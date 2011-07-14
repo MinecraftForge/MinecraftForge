@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>forge_server</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>forge_common</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/forge_common</locationURI>
+		</link>
+		<link>
+			<name>minecraft_server</name>
+			<type>2</type>
+			<locationURI>PARENT-1-WORKSPACE_LOC/src_work/minecraft_server</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>
