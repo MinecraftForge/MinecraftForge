@@ -45,9 +45,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
                  if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
                  {
                      world.setBlockWithNotify(i, j, k, 0);
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
---- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-11 21:58:45.359692600 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-16 00:35:25.293181000 +0200
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRenderer.java ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
+--- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-07-11 21:58:45.189682900 +0200
++++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-07-16 01:00:00.046532100 +0200
 @@ -5,6 +5,8 @@
  package net.minecraft.src;
  
@@ -57,23 +57,100 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlo
  import org.lwjgl.opengl.GL11;
  
  // Referenced classes of package net.minecraft.src:
-@@ -3485,6 +3487,7 @@
- 
-     public void renderBlockOnInventory(Block block, int i, float f)
-     {
-+        MinecraftForgeClient.beforeBlockRenderInventory(block);
-         Tessellator tessellator = Tessellator.instance;
-         if(field_31088_b)
+@@ -34,15 +36,18 @@
+         if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
          {
-@@ -3685,6 +3688,8 @@
+             GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
++            MinecraftForgeClient.overrideTexture (Block.blocksList[itemstack.itemID]);
+             renderBlocksInstance.renderBlockOnInventory(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), entityliving.getEntityBrightness(1.0F));
+         } else
          {
-             ModLoader.RenderInvBlock(this, block, i, k);
-         }
-+        
-+        MinecraftForgeClient.afterBlockRenderInventory(block);
-     }
+             if(itemstack.itemID < 256)
+             {
+                 GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
++                MinecraftForgeClient.overrideTexture (Block.blocksList[itemstack.itemID]);
+             } else
+             {
+                 GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/gui/items.png"));
++                MinecraftForgeClient.overrideTexture (Item.itemsList[itemstack.itemID]);
+             }
+             Tessellator tessellator = Tessellator.instance;
+             int i = entityliving.getItemIcon(itemstack);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-11 21:58:45.359692600 +0200
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-16 00:51:36.820749200 +0200
+@@ -5,6 +5,8 @@
+ package net.minecraft.src;
  
-     public static boolean renderItemIn3d(int i)
+ import net.minecraft.client.Minecraft;
++import net.minecraft.src.forge.MinecraftForgeClient;
++
+ import org.lwjgl.opengl.GL11;
+ 
+ // Referenced classes of package net.minecraft.src:
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
+--- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-07-11 21:58:45.370693200 +0200
++++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-07-16 01:01:10.494561500 +0200
+@@ -5,6 +5,9 @@
+ package net.minecraft.src;
+ 
+ import java.util.Random;
++
++import net.minecraft.src.forge.MinecraftForgeClient;
++
+ import org.lwjgl.opengl.GL11;
+ 
+ // Referenced classes of package net.minecraft.src:
+@@ -51,6 +54,7 @@
+         {
+             GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
+             loadTexture("/terrain.png");
++            MinecraftForgeClient.overrideTexture(Block.blocksList[itemstack.itemID]);
+             float f4 = 0.25F;
+             if(!Block.blocksList[itemstack.itemID].renderAsNormalBlock() && itemstack.itemID != Block.stairSingle.blockID && Block.blocksList[itemstack.itemID].getRenderType() != 16)
+             {
+@@ -78,10 +82,12 @@
+             if(itemstack.itemID < 256)
+             {
+                 loadTexture("/terrain.png");
++                MinecraftForgeClient.overrideTexture(Block.blocksList[itemstack.itemID]);
+             } else
+             {
+                 loadTexture("/gui/items.png");
+-            }
++                MinecraftForgeClient.overrideTexture(Item.itemsList[itemstack.itemID]);
++            }            
+             Tessellator tessellator = Tessellator.instance;
+             float f6 = (float)((i % 16) * 16 + 0) / 256F;
+             float f8 = (float)((i % 16) * 16 + 16) / 256F;
+@@ -92,6 +98,7 @@
+             float f14 = 0.25F;
+             if(field_27004_a)
+             {
++            	
+                 int k = Item.itemsList[itemstack.itemID].getColorFromDamage(itemstack.getItemDamage());
+                 float f15 = (float)(k >> 16 & 0xff) / 255F;
+                 float f17 = (float)(k >> 8 & 0xff) / 255F;
+@@ -131,6 +138,7 @@
+         {
+             int j1 = i;
+             renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
++            MinecraftForgeClient.overrideTexture (Block.blocksList[i]);
+             Block block = Block.blocksList[j1];
+             GL11.glPushMatrix();
+             GL11.glTranslatef(l - 2, i1 + 3, -3F);
+@@ -159,9 +167,11 @@
+             if(i < 256)
+             {
+                 renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
++                MinecraftForgeClient.overrideTexture (Block.blocksList[i]);
+             } else
+             {
+                 renderengine.bindTexture(renderengine.getTexture("/gui/items.png"));
++                MinecraftForgeClient.overrideTexture(Item.itemsList[i]);
+             }
+             int k1 = Item.itemsList[i].getColorFromDamage(j);
+             float f = (float)(k1 >> 16 & 0xff) / 255F;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-11 21:58:45.464698600 +0200
 +++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-16 00:27:38.378475000 +0200
