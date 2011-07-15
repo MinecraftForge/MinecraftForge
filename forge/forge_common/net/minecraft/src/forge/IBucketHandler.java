@@ -5,6 +5,6 @@ import net.minecraft.src.World;
 
 public interface IBucketHandler {
 
-	public ItemStack fillCustomBucket (World w, int i, int j, int k);
-	
+    public ItemStack fillCustomBucket(World w, int i, int j, int k);
+
 }
