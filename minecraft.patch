@@ -45,6 +45,60 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
                  if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
                  {
                      world.setBlockWithNotify(i, j, k, 0);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-11 21:58:45.359692600 +0200
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-16 00:35:25.293181000 +0200
+@@ -5,6 +5,8 @@
+ package net.minecraft.src;
+ 
+ import net.minecraft.client.Minecraft;
++import net.minecraft.src.forge.MinecraftForgeClient;
++
+ import org.lwjgl.opengl.GL11;
+ 
+ // Referenced classes of package net.minecraft.src:
+@@ -3485,6 +3487,7 @@
+ 
+     public void renderBlockOnInventory(Block block, int i, float f)
+     {
++        MinecraftForgeClient.beforeBlockRenderInventory(block);
+         Tessellator tessellator = Tessellator.instance;
+         if(field_31088_b)
+         {
+@@ -3685,6 +3688,8 @@
+         {
+             ModLoader.RenderInvBlock(this, block, i, k);
+         }
++        
++        MinecraftForgeClient.afterBlockRenderInventory(block);
+     }
+ 
+     public static boolean renderItemIn3d(int i)
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-11 21:58:45.464698600 +0200
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-16 00:27:38.378475000 +0200
+@@ -5,6 +5,9 @@
+ package net.minecraft.src;
+ 
+ import java.util.*;
++
++import net.minecraft.src.forge.MinecraftForgeClient;
++
+ import org.lwjgl.opengl.GL11;
+ 
+ // Referenced classes of package net.minecraft.src:
+@@ -144,8 +147,10 @@
+                             continue;
+                         }
+                         if(j3 == i2)
+-                        {
++                        {                        	                            
++                        	MinecraftForgeClient.beforeBlockRender(block, renderblocks);
+                             flag1 |= renderblocks.renderBlockByRenderType(block, l2, j2, k2);
++                            MinecraftForgeClient.afterBlockRender(block, renderblocks);                           
+                         }
+                     }
+ 
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java
 --- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-07-11 21:58:45.468698800 +0200
 +++ ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-07-11 22:00:55.619143000 +0200
