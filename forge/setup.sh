@@ -1,7 +1,10 @@
-if [ ! -f ../src_base ]; then
-   cp -r ../src ../src_base
-   patch -p0 < minecraft.patch
-   cp -r ../src ../src_work
-else
-   echo "patch already applied - remove src and src_base and decompile again"
+if [ ! -d ../src ]; then
+   move ../src_base src
+   rm -rf src_work
 fi
+
+cp -r ../src ../src_base
+cp -r ../src ../src_work
+dir=`pwd`
+cd ../src_work
+patch -u -p2 < $dir/minecraft.patch
