@@ -176,6 +176,18 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
                          }
                      }
  
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/client/Minecraft.java ../src_work/minecraft/net/minecraft/client/Minecraft.java
+--- ../src_base/minecraft/net/minecraft/client/Minecraft.java	2011-07-11 21:58:45.464698600 +0200
++++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	2011-07-16 00:27:38.378475000 +0200
+@@ -177,6 +177,7 @@
+         renderGlobal = new RenderGlobal(this, renderEngine);
+         GL11.glViewport(0, 0, displayWidth, displayHeight);
+         effectRenderer = new EffectRenderer(theWorld, renderEngine);
++		 MinecraftForgeClient.onGameStart();
+         try
+         {
+             downloadResourcesThread = new ThreadDownloadResources(mcDataDir, this);
+
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java
 --- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-07-11 21:58:45.468698800 +0200
 +++ ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java	2011-07-11 22:00:55.619143000 +0200

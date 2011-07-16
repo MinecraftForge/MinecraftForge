@@ -49,7 +49,9 @@ public class MinecraftForgeClient {
                             .getTextureFile()));
         }
     }
-    
-    
-
+	
+	public static void onGameStart() {
+		System.out.println("OnGameHook");
+		ModLoader.getMinecraftInstance().effectRenderer = new MinecraftForgeEffectRenderer(ModLoader.getMinecraftInstance().theWorld, ModLoader.getMinecraftInstance().renderEngine);
+	}
 }
