@@ -23,7 +23,7 @@ function package_all () {
 
    zip -r $dir/minecraftforge$qual-$version.zip \
       *.class \
-      net/minecraft/src/forge
+      forge
 }
 
 cd ../reobf
@@ -41,4 +41,4 @@ package_all "-server"
 
 cd ../..
 
-#rm -rf reobf
+rm -rf reobf
