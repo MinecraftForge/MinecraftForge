@@ -1,6 +1,6 @@
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/client/Minecraft.java ../src_work/minecraft/net/minecraft/client/Minecraft.java
---- ../src_base/minecraft/net/minecraft/client/Minecraft.java	2011-07-17 00:28:07.253743200 +0200
-+++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	2011-07-17 00:28:32.530189000 +0200
+--- ../src_base/minecraft/net/minecraft/client/Minecraft.java	2011-07-19 20:32:54.429858500 +0200
++++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	2011-07-19 20:33:40.515494400 +0200
 @@ -8,6 +8,8 @@
  import java.io.File;
  import java.io.PrintStream;
@@ -19,8 +19,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/client/Minecr
          {
              downloadResourcesThread = new ThreadDownloadResources(mcDataDir, this);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ChunkProviderGenerate.java ../src_work/minecraft/net/minecraft/src/ChunkProviderGenerate.java
---- ../src_base/minecraft/net/minecraft/src/ChunkProviderGenerate.java	2011-07-17 00:28:07.334747900 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ChunkProviderGenerate.java	2011-07-17 00:28:09.467869900 +0200
+--- ../src_base/minecraft/net/minecraft/src/ChunkProviderGenerate.java	2011-07-19 20:32:54.820880000 +0200
++++ ../src_work/minecraft/net/minecraft/src/ChunkProviderGenerate.java	2011-07-19 20:33:40.519494600 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -39,9 +39,154 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ChunkProv
  
          generatedTemperatures = worldObj.getWorldChunkManager().getTemperatures(generatedTemperatures, k + 8, l + 8, 16, 16);
          for(int j19 = k + 8; j19 < k + 8 + 16; j19++)
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRenderer.java ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
+--- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-07-19 20:32:54.895885100 +0200
++++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-07-19 20:40:47.501916600 +0200
+@@ -7,6 +7,9 @@
+ import java.util.*;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraft.src.forge.BlockTextureParticles;
++import net.minecraft.src.forge.ITextureProvider;
++
+ // Referenced classes of package net.minecraft.src:
+ //            EntityFX, Entity, MathHelper, RenderEngine, 
+ //            Tessellator, Block, EntityDiggingFX, World
+@@ -16,6 +19,7 @@
+ 
+     public EffectRenderer(World world, RenderEngine renderengine)
+     {
++        effectList = new ArrayList();
+         fxLayers = new List[4];
+         rand = new Random();
+         if(world != null)
+@@ -55,6 +59,18 @@
+             }
+ 
+         }
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            for (int y = 0; y < entry.effects.size(); y++) {
++                EntityFX entityfx = (EntityFX) entry.effects.get(y);
++                if (entityfx.isDead) {
++                    entry.effects.remove(y--);
++                }
++            }
++            if (effectList.size() == 0)
++                effectList.remove(x--);
++        }
+ 
+     }
+ 
+@@ -93,11 +109,26 @@
+             for(int k = 0; k < fxLayers[i].size(); k++)
+             {
+                 EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
++				if(entityfx instanceof EntityDiggingFX) continue;
+                 entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
+             }
+ 
+             tessellator.draw();
+         }
++        Tessellator tessellator = Tessellator.instance;
++
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            GL11.glBindTexture(3553 /* GL_TEXTURE_2D */,
++                    renderer.getTexture(entry.texture));
++            tessellator.startDrawingQuads();
++            for (int y = 0; y < entry.effects.size(); y++) {
++                EntityFX entityfx = (EntityFX) entry.effects.get(y);
++                entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
++            }
++            tessellator.draw();
++        }
+ 
+     }
+ 
+@@ -124,6 +155,13 @@
+         {
+             fxLayers[i].clear();
+         }
++		
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            entry.effects.clear();
++        }
++        effectList.clear();
+ 
+     }
+ 
+@@ -145,7 +183,12 @@
+                     double d1 = (double)j + ((double)l1 + 0.5D) / (double)j1;
+                     double d2 = (double)k + ((double)i2 + 0.5D) / (double)j1;
+                     int j2 = rand.nextInt(6);
+-                    addEffect((new EntityDiggingFX(worldObj, d, d1, d2, d - (double)i - 0.5D, d1 - (double)j - 0.5D, d2 - (double)k - 0.5D, block, j2, i1)).func_4041_a(i, j, k));
++                    EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj,
++                            d, d1, d2, d - (double) i - 0.5D, d1 - (double) j
++                                    - 0.5D, d2 - (double) k - 0.5D, block, j2,
++                            i1);
++                    dig_effect.func_4041_a(i, j, k);
++                    addDigParticleEffect(dig_effect, block);
+                 }
+ 
+             }
+@@ -190,16 +233,48 @@
+         {
+             d = (double)i + block.maxX + (double)f;
+         }
+-        addEffect((new EntityDiggingFX(worldObj, d, d1, d2, 0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k))).func_4041_a(i, j, k).func_407_b(0.2F).func_405_d(0.6F));
++        EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj, d, d1, d2,
++                0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k));
++        dig_effect.func_4041_a(i, j, k);
++        dig_effect.func_407_b(0.2F);
++        dig_effect.func_405_d(0.6F);
++        addDigParticleEffect(dig_effect, block);
+     }
+ 
+     public String getStatistics()
+     {
+         return (new StringBuilder()).append("").append(fxLayers[0].size() + fxLayers[1].size() + fxLayers[2].size()).toString();
+     }
++	
++    public void addDigParticleEffect(EntityDiggingFX dig_effect, Block block) {
++        boolean added = false;
++        String comp;
++
++        if (block instanceof ITextureProvider) {
++            comp = ((ITextureProvider) block).getTextureFile();
++        } else {
++            comp = "/terrain.png";
++        }
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            if (entry.texture.equals(comp)) {
++                entry.effects.add(dig_effect);
++                added = true;
++            }
++        }
++        if (!added) {
++            BlockTextureParticles entry = new BlockTextureParticles();
++            entry.texture = comp;
++            entry.effects.add(dig_effect);
++            effectList.add(entry);
++        }
++        addEffect(dig_effect);
++    }
+ 
+     protected World worldObj;
+     private List fxLayers[];
++    private List effectList;
+     private RenderEngine renderer;
+     private Random rand;
+ }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucket.java ../src_work/minecraft/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-07-17 00:28:07.460755100 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-07-17 00:28:09.470870000 +0200
+--- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-07-19 20:32:55.620926000 +0200
++++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-07-19 20:33:40.524494900 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -66,8 +211,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
                  {
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRenderer.java ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
---- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-07-17 00:28:07.476756000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-07-17 00:28:09.472870200 +0200
+--- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-07-19 20:32:55.684930300 +0200
++++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-07-19 20:33:40.528495200 +0200
 @@ -5,6 +5,8 @@
  package net.minecraft.src;
  
@@ -97,8 +242,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
              Tessellator tessellator = Tessellator.instance;
              int i = entityliving.getItemIcon(itemstack);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
---- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-17 00:28:07.646765700 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-17 00:28:09.476870400 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-19 20:32:57.062009000 +0200
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-07-19 20:33:40.533495400 +0200
 @@ -5,6 +5,8 @@
  package net.minecraft.src;
  
@@ -109,8 +254,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlo
  
  // Referenced classes of package net.minecraft.src:
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
---- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-07-17 00:28:07.657766300 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-07-17 00:28:09.478870500 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-07-19 20:32:57.183015900 +0200
++++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-07-19 20:33:40.568497500 +0200
 @@ -5,6 +5,9 @@
  package net.minecraft.src;
  
@@ -171,170 +316,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              }
              int k1 = Item.itemsList[i].getColorFromDamage(j);
              float f = (float)(k1 >> 16 & 0xff) / 255F;
-
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRenderer.java ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-07-17 00:28:07.657766300 +0200
-+++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-07-17 00:28:09.478870500 +0200
-@@ -6,6 +6,7 @@
- 
- import java.util.*;
- import org.lwjgl.opengl.GL11;
-+import net.minecraft.src.forge.ITextureProvider;
- 
- // Referenced classes of package net.minecraft.src:
- //            EntityFX, Entity, MathHelper, RenderEngine, 
-@@ -13,9 +14,18 @@
- 
- public class EffectRenderer
- {
-+	class BlockTextureParticles {
-+		public String texture;
-+		public List effects;
-+		
-+		public BlockTextureParticles(){
-+			effects = new ArrayList();
-+		}
-+	}
- 
-     public EffectRenderer(World world, RenderEngine renderengine)
-     {
-+		effectList = new ArrayList();
-         fxLayers = new List[4];
-         rand = new Random();
-         if(world != null)
-@@ -55,6 +65,19 @@
-             }
- 
-         }
-+		for(int x = 0; x < effectList.size(); x++)
-+		{
-+			BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
-+			for(int y =0; y < entry.effects.size(); y++)
-+			{
-+                EntityFX entityfx = (EntityFX)entry.effects.get(y);
-+                if(entityfx.isDead)
-+                {
-+                    entry.effects.remove(y--);
-+                }
-+			}
-+			if(effectList.size() == 0) effectList.remove(x--);
-+		}
- 
-     }
- 
-@@ -93,11 +116,26 @@
-             for(int k = 0; k < fxLayers[i].size(); k++)
-             {
-                 EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
-+				if(entityfx instanceof EntityDiggingFX) continue;
-                 entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
-             }
- 
-             tessellator.draw();
-         }
-+		Tessellator tessellator = Tessellator.instance;
-+				
-+		for(int x = 0; x < effectList.size(); x++)
-+		{
-+			BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
-+			GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, renderer.getTexture(entry.texture));
-+			tessellator.startDrawingQuads();
-+			for(int y =0; y < entry.effects.size(); y++)
-+			{
-+				EntityFX entityfx = (EntityFX)entry.effects.get(y);
-+				entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
-+			}
-+			tessellator.draw();
-+		}
- 
-     }
- 
-@@ -124,6 +162,13 @@
-         {
-             fxLayers[i].clear();
-         }
-+		
-+		for(int x = 0; x < effectList.size(); x++)
-+		{
-+			BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
-+			entry.effects.clear();
-+		}
-+		effectList.clear();
- 
-     }
- 
-@@ -145,7 +190,9 @@
-                     double d1 = (double)j + ((double)l1 + 0.5D) / (double)j1;
-                     double d2 = (double)k + ((double)i2 + 0.5D) / (double)j1;
-                     int j2 = rand.nextInt(6);
--                    addEffect((new EntityDiggingFX(worldObj, d, d1, d2, d - (double)i - 0.5D, d1 - (double)j - 0.5D, d2 - (double)k - 0.5D, block, j2, i1)).func_4041_a(i, j, k));
-+					EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj, d, d1, d2, d - (double)i - 0.5D, d1 - (double)j - 0.5D, d2 - (double)k - 0.5D, block, j2, i1);
-+					dig_effect.func_4041_a(i, j, k);
-+					addDigParticleEffect(dig_effect, block);
-                 }
- 
-             }
-@@ -190,16 +237,53 @@
-         {
-             d = (double)i + block.maxX + (double)f;
-         }
--        addEffect((new EntityDiggingFX(worldObj, d, d1, d2, 0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k))).func_4041_a(i, j, k).func_407_b(0.2F).func_405_d(0.6F));
-+		EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj, d, d1, d2, 0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k));
-+		dig_effect.func_4041_a(i, j, k);
-+		dig_effect.func_407_b(0.2F);
-+		dig_effect.func_405_d(0.6F);	
-+		addDigParticleEffect(dig_effect, block);
-     }
- 
-     public String getStatistics()
-     {
-         return (new StringBuilder()).append("").append(fxLayers[0].size() + fxLayers[1].size() + fxLayers[2].size()).toString();
-     }
-+	
-+	public void addDigParticleEffect(EntityDiggingFX dig_effect, Block block)
-+	{
-+		boolean added = false;
-+		String comp;
-+					
-+		if(block instanceof ITextureProvider)
-+		{
-+			comp = ((ITextureProvider)block).getTextureFile();
-+		}
-+		else
-+		{
-+			comp = "/terrain.png";
-+		}
-+		for(int x = 0; x < effectList.size(); x++)
-+		{
-+			BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
-+			if(entry.texture.equals(comp))
-+			{
-+				entry.effects.add(dig_effect);
-+				added = true;
-+			}
-+		}
-+		if(!added)
-+		{
-+			BlockTextureParticles entry = new BlockTextureParticles();
-+			entry.texture = comp;
-+			entry.effects.add(dig_effect);
-+			effectList.add(entry);
-+		}
-+		addEffect(dig_effect);
-+	}
- 
-     protected World worldObj;
-     private List fxLayers[];
-+	private List effectList;
-     private RenderEngine renderer;
-     private Random rand;
- }
-
-
-
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
---- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-17 00:28:07.751771700 +0200
-+++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-17 00:28:09.481870700 +0200
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-19 20:32:57.777049900 +0200
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-07-19 20:33:40.579498100 +0200
 @@ -5,6 +5,9 @@
  package net.minecraft.src;
  
@@ -358,8 +342,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
                      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java ../src_work/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java
---- ../src_base/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java	2011-07-17 00:28:07.853777600 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java	2011-07-17 00:28:09.488871100 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java	2011-07-19 20:33:10.318767000 +0200
++++ ../src_work/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java	2011-07-19 20:33:40.583498300 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -379,8 +363,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
          generatedTemperatures = worldObj.getWorldChunkManager().getTemperatures(generatedTemperatures, k + 8, l + 8, 16, 16);
          for(int j19 = k + 8; j19 < k + 8 + 16; j19++)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-07-17 00:28:08.089791100 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-07-17 00:28:09.490871200 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-07-19 20:33:10.742791000 +0200
++++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-07-19 20:33:40.617500300 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
