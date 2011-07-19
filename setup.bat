@@ -1,11 +1,11 @@
-set CYWIN=E:\cygwin\bin
+set CYGWIN=E:\cygwin\bin
 
 cd ..
 
 rmdir /S /Q src
 
 IF EXIST src_base (
-move src_base src;
+move src_base src
 rmdir /S /Q src_work
 ) ELSE (
 cmd /C decompile.bat
@@ -22,3 +22,4 @@ xcopy  /Y /E src\* src_base
 xcopy  /Y /E src\* src_work
 cd src_work
 %CYGWIN%\patch -u -p2 < ..\forge\minecraft.patch
+pause
