@@ -49,8 +49,4 @@ public class MinecraftForgeClient {
                             .getTextureFile()));
         }
     }
-	
-	public static void onGameStart() {
-		
-	}
 }
