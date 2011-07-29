@@ -61,7 +61,7 @@ public class MinecraftForge {
         return false;
     }
 
-    public void addPixaxeBlockEffectiveAgainst (Block block) {
+    public static void addPixaxeBlockEffectiveAgainst (Block block) {
         ((ItemTool) Item.pickaxeWood).addBlockEffectiveAgainst(block);
         ((ItemTool) Item.pickaxeStone).addBlockEffectiveAgainst(block);
         ((ItemTool) Item.pickaxeSteel).addBlockEffectiveAgainst(block);
