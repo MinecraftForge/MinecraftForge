@@ -40,10 +40,19 @@ public class Configuration {
     public TreeMap<String, Property> itemProperties = new TreeMap<String, Property>();
     public TreeMap<String, Property> generalProperties = new TreeMap<String, Property>();
 
+    /**
+     * Create a configuration file for the file given in parameter.
+     */
     public Configuration(File file) {
         this.file = file;
     }
 
+    /**
+     * Gets or create a block id property. If the block id property key is
+     * already in the configuration, then it will be used. Otherwise, 
+     * defaultId will be used, except if already taken, in which case this
+     * will try to determine a free default id. 
+     */
     public Property getOrCreateBlockIdProperty(String key, int defaultId) {
         if (configBlocks == null) {
             configBlocks = new boolean[Block.blocksList.length];

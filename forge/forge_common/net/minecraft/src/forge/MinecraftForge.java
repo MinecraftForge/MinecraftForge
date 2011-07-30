@@ -61,6 +61,9 @@ public class MinecraftForge {
         return false;
     }
 
+    /**
+     * Add a block to the list of blocks supposed to be 
+     */
     public static void addPixaxeBlockEffectiveAgainst (Block block) {
         ((ItemTool) Item.pickaxeWood).addBlockEffectiveAgainst(block);
         ((ItemTool) Item.pickaxeStone).addBlockEffectiveAgainst(block);
