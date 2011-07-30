@@ -20,6 +20,10 @@ import java.util.TreeMap;
 
 import net.minecraft.src.Block;
 
+/** 
+ * This class offers advanced configurations capabilities, allowing to provide
+ * various categories for configuration variables.
+ */
 public class Configuration {
 
     private boolean configBlocks[] = null;

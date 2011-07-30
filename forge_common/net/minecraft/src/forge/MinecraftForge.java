@@ -20,18 +20,30 @@ public class MinecraftForge {
     private static LinkedList<IBiomePopulator> biomePopulators = new LinkedList<IBiomePopulator>();
     private static LinkedList<IHarvestHandler> harvestHandlers = new LinkedList<IHarvestHandler>();
 
+    /**
+     * Registers a new custom bucket handler.
+     */
     public static void registerCustomBucketHander(IBucketHandler handler) {
         bucketHandlers.add(handler);
     }
 
+    /**
+     * Registers a new biome contributer.
+     */
     public static void registerBiomePopulate(IBiomePopulator populator) {
         biomePopulators.add(populator);
     }
     
+    /**
+     * Registers a new harvest handler.
+     */
     public static void registerHarvestHandler(IHarvestHandler handler) {
         harvestHandlers.add(handler);
     }
 
+    /**
+     * This is not supposed to be called outside of Minecraft internals.
+     */
     public static ItemStack fillCustomBucket(World w, int i, int j, int k) {
         for (IBucketHandler handler : bucketHandlers) {
             ItemStack stack = handler.fillCustomBucket(w, i, j, k);
@@ -44,6 +56,9 @@ public class MinecraftForge {
         return null;
     }
 
+    /**
+     * This is not supposed to be called outside of Minecraft internals.
+     */
     public static void populateBiome(World world, BiomeGenBase biomegenbase,
             int x, int z) {
         for (IBiomePopulator populator : biomePopulators) {
@@ -51,6 +66,9 @@ public class MinecraftForge {
         }
     }
 
+    /**
+     * This is not supposed to be called outside of Minecraft internals.
+     */
     public static boolean canHarvestBlock(ItemTool item, Block block) {
         for (IHarvestHandler handler : harvestHandlers) {
             if (handler.canHarvestBlock(item, block)) {
@@ -62,7 +80,8 @@ public class MinecraftForge {
     }
 
     /**
-     * Add a block to the list of blocks supposed to be 
+     * Add a block to the list of blocks to which the pixaxe is know to be
+     * effective.
      */
     public static void addPixaxeBlockEffectiveAgainst (Block block) {
         ((ItemTool) Item.pickaxeWood).addBlockEffectiveAgainst(block);
