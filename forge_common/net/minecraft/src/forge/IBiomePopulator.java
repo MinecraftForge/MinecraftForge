@@ -11,7 +11,10 @@ import net.minecraft.src.World;
 public interface IBiomePopulator {
 
     /** 
-     * This is called for 
+     * This is called for each chunk, after the rest of the generation, and
+     * allow contributers to add additional blocks in the world.
+     * 
+     * @see MinecraftForge#registerBiomePopulate(IBiomePopulator)
      */
     public void populate(World world, BiomeGenBase biomegenbase, int x, int z);
 
