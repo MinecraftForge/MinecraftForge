@@ -46,7 +46,6 @@ rm -rf reobf
 
 cd $build_dir
 
-echo `pwd`
 mkdir src
 mkdir src/minecraft
 mkdir src/minecraft_server
