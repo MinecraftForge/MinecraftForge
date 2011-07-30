@@ -225,6 +225,40 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
      private RenderEngine renderer;
      private Random rand;
  }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-07-29 23:21:34.219017000 +0200
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-07-30 09:10:04.107032100 +0200
+@@ -6,6 +6,8 @@
+ 
+ import java.util.*;
+ 
++import net.minecraft.src.forge.ISpecialArmor;
++
+ // Referenced classes of package net.minecraft.src:
+ //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
+ //            ChunkCoordinates, DataWatcher, Container, StatList, 
+@@ -477,6 +479,21 @@
+ 
+     protected void damageEntity(int i)
+     {
++        boolean doRegularComputation = true;
++        for (ItemStack stack : inventory.armorInventory) {
++            if (stack.getItem() instanceof ISpecialArmor) {
++                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
++                
++                i = armor.adjustArmorDamage(i);
++                doRegularComputation = doRegularComputation
++                        && armor.allowRegularComputation();
++            }
++        }
++        
++        if (!doRegularComputation) {
++            super.damageEntity(i);
++        }
++        
+         int j = 25 - inventory.getTotalArmorValue();
+         int k = i * j + damageRemainder;
+         inventory.damageArmor(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-07-29 23:21:34.371026000 +0200
 +++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-07-30 08:35:55.747872700 +0200
@@ -571,6 +605,40 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
  
          generatedTemperatures = worldObj.getWorldChunkManager().getTemperatures(generatedTemperatures, k + 8, l + 8, 16, 16);
          for(int j19 = k + 8; j19 < k + 8 + 16; j19++)
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
+--- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-29 23:21:50.320938000 +0200
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-30 09:10:42.295216400 +0200
+@@ -6,6 +6,8 @@
+ 
+ import java.util.*;
+ 
++import net.minecraft.src.forge.ISpecialArmor;
++
+ // Referenced classes of package net.minecraft.src:
+ //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
+ //            ChunkCoordinates, DataWatcher, Container, StatList, 
+@@ -457,6 +459,21 @@
+ 
+     protected void damageEntity(int i)
+     {
++        boolean doRegularComputation = true;
++        for (ItemStack stack : inventory.armorInventory) {
++            if (stack.getItem() instanceof ISpecialArmor) {
++                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
++                
++                i = armor.adjustArmorDamage(i);
++                doRegularComputation = doRegularComputation
++                        && armor.allowRegularComputation();
++            }
++        }
++        
++        if (!doRegularComputation) {
++            super.damageEntity(i);
++        }
++        
+         int j = 25 - inventory.getTotalArmorValue();
+         int k = i * j + damageRemainder;
+         inventory.damageArmor(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Explosion.java ../src_work/minecraft_server/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-07-29 23:21:50.402943000 +0200
 +++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-07-30 08:15:01.806151300 +0200
