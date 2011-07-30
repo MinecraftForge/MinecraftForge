@@ -227,7 +227,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-07-29 23:21:34.219017000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-07-30 09:10:04.107032100 +0200
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-07-30 21:03:33.693757400 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.*;
@@ -243,7 +243,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
      {
 +        boolean doRegularComputation = true;
 +        for (ItemStack stack : inventory.armorInventory) {
-+            if (stack.getItem() instanceof ISpecialArmor) {
++            if (stack != null && stack.getItem() instanceof ISpecialArmor) {
 +                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
 +                
 +                i = armor.adjustArmorDamage(i);
@@ -370,7 +370,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
              int i = entityliving.getItemIcon(itemstack);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.java ../src_work/minecraft/net/minecraft/src/ItemTool.java
 --- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-07-29 23:21:34.752048000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-07-30 08:15:01.737147400 +0200
++++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-07-30 09:12:08.010119000 +0200
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -388,7 +388,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.
 +        blocksEffectiveAgainst = Arrays.copyOf(blocksEffectiveAgainst,
 +                blocksEffectiveAgainst.length + 1);
 +        
-+        blocksEffectiveAgainst [blocksEffectiveAgainst.length + 1] = block;
++        blocksEffectiveAgainst [blocksEffectiveAgainst.length] = block;
 +    }
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerController.java ../src_work/minecraft/net/minecraft/src/PlayerController.java
@@ -607,7 +607,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
          for(int j19 = k + 8; j19 < k + 8 + 16; j19++)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-29 23:21:50.320938000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-30 09:10:42.295216400 +0200
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-30 21:04:21.430487800 +0200
 @@ -6,6 +6,8 @@
  
  import java.util.*;
@@ -623,7 +623,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
      {
 +        boolean doRegularComputation = true;
 +        for (ItemStack stack : inventory.armorInventory) {
-+            if (stack.getItem() instanceof ISpecialArmor) {
++            if (stack != null && stack.getItem() instanceof ISpecialArmor) {
 +                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
 +                
 +                i = armor.adjustArmorDamage(i);
