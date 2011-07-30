@@ -55,5 +55,9 @@ cp -r forge_common/* src/minecraft
 cp -r forge_common/* src/minecraft_server
 cp minecraft.patch src
 
-zip -r $dir/minecraftforge-src-$version.zip src
+cd src
+remove_svn .
+cd ..
+
+zip -r $dir/minecraftforge-src-$version.zip src doc
 rm -rf src
