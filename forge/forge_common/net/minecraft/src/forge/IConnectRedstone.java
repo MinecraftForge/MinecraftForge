@@ -17,8 +17,10 @@ import net.minecraft.src.IBlockAccess;
 public interface IConnectRedstone {
     
     /**
-     * When this returns false, the block at location i, j, k cannot provide
-     * redstone power to the direction given in parameter, otherwise it can.
+     * When this returns false, the block at location i, j, k cannot make
+     * a redstone connection in the direction given in parameter, otherwise
+     * it can.  Use to control which sides are inputs and outputs for redstone
+     * wires.
      */
     public boolean canConnectRedstone(IBlockAccess iba, int i, int j, int k,
             int dir);
