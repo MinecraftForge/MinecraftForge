@@ -18,8 +18,8 @@ public interface IOverrideReplace {
     
     /**
      * Return true if this block has to take control over replacement, for
-     * the intended replacement given by the parameter bid. If true, then
-     * the actual replacement is supposed to have occured in the block.
+     * the intended replacement given by the parameter bid. If false, then
+     * the block replacement will be prevented.
      */
 	public boolean canReplaceBlock(World world, int i, int j, int k, int bid);
 	
