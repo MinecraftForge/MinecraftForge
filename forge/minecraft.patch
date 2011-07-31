@@ -59,27 +59,6 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
          blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
          if(j1 != 0)
          {
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ChunkProviderGenerate.java ../src_work/minecraft/net/minecraft/src/ChunkProviderGenerate.java
---- ../src_base/minecraft/net/minecraft/src/ChunkProviderGenerate.java	2011-07-29 23:21:33.906999000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ChunkProviderGenerate.java	2011-07-30 08:15:01.684144300 +0200
-@@ -6,6 +6,8 @@
- 
- import java.util.Random;
- 
-+import net.minecraft.src.forge.MinecraftForge;
-+
- // Referenced classes of package net.minecraft.src:
- //            IChunkProvider, MapGenCaves, NoiseGeneratorOctaves, Block, 
- //            BiomeGenBase, Chunk, World, WorldChunkManager, 
-@@ -632,6 +634,8 @@
-             int i25 = l + rand.nextInt(16) + 8;
-             (new WorldGenLiquids(Block.lavaMoving.blockID)).generate(worldObj, rand, i22, l23, i25);
-         }
-+        
-+        MinecraftForge.populateBiome(worldObj, biomegenbase, k, l);
- 
-         generatedTemperatures = worldObj.getWorldChunkManager().getTemperatures(generatedTemperatures, k + 8, l + 8, 16, 16);
-         for(int j19 = k + 8; j19 < k + 8 + 16; j19++)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRenderer.java ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-07-29 23:21:33.988004400 +0200
 +++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-07-30 08:15:01.696145000 +0200
@@ -584,27 +563,6 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
          blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
          if(j1 != 0)
          {
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java ../src_work/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java
---- ../src_base/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java	2011-07-29 23:21:50.088925000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/ChunkProviderGenerate.java	2011-07-30 08:15:01.786150200 +0200
-@@ -6,6 +6,8 @@
- 
- import java.util.Random;
- 
-+import net.minecraft.src.forge.MinecraftForge;
-+
- // Referenced classes of package net.minecraft.src:
- //            IChunkProvider, MapGenCaves, NoiseGeneratorOctaves, Block, 
- //            BiomeGenBase, Chunk, World, WorldChunkManager, 
-@@ -632,6 +634,8 @@
-             int i25 = l + rand.nextInt(16) + 8;
-             (new WorldGenLiquids(Block.lavaMoving.blockID)).generate(worldObj, rand, i22, l23, i25);
-         }
-+        
-+        MinecraftForge.populateBiome(worldObj, biomegenbase, k, l);
- 
-         generatedTemperatures = worldObj.getWorldChunkManager().getTemperatures(generatedTemperatures, k + 8, l + 8, 16, 16);
-         for(int j19 = k + 8; j19 < k + 8 + 16; j19++)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-29 23:21:50.320938000 +0200
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-07-30 21:04:21.430487800 +0200
