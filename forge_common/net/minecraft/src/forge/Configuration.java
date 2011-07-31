@@ -28,17 +28,11 @@ public class Configuration {
 
     private boolean configBlocks[] = null;
 
-    public enum PropertyKind {
-        General, Block, Item
-    }
-
+    public static final int GENERAL_PROPERTY = 0;
+    public static final int BLOCK_PROPERTY = 1;
+    public static final int ITEM_PROPERTY = 2;
+    
     File file;
-
-    public static class Property {
-        public String name;
-        public String value;
-        public String comment;
-    }
 
     public TreeMap<String, Property> blockProperties = new TreeMap<String, Property>();
     public TreeMap<String, Property> itemProperties = new TreeMap<String, Property>();
@@ -67,8 +61,8 @@ public class Configuration {
         }
 
         if (blockProperties.containsKey(key)) {
-            Property property = getOrCreateIntProperty(key, PropertyKind.Block,
-                    defaultId);
+			Property property = getOrCreateIntProperty(key,
+					Configuration.BLOCK_PROPERTY, defaultId);
             configBlocks[Integer.parseInt(property.value)] = true;
             return property;
         } else {
@@ -97,7 +91,7 @@ public class Configuration {
         }
     }
 
-    public Property getOrCreateIntProperty(String key, PropertyKind kind,
+    public Property getOrCreateIntProperty(String key, int kind,
             int defaultValue) {
         Property prop = getOrCreateProperty(key, kind,
                 Integer.toString(defaultValue));
@@ -112,7 +106,7 @@ public class Configuration {
         }
     }
 
-    public Property getOrCreateBooleanProperty(String key, PropertyKind kind,
+    public Property getOrCreateBooleanProperty(String key, int kind,
             boolean defaultValue) {
         Property prop = getOrCreateProperty(key, kind,
                 Boolean.toString(defaultValue));
@@ -126,18 +120,18 @@ public class Configuration {
         }
     }
 
-    public Property getOrCreateProperty(String key, PropertyKind kind,
+    public Property getOrCreateProperty(String key, int kind,
             String defaultValue) {
         TreeMap<String, Property> source = null;
 
         switch (kind) {
-        case General:
+        case GENERAL_PROPERTY:
             source = generalProperties;
             break;
-        case Block:
+        case BLOCK_PROPERTY:
             source = blockProperties;
             break;
-        case Item:
+        case ITEM_PROPERTY:
             source = itemProperties;
             break;
         }

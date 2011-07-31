@@ -17,7 +17,6 @@ import net.minecraft.src.World;
 public class MinecraftForge {
 
     private static LinkedList<IBucketHandler> bucketHandlers = new LinkedList<IBucketHandler>();
-    private static LinkedList<IBiomePopulator> biomePopulators = new LinkedList<IBiomePopulator>();
     private static LinkedList<IHarvestHandler> harvestHandlers = new LinkedList<IHarvestHandler>();
 
     /**
@@ -25,13 +24,6 @@ public class MinecraftForge {
      */
     public static void registerCustomBucketHander(IBucketHandler handler) {
         bucketHandlers.add(handler);
-    }
-
-    /**
-     * Registers a new biome contributer.
-     */
-    public static void registerBiomePopulate(IBiomePopulator populator) {
-        biomePopulators.add(populator);
     }
     
     /**
@@ -54,16 +46,6 @@ public class MinecraftForge {
         }
 
         return null;
-    }
-
-    /**
-     * This is not supposed to be called outside of Minecraft internals.
-     */
-    public static void populateBiome(World world, BiomeGenBase biomegenbase,
-            int x, int z) {
-        for (IBiomePopulator populator : biomePopulators) {
-            populator.populate(world, biomegenbase, x, z);
-        }
     }
 
     /**
