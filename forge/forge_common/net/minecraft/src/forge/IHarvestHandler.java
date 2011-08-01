@@ -15,7 +15,7 @@ public interface IHarvestHandler {
      * the given block, false if this handler does not know of any particular
      * harvesting. Other rules may activate the harvesting outside of this
      * handler. This is typically used to add e.g. blocks only extracted by 
-     * diamond pixaxe
+     * diamond pickaxe
      * 
      * @see MinecraftForge#registerHarvestHandler(IHarvestHandler)
      */

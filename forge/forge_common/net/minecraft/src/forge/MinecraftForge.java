@@ -62,10 +62,10 @@ public class MinecraftForge {
     }
 
     /**
-     * Add a block to the list of blocks to which the pixaxe is know to be
+     * Add a block to the list of blocks to which the pickaxe is know to be
      * effective.
      */
-    public static void addPixaxeBlockEffectiveAgainst (Block block) {
+    public static void addPickaxeBlockEffectiveAgainst (Block block) {
         ((ItemTool) Item.pickaxeWood).addBlockEffectiveAgainst(block);
         ((ItemTool) Item.pickaxeStone).addBlockEffectiveAgainst(block);
         ((ItemTool) Item.pickaxeSteel).addBlockEffectiveAgainst(block);
