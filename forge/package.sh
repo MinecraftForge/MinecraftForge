@@ -46,18 +46,26 @@ rm -rf reobf
 
 cd $build_dir
 
+mkdir forge
+cd forge
 mkdir src
 mkdir src/minecraft
 mkdir src/minecraft_server
-cp -r forge_client/src/* src/minecraft
-cp -r forge_server/src/* src/minecraft_server
-cp -r forge_common/* src/minecraft
-cp -r forge_common/* src/minecraft_server
-cp minecraft.patch src
+cp -r ../forge_client/src/* src/minecraft
+cp -r ../forge_server/src/* src/minecraft_server
+cp -r ../forge_common/* src/minecraft
+cp -r ../forge_common/* src/minecraft_server
+cp ../minecraft.patch .
+cp ../lfcr.py .
+cp ../install/install.cmd .
+cp ../install/README.txt .
+cp -r ../doc .
 
 cd src
 remove_svn .
 cd ..
 
-zip -r $dir/minecraftforge-src-$version.zip src doc
-rm -rf src
+cd ..
+
+zip -r $dir/minecraftforge-src-$version.zip forge
+rm -rf forge

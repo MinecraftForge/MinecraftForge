@@ -9,7 +9,7 @@ rmdir /S /Q src_work
 cmd /C decompile.bat
 cd src
 ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ..\forge\modLoaderMP.patch ..\forge\modLoaderMP-win.patch
-..\runtime\bin\applydiff.exe -uf -p2 < ..\forge\modLoaderMP.patch
+..\runtime\bin\applydiff.exe -uf -p2 < ..\forge\modLoaderMP-win.patch
 cd ..
 cmd /C recompile.bat
 cmd /C updatemd5.bat

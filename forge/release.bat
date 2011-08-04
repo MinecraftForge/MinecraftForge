@@ -8,6 +8,6 @@ set PATH=E:\cygwin\bin;%PATH%
 
 cd forge
 
-sh package.sh 1.0.0
+sh package.sh 1.0.3
 
 pause
