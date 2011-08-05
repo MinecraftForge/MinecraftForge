@@ -12,41 +12,15 @@ import net.minecraft.src.Tessellator;
 import org.lwjgl.opengl.GL11;
 
 public class MinecraftForgeClient {
-    
-    public static void beforeBlockRender(Block block, RenderBlocks renderblocks) {
-        if (block instanceof ITextureProvider
-                && renderblocks.overrideBlockTexture == -1) {
-            Tessellator tessellator = Tessellator.instance;
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-            tessellator.setNormal(0.0F, -1F, 0.0F);
+	public static void bindTexture(String name, int sub) {
+		ForgeHooksClient.bindTexture(name,sub);
+	}
 
-            GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-                    .getMinecraftInstance().renderEngine
-                    .getTexture(((ITextureProvider) (block)).getTextureFile()));
+	public static void bindTexture(String name) {
+		ForgeHooksClient.bindTexture(name,0);
+	}
 
-        }
-    }
-    
-    public static void afterBlockRender(Block block, RenderBlocks renderblocks) {
-        if (block instanceof ITextureProvider
-                && renderblocks.overrideBlockTexture == -1) {
-            Tessellator tessellator = Tessellator.instance;
-            tessellator.draw();
-            tessellator.startDrawingQuads();
-
-            GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-                    .getMinecraftInstance().renderEngine
-                    .getTexture("/terrain.png"));
-        }
-    }
-    
-    public static void overrideTexture (Object o) {
-        if (o instanceof ITextureProvider) {
-            GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
-                    .getMinecraftInstance().renderEngine
-                    .getTexture(((ITextureProvider) (o))
-                            .getTextureFile()));
-        }
-    }
+	public static void unbindTexture() {
+		ForgeHooksClient.unbindTexture();
+	}
 }
