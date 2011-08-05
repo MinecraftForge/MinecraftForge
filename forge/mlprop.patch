@@ -1,0 +1,70 @@
+diff -ru src/minecraft/net/minecraft/src/MLProp.java src_fix/minecraft/net/minecraft/src/MLProp.java
+--- src/minecraft/net/minecraft/src/MLProp.java	2011-08-04 20:10:17.000000000 -0400
++++ src_fix/minecraft/net/minecraft/src/MLProp.java	2011-08-04 20:12:55.000000000 -0400
+@@ -1,20 +1,11 @@
+-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+-// Jad home page: http://www.kpdus.com/jad.html
+-// Decompiler options: packimports(3) braces deadcode 
+-
+-package net.minecraft.src;
+-
+-import java.lang.annotation.Annotation;
+-
+-public interface MLProp
+-    extends Annotation
+-{
+-
+-    public abstract String name();
+-
+-    public abstract String info();
+-
+-    public abstract double min();
+-
+-    public abstract double max();
+-}
++package net.minecraft.src;
++import java.lang.annotation.*;
++
++@Retention(RetentionPolicy.RUNTIME)
++@Target(ElementType.FIELD)
++public @interface MLProp {
++	String name() default "";
++	String info() default "";
++	double min() default Double.NEGATIVE_INFINITY;
++	double max() default Double.POSITIVE_INFINITY;
++}
+diff -ru src/minecraft_server/net/minecraft/src/MLProp.java src_fix/minecraft_server/net/minecraft/src/MLProp.java
+--- src/minecraft_server/net/minecraft/src/MLProp.java	2011-08-04 20:10:17.000000000 -0400
++++ src_fix/minecraft_server/net/minecraft/src/MLProp.java	2011-08-04 20:13:00.000000000 -0400
+@@ -1,20 +1,11 @@
+-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+-// Jad home page: http://www.kpdus.com/jad.html
+-// Decompiler options: packimports(3) braces deadcode 
+-
+-package net.minecraft.src;
+-
+-import java.lang.annotation.Annotation;
+-
+-public interface MLProp
+-    extends Annotation
+-{
+-
+-    public abstract String name();
+-
+-    public abstract String info();
+-
+-    public abstract double min();
+-
+-    public abstract double max();
+-}
++package net.minecraft.src;
++import java.lang.annotation.*;
++
++@Retention(RetentionPolicy.RUNTIME)
++@Target(ElementType.FIELD)
++public @interface MLProp {
++	String name() default "";
++	String info() default "";
++	double min() default Double.NEGATIVE_INFINITY;
++	double max() default Double.POSITIVE_INFINITY;
++}

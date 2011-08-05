@@ -2,15 +2,15 @@
 
 pushd ..
 
-rm -rf src
-cp -a src_work src
-rm -rf bin
+rm -rf src bin
 
-popd
+cp -a src_work src_forge
 
-cp -a forge_client/src/net/* ../src/minecraft/net/
-cp -a forge_common/net/* ../src/minecraft/net/
-cp -a forge_common/net/* ../src/minecraft_server/net/
+cp -a forge/forge_client/src/net/* src_forge/minecraft/net/
+cp -a forge/forge_common/net/* src_forge/minecraft/net/
+cp -a forge/forge_common/net/* src_forge/minecraft_server/net/
+
+cp -a src_forge src
 
 pushd ..
 
