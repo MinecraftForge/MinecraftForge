@@ -91,7 +91,8 @@ public class ForgeHooksClient {
 		inWorld=false;
 		for(List l : renderTextureList) {
 			// TODO: call appropriate client hooks
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D,(Integer)l.toArray()[0]);
+			Integer[] tn=(Integer[])l.toArray();
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D,tn[0]);
 			Tessellator t=(Tessellator)tessellators.get(l);
 			t.draw();
 		}
