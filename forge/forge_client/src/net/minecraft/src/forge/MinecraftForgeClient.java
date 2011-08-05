@@ -23,4 +23,9 @@ public class MinecraftForgeClient {
 	public static void unbindTexture() {
 		ForgeHooksClient.unbindTexture();
 	}
+
+	public static void preloadTexture(String texture) {
+		ModLoader.getMinecraftInstance().renderEngine
+			.getTexture(texture);
+	}
 }
