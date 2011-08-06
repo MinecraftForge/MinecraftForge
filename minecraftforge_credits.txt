@@ -2,6 +2,8 @@
 
 * FlowerChild *
 
+* Hawkye *
+
 * Scokeev9 *
 
 Gave permission for ScotTools API to be integrated into MCF, and also supported the Forge by converting his mods to use it.
