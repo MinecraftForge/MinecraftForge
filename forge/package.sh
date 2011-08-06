@@ -22,7 +22,10 @@ function remove_svn () {
 function package_all () {
    qual=$1
 
+   cp $build_dir/minecraftforge_credits.txt .
+
    zip -r $dir/minecraftforge$qual-$version.zip \
+      minecraftforge_credits.txt \
       *.class \
       forge
 }
@@ -59,6 +62,7 @@ cp ../minecraft.patch .
 cp ../lfcr.py .
 cp ../install/install.cmd .
 cp ../install/README.txt .
+cp ../minecraftforge_credits.txt .
 cp -r ../doc .
 
 cd src
