@@ -1,5 +1,5 @@
-set HOME=%CD%
-set MCP=%HOME%\..
+set HOME=%~dps0
+set MCP=%HOME%..
 xcopy  /Y /E src\* ..\src
 
 cd %MCP%\src
