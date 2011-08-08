@@ -1,3 +1,31 @@
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
+--- ../src_base/minecraft/net/minecraft/src/Block.java	2011-08-04 20:51:16.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-08-08 12:43:09.000000000 -0400
+@@ -600,6 +600,10 @@
+         return blockMaterial.getMaterialMobility();
+     }
+ 
++    public boolean isLadder() {
++	return false;
++    }
++
+     static Class _mthclass$(String s)
+     {
+         try
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadder.java ../src_work/minecraft/net/minecraft/src/BlockLadder.java
+--- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-08-04 20:51:16.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-08-08 12:43:21.000000000 -0400
+@@ -63,6 +63,10 @@
+         return super.getSelectedBoundingBoxFromPool(world, i, j, k);
+     }
+ 
++    public boolean isLadder() {
++	return true;
++    }
++
+     public boolean isOpaqueCube()
+     {
+         return false;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-04 20:51:16.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-05 07:07:18.000000000 -0400
@@ -204,6 +232,20 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
      private RenderEngine renderer;
      private Random rand;
  }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiving.java ../src_work/minecraft/net/minecraft/src/EntityLiving.java
+--- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-08-04 20:51:17.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-08-08 12:43:24.000000000 -0400
+@@ -555,7 +555,9 @@
+         int i = MathHelper.floor_double(posX);
+         int j = MathHelper.floor_double(boundingBox.minY);
+         int k = MathHelper.floor_double(posZ);
+-        return worldObj.getBlockId(i, j, k) == Block.ladder.blockID;
++	Block block=Block.blocksList[worldObj.getBlockId(i,j,k)];
++	if(block==null) return false;
++	return block.isLadder();
+     }
+ 
+     public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-04 20:51:17.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-05 07:07:18.000000000 -0400
@@ -747,12 +789,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-08-04 20:51:17.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-08-05 07:07:18.000000000 -0400
-@@ -3,8 +3,12 @@
- // Decompiler options: packimports(3) braces deadcode 
- 
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-08-08 12:37:17.000000000 -0400
+@@ -5,6 +5,9 @@
  package net.minecraft.src;
-+import net.minecraft.src.forge.*;
  
  import java.util.*;
 +
@@ -761,7 +800,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
  import org.lwjgl.opengl.GL11;
  
  // Referenced classes of package net.minecraft.src:
-@@ -125,8 +129,10 @@
+@@ -125,8 +128,10 @@
                              GL11.glTranslatef((float)(-sizeDepth) / 2.0F, (float)(-sizeHeight) / 2.0F, (float)(-sizeDepth) / 2.0F);
                              GL11.glScalef(f, f, f);
                              GL11.glTranslatef((float)sizeDepth / 2.0F, (float)sizeHeight / 2.0F, (float)sizeDepth / 2.0F);
@@ -774,7 +813,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
                          }
                          if(i2 == 0 && Block.isBlockContainer[i3])
                          {
-@@ -136,17 +142,17 @@
+@@ -136,17 +141,17 @@
                                  tileEntityRenderers.add(tileentity);
                              }
                          }
@@ -801,7 +840,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
                      }
  
                  }
-@@ -155,10 +161,11 @@
+@@ -155,10 +160,11 @@
  
              if(flag2)
              {
@@ -815,7 +854,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
              } else
              {
                  flag1 = false;
-@@ -251,7 +258,6 @@
+@@ -251,7 +257,6 @@
  
      public World worldObj;
      private int glRenderList;
@@ -823,7 +862,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
-@@ -282,8 +288,4 @@
+@@ -282,8 +287,4 @@
      public List tileEntityRenderers;
      private List tileEntities;
  
@@ -984,7 +1023,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java
 --- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-04 20:51:17.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-05 07:07:18.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-08 02:24:47.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
