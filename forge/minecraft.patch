@@ -1,12 +1,279 @@
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButton.java ../src_work/minecraft/net/minecraft/src/BlockButton.java
+--- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-08-11 21:40:22.000000000 -0400
+@@ -41,36 +41,36 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
++        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j, k + 1);
++        return world.isBlockSolidOnSide(i, j, k + 1,2);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+@@ -78,19 +78,19 @@
+         int i1 = world.getBlockMetadata(i, j, k);
+         int j1 = i1 & 8;
+         i1 &= 7;
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         } else
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         } else
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         } else
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         } else
+@@ -102,19 +102,19 @@
+ 
+     private int getOrientation(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return 1;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return 2;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return 3;
+         }
+-        return !world.isBlockNormalCube(i, j, k + 1) ? 1 : 4;
++        return !world.isBlockSolidOnSide(i, j, k + 1,2) ? 1 : 4;
+     }
+ 
+     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+@@ -123,19 +123,19 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k) & 7;
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChest.java ../src_work/minecraft/net/minecraft/src/BlockChest.java
+--- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-08-11 22:00:30.000000000 -0400
+@@ -230,23 +230,23 @@
+     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
+     {
+         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
+-        if(world.isBlockNormalCube(i, j + 1, k))
++        if(world.isBlockSolidOnSide(i, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
++        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
++        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
++        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
++        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
+         {
+             return true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor.java ../src_work/minecraft/net/minecraft/src/BlockDoor.java
+--- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-08-11 22:01:46.000000000 -0400
+@@ -178,7 +178,7 @@
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k))
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+             {
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+@@ -241,7 +241,7 @@
+             return false;
+         } else
+         {
+-            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
++            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
+         }
+     }
+ 
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
 --- ../src_base/minecraft/net/minecraft/src/Block.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-08-11 17:02:12.000000000 -0400
-@@ -600,6 +600,10 @@
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-08-12 19:07:50.000000000 -0400
+@@ -3,6 +3,7 @@
+ // Decompiler options: packimports(3) braces deadcode 
+ 
+ package net.minecraft.src;
++import net.minecraft.src.forge.ForgeHooks;
+ 
+ import java.util.ArrayList;
+ import java.util.Random;
+@@ -276,19 +277,12 @@
+         return blockID;
+     }
+ 
++    /* FORGE: This function isn't called by Minecraft anymore.  Use
++     * blockStrength(EntityPlayer,int) instead.
++     */
+     public float blockStrength(EntityPlayer entityplayer)
+     {
+-        if(blockHardness < 0.0F)
+-        {
+-            return 0.0F;
+-        }
+-        if(!entityplayer.canHarvestBlock(this))
+-        {
+-            return 1.0F / blockHardness / 100F;
+-        } else
+-        {
+-            return entityplayer.getCurrentPlayerStrVsBlock(this) / blockHardness / 30F;
+-        }
++	return blockStrength(entityplayer,0);
+     }
+ 
+     public final void dropBlockAsItem(World world, int i, int j, int k, int l)
+@@ -600,6 +594,72 @@
          return blockMaterial.getMaterialMobility();
      }
  
++    /* FORGE: Implement and return true if you wish this block to behave
++     * like a ladder when the player is inside.
++     */
 +    public boolean isLadder() {
 +	return false;
++    }
++
++    /* FORGE: Return true if the block is solid on the given side.  This
++     * is used by placement logic. */
++    public boolean isBlockSolidOnSide( World world, int i, int j, int k,
++		    int side ) {
++	    return blockMaterial.getIsOpaque() && renderAsNormalBlock();
++    }
++
++    /* FORGE: Return true if the player can place a new block in the block
++     * occupied by this one, like water, lava, fire, etc.
++     */
++    public boolean isBlockReplaceable( World world, int i, int j, int k ) {
++	    return false;
++    }
++
++    /* FORGE: Return true if this block should set fire and deal fire damage
++     * to entities coming into contact with it, false otherwise.
++     */
++    public boolean isBlockBurning( World world, int i, int j, int k ) {
++	    return false;
++    }
++
++    /* FORGE: Return true if this block should be treated as an air block
++     * by the rest of the code, false otherwise.  This method is primarily
++     * useful for creating pure logic-blocks that will be invisible 
++     * to the player and otherwise interact as air would.  
++     */	
++    public boolean isAirBlock( World world, int i, int j, int k ) {
++	    return false;
++    }
++
++    /* FORGE: Return the block hardness with metadata 'md'.
++     */
++    public float getHardness(int md) {
++	    return blockHardness;
++    }
++
++    /* FORGE: Return the block strength of the block at i,j,k against the
++     * player.
++     */
++    public float blockStrength(World world, EntityPlayer player,
++		    int i, int j, int k) {
++	    int md=world.getBlockMetadata(i,j,k);
++	    return blockStrength(player,md);
++    }
++
++    /* FORGE: Return the block strength of a prototypical block with metadata
++     * 'md' against the player.
++     */
++    public float blockStrength(EntityPlayer player, int md) {
++	    return ForgeHooks.blockStrength(this,player,md);
++    }
++
++    /* FORGE: Return true if the player can harvest a prototypical block with
++     * metadata 'md'.
++     */
++    public boolean canHarvestBlock(EntityPlayer player, int md) {
++	    return ForgeHooks.canHarvestBlock(this,player,md);
 +    }
 +
      static Class _mthclass$(String s)
@@ -14,11 +281,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
          try
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadder.java ../src_work/minecraft/net/minecraft/src/BlockLadder.java
 --- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-08-11 17:02:12.000000000 -0400
-@@ -63,6 +63,10 @@
++++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-08-11 22:07:59.000000000 -0400
+@@ -63,6 +63,11 @@
          return super.getSelectedBoundingBoxFromPool(world, i, j, k);
      }
  
++    /* FORGE: Implemented base method, see Block.isLadder */
 +    public boolean isLadder() {
 +	return true;
 +    }
@@ -26,6 +294,239 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadd
      public boolean isOpaqueCube()
      {
          return false;
+@@ -80,37 +85,37 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j, k + 1);
++        return world.isBlockSolidOnSide(i, j, k + 1,2);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+     {
+         int i1 = world.getBlockMetadata(i, j, k);
+-        if((i1 == 0 || l == 2) && world.isBlockNormalCube(i, j, k + 1))
++        if((i1 == 0 || l == 2) && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 2;
+         }
+-        if((i1 == 0 || l == 3) && world.isBlockNormalCube(i, j, k - 1))
++        if((i1 == 0 || l == 3) && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         }
+-        if((i1 == 0 || l == 4) && world.isBlockNormalCube(i + 1, j, k))
++        if((i1 == 0 || l == 4) && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 4;
+         }
+-        if((i1 == 0 || l == 5) && world.isBlockNormalCube(i - 1, j, k))
++        if((i1 == 0 || l == 5) && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 5;
+         }
+@@ -121,19 +126,19 @@
+     {
+         int i1 = world.getBlockMetadata(i, j, k);
+         boolean flag = false;
+-        if(i1 == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(i1 == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             flag = true;
+         }
+-        if(i1 == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(i1 == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             flag = true;
+         }
+-        if(i1 == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(i1 == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             flag = true;
+         }
+-        if(i1 == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(i1 == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             flag = true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLever.java ../src_work/minecraft/net/minecraft/src/BlockLever.java
+--- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-08-11 22:12:11.000000000 -0400
+@@ -40,44 +40,44 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
+-        if(l == 1 && world.isBlockNormalCube(i, j - 1, k))
++        if(l == 1 && world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             return true;
+         }
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
++        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k + 1))
++        if(world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+@@ -86,23 +86,23 @@
+         int j1 = i1 & 8;
+         i1 &= 7;
+         i1 = -1;
+-        if(l == 1 && world.isBlockNormalCube(i, j - 1, k))
++        if(l == 1 && world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             i1 = 5 + world.rand.nextInt(2);
+         }
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         }
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         }
+@@ -124,27 +124,27 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k) & 7;
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k) && i1 == 5)
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1) && i1 == 5)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k) && i1 == 6)
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1) && i1 == 6)
+             {
+                 flag = true;
+             }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java
+--- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-08-11 22:17:55.000000000 -0400
+@@ -46,7 +46,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+@@ -56,7 +56,7 @@
+     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+     {
+         boolean flag = false;
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             flag = true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 22:18:50.000000000 -0400
+@@ -27,7 +27,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             return false;
+         } else
+@@ -38,7 +38,7 @@
+ 
+     public boolean canBlockStay(World world, int i, int j, int k)
+     {
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             return false;
+         } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:12.000000000 -0400
@@ -48,6 +549,111 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
          if(Block.blocksList[i1].canProvidePower())
          {
              return true;
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorch.java ../src_work/minecraft/net/minecraft/src/BlockTorch.java
+--- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-08-11 22:30:24.000000000 -0400
+@@ -41,24 +41,24 @@
+ 
+     private boolean func_31032_h(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j, k) || world.getBlockId(i, j, k) == Block.fence.blockID;
++        return world.isBlockSolidOnSide(i, j, k,1) || world.getBlockId(i, j, k) == Block.fence.blockID;
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k + 1))
++        if(world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+@@ -72,19 +72,19 @@
+         {
+             i1 = 5;
+         }
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         }
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         }
+@@ -102,19 +102,19 @@
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 1);
+         } else
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 2);
+         } else
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 3);
+         } else
+-        if(world.isBlockNormalCube(i, j, k + 1))
++        if(world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 4);
+         } else
+@@ -131,19 +131,19 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k);
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.java ../src_work/minecraft/net/minecraft/src/Chunk.java
 --- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-08-11 17:02:12.000000000 -0400
@@ -248,7 +854,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiv
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-12 18:00:55.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.*;
@@ -258,7 +864,41 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
  // Referenced classes of package net.minecraft.src:
  //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
  //            ChunkCoordinates, DataWatcher, Container, StatList, 
-@@ -477,6 +479,21 @@
+@@ -316,6 +318,8 @@
+         worldObj.entityJoinedWorld(entityitem);
+     }
+ 
++    /* FORGE: This isn't called anymore
++     */
+     public float getCurrentPlayerStrVsBlock(Block block)
+     {
+         float f = inventory.getStrVsBlock(block);
+@@ -330,6 +334,24 @@
+         return f;
+     }
+ 
++    /* FORGE: Extended to allow metadata.
++     */
++    public float getCurrentPlayerStrVsBlock(Block block, int md)
++    {
++        float f = 1.0F;
++	ItemStack ist=inventory.getCurrentItem();
++	if(ist!=null) f=ist.getItem().getStrVsBlock(ist,block,md);
++        if(isInsideOfMaterial(Material.water))
++        {
++            f /= 5F;
++        }
++        if(!onGround)
++        {
++            f /= 5F;
++        }
++        return f;
++    }
++
+     public boolean canHarvestBlock(Block block)
+     {
+         return inventory.canHarvestBlock(block);
+@@ -477,6 +499,21 @@
  
      protected void damageEntity(int i)
      {
@@ -336,28 +976,23 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
                  if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
                  {
                      world.setBlockWithNotify(i, j, k, 0);
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemPickaxe.java ../src_work/minecraft/net/minecraft/src/ItemPickaxe.java
---- ../src_base/minecraft/net/minecraft/src/ItemPickaxe.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemPickaxe.java	2011-08-11 17:02:12.000000000 -0400
-@@ -4,6 +4,8 @@
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
+--- ../src_base/minecraft/net/minecraft/src/Item.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-08-12 17:59:17.000000000 -0400
+@@ -75,6 +75,13 @@
+         return 1.0F;
+     }
  
- package net.minecraft.src;
- 
-+import net.minecraft.src.forge.MinecraftForge;
++    /* FORGE: Metadata-sensitive version of getStrVsBlock
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
++    {
++	    return getStrVsBlock(itemstack,block);
++    }
 +
- 
- // Referenced classes of package net.minecraft.src:
- //            ItemTool, Block, EnumToolMaterial, Material
-@@ -42,6 +44,9 @@
-         {
-             return toolMaterial.getHarvestLevel() >= 2;
-         }
-+        if (MinecraftForge.canHarvestBlock(this, block)) {
-+            return true;
-+        }
-         if(block.blockMaterial == Material.rock)
-         {
-             return true;
+     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+     {
+         return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRenderer.java ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-08-11 17:02:12.000000000 -0400
@@ -391,27 +1026,31 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
              int i = entityliving.getItemIcon(itemstack);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.java ../src_work/minecraft/net/minecraft/src/ItemTool.java
 --- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-08-11 17:02:12.000000000 -0400
-@@ -4,6 +4,7 @@
++++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-08-12 18:38:09.000000000 -0400
+@@ -4,6 +4,8 @@
  
  package net.minecraft.src;
  
 +import java.util.Arrays;
++import net.minecraft.src.forge.ForgeHooks;
  
  // Referenced classes of package net.minecraft.src:
  //            Item, EnumToolMaterial, ItemStack, Block, 
-@@ -63,4 +64,11 @@
-     private float efficiencyOnProperMaterial;
-     private int damageVsEntity;
-     protected EnumToolMaterial toolMaterial;
-+    
-+    public void addBlockEffectiveAgainst (Block block) {    
-+        blocksEffectiveAgainst = Arrays.copyOf(blocksEffectiveAgainst,
-+                blocksEffectiveAgainst.length + 1);
-+        
-+        blocksEffectiveAgainst [blocksEffectiveAgainst.length-1] = block;
+@@ -37,6 +39,14 @@
+         return 1.0F;
+     }
+ 
++    /* FORGE: Overridden to allow custom tool effectiveness
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md) {
++	    if(ForgeHooks.isToolEffective(itemstack,block,md))
++                return efficiencyOnProperMaterial;
++	    return getStrVsBlock(itemstack,block);
 +    }
- }
++
+     public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
+     {
+         itemstack.damageItem(2, entityliving1);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java
 --- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-08-11 17:02:12.000000000 -0400
@@ -447,6 +1086,145 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-08-12 00:47:04.000000000 -0400
+@@ -63,7 +63,7 @@
+             {
+                 Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
+             }
+-            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
++            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
+             {
+                 sendBlockRemoved(i, j, k, l);
+             } else
+@@ -106,7 +106,7 @@
+                 return;
+             }
+             Block block = Block.blocksList[i1];
+-            curBlockDamageMP += block.blockStrength(mc.thePlayer);
++            curBlockDamageMP += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
+             if(field_9441_h % 4F == 0.0F && block != null)
+             {
+                 mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-08-12 19:08:13.000000000 -0400
+@@ -37,7 +37,7 @@
+         int j1 = mc.theWorld.getBlockMetadata(i, j, k);
+         boolean flag = super.sendBlockRemoved(i, j, k, l);
+         ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
+-        boolean flag1 = mc.thePlayer.canHarvestBlock(Block.blocksList[i1]);
++        boolean flag1 = Block.blocksList[i1].canHarvestBlock(mc.thePlayer,j1);
+         if(itemstack != null)
+         {
+             itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
+@@ -62,7 +62,7 @@
+         {
+             Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
+         }
+-        if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
++        if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
+         {
+             sendBlockRemoved(i, j, k, l);
+         }
+@@ -89,7 +89,7 @@
+                 return;
+             }
+             Block block = Block.blocksList[i1];
+-            curBlockDamage += block.blockStrength(mc.thePlayer);
++            curBlockDamage += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
+             if(field_1069_h % 4F == 0.0F && block != null)
+             {
+                 mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-08-12 19:29:14.000000000 -0400
+@@ -2171,7 +2171,7 @@
+             colorBlueTopRight *= f27;
+             int i1 = block.getBlockTexture(blockAccess, i, j, k, 2);
+             renderEastFace(block, i, j, k, i1);
+-            if(cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -2256,7 +2256,7 @@
+             colorBlueTopRight *= f28;
+             int j1 = block.getBlockTexture(blockAccess, i, j, k, 3);
+             renderWestFace(block, i, j, k, block.getBlockTexture(blockAccess, i, j, k, 3));
+-            if(cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -2341,7 +2341,7 @@
+             colorBlueTopRight *= f29;
+             int k1 = block.getBlockTexture(blockAccess, i, j, k, 4);
+             renderNorthFace(block, i, j, k, k1);
+-            if(cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -2426,7 +2426,7 @@
+             colorBlueTopRight *= f30;
+             int l1 = block.getBlockTexture(blockAccess, i, j, k, 5);
+             renderSouthFace(block, i, j, k, l1);
+-            if(cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -2510,7 +2510,7 @@
+             tessellator.setColorOpaque_F(f11 * f22, f14 * f22, f17 * f22);
+             int l = block.getBlockTexture(blockAccess, i, j, k, 2);
+             renderEastFace(block, i, j, k, l);
+-            if(cfgGrassFix && l == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && l == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f11 * f22 * f, f14 * f22 * f1, f17 * f22 * f2);
+                 renderEastFace(block, i, j, k, 38);
+@@ -2527,7 +2527,7 @@
+             tessellator.setColorOpaque_F(f11 * f23, f14 * f23, f17 * f23);
+             int i1 = block.getBlockTexture(blockAccess, i, j, k, 3);
+             renderWestFace(block, i, j, k, i1);
+-            if(cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f11 * f23 * f, f14 * f23 * f1, f17 * f23 * f2);
+                 renderWestFace(block, i, j, k, 38);
+@@ -2544,7 +2544,7 @@
+             tessellator.setColorOpaque_F(f12 * f24, f15 * f24, f18 * f24);
+             int j1 = block.getBlockTexture(blockAccess, i, j, k, 4);
+             renderNorthFace(block, i, j, k, j1);
+-            if(cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f12 * f24 * f, f15 * f24 * f1, f18 * f24 * f2);
+                 renderNorthFace(block, i, j, k, 38);
+@@ -2561,7 +2561,7 @@
+             tessellator.setColorOpaque_F(f12 * f25, f15 * f25, f18 * f25);
+             int k1 = block.getBlockTexture(blockAccess, i, j, k, 5);
+             renderSouthFace(block, i, j, k, k1);
+-            if(cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f12 * f25 * f, f15 * f25 * f1, f18 * f25 * f2);
+                 renderSouthFace(block, i, j, k, 38);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEngine.java ../src_work/minecraft/net/minecraft/src/RenderEngine.java
+--- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-08-11 23:20:23.000000000 -0400
+@@ -126,6 +126,9 @@
+         }
+         try
+         {
++	    if(Tessellator.renderingWorldRenderer) {
++		System.out.printf("Warning: Texture %s not preloaded, will cause render glitches!\n",s);
++	    }
+             singleIntBuffer.clear();
+             GLAllocation.generateTextureNames(singleIntBuffer);
+             int i = singleIntBuffer.get(0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
 --- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-08-11 17:02:12.000000000 -0400
@@ -512,7 +1290,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              float f = (float)(k1 >> 16 & 0xff) / 255F;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellator.java ../src_work/minecraft/net/minecraft/src/Tessellator.java
 --- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-08-11 23:13:28.000000000 -0400
 @@ -6,6 +6,7 @@
  
  import java.io.PrintStream;
@@ -521,21 +1299,18 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
  import org.lwjgl.opengl.*;
  
  // Referenced classes of package net.minecraft.src:
-@@ -14,8 +15,11 @@
+@@ -13,9 +14,7 @@
+ 
  public class Tessellator
  {
- 
+-
 -    private Tessellator(int i)
 -    {
-+    public int instanceNo;
-+    static int instanceTotal=0;
-+
 +    public Tessellator() {
-+	    instanceNo=instanceTotal++;
          vertexCount = 0;
          hasColor = false;
          hasTexture = false;
-@@ -24,20 +28,10 @@
+@@ -24,20 +23,10 @@
          addedVertices = 0;
          isColorDisabled = false;
          isDrawing = false;
@@ -559,7 +1334,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
      }
  
      public void draw()
-@@ -47,12 +41,20 @@
+@@ -47,12 +36,20 @@
              throw new IllegalStateException("Not tesselating!");
          }
          isDrawing = false;
@@ -584,7 +1359,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
              if(useVBO)
              {
                  vboIndex = (vboIndex + 1) % vboCount;
-@@ -106,10 +108,10 @@
+@@ -106,10 +103,10 @@
              GL11.glEnableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
              if(drawMode == 7 && convertQuadsToTriangles)
              {
@@ -597,7 +1372,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
              }
              GL11.glDisableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
              if(hasTexture)
-@@ -125,6 +127,10 @@
+@@ -125,6 +122,10 @@
                  GL11.glDisableClientState(32885 /*GL_NORMAL_ARRAY_EXT*/);
              }
          }
@@ -608,7 +1383,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
          reset();
      }
  
-@@ -237,6 +243,15 @@
+@@ -237,6 +238,15 @@
  
      public void addVertex(double d, double d1, double d2)
      {
@@ -624,7 +1399,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
          addedVertices++;
          if(drawMode == 7 && convertQuadsToTriangles && addedVertices % 4 == 0)
          {
-@@ -278,11 +293,6 @@
+@@ -278,11 +288,6 @@
          rawBuffer[rawBufferIndex + 2] = Float.floatToRawIntBits((float)(d2 + zOffset));
          rawBufferIndex += 8;
          vertexCount++;
@@ -636,7 +1411,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
      }
  
      public void setColorOpaque_I(int i)
-@@ -335,9 +345,7 @@
+@@ -335,9 +340,7 @@
  
      private static boolean convertQuadsToTriangles = true;
      private static boolean tryVBO = false;
@@ -647,7 +1422,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
      private int rawBuffer[];
      private int vertexCount;
      private double textureU;
-@@ -350,16 +358,40 @@
+@@ -350,16 +353,43 @@
      private int addedVertices;
      private boolean isColorDisabled;
      private int drawMode;
@@ -666,6 +1441,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 -    private int vboCount;
 -    private int bufferSize;
 +
++    public static boolean renderingWorldRenderer=false;
++    public boolean defaultTexture=false;
 +    private int rawBufferSize;
 +    private static int vboCount;
 +    private static IntBuffer vertexBuffers;
@@ -680,6 +1457,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +    static {
 +	instance=new Tessellator();
 +    	firstInstance=instance;
++	firstInstance.defaultTexture=true;
 +
 +        nativeBufferSize = 0x200000;
 +	trivertsInBuffer = (nativeBufferSize/48)*6;
@@ -696,19 +1474,37 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +    }
  
  }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java
+--- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-08-12 19:32:56.000000000 -0400
+@@ -4,6 +4,7 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.ForgeHooksClient;
+ import net.minecraft.client.Minecraft;
+ import org.lwjgl.opengl.GL11;
+ 
+@@ -38,6 +39,7 @@
+             {
+                 GL11.glShadeModel(7424 /*GL_FLAT*/);
+             }
++	    ForgeHooksClient.beforeBlockRender(block,field_31071_b);
+             tessellator.startDrawingQuads();
+             tessellator.setTranslationD(((float)d - (float)tileentitypiston.xCoord) + tileentitypiston.func_31017_b(f), ((float)d1 - (float)tileentitypiston.yCoord) + tileentitypiston.func_31014_c(f), ((float)d2 - (float)tileentitypiston.zCoord) + tileentitypiston.func_31013_d(f));
+             tessellator.setColorOpaque(1, 1, 1);
+@@ -58,6 +60,7 @@
+             }
+             tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
+             tessellator.draw();
++	    ForgeHooksClient.afterBlockRender(block,field_31071_b);
+             RenderHelper.enableStandardItemLighting();
+         }
+     }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.java ../src_work/minecraft/net/minecraft/src/World.java
 --- ../src_base/minecraft/net/minecraft/src/World.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/World.java	2011-08-11 17:05:55.000000000 -0400
-@@ -7,6 +7,8 @@
- import java.io.PrintStream;
- import java.util.*;
- 
-+import net.minecraft.src.forge.IBlockSecondaryProperties;
-+
- // Referenced classes of package net.minecraft.src:
- //            IBlockAccess, WorldProvider, WorldInfo, MapStorage, 
- //            ISaveHandler, ChunkProvider, EntityPlayer, ChunkProviderLoadOrGenerate, 
-@@ -313,7 +315,25 @@
++++ ../src_work/minecraft/net/minecraft/src/World.java	2011-08-12 19:51:21.000000000 -0400
+@@ -313,7 +313,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -716,81 +1512,69 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
 +    	int iBlockID = getBlockId( i, j, k );
 +
 +    	if ( iBlockID == 0 )
-+    	{
 +    		return true;
-+    	}
-+    	else
-+    	{
-+    		Block block = Block.blocksList[iBlockID];
-+    		
-+    		if ( block instanceof IBlockSecondaryProperties )
-+    		{
-+    			return ((IBlockSecondaryProperties)block).isAirBlock( this, i, j, k );
-+    		}
-+    		else
-+    		{
-+    			return false;
-+    		}
-+    	}
++	return Block.blocksList[iBlockID].isAirBlock(this,i,j,k);
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -1608,6 +1628,18 @@
+@@ -1607,7 +1611,10 @@
+                         if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
-                         }
-+                        else
-+                        {
-+                        	Block block = Block.blocksList[j2];
-+                        	
-+                        	if ( block instanceof IBlockSecondaryProperties )
-+                        	{
-+                        		if ( ((IBlockSecondaryProperties)block).isBlockBurning( this, k1, l1, i2 ) )
-+                        		{
-+                        			return true;
-+                        		}
-+                        	}
-+                        }
+-                        }
++                        } else {
++				if(j2>0 && Block.blocksList[j2].isBlockBurning(this,k1,l1,i2))
++					return true;
++			}
                      }
  
                  }
-@@ -1900,7 +1932,14 @@
-             return false;
-         } else
-         {
+@@ -1895,13 +1902,18 @@
+     public boolean isBlockNormalCube(int i, int j, int k)
+     {
+         Block block = Block.blocksList[getBlockId(i, j, k)];
+-        if(block == null)
+-        {
+-            return false;
+-        } else
+-        {
 -            return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
-+	    if ( block instanceof IBlockSecondaryProperties )
-+	    {
-+		    return ((IBlockSecondaryProperties)block).isBlockNormalCube( this, i, j, k );
-+	    }
-+	    else
-+	    {
-+		    return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
-+	    }
-         }
+-        }
++        if(block == null) return false;
++	return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
++    }
++
++    /* FORGE: Determine if the given block is considered solid on the
++     * specified side.  Used by placement logic.
++     */
++    public boolean isBlockSolidOnSide(int i, int j, int k, int side)
++    {
++        Block block = Block.blocksList[getBlockId(i, j, k)];
++        if(block == null) return false;
++	return block.isBlockSolidOnSide(this,i,j,k,side);
      }
  
-@@ -2425,6 +2464,16 @@
+     public void saveWorldIndirectly(IProgressUpdate iprogressupdate)
+@@ -2425,6 +2437,7 @@
          {
              block = null;
          }
-+        else
-+        {
-+        	if ( block instanceof IBlockSecondaryProperties )
-+        	{
-+        		if ( ((IBlockSecondaryProperties)block).isBlockReplaceable( this, j, k, l ) )
-+        		{
-+        			block = null;
-+        		}
-+        	}
-+        }
++	if(block!=null && block.isBlockReplaceable(this,j,k,l)) block=null;
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-Only in ../src_work/minecraft/net/minecraft/src: World.java.orig
+@@ -2913,7 +2926,7 @@
+     public int field_27172_i;
+     public boolean editingBlocks;
+     private long lockTimestamp;
+-    protected int autosavePeriod;
++    public int autosavePeriod;
+     public int difficultySetting;
+     public Random rand;
+     public boolean isNewWorld;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-08-12 19:23:40.000000000 -0400
 @@ -5,6 +5,9 @@
  package net.minecraft.src;
  
@@ -837,7 +1621,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
 +
 +			ForgeHooksClient.beforeBlockRender(block, renderblocks);
 +			flag1 |= renderblocks.renderBlockByRenderType(block, l2, j2, k2);
-+			ForgeHooksClient.afterBlockRender(block, renderblocks);                           
++			ForgeHooksClient.afterBlockRender(block, renderblocks);
                      }
  
                  }
@@ -872,6 +1656,535 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
 -        tessellator = Tessellator.instance;
 -    }
  }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockButton.java ../src_work/minecraft_server/net/minecraft/src/BlockButton.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-08-11 21:44:46.000000000 -0400
+@@ -41,36 +41,36 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
++        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j, k + 1);
++        return world.isBlockSolidOnSide(i, j, k + 1,2);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+@@ -78,19 +78,19 @@
+         int i1 = world.getBlockMetadata(i, j, k);
+         int j1 = i1 & 8;
+         i1 &= 7;
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         } else
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         } else
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         } else
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         } else
+@@ -102,19 +102,19 @@
+ 
+     private int getOrientation(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return 1;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return 2;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return 3;
+         }
+-        return !world.isBlockNormalCube(i, j, k + 1) ? 1 : 4;
++        return !world.isBlockSolidOnSide(i, j, k + 1,2) ? 1 : 4;
+     }
+ 
+     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+@@ -123,19 +123,19 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k) & 7;
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockChest.java ../src_work/minecraft_server/net/minecraft/src/BlockChest.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-08-11 22:01:13.000000000 -0400
+@@ -140,23 +140,23 @@
+     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
+     {
+         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
+-        if(world.isBlockNormalCube(i, j + 1, k))
++        if(world.isBlockSolidOnSide(i, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
++        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
++        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
++        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
++        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
+         {
+             return true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-08-11 22:02:01.000000000 -0400
+@@ -167,7 +167,7 @@
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k))
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+             {
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+@@ -230,7 +230,7 @@
+             return false;
+         } else
+         {
+-            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
++            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
+         }
+     }
+ 
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Block.java ../src_work/minecraft_server/net/minecraft/src/Block.java
+--- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-08-12 19:07:46.000000000 -0400
+@@ -3,6 +3,7 @@
+ // Decompiler options: packimports(3) braces deadcode 
+ 
+ package net.minecraft.src;
++import net.minecraft.src.forge.ForgeHooks;
+ 
+ import java.util.ArrayList;
+ import java.util.Random;
+@@ -221,19 +222,12 @@
+         return blockID;
+     }
+ 
++    /* FORGE: This function isn't called by Minecraft anymore.  Use
++     * blockStrength(EntityPlayer,int) instead.
++     */
+     public float blockStrength(EntityPlayer entityplayer)
+     {
+-        if(blockHardness < 0.0F)
+-        {
+-            return 0.0F;
+-        }
+-        if(!entityplayer.canHarvestBlock(this))
+-        {
+-            return 1.0F / blockHardness / 100F;
+-        } else
+-        {
+-            return entityplayer.getCurrentPlayerStrVsBlock(this) / blockHardness / 30F;
+-        }
++	    return blockStrength(entityplayer,0);
+     }
+ 
+     public final void dropBlockAsItem(World world, int i, int j, int k, int l)
+@@ -526,6 +520,72 @@
+         return blockMaterial.getMaterialMobility();
+     }
+ 
++    /* FORGE: Implement and return true if you wish this block to behave
++     * like a ladder when the player is inside.
++     */
++    public boolean isLadder() {
++	return false;
++    }
++
++    /* FORGE: Return true if the block is solid on the given side.  This
++     * is used by placement logic. */
++    public boolean isBlockSolidOnSide( World world, int i, int j, int k,
++		    int side ) {
++	    return blockMaterial.getIsOpaque() && isACube();
++    }
++
++    /* FORGE: Return true if the player can place a new block in the block
++     * occupied by this one, like water, lava, fire, etc.
++     */
++    public boolean isBlockReplaceable( World world, int i, int j, int k ) {
++	    return false;
++    }
++
++    /* FORGE: Return true if this block should set fire and deal fire damage
++     * to entities coming into contact with it, false otherwise.
++     */
++    public boolean isBlockBurning( World world, int i, int j, int k ) {
++	    return false;
++    }
++
++    /* FORGE: Return true if this block should be treated as an air block
++     * by the rest of the code, false otherwise.  This method is primarily
++     * useful for creating pure logic-blocks that will be invisible 
++     * to the player and otherwise interact as air would.  
++     */	
++    public boolean isAirBlock( World world, int i, int j, int k ) {
++	    return false;
++    }
++
++    /* FORGE: Return the block hardness with metadata 'md'.
++     */
++    public float getHardness(int md) {
++	    return blockHardness;
++    }
++
++    /* FORGE: Return the block strength of the block at i,j,k against the
++     * player.
++     */
++    public float blockStrength(World world, EntityPlayer player,
++		    int i, int j, int k) {
++	    int md=world.getBlockMetadata(i,j,k);
++	    return blockStrength(player,md);
++    }
++
++    /* FORGE: Return the block strength of a prototypical block with metadata
++     * 'md' against the player.
++     */
++    public float blockStrength(EntityPlayer player, int md) {
++	    return ForgeHooks.blockStrength(this,player,md);
++    }
++
++    /* FORGE: Return true if the player can harvest a prototypical block with
++     * metadata 'md'.
++     */
++    public boolean canHarvestBlock(EntityPlayer player, int md) {
++	    return ForgeHooks.canHarvestBlock(this,player,md);
++    }
++
+     static Class _mthclass$(String s)
+     {
+         try
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-08-11 22:07:05.000000000 -0400
+@@ -40,6 +40,11 @@
+         return super.getCollisionBoundingBoxFromPool(world, i, j, k);
+     }
+ 
++    /* FORGE: Implemented base method, see Block.isLadder */
++    public boolean isLadder() {
++	return true;
++    }
++
+     public boolean isOpaqueCube()
+     {
+         return false;
+@@ -52,37 +57,37 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j, k + 1);
++        return world.isBlockSolidOnSide(i, j, k + 1,2);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+     {
+         int i1 = world.getBlockMetadata(i, j, k);
+-        if((i1 == 0 || l == 2) && world.isBlockNormalCube(i, j, k + 1))
++        if((i1 == 0 || l == 2) && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 2;
+         }
+-        if((i1 == 0 || l == 3) && world.isBlockNormalCube(i, j, k - 1))
++        if((i1 == 0 || l == 3) && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         }
+-        if((i1 == 0 || l == 4) && world.isBlockNormalCube(i + 1, j, k))
++        if((i1 == 0 || l == 4) && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 4;
+         }
+-        if((i1 == 0 || l == 5) && world.isBlockNormalCube(i - 1, j, k))
++        if((i1 == 0 || l == 5) && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 5;
+         }
+@@ -93,19 +98,19 @@
+     {
+         int i1 = world.getBlockMetadata(i, j, k);
+         boolean flag = false;
+-        if(i1 == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(i1 == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             flag = true;
+         }
+-        if(i1 == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(i1 == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             flag = true;
+         }
+-        if(i1 == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(i1 == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             flag = true;
+         }
+-        if(i1 == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(i1 == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             flag = true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLever.java ../src_work/minecraft_server/net/minecraft/src/BlockLever.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-08-11 22:13:32.000000000 -0400
+@@ -35,44 +35,44 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
+-        if(l == 1 && world.isBlockNormalCube(i, j - 1, k))
++        if(l == 1 && world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             return true;
+         }
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
++        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k + 1))
++        if(world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+@@ -81,23 +81,23 @@
+         int j1 = i1 & 8;
+         i1 &= 7;
+         i1 = -1;
+-        if(l == 1 && world.isBlockNormalCube(i, j - 1, k))
++        if(l == 1 && world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             i1 = 5 + world.rand.nextInt(2);
+         }
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         }
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         }
+@@ -119,27 +119,27 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k) & 7;
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k) && i1 == 5)
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1) && i1 == 5)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k) && i1 == 6)
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1) && i1 == 6)
+             {
+                 flag = true;
+             }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-08-11 22:18:08.000000000 -0400
+@@ -46,7 +46,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+@@ -56,7 +56,7 @@
+     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+     {
+         boolean flag = false;
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             flag = true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 22:19:02.000000000 -0400
+@@ -27,7 +27,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             return false;
+         } else
+@@ -38,7 +38,7 @@
+ 
+     public boolean canBlockStay(World world, int i, int j, int k)
+     {
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             return false;
+         } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java
 --- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:12.000000000 -0400
@@ -894,6 +2207,111 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
          if(Block.blocksList[i1].canProvidePower())
          {
              return true;
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-08-11 22:31:30.000000000 -0400
+@@ -36,24 +36,24 @@
+ 
+     private boolean func_31028_g(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j, k) || world.getBlockId(i, j, k) == Block.fence.blockID;
++        return world.isBlockSolidOnSide(i, j, k,1) || world.getBlockId(i, j, k) == Block.fence.blockID;
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k + 1))
++        if(world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+@@ -67,19 +67,19 @@
+         {
+             i1 = 5;
+         }
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         }
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         }
+@@ -97,19 +97,19 @@
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 1);
+         } else
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 2);
+         } else
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 3);
+         } else
+-        if(world.isBlockNormalCube(i, j, k + 1))
++        if(world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             world.setBlockMetadataWithNotify(i, j, k, 4);
+         } else
+@@ -126,19 +126,19 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k);
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Chunk.java ../src_work/minecraft_server/net/minecraft/src/Chunk.java
 --- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-08-11 17:02:12.000000000 -0400
@@ -933,9 +2351,23 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
          blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
          if(j1 != 0)
          {
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java
+--- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-08-11 20:47:14.000000000 -0400
+@@ -532,7 +532,9 @@
+         int i = MathHelper.floor_double(posX);
+         int j = MathHelper.floor_double(boundingBox.minY);
+         int k = MathHelper.floor_double(posZ);
+-        return worldObj.getBlockId(i, j, k) == Block.ladder.blockID;
++	Block block=Block.blocksList[worldObj.getBlockId(i,j,k)];
++	if(block==null) return false;
++	return block.isLadder();
+     }
+ 
+     public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-08-12 18:00:54.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.*;
@@ -945,7 +2377,41 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
  // Referenced classes of package net.minecraft.src:
  //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
  //            ChunkCoordinates, DataWatcher, Container, StatList, 
-@@ -457,6 +459,21 @@
+@@ -296,6 +298,8 @@
+         worldObj.entityJoinedWorld(entityitem);
+     }
+ 
++    /* FORGE: This isn't called anymore
++     */
+     public float getCurrentPlayerStrVsBlock(Block block)
+     {
+         float f = inventory.getStrVsBlock(block);
+@@ -310,6 +314,24 @@
+         return f;
+     }
+ 
++    /* FORGE: Extended to allow metadata.
++     */
++    public float getCurrentPlayerStrVsBlock(Block block, int md)
++    {
++        float f = 1.0F;
++	ItemStack ist=inventory.getCurrentItem();
++	if(ist!=null) f=ist.getItem().getStrVsBlock(ist,block,md);
++        if(isInsideOfMaterial(Material.water))
++        {
++            f /= 5F;
++        }
++        if(!onGround)
++        {
++            f /= 5F;
++        }
++        return f;
++    }
++
+     public boolean canHarvestBlock(Block block)
+     {
+         return inventory.canHarvestBlock(block);
+@@ -457,6 +479,21 @@
  
      protected void damageEntity(int i)
      {
@@ -1024,7 +2490,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java
 --- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-12 19:08:10.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1033,7 +2499,44 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
  
  
  // Referenced classes of package net.minecraft.src:
-@@ -145,6 +146,11 @@
+@@ -29,7 +30,8 @@
+             if(j != 0)
+             {
+                 Block block = Block.blocksList[j];
+-                float f = block.blockStrength(thisPlayer) * (float)(i + 1);
++                float f = block.blockStrength(thisWorld,thisPlayer,
++			field_22049_l,field_22048_m,field_22047_n) * (float)(i + 1);
+                 if(f >= 1.0F)
+                 {
+                     field_22050_k = false;
+@@ -51,7 +53,7 @@
+         {
+             Block.blocksList[i1].onBlockClicked(thisWorld, i, j, k, thisPlayer);
+         }
+-        if(i1 > 0 && Block.blocksList[i1].blockStrength(thisPlayer) >= 1.0F)
++        if(i1 > 0 && Block.blocksList[i1].blockStrength(thisWorld,thisPlayer,i,j,k) >= 1.0F)
+         {
+             blockHarvessted(i, j, k);
+         } else
+@@ -71,7 +73,7 @@
+             if(i1 != 0)
+             {
+                 Block block = Block.blocksList[i1];
+-                float f = block.blockStrength(thisPlayer) * (float)(l + 1);
++                float f = block.blockStrength(thisWorld,thisPlayer,i,j,k) * (float)(l + 1);
+                 if(f >= 0.7F)
+                 {
+                     blockHarvessted(i, j, k);
+@@ -117,7 +119,7 @@
+                 thisPlayer.destroyCurrentEquippedItem();
+             }
+         }
+-        if(flag && thisPlayer.canHarvestBlock(Block.blocksList[l]))
++        if(flag && Block.blocksList[l].canHarvestBlock(thisPlayer,i1))
+         {
+             Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
+             ((EntityPlayerMP)thisPlayer).playerNetServerHandler.sendPacket(new Packet53BlockChange(i, j, k, thisWorld));
+@@ -145,6 +147,11 @@
  
      public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -1045,52 +2548,50 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemPickaxe.java ../src_work/minecraft_server/net/minecraft/src/ItemPickaxe.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemPickaxe.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemPickaxe.java	2011-08-11 17:02:12.000000000 -0400
-@@ -4,6 +4,8 @@
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
+--- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-08-12 17:59:16.000000000 -0400
+@@ -65,6 +65,13 @@
+         return 1.0F;
+     }
  
- package net.minecraft.src;
- 
-+import net.minecraft.src.forge.MinecraftForge;
++    /* FORGE: Metadata-sensitive version of getStrVsBlock
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
++    {
++	    return getStrVsBlock(itemstack,block);
++    }
 +
- 
- // Referenced classes of package net.minecraft.src:
- //            ItemTool, Block, EnumToolMaterial, Material
-@@ -42,6 +44,9 @@
-         {
-             return toolMaterial.getHarvestLevel() >= 2;
-         }
-+        if (MinecraftForge.canHarvestBlock(this, block)) {
-+            return true;
-+        }
-         if(block.blockMaterial == Material.rock)
-         {
-             return true;
+     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+     {
+         return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemTool.java ../src_work/minecraft_server/net/minecraft/src/ItemTool.java
 --- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-08-12 18:38:14.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
  
 +import java.util.Arrays;
-+
++import net.minecraft.src.forge.ForgeHooks;
  
  // Referenced classes of package net.minecraft.src:
  //            Item, EnumToolMaterial, ItemStack, Block, 
-@@ -58,4 +60,11 @@
-     private float efficiencyOnProperMaterial;
-     private int damageVsEntity;
-     protected EnumToolMaterial toolMaterial;
-+    
-+    public void addBlockEffectiveAgainst (Block block) {    
-+        blocksEffectiveAgainst = Arrays.copyOf(blocksEffectiveAgainst,
-+                blocksEffectiveAgainst.length + 1);
-+        
-+        blocksEffectiveAgainst [blocksEffectiveAgainst.length-1] = block;
+@@ -37,6 +39,14 @@
+         return 1.0F;
+     }
+ 
++    /* FORGE: Overridden to allow custom tool effectiveness
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md) {
++	    if(ForgeHooks.isToolEffective(itemstack,block,md))
++                return efficiencyOnProperMaterial;
++	    return getStrVsBlock(itemstack,block);
 +    }
- }
++
+     public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
+     {
+         itemstack.damageItem(2, entityliving1);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java
 --- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-08-11 17:02:12.000000000 -0400
@@ -1123,17 +2624,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Pl
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/World.java ../src_work/minecraft_server/net/minecraft/src/World.java
 --- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-08-11 17:02:12.000000000 -0400
-@@ -7,6 +7,8 @@
- import java.io.PrintStream;
- import java.util.*;
- 
-+import net.minecraft.src.forge.IBlockSecondaryProperties;
-+
- // Referenced classes of package net.minecraft.src:
- //            IBlockAccess, WorldProvider, MapStorage, ISaveHandler, 
- //            WorldInfo, ChunkProvider, IChunkProvider, IProgressUpdate, 
-@@ -166,7 +168,25 @@
++++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-08-12 19:51:26.000000000 -0400
+@@ -166,7 +166,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -1141,74 +2633,63 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
 +    	int iBlockID = getBlockId( i, j, k );
 +
 +    	if ( iBlockID == 0 )
-+    	{
 +    		return true;
-+    	}
-+    	else
-+    	{
-+    		Block block = Block.blocksList[iBlockID];
-+    		
-+    		if ( block instanceof IBlockSecondaryProperties )
-+    		{
-+    			return ((IBlockSecondaryProperties)block).isAirBlock( this, i, j, k );
-+    		}
-+    		else
-+    		{
-+    			return false;
-+    		}
-+    	}
++	return Block.blocksList[iBlockID].isAirBlock(this,i,j,k);
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -1409,6 +1429,18 @@
+@@ -1408,7 +1412,10 @@
+                         if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
-                         }
-+                        else
-+                        {
-+                        	Block block = Block.blocksList[j2];
-+                        	
-+                        	if ( block instanceof IBlockSecondaryProperties )
-+                        	{
-+                        		if ( ((IBlockSecondaryProperties)block).isBlockBurning( this, k1, l1, i2 ) )
-+                        		{
-+                        			return true;
-+                        		}
-+                        	}
-+                        }
+-                        }
++                        } else {
++				if(j2>0 && Block.blocksList[j2].isBlockBurning(this,k1,l1,i2))
++					return true;
++			}
                      }
  
                  }
-@@ -1686,7 +1718,14 @@
-             return false;
-         } else
-         {
+@@ -1681,13 +1688,18 @@
+     public boolean isBlockNormalCube(int i, int j, int k)
+     {
+         Block block = Block.blocksList[getBlockId(i, j, k)];
+-        if(block == null)
+-        {
+-            return false;
+-        } else
+-        {
 -            return block.blockMaterial.getIsOpaque() && block.isACube();
-+        	if ( block instanceof IBlockSecondaryProperties )
-+        	{
-+        		return ((IBlockSecondaryProperties)block).isBlockNormalCube( this, i, j, k );
-+        	}
-+        	else
-+        	{
-+		    return block.blockMaterial.getIsOpaque() && block.isACube();
-+		}
-         }
+-        }
++        if(block == null) return false;
++	return block.blockMaterial.getIsOpaque() && block.isACube();
++    }
++
++    /* FORGE: Determine if the given block is considered solid on the
++     * specified side.  Used by placement logic.
++     */
++    public boolean isBlockSolidOnSide(int i, int j, int k, int side)
++    {
++        Block block = Block.blocksList[getBlockId(i, j, k)];
++        if(block == null) return false;
++	return block.isBlockSolidOnSide(this,i,j,k,side);
      }
  
-@@ -2178,6 +2217,16 @@
+     public boolean func_6156_d()
+@@ -2178,6 +2190,7 @@
          {
              block = null;
          }
-+        else
-+        {
-+        	if ( block instanceof IBlockSecondaryProperties )
-+        	{
-+        		if ( ((IBlockSecondaryProperties)block).isBlockReplaceable( this, j, k, l ) )
-+        		{
-+        			block = null;
-+        		}
-+        	}
-+        }
++	if(block!=null && block.isBlockReplaceable(this,j,k,l)) block=null;
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
+@@ -2601,7 +2614,7 @@
+     public int field_27080_i;
+     public boolean editingBlocks;
+     private long lockTimestamp;
+-    protected int autosavePeriod;
++    public int autosavePeriod;
+     public int difficultySetting;
+     public Random rand;
+     public boolean isNewWorld;
