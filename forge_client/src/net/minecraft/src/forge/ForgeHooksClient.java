@@ -79,6 +79,7 @@ public class ForgeHooksClient {
 
 	public static void beforeRenderPass(int pass) {
 		Tessellator.instance=Tessellator.firstInstance;
+		Tessellator.renderingWorldRenderer=true;
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 			.getMinecraftInstance().renderEngine
 			.getTexture("/terrain.png"));
@@ -100,6 +101,7 @@ public class ForgeHooksClient {
 			.getMinecraftInstance().renderEngine
 			.getTexture("/terrain.png"));
 		Tessellator.instance=Tessellator.firstInstance;
+		Tessellator.renderingWorldRenderer=false;
 	}
 
 	public static void beforeBlockRender(Block block,
@@ -115,7 +117,7 @@ public class ForgeHooksClient {
 			RenderBlocks renderblocks) {
 		if (block instanceof ITextureProvider
 				&& renderblocks.overrideBlockTexture == -1) {
-			Tessellator.instance=Tessellator.firstInstance;
+			unbindTexture();
 		}
 	}
 

@@ -11,6 +11,9 @@ import net.minecraft.src.World;
 /**
  * This interface provides access to a number of secondary block properties through providing  
  * overrides to methods within world.class.
+ *
+ * This interface is DEPRECATED.  The functions are now provided directly by
+ * Block.
  */
 
 public interface IBlockSecondaryProperties 
