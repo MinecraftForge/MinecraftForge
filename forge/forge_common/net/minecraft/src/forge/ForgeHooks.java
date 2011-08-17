@@ -7,6 +7,7 @@ package net.minecraft.src.forge;
 import net.minecraft.src.Block;
 import net.minecraft.src.World;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
 
@@ -15,6 +16,14 @@ import java.util.*;
 public class ForgeHooks {
 	// TODO: move all app-side hooks from MinecraftForge
 	//
+	public static void onTakenFromCrafting(EntityPlayer player, ItemStack ist,
+			IInventory craftMatrix) {
+		for (ICraftingHandler handler : craftingHandlers) {
+			handler.onTakenFromCrafting(player,ist,craftMatrix);
+		}
+	}
+
+	static LinkedList<ICraftingHandler> craftingHandlers = new LinkedList<ICraftingHandler>();
 	
 	public static boolean canHarvestBlock(Block bl,
 			EntityPlayer player, int md) {
