@@ -20,9 +20,22 @@ public class MinecraftForge {
 
     /**
      * Registers a new custom bucket handler.
+     * @deprecated Spelling mistake, don't use this function!  It will go away
+     * soon.
      */
     public static void registerCustomBucketHander(IBucketHandler handler) {
         bucketHandlers.add(handler);
+    }
+
+    public static void registerCustomBucketHandler(IBucketHandler handler) {
+        bucketHandlers.add(handler);
+    }
+
+    /**
+     * Registers a new crafting handler.
+     */
+    public static void registerCraftingHandler(ICraftingHandler handler) {
+        ForgeHooks.craftingHandlers.add(handler);
     }
 
     /**
