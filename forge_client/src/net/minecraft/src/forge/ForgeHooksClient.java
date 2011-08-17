@@ -77,7 +77,9 @@ public class ForgeHooksClient {
 		}
 	}
 
+	static int renderPass=-1;
 	public static void beforeRenderPass(int pass) {
+		renderPass=pass;
 		Tessellator.instance=Tessellator.firstInstance;
 		Tessellator.renderingWorldRenderer=true;
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
@@ -89,6 +91,7 @@ public class ForgeHooksClient {
 	}
 
 	public static void afterRenderPass(int pass) {
+		renderPass=-1;
 		inWorld=false;
 		for(List l : renderTextureList) {
 			// TODO: call appropriate client hooks
