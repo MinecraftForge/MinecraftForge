@@ -51,4 +51,10 @@ public class MinecraftForgeClient {
         	rb.renderBlockByRenderType(bl,i,j,k);
 		ForgeHooksClient.afterBlockRender(bl,rb);
 	}
+
+	/** Get the current render pass.
+	 */
+	public static int getRenderPass() {
+		return ForgeHooksClient.renderPass;
+	}
 }
