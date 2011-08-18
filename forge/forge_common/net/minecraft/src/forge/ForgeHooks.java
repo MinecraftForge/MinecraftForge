@@ -10,6 +10,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
+import net.minecraft.src.EnumStatus;
 
 import java.util.*;
 
@@ -24,7 +25,25 @@ public class ForgeHooks {
 	}
 
 	static LinkedList<ICraftingHandler> craftingHandlers = new LinkedList<ICraftingHandler>();
-	
+
+	public static void onDestroyCurrentItem(EntityPlayer player) {
+		for (IDestroyToolHandler handler : destroyToolHandlers) {
+			handler.onDestroyCurrentItem(player);
+		}
+	}
+
+	static LinkedList<IDestroyToolHandler> destroyToolHandlers = new LinkedList<IDestroyToolHandler>();
+
+	public static EnumStatus sleepInBedAt(EntityPlayer player, int i, int j, int k) {
+		for (ISleepHandler handler : sleepHandlers) {
+			EnumStatus status = handler.sleepInBedAt(player, i, j, k);
+			if (status != null)
+				return status;
+		}
+		return null;
+	}
+
+	static LinkedList<ISleepHandler> sleepHandlers = new LinkedList<ISleepHandler>();
 	public static boolean canHarvestBlock(Block bl,
 			EntityPlayer player, int md) {
 		if(bl.blockMaterial.getIsHarvestable())

@@ -27,8 +27,25 @@ public class MinecraftForge {
         bucketHandlers.add(handler);
     }
 
+    /**
+     * Register a new custom bucket handler.
+     */
     public static void registerCustomBucketHandler(IBucketHandler handler) {
         bucketHandlers.add(handler);
+    }
+
+    /**
+     * Registers a new sleeping handler.
+     */
+    public static void registerSleepHandler(ISleepHandler handler) {
+	ForgeHooks.sleepHandlers.add(handler);
+    }
+
+    /**
+     * Registers a new destroy tool handler.
+     */
+    public static void registerDestroyToolHandler(IDestroyToolHandler handler) {
+	ForgeHooks.destroyToolHandlers.add(handler);
     }
 
     /**
