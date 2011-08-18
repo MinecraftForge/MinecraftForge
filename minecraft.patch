@@ -173,7 +173,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
 --- ../src_base/minecraft/net/minecraft/src/Block.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-08-12 19:07:50.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-08-17 17:54:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -206,7 +206,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l)
-@@ -600,6 +594,72 @@
+@@ -600,6 +594,80 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -217,11 +217,19 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
 +	return false;
 +    }
 +
++    /* FORGE: Return true if the block is a normal, solid cube.  This
++     * determines indirect power state, entity ejection from blocks, and a few
++     * others.
++     */
++    public boolean isBlockNormalCube(World world, int i, int j, int k) {
++	    return blockMaterial.getIsOpaque() && renderAsNormalBlock();
++    }
++
 +    /* FORGE: Return true if the block is solid on the given side.  This
 +     * is used by placement logic. */
 +    public boolean isBlockSolidOnSide( World world, int i, int j, int k,
 +		    int side ) {
-+	    return blockMaterial.getIsOpaque() && renderAsNormalBlock();
++	    return isBlockNormalCube(world,i,j,k);
 +    }
 +
 +    /* FORGE: Return true if the player can place a new block in the block
@@ -506,6 +514,62 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPres
          {
              flag = true;
          }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail.java ../src_work/minecraft/net/minecraft/src/BlockRail.java
+--- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-08-17 17:10:13.000000000 -0400
+@@ -16,12 +16,12 @@
+     public static final boolean isRailBlockAt(World world, int i, int j, int k)
+     {
+         int l = world.getBlockId(i, j, k);
+-        return l == Block.rail.blockID || l == Block.railPowered.blockID || l == Block.railDetector.blockID;
++	return Block.blocksList[l] instanceof BlockRail;
+     }
+ 
+     public static final boolean isRailBlock(int i)
+     {
+-        return i == Block.rail.blockID || i == Block.railPowered.blockID || i == Block.railDetector.blockID;
++	return Block.blocksList[i] instanceof BlockRail;
+     }
+ 
+     protected BlockRail(int i, int j, boolean flag)
+@@ -97,7 +97,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+@@ -121,23 +121,23 @@
+             j1 &= 7;
+         }
+         boolean flag = false;
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 2 && !world.isBlockNormalCube(i + 1, j, k))
++        if(j1 == 2 && !world.isBlockSolidOnSide(i + 1, j, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 3 && !world.isBlockNormalCube(i - 1, j, k))
++        if(j1 == 3 && !world.isBlockSolidOnSide(i - 1, j, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 4 && !world.isBlockNormalCube(i, j, k - 1))
++        if(j1 == 4 && !world.isBlockSolidOnSide(i, j, k - 1,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 5 && !world.isBlockNormalCube(i, j, k + 1))
++        if(j1 == 5 && !world.isBlockSolidOnSide(i, j, k + 1,1))
+         {
+             flag = true;
+         }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 22:18:50.000000000 -0400
@@ -529,7 +593,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-08-17 18:00:29.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -538,6 +602,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
  
  import java.util.*;
  
+@@ -53,7 +54,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k, 1);
+     }
+ 
+     private void updateAndPropagateCurrentStrength(World world, int i, int j, int k)
 @@ -451,6 +452,10 @@
          {
              return false;
@@ -654,6 +727,35 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorc
              {
                  flag = true;
              }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java
+--- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-08-17 17:38:38.000000000 -0400
+@@ -147,7 +147,7 @@
+         {
+             j1--;
+         }
+-        if(!world.isBlockNormalCube(j1, j, k1))
++        if(!disableValidation && !world.isBlockSolidOnSide(j1, j, k1, (i1&3)+2))
+         {
+             world.setBlockWithNotify(i, j, k, 0);
+             dropBlockAsItem(world, i, j, k, i1);
+@@ -213,11 +213,15 @@
+         {
+             i--;
+         }
+-        return world.isBlockNormalCube(i, j, k);
++        return world.isBlockSolidOnSide(i, j, k, l);
+     }
+ 
+     public static boolean isTrapdoorOpen(int i)
+     {
+         return (i & 4) != 0;
+     }
++
++    /* FORGE: Set this to allow trapdoors to remain free-floating
++     */
++    public static boolean disableValidation=false;
+ }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.java ../src_work/minecraft/net/minecraft/src/Chunk.java
 --- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-08-11 17:02:12.000000000 -0400
@@ -854,17 +956,18 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiv
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-12 18:00:55.000000000 -0400
-@@ -6,6 +6,8 @@
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-08-17 19:06:38.000000000 -0400
+@@ -6,6 +6,9 @@
  
  import java.util.*;
  
 +import net.minecraft.src.forge.ISpecialArmor;
++import net.minecraft.src.forge.ForgeHooks;
 +
  // Referenced classes of package net.minecraft.src:
  //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
  //            ChunkCoordinates, DataWatcher, Container, StatList, 
-@@ -316,6 +318,8 @@
+@@ -316,6 +319,8 @@
          worldObj.entityJoinedWorld(entityitem);
      }
  
@@ -873,7 +976,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -330,6 +334,24 @@
+@@ -330,6 +335,24 @@
          return f;
      }
  
@@ -898,7 +1001,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -477,6 +499,21 @@
+@@ -477,6 +500,21 @@
  
      protected void damageEntity(int i)
      {
@@ -920,6 +1023,25 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
          int j = 25 - inventory.getTotalArmorValue();
          int k = i * j + damageRemainder;
          inventory.damageArmor(i);
+@@ -523,6 +561,7 @@
+     public void destroyCurrentEquippedItem()
+     {
+         inventory.setInventorySlotContents(inventory.currentItem, null);
++	ForgeHooks.onDestroyCurrentItem(this);
+     }
+ 
+     public double getYOffset()
+@@ -594,6 +633,10 @@
+ 
+     public EnumStatus sleepInBedAt(int i, int j, int k)
+     {
++	EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
++	if (customSleep != null) {
++	    return customSleep;
++	}
+         if(!worldObj.multiplayerWorld)
+         {
+             if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-08-11 17:02:12.000000000 -0400
@@ -1064,7 +1186,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObj
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerController.java ../src_work/minecraft/net/minecraft/src/PlayerController.java
 --- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-08-17 20:02:41.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1073,7 +1195,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
  
  import net.minecraft.client.Minecraft;
  
-@@ -98,6 +99,12 @@
+@@ -71,6 +72,7 @@
+             if(itemstack1.stackSize == 0)
+             {
+                 entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
++		ForgeHooks.onDestroyCurrentItem(entityplayer);
+             }
+             return true;
+         } else
+@@ -98,6 +100,12 @@
  
      public boolean sendPlaceBlock(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -1086,6 +1216,19 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
+@@ -108,7 +116,11 @@
+             return false;
+         } else
+         {
+-            return itemstack.useItem(entityplayer, world, i, j, k, l);
++            if(!itemstack.useItem(entityplayer, world, i, j, k, l))
++		    return false;
++            if(itemstack.stackSize == 0)
++		ForgeHooks.onDestroyCurrentItem(entityplayer);
++	    return true;
+         }
+     }
+ 
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-08-12 00:47:04.000000000 -0400
@@ -1522,7 +1665,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
      }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.java ../src_work/minecraft/net/minecraft/src/World.java
 --- ../src_base/minecraft/net/minecraft/src/World.java	2011-08-11 17:02:11.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/World.java	2011-08-12 19:51:21.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/World.java	2011-08-17 17:56:22.000000000 -0400
 @@ -313,7 +313,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
@@ -1560,7 +1703,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
 -            return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
 -        }
 +        if(block == null) return false;
-+	return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
++	return block.isBlockNormalCube(this,i,j,k);
 +    }
 +
 +    /* FORGE: Determine if the given block is considered solid on the
@@ -1851,7 +1994,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Block.java ../src_work/minecraft_server/net/minecraft/src/Block.java
 --- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-08-12 19:07:46.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-08-17 17:55:56.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1884,7 +2027,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l)
-@@ -526,6 +520,72 @@
+@@ -526,6 +520,80 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -1895,11 +2038,19 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
 +	return false;
 +    }
 +
++    /* FORGE: Return true if the block is a normal, solid cube.  This
++     * determines indirect power state, entity ejection from blocks, and a few
++     * others.
++     */
++    public boolean isBlockNormalCube(World world, int i, int j, int k) {
++	    return blockMaterial.getIsOpaque() && isACube();
++    }
++
 +    /* FORGE: Return true if the block is solid on the given side.  This
 +     * is used by placement logic. */
 +    public boolean isBlockSolidOnSide( World world, int i, int j, int k,
 +		    int side ) {
-+	    return blockMaterial.getIsOpaque() && isACube();
++	    return isBlockNormalCube(world,i,j,k);
 +    }
 +
 +    /* FORGE: Return true if the player can place a new block in the block
@@ -2184,6 +2335,62 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
          {
              flag = true;
          }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRail.java ../src_work/minecraft_server/net/minecraft/src/BlockRail.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-08-17 17:10:08.000000000 -0400
+@@ -16,12 +16,12 @@
+     public static final boolean func_27029_g(World world, int i, int j, int k)
+     {
+         int l = world.getBlockId(i, j, k);
+-        return l == Block.rail.blockID || l == Block.railPowered.blockID || l == Block.railDetector.blockID;
++	return Block.blocksList[l] instanceof BlockRail;
+     }
+ 
+     public static final boolean func_27030_c(int i)
+     {
+-        return i == Block.rail.blockID || i == Block.railPowered.blockID || i == Block.railDetector.blockID;
++	return Block.blocksList[i] instanceof BlockRail;
+     }
+ 
+     protected BlockRail(int i, int j, boolean flag)
+@@ -92,7 +92,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+@@ -116,23 +116,23 @@
+             j1 &= 7;
+         }
+         boolean flag = false;
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 2 && !world.isBlockNormalCube(i + 1, j, k))
++        if(j1 == 2 && !world.isBlockSolidOnSide(i + 1, j, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 3 && !world.isBlockNormalCube(i - 1, j, k))
++        if(j1 == 3 && !world.isBlockSolidOnSide(i - 1, j, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 4 && !world.isBlockNormalCube(i, j, k - 1))
++        if(j1 == 4 && !world.isBlockSolidOnSide(i, j, k - 1,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 5 && !world.isBlockNormalCube(i, j, k + 1))
++        if(j1 == 5 && !world.isBlockSolidOnSide(i, j, k + 1,1))
+         {
+             flag = true;
+         }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java
 --- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-08-11 22:19:02.000000000 -0400
@@ -2207,7 +2414,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java
 --- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-08-17 18:00:42.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2216,6 +2423,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
  
  import java.util.*;
  
+@@ -43,7 +44,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k, 1);
+     }
+ 
+     private void updateAndPropagateCurrentStrength(World world, int i, int j, int k)
 @@ -413,6 +414,10 @@
          {
              return false;
@@ -2332,6 +2548,35 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              {
                  flag = true;
              }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-08-11 17:02:12.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-08-17 17:38:43.000000000 -0400
+@@ -130,7 +130,7 @@
+         {
+             j1--;
+         }
+-        if(!world.isBlockNormalCube(j1, j, k1))
++        if(!disableValidation && !world.isBlockSolidOnSide(j1, j, k1, (i1&3)+2))
+         {
+             world.setBlockWithNotify(i, j, k, 0);
+             dropBlockAsItem(world, i, j, k, i1);
+@@ -196,11 +196,15 @@
+         {
+             i--;
+         }
+-        return world.isBlockNormalCube(i, j, k);
++        return world.isBlockSolidOnSide(i, j, k,l);
+     }
+ 
+     public static boolean func_28038_d(int i)
+     {
+         return (i & 4) != 0;
+     }
++
++    /* FORGE: Set this to allow trapdoors to remain free-floating
++     */
++    public static boolean disableValidation=false;
+ }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Chunk.java ../src_work/minecraft_server/net/minecraft/src/Chunk.java
 --- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-08-11 17:02:12.000000000 -0400
@@ -2387,17 +2632,18 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-08-12 18:00:54.000000000 -0400
-@@ -6,6 +6,8 @@
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-08-17 19:06:41.000000000 -0400
+@@ -6,6 +6,9 @@
  
  import java.util.*;
  
 +import net.minecraft.src.forge.ISpecialArmor;
++import net.minecraft.src.forge.ForgeHooks;
 +
  // Referenced classes of package net.minecraft.src:
  //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
  //            ChunkCoordinates, DataWatcher, Container, StatList, 
-@@ -296,6 +298,8 @@
+@@ -296,6 +299,8 @@
          worldObj.entityJoinedWorld(entityitem);
      }
  
@@ -2406,7 +2652,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -310,6 +314,24 @@
+@@ -310,6 +315,24 @@
          return f;
      }
  
@@ -2431,7 +2677,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -457,6 +479,21 @@
+@@ -457,6 +480,21 @@
  
      protected void damageEntity(int i)
      {
@@ -2453,6 +2699,25 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
          int j = 25 - inventory.getTotalArmorValue();
          int k = i * j + damageRemainder;
          inventory.damageArmor(i);
+@@ -503,6 +541,7 @@
+     public void destroyCurrentEquippedItem()
+     {
+         inventory.setInventorySlotContents(inventory.currentItem, null);
++	ForgeHooks.onDestroyCurrentItem(this);
+     }
+ 
+     public double getYOffset()
+@@ -568,6 +607,10 @@
+ 
+     public EnumStatus goToSleep(int i, int j, int k)
+     {
++	EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
++	if (customSleep != null) {
++	    return customSleep;
++	}
+         if(!worldObj.singleplayerWorld)
+         {
+             if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Explosion.java ../src_work/minecraft_server/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-08-11 17:02:12.000000000 -0400
@@ -2510,7 +2775,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java
 --- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-12 19:08:10.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-08-17 20:02:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2556,7 +2821,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
          {
              Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
              ((EntityPlayerMP)thisPlayer).playerNetServerHandler.sendPacket(new Packet53BlockChange(i, j, k, thisWorld));
-@@ -145,6 +147,11 @@
+@@ -135,6 +137,7 @@
+             if(itemstack1.stackSize == 0)
+             {
+                 entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
++		ForgeHooks.onDestroyCurrentItem(entityplayer);
+             }
+             return true;
+         } else
+@@ -145,6 +148,11 @@
  
      public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -2568,6 +2841,19 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
+@@ -155,7 +163,11 @@
+             return false;
+         } else
+         {
+-            return itemstack.useItem(entityplayer, world, i, j, k, l);
++            if(!itemstack.useItem(entityplayer, world, i, j, k, l))
++		    return false;
++            if(itemstack.stackSize == 0)
++		ForgeHooks.onDestroyCurrentItem(entityplayer);
++	    return true;
+         }
+     }
+ 
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
 --- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-08-11 17:02:12.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-08-12 17:59:16.000000000 -0400
@@ -2663,7 +2949,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Sl
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/World.java ../src_work/minecraft_server/net/minecraft/src/World.java
 --- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-08-11 17:02:12.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-08-12 19:51:26.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-08-17 17:56:37.000000000 -0400
 @@ -166,7 +166,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
@@ -2701,7 +2987,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
 -            return block.blockMaterial.getIsOpaque() && block.isACube();
 -        }
 +        if(block == null) return false;
-+	return block.blockMaterial.getIsOpaque() && block.isACube();
++	return block.isBlockNormalCube(this,i,j,k);
 +    }
 +
 +    /* FORGE: Determine if the given block is considered solid on the
