@@ -1081,6 +1081,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRen
                  GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
              }
              renderRainSnow(f);
+Only in ../src_work/minecraft/net/minecraft/src: .EntityRenderer.java.swp
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-08-11 17:02:12.000000000 -0400
@@ -1407,6 +1408,31 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEng
              singleIntBuffer.clear();
              GLAllocation.generateTextureNames(singleIntBuffer);
              int i = singleIntBuffer.get(0);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlobal.java ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
+--- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-08-20 18:22:41.000000000 -0400
+@@ -1558,8 +1558,8 @@
+     }
+ 
+     public List tileEntities;
+-    private World worldObj;
+-    private RenderEngine renderEngine;
++    public World worldObj;
++    public RenderEngine renderEngine;
+     private List worldRenderersToUpdate;
+     private WorldRenderer sortedWorldRenderers[];
+     private WorldRenderer worldRenderers[];
+@@ -1567,8 +1567,8 @@
+     private int renderChunksTall;
+     private int renderChunksDeep;
+     private int glRenderListBase;
+-    private Minecraft mc;
+-    private RenderBlocks globalRenderBlocks;
++    public Minecraft mc;
++    public RenderBlocks globalRenderBlocks;
+     private IntBuffer glOcclusionQueryBase;
+     private boolean occlusionEnabled;
+     private int cloudOffsetX;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
 --- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-08-11 17:02:12.000000000 -0400
