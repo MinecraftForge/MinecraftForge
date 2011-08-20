@@ -9,11 +9,29 @@ import net.minecraft.src.Block;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
+import net.minecraft.src.RenderGlobal;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.MovingObjectPosition;
+import net.minecraft.src.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
 public class ForgeHooksClient {
+
+	public static boolean onBlockHighlight(RenderGlobal renderglobal,
+		    EntityPlayer player, MovingObjectPosition mop, int i,
+		    ItemStack itemstack, float f) {
+		for (IHighlightHandler handler : highlightHandlers) {
+			if(handler.onBlockHighlight(renderglobal,player,mop,
+					i,itemstack,f))
+				return true;
+		}
+		return false;
+	}
+
+	static LinkedList<IHighlightHandler> highlightHandlers = new LinkedList<IHighlightHandler>();
+
 	public static boolean canRenderInPass(Block block, int pass) {
 		if(block instanceof IMultipassRender) {
 			IMultipassRender impr = (IMultipassRender) block;
@@ -22,7 +40,6 @@ public class ForgeHooksClient {
 		if(pass==block.getRenderBlockPass()) return true;
 		return false;
 	}
-
 
 	static HashMap tessellators=new HashMap();
 	static HashMap textures=new HashMap();
