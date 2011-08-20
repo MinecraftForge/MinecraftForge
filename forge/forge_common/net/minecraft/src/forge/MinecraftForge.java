@@ -166,4 +166,55 @@ public class MinecraftForge {
     public static void addPickaxeBlockEffectiveAgainst (Block block) {
 	setBlockHarvestLevel(block,"pickaxe",0);
     }
+
+    /**
+     * Kill minecraft with an error message.
+     */
+    public static void killMinecraft(String modname, String msg) {
+	    throw new RuntimeException(modname+": "+msg);
+    }
+
+    /**
+     * Version checking.  Ensures that a sufficiently recent version of Forge
+     * is installed.  Will result in a fatal error if the major versions
+     * mismatch or if the version is too old.  Will print a warning message if
+     * the minor versions don't match.
+     */
+    public static void versionDetect(String modname,
+		    int major, int minor, int revision) {
+	    if(major!=ForgeHooks.majorVersion) {
+		    killMinecraft(modname,"MinecraftForge Major Version Mismatch, expecting "+major+".x.x");
+	    } else if(minor!=ForgeHooks.minorVersion) {
+		    if(minor>ForgeHooks.minorVersion) {
+			    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
+		    } else {
+			    System.out.println(modname + ": MinecraftForge minor version mismatch, expecting "+major+"."+minor+".x, may lead to unexpected behavior");
+		    }
+	    } else if(revision>ForgeHooks.revisionVersion) {
+		    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
+	    }
+    }
+
+    /**
+     * Strict version checking.  Ensures that a sufficiently recent version of
+     * Forge is installed.  Will result in a fatal error if the major or minor 
+     * versions mismatch or if the version is too old.  Use this function for
+     * mods that use recent, new, or unstable APIs to prevent
+     * incompatibilities.
+     */
+    public static void versionDetectStrict(String modname,
+		    int major, int minor, int revision) {
+	    if(major!=ForgeHooks.majorVersion) {
+		    killMinecraft(modname,"MinecraftForge Major Version Mismatch, expecting "+major+".x.x");
+	    } else if(minor!=ForgeHooks.minorVersion) {
+		    if(minor>ForgeHooks.minorVersion) {
+			    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
+		    } else {
+			    killMinecraft(modname,"MinecraftForge minor version mismatch, expecting "+major+"."+minor+".x");
+		    }
+	    } else if(revision>ForgeHooks.revisionVersion) {
+		    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
+	    }
+    }
+
 }
