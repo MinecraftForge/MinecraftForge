@@ -26,9 +26,9 @@ public class ForgeHooks {
 
 	static LinkedList<ICraftingHandler> craftingHandlers = new LinkedList<ICraftingHandler>();
 
-	public static void onDestroyCurrentItem(EntityPlayer player) {
+	public static void onDestroyCurrentItem(EntityPlayer player, ItemStack orig) {
 		for (IDestroyToolHandler handler : destroyToolHandlers) {
-			handler.onDestroyCurrentItem(player);
+			handler.onDestroyCurrentItem(player,orig);
 		}
 	}
 
@@ -136,6 +136,13 @@ public class ForgeHooks {
 		}
 
 		// TODO: add other tool tables.
+	}
+
+	public static final int majorVersion=1;
+	public static final int minorVersion=1;
+	public static final int revisionVersion=5;
+	static {
+		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n",majorVersion,minorVersion,revisionVersion);
 	}
 
 	static boolean toolInit=false;
