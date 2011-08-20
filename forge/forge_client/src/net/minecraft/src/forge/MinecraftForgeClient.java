@@ -12,6 +12,13 @@ import net.minecraft.src.Tessellator;
 import org.lwjgl.opengl.GL11;
 
 public class MinecraftForgeClient {
+	/**
+	 * Registers a new block highlight handler.
+	 */
+	public static void registerHighlightHandler(IHighlightHandler handler) {
+		ForgeHooksClient.highlightHandlers.add(handler);
+	}
+
 	/** Bind a texture.  This is used to bind a texture file when
 	 * performing your own rendering, rather than using ITextureProvider.
 	 *

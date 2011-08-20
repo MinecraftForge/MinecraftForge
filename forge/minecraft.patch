@@ -1044,6 +1044,43 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
          if(!worldObj.multiplayerWorld)
          {
              if(isPlayerSleeping() || !isEntityAlive())
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRenderer.java ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-08-11 17:02:11.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-08-20 06:25:56.000000000 -0400
+@@ -3,6 +3,7 @@
+ // Decompiler options: packimports(3) braces deadcode 
+ 
+ package net.minecraft.src;
++import net.minecraft.src.forge.ForgeHooksClient;
+ 
+ import java.nio.FloatBuffer;
+ import java.util.List;
+@@ -573,8 +574,12 @@
+             {
+                 EntityPlayer entityplayer = (EntityPlayer)entityliving;
+                 GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
++		if(!ForgeHooksClient.onBlockHighlight(renderglobal,entityplayer,
++			mc.objectMouseOver,0,
++			entityplayer.inventory.getCurrentItem(),f)) {
+                 renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
+                 renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
++		}
+                 GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
+             }
+             GL11.glBlendFunc(770, 771);
+@@ -619,8 +624,12 @@
+             {
+                 EntityPlayer entityplayer1 = (EntityPlayer)entityliving;
+                 GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
++		if(!ForgeHooksClient.onBlockHighlight(renderglobal,entityplayer1,
++			mc.objectMouseOver,0,
++			entityplayer1.inventory.getCurrentItem(),f)) {
+                 renderglobal.drawBlockBreaking(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
+                 renderglobal.drawSelectionBox(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
++		}
+                 GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
+             }
+             renderRainSnow(f);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
 --- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-08-11 17:02:11.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-08-11 17:02:12.000000000 -0400
