@@ -1497,12 +1497,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              float f = (float)(k1 >> 16 & 0xff) / 255F;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPlayer.java ../src_work/minecraft/net/minecraft/src/RenderPlayer.java
 --- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-08-21 03:48:04.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-08-24 20:22:50.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-08-25 03:19:02.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
  
-+import net.minecraft.src.forge.IItemArmorPlayerTextureProvider;
++import net.minecraft.src.forge.IArmorTextureProvider;
  import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  
