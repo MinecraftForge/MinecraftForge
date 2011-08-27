@@ -5,11 +5,9 @@
 
 package net.minecraft.src.forge;
 
-import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ItemTool;
 import net.minecraft.src.World;
 
 import java.util.*;

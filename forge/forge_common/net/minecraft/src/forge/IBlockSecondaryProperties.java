@@ -5,7 +5,6 @@
 
 package net.minecraft.src.forge;
 
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;
 
 /**
