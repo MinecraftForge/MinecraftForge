@@ -1,10 +1,12 @@
 *** HOW TO INSTALL ***
 
-The forge directory should have been uncompacted right under your MCP root 
-directory.
+Extract the download archive directly into your MCP-directiory.
+It should create a folder "forge" within that directory, containing all 
+extracted files.
 
-You should a a fresh minecraft and minecraft_server.jar freshly decompiled 
-with ModLoader and ModLoaderMP.
+You should use freshly decompiled jars, solely including ModLoader & 
+ModLoaderMP respectively. Anything else can eventually cause conflicts.
 
-Just run the script install.bat. It will copy the Minecraft Forge source on your
-src directory, and modify the Minecraft source files.
+Now just start the install-bat, MCForge will install itself into the proper
+locations and copy all ned files, as well as modifying the ned baseclasses.
+
