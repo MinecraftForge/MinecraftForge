@@ -5,8 +5,6 @@
 
 package net.minecraft.src.forge;
 
-import javax.swing.text.html.parser.Entity;
-
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemArmor;
 
@@ -18,18 +16,6 @@ import net.minecraft.src.ItemArmor;
  * @see ItemArmor
  */
 public interface ISpecialArmor {
-	
-    /**
-     * This interface will adjust the amount of damage received by the entity.
-     * @deprecated use getProperties instead.
-     */
-    public int adjustArmorDamage (int damage);
-    
-    /**
-     * When this return true, the regular armor computation will be cancelled
-     * @deprecated use getProperties instead.
-     */
-    public boolean allowRegularComputation ();
     
     /**
      * Return extra properties for the armor
