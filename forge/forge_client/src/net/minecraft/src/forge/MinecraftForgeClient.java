@@ -6,10 +6,9 @@
 package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.Tessellator;
-import org.lwjgl.opengl.GL11;
 
 public class MinecraftForgeClient {
 	/**
@@ -63,5 +62,15 @@ public class MinecraftForgeClient {
 	 */
 	public static int getRenderPass() {
 		return ForgeHooksClient.renderPass;
+	}
+	
+	private static ICustomItemRenderer [] customItemRenderers = new ICustomItemRenderer [Item.itemsList.length];
+	
+	public static void registerCustomItemRenderer (int itemID, ICustomItemRenderer renderer) {
+		customItemRenderers [itemID] = renderer;
+	}
+	
+	public static ICustomItemRenderer getCustomItemRenderer (int itemID) {
+		return customItemRenderers [itemID];
 	}
 }

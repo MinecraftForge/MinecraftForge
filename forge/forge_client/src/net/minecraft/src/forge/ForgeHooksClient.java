@@ -149,5 +149,19 @@ public class ForgeHooksClient {
 					.getTextureFile()));
 		}
 	}
+	
+	public static void renderCustomItem(ICustomItemRenderer customRenderer, RenderBlocks renderBlocks,int itemID, int meta, float f) {
+		Tessellator tessellator = Tessellator.instance;
+		if (renderBlocks.useInventoryTint) {
+			int j = 0xffffff;//block.getRenderColor(i);
+			float f1 = (float) (j >> 16 & 0xff) / 255F;
+			float f3 = (float) (j >> 8 & 0xff) / 255F;
+			float f5 = (float) (j & 0xff) / 255F;
+			GL11.glColor4f(f1 * f, f3 * f, f5 * f, 1.0F);
+		}
+
+//		ModLoader.RenderInvBlock(this, block, i, k);
+		customRenderer.renderInventory(renderBlocks, itemID, meta);
+	}
 }
 
