@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="../../jars/bin/jinput.jar"/>
 	<classpathentry kind="lib" path="../../jars/bin/lwjgl.jar"/>
 	<classpathentry kind="lib" path="../../jars/bin/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="../../jars/bin/minecraft.jar"/>
+	<classpathentry kind="lib" path="E:/MCP/jars/bin/paul.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
