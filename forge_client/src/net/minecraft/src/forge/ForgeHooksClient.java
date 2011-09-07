@@ -46,6 +46,7 @@ public class ForgeHooksClient {
 	static boolean inWorld=false;
 	static HashSet renderTextureTest=new HashSet();
 	static ArrayList<List> renderTextureList=new ArrayList();
+	static Tessellator defaultTessellator=null;
 
 	protected static void bindTessellator(int tex, int sub) {
 		List key=Arrays.asList(tex,sub);
@@ -60,9 +61,9 @@ public class ForgeHooksClient {
 			renderTextureTest.add(key);
 			renderTextureList.add(key);
 			t.startDrawingQuads();
-			t.setTranslationD(Tessellator.firstInstance.xOffset,
-				Tessellator.firstInstance.yOffset,
-				Tessellator.firstInstance.zOffset);
+			t.setTranslationD(defaultTessellator.xOffset,
+				defaultTessellator.yOffset,
+				defaultTessellator.zOffset);
 		}
 		Tessellator.instance=t;
 	}
@@ -77,7 +78,6 @@ public class ForgeHooksClient {
 			n=(Integer)textures.get(name);
 		}
 		if(!inWorld) {
-			Tessellator.instance=Tessellator.firstInstance;
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */,n);
 			return;
 		}
@@ -85,8 +85,9 @@ public class ForgeHooksClient {
 	}
 
 	protected static void unbindTexture() {
-		Tessellator.instance=Tessellator.firstInstance;
-		if(!inWorld) {
+		if(inWorld) {
+			Tessellator.instance=defaultTessellator;
+		} else {
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 				.getMinecraftInstance().renderEngine
 				.getTexture("/terrain.png"));
@@ -97,7 +98,7 @@ public class ForgeHooksClient {
 	static int renderPass=-1;
 	public static void beforeRenderPass(int pass) {
 		renderPass=pass;
-		Tessellator.instance=Tessellator.firstInstance;
+		defaultTessellator=Tessellator.instance;
 		Tessellator.renderingWorldRenderer=true;
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 			.getMinecraftInstance().renderEngine
@@ -120,7 +121,6 @@ public class ForgeHooksClient {
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 			.getMinecraftInstance().renderEngine
 			.getTexture("/terrain.png"));
-		Tessellator.instance=Tessellator.firstInstance;
 		Tessellator.renderingWorldRenderer=false;
 	}
 
