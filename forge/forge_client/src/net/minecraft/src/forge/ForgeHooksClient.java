@@ -78,6 +78,11 @@ public class ForgeHooksClient {
 			n=(Integer)textures.get(name);
 		}
 		if(!inWorld) {
+			if(Tessellator.instance.isDrawing) {
+				int mode=Tessellator.instance.drawMode;
+				Tessellator.instance.draw();
+				Tessellator.instance.startDrawing(mode);
+			}
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */,n);
 			return;
 		}
@@ -88,6 +93,11 @@ public class ForgeHooksClient {
 		if(inWorld) {
 			Tessellator.instance=defaultTessellator;
 		} else {
+			if(Tessellator.instance.isDrawing) {
+				int mode=Tessellator.instance.drawMode;
+				Tessellator.instance.draw();
+				Tessellator.instance.startDrawing(mode);
+			}
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 				.getMinecraftInstance().renderEngine
 				.getTexture("/terrain.png"));

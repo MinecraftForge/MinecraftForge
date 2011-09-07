@@ -1677,7 +1677,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCraft
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellator.java ../src_work/minecraft/net/minecraft/src/Tessellator.java
 --- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-07 10:43:33.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-07 10:57:28.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-07 11:12:23.000000000 -0400
 @@ -6,6 +6,7 @@
  
  import java.io.PrintStream;
@@ -1809,21 +1809,24 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
      private int rawBuffer[];
      private int vertexCount;
      private double textureU;
-@@ -350,16 +353,41 @@
+@@ -349,17 +352,42 @@
+     private int rawBufferIndex;
      private int addedVertices;
      private boolean isColorDisabled;
-     private int drawMode;
+-    private int drawMode;
 -    private double xOffset;
 -    private double yOffset;
 -    private double zOffset;
++    public int drawMode;
 +    public double xOffset;
 +    public double yOffset;
 +    public double zOffset;
      private int normal;
 -    public static final Tessellator instance = new Tessellator(0x200000);
-     private boolean isDrawing;
+-    private boolean isDrawing;
 -    private boolean useVBO;
 -    private IntBuffer vertexBuffers;
++    public boolean isDrawing;
      private int vboIndex;
 -    private int vboCount;
 -    private int bufferSize;
