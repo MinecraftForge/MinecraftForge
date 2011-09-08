@@ -1,6 +1,179 @@
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButton.java ../src_work/minecraft/net/minecraft/src/BlockButton.java
+--- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-09-08 13:52:48.000000000 -0400
+@@ -41,36 +41,36 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
++        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j, k + 1);
++        return world.isBlockSolidOnSide(i, j, k + 1,2);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+@@ -78,19 +78,19 @@
+         int i1 = world.getBlockMetadata(i, j, k);
+         int j1 = i1 & 8;
+         i1 &= 7;
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         } else
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         } else
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         } else
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         } else
+@@ -102,19 +102,19 @@
+ 
+     private int getOrientation(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return 1;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return 2;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return 3;
+         }
+-        return !world.isBlockNormalCube(i, j, k + 1) ? 1 : 4;
++        return !world.isBlockSolidOnSide(i, j, k + 1,2) ? 1 : 4;
+     }
+ 
+     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+@@ -123,19 +123,19 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k) & 7;
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChest.java ../src_work/minecraft/net/minecraft/src/BlockChest.java
+--- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-09-08 13:52:48.000000000 -0400
+@@ -230,23 +230,23 @@
+     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
+     {
+         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
+-        if(world.isBlockNormalCube(i, j + 1, k))
++        if(world.isBlockSolidOnSide(i, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
++        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
++        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
++        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
++        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
+         {
+             return true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor.java ../src_work/minecraft/net/minecraft/src/BlockDoor.java
+--- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:48.000000000 -0400
+@@ -178,7 +178,7 @@
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k))
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+             {
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+@@ -241,7 +241,7 @@
+             return false;
+         } else
+         {
+-            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
++            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
+         }
+     }
+ 
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
---- ../src_base/minecraft/net/minecraft/src/Block.java	2011-09-07 21:52:10.331793000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-09-07 21:53:05.657957800 +0200
+--- ../src_base/minecraft/net/minecraft/src/Block.java	2011-09-08 13:52:45.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -130,182 +303,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
      static Class _mthclass$(String s)
      {
          try
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButton.java ../src_work/minecraft/net/minecraft/src/BlockButton.java
---- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-09-07 21:52:10.345794000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-09-07 21:53:05.647957200 +0200
-@@ -41,36 +41,36 @@
- 
-     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
-     {
--        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
-+        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
-         {
-             return true;
-         }
--        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
-+        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             return true;
-         }
--        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
-+        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             return true;
-         }
--        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
-+        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
-     }
- 
-     public boolean canPlaceBlockAt(World world, int i, int j, int k)
-     {
--        if(world.isBlockNormalCube(i - 1, j, k))
-+        if(world.isBlockSolidOnSide(i - 1, j, k,5))
-         {
-             return true;
-         }
--        if(world.isBlockNormalCube(i + 1, j, k))
-+        if(world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             return true;
-         }
--        if(world.isBlockNormalCube(i, j, k - 1))
-+        if(world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             return true;
-         }
--        return world.isBlockNormalCube(i, j, k + 1);
-+        return world.isBlockSolidOnSide(i, j, k + 1,2);
-     }
- 
-     public void onBlockPlaced(World world, int i, int j, int k, int l)
-@@ -78,19 +78,19 @@
-         int i1 = world.getBlockMetadata(i, j, k);
-         int j1 = i1 & 8;
-         i1 &= 7;
--        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
-+        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
-         {
-             i1 = 4;
-         } else
--        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
-+        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             i1 = 3;
-         } else
--        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
-+        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             i1 = 2;
-         } else
--        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
-+        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
-         {
-             i1 = 1;
-         } else
-@@ -102,19 +102,19 @@
- 
-     private int getOrientation(World world, int i, int j, int k)
-     {
--        if(world.isBlockNormalCube(i - 1, j, k))
-+        if(world.isBlockSolidOnSide(i - 1, j, k,5))
-         {
-             return 1;
-         }
--        if(world.isBlockNormalCube(i + 1, j, k))
-+        if(world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             return 2;
-         }
--        if(world.isBlockNormalCube(i, j, k - 1))
-+        if(world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             return 3;
-         }
--        return !world.isBlockNormalCube(i, j, k + 1) ? 1 : 4;
-+        return !world.isBlockSolidOnSide(i, j, k + 1,2) ? 1 : 4;
-     }
- 
-     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
-@@ -123,19 +123,19 @@
-         {
-             int i1 = world.getBlockMetadata(i, j, k) & 7;
-             boolean flag = false;
--            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
-+            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
-             {
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
-+            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
-             {
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
-+            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
-             {
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
-+            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
-             {
-                 flag = true;
-             }
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChest.java ../src_work/minecraft/net/minecraft/src/BlockChest.java
---- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-09-07 21:52:10.356794000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-09-07 21:53:05.650957400 +0200
-@@ -230,23 +230,23 @@
-     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
-     {
-         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
--        if(world.isBlockNormalCube(i, j + 1, k))
-+        if(world.isBlockSolidOnSide(i, j + 1, k,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
-+        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
-+        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
-+        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
-+        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
-         {
-             return true;
-         }
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor.java ../src_work/minecraft/net/minecraft/src/BlockDoor.java
---- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-09-07 21:52:10.383796000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-09-07 21:53:05.653957600 +0200
-@@ -178,7 +178,7 @@
-                 world.setBlockWithNotify(i, j, k, 0);
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i, j - 1, k))
-+            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
-             {
-                 world.setBlockWithNotify(i, j, k, 0);
-                 flag = true;
-@@ -241,7 +241,7 @@
-             return false;
-         } else
-         {
--            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
-+            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
-         }
-     }
- 
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadder.java ../src_work/minecraft/net/minecraft/src/BlockLadder.java
---- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-09-07 21:52:10.429798000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-09-07 21:53:05.660958000 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:48.000000000 -0400
 @@ -63,6 +63,11 @@
          return super.getSelectedBoundingBoxFromPool(world, i, j, k);
      }
@@ -389,8 +389,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadd
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLever.java ../src_work/minecraft/net/minecraft/src/BlockLever.java
---- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-09-07 21:52:10.439799000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-09-07 21:53:05.663958100 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-09-08 13:52:48.000000000 -0400
 @@ -40,44 +40,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -510,8 +510,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLeve
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java
---- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-07 21:52:10.485802000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-07 21:53:05.666958300 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:48.000000000 -0400
 @@ -46,7 +46,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -531,8 +531,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPres
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail.java ../src_work/minecraft/net/minecraft/src/BlockRail.java
---- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-09-07 21:52:10.492802000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-09-07 21:53:05.669958500 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-09-08 13:52:48.000000000 -0400
 @@ -16,12 +16,12 @@
      public static final boolean isRailBlockAt(World world, int i, int j, int k)
      {
@@ -587,8 +587,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java
---- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-07 21:52:10.498802000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-07 21:53:05.672958700 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:48.000000000 -0400
 @@ -27,7 +27,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -608,8 +608,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
              return false;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java
---- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-07 21:52:10.508803000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-07 21:53:05.675958800 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -639,8 +639,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
          {
              return true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorch.java ../src_work/minecraft/net/minecraft/src/BlockTorch.java
---- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-09-07 21:52:10.556806000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-09-07 21:53:05.678959000 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:48.000000000 -0400
 @@ -41,24 +41,24 @@
  
      private boolean func_31032_h(World world, int i, int j, int k)
@@ -744,8 +744,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorc
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java
---- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-07 21:52:10.559806000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-07 21:53:05.681959200 +0200
+--- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:48.000000000 -0400
 @@ -147,7 +147,7 @@
          {
              j1--;
@@ -781,8 +781,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrap
 +    public static boolean disableValidation=false;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.java ../src_work/minecraft/net/minecraft/src/Chunk.java
---- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-09-07 21:52:10.593808000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-09-07 21:53:05.684959300 +0200
+--- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-09-08 13:52:45.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-09-08 16:31:16.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -819,9 +819,55 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
          blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
          if(j1 != 0)
          {
+@@ -438,7 +453,7 @@
+             {
+                 return null;
+             }
+-            BlockContainer blockcontainer = (BlockContainer)Block.blocksList[l];
++            Block blockcontainer = Block.blocksList[l];
+             blockcontainer.onBlockAdded(worldObj, xPosition * 16 + i, j, zPosition * 16 + k);
+             tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
+         }
+@@ -460,7 +475,7 @@
+         setChunkBlockTileEntity(i, j, k, tileentity);
+         if(isChunkLoaded)
+         {
+-            worldObj.loadedTileEntityList.add(tileentity);
++            worldObj.addTileEntity(tileentity);
+         }
+     }
+ 
+@@ -471,7 +486,7 @@
+         tileentity.xCoord = xPosition * 16 + i;
+         tileentity.yCoord = j;
+         tileentity.zCoord = zPosition * 16 + k;
+-        if(getBlockID(i, j, k) == 0 || !(Block.blocksList[getBlockID(i, j, k)] instanceof BlockContainer))
++        if(getBlockID(i, j, k) == 0 || !Block.isBlockContainer[getBlockID(i, j, k)])
+         {
+             System.out.println("Attempted to place a tile entity where there was no entity tile!");
+             return;
+@@ -496,6 +511,18 @@
+         }
+     }
+ 
++    /* FORGE: Used to remove only invalid TileEntities */
++    public void cleanChunkBlockTileEntity(int i, int j, int k)
++    {
++        ChunkPosition chunkposition = new ChunkPosition(i, j, k);
++        if(isChunkLoaded)
++        {
++            TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
++	    if(tileentity!=null && tileentity.isInvalid())
++		    chunkTileEntityMap.remove(chunkposition);
++        }
++    }
++
+     public void onChunkLoad()
+     {
+         isChunkLoaded = true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRenderer.java ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-07 21:52:10.730816200 +0200
-+++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-07 21:53:05.688959600 +0200
+--- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -7,6 +7,9 @@
  import java.util.*;
  import org.lwjgl.opengl.GL11;
@@ -965,8 +1011,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
      private Random rand;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiving.java ../src_work/minecraft/net/minecraft/src/EntityLiving.java
---- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-09-07 21:52:10.892825000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-09-07 21:53:05.691959700 +0200
+--- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:48.000000000 -0400
 @@ -555,7 +555,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);
@@ -979,8 +1025,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiv
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
---- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-07 21:52:10.951828000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-07 21:53:05.701960300 +0200
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -6,6 +6,10 @@
  
  import java.util.*;
@@ -1074,8 +1120,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
          {
              if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRenderer.java ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-07 21:52:11.003831800 +0200
-+++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-07 21:53:05.704960500 +0200
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1111,8 +1157,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRen
              }
              renderRainSnow(f);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
---- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-09-07 21:52:11.106837000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-09-07 21:53:05.707960700 +0200
+--- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-09-08 13:52:45.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1140,26 +1186,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion
                          }
                          if(f1 > 0.0F)
                          {
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
---- ../src_base/minecraft/net/minecraft/src/Item.java	2011-09-07 21:52:11.394854000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-09-07 21:53:05.713961000 +0200
-@@ -75,6 +75,13 @@
-         return 1.0F;
-     }
- 
-+    /* FORGE: Metadata-sensitive version of getStrVsBlock
-+     */
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
-+    {
-+	    return getStrVsBlock(itemstack,block);
-+    }
-+
-     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
-     {
-         return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucket.java ../src_work/minecraft/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-09-07 21:52:11.418855000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-09-07 21:53:05.710960800 +0200
+--- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:48.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -1183,9 +1212,26 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
                  if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
                  {
                      world.setBlockWithNotify(i, j, k, 0);
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
+--- ../src_base/minecraft/net/minecraft/src/Item.java	2011-09-08 13:52:45.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-09-08 13:52:48.000000000 -0400
+@@ -75,6 +75,13 @@
+         return 1.0F;
+     }
+ 
++    /* FORGE: Metadata-sensitive version of getStrVsBlock
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
++    {
++	    return getStrVsBlock(itemstack,block);
++    }
++
+     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+     {
+         return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRenderer.java ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
---- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-07 21:52:11.494859900 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-07 21:53:05.716961200 +0200
+--- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -5,6 +5,10 @@
  package net.minecraft.src;
  
@@ -1227,8 +1273,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
              Tessellator tessellator = Tessellator.instance;
              int i = entityliving.getItemIcon(itemstack);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.java ../src_work/minecraft/net/minecraft/src/ItemTool.java
---- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-09-07 21:52:11.528861000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-09-07 21:53:05.719961400 +0200
+--- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-09-08 13:52:48.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -1264,8 +1310,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.
      protected EnumToolMaterial toolMaterial;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MetadataChunkBlock.java ../src_work/minecraft/net/minecraft/src/MetadataChunkBlock.java
---- ../src_base/minecraft/net/minecraft/src/MetadataChunkBlock.java	2011-09-07 21:52:11.738873000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/MetadataChunkBlock.java	2011-09-07 21:53:05.722961500 +0200
+--- ../src_base/minecraft/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:48.000000000 -0400
 @@ -95,7 +95,7 @@
                      } else
                      if(blockEnum == EnumSkyBlock.Block)
@@ -1276,8 +1322,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MetadataC
                      if(k3 >= 15 && l3 == 0)
                      {
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java
---- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-07 21:52:11.858880000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-07 21:53:05.725961700 +0200
+--- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:48.000000000 -0400
 @@ -35,4 +35,7 @@
      public int sideHit;
      public Vec3D hitVec;
@@ -1287,8 +1333,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObj
 +    public int subHit=-1;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerController.java ../src_work/minecraft/net/minecraft/src/PlayerController.java
---- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-09-07 21:52:12.966944000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-09-07 21:53:05.728961900 +0200
+--- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1332,8 +1378,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
---- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-07 21:52:12.970944000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-07 21:53:05.731962000 +0200
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-08 13:52:48.000000000 -0400
 @@ -63,7 +63,7 @@
              {
                  Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
@@ -1353,8 +1399,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
              {
                  mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
---- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-07 21:52:12.974944000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-07 21:53:05.733962200 +0200
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-08 13:52:48.000000000 -0400
 @@ -37,7 +37,7 @@
          int j1 = mc.theWorld.getBlockMetadata(i, j, k);
          boolean flag = super.sendBlockRemoved(i, j, k, l);
@@ -1383,8 +1429,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
              {
                  mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
---- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-07 21:52:13.275961700 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-07 21:53:05.739962500 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-08 13:52:48.000000000 -0400
 @@ -2171,7 +2171,7 @@
              colorBlueTopRight *= f27;
              int i1 = block.getBlockTexture(blockAccess, i, j, k, 2);
@@ -1458,8 +1504,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlo
                  tessellator.setColorOpaque_F(f12 * f25 * f, f15 * f25 * f1, f18 * f25 * f2);
                  renderSouthFace(block, i, j, k, 38);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEngine.java ../src_work/minecraft/net/minecraft/src/RenderEngine.java
---- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-09-07 21:52:13.298963000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-09-07 21:53:05.743962700 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-09-08 13:52:48.000000000 -0400
 @@ -126,6 +126,9 @@
          }
          try
@@ -1471,8 +1517,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEng
              GLAllocation.generateTextureNames(singleIntBuffer);
              int i = singleIntBuffer.get(0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlobal.java ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
---- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-07 21:52:13.380967700 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-07 21:53:05.747963000 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-08 13:52:48.000000000 -0400
 @@ -1558,8 +1558,8 @@
      }
  
@@ -1496,8 +1542,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlo
      private boolean occlusionEnabled;
      private int cloudOffsetX;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
---- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-09-07 21:52:13.389968200 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-09-07 21:53:05.750963100 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-09-08 13:52:48.000000000 -0400
 @@ -5,6 +5,11 @@
  package net.minecraft.src;
  
@@ -1630,8 +1676,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              int k1 = Item.itemsList[i].getColorFromDamage(j);
              float f = (float)(k1 >> 16 & 0xff) / 255F;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPlayer.java ../src_work/minecraft/net/minecraft/src/RenderPlayer.java
---- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-07 21:52:13.427970400 +0200
-+++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-07 21:53:05.753963300 +0200
+--- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -1657,8 +1703,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPla
                  modelbiped.bipedHead.showModel = i == 0;
                  modelbiped.bipedHeadwear.showModel = i == 0;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCrafting.java ../src_work/minecraft/net/minecraft/src/SlotCrafting.java
---- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-07 21:52:13.498974000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-07 21:53:05.756963500 +0200
+--- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1676,8 +1722,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCraft
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellator.java ../src_work/minecraft/net/minecraft/src/Tessellator.java
---- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-07 21:52:13.588979600 +0200
-+++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-07 21:53:05.760963700 +0200
+--- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-08 13:52:48.000000000 -0400
 @@ -6,6 +6,7 @@
  
  import java.io.PrintStream;
@@ -1862,9 +1908,26 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +    }
  
  }
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntity.java ../src_work/minecraft/net/minecraft/src/TileEntity.java
+--- ../src_base/minecraft/net/minecraft/src/TileEntity.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	2011-09-08 15:23:42.000000000 -0400
+@@ -60,6 +60,13 @@
+     {
+     }
+ 
++    /* FORGE: Return false if this TileEntity does not require updateEntity()
++     * calls.
++     */
++    public boolean canUpdate() {
++	    return true;
++    }
++
+     public static TileEntity createAndLoadEntity(NBTTagCompound nbttagcompound)
+     {
+         TileEntity tileentity = null;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java
---- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-07 21:52:13.700986000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-07 21:53:05.763963900 +0200
+--- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-08 13:52:45.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-08 13:52:48.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -1890,8 +1953,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
          }
      }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.java ../src_work/minecraft/net/minecraft/src/World.java
---- ../src_base/minecraft/net/minecraft/src/World.java	2011-09-07 21:52:13.815992000 +0200
-+++ ../src_work/minecraft/net/minecraft/src/World.java	2011-09-07 21:54:44.038584900 +0200
+--- ../src_base/minecraft/net/minecraft/src/World.java	2011-09-08 13:52:45.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/World.java	2011-09-08 16:26:17.000000000 -0400
 @@ -313,7 +313,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
@@ -1918,7 +1981,59 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
              }
          }
          if(getSavedLightValue(enumskyblock, i, j, k) != l)
-@@ -1607,7 +1612,10 @@
+@@ -1408,7 +1413,7 @@
+                 Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+                 if(chunk != null)
+                 {
+-                    chunk.removeChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
++                    chunk.cleanChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
+                 }
+             }
+         } while(true);
+@@ -1429,12 +1434,13 @@
+                     {
+                         loadedTileEntityList.add(tileentity1);
+                     }
++		    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
++		} else {
+                     Chunk chunk1 = getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
+                     if(chunk1 != null)
+                     {
+-                        chunk1.setChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf, tileentity1);
++                        chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf);
+                     }
+-                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
+                 }
+             } while(true);
+             addedTileEntityList.clear();
+@@ -1443,13 +1449,19 @@
+ 
+     public void addTileEntity(Collection collection)
+     {
+-        if(scanningTileEntities)
+-        {
+-            addedTileEntityList.addAll(collection);
+-        } else
+-        {
+-            loadedTileEntityList.addAll(collection);
+-        }
++	List dest=scanningTileEntities ? addedTileEntityList :
++		loadedTileEntityList;
++	for(Object ob : collection) {
++		TileEntity te=(TileEntity)ob;
++		if(te.canUpdate()) dest.add(te);
++	}
++    }
++
++    /* FORGE: Used as a bugfix */
++    public void addTileEntity(TileEntity te) {
++	List dest=scanningTileEntities ? addedTileEntityList :
++		loadedTileEntityList;
++	if(te.canUpdate()) dest.add(te);
+     }
+ 
+     public void updateEntity(Entity entity)
+@@ -1607,7 +1619,10 @@
                          if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -1930,34 +2045,65 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
                      }
  
                  }
-@@ -1847,7 +1855,25 @@
-                 tileentity.xCoord = i;
-                 tileentity.yCoord = j;
-                 tileentity.zCoord = k;
+@@ -1840,44 +1855,23 @@
+ 
+     public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
+     {
+-        if(!tileentity.isInvalid())
+-        {
+-            if(scanningTileEntities)
+-            {
+-                tileentity.xCoord = i;
+-                tileentity.yCoord = j;
+-                tileentity.zCoord = k;
 -                addedTileEntityList.add(tileentity);
-+                
-+                // FORGE: This loop fixes a problem where, when scanning, the
-+                // same entity is added several times, making the client lag
-+                // crazyly when tile are requested during the scanning
-+                // process.
-+				boolean found = false;
-+
-+				for (Object o : addedTileEntityList) {
-+					TileEntity e = (TileEntity) o;
-+
-+					if (e.xCoord == i && e.yCoord == j && e.zCoord == k) {
-+						found = true;
-+						break;
-+					}
-+				}
-+
-+				if (!found) {
-+					addedTileEntityList.add(tileentity);
-+				}
-             } else
-             {
-                 loadedTileEntityList.add(tileentity);
-@@ -1895,13 +1921,18 @@
+-            } else
+-            {
+-                loadedTileEntityList.add(tileentity);
+-                Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
+-                if(chunk != null)
+-                {
+-                    chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
+-                }
+-            }
+-        }
++	if(tileentity.isInvalid())
++		return;
++	List dest=scanningTileEntities ? addedTileEntityList :
++		loadedTileEntityList;
++	if(tileentity.canUpdate()) dest.add(tileentity);
++	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++	if(chunk != null) {
++		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
++	}
+     }
+ 
+     public void removeBlockTileEntity(int i, int j, int k)
+     {
+-        TileEntity tileentity = getBlockTileEntity(i, j, k);
+-        if(tileentity != null && scanningTileEntities)
+-        {
+-            tileentity.invalidate();
+-        } else
+-        {
+-            if(tileentity != null)
+-            {
+-                loadedTileEntityList.remove(tileentity);
+-            }
+-            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
+-            if(chunk != null)
+-            {
+-                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
+-            }
+-        }
++	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++	if(chunk != null) {
++		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
++	}
+     }
+ 
+     public boolean isBlockOpaqueCube(int i, int j, int k)
+@@ -1895,13 +1889,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {
          Block block = Block.blocksList[getBlockId(i, j, k)];
@@ -1983,7 +2129,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      }
  
      public void saveWorldIndirectly(IProgressUpdate iprogressupdate)
-@@ -2425,6 +2456,7 @@
+@@ -2425,6 +2424,7 @@
          {
              block = null;
          }
@@ -1991,7 +2137,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -2913,7 +2945,7 @@
+@@ -2913,7 +2913,7 @@
      public int field_27172_i;
      public boolean editingBlocks;
      private long lockTimestamp;
@@ -2001,8 +2147,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      public Random rand;
      public boolean isNewWorld;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
---- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-07 21:52:13.915998300 +0200
-+++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-07 21:53:05.771964300 +0200
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -5,6 +5,9 @@
  package net.minecraft.src;
  
@@ -2084,9 +2230,182 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
 -        tessellator = Tessellator.instance;
 -    }
  }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockButton.java ../src_work/minecraft_server/net/minecraft/src/BlockButton.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-08 13:52:48.000000000 -0400
+@@ -41,36 +41,36 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             return true;
+         }
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
++        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
+     }
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return true;
+         }
+-        return world.isBlockNormalCube(i, j, k + 1);
++        return world.isBlockSolidOnSide(i, j, k + 1,2);
+     }
+ 
+     public void onBlockPlaced(World world, int i, int j, int k, int l)
+@@ -78,19 +78,19 @@
+         int i1 = world.getBlockMetadata(i, j, k);
+         int j1 = i1 & 8;
+         i1 &= 7;
+-        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
++        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
+         {
+             i1 = 4;
+         } else
+-        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
++        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             i1 = 3;
+         } else
+-        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
++        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             i1 = 2;
+         } else
+-        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
++        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             i1 = 1;
+         } else
+@@ -102,19 +102,19 @@
+ 
+     private int getOrientation(World world, int i, int j, int k)
+     {
+-        if(world.isBlockNormalCube(i - 1, j, k))
++        if(world.isBlockSolidOnSide(i - 1, j, k,5))
+         {
+             return 1;
+         }
+-        if(world.isBlockNormalCube(i + 1, j, k))
++        if(world.isBlockSolidOnSide(i + 1, j, k,4))
+         {
+             return 2;
+         }
+-        if(world.isBlockNormalCube(i, j, k - 1))
++        if(world.isBlockSolidOnSide(i, j, k - 1,3))
+         {
+             return 3;
+         }
+-        return !world.isBlockNormalCube(i, j, k + 1) ? 1 : 4;
++        return !world.isBlockSolidOnSide(i, j, k + 1,2) ? 1 : 4;
+     }
+ 
+     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+@@ -123,19 +123,19 @@
+         {
+             int i1 = world.getBlockMetadata(i, j, k) & 7;
+             boolean flag = false;
+-            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
++            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
++            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
++            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
+             {
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
++            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
+             {
+                 flag = true;
+             }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockChest.java ../src_work/minecraft_server/net/minecraft/src/BlockChest.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-08 13:52:48.000000000 -0400
+@@ -140,23 +140,23 @@
+     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
+     {
+         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
+-        if(world.isBlockNormalCube(i, j + 1, k))
++        if(world.isBlockSolidOnSide(i, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
++        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
++        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
++        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
++        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
+         {
+             return true;
+         }
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java
+--- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:48.000000000 -0400
+@@ -167,7 +167,7 @@
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k))
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+             {
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+@@ -230,7 +230,7 @@
+             return false;
+         } else
+         {
+-            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
++            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
+         }
+     }
+ 
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Block.java ../src_work/minecraft_server/net/minecraft/src/Block.java
---- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-09-07 21:52:24.970630000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-09-07 21:53:05.784965100 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2206,182 +2525,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      static Class _mthclass$(String s)
      {
          try
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockButton.java ../src_work/minecraft_server/net/minecraft/src/BlockButton.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-07 21:52:24.984631000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-07 21:53:05.774964500 +0200
-@@ -41,36 +41,36 @@
- 
-     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
-     {
--        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
-+        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
-         {
-             return true;
-         }
--        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
-+        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             return true;
-         }
--        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
-+        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             return true;
-         }
--        return l == 5 && world.isBlockNormalCube(i - 1, j, k);
-+        return l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5);
-     }
- 
-     public boolean canPlaceBlockAt(World world, int i, int j, int k)
-     {
--        if(world.isBlockNormalCube(i - 1, j, k))
-+        if(world.isBlockSolidOnSide(i - 1, j, k,5))
-         {
-             return true;
-         }
--        if(world.isBlockNormalCube(i + 1, j, k))
-+        if(world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             return true;
-         }
--        if(world.isBlockNormalCube(i, j, k - 1))
-+        if(world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             return true;
-         }
--        return world.isBlockNormalCube(i, j, k + 1);
-+        return world.isBlockSolidOnSide(i, j, k + 1,2);
-     }
- 
-     public void onBlockPlaced(World world, int i, int j, int k, int l)
-@@ -78,19 +78,19 @@
-         int i1 = world.getBlockMetadata(i, j, k);
-         int j1 = i1 & 8;
-         i1 &= 7;
--        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
-+        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
-         {
-             i1 = 4;
-         } else
--        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
-+        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             i1 = 3;
-         } else
--        if(l == 4 && world.isBlockNormalCube(i + 1, j, k))
-+        if(l == 4 && world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             i1 = 2;
-         } else
--        if(l == 5 && world.isBlockNormalCube(i - 1, j, k))
-+        if(l == 5 && world.isBlockSolidOnSide(i - 1, j, k,5))
-         {
-             i1 = 1;
-         } else
-@@ -102,19 +102,19 @@
- 
-     private int getOrientation(World world, int i, int j, int k)
-     {
--        if(world.isBlockNormalCube(i - 1, j, k))
-+        if(world.isBlockSolidOnSide(i - 1, j, k,5))
-         {
-             return 1;
-         }
--        if(world.isBlockNormalCube(i + 1, j, k))
-+        if(world.isBlockSolidOnSide(i + 1, j, k,4))
-         {
-             return 2;
-         }
--        if(world.isBlockNormalCube(i, j, k - 1))
-+        if(world.isBlockSolidOnSide(i, j, k - 1,3))
-         {
-             return 3;
-         }
--        return !world.isBlockNormalCube(i, j, k + 1) ? 1 : 4;
-+        return !world.isBlockSolidOnSide(i, j, k + 1,2) ? 1 : 4;
-     }
- 
-     public void onNeighborBlockChange(World world, int i, int j, int k, int l)
-@@ -123,19 +123,19 @@
-         {
-             int i1 = world.getBlockMetadata(i, j, k) & 7;
-             boolean flag = false;
--            if(!world.isBlockNormalCube(i - 1, j, k) && i1 == 1)
-+            if(!world.isBlockSolidOnSide(i - 1, j, k,5) && i1 == 1)
-             {
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i + 1, j, k) && i1 == 2)
-+            if(!world.isBlockSolidOnSide(i + 1, j, k,4) && i1 == 2)
-             {
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i, j, k - 1) && i1 == 3)
-+            if(!world.isBlockSolidOnSide(i, j, k - 1,3) && i1 == 3)
-             {
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i, j, k + 1) && i1 == 4)
-+            if(!world.isBlockSolidOnSide(i, j, k + 1,2) && i1 == 4)
-             {
-                 flag = true;
-             }
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockChest.java ../src_work/minecraft_server/net/minecraft/src/BlockChest.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-07 21:52:24.994632000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-07 21:53:05.777964700 +0200
-@@ -140,23 +140,23 @@
-     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
-     {
-         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
--        if(world.isBlockNormalCube(i, j + 1, k))
-+        if(world.isBlockSolidOnSide(i, j + 1, k,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
-+        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
-+        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
-+        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
-         {
-             return true;
-         }
--        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
-+        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
-         {
-             return true;
-         }
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-07 21:52:25.022633000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-07 21:53:05.780964800 +0200
-@@ -167,7 +167,7 @@
-                 world.setBlockWithNotify(i, j, k, 0);
-                 flag = true;
-             }
--            if(!world.isBlockNormalCube(i, j - 1, k))
-+            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
-             {
-                 world.setBlockWithNotify(i, j, k, 0);
-                 flag = true;
-@@ -230,7 +230,7 @@
-             return false;
-         } else
-         {
--            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
-+            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
-         }
-     }
- 
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-07 21:52:25.067636000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-07 21:53:05.787965200 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:48.000000000 -0400
 @@ -40,6 +40,11 @@
          return super.getCollisionBoundingBoxFromPool(world, i, j, k);
      }
@@ -2465,8 +2611,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLever.java ../src_work/minecraft_server/net/minecraft/src/BlockLever.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-07 21:52:25.077636000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-07 21:53:05.790965400 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-08 13:52:48.000000000 -0400
 @@ -35,44 +35,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -2586,8 +2732,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-07 21:52:25.121639000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-07 21:53:05.793965600 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:48.000000000 -0400
 @@ -46,7 +46,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -2607,8 +2753,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRail.java ../src_work/minecraft_server/net/minecraft/src/BlockRail.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-07 21:52:25.128639000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-07 21:53:05.796965800 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-08 13:52:48.000000000 -0400
 @@ -16,12 +16,12 @@
      public static final boolean isRailBlockAt(World world, int i, int j, int k)
      {
@@ -2663,8 +2809,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-07 21:52:25.134639000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-07 21:53:05.799965900 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:48.000000000 -0400
 @@ -27,7 +27,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -2684,8 +2830,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              return false;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-07 21:52:25.143640000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-07 21:53:05.802966100 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2715,8 +2861,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
          {
              return true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-07 21:52:25.191643000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-07 21:53:05.805966300 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:48.000000000 -0400
 @@ -36,24 +36,24 @@
  
      private boolean func_31028_g(World world, int i, int j, int k)
@@ -2820,8 +2966,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-07 21:52:25.194643000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-07 21:53:05.808966400 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:48.000000000 -0400
 @@ -130,7 +130,7 @@
          {
              j1--;
@@ -2857,8 +3003,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
 +    public static boolean disableValidation=false;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Chunk.java ../src_work/minecraft_server/net/minecraft/src/Chunk.java
---- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-09-07 21:52:25.210644000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-09-07 21:53:05.811966600 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-09-08 16:31:36.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2895,9 +3041,55 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
          blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
          if(j1 != 0)
          {
+@@ -416,7 +431,7 @@
+             {
+                 return null;
+             }
+-            BlockContainer blockcontainer = (BlockContainer)Block.blocksList[l];
++            Block blockcontainer = Block.blocksList[l];
+             blockcontainer.onBlockAdded(worldObj, xPosition * 16 + i, j, zPosition * 16 + k);
+             tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
+         }
+@@ -438,7 +453,7 @@
+         setChunkBlockTileEntity(i, j, k, tileentity);
+         if(isChunkLoaded)
+         {
+-            worldObj.loadedTileEntityList.add(tileentity);
++            worldObj.addTileEntity(tileentity);
+         }
+     }
+ 
+@@ -449,7 +464,7 @@
+         tileentity.xCoord = xPosition * 16 + i;
+         tileentity.yCoord = j;
+         tileentity.zCoord = zPosition * 16 + k;
+-        if(getBlockID(i, j, k) == 0 || !(Block.blocksList[getBlockID(i, j, k)] instanceof BlockContainer))
++        if(getBlockID(i, j, k) == 0 || !Block.isBlockContainer[getBlockID(i, j, k)])
+         {
+             System.out.println("Attempted to place a tile entity where there was no entity tile!");
+             return;
+@@ -474,6 +489,18 @@
+         }
+     }
+ 
++    /* FORGE: Used to remove only invalid TileEntities */
++    public void cleanChunkBlockTileEntity(int i, int j, int k)
++    {
++        ChunkPosition chunkposition = new ChunkPosition(i, j, k);
++        if(isChunkLoaded)
++        {
++            TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
++	    if(tileentity!=null && tileentity.isInvalid())
++		    chunkTileEntityMap.remove(chunkposition);
++        }
++    }
++
+     public void onChunkLoad()
+     {
+         isChunkLoaded = true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-07 21:52:25.444657000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-07 21:53:05.814966800 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:48.000000000 -0400
 @@ -532,7 +532,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);
@@ -2910,8 +3102,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-07 21:52:25.489660000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-07 21:53:05.818967000 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:48.000000000 -0400
 @@ -6,6 +6,10 @@
  
  import java.util.*;
@@ -3005,8 +3197,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
          {
              if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Explosion.java ../src_work/minecraft_server/net/minecraft/src/Explosion.java
---- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-09-07 21:52:25.578665000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-09-07 21:53:05.820967100 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3033,26 +3225,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ex
                          }
                          if(f1 > 0.0F)
                          {
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
---- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-09-07 21:52:25.654669000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-09-07 21:53:05.830967700 +0200
-@@ -65,6 +65,13 @@
-         return 1.0F;
-     }
- 
-+    /* FORGE: Metadata-sensitive version of getStrVsBlock
-+     */
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
-+    {
-+	    return getStrVsBlock(itemstack,block);
-+    }
-+
-     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
-     {
-         return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-07 21:52:25.675670000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-07 21:53:05.823967300 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:48.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -3077,8 +3252,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                  {
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-07 21:52:25.706672000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-07 21:53:05.827967500 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3157,9 +3332,26 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
          }
      }
  
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
+--- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-09-08 13:52:48.000000000 -0400
+@@ -65,6 +65,13 @@
+         return 1.0F;
+     }
+ 
++    /* FORGE: Metadata-sensitive version of getStrVsBlock
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
++    {
++	    return getStrVsBlock(itemstack,block);
++    }
++
+     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+     {
+         return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemTool.java ../src_work/minecraft_server/net/minecraft/src/ItemTool.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-07 21:52:25.772676000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-07 21:53:05.832967800 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-08 13:52:48.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -3195,8 +3387,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
      protected EnumToolMaterial toolMaterial;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/MetadataChunkBlock.java ../src_work/minecraft_server/net/minecraft/src/MetadataChunkBlock.java
---- ../src_base/minecraft_server/net/minecraft/src/MetadataChunkBlock.java	2011-09-07 21:52:25.835680000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/MetadataChunkBlock.java	2011-09-07 21:53:05.835968000 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:48.000000000 -0400
 @@ -95,7 +95,7 @@
                      } else
                      if(blockEnum == EnumSkyBlock.Block)
@@ -3207,8 +3399,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Me
                      if(k3 >= 15 && l3 == 0)
                      {
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java
---- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-07 21:52:25.857681000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-07 21:53:05.838968200 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:48.000000000 -0400
 @@ -35,4 +35,7 @@
      public int sideHit;
      public Vec3D hitVec;
@@ -3218,8 +3410,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Mo
 +    public int subHit=-1;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java
---- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-07 21:52:26.166698000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-07 21:53:05.840968300 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-08 13:52:48.000000000 -0400
 @@ -169,12 +169,11 @@
              sendPacketToPlayersInInstance(new Packet52MultiBlockChange(chunkX, chunkZ, blocksToUpdate, numBlocksToUpdate, worldserver));
              for(int k = 0; k < numBlocksToUpdate; k++)
@@ -3237,8 +3429,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Pl
                  }
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java
---- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-07 21:52:26.268704000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-07 21:53:05.843968400 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:48.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3255,9 +3447,26 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Sl
          for(int i = 0; i < craftMatrix.getSizeInventory(); i++)
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/TileEntity.java ../src_work/minecraft_server/net/minecraft/src/TileEntity.java
+--- ../src_base/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-08 15:23:33.000000000 -0400
+@@ -60,6 +60,13 @@
+     {
+     }
+ 
++    /* FORGE: Return false if this TileEntity does not require updateEntity()
++     * calls.
++     */
++    public boolean canUpdate() {
++	    return true;
++    }
++
+     public static TileEntity createAndLoadEntity(NBTTagCompound nbttagcompound)
+     {
+         TileEntity tileentity = null;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/World.java ../src_work/minecraft_server/net/minecraft/src/World.java
---- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-09-07 21:52:26.443714000 +0200
-+++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-09-07 21:53:05.847968700 +0200
+--- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-09-08 13:52:46.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-09-08 16:26:27.000000000 -0400
 @@ -166,7 +166,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
@@ -3284,7 +3493,59 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
              }
          }
          if(getSavedLightValue(enumskyblock, i, j, k) != l)
-@@ -1408,7 +1413,10 @@
+@@ -1169,7 +1174,7 @@
+                 Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+                 if(chunk != null)
+                 {
+-                    chunk.removeChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
++                    chunk.cleanChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
+                 }
+             }
+         } while(true);
+@@ -1190,12 +1195,13 @@
+                     {
+                         loadedTileEntityList.add(tileentity1);
+                     }
++                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
++		} else {
+                     Chunk chunk1 = getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
+                     if(chunk1 != null)
+                     {
+-                        chunk1.setChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf, tileentity1);
++                        chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf);
+                     }
+-                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
+                 }
+             } while(true);
+             field_20912_E.clear();
+@@ -1204,13 +1210,19 @@
+ 
+     public void addTileEntity(Collection collection)
+     {
+-        if(scanningTileEntities)
+-        {
+-            field_20912_E.addAll(collection);
+-        } else
+-        {
+-            loadedTileEntityList.addAll(collection);
+-        }
++	List dest=scanningTileEntities ? field_20912_E :
++		loadedTileEntityList;
++	for(Object ob : collection) {
++		TileEntity te=(TileEntity)ob;
++		if(te.canUpdate()) dest.add(te);
++	}
++    }
++
++    /* FORGE: Used as a bugfix */
++    public void addTileEntity(TileEntity te) {
++	List dest=scanningTileEntities ? field_20912_E :
++		loadedTileEntityList;
++	if(te.canUpdate()) dest.add(te);
+     }
+ 
+     public void updateEntity(Entity entity)
+@@ -1408,7 +1420,10 @@
                          if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -3296,7 +3557,65 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
                      }
  
                  }
-@@ -1681,13 +1689,18 @@
+@@ -1626,44 +1641,23 @@
+ 
+     public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
+     {
+-        if(!tileentity.isInvalid())
+-        {
+-            if(scanningTileEntities)
+-            {
+-                tileentity.xCoord = i;
+-                tileentity.yCoord = j;
+-                tileentity.zCoord = k;
+-                field_20912_E.add(tileentity);
+-            } else
+-            {
+-                loadedTileEntityList.add(tileentity);
+-                Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
+-                if(chunk != null)
+-                {
+-                    chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
+-                }
+-            }
+-        }
++	if(tileentity.isInvalid())
++		return;
++	List dest=scanningTileEntities ? field_20912_E :
++		loadedTileEntityList;
++	if(tileentity.canUpdate()) dest.add(tileentity);
++	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++	if(chunk != null) {
++		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
++	}
+     }
+ 
+     public void removeBlockTileEntity(int i, int j, int k)
+     {
+-        TileEntity tileentity = getBlockTileEntity(i, j, k);
+-        if(tileentity != null && scanningTileEntities)
+-        {
+-            tileentity.invalidate();
+-        } else
+-        {
+-            if(tileentity != null)
+-            {
+-                loadedTileEntityList.remove(tileentity);
+-            }
+-            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
+-            if(chunk != null)
+-            {
+-                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
+-            }
+-        }
++	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++	if(chunk != null) {
++		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
++	}
+     }
+ 
+     public boolean isBlockOpaqueCube(int i, int j, int k)
+@@ -1681,13 +1675,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {
          Block block = Block.blocksList[getBlockId(i, j, k)];
@@ -3322,7 +3641,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
      }
  
      public boolean updatingLighting()
-@@ -2178,6 +2191,7 @@
+@@ -2178,6 +2177,7 @@
          {
              block = null;
          }
@@ -3330,7 +3649,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -2601,7 +2615,7 @@
+@@ -2601,7 +2601,7 @@
      public int field_27080_i;
      public boolean editingBlocks;
      private long lockTimestamp;
@@ -3339,3 +3658,35 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
      public int difficultySetting;
      public Random rand;
      public boolean isNewWorld;
+diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/WorldServer.java ../src_work/minecraft_server/net/minecraft/src/WorldServer.java
+--- ../src_base/minecraft_server/net/minecraft/src/WorldServer.java	2011-09-08 13:52:47.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/WorldServer.java	2011-09-08 16:26:47.000000000 -0400
+@@ -54,15 +54,19 @@
+     public List getTileEntityList(int i, int j, int k, int l, int i1, int j1)
+     {
+         ArrayList arraylist = new ArrayList();
+-        for(int k1 = 0; k1 < loadedTileEntityList.size(); k1++)
+-        {
+-            TileEntity tileentity = (TileEntity)loadedTileEntityList.get(k1);
+-            if(tileentity.xCoord >= i && tileentity.yCoord >= j && tileentity.zCoord >= k && tileentity.xCoord < l && tileentity.yCoord < i1 && tileentity.zCoord < j1)
+-            {
+-                arraylist.add(tileentity);
+-            }
+-        }
+-
++	for(int x=(i>>4); x<=(l>>4); x++) 
++	for(int z=(k>>4); z<=(j1>>4); z++) {
++		Chunk ch=getChunkFromChunkCoords(x,z);
++		if(ch==null) continue;
++		for(Object ob : ch.chunkTileEntityMap.values()) {
++			TileEntity te=(TileEntity)ob;
++			if(te.xCoord>=i && te.yCoord>=j && te.zCoord>=k
++					&& te.xCoord<l && te.yCoord<i1 &&
++					te.zCoord<j1) {
++				arraylist.add(te);
++			}
++		}
++	}
+         return arraylist;
+     }
+ 
