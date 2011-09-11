@@ -23,7 +23,7 @@ if [ ! -d src_base ] ; then
 	./decompile.sh
 	pushd src > /dev/null
 
-	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
+	find . -name *.java -exec sed -i\"\" 's/\r//g' \{\} \;
 	patch -p2 -i ../forge/modLoaderMP.patch
 	patch -p1 -i ../forge/mlprop.patch
 
