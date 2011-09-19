@@ -24,7 +24,7 @@ if [ ! -d src_base ] ; then
 	pushd src > /dev/null
 
 	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-	patch -p2 -i ../forge/modLoaderMP.patch
+#	patch -p2 -i ../forge/modLoaderMP.patch
 	patch -p1 -i ../forge/mlprop.patch
 
 	popd > /dev/null

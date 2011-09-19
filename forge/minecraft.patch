@@ -1,17 +1,17 @@
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButton.java ../src_work/minecraft/net/minecraft/src/BlockButton.java
---- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-09-18 17:51:10.000000000 -0400
 @@ -41,36 +41,36 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
      {
 -        if(l == 2 && world.isBlockNormalCube(i, j, k + 1))
-+        if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
++	if(l == 2 && world.isBlockSolidOnSide(i, j, k + 1,2))
          {
              return true;
          }
 -        if(l == 3 && world.isBlockNormalCube(i, j, k - 1))
-+        if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
++	if(l == 3 && world.isBlockSolidOnSide(i, j, k - 1,3))
          {
              return true;
          }
@@ -32,7 +32,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButt
              return true;
          }
 -        if(world.isBlockNormalCube(i + 1, j, k))
-+        if(world.isBlockSolidOnSide(i + 1, j, k,4))
++	if(world.isBlockSolidOnSide(i + 1, j, k,4))
          {
              return true;
          }
@@ -119,12 +119,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButt
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChest.java ../src_work/minecraft/net/minecraft/src/BlockChest.java
---- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-09-08 13:52:48.000000000 -0400
-@@ -230,23 +230,23 @@
-     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
-     {
-         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
+--- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-09-18 17:52:42.000000000 -0400
+@@ -423,23 +423,23 @@
+         {
+             return true;
+         }
 -        if(world.isBlockNormalCube(i, j + 1, k))
 +        if(world.isBlockSolidOnSide(i, j + 1, k,0))
          {
@@ -151,8 +151,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChes
              return true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor.java ../src_work/minecraft/net/minecraft/src/BlockDoor.java
---- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-09-18 17:54:16.000000000 -0400
 @@ -178,7 +178,7 @@
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
@@ -162,27 +162,27 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor
              {
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
-@@ -241,7 +241,7 @@
+@@ -242,7 +242,7 @@
              return false;
          } else
          {
 -            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
-+            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
+++            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
          }
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
---- ../src_base/minecraft/net/minecraft/src/Block.java	2011-09-08 13:52:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-09-08 13:52:48.000000000 -0400
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
+--- ../src_base/minecraft/net/minecraft/src/Block.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-09-18 18:00:27.000000000 -0400
+@@ -4,6 +4,7 @@
  
  package net.minecraft.src;
-+import net.minecraft.src.forge.ForgeHooks;
  
++import net.minecraft.src.forge.ForgeHooks;
  import java.util.ArrayList;
  import java.util.Random;
-@@ -149,7 +150,8 @@
+ 
+@@ -151,12 +152,14 @@
  
      public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k)
      {
@@ -191,8 +191,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
 +		getLightValue(iblockaccess,i,j,k));
      }
  
+     public int func_35275_c(IBlockAccess iblockaccess, int i, int j, int k)
+     {
+-        return iblockaccess.func_35451_b(i, j, k, lightValue[blockID]);
++        return iblockaccess.func_35451_b(i, j, k,
++		getLightValue(iblockaccess,i,j,k));
+     }
+ 
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
-@@ -276,19 +278,12 @@
+@@ -283,19 +286,12 @@
          return blockID;
      }
  
@@ -216,8 +223,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l)
-@@ -600,6 +595,86 @@
-         return blockMaterial.getMaterialMobility();
+@@ -618,6 +614,86 @@
+         return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
 +    /* FORGE: Allow a block to set illumination on a coordinate basis.
@@ -304,8 +311,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
      {
          try
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadder.java ../src_work/minecraft/net/minecraft/src/BlockLadder.java
---- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-09-18 18:04:12.000000000 -0400
 @@ -63,6 +63,11 @@
          return super.getSelectedBoundingBoxFromPool(world, i, j, k);
      }
@@ -389,8 +396,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadd
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLever.java ../src_work/minecraft/net/minecraft/src/BlockLever.java
---- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-09-18 18:07:05.000000000 -0400
 @@ -40,44 +40,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -510,29 +517,31 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLeve
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java
---- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:48.000000000 -0400
-@@ -46,7 +46,7 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-18 18:09:41.000000000 -0400
+@@ -46,7 +46,8 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
--        return world.isBlockNormalCube(i, j - 1, k);
-+        return world.isBlockSolidOnSide(i, j - 1, k,1);
+-        return world.isBlockNormalCube(i, j - 1, k) || world.getBlockId(i, j - 1, k) == Block.fence.blockID;
++        return world.isBlockSolidOnSide(i, j - 1, k,1)
++		|| world.getBlockId(i, j - 1, k) == Block.fence.blockID;
      }
  
      public void onBlockAdded(World world, int i, int j, int k)
-@@ -56,7 +56,7 @@
+@@ -56,7 +57,8 @@
      public void onNeighborBlockChange(World world, int i, int j, int k, int l)
      {
          boolean flag = false;
--        if(!world.isBlockNormalCube(i, j - 1, k))
+-        if(!world.isBlockNormalCube(i, j - 1, k) && world.getBlockId(i, j - 1, k) != Block.fence.blockID)
 +        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
++			&& world.getBlockId(i, j - 1, k) != Block.fence.blockID)
          {
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail.java ../src_work/minecraft/net/minecraft/src/BlockRail.java
---- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-09-18 18:12:22.000000000 -0400
 @@ -16,12 +16,12 @@
      public static final boolean isRailBlockAt(World world, int i, int j, int k)
      {
@@ -587,8 +596,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java
---- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-18 18:13:04.000000000 -0400
 @@ -27,7 +27,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -608,17 +617,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
              return false;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java
---- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:48.000000000 -0400
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
- 
- package net.minecraft.src;
-+import net.minecraft.src.forge.*;
- 
- import java.util.*;
- 
-@@ -53,7 +54,7 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-18 18:13:57.000000000 -0400
+@@ -53,7 +53,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -627,7 +628,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
      }
  
      private void updateAndPropagateCurrentStrength(World world, int i, int j, int k)
-@@ -451,6 +452,10 @@
+@@ -451,6 +451,10 @@
          {
              return false;
          }
@@ -639,8 +640,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
          {
              return true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorch.java ../src_work/minecraft/net/minecraft/src/BlockTorch.java
---- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-09-18 18:16:48.000000000 -0400
 @@ -41,24 +41,24 @@
  
      private boolean func_31032_h(World world, int i, int j, int k)
@@ -744,8 +745,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorc
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java
---- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-18 18:18:39.000000000 -0400
 @@ -147,7 +147,7 @@
          {
              j1--;
@@ -781,8 +782,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrap
 +    public static boolean disableValidation=false;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.java ../src_work/minecraft/net/minecraft/src/Chunk.java
---- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-09-08 13:52:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-09-08 16:31:16.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-09-18 18:38:26.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -791,10 +792,150 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
  
  import java.io.PrintStream;
  import java.util.*;
-@@ -249,6 +250,13 @@
+@@ -26,7 +27,6 @@
+         hasEntities = false;
+         lastSaveTime = 0L;
+         field_35846_u = false;
+-        world.getClass();
+         entities = new List[128 / 16];
+         worldObj = world;
+         xPosition = i;
+@@ -44,11 +44,8 @@
+     {
+         this(world, i, j);
+         blocks = abyte0;
+-        world.getClass();
+         data = new NibbleArray(abyte0.length, 7);
+-        world.getClass();
+         skylightMap = new NibbleArray(abyte0.length, 7);
+-        world.getClass();
+         blocklightMap = new NibbleArray(abyte0.length, 7);
+     }
+ 
+@@ -68,16 +65,12 @@
+ 
+     public void generateHeightMap()
+     {
+-        worldObj.getClass();
+         int i = 128 - 1;
+         for(int j = 0; j < 16; j++)
+         {
+             for(int k = 0; k < 16; k++)
+             {
+-                worldObj.getClass();
+                 int l = 128 - 1;
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 for(int i1 = j << 11 | k << 7; l > 0 && Block.lightOpacity[blocks[(i1 + l) - 1] & 0xff] == 0; l--) { }
+                 heightMap[k << 4 | j] = (byte)l;
+                 if(l < i)
+@@ -94,16 +87,12 @@
+ 
+     public void generateSkylightMap()
+     {
+-        worldObj.getClass();
+         int i = 128 - 1;
+         for(int j = 0; j < 16; j++)
+         {
+             for(int l = 0; l < 16; l++)
+             {
+-                worldObj.getClass();
+                 int j1 = 128 - 1;
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int k1;
+                 for(k1 = j << 11 | l << 7; j1 > 0 && Block.lightOpacity[blocks[(k1 + j1) - 1] & 0xff] == 0; j1--) { }
+                 heightMap[l << 4 | j] = (byte)j1;
+@@ -116,7 +105,6 @@
+                     continue;
+                 }
+                 int l1 = 15;
+-                worldObj.getClass();
+                 int i2 = 128 - 1;
+                 do
+                 {
+@@ -154,7 +142,6 @@
+ 
+     private void func_35839_k()
+     {
+-        worldObj.getClass();
+         if(worldObj.doChunksNearChunkExist(xPosition * 16 + 8, 128 / 2, zPosition * 16 + 8, 16))
+         {
+             for(int i = 0; i < 16; i++)
+@@ -216,7 +203,6 @@
+     {
+         if(l > k)
+         {
+-            worldObj.getClass();
+             if(worldObj.doChunksNearChunkExist(i, 128 / 2, j, 16))
+             {
+                 for(int i1 = k; i1 < l; i1++)
+@@ -237,8 +223,6 @@
+         {
+             i1 = j;
+         }
+-        worldObj.getClass();
+-        worldObj.getClass();
+         for(int j1 = i << 11 | k << 7; i1 > 0 && Block.lightOpacity[blocks[(j1 + i1) - 1] & 0xff] == 0; i1--) { }
+         if(i1 == l)
+         {
+@@ -251,7 +235,6 @@
+             lowestBlockHeight = i1;
+         } else
+         {
+-            worldObj.getClass();
+             int k1 = 128 - 1;
+             for(int i2 = 0; i2 < 16; i2++)
+             {
+@@ -320,8 +303,6 @@
+ 
+     public int getBlockID(int i, int j, int k)
+     {
+-        worldObj.getClass();
+-        worldObj.getClass();
+         return blocks[i << 11 | k << 7 | j] & 0xff;
+     }
+ 
+@@ -334,8 +315,6 @@
+             field_35845_c[j1] = -999;
+         }
+         int k1 = heightMap[k << 4 | i] & 0xff;
+-        worldObj.getClass();
+-        worldObj.getClass();
+         int l1 = blocks[i << 11 | k << 7 | j] & 0xff;
+         if(l1 == l && data.getNibble(i, j, k) == i1)
+         {
+@@ -343,8 +322,13 @@
+         }
+         int i2 = xPosition * 16 + i;
+         int j2 = zPosition * 16 + k;
+-        worldObj.getClass();
+-        worldObj.getClass();
++
++        if (Block.blocksList[l1] instanceof IOverrideReplace) {
++            IOverrideReplace iovr = (IOverrideReplace) Block.blocksList[l1];
++            if (!iovr.canReplaceBlock(worldObj, i2, j, j2, l))
++                return iovr.getReplacedSuccess();
++        }
++
+         blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
+         if(l1 != 0 && !worldObj.multiplayerWorld)
+         {
+@@ -410,8 +394,6 @@
+             field_35845_c[i1] = -999;
+         }
+         int j1 = heightMap[i1] & 0xff;
+-        worldObj.getClass();
+-        worldObj.getClass();
+         int k1 = blocks[i << 11 | k << 7 | j] & 0xff;
+         if(k1 == l)
+         {
+@@ -419,8 +401,13 @@
          }
          int l1 = xPosition * 16 + i;
          int i2 = zPosition * 16 + k;
+-        worldObj.getClass();
+-        worldObj.getClass();
 +
 +        if (Block.blocksList[k1] instanceof IOverrideReplace) {
 +            IOverrideReplace iovr = (IOverrideReplace) Block.blocksList[k1];
@@ -803,71 +944,55 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
 +        }
 +
          blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
-         if(k1 != 0 && !worldObj.multiplayerWorld)
+         if(k1 != 0)
          {
-@@ -292,6 +300,13 @@
-         }
-         int k1 = xPosition * 16 + i;
-         int l1 = zPosition * 16 + k;
-+
-+        if (Block.blocksList[j1] instanceof IOverrideReplace) {
-+            IOverrideReplace iovr = (IOverrideReplace) Block.blocksList[j1];
-+            if (!iovr.canReplaceBlock(worldObj, k1, j, l1, l))
-+                return iovr.getReplacedSuccess();
-+        }
-+
-         blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
-         if(j1 != 0)
+@@ -777,8 +764,6 @@
          {
-@@ -438,7 +453,7 @@
+             for(int l2 = k; l2 < j1; l2++)
              {
-                 return null;
-             }
--            BlockContainer blockcontainer = (BlockContainer)Block.blocksList[l];
-+            Block blockcontainer = Block.blocksList[l];
-             blockcontainer.onBlockAdded(worldObj, xPosition * 16 + i, j, zPosition * 16 + k);
-             tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
-         }
-@@ -460,7 +475,7 @@
-         setChunkBlockTileEntity(i, j, k, tileentity);
-         if(isChunkLoaded)
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int l3 = l1 << 11 | l2 << 7 | j;
+                 int l4 = i1 - j;
+                 System.arraycopy(abyte0, k1, blocks, l3, l4);
+@@ -792,8 +777,6 @@
          {
--            worldObj.loadedTileEntityList.add(tileentity);
-+            worldObj.addTileEntity(tileentity);
-         }
-     }
- 
-@@ -471,7 +486,7 @@
-         tileentity.xCoord = xPosition * 16 + i;
-         tileentity.yCoord = j;
-         tileentity.zCoord = zPosition * 16 + k;
--        if(getBlockID(i, j, k) == 0 || !(Block.blocksList[getBlockID(i, j, k)] instanceof BlockContainer))
-+        if(getBlockID(i, j, k) == 0 || !Block.isBlockContainer[getBlockID(i, j, k)])
+             for(int i3 = k; i3 < j1; i3++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int i4 = (i2 << 11 | i3 << 7 | j) >> 1;
+                 int i5 = (i1 - j) / 2;
+                 System.arraycopy(abyte0, k1, data.data, i4, i5);
+@@ -806,8 +789,6 @@
          {
-             System.out.println("Attempted to place a tile entity where there was no entity tile!");
-             return;
-@@ -496,6 +511,18 @@
-         }
-     }
- 
-+    /* FORGE: Used to remove only invalid TileEntities */
-+    public void cleanChunkBlockTileEntity(int i, int j, int k)
-+    {
-+        ChunkPosition chunkposition = new ChunkPosition(i, j, k);
-+        if(isChunkLoaded)
-+        {
-+            TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
-+	    if(tileentity!=null && tileentity.isInvalid())
-+		    chunkTileEntityMap.remove(chunkposition);
-+        }
-+    }
-+
-     public void onChunkLoad()
-     {
-         isChunkLoaded = true;
+             for(int j3 = k; j3 < j1; j3++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int j4 = (j2 << 11 | j3 << 7 | j) >> 1;
+                 int j5 = (i1 - j) / 2;
+                 System.arraycopy(abyte0, k1, blocklightMap.data, j4, j5);
+@@ -820,8 +801,6 @@
+         {
+             for(int k3 = k; k3 < j1; k3++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int k4 = (k2 << 11 | k3 << 7 | j) >> 1;
+                 int k5 = (i1 - j) / 2;
+                 System.arraycopy(abyte0, k1, skylightMap.data, k4, k5);
+@@ -880,7 +859,6 @@
+         int l = field_35845_c[k];
+         if(l == -999)
+         {
+-            worldObj.getClass();
+             int i1 = 128 - 1;
+             for(l = -1; i1 > 0 && l == -1;)
+             {
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRenderer.java ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-18 18:55:11.000000000 -0400
 @@ -7,6 +7,9 @@
  import java.util.*;
  import org.lwjgl.opengl.GL11;
@@ -886,10 +1011,11 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
          fxLayers = new List[4];
          rand = new Random();
          if(world != null)
-@@ -55,6 +59,18 @@
+@@ -55,7 +59,18 @@
              }
  
          }
+-
 +        for (int x = 0; x < effectList.size(); x++) {
 +            BlockTextureParticles entry = (BlockTextureParticles) effectList
 +                    .get(x);
@@ -902,21 +1028,22 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
 +            if (effectList.size() == 0)
 +                effectList.remove(x--);
 +        }
- 
      }
  
-@@ -93,11 +109,26 @@
+     public void renderParticles(Entity entity, float f)
+@@ -94,6 +109,7 @@
              for(int k = 0; k < fxLayers[i].size(); k++)
              {
                  EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
-+				if(entityfx instanceof EntityDiggingFX) continue;
++		if(entityfx instanceof EntityDiggingFX) continue;
+                 tessellator.func_35835_b(entityfx.func_35115_a(f));
                  entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
              }
- 
+@@ -101,6 +117,20 @@
              tessellator.draw();
          }
+ 
 +        Tessellator tessellator = Tessellator.instance;
-+
 +        for (int x = 0; x < effectList.size(); x++) {
 +            BlockTextureParticles entry = (BlockTextureParticles) effectList
 +                    .get(x);
@@ -929,24 +1056,25 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
 +            }
 +            tessellator.draw();
 +        }
- 
++
      }
  
-@@ -124,6 +155,13 @@
+     public void func_1187_b(Entity entity, float f)
+@@ -132,7 +162,12 @@
          {
              fxLayers[i].clear();
          }
-+		
+-
 +        for (int x = 0; x < effectList.size(); x++) {
 +            BlockTextureParticles entry = (BlockTextureParticles) effectList
 +                    .get(x);
 +            entry.effects.clear();
 +        }
 +        effectList.clear();
- 
      }
  
-@@ -145,7 +183,12 @@
+     public void addBlockDestroyEffects(int i, int j, int k, int l, int i1)
+@@ -153,7 +188,12 @@
                      double d1 = (double)j + ((double)l1 + 0.5D) / (double)j1;
                      double d2 = (double)k + ((double)i2 + 0.5D) / (double)j1;
                      int j2 = rand.nextInt(6);
@@ -960,7 +1088,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
                  }
  
              }
-@@ -190,16 +233,48 @@
+@@ -198,16 +238,48 @@
          {
              d = (double)i + block.maxX + (double)f;
          }
@@ -1011,9 +1139,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
      private Random rand;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiving.java ../src_work/minecraft/net/minecraft/src/EntityLiving.java
---- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:48.000000000 -0400
-@@ -555,7 +555,9 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-09-18 18:55:53.000000000 -0400
+@@ -624,7 +624,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);
          int k = MathHelper.floor_double(posZ);
@@ -1025,20 +1153,20 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiv
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
---- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:48.000000000 -0400
-@@ -6,6 +6,10 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-18 19:01:21.000000000 -0400
+@@ -4,6 +4,10 @@
  
- import java.util.*;
+ package net.minecraft.src;
  
 +import net.minecraft.src.forge.ArmorProperties;
 +import net.minecraft.src.forge.ISpecialArmor;
 +import net.minecraft.src.forge.ForgeHooks;
 +
+ import java.util.*;
+ 
  // Referenced classes of package net.minecraft.src:
- //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
- //            ChunkCoordinates, DataWatcher, Container, StatList, 
-@@ -316,6 +320,8 @@
+@@ -485,6 +489,8 @@
          worldObj.entityJoinedWorld(entityitem);
      }
  
@@ -1047,7 +1175,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -330,6 +336,24 @@
+@@ -507,6 +513,32 @@
          return f;
      }
  
@@ -1066,39 +1194,21 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
 +        {
 +            f /= 5F;
 +        }
++        if(func_35160_a(Potion.field_35675_e))
++        {
++            f *= 1.0F + (float)(func_35167_b(Potion.field_35675_e).func_35801_c() + 1) * 0.2F;
++        }
++        if(func_35160_a(Potion.field_35672_f))
++        {
++            f *= 1.0F - (float)(func_35167_b(Potion.field_35672_f).func_35801_c() + 1) * 0.2F;
++        }
 +        return f;
 +    }
 +
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -477,6 +501,25 @@
- 
-     protected void damageEntity(int i)
-     {
-+    	 boolean doRegularComputation = true;
-+         int initialDamage = i;
-+         
-+         for (ItemStack stack : inventory.armorInventory) {
-+             if (stack != null && stack.getItem() instanceof ISpecialArmor) {
-+                 ISpecialArmor armor = (ISpecialArmor) stack.getItem();
-+                 
-+                 ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
-+                 i = i - props.damageRemove;
-+                 doRegularComputation = doRegularComputation
-+                         && props.allowRegularComputation;
-+             }
-+         }
-+         
-+         if (!doRegularComputation) {
-+             super.damageEntity(i);
-+             return;
-+         }
-+        
-         int j = 25 - inventory.getTotalArmorValue();
-         int k = i * j + damageRemainder;
-         inventory.damageArmor(i);
-@@ -522,7 +565,9 @@
+@@ -720,7 +752,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -1108,7 +1218,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
      }
  
      public double getYOffset()
-@@ -594,6 +639,10 @@
+@@ -815,6 +849,10 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
@@ -1120,30 +1230,30 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
          {
              if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRenderer.java ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-08 13:52:48.000000000 -0400
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-18 19:03:56.000000000 -0400
+@@ -4,6 +4,7 @@
  
  package net.minecraft.src;
-+import net.minecraft.src.forge.ForgeHooksClient;
  
++import net.minecraft.src.forge.ForgeHooksClient;
+ import java.awt.image.BufferedImage;
  import java.nio.FloatBuffer;
- import java.util.List;
-@@ -573,8 +574,12 @@
-             {
-                 EntityPlayer entityplayer = (EntityPlayer)entityliving;
-                 GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
-+		if(!ForgeHooksClient.onBlockHighlight(renderglobal,entityplayer,
+ import java.util.Random;
+@@ -803,8 +804,12 @@
+                 {
+                     EntityPlayer entityplayer = (EntityPlayer)entityliving;
+                     GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
++		    if(!ForgeHooksClient.onBlockHighlight(renderglobal,entityplayer,
 +			mc.objectMouseOver,0,
 +			entityplayer.inventory.getCurrentItem(),f)) {
-                 renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
-                 renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
-+		}
-                 GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
+                     renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
+                     renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
++		    }
+                     GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
+                 }
              }
-             GL11.glBlendFunc(770, 771);
-@@ -619,8 +624,12 @@
+@@ -853,8 +858,12 @@
              {
                  EntityPlayer entityplayer1 = (EntityPlayer)entityliving;
                  GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
@@ -1157,17 +1267,17 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRen
              }
              renderRainSnow(f);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
---- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-09-08 13:52:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-09-08 13:52:48.000000000 -0400
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
- 
+--- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-09-18 19:05:02.000000000 -0400
+@@ -5,6 +5,7 @@
  package net.minecraft.src;
-+import net.minecraft.src.forge.ISpecialResistance;
  
  import java.util.*;
++import net.minecraft.src.forge.ISpecialResistance;
  
-@@ -65,7 +66,17 @@
+ // Referenced classes of package net.minecraft.src:
+ //            World, MathHelper, Block, ChunkPosition, 
+@@ -66,7 +67,17 @@
                          int i5 = worldObj.getBlockId(j4, k4, l4);
                          if(i5 > 0)
                          {
@@ -1187,8 +1297,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion
                          if(f1 > 0.0F)
                          {
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucket.java ../src_work/minecraft/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-09-18 19:06:31.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -1198,24 +1308,22 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
  // Referenced classes of package net.minecraft.src:
  //            Item, EntityPlayer, Vec3D, MathHelper, 
  //            World, MovingObjectPosition, EnumMovingObjectType, Material, 
-@@ -55,6 +57,13 @@
-             }
-             if(isFull == 0)
-             {
+@@ -60,6 +62,11 @@
+                 {
+                     return itemstack;
+                 }
 +                ItemStack customBucket = MinecraftForge.fillCustomBucket(world,
 +                        i, j, k);
-+            	
 +                if (customBucket != null) {
 +                   return customBucket;
 +                }
-+
                  if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
                  {
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
---- ../src_base/minecraft/net/minecraft/src/Item.java	2011-09-08 13:52:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-09-08 13:52:48.000000000 -0400
-@@ -75,6 +75,13 @@
+--- ../src_base/minecraft/net/minecraft/src/Item.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-09-18 19:07:25.000000000 -0400
+@@ -76,6 +76,13 @@
          return 1.0F;
      }
  
@@ -1230,8 +1338,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java
      {
          return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRenderer.java ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
---- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-18 19:10:03.000000000 -0400
 @@ -5,6 +5,10 @@
  package net.minecraft.src;
  
@@ -1241,9 +1349,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
 +import net.minecraft.src.forge.MinecraftForgeClient;
 +
  import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL13;
  
- // Referenced classes of package net.minecraft.src:
-@@ -31,18 +35,27 @@
+@@ -32,18 +36,27 @@
      public void renderItem(EntityLiving entityliving, ItemStack itemstack)
      {
          GL11.glPushMatrix();
@@ -1258,7 +1366,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
          {
              GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
 +            ForgeHooksClient.overrideTexture (Block.blocksList[itemstack.itemID]);
-             renderBlocksInstance.renderBlockOnInventory(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), entityliving.getEntityBrightness(1.0F));
+             renderBlocksInstance.renderBlockOnInventory(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), 1.0F);
          } else
          {
              if(itemstack.itemID < 256)
@@ -1273,8 +1381,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
              Tessellator tessellator = Tessellator.instance;
              int i = entityliving.getItemIcon(itemstack);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.java ../src_work/minecraft/net/minecraft/src/ItemTool.java
---- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-09-18 19:11:23.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -1309,21 +1417,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.
 +    public int damageVsEntity;
      protected EnumToolMaterial toolMaterial;
  }
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MetadataChunkBlock.java ../src_work/minecraft/net/minecraft/src/MetadataChunkBlock.java
---- ../src_base/minecraft/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:48.000000000 -0400
-@@ -95,7 +95,7 @@
-                     } else
-                     if(blockEnum == EnumSkyBlock.Block)
-                     {
--                        l3 = Block.lightValue[j3];
-+			l3 = (j3==0)?0:Block.blocksList[j3].getLightValue(world,k1,k2,l1);
-                     }
-                     if(k3 >= 15 && l3 == 0)
-                     {
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java
---- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-18 19:14:26.000000000 -0400
 @@ -35,4 +35,7 @@
      public int sideHit;
      public Vec3D hitVec;
@@ -1333,8 +1429,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObj
 +    public int subHit=-1;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerController.java ../src_work/minecraft/net/minecraft/src/PlayerController.java
---- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-09-18 19:15:17.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1343,7 +1439,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
  
  import net.minecraft.client.Minecraft;
  
-@@ -71,6 +72,7 @@
+@@ -64,6 +65,7 @@
              if(itemstack1.stackSize == 0)
              {
                  entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
@@ -1351,7 +1447,85 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
              }
              return true;
          } else
-@@ -98,6 +100,12 @@
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-18 19:22:49.000000000 -0400
+@@ -91,7 +91,7 @@
+             {
+                 Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
+             }
+-            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
++            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
+             {
+                 sendBlockRemoved(i, j, k, l);
+             } else
+@@ -137,7 +137,7 @@
+                 return;
+             }
+             Block block = Block.blocksList[i1];
+-            curBlockDamageMP += block.blockStrength(mc.thePlayer);
++            curBlockDamageMP += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
+             if(field_9441_h % 4F == 0.0F && block != null)
+             {
+                 mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+@@ -204,6 +204,13 @@
+     {
+         syncCurrentPlayItem();
+         netClientHandler.addToSendQueue(new Packet15Place(i, j, k, l, entityplayer.inventory.getCurrentItem()));
++
++        if (itemstack != null && itemstack.getItem() instanceof IUseItemFirst) {
++            IUseItemFirst iuif = (IUseItemFirst) itemstack.getItem();
++            if (iuif.onItemUseFirst(itemstack, entityplayer, world, i, j, k, l)) {
++                return true;
++            }
++        }
+         int i1 = world.getBlockId(i, j, k);
+         if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
+         {
+@@ -223,7 +230,11 @@
+             return flag;
+         } else
+         {
+-            return itemstack.useItem(entityplayer, world, i, j, k, l);
++            if(!itemstack.useItem(entityplayer, world, i, j, k, l))
++		    return false;
++            if(itemstack.stackSize == 0)
++		ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack);
++	    return true;
+         }
+     }
+ 
+diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-18 19:27:32.000000000 -0400
+@@ -42,7 +42,7 @@
+         int j1 = mc.theWorld.getBlockMetadata(i, j, k);
+         boolean flag = super.sendBlockRemoved(i, j, k, l);
+         ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
+-        boolean flag1 = mc.thePlayer.canHarvestBlock(Block.blocksList[i1]);
++        boolean flag1 = Block.blocksList[i1].canHarvestBlock(mc.thePlayer,j1);
+         if(itemstack != null)
+         {
+             itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
+@@ -71,7 +71,7 @@
+         {
+             Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
+         }
+-        if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
++        if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
+         {
+             sendBlockRemoved(i, j, k, l);
+         }
+@@ -102,7 +102,7 @@
+                 return;
+             }
+             Block block = Block.blocksList[i1];
+-            curBlockDamage += block.blockStrength(mc.thePlayer);
++            curBlockDamage += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
+             if(field_1069_h % 4F == 0.0F && block != null)
+             {
+                 mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+@@ -165,6 +165,12 @@
  
      public boolean sendPlaceBlock(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -1364,7 +1538,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -108,7 +116,11 @@
+@@ -175,7 +181,11 @@
              return false;
          } else
          {
@@ -1377,136 +1551,85 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
          }
      }
  
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
---- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-08 13:52:48.000000000 -0400
-@@ -63,7 +63,7 @@
-             {
-                 Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
-             }
--            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
-+            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
-             {
-                 sendBlockRemoved(i, j, k, l);
-             } else
-@@ -106,7 +106,7 @@
-                 return;
-             }
-             Block block = Block.blocksList[i1];
--            curBlockDamageMP += block.blockStrength(mc.thePlayer);
-+            curBlockDamageMP += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
-             if(field_9441_h % 4F == 0.0F && block != null)
-             {
-                 mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
-diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
---- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-08 13:52:48.000000000 -0400
-@@ -37,7 +37,7 @@
-         int j1 = mc.theWorld.getBlockMetadata(i, j, k);
-         boolean flag = super.sendBlockRemoved(i, j, k, l);
-         ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
--        boolean flag1 = mc.thePlayer.canHarvestBlock(Block.blocksList[i1]);
-+        boolean flag1 = Block.blocksList[i1].canHarvestBlock(mc.thePlayer,j1);
-         if(itemstack != null)
-         {
-             itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
-@@ -62,7 +62,7 @@
-         {
-             Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
-         }
--        if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
-+        if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
-         {
-             sendBlockRemoved(i, j, k, l);
-         }
-@@ -89,7 +89,7 @@
-                 return;
-             }
-             Block block = Block.blocksList[i1];
--            curBlockDamage += block.blockStrength(mc.thePlayer);
-+            curBlockDamage += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
-             if(field_1069_h % 4F == 0.0F && block != null)
-             {
-                 mc.sndManager.playSound(block.stepSound.func_1145_d(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
---- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-08 13:52:48.000000000 -0400
-@@ -2171,7 +2171,7 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-18 19:30:11.000000000 -0400
+@@ -2980,7 +2980,7 @@
              colorBlueTopRight *= f27;
+             int j2 = block.getBlockTexture(blockAccess, i, j, k, 2);
+             renderEastFace(block, i, j, k, j2);
+-            if(cfgGrassFix && j2 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && j2 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3085,7 +3085,7 @@
+             colorBlueTopRight *= f28;
+             int k2 = block.getBlockTexture(blockAccess, i, j, k, 3);
+             renderWestFace(block, i, j, k, block.getBlockTexture(blockAccess, i, j, k, 3));
+-            if(cfgGrassFix && k2 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && k2 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3190,7 +3190,7 @@
+             colorBlueTopRight *= f29;
+             int l2 = block.getBlockTexture(blockAccess, i, j, k, 4);
+             renderNorthFace(block, i, j, k, l2);
+-            if(cfgGrassFix && l2 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && l2 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3295,7 +3295,7 @@
+             colorBlueTopRight *= f30;
+             int i3 = block.getBlockTexture(blockAccess, i, j, k, 5);
+             renderSouthFace(block, i, j, k, i3);
+-            if(cfgGrassFix && i3 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && i3 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3388,7 +3388,7 @@
+             tessellator.setColorOpaque_F(f11, f14, f17);
              int i1 = block.getBlockTexture(blockAccess, i, j, k, 2);
              renderEastFace(block, i, j, k, i1);
 -            if(cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
 +            if(Tessellator.instance.defaultTexture && cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
              {
-                 colorRedTopLeft *= f;
-                 colorRedBottomLeft *= f;
-@@ -2256,7 +2256,7 @@
-             colorBlueTopRight *= f28;
+                 tessellator.setColorOpaque_F(f11 * f, f14 * f1, f17 * f2);
+                 renderEastFace(block, i, j, k, 38);
+@@ -3401,7 +3401,7 @@
+             tessellator.setColorOpaque_F(f11, f14, f17);
              int j1 = block.getBlockTexture(blockAccess, i, j, k, 3);
-             renderWestFace(block, i, j, k, block.getBlockTexture(blockAccess, i, j, k, 3));
+             renderWestFace(block, i, j, k, j1);
 -            if(cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
 +            if(Tessellator.instance.defaultTexture && cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
              {
-                 colorRedTopLeft *= f;
-                 colorRedBottomLeft *= f;
-@@ -2341,7 +2341,7 @@
-             colorBlueTopRight *= f29;
+                 tessellator.setColorOpaque_F(f11 * f, f14 * f1, f17 * f2);
+                 renderWestFace(block, i, j, k, 38);
+@@ -3414,7 +3414,7 @@
+             tessellator.setColorOpaque_F(f12, f15, f18);
              int k1 = block.getBlockTexture(blockAccess, i, j, k, 4);
              renderNorthFace(block, i, j, k, k1);
 -            if(cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
 +            if(Tessellator.instance.defaultTexture && cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
              {
-                 colorRedTopLeft *= f;
-                 colorRedBottomLeft *= f;
-@@ -2426,7 +2426,7 @@
-             colorBlueTopRight *= f30;
+                 tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
+                 renderNorthFace(block, i, j, k, 38);
+@@ -3427,7 +3427,7 @@
+             tessellator.setColorOpaque_F(f12, f15, f18);
              int l1 = block.getBlockTexture(blockAccess, i, j, k, 5);
              renderSouthFace(block, i, j, k, l1);
 -            if(cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
 +            if(Tessellator.instance.defaultTexture && cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
              {
-                 colorRedTopLeft *= f;
-                 colorRedBottomLeft *= f;
-@@ -2510,7 +2510,7 @@
-             tessellator.setColorOpaque_F(f11 * f22, f14 * f22, f17 * f22);
-             int l = block.getBlockTexture(blockAccess, i, j, k, 2);
-             renderEastFace(block, i, j, k, l);
--            if(cfgGrassFix && l == 3 && overrideBlockTexture < 0)
-+            if(Tessellator.instance.defaultTexture && cfgGrassFix && l == 3 && overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f11 * f22 * f, f14 * f22 * f1, f17 * f22 * f2);
-                 renderEastFace(block, i, j, k, 38);
-@@ -2527,7 +2527,7 @@
-             tessellator.setColorOpaque_F(f11 * f23, f14 * f23, f17 * f23);
-             int i1 = block.getBlockTexture(blockAccess, i, j, k, 3);
-             renderWestFace(block, i, j, k, i1);
--            if(cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
-+            if(Tessellator.instance.defaultTexture && cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f11 * f23 * f, f14 * f23 * f1, f17 * f23 * f2);
-                 renderWestFace(block, i, j, k, 38);
-@@ -2544,7 +2544,7 @@
-             tessellator.setColorOpaque_F(f12 * f24, f15 * f24, f18 * f24);
-             int j1 = block.getBlockTexture(blockAccess, i, j, k, 4);
-             renderNorthFace(block, i, j, k, j1);
--            if(cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
-+            if(Tessellator.instance.defaultTexture && cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f12 * f24 * f, f15 * f24 * f1, f18 * f24 * f2);
-                 renderNorthFace(block, i, j, k, 38);
-@@ -2561,7 +2561,7 @@
-             tessellator.setColorOpaque_F(f12 * f25, f15 * f25, f18 * f25);
-             int k1 = block.getBlockTexture(blockAccess, i, j, k, 5);
-             renderSouthFace(block, i, j, k, k1);
--            if(cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
-+            if(Tessellator.instance.defaultTexture && cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f12 * f25 * f, f15 * f25 * f1, f18 * f25 * f2);
+                 tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
                  renderSouthFace(block, i, j, k, 38);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEngine.java ../src_work/minecraft/net/minecraft/src/RenderEngine.java
---- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-09-08 13:52:48.000000000 -0400
-@@ -126,6 +126,9 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-09-18 19:33:08.000000000 -0400
+@@ -128,6 +128,9 @@
          }
          try
          {
@@ -1517,9 +1640,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEng
              GLAllocation.generateTextureNames(singleIntBuffer);
              int i = singleIntBuffer.get(0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlobal.java ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
---- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-08 13:52:48.000000000 -0400
-@@ -1558,8 +1558,8 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-18 19:33:55.000000000 -0400
+@@ -1635,8 +1635,8 @@
      }
  
      public List tileEntities;
@@ -1530,7 +1653,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlo
      private List worldRenderersToUpdate;
      private WorldRenderer sortedWorldRenderers[];
      private WorldRenderer worldRenderers[];
-@@ -1567,8 +1567,8 @@
+@@ -1644,8 +1644,8 @@
      private int renderChunksTall;
      private int renderChunksDeep;
      private int glRenderListBase;
@@ -1542,26 +1665,14 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlo
      private boolean occlusionEnabled;
      private int cloudOffsetX;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
---- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-09-08 13:52:48.000000000 -0400
-@@ -5,6 +5,11 @@
- package net.minecraft.src;
- 
- import java.util.Random;
-+
-+import net.minecraft.src.forge.ForgeHooksClient;
-+import net.minecraft.src.forge.ICustomItemRenderer;
-+import net.minecraft.src.forge.MinecraftForgeClient;
-+
- import org.lwjgl.opengl.GL11;
- 
- // Referenced classes of package net.minecraft.src:
-@@ -47,10 +52,36 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-09-18 19:41:51.000000000 -0400
+@@ -47,10 +47,36 @@
          }
          GL11.glTranslatef((float)d, (float)d1 + f2, (float)d2);
          GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
 -        if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
-+        
++
 +        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(itemstack.itemID);
 +        
 +        if (customRenderer != null) {
@@ -1592,9 +1703,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              loadTexture("/terrain.png");
 +            ForgeHooksClient.overrideTexture(Block.blocksList[itemstack.itemID]);
              float f4 = 0.25F;
-             if(!Block.blocksList[itemstack.itemID].renderAsNormalBlock() && itemstack.itemID != Block.stairSingle.blockID && Block.blocksList[itemstack.itemID].getRenderType() != 16)
-             {
-@@ -78,10 +109,12 @@
+             int j = Block.blocksList[itemstack.itemID].getRenderType();
+             if(j == 1 || j == 19 || j == 12 || j == 2)
+@@ -80,9 +106,11 @@
              if(itemstack.itemID < 256)
              {
                  loadTexture("/terrain.png");
@@ -1602,21 +1713,11 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              } else
              {
                  loadTexture("/gui/items.png");
--            }
 +                ForgeHooksClient.overrideTexture(Item.itemsList[itemstack.itemID]);
-+            }            
+             }
              Tessellator tessellator = Tessellator.instance;
-             float f6 = (float)((i % 16) * 16 + 0) / 256F;
-             float f8 = (float)((i % 16) * 16 + 16) / 256F;
-@@ -92,6 +125,7 @@
-             float f14 = 0.25F;
-             if(field_27004_a)
-             {
-+            	
-                 int k = Item.itemsList[itemstack.itemID].getColorFromDamage(itemstack.getItemDamage());
-                 float f15 = (float)(k >> 16 & 0xff) / 255F;
-                 float f17 = (float)(k >> 8 & 0xff) / 255F;
-@@ -127,10 +161,37 @@
+             float f5 = (float)((i % 16) * 16 + 0) / 256F;
+@@ -129,10 +157,37 @@
  
      public void drawItemIntoGui(FontRenderer fontrenderer, RenderEngine renderengine, int i, int j, int k, int l, int i1)
      {
@@ -1655,15 +1756,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              Block block = Block.blocksList[j1];
              GL11.glPushMatrix();
              GL11.glTranslatef(l - 2, i1 + 3, -3F);
-@@ -152,16 +213,17 @@
-             renderBlocks.renderBlockOnInventory(block, j, 1.0F);
-             renderBlocks.useInventoryTint = true;
-             GL11.glPopMatrix();
--        } else
--        if(k >= 0)
-+        } else if(k >= 0)
-         {
-             GL11.glDisable(2896 /*GL_LIGHTING*/);
+@@ -161,9 +216,11 @@
              if(i < 256)
              {
                  renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
@@ -1676,17 +1769,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              int k1 = Item.itemsList[i].getColorFromDamage(j);
              float f = (float)(k1 >> 16 & 0xff) / 255F;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPlayer.java ../src_work/minecraft/net/minecraft/src/RenderPlayer.java
---- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-08 13:52:48.000000000 -0400
-@@ -4,6 +4,7 @@
- 
- package net.minecraft.src;
- 
-+import net.minecraft.src.forge.IArmorTextureProvider;
- import net.minecraft.client.Minecraft;
- import org.lwjgl.opengl.GL11;
- 
-@@ -34,7 +35,14 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-18 19:43:11.000000000 -0400
+@@ -34,7 +34,14 @@
              if(item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -1703,8 +1788,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPla
                  modelbiped.bipedHead.showModel = i == 0;
                  modelbiped.bipedHeadwear.showModel = i == 0;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCrafting.java ../src_work/minecraft/net/minecraft/src/SlotCrafting.java
---- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-18 19:43:41.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1716,34 +1801,25 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCraft
 @@ -60,6 +61,7 @@
              thePlayer.addStat(AchievementList.buildSword, 1);
          }
-         ModLoader.TakenFromCrafting(thePlayer, itemstack);
+         ModLoader.TakenFromCrafting(thePlayer, itemstack, craftMatrix);
 +	ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
          for(int i = 0; i < craftMatrix.getSizeInventory(); i++)
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellator.java ../src_work/minecraft/net/minecraft/src/Tessellator.java
---- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-08 13:52:48.000000000 -0400
-@@ -6,6 +6,7 @@
- 
- import java.io.PrintStream;
- import java.nio.*;
-+import java.util.*;
- import org.lwjgl.opengl.*;
- 
- // Referenced classes of package net.minecraft.src:
-@@ -13,9 +14,7 @@
- 
+--- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-18 19:59:43.000000000 -0400
+@@ -13,8 +13,7 @@
  public class Tessellator
  {
--
+ 
 -    private Tessellator(int i)
 -    {
 +    public Tessellator() {
          vertexCount = 0;
          hasColor = false;
          hasTexture = false;
-@@ -24,20 +23,10 @@
+@@ -24,21 +23,10 @@
          addedVertices = 0;
          isColorDisabled = false;
          isDrawing = false;
@@ -1754,6 +1830,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 -        byteBuffer = GLAllocation.createDirectByteBuffer(i * 4);
 -        intBuffer = byteBuffer.asIntBuffer();
 -        floatBuffer = byteBuffer.asFloatBuffer();
+-        field_35836_g = byteBuffer.asShortBuffer();
 -        rawBuffer = new int[i];
 -        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
 -        if(useVBO)
@@ -1767,7 +1844,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
      }
  
      public void draw()
-@@ -47,12 +36,20 @@
+@@ -48,12 +36,20 @@
              throw new IllegalStateException("Not tesselating!");
          }
          isDrawing = false;
@@ -1792,7 +1869,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
              if(useVBO)
              {
                  vboIndex = (vboIndex + 1) % vboCount;
-@@ -106,10 +103,10 @@
+@@ -121,10 +117,10 @@
              GL11.glEnableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
              if(drawMode == 7 && convertQuadsToTriangles)
              {
@@ -1805,7 +1882,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
              }
              GL11.glDisableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
              if(hasTexture)
-@@ -125,6 +122,10 @@
+@@ -146,6 +142,10 @@
                  GL11.glDisableClientState(32885 /*GL_NORMAL_ARRAY_EXT*/);
              }
          }
@@ -1816,7 +1893,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
          reset();
      }
  
-@@ -237,6 +238,15 @@
+@@ -265,6 +265,15 @@
  
      public void addVertex(double d, double d1, double d2)
      {
@@ -1832,7 +1909,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
          addedVertices++;
          if(drawMode == 7 && convertQuadsToTriangles && addedVertices % 4 == 0)
          {
-@@ -278,11 +288,6 @@
+@@ -314,11 +323,6 @@
          rawBuffer[rawBufferIndex + 2] = Float.floatToRawIntBits((float)(d2 + zOffset));
          rawBufferIndex += 8;
          vertexCount++;
@@ -1844,18 +1921,19 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
      }
  
      public void setColorOpaque_I(int i)
-@@ -335,9 +340,7 @@
+@@ -367,10 +371,7 @@
  
-     private static boolean convertQuadsToTriangles = true;
+     private static boolean convertQuadsToTriangles = false;
      private static boolean tryVBO = false;
 -    private ByteBuffer byteBuffer;
 -    private IntBuffer intBuffer;
 -    private FloatBuffer floatBuffer;
+-    private ShortBuffer field_35836_g;
 +    private static boolean useVBO = false;
      private int rawBuffer[];
      private int vertexCount;
      private double textureU;
-@@ -349,17 +352,42 @@
+@@ -384,17 +385,42 @@
      private int rawBufferIndex;
      private int addedVertices;
      private boolean isColorDisabled;
@@ -1872,11 +1950,10 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 -    private boolean isDrawing;
 -    private boolean useVBO;
 -    private IntBuffer vertexBuffers;
-+    public boolean isDrawing;
      private int vboIndex;
 -    private int vboCount;
 -    private int bufferSize;
-+
+ 
 +    public static boolean renderingWorldRenderer=false;
 +    public boolean defaultTexture=false;
 +    private int rawBufferSize;
@@ -1887,6 +1964,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +    private static ByteBuffer byteBuffer;
 +    private static IntBuffer intBuffer;
 +    private static FloatBuffer floatBuffer;
++    private static ShortBuffer field_35836_g;
 +    public static Tessellator instance;
 +
 +    static {
@@ -1898,6 +1976,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +        byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
 +        intBuffer = byteBuffer.asIntBuffer();
 +        floatBuffer = byteBuffer.asFloatBuffer();
++        field_35836_g = byteBuffer.asShortBuffer();
 +        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
 +        vboCount = 10;
 +        if(useVBO)
@@ -1906,12 +1985,11 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
 +        }
 +    }
- 
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntity.java ../src_work/minecraft/net/minecraft/src/TileEntity.java
---- ../src_base/minecraft/net/minecraft/src/TileEntity.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	2011-09-08 15:23:42.000000000 -0400
-@@ -60,6 +60,13 @@
+--- ../src_base/minecraft/net/minecraft/src/TileEntity.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	2011-09-18 20:01:14.000000000 -0400
+@@ -61,6 +61,13 @@
      {
      }
  
@@ -1926,8 +2004,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
      {
          TileEntity tileentity = null;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java
---- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-08 13:52:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-18 20:02:27.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -1953,87 +2031,21 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
          }
      }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.java ../src_work/minecraft/net/minecraft/src/World.java
---- ../src_base/minecraft/net/minecraft/src/World.java	2011-09-08 13:52:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/World.java	2011-09-08 16:26:17.000000000 -0400
-@@ -313,7 +313,11 @@
+--- ../src_base/minecraft/net/minecraft/src/World.java	2011-09-18 17:42:58.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/World.java	2011-09-18 20:07:22.000000000 -0400
+@@ -336,7 +336,10 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
 -        return getBlockId(i, j, k) == 0;
 +    	int iBlockID = getBlockId( i, j, k );
-+
 +    	if ( iBlockID == 0 )
 +    		return true;
 +	return Block.blocksList[iBlockID].isAirBlock(this,i,j,k);
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -711,9 +715,10 @@
-         if(enumskyblock == EnumSkyBlock.Block)
-         {
-             int i1 = getBlockId(i, j, k);
--            if(Block.lightValue[i1] > l)
-+	    int bl=(i1==0)?0:Block.blocksList[i1].getLightValue(this,i,j,k);
-+            if(bl > l)
-             {
--                l = Block.lightValue[i1];
-+                l = bl;
-             }
-         }
-         if(getSavedLightValue(enumskyblock, i, j, k) != l)
-@@ -1408,7 +1413,7 @@
-                 Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
-                 if(chunk != null)
-                 {
--                    chunk.removeChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
-+                    chunk.cleanChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
-                 }
-             }
-         } while(true);
-@@ -1429,12 +1434,13 @@
-                     {
-                         loadedTileEntityList.add(tileentity1);
-                     }
-+		    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
-+		} else {
-                     Chunk chunk1 = getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
-                     if(chunk1 != null)
-                     {
--                        chunk1.setChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf, tileentity1);
-+                        chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf);
-                     }
--                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
-                 }
-             } while(true);
-             addedTileEntityList.clear();
-@@ -1443,13 +1449,19 @@
- 
-     public void addTileEntity(Collection collection)
-     {
--        if(scanningTileEntities)
--        {
--            addedTileEntityList.addAll(collection);
--        } else
--        {
--            loadedTileEntityList.addAll(collection);
--        }
-+	List dest=scanningTileEntities ? addedTileEntityList :
-+		loadedTileEntityList;
-+	for(Object ob : collection) {
-+		TileEntity te=(TileEntity)ob;
-+		if(te.canUpdate()) dest.add(te);
-+	}
-+    }
-+
-+    /* FORGE: Used as a bugfix */
-+    public void addTileEntity(TileEntity te) {
-+	List dest=scanningTileEntities ? addedTileEntityList :
-+		loadedTileEntityList;
-+	if(te.canUpdate()) dest.add(te);
-     }
- 
-     public void updateEntity(Entity entity)
-@@ -1607,7 +1619,10 @@
+@@ -1684,7 +1687,10 @@
                          if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -2045,65 +2057,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
                      }
  
                  }
-@@ -1840,44 +1855,23 @@
- 
-     public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
-     {
--        if(!tileentity.isInvalid())
--        {
--            if(scanningTileEntities)
--            {
--                tileentity.xCoord = i;
--                tileentity.yCoord = j;
--                tileentity.zCoord = k;
--                addedTileEntityList.add(tileentity);
--            } else
--            {
--                loadedTileEntityList.add(tileentity);
--                Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
--                if(chunk != null)
--                {
--                    chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
--                }
--            }
--        }
-+	if(tileentity.isInvalid())
-+		return;
-+	List dest=scanningTileEntities ? addedTileEntityList :
-+		loadedTileEntityList;
-+	if(tileentity.canUpdate()) dest.add(tileentity);
-+	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+	if(chunk != null) {
-+		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
-+	}
-     }
- 
-     public void removeBlockTileEntity(int i, int j, int k)
-     {
--        TileEntity tileentity = getBlockTileEntity(i, j, k);
--        if(tileentity != null && scanningTileEntities)
--        {
--            tileentity.invalidate();
--        } else
--        {
--            if(tileentity != null)
--            {
--                loadedTileEntityList.remove(tileentity);
--            }
--            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
--            if(chunk != null)
--            {
--                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
--            }
--        }
-+	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+	if(chunk != null) {
-+		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
-+	}
-     }
- 
-     public boolean isBlockOpaqueCube(int i, int j, int k)
-@@ -1895,13 +1889,18 @@
+@@ -1977,13 +1983,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {
          Block block = Block.blocksList[getBlockId(i, j, k)];
@@ -2129,7 +2083,16 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      }
  
      public void saveWorldIndirectly(IProgressUpdate iprogressupdate)
-@@ -2425,6 +2424,7 @@
+@@ -2308,7 +2319,7 @@
+ 
+     private int func_35458_d(int i, int j, int k, int l, int i1, int j1)
+     {
+-        int k1 = Block.lightValue[i1];
++	int k1=(i1==0)?0:Block.blocksList[i1].getLightValue(this,j,k,l);
+         int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
+         int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
+         int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
+@@ -2679,6 +2690,7 @@
          {
              block = null;
          }
@@ -2137,7 +2100,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -2913,7 +2913,7 @@
+@@ -3193,7 +3205,7 @@
      public int field_27172_i;
      public boolean editingBlocks;
      private long lockTimestamp;
@@ -2147,38 +2110,33 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      public Random rand;
      public boolean isNewWorld;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
---- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-08 13:52:48.000000000 -0400
-@@ -5,6 +5,9 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-18 20:12:00.000000000 -0400
+@@ -4,6 +4,8 @@
+ 
  package net.minecraft.src;
  
- import java.util.*;
-+
 +import net.minecraft.src.forge.ForgeHooksClient;
 +
+ import java.util.*;
  import org.lwjgl.opengl.GL11;
  
- // Referenced classes of package net.minecraft.src:
-@@ -125,8 +128,10 @@
+@@ -125,8 +127,9 @@
                              GL11.glTranslatef((float)(-sizeDepth) / 2.0F, (float)(-sizeHeight) / 2.0F, (float)(-sizeDepth) / 2.0F);
                              GL11.glScalef(f, f, f);
                              GL11.glTranslatef((float)sizeDepth / 2.0F, (float)sizeHeight / 2.0F, (float)sizeDepth / 2.0F);
 -                            tessellator.startDrawingQuads();
 -                            tessellator.setTranslationD(-posX, -posY, -posZ);
-+
 +			    ForgeHooksClient.beforeRenderPass(i2);
 +                            Tessellator.instance.startDrawingQuads();
 +                            Tessellator.instance.setTranslationD(-posX, -posY, -posZ);
                          }
                          if(i2 == 0 && Block.isBlockContainer[i3])
                          {
-@@ -136,17 +141,17 @@
-                                 tileEntityRenderers.add(tileentity);
-                             }
+@@ -142,15 +145,13 @@
+                         {
+                             flag1 = true;
                          }
-+
-                         Block block = Block.blocksList[i3];
-                         int j3 = block.getRenderBlockPass();
 -                        if(j3 != i2)
 -                        {
 -                            flag = true;
@@ -2189,7 +2147,6 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
 -                            flag1 |= renderblocks.renderBlockByRenderType(block, l2, j2, k2);
 -                        }
 +			if(j3>i2) flag=true;
-+
 +			if(!ForgeHooksClient.canRenderInPass(block,i2))
 +				continue;
 +
@@ -2199,7 +2156,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
                      }
  
                  }
-@@ -155,10 +160,11 @@
+@@ -159,10 +160,11 @@
  
              if(flag2)
              {
@@ -2213,7 +2170,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
              } else
              {
                  flag1 = false;
-@@ -251,7 +257,6 @@
+@@ -255,7 +257,6 @@
  
      public World worldObj;
      private int glRenderList;
@@ -2221,7 +2178,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
-@@ -282,8 +287,4 @@
+@@ -286,8 +287,4 @@
      public List tileEntityRenderers;
      private List tileEntities;
  
@@ -2231,8 +2188,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
 -    }
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockButton.java ../src_work/minecraft_server/net/minecraft/src/BlockButton.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-18 20:19:50.000000000 -0400
 @@ -41,36 +41,36 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -2351,12 +2308,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockChest.java ../src_work/minecraft_server/net/minecraft/src/BlockChest.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-08 13:52:48.000000000 -0400
-@@ -140,23 +140,23 @@
-     public boolean blockActivated(World world, int i, int j, int k, EntityPlayer entityplayer)
-     {
-         Object obj = (TileEntityChest)world.getBlockTileEntity(i, j, k);
+--- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-18 20:21:35.000000000 -0400
+@@ -328,23 +328,23 @@
+         {
+             return true;
+         }
 -        if(world.isBlockNormalCube(i, j + 1, k))
 +        if(world.isBlockSolidOnSide(i, j + 1, k,0))
          {
@@ -2383,8 +2340,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              return true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-18 20:22:48.000000000 -0400
 @@ -167,7 +167,7 @@
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
@@ -2394,7 +2351,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              {
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
-@@ -230,7 +230,7 @@
+@@ -231,7 +231,7 @@
              return false;
          } else
          {
@@ -2404,8 +2361,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Block.java ../src_work/minecraft_server/net/minecraft/src/Block.java
---- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-09-18 20:25:11.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2414,7 +2371,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
  
  import java.util.ArrayList;
  import java.util.Random;
-@@ -221,19 +222,12 @@
+@@ -223,19 +224,12 @@
          return blockID;
      }
  
@@ -2438,7 +2395,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l)
-@@ -526,6 +520,86 @@
+@@ -529,6 +523,86 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -2526,8 +2483,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      {
          try
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-18 20:28:10.000000000 -0400
 @@ -40,6 +40,11 @@
          return super.getCollisionBoundingBoxFromPool(world, i, j, k);
      }
@@ -2611,8 +2568,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLever.java ../src_work/minecraft_server/net/minecraft/src/BlockLever.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-18 20:31:37.000000000 -0400
 @@ -35,44 +35,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -2732,35 +2689,37 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-08 13:52:48.000000000 -0400
-@@ -46,7 +46,7 @@
+--- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-18 20:33:43.000000000 -0400
+@@ -46,7 +46,8 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
--        return world.isBlockNormalCube(i, j - 1, k);
-+        return world.isBlockSolidOnSide(i, j - 1, k,1);
+-        return world.isBlockNormalCube(i, j - 1, k) || world.getBlockId(i, j - 1, k) == Block.fence.blockID;
++        return world.isBlockSolidOnSide(i, j - 1, k,1) ||
++		world.getBlockId(i, j - 1, k) == Block.fence.blockID;
      }
  
      public void onBlockAdded(World world, int i, int j, int k)
-@@ -56,7 +56,7 @@
+@@ -56,7 +57,8 @@
      public void onNeighborBlockChange(World world, int i, int j, int k, int l)
      {
          boolean flag = false;
--        if(!world.isBlockNormalCube(i, j - 1, k))
-+        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+-        if(!world.isBlockNormalCube(i, j - 1, k) && world.getBlockId(i, j - 1, k) != Block.fence.blockID)
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1)
++			&& world.getBlockId(i, j - 1, k) != Block.fence.blockID)
          {
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRail.java ../src_work/minecraft_server/net/minecraft/src/BlockRail.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-18 20:36:04.000000000 -0400
 @@ -16,12 +16,12 @@
      public static final boolean isRailBlockAt(World world, int i, int j, int k)
      {
          int l = world.getBlockId(i, j, k);
 -        return l == Block.rail.blockID || l == Block.railPowered.blockID || l == Block.railDetector.blockID;
-+ 	return Block.blocksList[i] instanceof BlockRail;
++ 	return Block.blocksList[l] instanceof BlockRail;
      }
  
      public static final boolean isRailBlock(int i)
@@ -2809,8 +2768,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-18 20:37:01.000000000 -0400
 @@ -27,7 +27,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -2830,8 +2789,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              return false;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-18 20:37:35.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2861,8 +2820,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
          {
              return true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-18 20:40:00.000000000 -0400
 @@ -36,24 +36,24 @@
  
      private boolean func_31028_g(World world, int i, int j, int k)
@@ -2966,8 +2925,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-18 20:40:43.000000000 -0400
 @@ -130,7 +130,7 @@
          {
              j1--;
@@ -3003,8 +2962,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
 +    public static boolean disableValidation=false;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Chunk.java ../src_work/minecraft_server/net/minecraft/src/Chunk.java
---- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-09-08 16:31:36.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-09-18 20:42:37.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3013,84 +2972,170 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
  
  import java.io.PrintStream;
  import java.util.*;
-@@ -227,6 +228,13 @@
+@@ -68,16 +69,12 @@
+ 
+     public void generateSkylightMap()
+     {
+-        worldObj.getClass();
+         int i = 128 - 1;
+         for(int j = 0; j < 16; j++)
+         {
+             for(int l = 0; l < 16; l++)
+             {
+-                worldObj.getClass();
+                 int j1 = 128 - 1;
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int k1;
+                 for(k1 = j << 11 | l << 7; j1 > 0 && Block.lightOpacity[blocks[(k1 + j1) - 1] & 0xff] == 0; j1--) { }
+                 heightMap[l << 4 | j] = (byte)j1;
+@@ -90,7 +87,6 @@
+                     continue;
+                 }
+                 int l1 = 15;
+-                worldObj.getClass();
+                 int i2 = 128 - 1;
+                 do
+                 {
+@@ -128,7 +124,6 @@
+ 
+     private void func_35633_i()
+     {
+-        worldObj.getClass();
+         if(worldObj.doChunksNearChunkExist(xPosition * 16 + 8, 128 / 2, zPosition * 16 + 8, 16))
+         {
+             for(int i = 0; i < 16; i++)
+@@ -190,7 +185,6 @@
+     {
+         if(l > k)
+         {
+-            worldObj.getClass();
+             if(worldObj.doChunksNearChunkExist(i, 128 / 2, j, 16))
+             {
+                 for(int i1 = k; i1 < l; i1++)
+@@ -211,8 +205,6 @@
+         {
+             i1 = j;
+         }
+-        worldObj.getClass();
+-        worldObj.getClass();
+         for(int j1 = i << 11 | k << 7; i1 > 0 && Block.lightOpacity[blocks[(j1 + i1) - 1] & 0xff] == 0; i1--) { }
+         if(i1 == l)
+         {
+@@ -225,7 +217,6 @@
+             lowestBlockHeight = i1;
+         } else
+         {
+-            worldObj.getClass();
+             int k1 = 128 - 1;
+             for(int i2 = 0; i2 < 16; i2++)
+             {
+@@ -294,8 +285,6 @@
+ 
+     public int getBlockID(int i, int j, int k)
+     {
+-        worldObj.getClass();
+-        worldObj.getClass();
+         return blocks[i << 11 | k << 7 | j] & 0xff;
+     }
+ 
+@@ -308,8 +297,6 @@
+             field_35637_c[j1] = -999;
+         }
+         int k1 = heightMap[k << 4 | i] & 0xff;
+-        worldObj.getClass();
+-        worldObj.getClass();
+         int l1 = blocks[i << 11 | k << 7 | j] & 0xff;
+         if(l1 == l && data.getNibble(i, j, k) == i1)
+         {
+@@ -317,8 +304,12 @@
+         }
+         int i2 = xPosition * 16 + i;
+         int j2 = zPosition * 16 + k;
+-        worldObj.getClass();
+-        worldObj.getClass();
++        if (Block.blocksList[l1] instanceof IOverrideReplace) {
++            IOverrideReplace iovr = (IOverrideReplace) Block.blocksList[l1];
++            if (!iovr.canReplaceBlock(worldObj, i2, j, j2, l))
++                return iovr.getReplacedSuccess();
++        }
++
+         blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
+         if(l1 != 0 && !worldObj.singleplayerWorld)
+         {
+@@ -384,8 +375,6 @@
+             field_35637_c[i1] = -999;
+         }
+         int j1 = heightMap[i1] & 0xff;
+-        worldObj.getClass();
+-        worldObj.getClass();
+         int k1 = blocks[i << 11 | k << 7 | j] & 0xff;
+         if(k1 == l)
+         {
+@@ -393,8 +382,13 @@
          }
          int l1 = xPosition * 16 + i;
          int i2 = zPosition * 16 + k;
+-        worldObj.getClass();
+-        worldObj.getClass();
 +
-+	if(Block.blocksList[k1] instanceof IOverrideReplace) {
-+		IOverrideReplace iovr=(IOverrideReplace)Block.blocksList[k1];
-+		if(!iovr.canReplaceBlock(worldObj,l1,j,i2,l))
-+			return iovr.getReplacedSuccess();
-+	}
-+
-         blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
-         if(k1 != 0 && !worldObj.singleplayerWorld)
-         {
-@@ -270,6 +278,13 @@
-         }
-         int k1 = xPosition * 16 + i;
-         int l1 = zPosition * 16 + k;
-+
-+	if(Block.blocksList[j1] instanceof IOverrideReplace) {
-+		IOverrideReplace iovr=(IOverrideReplace)Block.blocksList[j1];
-+		if(!iovr.canReplaceBlock(worldObj,k1,j,l1,l))
-+			return iovr.getReplacedSuccess();
-+	}
-+
-         blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
-         if(j1 != 0)
-         {
-@@ -416,7 +431,7 @@
-             {
-                 return null;
-             }
--            BlockContainer blockcontainer = (BlockContainer)Block.blocksList[l];
-+            Block blockcontainer = Block.blocksList[l];
-             blockcontainer.onBlockAdded(worldObj, xPosition * 16 + i, j, zPosition * 16 + k);
-             tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
-         }
-@@ -438,7 +453,7 @@
-         setChunkBlockTileEntity(i, j, k, tileentity);
-         if(isChunkLoaded)
-         {
--            worldObj.loadedTileEntityList.add(tileentity);
-+            worldObj.addTileEntity(tileentity);
-         }
-     }
- 
-@@ -449,7 +464,7 @@
-         tileentity.xCoord = xPosition * 16 + i;
-         tileentity.yCoord = j;
-         tileentity.zCoord = zPosition * 16 + k;
--        if(getBlockID(i, j, k) == 0 || !(Block.blocksList[getBlockID(i, j, k)] instanceof BlockContainer))
-+        if(getBlockID(i, j, k) == 0 || !Block.isBlockContainer[getBlockID(i, j, k)])
-         {
-             System.out.println("Attempted to place a tile entity where there was no entity tile!");
-             return;
-@@ -474,6 +489,18 @@
-         }
-     }
- 
-+    /* FORGE: Used to remove only invalid TileEntities */
-+    public void cleanChunkBlockTileEntity(int i, int j, int k)
-+    {
-+        ChunkPosition chunkposition = new ChunkPosition(i, j, k);
-+        if(isChunkLoaded)
-+        {
-+            TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
-+	    if(tileentity!=null && tileentity.isInvalid())
-+		    chunkTileEntityMap.remove(chunkposition);
++        if (Block.blocksList[k1] instanceof IOverrideReplace) {
++            IOverrideReplace iovr = (IOverrideReplace) Block.blocksList[k1];
++            if (!iovr.canReplaceBlock(worldObj, l1, j, i2, l))
++                return iovr.getReplacedSuccess();
 +        }
-+    }
 +
-     public void onChunkLoad()
-     {
-         isChunkLoaded = true;
+         blocks[i << 11 | k << 7 | j] = (byte)(byte0 & 0xff);
+         if(k1 != 0)
+         {
+@@ -766,8 +760,6 @@
+         {
+             for(int k3 = k; k3 < j1; k3++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int k4 = k2 << 11 | k3 << 7 | j;
+                 int k5 = i1 - j;
+                 System.arraycopy(blocks, k4, abyte0, k1, k5);
+@@ -780,8 +772,6 @@
+         {
+             for(int l3 = k; l3 < j1; l3++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int l4 = (l2 << 11 | l3 << 7 | j) >> 1;
+                 int l5 = (i1 - j) / 2;
+                 System.arraycopy(data.data, l4, abyte0, k1, l5);
+@@ -794,8 +784,6 @@
+         {
+             for(int i4 = k; i4 < j1; i4++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int i5 = (i3 << 11 | i4 << 7 | j) >> 1;
+                 int i6 = (i1 - j) / 2;
+                 System.arraycopy(blocklightMap.data, i5, abyte0, k1, i6);
+@@ -808,8 +796,6 @@
+         {
+             for(int j4 = k; j4 < j1; j4++)
+             {
+-                worldObj.getClass();
+-                worldObj.getClass();
+                 int j5 = (j3 << 11 | j4 << 7 | j) >> 1;
+                 int j6 = (i1 - j) / 2;
+                 System.arraycopy(skylightMap.data, j5, abyte0, k1, j6);
+@@ -857,7 +843,6 @@
+         int l = field_35637_c[k];
+         if(l == -999)
+         {
+-            worldObj.getClass();
+             int i1 = 128 - 1;
+             for(l = -1; i1 > 0 && l == -1;)
+             {
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-08 13:52:48.000000000 -0400
-@@ -532,7 +532,9 @@
+--- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-18 20:43:15.000000000 -0400
+@@ -600,7 +600,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);
          int k = MathHelper.floor_double(posZ);
@@ -3102,8 +3147,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-18 20:47:39.000000000 -0400
 @@ -6,6 +6,10 @@
  
  import java.util.*;
@@ -3113,9 +3158,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
 +import net.minecraft.src.forge.ForgeHooks;
 +
  // Referenced classes of package net.minecraft.src:
- //            EntityLiving, InventoryPlayer, ContainerPlayer, World, 
- //            ChunkCoordinates, DataWatcher, Container, StatList, 
-@@ -296,6 +300,8 @@
+ //            EntityLiving, InventoryPlayer, FoodStats, PlayerCapabilities, 
+ //            ContainerPlayer, World, ChunkCoordinates, DataWatcher, 
+@@ -433,6 +437,8 @@
          worldObj.entityJoinedWorld(entityitem);
      }
  
@@ -3124,7 +3169,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -310,6 +316,24 @@
+@@ -455,6 +461,32 @@
          return f;
      }
  
@@ -3143,39 +3188,21 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
 +        {
 +            f /= 5F;
 +        }
++        if(func_35184_a(Potion.field_35452_e))
++        {
++            f *= 1.0F + (float)(func_35187_b(Potion.field_35452_e).func_35652_c() + 1) * 0.2F;
++        }
++        if(func_35184_a(Potion.field_35449_f))
++        {
++            f *= 1.0F - (float)(func_35187_b(Potion.field_35449_f).func_35652_c() + 1) * 0.2F;
++        }
 +        return f;
 +    }
 +
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -457,6 +481,25 @@
- 
-     protected void damageEntity(int i)
-     {
-+    	 boolean doRegularComputation = true;
-+         int initialDamage = i;
-+         
-+         for (ItemStack stack : inventory.armorInventory) {
-+             if (stack != null && stack.getItem() instanceof ISpecialArmor) {
-+                 ISpecialArmor armor = (ISpecialArmor) stack.getItem();
-+                 
-+                 ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
-+                 i = i - props.damageRemove;
-+                 doRegularComputation = doRegularComputation
-+                         && props.allowRegularComputation;
-+             }
-+         }
-+         
-+         if (!doRegularComputation) {
-+             super.damageEntity(i);
-+             return;
-+         }
-+        
-         int j = 25 - inventory.getTotalArmorValue();
-         int k = i * j + damageRemainder;
-         inventory.damageArmor(i);
-@@ -502,7 +545,9 @@
+@@ -668,7 +700,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -3185,9 +3212,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
      }
  
      public double getYOffset()
-@@ -568,6 +613,10 @@
+@@ -757,6 +791,10 @@
  
-     public EnumStatus goToSleep(int i, int j, int k)
+     public EnumStatus sleepInBedAt(int i, int j, int k)
      {
 +	EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
 +	if (customSleep != null) {
@@ -3197,8 +3224,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
          {
              if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Explosion.java ../src_work/minecraft_server/net/minecraft/src/Explosion.java
---- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-09-18 20:48:52.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3207,7 +3234,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ex
  
  import java.util.*;
  
-@@ -65,7 +66,16 @@
+@@ -66,7 +67,16 @@
                          int i5 = worldObj.getBlockId(j4, k4, l4);
                          if(i5 > 0)
                          {
@@ -3226,8 +3253,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ex
                          if(f1 > 0.0F)
                          {
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-18 20:50:40.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -3237,32 +3264,23 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
  // Referenced classes of package net.minecraft.src:
  //            Item, EntityPlayer, Vec3D, MathHelper, 
  //            World, MovingObjectPosition, EnumMovingObjectType, Material, 
-@@ -55,6 +57,13 @@
+@@ -56,6 +58,12 @@
              }
              if(isFull == 0)
              {
 +                ItemStack customBucket = MinecraftForge.fillCustomBucket(world,
 +                        i, j, k);
-+            	
 +            	if (customBucket != null) {
 +            		return customBucket;
 +            	}
 +
-                 if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
+                 if(!entityplayer.func_35200_c(i, j, k))
                  {
-                     world.setBlockWithNotify(i, j, k, 0);
+                     return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-08 13:52:48.000000000 -0400
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
- 
- package net.minecraft.src;
-+import net.minecraft.src.forge.*;
- 
- 
- // Referenced classes of package net.minecraft.src:
-@@ -29,7 +30,8 @@
+--- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-18 20:54:16.000000000 -0400
+@@ -66,7 +66,8 @@
              if(j != 0)
              {
                  Block block = Block.blocksList[j];
@@ -3272,7 +3290,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                  if(f >= 1.0F)
                  {
                      field_22050_k = false;
-@@ -51,7 +53,7 @@
+@@ -93,7 +94,7 @@
          {
              Block.blocksList[i1].onBlockClicked(thisWorld, i, j, k, thisPlayer);
          }
@@ -3281,7 +3299,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
          {
              blockHarvessted(i, j, k);
          } else
-@@ -71,7 +73,7 @@
+@@ -113,7 +114,7 @@
              if(i1 != 0)
              {
                  Block block = Block.blocksList[i1];
@@ -3290,16 +3308,16 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                  if(f >= 0.7F)
                  {
                      blockHarvessted(i, j, k);
-@@ -117,7 +119,7 @@
-                 thisPlayer.destroyCurrentEquippedItem();
+@@ -164,7 +165,7 @@
+                     thisPlayer.destroyCurrentEquippedItem();
+                 }
              }
-         }
--        if(flag && thisPlayer.canHarvestBlock(Block.blocksList[l]))
-+        if(flag && Block.blocksList[l].canHarvestBlock(thisPlayer,i1))
-         {
-             Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
-             ((EntityPlayerMP)thisPlayer).playerNetServerHandler.sendPacket(new Packet53BlockChange(i, j, k, thisWorld));
-@@ -135,6 +137,7 @@
+-            if(flag && thisPlayer.canHarvestBlock(Block.blocksList[l]))
++            if(flag && Block.blocksList[l].canHarvestBlock(thisPlayer,i1))
+             {
+                 Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
+             }
+@@ -188,6 +189,7 @@
              if(itemstack1.stackSize == 0)
              {
                  entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
@@ -3307,7 +3325,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
              }
              return true;
          } else
-@@ -145,6 +148,11 @@
+@@ -198,6 +200,11 @@
  
      public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -3319,8 +3337,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -155,7 +163,11 @@
-             return false;
+@@ -217,7 +224,11 @@
+             return flag;
          } else
          {
 -            return itemstack.useItem(entityplayer, world, i, j, k, l);
@@ -3333,9 +3351,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
---- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-09-08 13:52:48.000000000 -0400
-@@ -65,6 +65,13 @@
+--- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-09-18 20:55:42.000000000 -0400
+@@ -66,6 +66,13 @@
          return 1.0F;
      }
  
@@ -3350,8 +3368,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
      {
          return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemTool.java ../src_work/minecraft_server/net/minecraft/src/ItemTool.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-18 20:56:44.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -3386,21 +3404,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
 +    public int damageVsEntity;
      protected EnumToolMaterial toolMaterial;
  }
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/MetadataChunkBlock.java ../src_work/minecraft_server/net/minecraft/src/MetadataChunkBlock.java
---- ../src_base/minecraft_server/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/MetadataChunkBlock.java	2011-09-08 13:52:48.000000000 -0400
-@@ -95,7 +95,7 @@
-                     } else
-                     if(blockEnum == EnumSkyBlock.Block)
-                     {
--                        l3 = Block.lightValue[j3];
-+			l3 = (j3==0)?0:Block.blocksList[j3].getLightValue(world,k1,k2,l1);
-                     }
-                     if(k3 >= 15 && l3 == 0)
-                     {
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java
---- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-08 13:52:48.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-18 20:57:05.000000000 -0400
 @@ -35,4 +35,7 @@
      public int sideHit;
      public Vec3D hitVec;
@@ -3410,17 +3416,16 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Mo
 +    public int subHit=-1;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java
---- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-08 13:52:48.000000000 -0400
-@@ -169,12 +169,11 @@
+--- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-18 21:09:31.000000000 -0400
+@@ -168,12 +168,11 @@
              sendPacketToPlayersInInstance(new Packet52MultiBlockChange(chunkX, chunkZ, blocksToUpdate, numBlocksToUpdate, worldserver));
              for(int k = 0; k < numBlocksToUpdate; k++)
              {
 -                int j1 = chunkX * 16 + (numBlocksToUpdate >> 12 & 0xf);
--                int i2 = numBlocksToUpdate & 0xff;
--                int k2 = chunkZ * 16 + (numBlocksToUpdate >> 8 & 0xf);
 +                int j1 = chunkX * 16 + (blocksToUpdate[k] >> 12 & 0xf);
-+                int i2 = blocksToUpdate[k] & 0xff;
+                 int i2 = numBlocksToUpdate & 0xff;
+-                int k2 = chunkZ * 16 + (numBlocksToUpdate >> 8 & 0xf);
 +                int k2 = chunkZ * 16 + (blocksToUpdate[k] >> 8 & 0xf);
                  if(Block.isBlockContainer[worldserver.getBlockId(j1, i2, k2)])
                  {
@@ -3429,28 +3434,29 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Pl
                  }
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java
---- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-08 13:52:48.000000000 -0400
-@@ -3,6 +3,7 @@
+--- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-18 21:10:22.000000000 -0400
+@@ -3,7 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
  package net.minecraft.src;
+-
 +import net.minecraft.src.forge.ForgeHooks;
  
- 
  // Referenced classes of package net.minecraft.src:
-@@ -60,6 +61,7 @@
+ //            Slot, EntityPlayer, ItemStack, Block, 
+@@ -59,6 +59,7 @@
+         {
              thePlayer.addStat(AchievementList.buildSword, 1);
          }
-         ModLoader.TakenFromCrafting(thePlayer, itemstack);
 + 	ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
          for(int i = 0; i < craftMatrix.getSizeInventory(); i++)
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/TileEntity.java ../src_work/minecraft_server/net/minecraft/src/TileEntity.java
---- ../src_base/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-08 15:23:33.000000000 -0400
-@@ -60,6 +60,13 @@
+--- ../src_base/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-18 17:43:00.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-18 21:10:36.000000000 -0400
+@@ -61,6 +61,13 @@
      {
      }
  
@@ -3465,9 +3471,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ti
      {
          TileEntity tileentity = null;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/World.java ../src_work/minecraft_server/net/minecraft/src/World.java
---- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-09-08 13:52:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-09-08 16:26:27.000000000 -0400
-@@ -166,7 +166,11 @@
+--- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-09-18 17:42:59.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-09-18 21:13:31.000000000 -0400
+@@ -183,7 +183,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -3480,142 +3486,17 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -564,9 +568,10 @@
-         if(enumskyblock == EnumSkyBlock.Block)
-         {
-             int i1 = getBlockId(i, j, k);
--            if(Block.lightValue[i1] > l)
-+	    int bl=(i1==0)?0:Block.blocksList[i1].getLightValue(this,i,j,k);
-+            if(bl > l)
-             {
--                l = Block.lightValue[i1];
-+                l = bl;
-             }
-         }
-         if(getSavedLightValue(enumskyblock, i, j, k) != l)
-@@ -1169,7 +1174,7 @@
-                 Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
-                 if(chunk != null)
-                 {
--                    chunk.removeChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
-+                    chunk.cleanChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
-                 }
-             }
-         } while(true);
-@@ -1190,12 +1195,13 @@
-                     {
-                         loadedTileEntityList.add(tileentity1);
-                     }
-+                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
-+		} else {
-                     Chunk chunk1 = getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
-                     if(chunk1 != null)
-                     {
--                        chunk1.setChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf, tileentity1);
-+                        chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf);
-                     }
--                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
-                 }
-             } while(true);
-             field_20912_E.clear();
-@@ -1204,13 +1210,19 @@
- 
-     public void addTileEntity(Collection collection)
-     {
--        if(scanningTileEntities)
--        {
--            field_20912_E.addAll(collection);
--        } else
--        {
--            loadedTileEntityList.addAll(collection);
--        }
-+	List dest=scanningTileEntities ? field_20912_E :
-+		loadedTileEntityList;
-+	for(Object ob : collection) {
-+		TileEntity te=(TileEntity)ob;
-+		if(te.canUpdate()) dest.add(te);
-+	}
-+    }
-+
-+    /* FORGE: Used as a bugfix */
-+    public void addTileEntity(TileEntity te) {
-+	List dest=scanningTileEntities ? field_20912_E :
-+		loadedTileEntityList;
-+	if(te.canUpdate()) dest.add(te);
-     }
- 
-     public void updateEntity(Entity entity)
-@@ -1408,7 +1420,10 @@
+@@ -1372,6 +1376,9 @@
                          if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
--                        }
 +                        } else {
 +				if(j2>0 && Block.blocksList[j2].isBlockBurning(this,k1,l1,i2))
 +					return true;
-+			}
+                         }
                      }
  
-                 }
-@@ -1626,44 +1641,23 @@
- 
-     public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
-     {
--        if(!tileentity.isInvalid())
--        {
--            if(scanningTileEntities)
--            {
--                tileentity.xCoord = i;
--                tileentity.yCoord = j;
--                tileentity.zCoord = k;
--                field_20912_E.add(tileentity);
--            } else
--            {
--                loadedTileEntityList.add(tileentity);
--                Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
--                if(chunk != null)
--                {
--                    chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
--                }
--            }
--        }
-+	if(tileentity.isInvalid())
-+		return;
-+	List dest=scanningTileEntities ? field_20912_E :
-+		loadedTileEntityList;
-+	if(tileentity.canUpdate()) dest.add(tileentity);
-+	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+	if(chunk != null) {
-+		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
-+	}
-     }
- 
-     public void removeBlockTileEntity(int i, int j, int k)
-     {
--        TileEntity tileentity = getBlockTileEntity(i, j, k);
--        if(tileentity != null && scanningTileEntities)
--        {
--            tileentity.invalidate();
--        } else
--        {
--            if(tileentity != null)
--            {
--                loadedTileEntityList.remove(tileentity);
--            }
--            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
--            if(chunk != null)
--            {
--                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
--            }
--        }
-+	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+	if(chunk != null) {
-+		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
-+	}
-     }
- 
-     public boolean isBlockOpaqueCube(int i, int j, int k)
-@@ -1681,13 +1675,18 @@
+@@ -1650,13 +1657,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {
          Block block = Block.blocksList[getBlockId(i, j, k)];
@@ -3640,8 +3521,17 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
 +	return block.isBlockSolidOnSide(this,i,j,k,side);
      }
  
-     public boolean updatingLighting()
-@@ -2178,6 +2177,7 @@
+     public void calculateInitialSkylight()
+@@ -1976,7 +1988,7 @@
+ 
+     private int func_35241_e(int i, int j, int k, int l, int i1, int j1)
+     {
+-        int k1 = Block.lightValue[i1];
++	int k1 = (i1==0)?0:Block.blocksList[i1].getLightValue(world,j,k,l);
+         int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
+         int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
+         int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
+@@ -2315,6 +2327,7 @@
          {
              block = null;
          }
@@ -3649,7 +3539,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -2601,7 +2601,7 @@
+@@ -2759,7 +2772,7 @@
      public int field_27080_i;
      public boolean editingBlocks;
      private long lockTimestamp;
@@ -3658,35 +3548,3 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Wo
      public int difficultySetting;
      public Random rand;
      public boolean isNewWorld;
-diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/WorldServer.java ../src_work/minecraft_server/net/minecraft/src/WorldServer.java
---- ../src_base/minecraft_server/net/minecraft/src/WorldServer.java	2011-09-08 13:52:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/WorldServer.java	2011-09-08 16:26:47.000000000 -0400
-@@ -54,15 +54,19 @@
-     public List getTileEntityList(int i, int j, int k, int l, int i1, int j1)
-     {
-         ArrayList arraylist = new ArrayList();
--        for(int k1 = 0; k1 < loadedTileEntityList.size(); k1++)
--        {
--            TileEntity tileentity = (TileEntity)loadedTileEntityList.get(k1);
--            if(tileentity.xCoord >= i && tileentity.yCoord >= j && tileentity.zCoord >= k && tileentity.xCoord < l && tileentity.yCoord < i1 && tileentity.zCoord < j1)
--            {
--                arraylist.add(tileentity);
--            }
--        }
--
-+	for(int x=(i>>4); x<=(l>>4); x++) 
-+	for(int z=(k>>4); z<=(j1>>4); z++) {
-+		Chunk ch=getChunkFromChunkCoords(x,z);
-+		if(ch==null) continue;
-+		for(Object ob : ch.chunkTileEntityMap.values()) {
-+			TileEntity te=(TileEntity)ob;
-+			if(te.xCoord>=i && te.yCoord>=j && te.zCoord>=k
-+					&& te.xCoord<l && te.yCoord<i1 &&
-+					te.zCoord<j1) {
-+				arraylist.add(te);
-+			}
-+		}
-+	}
-         return arraylist;
-     }
- 
