@@ -1,6 +1,6 @@
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButton.java ../src_work/minecraft/net/minecraft/src/BlockButton.java
---- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockButton.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockButton.java	2011-09-19 16:32:53.000000000 -0400
 @@ -41,36 +41,36 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -119,8 +119,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockButt
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChest.java ../src_work/minecraft/net/minecraft/src/BlockChest.java
---- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockChest.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	2011-09-19 16:32:53.000000000 -0400
 @@ -423,23 +423,23 @@
          {
              return true;
@@ -151,8 +151,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockChes
              return true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor.java ../src_work/minecraft/net/minecraft/src/BlockDoor.java
---- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	2011-09-19 16:32:53.000000000 -0400
 @@ -178,7 +178,7 @@
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
@@ -172,8 +172,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockDoor
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.java ../src_work/minecraft/net/minecraft/src/Block.java
---- ../src_base/minecraft/net/minecraft/src/Block.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/Block.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Block.java	2011-09-19 16:35:38.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -188,14 +188,14 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
      {
 -        return iblockaccess.getBrightness(i, j, k, lightValue[blockID]);
 +        return iblockaccess.getBrightness(i, j, k,
-+		getLightValue(iblockaccess,i,j,k));
++ 		getLightValue(iblockaccess,i,j,k));
      }
  
      public int func_35275_c(IBlockAccess iblockaccess, int i, int j, int k)
      {
--        return iblockaccess.func_35451_b(i, j, k, lightValue[blockID]);
-+        return iblockaccess.func_35451_b(i, j, k,
-+		getLightValue(iblockaccess,i,j,k));
+-        return iblockaccess.getLightBrightnessFromSunlight(i, j, k, lightValue[blockID]);
++        return iblockaccess.getLightBrightnessFromSunlight(i, j, k,
++ 		getLightValue(iblockaccess,i,j,k));
      }
  
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
@@ -310,9 +310,11 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Block.jav
      static Class _mthclass$(String s)
      {
          try
+Only in ../src_work/minecraft/net/minecraft/src: Block.java.orig
+Only in ../src_work/minecraft/net/minecraft/src: Block.java.rej
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadder.java ../src_work/minecraft/net/minecraft/src/BlockLadder.java
---- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockLadder.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLadder.java	2011-09-19 16:32:53.000000000 -0400
 @@ -63,6 +63,11 @@
          return super.getSelectedBoundingBoxFromPool(world, i, j, k);
      }
@@ -396,8 +398,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLadd
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLever.java ../src_work/minecraft/net/minecraft/src/BlockLever.java
---- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockLever.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockLever.java	2011-09-19 16:32:53.000000000 -0400
 @@ -40,44 +40,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -517,8 +519,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockLeve
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java
---- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:32:53.000000000 -0400
 @@ -46,7 +46,8 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -540,8 +542,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockPres
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail.java ../src_work/minecraft/net/minecraft/src/BlockRail.java
---- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockRail.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	2011-09-19 16:32:53.000000000 -0400
 @@ -16,12 +16,12 @@
      public static final boolean isRailBlockAt(World world, int i, int j, int k)
      {
@@ -596,8 +598,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRail
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java
---- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:32:53.000000000 -0400
 @@ -27,7 +27,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -617,8 +619,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
              return false;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java
---- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:32:53.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -648,8 +650,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockReds
          {
              return true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorch.java ../src_work/minecraft/net/minecraft/src/BlockTorch.java
---- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockTorch.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	2011-09-19 16:32:53.000000000 -0400
 @@ -41,24 +41,24 @@
  
      private boolean func_31032_h(World world, int i, int j, int k)
@@ -753,8 +755,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTorc
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java
---- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:32:53.000000000 -0400
 @@ -147,7 +147,7 @@
          {
              j1--;
@@ -790,8 +792,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrap
 +    public static boolean disableValidation=false;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.java ../src_work/minecraft/net/minecraft/src/Chunk.java
---- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-09-19 16:25:44.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-09-19 16:32:53.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -999,8 +1001,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
              for(l = -1; i1 > 0 && l == -1;)
              {
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRenderer.java ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	2011-09-19 16:36:34.000000000 -0400
 @@ -7,6 +7,9 @@
  import java.util.*;
  import org.lwjgl.opengl.GL11;
@@ -1043,8 +1045,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
              for(int k = 0; k < fxLayers[i].size(); k++)
              {
                  EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
-+		if(entityfx instanceof EntityDiggingFX) continue;
-                 tessellator.func_35835_b(entityfx.func_35115_a(f));
++ 		if(entityfx instanceof EntityDiggingFX) continue;
+                 tessellator.setBrightness(entityfx.func_35115_a(f));
                  entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
              }
 @@ -101,6 +117,20 @@
@@ -1146,9 +1148,11 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EffectRen
      private RenderEngine renderer;
      private Random rand;
  }
+Only in ../src_work/minecraft/net/minecraft/src: EffectRenderer.java.orig
+Only in ../src_work/minecraft/net/minecraft/src: EffectRenderer.java.rej
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiving.java ../src_work/minecraft/net/minecraft/src/EntityLiving.java
---- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	2011-09-19 16:32:54.000000000 -0400
 @@ -624,7 +624,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);
@@ -1161,8 +1165,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityLiv
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPlayer.java ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
---- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	2011-09-19 16:38:04.000000000 -0400
 @@ -4,6 +4,10 @@
  
  package net.minecraft.src;
@@ -1202,13 +1206,13 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
 +        {
 +            f /= 5F;
 +        }
-+        if(func_35160_a(Potion.field_35675_e))
++        if(func_35160_a(Potion.potionDigSpeed))
 +        {
-+            f *= 1.0F + (float)(func_35167_b(Potion.field_35675_e).func_35801_c() + 1) * 0.2F;
++            f *= 1.0F + (float)(func_35167_b(Potion.potionDigSpeed).func_35801_c() + 1) * 0.2F;
 +        }
-+        if(func_35160_a(Potion.field_35672_f))
++        if(func_35160_a(Potion.potionDigSlow))
 +        {
-+            f *= 1.0F - (float)(func_35167_b(Potion.field_35672_f).func_35801_c() + 1) * 0.2F;
++            f *= 1.0F - (float)(func_35167_b(Potion.potionDigSlow).func_35801_c() + 1) * 0.2F;
 +        }
 +        return f;
 +    }
@@ -1238,8 +1242,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityPla
          {
              if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRenderer.java ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
---- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -1275,8 +1279,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/EntityRen
              }
              renderRainSnow(f);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion.java ../src_work/minecraft/net/minecraft/src/Explosion.java
---- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/Explosion.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Explosion.java	2011-09-19 16:32:54.000000000 -0400
 @@ -5,6 +5,7 @@
  package net.minecraft.src;
  
@@ -1305,8 +1309,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Explosion
                          if(f1 > 0.0F)
                          {
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucket.java ../src_work/minecraft/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	2011-09-19 16:32:54.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -1329,8 +1333,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemBucke
                  {
                      world.setBlockWithNotify(i, j, k, 0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java ../src_work/minecraft/net/minecraft/src/Item.java
---- ../src_base/minecraft/net/minecraft/src/Item.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/Item.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Item.java	2011-09-19 16:32:54.000000000 -0400
 @@ -76,6 +76,13 @@
          return 1.0F;
      }
@@ -1346,8 +1350,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Item.java
      {
          return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRenderer.java ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
---- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	2011-09-19 16:32:54.000000000 -0400
 @@ -5,6 +5,10 @@
  package net.minecraft.src;
  
@@ -1389,8 +1393,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemRende
              Tessellator tessellator = Tessellator.instance;
              int i = entityliving.getItemIcon(itemstack);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.java ../src_work/minecraft/net/minecraft/src/ItemTool.java
---- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/ItemTool.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -1426,8 +1430,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/ItemTool.
      protected EnumToolMaterial toolMaterial;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java
---- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:32:54.000000000 -0400
 @@ -35,4 +35,7 @@
      public int sideHit;
      public Vec3D hitVec;
@@ -1437,8 +1441,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/MovingObj
 +    public int subHit=-1;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerController.java ../src_work/minecraft/net/minecraft/src/PlayerController.java
---- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/PlayerController.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1456,8 +1460,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
              return true;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
---- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,9 @@
  
  package net.minecraft.src;
@@ -1514,8 +1518,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java
---- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerSP.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,8 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1579,8 +1583,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/PlayerCon
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlocks.java ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
---- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	2011-09-19 16:32:54.000000000 -0400
 @@ -2980,7 +2980,7 @@
              colorBlueTopRight *= f27;
              int j2 = block.getBlockTexture(blockAccess, i, j, k, 2);
@@ -1654,8 +1658,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlo
                  tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
                  renderSouthFace(block, i, j, k, 38);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEngine.java ../src_work/minecraft/net/minecraft/src/RenderEngine.java
---- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-09-19 16:32:54.000000000 -0400
 @@ -128,6 +128,9 @@
          }
          try
@@ -1667,8 +1671,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEng
              GLAllocation.generateTextureNames(singleIntBuffer);
              int i = singleIntBuffer.get(0);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlobal.java ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
---- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-09-19 16:32:54.000000000 -0400
 @@ -1635,8 +1635,8 @@
      }
  
@@ -1692,8 +1696,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlo
      private boolean occlusionEnabled;
      private int cloudOffsetX;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderItem.java ../src_work/minecraft/net/minecraft/src/RenderItem.java
---- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/RenderItem.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,10 @@
  
  package net.minecraft.src;
@@ -1807,8 +1811,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderIte
              int k1 = Item.itemsList[i].getColorFromDamage(j);
              float f = (float)(k1 >> 16 & 0xff) / 255F;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPlayer.java ../src_work/minecraft/net/minecraft/src/RenderPlayer.java
---- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -1834,8 +1838,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderPla
                  modelbiped.bipedHead.showModel = i == 0;
                  modelbiped.bipedHeadwear.showModel = i == 0;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCrafting.java ../src_work/minecraft/net/minecraft/src/SlotCrafting.java
---- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1853,8 +1857,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/SlotCraft
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellator.java ../src_work/minecraft/net/minecraft/src/Tessellator.java
---- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/Tessellator.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	2011-09-19 16:32:54.000000000 -0400
 @@ -5,6 +5,7 @@
  package net.minecraft.src;
  
@@ -2042,8 +2046,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
 +    }
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntity.java ../src_work/minecraft/net/minecraft/src/TileEntity.java
---- ../src_base/minecraft/net/minecraft/src/TileEntity.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/TileEntity.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	2011-09-19 16:32:54.000000000 -0400
 @@ -61,6 +61,13 @@
      {
      }
@@ -2059,8 +2063,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
      {
          TileEntity tileentity = null;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java
---- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,7 @@
  
  package net.minecraft.src;
@@ -2086,8 +2090,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
          }
      }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.java ../src_work/minecraft/net/minecraft/src/World.java
---- ../src_base/minecraft/net/minecraft/src/World.java	2011-09-19 16:25:45.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/World.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/World.java	2011-09-19 16:32:51.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/World.java	2011-09-19 16:32:54.000000000 -0400
 @@ -336,7 +336,10 @@
  
      public boolean isAirBlock(int i, int j, int k)
@@ -2165,8 +2169,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      public Random rand;
      public boolean isNewWorld;
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
---- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-19 16:32:52.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -2243,8 +2247,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRend
 -    }
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockButton.java ../src_work/minecraft_server/net/minecraft/src/BlockButton.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockButton.java	2011-09-19 16:32:54.000000000 -0400
 @@ -41,36 +41,36 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -2363,8 +2367,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockChest.java ../src_work/minecraft_server/net/minecraft/src/BlockChest.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockChest.java	2011-09-19 16:32:54.000000000 -0400
 @@ -328,23 +328,23 @@
          {
              return true;
@@ -2395,8 +2399,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              return true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	2011-09-19 16:32:54.000000000 -0400
 @@ -167,7 +167,7 @@
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
@@ -2416,8 +2420,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Block.java ../src_work/minecraft_server/net/minecraft/src/Block.java
---- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Block.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Block.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2538,8 +2542,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
      {
          try
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLadder.java	2011-09-19 16:32:54.000000000 -0400
 @@ -40,6 +40,11 @@
          return super.getCollisionBoundingBoxFromPool(world, i, j, k);
      }
@@ -2623,8 +2627,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockLever.java ../src_work/minecraft_server/net/minecraft/src/BlockLever.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	2011-09-19 16:32:54.000000000 -0400
 @@ -35,44 +35,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
@@ -2744,8 +2748,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
                  flag = true;
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockPressurePlate.java	2011-09-19 16:32:54.000000000 -0400
 @@ -46,7 +46,8 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -2767,8 +2771,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRail.java ../src_work/minecraft_server/net/minecraft/src/BlockRail.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	2011-09-19 16:32:54.000000000 -0400
 @@ -16,12 +16,12 @@
      public static final boolean isRailBlockAt(World world, int i, int j, int k)
      {
@@ -2823,8 +2827,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              flag = true;
          }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	2011-09-19 16:32:54.000000000 -0400
 @@ -27,7 +27,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
@@ -2844,8 +2848,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              return false;
          } else
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -2875,11 +2879,11 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
          {
              return true;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTorch.java	2011-09-19 16:32:54.000000000 -0400
 @@ -36,24 +36,24 @@
  
-     private boolean func_31028_g(World world, int i, int j, int k)
+     private boolean canPlaceTorchOn(World world, int i, int j, int k)
      {
 -        return world.isBlockNormalCube(i, j, k) || world.getBlockId(i, j, k) == Block.fence.blockID;
 +        return world.isBlockSolidOnSide(i, j, k,1) || world.getBlockId(i, j, k) == Block.fence.blockID;
@@ -2979,9 +2983,10 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
              {
                  flag = true;
              }
+Only in ../src_work/minecraft_server/net/minecraft/src: BlockTorch.java.orig
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java
---- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	2011-09-19 16:32:54.000000000 -0400
 @@ -130,7 +130,7 @@
          {
              j1--;
@@ -3017,8 +3022,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Bl
 +    public static boolean disableValidation=false;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Chunk.java ../src_work/minecraft_server/net/minecraft/src/Chunk.java
---- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3188,8 +3193,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ch
              for(l = -1; i1 > 0 && l == -1;)
              {
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	2011-09-19 16:32:54.000000000 -0400
 @@ -600,7 +600,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);
@@ -3202,8 +3207,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java
---- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-19 16:25:47.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	2011-09-19 16:38:48.000000000 -0400
 @@ -6,6 +6,10 @@
  
  import java.util.*;
@@ -3243,13 +3248,13 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
 +        {
 +            f /= 5F;
 +        }
-+        if(func_35184_a(Potion.field_35452_e))
++        if(func_35184_a(Potion.digSpeed))
 +        {
-+            f *= 1.0F + (float)(func_35187_b(Potion.field_35452_e).func_35652_c() + 1) * 0.2F;
++            f *= 1.0F + (float)(func_35187_b(Potion.digSpeed).func_35652_c() + 1) * 0.2F;
 +        }
-+        if(func_35184_a(Potion.field_35449_f))
++        if(func_35184_a(Potion.digSlowdown))
 +        {
-+            f *= 1.0F - (float)(func_35187_b(Potion.field_35449_f).func_35652_c() + 1) * 0.2F;
++            f *= 1.0F - (float)(func_35187_b(Potion.digSlowdown).func_35652_c() + 1) * 0.2F;
 +        }
 +        return f;
 +    }
@@ -3279,8 +3284,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/En
          {
              if(isPlayerSleeping() || !isEntityAlive())
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Explosion.java ../src_work/minecraft_server/net/minecraft/src/Explosion.java
---- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Explosion.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Explosion.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3308,8 +3313,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ex
                          if(f1 > 0.0F)
                          {
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	2011-09-19 16:32:54.000000000 -0400
 @@ -6,6 +6,8 @@
  
  import java.util.Random;
@@ -3333,8 +3338,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
                  {
                      return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,7 +3,8 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3416,8 +3421,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
      }
  
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Item.java ../src_work/minecraft_server/net/minecraft/src/Item.java
---- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/Item.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/Item.java	2011-09-19 16:32:54.000000000 -0400
 @@ -66,6 +66,13 @@
          return 1.0F;
      }
@@ -3433,8 +3438,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
      {
          return itemstack;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/ItemTool.java ../src_work/minecraft_server/net/minecraft/src/ItemTool.java
---- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	2011-09-19 16:32:54.000000000 -0400
 @@ -4,6 +4,8 @@
  
  package net.minecraft.src;
@@ -3470,8 +3475,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/It
      protected EnumToolMaterial toolMaterial;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java
---- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	2011-09-19 16:32:54.000000000 -0400
 @@ -35,4 +35,7 @@
      public int sideHit;
      public Vec3D hitVec;
@@ -3481,8 +3486,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Mo
 +    public int subHit=-1;
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java
---- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	2011-09-19 16:32:54.000000000 -0400
 @@ -168,12 +168,11 @@
              sendPacketToPlayersInInstance(new Packet52MultiBlockChange(chunkX, chunkZ, blocksToUpdate, numBlocksToUpdate, worldserver));
              for(int k = 0; k < numBlocksToUpdate; k++)
@@ -3499,8 +3504,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Pl
                  }
              }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java
---- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-19 16:29:56.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	2011-09-19 16:32:54.000000000 -0400
 @@ -3,7 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -3518,12 +3523,9 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Sl
          for(int i = 0; i < craftMatrix.getSizeInventory(); i++)
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
-Only in ../src_work/minecraft_server/net/minecraft/src: SlotCrafting.java.orig
-Only in ../src_work/minecraft_server/net/minecraft/src: SlotCrafting.java.rej
-Only in ../src_work/minecraft_server/net/minecraft/src: .SlotCrafting.java.rej.swp
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/TileEntity.java ../src_work/minecraft_server/net/minecraft/src/TileEntity.java
---- ../src_base/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-19 16:32:54.000000000 -0400
 @@ -61,6 +61,13 @@
      {
      }
@@ -3539,8 +3541,8 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ti
      {
          TileEntity tileentity = null;
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/World.java ../src_work/minecraft_server/net/minecraft/src/World.java
---- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-09-19 16:25:46.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-09-19 16:25:47.000000000 -0400
+--- ../src_base/minecraft_server/net/minecraft/src/World.java	2011-09-19 16:32:53.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/World.java	2011-09-19 16:32:54.000000000 -0400
 @@ -183,7 +183,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
