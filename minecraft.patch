@@ -2098,7 +2098,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Tessellat
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java
 --- ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java	2011-09-19 16:32:52.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	2011-09-20 20:51:30.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	2011-09-20 20:58:51.000000000 -0400
 @@ -196,7 +196,7 @@
          {
              return false;
@@ -2108,7 +2108,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
          if(itemstack == null)
          {
              return false;
-@@ -222,7 +222,7 @@
+@@ -222,12 +222,12 @@
          {
              return;
          }
@@ -2117,6 +2117,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntit
          if(furnaceItemStacks[2] == null)
          {
              furnaceItemStacks[2] = itemstack.copy();
+         } else
+-        if(furnaceItemStacks[2].itemID == itemstack.itemID)
++        if(furnaceItemStacks[2].isItemEqual(itemstack))
+         {
+             furnaceItemStacks[2].stackSize++;
+         }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/TileEntity.java ../src_work/minecraft/net/minecraft/src/TileEntity.java
 --- ../src_base/minecraft/net/minecraft/src/TileEntity.java	2011-09-19 16:32:52.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	2011-09-19 16:32:54.000000000 -0400
@@ -3648,7 +3654,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Sl
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/TileEntityFurnace.java ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java
 --- ../src_base/minecraft_server/net/minecraft/src/TileEntityFurnace.java	2011-09-19 16:32:53.000000000 -0400
-+++ ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java	2011-09-20 20:51:40.000000000 -0400
++++ ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java	2011-09-20 20:58:42.000000000 -0400
 @@ -176,7 +176,7 @@
          {
              return false;
@@ -3658,7 +3664,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ti
          if(itemstack == null)
          {
              return false;
-@@ -204,7 +204,7 @@
+@@ -204,12 +204,12 @@
          {
              return;
          }
@@ -3667,6 +3673,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/Ti
          if(furnaceItemStacks[2] == null)
          {
              furnaceItemStacks[2] = itemstack.copy();
+         } else
+-        if(furnaceItemStacks[2].itemID == itemstack.itemID)
++        if(furnaceItemStacks[2].isItemEqual(itemstack))
+         {
+             furnaceItemStacks[2].stackSize++;
+         }
 diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/src/TileEntity.java ../src_work/minecraft_server/net/minecraft/src/TileEntity.java
 --- ../src_base/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-19 16:32:53.000000000 -0400
 +++ ../src_work/minecraft_server/net/minecraft/src/TileEntity.java	2011-09-19 16:32:54.000000000 -0400
