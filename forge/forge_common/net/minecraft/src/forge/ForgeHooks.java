@@ -60,7 +60,7 @@ public class ForgeHooks {
 			bl.blockID,md,cls));
 		if(bhl==null) return itemstack.canHarvestBlock(bl);
 		if(bhl>hvl) return false;
-		return itemstack.canHarvestBlock(bl);
+		return true;
 	}
 
 	public static float blockStrength(Block bl,
@@ -125,9 +125,8 @@ public class ForgeHooks {
 		Block[] pickeff ={
 			Block.cobblestone, Block.stairDouble,
 			Block.stairSingle, Block.stone, Block.sandStone,
-			Block.cobblestoneMossy, Block.oreIron,
-			Block.blockSteel, Block.oreCoal, Block.blockGold, 
-			Block.oreGold, Block.oreDiamond, Block.blockDiamond,
+			Block.cobblestoneMossy,
+			Block.oreCoal,
 			Block.ice, Block.netherrack, Block.oreLapis,
 			Block.blockLapis
 				};
