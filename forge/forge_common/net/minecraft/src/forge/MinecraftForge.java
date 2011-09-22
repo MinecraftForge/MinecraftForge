@@ -158,6 +158,22 @@ public class MinecraftForge {
 	    }
     }
 
+    /** Remove a block effectiveness mapping.  Since setBlockHarvestLevel
+     * makes the tool class effective against the block by default, this can be
+     * used to remove that mapping.  This will force a block to be harvested at
+     * the same speed regardless of tool quality, while still requiring a given
+     * harvesting level.
+     * @param bl The block to remove effectiveness from.
+     * @param md The metadata for the block subtype.
+     * @param tclass The tool class to remove the effectiveness mapping from.
+     * @see setToolClass for details on tool classes.
+     */
+    public static void removeBlockEffectiveness(Block bl, int md, String tclass) {
+	    ForgeHooks.initTools();
+	    List key=Arrays.asList(bl.blockID,md,tclass);
+	    ForgeHooks.toolEffectiveness.remove(key);
+    }
+
     /**
      * This function is deprecated and will be removed eventually.
      */
