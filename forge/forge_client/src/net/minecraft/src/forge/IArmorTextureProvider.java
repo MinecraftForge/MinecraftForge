@@ -5,6 +5,8 @@
 
 package net.minecraft.src.forge;
 
+import net.minecraft.src.ItemStack;
+
 /**
  * This interface has to be implemented by an instance of ItemArmor.
  * It allows for the application of a custom texture file to the player skin
@@ -17,7 +19,7 @@ public interface IArmorTextureProvider {
      * format as iron_1.png (or any of the other armor files). It will be
      * applied to the player skin when the armor is worn.
      */
-    public String getArmorTextureFile();
+    public String getArmorTextureFile(ItemStack itemstack);
 
 }
 
