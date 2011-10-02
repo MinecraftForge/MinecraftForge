@@ -11,12 +11,16 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
+import net.minecraft.src.World;
 
 import java.util.*;
 
 public class ForgeHooks {
 	// TODO: move all app-side hooks from MinecraftForge
-	//
+
+
+	// List Handling Hooks
+	// ------------------------------------------------------------
 	public static void onTakenFromCrafting(EntityPlayer player, ItemStack ist,
 			IInventory craftMatrix) {
 		for (ICraftingHandler handler : craftingHandlers) {
@@ -34,6 +38,17 @@ public class ForgeHooks {
 
 	static LinkedList<IDestroyToolHandler> destroyToolHandlers = new LinkedList<IDestroyToolHandler>();
 
+	public static boolean onUseBonemeal(World world,
+			int bid, int i, int j, int k) {
+		for(IBonemealHandler handler : bonemealHandlers) {
+			if(handler.onUseBonemeal(world,bid,i,j,k))
+				return true;
+		}
+		return false;
+	}
+
+	static LinkedList<IBonemealHandler> bonemealHandlers = new LinkedList<IBonemealHandler>();
+
 	public static EnumStatus sleepInBedAt(EntityPlayer player, int i, int j, int k) {
 		for (ISleepHandler handler : sleepHandlers) {
 			EnumStatus status = handler.sleepInBedAt(player, i, j, k);
@@ -44,6 +59,82 @@ public class ForgeHooks {
 	}
 
 	static LinkedList<ISleepHandler> sleepHandlers = new LinkedList<ISleepHandler>();
+
+	// Plant Management
+	// ------------------------------------------------------------
+	static class ProbableItem {
+		public ProbableItem(int item, int md, int q, int st, int e) {
+			wstart=st; wend=e;
+			itemid=item; meta=md;
+			qty=q;
+		}
+		int wstart, wend;
+		int itemid, meta;
+		int qty;
+	}
+
+	static ProbableItem getRandomItem(List<ProbableItem> list, int prop) {
+		int n=Collections.binarySearch(list,prop,new Comparator(){
+			public int compare(Object o1, Object o2) {
+				ProbableItem pi=(ProbableItem)o1;
+				Integer i1=(Integer)o2;
+				if(i1<pi.wstart) return 1;
+				if(i1>=pi.wend) return -1;
+				return 0;
+			}
+		});
+		if(n<0) return null;
+		return list.get(n);
+	}
+
+	static List<ProbableItem> plantGrassList;
+	static int plantGrassWeight;
+
+	static List<ProbableItem> seedGrassList;
+	static int seedGrassWeight;
+
+	static {
+		plantGrassList=new ArrayList<ProbableItem>();
+		plantGrassList.add(new ProbableItem(
+			Block.plantYellow.blockID,0,1,0,30));
+		plantGrassList.add(new ProbableItem(
+			Block.plantRed.blockID,0,1,30,40));
+		plantGrassWeight=40;
+
+		seedGrassList=new ArrayList<ProbableItem>();
+		seedGrassList.add(new ProbableItem(
+			Item.seeds.shiftedIndex,0,1,0,10));
+		seedGrassWeight=10;
+	}
+
+	public static void plantGrassPlant(World world, int i, int j, int k) {
+		int n=world.rand.nextInt(plantGrassWeight);
+		ProbableItem pi=getRandomItem(plantGrassList,n);
+		if(pi==null) return;
+		world.setBlockAndMetadataWithNotify(i,j,k,pi.itemid,pi.meta);
+	}
+
+	public static void addPlantGrass(int item, int md, int prop) {
+		plantGrassList.add(new ProbableItem(
+			item,md,1,plantGrassWeight,plantGrassWeight+prop));
+		plantGrassWeight+=prop;
+	}
+
+	public static ItemStack getGrassSeed(World world) {
+		int n=world.rand.nextInt(seedGrassWeight);
+		ProbableItem pi=getRandomItem(seedGrassList,n);
+		if(pi==null) return null;
+		return new ItemStack(pi.itemid,pi.qty,pi.meta);
+	}
+
+	public static void addGrassSeed(int item, int md, int qty, int prop) {
+		seedGrassList.add(new ProbableItem(
+			item,md,qty,seedGrassWeight,seedGrassWeight+prop));
+		seedGrassWeight+=prop;
+	}
+
+	// Tool Path
+	// ------------------------------------------------------------
 	public static boolean canHarvestBlock(Block bl,
 			EntityPlayer player, int md) {
 		if(bl.blockMaterial.getIsHarvestable())
@@ -139,7 +230,7 @@ public class ForgeHooks {
 
 	public static final int majorVersion=1;
 	public static final int minorVersion=1;
-	public static final int revisionVersion=0;
+	public static final int revisionVersion=1;
 	static {
 		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n",majorVersion,minorVersion,revisionVersion);
 	}

@@ -17,15 +17,6 @@ public class MinecraftForge {
     private static LinkedList<IBucketHandler> bucketHandlers = new LinkedList<IBucketHandler>();
 
     /**
-     * Registers a new custom bucket handler.
-     * @deprecated Spelling mistake, don't use this function!  It will go away
-     * soon.
-     */
-    public static void registerCustomBucketHander(IBucketHandler handler) {
-        bucketHandlers.add(handler);
-    }
-
-    /**
      * Register a new custom bucket handler.
      */
     public static void registerCustomBucketHandler(IBucketHandler handler) {
@@ -37,6 +28,13 @@ public class MinecraftForge {
      */
     public static void registerSleepHandler(ISleepHandler handler) {
 	ForgeHooks.sleepHandlers.add(handler);
+    }
+
+    /**
+     * Registers a new bonemeal handler.
+     */
+    public static void registerBonemealHandler(IBonemealHandler handler) {
+	ForgeHooks.bonemealHandlers.add(handler);
     }
 
     /**
@@ -66,6 +64,27 @@ public class MinecraftForge {
         }
 
         return null;
+    }
+
+    /** Register a new plant to be planted when bonemeal is used on grass.
+     * @param bid The block ID to plant.
+     * @param md The metadata to plant.
+     * @param prop The relative probability of the plant, where red flowers are
+     * 10 and yellow flowers are 30.
+     */
+    public static void addGrassPlant(int item, int md, int prop) {
+	    ForgeHooks.addPlantGrass(item,md,prop);
+    }
+
+    /** Register a new seed to be dropped when breaking tall grass.
+     * @param bid The item ID of the seeds.
+     * @param md The metadata of the seeds.
+     * @param qty The quantity of seeds to drop.
+     * @param prop The relative probability of the seeds, where wheat seeds are
+     * 10.
+     */
+    public static void addGrassSeed(int item, int md, int qty, int prop) {
+	    ForgeHooks.addGrassSeed(item,md,qty,prop);
     }
 
     /** Register a tool as a tool class with a given harvest level.
@@ -156,13 +175,6 @@ public class MinecraftForge {
 		    List key=Arrays.asList(bl.blockID,md,tclass);
 		    ForgeHooks.toolEffectiveness.remove(key);
 	    }
-    }
-
-    /**
-     * This function is deprecated and will be removed eventually.
-     */
-    public static void addPickaxeBlockEffectiveAgainst (Block block) {
-	setBlockHarvestLevel(block,"pickaxe",0);
     }
 
     /**
