@@ -956,7 +956,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/BlockTrap
  }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.java ../src_work/minecraft/net/minecraft/src/Chunk.java
 --- ../src_base/minecraft/net/minecraft/src/Chunk.java	2011-10-02 14:29:20.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-10-02 14:29:22.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/Chunk.java	2011-10-04 17:42:37.000000000 -0400
 @@ -3,6 +3,7 @@
  // Decompiler options: packimports(3) braces deadcode 
  
@@ -1280,7 +1280,12 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
                  int k4 = (k2 << 11 | k3 << 7 | j) >> 1;
                  int k5 = (i1 - j) / 2;
                  System.arraycopy(abyte0, k1, skylightMap.data, k4, k5);
-@@ -834,6 +811,12 @@
+@@ -830,11 +807,20 @@
+ 
+         }
+ 
++	List<TileEntity> invalidList=new ArrayList();
+         TileEntity tileentity;
          for(Iterator iterator = chunkTileEntityMap.values().iterator(); iterator.hasNext(); tileentity.func_35144_b())
          {
              tileentity = (TileEntity)iterator.next();
@@ -1288,12 +1293,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/Chunk.jav
 +		    tileentity.yCoord>=j && tileentity.yCoord<=i1 &&
 +		    (tileentity.zCoord&15)>=k && (tileentity.zCoord&15)<=j1) {
 +
-+		    tileentity.invalidate();
++		    invalidList.add(tileentity);
 +	    }
          }
++	for(TileEntity te : invalidList)
++		te.invalidate();
  
          return k1;
-@@ -880,7 +863,6 @@
+     }
+@@ -880,7 +866,6 @@
          int l = field_35845_c[k];
          if(l == -999)
          {
@@ -2852,6 +2860,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      public Random rand;
      public boolean isNewWorld;
 Only in ../src_work/minecraft/net/minecraft/src: World.java.orig
+Only in ../src_work/minecraft/net/minecraft/src: .World.java.swp
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-10-02 14:29:21.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-10-02 14:29:22.000000000 -0400
