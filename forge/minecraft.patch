@@ -2146,7 +2146,7 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderBlo
                  renderSouthFace(block, i, j, k, 38);
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEngine.java ../src_work/minecraft/net/minecraft/src/RenderEngine.java
 --- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	2011-10-02 14:29:20.000000000 -0400
-+++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-10-02 14:29:22.000000000 -0400
++++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	2011-10-05 18:51:03.000000000 -0400
 @@ -128,6 +128,9 @@
          }
          try
@@ -2157,6 +2157,15 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderEng
              singleIntBuffer.clear();
              GLAllocation.generateTextureNames(singleIntBuffer);
              int i = singleIntBuffer.get(0);
+@@ -667,7 +670,7 @@
+     private GameSettings options;
+     public boolean clampTexture;
+     public boolean blurTexture;
+-    private TexturePackList texturePack;
++    public TexturePackList texturePack;
+     private BufferedImage missingTextureImage;
+ 
+ }
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/RenderGlobal.java ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
 --- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	2011-10-02 14:29:20.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	2011-10-02 14:29:22.000000000 -0400
@@ -2860,7 +2869,6 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/World.jav
      public Random rand;
      public boolean isNewWorld;
 Only in ../src_work/minecraft/net/minecraft/src: World.java.orig
-Only in ../src_work/minecraft/net/minecraft/src: .World.java.swp
 diff -u -r --strip-trailing-cr ../src_base/minecraft/net/minecraft/src/WorldRenderer.java ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	2011-10-02 14:29:21.000000000 -0400
 +++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	2011-10-02 14:29:22.000000000 -0400
