@@ -1,0 +1,23 @@
+--- ../src_base/minecraft/net/minecraft/src/ItemBucket.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ItemBucket.java	0000-00-00 00:00:00.000000000 -0000
+@@ -6,6 +6,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ // Referenced classes of package net.minecraft.src:
+ //            Item, EntityPlayer, Vec3D, MathHelper, 
+ //            World, MovingObjectPosition, EnumMovingObjectType, Material, 
+@@ -60,6 +62,11 @@
+                 {
+                     return itemstack;
+                 }
++                ItemStack customBucket = MinecraftForge.fillCustomBucket(world,
++                        i, j, k);
++                if (customBucket != null) {
++                   return customBucket;
++                }
+                 if(world.getBlockMaterial(i, j, k) == Material.water && world.getBlockMetadata(i, j, k) == 0)
+                 {
+                     world.setBlockWithNotify(i, j, k, 0);

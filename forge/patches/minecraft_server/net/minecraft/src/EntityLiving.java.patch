@@ -1,0 +1,13 @@
+--- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
+@@ -600,7 +600,9 @@
+         int i = MathHelper.floor_double(posX);
+         int j = MathHelper.floor_double(boundingBox.minY);
+         int k = MathHelper.floor_double(posZ);
+-        return worldObj.getBlockId(i, j, k) == Block.ladder.blockID;
++	Block block=Block.blocksList[worldObj.getBlockId(i,j,k)];
++	if(block==null) return false;
++	return block.isLadder();
+     }
+ 
+     public void writeEntityToNBT(NBTTagCompound nbttagcompound)

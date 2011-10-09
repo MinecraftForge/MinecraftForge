@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/src/TileEntityRendererPiston.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/TileEntityRendererPiston.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,7 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.ForgeHooksClient;
+ import net.minecraft.client.Minecraft;
+ import org.lwjgl.opengl.GL11;
+ 
+@@ -38,6 +39,7 @@
+             {
+                 GL11.glShadeModel(7424 /*GL_FLAT*/);
+             }
++	    ForgeHooksClient.beforeBlockRender(block,field_31071_b);
+             tessellator.startDrawingQuads();
+             tessellator.setTranslationD(((float)d - (float)tileentitypiston.xCoord) + tileentitypiston.func_31017_b(f), ((float)d1 - (float)tileentitypiston.yCoord) + tileentitypiston.func_31014_c(f), ((float)d2 - (float)tileentitypiston.zCoord) + tileentitypiston.func_31013_d(f));
+             tessellator.setColorOpaque(1, 1, 1);
+@@ -58,6 +60,7 @@
+             }
+             tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
+             tessellator.draw();
++	    ForgeHooksClient.afterBlockRender(block,field_31071_b);
+             RenderHelper.enableStandardItemLighting();
+         }
+     }

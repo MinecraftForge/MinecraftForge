@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	0000-00-00 00:00:00.000000000 -0000
+@@ -178,7 +178,7 @@
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+             }
+-            if(!world.isBlockNormalCube(i, j - 1, k))
++            if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+             {
+                 world.setBlockWithNotify(i, j, k, 0);
+                 flag = true;
+@@ -242,7 +242,7 @@
+             return false;
+         } else
+         {
+-            return world.isBlockNormalCube(i, j - 1, k) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
++            return world.isBlockSolidOnSide(i, j - 1, k,1) && super.canPlaceBlockAt(world, i, j, k) && super.canPlaceBlockAt(world, i, j + 1, k);
+         }
+     }
+ 

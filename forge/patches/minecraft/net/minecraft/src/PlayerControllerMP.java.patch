@@ -1,0 +1,57 @@
+--- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,9 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.IUseItemFirst;
++import net.minecraft.src.forge.ForgeHooks;
++
+ import net.minecraft.client.Minecraft;
+ 
+ // Referenced classes of package net.minecraft.src:
+@@ -91,7 +94,7 @@
+             {
+                 Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
+             }
+-            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
++            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
+             {
+                 sendBlockRemoved(i, j, k, l);
+             } else
+@@ -137,7 +140,7 @@
+                 return;
+             }
+             Block block = Block.blocksList[i1];
+-            curBlockDamageMP += block.blockStrength(mc.thePlayer);
++	    curBlockDamageMP += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
+             if(stepSoundTickCounter % 4F == 0.0F && block != null)
+             {
+                 mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+@@ -204,6 +207,13 @@
+     {
+         syncCurrentPlayItem();
+         netClientHandler.addToSendQueue(new Packet15Place(i, j, k, l, entityplayer.inventory.getCurrentItem()));
++
++        if (itemstack != null && itemstack.getItem() instanceof IUseItemFirst) {
++            IUseItemFirst iuif = (IUseItemFirst) itemstack.getItem();
++            if (iuif.onItemUseFirst(itemstack, entityplayer, world, i, j, k, l)) {
++                return true;
++            }
++        }
+         int i1 = world.getBlockId(i, j, k);
+         if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
+         {
+@@ -223,7 +233,11 @@
+             return flag;
+         } else
+         {
+-            return itemstack.useItem(entityplayer, world, i, j, k, l);
++            if(!itemstack.useItem(entityplayer, world, i, j, k, l))
++		    return false;
++            if(itemstack.stackSize == 0)
++		ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack);
++	    return true;
+         }
+     }
+ 

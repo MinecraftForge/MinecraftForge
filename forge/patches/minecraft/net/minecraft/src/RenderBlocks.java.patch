@@ -1,0 +1,74 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2980,7 +2980,7 @@
+             colorBlueTopRight *= f27;
+             int j2 = block.getBlockTexture(blockAccess, i, j, k, 2);
+             renderEastFace(block, i, j, k, j2);
+-            if(cfgGrassFix && j2 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && j2 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3085,7 +3085,7 @@
+             colorBlueTopRight *= f28;
+             int k2 = block.getBlockTexture(blockAccess, i, j, k, 3);
+             renderWestFace(block, i, j, k, block.getBlockTexture(blockAccess, i, j, k, 3));
+-            if(cfgGrassFix && k2 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && k2 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3190,7 +3190,7 @@
+             colorBlueTopRight *= f29;
+             int l2 = block.getBlockTexture(blockAccess, i, j, k, 4);
+             renderNorthFace(block, i, j, k, l2);
+-            if(cfgGrassFix && l2 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && l2 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3295,7 +3295,7 @@
+             colorBlueTopRight *= f30;
+             int i3 = block.getBlockTexture(blockAccess, i, j, k, 5);
+             renderSouthFace(block, i, j, k, i3);
+-            if(cfgGrassFix && i3 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && i3 == 3 && overrideBlockTexture < 0)
+             {
+                 colorRedTopLeft *= f;
+                 colorRedBottomLeft *= f;
+@@ -3388,7 +3388,7 @@
+             tessellator.setColorOpaque_F(f11, f14, f17);
+             int i1 = block.getBlockTexture(blockAccess, i, j, k, 2);
+             renderEastFace(block, i, j, k, i1);
+-            if(cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f11 * f, f14 * f1, f17 * f2);
+                 renderEastFace(block, i, j, k, 38);
+@@ -3401,7 +3401,7 @@
+             tessellator.setColorOpaque_F(f11, f14, f17);
+             int j1 = block.getBlockTexture(blockAccess, i, j, k, 3);
+             renderWestFace(block, i, j, k, j1);
+-            if(cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f11 * f, f14 * f1, f17 * f2);
+                 renderWestFace(block, i, j, k, 38);
+@@ -3414,7 +3414,7 @@
+             tessellator.setColorOpaque_F(f12, f15, f18);
+             int k1 = block.getBlockTexture(blockAccess, i, j, k, 4);
+             renderNorthFace(block, i, j, k, k1);
+-            if(cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
+                 renderNorthFace(block, i, j, k, 38);
+@@ -3427,7 +3427,7 @@
+             tessellator.setColorOpaque_F(f12, f15, f18);
+             int l1 = block.getBlockTexture(blockAccess, i, j, k, 5);
+             renderSouthFace(block, i, j, k, l1);
+-            if(cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
++            if(Tessellator.instance.defaultTexture && cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
+             {
+                 tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
+                 renderSouthFace(block, i, j, k, 38);

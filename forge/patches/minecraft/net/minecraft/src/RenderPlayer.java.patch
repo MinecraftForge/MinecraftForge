@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,7 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.IArmorTextureProvider;
+ import net.minecraft.client.Minecraft;
+ import org.lwjgl.opengl.GL11;
+ 
+@@ -34,7 +35,14 @@
+             if(item instanceof ItemArmor)
+             {
+                 ItemArmor itemarmor = (ItemArmor)item;
+-                loadTexture((new StringBuilder()).append("/armor/").append(armorFilenamePrefix[itemarmor.renderIndex]).append("_").append(i != 2 ? 1 : 2).append(".png").toString());
++                if ( item instanceof IArmorTextureProvider )
++                {
++                	loadTexture( ((IArmorTextureProvider)item).getArmorTextureFile(itemstack) ); 
++                }
++                else
++                {
++                	loadTexture((new StringBuilder()).append("/armor/").append(armorFilenamePrefix[itemarmor.renderIndex]).append("_").append(i != 2 ? 1 : 2).append(".png").toString());
++                }                
+                 ModelBiped modelbiped = i != 2 ? modelArmorChestplate : modelArmor;
+                 modelbiped.bipedHead.showModel = i == 0;
+                 modelbiped.bipedHeadwear.showModel = i == 0;
