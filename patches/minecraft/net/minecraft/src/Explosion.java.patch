@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/src/Explosion.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/Explosion.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,6 +5,7 @@
+ package net.minecraft.src;
+ 
+ import java.util.*;
++import net.minecraft.src.forge.ISpecialResistance;
+ 
+ // Referenced classes of package net.minecraft.src:
+ //            World, MathHelper, Block, ChunkPosition, 
+@@ -66,7 +67,17 @@
+                         int i5 = worldObj.getBlockId(j4, k4, l4);
+                         if(i5 > 0)
+                         {
+-                            f1 -= (Block.blocksList[i5].getExplosionResistance(exploder) + 0.3F) * f2;
++                            if (Block.blocksList[i5] instanceof ISpecialResistance) {
++                                ISpecialResistance isr = (ISpecialResistance) Block.blocksList[i5];
++                                f1 -= (isr.getSpecialExplosionResistance(
++                                        worldObj, j4, k4, l4, explosionX,
++                                        explosionY, explosionZ, exploder) + 0.3F)
++                                        * f2;
++                            } else {
++                                f1 -= (Block.blocksList[i5]
++                                        .getExplosionResistance(exploder) + 0.3F)
++                                        * f2;
++                            }
+                         }
+                         if(f1 > 0.0F)
+                         {

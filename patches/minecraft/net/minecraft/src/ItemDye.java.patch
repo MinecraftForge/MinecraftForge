@@ -1,0 +1,45 @@
+--- ../src_base/minecraft/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,6 +3,7 @@
+ // Decompiler options: packimports(3) braces deadcode 
+ 
+ package net.minecraft.src;
++import net.minecraft.src.forge.ForgeHooks;
+ 
+ import java.util.Random;
+ 
+@@ -35,13 +36,18 @@
+ 
+     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
+     {
+-        if(!entityplayer.func_35190_e(i, j, k))
++        if(entityplayer!=null && !entityplayer.func_35190_e(i, j, k))
+         {
+             return false;
+         }
+         if(itemstack.getItemDamage() == 15)
+         {
+             int i1 = world.getBlockId(i, j, k);
++	    if(ForgeHooks.onUseBonemeal(world,i1,i,j,k)) {
++		    if(!world.multiplayerWorld)
++			    itemstack.stackSize--;
++		    return true;
++	    }
+             if(i1 == Block.sapling.blockID)
+             {
+                 if(!world.multiplayerWorld)
+@@ -108,13 +114,7 @@
+                             world.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1);
+                             continue;
+                         }
+-                        if(itemRand.nextInt(3) != 0)
+-                        {
+-                            world.setBlockWithNotify(k1, l1, i2, Block.plantYellow.blockID);
+-                        } else
+-                        {
+-                            world.setBlockWithNotify(k1, l1, i2, Block.plantRed.blockID);
+-                        }
++			ForgeHooks.plantGrassPlant(world,k1,l1,i2);
+                     }
+ 
+                 }

@@ -1,0 +1,58 @@
+--- ../src_base/minecraft/net/minecraft/src/FurnaceRecipes.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/FurnaceRecipes.java	0000-00-00 00:00:00.000000000 -0000
+@@ -6,6 +6,7 @@
+ 
+ import java.util.HashMap;
+ import java.util.Map;
++import java.util.Arrays;
+ 
+ // Referenced classes of package net.minecraft.src:
+ //            Block, ItemStack, Item
+@@ -21,6 +22,7 @@
+     private FurnaceRecipes()
+     {
+         smeltingList = new HashMap();
++        metaSmeltingList = new HashMap();
+         addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron));
+         addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold));
+         addSmelting(Block.oreDiamond.blockID, new ItemStack(Item.diamond));
+@@ -40,11 +42,32 @@
+         smeltingList.put(Integer.valueOf(i), itemstack);
+     }
+ 
++    /* FORGE: Add a metadata-sensitive furnace recipe.
++     */
++    public void addSmelting(int i, int meta, ItemStack itemstack)
++    {
++        metaSmeltingList.put(Arrays.asList(i,meta), itemstack);
++    }
++
++    /* FORGE: Not used anymore.
++     */
+     public ItemStack getSmeltingResult(int i)
+     {
+         return (ItemStack)smeltingList.get(Integer.valueOf(i));
+     }
+ 
++    /* FORGE: Added to allow metadata-sensitive smelting.
++     */
++    public ItemStack getSmeltingResult(ItemStack src) {
++	    ItemStack tr;
++
++	    if(src==null) return null;
++	    tr=(ItemStack)metaSmeltingList.get(
++		Arrays.asList(src.itemID,src.getItemDamage()));
++	    if(tr!=null) return tr;
++	    return (ItemStack)smeltingList.get(Integer.valueOf(src.itemID));
++    }
++
+     public Map getSmeltingList()
+     {
+         return smeltingList;
+@@ -52,5 +75,6 @@
+ 
+     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
+     private Map smeltingList;
++    private Map metaSmeltingList;
+ 
+ }

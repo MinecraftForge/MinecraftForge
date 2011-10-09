@@ -1,0 +1,82 @@
+--- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,7 +3,8 @@
+ // Decompiler options: packimports(3) braces deadcode 
+ 
+ package net.minecraft.src;
+-
++import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.IUseItemFirst;
+ 
+ // Referenced classes of package net.minecraft.src:
+ //            EntityPlayer, PlayerCapabilities, World, Block, 
+@@ -66,7 +67,8 @@
+             if(j != 0)
+             {
+                 Block block = Block.blocksList[j];
+-                float f = block.blockStrength(thisPlayer) * (float)(i + 1);
++                float f = block.blockStrength(thisWorld,thisPlayer,
++			field_22049_l,field_22048_m,field_22047_n) * (float)(i + 1);
+                 if(f >= 1.0F)
+                 {
+                     field_22050_k = false;
+@@ -93,7 +95,7 @@
+         {
+             Block.blocksList[i1].onBlockClicked(thisWorld, i, j, k, thisPlayer);
+         }
+-        if(i1 > 0 && Block.blocksList[i1].blockStrength(thisPlayer) >= 1.0F)
++        if(i1 > 0 && Block.blocksList[i1].blockStrength(thisWorld,thisPlayer,i,j,k) >= 1.0F)
+         {
+             blockHarvessted(i, j, k);
+         } else
+@@ -113,7 +115,7 @@
+             if(i1 != 0)
+             {
+                 Block block = Block.blocksList[i1];
+-                float f = block.blockStrength(thisPlayer) * (float)(l + 1);
++                float f = block.blockStrength(thisWorld,thisPlayer,i,j,k) * (float)(l + 1);
+                 if(f >= 0.7F)
+                 {
+                     blockHarvessted(i, j, k);
+@@ -164,7 +166,7 @@
+                     thisPlayer.destroyCurrentEquippedItem();
+                 }
+             }
+-            if(flag && thisPlayer.canHarvestBlock(Block.blocksList[l]))
++            if(flag && Block.blocksList[l].canHarvestBlock(thisPlayer,i1))
+             {
+                 Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
+             }
+@@ -188,6 +190,7 @@
+             if(itemstack1.stackSize == 0)
+             {
+                 entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
++		ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack1);
+             }
+             return true;
+         } else
+@@ -198,6 +201,11 @@
+ 
+     public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
+     {
++	if(itemstack!=null && itemstack.getItem() instanceof IUseItemFirst) {
++		IUseItemFirst iuif=(IUseItemFirst)itemstack.getItem();
++		if(iuif.onItemUseFirst(itemstack,entityplayer,world,i,j,k,l))
++			return true;
++	}
+         int i1 = world.getBlockId(i, j, k);
+         if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
+         {
+@@ -217,7 +225,11 @@
+             return flag;
+         } else
+         {
+-            return itemstack.useItem(entityplayer, world, i, j, k, l);
++            if(!itemstack.useItem(entityplayer, world, i, j, k, l))
++		    return false;
++            if(itemstack.stackSize == 0)
++		ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack);
++	    return true;
+         }
+     }
+ 

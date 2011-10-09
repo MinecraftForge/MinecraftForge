@@ -34,7 +34,10 @@ fi
 
 cp -a src_base src_work
 pushd src_work > /dev/null
-	patch -p2 -i ../forge/minecraft.patch
+	for i in `find ../forge/patches/ -type f`
+	do
+		patch -p2 -i $i
+	done
 popd > /dev/null
 
 cp -a src_work src_forge

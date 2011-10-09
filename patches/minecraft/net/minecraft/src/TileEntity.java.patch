@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
+@@ -61,6 +61,13 @@
+     {
+     }
+ 
++    /* FORGE: Return false if this TileEntity does not require updateEntity()
++     * calls.
++     */
++    public boolean canUpdate() {
++	    return true;
++    }
++
+     public static TileEntity createAndLoadEntity(NBTTagCompound nbttagcompound)
+     {
+         TileEntity tileentity = null;

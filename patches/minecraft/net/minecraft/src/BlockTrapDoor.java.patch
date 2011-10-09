@@ -1,0 +1,36 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockTrapDoor.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockTrapDoor.java	0000-00-00 00:00:00.000000000 -0000
+@@ -147,7 +147,7 @@
+         {
+             j1--;
+         }
+-        if(!world.isBlockNormalCube(j1, j, k1))
++        if(!disableValidation && !world.isBlockSolidOnSide(j1, j, k1, (i1&3)+2))
+         {
+             world.setBlockWithNotify(i, j, k, 0);
+             dropBlockAsItem(world, i, j, k, i1);
+@@ -189,6 +189,7 @@
+ 
+     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+     {
++	if(disableValidation) return true;
+         if(l == 0)
+         {
+             return false;
+@@ -213,11 +214,15 @@
+         {
+             i--;
+         }
+-        return world.isBlockNormalCube(i, j, k);
++        return world.isBlockSolidOnSide(i, j, k, l);
+     }
+ 
+     public static boolean isTrapdoorOpen(int i)
+     {
+         return (i & 4) != 0;
+     }
++
++    /* FORGE: Set this to allow trapdoors to remain free-floating
++     */
++    public static boolean disableValidation=false;
+ }

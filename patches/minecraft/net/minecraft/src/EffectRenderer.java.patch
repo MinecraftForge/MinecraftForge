@@ -1,0 +1,148 @@
+--- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,6 +7,9 @@
+ import java.util.*;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraft.src.forge.BlockTextureParticles;
++import net.minecraft.src.forge.ITextureProvider;
++
+ // Referenced classes of package net.minecraft.src:
+ //            EntityFX, Entity, MathHelper, RenderEngine, 
+ //            Tessellator, Block, EntityDiggingFX, World
+@@ -16,6 +19,7 @@
+ 
+     public EffectRenderer(World world, RenderEngine renderengine)
+     {
++        effectList = new ArrayList();
+         fxLayers = new List[4];
+         rand = new Random();
+         if(world != null)
+@@ -55,7 +59,18 @@
+             }
+ 
+         }
+-
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            for (int y = 0; y < entry.effects.size(); y++) {
++                EntityFX entityfx = (EntityFX) entry.effects.get(y);
++                if (entityfx.isDead) {
++                    entry.effects.remove(y--);
++                }
++            }
++            if (effectList.size() == 0)
++                effectList.remove(x--);
++        }
+     }
+ 
+     public void renderParticles(Entity entity, float f)
+@@ -94,6 +109,7 @@
+             for(int k = 0; k < fxLayers[i].size(); k++)
+             {
+                 EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
++ 		if(entityfx instanceof EntityDiggingFX) continue;
+                 tessellator.setBrightness(entityfx.func_35115_a(f));
+                 entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
+             }
+@@ -101,6 +117,21 @@
+             tessellator.draw();
+         }
+ 
++        Tessellator tessellator = Tessellator.instance;
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            GL11.glBindTexture(3553 /* GL_TEXTURE_2D */,
++                    renderer.getTexture(entry.texture));
++            tessellator.startDrawingQuads();
++            for (int y = 0; y < entry.effects.size(); y++) {
++                EntityFX entityfx = (EntityFX) entry.effects.get(y);
++                tessellator.setBrightness(entityfx.func_35115_a(f));
++                entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
++            }
++            tessellator.draw();
++        }
++
+     }
+ 
+     public void func_1187_b(Entity entity, float f)
+@@ -132,7 +163,12 @@
+         {
+             fxLayers[i].clear();
+         }
+-
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            entry.effects.clear();
++        }
++        effectList.clear();
+     }
+ 
+     public void addBlockDestroyEffects(int i, int j, int k, int l, int i1)
+@@ -153,7 +189,12 @@
+                     double d1 = (double)j + ((double)l1 + 0.5D) / (double)j1;
+                     double d2 = (double)k + ((double)i2 + 0.5D) / (double)j1;
+                     int j2 = rand.nextInt(6);
+-                    addEffect((new EntityDiggingFX(worldObj, d, d1, d2, d - (double)i - 0.5D, d1 - (double)j - 0.5D, d2 - (double)k - 0.5D, block, j2, i1)).func_4041_a(i, j, k));
++                    EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj,
++                            d, d1, d2, d - (double) i - 0.5D, d1 - (double) j
++                                    - 0.5D, d2 - (double) k - 0.5D, block, j2,
++                            i1);
++                    dig_effect.func_4041_a(i, j, k);
++                    addDigParticleEffect(dig_effect, block);
+                 }
+ 
+             }
+@@ -198,16 +239,48 @@
+         {
+             d = (double)i + block.maxX + (double)f;
+         }
+-        addEffect((new EntityDiggingFX(worldObj, d, d1, d2, 0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k))).func_4041_a(i, j, k).func_407_b(0.2F).func_405_d(0.6F));
++        EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj, d, d1, d2,
++                0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k));
++        dig_effect.func_4041_a(i, j, k);
++        dig_effect.func_407_b(0.2F);
++        dig_effect.func_405_d(0.6F);
++        addDigParticleEffect(dig_effect, block);
+     }
+ 
+     public String getStatistics()
+     {
+         return (new StringBuilder()).append("").append(fxLayers[0].size() + fxLayers[1].size() + fxLayers[2].size()).toString();
+     }
++	
++    public void addDigParticleEffect(EntityDiggingFX dig_effect, Block block) {
++        boolean added = false;
++        String comp;
++
++        if (block instanceof ITextureProvider) {
++            comp = ((ITextureProvider) block).getTextureFile();
++        } else {
++            comp = "/terrain.png";
++        }
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            if (entry.texture.equals(comp)) {
++                entry.effects.add(dig_effect);
++                added = true;
++            }
++        }
++        if (!added) {
++            BlockTextureParticles entry = new BlockTextureParticles();
++            entry.texture = comp;
++            entry.effects.add(dig_effect);
++            effectList.add(entry);
++        }
++        addEffect(dig_effect);
++    }
+ 
+     protected World worldObj;
+     private List fxLayers[];
++    private List effectList;
+     private RenderEngine renderer;
+     private Random rand;
+ }

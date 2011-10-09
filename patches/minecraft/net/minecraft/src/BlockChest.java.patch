@@ -1,0 +1,31 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockChest.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	0000-00-00 00:00:00.000000000 -0000
+@@ -423,23 +423,23 @@
+         {
+             return true;
+         }
+-        if(world.isBlockNormalCube(i, j + 1, k))
++        if(world.isBlockSolidOnSide(i, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockNormalCube(i - 1, j + 1, k))
++        if(world.getBlockId(i - 1, j, k) == blockID && world.isBlockSolidOnSide(i - 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockNormalCube(i + 1, j + 1, k))
++        if(world.getBlockId(i + 1, j, k) == blockID && world.isBlockSolidOnSide(i + 1, j + 1, k,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockNormalCube(i, j + 1, k - 1))
++        if(world.getBlockId(i, j, k - 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k - 1,0))
+         {
+             return true;
+         }
+-        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockNormalCube(i, j + 1, k + 1))
++        if(world.getBlockId(i, j, k + 1) == blockID && world.isBlockSolidOnSide(i, j + 1, k + 1,0))
+         {
+             return true;
+         }

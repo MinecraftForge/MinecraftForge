@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/src/ItemSeeds.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ItemSeeds.java	0000-00-00 00:00:00.000000000 -0000
+@@ -24,7 +24,7 @@
+         {
+             return false;
+         }
+-        if(!entityplayer.func_35190_e(i, j, k) || !entityplayer.func_35190_e(i, j + 1, k))
++        if(entityplayer!=null && (!entityplayer.func_35190_e(i, j, k) || !entityplayer.func_35190_e(i, j + 1, k)))
+         {
+             return false;
+         }

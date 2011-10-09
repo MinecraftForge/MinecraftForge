@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/src/PlayerController.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,6 +3,7 @@
+ // Decompiler options: packimports(3) braces deadcode 
+ 
+ package net.minecraft.src;
++import net.minecraft.src.forge.*;
+ 
+ import net.minecraft.client.Minecraft;
+ 
+@@ -64,6 +65,7 @@
+             if(itemstack1.stackSize == 0)
+             {
+                 entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
++		ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack1);
+             }
+             return true;
+         } else

@@ -1,0 +1,76 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,10 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.ArmorProperties;
++import net.minecraft.src.forge.ISpecialArmor;
++import net.minecraft.src.forge.ForgeHooks;
++
+ import java.util.*;
+ 
+ // Referenced classes of package net.minecraft.src:
+@@ -485,6 +489,8 @@
+         worldObj.entityJoinedWorld(entityitem);
+     }
+ 
++    /* FORGE: This isnt called anymore
++     */
+     public float getCurrentPlayerStrVsBlock(Block block)
+     {
+         float f = inventory.getStrVsBlock(block);
+@@ -507,6 +513,32 @@
+         return f;
+     }
+ 
++    /* FORGE: Extended to allow metadata.
++     */
++    public float getCurrentPlayerStrVsBlock(Block block, int md)
++    {
++        float f = 1.0F;
++	ItemStack ist=inventory.getCurrentItem();
++	if(ist!=null) f=ist.getItem().getStrVsBlock(ist,block,md);
++        if(isInsideOfMaterial(Material.water))
++        {
++            f /= 5F;
++        }
++        if(!onGround)
++        {
++            f /= 5F;
++        }
++        if(isPotionActive(Potion.potionDigSpeed))
++        {
++            f *= 1.0F + (float)(getActivePotionEffect(Potion.potionDigSpeed).getAmplifier() + 1) * 0.2F;
++        }
++        if(isPotionActive(Potion.potionDigSlow))
++        {
++            f *= 1.0F - (float)(getActivePotionEffect(Potion.potionDigSlow).getAmplifier() + 1) * 0.2F;
++        }
++        return f;
++    }
++
+     public boolean canHarvestBlock(Block block)
+     {
+         return inventory.canHarvestBlock(block);
+@@ -720,7 +752,9 @@
+ 
+     public void destroyCurrentEquippedItem()
+     {
++	ItemStack orig=inventory.getCurrentItem();
+         inventory.setInventorySlotContents(inventory.currentItem, null);
++	ForgeHooks.onDestroyCurrentItem(this,orig);
+     }
+ 
+     public double getYOffset()
+@@ -815,6 +849,10 @@
+ 
+     public EnumStatus sleepInBedAt(int i, int j, int k)
+     {
++	EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
++	if (customSleep != null) {
++	    return customSleep;
++	}
+         if(!worldObj.multiplayerWorld)
+         {
+             if(isPlayerSleeping() || !isEntityAlive())

@@ -1,0 +1,55 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockRail.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockRail.java	0000-00-00 00:00:00.000000000 -0000
+@@ -16,12 +16,12 @@
+     public static final boolean isRailBlockAt(World world, int i, int j, int k)
+     {
+         int l = world.getBlockId(i, j, k);
+-        return l == Block.rail.blockID || l == Block.railPowered.blockID || l == Block.railDetector.blockID;
++	return Block.blocksList[l] instanceof BlockRail;
+     }
+ 
+     public static final boolean isRailBlock(int i)
+     {
+-        return i == Block.rail.blockID || i == Block.railPowered.blockID || i == Block.railDetector.blockID;
++	return Block.blocksList[i] instanceof BlockRail;
+     }
+ 
+     protected BlockRail(int i, int j, boolean flag)
+@@ -97,7 +97,7 @@
+ 
+     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+     {
+-        return world.isBlockNormalCube(i, j - 1, k);
++        return world.isBlockSolidOnSide(i, j - 1, k,1);
+     }
+ 
+     public void onBlockAdded(World world, int i, int j, int k)
+@@ -121,23 +121,23 @@
+             j1 &= 7;
+         }
+         boolean flag = false;
+-        if(!world.isBlockNormalCube(i, j - 1, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 2 && !world.isBlockNormalCube(i + 1, j, k))
++        if(j1 == 2 && !world.isBlockSolidOnSide(i + 1, j, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 3 && !world.isBlockNormalCube(i - 1, j, k))
++        if(j1 == 3 && !world.isBlockSolidOnSide(i - 1, j, k,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 4 && !world.isBlockNormalCube(i, j, k - 1))
++        if(j1 == 4 && !world.isBlockSolidOnSide(i, j, k - 1,1))
+         {
+             flag = true;
+         }
+-        if(j1 == 5 && !world.isBlockNormalCube(i, j, k + 1))
++        if(j1 == 5 && !world.isBlockSolidOnSide(i, j, k + 1,1))
+         {
+             flag = true;
+         }
