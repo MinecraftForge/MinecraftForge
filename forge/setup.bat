@@ -12,7 +12,7 @@ pushd .. >nul
     ..\runtime\bin\applydiff.exe -uf -p2 < ..\forge\modLoaderMP-win.patch
     ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ..\forge\mlprop.patch ..\forge\mlprop-win.patch
     ..\runtime\bin\applydiff.exe -uf -p1 < ..\forge\mlprop-win.patch
-    rm ../forge/mlprop-win.patch ../forge/modLoaderMP-win.patch
+    del ..\forge\mlprop-win.patch ..\forge\modLoaderMP-win.patch >nul 1>nul
   popd >nul
 
   cmd /C updatemd5.bat
@@ -35,7 +35,7 @@ pushd .. >nul
       if /I "!file:~-6!" EQU ".patch" (
         ..\runtime\bin\python\python_mcp ..\forge\lfcr.py %%i ..\forge\temp.patch
         ..\runtime\bin\applydiff.exe -uf -p2 -i ..\forge\temp.patch
-	rm ../forge/temp.patch >nul 1>nul
+        del ..\forge\temp.patch >nul 1>nul
       )
     )
   popd >nul
