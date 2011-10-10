@@ -1,5 +1,3 @@
-rm -rf patches
-
 echo Creating directories
 
 for i in `find ../src_work -type d`
@@ -11,16 +9,15 @@ echo Creating patches
 
 for i in `find ../src_work -type f`
 do
-	diff -u ../src_base${i:11} $i -r --strip-trailing-cr --new-file | sed -e "1,2s/[0-9-]* [0-9:\.]* [+-][0-9]*\b/0000-00-00 00:00:00.000000000 -00/" | tr -d '\r' > ./patches${i:11}.patch
+	diff -u ../src_base${i:11} $i -r --strip-trailing-cr --new-file | sed -e "1,2s/[0-9-]* [0-9:\.]* [+-][0-9]*\b/0000-00-00 00:00:00.000000000 -0000/" | tr -d '\r' > ./patches${i:11}.patch
 done
 
 echo Removing empty patches
-for i in `find patches -size 0 -type f` 
+for i in `find patches -size 0 -type f -name \*.patch` 
 do 
 	rm $i 
 done
-for i in `find patches -depth -empty -type d` 
+for i in `find patches -depth -empty -type d | grep -a -v "svn"` 
 do 
 	rmdir "$i"
 done
-

@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/src/ItemHoe.java	0000-00-00 00:00:00.000000000 -00
-+++ ../src_work/minecraft/net/minecraft/src/ItemHoe.java	0000-00-00 00:00:00.000000000 -00
+--- ../src_base/minecraft/net/minecraft/src/ItemHoe.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ItemHoe.java	0000-00-00 00:00:00.000000000 -0000
 @@ -21,7 +21,7 @@
  
      public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
