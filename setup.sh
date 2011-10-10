@@ -36,7 +36,9 @@ cp -a src_base src_work
 pushd src_work > /dev/null
 	for i in `find ../forge/patches/ -type f`
 	do
-		patch -p2 -i $i
+        if ["${i:(-6)}" == ".patch"]; then
+            patch -p2 -i $i
+        fi
 	done
 popd > /dev/null
 
