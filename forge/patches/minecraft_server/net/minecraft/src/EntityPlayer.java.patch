@@ -1,5 +1,5 @@
---- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -00
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -00
 @@ -6,6 +6,10 @@
  
  import java.util.*;
@@ -53,7 +53,33 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -668,7 +700,9 @@
+@@ -615,6 +647,25 @@
+ 
+     protected void damageEntity(DamageSource damagesource, int i)
+     {
++    	boolean doRegularComputation = true;
++        int initialDamage = i;
++        
++        for (ItemStack stack : inventory.armorInventory) {
++            if (stack != null && stack.getItem() instanceof ISpecialArmor) {
++                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
++                
++                ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
++                i = i - props.damageRemove;
++                doRegularComputation = doRegularComputation
++                        && props.allowRegularComputation;
++            }
++        }
++        
++        if (!doRegularComputation) {
++            super.damageEntity(damagesource, i);
++            return;
++        }
++        
+         if(!damagesource.func_35083_b() && func_35180_G())
+         {
+             i = 1 + i >> 1;
+@@ -668,7 +719,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -63,7 +89,7 @@
      }
  
      public double getYOffset()
-@@ -757,6 +791,10 @@
+@@ -757,6 +810,10 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {

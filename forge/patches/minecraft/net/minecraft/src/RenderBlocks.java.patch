@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -00
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -00
 @@ -2980,7 +2980,7 @@
              colorBlueTopRight *= f27;
              int j2 = block.getBlockTexture(blockAccess, i, j, k, 2);

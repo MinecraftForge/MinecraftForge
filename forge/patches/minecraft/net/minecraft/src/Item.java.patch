@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src_work/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -00
++++ ../src_work/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -00
 @@ -76,6 +76,13 @@
          return 1.0F;
      }
