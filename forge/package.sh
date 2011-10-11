@@ -54,18 +54,24 @@ cd forge
 mkdir src
 mkdir src/minecraft
 mkdir src/minecraft_server
+mkdir patches
 cp -r ../forge_client/src/* src/minecraft
 cp -r ../forge_server/src/* src/minecraft_server
 cp -r ../forge_common/* src/minecraft
 cp -r ../forge_common/* src/minecraft_server
-cp ../minecraft.patch .
+cp -r ../patches/* patches
 cp ../lfcr.py .
 cp ../install/install.cmd .
+cp ../install/install.sh .
+cp ../modLoaderMP.patch .
+cp ../mlprop.patch .
 cp ../install/README.txt .
 cp ../minecraftforge_credits.txt .
 cp -r ../doc .
 
 cd src
+remove_svn .
+cd ../patches
 remove_svn .
 cd ..
 
