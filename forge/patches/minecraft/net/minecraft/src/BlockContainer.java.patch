@@ -18,7 +18,7 @@
 +    public TileEntity getBlockEntity(int md) {
 +	    return getBlockEntity();
 +    }
-+
-     public void playBlock(World world, int i, int j, int k, int l, int i1)
++ 
+     public void powerBlock(World world, int i, int j, int k, int l, int i1)
      {
-         super.playBlock(world, i, j, k, l, i1);
+         super.powerBlock(world, i, j, k, l, i1);
