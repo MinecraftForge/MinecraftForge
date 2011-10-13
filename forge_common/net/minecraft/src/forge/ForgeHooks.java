@@ -96,10 +96,10 @@ public class ForgeHooks {
 	static {
 		plantGrassList=new ArrayList<ProbableItem>();
 		plantGrassList.add(new ProbableItem(
-			Block.plantYellow.blockID,0,1,0,30));
+			Block.plantYellow.blockID,0,1,0,20));
 		plantGrassList.add(new ProbableItem(
-			Block.plantRed.blockID,0,1,30,40));
-		plantGrassWeight=40;
+			Block.plantRed.blockID,0,1,20,30));
+		plantGrassWeight=30;
 
 		seedGrassList=new ArrayList<ProbableItem>();
 		seedGrassList.add(new ProbableItem(
@@ -212,6 +212,7 @@ public class ForgeHooks {
 		MinecraftForge.setBlockHarvestLevel(Block.oreRedstoneGlowing,"pickaxe",2);
 		MinecraftForge.removeBlockEffectiveness(Block.oreRedstone,"pickaxe");
 		MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing,"pickaxe");
+		MinecraftForge.removeBlockEffectiveness(Block.obsidian,"pickaxe");
 
 		Block[] pickeff ={
 			Block.cobblestone, Block.stairDouble,

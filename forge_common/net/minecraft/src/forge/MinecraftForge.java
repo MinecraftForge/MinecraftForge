@@ -70,7 +70,7 @@ public class MinecraftForge {
      * @param bid The block ID to plant.
      * @param md The metadata to plant.
      * @param prop The relative probability of the plant, where red flowers are
-     * 10 and yellow flowers are 30.
+     * 10 and yellow flowers are 20.
      */
     public static void addGrassPlant(int item, int md, int prop) {
 	    ForgeHooks.addPlantGrass(item,md,prop);
