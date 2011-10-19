@@ -21,8 +21,8 @@
 +			TileEntity te=(TileEntity)ob;
 +			if(te.isInvalid()) continue;
 +			if(te.xCoord>=i && te.yCoord>=j && te.zCoord>=k
-+					&& te.xCoord<l && te.yCoord<i1 &&
-+					te.zCoord<j1) {
++					&& te.xCoord<=l && te.yCoord<=i1 &&
++					te.zCoord<=j1) {
 +				arraylist.add(te);
 +			}
 +		}
