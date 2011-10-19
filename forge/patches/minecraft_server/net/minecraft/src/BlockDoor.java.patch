@@ -1,5 +1,14 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockDoor.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockDoor.java	0000-00-00 00:00:00.000000000 -0000
+@@ -100,7 +100,7 @@
+     {
+         if(blockMaterial == Material.iron)
+         {
+-            return true;
++            return false;
+         }
+         int l = world.getBlockMetadata(i, j, k);
+         if((l & 8) != 0)
 @@ -167,7 +167,7 @@
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
