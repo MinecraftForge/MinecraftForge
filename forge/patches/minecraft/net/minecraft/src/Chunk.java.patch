@@ -113,7 +113,7 @@
      }
  
 @@ -334,8 +315,6 @@
-             field_35845_c[j1] = -999;
+             precipitationHeightMap[j1] = -999;
          }
          int k1 = heightMap[k << 4 | i] & 0xff;
 -        worldObj.getClass();
@@ -170,7 +170,7 @@
          isModified = true;
          return true;
 @@ -410,8 +387,6 @@
-             field_35845_c[i1] = -999;
+             precipitationHeightMap[i1] = -999;
          }
          int j1 = heightMap[i1] & 0xff;
 -        worldObj.getClass();
@@ -345,7 +345,7 @@
          return k1;
      }
 @@ -880,7 +866,6 @@
-         int l = field_35845_c[k];
+         int l = precipitationHeightMap[k];
          if(l == -999)
          {
 -            worldObj.getClass();
