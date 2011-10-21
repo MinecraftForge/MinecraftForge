@@ -287,7 +287,20 @@
              tileentity.validate();
              chunkTileEntityMap.put(chunkposition, tileentity);
              return;
-@@ -777,8 +762,6 @@
+@@ -773,12 +758,19 @@
+     public int setChunkData(byte abyte0[], int i, int j, int k, int l, int i1, int j1, 
+             int k1)
+     {
++        TileEntity te;
++	Iterator iterator = chunkTileEntityMap.values().iterator(); 
++        while(iterator.hasNext()) {
++		te = (TileEntity)iterator.next();
++		te.func_35144_b();
++		te.getBlockMetadata();
++		te.getBlockType();
++	}
++
+         for(int l1 = i; l1 < l; l1++)
          {
              for(int l2 = k; l2 < j1; l2++)
              {
@@ -296,7 +309,7 @@
                  int l3 = l1 << 11 | l2 << 7 | j;
                  int l4 = i1 - j;
                  System.arraycopy(abyte0, k1, blocks, l3, l4);
-@@ -792,8 +775,6 @@
+@@ -792,8 +784,6 @@
          {
              for(int i3 = k; i3 < j1; i3++)
              {
@@ -305,7 +318,7 @@
                  int i4 = (i2 << 11 | i3 << 7 | j) >> 1;
                  int i5 = (i1 - j) / 2;
                  System.arraycopy(abyte0, k1, data.data, i4, i5);
-@@ -806,8 +787,6 @@
+@@ -806,8 +796,6 @@
          {
              for(int j3 = k; j3 < j1; j3++)
              {
@@ -314,7 +327,7 @@
                  int j4 = (j2 << 11 | j3 << 7 | j) >> 1;
                  int j5 = (i1 - j) / 2;
                  System.arraycopy(abyte0, k1, blocklightMap.data, j4, j5);
-@@ -820,8 +799,6 @@
+@@ -820,8 +808,6 @@
          {
              for(int k3 = k; k3 < j1; k3++)
              {
@@ -323,28 +336,37 @@
                  int k4 = (k2 << 11 | k3 << 7 | j) >> 1;
                  int k5 = (i1 - j) / 2;
                  System.arraycopy(abyte0, k1, skylightMap.data, k4, k5);
-@@ -830,11 +807,20 @@
+@@ -830,12 +816,24 @@
  
          }
  
+-        TileEntity tileentity;
+-        for(Iterator iterator = chunkTileEntityMap.values().iterator(); iterator.hasNext(); tileentity.func_35144_b())
+-        {
+-            tileentity = (TileEntity)iterator.next();
 +	List<TileEntity> invalidList=new ArrayList();
-         TileEntity tileentity;
-         for(Iterator iterator = chunkTileEntityMap.values().iterator(); iterator.hasNext(); tileentity.func_35144_b())
-         {
-             tileentity = (TileEntity)iterator.next();
-+	    if( (tileentity.xCoord&15)>=i && (tileentity.xCoord&15)<=l &&
-+		    tileentity.yCoord>=j && tileentity.yCoord<=i1 &&
-+		    (tileentity.zCoord&15)>=k && (tileentity.zCoord&15)<=j1) {
++	iterator = chunkTileEntityMap.values().iterator(); 
++        while(iterator.hasNext()) {
++            te = (TileEntity)iterator.next();
++	    if( (te.xCoord&15)>=i && (te.xCoord&15)<=l &&
++		    te.yCoord>=j && te.yCoord<=i1 &&
++		    (te.zCoord&15)>=k && (te.zCoord&15)<=j1) {
 +
-+		    invalidList.add(tileentity);
++		    if(te.getBlockType().blockID==
++			worldObj.getBlockId(te.xCoord,te.yCoord,te.zCoord) &&
++			te.getBlockMetadata()==worldObj.getBlockMetadata(
++				te.xCoord,te.yCoord,te.zCoord))
++			    continue;
++		    invalidList.add(te);
 +	    }
          }
-+	for(TileEntity te : invalidList)
-+		te.invalidate();
- 
+-
++	for(TileEntity te2 : invalidList)
++		te2.invalidate();
          return k1;
      }
-@@ -880,7 +866,6 @@
+ 
+@@ -880,7 +878,6 @@
          int l = precipitationHeightMap[k];
          if(l == -999)
          {
