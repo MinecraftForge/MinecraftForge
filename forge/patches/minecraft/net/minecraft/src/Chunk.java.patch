@@ -336,7 +336,7 @@
                  int k4 = (k2 << 11 | k3 << 7 | j) >> 1;
                  int k5 = (i1 - j) / 2;
                  System.arraycopy(abyte0, k1, skylightMap.data, k4, k5);
-@@ -830,12 +816,24 @@
+@@ -830,12 +816,25 @@
  
          }
  
@@ -352,7 +352,8 @@
 +		    te.yCoord>=j && te.yCoord<=i1 &&
 +		    (te.zCoord&15)>=k && (te.zCoord&15)<=j1) {
 +
-+		    if(te.getBlockType().blockID==
++		    Block bl=te.getBlockType();
++		    if(bl!=null && bl.blockID==
 +			worldObj.getBlockId(te.xCoord,te.yCoord,te.zCoord) &&
 +			te.getBlockMetadata()==worldObj.getBlockMetadata(
 +				te.xCoord,te.yCoord,te.zCoord))
@@ -366,7 +367,7 @@
          return k1;
      }
  
-@@ -880,7 +878,6 @@
+@@ -880,7 +879,6 @@
          int l = precipitationHeightMap[k];
          if(l == -999)
          {
