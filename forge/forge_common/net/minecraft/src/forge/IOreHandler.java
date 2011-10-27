@@ -8,11 +8,14 @@ package net.minecraft.src.forge;
 import net.minecraft.src.ItemStack;
 
 /** The current list of known classes.
- * oreTin, oreCopper, oreSilver
+ * oreTin, oreCopper, oreSilver, oreUranium
  * ingotTin, ingotCopper, ingotSilver, ingotBrass, ingotBronze
+ * ingotUranium, ingotRefinedIron
  * dyeBlue
  * gemRuby, gemEmerald, gemSapphire
+ * itemDropUranium
  * woodRubber
+ * itemRubber
  */
 
 public interface IOreHandler {
