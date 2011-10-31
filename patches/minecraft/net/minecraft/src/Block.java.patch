@@ -101,7 +101,7 @@
      }
  
      protected void dropBlockAsItem_do(World world, int i, int j, int k, ItemStack itemstack)
-@@ -618,6 +629,86 @@
+@@ -618,6 +629,96 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
@@ -183,6 +183,16 @@
 +     */
 +    public boolean canHarvestBlock(EntityPlayer player, int md) {
 +	    return ForgeHooks.canHarvestBlock(this,player,md);
++    }
++
++    /* FORGE: Called when a player removes a block.  This is responsible for
++     * actually destroying the block, and the block is intact at time of call.
++     * This is called regardless of whether the player can harvest the block or
++     * not.  Return true if the block is actually destroyed.
++     */
++    public boolean removeBlockByPlayer(World world, EntityPlayer player,
++		    int i, int j, int k) {
++        return world.setBlockWithNotify(i, j, k, 0);
 +    }
 +
      static Class _mthclass$(String s)

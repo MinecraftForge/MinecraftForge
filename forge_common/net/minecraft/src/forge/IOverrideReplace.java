@@ -13,6 +13,7 @@ import net.minecraft.src.World;
  * to control how it can be replaced
  *
  * @see Block
+ * @deprecated.  This functionality will be removed soon.
  */
 public interface IOverrideReplace {
     

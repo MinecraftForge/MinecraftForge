@@ -38,7 +38,23 @@
                  if(f >= 0.7F)
                  {
                      blockHarvessted(i, j, k);
-@@ -164,7 +166,7 @@
+@@ -135,11 +137,10 @@
+     {
+         Block block = Block.blocksList[thisWorld.getBlockId(i, j, k)];
+         int l = thisWorld.getBlockMetadata(i, j, k);
+-        boolean flag = thisWorld.setBlockWithNotify(i, j, k, 0);
+-        if(block != null && flag)
+-        {
+-            block.onBlockDestroyedByPlayer(thisWorld, i, j, k, l);
+-        }
++
++	if(block==null) return false;
++	boolean flag = block.removeBlockByPlayer(thisWorld,thisPlayer,i,j,k);
++	if(flag) block.onBlockDestroyedByPlayer(thisWorld, i, j, k, l);
+         return flag;
+     }
+ 
+@@ -164,7 +165,7 @@
                      thisPlayer.destroyCurrentEquippedItem();
                  }
              }
@@ -47,7 +63,7 @@
              {
                  Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
              }
-@@ -188,6 +190,7 @@
+@@ -188,6 +189,7 @@
              if(itemstack1.stackSize == 0)
              {
                  entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
@@ -55,7 +71,7 @@
              }
              return true;
          } else
-@@ -198,6 +201,11 @@
+@@ -198,6 +200,11 @@
  
      public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -67,7 +83,7 @@
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -217,7 +225,11 @@
+@@ -217,7 +224,11 @@
              return flag;
          } else
          {
