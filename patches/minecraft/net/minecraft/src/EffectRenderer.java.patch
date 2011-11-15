@@ -38,15 +38,7 @@
      }
  
      public void renderParticles(Entity entity, float f)
-@@ -94,6 +109,7 @@
-             for(int k = 0; k < fxLayers[i].size(); k++)
-             {
-                 EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
-+ 		if(entityfx instanceof EntityDiggingFX) continue;
-                 tessellator.setBrightness(entityfx.func_35115_a(f));
-                 entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
-             }
-@@ -101,6 +117,21 @@
+@@ -101,6 +116,21 @@
              tessellator.draw();
          }
  
@@ -59,7 +51,7 @@
 +            tessellator.startDrawingQuads();
 +            for (int y = 0; y < entry.effects.size(); y++) {
 +                EntityFX entityfx = (EntityFX) entry.effects.get(y);
-+                tessellator.setBrightness(entityfx.func_35115_a(f));
++                tessellator.setBrightness(entityfx.getEntityBrightnessForRender(f));
 +                entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
 +            }
 +            tessellator.draw();
@@ -68,7 +60,7 @@
      }
  
      public void func_1187_b(Entity entity, float f)
-@@ -132,7 +163,12 @@
+@@ -132,7 +162,12 @@
          {
              fxLayers[i].clear();
          }
@@ -82,7 +74,7 @@
      }
  
      public void addBlockDestroyEffects(int i, int j, int k, int l, int i1)
-@@ -153,7 +189,12 @@
+@@ -153,7 +188,12 @@
                      double d1 = (double)j + ((double)l1 + 0.5D) / (double)j1;
                      double d2 = (double)k + ((double)i2 + 0.5D) / (double)j1;
                      int j2 = rand.nextInt(6);
@@ -96,7 +88,7 @@
                  }
  
              }
-@@ -198,16 +239,48 @@
+@@ -198,16 +238,48 @@
          {
              d = (double)i + block.maxX + (double)f;
          }
