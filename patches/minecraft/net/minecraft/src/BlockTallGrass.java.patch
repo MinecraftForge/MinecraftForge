@@ -11,9 +11,9 @@
  
  // Referenced classes of package net.minecraft.src:
  //            BlockFlower, ColorizerGrass, ColorizerFoliage, IBlockAccess, 
-@@ -79,13 +82,17 @@
+@@ -73,13 +76,17 @@
  
-     public int idDropped(int i, Random random)
+     public int idDropped(int i, Random random, int j)
      {
 -        if(random.nextInt(8) == 0)
 -        {
@@ -35,4 +35,4 @@
 +	    return tr;
      }
  
-     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+     public int func_40198_a(int i, Random random)

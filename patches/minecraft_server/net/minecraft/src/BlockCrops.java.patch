@@ -8,18 +8,27 @@
  
  // Referenced classes of package net.minecraft.src:
  //            BlockFlower, Block, World, EntityItem, 
-@@ -103,27 +104,16 @@
-         return blockIndexInTexture + j;
+@@ -108,28 +109,16 @@
+         return 6;
      }
  
--    public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f)
+-    public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int i1)
 -    {
--        super.dropBlockAsItemWithChance(world, i, j, k, l, f);
+-        super.dropBlockAsItemWithChance(world, i, j, k, l, f, 0);
 -        if(world.singleplayerWorld)
 -        {
 -            return;
--        }
--        for(int i1 = 0; i1 < 3; i1++)
++    public ArrayList<ItemStack> getBlockDropped(World world,
++        	    int i, int j, int k, int md) {
++        ArrayList<ItemStack> tr = new ArrayList<ItemStack>();
++        if (md == 7) tr.add(new ItemStack(Item.wheat));
++            
++        for(int n = 0; n < 3; n++) {
++            if (world.rand.nextInt(15) <= md)
++                tr.add(new ItemStack(Item.seeds));
+         }
+-        int j1 = 3 + i1;
+-        for(int k1 = 0; k1 < j1; k1++)
 -        {
 -            if(world.rand.nextInt(15) <= l)
 -            {
@@ -33,16 +42,7 @@
 -            }
 -        }
 -
-+    public ArrayList<ItemStack> getBlockDropped(World world,
-+		    int i, int j, int k, int md) {
-+	    ArrayList<ItemStack> tr=new ArrayList<ItemStack>();
-+	    if(md==7) tr.add(new ItemStack(Item.wheat));
-+
-+	    for(int n=0; n<3; n++) {
-+		    if(world.rand.nextInt(15) <= md)
-+			    tr.add(new ItemStack(Item.seeds));
-+	    }
-+	    return tr;
++        return tr;
      }
  
-     public int idDropped(int i, Random random)
+     public int idDropped(int i, Random random, int j)

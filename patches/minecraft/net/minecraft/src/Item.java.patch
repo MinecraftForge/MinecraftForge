@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
-@@ -76,6 +76,13 @@
+@@ -177,6 +177,9 @@
+     private String field_39010_c;
+     private String itemName;
+ 
++    // FORGE: To disable repair recipes.
++    protected boolean canRepair=true;
++
+     protected Item(int i)
+     {
+         maxStackSize = 64;
+@@ -231,6 +234,13 @@
          return 1.0F;
      }
  
@@ -14,3 +24,23 @@
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
+@@ -278,6 +288,19 @@
+         return maxDamage > 0 && !hasSubtypes;
+     }
+ 
++    /* FORGE: Called by CraftingManager to determine if an item is repairable.
++     */
++    public boolean isRepairable() {
++	    return canRepair && isDamageable();
++    }
++
++    /* FORGE: Call to disable repair recipes.
++     */
++    public Item setNoRepair() {
++	    canRepair=false;
++	    return this;
++    }
++
+     public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
+     {
+         return false;

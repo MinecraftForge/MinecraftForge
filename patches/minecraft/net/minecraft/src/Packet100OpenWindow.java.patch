@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Packet100OpenWindow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Packet100OpenWindow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -25,9 +25,9 @@
+@@ -30,9 +30,9 @@
          throws IOException
      {
          windowId = datainputstream.readByte();

@@ -9,10 +9,10 @@
 +import net.minecraft.src.forge.MinecraftForgeClient;
 +
  import org.lwjgl.opengl.GL11;
- import org.lwjgl.opengl.GL13;
  
-@@ -32,18 +36,27 @@
-     public void renderItem(EntityLiving entityliving, ItemStack itemstack)
+ // Referenced classes of package net.minecraft.src:
+@@ -40,18 +44,27 @@
+     public void renderItem(EntityLiving entityliving, ItemStack itemstack, int i)
      {
          GL11.glPushMatrix();
 -        if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
@@ -39,4 +39,4 @@
 +                ForgeHooksClient.overrideTexture (Item.itemsList[itemstack.itemID]);
              }
              Tessellator tessellator = Tessellator.instance;
-             int i = entityliving.getItemIcon(itemstack);
+             int j = entityliving.getItemIcon(itemstack, i);

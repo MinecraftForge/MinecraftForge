@@ -11,7 +11,7 @@
  import java.util.Random;
  import org.lwjgl.opengl.GL11;
  
-@@ -47,10 +51,36 @@
+@@ -54,10 +58,36 @@
          }
          GL11.glTranslatef((float)d, (float)d1 + f2, (float)d2);
          GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
@@ -49,7 +49,7 @@
              float f4 = 0.25F;
              int j = Block.blocksList[itemstack.itemID].getRenderType();
              if(j == 1 || j == 19 || j == 12 || j == 2)
-@@ -80,9 +110,11 @@
+@@ -108,9 +138,11 @@
              if(itemstack.itemID < 256)
              {
                  loadTexture("/terrain.png");
@@ -59,9 +59,9 @@
                  loadTexture("/gui/items.png");
 +                ForgeHooksClient.overrideTexture(Item.itemsList[itemstack.itemID]);
              }
-             Tessellator tessellator = Tessellator.instance;
-             float f5 = (float)((i % 16) * 16 + 0) / 256F;
-@@ -129,10 +161,37 @@
+             if(field_27004_a)
+             {
+@@ -162,10 +194,37 @@
  
      public void drawItemIntoGui(FontRenderer fontrenderer, RenderEngine renderengine, int i, int j, int k, int l, int i1)
      {
@@ -99,8 +99,8 @@
 +            ForgeHooksClient.overrideTexture (Block.blocksList[i]);
              Block block = Block.blocksList[j1];
              GL11.glPushMatrix();
-             GL11.glTranslatef(l - 2, i1 + 3, -3F);
-@@ -161,9 +220,11 @@
+             GL11.glTranslatef(l - 2, i1 + 3, -3F + field_40268_b);
+@@ -215,9 +274,11 @@
              if(i < 256)
              {
                  renderengine.bindTexture(renderengine.getTexture("/terrain.png"));

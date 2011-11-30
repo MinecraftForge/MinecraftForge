@@ -12,7 +12,7 @@
      public boolean isOpaqueCube()
      {
          return false;
-@@ -52,37 +57,37 @@
+@@ -57,37 +62,37 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -58,7 +58,7 @@
          {
              i1 = 5;
          }
-@@ -93,19 +98,19 @@
+@@ -98,19 +103,19 @@
      {
          int i1 = world.getBlockMetadata(i, j, k);
          boolean flag = false;

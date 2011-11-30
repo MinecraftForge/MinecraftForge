@@ -7,9 +7,9 @@
 +import net.minecraft.src.forge.MinecraftForge;
 +
  // Referenced classes of package net.minecraft.src:
- //            Item, EntityPlayer, Vec3D, MathHelper, 
- //            World, MovingObjectPosition, EnumMovingObjectType, Material, 
-@@ -60,6 +62,11 @@
+ //            Item, EntityPlayer, MovingObjectPosition, EnumMovingObjectType, 
+ //            World, Material, PlayerCapabilities, ItemStack, 
+@@ -50,6 +52,11 @@
                  {
                      return itemstack;
                  }

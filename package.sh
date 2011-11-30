@@ -64,7 +64,7 @@ cp ../lfcr.py .
 cp ../install/install.cmd .
 cp ../install/install.sh .
 cp ../modLoaderMP.patch .
-cp ../mlprop.patch .
+cp ../MLProp.java .
 cp ../install/README.txt .
 cp ../minecraftforge_credits.txt .
 cp -r ../doc .

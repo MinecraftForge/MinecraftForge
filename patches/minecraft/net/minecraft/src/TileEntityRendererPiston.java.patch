@@ -8,19 +8,19 @@
  import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  
-@@ -38,6 +39,7 @@
+@@ -40,6 +41,7 @@
              {
                  GL11.glShadeModel(7424 /*GL_FLAT*/);
              }
-+	    ForgeHooksClient.beforeBlockRender(block,field_31071_b);
++            ForgeHooksClient.beforeBlockRender(block,field_31071_b);
              tessellator.startDrawingQuads();
              tessellator.setTranslationD(((float)d - (float)tileentitypiston.xCoord) + tileentitypiston.func_31017_b(f), ((float)d1 - (float)tileentitypiston.yCoord) + tileentitypiston.func_31014_c(f), ((float)d2 - (float)tileentitypiston.zCoord) + tileentitypiston.func_31013_d(f));
              tessellator.setColorOpaque(1, 1, 1);
-@@ -58,6 +60,7 @@
+@@ -60,6 +62,7 @@
              }
              tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
              tessellator.draw();
-+	    ForgeHooksClient.afterBlockRender(block,field_31071_b);
++            ForgeHooksClient.afterBlockRender(block,field_31071_b);
              RenderHelper.enableStandardItemLighting();
          }
      }

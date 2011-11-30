@@ -8,35 +8,37 @@
  import java.util.ArrayList;
  import java.util.Random;
  
-@@ -151,12 +152,14 @@
+@@ -312,12 +313,14 @@
  
      public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k)
      {
 -        return iblockaccess.getBrightness(i, j, k, lightValue[blockID]);
 +        return iblockaccess.getBrightness(i, j, k,
-+  		getLightValue(iblockaccess,i,j,k));
++        		getLightValue(iblockaccess,i,j,k));
      }
  
      public int getMixedBrightnessForBlock(IBlockAccess iblockaccess, int i, int j, int k)
      {
 -        return iblockaccess.getLightBrightnessForSkyBlocks(i, j, k, lightValue[blockID]);
 +        return iblockaccess.getLightBrightnessForSkyBlocks(i, j, k,
-+  		getLightValue(iblockaccess,i,j,k));
++        		getLightValue(iblockaccess,i,j,k));
      }
  
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
-@@ -278,24 +281,40 @@
+@@ -438,25 +441,41 @@
+     {
          return 1;
      }
- 
+-
++    
 +    /* FORGE: Metadata-sensitive version.
 +     */
 +    public int quantityDropped(int i, Random random)
 +    {
 +        return quantityDropped(random);
 +    }
-+
-     public int idDropped(int i, Random random)
++    
+     public int idDropped(int i, Random random, int j)
      {
          return blockID;
      }
@@ -57,51 +59,49 @@
 -        {
 -            return entityplayer.getCurrentPlayerStrVsBlock(this) / blockHardness / 30F;
 -        }
-+	return blockStrength(entityplayer,0);
++        return blockStrength(entityplayer,0);
 +    }
 +
 +    /* FORGE: This function returns the complete list of drops for a block.
 +     */
 +    public ArrayList<ItemStack> getBlockDropped(World world,
-+		    int i, int j, int k, int md) {
-+		ArrayList<ItemStack> tr=new ArrayList<ItemStack>();
++        	    int i, int j, int k, int md) {
++    	ArrayList<ItemStack> tr=new ArrayList<ItemStack>();
 +
-+		int q=quantityDropped(md,world.rand);
-+		for(int n=0; n<q; n++) {
-+			int id=idDropped(md, world.rand);
-+			if(id>0) {
-+				tr.add(new ItemStack(id,1,damageDropped(md)));
-+			}
-+		}
-+		return tr;
++    	int q=quantityDropped(md,world.rand);
++    	for(int n=0; n<q; n++) {
++    		int id = idDropped(md, world.rand, 0);
++    		if(id > 0) {
++    			tr.add(new ItemStack(id,1,damageDropped(md)));
++    		}
++    	}
++    	return tr;
      }
  
-     public final void dropBlockAsItem(World world, int i, int j, int k, int l)
-@@ -309,20 +328,12 @@
+     public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
+@@ -470,18 +489,13 @@
          {
              return;
          }
--        int i1 = quantityDropped(world.rand);
--        for(int j1 = 0; j1 < i1; j1++)
+-        int j1 = func_40198_a(i1, world.rand);
+-        for(int k1 = 0; k1 < j1; k1++)
 -        {
-+	ArrayList<ItemStack> ar=getBlockDropped(world,i,j,k,l);
-+	for(ItemStack ist : ar) {
++        ArrayList<ItemStack> ar = getBlockDropped(world,i,j,k,l);
++        for (ItemStack ist : ar) {
              if(world.rand.nextFloat() > f)
--            {
+             {
                  continue;
--            }
--            int k1 = idDropped(l, world.rand);
--            if(k1 > 0)
+             }
+-            int l1 = idDropped(l, world.rand, i1);
+-            if(l1 > 0)
 -            {
--                dropBlockAsItem_do(world, i, j, k, new ItemStack(k1, 1, damageDropped(l)));
+-                dropBlockAsItem_do(world, i, j, k, new ItemStack(l1, 1, damageDropped(l)));
 -            }
-+	    dropBlockAsItem_do(world, i, j, k, ist);
++        	dropBlockAsItem_do(world, i, j, k, ist);
          }
--
-     }
  
-     protected void dropBlockAsItem_do(World world, int i, int j, int k, ItemStack itemstack)
-@@ -618,6 +629,96 @@
+     }
+@@ -805,6 +819,96 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
