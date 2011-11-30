@@ -8,7 +8,7 @@
  import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  
-@@ -34,7 +35,14 @@
+@@ -41,7 +42,14 @@
              if(item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;

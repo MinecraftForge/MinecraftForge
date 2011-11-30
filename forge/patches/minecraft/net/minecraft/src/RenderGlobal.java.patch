@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1635,8 +1635,8 @@
-     }
+@@ -34,8 +34,8 @@
+ {
  
      public List tileEntities;
 -    private World worldObj;
@@ -11,7 +11,7 @@
      private List worldRenderersToUpdate;
      private WorldRenderer sortedWorldRenderers[];
      private WorldRenderer worldRenderers[];
-@@ -1644,8 +1644,8 @@
+@@ -43,8 +43,8 @@
      private int renderChunksTall;
      private int renderChunksDeep;
      private int glRenderListBase;

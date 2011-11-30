@@ -1,7 +1,7 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ItemInWorldManager.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ItemInWorldManager.java	0000-00-00 00:00:00.000000000 -0000
 @@ -3,7 +3,8 @@
- // Decompiler options: packimports(3) braces deadcode 
+ // Decompiler options: packimports(3) braces deadcode fieldsfirst 
  
  package net.minecraft.src;
 -
@@ -10,7 +10,7 @@
  
  // Referenced classes of package net.minecraft.src:
  //            EntityPlayer, PlayerCapabilities, World, Block, 
-@@ -66,7 +67,8 @@
+@@ -81,7 +82,8 @@
              if(j != 0)
              {
                  Block block = Block.blocksList[j];
@@ -20,7 +20,7 @@
                  if(f >= 1.0F)
                  {
                      field_22050_k = false;
-@@ -93,7 +95,7 @@
+@@ -108,7 +110,7 @@
          {
              Block.blocksList[i1].onBlockClicked(thisWorld, i, j, k, thisPlayer);
          }
@@ -29,7 +29,7 @@
          {
              blockHarvessted(i, j, k);
          } else
-@@ -113,7 +115,7 @@
+@@ -128,7 +130,7 @@
              if(i1 != 0)
              {
                  Block block = Block.blocksList[i1];
@@ -38,7 +38,7 @@
                  if(f >= 0.7F)
                  {
                      blockHarvessted(i, j, k);
-@@ -135,11 +137,10 @@
+@@ -150,11 +152,10 @@
      {
          Block block = Block.blocksList[thisWorld.getBlockId(i, j, k)];
          int l = thisWorld.getBlockMetadata(i, j, k);
@@ -54,16 +54,16 @@
          return flag;
      }
  
-@@ -164,7 +165,7 @@
-                     thisPlayer.destroyCurrentEquippedItem();
-                 }
-             }
--            if(flag && thisPlayer.canHarvestBlock(Block.blocksList[l]))
-+            if(flag && Block.blocksList[l].canHarvestBlock(thisPlayer,i1))
+@@ -170,7 +171,7 @@
+         } else
+         {
+             ItemStack itemstack = thisPlayer.getCurrentEquippedItem();
+-            boolean flag1 = thisPlayer.canHarvestBlock(Block.blocksList[l]);
++            boolean flag1 = Block.blocksList[l].canHarvestBlock(thisPlayer, i1);
+             if(itemstack != null)
              {
-                 Block.blocksList[l].harvestBlock(thisWorld, thisPlayer, i, j, k, i1);
-             }
-@@ -188,6 +189,7 @@
+                 itemstack.onDestroyBlock(l, i, j, k, thisPlayer);
+@@ -204,6 +205,7 @@
              if(itemstack1.stackSize == 0)
              {
                  entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
@@ -71,7 +71,7 @@
              }
              return true;
          } else
-@@ -198,6 +200,11 @@
+@@ -214,6 +216,11 @@
  
      public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -83,7 +83,7 @@
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -217,7 +224,11 @@
+@@ -233,7 +240,11 @@
              return flag;
          } else
          {

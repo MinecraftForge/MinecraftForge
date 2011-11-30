@@ -8,7 +8,15 @@
  
  // Referenced classes of package net.minecraft.src:
  //            Block, ItemStack, Item
-@@ -21,6 +22,7 @@
+@@ -15,6 +16,7 @@
+ 
+     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
+     private Map smeltingList;
++    private Map metaSmeltingList;
+ 
+     public static final FurnaceRecipes smelting()
+     {
+@@ -24,6 +26,7 @@
      private FurnaceRecipes()
      {
          smeltingList = new HashMap();
@@ -16,7 +24,7 @@
          addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron));
          addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold));
          addSmelting(Block.oreDiamond.blockID, new ItemStack(Item.diamond));
-@@ -40,11 +42,32 @@
+@@ -46,11 +49,32 @@
          smeltingList.put(Integer.valueOf(i), itemstack);
      }
  
@@ -49,10 +57,3 @@
      public Map getSmeltingList()
      {
          return smeltingList;
-@@ -52,5 +75,6 @@
- 
-     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
-     private Map smeltingList;
-+    private Map metaSmeltingList;
- 
- }

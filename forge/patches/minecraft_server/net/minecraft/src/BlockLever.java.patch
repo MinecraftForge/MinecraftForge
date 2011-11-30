@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockLever.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockLever.java	0000-00-00 00:00:00.000000000 -0000
-@@ -35,44 +35,44 @@
+@@ -40,44 +40,44 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
      {
@@ -55,7 +55,7 @@
      }
  
      public void onBlockPlaced(World world, int i, int j, int k, int l)
-@@ -81,23 +81,23 @@
+@@ -86,23 +86,23 @@
          int j1 = i1 & 8;
          i1 &= 7;
          i1 = -1;
@@ -84,7 +84,7 @@
          {
              i1 = 1;
          }
-@@ -119,27 +119,27 @@
+@@ -124,27 +124,27 @@
          {
              int i1 = world.getBlockMetadata(i, j, k) & 7;
              boolean flag = false;

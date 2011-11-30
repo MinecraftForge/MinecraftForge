@@ -8,29 +8,29 @@
  import java.awt.image.BufferedImage;
  import java.nio.FloatBuffer;
  import java.util.Random;
-@@ -803,8 +804,12 @@
-                 {
+@@ -916,8 +917,10 @@
                      EntityPlayer entityplayer = (EntityPlayer)entityliving;
                      GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
-+		    if(!ForgeHooksClient.onBlockHighlight(renderglobal,entityplayer,
-+			mc.objectMouseOver,0,
-+			entityplayer.inventory.getCurrentItem(),f)) {
-                     renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
-                     renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
-+		    }
+                     Profiler.endStartSection("outline");
+-                    renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
+-                    renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
++                    if (!ForgeHooksClient.onBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f)) {
++	                    renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
++	                    renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
++                    }
                      GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
                  }
              }
-@@ -853,8 +858,12 @@
-             {
+@@ -969,8 +972,10 @@
                  EntityPlayer entityplayer1 = (EntityPlayer)entityliving;
                  GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
-+		if(!ForgeHooksClient.onBlockHighlight(renderglobal,entityplayer1,
-+			mc.objectMouseOver,0,
-+			entityplayer1.inventory.getCurrentItem(),f)) {
-                 renderglobal.drawBlockBreaking(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
-                 renderglobal.drawSelectionBox(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
-+		}
+                 Profiler.endStartSection("outline");
+-                renderglobal.drawBlockBreaking(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
+-                renderglobal.drawSelectionBox(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
++                if (!ForgeHooksClient.onBlockHighlight(renderglobal, entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f)) {
++	                renderglobal.drawBlockBreaking(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
++	                renderglobal.drawSelectionBox(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
++                }
                  GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
              }
-             renderRainSnow(f);
+             Profiler.endStartSection("weather");

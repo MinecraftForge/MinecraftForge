@@ -9,7 +9,18 @@
  
  // Referenced classes of package net.minecraft.src:
  //            Item, EnumToolMaterial, ItemStack, Block, 
-@@ -37,6 +39,14 @@
+@@ -13,8 +15,8 @@
+ {
+ 
+     private Block blocksEffectiveAgainst[];
+-    protected float efficiencyOnProperMaterial;
+-    private int damageVsEntity;
++    public float efficiencyOnProperMaterial;
++    public int damageVsEntity;
+     protected EnumToolMaterial toolMaterial;
+ 
+     protected ItemTool(int i, int j, EnumToolMaterial enumtoolmaterial, Block ablock[])
+@@ -42,6 +44,14 @@
          return 1.0F;
      }
  
@@ -24,13 +35,3 @@
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
      {
          itemstack.damageItem(2, entityliving1);
-@@ -55,7 +65,7 @@
-     }
- 
-     private Block blocksEffectiveAgainst[];
--    private float efficiencyOnProperMaterial;
--    private int damageVsEntity;
-+    public float efficiencyOnProperMaterial;
-+    public int damageVsEntity;
-     protected EnumToolMaterial toolMaterial;
- }

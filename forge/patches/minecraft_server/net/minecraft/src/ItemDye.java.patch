@@ -1,14 +1,14 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
 @@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
+ // Decompiler options: packimports(3) braces deadcode fieldsfirst 
  
  package net.minecraft.src;
 +import net.minecraft.src.forge.ForgeHooks;
  
  import java.util.Random;
  
-@@ -29,13 +30,18 @@
+@@ -39,13 +40,18 @@
  
      public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
      {
@@ -28,7 +28,7 @@
              if(i1 == Block.sapling.blockID)
              {
                  if(!world.singleplayerWorld)
-@@ -102,13 +108,7 @@
+@@ -112,13 +118,7 @@
                              world.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1);
                              continue;
                          }

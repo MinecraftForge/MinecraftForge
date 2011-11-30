@@ -1,14 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
- 
- package net.minecraft.src;
-+import net.minecraft.src.forge.*;
+@@ -6,6 +6,8 @@
  
  import java.util.*;
  
-@@ -53,7 +54,7 @@
++import net.minecraft.src.forge.*;
++
+ // Referenced classes of package net.minecraft.src:
+ //            Block, Material, World, ChunkPosition, 
+ //            Item, IBlockAccess, Direction, AxisAlignedBB
+@@ -56,7 +58,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -17,14 +18,14 @@
      }
  
      private void updateAndPropagateCurrentStrength(World world, int i, int j, int k)
-@@ -451,6 +452,10 @@
+@@ -454,6 +456,10 @@
          {
              return false;
          }
 +        if (Block.blocksList[i1] instanceof IConnectRedstone) {
-+            IConnectRedstone icr = (IConnectRedstone) Block.blocksList[i1];
-+            return icr.canConnectRedstone(iblockaccess, i, j, k, l);
++        	IConnectRedstone icr = (IConnectRedstone)Block.blocksList[i1];
++        	return icr.canConnectRedstone(iblockaccess, i, j, k, l);
 +        }
-         if(Block.blocksList[i1].canProvidePower())
+         if(Block.blocksList[i1].canProvidePower() && l != -1)
          {
              return true;

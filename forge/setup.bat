@@ -10,9 +10,13 @@ pushd .. >nul
   pushd src >nul
     ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ..\forge\modLoaderMP.patch ..\forge\modLoaderMP-win.patch
     ..\runtime\bin\applydiff.exe -uf -p2 < ..\forge\modLoaderMP-win.patch
-    ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ..\forge\mlprop.patch ..\forge\mlprop-win.patch
-    ..\runtime\bin\applydiff.exe -uf -p1 < ..\forge\mlprop-win.patch
-    del ..\forge\mlprop-win.patch ..\forge\modLoaderMP-win.patch >nul 1>nul
+    rem ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ..\forge\mlprop.patch ..\forge\mlprop-win.patch
+    rem ..\runtime\bin\applydiff.exe -uf -p1 < ..\forge\mlprop-win.patch
+    rem del ..\forge\mlprop-win.patch ..\forge\modLoaderMP-win.patch >nul 1>nul
+    del minecraft\net\minecraft\src\MLProp.java
+    copy ..\forge\MLProp.java minecraft\net\minecraft\src\MLProp.java
+    del minecraft_server\net\minecraft\src\MLProp.java
+    copy ..\forge\MLProp.java minecraft_server\net\minecraft\src\MLProp.java
   popd >nul
 
   cmd /C updatemd5.bat

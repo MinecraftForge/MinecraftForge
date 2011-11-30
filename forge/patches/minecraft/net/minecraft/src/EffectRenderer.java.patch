@@ -8,9 +8,15 @@
 +import net.minecraft.src.forge.ITextureProvider;
 +
  // Referenced classes of package net.minecraft.src:
- //            EntityFX, Entity, MathHelper, RenderEngine, 
- //            Tessellator, Block, EntityDiggingFX, World
-@@ -16,6 +19,7 @@
+ //            EntityFX, ActiveRenderInfo, Entity, RenderEngine, 
+ //            Tessellator, MathHelper, Block, EntityDiggingFX, 
+@@ -17,11 +20,13 @@
+ 
+     protected World worldObj;
+     private List fxLayers[];
++    private List effectList;
+     private RenderEngine renderer;
+     private Random rand;
  
      public EffectRenderer(World world, RenderEngine renderengine)
      {
@@ -18,7 +24,7 @@
          fxLayers = new List[4];
          rand = new Random();
          if(world != null)
-@@ -55,7 +59,18 @@
+@@ -61,7 +66,18 @@
              }
  
          }
@@ -38,7 +44,15 @@
      }
  
      public void renderParticles(Entity entity, float f)
-@@ -101,6 +116,21 @@
+@@ -100,6 +116,7 @@
+             for(int k = 0; k < fxLayers[i].size(); k++)
+             {
+                 EntityFX entityfx = (EntityFX)fxLayers[i].get(k);
++                if (entityfx instanceof EntityDiggingFX) continue;
+                 tessellator.setBrightness(entityfx.getEntityBrightnessForRender(f));
+                 entityfx.renderParticle(tessellator, f, f1, f5, f2, f3, f4);
+             }
+@@ -107,6 +124,21 @@
              tessellator.draw();
          }
  
@@ -60,7 +74,7 @@
      }
  
      public void func_1187_b(Entity entity, float f)
-@@ -132,7 +162,12 @@
+@@ -138,7 +170,12 @@
          {
              fxLayers[i].clear();
          }
@@ -74,7 +88,7 @@
      }
  
      public void addBlockDestroyEffects(int i, int j, int k, int l, int i1)
-@@ -153,7 +188,12 @@
+@@ -159,7 +196,12 @@
                      double d1 = (double)j + ((double)l1 + 0.5D) / (double)j1;
                      double d2 = (double)k + ((double)i2 + 0.5D) / (double)j1;
                      int j2 = rand.nextInt(6);
@@ -88,53 +102,44 @@
                  }
  
              }
-@@ -198,16 +238,48 @@
+@@ -204,11 +246,39 @@
          {
              d = (double)i + block.maxX + (double)f;
          }
 -        addEffect((new EntityDiggingFX(worldObj, d, d1, d2, 0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k))).func_4041_a(i, j, k).multiplyVelocity(0.2F).func_405_d(0.6F));
-+	EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj, d, d1, d2,
-+		0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k));
-+	dig_effect.func_4041_a(i, j, k);
-+	dig_effect.multiplyVelocity(0.2F);
-+	dig_effect.func_405_d(0.6F);
-+	addDigParticleEffect(dig_effect, block);
++        EntityDiggingFX dig_effect = new EntityDiggingFX(worldObj, d, d1, d2, 0.0D, 0.0D, 0.0D, block, l, worldObj.getBlockMetadata(i, j, k));
++        dig_effect.func_4041_a(i, j, k);
++        dig_effect.multiplyVelocity(0.4F);
++        dig_effect.func_405_d(0.6F);
++        addDigParticleEffect(dig_effect, block);
      }
  
      public String getStatistics()
      {
          return (new StringBuilder()).append("").append(fxLayers[0].size() + fxLayers[1].size() + fxLayers[2].size()).toString();
      }
-+ 	
++    
 +    public void addDigParticleEffect(EntityDiggingFX dig_effect, Block block) {
-+         boolean added = false;
-+         String comp;
-+ 
-+         if (block instanceof ITextureProvider) {
-+             comp = ((ITextureProvider) block).getTextureFile();
-+         } else {
-+             comp = "/terrain.png";
-+         }
-+         for (int x = 0; x < effectList.size(); x++) {
-+             BlockTextureParticles entry = (BlockTextureParticles) effectList
-+                     .get(x);
-+             if (entry.texture.equals(comp)) {
-+                 entry.effects.add(dig_effect);
-+                 added = true;
-+             }
-+         }
-+         if (!added) {
-+             BlockTextureParticles entry = new BlockTextureParticles();
-+             entry.texture = comp;
-+             entry.effects.add(dig_effect);
-+             effectList.add(entry);
-+         }
-+         addEffect(dig_effect);
-+     }
- 
-     protected World worldObj;
-     private List fxLayers[];
-+    private List effectList;
-     private RenderEngine renderer;
-     private Random rand;
++        boolean added = false;
++        String comp = "/terrain.png";
++
++        if (block instanceof ITextureProvider) {
++            comp = ((ITextureProvider) block).getTextureFile();
++        }
++        for (int x = 0; x < effectList.size(); x++) {
++            BlockTextureParticles entry = (BlockTextureParticles) effectList
++                    .get(x);
++            if (entry.texture.equals(comp)) {
++                entry.effects.add(dig_effect);
++                added = true;
++            }
++        }
++        if (!added) {
++            BlockTextureParticles entry = new BlockTextureParticles();
++            entry.texture = comp;
++            entry.effects.add(dig_effect);
++            effectList.add(entry);
++        }
++        addEffect(dig_effect);
++    }
  }

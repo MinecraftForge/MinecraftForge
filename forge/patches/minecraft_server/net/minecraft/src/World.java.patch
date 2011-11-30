@@ -1,6 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -183,7 +183,11 @@
+@@ -51,7 +51,7 @@
+     public int lightningFlash;
+     public boolean editingBlocks;
+     private long lockTimestamp;
+-    protected int autosavePeriod;
++    public int autosavePeriod;
+     public int difficultySetting;
+     public Random rand;
+     public boolean isNewWorld;
+@@ -244,7 +244,11 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -13,7 +22,7 @@
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -1124,7 +1128,7 @@
+@@ -1207,7 +1211,7 @@
                      Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
                      if(chunk != null)
                      {
@@ -22,7 +31,7 @@
                      }
                  }
              }
-@@ -1151,15 +1155,15 @@
+@@ -1235,15 +1239,15 @@
                      {
                          loadedTileEntityList.add(tileentity1);
                      }
@@ -40,7 +49,7 @@
                  }
              } while(true);
              addedTileEntityList.clear();
-@@ -1168,13 +1172,19 @@
+@@ -1254,13 +1258,19 @@
  
      public void addTileEntity(Collection collection)
      {
@@ -67,7 +76,7 @@
      }
  
      public void updateEntity(Entity entity)
-@@ -1372,6 +1382,9 @@
+@@ -1460,6 +1470,9 @@
                          if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -77,7 +86,7 @@
                          }
                      }
  
-@@ -1590,44 +1603,23 @@
+@@ -1700,46 +1713,22 @@
  
      public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
      {
@@ -99,15 +108,14 @@
 -                }
 -            }
 -        }
-+ 	if(tileentity==null || tileentity.isInvalid())
-+ 		return;
-+ 	List dest=scanningTileEntities ? addedTileEntityList :
-+ 		loadedTileEntityList;
-+ 	if(tileentity.canUpdate()) dest.add(tileentity);
-+ 	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+ 	if(chunk != null) {
-+ 		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
-+ 	}
++    	if(tileentity==null || tileentity.isInvalid())
++    		return;
++    	List dest=scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++    	if(tileentity.canUpdate()) dest.add(tileentity);
++    	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++    	if(chunk != null) {
++    		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
++    	}
      }
  
      public void removeBlockTileEntity(int i, int j, int k)
@@ -116,10 +124,12 @@
 -        if(tileentity != null && scanningTileEntities)
 -        {
 -            tileentity.invalidate();
+-            addedTileEntityList.remove(tileentity);
 -        } else
 -        {
 -            if(tileentity != null)
 -            {
+-                addedTileEntityList.remove(tileentity);
 -                loadedTileEntityList.remove(tileentity);
 -            }
 -            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
@@ -128,14 +138,14 @@
 -                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
 -            }
 -        }
-+ 	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+ 	if(chunk != null) {
-+ 		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
-+ 	}
++    	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++    	if(chunk != null) {
++    		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
++    	}
      }
  
      public void func_35239_a(TileEntity tileentity)
-@@ -1650,13 +1642,18 @@
+@@ -1762,13 +1751,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {
          Block block = Block.blocksList[getBlockId(i, j, k)];
@@ -160,8 +170,8 @@
 +	return block.isBlockSolidOnSide(this,i,j,k,side);
      }
  
-     public void calculateInitialSkylight()
-@@ -1976,7 +1973,7 @@
+     public boolean func_41047_b(int i, int j, int k, boolean flag)
+@@ -2179,7 +2173,7 @@
  
      private int func_35241_e(int i, int j, int k, int l, int i1, int j1)
      {
@@ -170,7 +180,7 @@
          int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
          int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
          int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
-@@ -2315,6 +2312,7 @@
+@@ -2556,6 +2550,7 @@
          {
              block = null;
          }
@@ -178,12 +188,3 @@
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -2759,7 +2757,7 @@
-     public int field_27080_i;
-     public boolean editingBlocks;
-     private long lockTimestamp;
--    protected int autosavePeriod;
-+    public int autosavePeriod;
-     public int difficultySetting;
-     public Random rand;
-     public boolean isNewWorld;

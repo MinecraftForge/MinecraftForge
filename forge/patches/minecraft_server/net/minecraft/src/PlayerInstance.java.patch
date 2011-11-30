@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/PlayerInstance.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/PlayerInstance.java	0000-00-00 00:00:00.000000000 -0000
-@@ -168,12 +168,11 @@
+@@ -183,12 +183,11 @@
              sendPacketToPlayersInInstance(new Packet52MultiBlockChange(chunkX, chunkZ, blocksToUpdate, numBlocksToUpdate, worldserver));
              for(int k = 0; k < numBlocksToUpdate; k++)
              {

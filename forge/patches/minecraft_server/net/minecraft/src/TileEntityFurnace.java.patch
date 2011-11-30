@@ -16,8 +16,8 @@
 +    implements IInventory, ISidedInventory
  {
  
-     public TileEntityFurnace()
-@@ -28,6 +29,16 @@
+     private ItemStack furnaceItemStacks[];
+@@ -33,6 +34,16 @@
          return furnaceItemStacks.length;
      }
  
@@ -34,7 +34,7 @@
      public ItemStack getStackInSlot(int i)
      {
          return furnaceItemStacks[i];
-@@ -176,7 +187,7 @@
+@@ -181,7 +192,7 @@
          {
              return false;
          }
@@ -43,7 +43,7 @@
          if(itemstack == null)
          {
              return false;
-@@ -189,13 +200,9 @@
+@@ -194,13 +205,9 @@
          {
              return false;
          }
@@ -60,7 +60,7 @@
      }
  
      public void smeltItem()
-@@ -204,23 +211,29 @@
+@@ -209,23 +216,29 @@
          {
              return;
          }

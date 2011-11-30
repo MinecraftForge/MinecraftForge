@@ -8,22 +8,19 @@
  
  // Referenced classes of package net.minecraft.src:
  //            World, MathHelper, Block, ChunkPosition, 
-@@ -66,7 +67,17 @@
-                         int i5 = worldObj.getBlockId(j4, k4, l4);
-                         if(i5 > 0)
+@@ -76,7 +77,14 @@
+                         int k3 = worldObj.getBlockId(l2, i3, j3);
+                         if(k3 > 0)
                          {
--                            f1 -= (Block.blocksList[i5].getExplosionResistance(exploder) + 0.3F) * f2;
-+                            if (Block.blocksList[i5] instanceof ISpecialResistance) {
-+                                ISpecialResistance isr = (ISpecialResistance) Block.blocksList[i5];
-+                                f1 -= (isr.getSpecialExplosionResistance(
-+                                        worldObj, j4, k4, l4, explosionX,
-+                                        explosionY, explosionZ, exploder) + 0.3F)
-+                                        * f2;
+-                            f1 -= (Block.blocksList[k3].getExplosionResistance(exploder) + 0.3F) * f2;
++                            if (Block.blocksList[k3] instanceof ISpecialResistance){
++                            	ISpecialResistance isr = (ISpecialResistance)Block.blocksList[k3];
++                            	f1 -= (isr.getSpecialExplosionResistance(worldObj, l2, i3, j3, 
++                            			explosionX, explosionY, explosionZ, exploder) + 0.3F) * f2;
 +                            } else {
-+                                f1 -= (Block.blocksList[i5]
-+                                        .getExplosionResistance(exploder) + 0.3F)
-+                                        * f2;
++                                f1 -= (Block.blocksList[k3].getExplosionResistance(exploder) + 0.3F) * f2;
 +                            }
++                            
                          }
                          if(f1 > 0.0F)
                          {

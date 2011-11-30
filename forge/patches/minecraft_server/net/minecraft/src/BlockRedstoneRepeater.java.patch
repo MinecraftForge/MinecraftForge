@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneRepeater.java	0000-00-00 00:00:00.000000000 -0000
-@@ -27,7 +27,7 @@
+@@ -35,7 +35,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -9,7 +9,7 @@
          {
              return false;
          } else
-@@ -38,7 +38,7 @@
+@@ -46,7 +46,7 @@
  
      public boolean canBlockStay(World world, int i, int j, int k)
      {

@@ -1,7 +1,7 @@
 --- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
 @@ -3,7 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode 
+ // Decompiler options: packimports(3) braces deadcode fieldsfirst 
  
  package net.minecraft.src;
 -
@@ -9,8 +9,8 @@
  
  // Referenced classes of package net.minecraft.src:
  //            Slot, EntityPlayer, ItemStack, Block, 
-@@ -60,6 +60,7 @@
-             thePlayer.addStat(AchievementList.buildSword, 1);
+@@ -71,6 +71,7 @@
+             thePlayer.addStat(AchievementList.bookcase, 1);
          }
          ModLoader.TakenFromCrafting(thePlayer, itemstack);
 +  	ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);

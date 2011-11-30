@@ -18,7 +18,7 @@
              {
                  world.setBlockWithNotify(i, j, k, 0);
                  flag = true;
-@@ -242,7 +242,7 @@
+@@ -241,7 +241,7 @@
              return false;
          } else
          {

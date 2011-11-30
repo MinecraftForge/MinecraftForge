@@ -8,9 +8,74 @@
  import org.lwjgl.opengl.*;
  
  // Referenced classes of package net.minecraft.src:
-@@ -13,8 +14,7 @@
+@@ -12,13 +13,9 @@
+ 
  public class Tessellator
  {
+-
+     private static boolean convertQuadsToTriangles = false;
+     private static boolean tryVBO = false;
+-    private ByteBuffer byteBuffer;
+-    private IntBuffer intBuffer;
+-    private FloatBuffer floatBuffer;
+-    private ShortBuffer shortBuffer;
++    private static boolean useVBO = false;
+     private int rawBuffer[];
+     private int vertexCount;
+     private double textureU;
+@@ -32,21 +29,47 @@
+     private int rawBufferIndex;
+     private int addedVertices;
+     private boolean isColorDisabled;
+-    private int drawMode;
+-    private double xOffset;
+-    private double yOffset;
+-    private double zOffset;
++    public int drawMode;
++    public double xOffset;
++    public double yOffset;
++    public double zOffset;
+     private int normal;
+-    public static final Tessellator instance = new Tessellator(0x200000);
+-    private boolean isDrawing;
+-    private boolean useVBO;
+-    private IntBuffer vertexBuffers;
++    public boolean isDrawing;
+     private int vboIndex;
+-    private int vboCount;
+-    private int bufferSize;
++    
++    public static boolean renderingWorldRenderer=false;
++    public boolean defaultTexture=false;
++    private int rawBufferSize;
++    private static int vboCount;
++    private static IntBuffer vertexBuffers;
++    private static int nativeBufferSize;
++    private static int trivertsInBuffer;
++    private static ByteBuffer byteBuffer;
++    private static IntBuffer intBuffer;
++    private static FloatBuffer floatBuffer;
++    private static ShortBuffer shortBuffer;
++    public static Tessellator instance;
++
++    static {
++        instance=new Tessellator();
++        instance.defaultTexture=true;
++
++        nativeBufferSize = 0x200000;
++        trivertsInBuffer = (nativeBufferSize/48)*6;
++        byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
++        intBuffer = byteBuffer.asIntBuffer();
++        floatBuffer = byteBuffer.asFloatBuffer();
++        shortBuffer = byteBuffer.asShortBuffer();
++        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
++        vboCount = 10;
++        if(useVBO)
++        {
++            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
++            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
++        }
++    }
  
 -    private Tessellator(int i)
 -    {
@@ -18,7 +83,7 @@
          vertexCount = 0;
          hasColor = false;
          hasTexture = false;
-@@ -24,21 +24,10 @@
+@@ -56,21 +79,10 @@
          addedVertices = 0;
          isColorDisabled = false;
          isDrawing = false;
@@ -38,12 +103,12 @@
 -            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
 -        }
 +
-+	rawBuffer=null;
-+	rawBufferSize=0;
++		rawBuffer=null;
++		rawBufferSize=0;
      }
  
-     public void draw()
-@@ -48,12 +37,20 @@
+     public int draw()
+@@ -80,12 +92,20 @@
              throw new IllegalStateException("Not tesselating!");
          }
          isDrawing = false;
@@ -68,7 +133,7 @@
              if(useVBO)
              {
                  vboIndex = (vboIndex + 1) % vboCount;
-@@ -121,10 +118,10 @@
+@@ -153,10 +173,10 @@
              GL11.glEnableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
              if(drawMode == 7 && convertQuadsToTriangles)
              {
@@ -81,34 +146,34 @@
              }
              GL11.glDisableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
              if(hasTexture)
-@@ -146,6 +143,10 @@
+@@ -178,6 +198,10 @@
                  GL11.glDisableClientState(32885 /*GL_NORMAL_ARRAY_EXT*/);
              }
          }
-+	if(rawBufferSize>0x20000 && rawBufferIndex<(rawBufferSize<<3)) {
-+		rawBufferSize=0;
-+		rawBuffer=null;
-+	}
++        if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize<<3)) {
++            rawBufferSize=0;
++            rawBuffer=null;
++        }
+         int i = rawBufferIndex * 4;
          reset();
-     }
- 
-@@ -265,6 +266,15 @@
+         return i;
+@@ -299,6 +323,15 @@
  
      public void addVertex(double d, double d1, double d2)
      {
-+	if(rawBufferIndex >= rawBufferSize-32) {
-+		if(rawBufferSize==0) {
-+			rawBufferSize=0x10000;
-+			rawBuffer=new int[rawBufferSize];
-+		} else {
-+			rawBufferSize*=2;
-+			rawBuffer=Arrays.copyOf(rawBuffer,rawBufferSize);
++		if (rawBufferIndex >= rawBufferSize-32) {
++			if (rawBufferSize == 0) {
++				rawBufferSize = 0x10000;
++				rawBuffer = new int[rawBufferSize];
++			} else {
++				rawBufferSize *= 2;
++				rawBuffer = Arrays.copyOf(rawBuffer, rawBufferSize);
++			}
 +		}
-+	}
          addedVertices++;
          if(drawMode == 7 && convertQuadsToTriangles && addedVertices % 4 == 0)
          {
-@@ -314,11 +324,6 @@
+@@ -348,11 +381,6 @@
          rawBuffer[rawBufferIndex + 2] = Float.floatToRawIntBits((float)(d2 + zOffset));
          rawBufferIndex += 8;
          vertexCount++;
@@ -120,69 +185,3 @@
      }
  
      public void setColorOpaque_I(int i)
-@@ -367,10 +372,7 @@
- 
-     private static boolean convertQuadsToTriangles = false;
-     private static boolean tryVBO = false;
--    private ByteBuffer byteBuffer;
--    private IntBuffer intBuffer;
--    private FloatBuffer floatBuffer;
--    private ShortBuffer shortBuffer;
-+    private static boolean useVBO = false;
-     private int rawBuffer[];
-     private int vertexCount;
-     private double textureU;
-@@ -384,17 +386,43 @@
-     private int rawBufferIndex;
-     private int addedVertices;
-     private boolean isColorDisabled;
--    private int drawMode;
--    private double xOffset;
--    private double yOffset;
--    private double zOffset;
-+    public int drawMode;
-+    public double xOffset;
-+    public double yOffset;
-+    public double zOffset;
-     private int normal;
--    public static final Tessellator instance = new Tessellator(0x200000);
--    private boolean isDrawing;
--    private boolean useVBO;
--    private IntBuffer vertexBuffers;
-+    public boolean isDrawing;
-     private int vboIndex;
--    private int vboCount;
--    private int bufferSize;
- 
-+    public static boolean renderingWorldRenderer=false;
-+    public boolean defaultTexture=false;
-+    private int rawBufferSize;
-+    private static int vboCount;
-+    private static IntBuffer vertexBuffers;
-+    private static int nativeBufferSize;
-+    private static int trivertsInBuffer;
-+    private static ByteBuffer byteBuffer;
-+    private static IntBuffer intBuffer;
-+    private static FloatBuffer floatBuffer;
-+    private static ShortBuffer shortBuffer;
-+    public static Tessellator instance;
-+
-+    static {
-+	instance=new Tessellator();
-+	instance.defaultTexture=true;
-+
-+        nativeBufferSize = 0x200000;
-+	trivertsInBuffer = (nativeBufferSize/48)*6;
-+        byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
-+        intBuffer = byteBuffer.asIntBuffer();
-+        floatBuffer = byteBuffer.asFloatBuffer();
-+        shortBuffer = byteBuffer.asShortBuffer();
-+        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
-+        vboCount = 10;
-+        if(useVBO)
-+        {
-+            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
-+            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
-+        }
-+    }
- }

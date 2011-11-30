@@ -16,8 +16,8 @@
 +    implements IInventory, ISidedInventory
  {
  
-     public TileEntityFurnace()
-@@ -28,6 +29,16 @@
+     private ItemStack furnaceItemStacks[];
+@@ -33,6 +34,16 @@
          return furnaceItemStacks.length;
      }
  
@@ -34,7 +34,7 @@
      public ItemStack getStackInSlot(int i)
      {
          return furnaceItemStacks[i];
-@@ -196,7 +207,7 @@
+@@ -201,7 +212,7 @@
          {
              return false;
          }
@@ -43,7 +43,7 @@
          if(itemstack == null)
          {
              return false;
-@@ -209,11 +220,9 @@
+@@ -214,11 +225,8 @@
          {
              return false;
          }
@@ -52,13 +52,12 @@
 -            return true;
 -        }
 -        return furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize();
-+	int st=furnaceItemStacks[2].stackSize+itemstack.stackSize;
-+	return (st<=getInventoryStackLimit() &&
-+		st<=itemstack.getMaxStackSize());
++        int st = furnaceItemStacks[2].stackSize + itemstack.stackSize;
++        return (st <= getInventoryStackLimit() && st <= itemstack.getMaxStackSize());
      }
  
      public void smeltItem()
-@@ -222,14 +231,14 @@
+@@ -227,14 +235,14 @@
          {
              return;
          }
@@ -72,11 +71,11 @@
 +        if(furnaceItemStacks[2].isItemEqual(itemstack))
          {
 -            furnaceItemStacks[2].stackSize++;
-+            furnaceItemStacks[2].stackSize+=itemstack.stackSize;
++            furnaceItemStacks[2].stackSize += itemstack.stackSize;
          }
          if(furnaceItemStacks[0].getItem().hasContainerItem())
          {
-@@ -244,7 +253,7 @@
+@@ -249,7 +257,7 @@
          }
      }
  

@@ -13,7 +13,7 @@
  //            BlockFlower, Item, World, EntityPlayer, 
 @@ -41,13 +44,17 @@
  
-     public int idDropped(int i, Random random)
+     public int idDropped(int i, Random random, int j)
      {
 -        if(random.nextInt(8) == 0)
 -        {
@@ -34,4 +34,4 @@
 +	    return tr;
      }
  
-     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+     public int func_40162_a(int i, Random random)

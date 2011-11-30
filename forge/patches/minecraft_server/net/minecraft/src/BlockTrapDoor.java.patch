@@ -1,36 +1,40 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockTrapDoor.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockTrapDoor.java	0000-00-00 00:00:00.000000000 -0000
-@@ -130,7 +130,7 @@
+@@ -11,7 +11,10 @@
+ 
+ public class BlockTrapDoor extends Block
+ {
+-
++	/* FORGE: Set this to allow trapdoors to remain free-floating
++	 */
++	public static boolean disableValidation=false;
++	
+     protected BlockTrapDoor(int i, Material material)
+     {
+         super(i, material);
+@@ -141,7 +144,7 @@
          {
              j1--;
          }
--        if(!world.isBlockNormalCube(j1, j, k1))
-+        if(!disableValidation && !world.isBlockSolidOnSide(j1, j, k1, (i1&3)+2))
+-        if(!func_41006_g(world.getBlockId(j1, j, k1)))
++        if(!(func_41006_g(world.getBlockId(j1, j, k1)) || world.isBlockSolidOnSide(j1, j, k1, (i1&3)+2)))
          {
              world.setBlockWithNotify(i, j, k, 0);
-             dropBlockAsItem(world, i, j, k, i1);
-@@ -172,6 +172,7 @@
+             dropBlockAsItem(world, i, j, k, i1, 0);
+@@ -186,6 +189,7 @@
  
      public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
      {
-+	if(disableValidation) return true;
++        if(disableValidation) return true;
          if(l == 0)
          {
              return false;
-@@ -196,11 +197,15 @@
+@@ -210,7 +214,7 @@
          {
              i--;
          }
--        return world.isBlockNormalCube(i, j, k);
-+        return world.isBlockSolidOnSide(i, j, k, l);
+-        return func_41006_g(world.getBlockId(i, j, k));
++        return func_41006_g(world.getBlockId(i, j, k)) || world.isBlockSolidOnSide(i, j, k, l);
      }
  
      public static boolean isTrapdoorOpen(int i)
-     {
-         return (i & 4) != 0;
-     }
-+
-+    /* FORGE: Set this to allow trapdoors to remain free-floating
-+    */
-+    public static boolean disableValidation=false;
- }

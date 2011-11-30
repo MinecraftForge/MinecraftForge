@@ -1,6 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -336,7 +336,10 @@
+@@ -51,7 +51,7 @@
+     public int lightningFlash;
+     public boolean editingBlocks;
+     private long lockTimestamp;
+-    protected int autosavePeriod;
++    public int autosavePeriod;
+     public int difficultySetting;
+     public Random rand;
+     public boolean isNewWorld;
+@@ -406,7 +406,10 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -8,11 +17,11 @@
 +    	int iBlockID = getBlockId( i, j, k );
 +    	if ( iBlockID == 0 )
 +    		return true;
-+	return Block.blocksList[iBlockID].isAirBlock(this,i,j,k);
++    	return Block.blocksList[iBlockID].isAirBlock(this,i,j,k);
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -1476,7 +1479,7 @@
+@@ -1576,7 +1579,7 @@
                      Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
                      if(chunk != null)
                      {
@@ -21,11 +30,11 @@
                      }
                  }
              }
-@@ -1503,16 +1506,16 @@
+@@ -1604,16 +1607,16 @@
                      {
                          loadedTileEntityList.add(tileentity1);
                      }
-+		} else {
++            	} else {
                      if(chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4))
                      {
                          Chunk chunk1 = getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
@@ -37,11 +46,11 @@
                      }
 -                    markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
 -                }
-+		}
++            	}
              } while(true);
              addedTileEntityList.clear();
          }
-@@ -1520,13 +1523,19 @@
+@@ -1623,13 +1626,17 @@
  
      public void addTileEntity(Collection collection)
      {
@@ -52,35 +61,33 @@
 -        {
 -            loadedTileEntityList.addAll(collection);
 -        }
-+	List dest=scanningTileEntities ? addedTileEntityList :
-+		loadedTileEntityList;
-+	for(Object ob : collection) {
-+		TileEntity te=(TileEntity)ob;
-+		if(te.canUpdate()) dest.add(te);
-+	}
++    	List dest=scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++    	for(Object ob : collection) {
++    		TileEntity te = (TileEntity)ob;
++    		if(te.canUpdate()) dest.add(te);
++    	}
 +    }
 +
 +    /* FORGE: Used as a bugfix */
 +    public void addTileEntity(TileEntity te) {
-+	List dest=scanningTileEntities ? addedTileEntityList :
-+		loadedTileEntityList;
-+	if(te.canUpdate()) dest.add(te);
++    	List dest=scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++    	if(te.canUpdate()) dest.add(te);
      }
  
      public void updateEntity(Entity entity)
-@@ -1684,7 +1693,10 @@
+@@ -1789,7 +1796,10 @@
                          if(j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
 -                        }
 +                        } else {
-+				if(j2>0 && Block.blocksList[j2].isBlockBurning(this,k1,l1,i2))
-+					return true;
-+			}
++                        	if(j2>0 && Block.blocksList[j2].isBlockBurning(this,k1,l1,i2))
++                        		return true;
++                    	}
                      }
  
                  }
-@@ -1917,44 +1929,23 @@
+@@ -2044,46 +2054,22 @@
  
      public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
      {
@@ -102,15 +109,14 @@
 -                }
 -            }
 -        }
-+	if(tileentity==null || tileentity.isInvalid())
-+		return;
-+	List dest=scanningTileEntities ? addedTileEntityList :
-+		loadedTileEntityList;
-+	if(tileentity.canUpdate()) dest.add(tileentity);
-+	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+	if(chunk != null) {
-+		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
-+	}
++    	if(tileentity==null || tileentity.isInvalid())
++    		return;
++    	List dest=scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++    	if(tileentity.canUpdate()) dest.add(tileentity);
++    	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++    	if(chunk != null) {
++    		chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
++    	}
      }
  
      public void removeBlockTileEntity(int i, int j, int k)
@@ -119,10 +125,12 @@
 -        if(tileentity != null && scanningTileEntities)
 -        {
 -            tileentity.invalidate();
+-            addedTileEntityList.remove(tileentity);
 -        } else
 -        {
 -            if(tileentity != null)
 -            {
+-                addedTileEntityList.remove(tileentity);
 -                loadedTileEntityList.remove(tileentity);
 -            }
 -            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
@@ -131,14 +139,14 @@
 -                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
 -            }
 -        }
-+	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+	if(chunk != null) {
-+		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
-+	}
++    	Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++    	if(chunk != null) {
++    		chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
++    	}
      }
  
      public void func_35455_a(TileEntity tileentity)
-@@ -1977,13 +1968,18 @@
+@@ -2106,13 +2092,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {
          Block block = Block.blocksList[getBlockId(i, j, k)];
@@ -150,7 +158,7 @@
 -            return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
 -        }
 +        if(block == null) return false;
-+	return block.isBlockNormalCube(this,i,j,k);
++        return block.isBlockNormalCube(this,i,j,k);
 +    }
 +
 +    /* FORGE: Determine if the given block is considered solid on the
@@ -160,33 +168,24 @@
 +    {
 +        Block block = Block.blocksList[getBlockId(i, j, k)];
 +        if(block == null) return false;
-+	return block.isBlockSolidOnSide(this,i,j,k,side);
++        return block.isBlockSolidOnSide(this,i,j,k,side);
      }
  
-     public void saveWorldIndirectly(IProgressUpdate iprogressupdate)
-@@ -2308,7 +2304,7 @@
+     public boolean func_41082_b(int i, int j, int k, boolean flag)
+@@ -2531,7 +2522,7 @@
  
      private int computeBlockLightValue(int i, int j, int k, int l, int i1, int j1)
      {
 -        int k1 = Block.lightValue[i1];
-+	int k1=(i1==0)?0:Block.blocksList[i1].getLightValue(this,j,k,l);
++    	int k1 = (i1==0) ? 0 : Block.blocksList[i1].getLightValue(this,j,k,l);
          int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
          int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
          int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
-@@ -2679,6 +2675,7 @@
+@@ -2940,6 +2931,7 @@
          {
              block = null;
          }
-+	if(block!=null && block.isBlockReplaceable(this,j,k,l)) block=null;
++        if (block != null && block.isBlockReplaceable(this,j,k,l)) block = null;
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -3193,7 +3190,7 @@
-     public int lightningFlash;
-     public boolean editingBlocks;
-     private long lockTimestamp;
--    protected int autosavePeriod;
-+    public int autosavePeriod;
-     public int difficultySetting;
-     public Random rand;
-     public boolean isNewWorld;

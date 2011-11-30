@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockChest.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	0000-00-00 00:00:00.000000000 -0000
-@@ -423,23 +423,23 @@
+@@ -429,23 +429,23 @@
          {
              return true;
          }
