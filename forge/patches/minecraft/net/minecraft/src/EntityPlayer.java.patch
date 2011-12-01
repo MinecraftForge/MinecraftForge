@@ -20,7 +20,7 @@
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -576,6 +582,32 @@
+@@ -576,6 +582,45 @@
          return f1;
      }
  
@@ -29,23 +29,36 @@
 +    public float getCurrentPlayerStrVsBlock(Block block, int md)
 +    {
 +        float f = 1.0F;
-+	ItemStack ist=inventory.getCurrentItem();
-+	if(ist!=null) f=ist.getItem().getStrVsBlock(ist,block,md);
-+        if(isInsideOfMaterial(Material.water))
++        ItemStack ist = inventory.getCurrentItem();
++        if(ist != null)
 +        {
-+            f /= 5F;
++        	f = ist.getItem().getStrVsBlock(ist, block, md);
 +        }
-+        if(!onGround)
++        
++        int i = EnchantmentHelper.getEfficiencyModifier(inventory);
++        if (i > 0 && ForgeHooks.canHarvestBlock(block, this, md))
 +        {
-+            f /= 5F;
++        	f += i * i + 1;
 +        }
++        
 +        if(isPotionActive(Potion.potionDigSpeed))
 +        {
 +            f *= 1.0F + (float)(getActivePotionEffect(Potion.potionDigSpeed).getAmplifier() + 1) * 0.2F;
 +        }
++        
 +        if(isPotionActive(Potion.potionDigSlow))
 +        {
 +            f *= 1.0F - (float)(getActivePotionEffect(Potion.potionDigSlow).getAmplifier() + 1) * 0.2F;
++        }
++        
++        if(isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(inventory))
++        {
++            f /= 5F;
++        }
++        
++        if(!onGround)
++        {
++            f /= 5F;
 +        }
 +        return f;
 +    }
@@ -53,7 +66,7 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -774,6 +806,25 @@
+@@ -774,6 +819,25 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
      {
@@ -79,7 +92,7 @@
          if(!damagesource.unblockable() && func_35162_ad())
          {
              i = 1 + i >> 1;
-@@ -825,7 +876,9 @@
+@@ -825,7 +889,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -89,7 +102,7 @@
      }
  
      public double getYOffset()
-@@ -957,6 +1010,10 @@
+@@ -957,6 +1023,10 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
