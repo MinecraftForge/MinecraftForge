@@ -62,7 +62,7 @@
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
      {
          return false;
-@@ -473,6 +497,18 @@
+@@ -473,6 +507,18 @@
      {
          return 0;
      }

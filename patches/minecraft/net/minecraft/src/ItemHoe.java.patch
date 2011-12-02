@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/src/ItemHoe.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ItemHoe.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,7 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.ForgeHooks;
+ 
+ // Referenced classes of package net.minecraft.src:
+ //            Item, EnumToolMaterial, EntityPlayer, World, 
+@@ -25,6 +26,10 @@
+         {
+             return false;
+         }
++	if(ForgeHooks.onUseHoe(itemstack,entityplayer,world,i,j,k)) {
++                itemstack.damageItem(1, entityplayer);
++		return true;
++	}
+         int i1 = world.getBlockId(i, j, k);
+         int j1 = world.getBlockId(i, j + 1, k);
+         if(l != 0 && j1 == 0 && i1 == Block.grass.blockID || i1 == Block.dirt.blockID)
