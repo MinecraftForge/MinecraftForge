@@ -52,7 +52,7 @@
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
      {
          return false;
-@@ -473,6 +497,28 @@
+@@ -473,6 +497,18 @@
      {
          return 0;
      }
@@ -65,17 +65,7 @@
 +    {    	
 +    	if (this.shiftedIndex != Item.potion.shiftedIndex)
 +    	{
-+    		if (this.shiftedIndex == Item.dyePowder.shiftedIndex)
-+    		{
-+    			for (int x = 0; x < 16; x++)
-+    			{
-+    				itemList.add(new ItemStack(Item.dyePowder, 1, x));
-+    			}
-+    		}
-+    		else
-+    		{
-+    			itemList.add(new ItemStack(this, 1));
-+    		}
++			itemList.add(new ItemStack(this, 1));
 +    	}
 +    }
  

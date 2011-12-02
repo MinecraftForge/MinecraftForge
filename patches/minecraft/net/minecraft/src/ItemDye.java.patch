@@ -1,14 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,7 @@
+@@ -3,7 +3,9 @@
  // Decompiler options: packimports(3) braces deadcode fieldsfirst 
  
  package net.minecraft.src;
 +import net.minecraft.src.forge.ForgeHooks;
  
++import java.util.ArrayList;
  import java.util.Random;
  
-@@ -45,13 +46,18 @@
+ // Referenced classes of package net.minecraft.src:
+@@ -45,13 +47,18 @@
  
      public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
      {
@@ -28,7 +30,7 @@
              if(i1 == Block.sapling.blockID)
              {
                  if(!world.multiplayerWorld)
-@@ -118,13 +124,7 @@
+@@ -118,13 +125,7 @@
                              world.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1);
                              continue;
                          }
@@ -43,3 +45,21 @@
                      }
  
                  }
+@@ -147,5 +148,17 @@
+             }
+         }
+     }
++    
++    /* FORGE: Called when a new CreativeContainer is opened, populate the list 
++     * with all of the items for this item you want a player in creative mode
++     * to have access to.
++     */
++    public void addCreativeItems(ArrayList itemList)
++    {    	
++		for (int x = 0; x < 16; x++)
++		{
++			itemList.add(new ItemStack(this, 1, x));
++		}
++    }
+ 
+ }
