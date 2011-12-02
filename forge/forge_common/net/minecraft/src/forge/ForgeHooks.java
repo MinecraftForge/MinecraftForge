@@ -49,6 +49,17 @@ public class ForgeHooks {
 
 	static LinkedList<IBonemealHandler> bonemealHandlers = new LinkedList<IBonemealHandler>();
 
+	public static boolean onUseHoe(ItemStack hoe, EntityPlayer player,
+			World world, int i, int j, int k) {
+		for(IHoeHandler handler : hoeHandlers) {
+			if(handler.onUseHoe(hoe,player,world,i,j,k))
+				return true;
+		}
+		return false;
+	}
+
+	static LinkedList<IHoeHandler> hoeHandlers = new LinkedList<IHoeHandler>();
+
 	public static EnumStatus sleepInBedAt(EntityPlayer player, int i, int j, int k) {
 		for (ISleepHandler handler : sleepHandlers) {
 			EnumStatus status = handler.sleepInBedAt(player, i, j, k);

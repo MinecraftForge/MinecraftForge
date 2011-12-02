@@ -37,6 +37,13 @@ public class MinecraftForge {
     }
 
     /**
+     * Registers a new hoe handler.
+     */
+    public static void registerHoeHandler(IHoeHandler handler) {
+	ForgeHooks.hoeHandlers.add(handler);
+    }
+
+    /**
      * Registers a new destroy tool handler.
      */
     public static void registerDestroyToolHandler(IDestroyToolHandler handler) {
