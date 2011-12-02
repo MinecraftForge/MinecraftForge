@@ -101,7 +101,7 @@
          }
  
      }
-@@ -805,6 +819,104 @@
+@@ -805,6 +819,107 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
@@ -189,6 +189,9 @@
 +     * actually destroying the block, and the block is intact at time of call.
 +     * This is called regardless of whether the player can harvest the block or
 +     * not.  Return true if the block is actually destroyed.
++     *
++     * Note: When used in multiplayer, this is called on both client and
++     * server sides!
 +     */
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player,
 +		    int i, int j, int k) {

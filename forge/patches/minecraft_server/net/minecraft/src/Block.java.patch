@@ -85,7 +85,7 @@
          }
  
      }
-@@ -725,6 +737,96 @@
+@@ -725,6 +737,99 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -173,6 +173,9 @@
 +     * actually destroying the block, and the block is intact at time of call.
 +     * This is called regardless of whether the player can harvest the block or
 +     * not.  Return true if the block is actually destroyed.
++     *
++     * Note: When used in multiplayer, this is called on both client and
++     * server sides!
 +     */
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player,
 +		    int i, int j, int k) {
