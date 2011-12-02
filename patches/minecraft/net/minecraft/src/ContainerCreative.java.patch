@@ -1,0 +1,25 @@
+--- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
+@@ -74,12 +74,20 @@
+             }
+             itemList.add(new ItemStack(ablock[l1], 1, k2));
+         }
++        
++        for(int x = 0; x < 256; x++)
++        {
++        	if (Block.blocksList[x] != null)
++        	{
++        		Block.blocksList[x].addCreativeItems((ArrayList)itemList);
++        	}
++        }
+ 
+         for(int i2 = 256; i2 < Item.itemsList.length; i2++)
+         {
+-            if(Item.itemsList[i2] != null && Item.itemsList[i2].shiftedIndex != Item.potion.shiftedIndex)
++            if(Item.itemsList[i2] != null)
+             {
+-                itemList.add(new ItemStack(Item.itemsList[i2]));
++            	Item.itemsList[i2].addCreativeItems((ArrayList)itemList);
+             }
+         }
+ 
