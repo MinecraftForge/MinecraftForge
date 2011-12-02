@@ -10,7 +10,25 @@
  import net.minecraft.client.Minecraft;
  
  // Referenced classes of package net.minecraft.src:
-@@ -103,7 +106,7 @@
+@@ -68,13 +71,16 @@
+ 
+     public boolean sendBlockRemoved(int i, int j, int k, int l)
+     {
++        ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
++	if(itemstack!=null && itemstack.getItem().onBlockStartBreak(itemstack,
++			i,j,k,mc.thePlayer))
++		return false;
+         if(creativeMode)
+         {
+             return super.sendBlockRemoved(i, j, k, l);
+         }
+         int i1 = mc.theWorld.getBlockId(i, j, k);
+         boolean flag = super.sendBlockRemoved(i, j, k, l);
+-        ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
+         if(itemstack != null)
+         {
+             itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
+@@ -103,7 +109,7 @@
              {
                  Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
              }
@@ -19,7 +37,7 @@
              {
                  sendBlockRemoved(i, j, k, l);
              } else
-@@ -149,7 +152,7 @@
+@@ -149,7 +155,7 @@
                  return;
              }
              Block block = Block.blocksList[i1];
@@ -28,7 +46,7 @@
              if(stepSoundTickCounter % 4F == 0.0F && block != null)
              {
                  mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
-@@ -216,6 +219,13 @@
+@@ -216,6 +222,13 @@
      {
          syncCurrentPlayItem();
          netClientHandler.addToSendQueue(new Packet15Place(i, j, k, l, entityplayer.inventory.getCurrentItem()));
@@ -42,7 +60,7 @@
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -235,7 +245,11 @@
+@@ -235,7 +248,11 @@
              return flag;
          } else
          {

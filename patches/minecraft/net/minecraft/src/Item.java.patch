@@ -32,7 +32,7 @@
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
-@@ -278,6 +289,19 @@
+@@ -278,6 +289,29 @@
          return maxDamage > 0 && !hasSubtypes;
      }
  
@@ -47,6 +47,16 @@
 +    public Item setNoRepair() {
 +	    canRepair=false;
 +	    return this;
++    }
++
++    /* FORGE: Called before a block is broken.  Return true to prevent default
++     * block harvesting.
++     *
++     * Note: In SMP, this is called on both client and server sides!
++     */
++    public boolean onBlockStartBreak(ItemStack itemstack, int i, int j, int k,
++		    EntityPlayer player) {
++	    return false;
 +    }
 +
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)

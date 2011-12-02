@@ -38,7 +38,7 @@
                  if(f >= 0.7F)
                  {
                      blockHarvessted(i, j, k);
-@@ -150,11 +152,10 @@
+@@ -150,16 +152,19 @@
      {
          Block block = Block.blocksList[thisWorld.getBlockId(i, j, k)];
          int l = thisWorld.getBlockMetadata(i, j, k);
@@ -54,16 +54,26 @@
          return flag;
      }
  
-@@ -170,7 +171,7 @@
+     public boolean blockHarvessted(int i, int j, int k)
+     {
++        ItemStack itemstack = thisPlayer.getCurrentEquippedItem();
++	if(itemstack!=null && itemstack.getItem().onBlockStartBreak(itemstack,
++			i,j,k,thisPlayer))
++		return false;
+         int l = thisWorld.getBlockId(i, j, k);
+         int i1 = thisWorld.getBlockMetadata(i, j, k);
+         thisWorld.playAuxSFXAtEntity(thisPlayer, 2001, i, j, k, l + thisWorld.getBlockMetadata(i, j, k) * 256);
+@@ -169,8 +174,7 @@
+             ((EntityPlayerMP)thisPlayer).playerNetServerHandler.sendPacket(new Packet53BlockChange(i, j, k, thisWorld));
          } else
          {
-             ItemStack itemstack = thisPlayer.getCurrentEquippedItem();
+-            ItemStack itemstack = thisPlayer.getCurrentEquippedItem();
 -            boolean flag1 = thisPlayer.canHarvestBlock(Block.blocksList[l]);
 +            boolean flag1 = Block.blocksList[l].canHarvestBlock(thisPlayer, i1);
              if(itemstack != null)
              {
                  itemstack.onDestroyBlock(l, i, j, k, thisPlayer);
-@@ -204,6 +205,7 @@
+@@ -204,6 +208,7 @@
              if(itemstack1.stackSize == 0)
              {
                  entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
@@ -71,7 +81,7 @@
              }
              return true;
          } else
-@@ -214,6 +216,11 @@
+@@ -214,6 +219,11 @@
  
      public boolean activeBlockOrUseItem(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
@@ -83,7 +93,7 @@
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -233,7 +240,11 @@
+@@ -233,7 +243,11 @@
              return flag;
          } else
          {
