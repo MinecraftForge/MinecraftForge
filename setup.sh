@@ -25,6 +25,7 @@ if [ ! -d src_base ] ; then
 
 	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
 	patch -p2 -i ../forge/modLoaderMP.patch
+	cp -f ../forge/MLProp.java minecraft/net/minecraft/src
 
 	popd > /dev/null
 
