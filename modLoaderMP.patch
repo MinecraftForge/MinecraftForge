@@ -57,3 +57,14 @@ diff -u -r --strip-trailing-cr ../src_base/minecraft_server/net/minecraft/server
  
      private void doTick()
      {
+diff U3 ../src_base/minecraft_server/net/minecraft/src/MLProp.java ../src_work/minecraft_server/net/minecraft/src/MLProp.java
+--- ../src_base/minecraft_server/net/minecraft/src/MLProp.java	Wed Nov 30 22:27:22 2011
++++ ../src_work/minecraft_server/net/minecraft/src/MLProp.java	Sun Dec 04 14:31:04 2011
+@@ -8,4 +8,6 @@
+ 	String info() default "";
+ 	double min() default Double.NEGATIVE_INFINITY;
+ 	double max() default Double.POSITIVE_INFINITY;
++    
++    public int reobf() default 0;
+ }
+\ No newline at end of file
