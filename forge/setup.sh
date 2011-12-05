@@ -24,8 +24,9 @@ if [ ! -d src_base ] ; then
 	pushd src > /dev/null
 
 	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
+    cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
+    cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
 	patch -p2 -i ../forge/modLoaderMP.patch
-	cp -f ../forge/MLProp.java minecraft/net/minecraft/src
 
 	popd > /dev/null
 
