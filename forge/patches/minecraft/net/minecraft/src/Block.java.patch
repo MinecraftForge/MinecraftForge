@@ -25,7 +25,7 @@
      }
  
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
-@@ -438,25 +441,41 @@
+@@ -438,25 +441,42 @@
      {
          return 1;
      }
@@ -33,9 +33,9 @@
 +    
 +    /* FORGE: Metadata-sensitive version.
 +     */
-+    public int quantityDropped(int i, Random random)
++    public int quantityDropped(int meta, int fortune, Random random)
 +    {
-+        return quantityDropped(random);
++        return func_40198_a(fortune, random);
 +    }
 +    
      public int idDropped(int i, Random random, int j)
@@ -65,28 +65,29 @@
 +    /* FORGE: This function returns the complete list of drops for a block.
 +     */
 +    public ArrayList<ItemStack> getBlockDropped(World world,
-+        	    int i, int j, int k, int md) {
-+    	ArrayList<ItemStack> tr=new ArrayList<ItemStack>();
++        	    int i, int j, int k, int md, int fortune) {
++    	
++    	ArrayList<ItemStack> tr = new ArrayList<ItemStack>();
 +
-+    	int q=quantityDropped(md,world.rand);
-+    	for(int n=0; n<q; n++) {
++    	int q = quantityDropped(md, fortune, world.rand);
++    	for (int n = 0; n < q; n++) {
 +    		int id = idDropped(md, world.rand, 0);
 +    		if(id > 0) {
-+    			tr.add(new ItemStack(id,1,damageDropped(md)));
++    			tr.add(new ItemStack(id, 1, damageDropped(md)));
 +    		}
 +    	}
 +    	return tr;
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
-@@ -470,18 +489,13 @@
+@@ -470,18 +490,13 @@
          {
              return;
          }
 -        int j1 = func_40198_a(i1, world.rand);
 -        for(int k1 = 0; k1 < j1; k1++)
 -        {
-+        ArrayList<ItemStack> ar = getBlockDropped(world,i,j,k,l);
++        ArrayList<ItemStack> ar = getBlockDropped(world, i, j, k, l, i1);
 +        for (ItemStack ist : ar) {
              if(world.rand.nextFloat() > f)
              {
@@ -101,7 +102,7 @@
          }
  
      }
-@@ -805,6 +819,107 @@
+@@ -805,6 +820,107 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  

@@ -8,15 +8,15 @@
  
  import java.util.ArrayList;
  import java.util.Random;
-@@ -384,26 +385,41 @@
+@@ -384,26 +385,43 @@
          return 1;
      }
  
 +    /* FORGE: Metadata-sensitive version.
 +     */
-+    public int quantityDropped(int i, Random random)
++    public int quantityDropped(int meta, int fortune, Random random)
 +    {
-+    	return quantityDropped(random);
++    	return func_40162_a(fortune, random);
 +    }
 +    
      public int idDropped(int i, Random random, int j)
@@ -24,6 +24,7 @@
          return blockID;
      }
 -
++    
 +    /* FORGE: This function isnt called by Minecraft anymore.  Use
 +     * blockStrength(EntityPlayer,int) instead.
 +     */
@@ -47,10 +48,11 @@
 +    /* FORGE: This function returns the complete list of drops for a block.
 +     */
 +    public ArrayList<ItemStack> getBlockDropped(World world,
-+    	    int i, int j, int k, int md) {
++    	    int i, int j, int k, int md, int fortune) {
++    	
 +    	ArrayList<ItemStack> tr = new ArrayList<ItemStack>();
 +        
-+    	int q = quantityDropped(md, world.rand);
++    	int q = quantityDropped(md, fortune, world.rand);
 +    	for(int n = 0; n < q; n++) {
 +    		int id = idDropped(md, world.rand, 0);
 +    		if (id > 0) {
@@ -63,13 +65,13 @@
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
      {
          dropBlockAsItemWithChance(world, i, j, k, l, 1.0F, i1);
-@@ -415,18 +431,14 @@
+@@ -415,18 +433,14 @@
          {
              return;
          }
 -        int j1 = func_40162_a(i1, world.rand);
 -        for(int k1 = 0; k1 < j1; k1++)
-+        ArrayList<ItemStack> ar = getBlockDropped(world,i,j,k,l);
++        ArrayList<ItemStack> ar = getBlockDropped(world, i, j, k, l, i1);
 +        for (ItemStack ist : ar) 
          {
              if(world.rand.nextFloat() > f)
@@ -85,7 +87,7 @@
          }
  
      }
-@@ -725,6 +737,99 @@
+@@ -725,6 +739,99 @@
          return blockMaterial.getMaterialMobility();
      }
  
