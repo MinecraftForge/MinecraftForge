@@ -25,7 +25,7 @@
      }
  
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
-@@ -438,25 +441,42 @@
+@@ -438,25 +441,49 @@
      {
          return 1;
      }
@@ -36,6 +36,13 @@
 +    public int quantityDropped(int meta, int fortune, Random random)
 +    {
 +        return func_40198_a(fortune, random);
++    }
++    
++    /* FORGE: Metadata-sensitive version.
++     */
++    public int quantityDropped(int meta, Random random)
++    {
++        return quantityDropped(meta, 0, random);
 +    }
 +    
      public int idDropped(int i, Random random, int j)
@@ -80,7 +87,7 @@
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
-@@ -470,18 +490,13 @@
+@@ -470,18 +497,13 @@
          {
              return;
          }
@@ -102,7 +109,7 @@
          }
  
      }
-@@ -805,6 +820,107 @@
+@@ -805,6 +827,107 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
