@@ -8,7 +8,7 @@
  
  import java.util.ArrayList;
  import java.util.Random;
-@@ -384,26 +385,43 @@
+@@ -384,26 +385,50 @@
          return 1;
      }
  
@@ -17,6 +17,13 @@
 +    public int quantityDropped(int meta, int fortune, Random random)
 +    {
 +    	return func_40162_a(fortune, random);
++    }
++    
++    /* FORGE: Metadata-sensitive version.
++     */
++    public int quantityDropped(int meta, Random random)
++    {
++        return quantityDropped(meta, 0, random);
 +    }
 +    
      public int idDropped(int i, Random random, int j)
@@ -65,7 +72,7 @@
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
      {
          dropBlockAsItemWithChance(world, i, j, k, l, 1.0F, i1);
-@@ -415,18 +433,14 @@
+@@ -415,18 +440,14 @@
          {
              return;
          }
@@ -87,7 +94,7 @@
          }
  
      }
-@@ -725,6 +739,99 @@
+@@ -725,6 +746,99 @@
          return blockMaterial.getMaterialMobility();
      }
  
