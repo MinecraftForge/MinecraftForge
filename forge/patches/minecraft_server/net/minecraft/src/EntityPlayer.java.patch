@@ -35,7 +35,7 @@
 +        	f = ist.getItem().getStrVsBlock(ist, block, md);
 +        }
 +        
-+        int i = EnchantmentHelper.func_40630_b(inventory);
++        int i = EnchantmentHelper.getEfficiencyModifier(inventory);
 +        if (i > 0 && ForgeHooks.canHarvestBlock(block, this, md))
 +        {
 +        	f += i * i + 1;
@@ -43,15 +43,15 @@
 +        
 +        if(func_35184_a(Potion.digSpeed))
 +        {
-+            f *= 1.0F + (float)(func_35187_b(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
++            f *= 1.0F + (float)(getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
 +        }
 +        
 +        if(func_35184_a(Potion.digSlowdown))
 +        {
-+            f *= 1.0F - (float)(func_35187_b(Potion.digSlowdown).getAmplifier() + 1) * 0.2F;
++            f *= 1.0F - (float)(getActivePotionEffect(Potion.digSlowdown).getAmplifier() + 1) * 0.2F;
 +        }
 +        
-+        if(isInsideOfMaterial(Material.water) && !EnchantmentHelper.func_40632_g(inventory))
++        if(isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(inventory))
 +        {
 +            f /= 5F;
 +        }
