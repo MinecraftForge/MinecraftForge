@@ -41,14 +41,14 @@
 +        	f += i * i + 1;
 +        }
 +        
-+        if(isPotionActive(Potion.potionDigSpeed))
++        if(isPotionActive(Potion.digSpeed))
 +        {
-+            f *= 1.0F + (float)(getActivePotionEffect(Potion.potionDigSpeed).getAmplifier() + 1) * 0.2F;
++            f *= 1.0F + (float)(getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
 +        }
 +        
-+        if(isPotionActive(Potion.potionDigSlow))
++        if(isPotionActive(Potion.digSlowdown))
 +        {
-+            f *= 1.0F - (float)(getActivePotionEffect(Potion.potionDigSlow).getAmplifier() + 1) * 0.2F;
++            f *= 1.0F - (float)(getActivePotionEffect(Potion.digSlowdown).getAmplifier() + 1) * 0.2F;
 +        }
 +        
 +        if(isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(inventory))

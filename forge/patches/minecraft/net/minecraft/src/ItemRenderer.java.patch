@@ -17,16 +17,16 @@
          GL11.glPushMatrix();
 -        if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
 +        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(itemstack.itemID);
-+        
++                
 +        if (customRenderer != null) {
-+            GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
-+            ForgeHooksClient.overrideTexture (itemstack.getItem());
-+            ForgeHooksClient.renderCustomItem(customRenderer, renderBlocksInstance, itemstack.itemID,  itemstack.getItemDamage(), entityliving.getEntityBrightness(1.0F));        	
++        	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
++        	ForgeHooksClient.overrideTexture (itemstack.getItem());
++        	ForgeHooksClient.renderCustomItem(customRenderer, renderBlocksInstance, itemstack.itemID,  itemstack.getItemDamage(), entityliving.getEntityBrightness(1.0F));        	
 +        } else if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
          {
              GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
 +            ForgeHooksClient.overrideTexture (Block.blocksList[itemstack.itemID]);
-             renderBlocksInstance.renderBlockOnInventory(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), 1.0F);
+             renderBlocksInstance.renderBlockAsItem(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), 1.0F);
          } else
          {
              if(itemstack.itemID < 256)
