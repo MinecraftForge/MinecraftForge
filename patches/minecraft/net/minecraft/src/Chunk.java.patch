@@ -8,15 +8,7 @@
  
  import java.io.PrintStream;
  import java.util.*;
-@@ -348,6 +349,7 @@
-         }
-         int i2 = xPosition * 16 + i;
-         int j2 = zPosition * 16 + k;
-+        
-         blocks[i << worldObj.field_35471_b | k << worldObj.field_35473_a | j] = (byte)(byte0 & 0xff);
-         if(l1 != 0)
-         {
-@@ -390,7 +392,7 @@
+@@ -390,7 +391,7 @@
                  TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
                  if(tileentity == null)
                  {
@@ -25,7 +17,7 @@
                      worldObj.setBlockTileEntity(i, j, k, tileentity);
                  }
                  if(tileentity != null)
-@@ -398,14 +400,6 @@
+@@ -398,14 +399,6 @@
                      tileentity.func_35144_b();
                  }
              }
@@ -40,17 +32,15 @@
          }
          isModified = true;
          return true;
-@@ -427,10 +421,13 @@
-         }
-         int l1 = xPosition * 16 + i;
-         int i2 = zPosition * 16 + k;
-+
-         blocks[i << worldObj.field_35471_b | k << worldObj.field_35473_a | j] = (byte)(byte0 & 0xff);
+@@ -430,7 +423,11 @@
+         blocks[i << worldObj.xShift | k << worldObj.heightShift | j] = (byte)(byte0 & 0xff);
          if(k1 != 0)
          {
 -            Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
-+        	if (!worldObj.multiplayerWorld)
++        	if (!worldObj.multiplayerWorld) 
++        	{
 +        		Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
++        	}
 +        	removeChunkBlockTileEntity(i, j, k);
          }
          data.setNibble(i, j, k, 0);

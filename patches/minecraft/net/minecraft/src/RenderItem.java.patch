@@ -99,7 +99,7 @@
 +            ForgeHooksClient.overrideTexture (Block.blocksList[i]);
              Block block = Block.blocksList[j1];
              GL11.glPushMatrix();
-             GL11.glTranslatef(l - 2, i1 + 3, -3F + field_40268_b);
+             GL11.glTranslatef(l - 2, i1 + 3, -3F + zLevel);
 @@ -215,9 +274,11 @@
              if(i < 256)
              {
