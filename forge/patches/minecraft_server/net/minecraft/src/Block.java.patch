@@ -8,7 +8,7 @@
  
  import java.util.ArrayList;
  import java.util.Random;
-@@ -384,26 +385,50 @@
+@@ -384,26 +385,57 @@
          return 1;
      }
  
@@ -69,10 +69,17 @@
 +    	return tr;
 +    }
 +    
++    /* FORGE: This function returns the complete list of drops for a block.
++     */
++    public ArrayList<ItemStack> getBlockDropped(World world,
++        	    int i, int j, int k, int md) {
++    	return getBlockDropped (world, i, j, k, md);
++    }
++    
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
      {
          dropBlockAsItemWithChance(world, i, j, k, l, 1.0F, i1);
-@@ -415,18 +440,14 @@
+@@ -415,18 +447,14 @@
          {
              return;
          }
@@ -94,7 +101,7 @@
          }
  
      }
-@@ -725,6 +746,99 @@
+@@ -725,6 +753,99 @@
          return blockMaterial.getMaterialMobility();
      }
  
