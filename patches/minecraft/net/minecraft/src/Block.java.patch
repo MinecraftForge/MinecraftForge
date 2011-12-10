@@ -25,7 +25,7 @@
      }
  
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
-@@ -438,25 +441,49 @@
+@@ -438,25 +441,56 @@
      {
          return 1;
      }
@@ -84,10 +84,17 @@
 +    		}
 +    	}
 +    	return tr;
++    }
++    
++    /* FORGE: This function returns the complete list of drops for a block.
++     */
++    public ArrayList<ItemStack> getBlockDropped(World world,
++        	    int i, int j, int k, int md) {
++    	return getBlockDropped (world, i, j, k, md);
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
-@@ -470,18 +497,13 @@
+@@ -470,18 +504,13 @@
          {
              return;
          }
@@ -109,7 +116,7 @@
          }
  
      }
-@@ -805,6 +827,107 @@
+@@ -805,6 +834,107 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
