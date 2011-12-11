@@ -160,6 +160,18 @@ public class ForgeHooksClient {
 		}
 	}
 	
+	public static String getTexture(String def, Object item) 
+	{
+		if (item instanceof ITextureProvider)
+		{
+			return ((ITextureProvider)item).getTextureFile();
+		}
+		else
+		{
+			return def;
+		}
+	}
+	
 	public static void renderCustomItem(ICustomItemRenderer customRenderer, RenderBlocks renderBlocks,int itemID, int meta, float f) {
 		Tessellator tessellator = Tessellator.instance;
 		if (renderBlocks.useInventoryTint) {
