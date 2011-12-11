@@ -8,7 +8,7 @@
  
  // Referenced classes of package net.minecraft.src:
  //            BlockFlower, Block, World, EntityItem, 
-@@ -108,28 +109,16 @@
+@@ -108,28 +109,22 @@
          return 6;
      }
  
@@ -16,22 +16,22 @@
 -    {
 -        super.dropBlockAsItemWithChance(world, i, j, k, l, f, 0);
 -        if(world.multiplayerWorld)
--        {
--            return;
-+    public ArrayList<ItemStack> getBlockDropped(World world,
-+        	    int i, int j, int k, int md) {
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int md, int fortune) {
 +        ArrayList<ItemStack> tr = new ArrayList<ItemStack>();
-+        if (md == 7) tr.add(new ItemStack(Item.wheat));
-+            
-+        for(int n = 0; n < 3; n++) {
-+            if (world.rand.nextInt(15) <= md)
-+                tr.add(new ItemStack(Item.seeds));
++        if (md == 7)
+         {
+-            return;
++        	tr.add(new ItemStack(Item.wheat));
          }
 -        int j1 = 3 + i1;
 -        for(int k1 = 0; k1 < j1; k1++)
--        {
++            
++        for(int n = 0; n < 3; n++) 
+         {
 -            if(world.rand.nextInt(15) <= l)
--            {
++            if (world.rand.nextInt(15) <= md)
+             {
 -                float f1 = 0.7F;
 -                float f2 = world.rand.nextFloat() * f1 + (1.0F - f1) * 0.5F;
 -                float f3 = world.rand.nextFloat() * f1 + (1.0F - f1) * 0.5F;
@@ -39,8 +39,9 @@
 -                EntityItem entityitem = new EntityItem(world, (float)i + f2, (float)j + f3, (float)k + f4, new ItemStack(Item.seeds));
 -                entityitem.delayBeforeCanPickup = 10;
 -                world.entityJoinedWorld(entityitem);
--            }
--        }
++                tr.add(new ItemStack(Item.seeds));
+             }
+         }
 -
 +        return tr;
      }
