@@ -1,0 +1,26 @@
+diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
+--- minecraft_server\net\minecraft\src\ItemMap.java	Tue Nov 22 23:21:56 2011
++++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Wed Nov 23 00:09:45 2011
+@@ -22,7 +22,6 @@
+    }
+ 
+    public MapData func_28023_a(ItemStack var1, World var2) {
+-      "map_" + var1.func_21125_h();
+       MapData var4 = (MapData)var2.func_28103_a(MapData.class, "map_" + var1.func_21125_h());
+       if(var4 == null) {
+          var1.func_28145_b(var2.func_28104_b("map"));
+diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_server_patched\net\minecraft\src\RConThreadClient.java
+diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Tue Nov 22 23:22:10 2011
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Wed Nov 23 00:09:45 2011
+@@ -21,7 +21,9 @@
+    }
+ 
+    public void run() {
+-      this.func_40509_b();
++      while (true) {
++         this.func_40509_b();
++      }
+    }
+ 
+    private void func_40509_b() {

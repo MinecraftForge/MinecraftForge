@@ -25,7 +25,7 @@
      }
  
      public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l)
-@@ -438,25 +441,56 @@
+@@ -438,25 +441,70 @@
      {
          return 1;
      }
@@ -39,7 +39,14 @@
 +    }
 +    
 +    /* FORGE: Metadata-sensitive version.
++     * 
++     * This is deprecated in MC 1.0+ versions because of the new Enchantment 
++     * system requiring a new argument. Will be removed unless a valid reason
++     * for it to remain is brought to light.
++     * 
++     * Implementing this in your mod will not do anything!
 +     */
++    @Deprecated
 +    public int quantityDropped(int meta, Random random)
 +    {
 +        return quantityDropped(meta, 0, random);
@@ -87,14 +94,21 @@
 +    }
 +    
 +    /* FORGE: This function returns the complete list of drops for a block.
++     * 
++     * This is deprecated in MC 1.0+ versions because of the new Enchantment 
++     * system requiring a new argument. Will be removed unless a valid reason
++     * for it to remain is brought to light.
++     * 
++     * Implementing this in your mod will not do anything!
 +     */
++    @Deprecated
 +    public ArrayList<ItemStack> getBlockDropped(World world,
 +        	    int i, int j, int k, int md) {
-+    	return getBlockDropped (world, i, j, k, md);
++    	return getBlockDropped (world, i, j, k, md, 0);
      }
  
      public final void dropBlockAsItem(World world, int i, int j, int k, int l, int i1)
-@@ -470,18 +504,13 @@
+@@ -470,18 +518,13 @@
          {
              return;
          }
@@ -116,7 +130,7 @@
          }
  
      }
-@@ -805,6 +834,107 @@
+@@ -805,6 +848,107 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  

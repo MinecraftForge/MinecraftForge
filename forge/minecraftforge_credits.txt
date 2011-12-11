@@ -16,3 +16,5 @@ ScotTools Background: ScotTools was an API that enabled modders to add blocks to
 
 * SpaceToad *
 
+* LexManos *
+

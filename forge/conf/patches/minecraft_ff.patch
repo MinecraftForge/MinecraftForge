@@ -1,0 +1,109 @@
+diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net\minecraft\client\Minecraft.java
+--- minecraft\net\minecraft\client\Minecraft.java	Tue Nov 22 23:21:44 2011
++++ minecraft_patched\net\minecraft\client\Minecraft.java	Wed Nov 23 00:09:14 2011
+@@ -1600,11 +1600,13 @@
+ 
+             this.field_6324_e.func_600_a(var6.field_22395_a + var10, 64, var6.field_22396_c + var8);
+             if(!this.field_6327_b.func_35643_e()) {
++/*
+                while(true) {
+                   if(this.field_6324_e.func_6465_g()) {
+                      continue;
+                   }
+                }
++*/
+             }
+          }
+       }
+diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\minecraft\src\CodecMus.java
+--- minecraft\net\minecraft\src\CodecMus.java	Tue Nov 22 23:21:36 2011
++++ minecraft_patched\net\minecraft\src\CodecMus.java	Wed Nov 23 00:09:14 2011
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import java.io.IOException;
+ import java.io.InputStream;
+ import net.minecraft.src.MusInputStream;
+ import paulscode.sound.codecs.CodecJOrbis;
+@@ -7,6 +8,11 @@
+ public class CodecMus extends CodecJOrbis {
+ 
+    protected InputStream openInputStream() {
+-      return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++      try {
++         return new MusInputStream(this, this.url, this.urlConnection.getInputStream());
++      }
++      catch (IOException e) {
++         return null;
++      }
+    }
+ }
+diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\minecraft\src\ItemMap.java
+--- minecraft\net\minecraft\src\ItemMap.java	Tue Nov 22 23:21:24 2011
++++ minecraft_patched\net\minecraft\src\ItemMap.java	Wed Nov 23 00:09:14 2011
+@@ -19,7 +19,6 @@
+    }
+ 
+    public static MapData func_28013_a(short var0, World var1) {
+-      "map_" + var0;
+       MapData var3 = (MapData)var1.func_28103_a(MapData.class, "map_" + var0);
+       if(var3 == null) {
+          int var4 = var1.func_28101_b("map");
+@@ -32,7 +31,6 @@
+    }
+ 
+    public MapData func_28012_a(ItemStack var1, World var2) {
+-      "map_" + var1.func_21181_i();
+       MapData var4 = (MapData)var2.func_28103_a(MapData.class, "map_" + var1.func_21181_i());
+       if(var4 == null) {
+          var1.func_28156_b(var2.func_28101_b("map"));
+diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\net\minecraft\src\MusInputStream.java
+--- minecraft\net\minecraft\src\MusInputStream.java	Tue Nov 22 23:21:24 2011
++++ minecraft_patched\net\minecraft\src\MusInputStream.java	Wed Nov 23 00:09:14 2011
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import java.io.IOException;
+ import java.io.InputStream;
+ import java.net.URL;
+ import net.minecraft.src.CodecMus;
+@@ -28,7 +29,12 @@
+    }
+ 
+    public int read(byte[] var1, int var2, int var3) {
+-      var3 = this.field_1515_d.read(var1, var2, var3);
++      try {
++         var3 = this.field_1515_d.read(var1, var2, var3);
++      }
++      catch (IOException e) {
++         return 0;
++      }
+ 
+       for(int var4 = 0; var4 < var3; ++var4) {
+          byte var5 = var1[var2 + var4] = (byte)(var1[var2 + var4] ^ this.field_1516_c >> 8);
+diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
+--- minecraft\net\minecraft\src\RenderGlobal.java	Tue Nov 22 23:21:20 2011
++++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Wed Nov 23 00:10:20 2011
+@@ -1466,7 +1466,7 @@
+          double var15 = this.field_1439_t.field_22009_h.field_611_ak - var2;
+          double var17 = this.field_1439_t.field_22009_h.field_610_al - var4;
+          double var19 = this.field_1439_t.field_22009_h.field_609_am - var6;
+-         Object var21 = null;
++         EntityFX var21 = null;
+          if(var1.equals("hugeexplosion")) {
+             this.field_1439_t.field_6321_h.func_1192_a(var21 = new EntityHugeExplodeFX(this.field_1448_k, var2, var4, var6, var8, var10, var12));
+          } else if(var1.equals("largeexplode")) {
+diff -r -U 3 minecraft\net\minecraft\src\ThreadedFileIOBase.java minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java
+--- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Tue Nov 22 23:21:30 2011
++++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Wed Nov 23 00:09:14 2011
+@@ -21,7 +21,9 @@
+    }
+ 
+    public void run() {
+-      this.func_40568_b();
++      while (true) {
++         this.func_40568_b();
++      }
+    }
+ 
+    private void func_40568_b() {
