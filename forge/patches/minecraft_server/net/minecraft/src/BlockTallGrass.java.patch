@@ -11,7 +11,7 @@
  
  // Referenced classes of package net.minecraft.src:
  //            BlockFlower, Item, World, EntityPlayer, 
-@@ -41,13 +44,17 @@
+@@ -41,13 +44,24 @@
  
      public int idDropped(int i, Random random, int j)
      {
@@ -24,13 +24,20 @@
 -        }
 +    }
 +
-+    public ArrayList<ItemStack> getBlockDropped(World world,
-+		    int i, int j, int k, int md) {
-+	    ArrayList<ItemStack> tr=new ArrayList<ItemStack>();
-+	    if(world.rand.nextInt(8)!=0)
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int md, int fortune) 
++    {
++	    ArrayList<ItemStack> tr = new ArrayList<ItemStack>();
++	    if (world.rand.nextInt(8) != 0)
++	    {
 +		    return tr;
-+	    ItemStack ist=ForgeHooks.getGrassSeed(world);
-+	    if(ist!=null) tr.add(ist);
++	    }
++	    
++	    ItemStack ist = ForgeHooks.getGrassSeed(world);
++	    if (ist != null)
++    	{
++	    	tr.add(ist);
++    	}
 +	    return tr;
      }
  
