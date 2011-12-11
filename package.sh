@@ -55,11 +55,13 @@ mkdir src
 mkdir src/minecraft
 mkdir src/minecraft_server
 mkdir patches
+mkdir conf
 cp -r ../forge_client/src/* src/minecraft
 cp -r ../forge_server/src/* src/minecraft_server
 cp -r ../forge_common/* src/minecraft
 cp -r ../forge_common/* src/minecraft_server
 cp -r ../patches/* patches
+cp -r ../conf/* conf
 cp ../lfcr.py .
 cp ../install/install.cmd .
 cp ../install/install.sh .
@@ -72,6 +74,8 @@ cp -r ../doc .
 cd src
 remove_svn .
 cd ../patches
+remove_svn .
+cd ../conf
 remove_svn .
 cd ..
 

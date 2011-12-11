@@ -13,11 +13,22 @@ do
 done
 
 echo Removing empty patches
-for i in `find patches -size 0 -type f -name \*.patch` 
-do 
-	rm $i 
-done
+find patches -size 0 -type f -name \*.patch -delete
 for i in `find patches -depth -empty -type d | grep -a -v "svn"` 
 do 
 	rmdir "$i"
 done
+
+echo Grabbing copy of conf folder
+for i in `find conf -type f | grep -a -v "svn"` 
+do 
+	rm $i 
+done
+for i in `find conf -depth -empty -type d | grep -a -v "svn"` 
+do 
+	rmdir "$i"
+done
+
+cp -r ../conf/* conf
+
+echo Finished
