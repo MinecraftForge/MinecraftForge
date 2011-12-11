@@ -25,16 +25,30 @@ fi
 
 pushd src > /dev/null
     find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-    cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
-    cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
-    
     find ../forge/ -name *.patch -exec sed -i 's/\r//g' \{\} \;
-    patch -p2 -i ../forge/modLoaderMP.patch
+
+    if [ -f ../jars/bin/minecraft.jar ];
+    then
+        cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
     
-    for i in `find ../forge/patches/ -type f`
-    do
-        patch -p2 -i $i
-    done
+        for i in `find ../forge/patches/minecraft/ -type f`
+        do
+            patch -p2 -i $i
+        done
+    fi
+
+
+    if [ -f ../jars/minecraft_server.jar ];
+    then
+        cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
+    
+        patch -p2 -i ../forge/modLoaderMP.patch
+    
+        for i in `find ../forge/patches/minecraft_server/ -type f`
+        do
+            patch -p2 -i $i
+        done
+    fi
 popd > /dev/null
 
 cp -r forge/src/* src
