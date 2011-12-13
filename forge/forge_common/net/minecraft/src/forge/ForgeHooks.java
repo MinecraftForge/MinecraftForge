@@ -242,7 +242,7 @@ public class ForgeHooks {
 
 	public static final int majorVersion=1;
 	public static final int minorVersion=2;
-	public static final int revisionVersion=1;
+	public static final int revisionVersion=2;
 	static {
 		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n",majorVersion,minorVersion,revisionVersion);
 	}
