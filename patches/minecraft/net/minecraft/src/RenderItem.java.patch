@@ -73,7 +73,7 @@
 +              renderengine.bindTexture(renderengine.getTexture(tex));
 +              Item item = Item.itemsList[i];
 +              GL11.glPushMatrix();
-+              GL11.glTranslatef(l - 2, i1 + 3, -3F);
++              GL11.glTranslatef(l - 2, i1 + 3, -3F + zLevel);
 +              GL11.glScalef(10F, 10F, 10F);
 +              GL11.glTranslatef(1.0F, 0.5F, 1.0F);
 +              GL11.glScalef(1.0F, 1.0F, -1F);
