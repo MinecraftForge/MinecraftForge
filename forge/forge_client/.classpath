@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry including="*.java" kind="src" path="start"/>
 	<classpathentry kind="src" path="forge_common"/>
 	<classpathentry kind="src" path="minecraft"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="../../jars/bin/jinput.jar"/>
-	<classpathentry kind="lib" path="../../jars/bin/lwjgl.jar"/>
-	<classpathentry kind="lib" path="../../jars/bin/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="../../jars/bin/jinput.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="forge_client/jars/bin/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="../../jars/bin/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="forge_client/jars/bin/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="../../jars/bin/lwjgl_util.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="forge_client/jars/bin/natives"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="../../jars/bin/minecraft.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

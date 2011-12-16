@@ -179,72 +179,99 @@ public class ForgeHooks {
 	}
 
 	public static boolean isToolEffective(ItemStack ist, Block bl, int md) {
-		List tc=(List)toolClasses.get(ist.itemID);
-		if(tc==null) return false;
-		Object[] ta=tc.toArray();
-		String cls=(String)ta[0];
-
-		return toolEffectiveness.contains(Arrays.asList(
-			bl.blockID,md,cls));
+		List tc = (List)toolClasses.get(ist.itemID);
+		if (tc == null) 
+		{
+			return false;
+		}
+		Object[] ta = tc.toArray();
+		String cls = (String)ta[0];
+		return toolEffectiveness.contains(Arrays.asList(bl.blockID, md, cls));
 	}
 
 	static void initTools() {
-		if(toolInit) return;
-		toolInit=true;
+		if(toolInit) 
+		{
+			return;
+		}
+		toolInit = true;
 
-		MinecraftForge.setToolClass(Item.pickaxeWood,"pickaxe",0);
-		MinecraftForge.setToolClass(Item.pickaxeStone,"pickaxe",1);
-		MinecraftForge.setToolClass(Item.pickaxeSteel,"pickaxe",2);
-		MinecraftForge.setToolClass(Item.pickaxeGold,"pickaxe",0);
-		MinecraftForge.setToolClass(Item.pickaxeDiamond,"pickaxe",3);
+		MinecraftForge.setToolClass(Item.pickaxeWood,    "pickaxe", 0);
+		MinecraftForge.setToolClass(Item.pickaxeStone,   "pickaxe", 1);
+		MinecraftForge.setToolClass(Item.pickaxeSteel,   "pickaxe", 2);
+		MinecraftForge.setToolClass(Item.pickaxeGold,    "pickaxe", 0);
+		MinecraftForge.setToolClass(Item.pickaxeDiamond, "pickaxe", 3);
 
-		MinecraftForge.setToolClass(Item.axeWood,"axe",0);
-		MinecraftForge.setToolClass(Item.axeStone,"axe",1);
-		MinecraftForge.setToolClass(Item.axeSteel,"axe",2);
-		MinecraftForge.setToolClass(Item.axeGold,"axe",0);
-		MinecraftForge.setToolClass(Item.axeDiamond,"axe",3);
+		MinecraftForge.setToolClass(Item.axeWood,    "axe", 0);
+		MinecraftForge.setToolClass(Item.axeStone,   "axe", 1);
+		MinecraftForge.setToolClass(Item.axeSteel,   "axe", 2);
+		MinecraftForge.setToolClass(Item.axeGold,    "axe", 0);
+		MinecraftForge.setToolClass(Item.axeDiamond, "axe", 3);
 
-		MinecraftForge.setToolClass(Item.shovelWood,"shovel",0);
-		MinecraftForge.setToolClass(Item.shovelStone,"shovel",1);
-		MinecraftForge.setToolClass(Item.shovelSteel,"shovel",2);
-		MinecraftForge.setToolClass(Item.shovelGold,"shovel",0);
-		MinecraftForge.setToolClass(Item.shovelDiamond,"shovel",3);
+		MinecraftForge.setToolClass(Item.shovelWood,    "shovel", 0);
+		MinecraftForge.setToolClass(Item.shovelStone,   "shovel", 1);
+		MinecraftForge.setToolClass(Item.shovelSteel,   "shovel", 2);
+		MinecraftForge.setToolClass(Item.shovelGold,    "shovel", 0);
+		MinecraftForge.setToolClass(Item.shovelDiamond, "shovel", 3);
 
-		MinecraftForge.setBlockHarvestLevel(Block.obsidian,"pickaxe",3);
-		MinecraftForge.setBlockHarvestLevel(Block.oreDiamond,"pickaxe",2);
-		MinecraftForge.setBlockHarvestLevel(Block.blockDiamond,"pickaxe",2);
-		MinecraftForge.setBlockHarvestLevel(Block.oreGold,"pickaxe",2);
-		MinecraftForge.setBlockHarvestLevel(Block.blockGold,"pickaxe",2);
-		MinecraftForge.setBlockHarvestLevel(Block.oreIron,"pickaxe",1);
-		MinecraftForge.setBlockHarvestLevel(Block.blockSteel,"pickaxe",1);
-		MinecraftForge.setBlockHarvestLevel(Block.oreLapis,"pickaxe",1);
-		MinecraftForge.setBlockHarvestLevel(Block.blockLapis,"pickaxe",1);
-		MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,"pickaxe",2);
-		MinecraftForge.setBlockHarvestLevel(Block.oreRedstoneGlowing,"pickaxe",2);
-		MinecraftForge.removeBlockEffectiveness(Block.oreRedstone,"pickaxe");
-		MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing,"pickaxe");
-		MinecraftForge.removeBlockEffectiveness(Block.obsidian,"pickaxe");
+		MinecraftForge.setBlockHarvestLevel(Block.obsidian,     "pickaxe", 3);
+		MinecraftForge.setBlockHarvestLevel(Block.oreDiamond,   "pickaxe", 2);
+		MinecraftForge.setBlockHarvestLevel(Block.blockDiamond, "pickaxe", 2);
+		MinecraftForge.setBlockHarvestLevel(Block.oreGold,      "pickaxe", 2);
+		MinecraftForge.setBlockHarvestLevel(Block.blockGold,    "pickaxe", 2);
+		MinecraftForge.setBlockHarvestLevel(Block.oreIron,      "pickaxe", 1);
+		MinecraftForge.setBlockHarvestLevel(Block.blockSteel,   "pickaxe", 1);
+		MinecraftForge.setBlockHarvestLevel(Block.oreLapis,     "pickaxe", 1);
+		MinecraftForge.setBlockHarvestLevel(Block.blockLapis,   "pickaxe", 1);
+		MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,  "pickaxe", 2);
+		MinecraftForge.setBlockHarvestLevel(Block.oreRedstoneGlowing, "pickaxe", 2);
+		MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
+		MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
+		MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
 
-		Block[] pickeff ={
+		Block[] pickeff = {
 			Block.cobblestone, Block.stairDouble,
-			Block.stairSingle, Block.stone, Block.sandStone,
-			Block.cobblestoneMossy,
-			Block.oreCoal,
-			Block.ice, Block.netherrack, Block.oreLapis,
+			Block.stairSingle, Block.stone, 
+			Block.sandStone,   Block.cobblestoneMossy,
+			Block.oreCoal,     Block.ice, 
+			Block.netherrack,  Block.oreLapis,
 			Block.blockLapis
-				};
-		for(Block bl : pickeff) {
-			MinecraftForge.setBlockHarvestLevel(bl,"pickaxe",0);
+		};
+		for (Block bl : pickeff) 
+		{
+			MinecraftForge.setBlockHarvestLevel(bl, "pickaxe", 0);
+		}
+		
+		Block[] spadeEff = {
+			Block.grass,     Block.dirt, 
+			Block.sand,      Block.gravel, 
+			Block.snow,      Block.blockSnow, 
+			Block.blockClay, Block.tilledField, 
+			Block.slowSand,  Block.mycelium
+		};
+		for (Block bl : spadeEff) 
+		{
+			MinecraftForge.setBlockHarvestLevel(bl, "shovel", 0);
+		}
+		
+		Block[] axeEff = {
+			Block.planks,      Block.bookShelf, 
+			Block.wood,        Block.chest, 
+			Block.stairDouble, Block.stairSingle, 
+			Block.pumpkin,     Block.pumpkinLantern
+		};
+		for (Block bl : axeEff) 
+		{
+			MinecraftForge.setBlockHarvestLevel(bl, "axe", 0);
 		}
 
-		// TODO: add other tool tables.
 	}
 
 	public static final int majorVersion=1;
 	public static final int minorVersion=2;
 	public static final int revisionVersion=2;
 	static {
-		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n",majorVersion,minorVersion,revisionVersion);
+		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion);
 	}
 
 	static boolean toolInit=false;
