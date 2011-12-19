@@ -1,0 +1,37 @@
+--- ../src_base/minecraft_server/net/minecraft/src/TileEntityBrewingStand.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/TileEntityBrewingStand.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,8 @@
+ 
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.ISidedInventory;
++
+ 
+ // Referenced classes of package net.minecraft.src:
+ //            TileEntity, IInventory, ItemStack, World, 
+@@ -11,7 +13,7 @@
+ //            NBTTagList, EntityPlayer
+ 
+ public class TileEntityBrewingStand extends TileEntity
+-    implements IInventory
++    implements IInventory, ISidedInventory
+ {
+ 
+     private ItemStack field_40083_a[];
+@@ -274,5 +276,15 @@
+         }
+ 
+         return i;
+-    }
++    }	
++    
++    @Override
++	public int getStartInventorySide(int side) {
++		return (side == 1 ? 3 : 0);
++	}
++
++	@Override
++	public int getSizeInventorySide(int side) {
++		return (side == 1 ? 1 : 3);
++	}
+ }
