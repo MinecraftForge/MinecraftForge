@@ -27,7 +27,7 @@
 -        int j1 = 3 + i1;
 -        for(int k1 = 0; k1 < j1; k1++)
 +            
-+        for(int n = 0; n < 3; n++) 
++        for(int n = 0; n < 3+fortune; n++) 
          {
 -            if(world.rand.nextInt(15) <= l)
 +            if (world.rand.nextInt(15) <= md)

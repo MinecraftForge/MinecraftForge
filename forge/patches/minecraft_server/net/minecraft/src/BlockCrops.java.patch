@@ -24,7 +24,7 @@
 +        	tr.add(new ItemStack(Item.wheat));
 +    	}
 +            
-+        for(int n = 0; n < 3; n++) 
++        for(int n = 0; n < 3+fortune; n++) 
          {
 -            return;
 -        }
