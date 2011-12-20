@@ -1,0 +1,34 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenDungeons.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenDungeons.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,6 +7,8 @@
+ import java.io.PrintStream;
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ // Referenced classes of package net.minecraft.src:
+ //            WorldGenerator, World, Material, Block, 
+ //            TileEntityChest, TileEntityMobSpawner, ItemStack, Item
+@@ -129,11 +131,11 @@
+                 int k4 = 0;
+                 do
+                 {
+-                    if(k4 >= 8)
++                    if(k4 >= MinecraftForge.getDungeonLootTries())
+                     {
+                         break label0;
+                     }
+-                    ItemStack itemstack = pickCheckLootItem(random);
++                    ItemStack itemstack = MinecraftForge.getRandomDungeonLoot(random);
+                     if(itemstack != null)
+                     {
+                         tileentitychest.setInventorySlotContents(random.nextInt(tileentitychest.getSizeInventory()), itemstack);
+@@ -148,7 +150,7 @@
+         TileEntityMobSpawner tileentitymobspawner = (TileEntityMobSpawner)world.getBlockTileEntity(i, j, k);
+         if(tileentitymobspawner != null)
+         {
+-            tileentitymobspawner.setMobID(pickMobSpawner(random));
++            tileentitymobspawner.setMobID(MinecraftForge.getRandomDungeonMob(random));
+         } else
+         {
+             System.err.println((new StringBuilder()).append("Failed to fetch mob spawner entity at (").append(i).append(", ").append(j).append(", ").append(k).append(")").toString());
