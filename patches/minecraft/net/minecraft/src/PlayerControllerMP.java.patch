@@ -10,43 +10,46 @@
  import net.minecraft.client.Minecraft;
  
  // Referenced classes of package net.minecraft.src:
-@@ -68,13 +71,16 @@
+@@ -68,13 +71,19 @@
  
-     public boolean sendBlockRemoved(int i, int j, int k, int l)
+     public boolean onPlayerDestroyBlock(int i, int j, int k, int l)
      {
-+        ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
-+	if(itemstack!=null && itemstack.getItem().onBlockStartBreak(itemstack,
-+			i,j,k,mc.thePlayer))
-+		return false;
++    	ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
++    	if (itemstack != null && itemstack.getItem().onBlockStartBreak(itemstack, i, j, k, mc.thePlayer))
++    	{
++    		return false;
++    	}
++    	
          if(creativeMode)
          {
-             return super.sendBlockRemoved(i, j, k, l);
+             return super.onPlayerDestroyBlock(i, j, k, l);
          }
          int i1 = mc.theWorld.getBlockId(i, j, k);
-         boolean flag = super.sendBlockRemoved(i, j, k, l);
+         boolean flag = super.onPlayerDestroyBlock(i, j, k, l);
 -        ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
++
          if(itemstack != null)
          {
              itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
-@@ -103,7 +109,7 @@
+@@ -103,7 +112,7 @@
              {
                  Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
              }
 -            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
 +            if(i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld,mc.thePlayer,i,j,k) >= 1.0F)
              {
-                 sendBlockRemoved(i, j, k, l);
+                 onPlayerDestroyBlock(i, j, k, l);
              } else
-@@ -149,7 +155,7 @@
+@@ -149,7 +158,7 @@
                  return;
              }
              Block block = Block.blocksList[i1];
 -            curBlockDamageMP += block.blockStrength(mc.thePlayer);
-+	    curBlockDamageMP += block.blockStrength(mc.theWorld,mc.thePlayer,i,j,k);
++            curBlockDamageMP += block.blockStrength(mc.theWorld, mc.thePlayer, i, j, k);
              if(stepSoundTickCounter % 4F == 0.0F && block != null)
              {
                  mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
-@@ -216,6 +222,13 @@
+@@ -216,6 +225,13 @@
      {
          syncCurrentPlayItem();
          netClientHandler.addToSendQueue(new Packet15Place(i, j, k, l, entityplayer.inventory.getCurrentItem()));
@@ -60,7 +63,7 @@
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -235,7 +248,11 @@
+@@ -235,7 +251,11 @@
              return flag;
          } else
          {

@@ -145,7 +145,7 @@
 +    	}
      }
  
-     public void func_35455_a(TileEntity tileentity)
+     public void markEntityForDespawn(TileEntity tileentity)
 @@ -2106,13 +2092,18 @@
      public boolean isBlockNormalCube(int i, int j, int k)
      {

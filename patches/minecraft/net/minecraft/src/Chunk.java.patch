@@ -17,8 +17,8 @@
                      worldObj.setBlockTileEntity(i, j, k, tileentity);
                  }
                  if(tileentity != null)
-@@ -398,14 +399,6 @@
-                     tileentity.func_35144_b();
+@@ -398,15 +399,7 @@
+                     tileentity.updateContainingBlockInfo();
                  }
              }
 -        } else
@@ -27,11 +27,13 @@
 -            TileEntity tileentity1 = getChunkBlockTileEntity(i, j, k);
 -            if(tileentity1 != null)
 -            {
--                tileentity1.func_35144_b();
+-                tileentity1.updateContainingBlockInfo();
 -            }
-         }
+-        }
++        } 
          isModified = true;
          return true;
+     }
 @@ -430,7 +423,11 @@
          blocks[i << worldObj.xShift | k << worldObj.heightShift | j] = (byte)(byte0 & 0xff);
          if(k1 != 0)
@@ -55,7 +57,7 @@
                  }
                  if(tileentity != null)
 @@ -466,14 +463,6 @@
-                     tileentity.func_35144_b();
+                     tileentity.updateContainingBlockInfo();
                  }
              }
 -        } else
@@ -64,7 +66,7 @@
 -            TileEntity tileentity1 = getChunkBlockTileEntity(i, j, k);
 -            if(tileentity1 != null)
 -            {
--                tileentity1.func_35144_b();
+-                tileentity1.updateContainingBlockInfo();
 -            }
          }
          isModified = true;
@@ -138,7 +140,7 @@
 +    	Iterator iterator = chunkTileEntityMap.values().iterator();
 +    	while (iterator.hasNext()){
 +    		te = (TileEntity)iterator.next();
-+    		te.func_35144_b();
++    		te.updateContainingBlockInfo();
 +    		te.getBlockMetadata();
 +    		te.getBlockType();
 +    	}
@@ -146,17 +148,18 @@
          for(int l1 = i; l1 < l; l1++)
          {
              for(int l2 = k; l2 < j1; l2++)
-@@ -859,12 +869,25 @@
+@@ -859,12 +869,29 @@
  
          }
  
 -        TileEntity tileentity;
--        for(Iterator iterator = chunkTileEntityMap.values().iterator(); iterator.hasNext(); tileentity.func_35144_b())
+-        for(Iterator iterator = chunkTileEntityMap.values().iterator(); iterator.hasNext(); tileentity.updateContainingBlockInfo())
 -        {
 -            tileentity = (TileEntity)iterator.next();
 +        List<TileEntity> invalidList=new ArrayList();
 +        iterator = chunkTileEntityMap.values().iterator(); 
-+        while(iterator.hasNext()) {
++        while(iterator.hasNext()) 
++        {
 +            te = (TileEntity)iterator.next();
 +            if ((te.xCoord & 15) >= i && (te.xCoord & 15) <= l &&
 +		        (te.yCoord >= j) && (te.yCoord <= i1) &&
@@ -171,9 +174,11 @@
 +			    invalidList.add(te);
 +            }
          }
--
+ 
 +        for(TileEntity te2 : invalidList)
++        {
 +        	te2.invalidate();
++        }
          return k1;
      }
  

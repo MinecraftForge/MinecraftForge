@@ -17,7 +17,7 @@
 +    implements IInventory, ISidedInventory
  {
  
-     private ItemStack field_40083_a[];
+     private ItemStack brewingItemStacks[];
 @@ -274,5 +276,15 @@
          }
  

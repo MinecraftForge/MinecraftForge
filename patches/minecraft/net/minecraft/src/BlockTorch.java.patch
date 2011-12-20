@@ -2,7 +2,7 @@
 +++ ../src_work/minecraft/net/minecraft/src/BlockTorch.java	0000-00-00 00:00:00.000000000 -0000
 @@ -41,7 +41,7 @@
  
-     private boolean func_31032_h(World world, int i, int j, int k)
+     private boolean canPlaceTorchOn(World world, int i, int j, int k)
      {
 -        if(world.func_41082_b(i, j, k, true))
 +        if(world.isBlockSolidOnSide(i, j, k, 1))

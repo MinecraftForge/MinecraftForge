@@ -9,16 +9,27 @@
      }
  
      public void onBlockRemoval(World world, int i, int j, int k)
-@@ -37,6 +37,12 @@
+@@ -36,7 +36,7 @@
+     }
  
      public abstract TileEntity getBlockEntity();
- 
-+    /* FORGE: Metadata-sensitive version, to fix 1.8.1 regression.
-+     */
-+    public TileEntity getBlockEntity(int md) {
-+	    return getBlockEntity();
-+    }
-+
-     public void playBlock(World world, int i, int j, int k, int l, int i1)
+-
++    
+     public void powerBlock(World world, int i, int j, int k, int l, int i1)
      {
-         super.playBlock(world, i, j, k, l, i1);
+         super.powerBlock(world, i, j, k, l, i1);
+@@ -46,4 +46,14 @@
+             tileentity.onTileEntityPowered(l, i1);
+         }
+     }
++    
++    /**
++     * Metatdata sensitive version of getBlockEntity
++     * @param metadata The Metatdata for the current block
++     * @return A instance of the TileEntity class associated with this block
++     */
++    public TileEntity getBlockEntity(int metadata)
++    {
++    	return getBlockEntity();
++    }
+ }

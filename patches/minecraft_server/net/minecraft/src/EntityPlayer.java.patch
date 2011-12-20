@@ -41,12 +41,12 @@
 +        	f += i * i + 1;
 +        }
 +        
-+        if(func_35184_a(Potion.digSpeed))
++        if(isPotionActive(Potion.digSpeed))
 +        {
 +            f *= 1.0F + (float)(getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
 +        }
 +        
-+        if(func_35184_a(Potion.digSlowdown))
++        if(isPotionActive(Potion.digSlowdown))
 +        {
 +            f *= 1.0F - (float)(getActivePotionEffect(Potion.digSlowdown).getAmplifier() + 1) * 0.2F;
 +        }
