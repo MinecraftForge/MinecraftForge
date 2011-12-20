@@ -8,15 +8,7 @@
  
  import java.io.PrintStream;
  import java.util.*;
-@@ -325,6 +326,7 @@
-         }
-         int i2 = xPosition * 16 + i;
-         int j2 = zPosition * 16 + k;
-+        
-         blocks[i << worldObj.field_35250_b | k << worldObj.worldYBits | j] = (byte)(byte0 & 0xff);
-         if(l1 != 0)
-         {
-@@ -367,7 +369,7 @@
+@@ -367,7 +368,7 @@
                  TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
                  if(tileentity == null)
                  {
@@ -25,7 +17,7 @@
                      worldObj.setBlockTileEntity(i, j, k, tileentity);
                  }
                  if(tileentity != null)
-@@ -375,14 +377,6 @@
+@@ -375,14 +376,6 @@
                      tileentity.func_35164_g();
                  }
              }
@@ -40,22 +32,19 @@
          }
          isModified = true;
          return true;
-@@ -404,10 +398,13 @@
-         }
-         int l1 = xPosition * 16 + i;
-         int i2 = zPosition * 16 + k;
-+        
-         blocks[i << worldObj.field_35250_b | k << worldObj.worldYBits | j] = (byte)(byte0 & 0xff);
+@@ -408,6 +401,11 @@
          if(k1 != 0)
          {
--            Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
-+        	if (!worldObj.singleplayerWorld)
-+        		Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
-+            worldObj.removeBlockTileEntity(l1, j, i2);
+             Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
++            if (!worldObj.singleplayerWorld) 
++            {
++            	Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
++            }
++            worldObj.removeBlockTileEntity(l1,  j, i2);
          }
          data.setNibble(i, j, k, 0);
          if(Block.lightOpacity[byte0 & 0xff] != 0)
-@@ -435,7 +432,7 @@
+@@ -435,7 +433,7 @@
                  TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
                  if(tileentity == null)
                  {
@@ -64,7 +53,7 @@
                      worldObj.setBlockTileEntity(i, j, k, tileentity);
                  }
                  if(tileentity != null)
-@@ -443,14 +440,6 @@
+@@ -443,14 +441,6 @@
                      tileentity.func_35164_g();
                  }
              }
@@ -79,7 +68,7 @@
          }
          isModified = true;
          return true;
-@@ -586,6 +575,11 @@
+@@ -586,6 +576,11 @@
      {
          ChunkPosition chunkposition = new ChunkPosition(i, j, k);
          TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
@@ -91,7 +80,7 @@
          if(tileentity == null)
          {
              int l = getBlockID(i, j, k);
-@@ -595,18 +589,23 @@
+@@ -595,18 +590,23 @@
              }
              if(tileentity == null)
              {
@@ -122,7 +111,7 @@
          }
      }
  
-@@ -618,7 +617,7 @@
+@@ -618,7 +618,7 @@
          setChunkBlockTileEntity(i, j, k, tileentity);
          if(isChunkLoaded)
          {
@@ -131,7 +120,7 @@
          }
      }
  
-@@ -634,6 +633,8 @@
+@@ -634,6 +634,8 @@
              return;
          } else
          {

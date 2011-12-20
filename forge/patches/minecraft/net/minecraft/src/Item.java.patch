@@ -9,7 +9,7 @@
  import java.util.Random;
  
 @@ -177,6 +178,9 @@
-     private String field_39010_c;
+     private String potionModifier;
      private String itemName;
  
 +    // FORGE: To disable repair recipes.
