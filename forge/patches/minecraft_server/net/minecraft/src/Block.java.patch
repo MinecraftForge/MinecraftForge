@@ -218,8 +218,8 @@
 +    {    	
 +    }
 +
-+    private static int chanceToEncourageFire[] = new int[256];
-+    private static int blockFlammability[] = new int[256];
++    protected static int blockFireSpreadSpeed[] = new int[256];
++    protected static int blockFlammability[] = new int[256];
 +    
 +    /**
 +     * Chance that fire will spread and consume this block.
@@ -269,7 +269,7 @@
 +     */
 +    public int chanceToEncourageFire(World world, int x, int y, int z, int metadata, int face)
 +    {
-+    	return chanceToEncourageFire[blockID];
++    	return blockFireSpreadSpeed[blockID];
 +    }
 +    
 +    /**
@@ -306,7 +306,7 @@
 +     */
 +    protected static void setBurnRate(int id, int encouragement, int flammability)
 +    {
-+    	chanceToEncourageFire[id] = encouragement;
++    	blockFireSpreadSpeed[id] = encouragement;
 +    	blockFlammability[id] = flammability;
 +    }
 +
