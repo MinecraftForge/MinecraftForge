@@ -1,16 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,9 @@
+@@ -4,6 +4,8 @@
  
  package net.minecraft.src;
  
-+import net.minecraft.src.forge.IUseItemFirst;
 +import net.minecraft.src.forge.ForgeHooks;
 +
  import net.minecraft.client.Minecraft;
  
  // Referenced classes of package net.minecraft.src:
-@@ -68,13 +71,19 @@
+@@ -68,13 +70,19 @@
  
      public boolean onPlayerDestroyBlock(int i, int j, int k, int l)
      {
@@ -31,7 +30,7 @@
          if(itemstack != null)
          {
              itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
-@@ -103,7 +112,7 @@
+@@ -103,7 +111,7 @@
              {
                  Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
              }
@@ -40,7 +39,7 @@
              {
                  onPlayerDestroyBlock(i, j, k, l);
              } else
-@@ -149,7 +158,7 @@
+@@ -149,7 +157,7 @@
                  return;
              }
              Block block = Block.blocksList[i1];
@@ -49,21 +48,21 @@
              if(stepSoundTickCounter % 4F == 0.0F && block != null)
              {
                  mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
-@@ -216,6 +225,13 @@
+@@ -216,6 +224,13 @@
      {
          syncCurrentPlayItem();
          netClientHandler.addToSendQueue(new Packet15Place(i, j, k, l, entityplayer.inventory.getCurrentItem()));
 +
-+        if (itemstack != null && itemstack.getItem() instanceof IUseItemFirst) {
-+            IUseItemFirst iuif = (IUseItemFirst) itemstack.getItem();
-+            if (iuif.onItemUseFirst(itemstack, entityplayer, world, i, j, k, l)) {
-+                return true;
-+            }
++        if (itemstack != null) {
++		Item it=itemstack.getItem();
++		if (it.onItemUseFirst(itemstack, entityplayer, world, i, j, k, l)) {
++			return true;
++		}
 +        }
          int i1 = world.getBlockId(i, j, k);
          if(i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
          {
-@@ -235,7 +251,11 @@
+@@ -235,7 +250,11 @@
              return flag;
          } else
          {

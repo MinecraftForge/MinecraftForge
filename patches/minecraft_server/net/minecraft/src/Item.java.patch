@@ -18,7 +18,22 @@
      protected Item(int i)
      {
          maxStackSize = 64;
-@@ -219,6 +223,13 @@
+@@ -209,6 +213,14 @@
+         return this;
+     }
+ 
++    /* FORGE: This is called when the item is used, before the block is
++     * activated.  Return true to prevent any further processing.
++     */
++    public boolean onItemUseFirst(ItemStack ist, EntityPlayer player,
++		    World world, int i, int j, int k, int l) {
++	    return false;
++    }
++
+     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
+     {
+         return false;
+@@ -219,6 +231,13 @@
          return 1.0F;
      }
  
@@ -32,7 +47,7 @@
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
-@@ -266,6 +277,29 @@
+@@ -266,6 +285,29 @@
          return maxDamage > 0 && !hasSubtypes;
      }
  
@@ -62,7 +77,7 @@
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
      {
          return false;
-@@ -414,6 +448,12 @@
+@@ -414,6 +456,12 @@
          return 0;
      }
  

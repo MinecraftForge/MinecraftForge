@@ -14,6 +14,9 @@ import net.minecraft.src.World;
  * This interface is to be implemented by item classes. It will allow an item
  * to perform a use before the block is activated.
  *
+ * @deprecated This interface is no longer used, the function has been moved to
+ * Item.  The functionality remains, it simply does not require this interface
+ * any further.
  * @see Item
  */
 public interface IUseItemFirst {
