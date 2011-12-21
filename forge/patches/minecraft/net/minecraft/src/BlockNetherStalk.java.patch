@@ -1,0 +1,56 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockNetherStalk.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockNetherStalk.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,7 @@
+ 
+ package net.minecraft.src;
+ 
++import java.util.ArrayList;
+ import java.util.Random;
+ 
+ // Referenced classes of package net.minecraft.src:
+@@ -65,26 +66,26 @@
+         return 6;
+     }
+ 
+-    public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int i1)
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int md, int fortune) 
+     {
+-        if(world.multiplayerWorld)
+-        {
+-            return;
+-        }
+-        int j1 = 1;
+-        if(l >= 3)
+-        {
+-            j1 = 2 + world.rand.nextInt(3);
+-            if(i1 > 0)
+-            {
+-                j1 += world.rand.nextInt(i1 + 1);
+-            }
+-        }
+-        for(int k1 = 0; k1 < j1; k1++)
+-        {
+-            dropBlockAsItem_do(world, i, j, k, new ItemStack(Item.netherStalkSeeds));
+-        }
+-
++    	ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++    	
++    	int count = 1;
++    	if (md >= 3)
++    	{
++    		count = 2 + world.rand.nextInt(3);
++    		if (fortune > 0)
++    		{
++    			count += world.rand.nextInt(fortune + 1);
++    		}
++    	}
++    	for (int n = 0; n < count; n++)
++    	{
++    		ret.add(new ItemStack(Item.netherStalkSeeds));
++    	}
++    	return ret;
++    	
+     }
+ 
+     public int idDropped(int i, Random random, int j)
