@@ -115,7 +115,7 @@
          }
  
      }
-@@ -725,6 +767,191 @@
+@@ -725,6 +767,197 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -210,6 +210,12 @@
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player,
 +		    int i, int j, int k) {
 +        return world.setBlockWithNotify(i, j, k, 0);
++    }
++    
++    /* FORGE: This is not called by the server, but declared here for compatibility
++     */
++    public void addCreativeItems(ArrayList itemList)
++    {    	
 +    }
 +
 +    private static int chanceToEncourageFire[] = new int[256];
