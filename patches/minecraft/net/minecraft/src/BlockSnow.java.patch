@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
+@@ -82,15 +82,8 @@
+ 
+     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+     {
+-        int i1 = Item.snowball.shiftedIndex;
+-        float f = 0.7F;
+-        double d = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+-        double d1 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+-        double d2 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+-        EntityItem entityitem = new EntityItem(world, (double)i + d, (double)j + d1, (double)k + d2, new ItemStack(i1, 1, 0));
+-        entityitem.delayBeforeCanPickup = 10;
+-        world.entityJoinedWorld(entityitem);
+-        world.setBlockWithNotify(i, j, k, 0);
++
++	dropBlockAsItem(world,i,j,k,l,0);
+         entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
+     }
+ 
+@@ -101,7 +94,7 @@
+ 
+     public int quantityDropped(Random random)
+     {
+-        return 0;
++        return 1;
+     }
+ 
+     public void updateTick(World world, int i, int j, int k, Random random)
