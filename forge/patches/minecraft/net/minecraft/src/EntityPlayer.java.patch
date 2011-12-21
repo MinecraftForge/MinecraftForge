@@ -11,7 +11,25 @@
  import java.util.*;
  
  // Referenced classes of package net.minecraft.src:
-@@ -548,6 +552,8 @@
+@@ -502,7 +506,16 @@
+ 
+     public void dropCurrentItem()
+     {
+-        dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++    	ItemStack stack = inventory.getCurrentItem();
++    	if (stack == null)
++    	{
++    		return;
++    	}    	
++    	
++    	if (stack.getItem().onDroppedByPlayer(stack, this))
++    	{
++            dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++    	}
+     }
+ 
+     public void dropPlayerItem(ItemStack itemstack)
+@@ -548,6 +561,8 @@
          worldObj.entityJoinedWorld(entityitem);
      }
  
@@ -20,7 +38,7 @@
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -576,6 +582,45 @@
+@@ -576,6 +591,45 @@
          return f1;
      }
  
@@ -66,7 +84,7 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -774,6 +819,25 @@
+@@ -774,6 +828,25 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
      {
@@ -92,7 +110,7 @@
          if(!damagesource.unblockable() && func_35162_ad())
          {
              i = 1 + i >> 1;
-@@ -825,7 +889,9 @@
+@@ -825,7 +898,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -102,7 +120,7 @@
      }
  
      public double getYOffset()
-@@ -957,6 +1023,10 @@
+@@ -957,6 +1032,10 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {

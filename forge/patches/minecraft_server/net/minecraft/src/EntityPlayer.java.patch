@@ -11,7 +11,25 @@
  // Referenced classes of package net.minecraft.src:
  //            EntityLiving, InventoryPlayer, FoodStats, PlayerCapabilities, 
  //            ContainerPlayer, World, ChunkCoordinates, DataWatcher, 
-@@ -493,6 +497,8 @@
+@@ -447,7 +451,16 @@
+ 
+     public void dropCurrentItem()
+     {
+-        dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++    	ItemStack stack = inventory.getCurrentItem();
++    	if (stack == null)
++    	{
++    		return;
++    	}    	
++    	
++    	if (stack.getItem().onDroppedByPlayer(stack, this))
++    	{
++            dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++    	}
+     }
+ 
+     public void dropPlayerItem(ItemStack itemstack)
+@@ -493,6 +506,8 @@
          worldObj.entityJoinedWorld(entityitem);
      }
  
@@ -20,7 +38,7 @@
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -521,6 +527,45 @@
+@@ -521,6 +536,45 @@
          return f1;
      }
  
@@ -66,7 +84,7 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -718,7 +763,26 @@
+@@ -718,7 +772,26 @@
      }
  
      protected void damageEntity(DamageSource damagesource, int i)
@@ -94,7 +112,7 @@
          if(!damagesource.unblockable() && func_35180_G())
          {
              i = 1 + i >> 1;
-@@ -770,7 +834,9 @@
+@@ -770,7 +843,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -104,7 +122,7 @@
      }
  
      public double getYOffset()
-@@ -896,6 +962,10 @@
+@@ -896,6 +971,10 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
