@@ -130,7 +130,7 @@
          }
  
      }
-@@ -805,6 +848,107 @@
+@@ -805,6 +848,200 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
@@ -234,6 +234,99 @@
 +    public void addCreativeItems(ArrayList itemList)
 +    {    	
 +    }
++    
++    private static int blockFireSpreadSpeed[] = new int[256];
++    private static int blockFlammability[] = new int[256];
++    
++    /**
++     * Chance that fire will spread and consume this block.
++     * 300 being a 100% chance, 0, being a 0% chance.
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
++     */
++    public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, int face)
++    {
++    	return blockFlammability[blockID];
++    }
++    
++    /**
++     * Called when fire is updating, checks if a block face can catch fire.
++     * 
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return True if the face can be on fire, false otherwise.
++     */
++    public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, int face)
++    {
++    	return getFlammability(world, x, y, z, metadata, face) > 0;
++    }
++    
++    /**
++     * Called when fire is updating on a neighbor block.
++     * The higher the number returned, the faster fire will spread around this block.
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return A number that is used to determine the speed of fire growth around the block
++     */
++    public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, int face)
++    {
++    	return blockFireSpreadSpeed[blockID];
++    }
++    
++    /**
++     * Currently only called by fire when it is on top of this block.
++     * Returning true will prevent the fire from naturally dying during updating.
++     * Also prevents firing from dying from rain.
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return 
++     */
++    public boolean isFireSource(World world, int x, int y, int z, int metadata, int face)
++    {
++    	if (blockID == Block.netherrack.blockID && face == 0)
++    	{
++    		return true;
++    	}
++    	if ((world.worldProvider instanceof WorldProviderEnd) && blockID == Block.bedrock.blockID && face == 0)
++    	{
++    		return true;
++    	}
++    	return false;
++    }
++
++    /**
++     * Called by BlockFire to setup the burn values of vanilla blocks.
++     * @param id The block id
++     * @param encouragement How much the block encourages fire to spread
++     * @param flammability how easy a block is to catch fire
++     */
++    protected static void setBurnRate(int id, int encouragement, int flammability)
++    {
++    	blockFireSpreadSpeed[id] = encouragement;
++    	blockFlammability[id] = flammability;
++    }
++
 +
      static Class _mthclass$(String s)
      {
