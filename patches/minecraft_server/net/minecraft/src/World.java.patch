@@ -154,7 +154,7 @@
 -            return false;
 -        } else
 -        {
--            return block.blockMaterial.getIsOpaque() && block.isACube();
+-            return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
 -        }
 +        if(block == null) return false;
 +	return block.isBlockNormalCube(this,i,j,k);
