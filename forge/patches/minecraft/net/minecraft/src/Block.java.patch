@@ -235,8 +235,8 @@
 +    {    	
 +    }
 +    
-+    private static int blockFireSpreadSpeed[] = new int[256];
-+    private static int blockFlammability[] = new int[256];
++    protected static int blockFireSpreadSpeed[] = new int[256];
++    protected static int blockFlammability[] = new int[256];
 +    
 +    /**
 +     * Chance that fire will spread and consume this block.

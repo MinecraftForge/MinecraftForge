@@ -1,21 +1,26 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -14,14 +14,9 @@
+@@ -14,14 +14,14 @@
  public class BlockFire extends Block
  {
  
 -    private int chanceToEncourageFire[];
 -    private int abilityToCatchFire[];
 -
++	private int chanceToEncourageFire[]; 
++	private int abilityToCatchFire[];
++	
      protected BlockFire(int i, int j)
      {
          super(i, j, Material.fire);
 -        chanceToEncourageFire = new int[256];
 -        abilityToCatchFire = new int[256];
++        chanceToEncourageFire = Block.blockFireSpreadSpeed;
++        abilityToCatchFire = Block.blockFlammability;
          setTickOnLoad(true);
      }
  
-@@ -39,12 +34,6 @@
+@@ -39,12 +39,6 @@
          setBurnRate(Block.vine.blockID, 15, 100);
      }
  
@@ -28,7 +33,7 @@
      public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
      {
          return null;
-@@ -77,11 +66,9 @@
+@@ -77,11 +71,9 @@
  
      public void updateTick(World world, int i, int j, int k, Random random)
      {
@@ -43,7 +48,7 @@
          if(!canPlaceBlockAt(world, i, j, k))
          {
              world.setBlockWithNotify(i, j, k, 0);
-@@ -99,23 +86,23 @@
+@@ -99,23 +91,23 @@
          world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
          if(!flag && !func_263_h(world, i, j, k))
          {
@@ -75,7 +80,7 @@
          for(int i1 = i - 1; i1 <= i + 1; i1++)
          {
              for(int j1 = k - 1; j1 <= k + 1; j1++)
-@@ -155,9 +142,14 @@
+@@ -155,9 +147,14 @@
  
      }
  
@@ -92,7 +97,7 @@
          if(random.nextInt(l) < j1)
          {
              boolean flag = world.getBlockId(i, j, k) == Block.tnt.blockID;
-@@ -182,27 +174,27 @@
+@@ -182,27 +179,27 @@
  
      private boolean func_263_h(World world, int i, int j, int k)
      {
@@ -126,7 +131,7 @@
      }
  
      private int getChanceOfNeighborsEncouragingFire(World world, int i, int j, int k)
-@@ -213,12 +205,12 @@
+@@ -213,12 +210,12 @@
              return 0;
          } else
          {
@@ -145,7 +150,7 @@
              return l;
          }
      }
-@@ -228,14 +220,25 @@
+@@ -228,14 +225,25 @@
          return false;
      }
  
@@ -177,7 +182,7 @@
          if(i1 > l)
          {
              return i1;
-@@ -247,12 +250,12 @@
+@@ -247,12 +255,12 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -192,7 +197,7 @@
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
-@@ -268,7 +271,7 @@
+@@ -268,7 +276,7 @@
          {
              return;
          }
@@ -201,7 +206,7 @@
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
-@@ -285,7 +288,7 @@
+@@ -285,7 +293,7 @@
          {
              world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, "fire.fire", 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F);
          }
@@ -210,7 +215,7 @@
          {
              for(int l = 0; l < 3; l++)
              {
-@@ -297,7 +300,7 @@
+@@ -297,7 +305,7 @@
  
          } else
          {
@@ -219,7 +224,7 @@
              {
                  for(int i1 = 0; i1 < 2; i1++)
                  {
-@@ -308,7 +311,7 @@
+@@ -308,7 +316,7 @@
                  }
  
              }
@@ -228,7 +233,7 @@
              {
                  for(int j1 = 0; j1 < 2; j1++)
                  {
-@@ -319,7 +322,7 @@
+@@ -319,7 +327,7 @@
                  }
  
              }
@@ -237,7 +242,7 @@
              {
                  for(int k1 = 0; k1 < 2; k1++)
                  {
-@@ -330,7 +333,7 @@
+@@ -330,7 +338,7 @@
                  }
  
              }
@@ -246,7 +251,7 @@
              {
                  for(int l1 = 0; l1 < 2; l1++)
                  {
-@@ -341,7 +344,7 @@
+@@ -341,7 +349,7 @@
                  }
  
              }
