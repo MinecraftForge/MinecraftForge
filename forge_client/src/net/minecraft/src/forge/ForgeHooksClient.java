@@ -30,7 +30,16 @@ public class ForgeHooksClient {
 		return false;
 	}
 
-	static LinkedList<IHighlightHandler> highlightHandlers = new LinkedList<IHighlightHandler>();
+	public static void onRenderWorldLast(RenderGlobal rg, float f) {
+		for (IRenderWorldLastHandler handler : renderWorldLastHandlers) {
+			handler.onRenderWorldLast(rg,f);
+		}
+	}
+
+	static LinkedList<IHighlightHandler> highlightHandlers =
+		new LinkedList<IHighlightHandler>();
+	static LinkedList<IRenderWorldLastHandler> renderWorldLastHandlers =
+		new LinkedList<IRenderWorldLastHandler>();
 
 	public static boolean canRenderInPass(Block block, int pass) {
 		if(block instanceof IMultipassRender) {
