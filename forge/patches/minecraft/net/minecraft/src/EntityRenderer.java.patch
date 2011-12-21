@@ -34,3 +34,12 @@
                  GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
              }
              Profiler.endStartSection("weather");
+@@ -988,6 +993,8 @@
+                 setupFog(1, f);
+                 GL11.glPopMatrix();
+             }
++	    Profiler.endStartSection("fhooks");
++	    ForgeHooksClient.onRenderWorldLast(renderglobal,f);
+             Profiler.endStartSection("hand");
+             if(cameraZoom == 1.0D)
+             {
