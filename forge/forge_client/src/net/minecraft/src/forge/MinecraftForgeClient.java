@@ -18,6 +18,20 @@ public class MinecraftForgeClient {
 		ForgeHooksClient.highlightHandlers.add(handler);
 	}
 
+	/** Register a new render context handler.  A render context is a block
+	 * of rendering performed with similar OpenGL modes, for example,
+	 * texture name.
+	 * @param tex The name of the texture for this render context.
+	 * @param sub The subid of this render context.  0 is the default pass
+	 * for normal rendering, higher subids render later.  All subids of 0
+	 * will render before all subids of 1, etc.
+	 * @param handler The handler to register.
+	 */
+	public static void registerRenderContextHandler(String tex, int sub,
+			IRenderContextHandler handler) {
+		ForgeHooksClient.registerRenderContextHandler(tex,sub,handler);
+	}
+
 	/** Bind a texture.  This is used to bind a texture file when
 	 * performing your own rendering, rather than using ITextureProvider.
 	 *

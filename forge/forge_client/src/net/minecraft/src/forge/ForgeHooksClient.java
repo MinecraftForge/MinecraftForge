@@ -41,25 +41,54 @@ public class ForgeHooksClient {
 		return false;
 	}
 
-	static HashMap tessellators=new HashMap();
-	static HashMap textures=new HashMap();
+	private static class TesKey implements Comparable<TesKey> {
+		public TesKey(int t, int s) { tex=t; sub=s; }
+		public int compareTo(TesKey key) {
+			if(sub==key.sub) return tex-key.tex;
+			return sub-key.sub;
+		}
+		public boolean equals(Object obj) {
+			return compareTo((TesKey)obj)==0;
+		}
+		public int hashCode() {
+			int c1=Integer.valueOf(tex).hashCode();
+			int c2=Integer.valueOf(sub).hashCode();
+			return c1+31*c2;
+		}
+		public int tex, sub;
+	}
+
+	static HashMap<TesKey,Tessellator> tessellators=
+		new HashMap<TesKey,Tessellator>();
+	static HashMap<String,Integer> textures=new HashMap<String,Integer>();
 	static boolean inWorld=false;
-	static HashSet renderTextureTest=new HashSet();
-	static ArrayList<List> renderTextureList=new ArrayList();
+	static TreeSet<TesKey> renderTextures=new TreeSet<TesKey>();
 	static Tessellator defaultTessellator=null;
+	static HashMap<TesKey,IRenderContextHandler> renderHandlers=new
+		HashMap<TesKey,IRenderContextHandler>();
+
+	protected static void registerRenderContextHandler(String tex, int sub,
+			IRenderContextHandler handler) {
+		Integer n;
+		n=textures.get(tex);
+		if(n==null) {
+			n=ModLoader.getMinecraftInstance().renderEngine
+				.getTexture(tex);
+			textures.put(tex,n);
+		}
+		renderHandlers.put(new TesKey(n,sub),handler);
+	}
 
 	protected static void bindTessellator(int tex, int sub) {
-		List key=Arrays.asList(tex,sub);
+		TesKey key=new TesKey(tex,sub);
 		Tessellator t;
-		if(!tessellators.containsKey(key)) {
+		t=tessellators.get(key);
+		if(t==null) {
 			t=new Tessellator();
 			tessellators.put(key,t);
-		} else {
-			t=(Tessellator)tessellators.get(key);
 		}
-		if(inWorld && !renderTextureTest.contains(key)) {
-			renderTextureTest.add(key);
-			renderTextureList.add(key);
+		if(inWorld && !renderTextures.contains(key)) {
+			renderTextures.add(key);
 			t.startDrawingQuads();
 			t.setTranslationD(defaultTessellator.xOffset,
 				defaultTessellator.yOffset,
@@ -69,13 +98,12 @@ public class ForgeHooksClient {
 	}
 
 	protected static void bindTexture(String name, int sub) {
-		int n;
-		if(!textures.containsKey(name)) {
+		Integer n;
+		n=textures.get(name);
+		if(n==null) {
 			n=ModLoader.getMinecraftInstance().renderEngine
 				.getTexture(name);
 			textures.put(name,n);
-		} else {
-			n=(Integer)textures.get(name);
 		}
 		if(!inWorld) {
 			if(Tessellator.instance.isDrawing) {
@@ -113,25 +141,31 @@ public class ForgeHooksClient {
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 			.getMinecraftInstance().renderEngine
 			.getTexture("/terrain.png"));
-		renderTextureTest.clear();
-		renderTextureList.clear();
+		renderTextures.clear();
 		inWorld=true;
 	}
 
 	public static void afterRenderPass(int pass) {
 		renderPass=-1;
 		inWorld=false;
-		for(List l : renderTextureList) {
-			// TODO: call appropriate client hooks
-			Integer[] tn=(Integer[])l.toArray();
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D,tn[0]);
-			Tessellator t=(Tessellator)tessellators.get(l);
-			t.draw();
+		for(TesKey tk : renderTextures) {
+			IRenderContextHandler irch=renderHandlers.get(tk);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D,tk.tex);
+			Tessellator t=tessellators.get(tk);
+			if(irch==null) {
+				t.draw();
+			} else {
+				Tessellator.instance=t;
+				irch.beforeRenderContext();
+				t.draw();
+				irch.afterRenderContext();
+			}
 		}
 		GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
 			.getMinecraftInstance().renderEngine
 			.getTexture("/terrain.png"));
 		Tessellator.renderingWorldRenderer=false;
+		Tessellator.instance=defaultTessellator;
 	}
 
 	public static void beforeBlockRender(Block block,
@@ -171,7 +205,7 @@ public class ForgeHooksClient {
 			return def;
 		}
 	}
-	
+
 	public static void renderCustomItem(ICustomItemRenderer customRenderer, RenderBlocks renderBlocks,int itemID, int meta, float f) {
 		Tessellator tessellator = Tessellator.instance;
 		if (renderBlocks.useInventoryTint) {
