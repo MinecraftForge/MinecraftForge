@@ -77,7 +77,7 @@
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
      {
          return false;
-@@ -414,6 +456,12 @@
+@@ -414,6 +456,26 @@
          return 0;
      }
  
@@ -85,6 +85,20 @@
 +     */
 +    public void addCreativeItems(ArrayList itemList)
 +    {    	
++    }
++    
++    /**
++     * Called when a player drops the item into the world,
++     * returning false from this will prevent the item from
++     * being removed from the players inventory and spawning
++     * in the world
++     * 
++     * @param player The player that dropped the item
++     * @param item The item stack, before the item is removed.
++     */
++    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
++    {
++    	return true;
 +    }
 +
      static 
