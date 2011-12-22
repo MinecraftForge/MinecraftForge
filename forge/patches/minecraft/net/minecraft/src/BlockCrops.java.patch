@@ -38,7 +38,7 @@
 -                float f4 = world.rand.nextFloat() * f1 + (1.0F - f1) * 0.5F;
 -                EntityItem entityitem = new EntityItem(world, (float)i + f2, (float)j + f3, (float)k + f4, new ItemStack(Item.seeds));
 -                entityitem.delayBeforeCanPickup = 10;
--                world.entityJoinedWorld(entityitem);
+-                world.spawnEntityInWorld(entityitem);
 +                tr.add(new ItemStack(Item.seeds));
              }
          }

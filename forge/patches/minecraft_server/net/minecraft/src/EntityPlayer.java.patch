@@ -30,7 +30,7 @@
  
      public void dropPlayerItem(ItemStack itemstack)
 @@ -493,6 +506,8 @@
-         worldObj.entityJoinedWorld(entityitem);
+         worldObj.spawnEntityInWorld(entityitem);
      }
  
 +    /* FORGE: This isnt called anymore
@@ -109,7 +109,7 @@
 +            return;
 +        }
 +        
-         if(!damagesource.unblockable() && func_35180_G())
+         if(!damagesource.isUnblockable() && func_35180_G())
          {
              i = 1 + i >> 1;
 @@ -770,7 +843,9 @@

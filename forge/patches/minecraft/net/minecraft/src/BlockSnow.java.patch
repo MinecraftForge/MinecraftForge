@@ -11,7 +11,7 @@
 -        double d2 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 -        EntityItem entityitem = new EntityItem(world, (double)i + d, (double)j + d1, (double)k + d2, new ItemStack(i1, 1, 0));
 -        entityitem.delayBeforeCanPickup = 10;
--        world.entityJoinedWorld(entityitem);
+-        world.spawnEntityInWorld(entityitem);
 -        world.setBlockWithNotify(i, j, k, 0);
 +
 +	dropBlockAsItem(world,i,j,k,l,0);
