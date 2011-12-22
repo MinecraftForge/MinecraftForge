@@ -30,7 +30,7 @@
  
      public void dropPlayerItem(ItemStack itemstack)
 @@ -493,6 +506,8 @@
-         worldObj.entityJoinedWorld(entityitem);
+         worldObj.spawnEntityInWorld(entityitem);
      }
  
 +    /* FORGE: This isnt called anymore
