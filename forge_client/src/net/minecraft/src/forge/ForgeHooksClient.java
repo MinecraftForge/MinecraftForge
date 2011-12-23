@@ -106,6 +106,7 @@ public class ForgeHooksClient {
 		Tessellator.instance=t;
 	}
 
+	static IRenderContextHandler unbindContext=null;
 	protected static void bindTexture(String name, int sub) {
 		Integer n;
 		n=textures.get(name);
@@ -115,12 +116,20 @@ public class ForgeHooksClient {
 			textures.put(name,n);
 		}
 		if(!inWorld) {
+			if(unbindContext!=null) {
+				unbindContext.afterRenderContext();
+				unbindContext=null;
+			}
 			if(Tessellator.instance.isDrawing) {
 				int mode=Tessellator.instance.drawMode;
 				Tessellator.instance.draw();
 				Tessellator.instance.startDrawing(mode);
 			}
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */,n);
+			unbindContext=renderHandlers.get(new TesKey(n,sub));
+			if(unbindContext!=null) {
+				unbindContext.beforeRenderContext();
+			}
 			return;
 		}
 		bindTessellator(n,sub);
@@ -133,6 +142,10 @@ public class ForgeHooksClient {
 			if(Tessellator.instance.isDrawing) {
 				int mode=Tessellator.instance.drawMode;
 				Tessellator.instance.draw();
+				if(unbindContext!=null) {
+					unbindContext.afterRenderContext();
+					unbindContext=null;
+				}
 				Tessellator.instance.startDrawing(mode);
 			}
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, ModLoader
