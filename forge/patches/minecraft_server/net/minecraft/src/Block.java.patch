@@ -304,7 +304,7 @@
 +     * @param encouragement How much the block encourages fire to spread
 +     * @param flammability how easy a block is to catch fire
 +     */
-+    protected static void setBurnRate(int id, int encouragement, int flammability)
++    public static void setBurnProperties(int id, int encouragement, int flammability)
 +    {
 +    	blockFireSpreadSpeed[id] = encouragement;
 +    	blockFlammability[id] = flammability;
