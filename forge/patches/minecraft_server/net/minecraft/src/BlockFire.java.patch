@@ -177,7 +177,7 @@
 +    	Block block = Block.blocksList[world.getBlockId(i, j, k)];
 +    	if (block != null)
 +    	{
-+    		i1 = block.chanceToEncourageFire(world, i, j, k, world.getBlockMetadata(i, j, k), face);
++    		i1 = block.getFireSpreadSpeed(world, i, j, k, world.getBlockMetadata(i, j, k), face);
 +    	}
          if(i1 > l)
          {

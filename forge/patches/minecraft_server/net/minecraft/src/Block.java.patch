@@ -267,7 +267,7 @@
 +     * @param face The face that the fire is coming from
 +     * @return A number that is used to determine the speed of fire growth around the block
 +     */
-+    public int chanceToEncourageFire(World world, int x, int y, int z, int metadata, int face)
++    public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, int face)
 +    {
 +    	return blockFireSpreadSpeed[blockID];
 +    }
