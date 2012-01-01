@@ -74,8 +74,8 @@
 -        tryToCatchBlockOnFire(world, i, j, k + 1, 300, random, l);
 +        tryToCatchBlockOnFire(world, i + 1, j, k, 300, random, l, 4);
 +        tryToCatchBlockOnFire(world, i - 1, j, k, 300, random, l, 5);
-+        tryToCatchBlockOnFire(world, i, j - 1, k, 250, random, l, 0);
-+        tryToCatchBlockOnFire(world, i, j + 1, k, 250, random, l, 1);
++        tryToCatchBlockOnFire(world, i, j - 1, k, 250, random, l, 1);
++        tryToCatchBlockOnFire(world, i, j + 1, k, 250, random, l, 0);
 +        tryToCatchBlockOnFire(world, i, j, k - 1, 300, random, l, 3);
 +        tryToCatchBlockOnFire(world, i, j, k + 1, 300, random, l, 2);
          for(int i1 = i - 1; i1 <= i + 1; i1++)
@@ -121,12 +121,12 @@
              return true;
          }
 -        if(canBlockCatchFire(world, i, j - 1, k))
-+        if(canBlockCatchFire(world, i, j - 1, k, 0))
++        if(canBlockCatchFire(world, i, j - 1, k, 1))
          {
              return true;
          }
 -        if(canBlockCatchFire(world, i, j + 1, k))
-+        if(canBlockCatchFire(world, i, j + 1, k, 1))
++        if(canBlockCatchFire(world, i, j + 1, k, 0))
          {
              return true;
          }
@@ -150,10 +150,10 @@
 -            l = getChanceToEncourageFire(world, i, j + 1, k, l);
 -            l = getChanceToEncourageFire(world, i, j, k - 1, l);
 -            l = getChanceToEncourageFire(world, i, j, k + 1, l);
-+            l = getChanceToEncourageFire(world, i + 1, j, k, l, 5);
-+            l = getChanceToEncourageFire(world, i - 1, j, k, l, 4);
-+            l = getChanceToEncourageFire(world, i, j - 1, k, l, 0);
-+            l = getChanceToEncourageFire(world, i, j + 1, k, l, 1);
++            l = getChanceToEncourageFire(world, i + 1, j, k, l, 4);
++            l = getChanceToEncourageFire(world, i - 1, j, k, l, 5);
++            l = getChanceToEncourageFire(world, i, j - 1, k, l, 1);
++            l = getChanceToEncourageFire(world, i, j + 1, k, l, 0);
 +            l = getChanceToEncourageFire(world, i, j, k - 1, l, 3);
 +            l = getChanceToEncourageFire(world, i, j, k + 1, l, 2);
              return l;
@@ -211,13 +211,13 @@
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
 -        return world.isBlockNormalCube(i, j - 1, k) || func_263_h(world, i, j, k);
-+        return world.isBlockSolidOnSide(i, j - 1, k, 0) || func_263_h(world, i, j, k);
++        return world.isBlockSolidOnSide(i, j - 1, k, 1) || func_263_h(world, i, j, k);
      }
  
      public void onNeighborBlockChange(World world, int i, int j, int k, int l)
      {
 -        if(!world.isBlockNormalCube(i, j - 1, k) && !func_263_h(world, i, j, k))
-+        if(!world.isBlockSolidOnSide(i, j - 1, k, 0) && !func_263_h(world, i, j, k))
++        if(!world.isBlockSolidOnSide(i, j - 1, k, 1) && !func_263_h(world, i, j, k))
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
@@ -235,7 +235,7 @@
              world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, "fire.fire", 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F);
          }
 -        if(world.isBlockNormalCube(i, j - 1, k) || Block.fire.canBlockCatchFire(world, i, j - 1, k))
-+        if(world.isBlockSolidOnSide(i, j - 1, k, 0) || Block.fire.canBlockCatchFire(world, i, j - 1, k, 0))
++        if(world.isBlockSolidOnSide(i, j - 1, k, 1) || Block.fire.canBlockCatchFire(world, i, j - 1, k, 1))
          {
              for(int l = 0; l < 3; l++)
              {
@@ -244,7 +244,7 @@
          } else
          {
 -            if(Block.fire.canBlockCatchFire(world, i - 1, j, k))
-+            if(Block.fire.canBlockCatchFire(world, i - 1, j, k, 4))
++            if(Block.fire.canBlockCatchFire(world, i - 1, j, k, 5))
              {
                  for(int i1 = 0; i1 < 2; i1++)
                  {
@@ -253,7 +253,7 @@
  
              }
 -            if(Block.fire.canBlockCatchFire(world, i + 1, j, k))
-+            if(Block.fire.canBlockCatchFire(world, i + 1, j, k, 5))
++            if(Block.fire.canBlockCatchFire(world, i + 1, j, k, 4))
              {
                  for(int j1 = 0; j1 < 2; j1++)
                  {
@@ -280,7 +280,7 @@
  
              }
 -            if(Block.fire.canBlockCatchFire(world, i, j + 1, k))
-+            if(Block.fire.canBlockCatchFire(world, i, j + 1, k, 1))
++            if(Block.fire.canBlockCatchFire(world, i, j + 1, k, 0))
              {
                  for(int i2 = 0; i2 < 2; i2++)
                  {

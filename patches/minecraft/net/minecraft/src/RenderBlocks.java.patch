@@ -5,7 +5,7 @@
          double d3 = ((float)j1 + 15.99F) / 256F;
          float f = 1.4F;
 -        if(!blockAccess.isBlockNormalCube(i, j - 1, k) && !Block.fire.canBlockCatchFire(blockAccess, i, j - 1, k))
-+        if(!blockAccess.isBlockNormalCube(i, j - 1, k) && !Block.fire.canBlockCatchFire(blockAccess, i, j - 1, k, 0))
++        if(!blockAccess.isBlockNormalCube(i, j - 1, k) && !Block.fire.canBlockCatchFire(blockAccess, i, j - 1, k, 1))
          {
              float f1 = 0.2F;
              float f2 = 0.0625F;
@@ -14,7 +14,7 @@
                  d = d4;
              }
 -            if(Block.fire.canBlockCatchFire(blockAccess, i - 1, j, k))
-+            if(Block.fire.canBlockCatchFire(blockAccess, i - 1, j, k, 4))
++            if(Block.fire.canBlockCatchFire(blockAccess, i - 1, j, k, 5))
              {
                  tessellator.addVertexWithUV((float)i + f1, (float)j + f + f2, k + 1, d1, d2);
                  tessellator.addVertexWithUV(i + 0, (float)(j + 0) + f2, k + 1, d1, d3);
@@ -23,7 +23,7 @@
                  tessellator.addVertexWithUV((float)i + f1, (float)j + f + f2, k + 1, d1, d2);
              }
 -            if(Block.fire.canBlockCatchFire(blockAccess, i + 1, j, k))
-+            if(Block.fire.canBlockCatchFire(blockAccess, i + 1, j, k, 5))
++            if(Block.fire.canBlockCatchFire(blockAccess, i + 1, j, k, 4))
              {
                  tessellator.addVertexWithUV((float)(i + 1) - f1, (float)j + f + f2, k + 0, d, d2);
                  tessellator.addVertexWithUV((i + 1) - 0, (float)(j + 0) + f2, k + 0, d, d3);
@@ -50,7 +50,7 @@
                  tessellator.addVertexWithUV(i + 1, (float)j + f + f2, (float)(k + 1) - f1, d, d2);
              }
 -            if(Block.fire.canBlockCatchFire(blockAccess, i, j + 1, k))
-+            if(Block.fire.canBlockCatchFire(blockAccess, i, j + 1, k, 1))
++            if(Block.fire.canBlockCatchFire(blockAccess, i, j + 1, k, 0))
              {
                  double d5 = (double)i + 0.5D + 0.5D;
                  double d7 = ((double)i + 0.5D) - 0.5D;
