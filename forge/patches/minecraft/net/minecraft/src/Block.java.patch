@@ -130,7 +130,16 @@
          }
  
      }
-@@ -805,6 +848,200 @@
+@@ -726,7 +769,7 @@
+     {
+         entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
+         entityplayer.addExhaustion(0.025F);
+-        if(renderAsNormalBlock() && !isBlockContainer[blockID] && EnchantmentHelper.getSilkTouchModifier(entityplayer.inventory))
++        if(renderAsNormalBlock() && !hasTileEntity(l) && EnchantmentHelper.getSilkTouchModifier(entityplayer.inventory))
+         {
+             ItemStack itemstack = func_41049_c_(l);
+             if(itemstack != null)
+@@ -805,6 +848,238 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;
      }
  
@@ -327,6 +336,44 @@
 +    	blockFlammability[id] = flammability;
 +    }
 +
++    /**
++     * Called throughout the code as a replacement for block instanceof BlockContainer
++     * Moving this to the Block base class allows for mods that wish to extend vinella 
++     * blocks, and also want to have a tile entity on that block, may.
++     * 
++     * Return true from this function to specify this block has a tile entity.
++     * 
++     * @param metadata Metadata of the current block
++     * @return True if block has a tile entity, false otherwise
++     */
++    public boolean hasTileEntity(int metadata)
++    {
++    	if (isBlockContainer[blockID])
++    	{
++     		return true;
++    	}
++    	else
++    	{
++    		return false;
++    	}
++    }
++    
++    /**
++     * Called throughout the code as a replacement for BlockContainer.getBlockEntity
++     * Return the same thing you would from that function.
++     * This will fall back to BlockContainer.getBlockEntity if this block is a BlockContainer.
++     * 
++     * @param metadata The Metadata of the current block
++     * @return A instance of a class extending TileEntity
++     */
++    public TileEntity getTileEntity(int metadata)
++    {
++    	if (this instanceof BlockContainer)
++    	{
++    		return ((BlockContainer)this).getBlockEntity(metadata);
++    	}
++    	return null;
++    }
 +
      static Class _mthclass$(String s)
      {

@@ -115,7 +115,16 @@
          }
  
      }
-@@ -725,6 +767,197 @@
+@@ -651,7 +693,7 @@
+     {
+         entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
+         entityplayer.addExhaustion(0.025F);
+-        if(renderAsNormalBlock() && !isBlockContainer[blockID] && EnchantmentHelper.getSilkTouchModifier(entityplayer.inventory))
++        if(renderAsNormalBlock() && !hasTileEntity(l) && EnchantmentHelper.getSilkTouchModifier(entityplayer.inventory))
+         {
+             ItemStack itemstack = func_41001_e(l);
+             if(itemstack != null)
+@@ -725,6 +767,236 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -308,6 +317,45 @@
 +    {
 +    	blockFireSpreadSpeed[id] = encouragement;
 +    	blockFlammability[id] = flammability;
++    }
++
++    /**
++     * Called throughout the code as a replacement for block instanceof BlockContainer
++     * Moving this to the Block base class allows for mods that wish to extend vinella 
++     * blocks, and also want to have a tile entity on that block, may.
++     * 
++     * Return true from this function to specify this block has a tile entity.
++     * 
++     * @param metadata Metadata of the current block
++     * @return True if block has a tile entity, false otherwise
++     */
++    public boolean hasTileEntity(int metadata)
++    {
++    	if (isBlockContainer[blockID])
++    	{
++     		return true;
++    	}
++    	else
++    	{
++    		return false;
++    	}
++    }
++    
++    /**
++     * Called throughout the code as a replacement for BlockContainer.getBlockEntity
++     * Return the same thing you would from that function.
++     * This will fall back to BlockContainer.getBlockEntity if this block is a BlockContainer.
++     * 
++     * @param metadata The Metadata of the current block
++     * @return A instance of a class extending TileEntity
++     */
++    public TileEntity getTileEntity(int metadata)
++    {
++    	if (this instanceof BlockContainer)
++    	{
++    		return ((BlockContainer)this).getBlockEntity(metadata);
++    	}
++    	return null;
 +    }
 +
      static Class _mthclass$(String s)

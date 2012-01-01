@@ -8,16 +8,36 @@
  
  import java.io.PrintStream;
  import java.util.*;
-@@ -367,7 +368,7 @@
+@@ -328,11 +329,12 @@
+         blocks[i << worldObj.xShift | k << worldObj.worldYBits | j] = (byte)(byte0 & 0xff);
+         if(l1 != 0)
+         {
++        	int meta = getBlockMetadata(i, j, k);
+             if(!worldObj.singleplayerWorld)
+             {
+                 Block.blocksList[l1].onBlockRemoval(worldObj, i2, j, j2);
+             } else
+-            if(Block.blocksList[l1] instanceof BlockContainer)
++            if(Block.blocksList[l1] != null && Block.blocksList[l1].hasTileEntity(meta))
+             {
+                 worldObj.removeBlockTileEntity(i2, j, j2);
+             }
+@@ -362,12 +364,12 @@
+             {
+                 Block.blocksList[l].onBlockAdded(worldObj, i2, j, j2);
+             }
+-            if(Block.blocksList[l] instanceof BlockContainer)
++            if(Block.blocksList[l] != null && Block.blocksList[l].hasTileEntity(i1))
+             {
                  TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
                  if(tileentity == null)
                  {
 -                    tileentity = ((BlockContainer)Block.blocksList[l]).getBlockEntity();
-+                    tileentity = ((BlockContainer)Block.blocksList[l]).getBlockEntity(i1);
++                    tileentity = Block.blocksList[l].getTileEntity(i1);
                      worldObj.setBlockTileEntity(i, j, k, tileentity);
                  }
                  if(tileentity != null)
-@@ -375,14 +376,6 @@
+@@ -375,14 +377,6 @@
                      tileentity.func_35164_g();
                  }
              }
@@ -32,7 +52,7 @@
          }
          isModified = true;
          return true;
-@@ -408,6 +401,11 @@
+@@ -408,6 +402,11 @@
          if(k1 != 0)
          {
              Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
@@ -44,16 +64,23 @@
          }
          data.setNibble(i, j, k, 0);
          if(Block.lightOpacity[byte0 & 0xff] != 0)
-@@ -435,7 +433,7 @@
+@@ -430,12 +429,13 @@
+             {
+                 Block.blocksList[l].onBlockAdded(worldObj, l1, j, i2);
+             }
+-            if(l > 0 && (Block.blocksList[l] instanceof BlockContainer))
++            int meta = getBlockMetadata(i, j, k);
++            if(l > 0 && Block.blocksList[l] != null && Block.blocksList[l].hasTileEntity(meta))
+             {
                  TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
                  if(tileentity == null)
                  {
 -                    tileentity = ((BlockContainer)Block.blocksList[l]).getBlockEntity();
-+                    tileentity = ((BlockContainer)Block.blocksList[l]).getBlockEntity(0);
++                    tileentity = Block.blocksList[l].getTileEntity(meta);
                      worldObj.setBlockTileEntity(i, j, k, tileentity);
                  }
                  if(tileentity != null)
-@@ -443,14 +441,6 @@
+@@ -443,14 +443,6 @@
                      tileentity.func_35164_g();
                  }
              }
@@ -68,7 +95,16 @@
          }
          isModified = true;
          return true;
-@@ -586,6 +576,11 @@
+@@ -471,7 +463,7 @@
+         }
+         data.setNibble(i, j, k, l);
+         int j1 = getBlockID(i, j, k);
+-        if(j1 > 0 && (Block.blocksList[j1] instanceof BlockContainer))
++        if(j1 > 0 && Block.blocksList[j1] != null && Block.blocksList[j1].hasTileEntity(l))
+         {
+             TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
+             if(tileentity != null)
+@@ -586,27 +578,38 @@
      {
          ChunkPosition chunkposition = new ChunkPosition(i, j, k);
          TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
@@ -80,12 +116,16 @@
          if(tileentity == null)
          {
              int l = getBlockID(i, j, k);
-@@ -595,18 +590,23 @@
+-            if(!Block.isBlockContainer[l])
++        	int meta = getBlockMetadata(i, j, k);
++            if(Block.blocksList[l] == null || !Block.blocksList[l].hasTileEntity(meta))
+             {
+                 return null;
              }
              if(tileentity == null)
              {
 -                tileentity = ((BlockContainer)Block.blocksList[l]).getBlockEntity();
-+                tileentity = ((BlockContainer)Block.blocksList[l]).getBlockEntity(getBlockMetadata(i,j,k));
++                tileentity = Block.blocksList[l].getTileEntity(meta);
                  worldObj.setBlockTileEntity(xPosition * 16 + i, j, zPosition * 16 + k, tileentity);
              }
              tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
@@ -95,7 +135,7 @@
 -            chunkTileEntityMap.remove(chunkposition);
 -            return null;
 -        } else
-+	return tileentity;
++        return tileentity;
 +    }
 +
 +    /* FORGE: Used to remove only invalid TileEntities */
@@ -111,7 +151,7 @@
          }
      }
  
-@@ -618,7 +618,7 @@
+@@ -618,7 +621,7 @@
          setChunkBlockTileEntity(i, j, k, tileentity);
          if(isChunkLoaded)
          {
@@ -120,12 +160,25 @@
          }
      }
  
-@@ -634,6 +634,8 @@
-             return;
-         } else
+@@ -629,11 +632,19 @@
+         tileentity.xCoord = xPosition * 16 + i;
+         tileentity.yCoord = j;
+         tileentity.zCoord = zPosition * 16 + k;
+-        if(getBlockID(i, j, k) == 0 || !(Block.blocksList[getBlockID(i, j, k)] instanceof BlockContainer))
++        int id = getBlockID(i, j, k);
++        int meta = getBlockMetadata(i, j, k);
++        if(id == 0 || Block.blocksList[id] == null || !Block.blocksList[id].hasTileEntity(meta))
          {
-+	    TileEntity old=(TileEntity)chunkTileEntityMap.get(chunkposition);
-+	    if(old!=null) old.invalidate();
+             return;
+-        } else
++        } 
++        else
+         {
++        	TileEntity old = (TileEntity)chunkTileEntityMap.get(chunkposition);
++        	if (old != null)
++        	{
++        		old.invalidate();
++        	}
              tileentity.validate();
              chunkTileEntityMap.put(chunkposition, tileentity);
              return;
