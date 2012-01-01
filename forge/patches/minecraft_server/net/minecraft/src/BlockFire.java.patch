@@ -74,8 +74,8 @@
 -        tryToCatchBlockOnFire(world, i, j, k + 1, 300, random, l);
 +        tryToCatchBlockOnFire(world, i + 1, j, k, 300, random, l, 4);
 +        tryToCatchBlockOnFire(world, i - 1, j, k, 300, random, l, 5);
-+        tryToCatchBlockOnFire(world, i, j - 1, k, 250, random, l, 0);
-+        tryToCatchBlockOnFire(world, i, j + 1, k, 250, random, l, 1);
++        tryToCatchBlockOnFire(world, i, j - 1, k, 250, random, l, 1);
++        tryToCatchBlockOnFire(world, i, j + 1, k, 250, random, l, 0);
 +        tryToCatchBlockOnFire(world, i, j, k - 1, 300, random, l, 3);
 +        tryToCatchBlockOnFire(world, i, j, k + 1, 300, random, l, 2);
          for(int i1 = i - 1; i1 <= i + 1; i1++)
@@ -123,12 +123,12 @@
              return true;
          }
 -        if(canBlockCatchFire(world, i, j - 1, k))
-+        if(canBlockCatchFire(world, i, j - 1, k, 0))
++        if(canBlockCatchFire(world, i, j - 1, k, 1))
          {
              return true;
          }
 -        if(canBlockCatchFire(world, i, j + 1, k))
-+        if(canBlockCatchFire(world, i, j + 1, k, 1))
++        if(canBlockCatchFire(world, i, j + 1, k, 0))
          {
              return true;
          }
@@ -154,8 +154,8 @@
 -            l = getChanceToEncourageFire(world, i, j, k + 1, l);
 +            l = getChanceToEncourageFire(world, i + 1, j, k, l, 5);
 +            l = getChanceToEncourageFire(world, i - 1, j, k, l, 4);
-+            l = getChanceToEncourageFire(world, i, j - 1, k, l, 0);
-+            l = getChanceToEncourageFire(world, i, j + 1, k, l, 1);
++            l = getChanceToEncourageFire(world, i, j - 1, k, l, 1);
++            l = getChanceToEncourageFire(world, i, j + 1, k, l, 0);
 +            l = getChanceToEncourageFire(world, i, j, k - 1, l, 3);
 +            l = getChanceToEncourageFire(world, i, j, k + 1, l, 2);
              return l;
