@@ -17,7 +17,7 @@
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
-@@ -160,8 +161,9 @@
+@@ -160,10 +161,11 @@
                              GL11.glTranslatef((float)(-sizeDepth) / 2.0F, (float)(-sizeHeight) / 2.0F, (float)(-sizeDepth) / 2.0F);
                              GL11.glScalef(f, f, f);
                              GL11.glTranslatef((float)sizeDepth / 2.0F, (float)sizeHeight / 2.0F, (float)sizeDepth / 2.0F);
@@ -27,8 +27,11 @@
 +                            Tessellator.instance.startDrawingQuads();
 +                            Tessellator.instance.setTranslationD(-posX, -posY, -posZ);
                          }
-                         if(i2 == 0 && Block.isBlockContainer[i3])
+-                        if(i2 == 0 && Block.isBlockContainer[i3])
++                        if(i2 == 0 && Block.blocksList[i3] != null && Block.blocksList[i3].hasTileEntity(chunkcache.getBlockMetadata(l2, j2, k2)))
                          {
+                             TileEntity tileentity = chunkcache.getBlockTileEntity(l2, j2, k2);
+                             if(TileEntityRenderer.instance.hasSpecialRenderer(tileentity))
 @@ -177,15 +179,13 @@
                          {
                              flag1 = true;

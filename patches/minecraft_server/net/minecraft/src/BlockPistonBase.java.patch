@@ -1,0 +1,11 @@
+--- ../src_base/minecraft_server/net/minecraft/src/BlockPistonBase.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/BlockPistonBase.java	0000-00-00 00:00:00.000000000 -0000
+@@ -356,7 +356,7 @@
+                 return false;
+             }
+         }
+-        return !(Block.blocksList[i] instanceof BlockContainer);
++        return !(Block.blocksList[i] != null && Block.blocksList[i].hasTileEntity(world.getBlockMetadata(j, l, l)));
+     }
+ 
+     private static boolean canExtend(World world, int i, int j, int k, int l)
