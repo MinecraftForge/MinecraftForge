@@ -16,7 +16,7 @@
 +     */
 +    public int quantityDropped(int meta, int fortune, Random random)
 +    {
-+    	return func_40162_a(fortune, random);
++    	return quantityDroppedWithBonus(fortune, random);
 +    }
 +    
 +    /* FORGE: Metadata-sensitive version.

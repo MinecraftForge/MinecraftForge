@@ -1,0 +1,16 @@
+--- ../src_base/minecraft_server/net/minecraft/src/Enchantment.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/Enchantment.java	0000-00-00 00:00:00.000000000 -0000
+@@ -98,6 +98,13 @@
+         return this;
+     }
+ 
++    /* FORGE: Can enchantment be applied to item.  Redirected to allow users to
++     * override it in their Enchantment class.
++     */
++    public boolean canEnchantItem(ItemStack ist) {
++	return type.canEnchantItem(ist.getItem());
++    }
++
+     static 
+     {
+         looting = new EnchantmentLootBonus(21, 2, EnumEnchantmentType.weapon);
