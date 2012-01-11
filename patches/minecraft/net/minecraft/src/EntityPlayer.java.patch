@@ -11,7 +11,15 @@
  import java.util.*;
  
  // Referenced classes of package net.minecraft.src:
-@@ -502,7 +506,16 @@
+@@ -166,6 +170,7 @@
+                 clearItemInUse();
+             } else
+             {
++		itemInUse.getItem().onUsingItemTick(itemInUse,this,itemInUseCount);
+                 if(itemInUseCount <= 25 && itemInUseCount % 4 == 0)
+                 {
+                     func_35201_a(itemstack, 5);
+@@ -502,7 +507,16 @@
  
      public void dropCurrentItem()
      {
@@ -29,7 +37,7 @@
      }
  
      public void dropPlayerItem(ItemStack itemstack)
-@@ -548,6 +561,8 @@
+@@ -548,6 +562,8 @@
          worldObj.spawnEntityInWorld(entityitem);
      }
  
@@ -38,7 +46,7 @@
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -576,6 +591,45 @@
+@@ -576,6 +592,45 @@
          return f1;
      }
  
@@ -84,7 +92,7 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -774,6 +828,25 @@
+@@ -774,6 +829,25 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
      {
@@ -110,7 +118,7 @@
          if(!damagesource.isUnblockable() && func_35162_ad())
          {
              i = 1 + i >> 1;
-@@ -825,7 +898,9 @@
+@@ -825,7 +899,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -120,7 +128,7 @@
      }
  
      public double getYOffset()
-@@ -957,6 +1032,10 @@
+@@ -957,6 +1033,10 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {

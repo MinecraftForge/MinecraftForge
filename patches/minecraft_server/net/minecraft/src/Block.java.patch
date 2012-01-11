@@ -124,7 +124,7 @@
          {
              ItemStack itemstack = createStackedBlock(l);
              if(itemstack != null)
-@@ -725,6 +767,236 @@
+@@ -725,6 +767,246 @@
          return blockMaterial.getMaterialMobility();
      }
  
@@ -136,9 +136,19 @@
 +
 +    /* FORGE: Implement and return true if you wish this block to behave
 +     * like a ladder when the player is inside.
++     *
++     * This is deprecated in favor of the more flexible version below.
 +     */
++    @Deprecated
 +    public boolean isLadder() {
 +	return false;
++    }
++
++    /* FORGE: Implement and return true if you wish this block to behave
++     * like a ladder when the player is inside.
++     */
++    public boolean isLadder(World world, int i, int j, int k) {
++	return isLadder();
 +    }
 +
 +    /* FORGE: Return true if the block is a normal, solid cube.  This

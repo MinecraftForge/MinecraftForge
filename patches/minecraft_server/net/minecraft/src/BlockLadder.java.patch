@@ -5,7 +5,7 @@
      }
  
 +    /* FORGE: Implemented base method, see Block.isLadder */
-+    public boolean isLadder() {
++    public boolean isLadder(World world, int i, int j, int k) {
 +	return true;
 +    }
 +

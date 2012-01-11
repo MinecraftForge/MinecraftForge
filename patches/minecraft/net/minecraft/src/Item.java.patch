@@ -47,7 +47,7 @@
      public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
      {
          return itemstack;
-@@ -278,6 +297,29 @@
+@@ -278,6 +297,34 @@
          return maxDamage > 0 && !hasSubtypes;
      }
  
@@ -74,10 +74,15 @@
 +	    return false;
 +    }
 +
++    /* FORGE: Called each tick while using an item.
++     */
++    public void onUsingItemTick(ItemStack ist, EntityPlayer player, int count) {
++    }
++
      public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
      {
          return false;
-@@ -473,6 +515,32 @@
+@@ -473,6 +520,32 @@
      {
          return 0;
      }
