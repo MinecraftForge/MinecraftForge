@@ -7,7 +7,7 @@
 -        return worldObj.getBlockId(i, j, k) == Block.ladder.blockID;
 +	Block block=Block.blocksList[worldObj.getBlockId(i,j,k)];
 +	if(block==null) return false;
-+	return block.isLadder();
++	return block.isLadder(worldObj,i,j,k);
      }
  
      public void writeEntityToNBT(NBTTagCompound nbttagcompound)
