@@ -112,11 +112,11 @@
          {
              return;
          }
--        int j1 = func_40198_a(i1, world.rand);
+-        int j1 = quantityDroppedWithBonus(i1, world.rand);
 -        for(int k1 = 0; k1 < j1; k1++)
 -        {
-+        ArrayList<ItemStack> ar = getBlockDropped(world, i, j, k, l, i1);
-+        for (ItemStack ist : ar) {
++	ArrayList<ItemStack> ar = getBlockDropped(world, i, j, k, l, i1);
++	for (ItemStack ist : ar) {
              if(world.rand.nextFloat() > f)
              {
                  continue;
@@ -126,7 +126,7 @@
 -            {
 -                dropBlockAsItem_do(world, i, j, k, new ItemStack(l1, 1, damageDropped(l)));
 -            }
-+        	dropBlockAsItem_do(world, i, j, k, ist);
++	    dropBlockAsItem_do(world, i, j, k, ist);
          }
  
      }
@@ -137,7 +137,7 @@
 -        if(renderAsNormalBlock() && !isBlockContainer[blockID] && EnchantmentHelper.getSilkTouchModifier(entityplayer.inventory))
 +        if(renderAsNormalBlock() && !hasTileEntity(l) && EnchantmentHelper.getSilkTouchModifier(entityplayer.inventory))
          {
-             ItemStack itemstack = func_41049_c_(l);
+             ItemStack itemstack = createStackedBlock(l);
              if(itemstack != null)
 @@ -805,6 +848,238 @@
          return iblockaccess.isBlockNormalCube(i, j, k) ? 0.2F : 1.0F;

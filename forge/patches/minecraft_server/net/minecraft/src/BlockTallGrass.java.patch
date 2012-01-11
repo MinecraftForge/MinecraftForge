@@ -41,4 +41,4 @@
 +	    return tr;
      }
  
-     public int func_40162_a(int i, Random random)
+     public int quantityDroppedWithBonus(int i, Random random)
