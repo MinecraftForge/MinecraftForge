@@ -38,7 +38,7 @@
                  }
                  if(tileentity != null)
 @@ -375,14 +377,6 @@
-                     tileentity.func_35164_g();
+                     tileentity.updateContainingBlockInfo();
                  }
              }
 -        } else
@@ -47,7 +47,7 @@
 -            TileEntity tileentity1 = getChunkBlockTileEntity(i, j, k);
 -            if(tileentity1 != null)
 -            {
--                tileentity1.func_35164_g();
+-                tileentity1.updateContainingBlockInfo();
 -            }
          }
          isModified = true;
@@ -81,7 +81,7 @@
                  }
                  if(tileentity != null)
 @@ -443,14 +443,6 @@
-                     tileentity.func_35164_g();
+                     tileentity.updateContainingBlockInfo();
                  }
              }
 -        } else
@@ -90,7 +90,7 @@
 -            TileEntity tileentity1 = getChunkBlockTileEntity(i, j, k);
 -            if(tileentity1 != null)
 -            {
--                tileentity1.func_35164_g();
+-                tileentity1.updateContainingBlockInfo();
 -            }
          }
          isModified = true;
