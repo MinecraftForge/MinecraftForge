@@ -6,6 +6,7 @@
 package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
@@ -55,6 +56,15 @@ public class MinecraftForge {
      */
     public static void registerCraftingHandler(ICraftingHandler handler) {
         ForgeHooks.craftingHandlers.add(handler);
+    }
+    
+    /**
+     * Registers a new minecart handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerMinecartHandler(IMinecartHandler handler)
+    {
+    	ForgeHooks.minecartHandlers.add(handler);
     }
 
     /**
@@ -559,7 +569,6 @@ public class MinecraftForge {
     	
     	return rarity;  
     }
-    
 
     /**
      * Gets a random item stack to place in a dungeon chest during world generation
@@ -586,6 +595,149 @@ public class MinecraftForge {
     	
     	return null;
     }
+    
+
+    //Minecart Dictionary --------------------------------------
+    private static Map<MinecartKey, ItemStack> itemForMinecart = new HashMap<MinecartKey, ItemStack>();
+    private static Map<ItemStack, MinecartKey> minecartForItem = new HashMap<ItemStack, MinecartKey>();
+    /**
+     * Registers a custom minecart and its corresponding item.
+     * This should be the item used to place the minecart by the user,
+     * not the item dropped by the cart.
+     * @param cart The minecart.
+     * @param item The item used to place the cart.
+     */
+    public static void registerMinecart(Class<? extends EntityMinecart> cart, ItemStack item)
+    {
+        registerMinecart(cart, 0, item);
+    }
+
+    /**
+     * Registers a minecart and its corresponding item.
+     * This should be the item used to place the minecart by the user,
+     * not the item dropped by the cart.
+     * @param minecart The minecart.
+     * @param type The minecart type, used to differentiate carts that have the same class.
+     * @param item The item used to place the cart.
+     */
+    public static void registerMinecart(Class<? extends EntityMinecart> minecart, int type, ItemStack item)
+    {
+        MinecartKey k = new MinecartKey(minecart, type);
+        itemForMinecart.put(k, item);
+        minecartForItem.put(item, k);
+    }    
+    
+    /**
+     * Removes a previously registered Minecart. Useful for replacing the vanilla minecarts.
+     * @param minecart
+     * @param type 
+     */
+    public static void removeMinecart(Class<? extends EntityMinecart> minecart, int type)
+    {
+        MinecartKey k = new MinecartKey(minecart, type);
+        ItemStack item = itemForMinecart.remove(k);
+        if(item != null) 
+        {
+            minecartForItem.remove(item);
+        }
+    }    
+    
+    /**
+     * This function returns an ItemStack that represents this cart.
+     * The player should be able to use this item to place the minecart.
+     * This is the item that was registered with the cart via the registerMinecart function,
+     * but is not necessary the item the cart drops when destroyed.
+     * @param minecart The cart class
+     * @return An ItemStack that can be used to place the cart.
+     */
+    public static ItemStack getItemForCart(Class<? extends EntityMinecart> minecart)
+    {
+        return getItemForCart(minecart, 0);
+    }
+
+    /**
+     * This function returns an ItemStack that represents this cart.
+     * The player should be able to use this item to place the minecart.
+     * This is the item that was registered with the cart via the registerMinecart function,
+     * but is not necessary the item the cart drops when destroyed.
+     * @param minecart The cart class
+     * @param type The minecartType value
+     * @return An ItemStack that can be used to place the cart.
+     */
+    public static ItemStack getItemForCart(Class<? extends EntityMinecart> minecart, int type)
+    {
+        ItemStack item = itemForMinecart.get(new MinecartKey(minecart, type));
+        if (item == null)
+        {
+        	return null;
+        }
+        return item.copy();
+    }
+
+    /**
+     * This function returns an ItemStack that represents this cart.
+     * The player should be able to use this item to place the minecart.
+     * This is the item that was registered with the cart via the registerMinecart function,
+     * but is not necessary the item the cart drops when destroyed.
+     * @param cart The cart entity
+     * @return An ItemStack that can be used to place the cart.
+     */
+    public static ItemStack getItemForCart(EntityMinecart cart)
+    {
+        if(cart.getClass() == EntityMinecart.class) 
+        {
+            return getItemForCart(cart.getClass(), cart.getMinecartType());
+        }
+        return getItemForCart(cart.getClass(), 0);
+    }
+
+    /**
+     * The function will return the cart class for a given item.
+     * If the item was not registered via the registerMinecart function it will return null.
+     * @param item The item to test.
+     * @return Cart if mapping exists, null if not.
+     */
+    public static Class<? extends EntityMinecart> getCartClassForItem(ItemStack item)
+    {
+        MinecartKey k = minecartForItem.get(item);
+        if(k != null) 
+        {
+            return k.minecart;
+        }
+        return null;
+    }
+
+    /**
+     * The function will return the cart type for a given item.
+     * Will return -1 if the mapping doesn't exist.
+     * If the item was not registered via the registerMinecart function it will return null.
+     * @param item The item to test.
+     * @return the cart minecartType value.
+     */
+    public static int getCartTypeForItem(ItemStack item)
+    {
+        MinecartKey k = minecartForItem.get(item);
+        if(k != null) 
+        {
+            return k.type;
+        }
+        return -1;
+    }
+
+    /**
+     * Will return a set of all registered minecart items.
+     * @return a copy of the set of all minecart items
+     */
+    public static Set<ItemStack> getAllCartItems()
+    {
+    	Set<ItemStack> ret = new HashSet<ItemStack>();
+    	for(ItemStack item : minecartForItem.keySet())
+    	{
+    		ret.add(item.copy());
+    	}
+        return ret;
+    }
+  
         
     static 
     {
@@ -605,6 +757,10 @@ public class MinecraftForge {
     	addDungeonLoot(new ItemStack(Item.record13),        0.05f      );
     	addDungeonLoot(new ItemStack(Item.recordCat),       0.05f      );
     	addDungeonLoot(new ItemStack(Item.dyePowder, 1, 3), 1.00f      );
+    	
+        registerMinecart(EntityMinecart.class, 0, new ItemStack(Item.minecartEmpty));
+        registerMinecart(EntityMinecart.class, 1, new ItemStack(Item.minecartCrate));
+        registerMinecart(EntityMinecart.class, 2, new ItemStack(Item.minecartPowered));
     }
 
 }
