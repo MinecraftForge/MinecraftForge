@@ -309,7 +309,7 @@ public class EnumHelper {
 			else
 			{
 				if ((field.getModifiers() & flags) == flags &&
-					field.getType().getName().equals(valueType))
+					field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
 				{
 					valuesField = field;
 					break;
