@@ -1,0 +1,86 @@
+--- ../src_base/minecraft/net/minecraft/src/RailLogic.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/RailLogic.java	0000-00-00 00:00:00.000000000 -0000
+@@ -10,7 +10,7 @@
+ // Referenced classes of package net.minecraft.src:
+ //            World, Block, BlockRail, ChunkPosition
+ 
+-class RailLogic
++public class RailLogic
+ {
+ 
+     private World worldObj;
+@@ -20,6 +20,7 @@
+     private final boolean isPoweredRail;
+     private List connectedTracks;
+     final BlockRail rail; /* synthetic field */
++    private final boolean canMakeSlopes;
+ 
+     public RailLogic(BlockRail blockrail, World world, int i, int j, int k)
+     {
+@@ -31,15 +32,12 @@
+         trackY = j;
+         trackZ = k;
+         int l = world.getBlockId(i, j, k);
+-        int i1 = world.getBlockMetadata(i, j, k);
+-        if(BlockRail.isPoweredBlockRail((BlockRail)Block.blocksList[l]))
+-        {
+-            isPoweredRail = true;
+-            i1 &= -9;
+-        } else
+-        {
+-            isPoweredRail = false;
+-        }
++        
++        BlockRail target = (BlockRail)Block.blocksList[l];
++        int i1 = target.getBasicRailMetadata(world, null, i, j, k);
++        isPoweredRail = !target.isFlexibleRail(world, i, j, k);
++        canMakeSlopes = target.canMakeSlopes(world, i, j, k);
++        
+         setConnections(i1);
+     }
+ 
+@@ -249,7 +247,7 @@
+                 byte0 = 9;
+             }
+         }
+-        if(byte0 == 0)
++        if(byte0 == 0 && canMakeSlopes)
+         {
+             if(BlockRail.isRailBlockAt(worldObj, trackX, trackY + 1, trackZ - 1))
+             {
+@@ -260,7 +258,7 @@
+                 byte0 = 5;
+             }
+         }
+-        if(byte0 == 1)
++        if(byte0 == 1 && canMakeSlopes)
+         {
+             if(BlockRail.isRailBlockAt(worldObj, trackX + 1, trackY + 1, trackZ))
+             {
+@@ -381,7 +379,7 @@
+                 }
+             }
+         }
+-        if(byte0 == 0)
++        if(byte0 == 0 && canMakeSlopes)
+         {
+             if(BlockRail.isRailBlockAt(worldObj, trackX, trackY + 1, trackZ - 1))
+             {
+@@ -392,7 +390,7 @@
+                 byte0 = 5;
+             }
+         }
+-        if(byte0 == 1)
++        if(byte0 == 1 && canMakeSlopes)
+         {
+             if(BlockRail.isRailBlockAt(worldObj, trackX + 1, trackY + 1, trackZ))
+             {
+@@ -433,7 +431,7 @@
+         }
+     }
+ 
+-    static int getNAdjacentTracks(RailLogic raillogic)
++    public static int getNAdjacentTracks(RailLogic raillogic)
+     {
+         return raillogic.getAdjacentTracks();
+     }

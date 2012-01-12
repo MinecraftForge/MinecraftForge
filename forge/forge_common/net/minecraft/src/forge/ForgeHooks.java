@@ -6,6 +6,8 @@
 package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -70,6 +72,36 @@ public class ForgeHooks {
 	}
 
 	static LinkedList<ISleepHandler> sleepHandlers = new LinkedList<ISleepHandler>();
+	
+
+	public static void onMinecartUpdate(EntityMinecart minecart, int x, int y, int z)
+	{
+		for (IMinecartHandler handler : minecartHandlers)
+		{
+			handler.onMinecartUpdate(minecart, x, y, z);
+		}
+	}
+	
+	public static void onMinecartEntityCollision(EntityMinecart minecart, Entity entity)
+	{
+		for (IMinecartHandler handler : minecartHandlers)
+		{
+			handler.onMinecartEntityCollision(minecart, entity);
+		}
+	}
+	
+	public static boolean onMinecartInteract(EntityMinecart minecart, EntityPlayer player)
+	{
+		boolean canceled = true;
+		for (IMinecartHandler handler : minecartHandlers)
+		{
+			boolean tmp = handler.onMinecartInteract(minecart, player, canceled);
+			canceled = canceled && tmp;
+		}
+		return canceled;
+	}
+	
+	static LinkedList<IMinecartHandler> minecartHandlers = new LinkedList<IMinecartHandler>();
 
 	// Plant Management
 	// ------------------------------------------------------------

@@ -27,19 +27,20 @@
          nbttagcompound.setShort("Fire", (short)fire);
          nbttagcompound.setShort("Air", (short)getAir());
          nbttagcompound.setBoolean("OnGround", onGround);
-+	if(customEntityData!=null) {
-+		nbttagcompound.setCompoundTag("ForgeData",
-+			customEntityData);
-+	}
++        if (customEntityData != null)
++        {
++        	nbttagcompound.setCompoundTag("ForgeEntityData", customEntityData);
++        }
          writeEntityToNBT(nbttagcompound);
      }
  
-@@ -907,6 +927,9 @@
+@@ -907,6 +927,10 @@
          onGround = nbttagcompound.getBoolean("OnGround");
          setPosition(posX, posY, posZ);
          setRotation(rotationYaw, rotationPitch);
-+        if(nbttagcompound.hasKey("ForgeData")) {
-+        	customEntityData=nbttagcompound.getCompoundTag("ForgeData");
++        if (nbttagcompound.hasKey("ForgeEntityData"))
++        {
++        	customEntityData.getCompoundTag("ForgeEntityData");
 +        }
          readEntityFromNBT(nbttagcompound);
      }
