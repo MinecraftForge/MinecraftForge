@@ -139,7 +139,7 @@
                  EntityMinecart entityminecart = this;
  label0:
 @@ -204,12 +256,6 @@
-                         worldObj.entityJoinedWorld(entityitem);
+                         worldObj.spawnEntityInWorld(entityitem);
                      } while(true);
                  }
 -

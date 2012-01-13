@@ -92,32 +92,30 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -718,7 +773,26 @@
-     }
+@@ -719,6 +774,25 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
--    {
-+    {        
-+        boolean doRegularComputation = true;
-+        int initialDamage = i;
-+    
-+        for (ItemStack stack : inventory.armorInventory) {
-+            if (stack != null && stack.getItem() instanceof ISpecialArmor) {
-+                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
-+            
-+                ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
-+                i = i - props.damageRemove;
-+                doRegularComputation = doRegularComputation
-+                    && props.allowRegularComputation;
-+            }
-+        }
-+    
-+        if (!doRegularComputation) {
-+            super.damageEntity(damagesource, i);
-+            return;
-+        }
-+        
-         if(!damagesource.isUnblockable() && func_35180_G())
+     {
++         boolean doRegularComputation = true;
++         int initialDamage = i;
++     
++         for (ItemStack stack : inventory.armorInventory) {
++             if (stack != null && stack.getItem() instanceof ISpecialArmor) {
++                 ISpecialArmor armor = (ISpecialArmor) stack.getItem();
++             
++                 ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
++                 i = i - props.damageRemove;
++                 doRegularComputation = doRegularComputation
++                     && props.allowRegularComputation;
++             }
++         }
++     
++         if (!doRegularComputation) {
++             super.damageEntity(damagesource, i);
++             return;
++         }
++         
+         if(!damagesource.isUnblockable() && isBlocking())
          {
              i = 1 + i >> 1;
 @@ -770,7 +844,9 @@
