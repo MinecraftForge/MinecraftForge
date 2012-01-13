@@ -5020,7 +5020,7 @@
 "field_9156_bu","lastHealth","cc","I","I","EntityPlayerMP","fl","net/minecraft/src","1"
 "field_35221_cc","field_35221_cc","cd","I","I","EntityPlayerMP","fl","net/minecraft/src","1"
 "field_35222_cd","field_35222_cd","ce","Z","Z","EntityPlayerMP","fl","net/minecraft/src","1"
-"field_35220_ce","field_35220_ce","cf","I","I","EntityPlayerMP","fl","net/minecraft/src","1"
+"field_35220_ce","lastExperience","cf","I","I","EntityPlayerMP","fl","net/minecraft/src","1"
 "field_15004_bw","ticksOfInvuln","cg","I","I","EntityPlayerMP","fl","net/minecraft/src","1"
 "field_20066_bG","playerInventory","ch","[LItemStack;","[Ljb;","EntityPlayerMP","fl","net/minecraft/src","1"
 "field_20065_bH","currentWindowId","ci","I","I","EntityPlayerMP","fl","net/minecraft/src","1"

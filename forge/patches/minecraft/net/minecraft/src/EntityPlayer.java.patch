@@ -96,26 +96,26 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
      {
-+    	boolean doRegularComputation = true;
-+        int initialDamage = i;
-+        
-+        for (ItemStack stack : inventory.armorInventory) {
-+            if (stack != null && stack.getItem() instanceof ISpecialArmor) {
-+                ISpecialArmor armor = (ISpecialArmor) stack.getItem();
-+                
-+                ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
-+                i = i - props.damageRemove;
-+                doRegularComputation = doRegularComputation
-+                        && props.allowRegularComputation;
-+            }
-+        }
-+        
-+        if (!doRegularComputation) {
-+            super.damageEntity(damagesource, i);
-+            return;
-+        }
-+    	
-         if(!damagesource.isUnblockable() && func_35162_ad())
++     	boolean doRegularComputation = true;
++         int initialDamage = i;
++         
++         for (ItemStack stack : inventory.armorInventory) {
++             if (stack != null && stack.getItem() instanceof ISpecialArmor) {
++                 ISpecialArmor armor = (ISpecialArmor) stack.getItem();
++                 
++                 ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
++                 i = i - props.damageRemove;
++                 doRegularComputation = doRegularComputation
++                         && props.allowRegularComputation;
++             }
++         }
++         
++         if (!doRegularComputation) {
++             super.damageEntity(damagesource, i);
++             return;
++         }
++     	
+         if(!damagesource.isUnblockable() && isBlocking())
          {
              i = 1 + i >> 1;
 @@ -825,7 +899,9 @@
