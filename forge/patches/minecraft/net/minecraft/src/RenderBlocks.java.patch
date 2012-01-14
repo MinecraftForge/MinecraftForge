@@ -58,8 +58,8 @@
              colorBlueTopRight *= f27;
              int k2 = block.getBlockTexture(blockAccess, i, j, k, 2);
              renderEastFace(block, i, j, k, k2);
--            if (fancyGrass && k2 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && k2 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && k2 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && k2 == 3 && overrideBlockTexture < 0)
              {
                  colorRedTopLeft *= f;
                  colorRedBottomLeft *= f;
@@ -67,8 +67,8 @@
              colorBlueTopRight *= f28;
              int l2 = block.getBlockTexture(blockAccess, i, j, k, 3);
              renderWestFace(block, i, j, k, block.getBlockTexture(blockAccess, i, j, k, 3));
--            if (fancyGrass && l2 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && l2 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && l2 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && l2 == 3 && overrideBlockTexture < 0)
              {
                  colorRedTopLeft *= f;
                  colorRedBottomLeft *= f;
@@ -76,8 +76,8 @@
              colorBlueTopRight *= f29;
              int i3 = block.getBlockTexture(blockAccess, i, j, k, 4);
              renderNorthFace(block, i, j, k, i3);
--            if (fancyGrass && i3 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && i3 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && i3 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && i3 == 3 && overrideBlockTexture < 0)
              {
                  colorRedTopLeft *= f;
                  colorRedBottomLeft *= f;
@@ -85,8 +85,8 @@
              colorBlueTopRight *= f30;
              int j3 = block.getBlockTexture(blockAccess, i, j, k, 5);
              renderSouthFace(block, i, j, k, j3);
--            if (fancyGrass && j3 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && j3 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && j3 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && j3 == 3 && overrideBlockTexture < 0)
              {
                  colorRedTopLeft *= f;
                  colorRedBottomLeft *= f;
@@ -94,8 +94,8 @@
              tessellator.setColorOpaque_F(f11, f14, f17);
              int i1 = block.getBlockTexture(blockAccess, i, j, k, 2);
              renderEastFace(block, i, j, k, i1);
--            if (fancyGrass && i1 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && i1 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && i1 == 3 && overrideBlockTexture < 0)
              {
                  tessellator.setColorOpaque_F(f11 * f, f14 * f1, f17 * f2);
                  renderEastFace(block, i, j, k, 38);
@@ -103,8 +103,8 @@
              tessellator.setColorOpaque_F(f11, f14, f17);
              int j1 = block.getBlockTexture(blockAccess, i, j, k, 3);
              renderWestFace(block, i, j, k, j1);
--            if (fancyGrass && j1 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && j1 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && j1 == 3 && overrideBlockTexture < 0)
              {
                  tessellator.setColorOpaque_F(f11 * f, f14 * f1, f17 * f2);
                  renderWestFace(block, i, j, k, 38);
@@ -112,8 +112,8 @@
              tessellator.setColorOpaque_F(f12, f15, f18);
              int k1 = block.getBlockTexture(blockAccess, i, j, k, 4);
              renderNorthFace(block, i, j, k, k1);
--            if (fancyGrass && k1 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && k1 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && k1 == 3 && overrideBlockTexture < 0)
              {
                  tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
                  renderNorthFace(block, i, j, k, 38);
@@ -121,8 +121,8 @@
              tessellator.setColorOpaque_F(f12, f15, f18);
              int l1 = block.getBlockTexture(blockAccess, i, j, k, 5);
              renderSouthFace(block, i, j, k, l1);
--            if (fancyGrass && l1 == 3 && overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && l1 == 3 && overrideBlockTexture < 0)
+-            if (cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && cfgGrassFix && l1 == 3 && overrideBlockTexture < 0)
              {
                  tessellator.setColorOpaque_F(f12 * f, f15 * f1, f18 * f2);
                  renderSouthFace(block, i, j, k, 38);
