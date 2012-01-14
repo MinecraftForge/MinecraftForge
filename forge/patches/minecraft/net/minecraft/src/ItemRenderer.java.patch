@@ -42,7 +42,7 @@
              else
              {
 -                GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/gui/items.png"));
-+            	String tex = ForgeHooksClient.getTexture("/gui/items.png", Block.blocksList[itemstack.itemID]);
++            	String tex = ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]);
 +            	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
              }
              Tessellator tessellator = Tessellator.instance;
