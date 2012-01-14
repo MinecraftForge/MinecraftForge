@@ -8,7 +8,7 @@
  
  public class Explosion
  {
-@@ -66,7 +67,16 @@
+@@ -66,7 +67,15 @@
                          int k3 = worldObj.getBlockId(l2, i3, j3);
                          if (k3 > 0)
                          {
@@ -21,8 +21,7 @@
 +                            else 
 +                            {
 +                                f1 -= (Block.blocksList[k3].getExplosionResistance(exploder) + 0.3F) * f2;
-+                            }
-+                            
++                            }                            
                          }
                          if (f1 > 0.0F)
                          {

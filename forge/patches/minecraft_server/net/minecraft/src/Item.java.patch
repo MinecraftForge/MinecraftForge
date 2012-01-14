@@ -1,95 +1,41 @@
 --- ../src_base/minecraft_server/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,7 @@
+@@ -1,6 +1,7 @@
  package net.minecraft.src;
  
  import java.io.PrintStream;
 +import java.util.ArrayList;
  import java.util.Random;
  
- // Referenced classes of package net.minecraft.src:
-@@ -175,6 +176,9 @@
+ public class Item
+@@ -156,6 +157,9 @@
      private String potionInfo;
      private String itemName;
  
 +    // FORGE: To disable repair recipes.
-+    protected boolean canRepair=true;
++    protected boolean canRepair = true;
 +
      protected Item(int i)
      {
          maxStackSize = 64;
-@@ -209,6 +213,14 @@
-         return this;
+@@ -393,6 +397,109 @@
+         MovingObjectPosition movingobjectposition = world.rayTraceBlocks_do_do(vec3d, vec3d1, flag, !flag);
+         return movingobjectposition;
      }
- 
-+    /* FORGE: This is called when the item is used, before the block is
-+     * activated.  Return true to prevent any further processing.
-+     */
-+    public boolean onItemUseFirst(ItemStack ist, EntityPlayer player,
-+		    World world, int i, int j, int k, int l) {
-+	    return false;
-+    }
-+
-     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
-     {
-         return false;
-@@ -219,6 +231,13 @@
-         return 1.0F;
-     }
- 
-+    /* FORGE: Metadata-sensitive version of getStrVsBlock
-+     */
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
-+    {
-+	    return getStrVsBlock(itemstack,block);
-+    }
-+
-     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
-     {
-         return itemstack;
-@@ -266,6 +285,34 @@
-         return maxDamage > 0 && !hasSubtypes;
-     }
- 
-+    /* FORGE: Called by CraftingManager to determine if an item is repairable.
-+     */
-+    public boolean isRepairable() {
-+	    return canRepair && isDamageable();
-+    }
-+
-+    /* FORGE: Call to disable repair recipes.
-+     */
-+    public Item setNoRepair() {
-+	    canRepair=false;
-+	    return this;
-+    }
-+
-+    /* FORGE: Called before a block is broken.  Return true to prevent default
-+     * block harvesting.
-+     *
-+     * Note: In SMP, this is called on both client and server sides!
-+     */
-+    public boolean onBlockStartBreak(ItemStack itemstack, int i, int j, int k,
-+		    EntityPlayer player) {
-+	    return false;
-+    }
-+
-+    /* FORGE: Called each tick while using an item.
-+     */
-+    public void onUsingItemTick(ItemStack ist, EntityPlayer player, int count) {
-+    }
-+
-     public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
-     {
-         return false;
-@@ -414,6 +461,26 @@
-         return 0;
-     }
- 
-+    /* FORGE: This is not called by the server, but declared here for compatibility
++    
++    /**
++     * Called when a new CreativeContainer is opened, populate the list 
++     * with all of the items for this item you want a player in creative mode
++     * to have access to.
++     * 
++     * @param itemList The list of items currently in the creative inventory
 +     */
 +    public void addCreativeItems(ArrayList itemList)
-+    {    	
++    {       
++        if (this.shiftedIndex != Item.potion.shiftedIndex && this.shiftedIndex != Item.field_44008_bB.shiftedIndex)
++        {
++            itemList.add(new ItemStack(this, 1));
++        }
 +    }
 +    
 +    /**
@@ -103,9 +49,82 @@
 +     */
 +    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
 +    {
-+    	return true;
++        return true;
 +    }
 +
-     static 
++    /**
++     * This is called when the item is used, before the block is activated.
++     * @param stack The Item Stack
++     * @param player The Player that used the item
++     * @param world The Current World
++     * @param X Target X Position
++     * @param Y Target Y Position
++     * @param Z Target Z Position
++     * @param side The side of the target hit
++     * @return Return true to prevent any further processing.
++     */
++    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int X, int Y, int Z, int side) 
++    {
++        return false;
++    }
++
++    /**
++     * Metadata-sensitive version of getStrVsBlock
++     * @param itemstack The Item Stack
++     * @param block The block the item is trying to break
++     * @param metadata The items current metadata
++     * @return The damage strength
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata)
++    {
++        return getStrVsBlock(itemstack, block);
++    }
++    
++    /**
++     * Called by CraftingManager to determine if an item is reparable.
++     * @return True if reparable
++     */
++    public boolean isRepairable() 
++    {
++        return canRepair && isDamageable();
++    }
++
++    /**
++     * Call to disable repair recipes.
++     * @return The current Item instance
++     */
++    public Item setNoRepair() 
++    {
++        canRepair = false;
++        return this;
++    }
++    
++    /**
++     * Called before a block is broken.  Return true to prevent default block harvesting.
++     *
++     * Note: In SMP, this is called on both client and server sides!
++     * 
++     * @param itemstack The current ItemStack
++     * @param X The X Position
++     * @param Y The X Position
++     * @param Z The X Position
++     * @param player The Player that is wielding the item
++     * @return True to prevent harvesting, false to continue as normal
++     */
++    public boolean onBlockStartBreak(ItemStack itemstack, int X, int Y, int Z, EntityPlayer player) 
++    {
++        return false;
++    }
++
++    /**
++     * Called each tick while using an item.
++     * @param stack The Item being used
++     * @param player The Player using the item
++     * @param count The amount of time in tick the item has been used for continuously
++     */
++    public void onUsingItemTick(ItemStack stack, EntityPlayer player, int count) 
++    {
++    }
+ 
+     public int getItemEnchantability()
      {
-         shovelSteel = (new ItemSpade(0, EnumToolMaterial.IRON)).setIconCoord(2, 5).setItemName("shovelIron");

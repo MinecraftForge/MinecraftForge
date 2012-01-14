@@ -45,14 +45,14 @@
          if (!flag && !func_263_h(world, i, j, k))
          {
 -            if (!world.isBlockNormalCube(i, j - 1, k) || l > 3)
-+            if (!world.isBlockSolidOnSide(i, j - 1, k, 0) || l > 3)
++            if (!world.isBlockSolidOnSide(i, j - 1, k, 1) || l > 3)
              {
                  world.setBlockWithNotify(i, j, k, 0);
              }
              return;
          }
 -        if (!flag && !canBlockCatchFire(world, i, j - 1, k) && l == 15 && random.nextInt(4) == 0)
-+        if (!flag && !canBlockCatchFire(world, i, j - 1, k, 0) && l == 15 && random.nextInt(4) == 0)
++        if (!flag && !canBlockCatchFire(world, i, j - 1, k, 1) && l == 15 && random.nextInt(4) == 0)
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;

@@ -82,7 +82,7 @@
          {
              ItemStack itemstack = createStackedBlock(l);
              if (itemstack != null)
-@@ -780,6 +773,255 @@
+@@ -780,6 +773,273 @@
      {
      }
  
@@ -94,19 +94,9 @@
 +
 +    /* FORGE: Implement and return true if you wish this block to behave
 +     * like a ladder when the player is inside.
-+     *
-+     * This is deprecated in favor of the more flexible version below.
-+     */
-+    @Deprecated
-+    public boolean isLadder() {
-+	return false;
-+    }
-+
-+    /* FORGE: Implement and return true if you wish this block to behave
-+     * like a ladder when the player is inside.
 +     */
 +    public boolean isLadder(World world, int i, int j, int k) {
-+	return isLadder();
++    	return false;
 +    }
 +
 +    /* FORGE: Return true if the block is a normal, solid cube.  This
@@ -334,14 +324,6 @@
 +    {
 +    	return quantityDroppedWithBonus(fortune, random);
 +    }
-+
-     static Class _mthclass$(String s)
-     {
-         try
-@@ -791,6 +1033,34 @@
-             throw new NoClassDefFoundError(classnotfoundexception.getMessage());
-         }
-     }
 +    
 +    /**
 +     * This returns a complete list of items dropped from this block.
@@ -367,9 +349,10 @@
 +    			ret.add(new ItemStack(id, 1, damageDropped(metadata)));
 +    		}
 +    	}
-+    	
 +    	return ret;
 +    }
- 
-     static
++    	
++
+     static Class _mthclass$(String s)
      {
+         try

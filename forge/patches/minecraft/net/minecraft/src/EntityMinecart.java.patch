@@ -455,7 +455,7 @@
                  double d7 = entity.motionX + motionX;
                  double d8 = entity.motionZ + motionZ;
 -                if (((EntityMinecart)entity).minecartType == 2 && minecartType != 2)
-+                if (((EntityMinecart)entity).minecartType == 2 && !isPoweredCart())
++                if (((EntityMinecart)entity).isPoweredCart() && !isPoweredCart())
                  {
                      motionX *= 0.20000000298023224D;
                      motionZ *= 0.20000000298023224D;
@@ -464,7 +464,7 @@
                      entity.motionZ *= 0.94999998807907104D;
                  }
 -                else if (((EntityMinecart)entity).minecartType != 2 && minecartType == 2)
-+                else if (((EntityMinecart)entity).minecartType != 2 && isPoweredCart())
++                else if (!((EntityMinecart)entity).isPoweredCart() && isPoweredCart())
                  {
                      entity.motionX *= 0.20000000298023224D;
                      entity.motionZ *= 0.20000000298023224D;

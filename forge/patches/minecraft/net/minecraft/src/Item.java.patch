@@ -18,7 +18,7 @@
      protected Item(int i)
      {
          maxStackSize = 64;
-@@ -469,6 +473,114 @@
+@@ -469,6 +473,109 @@
      {
          return getIconFromDamage(i);
      }
@@ -98,12 +98,7 @@
 +	    canRepair = false;
 +	    return this;
 +    }
-+
-+    /* FORGE: Called before a block is broken.  Return true to prevent default
-+     * block harvesting.
-+     *
-+     * Note: In SMP, this is called on both client and server sides!
-+     */
++    
 +    /**
 +     * Called before a block is broken.  Return true to prevent default block harvesting.
 +     *

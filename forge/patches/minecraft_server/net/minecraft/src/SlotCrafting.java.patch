@@ -1,19 +1,19 @@
 --- ../src_base/minecraft_server/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,7 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode fieldsfirst 
- 
+@@ -1,5 +1,7 @@
  package net.minecraft.src;
--
-+import net.minecraft.src.forge.ForgeHooks;
  
- // Referenced classes of package net.minecraft.src:
- //            Slot, EntityPlayer, ItemStack, Block, 
-@@ -71,6 +71,7 @@
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class SlotCrafting extends Slot
+ {
+     private final IInventory craftMatrix;
+@@ -60,6 +62,8 @@
+         {
              thePlayer.addStat(AchievementList.bookcase, 1);
          }
-         ModLoader.TakenFromCrafting(thePlayer, itemstack);
-+  	ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
-         for(int i = 0; i < craftMatrix.getSizeInventory(); i++)
++        ModLoader.TakenFromCrafting(this.thePlayer, itemstack);
++        ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
+         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
          {
              ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
