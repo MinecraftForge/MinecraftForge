@@ -13,6 +13,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
 import java.util.*;
@@ -301,9 +302,10 @@ public class ForgeHooks {
 
 	public static final int majorVersion=1;
 	public static final int minorVersion=2;
-	public static final int revisionVersion=4;
+	public static final int revisionVersion=5;
 	static {
 		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion);
+		ModLoader.getLogger().info(String.format("MinecraftForge V%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion));
 	}
 
 	static boolean toolInit=false;
