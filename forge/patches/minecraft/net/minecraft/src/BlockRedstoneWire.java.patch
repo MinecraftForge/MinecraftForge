@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneWire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneWire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,8 @@
+@@ -2,6 +2,8 @@
  
  import java.util.*;
  
-+import net.minecraft.src.forge.*;
++import net.minecraft.src.forge.IConnectRedstone;
 +
- // Referenced classes of package net.minecraft.src:
- //            Block, Material, World, ChunkPosition, 
- //            Item, IBlockAccess, Direction, AxisAlignedBB
-@@ -56,7 +58,7 @@
+ public class BlockRedstoneWire extends Block
+ {
+     private boolean wiresProvidePower;
+@@ -47,7 +49,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -18,14 +18,16 @@
      }
  
      private void updateAndPropagateCurrentStrength(World world, int i, int j, int k)
-@@ -454,6 +456,10 @@
-         {
-             return false;
+@@ -467,6 +469,12 @@
+             int j1 = iblockaccess.getBlockMetadata(i, j, k);
+             return l == (j1 & 3) || l == Direction.footInvisibleFaceRemap[j1 & 3];
          }
-+        if (Block.blocksList[i1] instanceof IConnectRedstone) {
-+        	IConnectRedstone icr = (IConnectRedstone)Block.blocksList[i1];
-+        	return icr.canConnectRedstone(iblockaccess, i, j, k, l);
++        
++        if (Block.blocksList[i1] instanceof IConnectRedstone)
++        {
++        	return ((IConnectRedstone)icr).canConnectRedstone(iblockaccess, i, j, k, l);
 +        }
-         if(Block.blocksList[i1].canProvidePower() && l != -1)
-         {
-             return true;
++        
+         return Block.blocksList[i1].canProvidePower() && l != -1;
+     }
+ 

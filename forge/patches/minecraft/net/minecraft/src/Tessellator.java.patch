@@ -1,18 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/src/Tessellator.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Tessellator.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,7 @@
+@@ -1,16 +1,14 @@
  package net.minecraft.src;
  
  import java.nio.*;
 +import java.util.*;
  import org.lwjgl.opengl.*;
  
- // Referenced classes of package net.minecraft.src:
-@@ -12,13 +13,9 @@
- 
  public class Tessellator
  {
--
      private static boolean convertQuadsToTriangles = false;
      private static boolean tryVBO = false;
 -    private ByteBuffer byteBuffer;
@@ -23,7 +19,7 @@
      private int rawBuffer[];
      private int vertexCount;
      private double textureU;
-@@ -32,21 +29,47 @@
+@@ -24,21 +22,47 @@
      private int rawBufferIndex;
      private int addedVertices;
      private boolean isColorDisabled;
@@ -59,11 +55,11 @@
 +    public static Tessellator instance;
 +
 +    static {
-+        instance=new Tessellator();
-+        instance.defaultTexture=true;
++        instance = new Tessellator();
++        instance.defaultTexture = true;
 +
 +        nativeBufferSize = 0x200000;
-+        trivertsInBuffer = (nativeBufferSize/48)*6;
++        trivertsInBuffer = (nativeBufferSize / 48) * 6;
 +        byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
 +        intBuffer = byteBuffer.asIntBuffer();
 +        floatBuffer = byteBuffer.asFloatBuffer();
@@ -83,7 +79,7 @@
          vertexCount = 0;
          hasColor = false;
          hasTexture = false;
-@@ -56,21 +79,10 @@
+@@ -48,21 +72,9 @@
          addedVertices = 0;
          isColorDisabled = false;
          isDrawing = false;
@@ -97,87 +93,96 @@
 -        shortBuffer = byteBuffer.asShortBuffer();
 -        rawBuffer = new int[i];
 -        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
--        if(useVBO)
+-        if (useVBO)
 -        {
 -            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
 -            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
 -        }
-+
-+		rawBuffer=null;
-+		rawBufferSize=0;
++        rawBuffer = null;
++        rawBufferSize = 0;
      }
  
      public int draw()
-@@ -80,12 +92,20 @@
+@@ -72,12 +84,25 @@
              throw new IllegalStateException("Not tesselating!");
          }
          isDrawing = false;
--        if(vertexCount > 0)
--        {
-+	int offs=0;
-+        while(offs < vertexCount) {
-+	    int vtc;
-+            if(drawMode == 7 && convertQuadsToTriangles) {
-+		    vtc=Math.min(vertexCount-offs,trivertsInBuffer);
-+            } else {
-+		    vtc=Math.min(vertexCount-offs,nativeBufferSize>>5);
+-        if (vertexCount > 0)
++        int offs = 0;
++        while (offs < vertexCount) 
+         {
++        	int vtc;
++            if (drawMode == 7 && convertQuadsToTriangles) 
++            {
++            	vtc = Math.min(vertexCount - offs, trivertsInBuffer);
++            } 
++            else 
++            {
++            	vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
 +            }
 +
              intBuffer.clear();
 -            intBuffer.put(rawBuffer, 0, rawBufferIndex);
-+            intBuffer.put(rawBuffer, offs*8, vtc*8);
++            intBuffer.put(rawBuffer, offs * 8, vtc * 8);
              byteBuffer.position(0);
 -            byteBuffer.limit(rawBufferIndex * 4);
-+            byteBuffer.limit(vtc*32);
-+	    offs+=vtc;
-             if(useVBO)
++            byteBuffer.limit(vtc * 32);
++            offs += vtc;
++            
+             if (useVBO)
              {
                  vboIndex = (vboIndex + 1) % vboCount;
-@@ -153,10 +173,10 @@
+@@ -150,11 +175,11 @@
              GL11.glEnableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
-             if(drawMode == 7 && convertQuadsToTriangles)
+             if (drawMode == 7 && convertQuadsToTriangles)
              {
 -                GL11.glDrawArrays(4, 0, vertexCount);
-+                GL11.glDrawArrays(4, 0, vtc);
-             } else
++            	GL11.glDrawArrays(4, 0, vtc);
+             }
+             else
              {
 -                GL11.glDrawArrays(drawMode, 0, vertexCount);
-+                GL11.glDrawArrays(drawMode, 0, vtc);
++            	GL11.glDrawArrays(drawMode, 0, vtc);
              }
              GL11.glDisableClientState(32884 /*GL_VERTEX_ARRAY_EXT*/);
-             if(hasTexture)
-@@ -178,6 +198,10 @@
+             if (hasTexture)
+@@ -176,6 +201,11 @@
                  GL11.glDisableClientState(32885 /*GL_NORMAL_ARRAY_EXT*/);
              }
          }
-+        if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize<<3)) {
-+            rawBufferSize=0;
-+            rawBuffer=null;
++        if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3)) 
++        {
++            rawBufferSize = 0;
++            rawBuffer = null;
 +        }
          int i = rawBufferIndex * 4;
          reset();
          return i;
-@@ -299,6 +323,15 @@
+@@ -299,6 +329,19 @@
  
      public void addVertex(double d, double d1, double d2)
      {
-+		if (rawBufferIndex >= rawBufferSize-32) {
-+			if (rawBufferSize == 0) {
++		if (rawBufferIndex >= rawBufferSize - 32) 
++		{
++			if (rawBufferSize == 0) 
++			{
 +				rawBufferSize = 0x10000;
 +				rawBuffer = new int[rawBufferSize];
-+			} else {
++			} 
++			else 
++			{
 +				rawBufferSize *= 2;
 +				rawBuffer = Arrays.copyOf(rawBuffer, rawBufferSize);
 +			}
 +		}
          addedVertices++;
-         if(drawMode == 7 && convertQuadsToTriangles && addedVertices % 4 == 0)
+         if (drawMode == 7 && convertQuadsToTriangles && addedVertices % 4 == 0)
          {
-@@ -348,11 +381,6 @@
+@@ -347,11 +390,6 @@
          rawBuffer[rawBufferIndex + 2] = Float.floatToRawIntBits((float)(d2 + zOffset));
          rawBufferIndex += 8;
          vertexCount++;
--        if(vertexCount % 4 == 0 && rawBufferIndex >= bufferSize - 32)
+-        if (vertexCount % 4 == 0 && rawBufferIndex >= bufferSize - 32)
 -        {
 -            draw();
 -            isDrawing = true;

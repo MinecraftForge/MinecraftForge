@@ -1,0 +1,60 @@
+diff -r -U 3 minecraft_server\net\minecraft\src\EntityMinecart.java minecraft_server_patched\net\minecraft\src\EntityMinecart.java
+--- minecraft_server\net\minecraft\src\EntityMinecart.java	Sat Jan 14 16:05:25 2012
++++ minecraft_server_patched\net\minecraft\src\EntityMinecart.java	Sat Jan 14 16:07:50 2012
+@@ -751,7 +751,7 @@
+         double d = entity.field_322_l - field_322_l;
+         double d1 = entity.field_320_n - field_320_n;
+         double d2 = d * d + d1 * d1;
+-        if(d2 >= 9.9999997473787516E-05D)
++        if(d2 >= 9.9999997473787516E-005D)
+         {
+             d2 = MathHelper.func_583_a(d2);
+             d /= d2;
+diff -r -U 3 minecraft_server\net\minecraft\src\GuiStatsComponent.java minecraft_server_patched\net\minecraft\src\GuiStatsComponent.java
+--- minecraft_server\net\minecraft\src\GuiStatsComponent.java	Sat Jan 14 16:05:25 2012
++++ minecraft_server_patched\net\minecraft\src\GuiStatsComponent.java	Sat Jan 14 16:07:50 2012
+@@ -43,12 +43,12 @@
+         System.gc();
+         field_768_c[0] = (new StringBuilder()).append("Memory use: ").append(l / 1024L / 1024L).append(" mb (").append((Runtime.getRuntime().freeMemory() * 100L) / Runtime.getRuntime().maxMemory()).append("% free)").toString();
+         field_768_c[1] = (new StringBuilder()).append("Threads: ").append(NetworkManager.field_1052_b).append(" + ").append(NetworkManager.field_1051_c).toString();
+-        field_768_c[2] = (new StringBuilder()).append("Avg tick: ").append(field_40573_a.format(func_40571_a(field_40572_e.field_40027_f) * 9.9999999999999995E-07D)).append(" ms").toString();
++        field_768_c[2] = (new StringBuilder()).append("Avg tick: ").append(field_40573_a.format(func_40571_a(field_40572_e.field_40027_f) * 9.9999999999999995E-007D)).append(" ms").toString();
+         i = 0;
+ _L3:
+         if(i >= field_40572_e.field_6034_e.length) goto _L2; else goto _L1
+ _L1:
+-        field_768_c[3 + i] = (new StringBuilder()).append("Lvl ").append(i).append(" tick: ").append(field_40573_a.format(func_40571_a(field_40572_e.field_40028_g[i]) * 9.9999999999999995E-07D)).append(" ms").toString();
++        field_768_c[3 + i] = (new StringBuilder()).append("Lvl ").append(i).append(" tick: ").append(field_40573_a.format(func_40571_a(field_40572_e.field_40028_g[i]) * 9.9999999999999995E-007D)).append(" ms").toString();
+         if(field_40572_e.field_6034_e[i] == null || field_40572_e.field_6034_e[i].field_20911_y == null)
+         {
+             continue; /* Loop/switch isn't completed */
+diff -r -U 3 minecraft_server\net\minecraft\src\Vec3D.java minecraft_server_patched\net\minecraft\src\Vec3D.java
+--- minecraft_server\net\minecraft\src\Vec3D.java	Sat Jan 14 16:05:25 2012
++++ minecraft_server_patched\net\minecraft\src\Vec3D.java	Sat Jan 14 16:07:50 2012
+@@ -121,7 +121,7 @@
+         double d1 = vec3d.field_1055_a - field_1055_a;
+         double d2 = vec3d.field_1054_b - field_1054_b;
+         double d3 = vec3d.field_1058_c - field_1058_c;
+-        if(d1 * d1 < 1.0000000116860974E-07D)
++        if(d1 * d1 < 1.0000000116860974E-007D)
+         {
+             return null;
+         }
+@@ -140,7 +140,7 @@
+         double d1 = vec3d.field_1055_a - field_1055_a;
+         double d2 = vec3d.field_1054_b - field_1054_b;
+         double d3 = vec3d.field_1058_c - field_1058_c;
+-        if(d2 * d2 < 1.0000000116860974E-07D)
++        if(d2 * d2 < 1.0000000116860974E-007D)
+         {
+             return null;
+         }
+@@ -159,7 +159,7 @@
+         double d1 = vec3d.field_1055_a - field_1055_a;
+         double d2 = vec3d.field_1054_b - field_1054_b;
+         double d3 = vec3d.field_1058_c - field_1058_c;
+-        if(d3 * d3 < 1.0000000116860974E-07D)
++        if(d3 * d3 < 1.0000000116860974E-007D)
+         {
+             return null;
+         }

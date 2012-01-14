@@ -1,0 +1,54 @@
+diff -r -U 3 minecraft\net\minecraft\src\EntityMinecart.java minecraft_patched\net\minecraft\src\EntityMinecart.java
+--- minecraft\net\minecraft\src\EntityMinecart.java	Sat Jan 14 16:05:10 2012
++++ minecraft_patched\net\minecraft\src\EntityMinecart.java	Sat Jan 14 16:07:41 2012
+@@ -811,7 +811,7 @@
+         double d = entity.field_611_ak - field_611_ak;
+         double d1 = entity.field_609_am - field_609_am;
+         double d2 = d * d + d1 * d1;
+-        if(d2 >= 9.9999997473787516E-05D)
++        if(d2 >= 9.9999997473787516E-005D)
+         {
+             d2 = MathHelper.func_1109_a(d2);
+             d /= d2;
+diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
+--- minecraft\net\minecraft\src\RenderGlobal.java	Sat Jan 14 16:05:10 2012
++++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Sat Jan 14 16:07:41 2012
+@@ -968,7 +968,7 @@
+             f3 = f7;
+             f4 = f8;
+         }
+-        float f6 = 0.0004882812F;
++        float f6 = 0.0004882813F;
+         double d = (float)field_1435_x + f;
+         double d1 = field_1439_t.field_22009_h.field_9285_at + (field_1439_t.field_22009_h.field_611_ak - field_1439_t.field_22009_h.field_9285_at) * (double)f + d * 0.029999999329447746D;
+         double d2 = field_1439_t.field_22009_h.field_9283_av + (field_1439_t.field_22009_h.field_609_am - field_1439_t.field_22009_h.field_9283_av) * (double)f;
+diff -r -U 3 minecraft\net\minecraft\src\Vec3D.java minecraft_patched\net\minecraft\src\Vec3D.java
+--- minecraft\net\minecraft\src\Vec3D.java	Sat Jan 14 16:05:10 2012
++++ minecraft_patched\net\minecraft\src\Vec3D.java	Sat Jan 14 16:07:41 2012
+@@ -137,7 +137,7 @@
+         double d1 = vec3d.field_1776_a - field_1776_a;
+         double d2 = vec3d.field_1775_b - field_1775_b;
+         double d3 = vec3d.field_1779_c - field_1779_c;
+-        if(d1 * d1 < 1.0000000116860974E-07D)
++        if(d1 * d1 < 1.0000000116860974E-007D)
+         {
+             return null;
+         }
+@@ -156,7 +156,7 @@
+         double d1 = vec3d.field_1776_a - field_1776_a;
+         double d2 = vec3d.field_1775_b - field_1775_b;
+         double d3 = vec3d.field_1779_c - field_1779_c;
+-        if(d2 * d2 < 1.0000000116860974E-07D)
++        if(d2 * d2 < 1.0000000116860974E-007D)
+         {
+             return null;
+         }
+@@ -175,7 +175,7 @@
+         double d1 = vec3d.field_1776_a - field_1776_a;
+         double d2 = vec3d.field_1775_b - field_1775_b;
+         double d3 = vec3d.field_1779_c - field_1779_c;
+-        if(d3 * d3 < 1.0000000116860974E-07D)
++        if(d3 * d3 < 1.0000000116860974E-007D)
+         {
+             return null;
+         }

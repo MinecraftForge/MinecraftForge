@@ -1,22 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/src/FurnaceRecipes.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/FurnaceRecipes.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,7 @@
+@@ -2,11 +2,13 @@
  
  import java.util.HashMap;
  import java.util.Map;
 +import java.util.Arrays;
  
- // Referenced classes of package net.minecraft.src:
- //            Block, ItemStack, Item
-@@ -15,6 +16,7 @@
- 
+ public class FurnaceRecipes
+ {
      private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
      private Map smeltingList;
 +    private Map metaSmeltingList;
  
      public static final FurnaceRecipes smelting()
      {
-@@ -24,6 +26,7 @@
+@@ -16,6 +18,7 @@
      private FurnaceRecipes()
      {
          smeltingList = new HashMap();
@@ -24,34 +22,45 @@
          addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron));
          addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold));
          addSmelting(Block.oreDiamond.blockID, new ItemStack(Item.diamond));
-@@ -46,11 +49,32 @@
+@@ -38,11 +41,43 @@
          smeltingList.put(Integer.valueOf(i), itemstack);
      }
  
-+    /* FORGE: Add a metadata-sensitive furnace recipe.
++    /**
++     * Add a metadata-sensitive furnace recipe
++     * @param itemID The Item ID
++     * @param metadata The Item Metadata
++     * @param itemstack The ItemStack for the result
 +     */
-+    public void addSmelting(int i, int meta, ItemStack itemstack)
++    public void addSmelting(int itemID, int metadata, ItemStack itemstack)
 +    {
-+        metaSmeltingList.put(Arrays.asList(i,meta), itemstack);
++        metaSmeltingList.put(Arrays.asList(itemID, metadata), itemstack);
 +    }
 +
-+    /* FORGE: Not used anymore.
-+     */
++    /* FORGE: Not used anymore, now uses a metadata sensitive version */
++    @Deprecated
      public ItemStack getSmeltingResult(int i)
      {
          return (ItemStack)smeltingList.get(Integer.valueOf(i));
      }
  
-+    /* FORGE: Added to allow metadata-sensitive smelting.
++    /**
++     * Used to get the resulting ItemStack form a source ItemStack
++     * @param item The Source ItemStack
++     * @return The result ItemStack
 +     */
-+    public ItemStack getSmeltingResult(ItemStack src) {
-+	    ItemStack tr;
-+
-+	    if(src==null) return null;
-+	    tr=(ItemStack)metaSmeltingList.get(
-+		Arrays.asList(src.itemID,src.getItemDamage()));
-+	    if(tr!=null) return tr;
-+	    return (ItemStack)smeltingList.get(Integer.valueOf(src.itemID));
++    public ItemStack getSmeltingResult(ItemStack item) 
++    {
++	    if (item == null)
++	    {
++	    	return null;
++	    }
++	    ItemStack ret = (ItemStack)metaSmeltingList.get(Arrays.asList(item.itemID, item.getItemDamage()));
++	    if (ret != null) 
++	    {
++	    	return ret;
++	    }
++	    return (ItemStack)smeltingList.get(Integer.valueOf(item.itemID));
 +    }
 +
      public Map getSmeltingList()

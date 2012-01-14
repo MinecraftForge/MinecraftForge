@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -83,6 +83,9 @@
+@@ -70,6 +70,9 @@
      public int serverPosZ;
      public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
@@ -10,7 +10,7 @@
  
      public Entity(World world)
      {
-@@ -123,6 +126,20 @@
+@@ -110,6 +113,20 @@
      }
  
      protected abstract void entityInit();
@@ -31,23 +31,24 @@
  
      public DataWatcher getDataWatcher()
      {
-@@ -955,6 +972,10 @@
+@@ -967,6 +984,10 @@
          nbttagcompound.setShort("Fire", (short)fire);
          nbttagcompound.setShort("Air", (short)getAir());
          nbttagcompound.setBoolean("OnGround", onGround);
-+	if(customEntityData!=null) {
-+		nbttagcompound.setCompoundTag("ForgeData",
-+			customEntityData);
-+	}
++        if (customEntityData != null) 
++        {
++        	nbttagcompound.setCompoundTag("ForgeData", customEntityData);
++    	}
          writeEntityToNBT(nbttagcompound);
      }
  
-@@ -989,6 +1010,9 @@
+@@ -1001,6 +1022,10 @@
          onGround = nbttagcompound.getBoolean("OnGround");
          setPosition(posX, posY, posZ);
          setRotation(rotationYaw, rotationPitch);
-+        if(nbttagcompound.hasKey("ForgeData")) {
-+        	customEntityData=nbttagcompound.getCompoundTag("ForgeData");
++        if (nbttagcompound.hasKey("ForgeData")) 
++        {
++        	customEntityData = nbttagcompound.getCompoundTag("ForgeData");
 +        }
          readEntityFromNBT(nbttagcompound);
      }

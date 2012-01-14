@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,7 @@
+@@ -1,6 +1,7 @@
  package net.minecraft.src;
  
  import java.io.PrintStream;
@@ -8,92 +8,31 @@
  import java.util.List;
  import java.util.Random;
  
-@@ -177,6 +178,9 @@
+@@ -157,6 +158,9 @@
      private String potionModifier;
      private String itemName;
  
 +    // FORGE: To disable repair recipes.
-+    protected boolean canRepair=true;
++    protected boolean canRepair = true;
 +
      protected Item(int i)
      {
          maxStackSize = 64;
-@@ -221,6 +225,14 @@
-         return getIconFromDamage(itemstack.getItemDamage());
-     }
- 
-+    /* FORGE: This is called when the item is used, before the block is
-+     * activated.  Return true to prevent any further processing.
-+     */
-+    public boolean onItemUseFirst(ItemStack ist, EntityPlayer player,
-+		    World world, int i, int j, int k, int l) {
-+	    return false;
-+    }
-+
-     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
+@@ -469,6 +473,114 @@
      {
-         return false;
-@@ -231,6 +243,13 @@
-         return 1.0F;
-     }
- 
-+    /* FORGE: Metadata-sensitive version of getStrVsBlock
-+     */
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int md)
-+    {
-+	    return getStrVsBlock(itemstack,block);
-+    }
-+
-     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
-     {
-         return itemstack;
-@@ -278,6 +297,34 @@
-         return maxDamage > 0 && !hasSubtypes;
-     }
- 
-+    /* FORGE: Called by CraftingManager to determine if an item is repairable.
-+     */
-+    public boolean isRepairable() {
-+	    return canRepair && isDamageable();
-+    }
-+
-+    /* FORGE: Call to disable repair recipes.
-+     */
-+    public Item setNoRepair() {
-+	    canRepair=false;
-+	    return this;
-+    }
-+
-+    /* FORGE: Called before a block is broken.  Return true to prevent default
-+     * block harvesting.
-+     *
-+     * Note: In SMP, this is called on both client and server sides!
-+     */
-+    public boolean onBlockStartBreak(ItemStack itemstack, int i, int j, int k,
-+		    EntityPlayer player) {
-+	    return false;
-+    }
-+
-+    /* FORGE: Called each tick while using an item.
-+     */
-+    public void onUsingItemTick(ItemStack ist, EntityPlayer player, int count) {
-+    }
-+
-     public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
-     {
-         return false;
-@@ -473,6 +520,32 @@
-     {
-         return 0;
+         return getIconFromDamage(i);
      }
 +    
-+    /* FORGE: Called when a new CreativeContainer is opened, populate the list 
++    /**
++     * Called when a new CreativeContainer is opened, populate the list 
 +     * with all of the items for this item you want a player in creative mode
 +     * to have access to.
++     * 
++     * @param itemList The list of items currently in the creative inventory
 +     */
 +    public void addCreativeItems(ArrayList itemList)
 +    {    	
-+    	if (this.shiftedIndex != Item.potion.shiftedIndex)
++    	if (this.shiftedIndex != Item.potion.shiftedIndex && this.shiftedIndex != Item.field_44019_bC.shiftedIndex)
 +    	{
 +			itemList.add(new ItemStack(this, 1));
 +    	}
@@ -112,6 +51,85 @@
 +    {
 +    	return true;
 +    }
++
++    /**
++     * This is called when the item is used, before the block is activated.
++     * @param stack The Item Stack
++     * @param player The Player that used the item
++     * @param world The Current World
++     * @param X Target X Position
++     * @param Y Target Y Position
++     * @param Z Target Z Position
++     * @param side The side of the target hit
++     * @return Return true to prevent any further processing.
++     */
++    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int X, int Y, int Z, int side) 
++    {
++	    return false;
++    }
++
++    /**
++     * Metadata-sensitive version of getStrVsBlock
++     * @param itemstack The Item Stack
++     * @param block The block the item is trying to break
++     * @param metadata The items current metadata
++     * @return The damage strength
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata)
++    {
++	    return getStrVsBlock(itemstack, block);
++    }
++    
++    /**
++     * Called by CraftingManager to determine if an item is reparable.
++     * @return True if reparable
++     */
++    public boolean isRepairable() 
++    {
++	    return canRepair && isDamageable();
++    }
++
++    /**
++     * Call to disable repair recipes.
++     * @return The current Item instance
++     */
++    public Item setNoRepair() 
++    {
++	    canRepair = false;
++	    return this;
++    }
++
++    /* FORGE: Called before a block is broken.  Return true to prevent default
++     * block harvesting.
++     *
++     * Note: In SMP, this is called on both client and server sides!
++     */
++    /**
++     * Called before a block is broken.  Return true to prevent default block harvesting.
++     *
++     * Note: In SMP, this is called on both client and server sides!
++     * 
++     * @param itemstack The current ItemStack
++     * @param X The X Position
++     * @param Y The X Position
++     * @param Z The X Position
++     * @param player The Player that is wielding the item
++     * @return True to prevent harvesting, false to continue as normal
++     */
++    public boolean onBlockStartBreak(ItemStack itemstack, int X, int Y, int Z, EntityPlayer player) 
++    {
++	    return false;
++    }
++
++    /**
++     * Called each tick while using an item.
++     * @param stack The Item being used
++     * @param player The Player using the item
++     * @param count The amount of time in tick the item has been used for continuously
++     */
++    public void onUsingItemTick(ItemStack stack, EntityPlayer player, int count) 
++    {
++    }
  
-     static 
+     static
      {

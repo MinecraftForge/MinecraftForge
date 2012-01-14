@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockContainer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockContainer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -26,7 +26,7 @@
+@@ -17,7 +17,7 @@
      public void onBlockAdded(World world, int i, int j, int k)
      {
          super.onBlockAdded(world, i, j, k);
@@ -9,13 +9,19 @@
      }
  
      public void onBlockRemoval(World world, int i, int j, int k)
-@@ -37,6 +37,12 @@
+@@ -28,6 +28,18 @@
  
      public abstract TileEntity getBlockEntity();
  
 +    /* FORGE: Metadata-sensitive version, to fix 1.8.1 regression.
 +     */
-+    public TileEntity getBlockEntity(int md) {
++    /**
++     * Metadata-sensitive version, to fix 1.8.1 regression.
++     * @param metadata The current Metadata 
++     * @return And instance of the TileEntity class for this block
++     */
++    public TileEntity getBlockEntity(int md) 
++    {
 +	    return getBlockEntity();
 +    }
 + 

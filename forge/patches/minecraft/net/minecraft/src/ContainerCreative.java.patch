@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -74,20 +74,23 @@
+@@ -64,20 +64,23 @@
              }
              itemList.add(new ItemStack(ablock[l1], 1, k2));
          }
+-
 +        
 +        for(int x = 0; x < 256; x++)
 +        {
@@ -12,22 +13,22 @@
 +        		Block.blocksList[x].addCreativeItems((ArrayList)itemList);
 +        	}
 +        }
- 
-         for(int i2 = 256; i2 < Item.itemsList.length; i2++)
++        
+         for (int i2 = 256; i2 < Item.itemsList.length; i2++)
          {
--            if(Item.itemsList[i2] != null && Item.itemsList[i2].shiftedIndex != Item.potion.shiftedIndex)
-+            if(Item.itemsList[i2] != null)
+-            if (Item.itemsList[i2] != null && Item.itemsList[i2].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[i2].shiftedIndex != Item.field_44019_bC.shiftedIndex)
++            if (Item.itemsList[i2] != null)
              {
 -                itemList.add(new ItemStack(Item.itemsList[i2]));
-+            	Item.itemsList[i2].addCreativeItems((ArrayList)itemList);
++                Item.itemsList[i2].addCreativeItems((ArrayList)itemList);
              }
          }
  
--        for(int j2 = 1; j2 < 16; j2++)
+-        for (int j2 = 1; j2 < 16; j2++)
 -        {
 -            itemList.add(new ItemStack(Item.dyePowder.shiftedIndex, 1, j2));
 -        }
 -
-         InventoryPlayer inventoryplayer = entityplayer.inventory;
-         for(int l2 = 0; l2 < 9; l2++)
+         Integer integer;
+         for (Iterator iterator = EntityList.field_44041_a.keySet().iterator(); iterator.hasNext(); itemList.add(new ItemStack(Item.field_44019_bC.shiftedIndex, 1, integer.intValue())))
          {

@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
-@@ -34,8 +34,8 @@
+@@ -10,8 +10,8 @@
+     implements IWorldAccess
  {
- 
      public List tileEntities;
 -    private World worldObj;
 -    private RenderEngine renderEngine;
@@ -11,7 +11,7 @@
      private List worldRenderersToUpdate;
      private WorldRenderer sortedWorldRenderers[];
      private WorldRenderer worldRenderers[];
-@@ -43,8 +43,8 @@
+@@ -19,8 +19,8 @@
      private int renderChunksTall;
      private int renderChunksDeep;
      private int glRenderListBase;
