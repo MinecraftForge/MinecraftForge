@@ -1,14 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/Packet230ModLoader.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Packet230ModLoader.java	0000-00-00 00:00:00.000000000 -0000
-@@ -75,7 +75,10 @@
-                 }));
+@@ -71,7 +71,11 @@
+                         }));
              }
              byte abyte0[] = new byte[k1];
 -            datainputstream.read(abyte0, 0, k1);
-+	    int bytesRead = 0;
-+	    while (bytesRead < k1) {
-+		    bytesRead += datainputstream.read(abyte0, bytesRead, k1 - bytesRead);
-+	    }
++            int bytesRead = 0;
++            while (bytesRead < k1) 
++            {
++                bytesRead += datainputstream.read(abyte0, bytesRead, k1 - bytesRead);
++            }
              dataString[j1] = new String(abyte0);
          }
- 
+     }

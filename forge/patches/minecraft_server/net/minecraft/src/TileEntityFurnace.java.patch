@@ -39,7 +39,7 @@
          if (itemstack == null)
          {
              return false;
-@@ -184,11 +198,8 @@
+@@ -184,14 +198,8 @@
          {
              return false;
          }
@@ -47,13 +47,16 @@
 -        {
 -            return true;
 -        }
--        return furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize();
+-        else
+-        {
+-            return furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize();
+-        }
 +        int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
 +        return (result <= getInventoryStackLimit() && result <= itemstack.getMaxStackSize());
      }
  
      public void smeltItem()
-@@ -197,23 +208,30 @@
+@@ -200,23 +208,30 @@
          {
              return;
          }
@@ -89,13 +92,3 @@
      {
          if (itemstack == null)
          {
-@@ -240,7 +258,8 @@
-         {
-             return 100;
-         }
--        return i != Item.blazeRod.shiftedIndex ? 0 : 2400;
-+        return i != Item.blazeRod.shiftedIndex ? ModLoader.AddFuel(i) : 2400;
-+        
-     }
- 
-     public boolean isUseableByPlayer(EntityPlayer entityplayer)
