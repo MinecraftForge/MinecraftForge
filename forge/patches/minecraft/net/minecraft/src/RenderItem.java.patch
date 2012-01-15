@@ -1,25 +1,26 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderItem.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,10 @@
- 
+@@ -1,6 +1,11 @@
  package net.minecraft.src;
  
+ import java.util.Random;
++
 +import net.minecraft.src.forge.ForgeHooksClient;
 +import net.minecraft.src.forge.ICustomItemRenderer;
 +import net.minecraft.src.forge.MinecraftForgeClient;
 +
- import java.util.Random;
  import org.lwjgl.opengl.GL11;
  
-@@ -54,10 +58,34 @@
+ public class RenderItem extends Render
+@@ -43,10 +48,33 @@
          }
          GL11.glTranslatef((float)d, (float)d1 + f2, (float)d2);
          GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
--        if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
-+
+-        if (itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
 +        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(itemstack.itemID);
 +        
-+        if (customRenderer != null) {
++        if (customRenderer != null) 
++        {
 +        	GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
 +            loadTexture(ForgeHooksClient.getTexture("/terrain.png", itemstack.getItem()));
 +            float f4 = 0.25F;
@@ -35,64 +36,66 @@
 +                    float f9 = ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / f4;
 +                    GL11.glTranslatef(f5, f7, f9);
 +                }
-+				ForgeHooksClient.renderCustomItem(customRenderer, renderBlocks,
-+						itemstack.itemID, itemstack.getItemDamage(),
-+						entityitem.getEntityBrightness(f1));
++				ForgeHooksClient.renderCustomItem(customRenderer, renderBlocks, itemstack.itemID, itemstack.getItemDamage(), entityitem.getEntityBrightness(f1));
 +                GL11.glPopMatrix();
 +            }
-+        } else if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++        } 
++        else if (itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
          {
              GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
 -            loadTexture("/terrain.png");
 +            loadTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]));
              float f4 = 0.25F;
-             int j = Block.blocksList[itemstack.itemID].getRenderType();
-             if(j == 1 || j == 19 || j == 12 || j == 2)
-@@ -107,10 +135,10 @@
-             int i = itemstack.getIconIndex();
-             if(itemstack.itemID < 256)
+             int k = Block.blocksList[itemstack.itemID].getRenderType();
+             if (k == 1 || k == 19 || k == 12 || k == 2)
+@@ -94,11 +122,11 @@
+             int j = itemstack.getIconIndex();
+             if (itemstack.itemID < 256)
              {
 -                loadTexture("/terrain.png");
-+                loadTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]));
-             } else
++            	loadTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]));
+             }
+             else
              {
 -                loadTexture("/gui/items.png");
-+                loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]));
++            	loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]));
              }
-             if(field_27004_a)
+             if (field_27004_a)
              {
-@@ -162,10 +190,37 @@
+@@ -149,10 +177,39 @@
  
      public void drawItemIntoGui(FontRenderer fontrenderer, RenderEngine renderengine, int i, int j, int k, int l, int i1)
      {
--        if(i < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[i].getRenderType()))
+-        if (i < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[i].getRenderType()))
 +    	ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(i);
-+    	if (customRenderer != null) {
-+    		  int j1 = i;
-+              String tex = ForgeHooksClient.getTexture("/terrain.png", Item.itemsList [i]);
-+              renderengine.bindTexture(renderengine.getTexture(tex));
-+              Item item = Item.itemsList[i];
-+              GL11.glPushMatrix();
-+              GL11.glTranslatef(l - 2, i1 + 3, -3F + zLevel);
-+              GL11.glScalef(10F, 10F, 10F);
-+              GL11.glTranslatef(1.0F, 0.5F, 1.0F);
-+              GL11.glScalef(1.0F, 1.0F, -1F);
-+              GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
-+              GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-+              int l1 = Item.itemsList[i].getColorFromDamage(j);
-+              float f2 = (float)(l1 >> 16 & 0xff) / 255F;
-+              float f4 = (float)(l1 >> 8 & 0xff) / 255F;
-+              float f5 = (float)(l1 & 0xff) / 255F;
-+              if(field_27004_a)
-+              {
-+                  GL11.glColor4f(f2, f4, f5, 1.0F);
-+              }
-+              GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
-+              renderBlocks.useInventoryTint = field_27004_a;
-+              ForgeHooksClient.renderCustomItem(customRenderer, renderBlocks, i, j, 1.0F);
-+              renderBlocks.useInventoryTint = true;
-+              GL11.glPopMatrix();
-+    	} else if(i < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[i].getRenderType()))
++		if (customRenderer != null) 
++		{
++			int j1 = i;
++	        String tex = ForgeHooksClient.getTexture("/terrain.png", Item.itemsList[i]);
++	        renderengine.bindTexture(renderengine.getTexture(tex));
++	        Item item = Item.itemsList[i];
++	        GL11.glPushMatrix();
++	        GL11.glTranslatef(l - 2, i1 + 3, -3F + zLevel);
++	        GL11.glScalef(10F, 10F, 10F);
++	        GL11.glTranslatef(1.0F, 0.5F, 1.0F);
++	        GL11.glScalef(1.0F, 1.0F, -1F);
++	        GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
++	        GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
++	        int l1 = Item.itemsList[i].getColorFromDamage(j, 0);
++	        float f2 = (float)(l1 >> 16 & 0xff) / 255F;
++	        float f4 = (float)(l1 >> 8 & 0xff) / 255F;
++	        float f5 = (float)(l1 & 0xff) / 255F;
++	        if(field_27004_a)
++	        {
++	            GL11.glColor4f(f2, f4, f5, 1.0F);
++	        }
++	        GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
++	        renderBlocks.useInventoryTint = field_27004_a;
++	        ForgeHooksClient.renderCustomItem(customRenderer, renderBlocks, i, j, 1.0F);
++	        renderBlocks.useInventoryTint = true;
++	        GL11.glPopMatrix();
++		} 
++		else if(i < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[i].getRenderType()))
          {
              int j1 = i;
 -            renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
@@ -101,18 +104,20 @@
              Block block = Block.blocksList[j1];
              GL11.glPushMatrix();
              GL11.glTranslatef(l - 2, i1 + 3, -3F + zLevel);
-@@ -214,10 +269,12 @@
+@@ -200,11 +257,13 @@
              GL11.glDisable(2896 /*GL_LIGHTING*/);
-             if(i < 256)
+             if (i < 256)
              {
 -                renderengine.bindTexture(renderengine.getTexture("/terrain.png"));
+-            }
 +                String tex = ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[i]);
 +                renderengine.bindTexture(renderengine.getTexture(tex));
-             } else
++            } 
+             else
              {
 -                renderengine.bindTexture(renderengine.getTexture("/gui/items.png"));
 +                String tex = ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[i]);
 +                renderengine.bindTexture(renderengine.getTexture(tex));
              }
-             int k1 = Item.itemsList[i].getColorFromDamage(j);
-             float f = (float)(k1 >> 16 & 0xff) / 255F;
+             int l1 = Item.itemsList[i].getColorFromDamage(j, 0);
+             float f = (float)(l1 >> 16 & 0xff) / 255F;

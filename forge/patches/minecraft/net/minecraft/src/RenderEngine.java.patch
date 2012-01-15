@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderEngine.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java	0000-00-00 00:00:00.000000000 -0000
-@@ -39,7 +39,7 @@
+@@ -30,7 +30,7 @@
      private GameSettings options;
      public boolean clampTexture;
      public boolean blurTexture;
@@ -9,12 +9,13 @@
      private BufferedImage missingTextureImage;
  
      public RenderEngine(TexturePackList texturepacklist, GameSettings gamesettings)
-@@ -142,6 +142,9 @@
+@@ -135,6 +135,10 @@
          }
          try
          {
-+        	if(Tessellator.renderingWorldRenderer) {
-+        		System.out.printf("Warning: Texture %s not preloaded, will cause render glitches!\n",s);
++        	if(Tessellator.renderingWorldRenderer) 
++        	{
++        		System.out.printf("Warning: Texture %s not preloaded, will cause render glitches!\n", s);
 +        	}
              singleIntBuffer.clear();
              GLAllocation.generateTextureNames(singleIntBuffer);

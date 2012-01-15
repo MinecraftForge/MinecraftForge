@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,10 @@
+@@ -1,6 +1,10 @@
  package net.minecraft.src;
  
  import net.minecraft.client.Minecraft;
@@ -10,32 +10,36 @@
 +
  import org.lwjgl.opengl.GL11;
  
- // Referenced classes of package net.minecraft.src:
-@@ -40,18 +44,27 @@
+ public class ItemRenderer
+@@ -27,20 +31,31 @@
      public void renderItem(EntityLiving entityliving, ItemStack itemstack, int i)
      {
          GL11.glPushMatrix();
--        if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
+-        if (itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
 +        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(itemstack.itemID);
-+                
-+        if (customRenderer != null) {
++        
++        if (customRenderer != null) 
++        {
 +        	String tex = ForgeHooksClient.getTexture("/terrain.png", itemstack.getItem());
 +        	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
 +        	ForgeHooksClient.renderCustomItem(customRenderer, renderBlocksInstance, itemstack.itemID,  itemstack.getItemDamage(), entityliving.getEntityBrightness(1.0F));        	
-+        } else if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++        } 
++        else if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
          {
 -            GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
 +        	String tex = ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]);
 +        	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
              renderBlocksInstance.renderBlockAsItem(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), 1.0F);
-         } else
+         }
+         else
          {
-             if(itemstack.itemID < 256)
+             if (itemstack.itemID < 256)
              {
 -                GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
 +            	String tex = ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]);
 +            	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
-             } else
+             }
+             else
              {
 -                GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/gui/items.png"));
 +            	String tex = ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]);

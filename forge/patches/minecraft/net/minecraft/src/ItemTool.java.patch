@@ -1,17 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemTool.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ItemTool.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,8 @@
- 
+@@ -1,10 +1,12 @@
  package net.minecraft.src;
  
-+import java.util.Arrays;
 +import net.minecraft.src.forge.ForgeHooks;
- 
- // Referenced classes of package net.minecraft.src:
- //            Item, EnumToolMaterial, ItemStack, Block, 
-@@ -13,8 +15,8 @@
++
+ public class ItemTool extends Item
  {
- 
      private Block blocksEffectiveAgainst[];
 -    protected float efficiencyOnProperMaterial;
 -    private int damageVsEntity;
@@ -20,15 +15,18 @@
      protected EnumToolMaterial toolMaterial;
  
      protected ItemTool(int i, int j, EnumToolMaterial enumtoolmaterial, Block ablock[])
-@@ -42,6 +44,14 @@
+@@ -32,6 +34,17 @@
          return 1.0F;
      }
  
-+    /* FORGE: Overridden to allow custom tool effectiveness
-+     */
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int md) {
-+	    if(ForgeHooks.isToolEffective(itemstack,block,md))
-+                return efficiencyOnProperMaterial;
++    /* FORGE: Overridden to allow custom tool effectiveness */
++    @Override
++    public float getStrVsBlock(ItemStack itemstack, Block block, int md) 
++    {
++	    if (ForgeHooks.isToolEffective(itemstack, block, md))
++	    {
++	    	return efficiencyOnProperMaterial;
++	    }
 +	    return getStrVsBlock(itemstack,block);
 +    }
 +

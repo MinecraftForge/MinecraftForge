@@ -1,25 +1,25 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,10 @@
+@@ -2,6 +2,10 @@
  
  import java.util.*;
  
 +import net.minecraft.src.forge.ArmorProperties;
-+import net.minecraft.src.forge.ISpecialArmor;
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.ISpecialArmor;
 +
- // Referenced classes of package net.minecraft.src:
- //            EntityLiving, InventoryPlayer, FoodStats, PlayerCapabilities, 
- //            ContainerPlayer, World, ChunkCoordinates, DataWatcher, 
-@@ -142,6 +146,7 @@
-                 clearItemInUse();
-             } else
+ public abstract class EntityPlayer extends EntityLiving
+ {
+     public InventoryPlayer inventory;
+@@ -124,6 +128,7 @@
+             }
+             else
              {
-+		itemInUse.getItem().onUsingItemTick(itemInUse,this,itemInUseCount);
-                 if(itemInUseCount <= 25 && itemInUseCount % 4 == 0)
++                itemInUse.getItem().onUsingItemTick(itemInUse,this,itemInUseCount);
+                 if (itemInUseCount <= 25 && itemInUseCount % 4 == 0)
                  {
                      func_35208_b(itemstack, 5);
-@@ -447,7 +452,16 @@
+@@ -433,7 +438,16 @@
  
      public void dropCurrentItem()
      {
@@ -37,16 +37,16 @@
      }
  
      public void dropPlayerItem(ItemStack itemstack)
-@@ -493,6 +507,8 @@
+@@ -480,6 +494,8 @@
          worldObj.spawnEntityInWorld(entityitem);
      }
  
-+    /* FORGE: This isnt called anymore
-+     */
++    /* FORGE: This isnt called anymore, There is a new metadata sensitive version */
++    @Deprecated
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -521,6 +537,45 @@
+@@ -508,6 +524,45 @@
          return f1;
      }
  
@@ -92,50 +92,52 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -719,6 +774,25 @@
+@@ -707,6 +762,26 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
      {
-+         boolean doRegularComputation = true;
-+         int initialDamage = i;
-+     
-+         for (ItemStack stack : inventory.armorInventory) {
-+             if (stack != null && stack.getItem() instanceof ISpecialArmor) {
-+                 ISpecialArmor armor = (ISpecialArmor) stack.getItem();
-+             
-+                 ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
-+                 i = i - props.damageRemove;
-+                 doRegularComputation = doRegularComputation
-+                     && props.allowRegularComputation;
-+             }
-+         }
-+     
-+         if (!doRegularComputation) {
-+             super.damageEntity(damagesource, i);
-+             return;
-+         }
-+         
-         if(!damagesource.isUnblockable() && isBlocking())
++        boolean doRegularComputation = true;
++        int initialDamage = i;
++    
++        for (ItemStack stack : inventory.armorInventory) 
++        {
++            if (stack != null && stack.getItem() instanceof ISpecialArmor) 
++            {
++                ISpecialArmor armor = (ISpecialArmor) stack.getItem();            
++                ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
++                i = i - props.damageRemove;
++                doRegularComputation = doRegularComputation && props.allowRegularComputation;
++            }
++        }
++    
++        if (!doRegularComputation) 
++        {
++            super.damageEntity(damagesource, i);
++            return;
++        }
++        
+         if (!damagesource.isUnblockable() && isBlocking())
          {
              i = 1 + i >> 1;
-@@ -770,7 +844,9 @@
+@@ -758,7 +833,9 @@
  
      public void destroyCurrentEquippedItem()
      {
-+	ItemStack orig=inventory.getCurrentItem();
++        ItemStack orig=inventory.getCurrentItem();
          inventory.setInventorySlotContents(inventory.currentItem, null);
-+	ForgeHooks.onDestroyCurrentItem(this,orig);
++        ForgeHooks.onDestroyCurrentItem(this, orig);
      }
  
      public double getYOffset()
-@@ -896,6 +972,10 @@
+@@ -884,6 +961,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
-+	EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
-+	if (customSleep != null) {
-+	    return customSleep;
-+	}
-         if(!worldObj.singleplayerWorld)
++        EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
++        if (customSleep != null) 
++        {
++            return customSleep;
++        }
+         if (!worldObj.singleplayerWorld)
          {
-             if(isPlayerSleeping() || !isEntityAlive())
+             if (isPlayerSleeping() || !isEntityAlive())

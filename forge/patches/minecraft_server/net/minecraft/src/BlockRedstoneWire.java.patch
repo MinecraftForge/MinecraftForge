@@ -1,14 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockRedstoneWire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode fieldsfirst 
- 
- package net.minecraft.src;
-+import net.minecraft.src.forge.*;
+@@ -2,6 +2,8 @@
  
  import java.util.*;
  
-@@ -51,7 +52,7 @@
++import net.minecraft.src.forge.IConnectRedstone;
++
+ public class BlockRedstoneWire extends Block
+ {
+     private boolean wiresProvidePower;
+@@ -42,7 +44,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
@@ -17,14 +18,14 @@
      }
  
      private void updateAndPropagateCurrentStrength(World world, int i, int j, int k)
-@@ -421,6 +422,10 @@
+@@ -429,6 +431,10 @@
          {
              return false;
          }
-+        if(Block.blocksList[i1] instanceof IConnectRedstone) {
-+        	IConnectRedstone icr=(IConnectRedstone)Block.blocksList[i1];
-+        	return icr.canConnectRedstone(iblockaccess,i,j,k,l);
++        if(Block.blocksList[i1] instanceof IConnectRedstone) 
++        {
++        	return ((IConnectRedstone)Block.blocksList[i1]).canConnectRedstone(iblockaccess,i,j,k,l);
 +        }
-         if(Block.blocksList[i1].canProvidePower() && l != -1)
+         if (i1 == Block.redstoneRepeaterIdle.blockID || i1 == Block.redstoneRepeaterActive.blockID)
          {
-             return true;
+             int j1 = iblockaccess.getBlockMetadata(i, j, k);

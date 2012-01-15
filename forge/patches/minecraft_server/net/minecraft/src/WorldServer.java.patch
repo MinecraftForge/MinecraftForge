@@ -1,32 +1,38 @@
 --- ../src_base/minecraft_server/net/minecraft/src/WorldServer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/WorldServer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -63,15 +63,20 @@
+@@ -54,15 +54,30 @@
      public List getTileEntityList(int i, int j, int k, int l, int i1, int j1)
      {
          ArrayList arraylist = new ArrayList();
--        for(int k1 = 0; k1 < loadedTileEntityList.size(); k1++)
--        {
+-        for (int k1 = 0; k1 < loadedTileEntityList.size(); k1++)
++        for(int x = (i>>4); x <= (l>>4); x++)
+         {
 -            TileEntity tileentity = (TileEntity)loadedTileEntityList.get(k1);
--            if(tileentity.xCoord >= i && tileentity.yCoord >= j && tileentity.zCoord >= k && tileentity.xCoord < l && tileentity.yCoord < i1 && tileentity.zCoord < j1)
--            {
+-            if (tileentity.xCoord >= i && tileentity.yCoord >= j && tileentity.zCoord >= k && tileentity.xCoord < l && tileentity.yCoord < i1 && tileentity.zCoord < j1)
++            for(int z = (k>>4); z <= (j1>>4); z++) 
+             {
 -                arraylist.add(tileentity);
--            }
--        }
++                Chunk chunk = getChunkFromChunkCoords(x,z);
++                if (chunk == null)
++                {
++                    continue;
++                }
++                for(Object obj : chunk.chunkTileEntityMap.values()) 
++                {
++                    TileEntity entity = (TileEntity)obj;
++                    if(entity.isInvalid())
++                    {
++                        continue;
++                    }
++                    if (entity.xCoord >= i && entity.yCoord >= j  && entity.zCoord >= k && 
++                        entity.xCoord <= l && entity.yCoord <= i1 && entity.zCoord <= j1) 
++                    {
++                        arraylist.add(entity);
++                    }
++                }
+             }
+         }
 -
-+	for(int x=(i>>4); x<=(l>>4); x++) 
-+	for(int z=(k>>4); z<=(j1>>4); z++) {
-+		Chunk ch=getChunkFromChunkCoords(x,z);
-+		if(ch==null) continue;
-+		for(Object ob : ch.chunkTileEntityMap.values()) {
-+			TileEntity te=(TileEntity)ob;
-+			if(te.isInvalid()) continue;
-+			if(te.xCoord>=i && te.yCoord>=j && te.zCoord>=k
-+					&& te.xCoord<=l && te.yCoord<=i1 &&
-+					te.zCoord<=j1) {
-+				arraylist.add(te);
-+			}
-+		}
-+	}
          return arraylist;
      }
  

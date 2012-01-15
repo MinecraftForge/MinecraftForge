@@ -1,23 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,8 @@
- 
+@@ -1,13 +1,15 @@
  package net.minecraft.src;
  
+ import java.util.*;
++
 +import net.minecraft.src.forge.ForgeHooksClient;
 +
- import java.util.*;
  import org.lwjgl.opengl.GL11;
  
-@@ -18,7 +20,6 @@
- 
+ public class WorldRenderer
+ {
      public World worldObj;
      private int glRenderList;
 -    private static Tessellator tessellator;
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
-@@ -160,10 +161,11 @@
+@@ -150,10 +152,11 @@
                              GL11.glTranslatef((float)(-sizeDepth) / 2.0F, (float)(-sizeHeight) / 2.0F, (float)(-sizeDepth) / 2.0F);
                              GL11.glScalef(f, f, f);
                              GL11.glTranslatef((float)sizeDepth / 2.0F, (float)sizeHeight / 2.0F, (float)sizeDepth / 2.0F);
@@ -27,53 +27,53 @@
 +                            Tessellator.instance.startDrawingQuads();
 +                            Tessellator.instance.setTranslationD(-posX, -posY, -posZ);
                          }
--                        if(i2 == 0 && Block.isBlockContainer[i3])
-+                        if(i2 == 0 && Block.blocksList[i3] != null && Block.blocksList[i3].hasTileEntity(chunkcache.getBlockMetadata(l2, j2, k2)))
+-                        if (i2 == 0 && Block.isBlockContainer[i3])
++                        if (i2 == 0 && Block.blocksList[i3] != null && Block.blocksList[i3].hasTileEntity(chunkcache.getBlockMetadata(l2, j2, k2)))
                          {
                              TileEntity tileentity = chunkcache.getBlockTileEntity(l2, j2, k2);
-                             if(TileEntityRenderer.instance.hasSpecialRenderer(tileentity))
-@@ -177,15 +179,13 @@
+                             if (TileEntityRenderer.instance.hasSpecialRenderer(tileentity))
+@@ -167,25 +170,29 @@
                          {
                              flag1 = true;
                          }
--                        if(j3 != i2)
--                        {
--                            flag = true;
+-                        if (j3 != i2)
++                        if (j3 > i2)
+                         {
+                             flag = true;
 -                            continue;
--                        }
--                        if(j3 == i2)
--                        {
+                         }
+-                        if (j3 == i2)
++                        if(!ForgeHooksClient.canRenderInPass(block, i2))
+                         {
 -                            flag1 |= renderblocks.renderBlockByRenderType(block, l2, j2, k2);
--                        }
-+                        if (j3 > i2) flag = true;
-+                        if(!ForgeHooksClient.canRenderInPass(block,i2))
 +                        	continue;
-+
-+						ForgeHooksClient.beforeBlockRender(block, renderblocks);
-+						flag1 |= renderblocks.renderBlockByRenderType(block, l2, j2, k2);
-+						ForgeHooksClient.afterBlockRender(block, renderblocks);
+                         }
++                        
++                        ForgeHooksClient.beforeBlockRender(block, renderblocks);
++                        flag1 |= renderblocks.renderBlockByRenderType(block, l2, j2, k2);                        
++                        ForgeHooksClient.afterBlockRender(block, renderblocks);
                      }
- 
                  }
-@@ -194,10 +194,11 @@
+             }
  
-             if(flag2)
+             if (flag2)
              {
 -                bytesDrawn += tessellator.draw();
-+                ForgeHooksClient.afterRenderPass(i2);
++            	ForgeHooksClient.afterRenderPass(i2);
 +                bytesDrawn += Tessellator.instance.draw();
                  GL11.glPopMatrix();
                  GL11.glEndList();
 -                tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
 +                Tessellator.instance.setTranslationD(0.0D, 0.0D, 0.0D);
-             } else
+             }
+             else
              {
-                 flag1 = false;
-@@ -288,8 +289,4 @@
+@@ -279,9 +286,4 @@
+     {
          needsUpdate = true;
      }
- 
--    static 
+-
+-    static
 -    {
 -        tessellator = Tessellator.instance;
 -    }

@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
---- minecraft_server\net\minecraft\src\ItemMap.java	Tue Nov 22 23:21:56 2011
-+++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Wed Nov 23 00:09:45 2011
+--- minecraft_server\net\minecraft\src\ItemMap.java	Fri Jan 13 17:46:22 2012
++++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Fri Jan 13 17:37:00 2012
 @@ -22,7 +22,6 @@
     }
  
@@ -11,8 +11,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_pa
           var1.func_28145_b(var2.func_28104_b("map"));
 diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_server_patched\net\minecraft\src\RConThreadClient.java
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Tue Nov 22 23:22:10 2011
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Wed Nov 23 00:09:45 2011
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Jan 13 17:45:20 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Jan 13 17:37:00 2012
 @@ -21,7 +21,9 @@
     }
  

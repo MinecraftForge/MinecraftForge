@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -82,15 +82,7 @@
+@@ -75,15 +75,7 @@
  
      public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
      {
@@ -13,11 +13,11 @@
 -        entityitem.delayBeforeCanPickup = 10;
 -        world.spawnEntityInWorld(entityitem);
 -        world.setBlockWithNotify(i, j, k, 0);
-+	dropBlockAsItem(world,i,j,k,l,0);
++    	dropBlockAsItem(world,i,j,k,l,0);
          entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
      }
  
-@@ -101,7 +93,7 @@
+@@ -94,7 +86,7 @@
  
      public int quantityDropped(Random random)
      {

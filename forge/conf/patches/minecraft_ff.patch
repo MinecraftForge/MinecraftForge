@@ -1,7 +1,7 @@
 diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net\minecraft\client\Minecraft.java
---- minecraft\net\minecraft\client\Minecraft.java	Tue Nov 22 23:21:44 2011
-+++ minecraft_patched\net\minecraft\client\Minecraft.java	Wed Nov 23 00:09:14 2011
-@@ -1600,11 +1600,13 @@
+--- minecraft\net\minecraft\client\Minecraft.java	Fri Jan 13 17:44:46 2012
++++ minecraft_patched\net\minecraft\client\Minecraft.java	Fri Jan 13 17:35:06 2012
+@@ -1609,11 +1609,13 @@
  
              this.field_6324_e.func_600_a(var6.field_22395_a + var10, 64, var6.field_22396_c + var8);
              if(!this.field_6327_b.func_35643_e()) {
@@ -16,8 +16,8 @@ diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net
           }
        }
 diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\minecraft\src\CodecMus.java
---- minecraft\net\minecraft\src\CodecMus.java	Tue Nov 22 23:21:36 2011
-+++ minecraft_patched\net\minecraft\src\CodecMus.java	Wed Nov 23 00:09:14 2011
+--- minecraft\net\minecraft\src\CodecMus.java	Fri Jan 13 17:44:20 2012
++++ minecraft_patched\net\minecraft\src\CodecMus.java	Fri Jan 13 17:35:06 2012
 @@ -1,5 +1,6 @@
  package net.minecraft.src;
  
@@ -39,8 +39,8 @@ diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\min
     }
  }
 diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\minecraft\src\ItemMap.java
---- minecraft\net\minecraft\src\ItemMap.java	Tue Nov 22 23:21:24 2011
-+++ minecraft_patched\net\minecraft\src\ItemMap.java	Wed Nov 23 00:09:14 2011
+--- minecraft\net\minecraft\src\ItemMap.java	Fri Jan 13 17:43:42 2012
++++ minecraft_patched\net\minecraft\src\ItemMap.java	Fri Jan 13 17:35:06 2012
 @@ -19,7 +19,6 @@
     }
  
@@ -58,8 +58,8 @@ diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\mine
        if(var4 == null) {
           var1.func_28156_b(var2.func_28101_b("map"));
 diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\net\minecraft\src\MusInputStream.java
---- minecraft\net\minecraft\src\MusInputStream.java	Tue Nov 22 23:21:24 2011
-+++ minecraft_patched\net\minecraft\src\MusInputStream.java	Wed Nov 23 00:09:14 2011
+--- minecraft\net\minecraft\src\MusInputStream.java	Fri Jan 13 17:42:36 2012
++++ minecraft_patched\net\minecraft\src\MusInputStream.java	Fri Jan 13 17:35:06 2012
 @@ -1,5 +1,6 @@
  package net.minecraft.src;
  
@@ -82,8 +82,8 @@ diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\n
        for(int var4 = 0; var4 < var3; ++var4) {
           byte var5 = var1[var2 + var4] = (byte)(var1[var2 + var4] ^ this.field_1516_c >> 8);
 diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
---- minecraft\net\minecraft\src\RenderGlobal.java	Tue Nov 22 23:21:20 2011
-+++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Wed Nov 23 00:10:20 2011
+--- minecraft\net\minecraft\src\RenderGlobal.java	Fri Jan 13 17:43:24 2012
++++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Fri Jan 13 17:35:06 2012
 @@ -1466,7 +1466,7 @@
           double var15 = this.field_1439_t.field_22009_h.field_611_ak - var2;
           double var17 = this.field_1439_t.field_22009_h.field_610_al - var4;
@@ -94,8 +94,8 @@ diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net
              this.field_1439_t.field_6321_h.func_1192_a(var21 = new EntityHugeExplodeFX(this.field_1448_k, var2, var4, var6, var8, var10, var12));
           } else if(var1.equals("largeexplode")) {
 diff -r -U 3 minecraft\net\minecraft\src\ThreadedFileIOBase.java minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Tue Nov 22 23:21:30 2011
-+++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Wed Nov 23 00:09:14 2011
+--- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Fri Jan 13 17:43:00 2012
++++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Jan 13 17:35:06 2012
 @@ -21,7 +21,9 @@
     }
  

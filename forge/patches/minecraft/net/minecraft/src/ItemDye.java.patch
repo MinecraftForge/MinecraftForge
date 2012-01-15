@@ -1,28 +1,21 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ItemDye.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,7 +3,9 @@
- // Decompiler options: packimports(3) braces deadcode fieldsfirst 
- 
+@@ -1,7 +1,10 @@
  package net.minecraft.src;
-+import net.minecraft.src.forge.ForgeHooks;
  
 +import java.util.ArrayList;
  import java.util.Random;
  
- // Referenced classes of package net.minecraft.src:
-@@ -45,13 +47,23 @@
- 
-     public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int l)
-     {
--        if(!entityplayer.canPlayerEdit(i, j, k))
-+        if(entityplayer != null && !entityplayer.canPlayerEdit(i, j, k))
-         {
-             return false;
-         }
-         if(itemstack.getItemDamage() == 15)
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class ItemDye extends Item
+ {
+     public static final String dyeColorNames[] =
+@@ -43,6 +46,16 @@
+         if (itemstack.getItemDamage() == 15)
          {
              int i1 = world.getBlockId(i, j, k);
-+            
++
 +            if (ForgeHooks.onUseBonemeal(world, i1, i, j, k))
 +            {
 +            	if (!world.multiplayerWorld)
@@ -32,33 +25,38 @@
 +            	return true;
 +            }
 +            
-             if(i1 == Block.sapling.blockID)
+             if (i1 == Block.sapling.blockID)
              {
-                 if(!world.multiplayerWorld)
-@@ -118,13 +130,7 @@
+                 if (!world.multiplayerWorld)
+@@ -109,14 +122,7 @@
                              world.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1);
                              continue;
                          }
--                        if(itemRand.nextInt(3) != 0)
+-                        if (itemRand.nextInt(3) != 0)
 -                        {
 -                            world.setBlockWithNotify(k1, l1, i2, Block.plantYellow.blockID);
--                        } else
+-                        }
+-                        else
 -                        {
 -                            world.setBlockWithNotify(k1, l1, i2, Block.plantRed.blockID);
 -                        }
-+			ForgeHooks.plantGrassPlant(world,k1,l1,i2);
++                        ForgeHooks.plantGrassPlant(world, k1, l1, i2);
                      }
- 
                  }
-@@ -147,5 +153,17 @@
-             }
-         }
+                 return true;
+@@ -125,6 +131,23 @@
+         return false;
      }
+ 
 +    
-+    /* FORGE: Called when a new CreativeContainer is opened, populate the list 
++    /**
++     * Called when a new CreativeContainer is opened, populate the list 
 +     * with all of the items for this item you want a player in creative mode
 +     * to have access to.
++     * 
++     * @param itemList The list of items currently in the creative inventory
 +     */
++    @Override
 +    public void addCreativeItems(ArrayList itemList)
 +    {    	
 +		for (int x = 0; x < 16; x++)
@@ -66,5 +64,7 @@
 +			itemList.add(new ItemStack(this, 1, x));
 +		}
 +    }
- 
- }
++
+     public void useItemOnEntity(ItemStack itemstack, EntityLiving entityliving)
+     {
+         if (entityliving instanceof EntitySheep)

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockContainer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockContainer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -26,7 +26,7 @@
+@@ -17,7 +17,7 @@
      public void onBlockAdded(World world, int i, int j, int k)
      {
          super.onBlockAdded(world, i, j, k);
@@ -9,7 +9,7 @@
      }
  
      public void onBlockRemoval(World world, int i, int j, int k)
-@@ -36,7 +36,7 @@
+@@ -27,7 +27,7 @@
      }
  
      public abstract TileEntity getBlockEntity();
@@ -18,7 +18,7 @@
      public void powerBlock(World world, int i, int j, int k, int l, int i1)
      {
          super.powerBlock(world, i, j, k, l, i1);
-@@ -46,4 +46,14 @@
+@@ -37,4 +37,14 @@
              tileentity.onTileEntityPowered(l, i1);
          }
      }

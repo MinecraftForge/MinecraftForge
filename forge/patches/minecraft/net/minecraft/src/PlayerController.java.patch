@@ -1,34 +1,32 @@
 --- ../src_base/minecraft/net/minecraft/src/PlayerController.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/PlayerController.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,7 @@
- // Decompiler options: packimports(3) braces deadcode fieldsfirst 
- 
+@@ -1,6 +1,7 @@
  package net.minecraft.src;
-+import net.minecraft.src.forge.*;
  
  import net.minecraft.client.Minecraft;
++import net.minecraft.src.forge.ForgeHooks;
  
-@@ -39,11 +40,10 @@
+ public abstract class PlayerController
+ {
+@@ -29,10 +30,10 @@
          }
          world.playAuxSFX(2001, i, j, k, block.blockID + world.getBlockMetadata(i, j, k) * 256);
          int i1 = world.getBlockMetadata(i, j, k);
 -        boolean flag = world.setBlockWithNotify(i, j, k, 0);
--        if(block != null && flag)
--        {
--            block.onBlockDestroyedByPlayer(world, i, j, k, i1);
--        }
-+
+-        if (block != null && flag)
 +        boolean flag = block.removeBlockByPlayer(world, mc.thePlayer, i, j, k);
-+        if(flag) 
++        if (flag)
+         {
+-            block.onBlockDestroyedByPlayer(world, i, j, k, i1);
 +        	block.onBlockDestroyedByPlayer(world, i, j, k, i1);
+         }
          return flag;
      }
- 
-@@ -67,6 +67,7 @@
-             if(itemstack1.stackSize == 0)
+@@ -57,6 +58,7 @@
+             if (itemstack1.stackSize == 0)
              {
                  entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
-+		ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack1);
++                ForgeHooks.onDestroyCurrentItem(entityplayer,itemstack1);
              }
              return true;
-         } else
+         }

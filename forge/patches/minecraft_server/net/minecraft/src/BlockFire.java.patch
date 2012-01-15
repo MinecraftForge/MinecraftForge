@@ -1,15 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -14,14 +14,14 @@
- public class BlockFire extends Block
- {
- 
--    private int chanceToEncourageFire[];
--    private int abilityToCatchFire[];
--
-+	private int chanceToEncourageFire[]; 
-+	private int abilityToCatchFire[];
-+	
+@@ -10,8 +10,8 @@
      protected BlockFire(int i, int j)
      {
          super(i, j, Material.fire);
@@ -20,7 +11,7 @@
          setTickOnLoad(true);
      }
  
-@@ -38,11 +38,10 @@
+@@ -28,11 +28,10 @@
          setBurnRate(Block.cloth.blockID, 30, 60);
          setBurnRate(Block.vine.blockID, 15, 100);
      }
@@ -34,34 +25,29 @@
      }
  
      public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
-@@ -77,11 +76,9 @@
+@@ -67,7 +66,8 @@
  
      public void updateTick(World world, int i, int j, int k, Random random)
      {
 -        boolean flag = world.getBlockId(i, j - 1, k) == Block.netherrack.blockID;
--        if((world.worldProvider instanceof WorldProviderEnd) && world.getBlockId(i, j - 1, k) == Block.bedrock.blockID)
--        {
--            flag = true;
--        }
 +        Block base = Block.blocksList[world.getBlockId(i,  j - 1, k)];
 +        boolean flag = (base != null && base.isFireSource(world, i, j - 1, k, world.getBlockMetadata(i, j - 1, k), 0));
-+
-         if(!canPlaceBlockAt(world, i, j, k))
+         if ((world.worldProvider instanceof WorldProviderEnd) && world.getBlockId(i, j - 1, k) == Block.bedrock.blockID)
          {
-             world.setBlockWithNotify(i, j, k, 0);
-@@ -99,23 +96,23 @@
+             flag = true;
+@@ -89,23 +89,23 @@
          world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
-         if(!flag && !func_268_g(world, i, j, k))
+         if (!flag && !func_268_g(world, i, j, k))
          {
--            if(!world.isBlockNormalCube(i, j - 1, k) || l > 3)
-+            if(!world.isBlockSolidOnSide(i, j - 1, k, 0) || l > 3)
+-            if (!world.isBlockNormalCube(i, j - 1, k) || l > 3)
++            if (!world.isBlockSolidOnSide(i, j - 1, k, 0) || l > 3)
              {
                  world.setBlockWithNotify(i, j, k, 0);
              }
              return;
          }
--        if(!flag && !canBlockCatchFire(world, i, j - 1, k) && l == 15 && random.nextInt(4) == 0)
-+        if(!flag && !canBlockCatchFire(world, i, j - 1, k, 0) && l == 15 && random.nextInt(4) == 0)
+-        if (!flag && !canBlockCatchFire(world, i, j - 1, k) && l == 15 && random.nextInt(4) == 0)
++        if (!flag && !canBlockCatchFire(world, i, j - 1, k, 1) && l == 15 && random.nextInt(4) == 0)
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
@@ -78,22 +64,18 @@
 +        tryToCatchBlockOnFire(world, i, j + 1, k, 250, random, l, 0);
 +        tryToCatchBlockOnFire(world, i, j, k - 1, 300, random, l, 3);
 +        tryToCatchBlockOnFire(world, i, j, k + 1, 300, random, l, 2);
-         for(int i1 = i - 1; i1 <= i + 1; i1++)
+         for (int i1 = i - 1; i1 <= i + 1; i1++)
          {
-             for(int j1 = k - 1; j1 <= k + 1; j1++)
-@@ -154,10 +151,24 @@
+             for (int j1 = k - 1; j1 <= k + 1; j1++)
+@@ -142,55 +142,66 @@
          }
- 
      }
--
-+    
-+    /*
-+     * Added for backwards compatibility, should not be called by anyone who is making a mod for forge
-+     */
+ 
 +    @Deprecated
      private void tryToCatchBlockOnFire(World world, int i, int j, int k, int l, Random random, int i1)
      {
 -        int j1 = abilityToCatchFire[world.getBlockId(i, j, k)];
+-        if (random.nextInt(l) < j1)
 +    	tryToCatchBlockOnFire(world, i, j, k, l, random, i1, 0);
 +    }
 +
@@ -105,34 +87,57 @@
 +        {
 +        	j1 = block.getFlammability(world, i, j, k, world.getBlockMetadata(i, j, k), face);
 +        }
-         if(random.nextInt(l) < j1)
++        if(random.nextInt(l) < j1)
          {
              boolean flag = world.getBlockId(i, j, k) == Block.tnt.blockID;
-@@ -182,27 +193,27 @@
+-            if (random.nextInt(i1 + 10) < 5 && !world.canLightningStrikeAt(i, j, k))
++            if(random.nextInt(i1 + 10) < 5 && !world.canLightningStrikeAt(i, j, k))
+             {
+                 int k1 = i1 + random.nextInt(5) / 4;
+-                if (k1 > 15)
++                if(k1 > 15)
+                 {
+                     k1 = 15;
+                 }
+                 world.setBlockAndMetadataWithNotify(i, j, k, blockID, k1);
+-            }
+-            else
++            } else
+             {
+                 world.setBlockWithNotify(i, j, k, 0);
+             }
+-            if (flag)
++            if(flag)
+             {
+                 Block.tnt.onBlockDestroyedByPlayer(world, i, j, k, 1);
+             }
+         }
+     }
  
++
      private boolean func_268_g(World world, int i, int j, int k)
      {
--        if(canBlockCatchFire(world, i + 1, j, k))
+-        if (canBlockCatchFire(world, i + 1, j, k))
 +        if(canBlockCatchFire(world, i + 1, j, k, 4))
          {
              return true;
          }
--        if(canBlockCatchFire(world, i - 1, j, k))
+-        if (canBlockCatchFire(world, i - 1, j, k))
 +        if(canBlockCatchFire(world, i - 1, j, k, 5))
          {
              return true;
          }
--        if(canBlockCatchFire(world, i, j - 1, k))
+-        if (canBlockCatchFire(world, i, j - 1, k))
 +        if(canBlockCatchFire(world, i, j - 1, k, 1))
          {
              return true;
          }
--        if(canBlockCatchFire(world, i, j + 1, k))
+-        if (canBlockCatchFire(world, i, j + 1, k))
 +        if(canBlockCatchFire(world, i, j + 1, k, 0))
          {
              return true;
          }
--        if(canBlockCatchFire(world, i, j, k - 1))
+-        if (canBlockCatchFire(world, i, j, k - 1))
 +        if(canBlockCatchFire(world, i, j, k - 1, 3))
          {
              return true;
@@ -142,9 +147,9 @@
      }
  
      private int getChanceOfNeighborsEncouragingFire(World world, int i, int j, int k)
-@@ -213,12 +224,12 @@
-             return 0;
-         } else
+@@ -202,12 +213,12 @@
+         }
+         else
          {
 -            l = getChanceToEncourageFire(world, i + 1, j, k, l);
 -            l = getChanceToEncourageFire(world, i - 1, j, k, l);
@@ -161,22 +166,17 @@
              return l;
          }
      }
-@@ -227,15 +238,43 @@
-     {
+@@ -217,19 +228,40 @@
          return false;
      }
--
-+    
-+    /*
-+     * Added for backwards compatibility, should not be called by anyone who is making a mod for forge
-+     */
+ 
 +    @Deprecated
      public boolean canBlockCatchFire(IBlockAccess iblockaccess, int i, int j, int k)
      {
 -        return chanceToEncourageFire[iblockaccess.getBlockId(i, j, k)] > 0;
 +    	return canBlockCatchFire(iblockaccess, i, j, k, 0);
-     }
- 
++    }
++    
 +    public boolean canBlockCatchFire(IBlockAccess world, int i, int j, int k, int face)
 +    {
 +    	Block block = Block.blocksList[world.getBlockId(i, j, k)];
@@ -185,15 +185,13 @@
 +    		return block.isFlammable(world, i, j, k, world.getBlockMetadata(i, j, k), face);
 +    	}
 +    	return false;
-+    }
-+
-+    /*
-+     * Added for backwards compatibility, should not be called by anyone who is making a mod for forge
-+     */
+     }
+ 
 +    @Deprecated
      public int getChanceToEncourageFire(World world, int i, int j, int k, int l)
      {
 -        int i1 = chanceToEncourageFire[world.getBlockId(i, j, k)];
+-        if (i1 > l)
 +    	return getChanceToEncourageFire(world, i, j, k, l, 0);
 +    }
 +
@@ -205,30 +203,36 @@
 +    	{
 +    		i1 = block.getFireSpreadSpeed(world, i, j, k, world.getBlockMetadata(i, j, k), face);
 +    	}
-         if(i1 > l)
++        if(i1 > l)
          {
              return i1;
-@@ -247,12 +286,12 @@
+-        }
+-        else
++        } else
+         {
+             return l;
+         }
+@@ -237,12 +269,12 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
 -        return world.isBlockNormalCube(i, j - 1, k) || func_268_g(world, i, j, k);
-+        return world.isBlockSolidOnSide(i, j - 1, k, 0) || func_268_g(world, i, j, k);
++        return world.isBlockSolidOnSide(i, j - 1, k, 1) || func_268_g(world, i, j, k);
      }
  
      public void onNeighborBlockChange(World world, int i, int j, int k, int l)
      {
--        if(!world.isBlockNormalCube(i, j - 1, k) && !func_268_g(world, i, j, k))
-+        if(!world.isBlockSolidOnSide(i, j - 1, k, 0) && !func_268_g(world, i, j, k))
+-        if (!world.isBlockNormalCube(i, j - 1, k) && !func_268_g(world, i, j, k))
++        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && !func_268_g(world, i, j, k))
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
-@@ -268,7 +307,7 @@
+@@ -259,7 +291,7 @@
          {
              return;
          }
--        if(!world.isBlockNormalCube(i, j - 1, k) && !func_268_g(world, i, j, k))
-+        if(!world.isBlockSolidOnSide(i, j - 1, k, 0) && !func_268_g(world, i, j, k))
+-        if (!world.isBlockNormalCube(i, j - 1, k) && !func_268_g(world, i, j, k))
++        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && !func_268_g(world, i, j, k))
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;

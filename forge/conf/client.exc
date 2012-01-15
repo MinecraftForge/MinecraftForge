@@ -213,6 +213,8 @@ net/minecraft/src/Packet8UpdateHealth.func_322_a(Ljava/io/DataOutputStream;)V=ja
 net/minecraft/src/Packet8UpdateHealth.func_327_a(Ljava/io/DataInputStream;)V=java/io/IOException
 net/minecraft/src/Packet9Respawn.func_322_a(Ljava/io/DataOutputStream;)V=java/io/IOException
 net/minecraft/src/Packet9Respawn.func_327_a(Ljava/io/DataInputStream;)V=java/io/IOException
+net/minecraft/src/Packet250CustomPayload.func_322_a(Ljava/io/DataOutputStream;)V=java/io/IOException
+net/minecraft/src/Packet250CustomPayload.func_327_a(Ljava/io/DataInputStream;)V=java/io/IOException
 net/minecraft/src/RegionFile.func_22196_b()V=java/io/IOException
 net/minecraft/src/RegionFile.func_22198_a(III)V=java/io/IOException
 net/minecraft/src/RegionFile.func_22200_a(I[BI)V=java/io/IOException
@@ -226,3 +228,4 @@ net/minecraft/src/ThreadDownloadResources.func_1212_a(Ljava/net/URL;Ljava/io/Fil
 net/minecraft/src/ThreadedChunkLoader.func_40551_a(Lnet/minecraft/src/ThreadedChunkLoaderPending;)V=java/io/IOException
 net/minecraft/src/ThreadedChunkLoader.func_813_a(Lnet/minecraft/src/World;II)Lnet/minecraft/src/Chunk;=java/io/IOException
 net/minecraft/src/ThreadedFileIOBase.func_40566_a()V=java/lang/InterruptedException
+net/minecraft/src/StringTranslate.func_44025_a(Ljava/util/Properties;Ljava/lang/String;)V=java/io/IOException

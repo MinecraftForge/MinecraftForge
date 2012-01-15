@@ -1,22 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockPressurePlate.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockPressurePlate.java	0000-00-00 00:00:00.000000000 -0000
-@@ -48,7 +48,8 @@
+@@ -38,7 +38,7 @@
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
 -        return world.isBlockNormalCube(i, j - 1, k) || world.getBlockId(i, j - 1, k) == Block.fence.blockID;
-+        return world.isBlockSolidOnSide(i, j - 1, k,1)
-+		|| world.getBlockId(i, j - 1, k) == Block.fence.blockID;
++        return world.isBlockSolidOnSide(i, j - 1, k, 1) || world.getBlockId(i, j - 1, k) == Block.fence.blockID;
      }
  
      public void onBlockAdded(World world, int i, int j, int k)
-@@ -58,7 +59,8 @@
+@@ -48,7 +48,7 @@
      public void onNeighborBlockChange(World world, int i, int j, int k, int l)
      {
          boolean flag = false;
--        if(!world.isBlockNormalCube(i, j - 1, k) && world.getBlockId(i, j - 1, k) != Block.fence.blockID)
-+        if(!world.isBlockSolidOnSide(i, j - 1, k,1)
-+			&& world.getBlockId(i, j - 1, k) != Block.fence.blockID)
+-        if (!world.isBlockNormalCube(i, j - 1, k) && world.getBlockId(i, j - 1, k) != Block.fence.blockID)
++        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && world.getBlockId(i, j - 1, k) != Block.fence.blockID)
          {
              flag = true;
          }
