@@ -66,7 +66,7 @@
              furnaceItemStacks[2] = itemstack.copy();
          }
 -        else if (furnaceItemStacks[2].itemID == itemstack.itemID)
-+        else if (furnaceItemStacks[2].equals(itemstack))
++        else if (furnaceItemStacks[2].isItemEqual(itemstack))
          {
 -            furnaceItemStacks[2].stackSize++;
 +            furnaceItemStacks[2].stackSize += itemstack.stackSize;
