@@ -1,0 +1,24 @@
+--- ../src_base/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
+@@ -295,7 +295,9 @@
+             double d1 = (playerEntity.posY - ((double)j + 0.5D)) + 1.5D;
+             double d3 = playerEntity.posZ - ((double)k + 0.5D);
+             double d5 = d * d + d1 * d1 + d3 * d3;
+-            if (d5 > 36D)
++            double dist = playerEntity.itemInWorldManager.getBlockReachDistance() + 1;
++            dist *= dist;
++            if (d5 > dist)
+             {
+                 return;
+             }
+@@ -366,7 +368,9 @@
+             {
+                 j1 = i1;
+             }
+-            if (hasMoved && playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < 64D && (j1 > 16 || flag))
++            double dist = playerEntity.itemInWorldManager.getBlockReachDistance() + 3;
++            dist *= dist;
++            if (hasMoved && playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && (j1 > 16 || flag))
+             {
+                 playerEntity.itemInWorldManager.activeBlockOrUseItem(playerEntity, worldserver, itemstack, i, j, k, l);
+             }

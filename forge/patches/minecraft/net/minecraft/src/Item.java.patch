@@ -18,6 +18,15 @@
      protected Item(int i)
      {
          maxStackSize = 64;
+@@ -449,7 +453,7 @@
+         float f7 = f4 * f5;
+         float f8 = f6;
+         float f9 = f3 * f5;
+-        double d3 = 5D;
++        double d3 = ModLoader.getMinecraftInstance().playerController.getBlockReachDistance();
+         Vec3D vec3d1 = vec3d.addVector((double)f7 * d3, (double)f8 * d3, (double)f9 * d3);
+         MovingObjectPosition movingobjectposition = world.rayTraceBlocks_do_do(vec3d, vec3d1, flag, !flag);
+         return movingobjectposition;
 @@ -469,6 +473,109 @@
      {
          return getIconFromDamage(i);

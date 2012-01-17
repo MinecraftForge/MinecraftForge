@@ -1,0 +1,50 @@
+--- ../src_base/minecraft_server/net/minecraft/src/EntityPlayerMP.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayerMP.java	0000-00-00 00:00:00.000000000 -0000
+@@ -405,6 +405,7 @@
+     public void displayWorkbenchGUI(int i, int j, int k)
+     {
+         getNextWidowId();
++        closeCraftingGui();
+         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 1, "Crafting", 9));
+         currentCraftingInventory = new ContainerWorkbench(inventory, worldObj, i, j, k);
+         currentCraftingInventory.windowId = currentWindowId;
+@@ -414,6 +415,7 @@
+     public void displayGUIEnchantment(int i, int j, int k)
+     {
+         getNextWidowId();
++        closeCraftingGui();
+         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 4, "Enchanting", 9));
+         currentCraftingInventory = new ContainerEnchantment(inventory, worldObj, i, j, k);
+         currentCraftingInventory.windowId = currentWindowId;
+@@ -423,6 +425,7 @@
+     public void displayGUIChest(IInventory iinventory)
+     {
+         getNextWidowId();
++        closeCraftingGui();
+         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 0, iinventory.getInvName(), iinventory.getSizeInventory()));
+         currentCraftingInventory = new ContainerChest(inventory, iinventory);
+         currentCraftingInventory.windowId = currentWindowId;
+@@ -432,6 +435,7 @@
+     public void displayGUIFurnace(TileEntityFurnace tileentityfurnace)
+     {
+         getNextWidowId();
++        closeCraftingGui();
+         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 2, tileentityfurnace.getInvName(), tileentityfurnace.getSizeInventory()));
+         currentCraftingInventory = new ContainerFurnace(inventory, tileentityfurnace);
+         currentCraftingInventory.windowId = currentWindowId;
+@@ -441,6 +445,7 @@
+     public void displayGUIDispenser(TileEntityDispenser tileentitydispenser)
+     {
+         getNextWidowId();
++        closeCraftingGui();
+         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 3, tileentitydispenser.getInvName(), tileentitydispenser.getSizeInventory()));
+         currentCraftingInventory = new ContainerDispenser(inventory, tileentitydispenser);
+         currentCraftingInventory.windowId = currentWindowId;
+@@ -450,6 +455,7 @@
+     public void displayGUIBrewingStand(TileEntityBrewingStand tileentitybrewingstand)
+     {
+         getNextWidowId();
++        closeCraftingGui();
+         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 5, tileentitybrewingstand.getInvName(), tileentitybrewingstand.getSizeInventory()));
+         currentCraftingInventory = new ContainerBrewingStand(inventory, tileentitybrewingstand);
+         currentCraftingInventory.windowId = currentWindowId;
