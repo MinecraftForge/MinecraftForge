@@ -699,7 +699,15 @@ public class MinecraftForge {
      */
     public static Class<? extends EntityMinecart> getCartClassForItem(ItemStack item)
     {
-        MinecartKey k = minecartForItem.get(item);
+        MinecartKey k = null;
+    	for (ItemStack key : minecartForItem.keySet())
+    	{
+    		if (key.isItemEqual(item))
+    		{
+    			k = minecartForItem.get(k);
+    			break;
+    		}
+    	}
         if(k != null) 
         {
             return k.minecart;
@@ -716,7 +724,15 @@ public class MinecraftForge {
      */
     public static int getCartTypeForItem(ItemStack item)
     {
-        MinecartKey k = minecartForItem.get(item);
+        MinecartKey k = null;
+    	for (ItemStack key : minecartForItem.keySet())
+    	{
+    		if (key.isItemEqual(item))
+    		{
+    			k = minecartForItem.get(k);
+    			break;
+    		}
+    	}
         if(k != null) 
         {
             return k.type;
