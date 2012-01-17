@@ -88,7 +88,7 @@
      }
  
 -    private int getItemBurnTime(ItemStack itemstack)
-+    public int getItemBurnTime(ItemStack itemstack)
++    public static int getItemBurnTime(ItemStack itemstack)
      {
          if (itemstack == null)
          {

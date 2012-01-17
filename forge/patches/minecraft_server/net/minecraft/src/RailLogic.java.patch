@@ -76,3 +76,12 @@
          {
              if (BlockRail.isRailBlockAt(worldObj, trackX + 1, trackY + 1, trackZ))
              {
+@@ -428,7 +425,7 @@
+         }
+     }
+ 
+-    static int getNAdjacentTracks(RailLogic raillogic)
++    public static int getNAdjacentTracks(RailLogic raillogic)
+     {
+         return raillogic.getAdjacentTracks();
+     }

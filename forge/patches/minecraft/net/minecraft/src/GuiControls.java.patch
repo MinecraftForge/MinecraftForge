@@ -1,0 +1,122 @@
+--- ../src_base/minecraft/net/minecraft/src/GuiControls.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/GuiControls.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,7 @@
+ 
+ import java.util.List;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.src.forge.GuiControlsScrollPanel;
+ 
+ public class GuiControls extends GuiScreen
+ {
+@@ -9,6 +10,7 @@
+     protected String screenTitle;
+     private GameSettings options;
+     private int buttonId;
++    private GuiControlsScrollPanel scrollPane;
+ 
+     public GuiControls(GuiScreen guiscreen, GameSettings gamesettings)
+     {
+@@ -25,60 +27,30 @@
+ 
+     public void initGui()
+     {
++    	scrollPane = new GuiControlsScrollPanel(this, options, mc);
+         StringTranslate stringtranslate = StringTranslate.getInstance();
+         int i = func_20080_j();
+-        for (int j = 0; j < options.keyBindings.length; j++)
+-        {
+-            controlList.add(new GuiSmallButton(j, i + (j % 2) * 160, height / 6 + 24 * (j >> 1), 70, 20, options.getOptionDisplayString(j)));
+-        }
+-
+-        controlList.add(new GuiButton(200, width / 2 - 100, height / 6 + 168, stringtranslate.translateKey("gui.done")));
++        controlList.add(new GuiButton(200, width / 2 - 100, height - 28, stringtranslate.translateKey("gui.done")));
++        scrollPane.registerScrollButtons(controlList, 7, 8);
+         screenTitle = stringtranslate.translateKey("controls.title");
+     }
+ 
+     protected void actionPerformed(GuiButton guibutton)
+     {
+-        for (int i = 0; i < options.keyBindings.length; i++)
+-        {
+-            ((GuiButton)controlList.get(i)).displayString = options.getOptionDisplayString(i);
+-        }
+-
+         if (guibutton.id == 200)
+         {
+             mc.displayGuiScreen(parentScreen);
+         }
+-        else
+-        {
+-            buttonId = guibutton.id;
+-            guibutton.displayString = (new StringBuilder()).append("> ").append(options.getOptionDisplayString(guibutton.id)).append(" <").toString();
+-        }
+     }
+ 
+     protected void mouseClicked(int i, int j, int k)
+     {
+-        if (buttonId >= 0)
+-        {
+-            options.setKeyBinding(buttonId, -100 + k);
+-            ((GuiButton)controlList.get(buttonId)).displayString = options.getOptionDisplayString(buttonId);
+-            buttonId = -1;
+-            KeyBinding.resetKeyBindingArrayAndHash();
+-        }
+-        else
+-        {
+-            super.mouseClicked(i, j, k);
+-        }
++		super.mouseClicked(i, j, k);
+     }
+ 
+     protected void keyTyped(char c, int i)
+     {
+-        if (buttonId >= 0)
+-        {
+-            options.setKeyBinding(buttonId, i);
+-            ((GuiButton)controlList.get(buttonId)).displayString = options.getOptionDisplayString(buttonId);
+-            buttonId = -1;
+-            KeyBinding.resetKeyBindingArrayAndHash();
+-        }
+-        else
++        if (scrollPane.keyTyped(c, i))
+         {
+             super.keyTyped(c, i);
+         }
+@@ -87,35 +59,8 @@
+     public void drawScreen(int i, int j, float f)
+     {
+         drawDefaultBackground();
+-        drawCenteredString(fontRenderer, screenTitle, width / 2, 20, 0xffffff);
+-        int k = func_20080_j();
+-        for (int l = 0; l < options.keyBindings.length; l++)
+-        {
+-            boolean flag = false;
+-            for (int i1 = 0; i1 < options.keyBindings.length; i1++)
+-            {
+-                if (i1 != l && options.keyBindings[l].keyCode == options.keyBindings[i1].keyCode)
+-                {
+-                    flag = true;
+-                }
+-            }
+-
+-            int j1 = l;
+-            if (buttonId == l)
+-            {
+-                ((GuiButton)controlList.get(j1)).displayString = "\247f> \247e??? \247f<";
+-            }
+-            else if (flag)
+-            {
+-                ((GuiButton)controlList.get(j1)).displayString = (new StringBuilder()).append("\247c").append(options.getOptionDisplayString(j1)).toString();
+-            }
+-            else
+-            {
+-                ((GuiButton)controlList.get(j1)).displayString = options.getOptionDisplayString(j1);
+-            }
+-            drawString(fontRenderer, options.getKeyBindingDescription(l), k + (l % 2) * 160 + 70 + 6, height / 6 + 24 * (l >> 1) + 7, -1);
+-        }
+-
++        scrollPane.drawScreen(i, j, f);
++        drawCenteredString(fontRenderer, screenTitle, width / 2, 4, 0xffffff);
+         super.drawScreen(i, j, f);
+     }
+ }
