@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -75,15 +75,7 @@
+@@ -63,7 +63,6 @@
+     {
+         if (!canPlaceBlockAt(world, i, j, k))
+         {
+-            dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
+             world.setBlockWithNotify(i, j, k, 0);
+             return false;
+         }
+@@ -75,15 +74,7 @@
  
      public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
      {
@@ -17,7 +25,7 @@
          entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
      }
  
-@@ -94,7 +86,7 @@
+@@ -94,14 +85,13 @@
  
      public int quantityDropped(Random random)
      {
@@ -26,3 +34,10 @@
      }
  
      public void updateTick(World world, int i, int j, int k, Random random)
+     {
+         if (world.getSavedLightValue(EnumSkyBlock.Block, i, j, k) > 11)
+         {
+-            dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
+             world.setBlockWithNotify(i, j, k, 0);
+         }
+     }
