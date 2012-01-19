@@ -1,26 +1,21 @@
 --- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -64,18 +64,21 @@
-             }
+@@ -65,17 +65,20 @@
              itemList.add(new ItemStack(ablock[l1], 1, k2));
          }
--
+ 
 -        for (int i2 = 256; i2 < Item.itemsList.length; i2++)
-+        
 +        for(int x = 0; x < Block.blocksList.length; x++)
          {
--            if (Item.itemsList[i2] != null && Item.itemsList[i2].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[i2].shiftedIndex != Item.field_44019_bC.shiftedIndex)
--            {
--                itemList.add(new ItemStack(Item.itemsList[i2]));
--            }
+-            if (Item.itemsList[i2] != null && Item.itemsList[i2].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[i2].shiftedIndex != Item.monsterPlacer.shiftedIndex)
 +        	if (Block.blocksList[x] != null)
-+        	{
+             {
+-                itemList.add(new ItemStack(Item.itemsList[i2]));
 +        		Block.blocksList[x].addCreativeItems((ArrayList)itemList);
-+        	}
+             }
          }
--
+ 
 -        for (int j2 = 1; j2 < 16; j2++)
-+        
 +        for (int i2 = Block.blocksList.length; i2 < Item.itemsList.length; i2++)
          {
 -            itemList.add(new ItemStack(Item.dyePowder.shiftedIndex, 1, j2));

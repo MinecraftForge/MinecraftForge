@@ -50,4 +50,4 @@
 +    
      public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
      {
-         if (!world.multiplayerWorld && entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
+         if (!world.isRemote && entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)

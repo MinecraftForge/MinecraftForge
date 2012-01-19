@@ -24,7 +24,7 @@
              int i1 = world.getBlockId(i, j, k);
 +            if (ForgeHooks.onUseBonemeal(world, i1, i, j, k))
 +            {
-+                if (!world.singleplayerWorld)
++                if (!world.isRemote)
 +                {
 +                    itemstack.stackSize--;
 +                }
@@ -32,7 +32,7 @@
 +            }            
              if (i1 == Block.sapling.blockID)
              {
-                 if (!world.singleplayerWorld)
+                 if (!world.isRemote)
 @@ -103,14 +113,7 @@
                              world.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1);
                              continue;

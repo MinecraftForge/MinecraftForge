@@ -17,17 +17,16 @@
 +    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int meta, int fortune)
      {
 -        super.dropBlockAsItemWithChance(world, i, j, k, l, f, 0);
--        if (world.multiplayerWorld)
--        {
--            return;
+-        if (world.isRemote)
 +    	ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+    	if (meta == 7)
-+    	{
-+            ret.add(new ItemStack(Item.wheat));
++        if (meta == 7)
+         {
+-            return;
++        	ret.add(new ItemStack(Item.wheat));
          }
 -        int j1 = 3 + i1;
 -        for (int k1 = 0; k1 < j1; k1++)
-+    	
++        
 +        for (int n = 0; n < 3 + fortune; n++)
          {
 -            if (world.rand.nextInt(15) <= l)

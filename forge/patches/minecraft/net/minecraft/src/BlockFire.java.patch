@@ -25,24 +25,20 @@
      }
  
      public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
-@@ -67,11 +66,9 @@
+@@ -67,7 +66,9 @@
  
      public void updateTick(World world, int i, int j, int k, Random random)
      {
 -        boolean flag = world.getBlockId(i, j - 1, k) == Block.netherrack.blockID;
--        if ((world.worldProvider instanceof WorldProviderEnd) && world.getBlockId(i, j - 1, k) == Block.bedrock.blockID)
--        {
--            flag = true;
--        }
 +        Block base = Block.blocksList[world.getBlockId(i, j - 1, k)];
 +        boolean flag = (base != null && base.isFireSource(world, i, j - 1, k, world.getBlockMetadata(i, j - 1, k), 0));
-+        
-         if (!canPlaceBlockAt(world, i, j, k))
++
+         if ((world.worldProvider instanceof WorldProviderEnd) && world.getBlockId(i, j - 1, k) == Block.bedrock.blockID)
          {
-             world.setBlockWithNotify(i, j, k, 0);
-@@ -89,23 +86,23 @@
+             flag = true;
+@@ -89,23 +90,23 @@
          world.scheduleBlockUpdate(i, j, k, blockID, tickRate());
-         if (!flag && !func_263_h(world, i, j, k))
+         if (!flag && !canNeighborBurn(world, i, j, k))
          {
 -            if (!world.isBlockNormalCube(i, j - 1, k) || l > 3)
 +            if (!world.isBlockSolidOnSide(i, j - 1, k, 1) || l > 3)
@@ -72,7 +68,7 @@
          for (int i1 = i - 1; i1 <= i + 1; i1++)
          {
              for (int j1 = k - 1; j1 <= k + 1; j1++)
-@@ -142,9 +139,24 @@
+@@ -142,9 +143,24 @@
          }
      }
  
@@ -98,9 +94,9 @@
          if (random.nextInt(l) < j1)
          {
              boolean flag = world.getBlockId(i, j, k) == Block.tnt.blockID;
-@@ -170,27 +182,27 @@
+@@ -170,27 +186,27 @@
  
-     private boolean func_263_h(World world, int i, int j, int k)
+     private boolean canNeighborBurn(World world, int i, int j, int k)
      {
 -        if (canBlockCatchFire(world, i + 1, j, k))
 +        if (canBlockCatchFire(world, i + 1, j, k, 4))
@@ -132,7 +128,7 @@
      }
  
      private int getChanceOfNeighborsEncouragingFire(World world, int i, int j, int k)
-@@ -202,12 +214,12 @@
+@@ -202,12 +218,12 @@
          }
          else
          {
@@ -151,7 +147,7 @@
              return l;
          }
      }
-@@ -217,32 +229,32 @@
+@@ -217,32 +233,32 @@
          return false;
      }
  
@@ -164,8 +160,7 @@
 -        return chanceToEncourageFire[iblockaccess.getBlockId(i, j, k)] > 0;
 +        return canBlockCatchFire(iblockaccess, i, j, k, 0);
      }
--
-+    
+ 
 +    /**
 +     * Deprecated for a side-sensitive version
 +     */
@@ -181,41 +176,41 @@
 -        {
 -            return l;
 -        }
-+    	return getChanceToEncourageFire(world, i, j, k, l, 0);
++        return getChanceToEncourageFire(world, i, j, k, l, 0);
      }
  
      public boolean canPlaceBlockAt(World world, int i, int j, int k)
      {
--        return world.isBlockNormalCube(i, j - 1, k) || func_263_h(world, i, j, k);
-+        return world.isBlockSolidOnSide(i, j - 1, k, 1) || func_263_h(world, i, j, k);
+-        return world.isBlockNormalCube(i, j - 1, k) || canNeighborBurn(world, i, j, k);
++        return world.isBlockSolidOnSide(i, j - 1, k, 1) || canNeighborBurn(world, i, j, k);
      }
  
      public void onNeighborBlockChange(World world, int i, int j, int k, int l)
      {
--        if (!world.isBlockNormalCube(i, j - 1, k) && !func_263_h(world, i, j, k))
-+        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && !func_263_h(world, i, j, k))
+-        if (!world.isBlockNormalCube(i, j - 1, k) && !canNeighborBurn(world, i, j, k))
++        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && !canNeighborBurn(world, i, j, k))
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
-@@ -259,7 +271,7 @@
+@@ -259,7 +275,7 @@
          {
              return;
          }
--        if (!world.isBlockNormalCube(i, j - 1, k) && !func_263_h(world, i, j, k))
-+        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && !func_263_h(world, i, j, k))
+-        if (!world.isBlockNormalCube(i, j - 1, k) && !canNeighborBurn(world, i, j, k))
++        if (!world.isBlockSolidOnSide(i, j - 1, k, 1) && !canNeighborBurn(world, i, j, k))
          {
              world.setBlockWithNotify(i, j, k, 0);
              return;
-@@ -277,7 +289,7 @@
+@@ -277,7 +293,7 @@
          {
              world.playSoundEffect((float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, "fire.fire", 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F);
          }
 -        if (world.isBlockNormalCube(i, j - 1, k) || Block.fire.canBlockCatchFire(world, i, j - 1, k))
-+        if (world.isBlockSolidOnSide(i, j - 1, k, 1) || Block.fire.canBlockCatchFire(world, i, j - 1, k))
++        if (world.isBlockSolidOnSide(i, j - 1, k, 1) || Block.fire.canBlockCatchFire(world, i, j - 1, k, 1))
          {
              for (int l = 0; l < 3; l++)
              {
-@@ -289,7 +301,7 @@
+@@ -289,7 +305,7 @@
          }
          else
          {
@@ -224,7 +219,7 @@
              {
                  for (int i1 = 0; i1 < 2; i1++)
                  {
-@@ -299,7 +311,7 @@
+@@ -299,7 +315,7 @@
                      world.spawnParticle("largesmoke", f1, f7, f13, 0.0D, 0.0D, 0.0D);
                  }
              }
@@ -233,7 +228,7 @@
              {
                  for (int j1 = 0; j1 < 2; j1++)
                  {
-@@ -309,7 +321,7 @@
+@@ -309,7 +325,7 @@
                      world.spawnParticle("largesmoke", f2, f8, f14, 0.0D, 0.0D, 0.0D);
                  }
              }
@@ -242,7 +237,7 @@
              {
                  for (int k1 = 0; k1 < 2; k1++)
                  {
-@@ -319,7 +331,7 @@
+@@ -319,7 +335,7 @@
                      world.spawnParticle("largesmoke", f3, f9, f15, 0.0D, 0.0D, 0.0D);
                  }
              }
@@ -251,7 +246,7 @@
              {
                  for (int l1 = 0; l1 < 2; l1++)
                  {
-@@ -329,7 +341,7 @@
+@@ -329,7 +345,7 @@
                      world.spawnParticle("largesmoke", f4, f10, f16, 0.0D, 0.0D, 0.0D);
                  }
              }
@@ -260,7 +255,7 @@
              {
                  for (int i2 = 0; i2 < 2; i2++)
                  {
-@@ -341,4 +353,41 @@
+@@ -341,4 +357,39 @@
              }
          }
      }
@@ -284,7 +279,6 @@
 +    public int getChanceToEncourageFire(World world, int i, int j, int k, int l, int face)
 +    {
 +    	int i1 = 0;
-+
 +    	Block block = Block.blocksList[world.getBlockId(i, j, k)];
 +    	if (block != null)
 +    	{
@@ -299,6 +293,5 @@
 +        {
 +            return l;
 +        }
-+    }
-+    
++    }    
  }

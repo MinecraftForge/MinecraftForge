@@ -471,13 +471,13 @@
  
      public void applyEntityCollision(Entity entity)
      {
-+    	ForgeHooks.onMinecartEntityCollision(this, entity);
-+    	if (getCollisionHandler() != null)
-+    	{
-+    		getCollisionHandler().onEntityCollision(this, entity);
-+    		return;
-+    	}
-         if (worldObj.multiplayerWorld)
++        ForgeHooks.onMinecartEntityCollision(this, entity);
++        if (getCollisionHandler() != null)
++        {
++            getCollisionHandler().onEntityCollision(this, entity);
++            return;
++        }
+         if (worldObj.isRemote)
          {
              return;
 @@ -803,7 +718,7 @@
@@ -536,7 +536,7 @@
 -        else if (minecartType == 1)
 +        else if (getSizeInventory() > 0)
          {
-             if (!worldObj.multiplayerWorld)
+             if (!worldObj.isRemote)
              {
                  entityplayer.displayGUIChest(this);
              }

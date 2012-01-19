@@ -40,7 +40,7 @@
 +     */
 +    public void addCreativeItems(ArrayList itemList)
 +    {       
-+        if (this.shiftedIndex != Item.potion.shiftedIndex && this.shiftedIndex != Item.field_44008_bB.shiftedIndex)
++        if (this.shiftedIndex != Item.potion.shiftedIndex && this.shiftedIndex != Item.monsterPlacer.shiftedIndex)
 +        {
 +            itemList.add(new ItemStack(this, 1));
 +        }

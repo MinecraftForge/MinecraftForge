@@ -461,21 +461,20 @@
          {
              NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
              cargoItems = new ItemStack[getSizeInventory()];
-@@ -734,6 +651,13 @@
+@@ -734,6 +651,12 @@
  
      public void applyEntityCollision(Entity entity)
      {
 +        ForgeHooks.onMinecartEntityCollision(this, entity);
-+        
 +        if (getCollisionHandler() != null)
 +        {
 +            getCollisionHandler().onEntityCollision(this, entity);
 +            return;
-+        }  
-         if (worldObj.singleplayerWorld)
++        }
+         if (worldObj.isRemote)
          {
              return;
-@@ -742,7 +666,7 @@
+@@ -742,7 +665,7 @@
          {
              return;
          }
@@ -484,7 +483,7 @@
          {
              entity.mountEntity(this);
          }
-@@ -780,7 +704,7 @@
+@@ -780,7 +703,7 @@
                  }
                  double d7 = entity.motionX + motionX;
                  double d8 = entity.motionZ + motionZ;
@@ -493,7 +492,7 @@
                  {
                      motionX *= 0.20000000298023224D;
                      motionZ *= 0.20000000298023224D;
-@@ -788,7 +712,7 @@
+@@ -788,7 +711,7 @@
                      entity.motionX *= 0.94999998807907104D;
                      entity.motionZ *= 0.94999998807907104D;
                  }
@@ -502,7 +501,7 @@
                  {
                      entity.motionX *= 0.20000000298023224D;
                      entity.motionZ *= 0.20000000298023224D;
-@@ -818,7 +742,7 @@
+@@ -818,7 +741,7 @@
  
      public int getSizeInventory()
      {
@@ -511,7 +510,7 @@
      }
  
      public ItemStack getStackInSlot(int i)
-@@ -874,7 +798,12 @@
+@@ -874,7 +797,12 @@
  
      public boolean interact(EntityPlayer entityplayer)
      {
@@ -525,24 +524,24 @@
          {
              if (riddenByEntity != null && (riddenByEntity instanceof EntityPlayer) && riddenByEntity != entityplayer)
              {
-@@ -885,14 +814,14 @@
+@@ -885,14 +813,14 @@
                  entityplayer.mountEntity(this);
              }
          }
 -        else if (minecartType == 1)
 +        else if (getSizeInventory() > 0)
          {
-             if (!worldObj.singleplayerWorld)
+             if (!worldObj.isRemote)
              {
                  entityplayer.displayGUIChest(this);
              }
          }
 -        else if (minecartType == 2)
-+        else if (minecartType == 2 && getClass() == EntityMinecart.class)
++        else if (minecartType == 2 && getClass() ==  EntityMinecart.class)
          {
              ItemStack itemstack = entityplayer.inventory.getCurrentItem();
              if (itemstack != null && itemstack.itemID == Item.coal.shiftedIndex)
-@@ -918,7 +847,7 @@
+@@ -918,7 +846,7 @@
          return entityplayer.getDistanceSqToEntity(this) <= 64D;
      }
  
@@ -551,7 +550,7 @@
      {
          return (dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -971,5 +900,384 @@
+@@ -971,5 +899,384 @@
      public int func_41021_q()
      {
          return dataWatcher.getWatchableObjectInt(18);

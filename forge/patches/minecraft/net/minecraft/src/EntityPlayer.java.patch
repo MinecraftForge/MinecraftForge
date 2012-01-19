@@ -135,11 +135,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
-+    	EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
-+    	if (customSleep != null)
-+    	{
-+    		return customSleep;
-+    	}
-         if (!worldObj.multiplayerWorld)
++        EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
++        if (customSleep != null)
++        {
++            return customSleep;
++        }
+         if (!worldObj.isRemote)
          {
              if (isPlayerSleeping() || !isEntityAlive())

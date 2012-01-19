@@ -158,7 +158,7 @@
 +    	}
      }
  
-     public void markEntityForDespawn(TileEntity tileentity)
+     public void markTileEntityForDespawn(TileEntity tileentity)
 @@ -2109,7 +2104,7 @@
          }
          else
@@ -190,7 +190,7 @@
  
 @@ -3493,4 +3492,39 @@
      {
-         return worldInfo.func_46133_t() != EnumWorldType.FLAT ? 63D : 0.0D;
+         return worldInfo.getTerrainType() != EnumWorldType.FLAT ? 63D : 0.0D;
      }
 +    
 +

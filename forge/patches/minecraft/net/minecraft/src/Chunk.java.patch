@@ -44,7 +44,7 @@
          if (k1 != 0)
          {
 -            Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
-+        	if (!worldObj.multiplayerWorld) 
++        	if (!worldObj.isRemote) 
 +        	{
 +        		Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
 +        	}

@@ -7,48 +7,37 @@
  import java.util.Random;
  
  public class BlockNetherStalk extends BlockFlower
-@@ -57,25 +58,26 @@
+@@ -57,25 +58,24 @@
          return 6;
      }
  
 -    public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int i1)
 +    @Override
-+    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int metadata, int fortune) 
++    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int meta, int fortune)
      {
--        if (world.singleplayerWorld)
+-        if (world.isRemote)
 -        {
 -            return;
 -        }
--        int j1 = 1;
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+         int j1 = 1;
 -        if (l >= 3)
--        {
--            j1 = 2 + world.rand.nextInt(3);
++        if (meta >= 3)
+         {
+             j1 = 2 + world.rand.nextInt(3);
 -            if (i1 > 0)
--            {
++            if (fortune > 0)
+             {
 -                j1 += world.rand.nextInt(i1 + 1);
--            }
--        }
--        for (int k1 = 0; k1 < j1; k1++)
--        {
++                j1 += world.rand.nextInt(fortune + 1);
+             }
+         }
+         for (int k1 = 0; k1 < j1; k1++)
+         {
 -            dropBlockAsItem_do(world, i, j, k, new ItemStack(Item.netherStalkSeeds));
--        }
-+    	ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+    	
-+    	int j1 = 1;
-+    	if (metadata >= 3)
-+    	{
-+    		j1 = 2 + world.rand.nextInt(3);
-+    		if (fortune > 0)
-+    		{
-+    			j1 += world.rand.nextInt(fortune + 1);
-+    		}
-+    	}
-+    	for (int k1 = 0; k1 < j1; k1++)
-+    	{
-+    		ret.add(new ItemStack(Item.netherStalkSeeds));
-+    	}
-+    	return ret;
-+    	
++            ret.add(new ItemStack(Item.netherStalkSeeds));
+         }
++        return ret;
      }
  
      public int idDropped(int i, Random random, int j)

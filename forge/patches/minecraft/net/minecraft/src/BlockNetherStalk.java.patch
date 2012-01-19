@@ -7,7 +7,7 @@
  import java.util.Random;
  
  public class BlockNetherStalk extends BlockFlower
-@@ -57,25 +58,25 @@
+@@ -57,25 +58,24 @@
          return 6;
      }
  
@@ -15,11 +15,11 @@
 +    @Override
 +    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int meta, int fortune)
      {
--        if (world.multiplayerWorld)
+-        if (world.isRemote)
 -        {
 -            return;
 -        }
-+    	ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
          int j1 = 1;
 -        if (l >= 3)
 +        if (meta >= 3)
@@ -37,7 +37,6 @@
 -            dropBlockAsItem_do(world, i, j, k, new ItemStack(Item.netherStalkSeeds));
 +            ret.add(new ItemStack(Item.netherStalkSeeds));
          }
-+        
 +        return ret;
      }
  
