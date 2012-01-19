@@ -120,33 +120,59 @@
      }
  
      public EntityMinecart(World world, double d, double d1, double d2,
-@@ -158,8 +208,10 @@
+@@ -158,49 +208,8 @@
                  riddenByEntity.mountEntity(this);
              }
              setEntityDead();
 -            dropItemWithOffset(Item.minecartEmpty.shiftedIndex, 1, 0.0F);
 -            if (minecartType == 1)
-+            
-+            dropCartAsItem();
-+            
-+            if (getSizeInventory() > 0)
-             {
-                 EntityMinecart entityminecart = this;
-                 label0:
-@@ -194,12 +246,6 @@
-                     }
-                     while (true);
-                 }
+-            {
+-                EntityMinecart entityminecart = this;
+-                label0:
+-                for (int j = 0; j < entityminecart.getSizeInventory(); j++)
+-                {
+-                    ItemStack itemstack = entityminecart.getStackInSlot(j);
+-                    if (itemstack == null)
+-                    {
+-                        continue;
+-                    }
+-                    float f = rand.nextFloat() * 0.8F + 0.1F;
+-                    float f1 = rand.nextFloat() * 0.8F + 0.1F;
+-                    float f2 = rand.nextFloat() * 0.8F + 0.1F;
+-                    do
+-                    {
+-                        if (itemstack.stackSize <= 0)
+-                        {
+-                            continue label0;
+-                        }
+-                        int k = rand.nextInt(21) + 10;
+-                        if (k > itemstack.stackSize)
+-                        {
+-                            k = itemstack.stackSize;
+-                        }
+-                        itemstack.stackSize -= k;
+-                        EntityItem entityitem = new EntityItem(worldObj, posX + (double)f, posY + (double)f1, posZ + (double)f2, new ItemStack(itemstack.itemID, k, itemstack.getItemDamage()));
+-                        float f3 = 0.05F;
+-                        entityitem.motionX = (float)rand.nextGaussian() * f3;
+-                        entityitem.motionY = (float)rand.nextGaussian() * f3 + 0.2F;
+-                        entityitem.motionZ = (float)rand.nextGaussian() * f3;
+-                        worldObj.spawnEntityInWorld(entityitem);
+-                    }
+-                    while (true);
+-                }
 -
 -                dropItemWithOffset(Block.chest.blockID, 1, 0.0F);
 -            }
 -            else if (minecartType == 2)
 -            {
 -                dropItemWithOffset(Block.stoneOvenIdle.blockID, 1, 0.0F);
-             }
+-            }
++            
++            dropCartAsItem();
          }
          return true;
-@@ -258,7 +304,7 @@
+     }
+@@ -258,7 +267,7 @@
          {
              func_41018_e_(func_41020_o() - 1);
          }
@@ -155,7 +181,7 @@
          {
              worldObj.spawnParticle("largesmoke", posX, posY + 0.80000000000000004D, posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -299,22 +345,18 @@
+@@ -299,22 +308,18 @@
          double d2 = 0.40000000000000002D;
          double d4 = 0.0078125D;
          int l = worldObj.getBlockId(i, j, k);
@@ -181,7 +207,7 @@
              if (i1 >= 2 && i1 <= 5)
              {
                  posY = j + 1;
-@@ -348,7 +390,7 @@
+@@ -348,7 +353,7 @@
              double d13 = Math.sqrt(motionX * motionX + motionZ * motionZ);
              motionX = (d13 * d9) / d11;
              motionZ = (d13 * d10) / d11;
@@ -190,7 +216,7 @@
              {
                  double d16 = Math.sqrt(motionX * motionX + motionZ * motionZ);
                  if (d16 < 0.029999999999999999D)
-@@ -391,30 +433,9 @@
+@@ -391,30 +396,9 @@
              posX = d18 + d9 * d17;
              posZ = d19 + d10 * d17;
              setPosition(posX, posY + (double)yOffset, posZ);
@@ -224,7 +250,7 @@
              if (ai[0][1] != 0 && MathHelper.floor_double(posX) - i == ai[0][0] && MathHelper.floor_double(posZ) - k == ai[0][2])
              {
                  setPosition(posX, posY + (double)ai[0][1], posZ);
-@@ -423,39 +444,9 @@
+@@ -423,39 +407,9 @@
              {
                  setPosition(posX, posY + (double)ai[1][1], posZ);
              }
@@ -267,7 +293,7 @@
              Vec3D vec3d1 = func_182_g(posX, posY, posZ);
              if (vec3d1 != null && vec3d != null)
              {
-@@ -476,26 +467,14 @@
+@@ -476,26 +430,14 @@
                  motionX = d15 * (double)(k1 - i);
                  motionZ = d15 * (double)(l1 - k);
              }
@@ -300,7 +326,7 @@
              {
                  double d31 = Math.sqrt(motionX * motionX + motionZ * motionZ);
                  if (d31 > 0.01D)
-@@ -530,35 +509,7 @@
+@@ -530,35 +472,7 @@
          }
          else
          {
@@ -337,7 +363,7 @@
          }
          rotationPitch = 0.0F;
          double d6 = prevPosX - posX;
-@@ -580,7 +531,19 @@
+@@ -580,7 +494,19 @@
              field_469_aj = !field_469_aj;
          }
          setRotation(rotationYaw, rotationPitch);
@@ -358,7 +384,7 @@
          if (list != null && list.size() > 0)
          {
              for (int j1 = 0; j1 < list.size(); j1++)
-@@ -600,15 +563,9 @@
+@@ -600,15 +526,9 @@
              }
              riddenByEntity = null;
          }
@@ -377,7 +403,7 @@
      }
  
      public Vec3D func_182_g(double d, double d1, double d2)
-@@ -623,12 +580,8 @@
+@@ -623,12 +543,8 @@
          int l = worldObj.getBlockId(i, j, k);
          if (BlockRail.isRailBlock(l))
          {
@@ -391,7 +417,7 @@
              if (i1 >= 2 && i1 <= 5)
              {
                  d1 = j + 1;
-@@ -683,13 +636,14 @@
+@@ -683,13 +599,14 @@
      protected void writeEntityToNBT(NBTTagCompound nbttagcompound)
      {
          nbttagcompound.setInteger("Type", minecartType);
@@ -409,7 +435,7 @@
          {
              NBTTagList nbttaglist = new NBTTagList();
              for (int i = 0; i < cargoItems.length; i++)
-@@ -702,7 +656,6 @@
+@@ -702,7 +619,6 @@
                      nbttaglist.setTag(nbttagcompound1);
                  }
              }
@@ -417,7 +443,7 @@
              nbttagcompound.setTag("Items", nbttaglist);
          }
      }
-@@ -710,13 +663,14 @@
+@@ -710,13 +626,14 @@
      protected void readEntityFromNBT(NBTTagCompound nbttagcompound)
      {
          minecartType = nbttagcompound.getInteger("Type");
@@ -435,7 +461,7 @@
          {
              NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
              cargoItems = new ItemStack[getSizeInventory()];
-@@ -734,6 +688,13 @@
+@@ -734,6 +651,13 @@
  
      public void applyEntityCollision(Entity entity)
      {
@@ -449,7 +475,7 @@
          if (worldObj.singleplayerWorld)
          {
              return;
-@@ -742,7 +703,7 @@
+@@ -742,7 +666,7 @@
          {
              return;
          }
@@ -458,7 +484,7 @@
          {
              entity.mountEntity(this);
          }
-@@ -780,7 +741,7 @@
+@@ -780,7 +704,7 @@
                  }
                  double d7 = entity.motionX + motionX;
                  double d8 = entity.motionZ + motionZ;
@@ -467,7 +493,7 @@
                  {
                      motionX *= 0.20000000298023224D;
                      motionZ *= 0.20000000298023224D;
-@@ -788,7 +749,7 @@
+@@ -788,7 +712,7 @@
                      entity.motionX *= 0.94999998807907104D;
                      entity.motionZ *= 0.94999998807907104D;
                  }
@@ -476,7 +502,7 @@
                  {
                      entity.motionX *= 0.20000000298023224D;
                      entity.motionZ *= 0.20000000298023224D;
-@@ -818,7 +779,7 @@
+@@ -818,7 +742,7 @@
  
      public int getSizeInventory()
      {
@@ -485,7 +511,7 @@
      }
  
      public ItemStack getStackInSlot(int i)
-@@ -874,7 +835,12 @@
+@@ -874,7 +798,12 @@
  
      public boolean interact(EntityPlayer entityplayer)
      {
@@ -499,7 +525,7 @@
          {
              if (riddenByEntity != null && (riddenByEntity instanceof EntityPlayer) && riddenByEntity != entityplayer)
              {
-@@ -885,14 +851,14 @@
+@@ -885,14 +814,14 @@
                  entityplayer.mountEntity(this);
              }
          }
@@ -516,7 +542,7 @@
          {
              ItemStack itemstack = entityplayer.inventory.getCurrentItem();
              if (itemstack != null && itemstack.itemID == Item.coal.shiftedIndex)
-@@ -918,7 +884,7 @@
+@@ -918,7 +847,7 @@
          return entityplayer.getDistanceSqToEntity(this) <= 64D;
      }
  
@@ -525,7 +551,7 @@
      {
          return (dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -971,5 +937,384 @@
+@@ -971,5 +900,384 @@
      public int func_41021_q()
      {
          return dataWatcher.getWatchableObjectInt(18);
