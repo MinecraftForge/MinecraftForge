@@ -49,6 +49,7 @@ popd >nul
 
 xcopy /Y /E forge\src\* src
 
-cmd /C updatemcp.bat
-cmd /C updatenames.bat
+rem Removed until MCP's Update Names is fixed
+rem cmd /C updatemcp.bat
+rem cmd /C updatenames.bat
 cmd /C updatemd5.bat

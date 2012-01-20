@@ -53,7 +53,7 @@ popd > /dev/null
 
 cp -r forge/src/* src
 
-
-./updatemcp.sh
-./updatenames.sh
+# Removed until MCP's UpdateNames Is fixed
+#./updatemcp.sh
+#./updatenames.sh
 ./updatemd5.sh

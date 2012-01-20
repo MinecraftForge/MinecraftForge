@@ -1,0 +1,11 @@
+--- ../src_base/minecraft_server/net/minecraft/src/Packet250CustomPayload.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/Packet250CustomPayload.java	0000-00-00 00:00:00.000000000 -0000
+@@ -20,7 +20,7 @@
+         if (length > 0 && length < 32767)
+         {
+             data = new byte[length];
+-            datainputstream.read(data);
++            datainputstream.readFully(data);
+         }
+     }
+ 
