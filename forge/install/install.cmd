@@ -3,6 +3,8 @@ echo off
 echo MinecraftForge Windows Setup Program
 echo:
 
+set PATH=%PATH%;%SystemDir%\system32;%SystemRoot%\System32
+
 pushd .. >nul
 
 xcopy /Y /E /I forge\conf\* conf
