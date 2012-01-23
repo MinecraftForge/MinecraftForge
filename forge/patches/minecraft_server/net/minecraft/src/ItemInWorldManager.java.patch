@@ -7,7 +7,7 @@
 +
  public class ItemInWorldManager
  {
-+    private double blockReachDistance;
++    private double blockReachDistance = 5.0d;
      public World thisWorld;
      public EntityPlayer thisPlayer;
      private int gameType;

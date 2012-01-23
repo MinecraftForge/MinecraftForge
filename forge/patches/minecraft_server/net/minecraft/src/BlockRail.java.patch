@@ -50,7 +50,12 @@
      }
  
      public void onBlockAdded(World world, int i, int j, int k)
-@@ -123,19 +136,19 @@
+@@ -119,23 +132,23 @@
+             j1 &= 7;
+         }
+         boolean flag = false;
+-        if (!world.isBlockNormalCube(i, j - 1, k))
++        if (!world.isBlockSolidOnSide(i, j - 1, k, 1))
          {
              flag = true;
          }
