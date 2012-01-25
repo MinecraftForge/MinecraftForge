@@ -19,15 +19,18 @@
                  if (itemInUseCount <= 25 && itemInUseCount % 4 == 0)
                  {
                      func_35208_b(itemstack, 5);
-@@ -274,6 +279,7 @@
+@@ -274,6 +279,10 @@
  
-     protected void usePersonalCraftingInventory()
+     protected void closeScreen()
      {
-+        currentCraftingInventory.onCraftGuiClosed(this);
-         currentCraftingInventory = personalCraftingInventory;
++        if (craftingInventory != null)
++        {
++            craftingInventory.onCraftGuiClosed(this);
++        }
+         craftingInventory = inventorySlots;
      }
  
-@@ -433,7 +439,16 @@
+@@ -433,7 +442,16 @@
  
      public void dropCurrentItem()
      {
@@ -45,7 +48,7 @@
      }
  
      public void dropPlayerItem(ItemStack itemstack)
-@@ -480,6 +495,8 @@
+@@ -480,6 +498,8 @@
          worldObj.spawnEntityInWorld(entityitem);
      }
  
@@ -54,7 +57,7 @@
      public float getCurrentPlayerStrVsBlock(Block block)
      {
          float f = inventory.getStrVsBlock(block);
-@@ -508,6 +525,45 @@
+@@ -508,6 +528,45 @@
          return f1;
      }
  
@@ -100,7 +103,7 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -707,6 +763,26 @@
+@@ -707,6 +766,26 @@
  
      protected void damageEntity(DamageSource damagesource, int i)
      {
@@ -127,7 +130,7 @@
          if (!damagesource.isUnblockable() && isBlocking())
          {
              i = 1 + i >> 1;
-@@ -758,7 +834,9 @@
+@@ -758,7 +837,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -137,7 +140,7 @@
      }
  
      public double getYOffset()
-@@ -884,6 +962,11 @@
+@@ -884,6 +965,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {

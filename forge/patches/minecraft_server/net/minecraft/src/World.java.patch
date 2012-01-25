@@ -178,7 +178,7 @@
  
 @@ -3028,4 +3029,38 @@
      {
-         return getChunkProvider().func_40182_a(this, s, i, j, k);
+         return getChunkProvider().findClosestStructure(this, s, i, j, k);
      }
 +
 +    /**

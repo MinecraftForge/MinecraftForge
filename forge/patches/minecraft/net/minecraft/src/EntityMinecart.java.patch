@@ -28,11 +28,11 @@
      {
          {
              {
-@@ -76,16 +81,36 @@
+@@ -76,16 +81,35 @@
              }
          }
      };
--    private int minecartPosRotationIncrements;
+-    private int turnProgress;
 -    private double minecartX;
 -    private double minecartY;
 -    private double minecartZ;
@@ -42,7 +42,7 @@
 -    private double velocityY;
 -    private double velocityZ;
 -
-+    protected int minecartPosRotationIncrements;
++    protected int turnProgress;
 +    protected double minecartX;
 +    protected double minecartY;
 +    protected double minecartZ;
@@ -51,9 +51,8 @@
 +    protected double velocityX;
 +    protected double velocityY;
 +    protected double velocityZ;
-+    
-+    /*Forge: Minecart Compatibility Layer Integration.
-+     */
++
++    /*Forge: Minecart Compatibility Layer Integration. */
 +    public static float defaultMaxSpeedRail = 0.4f;
 +    public static float defaultMaxSpeedGround = 0.4f;
 +    public static float defaultMaxSpeedAirLateral = 0.4f;
@@ -62,7 +61,7 @@
 +    protected boolean canUseRail = true;
 +    protected boolean canBePushed = true;
 +    private static IMinecartCollisionHandler collisionHandler = null;
-+
++    
 +    /*
 +     * Instance versions of the above physics properties
 +     */
@@ -70,12 +69,12 @@
 +    protected float maxSpeedGround;
 +    protected float maxSpeedAirLateral;
 +    protected float maxSpeedAirVertical;
-+    protected double dragAir;  
++    protected double dragAir;
 +    
      public EntityMinecart(World world)
      {
          super(world);
-@@ -95,6 +120,18 @@
+@@ -95,6 +119,18 @@
          preventEntitySpawning = true;
          setSize(0.98F, 0.7F);
          yOffset = height / 2.0F;
@@ -94,7 +93,7 @@
      }
  
      protected boolean canTriggerWalking()
-@@ -112,17 +149,27 @@
+@@ -112,17 +148,27 @@
  
      public AxisAlignedBB getCollisionBox(Entity entity)
      {
@@ -123,7 +122,7 @@
      }
  
      public EntityMinecart(World world, double d, double d1, double d2,
-@@ -161,49 +208,8 @@
+@@ -161,49 +207,8 @@
                  riddenByEntity.mountEntity(this);
              }
              setEntityDead();
@@ -175,7 +174,7 @@
          }
          return true;
      }
-@@ -268,7 +274,7 @@
+@@ -268,7 +273,7 @@
          {
              func_41024_b(func_41025_i() - 1);
          }
@@ -184,7 +183,7 @@
          {
              worldObj.spawnParticle("largesmoke", posX, posY + 0.80000000000000004D, posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -309,22 +315,18 @@
+@@ -309,22 +314,18 @@
          double d2 = 0.40000000000000002D;
          double d4 = 0.0078125D;
          int l = worldObj.getBlockId(i, j, k);
@@ -210,7 +209,7 @@
              if (i1 >= 2 && i1 <= 5)
              {
                  posY = j + 1;
-@@ -358,7 +360,7 @@
+@@ -358,7 +359,7 @@
              double d13 = Math.sqrt(motionX * motionX + motionZ * motionZ);
              motionX = (d13 * d9) / d11;
              motionZ = (d13 * d10) / d11;
@@ -219,7 +218,7 @@
              {
                  double d16 = Math.sqrt(motionX * motionX + motionZ * motionZ);
                  if (d16 < 0.029999999999999999D)
-@@ -401,30 +403,9 @@
+@@ -401,30 +402,9 @@
              posX = d18 + d9 * d17;
              posZ = d19 + d10 * d17;
              setPosition(posX, posY + (double)yOffset, posZ);
@@ -253,7 +252,7 @@
              if (ai[0][1] != 0 && MathHelper.floor_double(posX) - i == ai[0][0] && MathHelper.floor_double(posZ) - k == ai[0][2])
              {
                  setPosition(posX, posY + (double)ai[0][1], posZ);
-@@ -433,39 +414,9 @@
+@@ -433,39 +413,9 @@
              {
                  setPosition(posX, posY + (double)ai[1][1], posZ);
              }
@@ -296,7 +295,7 @@
              Vec3D vec3d1 = func_514_g(posX, posY, posZ);
              if (vec3d1 != null && vec3d != null)
              {
-@@ -486,26 +437,14 @@
+@@ -486,26 +436,14 @@
                  motionX = d15 * (double)(k1 - i);
                  motionZ = d15 * (double)(l1 - k);
              }
@@ -329,7 +328,7 @@
              {
                  double d31 = Math.sqrt(motionX * motionX + motionZ * motionZ);
                  if (d31 > 0.01D)
-@@ -540,35 +479,7 @@
+@@ -540,35 +478,7 @@
          }
          else
          {
@@ -366,7 +365,7 @@
          }
          rotationPitch = 0.0F;
          double d6 = prevPosX - posX;
-@@ -590,7 +501,20 @@
+@@ -590,7 +500,20 @@
              field_856_i = !field_856_i;
          }
          setRotation(rotationYaw, rotationPitch);
@@ -388,7 +387,7 @@
          if (list != null && list.size() > 0)
          {
              for (int j1 = 0; j1 < list.size(); j1++)
-@@ -610,15 +534,8 @@
+@@ -610,15 +533,8 @@
              }
              riddenByEntity = null;
          }
@@ -406,7 +405,7 @@
      }
  
      public Vec3D func_515_a(double d, double d1, double d2, double d3)
-@@ -633,11 +550,7 @@
+@@ -633,11 +549,7 @@
          int l = worldObj.getBlockId(i, j, k);
          if (BlockRail.isRailBlock(l))
          {
@@ -419,7 +418,7 @@
              d1 = j;
              if (i1 >= 2 && i1 <= 5)
              {
-@@ -679,12 +592,8 @@
+@@ -679,12 +591,8 @@
          int l = worldObj.getBlockId(i, j, k);
          if (BlockRail.isRailBlock(l))
          {
@@ -433,7 +432,7 @@
              if (i1 >= 2 && i1 <= 5)
              {
                  d1 = j + 1;
-@@ -739,13 +648,13 @@
+@@ -739,13 +647,13 @@
      protected void writeEntityToNBT(NBTTagCompound nbttagcompound)
      {
          nbttagcompound.setInteger("Type", minecartType);
@@ -450,7 +449,7 @@
          {
              NBTTagList nbttaglist = new NBTTagList();
              for (int i = 0; i < cargoItems.length; i++)
-@@ -766,13 +675,13 @@
+@@ -766,13 +674,13 @@
      protected void readEntityFromNBT(NBTTagCompound nbttagcompound)
      {
          minecartType = nbttagcompound.getInteger("Type");
@@ -467,7 +466,7 @@
          {
              NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
              cargoItems = new ItemStack[getSizeInventory()];
-@@ -795,6 +704,12 @@
+@@ -795,6 +703,12 @@
  
      public void applyEntityCollision(Entity entity)
      {
@@ -480,7 +479,7 @@
          if (worldObj.isRemote)
          {
              return;
-@@ -803,7 +718,7 @@
+@@ -803,7 +717,7 @@
          {
              return;
          }
@@ -489,7 +488,7 @@
          {
              entity.mountEntity(this);
          }
-@@ -841,7 +756,7 @@
+@@ -841,7 +755,7 @@
                  }
                  double d7 = entity.motionX + motionX;
                  double d8 = entity.motionZ + motionZ;
@@ -498,7 +497,7 @@
                  {
                      motionX *= 0.20000000298023224D;
                      motionZ *= 0.20000000298023224D;
-@@ -849,7 +764,7 @@
+@@ -849,7 +763,7 @@
                      entity.motionX *= 0.94999998807907104D;
                      entity.motionZ *= 0.94999998807907104D;
                  }
@@ -507,7 +506,7 @@
                  {
                      entity.motionX *= 0.20000000298023224D;
                      entity.motionZ *= 0.20000000298023224D;
-@@ -879,7 +794,7 @@
+@@ -879,7 +793,7 @@
  
      public int getSizeInventory()
      {
@@ -516,7 +515,7 @@
      }
  
      public ItemStack getStackInSlot(int i)
-@@ -935,7 +850,11 @@
+@@ -935,7 +849,11 @@
  
      public boolean interact(EntityPlayer entityplayer)
      {
@@ -529,7 +528,7 @@
          {
              if (riddenByEntity != null && (riddenByEntity instanceof EntityPlayer) && riddenByEntity != entityplayer)
              {
-@@ -946,14 +865,14 @@
+@@ -946,14 +864,14 @@
                  entityplayer.mountEntity(this);
              }
          }
@@ -546,7 +545,7 @@
          {
              ItemStack itemstack = entityplayer.inventory.getCurrentItem();
              if (itemstack != null && itemstack.itemID == Item.coal.shiftedIndex)
-@@ -1000,7 +919,7 @@
+@@ -1000,7 +918,7 @@
          return entityplayer.getDistanceSqToEntity(this) <= 64D;
      }
  
@@ -555,7 +554,7 @@
      {
          return (dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1054,4 +973,382 @@
+@@ -1054,4 +972,382 @@
      {
          return dataWatcher.getWatchableObjectInt(18);
      }

@@ -28,7 +28,7 @@
      {
          {
              {
-@@ -76,13 +81,36 @@
+@@ -76,12 +81,35 @@
              }
          }
      };
@@ -36,27 +36,25 @@
 -    private double minecartX;
 -    private double minecartY;
 -    private double minecartZ;
--    private double field_9159_ar;
+-    private double minecartYaw;
 -    private double minecartPitch;
--
 +    protected int turnProgress;
 +    protected double minecartX;
 +    protected double minecartY;
 +    protected double minecartZ;
-+    protected double field_9159_ar;
++    protected double minecartYaw;
 +    protected double minecartPitch;
 +
-+    /*Forge: Minecart Compatibility Layer Integration.
-+     */
++    /*Forge: Minecart Compatibility Layer Integration. */
 +    protected double velocityX;
 +    protected double velocityY;
-+    protected double velocityZ;  
++    protected double velocityZ;
 +    public static float defaultMaxSpeedRail = 0.4f;
 +    public static float defaultMaxSpeedGround = 0.4f;
 +    public static float defaultMaxSpeedAirLateral = 0.4f;
 +    public static float defaultMaxSpeedAirVertical = -1f;
 +    public static double defaultDragAir = 0.94999998807907104D;
-+    protected boolean canUseRail = true;  
++    protected boolean canUseRail = true;
 +    protected boolean canBePushed = true;
 +    private static IMinecartCollisionHandler collisionHandler = null;
 +    
@@ -67,11 +65,11 @@
 +    protected float maxSpeedGround;
 +    protected float maxSpeedAirLateral;
 +    protected float maxSpeedAirVertical;
-+    protected double dragAir;    
-+        
++    protected double dragAir;
++    
+ 
      public EntityMinecart(World world)
      {
-         super(world);
 @@ -92,6 +120,18 @@
          preventEntitySpawning = true;
          setSize(0.98F, 0.7F);

@@ -14,8 +14,8 @@
          {
              j1--;
          }
--        if (!func_41006_g(world.getBlockId(j1, j, k1)))
-+        if (!(func_41006_g(world.getBlockId(j1, j, k1)) || world.isBlockSolidOnSide(j1, j, k1, (i1 & 3) + 2)))
+-        if (!isValidSupportBlock(world.getBlockId(j1, j, k1)))
++        if (!(isValidSupportBlock(world.getBlockId(j1, j, k1)) || world.isBlockSolidOnSide(j1, j, k1, (i1 & 3) + 2)))
          {
              world.setBlockWithNotify(i, j, k, 0);
              dropBlockAsItem(world, i, j, k, i1, 0);
@@ -34,8 +34,8 @@
          {
              i--;
          }
--        return func_41006_g(world.getBlockId(i, j, k));
-+        return func_41006_g(world.getBlockId(i, j, k)) || world.isBlockSolidOnSide(i, j, k, l);
+-        return isValidSupportBlock(world.getBlockId(i, j, k));
++        return isValidSupportBlock(world.getBlockId(i, j, k)) || world.isBlockSolidOnSide(i, j, k, l);
      }
  
      public static boolean isTrapdoorOpen(int i)

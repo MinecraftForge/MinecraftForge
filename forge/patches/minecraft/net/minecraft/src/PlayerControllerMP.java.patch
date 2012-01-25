@@ -46,7 +46,7 @@
 +            curBlockDamageMP += block.blockStrength(mc.theWorld, mc.thePlayer, i, j, k);
              if (stepSoundTickCounter % 4F == 0.0F && block != null)
              {
-                 mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+                 mc.sndManager.playSound(block.stepSound.getStepSound(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
 @@ -207,6 +214,16 @@
      {
          syncCurrentPlayItem();

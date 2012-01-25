@@ -44,7 +44,7 @@
 +            curBlockDamage += block.blockStrength(mc.theWorld, mc.thePlayer, i, j, k);
              if (blockDestroySoundCounter % 4F == 0.0F && block != null)
              {
-                 mc.sndManager.playSound(block.stepSound.stepSoundDir2(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
+                 mc.sndManager.playSound(block.stepSound.getStepSound(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
 @@ -165,6 +171,14 @@
  
      public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)

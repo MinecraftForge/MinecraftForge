@@ -1,10 +1,10 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1317,6 +1317,7 @@
+@@ -1325,6 +1325,7 @@
              {
                  method_getNextWindowId.invoke(entityplayermp, new Object[0]);
                  int j = field_currentWindowId.getInt(entityplayermp);
 +                entityplayermp.closeCraftingGui();
                  entityplayermp.playerNetServerHandler.sendPacket(new Packet100OpenWindow(j, i, iinventory.getInvName(), iinventory.getSizeInventory()));
-                 entityplayermp.currentCraftingInventory = container;
-                 entityplayermp.currentCraftingInventory.windowId = j;
+                 entityplayermp.craftingInventory = container;
+                 entityplayermp.craftingInventory.windowId = j;

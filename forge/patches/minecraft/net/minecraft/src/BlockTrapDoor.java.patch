@@ -14,8 +14,8 @@
          {
              j1--;
          }
--        if (!func_41052_f(world.getBlockId(j1, j, k1)))
-+        if (!(func_41052_f(world.getBlockId(j1, j, k1)) || world.isBlockSolidOnSide(j1, j, k1, (i1 & 3) + 2)))
+-        if (!isValidSupportBlock(world.getBlockId(j1, j, k1)))
++        if (!(isValidSupportBlock(world.getBlockId(j1, j, k1)) || world.isBlockSolidOnSide(j1,  j, k1, (i1 & 3) + 2)))
          {
              world.setBlockWithNotify(i, j, k, 0);
              dropBlockAsItem(world, i, j, k, i1, 0);
@@ -34,14 +34,14 @@
          {
              i--;
          }
--        return func_41052_f(world.getBlockId(i, j, k));
-+        return func_41052_f(world.getBlockId(i, j, k)) || world.isBlockSolidOnSide(i, j, k, l);
+-        return isValidSupportBlock(world.getBlockId(i, j, k));
++        return isValidSupportBlock(world.getBlockId(i, j, k)) || world.isBlockSolidOnSide(i, j, k, l);
      }
  
      public static boolean isTrapdoorOpen(int i)
 @@ -215,6 +222,11 @@
  
-     private static boolean func_41052_f(int i)
+     private static boolean isValidSupportBlock(int i)
      {
 +    	if (disableValidation)
 +    	{

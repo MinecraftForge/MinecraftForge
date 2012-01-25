@@ -9,7 +9,7 @@
  
  public class Item
 @@ -156,6 +157,9 @@
-     private String potionInfo;
+     private String potionEffect;
      private String itemName;
  
 +    // FORGE: To disable repair recipes.
