@@ -1,10 +1,11 @@
-version=$1
+read major minor revision build <version.txt
+version=$major.$minor.$revision.$build
 build_dir=`pwd`
 dir=`pwd`/../forge-$version
 
 function remove_svn () {
   (
-  cd $1
+  cd "$1"
 
   if [ -d .svn ]; then
      rm -rf .svn
@@ -24,7 +25,7 @@ function package_all () {
 
    cp $build_dir/minecraftforge_credits.txt .
 
-   zip -r $dir/minecraftforge$qual-$version.zip \
+   zip -r "$dir/minecraftforge$qual-$version.zip" \
       minecraftforge_credits.txt \
       *.class \
       forge
@@ -34,8 +35,8 @@ cd ../reobf
 
 remove_svn .
 
-rm -rf $dir
-mkdir $dir
+rm -rf "$dir"
+mkdir "$dir"
 
 cd minecraft
 package_all "-client"
@@ -71,6 +72,11 @@ cp ../install/README.txt .
 cp ../minecraftforge_credits.txt .
 cp -r ../doc .
 
+cd ..
+sh inject_version.sh forge/src/minecraft/net/minecraft/src/forge/ForgeHooks.java
+sh inject_version.sh forge/src/minecraft_server/net/minecraft/src/forge/ForgeHooks.java
+cd forge 
+
 cd src
 remove_svn .
 cd ../patches
@@ -81,5 +87,5 @@ cd ..
 
 cd ..
 
-zip -r $dir/minecraftforge-src-$version.zip forge
+zip -r "$dir/minecraftforge-src-$version.zip" forge
 rm -rf forge

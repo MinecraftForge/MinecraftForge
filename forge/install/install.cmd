@@ -3,7 +3,7 @@ echo off
 echo MinecraftForge Windows Setup Program
 echo:
 
-set PATH=%PATH%;%SystemDir%\system32;%SystemRoot%\System32
+@set PATH=%PATH%;%SystemDir%\system32;%SystemRoot%\System32
 
 pushd .. >nul
 
@@ -11,8 +11,8 @@ xcopy /Y /E /I forge\conf\* conf
 
 if exist runtime\bin\fernflower.jar move runtime\bin\fernflower.jar runtime\bin\fernflower.jar-backup
 
-cmd /C cleanup.bat
-cmd /C decompile.bat
+echo | call cleanup.bat
+echo | call decompile.bat
 
 if exist runtime\bin\fernflower.jar-backup move runtime\bin\fernflower.jar-backup runtime\bin\fernflower.jar
 

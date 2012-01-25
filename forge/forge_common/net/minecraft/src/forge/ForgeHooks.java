@@ -300,12 +300,13 @@ public class ForgeHooks {
 
 	}
 
-	public static final int majorVersion=1;
-	public static final int minorVersion=3;
-	public static final int revisionVersion=1;
+	public static final int majorVersion=0;
+	public static final int minorVersion=0;
+	public static final int revisionVersion=0;
+	public static final int buildVersion=0;
 	static {
-		System.out.printf("MinecraftForge V%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion);
-		ModLoader.getLogger().info(String.format("MinecraftForge V%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion));
+		System.out.printf("MinecraftForge v%d.%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion, buildVersion);
+		ModLoader.getLogger().info(String.format("MinecraftForge v%d.%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion, buildVersion));
 	}
 
 	static boolean toolInit=false;

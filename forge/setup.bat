@@ -5,7 +5,7 @@ pushd .. >nul
   rmdir /S /Q src_base
   rmdir /S /Q src_work
 
-  cmd /C decompile.bat
+  @echo | cmd /C decompile.bat
 
   pushd src >nul
     del minecraft\net\minecraft\src\MLProp.java
@@ -17,7 +17,7 @@ pushd .. >nul
     del ..\forge\modLoaderMP-win.patch
   popd >nul
 
-  cmd /C updatemd5.bat
+  @echo | cmd /C updatemd5.bat
 
   mkdir src_base
   mkdir src_work

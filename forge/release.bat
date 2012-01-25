@@ -1,13 +1,13 @@
-cmd /C build.bat
+@cmd /C build.bat
 
-cd ..
+@cd ..
 
-cmd /C reobfuscate.bat
+@echo | cmd /C reobfuscate.bat
 
-set PATH=E:\cygwin\bin;%PATH%
+@set PATH=E:\cygwin\bin;%PATH%
 
-cd forge
+@cd forge
 
-sh package.sh 1.3.1
+@sh package.sh
 
 pause
