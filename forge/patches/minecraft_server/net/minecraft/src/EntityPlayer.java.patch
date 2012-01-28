@@ -103,10 +103,13 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -707,6 +766,26 @@
- 
-     protected void damageEntity(DamageSource damagesource, int i)
-     {
+@@ -711,8 +770,26 @@
+         {
+             i = 1 + i >> 1;
+         }
+-        i = applyArmorCalculations(damagesource, i);
+-        i = applyPotionDamageCalculations(damagesource, i);
++    
 +        boolean doRegularComputation = true;
 +        int initialDamage = i;
 +    
@@ -114,23 +117,22 @@
 +        {
 +            if (stack != null && stack.getItem() instanceof ISpecialArmor) 
 +            {
-+                ISpecialArmor armor = (ISpecialArmor) stack.getItem();            
++                ISpecialArmor armor = (ISpecialArmor)stack.getItem();            
 +                ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
 +                i = i - props.damageRemove;
 +                doRegularComputation = doRegularComputation && props.allowRegularComputation;
 +            }
 +        }
 +    
-+        if (!doRegularComputation) 
++        if (doRegularComputation) 
 +        {
-+            super.damageEntity(damagesource, i);
-+            return;
++            i = applyArmorCalculations(damagesource, i);
++            i = applyPotionDamageCalculations(damagesource, i);
 +        }
-+        
-         if (!damagesource.isUnblockable() && isBlocking())
-         {
-             i = 1 + i >> 1;
-@@ -758,7 +837,9 @@
+         addExhaustion(damagesource.getHungerDamage());
+         health -= i;
+     }
+@@ -758,7 +835,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -140,7 +142,7 @@
      }
  
      public double getYOffset()
-@@ -884,6 +965,11 @@
+@@ -884,6 +963,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
