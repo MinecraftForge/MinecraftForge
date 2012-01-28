@@ -93,12 +93,11 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -768,8 +824,26 @@
+@@ -768,7 +824,25 @@
          {
              i = 1 + i >> 1;
          }
 -        i = applyArmorCalculations(damagesource, i);
--        i = applyPotionDamageCalculations(damagesource, i);
 +        
 +        boolean doRegularComputation = true;
 +        int initialDamage = i;
@@ -117,11 +116,10 @@
 +        if (doRegularComputation)
 +        {
 +            i = applyArmorCalculations(damagesource, i);
-+            i = applyPotionDamageCalculations(damagesource, i);
 +        }
+         i = applyPotionDamageCalculations(damagesource, i);
          addExhaustion(damagesource.getHungerDamage());
          health -= i;
-     }
 @@ -815,7 +889,9 @@
  
      public void destroyCurrentEquippedItem()
