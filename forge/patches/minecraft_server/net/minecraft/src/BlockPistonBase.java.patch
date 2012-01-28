@@ -5,7 +5,7 @@
              }
          }
 -        return !(Block.blocksList[i] instanceof BlockContainer);
-+        return !(Block.blocksList[i] != null && Block.blocksList[i].hasTileEntity(world.getBlockMetadata(j, l, l)));
++        return !(Block.blocksList[i] != null && Block.blocksList[i].hasTileEntity(world.getBlockMetadata(j, k, l)));
      }
  
      private static boolean canExtend(World world, int i, int j, int k, int l)

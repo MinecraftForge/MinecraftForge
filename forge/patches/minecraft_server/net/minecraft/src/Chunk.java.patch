@@ -39,10 +39,11 @@
          isModified = true;
          return true;
      }
-@@ -392,6 +384,11 @@
+@@ -391,7 +383,11 @@
+         blocks[i << worldObj.xShift | k << worldObj.heightShift | j] = (byte)(byte0 & 0xff);
          if (k1 != 0)
          {
-             Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
+-            Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
 +            if (!worldObj.isRemote) 
 +            {
 +            	Block.blocksList[k1].onBlockRemoval(worldObj, l1, j, i2);
@@ -51,7 +52,7 @@
          }
          data.setNibble(i, j, k, 0);
          if (Block.lightOpacity[byte0 & 0xff] != 0)
-@@ -414,28 +411,22 @@
+@@ -414,28 +410,22 @@
              {
                  Block.blocksList[l].onBlockAdded(worldObj, l1, j, i2);
              }
@@ -84,7 +85,7 @@
          isModified = true;
          return true;
      }
-@@ -455,7 +446,7 @@
+@@ -455,7 +445,7 @@
          }
          data.setNibble(i, j, k, l);
          int j1 = getBlockID(i, j, k);
@@ -93,7 +94,7 @@
          {
              TileEntity tileentity = getChunkBlockTileEntity(i, j, k);
              if (tileentity != null)
-@@ -572,29 +563,27 @@
+@@ -572,29 +562,27 @@
      {
          ChunkPosition chunkposition = new ChunkPosition(i, j, k);
          TileEntity tileentity = (TileEntity)chunkTileEntityMap.get(chunkposition);
@@ -132,7 +133,7 @@
      }
  
      public void addTileEntity(TileEntity tileentity)
-@@ -605,7 +594,7 @@
+@@ -605,7 +593,7 @@
          setChunkBlockTileEntity(i, j, k, tileentity);
          if (isChunkLoaded)
          {
@@ -141,7 +142,7 @@
          }
      }
  
-@@ -616,12 +605,18 @@
+@@ -616,12 +604,18 @@
          tileentity.xCoord = xPosition * 16 + i;
          tileentity.yCoord = j;
          tileentity.zCoord = zPosition * 16 + k;
@@ -161,7 +162,7 @@
              tileentity.validate();
              chunkTileEntityMap.put(chunkposition, tileentity);
              return;
-@@ -903,4 +898,18 @@
+@@ -903,4 +897,18 @@
      {
          return new ChunkCoordIntPair(xPosition, zPosition);
      }
