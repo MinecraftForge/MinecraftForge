@@ -36,7 +36,7 @@ pushd .. >nul
     echo Applying patches
     for /f %%i in ('find ../forge/patches -type f') do (
       set file=%%i
-      rem Have to do this to filter out .svn entries
+      rem Have to do this to filter out .svn entries 
       if /I "!file:~-6!" EQU ".patch" (
         ..\runtime\bin\python\python_mcp ..\forge\lfcr.py %%i ..\forge\temp.patch
         ..\runtime\bin\applydiff.exe -uf -p2 -i ..\forge\temp.patch
