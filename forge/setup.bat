@@ -1,11 +1,14 @@
 echo off
 pushd .. >nul
 
-  rmdir /S /Q src
+  if "%1"=="-skipdecompile" (
+    @echo  | cmd /C updatenames.bat
+  ) ELSE (
+    rmdir /S /Q src
+    @echo | cmd /C decompile.bat
+  )
   rmdir /S /Q src_base
   rmdir /S /Q src_work
-
-  @echo | cmd /C decompile.bat
 
   pushd src >nul
     del minecraft\net\minecraft\src\MLProp.java
@@ -44,4 +47,3 @@ pushd .. >nul
 popd >nul
 echo finished
 pause
-

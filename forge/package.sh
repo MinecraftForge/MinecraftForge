@@ -23,8 +23,10 @@ function remove_svn () {
 function package_all () {
    qual=$1
 
-   cp $build_dir/minecraftforge_credits.txt .
+   cp "$build_dir/minecraftforge_credits.txt" .
 
+   echo "Making minecraftforge$qual-$version.zip"
+   
    zip -r "$dir/minecraftforge$qual-$version.zip" \
       minecraftforge_credits.txt \
       *.class \
@@ -48,7 +50,7 @@ cd ../..
 
 rm -rf reobf
 
-cd $build_dir
+cd "$build_dir"
 
 mkdir forge
 cd forge
