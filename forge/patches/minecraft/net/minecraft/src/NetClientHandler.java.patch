@@ -1,0 +1,135 @@
+--- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,6 +7,8 @@
+ import java.util.*;
+ import java.util.logging.Logger;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.MessageManager;
+ 
+ public class NetClientHandler extends NetHandler
+ {
+@@ -35,6 +37,8 @@
+         mc = minecraft;
+         Socket socket = new Socket(InetAddress.getByName(s), i);
+         netManager = new NetworkManager(socket, "Client", this);
++        
++        ForgeHooks.onConnect(netManager);
+     }
+ 
+     public void processReadPackets()
+@@ -58,6 +62,27 @@
+         mc.thePlayer.entityId = packet1login.protocolVersion;
+         currentServerMaxPlayers = packet1login.maxPlayers;
+         ((PlayerControllerMP)mc.playerController).setCreative(packet1login.serverMode == 1);
++        
++        ForgeHooks.onLogin(netManager, packet1login);
++        
++        String[] channels = MessageManager.getInstance().getRegisteredChannels(netManager);
++        StringBuilder tmp = new StringBuilder();
++        tmp.append("Forge");
++        for(String channel : channels)
++        {
++            tmp.append("\0");
++            tmp.append(channel);
++        }
++        Packet250CustomPayload pkt = new Packet250CustomPayload(); 
++        pkt.channel = "REGISTER";
++        try {
++            pkt.data = tmp.toString().getBytes("UTF8");
++        } catch (UnsupportedEncodingException e) {
++            e.printStackTrace();
++        }
++        pkt.length = pkt.data.length;
++        addToSendQueue(pkt);
++        
+     }
+ 
+     public void handlePickupSpawn(Packet21PickupSpawn packet21pickupspawn)
+@@ -608,7 +633,19 @@
+         }
+         else if (packet2handshake.username.equals("-"))
+         {
+-            addToSendQueue(new Packet1Login(mc.session.username, 23));
++            /**
++             * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
++             * This allows modded clients to connect to Vinella server without crashing.
++             * It also allows unmodded clients to connect to Forge server without crashing. 
++             * Its a bit of a dirty hack, but it doesnt interrupt the login flow, and its unused data.
++             * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
++             * identifier so we are certain it is not random, and it is Forge installed.
++             * The C->S mapSeed is set to the current Forge build number, in case we need to do any quick version checks.
++             */
++            Packet1Login pkt = new Packet1Login(mc.session.username, 23);
++            pkt.serverMode = 0x040E9B47; //"Forge".hashCode();
++            pkt.mapSeed = ForgeHooks.buildVersion;
++            addToSendQueue(pkt);
+         }
+         else
+         {
+@@ -620,7 +657,19 @@
+                 bufferedreader.close();
+                 if (s1.equalsIgnoreCase("ok"))
+                 {
+-                    addToSendQueue(new Packet1Login(mc.session.username, 23));
++                    /**
++                     * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
++                     * This allows modded clients to connect to Vinella server without crashing.
++                     * It also allows unmodded clients to connect to Forge server without crashing. 
++                     * Its a bit of a dirty hack, but it doesnt interrupt the login flow, and its unused data.
++                     * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
++                     * identifier so we are certain it is not random, and it is Forge installed.
++                     * The C->S mapSeed is set to the current Forge build number, in case we need to do any quick version checks.
++                     */
++                    Packet1Login pkt = new Packet1Login(mc.session.username, 23);
++                    pkt.serverMode = 0x040E9B47; //"Forge".hashCode();
++                    pkt.mapSeed = ForgeHooks.buildVersion;
++                    addToSendQueue(pkt);
+                 }
+                 else
+                 {
+@@ -1017,4 +1066,44 @@
+     {
+         addToSendQueue(new Packet0KeepAlive(packet0keepalive.randomId));
+     }
++    
++    @Override
++    public void handleCustomPayload(Packet250CustomPayload pkt)
++    {
++        MessageManager inst = MessageManager.getInstance();
++        if (pkt.channel.equals("REGISTER")) 
++        {
++            try 
++            {
++                String channels = new String(pkt.data, "UTF8");
++                for (String channel : channels.split("\0")) 
++                {
++                    inst.addActiveChannel(netManager, channel);
++                }
++            } 
++            catch (UnsupportedEncodingException ex) 
++            {
++                ModLoader.ThrowException("NetClientHandler.handleCustomPayload", ex);
++            }
++        } 
++        else if (pkt.channel.equals("UNREGISTER")) 
++        {
++            try 
++            {
++                String channels = new String(pkt.data, "UTF8");
++                for (String channel : channels.split("\0")) 
++                {
++                    inst.removeActiveChannel(netManager, channel);
++                }
++            }
++            catch (UnsupportedEncodingException ex) 
++            {
++                ModLoader.ThrowException("NetClientHandler.handleCustomPayload", ex);
++            }
++        } 
++        else 
++        {
++            inst.dispatchIncomingMessage(netManager, pkt.channel, pkt.data);
++        }
++    }
+ }

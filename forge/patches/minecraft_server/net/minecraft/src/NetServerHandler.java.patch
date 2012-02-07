@@ -1,6 +1,18 @@
 --- ../src_base/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -295,7 +295,9 @@
+@@ -1,9 +1,11 @@
+ package net.minecraft.src;
+ 
+ import java.io.PrintStream;
++import java.io.UnsupportedEncodingException;
+ import java.util.*;
+ import java.util.logging.Logger;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.forge.MessageManager;
+ 
+ public class NetServerHandler extends NetHandler
+     implements ICommandListener
+@@ -295,7 +297,9 @@
              double d1 = (playerEntity.posY - ((double)j + 0.5D)) + 1.5D;
              double d3 = playerEntity.posZ - ((double)k + 0.5D);
              double d5 = d * d + d1 * d1 + d3 * d3;
@@ -11,7 +23,7 @@
              {
                  return;
              }
-@@ -366,7 +368,9 @@
+@@ -366,7 +370,9 @@
              {
                  j1 = i1;
              }
@@ -22,3 +34,48 @@
              {
                  playerEntity.itemInWorldManager.activeBlockOrUseItem(playerEntity, worldserver, itemstack, i, j, k, l);
              }
+@@ -764,4 +770,44 @@
+     {
+         return true;
+     }
++    
++    @Override
++    public void handleCustomPayload(Packet250CustomPayload pkt)
++    {
++        MessageManager inst = MessageManager.getInstance();
++        if (pkt.channel.equals("REGISTER")) 
++        {
++            try 
++            {
++                String channels = new String(pkt.data, "UTF8");
++                for (String channel : channels.split("\0")) 
++                {
++                    inst.addActiveChannel(netManager, channel);
++                }
++            } 
++            catch (UnsupportedEncodingException ex) 
++            {
++                ModLoader.ThrowException("NetServerHandler.handleCustomPayload", ex);
++            }
++        } 
++        else if (pkt.channel.equals("UNREGISTER")) 
++        {
++            try 
++            {
++                String channels = new String(pkt.data, "UTF8");
++                for (String channel : channels.split("\0")) 
++                {
++                    inst.removeActiveChannel(netManager, channel);
++                }
++            }
++            catch (UnsupportedEncodingException ex) 
++            {
++                ModLoader.ThrowException("NetServerHandler.handleCustomPayload", ex);
++            }
++        } 
++        else 
++        {
++            inst.dispatchIncomingMessage(netManager, pkt.channel, pkt.data);
++        }
++    }
+ }

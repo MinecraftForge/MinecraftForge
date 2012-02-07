@@ -14,6 +14,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet1Login;
 import net.minecraft.src.World;
 
 import java.util.*;
@@ -103,6 +105,31 @@ public class ForgeHooks {
 	}
 	
 	static LinkedList<IMinecartHandler> minecartHandlers = new LinkedList<IMinecartHandler>();
+	
+	public static void onConnect(NetworkManager network)
+	{
+	    for (IConnectionHandler handler : connectionHandlers)
+	    {
+	        handler.OnConnect(network);
+	    }
+	}
+	
+	public static void onLogin(NetworkManager network, Packet1Login login)
+	{
+	    for (IConnectionHandler handler : connectionHandlers)
+	    {
+	        handler.OnLogin(network, login);
+	    }
+	}
+	
+    public static void onDisconnect(NetworkManager network, String message, Object[] args)
+    {
+        for (IConnectionHandler handler : connectionHandlers)
+        {
+            handler.OnDisconnect(network, message, args);
+        }
+    }
+	static LinkedList<IConnectionHandler> connectionHandlers = new LinkedList<IConnectionHandler>();
 
 	// Plant Management
 	// ------------------------------------------------------------

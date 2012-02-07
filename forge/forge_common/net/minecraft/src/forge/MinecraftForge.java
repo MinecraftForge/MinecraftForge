@@ -16,45 +16,58 @@ import java.util.*;
 public class MinecraftForge {
 
     private static LinkedList<IBucketHandler> bucketHandlers = new LinkedList<IBucketHandler>();
+    
     /**
      * Register a new custom bucket handler.
+     * @param handler The Handler to be registered
      */
-    public static void registerCustomBucketHandler(IBucketHandler handler) {
+    public static void registerCustomBucketHandler(IBucketHandler handler) 
+    {
         bucketHandlers.add(handler);
     }
 
     /**
      * Registers a new sleeping handler.
+     * @param handler The Handler to be registered
      */
-    public static void registerSleepHandler(ISleepHandler handler) {
-	ForgeHooks.sleepHandlers.add(handler);
+    public static void registerSleepHandler(ISleepHandler handler) 
+    {
+        ForgeHooks.sleepHandlers.add(handler);
     }
 
     /**
      * Registers a new bonemeal handler.
+     * @param handler The Handler to be registered
      */
-    public static void registerBonemealHandler(IBonemealHandler handler) {
-	ForgeHooks.bonemealHandlers.add(handler);
+    public static void registerBonemealHandler(IBonemealHandler handler) 
+    {
+        ForgeHooks.bonemealHandlers.add(handler);
     }
 
     /**
      * Registers a new hoe handler.
+     * @param handler The Handler to be registered
      */
-    public static void registerHoeHandler(IHoeHandler handler) {
-	ForgeHooks.hoeHandlers.add(handler);
+    public static void registerHoeHandler(IHoeHandler handler) 
+    {
+        ForgeHooks.hoeHandlers.add(handler);
     }
 
     /**
      * Registers a new destroy tool handler.
+     * @param handler The Handler to be registered
      */
-    public static void registerDestroyToolHandler(IDestroyToolHandler handler) {
-	ForgeHooks.destroyToolHandlers.add(handler);
+    public static void registerDestroyToolHandler(IDestroyToolHandler handler) 
+    {
+        ForgeHooks.destroyToolHandlers.add(handler);
     }
 
     /**
      * Registers a new crafting handler.
+     * @param handler The Handler to be registered
      */
-    public static void registerCraftingHandler(ICraftingHandler handler) {
+    public static void registerCraftingHandler(ICraftingHandler handler)
+    {
         ForgeHooks.craftingHandlers.add(handler);
     }
     
@@ -65,6 +78,15 @@ public class MinecraftForge {
     public static void registerMinecartHandler(IMinecartHandler handler)
     {
     	ForgeHooks.minecartHandlers.add(handler);
+    }
+    
+    /**
+     * Registers a new Connection event handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerConnectionHandler(IConnectionHandler handler)
+    {
+        ForgeHooks.connectionHandlers.add(handler);
     }
 
     /**
