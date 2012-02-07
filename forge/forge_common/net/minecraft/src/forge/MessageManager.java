@@ -69,9 +69,11 @@ public class MessageManager
         {
             ArrayList<IPacketHandler> handlers = channelToHandlers.get(channel);
             ArrayList<String> channels = handlerToChannels.get(handler);
+            boolean ret = false; 
             
             if (handlers == null)
             {
+                ret = true;
                 handlers = new ArrayList<IPacketHandler>();
                 channelToHandlers.put(channel, handlers);
             }
@@ -82,16 +84,13 @@ public class MessageManager
                 handlerToChannels.put(handler, channels);
             }
             
-            boolean ret = false; 
             if (!channels.contains(channel))
             {
                 channels.add(channel);
-                ret = true;
             }
             if (!handlers.contains(handler))
             {
                 handlers.add(handler);
-                ret = true;
             }
             return ret;
         }
@@ -113,17 +112,16 @@ public class MessageManager
 
             if (handlers != null && handlers.contains(handler))
             {
-                ret = true;
                 handlers.remove(handler);
                 if (handlers.size() == 0)
                 {
+                    ret = true;
                     channelToHandlers.remove(channel);
                 }
             }
             
             if (channels != null && channels.contains(channel))
             {
-                ret = true;
                 channels.remove(channel);
                 if (handlers.size() == 0)
                 {
