@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/src/EntitySheep.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EntitySheep.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class EntitySheep extends EntityAnimal
+ {
+     public static final float fleeceColorTable[][] =
+@@ -195,7 +197,7 @@
+     public boolean interact(EntityPlayer entityplayer)
+     {
+         ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+-        if (itemstack != null && itemstack.itemID == Item.shears.shiftedIndex && !getSheared() && !isChild())
++        if (itemstack != null && !getSheared() && !isChild() && (itemstack.itemID == Item.shears.shiftedIndex || ForgeHooks.onUseShears(entityplayer, this)))
+         {
+             if (!worldObj.isRemote)
+             {
+@@ -209,7 +211,7 @@
+                     entityitem.motionZ += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
+                 }
+             }
+-            itemstack.damageItem(1, entityplayer);
++            if (itemstack.itemID == Item.shears.shiftedIndex) itemstack.damageItem(1, entityplayer);
+         }
+         return super.interact(entityplayer);
+     }

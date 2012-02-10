@@ -100,6 +100,14 @@ public class MinecraftForge {
     {
         ForgeHooks.pickupHandlers.add(handler);
     }
+    
+    /**
+     * Registers a new shears event handler
+     */
+    public static void registerShearsHandler(IShearsHandler handler)
+    {
+    	ForgeHooks.shearsHandlers.add(handler);
+    }
 
     /**
      * This is not supposed to be called outside of Minecraft internals.
