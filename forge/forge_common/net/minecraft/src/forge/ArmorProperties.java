@@ -5,16 +5,23 @@
 
 package net.minecraft.src.forge;
 
-public class ArmorProperties {
-	public int damageRemove = 0;
-	public boolean allowRegularComputation = false;
+public class ArmorProperties 
+{
+    public double damageReduce = 0;
+    public int    damageAbsorb = 0;
 	
-	public ArmorProperties () {
-		
-	}
-	
-	public ArmorProperties (int damageRemove, boolean allowRegularCompuation) {
-		this.damageRemove = damageRemove;
-		this.allowRegularComputation = allowRegularCompuation;
+	public ArmorProperties () {}
+    /**
+      * Create an ArmorProperties describing the damage reduction.
+      * 
+      * @param absorb Damage absorption. Removed from damage before damage
+      *    reduction computation is applied.
+      * @param reduce Damage reduction, percentage of damage absorbed by
+      *    armor where 1.0 =100%.  A full set of diamond armor is 80%.
+      */
+	public ArmorProperties (int absorb, double reduce) 
+	{
+	    damageReduce = reduce;
+	    damageAbsorb = absorb;
 	}
 }

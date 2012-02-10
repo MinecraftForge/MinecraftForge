@@ -103,34 +103,64 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -711,7 +770,25 @@
+@@ -711,8 +770,54 @@
          {
              i = 1 + i >> 1;
          }
 -        i = applyArmorCalculations(damagesource, i);
+-        i = applyPotionDamageCalculations(damagesource, i);
 +    
-+        boolean doRegularComputation = true;
-+        int initialDamage = i;
++        int absorb = 0;
++        int reduce = 0;
 +    
-+        for (ItemStack stack : inventory.armorInventory) 
++        for (int x = 0; x < inventory.armorInventory.length; x++) 
 +        {
-+            if (stack != null && stack.getItem() instanceof ISpecialArmor) 
++            ItemStack stack = inventory.armorInventory[x];
++            if (stack == null)
 +            {
-+                ISpecialArmor armor = (ISpecialArmor)stack.getItem();            
-+                ArmorProperties props = armor.getProperties(this, initialDamage, i);                            
-+                i = i - props.damageRemove;
-+                doRegularComputation = doRegularComputation && props.allowRegularComputation;
++                continue;
++            }
++            
++            if (stack.getItem() instanceof ISpecialArmor) 
++            {
++                ISpecialArmor armor = (ISpecialArmor)stack.getItem();                
++                ArmorProperties props = armor.getProperties(this, damagesource, stack, i);
++                absorb += props.damageAbsorb;
++                reduce += props.damageReduce;
++            } 
++            else if (stack.getItem() instanceof ItemArmor && !damagesource.isUnblockable())
++            {
++                reduce += ((ItemArmor)stack.getItem()).damageReduceAmount / 25.0;
++                stack.damageItem((i / 4 == 0 ? 1 : i / 4), this);
++            }
++            
++            if (inventory.armorInventory[x] != null)
++            {
++                stack.onItemDestroyedByUse(this);
++                inventory.armorInventory[x] = null;
 +            }
 +        }
-+    
-+        if (doRegularComputation) 
++        
++        i -= absorb;
++        if (i <= 0)
 +        {
-+            i = applyArmorCalculations(damagesource, i);
++            return;
 +        }
-         i = applyPotionDamageCalculations(damagesource, i);
++        
++        reduce = Math.min(25, 25 * reduce);
++        int damage = i * (25 - reduce) + carryoverDamage;
++        carryoverDamage = damage % 25;
++        damage /= 25;
++        if (damage <= 0)
++        {
++            return;
++        }
++        
++        i = applyPotionDamageCalculations(damagesource, damage);
          addExhaustion(damagesource.getHungerDamage());
          health -= i;
-@@ -758,7 +835,9 @@
+     }
+@@ -758,7 +863,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -140,7 +170,7 @@
      }
  
      public double getYOffset()
-@@ -884,6 +963,11 @@
+@@ -884,6 +991,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
