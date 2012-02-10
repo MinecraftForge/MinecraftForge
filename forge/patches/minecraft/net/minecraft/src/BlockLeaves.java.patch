@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockLeaves.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockLeaves.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class BlockLeaves extends BlockLeavesBase
+ {
+     private int baseIndexInPNG;
+@@ -213,7 +215,7 @@
+ 
+     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+     {
+-        if (!world.isRemote && entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
++        if (!world.isRemote && entityplayer.getCurrentEquippedItem() != null && (entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex || ForgeHooks.onDestroyLeafBlock(entityplayer, i, j, k, world.getBlockId(i, j, k), l)))
+         {
+             entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
+             dropBlockAsItem_do(world, i, j, k, new ItemStack(Block.leaves.blockID, 1, l & 3));

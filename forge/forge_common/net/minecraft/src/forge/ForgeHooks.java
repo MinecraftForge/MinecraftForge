@@ -8,6 +8,7 @@ package net.minecraft.src.forge;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -152,6 +153,26 @@ public class ForgeHooks {
 	    return cont;
 	}
 	static LinkedList<IPickupHandler> pickupHandlers = new LinkedList<IPickupHandler>();
+	
+	public static boolean onUseShears(EntityPlayer player, EntityLiving mob)
+	{
+		for (IShearsHandler handler : shearsHandlers) {
+			if (handler.onUseShears(player, mob))
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean onDestroyLeafBlock(EntityPlayer player,
+			int x, int y, int z, int id, int meta)
+	{
+		for (IShearsHandler handler : shearsHandlers) {
+			if (handler.onDestroyLeafBlock(player, x, y, z, id, meta))
+				return true;
+		}
+		return false;
+	}
+	static LinkedList<IShearsHandler> shearsHandlers = new LinkedList<IShearsHandler>();
 
 	// Plant Management
 	// ------------------------------------------------------------
