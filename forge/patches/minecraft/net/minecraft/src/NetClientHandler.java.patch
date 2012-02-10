@@ -53,7 +53,7 @@
 -            addToSendQueue(new Packet1Login(mc.session.username, 23));
 +            /**
 +             * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
-+             * This allows modded clients to connect to Vinella server without crashing.
++             * This allows modded clients to connect to Vanilla server without crashing.
 +             * It also allows unmodded clients to connect to Forge server without crashing. 
 +             * Its a bit of a dirty hack, but it doesnt interrupt the login flow, and its unused data.
 +             * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
@@ -61,8 +61,8 @@
 +             * The C->S mapSeed is set to the current Forge build number, in case we need to do any quick version checks.
 +             */
 +            Packet1Login pkt = new Packet1Login(mc.session.username, 23);
-+            pkt.serverMode = 0x040E9B47; //"Forge".hashCode();
-+            pkt.mapSeed = ForgeHooks.buildVersion;
++            pkt.serverMode = ForgeHooks.FORGE_ID;
++            pkt.mapSeed    = ForgeHooks.buildVersion;
 +            addToSendQueue(pkt);
          }
          else
@@ -74,7 +74,7 @@
 -                    addToSendQueue(new Packet1Login(mc.session.username, 23));
 +                    /**
 +                     * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
-+                     * This allows modded clients to connect to Vinella server without crashing.
++                     * This allows modded clients to connect to Vanilla server without crashing.
 +                     * It also allows unmodded clients to connect to Forge server without crashing. 
 +                     * Its a bit of a dirty hack, but it doesnt interrupt the login flow, and its unused data.
 +                     * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
@@ -82,8 +82,8 @@
 +                     * The C->S mapSeed is set to the current Forge build number, in case we need to do any quick version checks.
 +                     */
 +                    Packet1Login pkt = new Packet1Login(mc.session.username, 23);
-+                    pkt.serverMode = 0x040E9B47; //"Forge".hashCode();
-+                    pkt.mapSeed = ForgeHooks.buildVersion;
++                    pkt.serverMode = ForgeHooks.FORGE_ID;
++                    pkt.mapSeed    = ForgeHooks.buildVersion;
 +                    addToSendQueue(pkt);
                  }
                  else

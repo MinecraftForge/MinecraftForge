@@ -15,9 +15,15 @@ import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class ForgeHooks {
@@ -165,37 +171,33 @@ public class ForgeHooks {
 	static int seedGrassWeight;
 
 	static {
-		plantGrassList=new ArrayList<ProbableItem>();
-		plantGrassList.add(new ProbableItem(
-			Block.plantYellow.blockID,0,1,0,20));
-		plantGrassList.add(new ProbableItem(
-			Block.plantRed.blockID,0,1,20,30));
-		plantGrassWeight=30;
+		plantGrassList = new ArrayList<ProbableItem>();
+		plantGrassList.add(new ProbableItem(Block.plantYellow.blockID, 0, 1, 0, 20));
+		plantGrassList.add(new ProbableItem(Block.plantRed.blockID, 0, 1, 20, 30));
+		plantGrassWeight = 30;
 
-		seedGrassList=new ArrayList<ProbableItem>();
-		seedGrassList.add(new ProbableItem(
-			Item.seeds.shiftedIndex,0,1,0,10));
-		seedGrassWeight=10;
+		seedGrassList = new ArrayList<ProbableItem>();
+		seedGrassList.add(new ProbableItem(Item.seeds.shiftedIndex, 0, 1, 0, 10));
+		seedGrassWeight = 10;
 	}
 
 	public static void plantGrassPlant(World world, int i, int j, int k) {
-		int n=world.rand.nextInt(plantGrassWeight);
-		ProbableItem pi=getRandomItem(plantGrassList,n);
-		if(pi==null) return;
-		world.setBlockAndMetadataWithNotify(i,j,k,pi.itemid,pi.meta);
+		int n = world.rand.nextInt(plantGrassWeight);
+		ProbableItem pi = getRandomItem(plantGrassList, n);
+		if (pi == null) return;
+		world.setBlockAndMetadataWithNotify(i, j, k, pi.itemid, pi.meta);
 	}
 
 	public static void addPlantGrass(int item, int md, int prop) {
-		plantGrassList.add(new ProbableItem(
-			item,md,1,plantGrassWeight,plantGrassWeight+prop));
-		plantGrassWeight+=prop;
+		plantGrassList.add(new ProbableItem(item, md, 1, plantGrassWeight, plantGrassWeight + prop));
+		plantGrassWeight += prop;
 	}
 
 	public static ItemStack getGrassSeed(World world) {
-		int n=world.rand.nextInt(seedGrassWeight);
-		ProbableItem pi=getRandomItem(seedGrassList,n);
-		if(pi==null) return null;
-		return new ItemStack(pi.itemid,pi.qty,pi.meta);
+		int n = world.rand.nextInt(seedGrassWeight);
+		ProbableItem pi = getRandomItem(seedGrassList,n);
+		if (pi == null) return null;
+		return new ItemStack(pi.itemid, pi.qty, pi.meta);
 	}
 
 	public static void addGrassSeed(int item, int md, int qty, int prop) {
@@ -206,22 +208,21 @@ public class ForgeHooks {
 
 	// Tool Path
 	// ------------------------------------------------------------
-	public static boolean canHarvestBlock(Block bl,
-			EntityPlayer player, int md) {
+	public static boolean canHarvestBlock(Block bl, EntityPlayer player, int md) {
 		if(bl.blockMaterial.getIsHarvestable())
 			return true;
 		ItemStack itemstack = player.inventory.getCurrentItem();
-		if(itemstack == null) return false;
+		if (itemstack == null) return false;
 
-		List tc=(List)toolClasses.get(itemstack.itemID);
-		if(tc==null) return itemstack.canHarvestBlock(bl);
-		Object[] ta=tc.toArray();
-		String cls=(String)ta[0]; int hvl=(Integer)ta[1];
+		List tc = (List)toolClasses.get(itemstack.itemID);
+		if (tc == null) return itemstack.canHarvestBlock(bl);
+		Object[] ta = tc.toArray();
+		String cls = (String)ta[0]; 
+		int hvl = (Integer)ta[1];
 
-		Integer bhl=(Integer)toolHarvestLevels.get(Arrays.asList(
-			bl.blockID,md,cls));
-		if(bhl==null) return itemstack.canHarvestBlock(bl);
-		if(bhl>hvl) return false;
+		Integer bhl = (Integer)toolHarvestLevels.get(Arrays.asList(bl.blockID, md, cls));
+		if(bhl == null) return itemstack.canHarvestBlock(bl);
+		if(bhl > hvl) return false;
 		return true;
 	}
 
@@ -326,6 +327,46 @@ public class ForgeHooks {
 		}
 
 	}
+	
+	public static HashMap<Class, EntityTrackerInfo> entityTrackerMap = new HashMap<Class, EntityTrackerInfo>();
+	
+	/**
+	 * Builds the 'Spawn' packet using the Custom Payload packet on the 'Forge' channel.
+	 * Supports entities that have custom spawn data, as well as the generic 'Owner' construct.
+	 * 
+	 * @param entity The entity instance to spawn
+	 * @return The spawn packet, or null if we arn't spawning it.
+	 */
+	public static Packet getEntitySpawnPacket(Entity entity)
+	{
+	    EntityTrackerInfo info = MinecraftForge.getEntityTrackerInfo(entity, false);
+	    if (info == null)
+	    {
+	        return null;
+	    }
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        DataOutputStream data = new DataOutputStream(bytes);
+	    try 
+	    {
+            data.writeByte(FORGE_PACKET_SPAWN);
+            PacketEntitySpawn spawn = new PacketEntitySpawn(entity, info.Mod, info.ID);
+            spawn.writeData(data);
+            if (entity instanceof ISpawnHandler)
+            {
+                ((ISpawnHandler)entity).writeSpawnData(data);
+            }
+        } 
+	    catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+	    
+	    Packet250CustomPayload pkt = new Packet250CustomPayload();
+	    pkt.channel = "Forge";
+	    pkt.data = bytes.toByteArray();
+	    pkt.length = pkt.data.length;
+	    return pkt;
+	}
 
 	public static final int majorVersion=0;
 	public static final int minorVersion=0;
@@ -340,5 +381,22 @@ public class ForgeHooks {
 	static HashMap toolClasses=new HashMap();
 	static HashMap toolHarvestLevels=new HashMap();
 	static HashSet toolEffectiveness=new HashSet();
+	
+	private static IPacketHandler forgePacketHandler = null;
+	public static void setPacketHandler(IPacketHandler handler)
+	{
+	    if (forgePacketHandler != null)
+	    {
+	        throw new RuntimeException("Attempted to set Forge's Internal packet handler after it was already set");
+	    }
+	    forgePacketHandler = handler;
+	}
+	public static IPacketHandler getPacketHandler()
+	{
+	    return forgePacketHandler;
+	}
+	//Forge Packet ID Constants.
+	public static final int FORGE_ID = 0x040E9B47; //"Forge".hashCode();
+	public static final int FORGE_PACKET_SPAWN = 1;
 }
 

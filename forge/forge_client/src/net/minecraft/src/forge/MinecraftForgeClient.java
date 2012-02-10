@@ -87,4 +87,20 @@ public class MinecraftForgeClient {
 	public static ICustomItemRenderer getCustomItemRenderer (int itemID) {
 		return customItemRenderers [itemID];
 	}
+	
+	private static boolean hasInit = false; 
+	public static void init()
+	{
+	    if (hasInit)
+	    {
+	        return;
+	    }
+	    hasInit = true;
+	    ForgeHooks.setPacketHandler(new PacketHandlerClient());
+	}
+	
+	static 
+	{
+	    init();
+	}
 }

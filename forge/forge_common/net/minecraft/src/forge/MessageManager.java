@@ -408,12 +408,12 @@ public class MessageManager
     {
         if (channel.equals("Forge"))
         {
-            /* Currently Forge has no custom tasks, but will eventually have 
-             * Mod list testing, and whatever, when we remove ModLoaderMP
-             * 
-            byte[] tmpData = new byte[data.length];
-            System.arraycopy(data, 0, tmpData, 0, data.length);
-             */
+            if (ForgeHooks.getPacketHandler() != null)
+            {
+                byte[] tmpData = new byte[data.length];
+                System.arraycopy(data, 0, tmpData, 0, data.length);
+                ForgeHooks.getPacketHandler().onPacketData(manager, channel, tmpData);
+            }
         }
         
         if (connections.contains(manager))

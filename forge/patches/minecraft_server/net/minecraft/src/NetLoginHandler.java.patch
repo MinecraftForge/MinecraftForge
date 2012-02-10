@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/NetLoginHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/NetLoginHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,10 +1,13 @@
+@@ -1,10 +1,14 @@
  package net.minecraft.src;
  
  import java.io.IOException;
@@ -10,11 +10,12 @@
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.ForgeHooksServer;
 +import net.minecraft.src.forge.MessageManager;
  
  public class NetLoginHandler extends NetHandler
  {
-@@ -29,6 +32,7 @@
+@@ -29,6 +33,7 @@
          mcServer = minecraftserver;
          netManager = new NetworkManager(socket, s, this);
          netManager.chunkDataSendCounter = 0;
@@ -22,14 +23,16 @@
      }
  
      public void tryLogin()
-@@ -129,7 +133,37 @@
+@@ -129,7 +134,39 @@
              }
  
              entityplayermp.func_20057_k();
 -            ModLoaderMp.HandleAllLogins(entityplayermp);
 +            
-+            if (packet1login.serverMode == 0x040E9B47) //"Forge".hashCode();
++            if (packet1login.serverMode == ForgeHooks.FORGE_ID)
 +            {
++                //Pretty hackish place to put it, but it needs to go somewhere
++                ForgeHooksServer.init();
 +                //pkt.mapSeed = ForgeHooks.buildVersion;
 +                ForgeHooks.onLogin(netManager, packet1login);                
 +

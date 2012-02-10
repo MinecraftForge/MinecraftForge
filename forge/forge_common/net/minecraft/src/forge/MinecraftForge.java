@@ -5,10 +5,13 @@
 
 package net.minecraft.src.forge;
 
+import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
 import java.util.*;
@@ -382,17 +385,25 @@ public class MinecraftForge {
      * mods that use recent, new, or unstable APIs to prevent
      * incompatibilities.
      */
-    public static void versionDetectStrict(String modname,
-		    int major, int minor, int revision) {
-	    if(major!=ForgeHooks.majorVersion) {
+    public static void versionDetectStrict(String modname, int major, int minor, int revision) 
+    {
+	    if(major!=ForgeHooks.majorVersion) 
+	    {
 		    killMinecraft(modname,"MinecraftForge Major Version Mismatch, expecting "+major+".x.x");
-	    } else if(minor!=ForgeHooks.minorVersion) {
-		    if(minor>ForgeHooks.minorVersion) {
+	    } 
+	    else if(minor!=ForgeHooks.minorVersion) 
+	    {
+		    if(minor>ForgeHooks.minorVersion) 
+		    {
 			    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
-		    } else {
+		    } 
+		    else 
+		    {
 			    killMinecraft(modname,"MinecraftForge minor version mismatch, expecting "+major+"."+minor+".x");
 		    }
-	    } else if(revision>ForgeHooks.revisionVersion) {
+	    } 
+	    else if(revision>ForgeHooks.revisionVersion) 
+	    {
 		    killMinecraft(modname,"MinecraftForge Too Old, need at least "+major+"."+minor+"."+revision);
 	    }
     }
@@ -774,6 +785,88 @@ public class MinecraftForge {
     		ret.add(item.copy());
     	}
         return ret;
+    }
+    
+    /**
+     * Registers a Entity class tracking information. Used for sendingEntity 
+     * information over the network. 
+     *  
+     * @param entityClass The class for the Entity
+     * @param mod The BaseMod that provides this Entity.
+     * @param ID The ID for the Entity. Needs to be unique combination of Mod and ID.
+     * @param range How close a player has to be to be informed this Entity exists.
+     * @param updateFrequancy How many ticks between checking and sending information updates for this Entity.
+     * @param sendVelocityInfo If velocity information should be included in the update information.
+     * @return True, if successfully registered. False if the class is already registered.
+     */
+    public static boolean registerEntity(Class entityClass, BaseMod mod, int ID, int range, int updateFrequancy, boolean sendVelocityInfo)
+    {
+        if (ForgeHooks.entityTrackerMap.containsKey(entityClass))
+        {
+            return false;
+        }
+        ForgeHooks.entityTrackerMap.put(entityClass, new EntityTrackerInfo(mod, ID, range, updateFrequancy, sendVelocityInfo));
+        return true;
+    }
+    
+    /**
+     * Retrieves the tracker info for input Entity.
+     * 
+     * @param entity The Entity to find tracking info for.
+     * @param checkSupers If we should check the super-classes for a match. 
+     * @return The information, or Null if not found.
+     */
+    public static EntityTrackerInfo getEntityTrackerInfo(Entity entity, boolean checkSupers)
+    {
+        for (Map.Entry<Class, EntityTrackerInfo> entry : ForgeHooks.entityTrackerMap.entrySet())
+        {
+            if (entry.getKey().isInstance(entity))
+            {
+                if (!checkSupers || entry.getKey() == entry.getClass())
+                {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Retrieves the Class for a registered Entity based on ModID and Entity Type.
+     * 
+     * @param modID The ID of the mod (mod.toString().hashCode())
+     * @param type The ID for the Entity
+     * @return The entity Class, or null if not found.
+     */
+    public static Class getEntityClass(int modID, int type)
+    {
+        for (Map.Entry<Class, EntityTrackerInfo> entry : ForgeHooks.entityTrackerMap.entrySet())
+        {
+            EntityTrackerInfo info = entry.getValue();
+            if (type == info.ID && modID == info.Mod.toString().hashCode())
+            {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Retrieves a mod instance based on it's ID. (toString().hashCode())
+     * 
+     * @param id The mod ID
+     * @return The mod, or null if not found
+     */
+    public static BaseMod getModByID(int id)
+    {
+        for(BaseMod mod : (List<BaseMod>)ModLoader.getLoadedMods())
+        {
+            if (mod.toString().hashCode() == id)
+            {
+                return mod;
+            }
+        }
+        return null;
     }
   
         

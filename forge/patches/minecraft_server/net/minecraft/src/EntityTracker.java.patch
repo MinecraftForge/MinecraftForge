@@ -1,0 +1,21 @@
+--- ../src_base/minecraft_server/net/minecraft/src/EntityTracker.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/EntityTracker.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,7 @@
+ 
+ import java.util.*;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.forge.ForgeHooksServer;
+ 
+ public class EntityTracker
+ {
+@@ -22,6 +23,10 @@
+ 
+     public void trackEntity(Entity entity)
+     {
++        if (ForgeHooksServer.OnTrackEntity(this, entity))
++        {
++            return;
++        }
+         if (entity instanceof EntityPlayerMP)
+         {
+             trackEntity(entity, 512, 2);
