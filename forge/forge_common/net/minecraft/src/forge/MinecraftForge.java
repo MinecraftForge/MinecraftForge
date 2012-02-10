@@ -93,6 +93,15 @@ public class MinecraftForge {
     }
 
     /**
+     * Registers a new Item Pickup event handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerPickupHandler(IPickupHandler handler)
+    {
+        ForgeHooks.pickupHandlers.add(handler);
+    }
+
+    /**
      * This is not supposed to be called outside of Minecraft internals.
      */
     public static ItemStack fillCustomBucket(World w, int i, int j, int k) {

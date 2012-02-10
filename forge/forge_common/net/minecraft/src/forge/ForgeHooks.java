@@ -7,6 +7,7 @@ package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -136,6 +137,21 @@ public class ForgeHooks {
         }
     }
 	static LinkedList<IConnectionHandler> connectionHandlers = new LinkedList<IConnectionHandler>();
+	
+	public static boolean onItemPickup(EntityPlayer player, EntityItem item)
+	{
+	    boolean cont = true;
+	    for (IPickupHandler handler : pickupHandlers)
+	    {
+	        cont = cont && handler.onItemPickup(player, item);
+	        if (!cont || item.item.stackSize <= 0)
+	        {
+	            return false;
+	        }
+	    }
+	    return cont;
+	}
+	static LinkedList<IPickupHandler> pickupHandlers = new LinkedList<IPickupHandler>();
 
 	// Plant Management
 	// ------------------------------------------------------------
