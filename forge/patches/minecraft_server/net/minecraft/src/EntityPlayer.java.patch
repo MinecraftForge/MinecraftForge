@@ -134,7 +134,7 @@
 +                stack.damageItem((i / 4 == 0 ? 1 : i / 4), this);
 +            }
 +            
-+            if (inventory.armorInventory[x] != null)
++            if (inventory.armorInventory[x] != null && stack.stackSize <= 0)
 +            {
 +                stack.onItemDestroyedByUse(this);
 +                inventory.armorInventory[x] = null;
