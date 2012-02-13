@@ -48,6 +48,15 @@
              float f4 = 0.25F;
              int k = Block.blocksList[itemstack.itemID].getRenderType();
              if (k == 1 || k == 19 || k == 12 || k == 2)
+@@ -72,7 +100,7 @@
+         else if (itemstack.getItem().func_46058_c())
+         {
+             GL11.glScalef(0.5F, 0.5F, 0.5F);
+-            loadTexture("/gui/items.png");
++            loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]));
+             for (int i = 0; i <= 1; i++)
+             {
+                 int l = itemstack.getItem().func_46057_a(itemstack.getItemDamage(), i);
 @@ -94,11 +122,11 @@
              int j = itemstack.getIconIndex();
              if (itemstack.itemID < 256)
