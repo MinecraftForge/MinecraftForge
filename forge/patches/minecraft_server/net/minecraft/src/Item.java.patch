@@ -18,7 +18,7 @@
      protected Item(int i)
      {
          maxStackSize = 64;
-@@ -389,10 +393,117 @@
+@@ -389,10 +393,132 @@
          float f8 = f6;
          float f9 = f3 * f5;
          double d3 = 5D;
@@ -132,6 +132,21 @@
 +     */
 +    public void onUsingItemTick(ItemStack stack, EntityPlayer player, int count) 
 +    {
++    }
++    
++    /**
++     * Called when the player Left Clicks (attacks) an entity.
++     * Processed before damage is done, if return value is true further processing is canceled
++     * and the entity is not attacked.
++     * 
++     * @param stack The Item being used
++     * @param player The player that is attacking
++     * @param entity The entity being attacked
++     * @return True to cancel the rest of the interaction.
++     */
++    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) 
++    {
++        return false;
 +    }
  
      public int getItemEnchantability()

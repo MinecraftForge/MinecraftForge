@@ -160,7 +160,19 @@
      }
  
      public double getYOffset()
-@@ -947,6 +1051,11 @@
+@@ -834,6 +938,11 @@
+ 
+     public void attackTargetEntityWithCurrentItem(Entity entity)
+     {
++        ItemStack stack = getCurrentEquippedItem();
++        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, entity))
++        {
++            return;
++        }
+         int i = inventory.getDamageVsEntity(entity);
+         if (isPotionActive(Potion.damageBoost))
+         {
+@@ -947,6 +1056,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {

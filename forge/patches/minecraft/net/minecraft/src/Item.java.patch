@@ -27,7 +27,7 @@
          Vec3D vec3d1 = vec3d.addVector((double)f7 * d3, (double)f8 * d3, (double)f9 * d3);
          MovingObjectPosition movingobjectposition = world.rayTraceBlocks_do_do(vec3d, vec3d1, flag, !flag);
          return movingobjectposition;
-@@ -469,6 +473,109 @@
+@@ -469,6 +473,124 @@
      {
          return getIconFromDamage(i);
      }
@@ -133,6 +133,21 @@
 +     */
 +    public void onUsingItemTick(ItemStack stack, EntityPlayer player, int count) 
 +    {
++    }
++    
++    /**
++     * Called when the player Left Clicks (attacks) an entity.
++     * Processed before damage is done, if return value is true further processing is canceled
++     * and the entity is not attacked.
++     * 
++     * @param stack The Item being used
++     * @param player The player that is attacking
++     * @param entity The entity being attacked
++     * @return True to cancel the rest of the interaction.
++     */
++    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) 
++    {
++        return false;
 +    }
  
      static
