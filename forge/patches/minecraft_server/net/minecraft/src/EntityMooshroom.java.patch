@@ -1,0 +1,71 @@
+--- ../src_base/minecraft_server/net/minecraft/src/EntityMooshroom.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/EntityMooshroom.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,6 +1,10 @@
+ package net.minecraft.src;
+ 
+-public class EntityMooshroom extends EntityCow
++import java.util.ArrayList;
++
++import net.minecraft.src.forge.IShearable;
++
++public class EntityMooshroom extends EntityCow implements IShearable
+ {
+     public EntityMooshroom(World world)
+     {
+@@ -17,30 +21,36 @@
+             entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, new ItemStack(Item.bowlSoup));
+             return true;
+         }
+-        if (itemstack != null && itemstack.itemID == Item.shears.shiftedIndex && getDelay() >= 0)
+-        {
+-            setEntityDead();
+-            EntityCow entitycow = new EntityCow(worldObj);
+-            entitycow.setLocationAndAngles(posX, posY, posZ, rotationYaw, rotationPitch);
+-            entitycow.setEntityHealth(getEntityHealth());
+-            entitycow.renderYawOffset = renderYawOffset;
+-            worldObj.spawnEntityInWorld(entitycow);
+-            worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
+-            for (int i = 0; i < 5; i++)
+-            {
+-                worldObj.spawnEntityInWorld(new EntityItem(worldObj, posX, posY + (double)height, posZ, new ItemStack(Block.mushroomRed)));
+-            }
+-
+-            return true;
+-        }
+-        else
+-        {
+-            return super.interact(entityplayer);
+-        }
++        return super.interact(entityplayer);
+     }
+ 
+     protected EntityAnimal spawnBabyAnimal(EntityAnimal entityanimal)
+     {
+         return new EntityMooshroom(worldObj);
+     }
++
++    @Override
++    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
++    {
++        return getDelay() >= 0;
++    }
++
++    @Override
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
++    {
++        setEntityDead();
++        EntityCow entitycow = new EntityCow(worldObj);
++        entitycow.setLocationAndAngles(posX, posY, posZ, rotationYaw, rotationPitch);
++        entitycow.setEntityHealth(getEntityHealth());
++        entitycow.renderYawOffset = renderYawOffset;
++        worldObj.spawnEntityInWorld(entitycow);
++        worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
++        
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        for (int x = 0; x < 5; x++)
++        {
++            ret.add(new ItemStack(Block.mushroomRed));
++        }
++        return ret;
++    }
+ }
