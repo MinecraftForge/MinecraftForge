@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/PlayerControllerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -48,6 +48,14 @@
+@@ -43,11 +43,24 @@
+     public static void clickBlockCreative(Minecraft minecraft, PlayerController playercontroller, int i, int j, int k, int l)
+     {
+         minecraft.theWorld.onBlockHit(minecraft.thePlayer, i, j, k, l);
++        ItemStack itemstack = minecraft.thePlayer.getCurrentEquippedItem();
++        if (itemstack != null && itemstack.getItem().onBlockStartBreak(itemstack, i, j, k, minecraft.thePlayer))
++        {
++            return;
++        }
+         playercontroller.onPlayerDestroyBlock(i, j, k, l);
+     }
  
      public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
      {
