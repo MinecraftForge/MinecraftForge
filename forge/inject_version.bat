@@ -17,4 +17,4 @@ sed s/revisionVersion=0/revisionVersion=!revision!/ | ^
 sed s/buildVersion=0/buildVersion=!build!/ | ^
 tr -d '\r' >!file!.tmp
 
-mv "!file!.tmp" "!file!"
+move /Y !file:/=\!.tmp !file:/=\! >nul
