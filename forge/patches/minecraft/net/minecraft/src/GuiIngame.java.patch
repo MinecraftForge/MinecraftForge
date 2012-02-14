@@ -1,0 +1,31 @@
+--- ../src_base/minecraft/net/minecraft/src/GuiIngame.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/GuiIngame.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,6 +5,7 @@
+ import java.util.Random;
+ import net.minecraft.client.Minecraft;
+ import org.lwjgl.opengl.GL11;
++import net.minecraft.src.forge.ISpecialArmor;
+ 
+ public class GuiIngame extends Gui
+ {
+@@ -106,7 +107,19 @@
+                 }
+                 int k8 = l - 39;
+                 int j9 = k8 - 10;
+-                int i10 = mc.thePlayer.getTotalArmorValue();
++                int i10 = 0;
++                for (int x = 0; x < mc.thePlayer.inventory.armorInventory.length; x++)
++                {
++                    ItemStack stack = mc.thePlayer.inventory.armorInventory[x];
++                    if (stack != null && stack.getItem() instanceof ISpecialArmor)
++                    {
++                        i10 += ((ISpecialArmor)stack.getItem()).getArmorDisplay(mc.thePlayer, stack, x);
++                    }
++                    else if (stack != null && stack.getItem() instanceof ItemArmor)
++                    {
++                        i10 += ((ItemArmor)stack.getItem()).damageReduceAmount;
++                    }
++                }
+                 int j10 = -1;
+                 if (mc.thePlayer.isPotionActive(Potion.regeneration))
+                 {

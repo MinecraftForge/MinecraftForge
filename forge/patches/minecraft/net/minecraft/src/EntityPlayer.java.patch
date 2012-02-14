@@ -93,52 +93,14 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -768,8 +824,54 @@
+@@ -768,8 +824,16 @@
          {
              i = 1 + i >> 1;
          }
 -        i = applyArmorCalculations(damagesource, i);
 -        i = applyPotionDamageCalculations(damagesource, i);
-+        
-+        int absorb = 0;
-+        int reduce = 0;
-+        
-+        for (int x = 0; x < inventory.armorInventory.length; x++) 
-+        {
-+            ItemStack stack = inventory.armorInventory[x];
-+            if (stack == null)
-+            {
-+                continue;
-+            }
-+            
-+            if (stack.getItem() instanceof ISpecialArmor) 
-+            {
-+                ISpecialArmor armor = (ISpecialArmor)stack.getItem();                
-+                ArmorProperties props = armor.getProperties(this, damagesource, stack, i);
-+                absorb += props.damageAbsorb;
-+                reduce += props.damageReduce;
-+            } 
-+            else if (stack.getItem() instanceof ItemArmor && !damagesource.isUnblockable())
-+            {
-+                reduce += ((ItemArmor)stack.getItem()).damageReduceAmount / 25.0;
-+                stack.damageItem((i / 4 == 0 ? 1 : i / 4), this);
-+            }
-+            
-+            if (inventory.armorInventory[x] != null && stack.stackSize <= 0)
-+            {
-+                stack.onItemDestroyedByUse(this);
-+                inventory.armorInventory[x] = null;
-+            }
-+        }
-+        
-+        i -= absorb;
-+        if (i <= 0)
-+        {
-+            return;
-+        }
-+        
-+        reduce = Math.min(25, 25 * reduce);
-+        int damage = i * (25 - reduce) + carryoverDamage;
++        int damage = ArmorProperties.ApplyArmor(this, inventory.armorInventory, damagesource, (double)i * 25) + carryoverDamage;
++
 +        carryoverDamage = damage % 25;
 +        damage /= 25;
 +        if (damage <= 0)
@@ -150,7 +112,7 @@
          addExhaustion(damagesource.getHungerDamage());
          health -= i;
      }
-@@ -815,7 +917,9 @@
+@@ -815,7 +879,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -160,7 +122,7 @@
      }
  
      public double getYOffset()
-@@ -834,6 +938,11 @@
+@@ -834,6 +900,11 @@
  
      public void attackTargetEntityWithCurrentItem(Entity entity)
      {
@@ -172,7 +134,7 @@
          int i = inventory.getDamageVsEntity(entity);
          if (isPotionActive(Potion.damageBoost))
          {
-@@ -947,6 +1056,11 @@
+@@ -947,6 +1018,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
