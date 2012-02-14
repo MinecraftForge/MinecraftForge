@@ -1,5 +1,14 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
+@@ -29,7 +29,7 @@
+     public float swingProgress;
+     protected int health;
+     public int prevHealth;
+-    protected int carryoverDamage;
++    public int carryoverDamage;
+     private int livingSoundTime;
+     public int hurtTime;
+     public int maxHurtTime;
 @@ -812,7 +812,9 @@
          int i = MathHelper.floor_double(posX);
          int j = MathHelper.floor_double(boundingBox.minY);

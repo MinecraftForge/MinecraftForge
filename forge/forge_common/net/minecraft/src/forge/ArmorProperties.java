@@ -41,11 +41,12 @@ public class ArmorProperties implements Comparable<ArmorProperties>
 	 */
 	public static int ApplyArmor(EntityLiving entity, ItemStack[] inventory, DamageSource source, double damage)
 	{
-        ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
         if (DEBUG)
         {
-            System.out.println("Start: " + damage);
+            System.out.println("Start: " + damage + " " + (damage * 25));
         }
+	    damage *= 25;
+        ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
         for (int x = 0; x < inventory.length; x++) 
         {
             ItemStack stack = inventory[x];
@@ -57,13 +58,12 @@ public class ArmorProperties implements Comparable<ArmorProperties>
             if (stack.getItem() instanceof ISpecialArmor) 
             {
                 ISpecialArmor armor = (ISpecialArmor)stack.getItem();                
-                prop = armor.getProperties(entity, stack, source, damage, x);
+                prop = armor.getProperties(entity, stack, source, damage / 25D, x).copy();
             } 
             else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
             {
                 ItemArmor armor = (ItemArmor)stack.getItem();
-                prop = new ArmorProperties(0, armor.damageReduceAmount / 25D, 
-                        armor.getMaxDamage() - stack.getItemDamage());
+                prop = new ArmorProperties(0, armor.damageReduceAmount / 25D, armor.getMaxDamage() + 1 - stack.getItemDamage());
             }
             if (prop != null)
             {
@@ -74,10 +74,9 @@ public class ArmorProperties implements Comparable<ArmorProperties>
         if (dmgVals.size() > 0)
         {
             ArmorProperties[] props = dmgVals.toArray(new ArmorProperties[0]);
-            StanderdizeList(props, damage);
+            StandardizeList(props, damage);
             int level = props[0].Priority;
             double ratio = 0;
-            double totalAbsorbed = 0;
             for (ArmorProperties prop : props)
             {
                 if (level != prop.Priority)
@@ -92,17 +91,18 @@ public class ArmorProperties implements Comparable<ArmorProperties>
                 if (absorb > 0)
                 {
                     ItemStack stack = inventory[prop.Slot];
+                    int itemDamage = (int)(absorb / 25D < 1 ? 1 : absorb / 25D);
                     if (stack.getItem() instanceof ISpecialArmor)
                     {
-                        ((ISpecialArmor)stack.getItem()).damageArmor(entity, stack, source, (int)(absorb < 1 ? 1 : (int)absorb), prop.Slot);
+                        ((ISpecialArmor)stack.getItem()).damageArmor(entity, stack, source, itemDamage, prop.Slot);
                     }
                     else
                     {
                         if (DEBUG)
                         {
-                            System.out.println("Item: " + stack.toString() + " Absorbed: " + absorb + " Damaged: " + (int)(absorb < 1 ? 1 : (int)absorb));
+                            System.out.println("Item: " + stack.toString() + " Absorbed: " + (absorb / 25D) + " Damaged: " + itemDamage);
                         }
-                        stack.damageItem((int)(absorb < 1 ? 1 : (int)absorb), entity);
+                        stack.damageItem(itemDamage, entity);
                     }
                     if (stack.stackSize <= 0)
                     {
@@ -116,11 +116,13 @@ public class ArmorProperties implements Comparable<ArmorProperties>
             }
             damage -= (damage * ratio);
         }
+        damage += entity.carryoverDamage;
         if (DEBUG)
         {
-            System.out.println("Return: " + (int)damage + " " + damage);
+            System.out.println("Return: " + (int)(damage / 25D) + " " + damage);
         }
-        return (int)damage;
+        entity.carryoverDamage = (int)damage % 25;
+        return (int)(damage / 25D);
 	}
 	
 	/**
@@ -129,7 +131,7 @@ public class ArmorProperties implements Comparable<ArmorProperties>
 	 * @param armor The armor information
 	 * @param damage The total damage being received
 	 */
-	private static void StanderdizeList(ArmorProperties[] armor, double damage)
+	private static void StandardizeList(ArmorProperties[] armor, double damage)
 	{
         Arrays.sort(armor);
         
@@ -252,5 +254,10 @@ public class ArmorProperties implements Comparable<ArmorProperties>
     public String toString()
     {
         return String.format("%d, %d, %f, %d", Priority, AbsorbMax, AbsorbRatio, (AbsorbRatio == 0 ? 0 : (int)(AbsorbMax * 100.0D / AbsorbRatio)));
+    }
+    
+    public ArmorProperties copy()
+    {
+        return new ArmorProperties(Priority, AbsorbRatio, AbsorbMax);
     }
 }

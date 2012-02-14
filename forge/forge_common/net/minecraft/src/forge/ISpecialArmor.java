@@ -22,8 +22,6 @@ public interface ISpecialArmor
 {
     /** 
      * Retrieves the modifiers to be used when calculating armor damage.
-     * Mods should return a new instance every time as the return values 
-     * will be manipulated by the damage function.
      * 
      * Armor will higher priority will have damage applied to them before
      * lower priority ones. If there are multiple pieces of armor with the
@@ -36,7 +34,7 @@ public interface ISpecialArmor
      *     properties based on the type or source of damage.
      * @param damage The total damage being applied to the entity
      * @param slot The armor slot the item is in. 
-     *
+     * @return A ArmorProperties instance holding information about how the armor effects damage. 
      */
 	public ArmorProperties getProperties(EntityLiving player, ItemStack armor, DamageSource source, double damage, int slot);
 	

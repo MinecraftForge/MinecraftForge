@@ -103,26 +103,20 @@
      public boolean canHarvestBlock(Block block)
      {
          return inventory.canHarvestBlock(block);
-@@ -711,8 +770,16 @@
+@@ -711,7 +770,11 @@
          {
              i = 1 + i >> 1;
          }
 -        i = applyArmorCalculations(damagesource, i);
--        i = applyPotionDamageCalculations(damagesource, i);
-+        int damage = ArmorProperties.ApplyArmor(this, inventory.armorInventory, damagesource, (double)i * 25) + carryoverDamage;
-+        
-+        carryoverDamage = damage % 25;
-+        damage /= 25;
-+        if (damage <= 0)
++        i = ArmorProperties.ApplyArmor(this, inventory.armorInventory, damagesource, i);
++        if (i <= 0)
 +        {
 +            return;
 +        }
-+        
-+        i = applyPotionDamageCalculations(damagesource, damage);
+         i = applyPotionDamageCalculations(damagesource, i);
          addExhaustion(damagesource.getHungerDamage());
          health -= i;
-     }
-@@ -758,7 +825,9 @@
+@@ -758,7 +821,9 @@
  
      public void destroyCurrentEquippedItem()
      {
@@ -132,7 +126,7 @@
      }
  
      public double getYOffset()
-@@ -777,6 +846,11 @@
+@@ -777,6 +842,11 @@
  
      public void attackTargetEntityWithCurrentItem(Entity entity)
      {
@@ -144,7 +138,7 @@
          int i = inventory.getDamageVsEntity(entity);
          if (isPotionActive(Potion.damageBoost))
          {
-@@ -884,6 +958,11 @@
+@@ -884,6 +954,11 @@
  
      public EnumStatus sleepInBedAt(int i, int j, int k)
      {
