@@ -163,7 +163,7 @@
          }
          else
          {
--            return block.blockMaterial.getIsOpaque() && block.renderAsNormalBlock();
+-            return block.blockMaterial.isOpaque() && block.renderAsNormalBlock();
 +            return block.isBlockNormalCube(this, i, j, k);
          }
      }

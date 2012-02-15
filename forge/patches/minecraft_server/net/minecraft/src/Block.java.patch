@@ -98,7 +98,7 @@
 +     */
 +    public boolean isBlockNormalCube(World world, int i, int j, int k) 
 +    {
-+	    return blockMaterial.getIsOpaque() && renderAsNormalBlock();
++	    return blockMaterial.isOpaque() && renderAsNormalBlock();
 +    }
 +
 +    /* FORGE: Return true if the block is solid on the given side.  This

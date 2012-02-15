@@ -225,7 +225,7 @@ public class ForgeHooks {
 	// Tool Path
 	// ------------------------------------------------------------
 	public static boolean canHarvestBlock(Block bl, EntityPlayer player, int md) {
-		if(bl.blockMaterial.getIsHarvestable())
+		if(bl.blockMaterial.isHarvestable())
 			return true;
 		ItemStack itemstack = player.inventory.getCurrentItem();
 		if (itemstack == null) return false;

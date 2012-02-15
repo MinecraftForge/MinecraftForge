@@ -202,7 +202,7 @@
 +                flag = (worldObj.getBlockMetadata(i, j, k) & 8) != 0;
                  flag1 = !flag;
              }
--            if (((BlockRail)Block.blocksList[l]).getIsPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
 -                i1 &= 7;
 -            }
@@ -410,7 +410,7 @@
          if (BlockRail.isRailBlock(l))
          {
 -            int i1 = worldObj.getBlockMetadata(i, j, k);
--            if (((BlockRail)Block.blocksList[l]).getIsPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
 -                i1 &= 7;
 -            }
@@ -423,9 +423,9 @@
          if (BlockRail.isRailBlock(l))
          {
 -            int i1 = worldObj.getBlockMetadata(i, j, k);
-+        	int i1 = ((BlockRail)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
++            int i1 = ((BlockRail)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
              d1 = j;
--            if (((BlockRail)Block.blocksList[l]).getIsPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
 -                i1 &= 7;
 -            }

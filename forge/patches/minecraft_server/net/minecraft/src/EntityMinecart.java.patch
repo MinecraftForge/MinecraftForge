@@ -198,7 +198,7 @@
 +                flag = (worldObj.getBlockMetadata(i, j, k) & 8) != 0;
                  flag1 = !flag;
              }
--            if (((BlockRail)Block.blocksList[l]).getIsPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
 -                i1 &= 7;
 -            }
@@ -408,7 +408,7 @@
 -            int i1 = worldObj.getBlockMetadata(i, j, k);
 +            int i1 = ((BlockRail)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
              d1 = j;
--            if (((BlockRail)Block.blocksList[l]).getIsPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
 -                i1 &= 7;
 -            }
@@ -434,7 +434,7 @@
              NBTTagList nbttaglist = new NBTTagList();
              for (int i = 0; i < cargoItems.length; i++)
 @@ -702,7 +619,6 @@
-                     nbttaglist.setTag(nbttagcompound1);
+                     nbttaglist.appendTag(nbttagcompound1);
                  }
              }
 -

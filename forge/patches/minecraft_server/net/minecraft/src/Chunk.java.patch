@@ -50,7 +50,7 @@
 +            }
 +            worldObj.removeBlockTileEntity(l1,  j, i2);
          }
-         data.setNibble(i, j, k, 0);
+         data.set(i, j, k, 0);
          if (Block.lightOpacity[byte0 & 0xff] != 0)
 @@ -414,28 +410,22 @@
              {
@@ -87,7 +87,7 @@
      }
 @@ -455,7 +445,7 @@
          }
-         data.setNibble(i, j, k, l);
+         data.set(i, j, k, l);
          int j1 = getBlockID(i, j, k);
 -        if (j1 > 0 && (Block.blocksList[j1] instanceof BlockContainer))
 +        if (j1 > 0 && Block.blocksList[j1] != null && Block.blocksList[j1].hasTileEntity(l))
