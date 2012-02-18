@@ -9,23 +9,12 @@ rm -rf conf
 mkdir conf
 cp -r forge/conf/* conf
 
-if [ -f runtime/bin/fernflower.jar ];
-then
-   mv runtime/bin/fernflower.jar runtime/bin/fernflower.jar-backup
-fi
-
 ./cleanup.sh
-./decompile.sh
-
-if [ -f runtime/bin/fernflower.jar-backup ];
-then
-   mv runtime/bin/fernflower.jar-backup runtime/bin/fernflower.jar
-fi
-
+./decompile.sh --jad
 
 pushd src > /dev/null
-    find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-    find ../forge/ -name *.patch -exec sed -i 's/\r//g' \{\} \;
+    #find . -name *.java -exec sed -i 's/\r//g' \{\} \;
+    #find ../forge/ -name *.patch -exec sed -i 's/\r//g' \{\} \;
 
     if [ -f ../jars/bin/minecraft.jar ];
     then
@@ -35,6 +24,7 @@ pushd src > /dev/null
         do
             patch -p2 -i $i
         done
+        cp -r ../forge/src/minecraft/* minecraft
     fi
 
 
@@ -48,10 +38,10 @@ pushd src > /dev/null
         do
             patch -p2 -i $i
         done
+        cp -r ../forge/src/minecraft_server/* minecraft_server
     fi
 popd > /dev/null
 
-cp -r forge/src/* src
 
 # Removed until MCP's UpdateNames Is fixed
 #./updatemcp.sh

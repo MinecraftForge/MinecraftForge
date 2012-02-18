@@ -9,12 +9,8 @@ pushd .. >nul
 
 xcopy /Y /E /I forge\conf\* conf
 
-if exist runtime\bin\fernflower.jar move runtime\bin\fernflower.jar runtime\bin\fernflower.jar-backup
-
-echo | call cleanup.bat
-echo | call decompile.bat
-
-if exist runtime\bin\fernflower.jar-backup move runtime\bin\fernflower.jar-backup runtime\bin\fernflower.jar
+runtime\bin\python\python_mcp runtime\cleanup.py
+runtime\bin\python\python_mcp runtime\decompile.py --jad
 
 pushd src >nul
 
@@ -29,6 +25,7 @@ pushd src >nul
                 ..\runtime\bin\applydiff.exe -uf -p2 -i "%%a"
             ) else popd
         )
+        xcopy /Y /E ..\forge\src\minecraft\* minecraft
     )
     
     if exist ..\jars\minecraft_server.jar (
@@ -45,13 +42,13 @@ pushd src >nul
                 ..\runtime\bin\applydiff.exe -uf -p2 -i "%%a"
             ) else popd
         )
-    
+        xcopy /Y /E ..\forge\src\minecraft_server\* minecraft_server    
     )
 popd >nul
 
-xcopy /Y /E forge\src\* src
 
 rem Removed until MCP's Update Names is fixed
 rem cmd /C updatemcp.bat
 rem cmd /C updatenames.bat
-cmd /C updatemd5.bat
+runtime\bin\python\python_mcp runtime\updatemd5.py
+pause
