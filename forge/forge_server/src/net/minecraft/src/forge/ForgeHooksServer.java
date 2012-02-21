@@ -2,8 +2,8 @@ package net.minecraft.src.forge;
 
 import java.util.Map;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityTracker;
+import net.minecraft.src.*;
+import net.minecraft.src.forge.packets.PacketModList;
 
 public class ForgeHooksServer 
 {
@@ -24,6 +24,12 @@ public class ForgeHooksServer
             return true;
         }
         return false;
+    }
+    
+    public static void sendModListRequest(NetworkManager net)
+    {
+        PacketModList pkt = new PacketModList(true);
+        ((NetServerHandler)net.getNetHandler()).sendPacket(pkt.getPacket());
     }
     
 

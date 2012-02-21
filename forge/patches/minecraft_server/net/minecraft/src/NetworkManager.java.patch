@@ -19,3 +19,18 @@
      }
  
      public void processReadPackets()
+@@ -313,4 +318,14 @@
+     {
+         return networkmanager.writeThread;
+     }
++    
++    /**
++     * Retrieves the current associated network handler.
++     * Added so modders dont have to use reflection.
++     * @return The current registered Network Handler
++     */
++    public NetHandler getNetHandler()
++    {
++        return netHandler;
++    }
+ }

@@ -34,10 +34,15 @@
              {
                  playerEntity.itemInWorldManager.activeBlockOrUseItem(playerEntity, worldserver, itemstack, i, j, k, l);
              }
-@@ -764,4 +770,44 @@
+@@ -764,4 +770,49 @@
      {
          return true;
      }
++    
++    public EntityPlayerMP getPlayerEntity()
++    {
++        return playerEntity;
++    }
 +    
 +    @Override
 +    public void handleCustomPayload(Packet250CustomPayload pkt)

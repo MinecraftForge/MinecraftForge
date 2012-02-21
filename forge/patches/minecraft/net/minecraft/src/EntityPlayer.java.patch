@@ -140,3 +140,20 @@
          if (!worldObj.isRemote)
          {
              if (isPlayerSleeping() || !isEntityAlive())
+@@ -1473,4 +1545,16 @@
+         experience = entityplayer.experience;
+         score = entityplayer.score;
+     }
++    
++    /**
++     * Opens a Gui for the player. 
++     * 
++     * @param mod The mod associated with the gui
++     * @param ID The ID number for the Gui
++     * @param world The World
++     * @param X X Position
++     * @param Y Y Position
++     * @param Z Z Position
++     */
++    public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z){}
+ }
