@@ -33,6 +33,26 @@ public class PacketHandlerClient implements IPacketHandler
                     pkt.readData(data);
                     onEntitySpawnPacket((PacketEntitySpawn)pkt, data, ModLoader.getMinecraftInstance().theWorld);
                     break;
+                    
+                case ForgePacket.MODLIST:
+                    /*
+                    pkt = new PacketModList(false);
+                    pkt.readData(data);
+                    */
+                    onModListCheck(net);
+                    break;
+                    
+                case ForgePacket.MOD_MISSING:
+                    pkt = new PacketMissingMods(false);
+                    pkt.readData(data);
+                    onMissingMods((PacketMissingMods)pkt, net);
+                    break;
+                    
+                case ForgePacket.MOD_IDS:
+                    pkt = new PacketModIDs();
+                    pkt.readData(data);
+                    onModIDs((PacketModIDs)pkt);
+                    break;
             }
         }
         catch(IOException e)
@@ -124,5 +144,52 @@ public class PacketHandlerClient implements IPacketHandler
             pkt.Mods[x++] = mod.toString(); 
         }
         net.addToSendQueue(pkt.getPacket());
+    }
+    
+    /**
+     * Received when the client does not have a mod installed that the server requires them to.
+     * Displays a informative screen, and disconnects from the server.
+     * 
+     * @param pkt The missing mods packet
+     * @param net The network handler
+     */
+    private void onMissingMods(PacketMissingMods pkt, NetClientHandler net) 
+    {
+        net.disconnect();
+        Minecraft mc = ModLoader.getMinecraftInstance();
+        mc.changeWorld1(null);
+        mc.displayGuiScreen(new GuiMissingMods(pkt));        
+    }
+    
+    /**
+     * Sets up the list of ID to mod mappings. 
+     * TODO; Make it display an error, and prompt if the user wishes to continue anyways 
+     * if it detects that the server does not have a corresponding mod to one it has installed.
+     * 
+     * @param pkt The mod id packet
+     */
+    private void onModIDs(PacketModIDs pkt) 
+    {
+        ForgeHooks.networkMods.clear();
+        NetworkMod[] mods = MinecraftForge.getNetworkMods();
+        for (NetworkMod mod : mods)
+        {
+            for (Entry<Integer, String> entry : pkt.Mods.entrySet())
+            {
+                if (mod.toString().equals(entry.getValue()))
+                {
+                    ForgeHooks.networkMods.put(entry.getKey(), mod);
+                }
+            }   
+        }
+        ArrayList<NetworkMod> missing = new ArrayList<NetworkMod>();
+        for (NetworkMod mod : mods)
+        {
+            if (MinecraftForge.getModID(mod) == -1 && mod.serverSideRequired())
+            {
+                missing.add(mod);
+            }
+        }
+        //TODO: Display error/confirmation screen
     }
 }
