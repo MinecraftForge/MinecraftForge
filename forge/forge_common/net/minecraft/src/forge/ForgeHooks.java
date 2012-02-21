@@ -368,6 +368,7 @@ public class ForgeHooks {
 	}
     
     public static Hashtable<Integer, NetworkMod> networkMods = new Hashtable<Integer, NetworkMod>();
+    public static Hashtable<BaseMod, IGuiHandler> guiHandlers = new Hashtable<BaseMod, IGuiHandler>();
 
 	public static final int majorVersion=0;
 	public static final int minorVersion=0;

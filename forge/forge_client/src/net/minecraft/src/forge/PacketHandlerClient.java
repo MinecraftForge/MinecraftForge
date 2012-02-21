@@ -53,6 +53,12 @@ public class PacketHandlerClient implements IPacketHandler
                     pkt.readData(data);
                     onModIDs((PacketModIDs)pkt);
                     break;
+                    
+                case ForgePacket.OPEN_GUI:
+                    pkt = new PacketOpenGUI();
+                    pkt.readData(data);
+                    onOpenGui((PacketOpenGUI)pkt);
+                    break;
             }
         }
         catch(IOException e)
@@ -191,5 +197,21 @@ public class PacketHandlerClient implements IPacketHandler
             }
         }
         //TODO: Display error/confirmation screen
+    }
+    
+    /**
+     * Handles opening the Gui for the player. 
+     * 
+     * @param pkt The Open Gui Packet
+     */
+    private void onOpenGui(PacketOpenGUI pkt) 
+    {
+        NetworkMod mod = MinecraftForge.getModByID(pkt.ModID);
+        if (mod != null)
+        {
+            EntityPlayerSP player = (EntityPlayerSP)ModLoader.getMinecraftInstance().thePlayer;
+            player.openGui(mod, pkt.GuiID, player.worldObj, pkt.X, pkt.Y, pkt.Z);
+            player.craftingInventory.windowId = pkt.WindowID;
+        } 
     }
 }

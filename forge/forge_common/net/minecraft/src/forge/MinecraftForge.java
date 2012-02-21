@@ -906,6 +906,28 @@ public class MinecraftForge {
         }
         return ret.toArray(new NetworkMod[0]);
     }
+    
+    /**
+     * Sets the GuiHandler associated with a mod.
+     * 
+     * @param mod The mod
+     * @param handler The Gui Handler
+     */
+    public static void setGuiHandler(BaseMod mod, IGuiHandler handler)
+    {
+        ForgeHooks.guiHandlers.put(mod, handler);
+    }
+    
+    /**
+     * Gets the GuiHandler associated with a mod
+     * 
+     * @param mod The mod
+     * @return The handler, or null if none associated.
+     */
+    public static IGuiHandler getGuiHandler(BaseMod mod)
+    {
+        return ForgeHooks.guiHandlers.get(mod);
+    }
   
         
     static 
