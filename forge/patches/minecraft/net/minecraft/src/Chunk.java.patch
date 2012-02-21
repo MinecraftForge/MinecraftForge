@@ -5,7 +5,7 @@
                  Block.blocksList[l1].onBlockRemoval(worldObj, i2, j, j2);
              }
 -            else if ((Block.blocksList[l1] instanceof BlockContainer) && l1 != l)
-+            else if (Block.blocksList[l1] != null && Block.blocksList[l1].hasTileEntity(getBlockMetadata(i, j, k)) && l1 != l)
++            else if (Block.blocksList[l1] != null && Block.blocksList[l1].hasTileEntity(getBlockMetadata(i, j, k)))
              {
                  worldObj.removeBlockTileEntity(i2, j, j2);
              }
