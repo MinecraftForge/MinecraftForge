@@ -1,16 +1,18 @@
 package net.minecraft.src.forge;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Entity;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.NetworkManager;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldClient;
+import net.minecraft.src.*;
+import net.minecraft.src.forge.packets.*;
 
 public class PacketHandlerClient implements IPacketHandler
 {
@@ -20,13 +22,16 @@ public class PacketHandlerClient implements IPacketHandler
         DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
         try
         {
+            ForgePacket pkt = null;
+            NetClientHandler net = (NetClientHandler)network.getNetHandler();
+            
             int packetID = data.read();
             switch(packetID)
             {
-                case ForgeHooks.FORGE_PACKET_SPAWN:
-                    PacketEntitySpawn pkt = new PacketEntitySpawn();
+                case ForgePacket.SPAWN:
+                    pkt = new PacketEntitySpawn();
                     pkt.readData(data);
-                    onEntitySpawnPacket(pkt, data, ModLoader.getMinecraftInstance().theWorld);
+                    onEntitySpawnPacket((PacketEntitySpawn)pkt, data, ModLoader.getMinecraftInstance().theWorld);
                     break;
             }
         }
@@ -36,7 +41,14 @@ public class PacketHandlerClient implements IPacketHandler
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Processes the Entity Spawn packet. And spawns an entity in world as needed.
+     * If the client has the required client mod.
+     * @param packet The Spawn Packet
+     * @param data A stream holding extra data for the entity to read
+     * @param world The world to spawn the entity in
+     */
     public void onEntitySpawnPacket(PacketEntitySpawn packet, DataInputStream data, World world)
     {
         Class cls = MinecraftForge.getEntityClass(packet.modID, packet.typeID);
@@ -95,5 +107,22 @@ public class PacketHandlerClient implements IPacketHandler
             ModLoader.getLogger().throwing("ForgeHooksClient", "onEntitySpawnPacket", e);
             ModLoader.ThrowException(String.format("Error spawning entity of type %d for %s.", packet.typeID, MinecraftForge.getModByID(packet.modID)), e);
         }
+    }
+
+    /**
+     * Sends a list of all loaded mods to the server.
+     * For now, it it simple a String[] of mod.toString()
+     * @param network The network connection to send the packet on.
+     */
+    private void onModListCheck(NetClientHandler net)
+    {
+        PacketModList pkt = new PacketModList(false);
+        pkt.Mods = new String[ModLoader.getLoadedMods().size()];
+        int x = 0;
+        for(BaseMod mod : (List<BaseMod>)ModLoader.getLoadedMods())
+        {
+            pkt.Mods[x++] = mod.toString(); 
+        }
+        net.addToSendQueue(pkt.getPacket());
     }
 }

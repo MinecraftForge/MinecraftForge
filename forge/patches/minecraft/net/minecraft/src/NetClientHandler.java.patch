@@ -1,15 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -7,6 +7,8 @@
+@@ -7,6 +7,9 @@
  import java.util.*;
  import java.util.logging.Logger;
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooks;
 +import net.minecraft.src.forge.MessageManager;
++import net.minecraft.src.forge.packets.ForgePacket;
  
  public class NetClientHandler extends NetHandler
  {
-@@ -35,6 +37,8 @@
+@@ -35,6 +38,8 @@
          mc = minecraft;
          Socket socket = new Socket(InetAddress.getByName(s), i);
          netManager = new NetworkManager(socket, "Client", this);
@@ -18,7 +19,7 @@
      }
  
      public void processReadPackets()
-@@ -58,6 +62,27 @@
+@@ -58,6 +63,27 @@
          mc.thePlayer.entityId = packet1login.protocolVersion;
          currentServerMaxPlayers = packet1login.maxPlayers;
          ((PlayerControllerMP)mc.playerController).setCreative(packet1login.serverMode == 1);
@@ -46,7 +47,7 @@
      }
  
      public void handlePickupSpawn(Packet21PickupSpawn packet21pickupspawn)
-@@ -608,7 +633,19 @@
+@@ -608,7 +634,19 @@
          }
          else if (packet2handshake.username.equals("-"))
          {
@@ -61,13 +62,13 @@
 +             * The C->S mapSeed is set to the current Forge build number, in case we need to do any quick version checks.
 +             */
 +            Packet1Login pkt = new Packet1Login(mc.session.username, 23);
-+            pkt.serverMode = ForgeHooks.FORGE_ID;
++            pkt.serverMode = ForgePacket.FORGE_ID;
 +            pkt.mapSeed    = ForgeHooks.buildVersion;
 +            addToSendQueue(pkt);
          }
          else
          {
-@@ -620,7 +657,19 @@
+@@ -620,7 +658,19 @@
                  bufferedreader.close();
                  if (s1.equalsIgnoreCase("ok"))
                  {
@@ -82,13 +83,13 @@
 +                     * The C->S mapSeed is set to the current Forge build number, in case we need to do any quick version checks.
 +                     */
 +                    Packet1Login pkt = new Packet1Login(mc.session.username, 23);
-+                    pkt.serverMode = ForgeHooks.FORGE_ID;
++                    pkt.serverMode = ForgePacket.FORGE_ID;
 +                    pkt.mapSeed    = ForgeHooks.buildVersion;
 +                    addToSendQueue(pkt);
                  }
                  else
                  {
-@@ -1017,4 +1066,44 @@
+@@ -1017,4 +1067,44 @@
      {
          addToSendQueue(new Packet0KeepAlive(packet0keepalive.randomId));
      }

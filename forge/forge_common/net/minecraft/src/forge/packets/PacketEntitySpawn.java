@@ -1,4 +1,4 @@
-package net.minecraft.src.forge;
+package net.minecraft.src.forge.packets;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,10 +7,13 @@ import java.io.IOException;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Entity;
 import net.minecraft.src.MathHelper;
+import net.minecraft.src.forge.ISpawnHandler;
+import net.minecraft.src.forge.IThrowableEntity;
+import net.minecraft.src.forge.MinecraftForge;
+import net.minecraft.src.forge.NetworkMod;
 
-public class PacketEntitySpawn 
+public class PacketEntitySpawn extends ForgePacket
 {
-
     public int entityID;
     public int posX;
     public int posY;
@@ -21,9 +24,10 @@ public class PacketEntitySpawn
     public int typeID;
     public int modID;
     public int throwerID;
+    private ISpawnHandler handler;
     
     public PacketEntitySpawn(){}
-    public PacketEntitySpawn(Entity ent, BaseMod mod, int type)
+    public PacketEntitySpawn(Entity ent, NetworkMod mod, int type)
     {
         entityID = ent.entityId; 
 
@@ -32,7 +36,7 @@ public class PacketEntitySpawn
         posZ = MathHelper.floor_double(ent.posZ * 32D);
         
         typeID = type;
-        modID = mod.toString().hashCode();
+        modID = MinecraftForge.getModID(mod);
         
         if (ent instanceof IThrowableEntity)
         {
@@ -52,6 +56,10 @@ public class PacketEntitySpawn
             speedY = (int)(mY * 8000D);
             speedZ = (int)(mZ * 8000D);
         }
+        if (ent instanceof ISpawnHandler)
+        {
+            handler = (ISpawnHandler)ent;
+        }
     }
     public void writeData(DataOutputStream data) throws IOException
     {
@@ -67,6 +75,10 @@ public class PacketEntitySpawn
             data.writeShort(speedX);
             data.writeShort(speedY);
             data.writeShort(speedZ);
+        }
+        if (handler != null)
+        {
+            handler.writeSpawnData(data);
         }
     }
     
@@ -85,5 +97,10 @@ public class PacketEntitySpawn
             speedY = data.readShort();
             speedX = data.readShort();
         }
+    }
+    @Override
+    public int getID() 
+    {
+        return ForgePacket.SPAWN;
     }
 }

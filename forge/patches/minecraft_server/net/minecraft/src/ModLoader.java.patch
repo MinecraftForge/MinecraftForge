@@ -1,6 +1,33 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1325,6 +1325,7 @@
+@@ -10,6 +10,8 @@
+ import java.util.zip.ZipEntry;
+ import java.util.zip.ZipInputStream;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.NetworkMod;
+ 
+ public final class ModLoader
+ {
+@@ -626,6 +628,17 @@
+             readFromClassPath(file);
+             System.out.println("Done.");
+             props.setProperty("loggingLevel", cfgLoggingLevel.getName());
++            /*
++             * Gather up a list of network mods and assign them an id 
++             */
++            int x = 0;
++            for (BaseMod mod : (List<BaseMod>)modList)
++            {
++                if (mod instanceof NetworkMod)
++                {
++                    ForgeHooks.networkMods.put(x++, (NetworkMod)mod);
++                }
++            }
+             Iterator iterator = modList.iterator();
+             do
+             {
+@@ -1325,6 +1338,7 @@
              {
                  method_getNextWindowId.invoke(entityplayermp, new Object[0]);
                  int j = field_currentWindowId.getInt(entityplayermp);

@@ -5,6 +5,7 @@
 
 package net.minecraft.src.forge;
 
+import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -20,6 +21,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
+import net.minecraft.src.forge.packets.PacketEntitySpawn;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -360,29 +362,12 @@ public class ForgeHooks {
 	    {
 	        return null;
 	    }
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        DataOutputStream data = new DataOutputStream(bytes);
-	    try 
-	    {
-            data.writeByte(FORGE_PACKET_SPAWN);
-            PacketEntitySpawn spawn = new PacketEntitySpawn(entity, info.Mod, info.ID);
-            spawn.writeData(data);
-            if (entity instanceof ISpawnHandler)
-            {
-                ((ISpawnHandler)entity).writeSpawnData(data);
-            }
-        } 
-	    catch (IOException e) 
-        {
-            e.printStackTrace();
-        }
 	    
-	    Packet250CustomPayload pkt = new Packet250CustomPayload();
-	    pkt.channel = "Forge";
-	    pkt.data = bytes.toByteArray();
-	    pkt.length = pkt.data.length;
-	    return pkt;
+	    PacketEntitySpawn pkt = new PacketEntitySpawn(entity, info.Mod, info.ID);
+	    return pkt.getPacket();
 	}
+    
+    public static Hashtable<Integer, NetworkMod> networkMods = new Hashtable<Integer, NetworkMod>();
 
 	public static final int majorVersion=0;
 	public static final int minorVersion=0;
@@ -411,8 +396,5 @@ public class ForgeHooks {
 	{
 	    return forgePacketHandler;
 	}
-	//Forge Packet ID Constants.
-	public static final int FORGE_ID = 0x040E9B47; //"Forge".hashCode();
-	public static final int FORGE_PACKET_SPAWN = 1;
 }
 

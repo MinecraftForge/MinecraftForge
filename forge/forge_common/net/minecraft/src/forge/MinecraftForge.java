@@ -15,6 +15,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.World;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 public class MinecraftForge {
 
@@ -808,7 +809,7 @@ public class MinecraftForge {
      * @param sendVelocityInfo If velocity information should be included in the update information.
      * @return True, if successfully registered. False if the class is already registered.
      */
-    public static boolean registerEntity(Class entityClass, BaseMod mod, int ID, int range, int updateFrequancy, boolean sendVelocityInfo)
+    public static boolean registerEntity(Class entityClass, NetworkMod mod, int ID, int range, int updateFrequancy, boolean sendVelocityInfo)
     {
         if (ForgeHooks.entityTrackerMap.containsKey(entityClass))
         {
@@ -866,16 +867,44 @@ public class MinecraftForge {
      * @param id The mod ID
      * @return The mod, or null if not found
      */
-    public static BaseMod getModByID(int id)
+    public static NetworkMod getModByID(int id)
     {
-        for(BaseMod mod : (List<BaseMod>)ModLoader.getLoadedMods())
+        return ForgeHooks.networkMods.get(id);
+    }
+    
+    /**
+     * Returns a unique index number for the specific mod.
+     * 
+     * @param mod The mod to find
+     * @return The index number, -1 if no index found
+     */
+    public static int getModID(NetworkMod mod)
+    {
+        for (Entry<Integer, NetworkMod> entry : ForgeHooks.networkMods.entrySet())
         {
-            if (mod.toString().hashCode() == id)
+            if (entry.getValue() == mod)
             {
-                return mod;
+                return entry.getKey();
             }
         }
-        return null;
+        return -1;
+    }
+    
+    /**
+     * Returns a list of mods that are designed to be used over the network.
+     * @return
+     */
+    public static NetworkMod[] getNetworkMods()
+    {
+        ArrayList<NetworkMod> ret = new ArrayList<NetworkMod>();
+        for(BaseMod mod : (List<BaseMod>)ModLoader.getLoadedMods())
+        {
+            if (mod instanceof NetworkMod)
+            {
+                ret.add((NetworkMod)mod);
+            }
+        }
+        return ret.toArray(new NetworkMod[0]);
     }
   
         
