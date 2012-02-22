@@ -1,0 +1,89 @@
+--- ../src_base/minecraft/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1030,17 +1030,22 @@
+     {
+         Profiler.endSection();
+         Profiler.endSection();
+-        Profiler.startSection("modtick");
++        Profiler.startSection("ModLoader");
++        Profiler.startSection("init");
+         if (!hasInit)
+         {
+             init();
+             logger.fine("Initialized");
+         }
++        Profiler.endSection();
++        Profiler.startSection("checkUpdateTextures");
+         if (texPack == null || minecraft.gameSettings.skin != texPack)
+         {
+             texturesAdded = false;
+             texPack = minecraft.gameSettings.skin;
+         }
++        Profiler.endSection();
++        Profiler.startSection("updateLocalization");
+         if (langPack == null || StringTranslate.getInstance().func_44024_c() != langPack)
+         {
+             Properties properties = null;
+@@ -1064,11 +1069,16 @@
+             }
+             langPack = StringTranslate.getInstance().func_44024_c();
+         }
++        Profiler.endSection();
++        Profiler.startSection("updateTextures");
+         if (!texturesAdded && minecraft.renderEngine != null)
+         {
+             RegisterAllTextureOverrides(minecraft.renderEngine);
+             texturesAdded = true;
+         }
++        Profiler.endSection();
++        Profiler.endSection();
++        Profiler.startSection("ModGameHook");
+         long l = 0L;
+         if (minecraft.theWorld != null)
+         {
+@@ -1076,28 +1086,37 @@
+             for (Iterator iterator = inGameHooks.entrySet().iterator(); iterator.hasNext();)
+             {
+                 java.util.Map.Entry entry1 = (java.util.Map.Entry)iterator.next();
++                Profiler.startSection(entry1.getKey().getClass().getSimpleName());
+                 if ((clock != l || !((Boolean)entry1.getValue()).booleanValue()) && !((BaseMod)entry1.getKey()).OnTickInGame(f, minecraft))
+                 {
+                     iterator.remove();
+                 }
++                Profiler.endSection();
+             }
+         }
++        Profiler.endSection();
++        Profiler.startSection("ModGUIHook");
+         if (minecraft.standardGalacticFontRenderer != null)
+         {
+             for (Iterator iterator1 = inGUIHooks.entrySet().iterator(); iterator1.hasNext();)
+             {
+                 java.util.Map.Entry entry2 = (java.util.Map.Entry)iterator1.next();
++                Profiler.startSection(entry2.getKey().getClass().getSimpleName());
+                 if ((clock != l || !(((Boolean)entry2.getValue()).booleanValue() & (minecraft.theWorld != null))) && !((BaseMod)entry2.getKey()).OnTickInGUI(f, minecraft, minecraft.currentScreen))
+                 {
+                     iterator1.remove();
+                 }
++                Profiler.endSection();
+             }
+         }
++        Profiler.endSection();
++        Profiler.startSection("ModKeyboard");
+         if (clock != l)
+         {
+             for (Iterator iterator2 = keyList.entrySet().iterator(); iterator2.hasNext();)
+             {
+                 java.util.Map.Entry entry = (java.util.Map.Entry)iterator2.next();
++                Profiler.startSection(entry.getKey().getClass().getSimpleName());
+                 for (Iterator iterator3 = ((Map)entry.getValue()).entrySet().iterator(); iterator3.hasNext();)
+                 {
+                     java.util.Map.Entry entry3 = (java.util.Map.Entry)iterator3.next();
+@@ -1119,6 +1138,7 @@
+                         ((BaseMod)entry.getKey()).KeyboardEvent((KeyBinding)entry3.getKey());
+                     }
+                 }
++                Profiler.endSection();
+             }
+         }
+         clock = l;
