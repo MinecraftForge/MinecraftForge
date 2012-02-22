@@ -16,6 +16,8 @@ import net.minecraft.src.forge.packets.*;
 
 public class PacketHandlerClient implements IPacketHandler
 {
+    private static boolean DEBUG = false;
+    
     @Override
     public void onPacketData(NetworkManager network, String channel, byte[] bytes) 
     {        
@@ -77,6 +79,10 @@ public class PacketHandlerClient implements IPacketHandler
      */
     public void onEntitySpawnPacket(PacketEntitySpawn packet, DataInputStream data, World world)
     {
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + packet.toString(true));
+        }
         Class cls = MinecraftForge.getEntityClass(packet.modID, packet.typeID);
         if (cls == null)
         {
@@ -142,6 +148,10 @@ public class PacketHandlerClient implements IPacketHandler
      */
     private void onModListCheck(NetClientHandler net)
     {
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + (new PacketModList(false)).toString(true));
+        }
         PacketModList pkt = new PacketModList(false);
         pkt.Mods = new String[ModLoader.getLoadedMods().size()];
         int x = 0;
@@ -150,6 +160,10 @@ public class PacketHandlerClient implements IPacketHandler
             pkt.Mods[x++] = mod.toString(); 
         }
         net.addToSendQueue(pkt.getPacket());
+        if (DEBUG)
+        {
+            System.out.println("C->S: " + pkt.toString(true));
+        }
     }
     
     /**
@@ -161,6 +175,10 @@ public class PacketHandlerClient implements IPacketHandler
      */
     private void onMissingMods(PacketMissingMods pkt, NetClientHandler net) 
     {
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + pkt.toString(true));
+        }
         net.disconnect();
         Minecraft mc = ModLoader.getMinecraftInstance();
         mc.changeWorld1(null);
@@ -176,6 +194,10 @@ public class PacketHandlerClient implements IPacketHandler
      */
     private void onModIDs(PacketModIDs pkt) 
     {
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + pkt.toString(true));
+        }
         ForgeHooks.networkMods.clear();
         NetworkMod[] mods = MinecraftForge.getNetworkMods();
         for (NetworkMod mod : mods)
@@ -206,6 +228,10 @@ public class PacketHandlerClient implements IPacketHandler
      */
     private void onOpenGui(PacketOpenGUI pkt) 
     {
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + pkt.toString(true));
+        }
         NetworkMod mod = MinecraftForge.getModByID(pkt.ModID);
         if (mod != null)
         {

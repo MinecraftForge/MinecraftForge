@@ -54,5 +54,27 @@ public class PacketModList extends ForgePacket
     {
         return ForgePacket.MODLIST;
     }
+    
+    @Override
+    public String toString(boolean full)
+    {
+        if (full)
+        {
+            StringBuilder ret = new StringBuilder();
+            ret.append(toString()).append('\n');
+            if (Mods != null)
+            {
+                for (String mod : Mods)
+                {
+                    ret.append("    " + mod + '\n');
+                }
+            }
+            return ret.toString();
+        }
+        else
+        {
+            return toString();
+        }
+    }
 
 }

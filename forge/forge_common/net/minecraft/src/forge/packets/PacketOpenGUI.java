@@ -3,6 +3,7 @@ package net.minecraft.src.forge.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Map.Entry;
 
 public class PacketOpenGUI extends ForgePacket 
 {
@@ -50,5 +51,26 @@ public class PacketOpenGUI extends ForgePacket
     public int getID() 
     {
         return ForgePacket.OPEN_GUI;
+    }
+    
+    @Override
+    public String toString(boolean full)
+    {
+        if (full)
+        {
+            StringBuilder ret = new StringBuilder();
+            ret.append(toString() + '\n');
+            ret.append("    Window: " + WindowID + '\n');
+            ret.append("    Mod:    " + ModID + '\n');
+            ret.append("    Gui:    " + GuiID + '\n');
+            ret.append("    X:      " + X + '\n');
+            ret.append("    Y:      " + Y + '\n');
+            ret.append("    Z:      " + Z + '\n');
+            return ret.toString();
+        }
+        else
+        {
+            return toString();
+        }
     }
 }

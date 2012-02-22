@@ -16,6 +16,7 @@ import net.minecraft.src.forge.packets.*;
 
 public class PacketHandlerServer implements IPacketHandler
 {
+    public static boolean DEBUG = false;
     @Override
     public void onPacketData(NetworkManager network, String channel, byte[] bytes) 
     {
@@ -44,6 +45,10 @@ public class PacketHandlerServer implements IPacketHandler
 
     private void onModListResponse(NetServerHandler net, PacketModList pkt) throws IOException 
     {
+        if (DEBUG)
+        {
+            System.out.println("C->S: " + pkt.toString(true));
+        }
         if (pkt.Length < 0)
         {
             net.kickPlayer("Invalid mod list response, Size: " + pkt.Length);
@@ -105,6 +110,10 @@ public class PacketHandlerServer implements IPacketHandler
         {
             pkt.Mods[x++] = mod.toString();
         }
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + pkt.toString(true));
+        }
         net.sendPacket(pkt.getPacket());
         disconnectUser(net);
     }
@@ -125,6 +134,10 @@ public class PacketHandlerServer implements IPacketHandler
             pkt.Mods.put(MinecraftForge.getModID(mod), mod.toString());
         }
         net.sendPacket(pkt.getPacket());
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + pkt.toString(true));
+        }
     }
     
     /**

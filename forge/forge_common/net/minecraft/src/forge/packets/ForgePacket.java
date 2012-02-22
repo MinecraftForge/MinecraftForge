@@ -47,4 +47,14 @@ public abstract class ForgePacket
     public abstract void writeData(DataOutputStream data) throws IOException;
     public abstract void readData(DataInputStream data) throws IOException;
     public abstract int getID();
+    public String toString(boolean full)
+    {
+        return toString();
+    }
+    
+    @Override 
+    public String toString()
+    {
+        return getID() + " " + getClass().getSimpleName();
+    }
 }

@@ -30,6 +30,10 @@ public class ForgeHooksServer
     {
         PacketModList pkt = new PacketModList(true);
         ((NetServerHandler)net.getNetHandler()).sendPacket(pkt.getPacket());
+        if (((PacketHandlerServer)ForgeHooks.getPacketHandler()).DEBUG)
+        {
+            System.out.println("S->C: " + pkt.toString(true));
+        }
     }
     
 

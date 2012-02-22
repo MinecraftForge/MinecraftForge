@@ -37,5 +37,24 @@ public class PacketModIDs extends ForgePacket
     {
         return ForgePacket.MOD_IDS;
     }
+    
+    @Override
+    public String toString(boolean full)
+    {
+        if (full)
+        {
+            StringBuilder ret = new StringBuilder();
+            ret.append(toString()).append('\n');
+            for (Entry<Integer, String> mod : Mods.entrySet())
+            {
+                ret.append(String.format("     %5d ", mod.getKey()) + mod.getValue() + '\n');
+            }
+            return ret.toString();
+        }
+        else
+        {
+            return toString();
+        }
+    }
 
 }
