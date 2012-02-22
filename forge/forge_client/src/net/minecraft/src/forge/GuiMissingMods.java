@@ -28,11 +28,11 @@ public class GuiMissingMods extends GuiScreen
     public void drawScreen(int i, int j, float f)
     {
         drawDefaultBackground();
-        drawCenteredString(fontRenderer, "The server requires the following mods:", width / 2, height / 2 - 50, 0xffffff);
+        drawCenteredString(fontRenderer, "The server requires the following mods:", width / 2, 50, 0xffffff);
         int y = 0;
         for (String mod : packet.Mods)
         {
-            drawCenteredString(fontRenderer, mod, width / 2, (height / 2 - 10) + y++ * 10, 0xffffff);
+            drawCenteredString(fontRenderer, mod, width / 2, 80 + y++ * 10, 0xffffff);
         }
         super.drawScreen(i, j, f);
     }
