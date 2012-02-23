@@ -928,6 +928,24 @@ public class MinecraftForge {
     {
         return ForgeHooks.guiHandlers.get(mod);
     }
+    
+    /**
+     * Registers a new Arrow Nock event handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerArrowNockHandler(IArrowNockHandler handler)
+    {
+        ForgeHooks.arrowNockHandlers.add(handler);
+    }
+    
+    /**
+     * Registers a new Arrow Loose event handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerArrowLooseHandler(IArrowLooseHandler handler)
+    {
+        ForgeHooks.arrowLooseHandlers.add(handler);
+    }
   
         
     static 

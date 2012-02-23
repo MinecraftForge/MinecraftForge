@@ -370,6 +370,34 @@ public class ForgeHooks {
     public static Hashtable<Integer, NetworkMod> networkMods = new Hashtable<Integer, NetworkMod>();
     public static Hashtable<BaseMod, IGuiHandler> guiHandlers = new Hashtable<BaseMod, IGuiHandler>();
 
+    public static boolean onArrowLoose(ItemStack itemstack, World world, EntityPlayer player, int heldTime) 
+    {
+        for (IArrowLooseHandler handler : arrowLooseHandlers)
+        {
+            if (handler.onArrowLoose(itemstack, world, player, heldTime))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static ArrayList<IArrowLooseHandler> arrowLooseHandlers = new ArrayList<IArrowLooseHandler>();
+    
+    public static ItemStack onArrowNock(ItemStack itemstack, World world, EntityPlayer player) 
+    {
+        for (IArrowNockHandler handler : arrowNockHandlers)
+        {
+            ItemStack ret = handler.onArrowNock(itemstack, world, player);
+            if (ret != null)
+            {
+                return ret;
+            }
+        }
+        return null;
+    }
+    public static ArrayList<IArrowNockHandler> arrowNockHandlers = new ArrayList<IArrowNockHandler>();
+
 	public static final int majorVersion=0;
 	public static final int minorVersion=0;
 	public static final int revisionVersion=0;

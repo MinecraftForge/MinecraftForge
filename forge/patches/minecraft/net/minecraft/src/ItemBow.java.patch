@@ -1,0 +1,35 @@
+--- ../src_base/minecraft/net/minecraft/src/ItemBow.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ItemBow.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class ItemBow extends Item
+ {
+     public ItemBow(int i)
+@@ -13,6 +15,11 @@
+ 
+     public void onPlayerStoppedUsing(ItemStack itemstack, World world, EntityPlayer entityplayer, int i)
+     {
++        boolean handled = ForgeHooks.onArrowLoose(itemstack, world, entityplayer, getMaxItemUseDuration(itemstack) - i);
++        if (handled)
++        {
++            return;
++        }
+         boolean flag = entityplayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, itemstack) > 0;
+         if (flag || entityplayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         {
+@@ -80,6 +87,11 @@
+ 
+     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+     {
++        ItemStack stack = ForgeHooks.onArrowNock(itemstack, world, entityplayer);
++        if (stack != null)
++        {
++            return stack;
++        }
+         if (entityplayer.capabilities.depleteBuckets || entityplayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         {
+             entityplayer.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
