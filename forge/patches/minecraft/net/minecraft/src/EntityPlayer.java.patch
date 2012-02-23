@@ -142,7 +142,15 @@
          if (!worldObj.isRemote)
          {
              if (isPlayerSleeping() || !isEntityAlive())
-@@ -1473,4 +1547,30 @@
+@@ -1341,6 +1415,7 @@
+                     return 101;
+                 }
+             }
++            j = itemstack.getItem().getIconIndex(itemstack, i, this, itemInUse, itemInUseCount);
+         }
+         return j;
+     }
+@@ -1473,4 +1548,30 @@
          experience = entityplayer.experience;
          score = entityplayer.score;
      }

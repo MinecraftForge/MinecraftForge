@@ -27,7 +27,7 @@
          Vec3D vec3d1 = vec3d.addVector((double)f7 * d3, (double)f8 * d3, (double)f9 * d3);
          MovingObjectPosition movingobjectposition = world.rayTraceBlocks_do_do(vec3d, vec3d1, flag, !flag);
          return movingobjectposition;
-@@ -469,6 +473,124 @@
+@@ -469,6 +473,149 @@
      {
          return getIconFromDamage(i);
      }
@@ -148,6 +148,31 @@
 +    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) 
 +    {
 +        return false;
++    }
++    
++    /**
++     * Player, Render pass, and item usage sensitive version of getIconIndex.
++     *   
++     * @param stack The item stack to get the icon for. (Usually this, and usingItem will be the same if usingItem is not null)
++     * @param renderPass The pass to get the icon for, 0 is default.
++     * @param player The player holding the item
++     * @param usingItem The item the player is actively using. Can be null if not using anything.
++     * @param useRemaining The ticks remaining for the active item.
++     * @return The icon index
++     */
++    public int getIconIndex(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
++    {
++        /*
++         * Here is an example usage for Vanilla bows.
++        if (usingItem != null && usingItem.getItem().shiftedIndex == Item.bow.shiftedIndex)
++        {
++            int k = usingItem.getMaxItemUseDuration() - useRemaining;
++            if (k >= 18) return 133;
++            if (k >  13) return 117;
++            if (k >   0) return 101;
++        }
++         */
++        return getIconIndex(stack);
 +    }
  
      static

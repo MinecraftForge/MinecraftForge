@@ -18,7 +18,7 @@
      protected Item(int i)
      {
          maxStackSize = 64;
-@@ -389,10 +393,132 @@
+@@ -389,10 +393,148 @@
          float f8 = f6;
          float f9 = f3 * f5;
          double d3 = 5D;
@@ -147,6 +147,22 @@
 +    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) 
 +    {
 +        return false;
++    }
++    
++    /**
++     * Player, Render pass, and item usage sensitive version of getIconIndex.
++     *   
++     * @param stack The item stack to get the icon for. (Usually this, and usingItem will be the same if usingItem is not null)
++     * @param renderPass The pass to get the icon for, 0 is default.
++     * @param player The player holding the item
++     * @param usingItem The item the player is actively using. Can be null if not using anything.
++     * @param useRemaining The ticks remaining for the active item.
++     * @return The icon index
++     */
++    public int getIconIndex(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
++    {
++        //This is here server side for compilation compatibility
++        return 0;
 +    }
  
      public int getItemEnchantability()
