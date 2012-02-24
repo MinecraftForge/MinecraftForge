@@ -17,7 +17,7 @@ for /f %%i in ('find ../src_work -type f') do (
   rem echo !file!
   if "!file:~-1!" NEQ "#" (
     if "!file:~-1!" NEQ "~" (
-      diff -u ../src_base!file! ../src_work!file! -r --strip-trailing-cr --new-file | sed -e "1,2s/[0-9-]* [0-9:\.]* [+-][0-9]*\b/0000-00-00 00:00:00.000000000 -0000/" | tr -d '\r'  > patches!file!.patch
+      diff -u ../src_base!file! ../src_work!file! -r --strip-trailing-cr --new-file | sed -e "1,2s/[0-9-]* [0-9:\.]* [+-][0-9]*\b/0000-00-00 00:00:00.000000000 -0000/" | tr -d \r  > patches!file!.patch
     )
   )
 )

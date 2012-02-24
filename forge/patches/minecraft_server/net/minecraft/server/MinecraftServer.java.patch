@@ -127,7 +127,7 @@
 +            worldTickTimes.put(id, new long[100]);
          }
  
-         char c = \304;
+         char c = '\304';
          long l1 = System.currentTimeMillis();
 -        for (int k = 0; k < 1; k++)
 +        for (Integer id : DimensionManager.getIDs())

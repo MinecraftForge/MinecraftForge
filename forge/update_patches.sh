@@ -14,7 +14,7 @@ cd src_work
 for i in `find ../src_work -type f`
 do
 	ibase=${i##../src_work}
-	diff -u ../src_base$ibase $i -r --strip-trailing-cr --new-file | sed -e "1,2s/[0-9-]* [0-9:\.]* [+-][0-9]*\b/0000-00-00 00:00:00.000000000 -0000/" | tr -d '\r' > $fdir/patches$ibase.patch
+	diff -u ../src_base$ibase $i -r --strip-trailing-cr --new-file | sed -e "1,2s/[0-9-]* [0-9:\.]* [+-][0-9]*\b/0000-00-00 00:00:00.000000000 -0000/" | tr -d \r > $fdir/patches$ibase.patch
 done
 cd ..
 

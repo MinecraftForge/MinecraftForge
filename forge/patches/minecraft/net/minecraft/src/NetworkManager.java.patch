@@ -24,7 +24,7 @@
 +    
 +    /**
 +     * Retrieves the current associated network handler.
-+     * Added so modders dont have to use reflection.
++     * Added so modders don't have to use reflection.
 +     * @return The current registered Network Handler
 +     */
 +    public NetHandler getNetHandler()
