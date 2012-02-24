@@ -1,0 +1,250 @@
+--- ../src_base/minecraft_server/net/minecraft/server/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/server/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,6 +7,7 @@
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.HashMap;
++import java.util.Hashtable;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
+@@ -42,12 +43,14 @@
+ import net.minecraft.src.ThreadServerApplication;
+ import net.minecraft.src.ThreadSleepForever;
+ import net.minecraft.src.Vec3D;
++import net.minecraft.src.World;
+ import net.minecraft.src.WorldInfo;
+ import net.minecraft.src.WorldManager;
+ import net.minecraft.src.WorldProvider;
+ import net.minecraft.src.WorldServer;
+ import net.minecraft.src.WorldServerMulti;
+ import net.minecraft.src.WorldSettings;
++import net.minecraft.src.forge.DimensionManager;
+ 
+ public class MinecraftServer
+     implements Runnable, ICommandListener, IServer
+@@ -58,9 +61,10 @@
+     private int serverPort;
+     public NetworkListenThread networkServer;
+     public PropertyManager propertyManagerObj;
+-    public WorldServer worldMngr[];
++    //public WorldServer worldMngr[];
+     public long field_40027_f[];
+-    public long field_40028_g[][];
++    //public long field_40028_g[][];
++    public Hashtable<Integer, long[]> worldTickTimes = new Hashtable<Integer, long[]>();
+     public ServerConfigurationManager configManager;
+     private ConsoleCommandHandler commandHandler;
+     private boolean serverRunning;
+@@ -70,7 +74,7 @@
+     public int percentDone;
+     private List playersOnline;
+     private List commands;
+-    public EntityTracker entityTracker[];
++    //public EntityTracker entityTracker[];
+     public boolean onlineMode;
+     public boolean spawnPeacefulMobs;
+     public boolean field_44002_p;
+@@ -88,7 +92,7 @@
+         deathTime = 0;
+         playersOnline = new ArrayList();
+         commands = Collections.synchronizedList(new ArrayList());
+-        entityTracker = new EntityTracker[3];
++        //entityTracker = new EntityTracker[3];
+         new ThreadSleepForever(this);
+     }
+ 
+@@ -143,9 +147,11 @@
+             logger.warning("To change this, set \"online-mode\" to \"true\" in the server.settings file.");
+         }
+         configManager = new ServerConfigurationManager(this);
++        /*
+         entityTracker[0] = new EntityTracker(this, 0);
+         entityTracker[1] = new EntityTracker(this, -1);
+         entityTracker[2] = new EntityTracker(this, 1);
++        */
+         long l = System.nanoTime();
+         String s = propertyManagerObj.getStringProperty("level-name", "world");
+         String s1 = propertyManagerObj.getStringProperty("level-seed", "");
+@@ -196,46 +202,43 @@
+             logger.info("Converting map!");
+             isaveformat.convertMapFormat(s, new ConvertProgressUpdater(this));
+         }
+-        worldMngr = new WorldServer[3];
+-        field_40028_g = new long[worldMngr.length][100];
++        //worldMngr = new WorldServer[3];
++        //field_40028_g = new long[3][100];
+         int i = propertyManagerObj.getIntProperty("gamemode", 0);
+         i = WorldSettings.validGameType(i);
+         logger.info((new StringBuilder()).append("Default game type: ").append(i).toString());
+         boolean flag = propertyManagerObj.getBooleanProperty("generate-structures", true);
+         WorldSettings worldsettings = new WorldSettings(l, i, flag, false, enumworldtype);
+         SaveOldDir saveolddir = new SaveOldDir(new File("."), s, true);
+-        for (int j = 0; j < worldMngr.length; j++)
+-        {
+-            byte byte0 = 0;
+-            if (j == 1)
+-            {
+-                byte0 = -1;
+-            }
+-            if (j == 2)
+-            {
+-                byte0 = 1;
+-            }
+-            if (j == 0)
+-            {
+-                worldMngr[j] = new WorldServer(this, saveolddir, s, byte0, worldsettings);
+-            }
+-            else
+-            {
+-                worldMngr[j] = new WorldServerMulti(this, saveolddir, s, byte0, worldsettings, worldMngr[0]);
+-            }
+-            worldMngr[j].addWorldAccess(new WorldManager(this, worldMngr[j]));
+-            worldMngr[j].difficultySetting = propertyManagerObj.getIntProperty("difficulty", 1);
+-            worldMngr[j].setAllowedSpawnTypes(propertyManagerObj.getBooleanProperty("spawn-monsters", true), spawnPeacefulMobs);
+-            worldMngr[j].getWorldInfo().setGameType(i);
+-            configManager.setPlayerManager(worldMngr);
++        
++        WorldServer overWorld = new WorldServer(this, saveolddir, s, 0, worldsettings);
++        overWorld.addWorldAccess(new WorldManager(this, overWorld));
++        overWorld.difficultySetting = propertyManagerObj.getIntProperty("difficulty", 1);
++        overWorld.setAllowedSpawnTypes(propertyManagerObj.getBooleanProperty("spawn-monsters", true), spawnPeacefulMobs);
++        overWorld.getWorldInfo().setGameType(i);
++        worldTickTimes.put(0, new long[100]);
++        configManager.setPlayerManager(new WorldServer[]{ overWorld });
++        
++        for (Integer id : DimensionManager.getIDs())
++        {
++            if (id == 0)
++            {
++                continue;
++            }
++            WorldServer world = new WorldServerMulti(this, saveolddir, s, id, worldsettings, overWorld);
++            world.addWorldAccess(new WorldManager(this, overWorld));
++            world.difficultySetting = propertyManagerObj.getIntProperty("difficulty", 1);
++            world.setAllowedSpawnTypes(propertyManagerObj.getBooleanProperty("spawn-monsters", true), spawnPeacefulMobs);
++            world.getWorldInfo().setGameType(i);
++            worldTickTimes.put(id, new long[100]);
+         }
+ 
+         char c = \304;
+         long l1 = System.currentTimeMillis();
+-        for (int k = 0; k < 1; k++)
++        for (Integer id : DimensionManager.getIDs())
+         {
+-            logger.info((new StringBuilder()).append("Preparing start region for level ").append(k).toString());
+-            WorldServer worldserver = worldMngr[k];
++            logger.info("Preparing start region for level " + id);
++            WorldServer worldserver = (WorldServer)DimensionManager.getWorld(id);
+             ChunkCoordinates chunkcoordinates = worldserver.getSpawnPoint();
+             for (int i1 = -c; i1 <= c && serverRunning; i1 += 16)
+             {
+@@ -278,9 +281,9 @@
+     private void saveServerWorld()
+     {
+         logger.info("Saving chunks");
+-        for (int i = 0; i < worldMngr.length; i++)
++        for (World world : DimensionManager.getWorlds())
+         {
+-            WorldServer worldserver = worldMngr[i];
++            WorldServer worldserver = (WorldServer)world;
+             worldserver.saveWorld(true, null);
+             worldserver.func_30006_w();
+         }
+@@ -293,12 +296,12 @@
+         {
+             configManager.savePlayerStates();
+         }
+-        for (int i = 0; i < worldMngr.length; i++)
++        for (World worldserver : DimensionManager.getWorlds())
+         {
+-            WorldServer worldserver = worldMngr[i];
+             if (worldserver != null)
+             {
+                 saveServerWorld();
++                break;
+             }
+         }
+     }
+@@ -333,7 +336,7 @@
+                     }
+                     l1 += l3;
+                     l = l2;
+-                    if (worldMngr[0].isAllPlayersFullyAsleep())
++                    if (((WorldServer)DimensionManager.getWorld(0)).isAllPlayersFullyAsleep())
+                     {
+                         doTick();
+                         l1 = 0L;
+@@ -426,12 +429,12 @@
+         AxisAlignedBB.clearBoundingBoxPool();
+         Vec3D.initialize();
+         deathTime++;
+-        for (int j = 0; j < worldMngr.length; j++)
++        for (Integer j : DimensionManager.getIDs())
+         {
+             long l1 = System.nanoTime();
+             if (j == 0 || propertyManagerObj.getBooleanProperty("allow-nether", true))
+             {
+-                WorldServer worldserver = worldMngr[j];
++                WorldServer worldserver = (WorldServer)DimensionManager.getWorld(j);
+                 if (deathTime % 20 == 0)
+                 {
+                     configManager.sendPacketToAllPlayersInDimension(new Packet4UpdateTime(worldserver.getWorldTime()), worldserver.worldProvider.worldType);
+@@ -440,14 +443,14 @@
+                 while (worldserver.updatingLighting()) ;
+                 worldserver.updateEntities();
+             }
+-            field_40028_g[j][deathTime % 100] = System.nanoTime() - l1;
++            worldTickTimes.get(j)[deathTime % 100] = System.nanoTime() - l1;
+         }
+ 
+         networkServer.handleNetworkListenThread();
+         configManager.onTick();
+-        for (int k = 0; k < entityTracker.length; k++)
++        for (World world : DimensionManager.getWorlds())
+         {
+-            entityTracker[k].updateTrackedEntities();
++            ((WorldServer)world).entityTracker.updateTrackedEntities();
+         }
+ 
+         for (int i1 = 0; i1 < playersOnline.size(); i1++)
+@@ -525,34 +528,17 @@
+ 
+     public WorldServer getWorldManager(int i)
+     {
+-        if (i == -1)
+-        {
+-            return worldMngr[1];
+-        }
+-        if (i == 1)
+-        {
+-            return worldMngr[2];
+-        }
+-        else
++        WorldServer ret = (WorldServer)DimensionManager.getWorld(i);
++        if (ret == null)
+         {
+-            return worldMngr[0];
++            ret = (WorldServer)DimensionManager.getWorld(0);
+         }
++        return ret;
+     }
+ 
+     public EntityTracker getEntityTracker(int i)
+     {
+-        if (i == -1)
+-        {
+-            return entityTracker[1];
+-        }
+-        if (i == 1)
+-        {
+-            return entityTracker[2];
+-        }
+-        else
+-        {
+-            return entityTracker[0];
+-        }
++        return getWorldManager(i).entityTracker;
+     }
+ 
+     public int getIntProperty(String s, int i)

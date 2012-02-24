@@ -1,0 +1,71 @@
+--- ../src_base/minecraft_server/net/minecraft/src/WorldProvider.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/WorldProvider.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.DimensionManager;
++
+ public abstract class WorldProvider
+ {
+     public World worldObj;
+@@ -95,22 +97,7 @@
+ 
+     public static WorldProvider getProviderForDimension(int i)
+     {
+-        if (i == -1)
+-        {
+-            return new WorldProviderHell();
+-        }
+-        if (i == 0)
+-        {
+-            return new WorldProviderSurface();
+-        }
+-        if (i == 1)
+-        {
+-            return new WorldProviderEnd();
+-        }
+-        else
+-        {
+-            return null;
+-        }
++        return DimensionManager.getProvider(i);
+     }
+ 
+     public ChunkCoordinates getEntrancePortalLocation()
+@@ -129,4 +116,36 @@
+             return worldObj.worldHeight / 2;
+         }
+     }
++    
++    /**
++     * Returns the sub-folder of the world folder that this WorldProvider saves to.
++     * EXA: DIM1, DIM-1
++     * @return The sub-folder name to save this worlds chunks to.
++     */
++    public abstract String getSaveFolder();
++    
++    /**
++     * A message to display to the user when they transfer to this dimension.
++     * 
++     * @return The message to be displayed
++     */
++    public abstract String getWelcomeMessage();
++    
++    /**
++     * A Message to display to the user when they transfer out of this dismension.
++     * 
++     * @return The message to be displayed
++     */
++    public abstract String getDepartMessage();
++    
++    /**
++     * The dimensions movement factor. Relative to normal overworld. 
++     * It is applied to the players position when they transfer dimensions.
++     * Exa: Nether movement is 8.0
++     * @return The movement factor
++     */
++    public double getMovementFactor()
++    {
++        return 1.0;
++    }
+ }

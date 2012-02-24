@@ -1,6 +1,33 @@
 --- ../src_base/minecraft_server/net/minecraft/src/WorldServer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/WorldServer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -54,15 +54,30 @@
+@@ -3,6 +3,7 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.forge.DimensionManager;
+ 
+ public class WorldServer extends World
+ {
+@@ -11,6 +12,8 @@
+     public boolean levelSaving;
+     private MinecraftServer mcServer;
+     private IntHashMap entityInstanceIdMap;
++    public EntityTracker entityTracker;
++    public PlayerManager playerManager;
+ 
+     public WorldServer(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings)
+     {
+@@ -21,6 +24,9 @@
+         {
+             entityInstanceIdMap = new IntHashMap();
+         }
++        DimensionManager.setWorld(i, this);
++        playerManager = new PlayerManager(mcServer, i, mcServer.propertyManagerObj.getIntProperty("view-distance", 10));
++        entityTracker = new EntityTracker(mcServer, i);
+     }
+ 
+     public void updateEntityWithOptionalForce(Entity entity, boolean flag)
+@@ -54,15 +60,30 @@
      public List getTileEntityList(int i, int j, int k, int l, int i1, int j1)
      {
          ArrayList arraylist = new ArrayList();

@@ -1,0 +1,51 @@
+--- ../src_base/minecraft_server/net/minecraft/src/GuiStatsComponent.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/GuiStatsComponent.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,6 +5,7 @@
+ import javax.swing.JComponent;
+ import javax.swing.Timer;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.forge.DimensionManager;
+ 
+ public class GuiStatsComponent extends JComponent
+ {
+@@ -31,15 +32,25 @@
+     {
+         long l = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+         System.gc();
++        if (displayStrings.length < DimensionManager.getIDs().length + 3)
++        {
++            displayStrings = new String[DimensionManager.getIDs().length + 3];
++        }
++        for(int x = 0; x < displayStrings.length; x++)
++        {
++            displayStrings[x] = "";
++        }
+         displayStrings[0] = (new StringBuilder()).append("Memory use: ").append(l / 1024L / 1024L).append(" mb (").append((Runtime.getRuntime().freeMemory() * 100L) / Runtime.getRuntime().maxMemory()).append("% free)").toString();
+         displayStrings[1] = (new StringBuilder()).append("Threads: ").append(NetworkManager.numReadThreads).append(" + ").append(NetworkManager.numWriteThreads).toString();
+         displayStrings[2] = (new StringBuilder()).append("Avg tick: ").append(field_40573_a.format(func_40571_a(field_40572_e.field_40027_f) * 9.9999999999999995E-007D)).append(" ms").toString();
+-        for (int i = 0; i < field_40572_e.worldMngr.length; i++)
++        int x = 0;
++        for (Integer id : DimensionManager.getIDs())
+         {
+-            displayStrings[3 + i] = (new StringBuilder()).append("Lvl ").append(i).append(" tick: ").append(field_40573_a.format(func_40571_a(field_40572_e.field_40028_g[i]) * 9.9999999999999995E-007D)).append(" ms").toString();
+-            if (field_40572_e.worldMngr[i] != null && field_40572_e.worldMngr[i].chunkProviderServer != null)
++            displayStrings[2 + ++x] = "Lvl " + id + " tick: " + field_40573_a.format(func_40571_a(field_40572_e.worldTickTimes.get(id)) * 10E-007D) + " ms";
++            WorldServer world = (WorldServer)DimensionManager.getWorld(id);
++            if (world != null && world.chunkProviderServer != null)
+             {
+-                displayStrings[3 + i] += ", " + field_40572_e.worldMngr[i].chunkProviderServer.func_46040_d();
++                displayStrings[2 + x] += ", " + world.chunkProviderServer.func_46040_d();
+             }
+         }
+         memoryUse[updateCounter++ & 0xff] = (int)((l * 100L) / Runtime.getRuntime().maxMemory());
+@@ -48,6 +59,10 @@
+ 
+     private double func_40571_a(long al[])
+     {
++        if (al == null)
++        {
++            return 0;
++        }
+         long l = 0L;
+         for (int i = 0; i < al.length; i++)
+         {
