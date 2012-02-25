@@ -1,5 +1,5 @@
 /**
- * This software is provided under the terms of the Minecraft Forge Public 
+ * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
  */
 
@@ -15,12 +15,12 @@ import net.minecraft.src.World;
  *
  * @see Block
  */
-public interface ISpecialResistance {
-    
+public interface ISpecialResistance
+{
+
     /**
-     * Return the explosion resistance of the block located at position i, j, 
-     * k, from an exploder explosing on src_x, src_y, src_z.
+     * Return the explosion resistance of the block located at position X, Y,
+     * Z, from an exploder explosing on srcX, srcY, srcZ.
      */
-	public float getSpecialExplosionResistance(World world, int i, int j, int k,
-		double src_x, double src_y, double src_z, Entity exploder);
+    public float getSpecialExplosionResistance(World world, int X, int Y, int Z, double srcX, double srcY, double srcZ, Entity exploder);
 }

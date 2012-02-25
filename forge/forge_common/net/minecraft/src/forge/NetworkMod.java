@@ -4,18 +4,18 @@ import net.minecraft.src.BaseMod;
 
 /**
  * This is for mods that are designed to be used on the server side alone,
- * or both the client and server side. This class is used when registering 
+ * or both the client and server side. This class is used when registering
  * various things relating to network traffic. Entity ID's, GUI Id's, etc..
  */
 public abstract class NetworkMod extends BaseMod
 {
     /**
-     * Returns true if every client is required to have this 
+     * Returns true if every client is required to have this
      * mod installed when it is installed on a server.
      * @return True if client is required, false if not.
      */
     public abstract boolean clientSideRequired();
-    
+
     /**
      * Returns true if the server is required to have this
      * mod when it is installed on the client.

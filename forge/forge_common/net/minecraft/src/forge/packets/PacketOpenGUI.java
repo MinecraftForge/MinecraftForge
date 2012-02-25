@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map.Entry;
 
-public class PacketOpenGUI extends ForgePacket 
+public class PacketOpenGUI extends ForgePacket
 {
     public int WindowID;
     public int ModID;
@@ -13,7 +13,7 @@ public class PacketOpenGUI extends ForgePacket
     public int X;
     public int Y;
     public int Z;
-    
+
     public PacketOpenGUI(){}
     public PacketOpenGUI(int window, int mod, int id, int x, int y, int z)
     {
@@ -23,10 +23,10 @@ public class PacketOpenGUI extends ForgePacket
         X = x;
         Y = y;
         Z = z;
-    }    
+    }
 
     @Override
-    public void writeData(DataOutputStream data) throws IOException 
+    public void writeData(DataOutputStream data) throws IOException
     {
         data.writeInt(WindowID);
         data.writeInt(ModID);
@@ -37,7 +37,7 @@ public class PacketOpenGUI extends ForgePacket
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException 
+    public void readData(DataInputStream data) throws IOException
     {
         WindowID = data.readInt();
         ModID = data.readInt();
@@ -48,11 +48,11 @@ public class PacketOpenGUI extends ForgePacket
     }
 
     @Override
-    public int getID() 
+    public int getID()
     {
         return ForgePacket.OPEN_GUI;
     }
-    
+
     @Override
     public String toString(boolean full)
     {

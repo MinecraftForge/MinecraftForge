@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
-public class PacketModIDs extends ForgePacket 
+public class PacketModIDs extends ForgePacket
 {
     public Hashtable<Integer, String> Mods = new Hashtable<Integer, String>();
     public int Length;
-    
+
     @Override
-    public void writeData(DataOutputStream data) throws IOException 
+    public void writeData(DataOutputStream data) throws IOException
     {
         data.writeInt(Mods.size());
         for (Entry<Integer, String> entry : Mods.entrySet())
@@ -23,21 +23,21 @@ public class PacketModIDs extends ForgePacket
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException 
+    public void readData(DataInputStream data) throws IOException
     {
         Length = data.readInt();
-        for(int x = 0; x < Length; x++)
+        for (int x = 0; x < Length; x++)
         {
             Mods.put(data.readInt(), data.readUTF());
         }
     }
 
     @Override
-    public int getID() 
+    public int getID()
     {
         return ForgePacket.MOD_IDS;
     }
-    
+
     @Override
     public String toString(boolean full)
     {

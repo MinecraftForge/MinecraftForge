@@ -18,16 +18,16 @@ public class PacketHandlerServer implements IPacketHandler
 {
     public static boolean DEBUG = false;
     @Override
-    public void onPacketData(NetworkManager network, String channel, byte[] bytes) 
+    public void onPacketData(NetworkManager network, String channel, byte[] bytes)
     {
         NetServerHandler net = (NetServerHandler)network.getNetHandler();
         DataInputStream data = new DataInputStream(new ByteArrayInputStream(bytes));
         ForgePacket pkt = null;
-        
+
         try
         {
             int packetID = data.read();
-            switch(packetID)
+            switch (packetID)
             {
                 case ForgePacket.MODLIST:
                     pkt = new PacketModList(true);
@@ -36,14 +36,14 @@ public class PacketHandlerServer implements IPacketHandler
                     break;
             }
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             ModLoader.getLogger().log(Level.SEVERE, "Exception in PacketHandlerServer.onPacketData", e);
             e.printStackTrace();
         }
     }
 
-    private void onModListResponse(NetServerHandler net, PacketModList pkt) throws IOException 
+    private void onModListResponse(NetServerHandler net, PacketModList pkt) throws IOException
     {
         if (DEBUG)
         {
@@ -53,7 +53,7 @@ public class PacketHandlerServer implements IPacketHandler
         {
             net.kickPlayer("Invalid mod list response, Size: " + pkt.Length);
             return;
-        }        
+        }
         if (pkt.Mods.length == 0)
         {
             ModLoader.getLogger().log(Level.INFO, net.getUsername() + " joined with no mods");
@@ -62,9 +62,9 @@ public class PacketHandlerServer implements IPacketHandler
         {
             ModLoader.getLogger().log(Level.INFO, net.getUsername() + " joined with: " + Arrays.toString(pkt.Mods).replaceAll("mod_", ""));
         }
-        
+
         //TODO: Write a 'banned mods' system and do the checks here
-        
+
         NetworkMod[] serverMods = MinecraftForge.getNetworkMods();
         ArrayList<NetworkMod> missing = new ArrayList<NetworkMod>();
         for (NetworkMod mod : serverMods)
@@ -96,7 +96,7 @@ public class PacketHandlerServer implements IPacketHandler
             sendModIDs(net, serverMods);
         }
     }
-    
+
     /**
      * Sends the user a list of mods they are missing and then disconnects them
      * @param net The network handler
@@ -106,7 +106,7 @@ public class PacketHandlerServer implements IPacketHandler
         PacketMissingMods pkt = new PacketMissingMods(true);
         pkt.Mods = new String[list.size()];
         int x = 0;
-        for(NetworkMod mod : list)
+        for (NetworkMod mod : list)
         {
             pkt.Mods[x++] = mod.toString();
         }
@@ -117,12 +117,12 @@ public class PacketHandlerServer implements IPacketHandler
         net.sendPacket(pkt.getPacket());
         disconnectUser(net);
     }
-    
+
 
     /**
      * Sends a list of mod id mappings to the client.
      * Only mod ID's are sent, not item or blocks.
-     * 
+     *
      * @param net The network handler
      * @param list A list of network mods
      */
@@ -139,7 +139,7 @@ public class PacketHandlerServer implements IPacketHandler
             System.out.println("S->C: " + pkt.toString(true));
         }
     }
-    
+
     /**
      * Disconnects the player just like kicking them, just without the kick message.
      * @param net The network handler

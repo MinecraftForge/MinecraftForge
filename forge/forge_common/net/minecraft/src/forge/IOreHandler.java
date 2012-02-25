@@ -1,5 +1,5 @@
 /**
- * This software is provided under the terms of the Minecraft Forge Public 
+ * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
  */
 
@@ -18,10 +18,11 @@ import net.minecraft.src.ItemStack;
  * itemRubber
  */
 
-public interface IOreHandler {
-	/** Called when a new ore is registered with the ore dictionary.
-	 * @param oreClass The string class of the ore.
-	 * @param ore The ItemStack for the ore.
-	 */
-	public void registerOre(String oreClass, ItemStack ore);
+public interface IOreHandler
+{
+    /** Called when a new ore is registered with the ore dictionary.
+     * @param oreClass The string class of the ore.
+     * @param ore The ItemStack for the ore.
+     */
+    public void registerOre(String oreClass, ItemStack ore);
 }

@@ -7,11 +7,11 @@ import java.util.Map.Entry;
 
 import net.minecraft.src.NetworkManager;
 
-public class MessageManager 
+public class MessageManager
 {
     private Hashtable<NetworkManager, ConnectionInstance> connections = new Hashtable<NetworkManager, ConnectionInstance>();
     private static MessageManager instance;
-    
+
     public static MessageManager getInstance()
     {
         if (instance == null)
@@ -20,19 +20,19 @@ public class MessageManager
         }
         return instance;
     }
-    
+
     public class ConnectionInstance
     {
         private NetworkManager network;
         private Hashtable<String, ArrayList<IPacketHandler>> channelToHandlers = new Hashtable<String, ArrayList<IPacketHandler>>();
         private Hashtable<IPacketHandler, ArrayList<String>> handlerToChannels = new Hashtable<IPacketHandler, ArrayList<String>>();
         private HashSet<String> activeChannels = new HashSet<String>();
-        
+
         public ConnectionInstance(NetworkManager mgr)
         {
             network = mgr;
         }
-        
+
         /**
          * Retrieves the associated NetworkManager
          * @return The associated NetworkManager;
@@ -41,11 +41,11 @@ public class MessageManager
         {
             return network;
         }
-        
+
         /**
          * Removes all channels and handlers from the registration.
-         * 
-         * @return An array of channels that were in the registration 
+         *
+         * @return An array of channels that were in the registration
          *   If the connection is still active, you should send UNREGISTER messages for these.
          */
         public String[] unregisterAll()
@@ -58,32 +58,32 @@ public class MessageManager
 
         /**
          * Registers a channel to a specific handler.
-         * 
+         *
          * @param handler The handler to register
          * @param channel The channel to register on
          * @return True if the channel was not previously registered to any handlers.
          *      If True, the connection is still active, and this is not the OnLogin event,
          *      you should send a REGISTER command for this channel.
          */
-        public boolean registerChannel(IPacketHandler handler, String channel) 
+        public boolean registerChannel(IPacketHandler handler, String channel)
         {
             ArrayList<IPacketHandler> handlers = channelToHandlers.get(channel);
             ArrayList<String> channels = handlerToChannels.get(handler);
-            boolean ret = false; 
-            
+            boolean ret = false;
+
             if (handlers == null)
             {
                 ret = true;
                 handlers = new ArrayList<IPacketHandler>();
                 channelToHandlers.put(channel, handlers);
             }
-            
+
             if (channels == null)
             {
                 channels = new ArrayList<String>();
                 handlerToChannels.put(handler, channels);
             }
-            
+
             if (!channels.contains(channel))
             {
                 channels.add(channel);
@@ -94,17 +94,17 @@ public class MessageManager
             }
             return ret;
         }
-        
+
         /**
          * Unregisters a channel from the specified handler.
-         * 
+         *
          * @param handler The handler to remove the channel from.
          * @param channel The channel to remove from the handler registration.
          * @return True if this was the last handler registered with the specified channel.
          *      If this is the case, and the network connection is still alive, you should send
          *      a UNREGISTER message for this channel.
          */
-        public boolean unregisterChannel(IPacketHandler handler, String channel) 
+        public boolean unregisterChannel(IPacketHandler handler, String channel)
         {
             boolean ret = false;
             ArrayList<IPacketHandler> handlers = channelToHandlers.get(channel);
@@ -119,7 +119,7 @@ public class MessageManager
                     channelToHandlers.remove(channel);
                 }
             }
-            
+
             if (channels != null && channels.contains(channel))
             {
                 channels.remove(channel);
@@ -128,26 +128,26 @@ public class MessageManager
                     handlerToChannels.remove(handler);
                 }
             }
-            
+
             return ret;
         }
 
         /**
          * Unregisters a handler from all of it's associated channels.
-         * 
+         *
          * @param handler The handler to unregister
          * @return A list of channels that now have no handlers.
-         *      If the connection is still active, you should send a UNREGISTER 
+         *      If the connection is still active, you should send a UNREGISTER
          *      message for each channel in this list.
          */
-        public String[] unregisterHandler(IPacketHandler handler) 
+        public String[] unregisterHandler(IPacketHandler handler)
         {
             ArrayList<String> tmp = handlerToChannels.get(handler);
             if (tmp != null)
             {
                 String[] channels = tmp.toArray(new String[0]);
                 tmp = new ArrayList<String>();
-                
+
                 for (String channel : channels)
                 {
                     if (unregisterChannel(handler, channel))
@@ -162,14 +162,14 @@ public class MessageManager
 
         /**
          * Retrieves a list of all unique channels that currently have valid handlers.
-         * 
+         *
          * @return The channel list
          */
-        public String[] getRegisteredChannels() 
+        public String[] getRegisteredChannels()
         {
             int x = 0;
             String[] ret = new String[channelToHandlers.size()];
-            
+
             for (String value : channelToHandlers.keySet())
             {
                 ret[x++] = value;
@@ -179,7 +179,7 @@ public class MessageManager
 
         /**
          * Retrieves a list of all handlers currently registered to the specified channel.
-         * 
+         *
          * @param channel The channel to get the handlers for.
          * @return A array containing all handlers for this channel.
          */
@@ -192,11 +192,11 @@ public class MessageManager
             }
             return new IPacketHandler[0];
         }
-    
+
         /**
          * Adds a channel to the active set.
          * This is a set that the other end of the connection has registered a channel.
-         * 
+         *
          * @param channel The channel name
          */
         public void addActiveChannel(String channel)
@@ -206,11 +206,11 @@ public class MessageManager
                 activeChannels.add(channel);
             }
         }
-        
+
         /**
          * Removes a channel from the active set.
          * This should be done with the other end of the connection unregisters a channel.
-         * 
+         *
          * @param channel
          */
         public void removeActiveChannel(String channel)
@@ -220,10 +220,10 @@ public class MessageManager
                 activeChannels.remove(channel);
             }
         }
-        
+
         /**
          * Checks if the specified channel is registered as active by the other end of the connection.
-         * 
+         *
          * @param channel The channel to check
          * @return True if it's active, false otherwise.
          */
@@ -232,10 +232,10 @@ public class MessageManager
             return activeChannels.contains(channel);
         }
     }
-    
+
     /**
      * Retrieves, or creates a ConnectionInstance associated with the specific NetworkManager.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @return A ConnectionInstance channel manager for this NetworkManager
      */
@@ -249,13 +249,13 @@ public class MessageManager
         }
         return ret;
     }
-    
+
     /**
      * Removes the associated channel manager, and unregisters all channels/handlers from it.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @return An array of all channels that were still registered to this NetowrkManager.
-     *      If the connection is still active, you should send a UNREGISTER request for 
+     *      If the connection is still active, you should send a UNREGISTER request for
      *      all of these channels.
      */
     public String[] removeConnection(NetworkManager manager)
@@ -269,10 +269,10 @@ public class MessageManager
         }
         return new String[0];
     }
-  
+
     /**
      * Registers a channel to a specific handler.
-     * 
+     *
      * @param manager The manager to register to
      * @param handler The handler to register
      * @param channel The channel to register on
@@ -288,7 +288,7 @@ public class MessageManager
 
     /**
      * Unregisters a channel from the specified handler.
-     * 
+     *
      * @param manager The manager to register to
      * @param handler The handler to remove the channel from.
      * @param channel The channel to remove from the handler registration.
@@ -308,11 +308,11 @@ public class MessageManager
 
     /**
      * Unregisters a handler from all of it's associated channels.
-     * 
+     *
      * @param manager The manager to register to
      * @param handler The handler to unregister
      * @return A list of channels that now have no handlers.
-     *      If the connection is still active, you should send a UNREGISTER 
+     *      If the connection is still active, you should send a UNREGISTER
      *      message for each channel in this list.
      */
     public String[] unregisterHandler(NetworkManager manager, IPacketHandler handler)
@@ -327,7 +327,7 @@ public class MessageManager
 
     /**
      * Retrieves a list of all unique channels that currently have valid handlers.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @return The channel list
      */
@@ -343,7 +343,7 @@ public class MessageManager
 
     /**
      * Retrieves a list of all handlers currently registered to the specified channel.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @param channel The channel to get the handlers for.
      * @return A array containing all handlers for this channel.
@@ -357,11 +357,11 @@ public class MessageManager
         }
         return new IPacketHandler[0];
     }
-    
+
     /**
      * Adds a channel to the active set.
      * This is a set that the other end of the connection has registered a channel.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @param channel The channel name
      */
@@ -370,11 +370,11 @@ public class MessageManager
         ConnectionInstance con = getConnection(manager);
         con.addActiveChannel(channel);
     }
-    
+
     /**
      * Removes a channel from the active set.
      * This should be done with the other end of the connection unregisters a channel.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @param channel
      */
@@ -386,10 +386,10 @@ public class MessageManager
             con.removeActiveChannel(channel);
         }
     }
-    
+
     /**
      * Checks if the specified channel is registered as active by the other end of the connection.
-     * 
+     *
      * @param manager The NetworkManager to look for.
      * @param channel The channel to check
      * @return True if it's active, false otherwise.
@@ -404,7 +404,7 @@ public class MessageManager
         return false;
     }
 
-    public void dispatchIncomingMessage(NetworkManager manager, String channel, byte[] data) 
+    public void dispatchIncomingMessage(NetworkManager manager, String channel, byte[] data)
     {
         if (channel.equals("Forge"))
         {
@@ -415,7 +415,7 @@ public class MessageManager
                 ForgeHooks.getPacketHandler().onPacketData(manager, channel, tmpData);
             }
         }
-        
+
         if (connections.contains(manager))
         {
             ConnectionInstance con = getConnection(manager);
@@ -425,7 +425,7 @@ public class MessageManager
             {
                 System.arraycopy(data, 0, tmpData, 0, data.length);
                 handler.onPacketData(manager, channel, tmpData);
-            }            
+            }
         }
     }
 }

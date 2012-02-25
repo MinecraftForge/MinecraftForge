@@ -1,5 +1,5 @@
 /**
- * This software is provided under the terms of the Minecraft Forge Public 
+ * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
  */
 
@@ -15,17 +15,18 @@ import net.minecraft.src.World;
  * @see Block
  * @deprecated.  This functionality will be removed soon.
  */
-public interface IOverrideReplace {
-    
+public interface IOverrideReplace
+{
+
     /**
      * Return true if this block has to take control over replacement, for
      * the intended replacement given by the parameter bid. If false, then
      * the block replacement will be prevented.
      */
-	public boolean canReplaceBlock(World world, int i, int j, int k, int bid);
-	
-	/**
-	 * Return the status of the actual replacement. 
-	 */
-	public boolean getReplacedSuccess();
+    public boolean canReplaceBlock(World world, int X, int Y, int Z, int replacement);
+
+    /**
+     * Return the status of the actual replacement.
+     */
+    public boolean getReplacedSuccess();
 }

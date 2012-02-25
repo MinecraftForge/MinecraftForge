@@ -8,24 +8,24 @@ import java.util.List;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.ModLoader;
 
-public class PacketModList extends ForgePacket 
+public class PacketModList extends ForgePacket
 {
     private boolean isServer = false;
     public String[] Mods;
     public int Length = -1;
-    
+
     public PacketModList(boolean server)
     {
         isServer = server;
     }
-    
+
     @Override
-    public void writeData(DataOutputStream data) throws IOException 
+    public void writeData(DataOutputStream data) throws IOException
     {
         if (!isServer)
         {
             data.writeInt(Mods.length);
-            for(String mod : Mods)
+            for (String mod : Mods)
             {
                 data.writeUTF(mod);
             }
@@ -33,7 +33,7 @@ public class PacketModList extends ForgePacket
     }
 
     @Override
-    public void readData(DataInputStream data) throws IOException 
+    public void readData(DataInputStream data) throws IOException
     {
         if (isServer)
         {
@@ -50,11 +50,11 @@ public class PacketModList extends ForgePacket
     }
 
     @Override
-    public int getID() 
+    public int getID()
     {
         return ForgePacket.MODLIST;
     }
-    
+
     @Override
     public String toString(boolean full)
     {

@@ -4,11 +4,11 @@ import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.GuiScreen;
 import net.minecraft.src.World;
 
-public interface IGuiHandler 
+public interface IGuiHandler
 {
     /**
      * Returns a GuiScreen to be displayed to the user. This is client side
-     * 
+     *
      * @param ID The Gui ID Number
      * @param player The player viewing the Gui
      * @param world The current world

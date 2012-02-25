@@ -25,19 +25,19 @@ public class PacketEntitySpawn extends ForgePacket
     public int modID;
     public int throwerID;
     private ISpawnHandler handler;
-    
+
     public PacketEntitySpawn(){}
     public PacketEntitySpawn(Entity ent, NetworkMod mod, int type)
     {
-        entityID = ent.entityId; 
+        entityID = ent.entityId;
 
         posX = MathHelper.floor_double(ent.posX * 32D);
         posY = MathHelper.floor_double(ent.posY * 32D);
         posZ = MathHelper.floor_double(ent.posZ * 32D);
-        
+
         typeID = type;
         modID = MinecraftForge.getModID(mod);
-        
+
         if (ent instanceof IThrowableEntity)
         {
             Entity owner = ((IThrowableEntity)ent).getThrower();
@@ -81,7 +81,7 @@ public class PacketEntitySpawn extends ForgePacket
             handler.writeSpawnData(data);
         }
     }
-    
+
     public void readData(DataInputStream data) throws IOException
     {
         modID     = data.readInt();
@@ -99,7 +99,7 @@ public class PacketEntitySpawn extends ForgePacket
         }
     }
     @Override
-    public int getID() 
+    public int getID()
     {
         return ForgePacket.SPAWN;
     }

@@ -8,19 +8,19 @@ import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.World;
 
 /**
- * 
+ *
  * This allows for mods to create there own Shear-like items
  * and have them interact with Blocks/Entities without extra work.
- * Also, if your block/entity supports the Shears, this allows you 
- * to support mod-shears as well. 
+ * Also, if your block/entity supports the Shears, this allows you
+ * to support mod-shears as well.
  *
  */
-public interface IShearable 
+public interface IShearable
 {
     /**
-     * Checks if the object is currently shearable 
+     * Checks if the object is currently shearable
      * Example: Sheep return false when they have no wool
-     * 
+     *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world
      * @param X The X Position
@@ -29,18 +29,18 @@ public interface IShearable
      * @return If this is shearable, and onSheared should be called.
      */
     public boolean isShearable(ItemStack item, World world, int X, int Y, int Z);
-    
+
     /**
      * Performs the shear function on this object.
      * This is called for both client, and server.
      * The object should perform all actions related to being sheared,
-     * except for dropping of the items. 
-     * 
+     * except for dropping of the items.
+     *
      * Returns a list of items that resulted from the shearing process.
-     * 
+     *
      * For entities, they should trust there internal location information
      * over the values passed into this function.
-     * 
+     *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world
      * @param X The X Position

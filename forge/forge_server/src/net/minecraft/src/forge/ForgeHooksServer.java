@@ -5,12 +5,12 @@ import java.util.Map;
 import net.minecraft.src.*;
 import net.minecraft.src.forge.packets.PacketModList;
 
-public class ForgeHooksServer 
+public class ForgeHooksServer
 {
     /**
      * Called when a Entity is being added to a EntityTracker.
-     * If we have valid info, register the entity. 
-     * 
+     * If we have valid info, register the entity.
+     *
      * @param tracker The EntityTracker instance
      * @param entity The Entity to add
      * @return True if we registered the Entity
@@ -25,7 +25,7 @@ public class ForgeHooksServer
         }
         return false;
     }
-    
+
     public static void sendModListRequest(NetworkManager net)
     {
         PacketModList pkt = new PacketModList(true);
@@ -35,9 +35,9 @@ public class ForgeHooksServer
             System.out.println("S->C: " + pkt.toString(true));
         }
     }
-    
 
-    private static boolean hasInit = false; 
+
+    private static boolean hasInit = false;
     public static void init()
     {
         if (hasInit)
@@ -47,8 +47,8 @@ public class ForgeHooksServer
         hasInit = true;
         ForgeHooks.setPacketHandler(new PacketHandlerServer());
     }
-    
-    static 
+
+    static
     {
         init();
     }

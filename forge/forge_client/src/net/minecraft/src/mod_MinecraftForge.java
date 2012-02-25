@@ -9,15 +9,15 @@ import net.minecraft.src.forge.MinecraftForge;
 public class mod_MinecraftForge extends BaseMod
 {
     @Override
-    public String getVersion() 
-    {        
-        return String.format("%d.%d.%d.%d", 
-                ForgeHooks.majorVersion,    ForgeHooks.minorVersion, 
+    public String getVersion()
+    {
+        return String.format("%d.%d.%d.%d",
+                ForgeHooks.majorVersion,    ForgeHooks.minorVersion,
                 ForgeHooks.revisionVersion, ForgeHooks.buildVersion);
     }
 
     @Override
-    public void load() 
+    public void load()
     {
         MinecraftForge.getDungeonLootTries(); //Random thing to make things Initialize
     }

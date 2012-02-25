@@ -3,14 +3,14 @@ package net.minecraft.src.forge;
 import net.minecraft.src.*;
 import net.minecraft.src.forge.packets.PacketMissingMods;
 
-public class GuiMissingMods extends GuiScreen 
+public class GuiMissingMods extends GuiScreen
 {
     PacketMissingMods packet;
     public GuiMissingMods(PacketMissingMods pkt)
     {
         packet = pkt;
     }
-    
+
     public void initGui()
     {
         controlList.clear();
@@ -28,7 +28,7 @@ public class GuiMissingMods extends GuiScreen
     public void drawScreen(int i, int j, float f)
     {
         drawDefaultBackground();
-        drawCenteredString(fontRenderer, "The server requires the following mods:", width / 2, 50, 0xffffff);
+        drawCenteredString(fontRenderer, "The server requires you to have the following mods:", width / 2, 50, 0xffffff);
         int y = 0;
         for (String mod : packet.Mods)
         {

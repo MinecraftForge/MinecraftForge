@@ -6,35 +6,36 @@ import net.minecraft.src.EntityMinecart;
  * Used to create hashmap values for Minecart/type pairs
  * Written by CovertJaguar
  */
-public class MinecartKey {
+public class MinecartKey
+{
     public final Class<? extends EntityMinecart> minecart;
     public final int type;
 
-    public MinecartKey(Class<? extends EntityMinecart> c, int t)
+    public MinecartKey(Class<? extends EntityMinecart> cls, int typtID)
     {
-        minecart = c;
-        type = t;
+        minecart = cls;
+        type = typtID;
     }
 
     @Override
     public boolean equals(Object obj)
     {
-        if(obj == null) 
+        if (obj == null)
         {
             return false;
         }
-        
-        if(getClass() != obj.getClass()) 
+
+        if (getClass() != obj.getClass())
         {
             return false;
         }
-        
+
         final MinecartKey other = (MinecartKey)obj;
-        if(this.minecart != other.minecart && (this.minecart == null || !this.minecart.equals(other.minecart))) 
+        if (this.minecart != other.minecart && (this.minecart == null || !this.minecart.equals(other.minecart)))
         {
             return false;
         }
-        
+
         return (this.type == other.type);
     }
 

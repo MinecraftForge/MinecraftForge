@@ -8,12 +8,12 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
-public interface IArrowLooseHandler 
+public interface IArrowLooseHandler
 {
     /**
      * This is called before a bow tries to shoot an arrow. If it
      * returns a true result, then the normal arrow will not be shot.
-     * 
+     *
      * @param itemstack The ItemStack for the bow doing the firing
      * @param world The current world
      * @param player The player that is firing the bow

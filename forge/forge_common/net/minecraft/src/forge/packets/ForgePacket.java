@@ -12,7 +12,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.forge.ForgeHooks;
 
-public abstract class ForgePacket 
+public abstract class ForgePacket
 {
     //Forge Packet ID Constants.
     public static final int FORGE_ID = 0x040E9B47; //"Forge".hashCode();
@@ -21,18 +21,18 @@ public abstract class ForgePacket
     public static final int MOD_MISSING = 3;
     public static final int MOD_IDS     = 4;
     public static final int OPEN_GUI    = 5;
-    
+
     public Packet getPacket()
     {
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(bytes);
-        try 
+        try
         {
             data.writeByte(getID());
             writeData(data);
-        } 
-        catch (IOException e) 
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -42,7 +42,7 @@ public abstract class ForgePacket
         pkt.length  = pkt.data.length;
         pkt.isChunkDataPacket = true; //Make our packets higher priority, allowing the initial communication to happen before the client receives all world chunks.
         return pkt;
-    }    
+    }
 
     public abstract void writeData(DataOutputStream data) throws IOException;
     public abstract void readData(DataInputStream data) throws IOException;
@@ -51,8 +51,8 @@ public abstract class ForgePacket
     {
         return toString();
     }
-    
-    @Override 
+
+    @Override
     public String toString()
     {
         return getID() + " " + getClass().getSimpleName();

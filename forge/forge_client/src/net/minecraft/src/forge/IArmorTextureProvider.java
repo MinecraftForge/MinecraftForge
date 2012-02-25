@@ -1,5 +1,5 @@
 /**
- * This software is provided under the terms of the Minecraft Forge Public 
+ * This software is provided under the terms of the Minecraft Forge Public
  * License v1.0.
  */
 
@@ -12,7 +12,8 @@ import net.minecraft.src.ItemStack;
  * It allows for the application of a custom texture file to the player skin
  * when the armor is worn.
  */
-public interface IArmorTextureProvider {
+public interface IArmorTextureProvider
+{
 
     /**
      * This interface has to return the path to a file that is the same
