@@ -47,6 +47,8 @@ for /f %%i in ('find conf -depth -empty -type d') do (
 )
 
 xcopy ..\conf conf /E /I /Y
+tr -d \r < ../conf/mcp.cfg > conf/mcp.cfg
+tr -d \r < ../conf/patches/Start.java > conf/patches/Start.java
 
 echo Finished
 pause
