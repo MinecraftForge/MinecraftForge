@@ -113,7 +113,17 @@
              Block block = Block.blocksList[j1];
              GL11.glPushMatrix();
              GL11.glTranslatef(l - 2, i1 + 3, -3F + zLevel);
-@@ -200,11 +257,13 @@
+@@ -178,7 +235,8 @@
+         else if (Item.itemsList[i].func_46058_c())
+         {
+             GL11.glDisable(2896 /*GL_LIGHTING*/);
+-            renderengine.bindTexture(renderengine.getTexture("/gui/items.png"));
++            String tex = ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[i]);
++            renderengine.bindTexture(renderengine.getTexture(tex));
+             for (int k1 = 0; k1 <= 1; k1++)
+             {
+                 int i2 = Item.itemsList[i].func_46057_a(j, k1);
+@@ -200,11 +258,13 @@
              GL11.glDisable(2896 /*GL_LIGHTING*/);
              if (i < 256)
              {
