@@ -15,7 +15,7 @@ public class EntityTrackerInfo
         Mod = mod;
         this.ID = ID;
         Range = range;
-        UpdateFrequancy = updateFrequency;
+        UpdateFrequency = updateFrequency;
         SendVelocityInfo = sendVelocityInfo;
     }
 }
