@@ -45,7 +45,7 @@
 +    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(Block.leaves.blockID, 1, world.getBlockMetadata(X, Y, Z) & 3));
++        ret.add(new ItemStack(this, 1, world.getBlockMetadata(X, Y, Z) & 3));
 +        return ret;
 +    }
  }

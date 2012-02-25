@@ -39,7 +39,7 @@
 +    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(Block.vine, 1, 0));
++        ret.add(new ItemStack(this, 1, 0));
 +        return ret;
      }
  }
