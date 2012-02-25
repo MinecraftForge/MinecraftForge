@@ -20,7 +20,7 @@ public class ForgeHooksServer
         EntityTrackerInfo info = MinecraftForge.getEntityTrackerInfo(entity, true);
         if (info != null)
         {
-            tracker.trackEntity(entity, info.Range, info.UpdateFrequancy, info.SendVelocityInfo);
+            tracker.trackEntity(entity, info.Range, info.UpdateFrequency, info.SendVelocityInfo);
             return true;
         }
         return false;
