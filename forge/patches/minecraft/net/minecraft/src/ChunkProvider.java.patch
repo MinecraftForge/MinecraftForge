@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/src/ChunkProvider.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/ChunkProvider.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,6 +3,8 @@
+ import java.io.IOException;
+ import java.util.*;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class ChunkProvider
+     implements IChunkProvider
+ {
+@@ -33,6 +35,7 @@
+ 
+     public void dropChunk(int i, int j)
+     {
++    	if(!ForgeHooks.canUnloadChunk(worldObj.getChunkFromChunkCoords(i, j)))return;
+         ChunkCoordinates chunkcoordinates = worldObj.getSpawnPoint();
+         int k = (i * 16 + 8) - chunkcoordinates.posX;
+         int l = (j * 16 + 8) - chunkcoordinates.posZ;
