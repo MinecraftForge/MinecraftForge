@@ -1,0 +1,25 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldProviderSurface.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldProviderSurface.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,4 +5,22 @@
+     public WorldProviderSurface()
+     {
+     }
++
++    @Override
++    public String getSaveFolder() 
++    {
++        return null;
++    }
++
++    @Override
++    public String getWelcomeMessage() 
++    {
++        return null;
++    }
++
++    @Override
++    public String getDepartMessage() 
++    {
++        return null;
++    }
+ }

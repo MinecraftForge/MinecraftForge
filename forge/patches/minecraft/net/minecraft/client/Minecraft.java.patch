@@ -1,0 +1,97 @@
+--- ../src_base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1615,70 +1615,47 @@
+ 
+     public void usePortal(int i)
+     {
++        usePortal(i, new Teleporter());
++    }
++    public void usePortal(int i, Teleporter teleporter)
++    {
+         int j = thePlayer.dimension;
+         thePlayer.dimension = i;
+         theWorld.setEntityDead(thePlayer);
+         thePlayer.isDead = false;
++        WorldProvider pNew = WorldProvider.getProviderForDimension(i);
++        WorldProvider pOld = WorldProvider.getProviderForDimension(j); 
+         double d = thePlayer.posX;
+         double d1 = thePlayer.posZ;
+-        double d2 = 1.0D;
+-        if (j > -1 && thePlayer.dimension == -1)
+-        {
+-            d2 = 0.125D;
+-        }
+-        else if (j == -1 && thePlayer.dimension > -1)
+-        {
+-            d2 = 8D;
+-        }
++        double d2 = pOld.getMovementFactor() / pNew.getMovementFactor();
+         d *= d2;
+         d1 *= d2;
+-        if (thePlayer.dimension == -1)
++        
++        World world = new World(theWorld, pNew);
++        if (thePlayer.isEntityAlive())
+         {
+-            thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, thePlayer.rotationYaw, thePlayer.rotationPitch);
+-            if (thePlayer.isEntityAlive())
+-            {
+-                theWorld.updateEntityWithOptionalForce(thePlayer, false);
+-            }
+-            World world = null;
+-            world = new World(theWorld, WorldProvider.getProviderForDimension(thePlayer.dimension));
+-            changeWorld(world, "Entering the Nether", thePlayer);
+-        }
+-        else if (thePlayer.dimension == 0)
+-        {
+-            if (thePlayer.isEntityAlive())
+-            {
+-                thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, thePlayer.rotationYaw, thePlayer.rotationPitch);
+-                theWorld.updateEntityWithOptionalForce(thePlayer, false);
+-            }
+-            World world1 = null;
+-            world1 = new World(theWorld, WorldProvider.getProviderForDimension(thePlayer.dimension));
+-            if (j == -1)
+-            {
+-                changeWorld(world1, "Leaving the Nether", thePlayer);
+-            }
+-            else
+-            {
+-                changeWorld(world1, "Leaving the End", thePlayer);
+-            }
++            theWorld.updateEntityWithOptionalForce(thePlayer, false);
+         }
+-        else
++        
++        if (thePlayer.dimension == 1)
+         {
+-            World world2 = null;
+-            world2 = new World(theWorld, WorldProvider.getProviderForDimension(thePlayer.dimension));
+-            ChunkCoordinates chunkcoordinates = world2.getEntrancePortalLocation();
++            ChunkCoordinates chunkcoordinates = world.getEntrancePortalLocation();
+             d = chunkcoordinates.posX;
+             thePlayer.posY = chunkcoordinates.posY;
+             d1 = chunkcoordinates.posZ;
+-            thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, 90F, 0.0F);
+-            if (thePlayer.isEntityAlive())
+-            {
+-                world2.updateEntityWithOptionalForce(thePlayer, false);
+-            }
+-            changeWorld(world2, "Entering the End", thePlayer);
++        }
++        
++        if (thePlayer.dimension == 0)
++        {
++            changeWorld(world, pOld.getDepartMessage(), thePlayer);
++        }
++        else
++        {
++            changeWorld(world, pNew.getWelcomeMessage(), thePlayer);
+         }
+         thePlayer.worldObj = theWorld;
+         System.out.println((new StringBuilder()).append("Teleported to ").append(theWorld.worldProvider.worldType).toString());
+-        if (thePlayer.isEntityAlive() && j < 1)
++        if (thePlayer.isEntityAlive())
+         {
+             thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, thePlayer.rotationYaw, thePlayer.rotationPitch);
+             theWorld.updateEntityWithOptionalForce(thePlayer, false);

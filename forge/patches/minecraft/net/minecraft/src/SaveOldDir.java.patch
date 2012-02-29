@@ -1,0 +1,23 @@
+--- ../src_base/minecraft/net/minecraft/src/SaveOldDir.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/SaveOldDir.java	0000-00-00 00:00:00.000000000 -0000
+@@ -13,18 +13,12 @@
+     public IChunkLoader getChunkLoader(WorldProvider worldprovider)
+     {
+         File file = getSaveDirectory();
+-        if (worldprovider instanceof WorldProviderHell)
++        if (worldprovider.getSaveFolder() != null)
+         {
+-            File file1 = new File(file, "DIM-1");
++            File file1 = new File(file, worldprovider.getSaveFolder());
+             file1.mkdirs();
+             return new ThreadedChunkLoader(file1);
+         }
+-        if (worldprovider instanceof WorldProviderEnd)
+-        {
+-            File file2 = new File(file, "DIM1");
+-            file2.mkdirs();
+-            return new ThreadedChunkLoader(file2);
+-        }
+         else
+         {
+             return new ThreadedChunkLoader(file);
