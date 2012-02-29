@@ -27,10 +27,7 @@ function package_all () {
 
    echo "Making minecraftforge$qual-$version.zip"
    
-   zip -r "$dir/minecraftforge$qual-$version.zip" \
-      minecraftforge_credits.txt \
-      *.class \
-      forge
+   zip -r "$dir/minecraftforge$qual-$version.zip" .
 }
 
 cd ../reobf
