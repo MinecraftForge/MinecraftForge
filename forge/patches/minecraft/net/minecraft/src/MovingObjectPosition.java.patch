@@ -1,12 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/src/MovingObjectPosition.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/MovingObjectPosition.java	0000-00-00 00:00:00.000000000 -0000
-@@ -9,6 +9,9 @@
-     public int sideHit;
-     public Vec3D hitVec;
+@@ -25,6 +25,9 @@
+ 
+     /** The hit entity */
      public Entity entityHit;
 +    
-+    //Added for RedPower subblocks
++    /** Used to determine what sub-segment is hit */
 +    public int subHit = -1;
  
-     public MovingObjectPosition(int i, int j, int k, int l, Vec3D vec3d)
+     public MovingObjectPosition(int par1, int par2, int par3, int par4, Vec3D par5Vec3D)
      {

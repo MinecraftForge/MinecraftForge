@@ -11,35 +11,41 @@
 +
 +public class BlockVine extends Block implements IShearable
  {
-     public BlockVine(int i)
+     public BlockVine(int par1)
      {
-@@ -345,14 +348,20 @@
- 
-     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+@@ -429,14 +432,26 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        if (!world.isRemote && entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
+-        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
 -        {
--            entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
--            dropBlockAsItem_do(world, i, j, k, new ItemStack(Block.vine, 1, 0));
+-            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+-            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.vine, 1, 0));
 -        }
 -        else
 -        {
--            super.harvestBlock(world, entityplayer, i, j, k, l);
+-            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 -        }
-+        super.harvestBlock(world, entityplayer, i, j, k, l);
++        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 +    }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
++    public boolean isShearable(ItemStack item, World world, int x, int y, int z) 
 +    {
-+        return true;
++        return false;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune) 
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        ret.add(new ItemStack(this, 1, 0));
 +        return ret;
++    }
++    
++    @Override
++    public boolean isLadder(World world, int x, int y, int z) 
++    {
++        return true;
      }
  }

@@ -1,43 +1,44 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -63,7 +63,6 @@
+@@ -73,7 +73,6 @@
      {
-         if (!canPlaceBlockAt(world, i, j, k))
+         if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
          {
--            dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
-             world.setBlockWithNotify(i, j, k, 0);
+-            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
+             par1World.setBlockWithNotify(par2, par3, par4, 0);
              return false;
          }
-@@ -75,15 +74,7 @@
- 
-     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+@@ -89,15 +88,7 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        int i1 = Item.snowball.shiftedIndex;
--        float f = 0.7F;
--        double d = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
--        double d1 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
--        double d2 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
--        EntityItem entityitem = new EntityItem(world, (double)i + d, (double)j + d1, (double)k + d2, new ItemStack(i1, 1, 0));
--        entityitem.delayBeforeCanPickup = 10;
--        world.spawnEntityInWorld(entityitem);
--        world.setBlockWithNotify(i, j, k, 0);
-+    	dropBlockAsItem(world, i, j, k, l, 0);
-         entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
+-        int var7 = Item.snowball.shiftedIndex;
+-        float var8 = 0.7F;
+-        double var9 = (double)(par1World.rand.nextFloat() * var8) + (double)(1.0F - var8) * 0.5D;
+-        double var11 = (double)(par1World.rand.nextFloat() * var8) + (double)(1.0F - var8) * 0.5D;
+-        double var13 = (double)(par1World.rand.nextFloat() * var8) + (double)(1.0F - var8) * 0.5D;
+-        EntityItem var15 = new EntityItem(par1World, (double)par3 + var9, (double)par4 + var11, (double)par5 + var13, new ItemStack(var7, 1, 0));
+-        var15.delayBeforeCanPickup = 10;
+-        par1World.spawnEntityInWorld(var15);
+-        par1World.setBlockWithNotify(par3, par4, par5, 0);
++        dropBlockAsItem(par1World, par3, par4, par5, par6, 0);
+         par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
      }
  
-@@ -94,14 +85,13 @@
- 
-     public int quantityDropped(Random random)
+@@ -114,7 +105,7 @@
+      */
+     public int quantityDropped(Random par1Random)
      {
 -        return 0;
 +        return 1;
      }
  
-     public void updateTick(World world, int i, int j, int k, Random random)
+     /**
+@@ -124,7 +115,6 @@
      {
-         if (world.getSavedLightValue(EnumSkyBlock.Block, i, j, k) > 11)
+         if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {
--            dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
-             world.setBlockWithNotify(i, j, k, 0);
+-            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
+             par1World.setBlockWithNotify(par2, par3, par4, 0);
          }
      }

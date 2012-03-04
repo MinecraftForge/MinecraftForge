@@ -9,41 +9,37 @@
 +import net.minecraft.src.forge.MinecraftForgeClient;
 +
  import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
  
- public class ItemRenderer
-@@ -27,20 +31,31 @@
-     public void renderItem(EntityLiving entityliving, ItemStack itemstack, int i)
+@@ -33,21 +37,27 @@
+     public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
--        if (itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
-+        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(itemstack.itemID);
-+        
-+        if (customRenderer != null) 
++        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(par2ItemStack.itemID);
+ 
+-        if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
++        if (customRenderer != null)
 +        {
-+        	String tex = ForgeHooksClient.getTexture("/terrain.png", itemstack.getItem());
-+        	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
-+        	ForgeHooksClient.renderCustomItem(customRenderer, renderBlocksInstance, itemstack.itemID,  itemstack.getItemDamage(), entityliving.getEntityBrightness(1.0F));        	
-+        } 
-+        else if(itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
++            ForgeHooksClient.renderCustomItem(customRenderer, renderBlocksInstance, par2ItemStack.itemID,  par2ItemStack.getItemDamage(), par1EntityLiving.getEntityBrightness(1.0F)); 
++        }
++        else if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
--            GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
-+        	String tex = ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]);
-+        	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
-             renderBlocksInstance.renderBlockAsItem(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), 1.0F);
+-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
+             this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
          }
          else
          {
-             if (itemstack.itemID < 256)
+             if (par2ItemStack.itemID < 256)
              {
--                GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/terrain.png"));
-+            	String tex = ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[itemstack.itemID]);
-+            	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
+-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[par2ItemStack.itemID])));
              }
              else
              {
--                GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/gui/items.png"));
-+            	String tex = ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[itemstack.itemID]);
-+            	GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture(tex));
+-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/items.png"));
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[par2ItemStack.itemID])));
              }
-             Tessellator tessellator = Tessellator.instance;
-             int j = entityliving.getItemIcon(itemstack, i);
+ 
+             Tessellator var4 = Tessellator.instance;

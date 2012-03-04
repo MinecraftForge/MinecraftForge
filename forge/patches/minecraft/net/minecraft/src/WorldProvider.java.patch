@@ -7,34 +7,19 @@
 +
  public abstract class WorldProvider
  {
-     public World worldObj;
-@@ -142,22 +144,7 @@
+     /** world object being used */
+@@ -181,7 +183,7 @@
  
-     public static WorldProvider getProviderForDimension(int i)
+     public static WorldProvider getProviderForDimension(int par0)
      {
--        if (i == -1)
--        {
--            return new WorldProviderHell();
--        }
--        if (i == 0)
--        {
--            return new WorldProviderSurface();
--        }
--        if (i == 1)
--        {
--            return new WorldProviderEnd();
--        }
--        else
--        {
--            return null;
--        }
-+        return DimensionManager.getProvider(i);
+-        return (WorldProvider)(par0 == -1 ? new WorldProviderHell() : (par0 == 0 ? new WorldProviderSurface() : (par0 == 1 ? new WorldProviderEnd() : null)));
++        return DimensionManager.getProvider(par0);
      }
  
-     public float getCloudHeight()
-@@ -196,4 +183,36 @@
+     /**
+@@ -227,4 +229,36 @@
      {
-         return terrainType != EnumWorldType.FLAT ? 0.03125D : 1.0D;
+         return false;
      }
 +    
 +    /**

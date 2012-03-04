@@ -1,28 +1,27 @@
 --- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -65,17 +65,20 @@
-             itemList.add(new ItemStack(ablock[l1], 1, k2));
-         }
+@@ -57,12 +57,20 @@
  
--        for (int i2 = 256; i2 < Item.itemsList.length; i2++)
-+        for(int x = 0; x < Block.blocksList.length; x++)
+             this.itemList.add(new ItemStack(var2[var10], 1, var11));
+         }
+-
+-        for (var10 = 256; var10 < Item.itemsList.length; ++var10)
++        
++        for (Block block : Block.blocksList)
++        {
++            if (block != null)
++            {
++                block.addCreativeItems((ArrayList)itemList);
++            }
++        }
++        
++        for (Item item : Item.itemsList)
          {
--            if (Item.itemsList[i2] != null && Item.itemsList[i2].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[i2].shiftedIndex != Item.monsterPlacer.shiftedIndex)
-+        	if (Block.blocksList[x] != null)
+-            if (Item.itemsList[var10] != null && Item.itemsList[var10].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[var10].shiftedIndex != Item.monsterPlacer.shiftedIndex)
++            if (item != null)
              {
--                itemList.add(new ItemStack(Item.itemsList[i2]));
-+        		Block.blocksList[x].addCreativeItems((ArrayList)itemList);
+-                this.itemList.add(new ItemStack(Item.itemsList[var10]));
++                item.addCreativeItems((ArrayList)itemList);
              }
          }
  
--        for (int j2 = 1; j2 < 16; j2++)
-+        for (int i2 = Block.blocksList.length; i2 < Item.itemsList.length; i2++)
-         {
--            itemList.add(new ItemStack(Item.dyePowder.shiftedIndex, 1, j2));
-+            if (Item.itemsList[i2] != null)
-+            {
-+                Item.itemsList[i2].addCreativeItems((ArrayList)itemList);
-+            }
-         }
- 
-         Integer integer;

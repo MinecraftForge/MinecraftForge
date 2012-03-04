@@ -1,84 +1,71 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,7 +1,9 @@
+@@ -1,6 +1,8 @@
  package net.minecraft.src;
  
+-public class TileEntityFurnace extends TileEntity implements IInventory
 +import net.minecraft.src.forge.ISidedInventory;
 +
- public class TileEntityFurnace extends TileEntity
--    implements IInventory
-+    implements IInventory, ISidedInventory
++public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
  {
-     private ItemStack furnaceItemStacks[];
-     public int furnaceBurnTime;
-@@ -21,6 +23,20 @@
-         return furnaceItemStacks.length;
+     /**
+      * The ItemStacks that hold the items currently being used in the furnace
+@@ -275,8 +277,12 @@
+         }
+         else
+         {
+-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().shiftedIndex);
+-            return var1 == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(var1) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < var1.getMaxStackSize())));
++            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
++            if (var1 == null) return false;
++            if (this.furnaceItemStacks[2] == null) return true;
++            if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
++            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
++            return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
+         }
      }
  
+@@ -287,13 +293,13 @@
+     {
+         if (this.canSmelt())
+         {
+-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().shiftedIndex);
++            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+ 
+             if (this.furnaceItemStacks[2] == null)
+             {
+                 this.furnaceItemStacks[2] = var1.copy();
+             }
+-            else if (this.furnaceItemStacks[2].itemID == var1.itemID)
++            else if (this.furnaceItemStacks[2].isItemEqual(var1))
+             {
+                 this.furnaceItemStacks[2].stackSize += var1.stackSize;
+             }
+@@ -318,7 +324,7 @@
+      * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
+      * fuel
+      */
+-    private int getItemBurnTime(ItemStack par1ItemStack)
++    public int getItemBurnTime(ItemStack par1ItemStack)
+     {
+         if (par1ItemStack == null)
+         {
+@@ -342,4 +348,18 @@
+     public void openChest() {}
+ 
+     public void closeChest() {}
++
 +    @Override
 +    public int getStartInventorySide(int side) 
 +    {
-+	    if (side == 0) return 1;
-+	    if (side == 1) return 0;
-+	    return 2;
++        if (side == 0) return 1;
++        if (side == 1) return 0;
++        return 2;
 +    }
 +
 +    @Override
 +    public int getSizeInventorySide(int side) 
 +    {
-+	    return 1;
++        return 1;
 +    }
-+
-     public ItemStack getStackInSlot(int i)
-     {
-         return furnaceItemStacks[i];
-@@ -192,7 +208,7 @@
-         {
-             return false;
-         }
--        ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(furnaceItemStacks[0].getItem().shiftedIndex);
-+        ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(furnaceItemStacks[0]);
-         if (itemstack == null)
-         {
-             return false;
-@@ -205,11 +221,8 @@
-         {
-             return false;
-         }
--        if (furnaceItemStacks[2].stackSize < getInventoryStackLimit() && furnaceItemStacks[2].stackSize < furnaceItemStacks[2].getMaxStackSize())
--        {
--            return true;
--        }
--        return furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize();
-+        int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
-+        return (result <= getInventoryStackLimit() && result <= itemstack.getMaxStackSize());
-     }
- 
-     public void smeltItem()
-@@ -218,14 +231,14 @@
-         {
-             return;
-         }
--        ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(furnaceItemStacks[0].getItem().shiftedIndex);
-+        ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(furnaceItemStacks[0]);
-         if (furnaceItemStacks[2] == null)
-         {
-             furnaceItemStacks[2] = itemstack.copy();
-         }
--        else if (furnaceItemStacks[2].itemID == itemstack.itemID)
-+        else if (furnaceItemStacks[2].isItemEqual(itemstack))
-         {
--            furnaceItemStacks[2].stackSize++;
-+            furnaceItemStacks[2].stackSize += itemstack.stackSize;
-         }
-         if (furnaceItemStacks[0].getItem().func_46056_k())
-         {
-@@ -241,7 +254,7 @@
-         }
-     }
- 
--    private int getItemBurnTime(ItemStack itemstack)
-+    public static int getItemBurnTime(ItemStack itemstack)
-     {
-         if (itemstack == null)
-         {
+ }

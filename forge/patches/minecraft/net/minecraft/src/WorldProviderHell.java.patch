@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/src/WorldProviderHell.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/WorldProviderHell.java	0000-00-00 00:00:00.000000000 -0000
-@@ -49,4 +49,28 @@
+@@ -76,4 +76,28 @@
      {
-         return false;
+         return true;
      }
 +
 +    @Override

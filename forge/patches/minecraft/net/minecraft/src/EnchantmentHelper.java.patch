@@ -1,11 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/src/EnchantmentHelper.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EnchantmentHelper.java	0000-00-00 00:00:00.000000000 -0000
-@@ -261,7 +261,7 @@
-         for (int k = 0; k < j; k++)
+@@ -354,7 +354,7 @@
          {
-             Enchantment enchantment = aenchantment[k];
--            if (enchantment == null || !enchantment.type.canEnchantItem(item))
-+            if (enchantment == null || !enchantment.canEnchantItem(itemstack))
+             Enchantment var7 = var4[var6];
+ 
+-            if (var7 != null && var7.type.canEnchantItem(var2))
++            if (var7 != null && var7.canEnchantItem(par1ItemStack))
              {
-                 continue;
-             }
+                 for (int var8 = var7.getMinLevel(); var8 <= var7.getMaxLevel(); ++var8)
+                 {
