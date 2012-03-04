@@ -3,6 +3,17 @@
 echo "MinecraftForge Linux Setup Program"
 echo 
 
+if [ ! -f ../runtime/bin/fernflower.jar]
+then
+    python download_fernflower.py
+fi
+
+if [ ! -f ../runtime/bin/fernflower.jar]
+then
+  echo "Failed to download fernflower, install it manually and re-run setup."
+  exit 1
+fi
+
 pushd .. > /dev/null
 
 rm -rf conf 
@@ -10,12 +21,9 @@ mkdir conf
 cp -r forge/conf/* conf
 
 ./cleanup.sh
-./decompile.sh --jad
+./decompile.sh
 
 pushd src > /dev/null
-    #find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-    #find ../forge/ -name *.patch -exec sed -i 's/\r//g' \{\} \;
-
     if [ -f ../jars/bin/minecraft.jar ];
     then
         cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
@@ -42,8 +50,6 @@ pushd src > /dev/null
     fi
 popd > /dev/null
 
-
-# Removed until MCP's UpdateNames Is fixed
-#./updatemcp.sh
-#./updatenames.sh
+./updatemcp.sh
+./updatenames.sh
 ./updatemd5.sh

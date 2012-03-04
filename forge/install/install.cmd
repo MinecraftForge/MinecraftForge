@@ -5,12 +5,20 @@ echo:
 
 @set PATH=%PATH%;%SystemDir%\system32;%SystemRoot%\System32
 
+if not exist "..\runtime\bin\fernflower.jar" (
+    ..\runtime\bin\python\python_mcp download_fernflower.py
+)
+if not exist "..\runtime\bin\fernflower.jar" (
+    echo Failed to download fernflower, install it manually and re-run setup.
+    exit 1
+)
+    
 pushd .. >nul
 
 xcopy /Y /E /I forge\conf\* conf
 
-runtime\bin\python\python_mcp runtime\cleanup.py
-runtime\bin\python\python_mcp runtime\decompile.py --jad
+runtime\bin\python\python_mcp runtime\cleanup.py 
+runtime\bin\python\python_mcp runtime\decompile.py
 
 pushd src >nul
 
@@ -31,9 +39,6 @@ pushd src >nul
     if exist ..\jars\minecraft_server.jar (
         del minecraft_server\net\minecraft\src\MLProp.java
         copy ..\forge\MLProp.java minecraft_server\net\minecraft\src\MLProp.java
-
-        ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ../forge/modLoaderMP.patch ../forge/modLoaderMP.patch
-        ..\runtime\bin\applydiff.exe -uf -p2 -i ../forge/modLoaderMP.patch
         
         for /f "delims=" %%a in ('dir /a -d /b /S ..\forge\patches\minecraft_server') do (
             pushd "%%a" 2>nul
@@ -46,9 +51,7 @@ pushd src >nul
     )
 popd >nul
 
-
-rem Removed until MCP's Update Names is fixed
-rem cmd /C updatemcp.bat
-rem cmd /C updatenames.bat
+cmd /C updatemcp.bat -f
+cmd /C updatenames.bat -f
 runtime\bin\python\python_mcp runtime\updatemd5.py
 pause

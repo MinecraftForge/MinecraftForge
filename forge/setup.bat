@@ -2,11 +2,22 @@ echo off
 pushd .. >nul
 
   if "%1"=="-skipdecompile" (
-    @echo  | cmd /C updatenames.bat
+    @echo  | cmd /C updatenames.bat -f
   ) ELSE (
+    if not exist "runtime\bin\fernflower.jar" (
+      pushd forge
+        ..\runtime\bin\python\python_mcp download_fernflower.py
+      popd
+    )
+    if not exist "runtime\bin\fernflower.jar" (
+      echo Failed to download fernflower, install it manually and re-run setup.
+      exit 1
+    )
     rmdir /S /Q src
     @echo | cmd /C decompile.bat
   )
+  
+  
   rmdir /S /Q src_base
   rmdir /S /Q src_work
 
@@ -15,9 +26,6 @@ pushd .. >nul
     copy ..\forge\MLProp.java minecraft\net\minecraft\src\MLProp.java
     del minecraft_server\net\minecraft\src\MLProp.java
     copy ..\forge\MLProp.java minecraft_server\net\minecraft\src\MLProp.java
-    ..\runtime\bin\python\python_mcp ..\forge\lfcr.py ..\forge\modLoaderMP.patch ..\forge\modLoaderMP-win.patch
-    ..\runtime\bin\applydiff.exe -uf -p2 < ..\forge\modLoaderMP-win.patch
-    del ..\forge\modLoaderMP-win.patch
   popd >nul
 
   @echo | cmd /C updatemd5.bat

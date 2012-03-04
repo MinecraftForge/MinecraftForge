@@ -65,7 +65,7 @@ cp -r ../conf/* conf
 cp ../lfcr.py .
 cp ../install/install.cmd .
 cp ../install/install.sh .
-cp ../modLoaderMP.patch .
+cp ../download_fernflower.py .
 cp ../MLProp.java .
 cp ../install/README.txt .
 cp ../minecraftforge_credits.txt .

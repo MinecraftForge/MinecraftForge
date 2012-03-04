@@ -17,6 +17,17 @@ if [ -d src ] ; then
 	if [ "$var" != "y" ]; then exit ; fi
 fi
 
+if [ ! -f ../runtime/bin/fernflower.jar]
+then
+    python download_fernflower.py
+fi
+
+if [ ! -f ../runtime/bin/fernflower.jar]
+then
+  echo "Failed to download fernflower, install it manually and re-run setup."
+  exit 1
+fi
+
 rm -rf src src_work src_forge
 
 if [ ! -d src_base ] ; then

@@ -7,6 +7,9 @@ extracted files.
 You should use freshly downloaded jars, solely including ModLoader & 
 ModLoaderMP. Anything else can eventually cause conflicts.
 
+You also need to install the FernFlower decompiler, you can download it at 
+http://goo.gl/PnJHp. Extract fernflower.jar into your MCP's runtime/bin folder.
+
 Now just start the install.cmd/.sh, MCForge will install itself into the proper
 locations and copy all needed files, as well as modifying the needed baseclasses.
 

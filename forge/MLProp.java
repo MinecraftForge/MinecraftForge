@@ -8,4 +8,5 @@ public @interface MLProp {
 	String info() default "";
 	double min() default Double.NEGATIVE_INFINITY;
 	double max() default Double.POSITIVE_INFINITY;
+    public int reobf() default 0;
 }
