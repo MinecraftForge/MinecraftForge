@@ -1,6 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -33,7 +33,7 @@
+@@ -3,6 +3,8 @@
+ import java.io.PrintStream;
+ import java.util.*;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class World
+     implements IBlockAccess
+ {
+@@ -33,7 +35,7 @@
      public int lightningFlash;
      public boolean editingBlocks;
      private long lockTimestamp;
@@ -9,7 +18,7 @@
      public int difficultySetting;
      public Random rand;
      public boolean isNewWorld;
-@@ -236,7 +236,13 @@
+@@ -236,7 +238,13 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -24,7 +33,7 @@
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -1205,7 +1211,7 @@
+@@ -1205,7 +1213,7 @@
                      Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
                      if (chunk != null)
                      {
@@ -33,7 +42,7 @@
                      }
                  }
              }
-@@ -1234,12 +1240,15 @@
+@@ -1234,12 +1242,15 @@
                      {
                          loadedTileEntityList.add(tileentity1);
                      }
@@ -50,18 +59,18 @@
                          }
                      }
                      markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
-@@ -1254,13 +1263,13 @@
+@@ -1254,13 +1265,13 @@
  
      public void addTileEntity(Collection collection)
      {
 -        if (scanningTileEntities)
-+        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
-+        for(Object entity : collection) 
-         {
+-        {
 -            addedTileEntityList.addAll(collection);
 -        }
 -        else
--        {
++        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++        for(Object entity : collection) 
+         {
 -            loadedTileEntityList.addAll(collection);
 +            if(((TileEntity)entity).canUpdate()) 
 +            {
@@ -70,7 +79,7 @@
          }
      }
  
-@@ -1460,6 +1469,13 @@
+@@ -1460,6 +1471,13 @@
                          if (j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -84,7 +93,7 @@
                          }
                      }
                  }
-@@ -1690,47 +1706,28 @@
+@@ -1690,47 +1708,28 @@
  
      public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
      {
@@ -125,14 +134,14 @@
      {
 -        TileEntity tileentity = getBlockTileEntity(i, j, k);
 -        if (tileentity != null && scanningTileEntities)
-+        Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+        if (chunk != null)
-         {
+-        {
 -            tileentity.invalidate();
 -            addedTileEntityList.remove(tileentity);
 -        }
 -        else
--        {
++        Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
++        if (chunk != null)
+         {
 -            if (tileentity != null)
 -            {
 -                addedTileEntityList.remove(tileentity);
@@ -147,7 +156,7 @@
          }
      }
  
-@@ -1761,7 +1758,7 @@
+@@ -1761,7 +1760,7 @@
          }
          else
          {
@@ -156,7 +165,15 @@
          }
      }
  
-@@ -2179,7 +2176,7 @@
+@@ -1978,6 +1977,7 @@
+                 }
+             }
+         }
++        ForgeHooks.addActiveChunks(this, activeChunkSet);
+ 
+         if (ambientTickCountdown > 0)
+         {
+@@ -2179,7 +2179,7 @@
  
      private int computeBlockLightValue(int i, int j, int k, int l, int i1, int j1)
      {
@@ -165,7 +182,7 @@
          int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
          int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
          int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
-@@ -2557,6 +2554,10 @@
+@@ -2557,6 +2557,10 @@
          {
              block = null;
          }
@@ -176,7 +193,7 @@
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -3028,4 +3029,38 @@
+@@ -3028,4 +3032,38 @@
      {
          return getChunkProvider().findClosestStructure(this, s, i, j, k);
      }

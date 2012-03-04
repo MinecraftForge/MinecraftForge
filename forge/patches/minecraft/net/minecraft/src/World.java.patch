@@ -1,6 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -33,7 +33,7 @@
+@@ -3,6 +3,8 @@
+ import java.io.PrintStream;
+ import java.util.*;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class World
+     implements IBlockAccess
+ {
+@@ -33,7 +35,7 @@
      public int lightningFlash;
      public boolean editingBlocks;
      private long lockTimestamp;
@@ -9,7 +18,7 @@
      public int difficultySetting;
      public Random rand;
      public boolean isNewWorld;
-@@ -399,7 +399,12 @@
+@@ -399,7 +401,12 @@
  
      public boolean isAirBlock(int i, int j, int k)
      {
@@ -23,7 +32,7 @@
      }
  
      public boolean blockExists(int i, int j, int k)
-@@ -1576,7 +1581,7 @@
+@@ -1576,7 +1583,7 @@
                      Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
                      if (chunk != null)
                      {
@@ -32,7 +41,7 @@
                      }
                  }
              }
-@@ -1605,15 +1610,17 @@
+@@ -1605,15 +1612,17 @@
                      {
                          loadedTileEntityList.add(tileentity1);
                      }
@@ -52,7 +61,7 @@
                  }
              }
              while (true);
-@@ -1625,14 +1632,14 @@
+@@ -1625,14 +1634,14 @@
  
      public void addTileEntity(Collection collection)
      {
@@ -75,7 +84,7 @@
      }
  
      public void updateEntity(Entity entity)
-@@ -1793,7 +1800,14 @@
+@@ -1793,7 +1802,14 @@
                          if (j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -91,7 +100,7 @@
                      }
                  }
              }
-@@ -2038,48 +2052,29 @@
+@@ -2038,48 +2054,29 @@
  
      public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
      {
@@ -159,7 +168,7 @@
      }
  
      public void markTileEntityForDespawn(TileEntity tileentity)
-@@ -2109,7 +2104,7 @@
+@@ -2109,7 +2106,7 @@
          }
          else
          {
@@ -168,7 +177,15 @@
          }
      }
  
-@@ -2535,7 +2530,7 @@
+@@ -2334,6 +2331,7 @@
+                 }
+             }
+         }
++        ForgeHooks.addActiveChunks(this, activeChunkSet);
+ 
+         if (ambientTickCountdown > 0)
+         {
+@@ -2535,7 +2533,7 @@
  
      private int computeBlockLightValue(int i, int j, int k, int l, int i1, int j1)
      {
@@ -177,7 +194,7 @@
          int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
          int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
          int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
-@@ -2945,6 +2940,10 @@
+@@ -2945,6 +2943,10 @@
          {
              block = null;
          }
@@ -188,7 +205,7 @@
          return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
      }
  
-@@ -3493,4 +3492,39 @@
+@@ -3493,4 +3495,39 @@
      {
          return worldInfo.getTerrainType() != EnumWorldType.FLAT ? 63D : 0.0D;
      }

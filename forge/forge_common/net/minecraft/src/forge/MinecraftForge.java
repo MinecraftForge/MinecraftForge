@@ -76,6 +76,15 @@ public class MinecraftForge
     }
 
     /**
+     * Registers a new Chunk Load event handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerChunkLoadHandler(IChunkLoadHandler handler)
+    {
+        ForgeHooks.chunkLoadHandlers.add(handler);
+    }
+    
+    /**
      * Registers a new minecart handler
      * @param handler The Handler to be registered
      */
