@@ -17,12 +17,12 @@ if [ -d src ] ; then
 	if [ "$var" != "y" ]; then exit ; fi
 fi
 
-if [ ! -f ../runtime/bin/fernflower.jar]
+if [ ! -f ../runtime/bin/fernflower.jar ]
 then
     python download_fernflower.py
 fi
 
-if [ ! -f ../runtime/bin/fernflower.jar]
+if [ ! -f ../runtime/bin/fernflower.jar ]
 then
   echo "Failed to download fernflower, install it manually and re-run setup."
   exit 1
