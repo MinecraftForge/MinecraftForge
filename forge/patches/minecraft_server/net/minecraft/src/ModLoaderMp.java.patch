@@ -1,25 +1,26 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ModLoaderMp.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ModLoaderMp.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,7 @@
- import java.util.*;
+@@ -16,6 +16,7 @@
+ import java.util.Map.Entry;
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
  
  public class ModLoaderMp
  {
-@@ -220,12 +221,11 @@
+@@ -231,13 +232,11 @@
  
-     public static World GetPlayerWorld(EntityPlayer entityplayer)
+     public static World GetPlayerWorld(EntityPlayer var0)
      {
--        WorldServer aworldserver[] = ModLoader.getMinecraftServerInstance().worldMngr;
--        for (int i = 0; i < aworldserver.length; i++)
+-        WorldServer[] var1 = ModLoader.getMinecraftServerInstance().worldMngr;
+-
+-        for (int var2 = 0; var2 < var1.length; ++var2)
 +        for (World world : DimensionManager.getWorlds())
          {
--            if (((World) (aworldserver[i])).playerEntities.contains(entityplayer))
-+            if (world.playerEntities.contains(entityplayer))
+-            if (var1[var2].playerEntities.contains(var0))
++            if (world.playerEntities.contains(var0))
              {
--                return aworldserver[i];
+-                return var1[var2];
 +                return world;
              }
          }

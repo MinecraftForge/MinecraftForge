@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
-@@ -10,6 +10,9 @@
+@@ -27,6 +27,9 @@
  import java.util.zip.ZipEntry;
  import java.util.zip.ZipInputStream;
  import net.minecraft.server.MinecraftServer;
@@ -10,10 +10,10 @@
  
  public final class ModLoader
  {
-@@ -626,6 +629,17 @@
-             readFromClassPath(file);
+@@ -675,6 +678,17 @@
+             readFromModFolder(modDir);
+             readFromClassPath(var17);
              System.out.println("Done.");
-             props.setProperty("loggingLevel", cfgLoggingLevel.getName());
 +            /*
 +             * Gather up a list of network mods and assign them an id 
 +             */
@@ -25,27 +25,27 @@
 +                    ForgeHooks.networkMods.put(x++, (NetworkMod)mod);
 +                }
 +            }
-             Iterator iterator = modList.iterator();
-             do
-             {
-@@ -793,9 +807,10 @@
-             logger.fine("Initialized");
-         }
-         long l = 0L;
--        if (minecraftserver.worldMngr != null && minecraftserver.worldMngr[0] != null)
+             props.setProperty("loggingLevel", cfgLoggingLevel.getName());
+             Iterator var19 = modList.iterator();
+ 
+@@ -838,9 +852,10 @@
+ 
+         long var1 = 0L;
+ 
+-        if (var0.worldMngr != null && var0.worldMngr[0] != null)
 +        WorldServer world = (WorldServer)DimensionManager.getWorld(0);
 +        if (world != null)
          {
--            l = minecraftserver.worldMngr[0].getWorldTime();
-+            l = world.getWorldTime();
-             Iterator iterator = inGameHooks.entrySet().iterator();
-             do
+-            var1 = var0.worldMngr[0].getWorldTime();
++            var1 = world.getWorldTime();
+             Iterator var3 = inGameHooks.entrySet().iterator();
+ 
+             while (var3.hasNext())
+@@ -1385,6 +1400,7 @@
              {
-@@ -1325,6 +1340,7 @@
-             {
-                 method_getNextWindowId.invoke(entityplayermp, new Object[0]);
-                 int j = field_currentWindowId.getInt(entityplayermp);
-+                entityplayermp.closeCraftingGui();
-                 entityplayermp.playerNetServerHandler.sendPacket(new Packet100OpenWindow(j, i, iinventory.getInvName(), iinventory.getSizeInventory()));
-                 entityplayermp.craftingInventory = container;
-                 entityplayermp.craftingInventory.windowId = j;
+                 method_getNextWindowId.invoke(var4, new Object[0]);
+                 int var5 = field_currentWindowId.getInt(var4);
++                var4.closeCraftingGui();
+                 var4.playerNetServerHandler.sendPacket(new Packet100OpenWindow(var5, var1, var2.getInvName(), var2.getSizeInventory()));
+                 var4.craftingInventory = var3;
+                 var4.craftingInventory.windowId = var5;

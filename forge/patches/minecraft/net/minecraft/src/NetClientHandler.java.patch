@@ -1,24 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,7 @@
- import java.io.DataInputStream;
- import java.io.IOException;
- import java.io.InputStreamReader;
-+import java.io.UnsupportedEncodingException;
- import java.net.InetAddress;
- import java.net.Socket;
- import java.net.URL;
-@@ -15,6 +16,9 @@
+@@ -16,6 +16,10 @@
  import java.util.Map;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooks;
 +import net.minecraft.src.forge.MessageManager;
 +import net.minecraft.src.forge.packets.ForgePacket;
++import java.io.UnsupportedEncodingException;
  
  public class NetClientHandler extends NetHandler
  {
-@@ -46,6 +50,8 @@
+@@ -47,6 +51,8 @@
          this.mc = par1Minecraft;
          Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
          this.netManager = new NetworkManager(var4, "Client", this);
@@ -27,7 +20,7 @@
      }
  
      /**
-@@ -73,6 +79,29 @@
+@@ -74,6 +80,29 @@
          this.mc.thePlayer.entityId = par1Packet1Login.protocolVersion;
          this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
          ((PlayerControllerMP)this.mc.playerController).setCreative(par1Packet1Login.serverMode == 1);
@@ -57,7 +50,7 @@
      }
  
      public void handlePickupSpawn(Packet21PickupSpawn par1Packet21PickupSpawn)
-@@ -630,7 +659,19 @@
+@@ -674,7 +703,19 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
@@ -78,7 +71,7 @@
          }
          else
          {
-@@ -643,7 +684,19 @@
+@@ -687,7 +728,19 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
@@ -99,7 +92,7 @@
                  }
                  else
                  {
-@@ -1074,4 +1127,44 @@
+@@ -1122,4 +1175,44 @@
      {
          this.addToSendQueue(new Packet0KeepAlive(par1Packet0KeepAlive.randomId));
      }

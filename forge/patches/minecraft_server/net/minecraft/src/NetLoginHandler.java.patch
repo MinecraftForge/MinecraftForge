@@ -18,11 +18,11 @@
      }
  
      /**
-@@ -163,6 +167,38 @@
+@@ -163,7 +167,37 @@
              }
  
              var2.func_20057_k();
-+            
+-            ModLoaderMp.HandleAllLogins(var2);
 +            if (packet1login.serverMode == ForgePacket.FORGE_ID)
 +            {
 +                //Pretty hackish place to put it, but it needs to go somewhere
