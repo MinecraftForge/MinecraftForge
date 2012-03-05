@@ -147,6 +147,7 @@ field_12237_e,destroyedBlockPositions,0,
 field_12238_d,explosionSize,0,
 field_12239_c,explosionZ,0,
 field_1223_k,options,0,Reference to the GameSettings object.
+field_12242_bI,timeSinceMoved,0,The time since the client player moved
 field_12249_i,worldObj,0,
 field_1224_j,playerViewX,0,
 field_12250_h,explosionRNG,0,
@@ -741,6 +742,7 @@ field_21078_n,randomMotionVecX,0,
 field_21081_k,randomMotionSpeed,0,
 field_21082_j,lastTentacleAngle,0,the last calculated angle of the tentacles in radians
 field_21083_i,tentacleAngle,0,angle of the tentacles in radians
+field_21093_bH,hasSetHealth,0,has the client player's health been set?
 field_21096_b,previousRedstoneState,0,stores the latest redstone state
 field_21097_a,note,0,Note to play
 field_210_z,pickaxeDiamond,0,
@@ -1535,6 +1537,10 @@ field_35123_e,xpOrbHealth,0,The health of this XP orb.
 field_35124_b,xpOrbAge,0,The age of the XP orb in ticks.
 field_35125_ap,xpValue,0,This is how much XP this orb has.
 field_35127_a,xpColor,0,A constantly increasing value that RenderXPOrb uses to control the colour shifting (Green / yellow)
+field_35132_az,maximumLife,0,
+field_35133_ay,currentLife,0,
+field_35138_ay,maximumTime,0,the maximum time for the explosion
+field_35139_a,timeSinceStart,0,
 field_35140_d,arrowCritical,0,Is this arrow a critical hit? (Controls particles and damage)
 field_35145_n,blockMetadata,0,
 field_35146_o,blockType,0,the Block type that this TileEntity is contained within
@@ -1574,6 +1580,7 @@ field_35223_ap,renderArmPitch,0,
 field_35224_c,sprintToggleTimer,0,"Used to tell if the player pressed forward twice. If this is at 0 and it's pressed (And they are allowed to sprint, aka enough food on the ground etc) it sets this to 7. If it's pressed and it's greater than 0 enable sprinting."
 field_35225_ar,prevRenderArmPitch,0,
 field_35226_aq,prevRenderArmYaw,0,
+field_35227_cs,shouldStopSneaking,0,should the player stop sneaking?
 field_35228_b,experienceTotal,0,The total experience points.
 field_35229_c,experienceLevel,0,The experience level.
 field_35230_a,experience,0,The current experience bar points.
@@ -2033,6 +2040,9 @@ field_40089_d,potionDamage,0,The damage value of the thrown potion that this Ent
 field_40092_e,despawnTimer,0,
 field_40093_ao,shatterOrDrop,0,
 field_400_at,mobSpawner,0,
+field_40103_a,materialType,0,the material type for dropped items/blocks
+field_40104_aw,bobTimer,0,The height of the current bob
+field_40105_ay,particleName,0,
 field_40129_bA,carryoverDamage,0,"in each step in the damage calculations, this is set to the 'carryover' that would result if someone was damaged .25 hearts (for example), and added to the damage in the next step"
 field_4013_a,modelBipedMain,0,
 field_40141_a,profession,0,"[This is the profession value of a Villager mob, used to determine their texture.]"
@@ -2837,6 +2847,7 @@ field_668_d,particleTextureJitterY,0,
 field_669_c,particleTextureJitterX,0,
 field_670_b,particleTextureIndex,0,
 field_671_a,smokeParticleScale,0,
+field_672_a,flameScale,0,the scale of the flame FX
 field_673_a,reddustParticleScale,0,
 field_674_a,lavaParticleScale,0,
 field_677_q,maxAge,0,
@@ -3073,10 +3084,12 @@ field_936_h,drawButton,0,Hides the button completely if false.
 field_9370_g,score,0,
 field_9376_bB,oldPosZ,0,
 field_9377_bA,oldPosY,0,
+field_9378_bz,oldMinY,0,Old Minimum Y of the bounding box
 field_9379_by,oldPosX,0,
 field_937_g,enabled,0,"True if this control is enabled, false to disable."
 field_9380_bx,inventoryUpdateTickCounter,0,"Tick counter that resets every 20 ticks, used for sending inventory updates"
 field_9381_bG,wasSneaking,0,
+field_9382_bF,wasOnGround,0,Check if was on ground last update
 field_9384_bD,oldRotationPitch,0,
 field_9385_bC,oldRotationYaw,0,
 field_9386_l,velocityZ,0,

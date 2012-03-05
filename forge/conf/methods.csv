@@ -2581,7 +2581,7 @@ func_935_a,doNothingWithTileEntity,0,"In all implementations, this method does n
 func_9367_r,respawnPlayer,0,
 func_9372_a_,setHealth,0,Updates health locally.
 func_9375_Q,sendInventoryChanged,0,Send a inventory changed message to the server if the current inventory has been modified.
-func_937_b,markBlockRangeNeedsUpdate,0,"Marks the blocks as needing an update with the renderer. Args: minX, minY, minZ, maxX, maxY, maxZ"
+func_937_b,markBlockRangeNeedsUpdate,0,"Called across all registered IWorldAccess instances when a block range is invalidated. Args: minX, minY, minZ, maxX, maxY, maxZ"
 func_938_b,releaseEntitySkin,0,Decrement the reference counter for this entity's skin image data
 func_939_a,spawnParticle,0,"Spawns a particle. Arg: particleType, x, y, z, velX, velY, velZ"
 func_940_a,playSound,0,"Plays the specified sound. Arg: x, y, z, soundName, unknown1, unknown2"
