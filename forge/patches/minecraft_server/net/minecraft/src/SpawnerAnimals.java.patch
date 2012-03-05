@@ -1,0 +1,12 @@
+--- ../src_base/minecraft_server/net/minecraft/src/SpawnerAnimals.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/SpawnerAnimals.java	0000-00-00 00:00:00.000000000 -0000
+@@ -190,7 +190,8 @@
+         else
+         {
+             int var5 = par1World.getBlockId(par2, par3 - 1, par4);
+-            return Block.func_48126_g(var5) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
++            //Fix for 1.2.3 change.. Why guys.. why?
++            return par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
+         }
+     }
+ 

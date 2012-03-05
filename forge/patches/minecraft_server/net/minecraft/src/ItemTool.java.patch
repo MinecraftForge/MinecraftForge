@@ -1,34 +1,36 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ItemTool.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ItemTool.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,10 +1,12 @@
+@@ -1,13 +1,15 @@
  package net.minecraft.src;
  
 +import net.minecraft.src.forge.ForgeHooks;
 +
  public class ItemTool extends Item
  {
-     private Block blocksEffectiveAgainst[];
--    protected float efficiencyOnProperMaterial;
+     /** Array of blocks the tool has extra effect against. */
+     private Block[] blocksEffectiveAgainst;
+-    protected float efficiencyOnProperMaterial = 4.0F;
++    public float efficiencyOnProperMaterial = 4.0F;
+ 
+     /** Damage versus entities. */
 -    private int damageVsEntity;
-+    public float efficiencyOnProperMaterial;
 +    public int damageVsEntity;
+ 
+     /** The material this tool is made from. */
      protected EnumToolMaterial toolMaterial;
- 
-     protected ItemTool(int i, int j, EnumToolMaterial enumtoolmaterial, Block ablock[])
-@@ -32,6 +34,16 @@
-         return 1.0F;
+@@ -61,4 +63,15 @@
+     {
+         return this.toolMaterial.getEnchantability();
      }
- 
-+    /* FORGE: Overridden to allow custom tool effectiveness */
++    
++    /** FORGE: Overridden to allow custom tool effectiveness */
 +    @Override
-+    public float getStrVsBlock(ItemStack itemstack, Block block, int md) 
++    public float getStrVsBlock(ItemStack stack, Block block, int meta) 
 +    {
-+        if (ForgeHooks.isToolEffective(itemstack, block, md))
++        if (ForgeHooks.isToolEffective(stack, block, meta))
 +        {
 +            return efficiencyOnProperMaterial;
 +        }
-+        return getStrVsBlock(itemstack,block);
++        return getStrVsBlock(stack, block);
 +    }
-     public boolean hitEntity(ItemStack itemstack, EntityLiving entityliving, EntityLiving entityliving1)
-     {
-         itemstack.damageItem(2, entityliving1);
+ }

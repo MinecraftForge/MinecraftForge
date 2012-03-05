@@ -7,12 +7,12 @@
 +
  public class SlotCrafting extends Slot
  {
-     private final IInventory craftMatrix;
-@@ -61,6 +63,7 @@
-             thePlayer.addStat(AchievementList.bookcase, 1);
-         }
-         ModLoader.TakenFromCrafting(thePlayer, itemstack);
-+        ForgeHooks.onTakenFromCrafting(thePlayer, itemstack, craftMatrix);
-         for (int i = 0; i < craftMatrix.getSizeInventory(); i++)
+     /** The craft matrix inventory linked to this result slot. */
+@@ -87,6 +89,7 @@
          {
-             ItemStack itemstack1 = craftMatrix.getStackInSlot(i);
+             this.thePlayer.addStat(AchievementList.bookcase, 1);
+         }
++        ForgeHooks.onTakenFromCrafting(thePlayer, par1ItemStack, craftMatrix);
+     }
+ 
+     /**

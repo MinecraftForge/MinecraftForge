@@ -1,68 +1,65 @@
 --- ../src_base/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -33,7 +33,7 @@
-     public int lightningFlash;
-     public boolean editingBlocks;
-     private long lockTimestamp;
--    protected int autosavePeriod;
-+    public int autosavePeriod;
-     public int difficultySetting;
-     public Random rand;
-     public boolean isNewWorld;
-@@ -236,7 +236,13 @@
+@@ -66,7 +66,7 @@
+      * Contains a timestamp from when the World object was created. Is used in the session.lock file
+      */
+     private long lockTimestamp = System.currentTimeMillis();
+-    protected int autosavePeriod = 40;
++    public int autosavePeriod = 40;
  
-     public boolean isAirBlock(int i, int j, int k)
+     /** Whether monsters are enabled or not. (1 = on, 0 = off) */
+     public int difficultySetting;
+@@ -324,7 +324,8 @@
+      */
+     public boolean isAirBlock(int par1, int par2, int par3)
      {
--        return getBlockId(i, j, k) == 0;
-+        int iBlockID = getBlockId(i, j, k);
-+        
-+        if (iBlockID == 0)
-+        {
-+            return true;
-+        }
-+        return Block.blocksList[iBlockID].isAirBlock(this, i, j, k);
+-        return this.getBlockId(par1, par2, par3) == 0;
++        int id = getBlockId(par1, par2, par3);
++        return (id == 0 || Block.blocksList[id] == null || Block.blocksList[id].isAirBlock(this, par1, par2, par3));
      }
  
-     public boolean blockExists(int i, int j, int k)
-@@ -1205,7 +1211,7 @@
-                     Chunk chunk = getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
-                     if (chunk != null)
+     public boolean func_48084_h(int par1, int par2, int par3)
+@@ -1549,7 +1550,7 @@
+ 
+                     if (var7 != null)
                      {
--                        chunk.removeChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
-+                        chunk.cleanChunkBlockTileEntity(tileentity.xCoord & 0xf, tileentity.yCoord, tileentity.zCoord & 0xf);
+-                        var7.removeChunkBlockTileEntity(var5.xCoord & 15, var5.yCoord, var5.zCoord & 15);
++                        var7.cleanChunkBlockTileEntity(var5.xCoord & 15, var5.yCoord, var5.zCoord & 15);
                      }
                  }
              }
-@@ -1234,12 +1240,15 @@
+@@ -1579,14 +1580,16 @@
                      {
-                         loadedTileEntityList.add(tileentity1);
+                         this.loadedTileEntityList.add(var8);
                      }
+-
 +                }
 +                else
 +                {
-                     if (chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4))
+                     if (this.chunkExists(var8.xCoord >> 4, var8.zCoord >> 4))
                      {
-                         Chunk chunk1 = getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
-                         if (chunk1 != null)
+                         Chunk var9 = this.getChunkFromChunkCoords(var8.xCoord >> 4, var8.zCoord >> 4);
+ 
+                         if (var9 != null)
                          {
--                            chunk1.setChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf, tileentity1);
-+                            chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 0xf, tileentity1.yCoord, tileentity1.zCoord & 0xf);
+-                            var9.setChunkBlockTileEntity(var8.xCoord & 15, var8.yCoord, var8.zCoord & 15, var8);
++                            var9.cleanChunkBlockTileEntity(var8.xCoord & 15, var8.yCoord, var8.zCoord & 15);
                          }
                      }
-                     markBlockNeedsUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
-@@ -1254,13 +1263,13 @@
  
-     public void addTileEntity(Collection collection)
+@@ -1603,13 +1606,13 @@
+ 
+     public void addTileEntity(Collection par1Collection)
      {
--        if (scanningTileEntities)
-+        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
-+        for(Object entity : collection) 
-         {
--            addedTileEntityList.addAll(collection);
+-        if (this.scanningTileEntities)
+-        {
+-            this.addedTileEntityList.addAll(par1Collection);
 -        }
 -        else
--        {
--            loadedTileEntityList.addAll(collection);
++        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++        for(Object entity : par1Collection)
+         {
+-            this.loadedTileEntityList.addAll(par1Collection);
 +            if(((TileEntity)entity).canUpdate()) 
 +            {
 +                dest.add(entity);
@@ -70,115 +67,124 @@
          }
      }
  
-@@ -1460,6 +1469,13 @@
-                         if (j2 == Block.fire.blockID || j2 == Block.lavaMoving.blockID || j2 == Block.lavaStill.blockID)
+@@ -1841,6 +1844,13 @@
+                         if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
 +                        } 
 +                        else 
 +                        {
-+                            if (j2 > 0 && Block.blocksList[j2].isBlockBurning(this, k1, l1, i2))
++                            if (var11 > 0 && Block.blocksList[var11] != null && Block.blocksList[var11].isBlockBurning(this, var8, var9, var10))
 +                            {
 +                                return true;
 +                            }
                          }
                      }
                  }
-@@ -1690,47 +1706,28 @@
- 
-     public void setBlockTileEntity(int i, int j, int k, TileEntity tileentity)
+@@ -2121,25 +2131,21 @@
+      */
+     public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
--        if (tileentity != null && !tileentity.isInvalid())
-+        if (tileentity == null || tileentity.isInvalid())
+-        if (par4TileEntity != null && !par4TileEntity.isInvalid())
++        if (par4TileEntity == null || !par4TileEntity.isInvalid())
          {
--            if (scanningTileEntities)
+-            if (this.scanningTileEntities)
 -            {
--                tileentity.xCoord = i;
--                tileentity.yCoord = j;
--                tileentity.zCoord = k;
--                addedTileEntityList.add(tileentity);
+-                par4TileEntity.xCoord = par1;
+-                par4TileEntity.yCoord = par2;
+-                par4TileEntity.zCoord = par3;
+-                this.addedTileEntityList.add(par4TileEntity);
 -            }
 -            else
 -            {
--                loadedTileEntityList.add(tileentity);
--                Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
--                if (chunk != null)
--                {
--                    chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
--                }
--            }
+-                this.loadedTileEntityList.add(par4TileEntity);
+-                Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
 +            return;
 +        }
 +        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
-+        if (tileentity.canUpdate()) 
++        if (par4TileEntity.canUpdate())
 +        {
-+            dest.add(tileentity);
++            dest.add(par4TileEntity);
 +        }
-+        Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+        if (chunk != null)
++        
++        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+ 
+-                if (var5 != null)
+-                {
+-                    var5.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
+-                }
+-            }
++        if (var5 != null)
 +        {
-+            chunk.setChunkBlockTileEntity(i & 0xf, j, k & 0xf, tileentity);
++            var5.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
          }
      }
  
-     public void removeBlockTileEntity(int i, int j, int k)
+@@ -2148,27 +2154,10 @@
+      */
+     public void removeBlockTileEntity(int par1, int par2, int par3)
      {
--        TileEntity tileentity = getBlockTileEntity(i, j, k);
--        if (tileentity != null && scanningTileEntities)
-+        Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
-+        if (chunk != null)
+-        TileEntity var4 = this.getBlockTileEntity(par1, par2, par3);
+-
+-        if (var4 != null && this.scanningTileEntities)
++        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++        if (var5 != null)
          {
--            tileentity.invalidate();
--            addedTileEntityList.remove(tileentity);
+-            var4.invalidate();
+-            this.addedTileEntityList.remove(var4);
 -        }
 -        else
 -        {
--            if (tileentity != null)
+-            if (var4 != null)
 -            {
--                addedTileEntityList.remove(tileentity);
--                loadedTileEntityList.remove(tileentity);
+-                this.addedTileEntityList.remove(var4);
+-                this.loadedTileEntityList.remove(var4);
 -            }
--            Chunk chunk = getChunkFromChunkCoords(i >> 4, k >> 4);
--            if (chunk != null)
+-
+-            Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+-
+-            if (var5 != null)
 -            {
--                chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
+-                var5.removeChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
 -            }
-+            chunk.removeChunkBlockTileEntity(i & 0xf, j, k & 0xf);
++            var5.removeChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
          }
      }
  
-@@ -1761,7 +1758,7 @@
-         }
-         else
-         {
--            return block.blockMaterial.isOpaque() && block.renderAsNormalBlock();
-+            return block.isBlockNormalCube(this, i, j, k);
-         }
-     }
- 
-@@ -2179,7 +2176,7 @@
- 
-     private int computeBlockLightValue(int i, int j, int k, int l, int i1, int j1)
+@@ -2191,7 +2180,8 @@
+      */
+     public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
--        int k1 = Block.lightValue[i1];
-+        int k1 = (i1 == 0 || Block.blocksList[i1] == null ? 0 : Block.blocksList[i1].getLightValue(this, j, k, l));
-         int l1 = getSavedLightValue(EnumSkyBlock.Block, j - 1, k, l) - j1;
-         int i2 = getSavedLightValue(EnumSkyBlock.Block, j + 1, k, l) - j1;
-         int j2 = getSavedLightValue(EnumSkyBlock.Block, j, k - 1, l) - j1;
-@@ -2557,6 +2554,10 @@
-         {
-             block = null;
-         }
-+        if (block != null && block.isBlockReplaceable(this, j, k, l))
-+        {
-+            block = null;
-+        }
-         return i > 0 && block == null && block1.canPlaceBlockOnSide(this, j, k, l, i1);
+-        return Block.func_48126_g(this.getBlockId(par1, par2, par3));
++        Block block = Block.blocksList[getBlockId(par1, par2, par3)];
++        return block != null && block.isBlockNormalCube(this, par1, par2, par3);
      }
  
-@@ -3028,4 +3029,38 @@
+     /**
+@@ -2785,7 +2775,7 @@
+ 
+     private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
-         return getChunkProvider().findClosestStructure(this, s, i, j, k);
+-        int var7 = Block.lightValue[par5];
++        int var7 = (par5 == 0 || Block.blocksList[par5] == null ? 0 : Block.blocksList[par5].getLightValue(this, par2, par3, par4));
+         int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
+         int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
+         int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
+@@ -3267,6 +3257,11 @@
+             {
+                 var8 = null;
+             }
++            
++            if (var8 != null && var8.isBlockReplaceable(this, par2, par3, par4))
++            {
++                var8 = null;
++            }
+ 
+             return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
+         }
+@@ -3732,4 +3727,38 @@
+     {
+         return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }
 +
 +    /**
@@ -199,19 +205,19 @@
 +     * Determine if the given block is considered solid on the
 +     * specified side.  Used by placement logic.
 +     * 
-+     * @param X Block X Position
-+     * @param Y Block Y Position
-+     * @param Z Block Z Position
++     * @param x Block X Position
++     * @param y Block Y Position
++     * @param z Block Z Position
 +     * @param side The Side in question
 +     * @return True if the side is solid
 +     */
-+    public boolean isBlockSolidOnSide(int X, int Y, int Z, int side)
++    public boolean isBlockSolidOnSide(int x, int y, int z, int side)
 +    {
-+        Block block = Block.blocksList[getBlockId(X, Y, Z)];
++        Block block = Block.blocksList[getBlockId(x, y, z)];
 +        if(block == null)
 +        {
 +            return false;
 +        }
-+        return block.isBlockSolidOnSide(this, X, Y, Z, side);
++        return block.isBlockSolidOnSide(this, x, y, z, side);
 +    }
  }

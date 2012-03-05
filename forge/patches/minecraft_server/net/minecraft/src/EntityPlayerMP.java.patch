@@ -1,67 +1,67 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayerMP.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayerMP.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,6 +2,10 @@
- 
- import java.util.*;
+@@ -5,6 +5,10 @@
+ import java.util.List;
+ import java.util.Set;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.IGuiHandler;
 +import net.minecraft.src.forge.MinecraftForge;
 +import net.minecraft.src.forge.NetworkMod;
 +import net.minecraft.src.forge.packets.PacketOpenGUI;
  
- public class EntityPlayerMP extends EntityPlayer
-     implements ICrafting
-@@ -405,6 +409,7 @@
-     public void displayWorkbenchGUI(int i, int j, int k)
+ public class EntityPlayerMP extends EntityPlayer implements ICrafting
+ {
+@@ -548,6 +552,7 @@
+     public void displayWorkbenchGUI(int par1, int par2, int par3)
      {
-         getNextWidowId();
-+        closeCraftingGui();
-         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 1, "Crafting", 9));
-         craftingInventory = new ContainerWorkbench(inventory, worldObj, i, j, k);
-         craftingInventory.windowId = currentWindowId;
-@@ -414,6 +419,7 @@
-     public void displayGUIEnchantment(int i, int j, int k)
+         this.getNextWidowId();
++        closeCraftingGui(); //TODO: This is a bug fix for chests staying open in SMP
+         this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 1, "Crafting", 9));
+         this.craftingInventory = new ContainerWorkbench(this.inventory, this.worldObj, par1, par2, par3);
+         this.craftingInventory.windowId = this.currentWindowId;
+@@ -557,6 +562,7 @@
+     public void displayGUIEnchantment(int par1, int par2, int par3)
      {
-         getNextWidowId();
-+        closeCraftingGui();
-         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 4, "Enchanting", 9));
-         craftingInventory = new ContainerEnchantment(inventory, worldObj, i, j, k);
-         craftingInventory.windowId = currentWindowId;
-@@ -423,6 +429,7 @@
-     public void displayGUIChest(IInventory iinventory)
+         this.getNextWidowId();
++        closeCraftingGui(); //TODO: This is a bug fix for chests staying open in SMP
+         this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 4, "Enchanting", 9));
+         this.craftingInventory = new ContainerEnchantment(this.inventory, this.worldObj, par1, par2, par3);
+         this.craftingInventory.windowId = this.currentWindowId;
+@@ -569,6 +575,7 @@
+     public void displayGUIChest(IInventory par1IInventory)
      {
-         getNextWidowId();
-+        closeCraftingGui();
-         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 0, iinventory.getInvName(), iinventory.getSizeInventory()));
-         craftingInventory = new ContainerChest(inventory, iinventory);
-         craftingInventory.windowId = currentWindowId;
-@@ -432,6 +439,7 @@
-     public void displayGUIFurnace(TileEntityFurnace tileentityfurnace)
+         this.getNextWidowId();
++        closeCraftingGui(); //TODO: This is a bug fix for chests staying open in SMP
+         this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 0, par1IInventory.getInvName(), par1IInventory.getSizeInventory()));
+         this.craftingInventory = new ContainerChest(this.inventory, par1IInventory);
+         this.craftingInventory.windowId = this.currentWindowId;
+@@ -581,6 +588,7 @@
+     public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
-         getNextWidowId();
-+        closeCraftingGui();
-         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 2, tileentityfurnace.getInvName(), tileentityfurnace.getSizeInventory()));
-         craftingInventory = new ContainerFurnace(inventory, tileentityfurnace);
-         craftingInventory.windowId = currentWindowId;
-@@ -441,6 +449,7 @@
-     public void displayGUIDispenser(TileEntityDispenser tileentitydispenser)
+         this.getNextWidowId();
++        closeCraftingGui(); //TODO: This is a bug fix for chests staying open in SMP
+         this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 2, par1TileEntityFurnace.getInvName(), par1TileEntityFurnace.getSizeInventory()));
+         this.craftingInventory = new ContainerFurnace(this.inventory, par1TileEntityFurnace);
+         this.craftingInventory.windowId = this.currentWindowId;
+@@ -593,6 +601,7 @@
+     public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
-         getNextWidowId();
-+        closeCraftingGui();
-         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 3, tileentitydispenser.getInvName(), tileentitydispenser.getSizeInventory()));
-         craftingInventory = new ContainerDispenser(inventory, tileentitydispenser);
-         craftingInventory.windowId = currentWindowId;
-@@ -450,6 +459,7 @@
-     public void displayGUIBrewingStand(TileEntityBrewingStand tileentitybrewingstand)
+         this.getNextWidowId();
++        closeCraftingGui(); //TODO: This is a bug fix for chests staying open in SMP
+         this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 3, par1TileEntityDispenser.getInvName(), par1TileEntityDispenser.getSizeInventory()));
+         this.craftingInventory = new ContainerDispenser(this.inventory, par1TileEntityDispenser);
+         this.craftingInventory.windowId = this.currentWindowId;
+@@ -602,6 +611,7 @@
+     public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
-         getNextWidowId();
-+        closeCraftingGui();
-         playerNetServerHandler.sendPacket(new Packet100OpenWindow(currentWindowId, 5, tileentitybrewingstand.getInvName(), tileentitybrewingstand.getSizeInventory()));
-         craftingInventory = new ContainerBrewingStand(inventory, tileentitybrewingstand);
-         craftingInventory.windowId = currentWindowId;
-@@ -613,4 +623,38 @@
-         EntityTracker entitytracker = mcServer.getEntityTracker(dimension);
-         entitytracker.sendPacketToTrackedPlayersAndTrackedEntity(this, new Packet18Animation(entity, 7));
+         this.getNextWidowId();
++        closeCraftingGui(); //TODO: This is a bug fix for chests staying open in SMP
+         this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 5, par1TileEntityBrewingStand.getInvName(), par1TileEntityBrewingStand.getSizeInventory()));
+         this.craftingInventory = new ContainerBrewingStand(this.inventory, par1TileEntityBrewingStand);
+         this.craftingInventory.windowId = this.currentWindowId;
+@@ -785,4 +795,38 @@
+         EntityTracker var2 = this.mcServer.getEntityTracker(this.dimension);
+         var2.sendPacketToTrackedPlayersAndTrackedEntity(this, new Packet18Animation(par1Entity, 7));
      }
 +    
 +    /**
@@ -70,12 +70,12 @@
 +     * @param mod The mod associated with the gui
 +     * @param ID The ID number for the Gui
 +     * @param world The World
-+     * @param X X Position
-+     * @param Y Y Position
-+     * @param Z Z Position
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
 +     */
 +    @Override
-+    public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z)
++    public void openGui(BaseMod mod, int ID, World world, int x, int y, int z)
 +    {
 +        if (!(mod instanceof NetworkMod))
 +        {
@@ -84,12 +84,12 @@
 +        IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
 +        if (handler != null)
 +        {
-+            Container container = handler.getGuiContainer(ID, this, world, X, Y, Z);
++            Container container = handler.getGuiContainer(ID, this, world, x, y, z);
 +            if (container != null)
 +            {
 +                getNextWidowId();
 +                closeCraftingGui();
-+                PacketOpenGUI pkt = new PacketOpenGUI(currentWindowId, MinecraftForge.getModID((NetworkMod)mod), ID, X, Y, Z);
++                PacketOpenGUI pkt = new PacketOpenGUI(currentWindowId, MinecraftForge.getModID((NetworkMod)mod), ID, x, y, z);
 +                playerNetServerHandler.sendPacket(pkt.getPacket());
 +                craftingInventory = container; 
 +                craftingInventory.windowId = currentWindowId;

@@ -12,23 +12,33 @@
 +
 +public class BlockTallGrass extends BlockFlower implements IShearable
  {
-     protected BlockTallGrass(int i, int j)
+     protected BlockTallGrass(int par1, int par2)
      {
-@@ -33,15 +37,25 @@
+@@ -24,7 +28,7 @@
+      */
+     public int idDropped(int par1, Random par2Random, int par3)
+     {
+-        return par2Random.nextInt(8) == 0 ? Item.seeds.shiftedIndex : -1;
++        return -1;
+     }
  
-     public int idDropped(int i, Random random, int j)
+     /**
+@@ -41,14 +45,37 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        if (random.nextInt(8) == 0)
-+    	return -1;
-+	}
+-        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
++        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
++    }
 +    
 +    @Override
-+    public ArrayList<ItemStack> getBlockDropped(World world, int i, int j, int k, int md, int fortune)
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int meta, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        if (world.rand.nextInt(8) != 0)
          {
--            return Item.seeds.shiftedIndex;
+-            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+-            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.tallGrass, 1, par6));
 +            return ret;
          }
 -        else
@@ -36,42 +46,23 @@
 +        ItemStack item = ForgeHooks.getGrassSeed(world);
 +        if (item != null)
          {
--            return -1;
+-            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 +            ret.add(item);
          }
--    }
-+	    return ret;
-+	}
- 
-     public int quantityDroppedWithBonus(int i, Random random)
-     {
-@@ -50,14 +64,20 @@
- 
-     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
-     {
--        if (!world.isRemote && entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
--        {
--            entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
--            dropBlockAsItem_do(world, i, j, k, new ItemStack(Block.tallGrass, 1, l));
--        }
--        else
--        {
--            super.harvestBlock(world, entityplayer, i, j, k, l);
--        }
-+        super.harvestBlock(world, entityplayer, i, j, k, l);
++        return ret;
 +    }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
++    public boolean isShearable(ItemStack item, World world, int x, int y, int z) 
 +    {
 +        return true;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune) 
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(this, 1, world.getBlockMetadata(X, Y, Z)));
++        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z)));
 +        return ret;
      }
  }

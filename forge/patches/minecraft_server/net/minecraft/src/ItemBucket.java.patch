@@ -1,23 +1,28 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ItemBucket.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ItemBucket.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,6 +2,8 @@
- 
- import java.util.Random;
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
  
 +import net.minecraft.src.forge.MinecraftForge;
 +
  public class ItemBucket extends Item
  {
-     private int isFull;
-@@ -36,6 +38,11 @@
-             }
-             if (isFull == 0)
-             {
-+                ItemStack customBucket = MinecraftForge.fillCustomBucket(world, i, j, k);
-+                if (customBucket != null)
-+                {
-+                    return customBucket;
-+                }                
-                 if (!entityplayer.canPlayerEdit(i, j, k))
+     /** field for checking if the bucket has been filled. */
+@@ -43,10 +45,16 @@
+ 
+                 if (this.isFull == 0)
                  {
-                     return itemstack;
+-                    if (!par3EntityPlayer.canPlayerEdit(var13, var14, var15))
++                    if (par3EntityPlayer != null && !par3EntityPlayer.canPlayerEdit(var13, var14, var15))
+                     {
+                         return par1ItemStack;
+                     }
++                    
++                    ItemStack stack = MinecraftForge.fillCustomBucket(par2World, var13, var14, var15);
++                    if (stack != null)
++                    {
++                        return stack;
++                    }
+ 
+                     if (par2World.getBlockMaterial(var13, var14, var15) == Material.water && par2World.getBlockMetadata(var13, var14, var15) == 0)
+                     {

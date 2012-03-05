@@ -8,58 +8,55 @@
  
  public class WorldServer extends World
  {
-@@ -11,6 +12,8 @@
-     public boolean levelSaving;
-     private MinecraftServer mcServer;
+@@ -17,6 +18,8 @@
+ 
+     /** Maps ids to entity instances */
      private IntHashMap entityInstanceIdMap;
 +    public EntityTracker entityTracker;
 +    public PlayerManager playerManager;
  
-     public WorldServer(MinecraftServer minecraftserver, ISaveHandler isavehandler, String s, int i, WorldSettings worldsettings)
+     public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings)
      {
-@@ -21,6 +24,9 @@
+@@ -27,6 +30,9 @@
          {
-             entityInstanceIdMap = new IntHashMap();
+             this.entityInstanceIdMap = new IntHashMap();
          }
-+        DimensionManager.setWorld(i, this);
-+        playerManager = new PlayerManager(mcServer, i, mcServer.propertyManagerObj.getIntProperty("view-distance", 10));
-+        entityTracker = new EntityTracker(mcServer, i);
++        DimensionManager.setWorld(par4, this);
++        playerManager = new PlayerManager(mcServer, par4, mcServer.propertyManagerObj.getIntProperty("view-distance", 10));
++        entityTracker = new EntityTracker(mcServer, par4);
      }
  
-     public void updateEntityWithOptionalForce(Entity entity, boolean flag)
-@@ -54,15 +60,30 @@
-     public List getTileEntityList(int i, int j, int k, int l, int i1, int j1)
+     public void updateEntityWithOptionalForce(Entity par1Entity, boolean par2)
+@@ -68,14 +74,26 @@
+     public List getTileEntityList(int par1, int par2, int par3, int par4, int par5, int par6)
      {
-         ArrayList arraylist = new ArrayList();
--        for (int k1 = 0; k1 < loadedTileEntityList.size(); k1++)
-+        for(int x = (i>>4); x <= (l>>4); x++)
+         ArrayList var7 = new ArrayList();
+-
+-        for (int var8 = 0; var8 < this.loadedTileEntityList.size(); ++var8)
++        for(int x = (par1 >> 4); x <= (par4 >> 4); x++)
          {
--            TileEntity tileentity = (TileEntity)loadedTileEntityList.get(k1);
--            if (tileentity.xCoord >= i && tileentity.yCoord >= j && tileentity.zCoord >= k && tileentity.xCoord < l && tileentity.yCoord < i1 && tileentity.zCoord < j1)
-+            for(int z = (k>>4); z <= (j1>>4); z++) 
+-            TileEntity var9 = (TileEntity)this.loadedTileEntityList.get(var8);
+-
+-            if (var9.xCoord >= par1 && var9.yCoord >= par2 && var9.zCoord >= par3 && var9.xCoord < par4 && var9.yCoord < par5 && var9.zCoord < par6)
++            for(int z = (par3 >> 4); z <= (par6 >> 4); z++) 
              {
--                arraylist.add(tileentity);
-+                Chunk chunk = getChunkFromChunkCoords(x,z);
-+                if (chunk == null)
+-                var7.add(var9);
++                Chunk chunk = getChunkFromChunkCoords(x, z);
++                if (chunk != null)
 +                {
-+                    continue;
-+                }
-+                for(Object obj : chunk.chunkTileEntityMap.values()) 
-+                {
-+                    TileEntity entity = (TileEntity)obj;
-+                    if(entity.isInvalid())
++                    for(Object obj : chunk.chunkTileEntityMap.values())
 +                    {
-+                        continue;
-+                    }
-+                    if (entity.xCoord >= i && entity.yCoord >= j  && entity.zCoord >= k && 
-+                        entity.xCoord <= l && entity.yCoord <= i1 && entity.zCoord <= j1) 
-+                    {
-+                        arraylist.add(entity);
++                        TileEntity entity = (TileEntity)obj;
++                        if (!entity.isInvalid())
++                        {
++                            if (entity.xCoord >= par1 && entity.yCoord >= par2 && entity.zCoord >= par3 && 
++                                entity.xCoord <= par4 && entity.yCoord <= par5 && entity.zCoord <= par6)
++                            {
++                                var7.add(entity);
++                            }
++                        }
 +                    }
 +                }
              }
          }
--
-         return arraylist;
-     }
  

@@ -1,8 +1,8 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,6 +2,10 @@
- 
- import java.util.*;
+@@ -3,6 +3,10 @@
+ import java.util.Iterator;
+ import java.util.List;
  
 +import net.minecraft.src.forge.ArmorProperties;
 +import net.minecraft.src.forge.ForgeHooks;
@@ -10,149 +10,116 @@
 +
  public abstract class EntityPlayer extends EntityLiving
  {
-     public InventoryPlayer inventory;
-@@ -124,6 +128,7 @@
+     /** Inventory of the player */
+@@ -158,6 +162,7 @@
              }
              else
              {
-+                itemInUse.getItem().onUsingItemTick(itemInUse,this,itemInUseCount);
-                 if (itemInUseCount <= 25 && itemInUseCount % 4 == 0)
++                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
+                 if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
-                     func_35208_b(itemstack, 5);
-@@ -274,6 +279,10 @@
- 
+                     this.func_35208_b(var1, 5);
+@@ -341,6 +346,10 @@
+      */
      protected void closeScreen()
      {
-+        if (craftingInventory != null)
++        if (craftingInventory != null) //TODO: This is a bugfix for chests staying open in SMP
 +        {
 +            craftingInventory.onCraftGuiClosed(this);
 +        }
-         craftingInventory = inventorySlots;
+         this.craftingInventory = this.inventorySlots;
      }
  
-@@ -433,7 +442,16 @@
+@@ -514,7 +523,16 @@
  
-     public void dropCurrentItem()
+     public EntityItem func_48347_R()
      {
--        dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
-+    	ItemStack stack = inventory.getCurrentItem();
-+    	if (stack == null)
-+    	{
-+    		return;
-+    	}    	
-+    	
-+    	if (stack.getItem().onDroppedByPlayer(stack, this))
-+    	{
-+            dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
-+    	}
+-        return this.func_48349_a(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
++        ItemStack stack = inventory.getCurrentItem();
++        if (stack == null)
++        {
++            return null;
++        }
++        if (stack.getItem().onDroppedByPlayer(stack, this))
++        {
++            return func_48349_a(inventory.decrStackSize(inventory.currentItem, 1), false);
++        }
++        return null;
      }
  
-     public void dropPlayerItem(ItemStack itemstack)
-@@ -480,6 +498,8 @@
-         worldObj.spawnEntityInWorld(entityitem);
-     }
+     public EntityItem func_48348_b(ItemStack par1ItemStack)
+@@ -573,10 +591,18 @@
  
-+    /* FORGE: This isnt called anymore, There is a new metadata sensitive version */
+     /**
+      * Returns how strong the player is against the specified block at this moment
++     * Deprecated in favor of the metadata-sensitive version
+      */
 +    @Deprecated
-     public float getCurrentPlayerStrVsBlock(Block block)
+     public float getCurrentPlayerStrVsBlock(Block par1Block)
      {
-         float f = inventory.getStrVsBlock(block);
-@@ -508,6 +528,45 @@
-         return f1;
-     }
- 
-+    /* FORGE: Extended to allow metadata.
-+     */
-+    public float getCurrentPlayerStrVsBlock(Block block, int md)
-+    {
-+        float f = 1.0F;
-+        ItemStack ist = inventory.getCurrentItem();
-+        if(ist != null)
-+        {
-+        	f = ist.getItem().getStrVsBlock(ist, block, md);
-+        }
-+        
-+        int i = EnchantmentHelper.getEfficiencyModifier(inventory);
-+        if (i > 0 && ForgeHooks.canHarvestBlock(block, this, md))
-+        {
-+        	f += i * i + 1;
-+        }
-+        
-+        if(isPotionActive(Potion.digSpeed))
-+        {
-+            f *= 1.0F + (float)(getActivePotionEffect(Potion.digSpeed).getAmplifier() + 1) * 0.2F;
-+        }
-+        
-+        if(isPotionActive(Potion.digSlowdown))
-+        {
-+            f *= 1.0F - (float)(getActivePotionEffect(Potion.digSlowdown).getAmplifier() + 1) * 0.2F;
-+        }
-+        
-+        if(isInsideOfMaterial(Material.water) && !EnchantmentHelper.getAquaAffinityModifier(inventory))
-+        {
-+            f /= 5F;
-+        }
-+        
-+        if(!onGround)
-+        {
-+            f /= 5F;
-+        }
-+        return f;
+-        float var2 = this.inventory.getStrVsBlock(par1Block);
++        return getCurrentPlayerStrVsBlock(par1Block, 0);
 +    }
-+
-     public boolean canHarvestBlock(Block block)
-     {
-         return inventory.canHarvestBlock(block);
-@@ -711,7 +770,11 @@
-         {
-             i = 1 + i >> 1;
++    
++    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
++    {
++        ItemStack stack = inventory.getCurrentItem();
++        float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));        
+         float var3 = var2;
+         int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
+ 
+@@ -868,7 +894,11 @@
+             par2 = 1 + par2 >> 1;
          }
--        i = applyArmorCalculations(damagesource, i);
-+        i = ArmorProperties.ApplyArmor(this, inventory.armorInventory, damagesource, i);
-+        if (i <= 0)
+ 
+-        par2 = this.applyArmorCalculations(par1DamageSource, par2);
++        par2 = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
++        if (par2 <= 0)
 +        {
 +            return;
 +        }
-         i = applyPotionDamageCalculations(damagesource, i);
-         addExhaustion(damagesource.getHungerDamage());
-         health -= i;
-@@ -758,7 +821,9 @@
- 
+         par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
+         this.addExhaustion(par1DamageSource.getHungerDamage());
+         this.health -= par2;
+@@ -926,7 +956,9 @@
+      */
      public void destroyCurrentEquippedItem()
      {
-+        ItemStack orig=inventory.getCurrentItem();
-         inventory.setInventorySlotContents(inventory.currentItem, null);
++        ItemStack orig = inventory.getCurrentItem();
+         this.inventory.setInventorySlotContents(this.inventory.currentItem, (ItemStack)null);
 +        ForgeHooks.onDestroyCurrentItem(this, orig);
      }
  
-     public double getYOffset()
-@@ -777,6 +842,11 @@
- 
-     public void attackTargetEntityWithCurrentItem(Entity entity)
+     /**
+@@ -955,6 +987,12 @@
+      */
+     public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
 +        ItemStack stack = getCurrentEquippedItem();
-+        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, entity))
++        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, par1Entity))
 +        {
 +            return;
 +        }
-         int i = inventory.getDamageVsEntity(entity);
-         if (isPotionActive(Potion.damageBoost))
++        
+         if (par1Entity.func_48313_k_())
          {
-@@ -884,6 +954,11 @@
- 
-     public EnumStatus sleepInBedAt(int i, int j, int k)
+             int var2 = this.inventory.getDamageVsEntity(par1Entity);
+@@ -1093,6 +1131,12 @@
+      */
+     public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
-+        EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, i, j, k);
++        EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, par1, par2, par3);
 +        if (customSleep != null)
 +        {
 +            return customSleep;
 +        }
-         if (!worldObj.isRemote)
++        
+         if (!this.worldObj.isRemote)
          {
-             if (isPlayerSleeping() || !isEntityAlive())
-@@ -1353,4 +1428,16 @@
-         experience = entityplayer.experience;
-         score = entityplayer.score;
+             if (this.isPlayerSleeping() || !this.isEntityAlive())
+@@ -1643,4 +1687,16 @@
+     {
+         return !this.capabilities.isFlying;
      }
 +    
 +    /**
@@ -165,5 +132,5 @@
 +     * @param Y Y Position
 +     * @param Z Z Position
 +     */
-+    public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z){}
++    public void openGui(BaseMod mod, int ID, World world, int x, int y, int z){}
  }

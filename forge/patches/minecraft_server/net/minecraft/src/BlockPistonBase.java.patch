@@ -1,11 +1,11 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockPistonBase.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockPistonBase.java	0000-00-00 00:00:00.000000000 -0000
-@@ -350,7 +350,7 @@
+@@ -355,7 +355,7 @@
                  return false;
              }
+ 
+-            return !(Block.blocksList[par0] instanceof BlockContainer);
++            return !(Block.blocksList[par0] != null && Block.blocksList[par0].hasTileEntity(par1World.getBlockMetadata(par2, par3, par4)));
          }
--        return !(Block.blocksList[i] instanceof BlockContainer);
-+        return !(Block.blocksList[i] != null && Block.blocksList[i].hasTileEntity(world.getBlockMetadata(j, k, l)));
      }
  
-     private static boolean canExtend(World world, int i, int j, int k, int l)

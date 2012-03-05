@@ -1,31 +1,35 @@
 --- ../src_base/minecraft_server/net/minecraft/src/FurnaceRecipes.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/FurnaceRecipes.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,11 +2,13 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
  
++import java.util.Arrays;
  import java.util.HashMap;
  import java.util.Map;
-+import java.util.Arrays;
  
- public class FurnaceRecipes
- {
-     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
-     private Map smeltingList;
-+    private Map metaSmeltingList;
+@@ -9,6 +10,7 @@
  
-     public static final FurnaceRecipes smelting()
+     /** The list of smelting results. */
+     private Map smeltingList = new HashMap();
++    private Map metaSmeltingList = new HashMap();
+ 
+     /**
+      * Used to call methods addSmelting and getSmeltingResult.
+@@ -47,7 +49,9 @@
+ 
+     /**
+      * Returns the smelting result of an item.
++     * Deprecated in favor of a metadata sensitive version
+      */
++    @Deprecated
+     public ItemStack getSmeltingResult(int par1)
      {
-@@ -16,6 +18,7 @@
-     private FurnaceRecipes()
+         return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
+@@ -57,4 +61,34 @@
      {
-         smeltingList = new HashMap();
-+        metaSmeltingList = new HashMap();
-         addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron));
-         addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold));
-         addSmelting(Block.oreDiamond.blockID, new ItemStack(Item.diamond));
-@@ -38,11 +41,43 @@
-         smeltingList.put(Integer.valueOf(i), itemstack);
+         return this.smeltingList;
      }
- 
++    
 +    /**
 +     * Add a metadata-sensitive furnace recipe
 +     * @param itemID The Item ID
@@ -36,14 +40,7 @@
 +    {
 +        metaSmeltingList.put(Arrays.asList(itemID, metadata), itemstack);
 +    }
-+
-+    /* FORGE: Not used anymore, now uses a metadata sensitive version */
-+    @Deprecated
-     public ItemStack getSmeltingResult(int i)
-     {
-         return (ItemStack)smeltingList.get(Integer.valueOf(i));
-     }
- 
++    
 +    /**
 +     * Used to get the resulting ItemStack form a source ItemStack
 +     * @param item The Source ItemStack
@@ -62,7 +59,4 @@
 +        }
 +        return (ItemStack)smeltingList.get(Integer.valueOf(item.itemID));
 +    }
-+
-     public Map getSmeltingList()
-     {
-         return smeltingList;
+ }
