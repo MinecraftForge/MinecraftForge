@@ -29,6 +29,7 @@ then
 fi
 
 rm -rf src src_work src_forge
+cp forge/conf/*.csv conf
 
 if [ ! -d src_base ] ; then
 	./decompile.sh
