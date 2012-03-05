@@ -14,7 +14,7 @@
      public boolean onBlockDestroyed(ItemStack par1ItemStack, int par2, int par3, int par4, int par5, EntityLiving par6EntityLiving)
      {
 -        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID)
-+        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID && Block.blocksList[par2] instanceof IShearable)
++        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID && !(Block.blocksList[par2] instanceof IShearable))
          {
              return super.onBlockDestroyed(par1ItemStack, par2, par3, par4, par5, par6EntityLiving);
          }

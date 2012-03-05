@@ -6,7 +6,7 @@
              int var5 = par1World.getBlockId(par2, par3 - 1, par4);
 -            return Block.func_48206_g(var5) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
 +            //Fix for 1.2.3 change.. Why guys.. why?
-+            return par1World.isBlockNormalCube(par2, par3, par4) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
++            return par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
          }
      }
  
