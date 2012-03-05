@@ -38,7 +38,6 @@ public abstract class ForgePacket
         pkt.channel = "Forge";
         pkt.data    = bytes.toByteArray();
         pkt.length  = pkt.data.length;
-        pkt.isChunkDataPacket = true; //Make our packets higher priority, allowing the initial communication to happen before the client receives all world chunks.
         return pkt;
     }
 
