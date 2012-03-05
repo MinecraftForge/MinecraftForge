@@ -5,9 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import net.minecraft.src.BaseMod;
-import net.minecraft.src.ModLoader;
-
 public class PacketModList extends ForgePacket
 {
     private boolean isServer = false;

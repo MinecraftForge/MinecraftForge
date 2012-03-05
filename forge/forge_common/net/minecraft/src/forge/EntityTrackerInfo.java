@@ -1,7 +1,5 @@
 package net.minecraft.src.forge;
 
-import net.minecraft.src.BaseMod;
-
 public class EntityTrackerInfo
 {
     public final NetworkMod Mod;
