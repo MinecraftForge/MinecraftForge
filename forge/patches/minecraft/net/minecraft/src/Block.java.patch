@@ -7,15 +7,6 @@
  import java.util.ArrayList;
  import java.util.Random;
  
-@@ -361,7 +362,7 @@
- 
-     public static boolean func_48206_g(int par0)
-     {
--        Block var1 = blocksList[par0];
-+        Block var1 = blocksList[par0];        
-         return var1 == null ? false : var1.blockMaterial.isOpaque() && var1.renderAsNormalBlock();
-     }
- 
 @@ -434,7 +435,7 @@
  
      public boolean func_48205_p()
@@ -89,10 +80,11 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1077,6 +1077,361 @@
+@@ -1077,6 +1077,362 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
++    /* =================================================== FORGE START =====================================*/
 +    /**
 +     * Get a light value for this block, normal ranges are between 0 and 15
 +     * 

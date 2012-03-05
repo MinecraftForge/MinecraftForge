@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -66,14 +70,39 @@
+@@ -66,14 +70,37 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -65,6 +65,4 @@
 +        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z)));
 +        return ret;
      }
-+    
-+    
  }

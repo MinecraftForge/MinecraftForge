@@ -28,10 +28,12 @@
          Vec3D var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          MovingObjectPosition var24 = par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
          return var24;
-@@ -570,4 +574,147 @@
+@@ -570,4 +574,149 @@
      {
          StatList.initStats();
      }
++    
++    /* =========================================================== FORGE START ===============================================================*/
 +    
 +    /**
 +     * Called when a new CreativeContainer is opened, populate the list 
