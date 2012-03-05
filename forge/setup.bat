@@ -28,7 +28,7 @@ pushd .. >nul
     copy ..\forge\MLProp.java minecraft_server\net\minecraft\src\MLProp.java
   popd >nul
 
-  @echo | cmd /C updatemd5.bat
+  @echo | cmd /C updatemd5.bat -f
 
   mkdir src_base
   mkdir src_work

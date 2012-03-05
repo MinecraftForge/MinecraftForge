@@ -50,6 +50,6 @@ pushd src > /dev/null
     fi
 popd > /dev/null
 
-./updatemcp.sh
-./updatenames.sh
-./updatemd5.sh
+./updatemcp.sh -f
+./updatenames.sh -f
+./updatemd5.sh -f

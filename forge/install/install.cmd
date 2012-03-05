@@ -53,5 +53,5 @@ popd >nul
 
 cmd /C updatemcp.bat -f
 cmd /C updatenames.bat -f
-runtime\bin\python\python_mcp runtime\updatemd5.py
+runtime\bin\python\python_mcp runtime\updatemd5.py -f
 pause
