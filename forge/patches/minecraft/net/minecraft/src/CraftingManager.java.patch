@@ -1,11 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/src/CraftingManager.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/CraftingManager.java	0000-00-00 00:00:00.000000000 -0000
-@@ -423,7 +423,7 @@
-             i++;
+@@ -239,7 +239,7 @@
+             }
          }
  
--        if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isDamageable())
-+        if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isRepairable())
+-        if (var2 == 2 && var3.itemID == var4.itemID && var3.stackSize == 1 && var4.stackSize == 1 && Item.itemsList[var3.itemID].isDamageable())
++        if (var2 == 2 && var3.itemID == var4.itemID && var3.stackSize == 1 && var4.stackSize == 1 && Item.itemsList[var3.itemID].isRepairable())
          {
-             Item item = Item.itemsList[itemstack.itemID];
-             int l = item.getMaxDamage() - itemstack.getItemDamageForDisplay();
+             Item var11 = Item.itemsList[var3.itemID];
+             int var10 = var11.getMaxDamage() - var3.getItemDamageForDisplay();

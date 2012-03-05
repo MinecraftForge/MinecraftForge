@@ -1,16 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -70,6 +70,9 @@
-     public int serverPosZ;
+@@ -177,6 +177,9 @@
+      */
      public boolean ignoreFrustrumCheck;
      public boolean isAirBorne;
 +    
-+    //Forge: Used to store custom data for each entity.
++    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
  
-     public Entity(World world)
+     public Entity(World par1World)
      {
-@@ -110,6 +113,20 @@
+@@ -218,6 +221,20 @@
      }
  
      protected abstract void entityInit();
@@ -31,25 +31,25 @@
  
      public DataWatcher getDataWatcher()
      {
-@@ -967,6 +984,10 @@
-         nbttagcompound.setShort("Fire", (short)fire);
-         nbttagcompound.setShort("Air", (short)getAir());
-         nbttagcompound.setBoolean("OnGround", onGround);
-+        if (customEntityData != null) 
+@@ -1290,6 +1307,10 @@
+         par1NBTTagCompound.setShort("Fire", (short)this.fire);
+         par1NBTTagCompound.setShort("Air", (short)this.getAir());
+         par1NBTTagCompound.setBoolean("OnGround", this.onGround);
++        if (customEntityData != null)
 +        {
-+        	nbttagcompound.setCompoundTag("ForgeData", customEntityData);
-+    	}
-         writeEntityToNBT(nbttagcompound);
++            par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
++        }
+         this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1001,6 +1022,10 @@
-         onGround = nbttagcompound.getBoolean("OnGround");
-         setPosition(posX, posY, posZ);
-         setRotation(rotationYaw, rotationPitch);
-+        if (nbttagcompound.hasKey("ForgeData")) 
+@@ -1331,6 +1352,10 @@
+         this.onGround = par1NBTTagCompound.getBoolean("OnGround");
+         this.setPosition(this.posX, this.posY, this.posZ);
+         this.setRotation(this.rotationYaw, this.rotationPitch);
++        if (par1NBTTagCompound.hasKey("ForgeData"))
 +        {
-+        	customEntityData = nbttagcompound.getCompoundTag("ForgeData");
++            customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
 +        }
-         readEntityFromNBT(nbttagcompound);
+         this.readEntityFromNBT(par1NBTTagCompound);
      }
  

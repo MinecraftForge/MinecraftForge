@@ -1,19 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntityBrewingStand.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntityBrewingStand.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,7 +1,9 @@
- package net.minecraft.src;
+@@ -2,7 +2,9 @@
  
+ import java.util.List;
+ 
+-public class TileEntityBrewingStand extends TileEntity implements IInventory
 +import net.minecraft.src.forge.ISidedInventory;
 +
- public class TileEntityBrewingStand extends TileEntity
--    implements IInventory
-+    implements IInventory, ISidedInventory
++public class TileEntityBrewingStand extends TileEntity implements IInventory, ISidedInventory
  {
-     private ItemStack brewingItemStacks[];
-     private int brewTime;
-@@ -273,4 +275,16 @@
+     /** The itemstacks currently placed in the slots of the brewing stand */
+     private ItemStack[] brewingItemStacks = new ItemStack[4];
+@@ -318,4 +320,16 @@
  
-         return i;
+         return var1;
      }
 +
 +	@Override

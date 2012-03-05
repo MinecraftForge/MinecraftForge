@@ -1,35 +1,39 @@
 --- ../src_base/minecraft_server/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/Item.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,6 +1,7 @@
+@@ -1,5 +1,6 @@
  package net.minecraft.src;
  
- import java.io.PrintStream;
 +import java.util.ArrayList;
  import java.util.Random;
  
  public class Item
-@@ -156,6 +157,9 @@
-     private String potionEffect;
-     private String itemName;
+@@ -184,6 +185,9 @@
  
-+    // FORGE: To disable repair recipes.
+     /** full name of item from language file */
+     private String itemName;
++    
++    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;
-+
-     protected Item(int i)
+ 
+     protected Item(int par1)
      {
-         maxStackSize = 64;
-@@ -389,10 +393,148 @@
-         float f8 = f6;
-         float f9 = f3 * f5;
-         double d3 = 5D;
-+        if (entityplayer instanceof EntityPlayerMP)
+@@ -468,6 +472,10 @@
+         float var18 = var15 * var16;
+         float var20 = var14 * var16;
+         double var21 = 5.0D;
++        if (par2EntityPlayer instanceof EntityPlayerMP)
 +        {
-+            d3 = ((EntityPlayerMP)entityplayer).itemInWorldManager.getBlockReachDistance();
++            var21 = ((EntityPlayerMP)par2EntityPlayer).itemInWorldManager.getBlockReachDistance();
 +        }
-         Vec3D vec3d1 = vec3d.addVector((double)f7 * d3, (double)f8 * d3, (double)f9 * d3);
-         MovingObjectPosition movingobjectposition = world.rayTraceBlocks_do_do(vec3d, vec3d1, flag, !flag);
-         return movingobjectposition;
+         Vec3D var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
+         MovingObjectPosition var24 = par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+         return var24;
+@@ -482,4 +490,149 @@
+     {
+         StatList.initStats();
      }
++    
++    /* =========================================================== FORGE START ===============================================================*/
 +    
 +    /**
 +     * Called when a new CreativeContainer is opened, populate the list 
@@ -161,9 +165,16 @@
 +     */
 +    public int getIconIndex(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
 +    {
-+        //This is here server side for compilation compatibility
++        /*
++         * Here is an example usage for Vanilla bows.
++        if (usingItem != null && usingItem.getItem().shiftedIndex == Item.bow.shiftedIndex)
++        {
++            int k = usingItem.getMaxItemUseDuration() - useRemaining;
++            if (k >= 18) return 133;
++            if (k >  13) return 117;
++            if (k >   0) return 101;
++        }
++         */
 +        return 0;
 +    }
- 
-     public int getItemEnchantability()
-     {
+ }

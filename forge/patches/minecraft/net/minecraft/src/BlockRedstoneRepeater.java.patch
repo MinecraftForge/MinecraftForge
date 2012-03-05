@@ -1,20 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockRedstoneRepeater.java	0000-00-00 00:00:00.000000000 -0000
-@@ -28,7 +28,7 @@
- 
-     public boolean canPlaceBlockAt(World world, int i, int j, int k)
+@@ -33,7 +33,7 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
--        if (!world.isBlockNormalCube(i, j - 1, k))
-+        if (!world.isBlockSolidOnSide(i, j - 1, k, 1))
-         {
-             return false;
-         }
-@@ -40,7 +40,7 @@
+-        return !par1World.isBlockNormalCube(par2, par3 - 1, par4) ? false : super.canPlaceBlockAt(par1World, par2, par3, par4);
++        return !par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) ? false : super.canPlaceBlockAt(par1World, par2, par3, par4);
+     }
  
-     public boolean canBlockStay(World world, int i, int j, int k)
+     /**
+@@ -41,7 +41,7 @@
+      */
+     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {
--        if (!world.isBlockNormalCube(i, j - 1, k))
-+        if (!world.isBlockSolidOnSide(i, j - 1, k, 1))
-         {
-             return false;
-         }
+-        return !par1World.isBlockNormalCube(par2, par3 - 1, par4) ? false : super.canBlockStay(par1World, par2, par3, par4);
++        return !par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) ? false : super.canBlockStay(par1World, par2, par3, par4);
+     }
+ 
+     /**

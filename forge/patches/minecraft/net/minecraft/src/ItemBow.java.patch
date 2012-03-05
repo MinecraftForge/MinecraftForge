@@ -1,35 +1,35 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemBow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ItemBow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,6 +2,8 @@
- 
- import java.util.Random;
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
  
 +import net.minecraft.src.forge.ForgeHooks;
 +
  public class ItemBow extends Item
  {
-     public ItemBow(int i)
-@@ -13,6 +15,11 @@
- 
-     public void onPlayerStoppedUsing(ItemStack itemstack, World world, EntityPlayer entityplayer, int i)
+     public ItemBow(int par1)
+@@ -14,6 +16,11 @@
+      */
+     public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
-+        boolean handled = ForgeHooks.onArrowLoose(itemstack, world, entityplayer, getMaxItemUseDuration(itemstack) - i);
-+        if (handled)
++        if (ForgeHooks.onArrowLoose(par1ItemStack, par2World, par3EntityPlayer, getMaxItemUseDuration(par1ItemStack) - par4))
 +        {
 +            return;
 +        }
-         boolean flag = entityplayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, itemstack) > 0;
-         if (flag || entityplayer.inventory.hasItem(Item.arrow.shiftedIndex))
-         {
-@@ -80,6 +87,11 @@
++        
+         boolean var5 = par3EntityPlayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
-     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer)
+         if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
+@@ -97,6 +104,12 @@
+      */
+     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
-+        ItemStack stack = ForgeHooks.onArrowNock(itemstack, world, entityplayer);
++        ItemStack stack = ForgeHooks.onArrowNock(par1ItemStack, par2World, par3EntityPlayer);
 +        if (stack != null)
 +        {
 +            return stack;
 +        }
-         if (entityplayer.capabilities.depleteBuckets || entityplayer.inventory.hasItem(Item.arrow.shiftedIndex))
++        
+         if (par3EntityPlayer.capabilities.depleteBuckets || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
          {
-             entityplayer.setItemInUse(itemstack, getMaxItemUseDuration(itemstack));
+             par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

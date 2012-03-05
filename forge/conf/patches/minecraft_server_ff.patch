@@ -1,25 +1,23 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
---- minecraft_server\net\minecraft\src\ItemMap.java	Fri Jan 13 17:46:22 2012
-+++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Fri Jan 13 17:37:00 2012
+--- minecraft_server\net\minecraft\src\ItemMap.java	Sat Mar 03 17:30:52 2012
++++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Sat Mar 03 17:32:42 2012
 @@ -22,7 +22,6 @@
     }
  
-    public MapData func_28023_a(ItemStack var1, World var2) {
--      "map_" + var1.func_21125_h();
-       MapData var4 = (MapData)var2.func_28103_a(MapData.class, "map_" + var1.func_21125_h());
+    public MapData func_28023_a(ItemStack p_28023_1_, World p_28023_2_) {
+-      "map_" + p_28023_1_.func_21125_h();
+       MapData var4 = (MapData)p_28023_2_.func_28103_a(MapData.class, "map_" + p_28023_1_.func_21125_h());
        if(var4 == null) {
-          var1.func_28145_b(var2.func_28104_b("map"));
-diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_server_patched\net\minecraft\src\RConThreadClient.java
+          p_28023_1_.func_28145_b(p_28023_2_.func_28104_b("map"));
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Jan 13 17:45:20 2012
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Jan 13 17:37:00 2012
-@@ -21,7 +21,9 @@
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sat Mar 03 17:30:52 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sat Mar 03 17:32:42 2012
+@@ -20,7 +20,9 @@
     }
  
     public void run() {
--      this.func_40509_b();
 +      while (true) {
-+         this.func_40509_b();
+       this.func_40509_b();
 +      }
     }
  

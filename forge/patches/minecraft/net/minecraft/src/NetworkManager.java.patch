@@ -1,25 +1,25 @@
 --- ../src_base/minecraft/net/minecraft/src/NetworkManager.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetworkManager.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,8 @@
- import java.net.*;
- import java.util.*;
+@@ -11,6 +11,8 @@
+ import java.util.Collections;
+ import java.util.List;
  
 +import net.minecraft.src.forge.ForgeHooks;
 +
  public class NetworkManager
  {
-     public static final Object threadSyncObject = new Object();
-@@ -201,6 +203,7 @@
-             networkSocket = null;
+     /** Synchronization object used for read and write threads. */
+@@ -307,6 +309,7 @@
+             {
+                 ;
+             }
++            ForgeHooks.onDisconnect(this, par1Str, par2ArrayOfObj);
          }
-         catch (Throwable throwable2) { }
-+        ForgeHooks.onDisconnect(this, s, aobj);
      }
  
-     public void processReadPackets()
-@@ -293,4 +296,14 @@
+@@ -427,4 +430,14 @@
      {
-         return networkmanager.writeThread;
+         return par0NetworkManager.writeThread;
      }
 +    
 +    /**

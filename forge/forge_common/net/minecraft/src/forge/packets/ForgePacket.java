@@ -6,8 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import net.minecraft.src.BaseMod;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.forge.ForgeHooks;

@@ -1,97 +1,113 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1615,70 +1615,47 @@
- 
-     public void usePortal(int i)
+@@ -1966,86 +1966,54 @@
+      */
+     public void usePortal(int par1)
      {
-+        usePortal(i, new Teleporter());
++    	usePortal(par1, new Teleporter());
 +    }
-+    public void usePortal(int i, Teleporter teleporter)
++    
++    public void usePortal(int par1, Teleporter teleporter)
 +    {
-         int j = thePlayer.dimension;
-         thePlayer.dimension = i;
-         theWorld.setEntityDead(thePlayer);
-         thePlayer.isDead = false;
-+        WorldProvider pNew = WorldProvider.getProviderForDimension(i);
-+        WorldProvider pOld = WorldProvider.getProviderForDimension(j); 
-         double d = thePlayer.posX;
-         double d1 = thePlayer.posZ;
--        double d2 = 1.0D;
--        if (j > -1 && thePlayer.dimension == -1)
+         int var2 = this.thePlayer.dimension;
+         this.thePlayer.dimension = par1;
+         this.theWorld.setEntityDead(this.thePlayer);
+         this.thePlayer.isDead = false;
++        WorldProvider pNew = WorldProvider.getProviderForDimension(par1);
++        WorldProvider pOld = WorldProvider.getProviderForDimension(var2);
+         double var3 = this.thePlayer.posX;
+         double var5 = this.thePlayer.posZ;
+-        double var7 = 1.0D;
+-
+-        if (var2 > -1 && this.thePlayer.dimension == -1)
 -        {
--            d2 = 0.125D;
+-            var7 = 0.125D;
 -        }
--        else if (j == -1 && thePlayer.dimension > -1)
+-        else if (var2 == -1 && this.thePlayer.dimension > -1)
 -        {
--            d2 = 8D;
+-            var7 = 8.0D;
 -        }
-+        double d2 = pOld.getMovementFactor() / pNew.getMovementFactor();
-         d *= d2;
-         d1 *= d2;
--        if (thePlayer.dimension == -1)
-+        
-+        World world = new World(theWorld, pNew);
-+        if (thePlayer.isEntityAlive())
+-
++        double var7 = pOld.getMovementFactor() / pNew.getMovementFactor();
+         var3 *= var7;
+         var5 *= var7;
+-        World var9;
++        World var9 = new World(theWorld, pNew);
+ 
+-        if (this.thePlayer.dimension == -1)
++        if (this.thePlayer.isEntityAlive())
          {
--            thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, thePlayer.rotationYaw, thePlayer.rotationPitch);
--            if (thePlayer.isEntityAlive())
+-            this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
+-
+-            if (this.thePlayer.isEntityAlive())
 -            {
--                theWorld.updateEntityWithOptionalForce(thePlayer, false);
+-                this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
 -            }
--            World world = null;
--            world = new World(theWorld, WorldProvider.getProviderForDimension(thePlayer.dimension));
--            changeWorld(world, "Entering the Nether", thePlayer);
+-
+-            var9 = null;
+-            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
+-            this.changeWorld(var9, "Entering the Nether", this.thePlayer);
 -        }
--        else if (thePlayer.dimension == 0)
+-        else if (this.thePlayer.dimension == 0)
 -        {
--            if (thePlayer.isEntityAlive())
+-            if (this.thePlayer.isEntityAlive())
 -            {
--                thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, thePlayer.rotationYaw, thePlayer.rotationPitch);
--                theWorld.updateEntityWithOptionalForce(thePlayer, false);
+-                this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
+-                this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
 -            }
--            World world1 = null;
--            world1 = new World(theWorld, WorldProvider.getProviderForDimension(thePlayer.dimension));
--            if (j == -1)
+-
+-            var9 = null;
+-            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
+-
+-            if (var2 == -1)
 -            {
--                changeWorld(world1, "Leaving the Nether", thePlayer);
+-                this.changeWorld(var9, "Leaving the Nether", this.thePlayer);
 -            }
 -            else
 -            {
--                changeWorld(world1, "Leaving the End", thePlayer);
+-                this.changeWorld(var9, "Leaving the End", this.thePlayer);
 -            }
-+            theWorld.updateEntityWithOptionalForce(thePlayer, false);
++            this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
          }
 -        else
 +        
 +        if (thePlayer.dimension == 1)
          {
--            World world2 = null;
--            world2 = new World(theWorld, WorldProvider.getProviderForDimension(thePlayer.dimension));
--            ChunkCoordinates chunkcoordinates = world2.getEntrancePortalLocation();
-+            ChunkCoordinates chunkcoordinates = world.getEntrancePortalLocation();
-             d = chunkcoordinates.posX;
-             thePlayer.posY = chunkcoordinates.posY;
-             d1 = chunkcoordinates.posZ;
--            thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, 90F, 0.0F);
--            if (thePlayer.isEntityAlive())
+-            var9 = null;
+-            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
+             ChunkCoordinates var10 = var9.getEntrancePortalLocation();
+             var3 = (double)var10.posX;
+             this.thePlayer.posY = (double)var10.posY;
+             var5 = (double)var10.posZ;
+-            this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, 90.0F, 0.0F);
+-
+-            if (this.thePlayer.isEntityAlive())
 -            {
--                world2.updateEntityWithOptionalForce(thePlayer, false);
+-                var9.updateEntityWithOptionalForce(this.thePlayer, false);
 -            }
--            changeWorld(world2, "Entering the End", thePlayer);
+-
+-            this.changeWorld(var9, "Entering the End", this.thePlayer);
 +        }
 +        
 +        if (thePlayer.dimension == 0)
 +        {
-+            changeWorld(world, pOld.getDepartMessage(), thePlayer);
++        	changeWorld(var9, pOld.getDepartMessage(), thePlayer);
 +        }
 +        else
 +        {
-+            changeWorld(world, pNew.getWelcomeMessage(), thePlayer);
++        	changeWorld(var9, pOld.getWelcomeMessage(), thePlayer);
          }
-         thePlayer.worldObj = theWorld;
-         System.out.println((new StringBuilder()).append("Teleported to ").append(theWorld.worldProvider.worldType).toString());
--        if (thePlayer.isEntityAlive() && j < 1)
-+        if (thePlayer.isEntityAlive())
+ 
+         this.thePlayer.worldObj = this.theWorld;
+         System.out.println("Teleported to " + this.theWorld.worldProvider.worldType);
+ 
+-        if (this.thePlayer.isEntityAlive() && var2 < 1)
++        if (this.thePlayer.isEntityAlive())
          {
-             thePlayer.setLocationAndAngles(d, thePlayer.posY, d1, thePlayer.rotationYaw, thePlayer.rotationPitch);
-             theWorld.updateEntityWithOptionalForce(thePlayer, false);
+             this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
+             this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
+-            (new Teleporter()).placeInPortal(this.theWorld, this.thePlayer);
++            teleporter.placeInPortal(this.theWorld, this.thePlayer);
+         }
+     }
+ 

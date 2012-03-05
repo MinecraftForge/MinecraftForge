@@ -11,35 +11,39 @@
 +
 +public class EntitySheep extends EntityAnimal implements IShearable
  {
-     public static final float fleeceColorTable[][] =
+     /**
+      * Holds the RGB table of the sheep colors - in OpenGL glColor3f values - used to render the sheep colored fleece.
+@@ -127,27 +130,6 @@
+      */
+     public boolean interact(EntityPlayer par1EntityPlayer)
      {
-@@ -194,23 +197,6 @@
- 
-     public boolean interact(EntityPlayer entityplayer)
-     {
--        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
--        if (itemstack != null && itemstack.itemID == Item.shears.shiftedIndex && !getSheared() && !isChild())
+-        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
+-
+-        if (var2 != null && var2.itemID == Item.shears.shiftedIndex && !this.getSheared() && !this.isChild())
 -        {
--            if (!worldObj.isRemote)
+-            if (!this.worldObj.isRemote)
 -            {
--                setSheared(true);
--                int i = 1 + rand.nextInt(3);
--                for (int j = 0; j < i; j++)
+-                this.setSheared(true);
+-                int var3 = 1 + this.rand.nextInt(3);
+-
+-                for (int var4 = 0; var4 < var3; ++var4)
 -                {
--                    EntityItem entityitem = entityDropItem(new ItemStack(Block.cloth.blockID, 1, getFleeceColor()), 1.0F);
--                    entityitem.motionY += rand.nextFloat() * 0.05F;
--                    entityitem.motionX += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
--                    entityitem.motionZ += (rand.nextFloat() - rand.nextFloat()) * 0.1F;
+-                    EntityItem var5 = this.entityDropItem(new ItemStack(Block.cloth.blockID, 1, this.getFleeceColor()), 1.0F);
+-                    var5.motionY += (double)(this.rand.nextFloat() * 0.05F);
+-                    var5.motionX += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+-                    var5.motionZ += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
 -                }
 -            }
--            itemstack.damageItem(1, entityplayer);
+-
+-            var2.damageItem(1, par1EntityPlayer);
 -        }
-         return super.interact(entityplayer);
+-
+         return super.interact(par1EntityPlayer);
      }
  
-@@ -308,4 +294,23 @@
+@@ -276,4 +258,23 @@
+             this.func_48122_d(var1);
          }
-         return entitysheep1;
      }
 +
 +    @Override

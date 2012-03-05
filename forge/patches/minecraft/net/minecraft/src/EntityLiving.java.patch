@@ -1,26 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
-@@ -29,7 +29,7 @@
-     public float swingProgress;
-     protected int health;
-     public int prevHealth;
+@@ -49,7 +49,7 @@
+      * in each step in the damage calculations, this is set to the 'carryover' that would result if someone was damaged
+      * .25 hearts (for example), and added to the damage in the next step
+      */
 -    protected int carryoverDamage;
 +    public int carryoverDamage;
+ 
+     /** Number of ticks since this EntityLiving last produced its sound */
      private int livingSoundTime;
-     public int hurtTime;
-     public int maxHurtTime;
-@@ -835,7 +835,13 @@
-         int i = MathHelper.floor_double(posX);
-         int j = MathHelper.floor_double(boundingBox.minY);
-         int k = MathHelper.floor_double(posZ);
--        return worldObj.getBlockId(i, j, k) == Block.ladder.blockID;
-+        
-+        Block block = Block.blocksList[worldObj.getBlockId(i, j, k)];
-+        if (block == null) 
-+        { 
-+        	return false;
-+        }
-+        return block.isLadder(worldObj, i, j, k);
+@@ -1286,7 +1286,7 @@
+         int var2 = MathHelper.floor_double(this.boundingBox.minY);
+         int var3 = MathHelper.floor_double(this.posZ);
+         int var4 = this.worldObj.getBlockId(var1, var2, var3);
+-        return var4 == Block.ladder.blockID || var4 == Block.vine.blockID;
++        return Block.blocksList[var4] != null && Block.blocksList[var4].isLadder(worldObj, var1, var2, var3);
      }
  
-     public void writeEntityToNBT(NBTTagCompound nbttagcompound)
+     /**

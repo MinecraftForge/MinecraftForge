@@ -4,50 +4,50 @@
  
  public class BlockTrapDoor extends Block
  {
-+	/* FORGE: Set this to allow trapdoors to remain free-floating */
-+	public static boolean disableValidation = false;
-+	
-     protected BlockTrapDoor(int i, Material material)
++    /** Set this to allow trapdoors to remain free-floating */
++    public static boolean disableValidation = false;
++    
+     protected BlockTrapDoor(int par1, Material par2Material)
      {
-         super(i, material);
-@@ -139,7 +142,7 @@
-         {
-             j1--;
-         }
--        if (!isValidSupportBlock(world.getBlockId(j1, j, k1)))
-+        if (!(isValidSupportBlock(world.getBlockId(j1, j, k1)) || world.isBlockSolidOnSide(j1,  j, k1, (i1 & 3) + 2)))
-         {
-             world.setBlockWithNotify(i, j, k, 0);
-             dropBlockAsItem(world, i, j, k, i1, 0);
-@@ -181,6 +184,10 @@
+         super(par1, par2Material);
+@@ -183,7 +186,7 @@
+                 --var7;
+             }
  
-     public boolean canPlaceBlockOnSide(World world, int i, int j, int k, int l)
+-            if (!isValidSupportBlock(par1World.getBlockId(var7, par3, var8)))
++            if (!(isValidSupportBlock(par1World.getBlockId(var7, par3, var8)) || par1World.isBlockSolidOnSide(var7, par3, var8, (var6 & 3) + 2)))
+             {
+                 par1World.setBlockWithNotify(par2, par3, par4, 0);
+                 this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
+@@ -241,6 +244,10 @@
+ 
+     public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
-+    	if (disableValidation)
-+    	{
-+    		return true;
-+    	}
-         if (l == 0)
++        if (disableValidation)
++        {
++            return true;
++        }
+         if (par5 == 0)
          {
              return false;
-@@ -205,7 +212,7 @@
-         {
-             i--;
+@@ -271,7 +278,7 @@
+                 --par2;
+             }
+ 
+-            return isValidSupportBlock(par1World.getBlockId(par2, par3, par4));
++            return isValidSupportBlock(par1World.getBlockId(par2, par3, par4)) || par1World.isBlockSolidOnSide(par2, par3, par4, 1);
          }
--        return isValidSupportBlock(world.getBlockId(i, j, k));
-+        return isValidSupportBlock(world.getBlockId(i, j, k)) || world.isBlockSolidOnSide(i, j, k, l);
      }
  
-     public static boolean isTrapdoorOpen(int i)
-@@ -215,6 +222,11 @@
- 
-     private static boolean isValidSupportBlock(int i)
+@@ -286,6 +293,11 @@
+      */
+     private static boolean isValidSupportBlock(int par0)
      {
-+    	if (disableValidation)
-+    	{
-+    		return true;
-+    	}
-+    	
-         if (i <= 0)
++        if (disableValidation)
++        {
++            return true;
++        }
++        
+         if (par0 <= 0)
          {
              return false;

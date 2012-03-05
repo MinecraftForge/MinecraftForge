@@ -8,19 +8,19 @@
  
  public class RenderPlayer extends RenderLiving
  {
-@@ -30,7 +31,14 @@
-             if (item instanceof ItemArmor)
+@@ -32,7 +33,14 @@
+             if (var5 instanceof ItemArmor)
              {
-                 ItemArmor itemarmor = (ItemArmor)item;
--                loadTexture((new StringBuilder()).append("/armor/").append(armorFilenamePrefix[itemarmor.renderIndex]).append("_").append(i != 2 ? 1 : 2).append(".png").toString());
-+                if (item instanceof IArmorTextureProvider)
+                 ItemArmor var6 = (ItemArmor)var5;
+-                this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
++                if (var5 instanceof IArmorTextureProvider)
 +                {
-+                	loadTexture( ((IArmorTextureProvider)item).getArmorTextureFile(itemstack) ); 
++                    loadTexture(((IArmorTextureProvider)var5).getArmorTextureFile(var4));
 +                }
 +                else
 +                {
-+                	loadTexture((new StringBuilder()).append("/armor/").append(armorFilenamePrefix[itemarmor.renderIndex]).append("_").append(i != 2 ? 1 : 2).append(".png").toString());
-+                }                
-                 ModelBiped modelbiped = i != 2 ? modelArmorChestplate : modelArmor;
-                 modelbiped.bipedHead.showModel = i == 0;
-                 modelbiped.bipedHeadwear.showModel = i == 0;
++                    this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
++                }
+                 ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
+                 var7.bipedHead.showModel = par2 == 0;
+                 var7.bipedHeadwear.showModel = par2 == 0;

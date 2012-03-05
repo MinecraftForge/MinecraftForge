@@ -1,6 +1,6 @@
 package net.minecraft.src.forge;
 
-import net.minecraft.src.EnumJsonNodeType;
+import argo.jdom.JsonNodeType;
 import net.minecraft.src.EnumOS2;
 import net.minecraft.src.EnumOptions;
 import net.minecraft.src.EnumRarity;
@@ -10,7 +10,7 @@ public class EnumHelperClient extends EnumHelper
 
     private static Class[][] ctrs =
     {
-        {EnumJsonNodeType.class},
+        {JsonNodeType.class},
         {EnumOptions.class, String.class, boolean.class, boolean.class},
         {EnumOS2.class},
         {EnumRarity.class, int.class, String.class}
@@ -19,14 +19,14 @@ public class EnumHelperClient extends EnumHelper
     private static boolean[] decompiled = new boolean[ctrs.length];
     private static boolean   isSetup    = false;
 
-    public static EnumJsonNodeType addJsonNodeType(String name)
+    public static JsonNodeType addJsonNodeType(String name)
     {
         if (!isSetup)
         {
             setup();
         }
 
-        return addEnum(decompiled[0], EnumJsonNodeType.class, name,
+        return addEnum(decompiled[0], JsonNodeType.class, name,
                 new Class[] {},
                 new Object[] {});
     }

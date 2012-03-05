@@ -9,21 +9,25 @@
 +
  public class ItemShears extends Item
  {
-     public ItemShears(int i)
-@@ -11,9 +15,8 @@
+     public ItemShears(int par1)
+@@ -11,13 +15,12 @@
  
-     public boolean onBlockDestroyed(ItemStack itemstack, int i, int j, int k, int l, EntityLiving entityliving)
+     public boolean onBlockDestroyed(ItemStack par1ItemStack, int par2, int par3, int par4, int par5, EntityLiving par6EntityLiving)
      {
--        if (i == Block.leaves.blockID || i == Block.web.blockID || i == Block.tallGrass.blockID || i == Block.vine.blockID)
-+        if (i == Block.leaves.blockID || i == Block.web.blockID || i == Block.tallGrass.blockID || i == Block.vine.blockID || Block.blocksList[i] instanceof IShearable)
+-        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID)
++        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID && !(Block.blocksList[par2] instanceof IShearable))
          {
--            itemstack.damageItem(1, entityliving);
-             return true;
+             return super.onBlockDestroyed(par1ItemStack, par2, par3, par4, par5, par6EntityLiving);
          }
          else
-@@ -42,4 +45,62 @@
-             return super.getStrVsBlock(itemstack, block);
+         {
+-            par1ItemStack.damageItem(1, par6EntityLiving);
+             return true;
          }
+     }
+@@ -38,4 +41,62 @@
+     {
+         return par2Block.blockID != Block.web.blockID && par2Block.blockID != Block.leaves.blockID ? (par2Block.blockID == Block.cloth.blockID ? 5.0F : super.getStrVsBlock(par1ItemStack, par2Block)) : 15.0F;
      }
 +    
 +    @Override

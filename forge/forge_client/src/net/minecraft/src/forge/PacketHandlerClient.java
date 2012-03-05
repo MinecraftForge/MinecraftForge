@@ -137,7 +137,7 @@ public class PacketHandlerClient implements IPacketHandler
         {
             e.printStackTrace();
             ModLoader.getLogger().throwing("ForgeHooksClient", "onEntitySpawnPacket", e);
-            ModLoader.ThrowException(String.format("Error spawning entity of type %d for %s.", packet.typeID, MinecraftForge.getModByID(packet.modID)), e);
+            ModLoader.throwException(String.format("Error spawning entity of type %d for %s.", packet.typeID, MinecraftForge.getModByID(packet.modID)), e);
         }
     }
 

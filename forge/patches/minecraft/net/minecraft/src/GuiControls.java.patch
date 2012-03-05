@@ -1,122 +1,135 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiControls.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/GuiControls.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,6 +2,7 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
  
- import java.util.List;
- import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.GuiControlsScrollPanel;
- 
++
  public class GuiControls extends GuiScreen
  {
-@@ -9,6 +10,7 @@
-     protected String screenTitle;
-     private GameSettings options;
-     private int buttonId;
+     /**
+@@ -15,6 +17,8 @@
+ 
+     /** The ID of the  button that has been pressed. */
+     private int buttonId = -1;
++    
 +    private GuiControlsScrollPanel scrollPane;
  
-     public GuiControls(GuiScreen guiscreen, GameSettings gamesettings)
+     public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
-@@ -25,60 +27,30 @@
- 
+@@ -32,15 +36,12 @@
+      */
      public void initGui()
      {
-+    	scrollPane = new GuiControlsScrollPanel(this, options, mc);
-         StringTranslate stringtranslate = StringTranslate.getInstance();
-         int i = func_20080_j();
--        for (int j = 0; j < options.keyBindings.length; j++)
++        scrollPane = new GuiControlsScrollPanel(this, options, mc);
+         StringTranslate var1 = StringTranslate.getInstance();
+         int var2 = this.func_20080_j();
+ 
+-        for (int var3 = 0; var3 < this.options.keyBindings.length; ++var3)
 -        {
--            controlList.add(new GuiSmallButton(j, i + (j % 2) * 160, height / 6 + 24 * (j >> 1), 70, 20, options.getOptionDisplayString(j)));
+-            this.controlList.add(new GuiSmallButton(var3, var2 + var3 % 2 * 160, this.height / 6 + 24 * (var3 >> 1), 70, 20, this.options.getOptionDisplayString(var3)));
 -        }
 -
--        controlList.add(new GuiButton(200, width / 2 - 100, height / 6 + 168, stringtranslate.translateKey("gui.done")));
-+        controlList.add(new GuiButton(200, width / 2 - 100, height - 28, stringtranslate.translateKey("gui.done")));
+-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
++        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, var1.translateKey("gui.done")));
 +        scrollPane.registerScrollButtons(controlList, 7, 8);
-         screenTitle = stringtranslate.translateKey("controls.title");
+         this.screenTitle = var1.translateKey("controls.title");
      }
  
-     protected void actionPerformed(GuiButton guibutton)
+@@ -49,20 +50,10 @@
+      */
+     protected void actionPerformed(GuiButton par1GuiButton)
      {
--        for (int i = 0; i < options.keyBindings.length; i++)
+-        for (int var2 = 0; var2 < this.options.keyBindings.length; ++var2)
 -        {
--            ((GuiButton)controlList.get(i)).displayString = options.getOptionDisplayString(i);
+-            ((GuiButton)this.controlList.get(var2)).displayString = this.options.getOptionDisplayString(var2);
 -        }
 -
-         if (guibutton.id == 200)
+         if (par1GuiButton.id == 200)
          {
-             mc.displayGuiScreen(parentScreen);
+             this.mc.displayGuiScreen(this.parentScreen);
          }
 -        else
 -        {
--            buttonId = guibutton.id;
--            guibutton.displayString = (new StringBuilder()).append("> ").append(options.getOptionDisplayString(guibutton.id)).append(" <").toString();
+-            this.buttonId = par1GuiButton.id;
+-            par1GuiButton.displayString = "> " + this.options.getOptionDisplayString(par1GuiButton.id) + " <";
 -        }
      }
  
-     protected void mouseClicked(int i, int j, int k)
+     /**
+@@ -70,17 +61,7 @@
+      */
+     protected void mouseClicked(int par1, int par2, int par3)
      {
--        if (buttonId >= 0)
+-        if (this.buttonId >= 0)
 -        {
--            options.setKeyBinding(buttonId, -100 + k);
--            ((GuiButton)controlList.get(buttonId)).displayString = options.getOptionDisplayString(buttonId);
--            buttonId = -1;
+-            this.options.setKeyBinding(this.buttonId, -100 + par3);
+-            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+-            this.buttonId = -1;
 -            KeyBinding.resetKeyBindingArrayAndHash();
 -        }
 -        else
 -        {
--            super.mouseClicked(i, j, k);
+-            super.mouseClicked(par1, par2, par3);
 -        }
-+		super.mouseClicked(i, j, k);
++        super.mouseClicked(par1, par2, par3);
      }
  
-     protected void keyTyped(char c, int i)
+     /**
+@@ -88,14 +69,7 @@
+      */
+     protected void keyTyped(char par1, int par2)
      {
--        if (buttonId >= 0)
+-        if (this.buttonId >= 0)
 -        {
--            options.setKeyBinding(buttonId, i);
--            ((GuiButton)controlList.get(buttonId)).displayString = options.getOptionDisplayString(buttonId);
--            buttonId = -1;
+-            this.options.setKeyBinding(this.buttonId, par2);
+-            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+-            this.buttonId = -1;
 -            KeyBinding.resetKeyBindingArrayAndHash();
 -        }
 -        else
-+        if (scrollPane.keyTyped(c, i))
++        if (scrollPane.keyTyped(par1, par2))
          {
-             super.keyTyped(c, i);
+             super.keyTyped(par1, par2);
          }
-@@ -87,35 +59,8 @@
-     public void drawScreen(int i, int j, float f)
+@@ -107,37 +81,9 @@
+     public void drawScreen(int par1, int par2, float par3)
      {
-         drawDefaultBackground();
--        drawCenteredString(fontRenderer, screenTitle, width / 2, 20, 0xffffff);
--        int k = func_20080_j();
--        for (int l = 0; l < options.keyBindings.length; l++)
+         this.drawDefaultBackground();
+-        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
+-        int var4 = this.func_20080_j();
+-
+-        for (int var5 = 0; var5 < this.options.keyBindings.length; ++var5)
 -        {
--            boolean flag = false;
--            for (int i1 = 0; i1 < options.keyBindings.length; i1++)
+-            boolean var6 = false;
+-
+-            for (int var7 = 0; var7 < this.options.keyBindings.length; ++var7)
 -            {
--                if (i1 != l && options.keyBindings[l].keyCode == options.keyBindings[i1].keyCode)
+-                if (var7 != var5 && this.options.keyBindings[var5].keyCode == this.options.keyBindings[var7].keyCode)
 -                {
--                    flag = true;
+-                    var6 = true;
 -                }
 -            }
 -
--            int j1 = l;
--            if (buttonId == l)
+-            if (this.buttonId == var5)
 -            {
--                ((GuiButton)controlList.get(j1)).displayString = "\247f> \247e??? \247f<";
+-                ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
 -            }
--            else if (flag)
+-            else if (var6)
 -            {
--                ((GuiButton)controlList.get(j1)).displayString = (new StringBuilder()).append("\247c").append(options.getOptionDisplayString(j1)).toString();
+-                ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7c" + this.options.getOptionDisplayString(var5);
 -            }
 -            else
 -            {
--                ((GuiButton)controlList.get(j1)).displayString = options.getOptionDisplayString(j1);
+-                ((GuiButton)this.controlList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
 -            }
--            drawString(fontRenderer, options.getKeyBindingDescription(l), k + (l % 2) * 160 + 70 + 6, height / 6 + 24 * (l >> 1) + 7, -1);
+-
+-            this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(var5), var4 + var5 % 2 * 160 + 70 + 6, this.height / 6 + 24 * (var5 >> 1) + 7, -1);
 -        }
 -
-+        scrollPane.drawScreen(i, j, f);
++        
++        scrollPane.drawScreen(par1, par2, par3);
 +        drawCenteredString(fontRenderer, screenTitle, width / 2, 4, 0xffffff);
-         super.drawScreen(i, j, f);
+         super.drawScreen(par1, par2, par3);
      }
  }

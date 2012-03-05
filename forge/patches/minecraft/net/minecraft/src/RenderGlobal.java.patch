@@ -1,24 +1,28 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
-@@ -10,8 +10,8 @@
-     implements IWorldAccess
- {
-     public List tileEntities;
+@@ -15,10 +15,10 @@
+     public List tileEntities = new ArrayList();
+ 
+     /** A reference to the World object. */
 -    private World worldObj;
--    private RenderEngine renderEngine;
 +    public World worldObj;
+ 
+     /** The RenderEngine instance used by RenderGlobal */
+-    private RenderEngine renderEngine;
 +    public RenderEngine renderEngine;
-     private List worldRenderersToUpdate;
-     private WorldRenderer sortedWorldRenderers[];
-     private WorldRenderer worldRenderers[];
-@@ -19,8 +19,8 @@
-     private int renderChunksTall;
-     private int renderChunksDeep;
+     private List worldRenderersToUpdate = new ArrayList();
+     private WorldRenderer[] sortedWorldRenderers;
+     private WorldRenderer[] worldRenderers;
+@@ -30,10 +30,10 @@
      private int glRenderListBase;
+ 
+     /** A reference to the Minecraft object. */
 -    private Minecraft mc;
--    private RenderBlocks globalRenderBlocks;
 +    public Minecraft mc;
+ 
+     /** Global render blocks */
+-    private RenderBlocks globalRenderBlocks;
 +    public RenderBlocks globalRenderBlocks;
+ 
+     /** OpenGL occlusion query base */
      private IntBuffer glOcclusionQueryBase;
-     private boolean occlusionEnabled;
-     private int cloudOffsetX;

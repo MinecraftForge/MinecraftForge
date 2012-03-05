@@ -8,73 +8,67 @@
  
  public class PlayerControllerSP extends PlayerController
  {
-@@ -36,11 +37,16 @@
- 
-     public boolean onPlayerDestroyBlock(int i, int j, int k, int l)
+@@ -35,11 +36,17 @@
+      */
+     public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
-+    	ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
-+    	if (itemstack != null && itemstack.getItem().onBlockStartBreak(itemstack, i, j, k, mc.thePlayer))
-+    	{
-+    		return false;
-+    	}
-+    	
-         int i1 = mc.theWorld.getBlockId(i, j, k);
-         int j1 = mc.theWorld.getBlockMetadata(i, j, k);
-         boolean flag = super.onPlayerDestroyBlock(i, j, k, l);
--        ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
--        boolean flag1 = mc.thePlayer.canHarvestBlock(Block.blocksList[i1]);
-+        boolean flag1 = Block.blocksList[i1].canHarvestBlock(mc.thePlayer, j1);
-         if (itemstack != null)
-         {
-             itemstack.onDestroyBlock(i1, i, j, k, mc.thePlayer);
-@@ -69,7 +75,7 @@
-         {
-             Block.blocksList[i1].onBlockClicked(mc.theWorld, i, j, k, mc.thePlayer);
-         }
--        if (i1 > 0 && Block.blocksList[i1].blockStrength(mc.thePlayer) >= 1.0F)
-+        if (i1 > 0 && Block.blocksList[i1].blockStrength(mc.theWorld, mc.thePlayer, i, j, k) >= 1.0F)
-         {
-             onPlayerDestroyBlock(i, j, k, l);
-         }
-@@ -100,7 +106,7 @@
-                 return;
-             }
-             Block block = Block.blocksList[i1];
--            curBlockDamage += block.blockStrength(mc.thePlayer);
-+            curBlockDamage += block.blockStrength(mc.theWorld, mc.thePlayer, i, j, k);
-             if (blockDestroySoundCounter % 4F == 0.0F && block != null)
-             {
-                 mc.sndManager.playSound(block.stepSound.getStepSound(), (float)i + 0.5F, (float)j + 0.5F, (float)k + 0.5F, (block.stepSound.getVolume() + 1.0F) / 8F, block.stepSound.getPitch() * 0.5F);
-@@ -165,6 +171,14 @@
- 
-     public boolean onPlayerRightClick(EntityPlayer entityplayer, World world, ItemStack itemstack, int i, int j, int k, int l)
-     {
-+        if (itemstack != null) 
++        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
++        if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, mc.thePlayer))
 +        {
-+        	Item item = itemstack.getItem();
-+        	if (item.onItemUseFirst(itemstack, entityplayer, world, i, j, k, l)) 
-+        	{
-+        		return true;
-+    		}
++            return false;
 +        }
-         int i1 = world.getBlockId(i, j, k);
-         if (i1 > 0 && Block.blocksList[i1].blockActivated(world, i, j, k, entityplayer))
++        
+         int var5 = this.mc.theWorld.getBlockId(par1, par2, par3);
+         int var6 = this.mc.theWorld.getBlockMetadata(par1, par2, par3);
+         boolean var7 = super.onPlayerDestroyBlock(par1, par2, par3, par4);
+         ItemStack var8 = this.mc.thePlayer.getCurrentEquippedItem();
+-        boolean var9 = this.mc.thePlayer.canHarvestBlock(Block.blocksList[var5]);
++        boolean var9 = Block.blocksList[var5].canHarvestBlock(mc.thePlayer, var6);
+ 
+         if (var8 != null)
          {
-@@ -176,7 +190,16 @@
-         }
-         else
-         {
--            return itemstack.useItem(entityplayer, world, i, j, k, l);
-+            if (!itemstack.useItem(entityplayer, world, i, j, k, l))
-+            {
-+            	return false;
-+            }
-+		    
-+            if(itemstack.stackSize == 0)
-+            {
-+            	ForgeHooks.onDestroyCurrentItem(entityplayer, itemstack);
-+            }
+@@ -75,7 +82,7 @@
+                 Block.blocksList[var5].onBlockClicked(this.mc.theWorld, par1, par2, par3, this.mc.thePlayer);
+             }
+ 
+-            if (var5 > 0 && Block.blocksList[var5].blockStrength(this.mc.thePlayer) >= 1.0F)
++            if (var5 > 0 && Block.blocksList[var5].blockStrength(mc.theWorld, mc.thePlayer, par1, par2, par3) >= 1.0F)
+             {
+                 this.onPlayerDestroyBlock(par1, par2, par3, par4);
+             }
+@@ -195,8 +202,34 @@
+      */
+     public boolean onPlayerRightClick(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7)
+     {
++        if (par3ItemStack != null && 
++            par3ItemStack.getItem() != null && 
++            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7))
++        {
++                return true;
++        }
++        
+         int var8 = par2World.getBlockId(par4, par5, par6);
+-        return var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer) ? true : (par3ItemStack == null ? false : par3ItemStack.useItem(par1EntityPlayer, par2World, par4, par5, par6, par7));
++        if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
++        {
 +            return true;
-         }
++        }
++        
++        if (par3ItemStack == null)
++        {
++            return false;
++        }
++        
++        if (!par3ItemStack.useItem(par1EntityPlayer, par2World, par4, par5, par6, par7))
++        {
++            return false;
++        }
++        
++        if (par3ItemStack.stackSize <= 0)
++        {
++            ForgeHooks.onDestroyCurrentItem(par1EntityPlayer, par3ItemStack);
++        }
++        return true;
      }
  
+     public boolean func_35642_f()

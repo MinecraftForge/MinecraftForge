@@ -23,12 +23,12 @@ public interface IShearable
      *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world
-     * @param X The X Position
-     * @param Y The Y Position
-     * @param Z The Z Position
+     * @param x The X Position
+     * @param y The Y Position
+     * @param z The Z Position
      * @return If this is shearable, and onSheared should be called.
      */
-    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z);
+    public boolean isShearable(ItemStack item, World world, int x, int y, int z);
 
     /**
      * Performs the shear function on this object.
@@ -43,11 +43,11 @@ public interface IShearable
      *
      * @param item The itemstack that is being used, Possible to be null
      * @param world The current world
-     * @param X The X Position
-     * @param Y The Y Position
-     * @param Z The Z Position
+     * @param x The X Position
+     * @param y The Y Position
+     * @param z The Z Position
      * @param fortune The fortune level of the shears being used
      * @return A ArrayList containing all items from this shearing. Possible to be null.
      */
-    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune);
+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune);
 }

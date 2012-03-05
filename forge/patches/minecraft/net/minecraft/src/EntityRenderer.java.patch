@@ -1,48 +1,50 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,8 @@
- import java.nio.FloatBuffer;
+@@ -5,6 +5,8 @@
+ import java.util.List;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooksClient;
 +
  import org.lwjgl.input.Mouse;
- import org.lwjgl.opengl.ContextCapabilities;
  import org.lwjgl.opengl.Display;
-@@ -911,8 +913,11 @@
-                     EntityPlayer entityplayer = (EntityPlayer)entityliving;
-                     GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
+ import org.lwjgl.opengl.GL11;
+@@ -1106,8 +1108,11 @@
+                     var20 = (EntityPlayer)var4;
+                     GL11.glDisable(GL11.GL_ALPHA_TEST);
                      Profiler.endStartSection("outline");
--                    renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
--                    renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
-+                    if (!ForgeHooksClient.onBlockHighlight(renderglobal, entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f)) 
+-                    var5.drawBlockBreaking(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
+-                    var5.drawSelectionBox(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
++                    if (!ForgeHooksClient.onBlockHighlight(var5, var20, mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1))
 +                    {
-+	                    renderglobal.drawBlockBreaking(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
-+	                    renderglobal.drawSelectionBox(entityplayer, mc.objectMouseOver, 0, entityplayer.inventory.getCurrentItem(), f);
++                        var5.drawBlockBreaking(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
++                        var5.drawSelectionBox(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
 +                    }
-                     GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
+                     GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -967,8 +972,11 @@
-                 EntityPlayer entityplayer1 = (EntityPlayer)entityliving;
-                 GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
+@@ -1171,8 +1176,12 @@
+                 var20 = (EntityPlayer)var4;
+                 GL11.glDisable(GL11.GL_ALPHA_TEST);
                  Profiler.endStartSection("outline");
--                renderglobal.drawBlockBreaking(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
--                renderglobal.drawSelectionBox(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
-+                if (!ForgeHooksClient.onBlockHighlight(renderglobal, entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f)) 
+-                var5.drawBlockBreaking(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
+-                var5.drawSelectionBox(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
++
++                if (!ForgeHooksClient.onBlockHighlight(var5, var20, mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1))
 +                {
-+	                renderglobal.drawBlockBreaking(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
-+	                renderglobal.drawSelectionBox(entityplayer1, mc.objectMouseOver, 0, entityplayer1.inventory.getCurrentItem(), f);
++                    var5.drawBlockBreaking(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
++                    var5.drawSelectionBox(var20, this.mc.objectMouseOver, 0, var20.inventory.getCurrentItem(), par1);
 +                }
-                 GL11.glEnable(3008 /*GL_ALPHA_TEST*/);
+                 GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
-             Profiler.endStartSection("weather");
-@@ -986,6 +994,8 @@
-                 setupFog(1, f);
+ 
+@@ -1196,6 +1205,9 @@
+                 this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }
++            
 +            Profiler.endStartSection("fhooks");
-+            ForgeHooksClient.onRenderWorldLast(renderglobal,f);
++            ForgeHooksClient.onRenderWorldLast(var5, par1);
+ 
              Profiler.endStartSection("hand");
-             if (cameraZoom == 1.0D)
-             {
+ 

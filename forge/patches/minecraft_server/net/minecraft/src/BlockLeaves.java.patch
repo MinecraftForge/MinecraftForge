@@ -11,41 +11,41 @@
 +
 +public class BlockLeaves extends BlockLeavesBase implements IShearable
  {
-     private int baseIndexInPNG;
-     int adjacentTreeBlocks[];
-@@ -162,15 +165,7 @@
- 
-     public void harvestBlock(World world, EntityPlayer entityplayer, int i, int j, int k, int l)
+     /**
+      * The base index in terrain.png corresponding to the fancy version of the leaf texture. This is stored so we can
+@@ -216,15 +219,7 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        if (!world.isRemote && entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
+-        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
 -        {
--            entityplayer.addStat(StatList.mineBlockStatArray[blockID], 1);
--            dropBlockAsItem_do(world, i, j, k, new ItemStack(Block.leaves.blockID, 1, l & 3));
+-            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+-            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.leaves.blockID, 1, par6 & 3));
 -        }
 -        else
 -        {
--            super.harvestBlock(world, entityplayer, i, j, k, l);
+-            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 -        }
-+        super.harvestBlock(world, entityplayer, i, j, k, l);
++        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
      }
  
-     protected int damageDropped(int i)
-@@ -199,4 +194,18 @@
+     /**
+@@ -259,4 +254,18 @@
      {
-         super.onEntityWalking(world, i, j, k, entity);
+         super.onEntityWalking(par1World, par2, par3, par4, par5Entity);
      }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
++    public boolean isShearable(ItemStack item, World world, int x, int y, int z) 
 +    {
 +        return true;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune) 
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        ret.add(new ItemStack(this, 1, world.getBlockMetadata(X, Y, Z) & 3));
++        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));
 +        return ret;
 +    }
  }

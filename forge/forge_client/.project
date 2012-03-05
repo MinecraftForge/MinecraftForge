@@ -30,11 +30,6 @@
 			<type>2</type>
 			<locationURI>PARENT-1-WORKSPACE_LOC/src_work/minecraft</locationURI>
 		</link>
-		<link>
-			<name>start</name>
-			<type>2</type>
-			<locationURI>MCP_LOC/conf/patches</locationURI>
-		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
@@ -53,15 +48,6 @@
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1324022795404</id>
-			<name>start</name>
-			<type>5</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-*.java</arguments>
 			</matcher>
 		</filter>
 		<filter>

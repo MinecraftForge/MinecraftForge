@@ -1,33 +1,32 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemShears.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ItemShears.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,9 @@
+@@ -1,5 +1,8 @@
  package net.minecraft.src;
  
 +import java.util.ArrayList;
-+
 +import net.minecraft.src.forge.IShearable;
 +
  public class ItemShears extends Item
  {
-     public ItemShears(int i)
-@@ -11,12 +15,11 @@
+     public ItemShears(int par1)
+@@ -11,13 +14,12 @@
  
-     public boolean onBlockDestroyed(ItemStack itemstack, int i, int j, int k, int l, EntityLiving entityliving)
+     public boolean onBlockDestroyed(ItemStack par1ItemStack, int par2, int par3, int par4, int par5, EntityLiving par6EntityLiving)
      {
--        if (i == Block.leaves.blockID || i == Block.web.blockID || i == Block.tallGrass.blockID || i == Block.vine.blockID)
-+        if (i == Block.leaves.blockID || i == Block.web.blockID || i == Block.tallGrass.blockID || i == Block.vine.blockID || Block.blocksList[i] instanceof IShearable)
+-        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID)
++        if (par2 != Block.leaves.blockID && par2 != Block.web.blockID && par2 != Block.tallGrass.blockID && par2 != Block.vine.blockID && !(Block.blocksList[par2] instanceof IShearable))
          {
--            itemstack.damageItem(1, entityliving);
+             return super.onBlockDestroyed(par1ItemStack, par2, par3, par4, par5, par6EntityLiving);
+         }
+         else
+         {
+-            par1ItemStack.damageItem(1, par6EntityLiving);
              return true;
          }
--        else
-+        else        
-         {
-             return super.onBlockDestroyed(itemstack, i, j, k, l, entityliving);
-         }
-@@ -42,4 +45,62 @@
-             return super.getStrVsBlock(itemstack, block);
-         }
+     }
+@@ -38,4 +40,62 @@
+     {
+         return par2Block.blockID != Block.web.blockID && par2Block.blockID != Block.leaves.blockID ? (par2Block.blockID == Block.cloth.blockID ? 5.0F : super.getStrVsBlock(par1ItemStack, par2Block)) : 15.0F;
      }
 +    
 +    @Override
@@ -57,19 +56,19 @@
 +    }
 +    
 +    @Override
-+    public boolean onBlockStartBreak(ItemStack itemstack, int X, int Y, int Z, EntityPlayer player) 
++    public boolean onBlockStartBreak(ItemStack itemstack, int x, int y, int z, EntityPlayer player) 
 +    {
 +        if (player.worldObj.isRemote)
 +        {
 +            return false;
 +        }
-+        int id = player.worldObj.getBlockId(X, Y, Z);
++        int id = player.worldObj.getBlockId(x, y, z);
 +        if (Block.blocksList[id] != null && Block.blocksList[id] instanceof IShearable)
 +        {
 +            IShearable target = (IShearable)Block.blocksList[id];
-+            if (target.isShearable(itemstack, player.worldObj, X, Y, Z))
++            if (target.isShearable(itemstack, player.worldObj, x, y, z))
 +            {
-+                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, X, Y, Z,
++                ArrayList<ItemStack> drops = target.onSheared(itemstack, player.worldObj, x, y, z,
 +                        EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
 +                for(ItemStack stack : drops)
 +                {
@@ -77,7 +76,7 @@
 +                    double d  = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d1 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
 +                    double d2 = (double)(player.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-+                    EntityItem entityitem = new EntityItem(player.worldObj, (double)X + d, (double)Y + d1, (double)Z + d2, stack);
++                    EntityItem entityitem = new EntityItem(player.worldObj, (double)x + d, (double)y + d1, (double)z + d2, stack);
 +                    entityitem.delayBeforeCanPickup = 10;
 +                    player.worldObj.spawnEntityInWorld(entityitem);
 +                }

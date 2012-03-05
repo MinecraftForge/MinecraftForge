@@ -10,44 +10,50 @@
 +
 +public class EntityMooshroom extends EntityCow implements IShearable
  {
-     public EntityMooshroom(World world)
+     public EntityMooshroom(World par1World)
      {
-@@ -17,30 +21,36 @@
-             entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, new ItemStack(Item.bowlSoup));
+@@ -21,31 +25,7 @@
+             par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(Item.bowlSoup));
              return true;
          }
--        if (itemstack != null && itemstack.itemID == Item.shears.shiftedIndex && getDelay() >= 0)
+-        else if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.func_48123_at() >= 0)
 -        {
--            setEntityDead();
--            EntityCow entitycow = new EntityCow(worldObj);
--            entitycow.setLocationAndAngles(posX, posY, posZ, rotationYaw, rotationPitch);
--            entitycow.setEntityHealth(getEntityHealth());
--            entitycow.renderYawOffset = renderYawOffset;
--            worldObj.spawnEntityInWorld(entitycow);
--            worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
--            for (int i = 0; i < 5; i++)
+-            this.setEntityDead();
+-            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
+-
+-            if (!this.worldObj.isRemote)
 -            {
--                worldObj.spawnEntityInWorld(new EntityItem(worldObj, posX, posY + (double)height, posZ, new ItemStack(Block.mushroomRed)));
+-                EntityCow var3 = new EntityCow(this.worldObj);
+-                var3.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+-                var3.setEntityHealth(this.getEntityHealth());
+-                var3.renderYawOffset = this.renderYawOffset;
+-                this.worldObj.spawnEntityInWorld(var3);
+-
+-                for (int var4 = 0; var4 < 5; ++var4)
+-                {
+-                    this.worldObj.spawnEntityInWorld(new EntityItem(this.worldObj, this.posX, this.posY + (double)this.height, this.posZ, new ItemStack(Block.mushroomRed)));
+-                }
 -            }
 -
 -            return true;
 -        }
 -        else
 -        {
--            return super.interact(entityplayer);
+-            return super.interact(par1EntityPlayer);
 -        }
-+        return super.interact(entityplayer);
++        return super.interact(par1EntityPlayer);
      }
  
-     protected EntityAnimal spawnBabyAnimal(EntityAnimal entityanimal)
+     /**
+@@ -55,4 +35,29 @@
      {
-         return new EntityMooshroom(worldObj);
+         return new EntityMooshroom(this.worldObj);
      }
-+
++    
 +    @Override
 +    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
 +    {
-+        return getDelay() >= 0;
++        return func_48123_at() >= 0;
 +    }
 +
 +    @Override

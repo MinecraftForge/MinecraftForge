@@ -1,31 +1,32 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiIngame.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/GuiIngame.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,7 @@
- import java.util.Random;
- import net.minecraft.client.Minecraft;
+@@ -8,6 +8,8 @@
  import org.lwjgl.opengl.GL11;
-+import net.minecraft.src.forge.ISpecialArmor;
+ import org.lwjgl.opengl.GL12;
  
++import net.minecraft.src.forge.*;
++
  public class GuiIngame extends Gui
  {
-@@ -106,7 +107,19 @@
-                 }
-                 int k8 = l - 39;
-                 int j9 = k8 - 10;
--                int i10 = mc.thePlayer.getTotalArmorValue();
-+                int i10 = 0;
+     private static RenderItem itemRenderer = new RenderItem();
+@@ -139,7 +141,19 @@
+ 
+                 var51 = var7 - 39;
+                 var22 = var51 - 10;
+-                var23 = this.mc.thePlayer.getTotalArmorValue();
++                var23 = 0;
 +                for (int x = 0; x < mc.thePlayer.inventory.armorInventory.length; x++)
 +                {
 +                    ItemStack stack = mc.thePlayer.inventory.armorInventory[x];
 +                    if (stack != null && stack.getItem() instanceof ISpecialArmor)
 +                    {
-+                        i10 += ((ISpecialArmor)stack.getItem()).getArmorDisplay(mc.thePlayer, stack, x);
++                        var23 += ((ISpecialArmor)stack.getItem()).getArmorDisplay(mc.thePlayer, stack, x);
 +                    }
 +                    else if (stack != null && stack.getItem() instanceof ItemArmor)
 +                    {
-+                        i10 += ((ItemArmor)stack.getItem()).damageReduceAmount;
++                        var23 += ((ItemArmor)stack.getItem()).damageReduceAmount;
 +                    }
 +                }
-                 int j10 = -1;
-                 if (mc.thePlayer.isPotionActive(Potion.regeneration))
-                 {
+                 int var24 = -1;
+ 
+                 if (this.mc.thePlayer.isPotionActive(Potion.regeneration))
