@@ -22,7 +22,7 @@
              }
  
              var2.func_20057_k();
--            ModLoaderMp.HandleAllLogins(var2);
+-            ModLoaderMp.handleAllLogins(var2);
 +            if (par1Packet1Login.serverMode == ForgePacket.FORGE_ID)
 +            {
 +                //Pretty hackish place to put it, but it needs to go somewhere
@@ -48,7 +48,7 @@
 +                pkt.length = pkt.data.length;
 +                var5.sendPacket(pkt);
 +                ForgeHooksServer.sendModListRequest(netManager);                
-+                ModLoaderMp.HandleAllLogins(var2);
++                ModLoaderMp.handleAllLogins(var2);
 +            }
 +            else
 +            {

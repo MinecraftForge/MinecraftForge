@@ -1,0 +1,14 @@
+--- ../src_base/minecraft_server/net/minecraft/src/Packet230ModLoader.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/Packet230ModLoader.java	0000-00-00 00:00:00.000000000 -0000
+@@ -76,10 +76,7 @@
+ 
+                         byte[] var7 = new byte[var6];
+ 
+-                        for (int var8 = 0; var8 < var6; var8 += var1.read(var7, var8, var6 - var8))
+-                        {
+-                            ;
+-                        }
++                        var1.readFully(var7);
+ 
+                         this.dataString[var5] = new String(var7);
+                     }

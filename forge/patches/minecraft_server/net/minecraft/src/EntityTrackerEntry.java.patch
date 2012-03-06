@@ -19,14 +19,5 @@
 +            return pkt;
 +        }
  
-         EntityTrackerEntry2 var1 = ModLoaderMp.HandleEntityTrackerEntries(this.trackedEntity);
+         EntityTrackerEntry2 var1 = ModLoaderMp.handleEntityTrackerEntries(this.trackedEntity);
  
-@@ -332,7 +339,7 @@
-             catch (Exception var4)
-             {
-                 ModLoader.getLogger().throwing("EntityTrackerEntry", "getSpawnPacket", var4);
--                ModLoader.ThrowException(String.format("Error sending spawn packet for entity of type %s.", new Object[] {this.trackedEntity.getClass()}), var4);
-+                ModLoader.throwException(String.format("Error sending spawn packet for entity of type %s.", new Object[] {this.trackedEntity.getClass()}), var4);
-                 return null;
-             }
-         }
