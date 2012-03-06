@@ -50,6 +50,15 @@
      {
          if (par1ItemStack == null)
          {
+@@ -287,7 +293,7 @@
+         else
+         {
+             int var2 = par1ItemStack.getItem().shiftedIndex;
+-            return var2 < 256 && Block.blocksList[var2].blockMaterial == Material.wood ? 300 : (var2 == Item.stick.shiftedIndex ? 100 : (var2 == Item.coal.shiftedIndex ? 1600 : (var2 == Item.bucketLava.shiftedIndex ? 20000 : (var2 == Block.sapling.blockID ? 100 : (var2 == Item.blazeRod.shiftedIndex ? 2400 : ModLoader.AddAllFuel(var2))))));
++            return var2 < 256 && Block.blocksList[var2].blockMaterial == Material.wood ? 300 : (var2 == Item.stick.shiftedIndex ? 100 : (var2 == Item.coal.shiftedIndex ? 1600 : (var2 == Item.bucketLava.shiftedIndex ? 20000 : (var2 == Block.sapling.blockID ? 100 : (var2 == Item.blazeRod.shiftedIndex ? 2400 : ModLoader.addAllFuel(par1ItemStack.itemID, par1ItemStack.getItemDamage()))))));
+         }
+     }
+ 
 @@ -302,4 +308,18 @@
      public void openChest() {}
  

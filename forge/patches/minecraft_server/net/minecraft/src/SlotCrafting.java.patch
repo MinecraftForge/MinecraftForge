@@ -8,10 +8,12 @@
  public class SlotCrafting extends Slot
  {
      /** The craft matrix inventory linked to this result slot. */
-@@ -89,6 +91,7 @@
+@@ -88,7 +90,8 @@
+             this.thePlayer.addStat(AchievementList.bookcase, 1);
          }
  
-         ModLoader.TakenFromCrafting(this.thePlayer, par1ItemStack);
+-        ModLoader.TakenFromCrafting(this.thePlayer, par1ItemStack);
++        ModLoader.takenFromCrafting(this.thePlayer, par1ItemStack, craftMatrix);
 +        ForgeHooks.onTakenFromCrafting(thePlayer, par1ItemStack, craftMatrix);
      }
  

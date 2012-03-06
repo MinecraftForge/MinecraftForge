@@ -1,8 +1,42 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ModLoader.java	0000-00-00 00:00:00.000000000 -0000
-@@ -27,6 +27,9 @@
+@@ -1,16 +1,22 @@
+ package net.minecraft.src;
+ 
++import java.awt.image.BufferedImage;
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileNotFoundException;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStream;
+ import java.lang.reflect.Field;
+ import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Method;
+ import java.net.URISyntaxException;
+ import java.net.URL;
+ import java.net.URLClassLoader;
++import java.security.DigestException;
++import java.security.NoSuchAlgorithmException;
++import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.HashSet;
+@@ -19,6 +25,7 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Properties;
++import java.util.Random;
+ import java.util.Map.Entry;
+ import java.util.logging.FileHandler;
+ import java.util.logging.Level;
+@@ -26,29 +33,44 @@
+ import java.util.logging.SimpleFormatter;
  import java.util.zip.ZipEntry;
  import java.util.zip.ZipInputStream;
++import javax.imageio.ImageIO;
++
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
 +import net.minecraft.src.forge.ForgeHooks;
@@ -10,38 +44,2212 @@
  
  public final class ModLoader
  {
-@@ -675,6 +678,17 @@
-             readFromModFolder(modDir);
-             readFromClassPath(var17);
-             System.out.println("Done.");
-+            /*
-+             * Gather up a list of network mods and assign them an id 
-+             */
-+            int x = 0;
-+            for (BaseMod mod : (List<BaseMod>)modList)
-+            {
-+                if (mod instanceof NetworkMod)
++    private static final List animList = new LinkedList();
++    private static final Map blockModels = new HashMap();
++    private static final Map blockSpecialInv = new HashMap();
+     private static File cfgdir;
+     private static File cfgfile;
+     public static Level cfgLoggingLevel = Level.FINER;
++    private static Map classMap = null;
+     private static long clock = 0L;
+     public static final boolean DEBUG = false;
++    private static Field field_animList = null;
++    private static Field field_armorList = null;
+     private static Field field_modifiers = null;
+-    private static Map classMap = null;
++    private static Field field_TileEntityRenderers = null;
+     private static boolean hasInit = false;
+     private static int highestEntityId = 3000;
+     private static final Map inGameHooks = new HashMap();
++    private static final Map inGUIHooks = new HashMap();
+     private static MinecraftServer instance = null;
+     private static int itemSpriteIndex = 0;
+     private static int itemSpritesLeft = 0;
++    private static final Map keyList = new HashMap();
++    private static String langPack = null;
++    private static Map localizedStrings = new HashMap();
+     private static File logfile;
+-    private static File modDir;
+     private static final Logger logger = Logger.getLogger("ModLoader");
+     private static FileHandler logHandler = null;
+     private static Method method_RegisterEntityID = null;
+     private static Method method_RegisterTileEntity = null;
++    private static File modDir;
+     private static final LinkedList modList = new LinkedList();
+     private static int nextBlockModelID = 1000;
+     private static final Map overrides = new HashMap();
+@@ -56,21 +78,36 @@
+     private static BiomeGenBase[] standardBiomes;
+     private static int terrainSpriteIndex = 0;
+     private static int terrainSpritesLeft = 0;
++    private static String texPack = null;
++    private static boolean texturesAdded = false;
+     private static final boolean[] usedItemSprites = new boolean[256];
+     private static final boolean[] usedTerrainSprites = new boolean[256];
+     public static final String VERSION = "ModLoader Server 1.2.3";
+     private static Method method_getNextWindowId;
+     private static Field field_currentWindowId;
+ 
+-    public static void AddAchievementDesc(Achievement var0, String var1, String var2)
++    public static void addAchievementDesc(Achievement var0, String var1, String var2)
+     {
+         try
+         {
+-            if (var0.toString().contains("."))
++            String name = (String)getPrivateValue(Achievement.class, var0, 1);
++            if (name.contains("."))
+             {
+-                String var3 = var0.toString().split("\\.")[1];
+-                setPrivateValue(StatBase.class, var0, 1, StatCollector.translateToLocal("achievement." + var3));
+-                setPrivateValue(Achievement.class, var0, 3, StatCollector.translateToLocal("achievement." + var3 + ".desc"));
++                String[] var3 = name.split("\\.");
++
++                if (var3.length == 2)
 +                {
-+                    ForgeHooks.networkMods.put(x++, (NetworkMod)mod);
++                    String var4 = var3[1];
++                    addLocalization("achievement." + var4, var1);
++                    addLocalization("achievement." + var4 + ".desc", var2);
++                    setPrivateValue(StatBase.class, var0, 1, StatCollector.translateToLocal("achievement." + var4));
++                    setPrivateValue(Achievement.class, var0, 3, StatCollector.translateToLocal("achievement." + var4 + ".desc"));
++                }
++                else
++                {
++                    setPrivateValue(StatBase.class, var0, 1, var1);
++                    setPrivateValue(Achievement.class, var0, 3, var2);
++                }
+             }
+             else
+             {
+@@ -78,46 +115,136 @@
+                 setPrivateValue(Achievement.class, var0, 3, var2);
+             }
+         }
+-        catch (IllegalArgumentException var4)
+-        {
+-            logger.throwing("ModLoader", "AddAchievementDesc", var4);
+-            ThrowException(var4);
+-        }
+-        catch (SecurityException var5)
++        catch (IllegalArgumentException var5)
+         {
+             logger.throwing("ModLoader", "AddAchievementDesc", var5);
+-            ThrowException(var5);
++            throwException(var5);
+         }
+-        catch (NoSuchFieldException var6)
++        catch (SecurityException var6)
+         {
+             logger.throwing("ModLoader", "AddAchievementDesc", var6);
+-            ThrowException(var6);
++            throwException(var6);
++        }
++        catch (NoSuchFieldException var7)
++        {
++            logger.throwing("ModLoader", "AddAchievementDesc", var7);
++            throwException(var7);
+         }
+     }
+ 
+-    public static int AddAllFuel(int var0)
++    public static int addAllFuel(int var0, int var1)
+     {
+         logger.finest("Finding fuel for " + var0);
+-        int var1 = 0;
++        int var2 = 0;
+ 
+-        for (Iterator var2 = modList.iterator(); var2.hasNext() && var1 == 0; var1 = ((BaseMod)var2.next()).AddFuel(var0))
++        for (Iterator var3 = modList.iterator(); var3.hasNext() && var2 == 0; var2 = ((BaseMod)var3.next()).addFuel(var0, var1))
+         {
+             ;
+         }
+ 
+-        if (var1 != 0)
++        if (var2 != 0)
+         {
+-            logger.finest("Returned " + var1);
++            logger.finest("Returned " + var2);
+         }
+ 
+-        return var1;
++        return var2;
+     }
++    
++    public static void addAllRenderers(Map var0)
++    {
++        /*
++        if (!hasInit)
++        {
++            init();
++            logger.fine("Initialized");
++        }
+ 
+-    public static int AddArmor(String var0)
++        Iterator var2 = modList.iterator();
++
++        while (var2.hasNext())
++        {
++            BaseMod var1 = (BaseMod)var2.next();
++            var1.addRenderer(var0);
++        }
++        */
++    }
++    
++    /*
++    public static void addAnimation(TextureFX var0)
++    {
++        logger.finest("Adding animation " + var0.toString());
++        Iterator var2 = animList.iterator();
++
++        while (var2.hasNext())
++        {
++            TextureFX var1 = (TextureFX)var2.next();
++
++            if (var1.iconIndex == var0.iconIndex && var1.tileImage == var0.tileImage)
++            {
++                animList.remove(var0);
++                break;
++            }
++        }
++
++        animList.add(var0);
++    }
++    */
++
++    public static int addArmor(String var0)
+     {
++        /*
++        try
++        {
++            String[] var1 = (String[])field_armorList.get((Object)null);
++            List var2 = Arrays.asList(var1);
++            ArrayList var3 = new ArrayList();
++            var3.addAll(var2);
++
++            if (!var3.contains(var0))
++            {
++                var3.add(var0);
++            }
++
++            int var4 = var3.indexOf(var0);
++            field_armorList.set((Object)null, var3.toArray(new String[0]));
++            return var4;
++        }
++        catch (IllegalArgumentException var5)
++        {
++            logger.throwing("ModLoader", "AddArmor", var5);
++            throwException("An impossible error has occured!", var5);
++        }
++        catch (IllegalAccessException var6)
++        {
++            logger.throwing("ModLoader", "AddArmor", var6);
++            throwException("An impossible error has occured!", var6);
++        }
++        */
+         return -1;
+     }
+ 
++    public static void addLocalization(String var0, String var1)
++    {
++        addLocalization(var0, "en_US", var1);
++    }
++
++    public static void addLocalization(String var0, String var1, String var2)
++    {
++        Object var3;
++
++        if (localizedStrings.containsKey(var1))
++        {
++            var3 = (Map)localizedStrings.get(var1);
++        }
++        else
++        {
++            var3 = new HashMap();
++            localizedStrings.put(var1, var3);
++        }
++
++        ((Map)var3).put(var0, var2);
++    }
++
+     private static void addMod(ClassLoader var0, String var1)
+     {
+         try
+@@ -154,9 +281,9 @@
+             if (var5 != null)
+             {
+                 modList.add(var5);
+-                logger.fine("Mod Loaded: \"" + var5.toString() + "\" from " + var1);
+-                System.out.println("Mod Loaded: " + var5.toString());
+-                MinecraftServer.logger.info("Mod Loaded: " + var5.toString());
++                logger.fine("Mod Initialized: \"" + var5.toString() + "\" from " + var1);
++                System.out.println("Mod Initialized: " + var5.toString());
++                MinecraftServer.logger.info("Mod Initialized: " + var5.toString());
+             }
+         }
+         catch (Throwable var6)
+@@ -164,127 +291,81 @@
+             logger.fine("Failed to load mod from \"" + var1 + "\"");
+             System.out.println("Failed to load mod from \"" + var1 + "\"");
+             logger.throwing("ModLoader", "addMod", var6);
+-            ThrowException(var6);
++            throwException(var6);
+         }
+     }
++    
++    public static void addName(Object var0, String var1)
++    {
++        addName(var0, "en_US", var1);
++    }
+ 
+-    private static void setupProperties(Class var0) throws IllegalArgumentException, IllegalAccessException, IOException, SecurityException, NoSuchFieldException
++    public static void addName(Object var0, String var1, String var2)
+     {
+-        Properties var1 = new Properties();
+-        File var2 = new File(cfgdir, var0.getName() + ".cfg");
++        String var3 = null;
++        Exception var8;
+ 
+-        if (var2.exists() && var2.canRead())
++        if (var0 instanceof Item)
+         {
+-            var1.load(new FileInputStream(var2));
+-        }
++            Item var4 = (Item)var0;
+ 
+-        StringBuilder var3 = new StringBuilder();
+-        Field[] var4;
+-        int var5 = (var4 = var0.getFields()).length;
+-
+-        for (int var6 = 0; var6 < var5; ++var6)
++            if (var4.getItemName() != null)
++            {
++                var3 = var4.getItemName() + ".name";
++            }
++        }
++        else if (var0 instanceof Block)
+         {
+-            Field var7 = var4[var6];
++            Block var6 = (Block)var0;
+ 
+-            if ((var7.getModifiers() & 8) != 0 && var7.isAnnotationPresent(MLProp.class))
++            if (var6.getBlockName() != null)
+             {
+-                Class var8 = var7.getType();
+-                MLProp var9 = (MLProp)var7.getAnnotation(MLProp.class);
+-                String var10 = var9.name().length() != 0 ? var9.name() : var7.getName();
+-                Object var11 = var7.get((Object)null);
+-                StringBuilder var12 = new StringBuilder();
+-
+-                if (var9.min() != Double.NEGATIVE_INFINITY)
+-                {
+-                    var12.append(String.format(",>=%.1f", new Object[] {Double.valueOf(var9.min())}));
+-                }
+-
+-                if (var9.max() != Double.POSITIVE_INFINITY)
+-                {
+-                    var12.append(String.format(",<=%.1f", new Object[] {Double.valueOf(var9.max())}));
+-                }
+-
+-                StringBuilder var13 = new StringBuilder();
+-
+-                if (var9.info().length() > 0)
+-                {
+-                    var13.append(" -- ");
+-                    var13.append(var9.info());
+-                }
+-
+-                var3.append(String.format("%s (%s:%s%s)%s\n", new Object[] {var10, var8.getName(), var11, var12, var13}));
+-
+-                if (var1.containsKey(var10))
+-                {
+-                    String var14 = var1.getProperty(var10);
+-                    Object var15 = null;
+-
+-                    if (var8.isAssignableFrom(String.class))
+-                    {
+-                        var15 = var14;
+-                    }
+-                    else if (var8.isAssignableFrom(Integer.TYPE))
+-                    {
+-                        var15 = Integer.valueOf(Integer.parseInt(var14));
+-                    }
+-                    else if (var8.isAssignableFrom(Short.TYPE))
+-                    {
+-                        var15 = Short.valueOf(Short.parseShort(var14));
+-                    }
+-                    else if (var8.isAssignableFrom(Byte.TYPE))
+-                    {
+-                        var15 = Byte.valueOf(Byte.parseByte(var14));
+-                    }
+-                    else if (var8.isAssignableFrom(Boolean.TYPE))
+-                    {
+-                        var15 = Boolean.valueOf(Boolean.parseBoolean(var14));
+-                    }
+-                    else if (var8.isAssignableFrom(Float.TYPE))
+-                    {
+-                        var15 = Float.valueOf(Float.parseFloat(var14));
+-                    }
+-                    else if (var8.isAssignableFrom(Double.TYPE))
+-                    {
+-                        var15 = Double.valueOf(Double.parseDouble(var14));
+-                    }
+-
+-                    if (var15 != null)
+-                    {
+-                        if (var15 instanceof Number)
+-                        {
+-                            double var16 = ((Number)var15).doubleValue();
+-
+-                            if (var9.min() != Double.NEGATIVE_INFINITY && var16 < var9.min() || var9.max() != Double.POSITIVE_INFINITY && var16 > var9.max())
+-                            {
+-                                continue;
+-                            }
+-                        }
+-
+-                        logger.finer(var10 + " set to " + var15);
++                var3 = var6.getBlockName() + ".name";
++            }
++        }
++        else if (var0 instanceof ItemStack)
++        {
++            ItemStack var7 = (ItemStack)var0;
++            String var5 = Item.itemsList[var7.itemID].getItemNameIS(var7);
+ 
+-                        if (!var15.equals(var11))
+-                        {
+-                            var7.set((Object)null, var15);
+-                        }
+-                    }
+-                }
+-                else
+-                {
+-                    logger.finer(var10 + " not in config, using default: " + var11);
+-                    var1.setProperty(var10, var11.toString());
+-                }
++            if (var5 != null)
++            {
++                var3 = var5 + ".name";
+             }
+         }
++        else
++        {
++            var8 = new Exception(var0.getClass().getName() + " cannot have name attached to it!");
++            logger.throwing("ModLoader", "AddName", var8);
++            throwException(var8);
++        }
+ 
+-        if (!var1.isEmpty() && (var2.exists() || var2.createNewFile()) && var2.canWrite())
++        if (var3 != null)
++        {
++            addLocalization(var3, var1, var2);
++        }
++        else
+         {
+-            var1.store(new FileOutputStream(var2), var3.toString());
++            var8 = new Exception(var0 + " is missing name tag!");
++            logger.throwing("ModLoader", "AddName", var8);
++            throwException(var8);
+         }
+     }
+-
++    
+     public static int addOverride(String var0, String var1)
+     {
+-        return 0;
++        try
++        {
++            int var2 = 0; //getUniqueSpriteIndex(var0);
++            addOverride(var0, var1, var2);
++            return var2;
++        }
++        catch (Throwable var3)
++        {
++            logger.throwing("ModLoader", "addOverride", var3);
++            throwException(var3);
++            throw new RuntimeException(var3);
++        }
+     }
+ 
+     public static void addOverride(String var0, String var1, int var2)
+@@ -322,28 +403,28 @@
+ 
+         ((Map)var5).put(var1, Integer.valueOf(var2));
+     }
+-
+-    public static void AddRecipe(ItemStack var0, Object[] var1)
++    
++    public static void addRecipe(ItemStack var0, Object ... var1)
+     {
+         CraftingManager.getInstance().addRecipe(var0, var1);
+     }
+ 
+-    public static void AddShapelessRecipe(ItemStack var0, Object[] var1)
++    public static void addShapelessRecipe(ItemStack var0, Object ... var1)
+     {
+         CraftingManager.getInstance().addShapelessRecipe(var0, var1);
+     }
+ 
+-    public static void AddSmelting(int var0, ItemStack var1)
++    public static void addSmelting(int var0, ItemStack var1)
+     {
+         FurnaceRecipes.smelting().addSmelting(var0, var1);
+     }
+ 
+-    public static void AddSpawn(Class var0, int var1, int var2, int var3, EnumCreatureType var4)
++    public static void addSpawn(Class var0, int var1, int var2, int var3, EnumCreatureType var4)
+     {
+-        AddSpawn(var0, var1, var2, var3, var4, (BiomeGenBase[])null);
++        addSpawn(var0, var1, var2, var3, var4, (BiomeGenBase[])null);
+     }
+-
+-    public static void AddSpawn(Class var0, int var1, int var2, int var3, EnumCreatureType var4, BiomeGenBase[] var5)
++    
++    public static void addSpawn(Class var0, int var1, int var2, int var3, EnumCreatureType var4, BiomeGenBase ... var5)
+     {
+         if (var0 == null)
+         {
+@@ -367,17 +448,17 @@
+                 if (var7 != null)
+                 {
+                     boolean var8 = false;
+-                    Iterator var9 = var7.iterator();
++                    Iterator var10 = var7.iterator();
+ 
+-                    while (var9.hasNext())
++                    while (var10.hasNext())
+                     {
+-                        SpawnListEntry var10 = (SpawnListEntry)var9.next();
++                        SpawnListEntry var9 = (SpawnListEntry)var10.next();
+ 
+-                        if (var10.entityClass == var0)
++                        if (var9.entityClass == var0)
+                         {
+-                            var10.itemWeight = var1;
+-                            var10.minGroupCount = var2;
+-                            var10.maxGroupCount = var3;
++                            var9.itemWeight = var1;
++                            var9.minGroupCount = var2;
++                            var9.maxGroupCount = var3;
+                             var8 = true;
+                             break;
+                         }
+@@ -391,33 +472,77 @@
+             }
+         }
+     }
+-
+-    public static void AddSpawn(String var0, int var1, int var2, int var3, EnumCreatureType var4)
++    
++    public static void addSpawn(String var0, int var1, int var2, int var3, EnumCreatureType var4)
+     {
+-        AddSpawn(var0, var1, var2, var3, var4, (BiomeGenBase[])null);
++        addSpawn(var0, var1, var2, var3, var4, (BiomeGenBase[])null);
+     }
+ 
+-    public static void AddSpawn(String var0, int var1, int var2, int var3, EnumCreatureType var4, BiomeGenBase[] var5)
++    public static void addSpawn(String var0, int var1, int var2, int var3, EnumCreatureType var4, BiomeGenBase ... var5)
+     {
+         Class var6 = (Class)classMap.get(var0);
+ 
+         if (var6 != null && EntityLiving.class.isAssignableFrom(var6))
+         {
+-            AddSpawn(var6, var1, var2, var3, var4, var5);
++            addSpawn(var6, var1, var2, var3, var4, var5);
+         }
+     }
+ 
+-    public static boolean DispenseEntity(World var0, double var1, double var3, double var5, int var7, int var8, ItemStack var9)
++    public static boolean dispenseEntity(World var0, double var1, double var3, double var5, int var7, int var8, ItemStack var9)
+     {
+         boolean var10 = false;
+ 
+-        for (Iterator var11 = modList.iterator(); var11.hasNext() && !var10; var10 = ((BaseMod)var11.next()).DispenseEntity(var0, var1, var3, var5, var7, var8, var9))
++        for (Iterator var11 = modList.iterator(); var11.hasNext() && !var10; var10 = ((BaseMod)var11.next()).dispenseEntity(var0, var1, var3, var5, var7, var8, var9))
+         {
+             ;
+         }
+ 
+         return var10;
+     }
++    
++    public static void genericContainerRemoval(World var0, int var1, int var2, int var3)
++    {
++        IInventory var4 = (IInventory)var0.getBlockTileEntity(var1, var2, var3);
++
++        if (var4 != null)
++        {
++            for (int var5 = 0; var5 < var4.getSizeInventory(); ++var5)
++            {
++                ItemStack var6 = var4.getStackInSlot(var5);
++
++                if (var6 != null)
++                {
++                    double var7 = var0.rand.nextDouble() * 0.8D + 0.1D;
++                    double var9 = var0.rand.nextDouble() * 0.8D + 0.1D;
++                    EntityItem var14;
++
++                    for (double var11 = var0.rand.nextDouble() * 0.8D + 0.1D; var6.stackSize > 0; var0.spawnEntityInWorld(var14))
++                    {
++                        int var13 = var0.rand.nextInt(21) + 10;
++
++                        if (var13 > var6.stackSize)
++                        {
++                            var13 = var6.stackSize;
++                        }
++
++                        var6.stackSize -= var13;
++                        var14 = new EntityItem(var0, (double)var1 + var7, (double)var2 + var9, (double)var3 + var11, new ItemStack(var6.itemID, var13, var6.getItemDamage()));
++                        double var15 = 0.05D;
++                        var14.motionX = var0.rand.nextGaussian() * var15;
++                        var14.motionY = var0.rand.nextGaussian() * var15 + 0.2D;
++                        var14.motionZ = var0.rand.nextGaussian() * var15;
++
++                        if (var6.hasTagCompound())
++                        {
++                            var14.item.setTagCompound((NBTTagCompound)var6.getTagCompound().copy());
++                        }
++                    }
++
++                    var4.setInventorySlotContents(var5, (ItemStack)null);
 +                }
 +            }
-             props.setProperty("loggingLevel", cfgLoggingLevel.getName());
-             Iterator var19 = modList.iterator();
++        }
++    }
  
-@@ -838,9 +852,10 @@
+     public static List getLoadedMods()
+     {
+@@ -429,11 +554,49 @@
+         return logger;
+     }
  
-         long var1 = 0L;
+-    public static MinecraftServer getMinecraftServerInstance()
++    /*
++    public static Minecraft getMinecraftInstance()
+     {
++        if (instance == null)
++        {
++            try
++            {
++                ThreadGroup var0 = Thread.currentThread().getThreadGroup();
++                int var1 = var0.activeCount();
++                Thread[] var2 = new Thread[var1];
++                var0.enumerate(var2);
++                int var3;
++
++                for (var3 = 0; var3 < var2.length; ++var3)
++                {
++                    System.out.println(var2[var3].getName());
++                }
++
++                for (var3 = 0; var3 < var2.length; ++var3)
++                {
++                    if (var2[var3].getName().equals("Minecraft main thread"))
++                    {
++                        instance = (Minecraft)getPrivateValue(Thread.class, var2[var3], "target");
++                        break;
++                    }
++                }
++            }
++            catch (SecurityException var4)
++            {
++                logger.throwing("ModLoader", "getMinecraftInstance", var4);
++                throw new RuntimeException(var4);
++            }
++            catch (NoSuchFieldException var5)
++            {
++                logger.throwing("ModLoader", "getMinecraftInstance", var5);
++                throw new RuntimeException(var5);
++            }
++        }
++
+         return instance;
+     }
+-
++    */
++    
+     public static Object getPrivateValue(Class var0, Object var1, int var2) throws IllegalArgumentException, SecurityException, NoSuchFieldException
+     {
+         try
+@@ -445,7 +608,7 @@
+         catch (IllegalAccessException var4)
+         {
+             logger.throwing("ModLoader", "getPrivateValue", var4);
+-            ThrowException("An impossible error has occured!", var4);
++            throwException("An impossible error has occured!", var4);
+             return null;
+         }
+     }
+@@ -461,14 +624,17 @@
+         catch (IllegalAccessException var4)
+         {
+             logger.throwing("ModLoader", "getPrivateValue", var4);
+-            ThrowException("An impossible error has occured!", var4);
++            throwException("An impossible error has occured!", var4);
+             return null;
+         }
+     }
+-
++    
+     public static int getUniqueBlockModelID(BaseMod var0, boolean var1)
+     {
+-        return nextBlockModelID++;
++        int var2 = nextBlockModelID++;
++        blockModels.put(Integer.valueOf(var2), var0);
++        blockSpecialInv.put(Integer.valueOf(var2), Boolean.valueOf(var1));
++        return var2;
+     }
+ 
+     public static int getUniqueEntityId()
+@@ -489,10 +655,12 @@
+ 
+             ++itemSpriteIndex;
+         }
+-
++        
++        /*
+         Exception var0 = new Exception("No more empty item sprite indices left!");
+         logger.throwing("ModLoader", "getUniqueItemSpriteIndex", var0);
+-        ThrowException(var0);
++        throwException(var0);
++        */
+         return 0;
+     }
+ 
+@@ -510,11 +678,11 @@
+         {
+             Exception var1 = new Exception("No registry for this texture: " + var0);
+             logger.throwing("ModLoader", "getUniqueItemSpriteIndex", var1);
+-            ThrowException(var1);
++            throwException(var1);
+             return 0;
+         }
+     }
+-
++    
+     private static int getUniqueTerrainSpriteIndex()
+     {
+         while (terrainSpriteIndex < usedTerrainSprites.length)
+@@ -528,18 +696,20 @@
+ 
+             ++terrainSpriteIndex;
+         }
+-
++        
++        /*
+         Exception var0 = new Exception("No more empty terrain sprite indices left!");
+         logger.throwing("ModLoader", "getUniqueItemSpriteIndex", var0);
+-        ThrowException(var0);
++        throwException(var0);
++        */
+         return 0;
+     }
+ 
+     private static void init()
+     {
+         hasInit = true;
+-        String var0 = "1111111111111111111111111111111111111101111111011111111111111001111111111111111111111011111010111111100110000011111110000000001111111001100000110000000100000011000000010000001100000000000000110000000000000000000000000000000000000000000000001100000000000000";
+-        String var1 = "1111111111111111111111111111110111111111111111111111110111111111111111111111000111111011111111111111001111000000111111111111100011111111000010001111011110000000111111000000000011111100000000001111000000000111111000000000001101000000000001111111111111000011";
++        String var0 = "1111111111111111111111111111111111111101111111111111111111111111111111111111111111111111111111111111110111111111111111000111111111111101111111110000000101111111000000010101111100000000000000110000000000000000000000000000000000000000000000001111111111111111";
++        String var1 = "1111111111111111111111111111110111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110111111111111110000001111111111000000001111110000000111111111000000001111111110000001111111111111111111";
+ 
+         for (int var2 = 0; var2 < 256; ++var2)
+         {
+@@ -560,81 +730,99 @@
+ 
+         try
+         {
++            //instance = (Minecraft)getPrivateValue(Minecraft.class, (Object)null, 1);
++            //instance.entityRenderer = new EntityRendererProxy(instance);
+             classMap = (Map)getPrivateValue(EntityList.class, (Object)null, 0);
+             field_modifiers = Field.class.getDeclaredField("modifiers");
+             field_modifiers.setAccessible(true);
+-            Field[] var16 = BiomeGenBase.class.getDeclaredFields();
++            /*
++            field_TileEntityRenderers = TileEntityRenderer.class.getDeclaredFields()[0];
++            field_TileEntityRenderers.setAccessible(true);
++            field_armorList = RenderPlayer.class.getDeclaredFields()[3];
++            field_modifiers.setInt(field_armorList, field_armorList.getModifiers() & -17);
++            field_armorList.setAccessible(true);
++            field_animList = RenderEngine.class.getDeclaredFields()[6];
++            field_animList.setAccessible(true);
++            */
++            Field[] var15 = BiomeGenBase.class.getDeclaredFields();
+             LinkedList var3 = new LinkedList();
+-
+-            for (int var4 = 0; var4 < var16.length; ++var4)
++            int var4 = 0;
++            
++            while (true)
+             {
+-                Class var5 = var16[var4].getType();
+-
+-                if ((var16[var4].getModifiers() & 8) != 0 && var5.isAssignableFrom(BiomeGenBase.class))
++                if (var4 >= var15.length)
+                 {
+-                    BiomeGenBase var6 = (BiomeGenBase)var16[var4].get((Object)null);
++                    standardBiomes = (BiomeGenBase[])var3.toArray(new BiomeGenBase[0]);
+ 
+-                    if (!(var6 instanceof BiomeGenHell))
++                    try
+                     {
+-                        var3.add(var6);
++                        method_RegisterTileEntity = TileEntity.class.getDeclaredMethod("a", new Class[] {Class.class, String.class});
++                    }
++                    catch (NoSuchMethodException var8)
++                    {
++                        method_RegisterTileEntity = TileEntity.class.getDeclaredMethod("addMapping", new Class[] {Class.class, String.class});
+                     }
+-                }
+-            }
+ 
+-            standardBiomes = (BiomeGenBase[])((BiomeGenBase[])var3.toArray(new BiomeGenBase[0]));
++                    method_RegisterTileEntity.setAccessible(true);
+ 
+-            try
+-            {
+-                method_RegisterTileEntity = TileEntity.class.getDeclaredMethod("a", new Class[] {Class.class, String.class});
+-            }
+-            catch (NoSuchMethodException var8)
+-            {
+-                method_RegisterTileEntity = TileEntity.class.getDeclaredMethod("addMapping", new Class[] {Class.class, String.class});
+-            }
++                    try
++                    {
++                        method_RegisterEntityID = EntityList.class.getDeclaredMethod("a", new Class[] {Class.class, String.class, Integer.TYPE});
++                    }
++                    catch (NoSuchMethodException var7)
++                    {
++                        method_RegisterEntityID = EntityList.class.getDeclaredMethod("addMapping", new Class[] {Class.class, String.class, Integer.TYPE});
++                    }
+ 
+-            method_RegisterTileEntity.setAccessible(true);
++                    method_RegisterEntityID.setAccessible(true);
++                    break;
++                }
+ 
+-            try
+-            {
+-                method_RegisterEntityID = EntityList.class.getDeclaredMethod("a", new Class[] {Class.class, String.class, Integer.TYPE});
+-            }
+-            catch (NoSuchMethodException var7)
+-            {
+-                method_RegisterEntityID = EntityList.class.getDeclaredMethod("addMapping", new Class[] {Class.class, String.class, Integer.TYPE});
+-            }
++                Class var5 = var15[var4].getType();
++
++                if ((var15[var4].getModifiers() & 8) != 0 && var5.isAssignableFrom(BiomeGenBase.class))
++                {
++                    BiomeGenBase var6 = (BiomeGenBase)var15[var4].get((Object)null);
++
++                    if (!(var6 instanceof BiomeGenHell) && !(var6 instanceof BiomeGenEnd))
++                    {
++                        var3.add(var6);
++                    }
++                }
+ 
+-            method_RegisterEntityID.setAccessible(true);
++                ++var4;
++            }            
++        }
++        catch (SecurityException var10)
++        {
++            logger.throwing("ModLoader", "init", var10);
++            throwException(var10);
++            throw new RuntimeException(var10);
+         }
+-        catch (SecurityException var11)
++        catch (NoSuchFieldException var11)
+         {
+             logger.throwing("ModLoader", "init", var11);
+-            ThrowException(var11);
++            throwException(var11);
+             throw new RuntimeException(var11);
+         }
+-        catch (NoSuchFieldException var12)
++        catch (NoSuchMethodException var12)
+         {
+             logger.throwing("ModLoader", "init", var12);
+-            ThrowException(var12);
++            throwException(var12);
+             throw new RuntimeException(var12);
+         }
+-        catch (NoSuchMethodException var13)
++        catch (IllegalArgumentException var13)
+         {
+             logger.throwing("ModLoader", "init", var13);
+-            ThrowException(var13);
++            throwException(var13);
+             throw new RuntimeException(var13);
+         }
+-        catch (IllegalArgumentException var14)
++        catch (IllegalAccessException var14)
+         {
+             logger.throwing("ModLoader", "init", var14);
+-            ThrowException(var14);
++            throwException(var14);
+             throw new RuntimeException(var14);
+         }
+-        catch (IllegalAccessException var15)
+-        {
+-            logger.throwing("ModLoader", "init", var15);
+-            ThrowException(var15);
+-            throw new RuntimeException(var15);
+-        }
+ 
+         try
+         {
+@@ -650,13 +838,20 @@
+                 }
+ 
+                 String var18 = "Error loading ModLoader config. Check the common problems section in the ModLoaderMP thread.";
+-                ThrowException(new RuntimeException(var18, var9));
++                throwException(new RuntimeException(var18, var9));
+             }
+ 
+             if (props.containsKey("loggingLevel"))
+             {
+                 cfgLoggingLevel = Level.parse(props.getProperty("loggingLevel"));
+             }
++            
++            /*
++            if (props.containsKey("grassFix"))
++            {
++                RenderBlocks.cfgGrassFix = Boolean.parseBoolean(props.getProperty("grassFix"));
++            }
++            */
+ 
+             logger.setLevel(cfgLoggingLevel);
+ 
+@@ -670,49 +865,65 @@
+             logger.fine("ModLoader Server 1.2.3 Initializing...");
+             System.out.println("ModLoader Server 1.2.3 Initializing...");
+             MinecraftServer.logger.info("ModLoader Server 1.2.3 Initializing...");
+-            File var17 = new File(ModLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
++            File var16 = new File(ModLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+             modDir.mkdirs();
++            readFromClassPath(var16);
+             readFromModFolder(modDir);
+-            readFromClassPath(var17);
+-            System.out.println("Done.");
+-            props.setProperty("loggingLevel", cfgLoggingLevel.getName());
+-            Iterator var19 = modList.iterator();
++            sortModList();
++            Iterator var18 = modList.iterator();
++            BaseMod var17;
++
++            int x = 0;
++            while (var18.hasNext())
++            {
++                var17 = (BaseMod)var18.next();
++                var17.load();
++                logger.fine("Mod Loaded: \"" + var17.toString() + "\"");
++                System.out.println("Mod Loaded: " + var17.toString());
+ 
+-            while (var19.hasNext())
+-            {
+-                BaseMod var21 = (BaseMod)var19.next();
+-                var21.load();
+-                logger.fine("Mod Loaded: \"" + var21.toString() + "\"");
+-                System.out.println("Mod Loaded: " + var21.toString());
++                if (!props.containsKey(var17.getClass().getSimpleName()))
++                {
++                    props.setProperty(var17.getClass().getSimpleName(), "on");
++                }
+ 
+-                if (!props.containsKey(var21.getClass().getSimpleName()))
++                /*
++                 * Gather up a list of network mods and assign them an id 
++                 */
++                if (var17 instanceof NetworkMod)
+                 {
+-                    props.setProperty(var21.getClass().getSimpleName(), "on");
++                    ForgeHooks.networkMods.put(x++, (NetworkMod)var17);
+                 }
+             }
+ 
+-            Iterator var22 = modList.iterator();
++            var18 = modList.iterator();
+ 
+-            while (var22.hasNext())
++            while (var18.hasNext())
+             {
+-                BaseMod var20 = (BaseMod)var22.next();
+-                var20.ModsLoaded();
++                var17 = (BaseMod)var18.next();
++                var17.modsLoaded();
+             }
+ 
++            System.out.println("Done.");
++            props.setProperty("loggingLevel", cfgLoggingLevel.getName());
++            /*
++            props.setProperty("grassFix", Boolean.toString(RenderBlocks.cfgGrassFix));
++            instance.gameSettings.keyBindings = registerAllKeys(instance.gameSettings.keyBindings);
++            instance.gameSettings.loadOptions();
++            */
+             initStats();
+             saveConfig();
+         }
+-        catch (Throwable var10)
++        catch (Throwable var9)
+         {
+-            logger.throwing("ModLoader", "init", var10);
+-            ThrowException("ModLoader has failed to initialize.", var10);
++            logger.throwing("ModLoader", "init", var9);
++            throwException("ModLoader has failed to initialize.", var9);
+ 
+             if (logHandler != null)
+             {
+                 logHandler.close();
+             }
+ 
+-            throw new RuntimeException(var10);
++            throw new RuntimeException(var9);
+         }
+     }
+ 
+@@ -725,7 +936,7 @@
+         {
+             if (!StatList.oneShotStats.containsKey(Integer.valueOf(16777216 + var0)) && Block.blocksList[var0] != null && Block.blocksList[var0].getEnableStats())
+             {
+-                var1 = StatCollector.translateToLocalFormatted("stat.mineBlock", new Object[] {Block.blocksList[var0].translateBlockName()});
++                var1 = StringTranslate.getInstance().translateKeyFormat("stat.mineBlock", new Object[] {Boolean.valueOf(Block.blocksList[var0].func_48125_m())});
+                 StatList.mineBlockStatArray[var0] = (new StatCrafting(16777216 + var0, var1, var0)).registerStat();
+                 StatList.objectMineStats.add(StatList.mineBlockStatArray[var0]);
+             }
+@@ -735,7 +946,7 @@
+         {
+             if (!StatList.oneShotStats.containsKey(Integer.valueOf(16908288 + var0)) && Item.itemsList[var0] != null)
+             {
+-                var1 = StatCollector.translateToLocalFormatted("stat.useItem", new Object[] {Item.itemsList[var0].getStatName()});
++                var1 = StringTranslate.getInstance().translateKeyFormat("stat.useItem", new Object[] {Item.itemsList[var0].getStatName()});
+                 StatList.objectUseStats[var0] = (new StatCrafting(16908288 + var0, var1, var0)).registerStat();
+ 
+                 if (var0 >= Block.blocksList.length)
+@@ -746,42 +957,52 @@
+ 
+             if (!StatList.oneShotStats.containsKey(Integer.valueOf(16973824 + var0)) && Item.itemsList[var0] != null && Item.itemsList[var0].isDamageable())
+             {
+-                var1 = StatCollector.translateToLocalFormatted("stat.breakItem", new Object[] {Item.itemsList[var0].getStatName()});
++                var1 = StringTranslate.getInstance().translateKeyFormat("stat.breakItem", new Object[] {Item.itemsList[var0].getStatName()});
+                 StatList.objectBreakStats[var0] = (new StatCrafting(16973824 + var0, var1, var0)).registerStat();
+             }
+         }
+ 
+-        HashSet var6 = new HashSet();
++        HashSet var4 = new HashSet();
+         Iterator var2 = CraftingManager.getInstance().getRecipeList().iterator();
+-
++        Object var5;
++        
+         while (var2.hasNext())
+         {
+-            Object var7 = var2.next();
+-            var6.add(Integer.valueOf(((IRecipe)var7).getRecipeOutput().itemID));
++            var5 = var2.next();
++            var4.add(Integer.valueOf(((IRecipe)var5).getRecipeOutput().itemID));
+         }
+ 
+-        Iterator var3 = FurnaceRecipes.smelting().getSmeltingList().values().iterator();
++        var2 = FurnaceRecipes.smelting().getSmeltingList().values().iterator();
+ 
+-        while (var3.hasNext())
++        while (var2.hasNext())
+         {
+-            Object var8 = var3.next();
+-            var6.add(Integer.valueOf(((ItemStack)var8).itemID));
++            var5 = var2.next();
++            var4.add(Integer.valueOf(((ItemStack)var5).itemID));
+         }
+ 
+-        var3 = var6.iterator();
++        var2 = var4.iterator();
+ 
+-        while (var3.hasNext())
++        while (var2.hasNext())
+         {
+-            int var4 = ((Integer)var3.next()).intValue();
++            int var6 = ((Integer)var2.next()).intValue();
+ 
+-            if (!StatList.oneShotStats.containsKey(Integer.valueOf(16842752 + var4)) && Item.itemsList[var4] != null)
++            if (!StatList.oneShotStats.containsKey(Integer.valueOf(16842752 + var6)) && Item.itemsList[var6] != null)
+             {
+-                String var5 = StatCollector.translateToLocalFormatted("stat.craftItem", new Object[] {Item.itemsList[var4].getStatName()});
+-                StatList.objectCraftStats[var4] = (new StatCrafting(16842752 + var4, var5, var4)).registerStat();
++                String var3 = StringTranslate.getInstance().translateKeyFormat("stat.craftItem", new Object[] {Item.itemsList[var6].getStatName()});
++                StatList.objectCraftStats[var6] = (new StatCrafting(16842752 + var6, var3, var6)).registerStat();
+             }
+         }
+     }
+ 
++    public static boolean isGUIOpen(Class var0)
++    {
++        return false;
++        /*
++        Minecraft var1 = getMinecraftInstance();
++        return var0 == null ? var1.currentScreen == null : (var1.currentScreen == null && var0 != null ? false : var0.isInstance(var1.currentScreen));
++        */
++    }
++
+     public static boolean isModLoaded(String var0)
+     {
+         Class var1 = null;
+@@ -797,13 +1018,13 @@
+ 
+         if (var1 != null)
+         {
+-            Iterator var2 = modList.iterator();
++            Iterator var3 = modList.iterator();
+ 
+-            while (var2.hasNext())
++            while (var3.hasNext())
+             {
+-                BaseMod var3 = (BaseMod)var2.next();
++                BaseMod var2 = (BaseMod)var3.next();
+ 
+-                if (var1.isInstance(var3))
++                if (var1.isInstance(var2))
+                 {
+                     return true;
+                 }
+@@ -828,36 +1049,198 @@
+         }
+     }
+ 
+-    public static void OnTick(MinecraftServer var0)
++    /*
++    public static BufferedImage loadImage(RenderEngine var0, String var1) throws Exception
+     {
+-        if (!hasInit)
++        TexturePackList var2 = (TexturePackList)getPrivateValue(RenderEngine.class, var0, 11);
++        InputStream var3 = var2.selectedTexturePack.getResourceAsStream(var1);
++
++        if (var3 == null)
+         {
+-            init();
+-            logger.fine("Initialized");
++            throw new Exception("Image not found: " + var1);
+         }
++        else
++        {
++            BufferedImage var4 = ImageIO.read(var3);
+ 
+-        long var1 = 0L;
++            if (var4 == null)
++            {
++                throw new Exception("Image corrupted: " + var1);
++            }
++            else
++            {
++                return var4;
++            }
++        }
++    }
++    */
  
 -        if (var0.worldMngr != null && var0.worldMngr[0] != null)
-+        WorldServer world = (WorldServer)DimensionManager.getWorld(0);
-+        if (world != null)
++    public static void onItemPickup(EntityPlayer var0, ItemStack var1)
++    {
++        Iterator var3 = modList.iterator();
++
++        while (var3.hasNext())
          {
 -            var1 = var0.worldMngr[0].getWorldTime();
-+            var1 = world.getWorldTime();
-             Iterator var3 = inGameHooks.entrySet().iterator();
+-            Iterator var3 = inGameHooks.entrySet().iterator();
++            BaseMod var2 = (BaseMod)var3.next();
++            var2.onItemPickup(var0, var1);
++        }
++    }
++    
++    //public static void onTick(float var0, Minecraft var1)
++    public static void onTick(MinecraftServer var1)
++    {
++        /*
++        Profiler.endSection();
++        Profiler.endSection();
++        Profiler.startSection("modtick");
++        */
  
-             while (var3.hasNext())
-@@ -1385,6 +1400,7 @@
+-            while (var3.hasNext())
++        if (!hasInit)
++        {
++            init();
++            logger.fine("Initialized");
++        }
++        
++        /*
++        if (texPack == null || var1.gameSettings.skin != texPack)
++        {
++            texturesAdded = false;
++            texPack = var1.gameSettings.skin;
++        }
++        */
++        
++        /*
++        if (langPack == null || StringTranslate.getInstance().getCurrentLanguage() != langPack)
++        {
++            Properties var2 = null;
++
++            try
++            {
++                var2 = (Properties)getPrivateValue(StringTranslate.class, StringTranslate.getInstance(), 1);
++            }
++            catch (SecurityException var12)
++            {
++                logger.throwing("ModLoader", "AddLocalization", var12);
++                throwException(var12);
++            }
++            catch (NoSuchFieldException var13)
++            {
++                logger.throwing("ModLoader", "AddLocalization", var13);
++                throwException(var13);
++            }
++
++            langPack = StringTranslate.getInstance().getCurrentLanguage();
++
++            if (var2 != null)
++            {
++                if (localizedStrings.containsKey("en_US"))
++                {
++                    var2.putAll((Map)localizedStrings.get("en_US"));
++                }
++
++                if (!langPack.contentEquals("en_US") && localizedStrings.containsKey(langPack))
++                {
++                    var2.putAll((Map)localizedStrings.get(langPack));
++                }
++            }
++        }
++        */
++
++        /*
++        if (!texturesAdded && var1.renderEngine != null)
++        {
++            registerAllTextureOverrides(var1.renderEngine);
++            texturesAdded = true;
++        }
++        */
++
++        long var14 = 0L;
++        Iterator var4;
++        Entry var5;
++
++        WorldServer world = (WorldServer)DimensionManager.getWorld(0);
++        if (world != null)
++        {
++            var14 = world.getWorldTime();
++            var4 = inGameHooks.entrySet().iterator();
++
++            while (var4.hasNext())
++            {
++                var5 = (Entry)var4.next();
++
++                if ((clock != var14 || !((Boolean)var5.getValue()).booleanValue()) && !((BaseMod)var5.getKey()).onTickInGame(var1))
++                {
++                    var4.remove();
++                }
++            }
++        }
++        
++        /*
++        if (var1.standardGalacticFontRenderer != null)
++        {
++            var4 = inGUIHooks.entrySet().iterator();
++
++            while (var4.hasNext())
++            {
++                var5 = (Entry)var4.next();
++
++                if ((clock != var14 || !(((Boolean)var5.getValue()).booleanValue() & var1.theWorld != null)) && !((BaseMod)var5.getKey()).onTickInGUI(var0, var1, var1.currentScreen))
++                {
++                    var4.remove();
++                }
++            }
++        }
++        */
++
++        /*
++        if (clock != var14)
++        {
++            Iterator var16 = keyList.entrySet().iterator();
++
++            while (var16.hasNext())
+             {
+-                Entry var4 = (Entry)var3.next();
++                Entry var15 = (Entry)var16.next();
++                Iterator var7 = ((Map)var15.getValue()).entrySet().iterator();
+ 
+-                if (clock != var1 || !((Boolean)var4.getValue()).booleanValue())
++                while (var7.hasNext())
+                 {
+-                    ((BaseMod)var4.getKey()).OnTickInGame(var0);
++                    Entry var6 = (Entry)var7.next();
++                    int var8 = ((KeyBinding)var6.getKey()).keyCode;
++                    boolean var9;
++
++                    if (var8 < 0)
++                    {
++                        var8 += 100;
++                        var9 = Mouse.isButtonDown(var8);
++                    }
++                    else
++                    {
++                        var9 = Keyboard.isKeyDown(var8);
++                    }
++
++                    boolean[] var10 = (boolean[])var6.getValue();
++                    boolean var11 = var10[1];
++                    var10[1] = var9;
++
++                    if (var9 && (!var11 || var10[0]))
++                    {
++                        ((BaseMod)var15.getKey()).keyboardEvent((KeyBinding)var6.getKey());
++                    }
+                 }
+             }
+         }
++        */
+ 
+-        clock = var1;
++        clock = var14;
++        /*
++        Profiler.endSection();
++        Profiler.startSection("render");
++        Profiler.startSection("gameRenderer");
++        */
+     }
+ 
+-    public static void PopulateChunk(IChunkProvider var0, int var1, int var2, World var3)
++    /*
++    public static void openGUI(EntityPlayer var0, GuiScreen var1)
+     {
+         if (!hasInit)
+         {
+@@ -865,23 +1248,108 @@
+             logger.fine("Initialized");
+         }
+ 
+-        Iterator var4 = modList.iterator();
++        Minecraft var2 = getMinecraftInstance();
+ 
+-        while (var4.hasNext())
++        if (var2.renderViewEntity == var0)
++        {
++            if (var1 != null)
++            {
++                var2.displayGuiScreen(var1);
++            }
++        }
++    }
++    */
++    
++    public static void populateChunk(IChunkProvider var0, int var1, int var2, World var3)
++    {
++        if (!hasInit)
++        {
++            init();
++            logger.fine("Initialized");
++        }
++        
++        Random var4 = new Random(var3.getSeed());
++        long var5 = var4.nextLong() / 2L * 2L + 1L;
++        long var7 = var4.nextLong() / 2L * 2L + 1L;
++        var4.setSeed((long)var1 * var5 + (long)var2 * var7 ^ var3.getSeed());        
++        Iterator var10 = modList.iterator();
++
++        while (var10.hasNext())
+         {
+-            BaseMod var5 = (BaseMod)var4.next();
++            BaseMod var9 = (BaseMod)var10.next();
+ 
++            //if (var0.makeString().equals("RandomLevelSource"))
+             if (var0 instanceof ChunkProviderGenerate)
+             {
+-                var5.GenerateSurface(var3, var3.rand, var1, var2);
++                var9.generateSurface(var3, var4, var1 << 4, var2 << 4);
+             }
++            //else if (var0.makeString().equals("HellRandomLevelSource"))
+             else if (var0 instanceof ChunkProviderHell)
+             {
+-                var5.GenerateNether(var3, var3.rand, var1, var2);
++                var9.generateNether(var3, var4, var1 << 4, var2 << 4);
+             }
+         }
+     }
+ 
++    private static void readFromClassPath(File var0) throws FileNotFoundException, IOException
++    {
++        logger.finer("Adding mods from " + var0.getCanonicalPath());
++        ClassLoader var1 = ModLoader.class.getClassLoader();
++        String var5;
++
++        if (var0.isFile() && (var0.getName().endsWith(".jar") || var0.getName().endsWith(".zip")))
++        {
++            logger.finer("Zip found.");
++            FileInputStream var6 = new FileInputStream(var0);
++            ZipInputStream var8 = new ZipInputStream(var6);
++            ZipEntry var9 = null;
++
++            while (true)
++            {
++                var9 = var8.getNextEntry();
++
++                if (var9 == null)
++                {
++                    var6.close();
++                    break;
++                }
++
++                var5 = var9.getName();
++
++                if (!var9.isDirectory() && var5.startsWith("mod_") && var5.endsWith(".class"))
++                {
++                    addMod(var1, var5);
++                }
++            }
++        }
++        else if (var0.isDirectory())
++        {
++            Package var2 = ModLoader.class.getPackage();
++
++            if (var2 != null)
++            {
++                String var3 = var2.getName().replace('.', File.separatorChar);
++                var0 = new File(var0, var3);
++            }
++
++            logger.finer("Directory found.");
++            File[] var7 = var0.listFiles();
++
++            if (var7 != null)
++            {
++                for (int var4 = 0; var4 < var7.length; ++var4)
++                {
++                    var5 = var7[var4].getName();
++
++                    if (var7[var4].isFile() && var5.startsWith("mod_") && var5.endsWith(".class"))
++                    {
++                        addMod(var1, var5);
++                    }
++                }
++            }
++        }
++    }
++    
+     private static void readFromModFolder(File var0) throws IOException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException
+     {
+         ClassLoader var1 = MinecraftServer.class.getClassLoader();
+@@ -895,18 +1363,29 @@
+         else
+         {
+             File[] var3 = var0.listFiles();
++            Arrays.sort(var3);
++            int var4;
++            File var5;
+ 
+-            for (int var4 = 0; var4 < var3.length; ++var4)
++            if (var1 instanceof URLClassLoader)
+             {
+-                File var5 = var3[var4];
+-
+-                if (var5.isDirectory() || var5.isFile() && (var5.getName().endsWith(".jar") || var5.getName().endsWith(".zip")))
++                for (var4 = 0; var4 < var3.length; ++var4)
+                 {
+-                    if (var1 instanceof URLClassLoader)
++                    var5 = var3[var4];
++
++                    if (var5.isDirectory() || var5.isFile() && (var5.getName().endsWith(".jar") || var5.getName().endsWith(".zip")))
+                     {
+                         var2.invoke(var1, new Object[] {var5.toURI().toURL()});
+                     }
++                }
++            }
++
++            for (var4 = 0; var4 < var3.length; ++var4)
++            {
++                var5 = var3[var4];
+ 
++                if (var5.isDirectory() || var5.isFile() && (var5.getName().endsWith(".jar") || var5.getName().endsWith(".zip")))
++                {
+                     logger.finer("Adding mods from " + var5.getCanonicalPath());
+                     String var9;
+ 
+@@ -915,10 +1394,11 @@
+                         logger.finer("Zip found.");
+                         FileInputStream var6 = new FileInputStream(var5);
+                         ZipInputStream var7 = new ZipInputStream(var6);
++                        ZipEntry var8 = null;
+ 
+                         while (true)
+                         {
+-                            ZipEntry var8 = var7.getNextEntry();
++                            var8 = var7.getNextEntry();
+ 
+                             if (var8 == null)
+                             {
+@@ -966,70 +1446,81 @@
+         }
+     }
+ 
+-    private static void readFromClassPath(File var0) throws FileNotFoundException, IOException
++    /*
++    public static KeyBinding[] registerAllKeys(KeyBinding[] var0)
+     {
+-        logger.finer("Adding mods from " + var0.getCanonicalPath());
+-        ClassLoader var1 = ModLoader.class.getClassLoader();
+-        String var5;
++        LinkedList var1 = new LinkedList();
++        var1.addAll(Arrays.asList(var0));
++        Iterator var3 = keyList.values().iterator();
+ 
+-        if (var0.isFile() && (var0.getName().endsWith(".jar") || var0.getName().endsWith(".zip")))
++        while (var3.hasNext())
+         {
+-            logger.finer("Zip found.");
+-            FileInputStream var6 = new FileInputStream(var0);
+-            ZipInputStream var8 = new ZipInputStream(var6);
++            Map var2 = (Map)var3.next();
++            var1.addAll(var2.keySet());
++        }
+ 
+-            while (true)
+-            {
+-                ZipEntry var9 = var8.getNextEntry();
++        return (KeyBinding[])var1.toArray(new KeyBinding[0]);
++    }
++    */
++    
++    /*
++    public static void registerAllTextureOverrides(RenderEngine var0)
++    {
++        animList.clear();
++        Minecraft var1 = getMinecraftInstance();
++        Iterator var3 = modList.iterator();
+ 
+-                if (var9 == null)
+-                {
+-                    var6.close();
+-                    break;
+-                }
++        while (var3.hasNext())
++        {
++            BaseMod var2 = (BaseMod)var3.next();
++            var2.registerAnimation(var1);
++        }
+ 
+-                var5 = var9.getName();
++        var3 = animList.iterator();
+ 
+-                if (!var9.isDirectory() && var5.startsWith("mod_") && var5.endsWith(".class"))
+-                {
+-                    addMod(var1, var5);
+-                }
+-            }
+-        }
+-        else if (var0.isDirectory())
++        while (var3.hasNext())
+         {
+-            Package var2 = ModLoader.class.getPackage();
++            TextureFX var12 = (TextureFX)var3.next();
++            var0.registerTextureFX(var12);
++        }
+ 
+-            if (var2 != null)
+-            {
+-                String var3 = var2.getName().replace('.', File.separatorChar);
+-                var0 = new File(var0, var3);
+-            }
++        var3 = overrides.entrySet().iterator();
+ 
+-            logger.finer("Directory found.");
+-            File[] var7 = var0.listFiles();
++        while (var3.hasNext())
++        {
++            Entry var13 = (Entry)var3.next();
++            Iterator var5 = ((Map)var13.getValue()).entrySet().iterator();
+ 
+-            if (var7 != null)
++            while (var5.hasNext())
+             {
+-                for (int var4 = 0; var4 < var7.length; ++var4)
+-                {
+-                    var5 = var7[var4].getName();
++                Entry var4 = (Entry)var5.next();
++                String var6 = (String)var4.getKey();
++                int var7 = ((Integer)var4.getValue()).intValue();
++                int var8 = ((Integer)var13.getKey()).intValue();
+ 
+-                    if (var7[var4].isFile() && var5.startsWith("mod_") && var5.endsWith(".class"))
+-                    {
+-                        addMod(var1, var5);
+-                    }
++                try
++                {
++                    BufferedImage var9 = loadImage(var0, var6);
++                    ModTextureStatic var10 = new ModTextureStatic(var7, var8, var9);
++                    var0.registerTextureFX(var10);
++                }
++                catch (Exception var11)
++                {
++                    logger.throwing("ModLoader", "RegisterAllTextureOverrides", var11);
++                    throwException(var11);
++                    throw new RuntimeException(var11);
+                 }
+             }
+         }
+     }
++    */
+ 
+-    public static void RegisterBlock(Block var0)
++    public static void registerBlock(Block var0)
+     {
+-        RegisterBlock(var0, (Class)null);
++        registerBlock(var0, (Class)null);
+     }
+ 
+-    public static void RegisterBlock(Block var0, Class var1)
++    public static void registerBlock(Block var0, Class var1)
+     {
+         try
+         {
+@@ -1058,36 +1549,36 @@
+         catch (IllegalArgumentException var4)
+         {
+             logger.throwing("ModLoader", "RegisterBlock", var4);
+-            ThrowException(var4);
++            throwException(var4);
+         }
+         catch (IllegalAccessException var5)
+         {
+             logger.throwing("ModLoader", "RegisterBlock", var5);
+-            ThrowException(var5);
++            throwException(var5);
+         }
+         catch (SecurityException var6)
+         {
+             logger.throwing("ModLoader", "RegisterBlock", var6);
+-            ThrowException(var6);
++            throwException(var6);
+         }
+         catch (InstantiationException var7)
+         {
+             logger.throwing("ModLoader", "RegisterBlock", var7);
+-            ThrowException(var7);
++            throwException(var7);
+         }
+         catch (InvocationTargetException var8)
+         {
+             logger.throwing("ModLoader", "RegisterBlock", var8);
+-            ThrowException(var8);
++            throwException(var8);
+         }
+         catch (NoSuchMethodException var9)
+         {
+             logger.throwing("ModLoader", "RegisterBlock", var9);
+-            ThrowException(var9);
++            throwException(var9);
+         }
+     }
+ 
+-    public static void RegisterEntityID(Class var0, String var1, int var2)
++    public static void registerEntityID(Class var0, String var1, int var2)
+     {
+         try
+         {
+@@ -1096,21 +1587,42 @@
+         catch (IllegalArgumentException var4)
+         {
+             logger.throwing("ModLoader", "RegisterEntityID", var4);
+-            ThrowException(var4);
++            throwException(var4);
+         }
+         catch (IllegalAccessException var5)
+         {
+             logger.throwing("ModLoader", "RegisterEntityID", var5);
+-            ThrowException(var5);
++            throwException(var5);
+         }
+         catch (InvocationTargetException var6)
+         {
+             logger.throwing("ModLoader", "RegisterEntityID", var6);
+-            ThrowException(var6);
++            throwException(var6);
+         }
+     }
+ 
+-    public static void RegisterTileEntity(Class var0, String var1)
++    public static void registerEntityID(Class var0, String var1, int var2, int var3, int var4)
++    {
++        registerEntityID(var0, var1, var2);
++        EntityList.entityEggs.put(Integer.valueOf(var2), new EntityEggInfo(var2, var3, var4));
++    }
++ 
++    /*
++    public static void registerKey(BaseMod var0, KeyBinding var1, boolean var2)
++    {
++        Object var3 = (Map)keyList.get(var0);
++
++        if (var3 == null)
++        {
++            var3 = new HashMap();
++        }
++
++        ((Map)var3).put(var1, new boolean[] {var2, false});
++        keyList.put(var0, var3);
++    }
++    */
++    
++    public static void registerTileEntity(Class var0, String var1)
+     {
+         try
+         {
+@@ -1119,26 +1631,59 @@
+         catch (IllegalArgumentException var3)
+         {
+             logger.throwing("ModLoader", "RegisterTileEntity", var3);
+-            ThrowException(var3);
++            throwException(var3);
+         }
+         catch (IllegalAccessException var4)
+         {
+             logger.throwing("ModLoader", "RegisterTileEntity", var4);
+-            ThrowException(var4);
++            throwException(var4);
+         }
+         catch (InvocationTargetException var5)
+         {
+             logger.throwing("ModLoader", "RegisterTileEntity", var5);
+-            ThrowException(var5);
++            throwException(var5);
+         }
+     }
++    
++    /*
++    public static void registerTileEntity(Class var0, String var1, TileEntitySpecialRenderer var2)
++    {
++        try
++        {
++            method_RegisterTileEntity.invoke((Object)null, new Object[] {var0, var1});
+ 
+-    public static void RemoveSpawn(Class var0, EnumCreatureType var1)
++            if (var2 != null)
++            {
++                TileEntityRenderer var3 = TileEntityRenderer.instance;
++                Map var4 = (Map)field_TileEntityRenderers.get(var3);
++                var4.put(var0, var2);
++                var2.setTileEntityRenderer(var3);
++            }
++        }
++        catch (IllegalArgumentException var5)
++        {
++            logger.throwing("ModLoader", "RegisterTileEntity", var5);
++            throwException(var5);
++        }
++        catch (IllegalAccessException var6)
++        {
++            logger.throwing("ModLoader", "RegisterTileEntity", var6);
++            throwException(var6);
++        }
++        catch (InvocationTargetException var7)
++        {
++            logger.throwing("ModLoader", "RegisterTileEntity", var7);
++            throwException(var7);
++        }
++    }
++    */
++    
++    public static void removeSpawn(Class var0, EnumCreatureType var1)
+     {
+-        RemoveSpawn(var0, var1, (BiomeGenBase[])null);
++        removeSpawn(var0, var1, (BiomeGenBase[])null);
+     }
+ 
+-    public static void RemoveSpawn(Class var0, EnumCreatureType var1, BiomeGenBase[] var2)
++    public static void removeSpawn(Class var0, EnumCreatureType var1, BiomeGenBase... var2)
+     {
+         if (var0 == null)
+         {
+@@ -1169,8 +1714,7 @@
+ 
+                         if (var6.entityClass == var0)
+                         {
+-                            var4.remove(var6);
+-                            break;
++                            var5.remove();
+                         }
+                     }
+                 }
+@@ -1178,21 +1722,46 @@
+         }
+     }
+ 
+-    public static void RemoveSpawn(String var0, EnumCreatureType var1)
++    public static void removeSpawn(String var0, EnumCreatureType var1)
+     {
+-        RemoveSpawn(var0, var1, (BiomeGenBase[])null);
++        removeSpawn(var0, var1, (BiomeGenBase[])null);
+     }
+ 
+-    public static void RemoveSpawn(String var0, EnumCreatureType var1, BiomeGenBase[] var2)
++    public static void removeSpawn(String var0, EnumCreatureType var1, BiomeGenBase... var2)
+     {
+         Class var3 = (Class)classMap.get(var0);
+ 
+         if (var3 != null && EntityLiving.class.isAssignableFrom(var3))
+         {
+-            RemoveSpawn(var3, var1, var2);
++            removeSpawn(var3, var1, var2);
++        }
++    }
++
++    public static boolean renderBlockIsItemFull3D(int var0)
++    {
++        return !blockSpecialInv.containsKey(Integer.valueOf(var0)) ? var0 == 16 : ((Boolean)blockSpecialInv.get(Integer.valueOf(var0))).booleanValue();
++    }
++
++    /*
++    public static void renderInvBlock(RenderBlocks var0, Block var1, int var2, int var3)
++    {
++        BaseMod var4 = (BaseMod)blockModels.get(Integer.valueOf(var3));
++
++        if (var4 != null)
++        {
++            var4.renderInvBlock(var0, var1, var2, var3);
+         }
+     }
++    */
+ 
++    /*
++    public static boolean renderWorldBlock(RenderBlocks var0, IBlockAccess var1, int var2, int var3, int var4, Block var5, int var6)
++    {
++        BaseMod var7 = (BaseMod)blockModels.get(Integer.valueOf(var6));
++        return var7 == null ? false : var7.renderWorldBlock(var0, var1, var2, var3, var4, var5, var6);
++    }
++    */
++    
+     public static void saveConfig() throws IOException
+     {
+         cfgdir.mkdir();
+@@ -1208,7 +1777,7 @@
+         }
+     }
+ 
+-    public static void SetInGameHook(BaseMod var0, boolean var1, boolean var2)
++    public static void setInGameHook(BaseMod var0, boolean var1, boolean var2)
+     {
+         if (var1)
+         {
+@@ -1220,6 +1789,18 @@
+         }
+     }
+ 
++    public static void setInGUIHook(BaseMod var0, boolean var1, boolean var2)
++    {
++        if (var1)
++        {
++            inGUIHooks.put(var0, Boolean.valueOf(var2));
++        }
++        else
++        {
++            inGUIHooks.remove(var0);
++        }
++    }
++    
+     public static void setPrivateValue(Class var0, Object var1, int var2, Object var3) throws IllegalArgumentException, SecurityException, NoSuchFieldException
+     {
+         try
+@@ -1238,7 +1819,7 @@
+         catch (IllegalAccessException var6)
+         {
+             logger.throwing("ModLoader", "setPrivateValue", var6);
+-            ThrowException("An impossible error has occured!", var6);
++            throwException("An impossible error has occured!", var6);
+         }
+     }
+ 
+@@ -1260,44 +1841,321 @@
+         catch (IllegalAccessException var6)
+         {
+             logger.throwing("ModLoader", "setPrivateValue", var6);
+-            ThrowException("An impossible error has occured!", var6);
++            throwException("An impossible error has occured!", var6);
+         }
+     }
+ 
+-    public static void TakenFromCrafting(EntityPlayer var0, ItemStack var1)
++    private static void setupProperties(Class var0) throws IllegalArgumentException, IllegalAccessException, IOException, SecurityException, NoSuchFieldException, NoSuchAlgorithmException, DigestException
+     {
+-        Iterator var3 = modList.iterator();
++        LinkedList var1 = new LinkedList();
++        Properties var2 = new Properties();
++        int var3 = 0;
++        int var4 = 0;
++        File var5 = new File(cfgdir, var0.getSimpleName() + ".cfg");
+ 
+-        while (var3.hasNext())
++        if (var5.exists() && var5.canRead())
+         {
+-            BaseMod var2 = (BaseMod)var3.next();
+-            var2.TakenFromCrafting(var0, var1);
++            var2.load(new FileInputStream(var5));
+         }
+-    }
+ 
+-    public static void TakenFromFurnace(EntityPlayer var0, ItemStack var1)
++        if (var2.containsKey("checksum"))
++        {
++            var4 = Integer.parseInt(var2.getProperty("checksum"), 36);
++        }
++
++        Field[] var9;
++        int var8 = (var9 = var0.getDeclaredFields()).length;
++
++        for (int var7 = 0; var7 < var8; ++var7)
++        {
++            Field var6 = var9[var7];
++
++            if ((var6.getModifiers() & 8) != 0 && var6.isAnnotationPresent(MLProp.class))
++            {
++                var1.add(var6);
++                Object var10 = var6.get((Object)null);
++                var3 += var10.hashCode();
++            }
++        }
++
++        StringBuilder var19 = new StringBuilder();
++        Iterator var21 = var1.iterator();
++
++        while (var21.hasNext())
++        {
++            Field var20 = (Field)var21.next();
++
++            if ((var20.getModifiers() & 8) != 0 && var20.isAnnotationPresent(MLProp.class))
++            {
++                Class var22 = var20.getType();
++                MLProp var23 = (MLProp)var20.getAnnotation(MLProp.class);
++                String var11 = var23.name().length() == 0 ? var20.getName() : var23.name();
++                Object var12 = var20.get((Object)null);
++                StringBuilder var13 = new StringBuilder();
++
++                if (var23.min() != Double.NEGATIVE_INFINITY)
++                {
++                    var13.append(String.format(",>=%.1f", new Object[] {Double.valueOf(var23.min())}));
++                }
++
++                if (var23.max() != Double.POSITIVE_INFINITY)
++                {
++                    var13.append(String.format(",<=%.1f", new Object[] {Double.valueOf(var23.max())}));
++                }
++
++                StringBuilder var14 = new StringBuilder();
++
++                if (var23.info().length() > 0)
++                {
++                    var14.append(" -- ");
++                    var14.append(var23.info());
++                }
++
++                var19.append(String.format("%s (%s:%s%s)%s\n", new Object[] {var11, var22.getName(), var12, var13, var14}));
++
++                if (var4 == var3 && var2.containsKey(var11))
++                {
++                    String var15 = var2.getProperty(var11);
++                    Object var16 = null;
++
++                    if (var22.isAssignableFrom(String.class))
++                    {
++                        var16 = var15;
++                    }
++                    else if (var22.isAssignableFrom(Integer.TYPE))
++                    {
++                        var16 = Integer.valueOf(Integer.parseInt(var15));
++                    }
++                    else if (var22.isAssignableFrom(Short.TYPE))
++                    {
++                        var16 = Short.valueOf(Short.parseShort(var15));
++                    }
++                    else if (var22.isAssignableFrom(Byte.TYPE))
++                    {
++                        var16 = Byte.valueOf(Byte.parseByte(var15));
++                    }
++                    else if (var22.isAssignableFrom(Boolean.TYPE))
++                    {
++                        var16 = Boolean.valueOf(Boolean.parseBoolean(var15));
++                    }
++                    else if (var22.isAssignableFrom(Float.TYPE))
++                    {
++                        var16 = Float.valueOf(Float.parseFloat(var15));
++                    }
++                    else if (var22.isAssignableFrom(Double.TYPE))
++                    {
++                        var16 = Double.valueOf(Double.parseDouble(var15));
++                    }
++
++                    if (var16 != null)
++                    {
++                        if (var16 instanceof Number)
++                        {
++                            double var17 = ((Number)var16).doubleValue();
++
++                            if (var23.min() != Double.NEGATIVE_INFINITY && var17 < var23.min() || var23.max() != Double.POSITIVE_INFINITY && var17 > var23.max())
++                            {
++                                continue;
++                            }
++                        }
++
++                        logger.finer(var11 + " set to " + var16);
++
++                        if (!var16.equals(var12))
++                        {
++                            var20.set((Object)null, var16);
++                        }
++                    }
++                }
++                else
++                {
++                    logger.finer(var11 + " not in config, using default: " + var12);
++                    var2.setProperty(var11, var12.toString());
++                }
++            }
++        }
++
++        var2.put("checksum", Integer.toString(var3, 36));
++
++        if (!var2.isEmpty() && (var5.exists() || var5.createNewFile()) && var5.canWrite())
++        {
++            var2.store(new FileOutputStream(var5), var19.toString());
++        }
++    }  
++    
++    private static void sortModList() throws Exception
+     {
+-        Iterator var3 = modList.iterator();
++        HashMap var0 = new HashMap();
++        Iterator var2 = getLoadedMods().iterator();
+ 
+-        while (var3.hasNext())
++        while (var2.hasNext())
+         {
+-            BaseMod var2 = (BaseMod)var3.next();
+-            var2.TakenFromFurnace(var0, var1);
++            BaseMod var1 = (BaseMod)var2.next();
++            var0.put(var1.getClass().getSimpleName(), var1);
+         }
++
++        LinkedList var17 = new LinkedList();
++
++        for (int var18 = 0; var17.size() != modList.size() && var18 <= 10; ++var18)
++        {
++            Iterator var4 = modList.iterator();
++
++            while (var4.hasNext())
++            {
++                BaseMod var3 = (BaseMod)var4.next();
++
++                if (!var17.contains(var3))
++                {
++                    String var5 = var3.getPriorities();
++
++                    if (var5 != null && var5.length() != 0 && var5.indexOf(58) != -1)
++                    {
++                        if (var18 > 0)
++                        {
++                            int var7 = -1;
++                            int var8 = Integer.MIN_VALUE;
++                            int var9 = Integer.MAX_VALUE;
++                            String[] var6;
++
++                            if (var5.indexOf(59) > 0)
++                            {
++                                var6 = var5.split(";");
++                            }
++                            else
++                            {
++                                var6 = new String[] {var5};
++                            }
++
++                            int var10 = 0;
++
++                            while (true)
++                            {
++                                if (var10 < var6.length)
++                                {
++                                    label141:
++                                    {
++                                        String var11 = var6[var10];
++
++                                        if (var11.indexOf(58) != -1)
++                                        {
++                                            String[] var12 = var11.split(":");
++                                            String var13 = var12[0];
++                                            String var14 = var12[1];
++
++                                            if (var13.contentEquals("required-before") || var13.contentEquals("before") || var13.contentEquals("after") || var13.contentEquals("required-after"))
++                                            {
++                                                if (var14.contentEquals("*"))
++                                                {
++                                                    if (!var13.contentEquals("required-before") && !var13.contentEquals("before"))
++                                                    {
++                                                        if (var13.contentEquals("required-after") || var13.contentEquals("after"))
++                                                        {
++                                                            var7 = var17.size();
++                                                        }
++                                                    }
++                                                    else
++                                                    {
++                                                        var7 = 0;
++                                                    }
++
++                                                    break label141;
++                                                }
++
++                                                if ((var13.contentEquals("required-before") || var13.contentEquals("required-after")) && !var0.containsKey(var14))
++                                                {
++                                                    throw new Exception(String.format("%s is missing dependency: %s", new Object[] {var3, var14}));
++                                                }
++
++                                                BaseMod var15 = (BaseMod)var0.get(var14);
++
++                                                if (!var17.contains(var15))
++                                                {
++                                                    break;
++                                                }
++
++                                                int var16 = var17.indexOf(var15);
++
++                                                if (!var13.contentEquals("required-before") && !var13.contentEquals("before"))
++                                                {
++                                                    if (var13.contentEquals("required-after") || var13.contentEquals("after"))
++                                                    {
++                                                        var7 = var16 + 1;
++
++                                                        if (var7 > var8)
++                                                        {
++                                                            var8 = var7;
++                                                        }
++                                                        else
++                                                        {
++                                                            var7 = var8;
++                                                        }
++                                                    }
++                                                }
++                                                else
++                                                {
++                                                    var7 = var16;
++
++                                                    if (var16 < var9)
++                                                    {
++                                                        var9 = var16;
++                                                    }
++                                                    else
++                                                    {
++                                                        var7 = var9;
++                                                    }
++                                                }
++                                            }
++                                        }
++
++                                        ++var10;
++                                        continue;
++                                    }
++                                }
++
++                                if (var7 != -1)
++                                {
++                                    var17.add(var7, var3);
++                                }
++
++                                break;
++                            }
++                        }
++                    }
++                    else
++                    {
++                        var17.add(var3);
++                    }
++                }
++            }
++        }
++
++        modList.clear();
++        modList.addAll(var17);
+     }
++    
++    public static void takenFromCrafting(EntityPlayer var0, ItemStack var1, IInventory var2)
++    {
++        Iterator var4 = modList.iterator();
+ 
+-    public static void OnItemPickup(EntityPlayer var0, ItemStack var1)
++        while (var4.hasNext())
++        {
++            BaseMod var3 = (BaseMod)var4.next();
++            var3.takenFromCrafting(var0, var1, var2);
++        }
++    }
++
++    public static void takenFromFurnace(EntityPlayer var0, ItemStack var1)
+     {
+         Iterator var3 = modList.iterator();
+ 
+         while (var3.hasNext())
+         {
+             BaseMod var2 = (BaseMod)var3.next();
+-            var2.OnItemPickup(var0, var1);
++            var2.takenFromFurnace(var0, var1);
+         }
+     }
+ 
+-    public static void ThrowException(String var0, Throwable var1)
++    public static void throwException(String var0, Throwable var1)
+     {
+         var1.printStackTrace();
+         logger.log(Level.SEVERE, "Unexpected exception", var1);
+@@ -1305,11 +2163,19 @@
+         throw new RuntimeException(var0, var1);
+     }
+ 
+-    private static void ThrowException(Throwable var0)
++    private static void throwException(Throwable var0)
+     {
+-        ThrowException("Exception occured in ModLoader", var0);
++        throwException("Exception occured in ModLoader", var0);
+     }
+ 
++    /* ============================== MLMP STUFF ================================= */
++
++    
++    public static MinecraftServer getMinecraftServerInstance()
++    {
++        return instance;
++    }
++    
+     public static void Init(MinecraftServer var0)
+     {
+         instance = var0;
+@@ -1326,7 +2192,7 @@
+         catch (URISyntaxException var6)
+         {
+             getLogger().throwing("ModLoader", "Init", var6);
+-            ThrowException("ModLoader", var6);
++            throwException("ModLoader", var6);
+             return;
+         }
+ 
+@@ -1357,13 +2223,13 @@
+         catch (NoSuchFieldException var4)
+         {
+             getLogger().throwing("ModLoader", "Init", var4);
+-            ThrowException("ModLoader", var4);
++            throwException("ModLoader", var4);
+             return;
+         }
+         catch (NoSuchMethodException var5)
+         {
+             getLogger().throwing("ModLoader", "Init", var5);
+-            ThrowException("ModLoader", var5);
++            throwException("ModLoader", var5);
+             return;
+         }
+ 
+@@ -1385,6 +2251,7 @@
              {
                  method_getNextWindowId.invoke(var4, new Object[0]);
                  int var5 = field_currentWindowId.getInt(var4);
@@ -49,3 +2257,130 @@
                  var4.playerNetServerHandler.sendPacket(new Packet100OpenWindow(var5, var1, var2.getInvName(), var2.getSizeInventory()));
                  var4.craftingInventory = var3;
                  var4.craftingInventory.windowId = var5;
+@@ -1393,13 +2260,124 @@
+             catch (InvocationTargetException var6)
+             {
+                 getLogger().throwing("ModLoaderMultiplayer", "OpenModGUI", var6);
+-                ThrowException("ModLoaderMultiplayer", var6);
++                throwException("ModLoaderMultiplayer", var6);
+             }
+             catch (IllegalAccessException var7)
+             {
+                 getLogger().throwing("ModLoaderMultiplayer", "OpenModGUI", var7);
+-                ThrowException("ModLoaderMultiplayer", var7);
++                throwException("ModLoaderMultiplayer", var7);
+             }
+         }
+     }
++    
++    /* And this kids, is why you don't be lazy when updating shit! All these bouncer functions just cuz Flan was to lazy to update ModLoaderMP properly */
++
++    public static void AddAchievementDesc(Achievement var0, String var1, String var2)
++    {
++        addAchievementDesc(var0, var1, var2);
++    }
++    public static int AddAllFuel(int var0)
++    {
++        return addAllFuel(var0, 0);
++    }
++    public static int AddArmor(String var0)
++    {
++        return addArmor(var0);
++    }
++    public static void AddRecipe(ItemStack var0, Object[] var1)
++    {
++        addRecipe(var0, var1);
++    }
++    public static void AddShapelessRecipe(ItemStack var0, Object[] var1)
++    {
++        addShapelessRecipe(var0, var1);
++    }
++    public static void AddSmelting(int var0, ItemStack var1)
++    {
++        addSmelting(var0, var1);
++    }
++    public static void AddSpawn(Class var0, int var1, int var2, int var3, EnumCreatureType var4)
++    {
++        addSpawn(var0, var1, var2, var3, var4);
++    }
++    public static void AddSpawn(Class var0, int var1, int var2, int var3, EnumCreatureType var4, BiomeGenBase[] var5)
++    {
++        addSpawn(var0, var1, var2, var3, var4, var5);
++    }
++    public static void AddSpawn(String var0, int var1, int var2, int var3, EnumCreatureType var4)
++    {
++        addSpawn(var0, var1, var2, var3, var4);
++    }
++    public static void AddSpawn(String var0, int var1, int var2, int var3, EnumCreatureType var4, BiomeGenBase[] var5)
++    {
++        addSpawn(var0, var1, var2, var3, var4, var5);
++    }
++    public static boolean DispenseEntity(World var0, double var1, double var3, double var5, int var7, int var8, ItemStack var9)
++    {
++        return dispenseEntity(var0, var1, var3, var5, var7, var8, var9);
++    }
++    public static void OnTick(MinecraftServer var0)
++    {
++        onTick(var0);
++    }
++    public static void PopulateChunk(IChunkProvider var0, int var1, int var2, World var3)
++    {
++        populateChunk(var0, var1, var2, var3);
++    }
++    public static void RegisterBlock(Block var0)
++    {
++        registerBlock(var0);
++    }
++    public static void RegisterBlock(Block var0, Class var1)
++    {
++        registerBlock(var0, var1);
++    }
++    public static void RegisterEntityID(Class var0, String var1, int var2)
++    {
++        registerEntityID(var0, var1, var2);
++    }
++    public static void RegisterTileEntity(Class var0, String var1)
++    {
++        registerTileEntity(var0, var1);
++    }
++    public static void RemoveSpawn(Class var0, EnumCreatureType var1)
++    {
++        removeSpawn(var0, var1);
++    }
++    public static void RemoveSpawn(Class var0, EnumCreatureType var1, BiomeGenBase[] var2)
++    {
++        removeSpawn(var0, var1, var2);
++    }
++    public static void RemoveSpawn(String var0, EnumCreatureType var1)
++    {
++        removeSpawn(var0, var1);
++    }
++    public static void RemoveSpawn(String var0, EnumCreatureType var1, BiomeGenBase[] var2)
++    {
++        removeSpawn(var0, var1, var2);
++    }
++    public static void SetInGameHook(BaseMod var0, boolean var1, boolean var2)
++    {
++        setInGameHook(var0, var1, var2);
++    }
++    public static void TakenFromCrafting(EntityPlayer var0, ItemStack var1)
++    {
++        takenFromCrafting(var0, var1, null);
++    }
++    public static void TakenFromFurnace(EntityPlayer var0, ItemStack var1)
++    {
++        takenFromFurnace(var0, var1);
++    }
++    public static void OnItemPickup(EntityPlayer var0, ItemStack var1)
++    {
++        onItemPickup(var0, var1);
++    }
++    public static void ThrowException(String var0, Throwable var1)
++    {
++        throwException(var0, var1);
++    }
++    private static void ThrowException(Throwable var0)
++    {
++        throwException(var0);
++    }
+ }

@@ -1,0 +1,82 @@
+--- ../src_base/minecraft_server/net/minecraft/src/BaseMod.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/BaseMod.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,18 +5,33 @@
+ 
+ public abstract class BaseMod
+ {
+-    public int AddFuel(int var1)
++    public int addFuel(int var1, int var2)
+     {
+         return 0;
+     }
+ 
++    public boolean dispenseEntity(World var1, double var2, double var4, double var6, int var8, int var9, ItemStack var10)
++    {
++        return DispenseEntity(var1, var2, var4, var6, var8, var9, var10); //Lazy Flan
++    }
++    
+     public boolean DispenseEntity(World var1, double var2, double var4, double var6, int var8, int var9, ItemStack var10)
+     {
+         return false;
+     }
+ 
++    public void generateNether(World var1, Random var2, int var3, int var4) 
++    {
++        GenerateNether(var1, var2, var3, var4); //Lazy Flan
++    }
++    
+     public void GenerateNether(World var1, Random var2, int var3, int var4) {}
+ 
++    public void generateSurface(World var1, Random var2, int var3, int var4) 
++    {
++        GenerateSurface(var1, var2, var3, var4); //Lazy Flan
++    }
++
+     public void GenerateSurface(World var1, Random var2, int var3, int var4) {}
+ 
+     public String getName()
+@@ -32,17 +47,39 @@
+     public abstract String getVersion();
+ 
+     public abstract void load();
++    
++    public void modsLoaded() 
++    {
++        ModsLoaded(); //Lazy Flan
++    }
++    
++    public void ModsLoaded(){}
+ 
+-    public void OnTickInGame(MinecraftServer var1) {}
++    public void onItemPickup(EntityPlayer var1, ItemStack var2) 
++    {
++        OnItemPickup(var1, var2); //Lazy Flan
++    }
++    public void OnItemPickup(EntityPlayer var1, ItemStack var2) {}
+ 
+-    public void ModsLoaded() {}
++    public boolean onTickInGame(MinecraftServer var1) 
++    {
++        onTickInGame(var1); //Lazy Flan
++        return true;
++    }
++    public void OnTickInGame(MinecraftServer var1) {}
+ 
++    public void takenFromCrafting(EntityPlayer var1, ItemStack var2, IInventory var3) 
++    {
++        TakenFromCrafting(var1, var2); //Lazy Flan
++    }
+     public void TakenFromCrafting(EntityPlayer var1, ItemStack var2) {}
+ 
++    public void takenFromFurnace(EntityPlayer var1, ItemStack var2) 
++    {
++        TakenFromFurnace(var1, var2);
++    }
+     public void TakenFromFurnace(EntityPlayer var1, ItemStack var2) {}
+-
+-    public void OnItemPickup(EntityPlayer var1, ItemStack var2) {}
+-
++    
+     public String toString()
+     {
+         return this.getName() + ' ' + this.getVersion();

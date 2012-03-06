@@ -60,7 +60,7 @@
 +            } 
 +            catch (UnsupportedEncodingException ex) 
 +            {
-+                ModLoader.ThrowException("NetServerHandler.handleCustomPayload", ex);
++                ModLoader.throwException("NetServerHandler.handleCustomPayload", ex);
 +            }
 +        } 
 +        else if (pkt.channel.equals("UNREGISTER")) 
@@ -75,7 +75,7 @@
 +            }
 +            catch (UnsupportedEncodingException ex) 
 +            {
-+                ModLoader.ThrowException("NetServerHandler.handleCustomPayload", ex);
++                ModLoader.throwException("NetServerHandler.handleCustomPayload", ex);
 +            }
 +        } 
 +        else 

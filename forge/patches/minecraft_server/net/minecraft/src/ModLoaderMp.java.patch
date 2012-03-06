@@ -8,6 +8,24 @@
  
  public class ModLoaderMp
  {
+@@ -182,7 +183,7 @@
+         {
+             IllegalArgumentException var2 = new IllegalArgumentException("baseModMp cannot be null.");
+             ModLoader.getLogger().throwing("ModLoaderMP", "SendPacketToAll", var2);
+-            ModLoader.ThrowException("baseModMp cannot be null.", var2);
++            ModLoader.throwException("baseModMp cannot be null.", var2);
+         }
+         else
+         {
+@@ -213,7 +214,7 @@
+         {
+             IllegalArgumentException var3 = new IllegalArgumentException("baseModMp cannot be null.");
+             ModLoader.getLogger().throwing("ModLoaderMP", "SendPacketTo", var3);
+-            ModLoader.ThrowException("baseModMp cannot be null.", var3);
++            ModLoader.throwException("baseModMp cannot be null.", var3);
+         }
+         else
+         {
 @@ -231,13 +232,11 @@
  
      public static World GetPlayerWorld(EntityPlayer var0)
@@ -23,5 +41,58 @@
 -                return var1[var2];
 +                return world;
              }
+         }
+ 
+@@ -267,31 +266,31 @@
+         catch (IllegalAccessException var4)
+         {
+             ModLoader.getLogger().throwing("ModLoaderMP", "AddCustomPacketMapping", var4);
+-            ModLoader.ThrowException("ModLoaderMP", var4);
++            ModLoader.throwException("ModLoaderMP", var4);
+             return;
+         }
+         catch (IllegalArgumentException var5)
+         {
+             ModLoader.getLogger().throwing("ModLoaderMP", "init", var5);
+-            ModLoader.ThrowException("ModLoaderMP", var5);
++            ModLoader.throwException("ModLoaderMP", var5);
+             return;
+         }
+         catch (InvocationTargetException var6)
+         {
+             ModLoader.getLogger().throwing("ModLoaderMP", "init", var6);
+-            ModLoader.ThrowException("ModLoaderMP", var6);
++            ModLoader.throwException("ModLoaderMP", var6);
+             return;
+         }
+         catch (NoSuchMethodException var7)
+         {
+             ModLoader.getLogger().throwing("ModLoaderMP", "init", var7);
+-            ModLoader.ThrowException("ModLoaderMP", var7);
++            ModLoader.throwException("ModLoaderMP", var7);
+             return;
+         }
+         catch (SecurityException var8)
+         {
+             ModLoader.getLogger().throwing("ModLoaderMP", "init", var8);
+-            ModLoader.ThrowException("ModLoaderMP", var8);
++            ModLoader.throwException("ModLoaderMP", var8);
+             return;
+         }
+ 
+@@ -315,13 +314,13 @@
+         catch (FileNotFoundException var9)
+         {
+             ModLoader.getLogger().throwing("ModLoader", "init", var9);
+-            ModLoader.ThrowException("ModLoaderMultiplayer", var9);
++            ModLoader.throwException("ModLoaderMultiplayer", var9);
+             return;
+         }
+         catch (IOException var10)
+         {
+             ModLoader.getLogger().throwing("ModLoader", "init", var10);
+-            ModLoader.ThrowException("ModLoaderMultiplayer", var10);
++            ModLoader.throwException("ModLoaderMultiplayer", var10);
+             return;
          }
  
