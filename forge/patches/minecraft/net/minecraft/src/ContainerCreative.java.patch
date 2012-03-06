@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -57,12 +57,20 @@
+@@ -57,12 +57,21 @@
  
              this.itemList.add(new ItemStack(var2[var10], 1, var11));
          }
@@ -15,10 +15,11 @@
 +            }
 +        }
 +        
++        int x = 0;
 +        for (Item item : Item.itemsList)
          {
 -            if (Item.itemsList[var10] != null && Item.itemsList[var10].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[var10].shiftedIndex != Item.monsterPlacer.shiftedIndex)
-+            if (item != null)
++            if (item != null && x++ < 256)
              {
 -                this.itemList.add(new ItemStack(Item.itemsList[var10]));
 +                item.addCreativeItems((ArrayList)itemList);

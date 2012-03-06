@@ -21,8 +21,9 @@
 +        
 +        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(var10.itemID);
 +        if (customRenderer != null)
-+        {
-+            GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
+         {
+             GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
+-            this.loadTexture("/terrain.png");
 +            loadTexture(ForgeHooksClient.getTexture("/terrain.png", var10.getItem()));
 +            GL11.glScalef(0.5F, 0.5F, 0.5F);
 +            for(int j = 0; j < var13; j++)
@@ -40,9 +41,8 @@
 +            }
 +        }
 +        else if (var10.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
-         {
-             GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
--            this.loadTexture("/terrain.png");
++        {
++            GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
 +            this.loadTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[var10.itemID]));
              float var21 = 0.25F;
              var15 = Block.blocksList[var10.itemID].getRenderType();
@@ -82,7 +82,7 @@
 +        {
 +            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", Item.itemsList[par3])));
 +            GL11.glPushMatrix();
-+            GL11.glTranslatef(par4 - 2, par7 + 3, -3F + zLevel);
++            GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
 +            GL11.glScalef(10F, 10F, 10F);
 +            GL11.glTranslatef(1.0F, 0.5F, 1.0F);
 +            GL11.glScalef(1.0F, 1.0F, -1F);

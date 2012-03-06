@@ -42,7 +42,7 @@
      }
  
      /**
-@@ -102,12 +123,29 @@
+@@ -102,12 +123,30 @@
                  for (int var11 = 0; var11 < this.fxLayers[var8].size(); ++var11)
                  {
                      EntityFX var12 = (EntityFX)this.fxLayers[var8].get(var11);
@@ -68,24 +68,12 @@
 +                    tessallator.setBrightness(entryfx.getEntityBrightnessForRender(par2));
 +                    entryfx.renderParticle(tessallator, par2, var3, var7, var4, var5, var6);
 +                }
++                tessallator.draw();
 +            }
          }
      }
  
-@@ -131,6 +169,12 @@
-                 var11.renderParticle(var9, par2, var3, var7, var4, var5, var6);
-             }
-         }
-+        for (int x = 0; x < effectList.size(); x++) 
-+        {
-+            BlockTextureParticles entry = (BlockTextureParticles)effectList.get(x);
-+            entry.effects.clear();
-+        }
-+        effectList.clear();
-     }
- 
-     public void clearEffects(World par1World)
-@@ -141,6 +185,13 @@
+@@ -141,6 +180,13 @@
          {
              this.fxLayers[var2].clear();
          }
@@ -99,7 +87,7 @@
      }
  
      public void addBlockDestroyEffects(int par1, int par2, int par3, int par4, int par5)
-@@ -160,7 +211,7 @@
+@@ -160,7 +206,7 @@
                          double var13 = (double)par2 + ((double)var9 + 0.5D) / (double)var7;
                          double var15 = (double)par3 + ((double)var10 + 0.5D) / (double)var7;
                          int var17 = this.rand.nextInt(6);
@@ -108,7 +96,7 @@
                      }
                  }
              }
-@@ -212,7 +263,7 @@
+@@ -212,7 +258,7 @@
                  var8 = (double)par1 + var6.maxX + (double)var7;
              }
  
@@ -117,7 +105,7 @@
          }
      }
  
-@@ -220,4 +271,30 @@
+@@ -220,4 +266,30 @@
      {
          return "" + (this.fxLayers[0].size() + this.fxLayers[1].size() + this.fxLayers[2].size());
      }
