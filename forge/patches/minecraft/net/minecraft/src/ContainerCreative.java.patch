@@ -19,7 +19,7 @@
 +        for (Item item : Item.itemsList)
          {
 -            if (Item.itemsList[var10] != null && Item.itemsList[var10].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[var10].shiftedIndex != Item.monsterPlacer.shiftedIndex)
-+            if (item != null && x++ < 256)
++            if (item != null && x++ >= 256)
              {
 -                this.itemList.add(new ItemStack(Item.itemsList[var10]));
 +                item.addCreativeItems((ArrayList)itemList);
