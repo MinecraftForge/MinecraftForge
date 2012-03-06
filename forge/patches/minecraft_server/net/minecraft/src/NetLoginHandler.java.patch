@@ -23,12 +23,12 @@
  
              var2.func_20057_k();
 -            ModLoaderMp.HandleAllLogins(var2);
-+            if (packet1login.serverMode == ForgePacket.FORGE_ID)
++            if (par1Packet1Login.serverMode == ForgePacket.FORGE_ID)
 +            {
 +                //Pretty hackish place to put it, but it needs to go somewhere
 +                ForgeHooksServer.init();
 +                //pkt.mapSeed = ForgeHooks.buildVersion;
-+                ForgeHooks.onLogin(netManager, packet1login);                
++                ForgeHooks.onLogin(netManager, par1Packet1Login);                
 +
 +                String[] channels = MessageManager.getInstance().getRegisteredChannels(netManager);
 +                StringBuilder tmp = new StringBuilder();
