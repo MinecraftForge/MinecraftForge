@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net\minecraft\client\Minecraft.java
---- minecraft\net\minecraft\client\Minecraft.java	Sat Mar 03 17:30:19 2012
-+++ minecraft_patched\net\minecraft\client\Minecraft.java	Sat Mar 03 17:35:46 2012
+--- minecraft\net\minecraft\client\Minecraft.java	Tue Mar 06 11:25:27 2012
++++ minecraft_patched\net\minecraft\client\Minecraft.java	Tue Mar 06 11:39:29 2012
 @@ -1626,11 +1626,13 @@
  
              this.field_6324_e.func_600_a(var6.field_22395_a + var10, 64, var6.field_22396_c + var8);
@@ -15,7 +15,7 @@ diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net
              }
           }
        }
-@@ -1746,7 +1748,11 @@
+@@ -1746,13 +1748,17 @@
     }
  
     public static void func_6269_a(String p_6269_0_, String p_6269_1_) {
@@ -27,9 +27,16 @@ diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net
     }
  
     public static void func_6253_a(String p_6253_0_, String p_6253_1_, String p_6253_2_) throws LWJGLException {
+       boolean var3 = false;
+       Frame var5 = new Frame("Minecraft");
+-      AWTGLCanvas var6 = new AWTGLCanvas();
++      Canvas var6 = new Canvas();
+       var5.setLayout(new BorderLayout());
+       var5.add(var6, "Center");
+       var6.setPreferredSize(new Dimension(854, 480));
 diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\minecraft\src\CodecMus.java
---- minecraft\net\minecraft\src\CodecMus.java	Sat Mar 03 17:30:19 2012
-+++ minecraft_patched\net\minecraft\src\CodecMus.java	Sat Mar 03 17:32:07 2012
+--- minecraft\net\minecraft\src\CodecMus.java	Tue Mar 06 11:25:28 2012
++++ minecraft_patched\net\minecraft\src\CodecMus.java	Tue Mar 06 11:37:54 2012
 @@ -1,5 +1,6 @@
  package net.minecraft.src;
  
@@ -50,8 +57,8 @@ diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\min
     }
  }
 diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\minecraft\src\ItemMap.java
---- minecraft\net\minecraft\src\ItemMap.java	Sat Mar 03 17:30:20 2012
-+++ minecraft_patched\net\minecraft\src\ItemMap.java	Sat Mar 03 17:32:07 2012
+--- minecraft\net\minecraft\src\ItemMap.java	Tue Mar 06 11:25:30 2012
++++ minecraft_patched\net\minecraft\src\ItemMap.java	Tue Mar 06 11:37:54 2012
 @@ -19,7 +19,6 @@
     }
  
@@ -69,8 +76,8 @@ diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\mine
        if(var4 == null) {
           p_28012_1_.func_28156_b(p_28012_2_.func_28101_b("map"));
 diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\net\minecraft\src\MusInputStream.java
---- minecraft\net\minecraft\src\MusInputStream.java	Sat Mar 03 17:30:20 2012
-+++ minecraft_patched\net\minecraft\src\MusInputStream.java	Sat Mar 03 17:32:07 2012
+--- minecraft\net\minecraft\src\MusInputStream.java	Tue Mar 06 11:25:31 2012
++++ minecraft_patched\net\minecraft\src\MusInputStream.java	Tue Mar 06 11:37:54 2012
 @@ -1,5 +1,6 @@
  package net.minecraft.src;
  
@@ -92,8 +99,8 @@ diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\n
        for(int var4 = 0; var4 < p_read_3_; ++var4) {
           byte var5 = p_read_1_[p_read_2_ + var4] = (byte)(p_read_1_[p_read_2_ + var4] ^ this.field_1516_c >> 8);
 diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
---- minecraft\net\minecraft\src\RenderGlobal.java	Sat Mar 03 17:30:20 2012
-+++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Sat Mar 03 17:32:07 2012
+--- minecraft\net\minecraft\src\RenderGlobal.java	Tue Mar 06 11:25:31 2012
++++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Tue Mar 06 11:37:54 2012
 @@ -1458,7 +1458,7 @@
           double var15 = this.field_1439_t.field_22009_h.field_611_ak - p_40193_2_;
           double var17 = this.field_1439_t.field_22009_h.field_610_al - p_40193_4_;
@@ -104,8 +111,8 @@ diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net
              this.field_1439_t.field_6321_h.func_1192_a(var21 = new EntityHugeExplodeFX(this.field_1448_k, p_40193_2_, p_40193_4_, p_40193_6_, p_40193_8_, p_40193_10_, p_40193_12_));
           } else if(p_40193_1_.equals("largeexplode")) {
 diff -r -U 3 minecraft\net\minecraft\src\ThreadedFileIOBase.java minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Sat Mar 03 17:30:20 2012
-+++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Sat Mar 03 17:32:07 2012
+--- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Tue Mar 06 11:25:32 2012
++++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Tue Mar 06 11:37:54 2012
 @@ -20,7 +20,9 @@
     }
  
