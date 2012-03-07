@@ -1,118 +1,14 @@
 --- ../src_base/minecraft_server/net/minecraft/src/Packet230ModLoader.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/Packet230ModLoader.java	0000-00-00 00:00:00.000000000 -0000
-@@ -13,6 +13,7 @@
-     public int packetType;
-     public int[] dataInt = new int[0];
-     public float[] dataFloat = new float[0];
-+    public double[] dataDouble = new double[0];
-     public String[] dataString = new String[0];
-     private static Map playerMap = new HashMap();
+@@ -93,10 +93,7 @@
  
-@@ -59,29 +60,42 @@
+                             byte[] var8 = new byte[var7];
  
-                 if (var4 > 65535)
-                 {
--                    throw new IOException(String.format("String data size of %d is higher than the max (%d).", new Object[] {Integer.valueOf(var4), Integer.valueOf(65535)}));
-+                    throw new IOException(String.format("Double data size of %d is higher than the max (%d).", new Object[] {Integer.valueOf(var4), Integer.valueOf(65535)}));
-                 }
-                 else
-                 {
--                    this.dataString = new String[var4];
-+                    this.dataDouble = new double[var4];
+-                            for (int var9 = 0; var9 < var7; var9 += var1.read(var8, var9, var7 - var9))
+-                            {
+-                                ;
+-                            }
++                            var1.readFully(var8);
  
-                     for (int var5 = 0; var5 < var4; ++var5)
-                     {
--                        int var6 = var1.readInt();
--
--                        if (var6 > 65535)
--                        {
--                            throw new IOException(String.format("String length of %d is higher than the max (%d).", new Object[] {Integer.valueOf(var6), Integer.valueOf(65535)}));
--                        }
-+                        this.dataDouble[var5] = var1.readDouble();
-+                    }
- 
--                        byte[] var7 = new byte[var6];
-+                    var4 = var1.readInt();
- 
--                        for (int var8 = 0; var8 < var6; var8 += var1.read(var7, var8, var6 - var8))
-+                    if (var4 > 65535)
-+                    {
-+                        throw new IOException(String.format("String data size of %d is higher than the max (%d).", new Object[] {Integer.valueOf(var4), Integer.valueOf(65535)}));
-+                    }
-+                    else
-+                    {
-+                        this.dataString = new String[var4];
-+    
-+                        for (int var5 = 0; var5 < var4; ++var5)
-                         {
--                            ;
-+                            int var6 = var1.readInt();
-+    
-+                            if (var6 > 65535)
-+                            {
-+                                throw new IOException(String.format("String length of %d is higher than the max (%d).", new Object[] {Integer.valueOf(var6), Integer.valueOf(65535)}));
-+                            }
-+    
-+                            byte[] var7 = new byte[var6];
-+    
-+                            var1.readFully(var7);
-+    
-+                            this.dataString[var5] = new String(var7);
+                             this.dataString[var6] = new String(var8);
                          }
--
--                        this.dataString[var5] = new String(var7);
-                     }
-                 }
-             }
-@@ -139,6 +153,20 @@
-                 }
-             }
- 
-+            if (this.dataDouble == null)
-+            {
-+                var1.writeInt(0);
-+            }
-+            else
-+            {
-+                var1.writeInt(this.dataDouble.length);
-+
-+                for (var2 = 0; var2 < this.dataDouble.length; ++var2)
-+                {
-+                    var1.writeDouble(this.dataDouble[var2]);
-+                }
-+            }
-+
-             if (this.dataString == null)
-             {
-                 var1.writeInt(0);
-@@ -193,19 +221,22 @@
-      */
-     public int getPacketSize()
-     {
--        byte var1 = 1;
--        int var3 = var1 + 1;
--        ++var3;
--        var3 += this.dataInt != null ? this.dataInt.length * 32 : 0;
--        ++var3;
--        var3 += this.dataFloat != null ? this.dataFloat.length * 32 : 0;
--        ++var3;
-+        byte var1 = 0;
-+        int var3 = var1 + 4;
-+        var3 += 4;
-+        var3 += 4;
-+        var3 += this.dataInt != null ? this.dataInt.length * 4 : 0;
-+        var3 += 4;
-+        var3 = this.dataFloat != null ? this.dataFloat.length * 4 : 0;
-+        var3 += 4;
-+        var3 = this.dataDouble != null ? this.dataDouble.length * 8 : 0;
-+        var3 += 4;
- 
-         if (this.dataString != null)
-         {
-             for (int var2 = 0; var2 < this.dataString.length; ++var2)
-             {
--                ++var3;
-+                var3 += 4;
-                 var3 += this.dataString[var2].length();
-             }
-         }
