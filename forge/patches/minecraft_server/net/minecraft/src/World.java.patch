@@ -86,7 +86,7 @@
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
 -        if (par4TileEntity != null && !par4TileEntity.isInvalid())
-+        if (par4TileEntity == null || !par4TileEntity.isInvalid())
++        if (par4TileEntity == null || par4TileEntity.isInvalid())
          {
 -            if (this.scanningTileEntities)
 -            {
