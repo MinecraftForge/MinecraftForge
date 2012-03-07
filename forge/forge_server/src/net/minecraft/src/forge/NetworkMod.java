@@ -22,4 +22,9 @@ public abstract class NetworkMod extends BaseModMp
      * @return True if server is required, false if not.
      */
     public abstract boolean serverSideRequired();
+    
+    public boolean hasClientSide() 
+    { 
+        return clientSideRequired();
+    }
 }
