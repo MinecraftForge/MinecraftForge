@@ -26,7 +26,7 @@
  
                  if (var8 == Block.sapling.blockID)
                  {
-@@ -118,14 +131,7 @@
+@@ -118,13 +131,9 @@
                                  {
                                      par3World.setBlockAndMetadataWithNotify(var10, var11, var12, Block.tallGrass.blockID, 1);
                                  }
@@ -34,15 +34,14 @@
 -                                {
 -                                    par3World.setBlockWithNotify(var10, var11, var12, Block.plantYellow.blockID);
 -                                }
--                                else
--                                {
+                                 else
+                                 {
 -                                    par3World.setBlockWithNotify(var10, var11, var12, Block.plantRed.blockID);
--                                }
-+                                ForgeHooks.plantGrassPlant(par3World, var10, var11, var12);
++                                    ForgeHooks.plantGrassPlant(par3World, var10, var11, var12);
+                                 }
                              }
                          }
-                     }
-@@ -155,4 +161,20 @@
+@@ -155,4 +164,20 @@
              }
          }
      }
