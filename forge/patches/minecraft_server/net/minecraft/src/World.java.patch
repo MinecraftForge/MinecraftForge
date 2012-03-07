@@ -155,7 +155,7 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
--        return Block.func_48126_g(this.getBlockId(par1, par2, par3));
+-        return Block.isNormalCube(this.getBlockId(par1, par2, par3));
 +        Block block = Block.blocksList[getBlockId(par1, par2, par3)];
 +        return block != null && block.isBlockNormalCube(this, par1, par2, par3);
      }
@@ -182,7 +182,7 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3732,4 +3727,38 @@
+@@ -3735,4 +3730,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }

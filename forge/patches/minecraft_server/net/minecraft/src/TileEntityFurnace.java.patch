@@ -10,7 +10,7 @@
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -242,8 +244,12 @@
+@@ -245,8 +247,12 @@
          }
          else
          {
@@ -25,7 +25,7 @@
          }
      }
  
-@@ -254,13 +260,13 @@
+@@ -257,13 +263,13 @@
      {
          if (this.canSmelt())
          {
@@ -41,7 +41,7 @@
              {
                  ++this.furnaceItemStacks[2].stackSize;
              }
-@@ -278,7 +284,7 @@
+@@ -281,7 +287,7 @@
       * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
       * fuel
       */
@@ -50,7 +50,7 @@
      {
          if (par1ItemStack == null)
          {
-@@ -302,4 +308,18 @@
+@@ -305,4 +311,18 @@
      public void openChest() {}
  
      public void closeChest() {}

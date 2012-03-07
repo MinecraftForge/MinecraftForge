@@ -56,13 +56,13 @@
      public void addTileEntity(Collection par1Collection)
      {
 -        if (this.scanningTileEntities)
--        {
--            this.addedTileEntityList.addAll(par1Collection);
--        }
--        else
 +        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
 +        for(Object entity : par1Collection) 
          {
+-            this.addedTileEntityList.addAll(par1Collection);
+-        }
+-        else
+-        {
 -            this.loadedTileEntityList.addAll(par1Collection);
 +            if(((TileEntity)entity).canUpdate())
 +            {
@@ -132,14 +132,14 @@
 -        TileEntity var4 = this.getBlockTileEntity(par1, par2, par3);
 -
 -        if (var4 != null && this.scanningTileEntities)
--        {
++        Chunk chunk = getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++        if (chunk != null)
+         {
 -            var4.invalidate();
 -            this.addedTileEntityList.remove(var4);
 -        }
 -        else
-+        Chunk chunk = getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-+        if (chunk != null)
-         {
+-        {
 -            if (var4 != null)
 -            {
 -                this.addedTileEntityList.remove(var4);
@@ -156,24 +156,17 @@
          }
      }
  
-@@ -2670,7 +2655,15 @@
+@@ -2670,7 +2655,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
--        return Block.func_48206_g(this.getBlockId(par1, par2, par3));
+-        return Block.isNormalCube(this.getBlockId(par1, par2, par3));
 +        Block block = Block.blocksList[getBlockId(par1, par2, par3)];
-+        if (block != null)
-+        {
-+            return block.isBlockNormalCube(this, par1, par2, par3);
-+        }
-+        else
-+        {
-+            return false;
-+        }
++        return block != null && block.isBlockNormalCube(this, par1, par2, par3);
      }
  
      /**
-@@ -3263,7 +3256,7 @@
+@@ -3263,7 +3249,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -182,7 +175,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3789,7 +3782,10 @@
+@@ -3789,7 +3775,10 @@
              {
                  var8 = null;
              }
@@ -194,7 +187,7 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -4378,4 +4374,39 @@
+@@ -4381,4 +4370,39 @@
      {
          return this.worldInfo.getTerrainType() == WorldType.field_48636_c ? 0.0D : 63.0D;
      }

@@ -59,7 +59,6 @@ field_1097_a,data,0,The float value for the tag.
 field_1098_a,data,0,The string value for the tag (cannot be empty).
 field_1099_b,recipeItems,0,
 field_1100_a,recipePatterns,0,
-field_1101_b,hostName,0,A reference to the Minecraft object.
 field_1102_a,mc,0,A reference to the Minecraft object.
 field_1103_d,connectingGui,0,A reference to the GuiConnecting object.
 field_1104_c,port,0,A reference to the Minecraft object.
@@ -88,6 +87,10 @@ field_1130_d,textureId,0,Texture ID
 field_1131_c,anaglyphEnabled,0,
 field_1134_k,tickCounter,0,
 field_1154_k,tickCounter,0,
+field_1155_j,alpha,0,alpha RGB value for water texture
+field_1156_i,blue,0,blue RGB value for water texture
+field_1157_h,green,0,green RGB value for water texture
+field_1158_g,red,0,red RGB value for water texture
 field_1159_b,worldObj,0,Reference to the World object.
 field_1160_a,rail,0,
 field_1161_g,connectedTracks,0,
@@ -123,11 +126,8 @@ field_1194_b,nVertices,0,
 field_1195_a,vertexPositions,0,
 field_1196_c,invertNormal,0,
 field_1198_a,recipeItems,0,
-field_1199_b,createIfNecessary,0,"If true, ChunkLoader will create the needed directories and file for a chunk. (true for WorldProvider, WorldProviderHell; false for WorldProviderIso)"
-field_1200_a,saveDir,0,The root directory from where the chunks are saved (this will be the World1-5 dirs)
 field_1201_b,posY,0,
 field_1202_a,posX,0,
-field_1203_g,worldClient,0,
 field_1204_f,metadata,0,
 field_1205_e,blockID,0,
 field_1206_d,acceptCountdown,0,Counts down 80 ticks until the position is accepted from the receive queue into the world.
@@ -240,7 +240,6 @@ field_1334_d,rock,0,
 field_1335_c,wood,0,
 field_1336_b,ground,0,
 field_1337_a,air,0,
-field_1340_d,allMobTypes,0,An array of all EnumMobType values.
 field_1342_b,imageWidth,0,
 field_1343_a,imageData,0,
 field_1344_c,imageHeight,0,
@@ -400,21 +399,13 @@ field_1516_c,hash,0,
 field_1522_s,lastSaveTime,0,The time according to World.worldTime when this chunk was last saved
 field_15235_a,blockIndex,0,
 field_1523_r,hasEntities,0,Whether this Chunk has any Entities and thus requires saving on every tick
-field_1525_p,neverSave,0,Set to true if this Chunk should never be saved (e.g. in multiplayer)
 field_1526_o,isModified,0,Set to true if the chunk has been modified and needs to be updated internally.
 field_1527_n,isTerrainPopulated,0,Boolean value indicating if the terrain is populated.
-field_1528_m,entities,0,List of lists of the entities in the chunk. It is 8 lists partitioned along the Y axis.
 field_1529_l,chunkTileEntityMap,0,A Map of ChunkPositions to TileEntities in this chunk
 field_1530_k,zPosition,0,The z coordinate of the chunk.
 field_1531_j,xPosition,0,The x coordinate of the chunk.
-field_1532_i,lowestBlockHeight,0,Sets the lowest block height in a chunk
-field_1533_h,heightMap,0,Byte array containing height map for the chunk.
-field_1534_g,blocklightMap,0,Light map for blocks. See class le (client) or eo (server).
-field_1535_f,skylightMap,0,Light map for sky. See class le (client) or eo (server).
-field_1536_e,data,0,Chunk data
 field_1537_d,worldObj,0,Reference to the World object.
 field_1538_c,isChunkLoaded,0,Whether or not this Chunk is currently loaded into the World
-field_1539_b,blocks,0,Byte array of blocks for the chunk.
 field_1540_a,isLit,0,Determines if the chunk is lit or not at a light value greater than 0.
 field_1541_n,fontRenderer,0,The FontRenderer instance used by the TileEntityRenderer
 field_1543_l,playerZ,0,The player's Z position in this rendering context
@@ -480,7 +471,6 @@ field_1621_b,craftResult,0,"The crafting result, size 1."
 field_1622_a,craftMatrix,0,The crafting matrix inventory (3x3).
 field_1623_z,sizeX,0,
 field_1624_y,title,0,
-field_1630_D,allArt,0,Every enum in EnumArt
 field_1632_C,offsetY,0,
 field_1634_B,offsetX,0,
 field_1636_A,sizeY,0,
@@ -541,7 +531,6 @@ field_1715_d,hash,0,A hash of the coordinates used to identify this point
 field_1716_c,zCoord,0,The z coordinate of this point
 field_1717_b,yCoord,0,The y coordinate of this point
 field_1718_a,xCoord,0,The x coordinate of this point
-field_1721_d,allSkyBlocks,0,An array of all EnumSkyBlock values.
 field_1722_c,defaultLightValue,0,
 field_1728_b,fxLayers,0,
 field_1729_a,worldObj,0,Reference to the World object.
@@ -555,7 +544,6 @@ field_1736_v,rendererBoundingBox,0,Axis aligned bounding box
 field_1737_F,tileEntities,0,
 field_1738_u,needsUpdate,0,Boolean for whether this renderer needs to be updated or not
 field_1739_E,isInitialized,0,
-field_1740_t,rendererRadius,0,Renderer radius (not used)
 field_1741_s,posZPlus,0,Pos Z plus
 field_1742_D,tessellator,0,
 field_1743_r,posYPlus,0,Pos Y plus
@@ -571,9 +559,6 @@ field_1752_l,posXClip,0,Pos X clipped
 field_1753_k,posZMinus,0,Pos Z minus
 field_1754_j,posYMinus,0,Pos Y minus
 field_1755_i,posXMinus,0,Pos X minus
-field_1756_h,sizeDepth,0,
-field_1757_g,sizeHeight,0,
-field_1758_f,sizeWidth,0,
 field_1759_e,posZ,0,
 field_1760_d,posY,0,
 field_1761_c,posX,0,
@@ -581,7 +566,6 @@ field_1762_b,chunksUpdated,0,
 field_1763_a,worldObj,0,Reference to the World object.
 field_1764_b,points,0,The actual points in the path
 field_1765_a,pathLength,0,The total length of the path
-field_1766_c,pathIndex,0,The index of the current point in the path
 field_1767_b,mc,0,A reference to the Minecraft object.
 field_1768_a,resourcesFolder,0,The folder to store the resources in.
 field_1769_c,closing,0,Set to true when Minecraft is closing down.
@@ -657,7 +641,6 @@ field_20072_a,inventoryTitle,0,
 field_20074_c,inventoryContents,0,
 field_20077_f,itemStack,0,
 field_20079_i,enumOptions,0,
-field_20082_i,allowedCharacters,0,
 field_20083_l,allowedCharacters,0,This String is just a local copy of the characters allowed in text rendering of minecraft.
 field_20097_i,bipedCloak,0,
 field_20098_h,bipedEars,0,
@@ -677,7 +660,6 @@ field_20130_j,posZ,0,
 field_20131_i,posY,0,
 field_20132_h,posX,0,
 field_20133_c,worldObj,0,
-field_20141_n,allOptions,0,An array of all EnumOptions values.
 field_20142_m,enumString,0,
 field_20143_l,enumBoolean,0,
 field_20144_k,enumFloat,0,
@@ -777,11 +759,9 @@ field_21165_d,isWatching,0,
 field_21166_c,watchedObject,0,
 field_21172_g,isPeacefulCreature,0,A flag indicating whether this creature type is peaceful.
 field_21173_f,creatureMaterial,0,
-field_21178_c,allMovingObjectTypes,0,An array of all EnumMovingObjectType values.
 field_211_y,shovelDiamond,0,
 field_21201_b,smeltingList,0,The list of smelting results.
 field_21202_a,smeltingBase,0,
-field_21209_j,allToolMaterials,0,An array of all EnumToolMaterial values.
 field_21210_i,damageVsEntity,0,Damage versus entities.
 field_21211_h,efficiencyOnProperMaterial,0,The strength of this tool material against blocks which it is effective against.
 field_21212_g,maxUses,0,"The number of uses this material allows. (wood = 59, stone = 131, iron = 250, diamond = 1561, gold = 32)"
@@ -865,7 +845,6 @@ field_22168_d,sizeOnDisk,0,
 field_22169_c,lastTimePlayed,0,
 field_22180_a,savesDirectory,0,Reference to the File object representing the directory for the world saves
 field_22188_h,livingPlayer,0,Rendermanager's variable for the player
-field_22189_a,dataFilenamePattern,0,
 field_22195_a,regionsByFilename,0,A map containing Files and keys and RegionFiles as values
 field_221_o,swordSteel,0,
 field_22212_b,fileName,0,
@@ -939,9 +918,6 @@ field_22317_d,spawnZ,0,The player spawn Z coordinate.
 field_22318_c,spawnY,0,The player spawn Y coordinate.
 field_22319_b,spawnX,0,The player spawn X coordinate.
 field_22320_a,randomSeed,0,Holds the seed of the currently world.
-field_22325_b,xChunk,0,
-field_22326_a,chunkFile,0,
-field_22327_c,yChunk,0,
 field_22333_Z,aoGrassXYZNCP,0,"Grass flag for ambient occlusion on Negative X, Center Y, and Positive Z"
 field_22334_Y,aoGrassXYZPCP,0,"Grass flag for ambient occlusion on Positive X, Center Y, and Positive Z"
 field_22335_X,aoGrassXYZNCN,0,"Grass flag for ambient occlusion on Negative X, Center Y, and Negative Z"
@@ -995,7 +971,6 @@ field_22383_g,aoLightValueXNeg,0,Light value one block less in x axis
 field_22384_f,lightValueOwn,0,Light value of the block itself
 field_22385_e,enableAO,0,Whether ambient occlusion is enabled or not
 field_22391_a,nightSpawnEntities,0,An array of entity classes that spawn at night.
-field_22392_a,folderRegexPattern,0,
 field_22394_b,posY,0,
 field_22395_a,posX,0,
 field_22396_c,posZ,0,
@@ -1128,7 +1103,6 @@ field_25197_d,buildWorkBench,0,Is the 'benchmarking' achievement.
 field_25198_c,mineWood,0,Is the 'getting wood' achievement.
 field_251_J,feather,0,
 field_25201_a,localizedName,0,
-field_25204_f,allStatuses,0,
 field_25209_b,guidMap,0,Maps a achievement id with it's unique GUID.
 field_25210_a,instance,0,Holds the singleton instance of AchievementMap.
 field_25212_a,entityClass,0,Holds the class of the entity to be spawned.
@@ -1140,7 +1114,6 @@ field_256_ax,minecartEmpty,0,
 field_257_G,pickaxeGold,0,
 field_258_aw,bucketLava,0,
 field_259_F,shovelGold,0,
-field_26003_a,convTable,0,"A table for storing which BlockIDs are defined, and which should be turned into air on-load to avoid crashing Minecraft."
 field_261_E,swordGold,0,
 field_262_au,bucketEmpty,0,
 field_263_D,bowlSoup,0,
@@ -1305,7 +1278,6 @@ field_27433_f,dataFile,0,A file named 'stats_' [lower case username] '.dat'
 field_27434_e,unsentDataFile,0,A file named 'stats_' [lower case username] '_unsent.dat'
 field_27435_d,statFileWriter,0,"The StatFileWriter object, presumably used to write to the statistics files"
 field_27438_a,isBusy,0,
-field_27442_h,allJsonNodeTypes,0,An array of all EnumJsonNodeType values.
 field_274_am,bootsGold,0,
 field_275_al,legsGold,0,
 field_276_ak,plateGold,0,
@@ -1489,12 +1461,9 @@ field_338_u,stone,0,
 field_339_t,lightValue,0,Amount of light emitted
 field_340_s,canBlockGrass,0,Array of booleans that tells if a block can grass
 field_341_r,lightOpacity,0,How much light is subtracted for going through this block
-field_342_q,isBlockContainer,0,Can this block be type casted to a BlockContainer (list indexed on blockIDs)
 field_343_p,opaqueCubeLookup,0,An array of 256 booleans corresponding to the result of the isOpaqueCube() method for each block ID
-field_344_o,tickRandomly,0,List of whether this blockType will receive random update ticks or not.
 field_345_n,blocksList,0,List of ly/ff (BlockType) containing the already registered blocks.
 field_34900_Q,entityRemoval,0,Entities marked for removal.
-field_34901_d,temperatureLayer,0,A GenLayer containing the temperature values.
 field_34902_c,biomeIndexLayer,0,A GenLayer containing the indices into BiomeGenBase.biomeList[]
 field_34903_b,genBiomes,0,
 field_34904_b,attackingPlayer,0,The most recent player that has attacked this entity
@@ -1596,11 +1565,9 @@ field_35242_d,worldHeight,0,Defaults to 128
 field_35243_e,creativeMode,0,"0 for survival, 1 for creative"
 field_35244_b,respawnDimension,0,
 field_35245_c,difficulty,0,"0 thru 3 for Peaceful, Easy, Normal, Hard. 1 is always sent c->s"
-field_35246_a,mapSeed,0,
 field_35247_f,difficultySetting,0,The difficulty setting byte.
 field_35248_g,worldHeight,0,Defaults to 128
 field_35249_d,serverMode,0,"0 for survival, 1 for creative"
-field_35250_e,worldType,0,The world type byte.
 field_35251_h,maxPlayers,0,The maximum players.
 field_35252_b,effectId,0,The ID of the effect which is being removed from an entity.
 field_35253_a,entityId,0,The ID of the entity which an effect is being removed from.
@@ -1713,11 +1680,6 @@ field_35437_a,blockObj,0,
 field_35444_c,endermanModel,0,The model of the enderman
 field_35445_h,rnd,0,
 field_35466_H,lightUpdateBlockList,0,"is a temporary list of blocks and light values used when updating light levels. Holds up to 32x32x32 blocks (the maximum influence of a light source.) Every element is a packed bit value: 0000000000LLLLzzzzzzyyyyyyxxxxxx. The 4-bit L is a light level used when darkening blocks. 6-bit numbers x, y and z represent the block's offset from the original block, plus 32 (i.e. value of 31 would mean a -1 offset"
-field_35469_d,worldMaxY,0,Maximum y-position of a block.
-field_35470_e,seaLevel,0,The maximum y-position of the ocean's water blocks.
-field_35471_b,xShift,0,The bit-shift applied to x-coordinates in accessing data from chunks.
-field_35472_c,worldHeight,0,"The height of the world instance, in blocks (e.g. 128)."
-field_35473_a,heightShift,0,(2^this) is the world's height
 field_35480_A,worldGenBigTree,0,
 field_35481_B,worldGenForest,0,
 field_35482_C,worldGenSwamp,0,
@@ -1763,7 +1725,6 @@ field_35552_n,damageSourceEntity,0,
 field_35553_n,indirectEntity,0,
 field_35563_f,biomeCache,0,The BiomeCache object for this world.
 field_35564_g,biomesToSpawnIn,0,A list of biomes that the player can spawn in.
-field_35565_e,rainfallLayer,0,A GenLayer containing the rainfall values.
 field_35580_d,percentUseable,0,percent of the hasharray that can be used without hash colliding probably
 field_35581_e,modCount,0,count of times elements have been added/removed
 field_35582_b,numHashElements,0,
@@ -1883,7 +1844,6 @@ field_35820_j,rainYCoords,0,Rain Y coords
 field_35821_h,torchFlickerDY,0,Torch flicker DY
 field_35822_i,rainXCoords,0,Rain X coords
 field_35823_q,debugViewDirection,0,"Debug view direction (0=OFF, 1=Front, 2=Right, 3=Back, 4=Left, 5=TiltLeft, 6=TiltRight)"
-field_35825_e,allDoors,0,Every enum in EnumDoor
 field_35831_d,hash,0,
 field_35832_b,value,0,the value held by the hash at the specified key
 field_35833_c,nextEntry,0,the next hashentry in the table
@@ -1902,7 +1862,6 @@ field_35867_f,enderEyeMetaToDirection,0,
 field_35869_d,vineGrowth,0,
 field_35870_b,offsetZ,0,
 field_35871_a,offsetX,0,
-field_35873_e,allActions,0,Every EnumAction.
 field_35885_D,chunk_X,0,The X-coordinate of the chunk currently being decorated
 field_35886_E,chunk_Z,0,The Z-coordinate of the chunk currently being decorated
 field_35887_F,biome,0,The biome to generate trees for
@@ -1949,7 +1908,6 @@ field_35938_R,aoBrightnessXYZNNP,0,Ambient occlusion brightness XYZNNP
 field_35939_Y,aoBrightnessXYNP,0,Ambient occlusion brightness XYNP
 field_35940_X,aoBrightnessXYZNPN,0,Ambient occlusion brightness XYZNPN
 field_35941_Z,aoBrightnessXYZNPP,0,Ambient occlusion brightness XYZNPP
-field_35942_c,catchesLight,0,"'True if Block is Ice, or else rendered normal and opaque'"
 field_35943_ak,brightnessTopLeft,0,Brightness top left
 field_35944_al,brightnessBottomLeft,0,Brightness bottom left
 field_35945_ai,aoBrightnessXZPP,0,Ambient occlusion brightness XZPP
@@ -2045,7 +2003,6 @@ field_40104_aw,bobTimer,0,The height of the current bob
 field_40105_ay,particleName,0,
 field_40129_bA,carryoverDamage,0,"in each step in the damage calculations, this is set to the 'carryover' that would result if someone was damaged .25 hearts (for example), and added to the damage in the next step"
 field_4013_a,modelBipedMain,0,
-field_40141_a,profession,0,"[This is the profession value of a Villager mob, used to determine their texture.]"
 field_4014_g,flintAndSteel,0,
 field_40153_b,heightOffsetUpdateTime,0,ticks until heightOffset is randomized
 field_40154_a,heightOffset,0,Random offset used in floating behaviour
@@ -2204,9 +2161,9 @@ field_40441_a,container,0,The brewing stand this slot belongs to.
 field_40442_a,container,0,The brewing stand this slot belongs to.
 field_40443_a,container,0,The brewing stand this slot belongs to.
 field_40445_l,clouds,0,Clouds flag
-field_40455_b,lightmapEnabled,0,An OpenGL constant specifying the enabled lightmap texture
+field_40455_b,lightmapTexUnit,0,"An OpenGL constant corresponding to GL_TEXTURE1, used when setting data pertaining to auxiliary OpenGL texture units."
 field_40456_c,useMultitextureARB,0,True if the renderer supports multitextures and the OpenGL version != 1.3
-field_40457_a,lightmapDisabled,0,An OpenGL constant specifying the disabled lightmap texture
+field_40457_a,defaultTexUnit,0,"An OpenGL constant corresponding to GL_TEXTURE0, used when setting data pertaining to auxiliary OpenGL texture units."
 field_40458_D,enchantments,0,Is the 'Enchanter' achievement
 field_40459_E,overkill,0,
 field_4045_bg,pumpkinLantern,0,The Jack-O-Lantern
@@ -2256,15 +2213,9 @@ field_40527_z,thresholdEnchantability,0,"Used on the formula of base enchantabil
 field_40528_y,levelEnchantability,0,Holds how much each level increased the enchantability factor to be able to use this enchant.
 field_40529_x,baseEnchantability,0,Holds the base factor of enchantability needed to be able to use the enchant.
 field_40531_f,saveDirectoryName,0,The directory name of the world
-field_40533_g,allRarities,0,Every enum in EnumRarity
 field_4053_bc,netherrack,0,"Red block, main part of the nether"
-field_40541_b,temperatureCache,0,Array holding the last set of values generated by the temperatureLayer
 field_40548_r,projectile,0,This kind of damage is based on a projectile or not.
 field_40549_q,fireDamage,0,This kind of damage is based on fire or not.
-field_40553_d,chunkSaveLocation,0,
-field_40554_b,pendingChunkCoords,0,A HashSet for fast looking up for which chunks are pending saving
-field_40555_c,chunkSaveLock,0,
-field_40556_a,pendingChunkList,0,List of pending chunks to be saved
 field_40558_d,hardcoreEnabled,0,True if hardcore mode is enabled
 field_4055_bb,pumpkin,0,A pumpkin
 field_40562_d,lock,0,Used to make threads queue to add packets
@@ -2280,8 +2231,6 @@ field_40577_f,maxDamageFactor,0,"Holds the maximum damage factor (each piece mul
 field_40578_g,damageReductionAmountArray,0,"Holds the damage reduction (each 1 points is half a shield on gui) of each piece of armor (helmet, plate, legs and boots)"
 field_4057_ba,fence,0,
 field_40584_h,enchantability,0,Return the enchantability factor of the material
-field_40585_i,allArmorMaterials,0,Every enum in EnumArmorMaterial.
-field_40586_d,allCreatureAttributes,0,Every enum in EnumCreatureAttribute
 field_40590_G,bytesDrawn,0,Bytes sent to the GPU
 field_40595_g,hardcore,0,
 field_4059_au,stairCompactPlanks,0,
@@ -2300,7 +2249,6 @@ field_40647_b,enchantmentModifierDamage,0,Used to calculate the extra armor of e
 field_40648_c,enchantmentModifierLiving,0,Used to calculate the (magic) extra damage done by enchantments on current equipped item of player.
 field_40649_a,enchantmentRand,0,Is the random seed of enchantment effects.
 field_4064_aS,button,0,
-field_40659_i,allEnchantmentTypes,0,Every enum in EnumEnchantmentType
 field_4065_aN,pressurePlatePlanks,0,
 field_40665_d,profilingSection,0,Current profiling section
 field_40666_e,profilingMap,0,Profiling map
@@ -2340,9 +2288,6 @@ field_40723_L,spikeGen,0,
 field_40725_r,hardcore,0,Hardcore mode flag
 field_4072_a,blockType,0,Boolean used to seperate different states of blocks
 field_40732_j,enchantability,0,Defines the natural enchantability factor of the material.
-field_40738_b,chunkData,0,
-field_40739_a,chunkPosition,0,
-field_4074_d,mapSeed,0,(not required for the client)
 field_40752_d,strongComponentType,0,
 field_407_ao,bookShelf,0,
 field_4082_a,blockInstance,0,
@@ -2426,7 +2371,6 @@ field_4183_f,noise2,0,A double array that hold terrain noise from noiseGen2
 field_4184_e,noise1,0,A double array that hold terrain noise
 field_4185_d,noise3,0,A double array that hold terrain noise from noiseGen3
 field_4189_i,updateCounter,0,Counts the number of screen updates.
-field_4195_d,rendererBiomeGenCache,0,Array holding the last set of BiomeGenbases returned by loadRendererData()
 field_4199_g,rainfall,0,The rainfall in the world
 field_419_ac,cloth,0,
 field_4200_f,hellTemperature,0,
@@ -2438,7 +2382,6 @@ field_4216_a,worldObj,0,world object being used
 field_4217_f,colorsSunriseSunset,0,Array for sunrise/sunset colors (RGBA)
 field_4218_e,worldType,0,0 for normal world -1 for hell
 field_4219_d,lightBrightnessTable,0,Light to brightness conversion table
-field_4220_c,isAlternateDimension,0,True if this WorldProvider is for the Hell or End dimension
 field_4223_i,dialImageData,0,Holds the image of the dial.png in rgb format.
 field_4224_h,watchIconImageData,0,Holds the image of the watch from items.png in rgb format.
 field_4225_g,mc,0,Holds the game instance to retrieve information like world provider and time.
@@ -2527,7 +2470,6 @@ field_46018_e,moveHelper,0,
 field_46019_bU,tasks,0,
 field_46020_bQ,entityLivingToAttack,0,"is only being set, has no uses as of MC 1.1"
 field_46021_am,jumpHelper,0,
-field_46022_an,navigation,0,
 field_46026_at,damage,0,
 field_46031_f,terrainType,0,
 field_46032_d,terrainType,0,
@@ -2554,7 +2496,7 @@ field_46061_b,primaryColor,0,Base color of the egg
 field_46062_c,secondaryColor,0,Color of the egg spots
 field_46063_a,spawnedID,0,The entityID of the spawned mob
 field_46067_b,terrainType,0,
-field_46093_b,entity,0,
+field_46085_a,mutexBits,0,"A bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other."
 field_46094_c,entityTarget,0,
 field_46095_a,worldObj,0,
 field_460_a,numAdjacentSources,0,Number of horizontally adjacent liquid source blocks. Diagonal doesn't count. Only source blocks of the same liquid as the block using the field are counted.
@@ -2572,7 +2514,6 @@ field_46127_k,posY,0,Current Y coordinate at which to draw the next character.
 field_46131_b,isJumping,0,
 field_46132_a,entity,0,
 field_46134_b,terrainType,0,
-field_46137_d,allWorldTypes,0,An array of all EnumWorldType values.
 field_46139_c,worldType,0,'default' or 'flat'
 field_46145_f,posY,0,
 field_46146_g,posZ,0,
@@ -2590,12 +2531,93 @@ field_472_j,isChunkDataPacket,0,"Only true for Packet51MapChunk, Packet52MultiBl
 field_478_b,zPosition,0,Chunk Z position.
 field_479_a,xPosition,0,Chunk X position.
 field_480_f,size,0,The size of the arrays.
+field_48103_c,revengeTimer,0,
+field_48105_bU,targetTasks,0,
+field_48106_as,aiTarget,0,The active target the Task system uses for tracking
+field_48107_ar,navigator,0,
+field_48109_aw,maximumHomeDistance,0,If -1 there is no maximum distance
+field_48110_av,homePosition,0,
+field_48121_a,villageObj,0,
+field_48130_d,isPlayingFlag,0,
+field_48131_b,randomTickDivider,0,
+field_48132_c,isMatingFlag,0,
+field_48133_a,villageObj,0,
+field_48146_a,aiSit,0,
 field_481_e,metadataArray,0,The metadata for each block changed.
-field_482_d,typeArray,0,The type for each block change.
-field_483_c,coordinateArray,0,The coordinates of the blocks to change.
+field_48208_bT,needsRandomTick,0,Flags whether or not this block is of a type that needs random ticking. Ref-counted by ExtendedBlockStorage in order to broadly cull a chunk from the random chunk update list for efficiency's sake.
+field_48256_a,entityObj,0,
+field_48340_d,worldObj,0,
+field_48341_e,matingTimeout,0,
+field_48342_b,villagerObj,0,
+field_48343_c,mate,0,
+field_48344_a,villageObj,0,
+field_48357_b,targetVillager,0,
+field_48359_a,villagerObj,0,
+field_48364_b,frontDoor,0,
+field_48365_a,entityObj,0,
+field_48371_b,entityHost,0,The entity the AI instance has been applied to
+field_48372_c,attackTarget,0,
+field_48385_a,irongolem,0,
+field_48465_A,villageCollectionObj,0,
+field_48466_O,villageSiegeObj,0,
+field_48482_b,canSeeCachePositive,0,
+field_48483_c,canSeeCacheNegative,0,
+field_48484_a,entityObj,0,
 field_484_b,xPosition,0,The X axis relative movement.
+field_48505_p,storageArrays,0,"Used to store block IDs, block MSBs, Sky-light maps, Block-light maps, and metadata. Each entry corresponds to a logical segment of 16x16x16 blocks, stacked vertically."
+field_48509_b,depthBits,0,
+field_48510_c,depthBitsPlusFour,0,
+field_48511_a,data,0,
+field_48513_b,agressionTime,0,
+field_48514_c,villageObj,0,
+field_48515_a,agressor,0,
+field_48542_f,lastAddDoorTimestamp,0,
+field_48543_g,tickCounter,0,
+field_48544_d,center,0,This is the actual village center.
+field_48545_e,villageRadius,0,
+field_48546_b,villageDoorInfoList,0,list of VillageDoorInfo objects
+field_48547_c,centerHelper,0,This is the sum of all door coordinates and used to calculate the actual village center by dividing by the number of doors.
+field_48548_a,worldObj,0,
+field_48549_j,numIronGolems,0,
+field_48550_h,numVillagers,0,
+field_48551_i,villageAgressors,0,
+field_48566_d,villageList,0,
+field_48567_e,tickCounter,0,
+field_48568_b,villagerPositionsList,0,"This is a black hole. You can add data to this list through a public interface, but you can't query that information in any way and it's not used internally either."
+field_48569_c,newDoors,0,
+field_48570_a,worldObj,0,
+field_48594_f,lastActivityTimestamp,0,
+field_48595_g,isDetachedFromVillageFlag,0,
+field_48596_d,insideDirectionX,0,
+field_48597_e,insideDirectionZ,0,
+field_48598_b,posY,0,
+field_48599_c,posZ,0,
 field_485_a,entityId,0,The ID of this entity.
+field_48600_a,posX,0,
+field_48601_h,doorOpeningRestrictionCounter,0,
+field_48602_f,data,0,
+field_48603_g,blocks,0,
+field_48604_d,blockLight,0,
+field_48605_e,skyLight,0,
+field_48607_c,heightmap,0,
+field_48608_a,lastUpdated,0,
+field_48609_l,z,0,
+field_48610_j,tileTicks,0,
+field_48611_k,x,0,
+field_48612_h,entities,0,
+field_48613_i,tileEntities,0,
+field_48615_f,isMovementBlockAllowed,0,should the PathFinder disregard BlockMovement type materials in its path
+field_48616_g,isPathingInWater,0,
+field_48617_e,isWoddenDoorAllowed,0,should the PathFinder go through wodden door blocks
+field_48618_h,canEntityDrown,0,tells the FathFinder to not stop pathing underwater
+field_48649_b,currentPathIndex,0,PathEntity Array Index the Entity is currently targeting
 field_486_g,rotating,0,Boolean set to true if the entity is rotating.
+field_48717_g,blocklightArray,0,The NibbleArray containing a block of Block-light data.
+field_48718_d,blockLSBArray,0,Contains the least significant 8 bits of each block ID belonging to this block storage's parent Chunk.
+field_48719_e,blockMSBArray,0,Contains the most significant 4 bits of each block ID belonging to this block storage's parent Chunk.
+field_48720_b,blockRefCount,0,A total count of the number of non-air blocks in this block storage's Chunk.
+field_48721_c,tickRefCount,0,Contains the number of blocks in this block storage's parent chunk that require random ticking. Used to cull the Chunk from random tick updates for performance reasons.
+field_48723_h,skylightArray,0,The NibbleArray containing a block of Sky-light data.
 field_487_f,pitch,0,The Y axis rotation.
 field_488_e,yaw,0,The X axis rotation.
 field_489_d,zPosition,0,The Z axis relative movement.
@@ -2676,14 +2698,6 @@ field_568_d,direction,0,The offset to use for block/item placement.
 field_569_c,zPosition,0,
 field_570_b,itemID,0,
 field_571_a,entityID,0,
-field_572_b,yPosition,0,Block Y position.
-field_573_a,xPosition,0,Block X position.
-field_574_h,chunkSize,0,The size of the compressed data.
-field_575_g,chunk,0,"The chunk data, compressed using ZLib deflate."
-field_576_f,zSize,0,The Z size of the chunk.
-field_577_e,ySize,0,The Y size of the chunk.
-field_578_d,xSize,0,The X size of the chunk.
-field_579_c,zPosition,0,Block Z position.
 field_580_b,collectorEntityId,0,The entity that picked up the one from the ground.
 field_581_a,collectedEntityId,0,The entity on the ground that was picked up.
 field_582_a,reason,0,Displayed to the client when the connection terminates.
@@ -2806,16 +2820,13 @@ field_6501_o,entityRenderMap,0,A map of entity classes and the associated render
 field_6503_n,color,0,
 field_6504_m,biomeName,0,
 field_6509_a,tileEntityRenderer,0,The TileEntityRenderer instance associated with this TileEntitySpecialRenderer
-field_6511_f,allOSes,0,An array of all EnumOS2 values.
 field_6514_b,exception,0,The Throwable object that was thrown.
 field_6515_a,description,0,A description of the error that has occurred.
 field_6517_m,specialRendererMap,0,A mapping of TileEntitySpecialRenderers used for each TileEntity that has one
-field_6518_e,allCreatureTypes,0,An array of all EnumCreatureType values.
 field_6521_r,keyBindChat,0,
 field_6522_B,optionsFile,0,
 field_6523_q,keyBindDrop,0,
 field_6524_j,skin,0,The name of the selected texture pack.
-field_6525_f,allOSes,0,An array of all EnumOS1 values.
 field_6527_k,texturePack,0,Texture pack
 field_6528_b,textureMap,0,
 field_6529_a,foliageBuffer,0,Color buffer for foliage
@@ -3205,7 +3216,6 @@ field_1002_b,worldFile,1,The directory in which to save world data
 field_1003_a,logger,1,Reference to the logger.
 field_1004_b,points,1,The actual points in the path
 field_1005_a,pathLength,1,The total length of the path
-field_1006_c,pathIndex,1,The index of the current point in the path
 field_1007_j,isFirst,1,Indicates this is the origin
 field_1008_i,previous,1,The point preceding this in its assigned path
 field_1009_h,distanceToTarget,1,The distance to the target
@@ -3264,28 +3274,14 @@ field_1056_e,nextVector,1,"Next empty index in the vectorList. We don't ever see
 field_1057_d,vectorList,1,ArrayList of all created vectors
 field_1058_c,zCoord,1,Z coordinate of Vec3D
 field_1059_b,commandListener,1,The CommandListener object associated with this command.
-field_105_b,yPosition,1,Block Y position.
 field_1060_a,command,1,The command string.
-field_1061_m,maxZ,1,highest z of a changed block
-field_1062_l,minZ,1,lowest z of a changed block
-field_1063_k,maxY,1,highest y of a changed block
-field_1064_j,minY,1,lowest y of a changed block
-field_1065_i,maxX,1,highest x of a changed block
-field_1066_h,minX,1,lowest x of a changed block
 field_1067_g,numBlocksToUpdate,1,the number of blocks that need to be updated next tick
 field_1068_f,blocksToUpdate,1,array of blocks to update this tick
 field_1069_e,currentChunk,1,the chunk the player currently resides in
-field_106_a,xPosition,1,Block X position.
 field_1070_d,chunkZ,1,the z coordinate of the chunk they are in
 field_1071_c,chunkX,1,the x coordinate of the chunk they are in
 field_1072_b,players,1,the list of all players in this instance (chunk)
 field_1073_a,playerManager,1,
-field_107_h,chunkSize,1,The size of the compressed data.
-field_108_g,chunk,1,"The chunk data, compressed using ZLib deflate."
-field_109_f,zSize,1,The Z size of the chunk.
-field_110_e,ySize,1,The Y size of the chunk.
-field_111_d,xSize,1,The X size of the chunk.
-field_112_c,zPosition,1,Block Z position.
 field_113_b,username,1,The name of the user attempting to login.
 field_116_a,entityId,1,ID of the entity to be destroyed on the client.
 field_117_b,slot,1,"Equipment slot: 0=held, 1-4=armor slot"
@@ -3499,7 +3495,6 @@ field_21108_e,maxNumberOfCreature,1,
 field_21109_d,creatureClass,1,"The root class of creatures associated with this EnumCreatureType (IMobs for aggressive creatures, EntityAnimals for friendly ones)"
 field_21120_L,spawnPeacefulMobs,1,
 field_21121_K,spawnHostileMobs,1,indicates if enemies are spawned or not
-field_21124_c,allMovingObjectTypes,1,
 field_21133_a,tileEntityDispenser,1,
 field_21137_b,recipeItems,1,
 field_21138_a,recipeOutput,1,
@@ -3517,7 +3512,6 @@ field_21174_b,dataValueId,1,id of max 31
 field_21175_a,objectType,1,
 field_21176_d,isWatching,1,
 field_21177_c,watchedObject,1,
-field_21182_j,allToolMaterials,1,
 field_21183_i,damageVsEntity,1,Damage versus entities.
 field_21184_h,efficiencyOnProperMaterial,1,The strength of this tool material against blocks which it is effective against.
 field_21185_g,maxUses,1,"The number of uses this material allows. (wood = 59, stone = 131, iron = 250, diamond = 1561, gold = 32)"
@@ -3557,7 +3551,6 @@ field_22100_d,initializationTime,1,The time in milliseconds when this field was 
 field_22106_a,savesDirectory,1,Reference to the File object representing the directory for the world saves
 field_22116_b,minecraftServer,1,Stores a reference to the Server
 field_22117_a,minecraftLogger,1,
-field_22119_a,dataFilenamePattern,1,
 field_22125_a,regionsByFilename,1,A map containing Files as keys and RegionFiles as values
 field_22142_b,fileName,1,
 field_22143_a,emptySector,1,
@@ -3587,11 +3580,7 @@ field_22199_d,spawnZ,1,The spawn zone position (Z)
 field_22200_c,spawnY,1,The spawn zone position (Y)
 field_22201_b,spawnX,1,The spawn zone position (X)
 field_22202_a,randomSeed,1,
-field_22208_b,xChunk,1,
-field_22209_a,chunkFile,1,
-field_22210_c,yChunk,1,
 field_22213_a,nightSpawnEntities,1,
-field_22214_a,folderRegexPattern,1,
 field_22216_a,posX,1,
 field_22_a,logger,1,Reference to the logger.
 field_230_aW,bFull3D,1,"If true, render the object in full 3D, like weapons and tools."
@@ -3664,7 +3653,6 @@ field_25131_c,mineWood,1,The get wood achievement
 field_25133_b,guidMap,1,
 field_25134_a,instance,1,
 field_25137_a,localizedName,1,
-field_25140_f,allStatuses,1,
 field_25145_a,entityClass,1,
 field_251_aB,snowball,1,
 field_252_aA,redstone,1,
@@ -3672,7 +3660,6 @@ field_253_a,spawnID,1,
 field_256_aY,damageReduceAmount,1,Holds the amount of damage that the armor reduces at full durability.
 field_257_aX,armorType,1,"Stores the armor type: 0 is helmet, 1 is plate, 2 is legs and 3 is boots"
 field_258_bb,maxDamageArray,1,Holds the 'base' maxDamage that each armorType have.
-field_26002_a,convTable,1,"A table for storing which BlockIDs are defined, and which should be turned into air on-load to avoid crashing Minecraft."
 field_260_a,doorMaterial,1,
 field_261_a,recordName,1,The name of the record.
 field_263_aZ,damageVsEntity,1,Damage versus entities.
@@ -3883,7 +3870,6 @@ field_34901_P,addedTileEntityList,1,
 field_34902_Q,entityInstanceIdMap,1,Maps ids to entity instances
 field_34903_b,attackingPlayer,1,The most recent player that has attacked this entity
 field_34904_c,recentlyHit,1,"Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity should drop items on death."
-field_34905_c,temperatureLayer,1,
 field_34906_b,biomeIndexLayer,1,A GenLayer containing the indices into BiomeGenBase.biomeList[]
 field_34907_a,genBiomes,1,
 field_34908_d,itemInUse,1,"This is the item that is in use when the player is holding down the useItemButton (e.g., bow, food, sword)"
@@ -3947,7 +3933,6 @@ field_35116_a,entityId,1,
 field_35117_d,worldHeight,1,Defaults to 128
 field_35118_e,creativeMode,1,"0 for survival, 1 for creative"
 field_35119_c,difficulty,1,The difficulty setting of the server.
-field_35120_a,mapSeed,1,
 field_35121_d,posZ,1,
 field_35122_e,xpValue,1,The Orbs Experience points value.
 field_35123_b,posX,1,
@@ -3959,12 +3944,10 @@ field_35128_a,entityId,1,The ID of the entity which an effect is being removed f
 field_35129_f,difficultySetting,1,The difficulty setting byte.
 field_35130_g,worldHeight,1,Defaults to 128
 field_35131_d,serverMode,1,"0 for survival, 1 for creative"
-field_35132_e,worldType,1,The world type byte.
 field_35133_h,maxPlayers,1,The maximum players.
 field_35134_b,experienceTotal,1,The total experience points.
 field_35135_c,experienceLevel,1,The experience level.
 field_35143_f,biomesToSpawnIn,1,
-field_35144_d,rainfallLayer,1,
 field_35145_e,biomeCache,1,The biome list.
 field_35151_ca,isAirBorne,1,
 field_35154_f,xpValue,1,This is how much XP this orb has.
@@ -4006,11 +3989,6 @@ field_35234_b,canCarryBlocks,1,
 field_35235_a,isAttacking,1,
 field_35237_a,allySummonCooldown,1,A cooldown before this entity will search for another Silverfish to join them in battle.
 field_35245_H,lightUpdateBlockList,1,"is a temporary list of blocks and light values used when updating light levels. Holds up to 32x32x32 blocks (the maximum influence of a light source.) Every element is a packed bit value: 0000000000LLLLzzzzzzyyyyyyxxxxxx. The 4-bit L is a light level used when darkening blocks. 6-bit numbers x, y and z represent the block's offset from the original block, plus 32 (i.e. value of 31 would mean a -1 offset"
-field_35248_d,worldMaxY,1,Maximum y-position of a block.
-field_35249_e,seaLevel,1,"The height of sea levels for this world used in world generation. Any air above the terrain, but below this level is replaced with water."
-field_35250_b,xShift,1,
-field_35251_c,worldHeight,1,the world instance's hight / maximum yPosition of a block
-field_35252_a,heightShift,1,(2^this) is the world's height
 field_35258_D,chunk_X,1,
 field_35259_E,chunk_Z,1,
 field_35260_F,biome,1,The biome generator object.
@@ -4178,8 +4156,6 @@ field_35592_e,prevFoodLevel,1,
 field_35593_b,foodSaturationLevel,1,The player's food saturation.
 field_35594_c,foodExhaustionLevel,1,The player's food exhaustion.
 field_35595_a,foodLevel,1,The player's food level.
-field_35598_e,allDoors,1,Every enum in EnumDoor
-field_35603_e,allActions,1,
 field_35607_f,enderEyeMetaToDirection,1,
 field_35609_d,vineGrowth,1,
 field_35610_b,offsetZ,1,
@@ -4272,7 +4248,6 @@ field_40086_c,inventoryContents,1,
 field_40087_a,inventoryTitle,1,
 field_40088_a,container,1,The brewing stand this slot belongs to.
 field_40105_ap,carryoverDamage,1,"in each step in the damage calculations, this is set to the 'carryover' that would result if someone was damaged .25 hearts (for example), and added to the damage in the next step"
-field_40112_a,profession,1,"[This is the profession value of a Villager mob, used to determine their texture.]"
 field_40129_b,heightOffsetUpdateTime,1,
 field_40130_a,heightOffset,1,
 field_40138_s,maxHealth,1,The maximum health of the Entity.
@@ -4347,7 +4322,6 @@ field_40266_a,experience,1,Experience at the current level
 field_40267_a,container,1,The brewing stand this clot belongs to.
 field_40268_a,container,1,The brewing stand this slot belongs to.
 field_40269_f,player,1,The player that has this container open.
-field_4026_d,mapSeed,1,(not required for the client)
 field_40270_a,container,1,The brewing stand this slot belongs to.
 field_40277_r,projectile,1,This kind of damage is based on a projectile or not.
 field_40278_q,fireDamage,1,This kind of damage is based on fire or not.
@@ -4362,10 +4336,6 @@ field_40320_u,bigMushroomGen,1,Field that holds big mushroom generator
 field_40321_y,waterlilyPerChunk,1,
 field_40322_x,waterlilyGen,1,
 field_40323_L,spikeGen,1,
-field_40327_d,chunkSaveLocation,1,
-field_40328_b,pendingChunkCoords,1,A HashSet for fast looking up for which chunks are pending saving
-field_40329_c,chunkSaveLock,1,
-field_40330_a,pendingChunkList,1,List of pending chunks to be saved
 field_40332_b,nameSeed,1,used as seed for EnchantmentNameParts (see GuiEnchantment)
 field_40333_c,enchantLevels,1,3-member array storing the enchantment levels of each slot
 field_40334_a,tableInventory,1,SlotEnchantmentTable object with ItemStack to be enchanted
@@ -4469,7 +4439,6 @@ field_40484_a,damageModifier,1,
 field_40485_b,entityLiving,1,
 field_40486_a,livingModifier,1,
 field_40488_j,enchantability,1,
-field_40489_d,allCreatureAttributes,1,
 field_4048_bd,slowSand,1,
 field_40493_b,enchantmentLevel,1,Enchantment level associated with this EnchantmentData
 field_40494_a,enchantmentobj,1,Enchantment object associated with this EnchantmentData
@@ -4477,7 +4446,6 @@ field_40498_f,maxDamageFactor,1,"Holds the maximum damage factor (each piece mul
 field_40499_g,damageReductionAmountArray,1,"Holds the damage reduction (each 1 points is half a shield on gui) of each piece of armor (helmet, plate, legs and boots)"
 field_404_af,attackStrength,1,How much damage this mob's attacks deal
 field_40505_h,enchantability,1,Return the enchantability factor of the material
-field_40506_i,allArmorMaterials,1,
 field_4050_bc,netherrack,1,
 field_40510_d,savedIOCounter,1,
 field_40511_e,isThreadWaiting,1,
@@ -4490,7 +4458,6 @@ field_40522_b,sectionList,1,
 field_40523_c,timestampList,1,
 field_40524_a,profilingEnabled,1,
 field_4052_bb,pumpkin,1,A pumpkin
-field_40534_i,allEnchantmentTypes,1,Every enum in EnumEnchantmentType
 field_40539_b,secondaryComponents,1,
 field_40540_a,primaryComponents,1,
 field_40542_d,strongComponentType,1,
@@ -4507,7 +4474,6 @@ field_40568_k,gunpowderEffect,1,
 field_40569_h,magmaCreamEffect,1,
 field_4056_N,glass,1,
 field_40570_i,redstoneEffect,1,
-field_40580_a,temperatureCache,1,Array holding the last set of values generated by the temperatureLayer
 field_40587_a,hexDigits,1,Translation array of decimal to hex digits
 field_40598_L,effectiveness,1,
 field_40599_M,usable,1,
@@ -4518,8 +4484,6 @@ field_40601_J,statusIconIndex,1,The index for the icon displayed when the potion
 field_40602_K,isBadEffect,1,This field indicated if the effect is 'bad' - negative - for the entity.
 field_4060_ay,blockDiamond,1,
 field_40611_d,stackTagCompound,1,
-field_40612_b,chunkData,1,
-field_40613_a,chunkPosition,1,
 field_40616_d,lock,1,Used to make threads queue to add packets
 field_40617_b,packetCountForID,1,A count of the total number of each packet sent grouped by IDs.
 field_40618_c,sizeCountForID,1,A count of the total size of each packet sent grouped by IDs.
@@ -4724,7 +4688,6 @@ field_46025_aM,tasks,1,
 field_46026_Y,prevRotationYaw3,1,
 field_46027_X,prevRotationYaw2,1,
 field_46028_f,jumpHelper,1,
-field_46029_g,navigation,1,
 field_46030_d,lookHelper,1,
 field_46031_e,moveHelper,1,
 field_46043_d,villageGen,1,
@@ -4732,7 +4695,6 @@ field_46044_b,random,1,
 field_46045_c,useStructures,1,
 field_46046_a,worldObj,1,
 field_46047_f,terrainType,1,"World terrain type, 0 for normal, 1 for flap map"
-field_46050_d,allWorldTypes,1,An array of all EnumWorldType values.
 field_46052_c,worldType,1,
 field_46054_w,infinity,1,"Infinity enchantment for bows. The bow will not consume arrows anymore, but will still required at least one arrow on inventory use the bow."
 field_46055_v,flame,1,Flame enchantment for bows. Arrows fired by the bow will be on fire. Any target hit will also set on fire.
@@ -4753,7 +4715,7 @@ field_46081_u,taigaHills,1,Taiga Hills biome.
 field_46082_t,forestHills,1,Forest Hills biome.
 field_46083_s,desertHills,1,Desert Hills biome.
 field_46084_r,beach,1,Beach biome.
-field_46097_b,entity,1,
+field_46093_a,mutexBits,1,
 field_46098_c,entityTarget,1,
 field_46099_a,worldObj,1,
 field_46104_a,entity,1,
@@ -4775,12 +4737,78 @@ field_476_ae,minecartType,1,"The type of minecart, 2 for powered, 1 for storage.
 field_478_b,xCoord,1,The x coordinate of the tile entity.
 field_479_a,worldObj,1,The reference to the world.
 field_47_b,zPosition,1,Chunk Z position.
+field_48081_t,buildLimit,1,Maximum build height
+field_48096_A,villageCollectionObj,1,
+field_48097_O,villageSiegeObj,1,
 field_480_f,classToNameMap,1,A HashMap storing the classes and mapping to the string names (reverse of nameToClassMap).
+field_48159_b,frontDoor,1,
+field_48160_a,entityObj,1,
+field_48165_b,targetVillager,1,
+field_48167_a,villagerObj,1,
+field_48175_a,entityObj,1,
 field_481_e,nameToClassMap,1,A HashMap storing string names of classes mapping to the actual java.lang.Class type.
 field_482_d,zCoord,1,The z coordinate of the tile entity.
+field_48302_a,irongolem,1,
+field_48308_d,worldObj,1,
+field_48309_e,matingTimeout,1,
+field_48310_b,villagerObj,1,
+field_48311_c,mate,1,
+field_48312_a,villageObj,1,
+field_48337_aM,targetTasks,1,
+field_48339_c,revengeTimer,1,
+field_48341_o,homePosition,1,
+field_48342_l,aiTarget,1,The active target the Task system uses for tracking
+field_48345_k,navigator,1,
+field_48346_p,maximumHomeDistance,1,
+field_48358_g,isPlayingFlag,1,
+field_48359_b,randomTickDivider,1,
+field_48360_c,isMatingFlag,1,
+field_48361_a,villageObj,1,
+field_48374_a,aiSit,1,
+field_48387_a,villageObj,1,
 field_483_c,yCoord,1,The y coordinate of the tile entity.
+field_48487_f,lastActivityTimestamp,1,
+field_48488_g,isDetachedFromVillageFlag,1,
+field_48489_d,insideDirectionX,1,
+field_48490_e,insideDirectionZ,1,
+field_48491_b,posY,1,
+field_48492_c,posZ,1,
+field_48493_a,posX,1,
+field_48494_h,doorOpeningRestrictionCounter,1,
 field_484_f,lineBeingEdited,1,"The index of the line currently being edited. Only used on client side, but defined on both. Note this is only really used when the > < are going to be visible."
+field_48536_f,lastAddDoorTimestamp,1,
+field_48537_g,tickCounter,1,
+field_48538_d,center,1,
+field_48539_e,villageRadius,1,
+field_48540_b,villageDoorInfoList,1,
+field_48541_c,centerHelper,1,
+field_48542_a,worldObj,1,
+field_48543_j,numIronGolems,1,
+field_48544_h,numVillagers,1,
+field_48545_i,villageAgressors,1,
+field_48568_f,data,1,
+field_48569_g,blocks,1,
+field_48570_d,blockLight,1,
+field_48571_e,skyLight,1,
+field_48573_c,heightmap,1,
+field_48574_a,lastUpdated,1,
+field_48575_l,z,1,
+field_48576_j,tileTicks,1,
+field_48577_k,x,1,
+field_48578_h,entities,1,
+field_48579_i,tileEntities,1,
 field_485_e,signText,1,An array of four strings storing the lines of text on the sign.
+field_48619_b,depthBits,1,
+field_48620_c,depthBitsPlusFour,1,
+field_48621_a,data,1,
+field_48625_b,agressionTime,1,
+field_48626_c,villageObj,1,
+field_48627_a,agressor,1,
+field_48640_d,villageList,1,
+field_48641_e,tickCounter,1,
+field_48642_b,villagerPositionsList,1,
+field_48643_c,newDoors,1,
+field_48644_a,worldObj,1,
 field_486_h,furnaceCookTime,1,The number of ticks that the current item has been cooking for
 field_487_g,currentItemBurnTime,1,The number of ticks that a fresh copy of the currently-burning item would keep the furnace burning for
 field_488_f,furnaceBurnTime,1,The number of ticks that the furnace will keep burning
@@ -4811,7 +4839,6 @@ field_514_m,sand,1,
 field_515_l,fire,1,
 field_517_j,sponge,1,
 field_518_i,plants,1,
-field_51_d,typeArray,1,The type for each block change.
 field_520_g,lava,1,
 field_521_f,water,1,
 field_522_e,iron,1,
@@ -4822,7 +4849,6 @@ field_526_a,air,1,
 field_527_a,statsComponent,1,
 field_528_b,posZ,1,the z coordinate
 field_529_a,posY,1,the y coordinate
-field_52_c,coordinateArray,1,The coordinates of the blocks to change.
 field_531_y,planks,1,
 field_532_x,cobblestone,1,
 field_533_w,dirt,1,
@@ -4831,10 +4857,8 @@ field_535_u,stone,1,
 field_536_t,lightValue,1,Amount of light emitted
 field_537_s,canBlockGrass,1,
 field_538_r,lightOpacity,1,How much light is subtracted for going through this block
-field_539_q,isBlockContainer,1,Can this block be type casted to a BlockContainer (list indexed on blockIDs)
 field_53_b,yPosition,1,Block Y position.
 field_540_p,opaqueCubeLookup,1,
-field_541_o,tickRandomly,1,List of whether this blockType will receive random update ticks or not.
 field_542_n,blocksList,1,List of ly/ff (BlockType) containing the already registered blocks.
 field_54_a,xPosition,1,Block X position.
 field_551_e,soundPowderFootstep,1,
@@ -4909,7 +4933,6 @@ field_6149_an,fishPosRotationIncrements,1,
 field_6150_ak,ticksInGround,1,
 field_6151_b,nextStepDistance,1,The distance that has to be exceeded in order to triger a new step sound and an onEntityWalking event on a block
 field_6153_aZ,iconIndex,1,Icon index in the icons table.
-field_6155_e,allCreatureTypes,1,
 field_6159_E,cloudColour,1,
 field_6160_D,mcServer,1,
 field_6162_n,color,1,
@@ -4917,7 +4940,6 @@ field_6163_m,biomeName,1,
 field_6164_h,colorsSunriseSunset,1,
 field_6165_g,worldType,1,0 for normal world -1 for hell
 field_6166_d,isHellWorld,1,States whether the Hell world provider is used(true) or if the normal world provider is used(false)
-field_6167_c,isAlternateDimension,1,Disables the use of beds in the world. Used client side for some rendering settings.
 field_616_ac,cloth,1,
 field_619_aZ,jukebox,1,
 field_61_f,yaw,1,The yaw of the entity.
@@ -4964,23 +4986,15 @@ field_674_b,thisWorld,1,The world object that this object is connected to.
 field_675_a,thisPlayer,1,The player that this object references.
 field_676_s,lastSaveTime,1,
 field_677_r,hasEntities,1,
-field_679_p,neverSave,1,
 field_67_g,onGround,1,True if the client is on the ground.
 field_680_o,isModified,1,Set to true if the chunk has been modified and needs to be updated internally.
 field_681_n,isTerrainPopulated,1,Boolean value indicating if the terrain is populated.
-field_682_m,entities,1,List of lists of the entities in the chunk. It is 8 lists partitioned along the Y axis.
 field_683_l,chunkTileEntityMap,1,
 field_684_k,zPosition,1,The z coordinate of the chunk.
 field_685_j,xPosition,1,The x coordinate of the chunk.
-field_686_i,lowestBlockHeight,1,
-field_687_h,heightMap,1,Byte array containing height map for the chunk.
-field_688_g,blocklightMap,1,Light map for blocks. See class le (client) or eo (server).
-field_689_f,skylightMap,1,Light map for sky. See class le (client) or eo (server).
 field_68_f,pitch,1,The player's pitch rotation.
-field_690_e,data,1,Chunk data
 field_691_d,worldObj,1,Reference to the World object.
 field_692_c,isChunkLoaded,1,
-field_693_b,blocks,1,Byte array of blocks for the chunk.
 field_694_a,isLit,1,Determines if the chunk is lit or not at a light value greater than 0.
 field_695_u,caveGenerator,1,
 field_69_e,yaw,1,The player's yaw rotation.
@@ -5109,7 +5123,6 @@ field_855_c,itemID,1,ID of the item.
 field_856_z,sizeX,1,
 field_857_y,title,1,Painting Title.
 field_85_f,pitch,1,The Y axis rotation.
-field_863_D,allArt,1,
 field_865_C,offsetY,1,
 field_867_B,offsetX,1,
 field_869_A,sizeY,1,
@@ -5345,8 +5358,6 @@ field_940_b,path,1,The path being generated
 field_941_a,worldMap,1,Used to find obstacles
 field_942_d,pathOptions,1,Selection of path points to add to the path
 field_943_c,pointMap,1,The points in the path
-field_944_b,createIfNecessary,1,"If true, ChunkLoader will create the needed directories and file for a chunk. (true for WorldProvider, WorldProviderHell; false for WorldProviderIso)"
-field_945_a,saveDir,1,The root directory from where the chunks are saved (this will be the World1-5 dirs)
 field_946_b,rand,1,The RNG used by the MapGen classes.
 field_947_a,range,1,The number of Chunks to gen-check in any given direction.
 field_948_b,numHashElements,1,the number of elements in the hash array
@@ -5375,13 +5386,11 @@ field_978_e,networkAcceptThread,1,
 field_979_d,serverSocket,1,
 field_97_b,xPosition,1,The X position of the object.
 field_980_c,mcServer,1,Reference to the MinecraftServer object.
-field_983_d,allSkyBlocks,1,
 field_984_c,defaultLightValue,1,
 field_985_b,netWorkListener,1,The network listener object.
 field_986_a,mcServer,1,Reference to the MinecraftServer object.
 field_987_a,mcServerGui,1,Reference to the ServerGui object.
 field_98_a,entityId,1,Entity ID of the object.
-field_990_d,allMobTypes,1,
 field_992_b,mcServerGui,1,Reference to the ServerGui object.
 field_993_a,textField,1,Text field.
 field_994_b,serverProperties,1,The server properties object.

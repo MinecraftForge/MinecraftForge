@@ -83,7 +83,7 @@
      }
  
      /**
-@@ -1050,6 +1076,12 @@
+@@ -1050,6 +1076,11 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -92,11 +92,10 @@
 +        {
 +            return;
 +        }
-+        
-         if (par1Entity.func_48080_j())
+         if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1192,6 +1224,12 @@
+@@ -1192,6 +1223,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -109,7 +108,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1674,6 +1712,7 @@
+@@ -1674,6 +1711,7 @@
                      return 101;
                  }
              }
@@ -117,7 +116,7 @@
          }
  
          return var3;
-@@ -1841,4 +1880,30 @@
+@@ -1841,4 +1879,30 @@
      {
          return !this.capabilities.isFlying;
      }

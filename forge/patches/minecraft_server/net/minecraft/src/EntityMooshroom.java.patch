@@ -12,11 +12,11 @@
  {
      public EntityMooshroom(World par1World)
      {
-@@ -21,31 +25,7 @@
+@@ -21,27 +25,6 @@
              par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(Item.bowlSoup));
              return true;
          }
--        else if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.func_48351_J() >= 0)
+-        else if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.getGrowingAge() >= 0)
 -        {
 -            this.setEntityDead();
 -            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
@@ -37,15 +37,10 @@
 -
 -            return true;
 -        }
--        else
--        {
--            return super.interact(par1EntityPlayer);
--        }
-+        return super.interact(par1EntityPlayer);
-     }
- 
-     /**
-@@ -55,4 +35,29 @@
+         else
+         {
+             return super.interact(par1EntityPlayer);
+@@ -55,4 +38,29 @@
      {
          return new EntityMooshroom(this.worldObj);
      }
@@ -53,7 +48,7 @@
 +    @Override
 +    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
 +    {
-+        return func_48351_J() >= 0;
++        return getGrowingAge() >= 0;
 +    }
 +
 +    @Override

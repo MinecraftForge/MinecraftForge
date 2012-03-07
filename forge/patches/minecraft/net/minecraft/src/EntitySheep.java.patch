@@ -42,7 +42,7 @@
      }
  
 @@ -276,4 +258,23 @@
-             this.func_48122_d(var1);
+             this.setGrowingAge(var1);
          }
      }
 +

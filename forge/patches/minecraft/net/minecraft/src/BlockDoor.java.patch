@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockDoor.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java	0000-00-00 00:00:00.000000000 -0000
-@@ -240,7 +240,7 @@
+@@ -243,7 +243,7 @@
      {
          if (this.blockMaterial == Material.iron)
          {
@@ -9,7 +9,7 @@
          }
          else
          {
-@@ -322,7 +322,7 @@
+@@ -325,7 +325,7 @@
                  var7 = true;
              }
  
@@ -18,7 +18,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
                  var7 = true;
-@@ -375,7 +375,7 @@
+@@ -378,7 +378,7 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {

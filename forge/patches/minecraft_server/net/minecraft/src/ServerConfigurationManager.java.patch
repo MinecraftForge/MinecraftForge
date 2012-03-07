@@ -74,7 +74,7 @@
          WorldServer var4 = this.mcServer.getWorldManager(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
 @@ -292,33 +301,14 @@
-         par1EntityPlayerMP.playerNetServerHandler.sendPacket(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.func_48095_y(), par1EntityPlayerMP.itemInWorldManager.getGameType()));
+         par1EntityPlayerMP.playerNetServerHandler.sendPacket(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getWorldHeight(), par1EntityPlayerMP.itemInWorldManager.getGameType()));
          var4.removePlayer(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
 -        double var6 = par1EntityPlayerMP.posX;

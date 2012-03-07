@@ -254,9 +254,9 @@
  
 -                if (this.riddenByEntity != null)
 -                {
--                    this.motionX *= 0.997D;
+-                    this.motionX *= 0.996999979019165D;
 -                    this.motionY *= 0.0D;
--                    this.motionZ *= 0.997D;
+-                    this.motionZ *= 0.996999979019165D;
 -                }
 -                else
 -                {
@@ -269,23 +269,23 @@
 -                            this.pushX /= var38;
 -                            this.pushZ /= var38;
 -                            double var40 = 0.04D;
--                            this.motionX *= 0.8D;
+-                            this.motionX *= 0.800000011920929D;
 -                            this.motionY *= 0.0D;
--                            this.motionZ *= 0.8D;
+-                            this.motionZ *= 0.800000011920929D;
 -                            this.motionX += this.pushX * var40;
 -                            this.motionZ += this.pushZ * var40;
 -                        }
 -                        else
 -                        {
--                            this.motionX *= 0.9D;
+-                            this.motionX *= 0.8999999761581421D;
 -                            this.motionY *= 0.0D;
--                            this.motionZ *= 0.9D;
+-                            this.motionZ *= 0.8999999761581421D;
 -                        }
 -                    }
 -
--                    this.motionX *= 0.96D;
+-                    this.motionX *= 0.9599999785423279D;
 -                    this.motionY *= 0.0D;
--                    this.motionZ *= 0.96D;
+-                    this.motionZ *= 0.9599999785423279D;
 -                }
 +                applyDragAndPushForces();
  
@@ -363,9 +363,9 @@
 -
 -                if (!this.onGround)
 -                {
--                    this.motionX *= 0.95D;
--                    this.motionY *= 0.95D;
--                    this.motionZ *= 0.95D;
+-                    this.motionX *= 0.949999988079071D;
+-                    this.motionY *= 0.949999988079071D;
+-                    this.motionZ *= 0.949999988079071D;
 -                }
 +                moveMinecartOffRail(var1, var2, var3);
              }
@@ -375,8 +375,8 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
--            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.2D, 0.0D, 0.2D));
-+
+-            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
++            
 +            AxisAlignedBB box = null;
 +            if (getCollisionHandler() != null)
 +            {
@@ -386,7 +386,7 @@
 +            {
 +                box = boundingBox.expand(0.2D, 0.0D, 0.2D);
 +            }
-+            
++
 +            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box);
  
              if (var15 != null && var15.size() > 0)
@@ -488,17 +488,17 @@
 -                        if (((EntityMinecart)par1Entity).minecartType == 2 && this.minecartType != 2)
 +                        if (((EntityMinecart)par1Entity).isPoweredCart() && !isPoweredCart())
                          {
-                             this.motionX *= 0.2D;
-                             this.motionZ *= 0.2D;
+                             this.motionX *= 0.20000000298023224D;
+                             this.motionZ *= 0.20000000298023224D;
 @@ -859,7 +752,7 @@
-                             par1Entity.motionX *= 0.95D;
-                             par1Entity.motionZ *= 0.95D;
+                             par1Entity.motionX *= 0.949999988079071D;
+                             par1Entity.motionZ *= 0.949999988079071D;
                          }
 -                        else if (((EntityMinecart)par1Entity).minecartType != 2 && this.minecartType == 2)
 +                        else if (!((EntityMinecart)par1Entity).isPoweredCart() && isPoweredCart())
                          {
-                             par1Entity.motionX *= 0.2D;
-                             par1Entity.motionZ *= 0.2D;
+                             par1Entity.motionX *= 0.20000000298023224D;
+                             par1Entity.motionZ *= 0.20000000298023224D;
 @@ -891,7 +784,7 @@
  
      public int getSizeInventory()
@@ -508,7 +508,7 @@
      }
  
      /**
-@@ -990,7 +883,12 @@
+@@ -993,7 +886,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -522,7 +522,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1002,14 +900,14 @@
+@@ -1005,14 +903,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -539,7 +539,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1041,7 +939,7 @@
+@@ -1044,7 +942,7 @@
      /**
       * Is this minecart powered (Fuel > 0)
       */
@@ -548,7 +548,7 @@
      {
          return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1094,4 +992,348 @@
+@@ -1097,4 +995,348 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }

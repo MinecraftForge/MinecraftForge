@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Chunk.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Chunk.java	0000-00-00 00:00:00.000000000 -0000
-@@ -546,7 +546,7 @@
+@@ -551,7 +551,7 @@
                  {
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
@@ -9,7 +9,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -584,32 +584,23 @@
+@@ -589,32 +589,23 @@
                      Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                  }
  
@@ -45,16 +45,16 @@
              this.isModified = true;
              return true;
          }
-@@ -640,7 +631,7 @@
+@@ -645,7 +636,7 @@
                  var5.func_48690_b(par1, par2 & 15, par3, par4);
-                 int var7 = var5.func_48703_a(par1, par2 & 15, par3);
+                 int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
 -                if (var7 > 0 && Block.blocksList[var7] instanceof BlockContainer)
 +                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.func_48694_b(par1, par3 & 15, par3)))
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -807,33 +798,31 @@
+@@ -812,33 +803,31 @@
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
  
@@ -98,7 +98,7 @@
      }
  
      /**
-@@ -848,7 +837,7 @@
+@@ -853,7 +842,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -107,7 +107,7 @@
          }
      }
  
-@@ -863,8 +852,14 @@
+@@ -868,8 +857,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -123,7 +123,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -1178,6 +1173,16 @@
+@@ -1183,6 +1178,16 @@
  
      public void func_48494_a(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -140,7 +140,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1281,6 +1286,29 @@
+@@ -1286,6 +1291,29 @@
              TileEntity var9 = (TileEntity)var10.next();
              var9.updateContainingBlockInfo();
          }
@@ -170,7 +170,7 @@
      }
  
      public BiomeGenBase func_48490_a(int par1, int par2, WorldChunkManager par3WorldChunkManager)
-@@ -1369,4 +1397,18 @@
+@@ -1374,4 +1402,18 @@
              }
          }
      }
