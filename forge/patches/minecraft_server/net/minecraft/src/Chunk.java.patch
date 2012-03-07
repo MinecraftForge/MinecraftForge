@@ -9,7 +9,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -513,7 +513,7 @@
+@@ -513,31 +513,23 @@
                      Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                  }
  
@@ -18,7 +18,13 @@
                  {
                      var13 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -526,18 +526,10 @@
+                     if (var13 == null)
+                     {
+-                        var13 = ((BlockContainer)Block.blocksList[par4]).getBlockEntity();
++                        var13 = Block.blocksList[par4].getTileEntity(par5);
+                         this.worldObj.setBlockTileEntity(var11, par2, var12, var13);
+                     }
+ 
                      if (var13 != null)
                      {
                          var13.updateContainingBlockInfo();
