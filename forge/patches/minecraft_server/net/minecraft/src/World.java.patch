@@ -1,6 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -66,7 +66,7 @@
+@@ -9,6 +9,8 @@
+ import java.util.Set;
+ import java.util.TreeSet;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class World implements IBlockAccess
+ {
+     /**
+@@ -66,7 +68,7 @@
       * Contains a timestamp from when the World object was created. Is used in the session.lock file
       */
      private long lockTimestamp = System.currentTimeMillis();
@@ -9,7 +18,7 @@
  
      /** Whether monsters are enabled or not. (1 = on, 0 = off) */
      public int difficultySetting;
-@@ -324,7 +324,8 @@
+@@ -324,7 +326,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -19,7 +28,7 @@
      }
  
      public boolean func_48084_h(int par1, int par2, int par3)
-@@ -1549,7 +1550,7 @@
+@@ -1549,7 +1552,7 @@
  
                      if (var7 != null)
                      {
@@ -28,7 +37,7 @@
                      }
                  }
              }
-@@ -1579,14 +1580,16 @@
+@@ -1579,14 +1582,16 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -47,7 +56,7 @@
                          }
                      }
  
-@@ -1603,13 +1606,13 @@
+@@ -1603,13 +1608,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -67,7 +76,7 @@
          }
      }
  
-@@ -1841,6 +1844,13 @@
+@@ -1841,6 +1846,13 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -81,7 +90,7 @@
                          }
                      }
                  }
-@@ -2121,25 +2131,21 @@
+@@ -2121,25 +2133,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -120,21 +129,21 @@
          }
      }
  
-@@ -2148,27 +2154,10 @@
+@@ -2148,27 +2156,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
 -        TileEntity var4 = this.getBlockTileEntity(par1, par2, par3);
 -
 -        if (var4 != null && this.scanningTileEntities)
-+        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-+        if (var5 != null)
-         {
+-        {
 -            var4.invalidate();
 -            this.addedTileEntityList.remove(var4);
 -        }
 -        else
--        {
++        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++        if (var5 != null)
+         {
 -            if (var4 != null)
 -            {
 -                this.addedTileEntityList.remove(var4);
@@ -151,7 +160,7 @@
          }
      }
  
-@@ -2191,7 +2180,8 @@
+@@ -2191,7 +2182,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -161,7 +170,15 @@
      }
  
      /**
-@@ -2785,7 +2775,7 @@
+@@ -2463,6 +2455,7 @@
+                 }
+             }
+         }
++        ForgeHooks.addActiveChunks(this, activeChunkSet);
+ 
+         Profiler.endSection();
+ 
+@@ -2785,7 +2778,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -170,7 +187,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3267,6 +3257,11 @@
+@@ -3267,6 +3260,11 @@
              {
                  var8 = null;
              }
@@ -182,7 +199,7 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3735,4 +3730,38 @@
+@@ -3735,4 +3733,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }

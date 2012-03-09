@@ -7,6 +7,8 @@ package net.minecraft.src.forge;
 
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
+import net.minecraft.src.Chunk;
+import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityMinecart;
@@ -160,6 +162,27 @@ public class ForgeHooks
         return cont;
     }
     static LinkedList<IPickupHandler> pickupHandlers = new LinkedList<IPickupHandler>();
+    
+    public static void addActiveChunks(World world, Set<ChunkCoordIntPair> chunkList)
+    {
+        for(IChunkLoadHandler loader : chunkLoadHandlers)
+        {
+            loader.addActiveChunks(world, chunkList);
+        }
+    }
+
+    public static boolean canUnloadChunk(Chunk chunk)
+    {
+        for(IChunkLoadHandler loader : chunkLoadHandlers)
+        {
+            if(!loader.canUnloadChunk(chunk))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    static LinkedList<IChunkLoadHandler> chunkLoadHandlers = new LinkedList<IChunkLoadHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
