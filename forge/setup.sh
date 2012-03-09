@@ -36,9 +36,9 @@ if [ ! -d src_base ] ; then
 	./decompile.sh
 	pushd src > /dev/null
 
-	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-    cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
-    cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
+	find . -name *.java -print0 | xargs -0 sed -i "s/$(printf '\r\n')\$/$(printf '\n')/"
+	cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
+	cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
 	patch -p2 -i ../forge/modLoaderMP.patch
 
 	popd > /dev/null
@@ -48,10 +48,7 @@ fi
 
 cp -a src_base src_work
 pushd src_work > /dev/null
-	for i in `find ../forge/patches/ -type f -name \*.patch`
-	do
-            patch -p2 -i $i
-	done
+  find ../forge/patches/ -type f -name \*.patch -print0 | xargs -0I, patch -p2 -i ,
 popd > /dev/null
 
 cp -a src_work src_forge
