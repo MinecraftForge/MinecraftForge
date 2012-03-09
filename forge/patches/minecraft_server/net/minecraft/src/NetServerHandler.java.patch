@@ -9,6 +9,15 @@
  
  public class NetServerHandler extends NetHandler implements ICommandListener
  {
+@@ -332,7 +334,7 @@
+         this.lastPosY = par3;
+         this.lastPosZ = par5;
+         this.playerEntity.setPositionAndRotation(par1, par3, par5, par7, par8);
+-        this.playerEntity.playerNetServerHandler.sendPacket(new Packet13PlayerLookMove(par1, par3 + 1.62D, par3, par5, par7, par8, false));
++        this.playerEntity.playerNetServerHandler.sendPacket(new Packet13PlayerLookMove(par1, par3 + 1.621D /* Temp fix for spawn bouncing */, par3, par5, par7, par8, false));
+     }
+ 
+     public void handleBlockDig(Packet14BlockDig par1Packet14BlockDig)
 @@ -372,8 +374,11 @@
                  double var10 = this.playerEntity.posY - ((double)var6 + 0.5D) + 1.5D;
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
