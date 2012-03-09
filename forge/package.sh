@@ -7,16 +7,9 @@ function remove_svn () {
   (
   cd "$1"
 
-  if [ -d .svn ]; then
-     rm -rf .svn
-  fi
+  [ -d .svn ] && rm -rf .svn
 
-  for j in `ls`
-  do
-     if [ -d $j ]; then
-        remove_svn $j
-     fi
-  done
+  find ./ -maxdepth 1 -type d -print0 | xargs -0I, remove_svn ,
   )
 }
 
