@@ -1,3 +1,8 @@
+#!/bin/bash
+
+set -e
+echo Update Patches, with die on unhandled error mode set.
+
 echo Creating directories
 
 fdir=$PWD
@@ -37,5 +42,7 @@ done
 
 mkdir -p $fdir/conf
 cp -r conf/* $fdir/conf
+
+set +e
 
 echo Finished
