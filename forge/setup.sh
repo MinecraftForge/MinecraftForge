@@ -5,6 +5,9 @@ echo
 
 pushd .. > /dev/null
 
+PYTHON2=$(which python)
+which python2 2>/dev/null && PYTHON2=$(which python2)
+
 if [ -d src ] ; then
 	echo "!!! WARNING !!!"
 	echo
@@ -20,7 +23,7 @@ fi
 if [ ! -f ./runtime/bin/fernflower.jar ]
 then
     pushd forge
-        python download_fernflower.py
+        ${PYTHON2} download_fernflower.py
     popd
 fi
 
