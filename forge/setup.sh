@@ -72,7 +72,6 @@ if [ ! -d src_base ] ; then
 	find . -name *.java -print0 | xargs -0 sed -i "s/$(printf '\r\n')\$/$(printf '\n')/"
 	cp ../../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
 	cp ../../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
-	patch -p2 -i ../forge/modLoaderMP.patch
 
 	popd > /dev/null
 
