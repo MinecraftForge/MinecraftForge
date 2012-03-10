@@ -1,72 +1,63 @@
 #!/bin/bash
 
+set -e
+
 echo "MinecraftForge Linux Setup Program"
 echo 
 
-pushd .. > /dev/null
+SETUP_SCRIPT=$(readlink -e $0)
+FORGEPATH="${SETUP_SCRIPT%/*}"
+BASEPATH="${FORGEPATH%/*}"
+MCPPATH="${BASEPATH}/MCP"
+LIBS="${BASEPATH}/libs"
 
-if [ -d src ] ; then
-	echo "!!! WARNING !!!"
-	echo
-	echo "This setup will erase your src directory.  Make sure to back up"
-	echo "any changes before continuing."
-	echo
+python () {
+	if which python2 > /dev/null ; then
+		python2 "$@"
+	else
+		python "$@"
+	fi
+}
 
-	read -p "Continue (y/n)? " var
+export -f python
 
-	if [ "$var" != "y" ]; then exit ; fi
+if [ ! -x "${MCPPATH}"/cleanup.sh ]; then
+  echo "The path "${MCPPATH}" does not appear to be a correctly setup MCP directory."
+  echo "Set it up manually or run ${FORGEPATH}/mcpsetup.sh"
+  exit 1
 fi
 
-if [ ! -f ./runtime/bin/fernflower.jar ]
-then
-    pushd forge
-        python download_fernflower.py
-    popd
+echo ${BASEPATH} ${FORGEPATH} ${MCPPATH} ${LIBS}
+echo
+
+if [ "$1" != "-f" ] ; then
+  if [ "$1" = "-skipdecompile" ]; then
+    pushd "${MCPPATH}" >/dev/null
+      "${MCPPATH}"/updatenames.sh -f
+    popd >/dev/null
+  else
+    pushd "${MCPPATH}" > /dev/null
+      if [ ! -e ./runtime/bin/fernflower.jar ] ; then
+        echo "MCP/runtime/bin/fernflower.jar not found, setup manually and use -skipdecompile or -f instead"
+      fi
+      "${MCPPATH}"/decompile.sh
+    popd >/dev/null
+  fi
 fi
 
-if [ ! -f ./runtime/bin/fernflower.jar ]
-then
-    echo "Failed to download fernflower, install it manually and re-run setup."
-    exit 1
-fi
+find "${MCPPATH}"/src -name '*.java' -print0 | xargs -0 sed -i "s/$(printf '\r\n')\$/$(printf '\n')/"
 
-rm -rf src src_work src_forge
+rm -rf "${MCPPATH}"/src_base "${MCPPATH}"/src_work
 
-if [ ! -d src_base ] ; then
-	./decompile.sh
-	pushd src > /dev/null
-
-	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-    cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
-    cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
-	patch -p2 -i ../forge/modLoaderMP.patch
-
-	popd > /dev/null
-
-	mv src src_base
-fi
-
-cp -a src_base src_work
-pushd src_work > /dev/null
-	for i in `find ../forge/patches/ -type f -name \*.patch`
-	do
-            patch -p2 -i $i
-	done
+pushd "${MCPPATH}" > /dev/null
+  "${MCPPATH}"/updatemd5.sh -f
 popd > /dev/null
 
-cp -a src_work src_forge
+cp -a "${MCPPATH}"/src "${MCPPATH}"/src_base
+cp -a "${MCPPATH}"/src "${MCPPATH}"/src_work
 
-cp -a forge/forge_client/src/net/* src_forge/minecraft/net/
-cp -a forge/forge_common/net/* src_forge/minecraft/net/
-cp -a forge/forge_common/net/* src_forge/minecraft_server/net/
-cp -a forge/forge_server/src/net/* src_forge/minecraft_server/net/
-
-pushd forge > /dev/null
-./inject_version.sh $OLDPWD/src_forge/minecraft/net/minecraft/src/forge/ForgeHooks.java
-./inject_version.sh $OLDPWD/src_forge/minecraft_server/net/minecraft/src/forge/ForgeHooks.java
+pushd "${MCPPATH}"/src_work > /dev/null
+  find "${FORGEPATH}"/patches/ -type f -name '*.patch' | sort | while read FILE ; do
+    patch -p2 -i "${FILE}"
+  done
 popd > /dev/null
-
-cp -a src_forge src
-
-./updatemd5.sh
-

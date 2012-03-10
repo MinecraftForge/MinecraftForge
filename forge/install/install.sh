@@ -3,9 +3,12 @@
 echo "MinecraftForge Linux Setup Program"
 echo 
 
+PYTHON2=$(which python)
+which python2 2>/dev/null && PYTHON2=$(which python2)
+
 if [ ! -f ../runtime/bin/fernflower.jar ]
 then
-    python download_fernflower.py
+   ${PYTHON2} download_fernflower.py
 fi
 
 if [ ! -f ../runtime/bin/fernflower.jar ]
