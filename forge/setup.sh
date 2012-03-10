@@ -118,7 +118,7 @@ cp -a "${MCPPATH}"/src "${MCPPATH}"/src_base
 cp -a "${MCPPATH}"/src "${MCPPATH}"/src_work
 
 pushd "${MCPPATH}"/src_work > /dev/null
-  for i in $(find "${FORGEPATH}"/patches/ -type f -name '*.patch' | sort); do
-    patch -p2 -i "${i}"
+  find "${FORGEPATH}"/patches/ -type f -name '*.patch' | sort | while read FILE ; do
+    patch -p2 -i "${FILE}"
   done
 popd > /dev/null
