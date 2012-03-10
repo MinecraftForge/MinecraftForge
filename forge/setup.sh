@@ -50,14 +50,14 @@ if [ -d src ] ; then
 	if [ "$var" != "y" ]; then exit ; fi
 fi
 
-if [ ! -f ./runtime/bin/fernflower.jar ]
+if [ ! -f ../runtime/bin/fernflower.jar ]
 then
     pushd ../forge
         python download_fernflower.py
     popd
 fi
 
-if [ ! -f ./runtime/bin/fernflower.jar ]
+if [ ! -f ../runtime/bin/fernflower.jar ]
 then
     echo "Failed to download fernflower, install it manually and re-run setup."
     exit 1
@@ -70,8 +70,8 @@ if [ ! -d src_base ] ; then
 	pushd src > /dev/null
 
 	find . -name *.java -print0 | xargs -0 sed -i "s/$(printf '\r\n')\$/$(printf '\n')/"
-	cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
-	cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
+	cp ../../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
+	cp ../../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
 	patch -p2 -i ../forge/modLoaderMP.patch
 
 	popd > /dev/null
@@ -81,7 +81,7 @@ fi
 
 cp -a src_base src_work
 pushd src_work > /dev/null
-  find ../forge/patches/ -type f -name \*.patch -print0 | xargs -0I, patch -p2 -i ,
+  find ../../forge/patches/ -type f -name \*.patch -print0 | xargs -0I, patch -p2 -i ,
 popd > /dev/null
 
 cp -a src_work src_forge
