@@ -7,22 +7,22 @@ echo
 
 pushd ../ >> /dev/null
 
-MCP=$(find src/ -maxdepth 1 -iname 'mcp*.zip')
+MCP=$(find jars/ -maxdepth 1 -iname 'mcp*.zip')
 
 # file exists and has size > 0
-if [ ! -s src/minecraft_server.jar ] ; then
-        echo "Please copy minecraft_server.jar to the src/ folder."
+if [ ! -s jars/minecraft_server.jar ] ; then
+        echo "Please copy minecraft_server.jar to the jars/ folder."
         exit 1
 fi
-if [ ! -d src/bin/ ] || [ ! -d src/resources/ ] ; then
-        echo "Please copy your .minecraft/ bin and resources folders to the src/ folder."
+if [ ! -d jars/bin/ ] || [ ! -d jars/resources/ ] ; then
+        echo "Please copy your .minecraft/ bin and resources folders to the jars/ folder."
         exit 1
 fi
 
 rm -rf MCP || echo "INFO: No old MCP to delete"
 7z x -oMCP/ "${MCP}"
 
-cp -a src/minecraft_server.jar src/bin/ src/resources/ MCP/jars/
+cp -a jars/minecraft_server.jar jars/bin/ jars/resources/ MCP/jars/
 
 cd MCP
 
@@ -96,7 +96,8 @@ pushd ../forge > /dev/null
 ./inject_version.sh $OLDPWD/src_forge/minecraft_server/net/minecraft/src/forge/ForgeHooks.java
 popd > /dev/null
 
-cp -a src_forge ../output/src
+cp -a src_forge src
+cp -a src_forge ../src
 
 ./updatemd5.sh
 
