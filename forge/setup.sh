@@ -52,7 +52,7 @@ fi
 
 if [ ! -f ./runtime/bin/fernflower.jar ]
 then
-    pushd forge
+    pushd ../forge
         python download_fernflower.py
     popd
 fi
@@ -91,12 +91,12 @@ cp -a forge/forge_common/net/* src_forge/minecraft/net/
 cp -a forge/forge_common/net/* src_forge/minecraft_server/net/
 cp -a forge/forge_server/src/net/* src_forge/minecraft_server/net/
 
-pushd forge > /dev/null
+pushd ../forge > /dev/null
 ./inject_version.sh $OLDPWD/src_forge/minecraft/net/minecraft/src/forge/ForgeHooks.java
 ./inject_version.sh $OLDPWD/src_forge/minecraft_server/net/minecraft/src/forge/ForgeHooks.java
 popd > /dev/null
 
-cp -a src_forge src
+cp -a src_forge ../output/src
 
 ./updatemd5.sh
 
