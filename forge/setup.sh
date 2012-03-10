@@ -1,12 +1,42 @@
 #!/bin/bash
 
+set -e
+
 echo "MinecraftForge Linux Setup Program"
 echo 
 
-pushd .. > /dev/null
+pushd ../ >> /dev/null
 
-PYTHON2=$(which python)
-which python2 2>/dev/null && PYTHON2=$(which python2)
+MCP=$(find src/ -maxdepth 1 -iname 'mcp*.zip')
+
+# file exists and has size > 0
+if [ ! -s src/minecraft_server.jar ] ; then
+        echo "Please copy minecraft_server.jar to the src/ folder."
+        exit 1
+fi
+if [ ! -d src/bin/ ] || [ ! -d src/resources/ ] ; then
+        echo "Please copy your .minecraft/ bin and resources folders to the src/ folder."
+        exit 1
+fi
+
+rm -rf MCP || echo "INFO: No old MCP to delete"
+7z x -oMCP/ "${MCP}"
+
+cp -a src/minecraft_server.jar src/bin/ src/resources/ MCP/jars/
+
+cd MCP
+
+python () {
+	if which python2 > /dev/null ; then
+		python2 "$@"
+	else
+		python "$@"
+	fi
+}
+
+export -f python
+
+yes Yes | bash updatemcp.sh
 
 if [ -d src ] ; then
 	echo "!!! WARNING !!!"
@@ -23,7 +53,7 @@ fi
 if [ ! -f ./runtime/bin/fernflower.jar ]
 then
     pushd forge
-        ${PYTHON2} download_fernflower.py
+        python download_fernflower.py
     popd
 fi
 
