@@ -781,11 +781,7 @@ public class MinecraftForge
      */
     public static ItemStack getItemForCart(EntityMinecart cart)
     {
-        if (cart.getClass() == EntityMinecart.class)
-        {
-            return getItemForCart(cart.getClass(), cart.getMinecartType());
-        }
-        return getItemForCart(cart.getClass(), 0);
+        return getItemForCart(cart.getClass(), cart.getMinecartType());
     }
 
     /**
