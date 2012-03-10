@@ -32,7 +32,7 @@
 +    @Override
 +    public boolean isShearable(ItemStack item, World world, int x, int y, int z) 
 +    {
-+        return false;
++        return true;
 +    }
 +
 +    @Override
