@@ -57,7 +57,7 @@ public class Configuration
     {
         if (configBlocks == null)
         {
-            configBlocks = new boolean[Block.blocksList.length];
+            configBlocks = new boolean[/*Block.blocksList.length*/ 256];
 
             for (int i = 0; i < configBlocks.length; ++i)
             {
@@ -85,7 +85,7 @@ public class Configuration
             }
             else
             {
-                for (int j = Block.blocksList.length - 1; j >= 0; --j)
+                for (int j = /*Block.blocksList.length*/ 256 - 1; j >= 0; --j)
                 {
                     if (Block.blocksList[j] == null && !configBlocks[j])
                     {
