@@ -56,7 +56,6 @@
      }
  
 @@ -960,4 +966,49 @@
->>>>>>> MCP Update.  Fixed a few small bugs in the linux scripts.
      {
          return true;
      }
