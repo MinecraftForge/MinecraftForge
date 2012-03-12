@@ -34,14 +34,7 @@ rm -rf src src_work src_forge
 
 if [ ! -d src_base ] ; then
 	./decompile.sh
-	pushd src > /dev/null
-
-	find . -name *.java -exec sed -i 's/\r//g' \{\} \;
-    cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
-    cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
-
-	popd > /dev/null
-
+    python forge/clean_src.py src
 	mv src src_base
 fi
 
@@ -49,9 +42,18 @@ cp -a src_base src_work
 pushd src_work > /dev/null
 	for i in `find ../forge/patches/ -type f -name \*.patch`
 	do
-            patch -p2 -i $i
+        patch -p2 -i $i
 	done
 popd > /dev/null
+
+echo "!!! WARNING !!!"
+echo
+echo "This is an extra step for Eloraam, only say yes if you are her"
+echo
+
+read -p "Continue (y/n)? " var
+
+if [ "$var" != "y" ]; then exit ; fi
 
 cp -a src_work src_forge
 

@@ -14,22 +14,15 @@ pushd .. >nul
       exit 1
     )
     rmdir /S /Q src
-    @echo | cmd /C decompile.bat
+    @echo | cmd /C decompile.bat -r
   )
   
-  
-  rmdir /S /Q src_base
-  rmdir /S /Q src_work
-
-  pushd src >nul
-    del minecraft\net\minecraft\src\MLProp.java
-    copy ..\forge\MLProp.java minecraft\net\minecraft\src\MLProp.java
-    del minecraft_server\net\minecraft\src\MLProp.java
-    copy ..\forge\MLProp.java minecraft_server\net\minecraft\src\MLProp.java
-  popd >nul
+  .\runtime\bin\python\python_mcp forge\clean_src.py src  
 
   @echo | cmd /C updatemd5.bat -f
 
+  rmdir /S /Q src_base
+  rmdir /S /Q src_work
   mkdir src_base
   mkdir src_work
 

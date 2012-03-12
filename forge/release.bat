@@ -1,5 +1,7 @@
 @cmd /C build.bat
 
+if %ERRORLEVEL% NEQ 0 exit 1
+
 @cd ..
 
 @echo | cmd /C reobfuscate.bat

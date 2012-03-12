@@ -18,14 +18,16 @@ pushd .. >nul
 xcopy /Y /E /I forge\conf\* conf
 
 runtime\bin\python\python_mcp runtime\cleanup.py 
+if exist ".\src" (
+    echo  Please make sure to backup your modified files, and say yes when it asks you to do cleanup.
+    exit 1
+)
 runtime\bin\python\python_mcp runtime\decompile.py
+runtime\bin\python\python_mcp forge\clean_src.py src
 
 pushd src >nul
 
     if exist ..\jars\bin\minecraft.jar (
-        del minecraft\net\minecraft\src\MLProp.java
-        copy ..\forge\MLProp.java minecraft\net\minecraft\src\MLProp.java
-        
         for /f "delims=" %%a in ('dir /a -d /b /S ..\forge\patches\minecraft') do (
             pushd "%%a" 2>nul
             if errorlevel 1 (
@@ -37,9 +39,6 @@ pushd src >nul
     )
     
     if exist ..\jars\minecraft_server.jar (
-        del minecraft_server\net\minecraft\src\MLProp.java
-        copy ..\forge\MLProp.java minecraft_server\net\minecraft\src\MLProp.java
-        
         for /f "delims=" %%a in ('dir /a -d /b /S ..\forge\patches\minecraft_server') do (
             pushd "%%a" 2>nul
             if errorlevel 1 (

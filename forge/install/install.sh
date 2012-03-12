@@ -10,8 +10,8 @@ fi
 
 if [ ! -f ../runtime/bin/fernflower.jar ]
 then
-  echo "Failed to download fernflower, install it manually and re-run setup."
-  exit 1
+    echo "Failed to download fernflower, install it manually and re-run setup."
+    exit 1
 fi
 
 pushd .. > /dev/null
@@ -21,13 +21,17 @@ mkdir conf
 cp -r forge/conf/* conf
 
 ./cleanup.sh
+if [ -d "src" ]
+then
+    echo "Failed to cleanup the MCP folder, please backup your modified files and run this script again and say yes when promped."
+    exit 1
+fi
 ./decompile.sh
+python forge/clean_src.py src
 
 pushd src > /dev/null
     if [ -f ../jars/bin/minecraft.jar ];
     then
-        cp ../forge/MLProp.java minecraft/net/minecraft/src/MLProp.java
-    
         for i in `find ../forge/patches/minecraft/ -type f`
         do
             patch -p2 -i $i
@@ -38,10 +42,6 @@ pushd src > /dev/null
 
     if [ -f ../jars/minecraft_server.jar ];
     then
-        cp ../forge/MLProp.java minecraft_server/net/minecraft/src/MLProp.java
-    
-        patch -p2 -i ../forge/modLoaderMP.patch
-    
         for i in `find ../forge/patches/minecraft_server/ -type f`
         do
             patch -p2 -i $i

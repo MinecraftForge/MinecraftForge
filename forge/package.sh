@@ -63,10 +63,10 @@ cp -r ../forge_common/* src/minecraft_server
 cp -r ../patches/* patches
 cp -r ../conf/* conf
 cp ../lfcr.py .
+cp ../clean_src.py .
 cp ../install/install.cmd .
 cp ../install/install.sh .
 cp ../download_fernflower.py .
-cp ../MLProp.java .
 cp ../install/README.txt .
 cp ../minecraftforge_credits.txt .
 cp -r ../doc .

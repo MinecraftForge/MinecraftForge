@@ -293,20 +293,24 @@
  
                  Vec3D var52 = this.func_182_g(this.posX, this.posY, this.posZ);
  
-@@ -500,29 +438,14 @@
+@@ -499,30 +437,15 @@
+                 }
  
                  double var41;
- 
+-
 -                if (this.minecartType == 2)
--                {
++                
++                updatePushForces();
++                
++                if(shouldDoRailFunctions())
+                 {
 -                    var41 = (double)MathHelper.sqrt_double(this.pushX * this.pushX + this.pushZ * this.pushZ);
 -
--                    if (var41 > 0.01D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.0010D)
+-                    if (var41 > 0.01D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.001D)
 -                    {
 -                        this.pushX /= var41;
 -                        this.pushZ /= var41;
-+		updatePushForces();
- 
+-
 -                        if (this.pushX * this.motionX + this.pushZ * this.motionZ < 0.0D)
 -                        {
 -                            this.pushX = 0.0D;
@@ -318,8 +322,6 @@
 -                            this.pushZ = this.motionZ;
 -                        }
 -                    }
-+		if (shouldDoRailFunctions())
-+                {
 +                    ((BlockRail)Block.blocksList[var8]).onMinecartPass(worldObj, this, var1, var2, var3);
                  }
  
