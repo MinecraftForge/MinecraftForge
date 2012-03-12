@@ -105,7 +105,7 @@
 +        for (Integer id : DimensionManager.getIDs())
 +        {
 +            WorldServer world = (id == 0 ? overWorld : new WorldServerMulti(this, var9, par2Str, id, var8, overWorld));
-+            world.addWorldAccess(new WorldManager(this, overWorld));
++            world.addWorldAccess(new WorldManager(this, world));
 +            world.difficultySetting = propertyManagerObj.getIntProperty("difficulty", 1);
 +            world.setAllowedSpawnTypes(propertyManagerObj.getBooleanProperty("spawn-monsters", true), spawnPeacefulMobs);
 +            world.getWorldInfo().setGameType(var6);
