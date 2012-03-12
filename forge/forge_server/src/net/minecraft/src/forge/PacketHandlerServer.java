@@ -73,12 +73,12 @@ public class PacketHandlerServer implements IPacketHandler
             {
                 continue;
             }
-            boolean found = true;
+            boolean found = false;
             for (String modName : pkt.Mods)
             {
                 if (modName.equals(mod.toString()))
                 {
-                    found = false;
+                    found = true;
                     break;
                 }
             }
