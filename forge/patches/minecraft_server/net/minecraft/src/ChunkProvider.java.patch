@@ -8,8 +8,8 @@
 +
  public class ChunkProvider implements IChunkProvider
  {
-     private Set droppedChunksSet = new HashSet();
-@@ -42,6 +44,11 @@
+     /** A set of dropped chunks. Currently not used in single player. */
+@@ -51,6 +53,11 @@
       */
      public void dropChunk(int par1, int par2)
      {

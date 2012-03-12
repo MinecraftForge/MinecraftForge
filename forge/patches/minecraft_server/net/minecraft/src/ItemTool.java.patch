@@ -18,7 +18,7 @@
  
      /** The material this tool is made from. */
      protected EnumToolMaterial toolMaterial;
-@@ -61,4 +63,15 @@
+@@ -71,4 +73,15 @@
      {
          return this.toolMaterial.getEnchantability();
      }

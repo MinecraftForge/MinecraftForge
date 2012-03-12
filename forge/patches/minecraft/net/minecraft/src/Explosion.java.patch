@@ -8,8 +8,8 @@
 +
  public class Explosion
  {
-     public boolean isFlaming = false;
-@@ -71,7 +73,15 @@
+     /** whether or not the explosion sets fire to blocks around it */
+@@ -72,7 +74,15 @@
  
                              if (var25 > 0)
                              {

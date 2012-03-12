@@ -9,16 +9,16 @@
  public class Block
  {
      public static final StepSound soundPowderFootstep = new StepSound("stone", 1.0F, 1.0F);
-@@ -396,7 +398,7 @@
+@@ -446,7 +448,7 @@
  
      public boolean func_48124_n()
      {
--        return this.field_48128_bU;
-+        return hasTileEntity(0);
+-        return this.isBlockContainer;
++	return hasTileEntity(0);
      }
  
      /**
-@@ -535,12 +537,16 @@
+@@ -585,12 +587,16 @@
          return this.blockID;
      }
  
@@ -37,7 +37,7 @@
      }
  
      /**
-@@ -559,17 +565,13 @@
+@@ -609,17 +615,13 @@
          if (!par1World.isRemote)
          {
              int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
@@ -59,16 +59,16 @@
                  }
              }
          }
-@@ -849,7 +851,7 @@
+@@ -902,7 +904,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
--        if (this.renderAsNormalBlock() && !this.field_48128_bU && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+-        if (this.renderAsNormalBlock() && !this.isBlockContainer && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
 +        if (this.renderAsNormalBlock() && !hasTileEntity(par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -951,6 +953,362 @@
+@@ -1010,6 +1012,362 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -367,7 +367,7 @@
 +     */
 +    public boolean hasTileEntity(int metadata)
 +    {
-+        return field_48128_bU;
++        return isBlockContainer;
 +    }
 +    
 +    /**

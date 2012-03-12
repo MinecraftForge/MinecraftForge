@@ -1,11 +1,9 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockRail.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockRail.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,16 +5,29 @@
- public class BlockRail extends Block
- {
+@@ -8,13 +8,26 @@
      private final boolean isPowered;
-+    
-+    /**
+ 
+     /**
 +     * Forge: Moved render type to a field and a setter.
 +     * This allows for a mod to change the render type
 +     * for vanilla rails, and any mod rails that extend
@@ -17,7 +15,11 @@
 +    {
 +        renderType = value;
 +    }
- 
++  
++    /**
+      * Returns true if the block at the coordinates of world passed is a valid rail block (current is rail, powered or
+      * detector).
+      */
      public static final boolean isRailBlockAt(World par0World, int par1, int par2, int par3)
      {
          int var4 = par0World.getBlockId(par1, par2, par3);
@@ -25,6 +27,9 @@
 +        return Block.blocksList[var4] instanceof BlockRail;
      }
  
+     /**
+@@ -22,7 +35,7 @@
+      */
      public static final boolean isRailBlock(int par0)
      {
 -        return par0 == Block.rail.blockID || par0 == Block.railPowered.blockID || par0 == Block.railDetector.blockID;
@@ -32,7 +37,7 @@
      }
  
      protected BlockRail(int par1, int par2, boolean par3)
-@@ -107,7 +120,7 @@
+@@ -118,7 +131,7 @@
       */
      public int getRenderType()
      {
@@ -41,7 +46,7 @@
      }
  
      /**
-@@ -123,7 +136,7 @@
+@@ -134,7 +147,7 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -50,7 +55,7 @@
      }
  
      /**
-@@ -160,27 +173,27 @@
+@@ -171,27 +184,27 @@
  
              boolean var8 = false;
  
@@ -83,13 +88,13 @@
              {
                  var8 = true;
              }
-@@ -383,8 +396,121 @@
-         return 0;
+@@ -395,10 +408,120 @@
      }
  
-+    /**
+     /**
+-     * Return true if the blocks passed is a power related rail.
 +     * This function is no longer called by Minecraft
-+     */
+      */
 +    @Deprecated
      static boolean isPoweredBlockRail(BlockRail par0BlockRail)
      {

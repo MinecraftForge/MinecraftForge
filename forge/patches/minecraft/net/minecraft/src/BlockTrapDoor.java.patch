@@ -19,8 +19,8 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
                  this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
-@@ -241,6 +244,10 @@
- 
+@@ -244,6 +247,10 @@
+      */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
 +        if (disableValidation)
@@ -30,7 +30,7 @@
          if (par5 == 0)
          {
              return false;
-@@ -271,7 +278,7 @@
+@@ -274,7 +281,7 @@
                  --par2;
              }
  
@@ -39,7 +39,7 @@
          }
      }
  
-@@ -286,6 +293,11 @@
+@@ -289,6 +296,11 @@
       */
      private static boolean isValidSupportBlock(int par0)
      {

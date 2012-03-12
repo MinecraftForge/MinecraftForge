@@ -11,7 +11,7 @@
  {
      /** The itemstacks currently placed in the slots of the brewing stand */
      private ItemStack[] brewingItemStacks = new ItemStack[4];
-@@ -321,4 +323,16 @@
+@@ -322,4 +324,16 @@
  
          return var1;
      }

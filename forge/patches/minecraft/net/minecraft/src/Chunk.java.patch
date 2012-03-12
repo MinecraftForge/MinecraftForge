@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Chunk.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Chunk.java	0000-00-00 00:00:00.000000000 -0000
-@@ -551,7 +551,7 @@
+@@ -569,7 +569,7 @@
                  {
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
@@ -9,7 +9,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -589,32 +589,23 @@
+@@ -607,32 +607,23 @@
                      Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                  }
  
@@ -45,16 +45,16 @@
              this.isModified = true;
              return true;
          }
-@@ -645,7 +636,7 @@
-                 var5.func_48690_b(par1, par2 & 15, par3, par4);
+@@ -663,7 +654,7 @@
+                 var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
 -                if (var7 > 0 && Block.blocksList[var7] instanceof BlockContainer)
-+                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.func_48694_b(par1, par3 & 15, par3)))
++                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.getExtBlockMetadata(par1, par3 & 15, par3)))
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -812,33 +803,31 @@
+@@ -830,33 +821,31 @@
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
  
@@ -98,7 +98,7 @@
      }
  
      /**
-@@ -853,7 +842,7 @@
+@@ -871,7 +860,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -107,7 +107,7 @@
          }
      }
  
-@@ -868,8 +857,14 @@
+@@ -886,8 +875,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -123,7 +123,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -1183,6 +1178,16 @@
+@@ -1201,6 +1196,16 @@
  
      public void func_48494_a(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -140,7 +140,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1286,6 +1291,29 @@
+@@ -1304,6 +1309,29 @@
              TileEntity var9 = (TileEntity)var10.next();
              var9.updateContainingBlockInfo();
          }
@@ -170,7 +170,7 @@
      }
  
      public BiomeGenBase func_48490_a(int par1, int par2, WorldChunkManager par3WorldChunkManager)
-@@ -1374,4 +1402,18 @@
+@@ -1407,4 +1435,18 @@
              }
          }
      }

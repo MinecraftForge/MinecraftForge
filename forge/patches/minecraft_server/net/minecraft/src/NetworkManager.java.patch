@@ -10,7 +10,7 @@
  public class NetworkManager
  {
      /** Synchronization object used for read and write threads. */
-@@ -312,6 +315,8 @@
+@@ -315,6 +318,8 @@
              {
                  ;
              }
@@ -19,7 +19,7 @@
          }
      }
  
-@@ -456,4 +461,14 @@
+@@ -462,4 +467,14 @@
      {
          return par0NetworkManager.writeThread;
      }

@@ -7,7 +7,7 @@
  import java.util.List;
  import java.util.Random;
  
-@@ -188,7 +189,10 @@
+@@ -196,7 +197,10 @@
  
      /** full name of item from language file */
      private String itemName;
@@ -19,7 +19,7 @@
      protected Item(int par1)
      {
          this.shiftedIndex = 256 + par1;
-@@ -542,7 +546,7 @@
+@@ -559,7 +563,7 @@
          float var17 = MathHelper.sin(-var5 * 0.017453292F);
          float var18 = var15 * var16;
          float var20 = var14 * var16;
@@ -28,7 +28,7 @@
          Vec3D var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          MovingObjectPosition var24 = par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
          return var24;
-@@ -570,4 +574,149 @@
+@@ -587,4 +591,149 @@
      {
          StatList.initStats();
      }

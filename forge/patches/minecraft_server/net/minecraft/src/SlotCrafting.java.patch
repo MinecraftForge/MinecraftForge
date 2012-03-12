@@ -8,7 +8,7 @@
  public class SlotCrafting extends Slot
  {
      /** The craft matrix inventory linked to this result slot. */
-@@ -89,6 +91,7 @@
+@@ -91,6 +93,7 @@
          }
  
          ModLoader.takenFromCrafting(this.thePlayer, par1ItemStack, this.craftMatrix);

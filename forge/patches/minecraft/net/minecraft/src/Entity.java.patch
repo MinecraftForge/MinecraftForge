@@ -2,7 +2,7 @@
 +++ ../src_work/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 @@ -177,6 +177,9 @@
       */
-     public boolean ignoreFrustrumCheck;
+     public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
 +    
 +    /** Forge: Used to store custom data for each entity. */

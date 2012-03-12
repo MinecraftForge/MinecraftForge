@@ -11,7 +11,7 @@
  
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
-@@ -548,6 +552,7 @@
+@@ -551,6 +555,7 @@
      public void displayWorkbenchGUI(int par1, int par2, int par3)
      {
          this.getNextWidowId();
@@ -19,7 +19,7 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 1, "Crafting", 9));
          this.craftingInventory = new ContainerWorkbench(this.inventory, this.worldObj, par1, par2, par3);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -557,6 +562,7 @@
+@@ -560,6 +565,7 @@
      public void displayGUIEnchantment(int par1, int par2, int par3)
      {
          this.getNextWidowId();
@@ -27,7 +27,7 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 4, "Enchanting", 9));
          this.craftingInventory = new ContainerEnchantment(this.inventory, this.worldObj, par1, par2, par3);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -569,6 +575,7 @@
+@@ -572,6 +578,7 @@
      public void displayGUIChest(IInventory par1IInventory)
      {
          this.getNextWidowId();
@@ -35,7 +35,7 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 0, par1IInventory.getInvName(), par1IInventory.getSizeInventory()));
          this.craftingInventory = new ContainerChest(this.inventory, par1IInventory);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -581,6 +588,7 @@
+@@ -584,6 +591,7 @@
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
          this.getNextWidowId();
@@ -43,7 +43,7 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 2, par1TileEntityFurnace.getInvName(), par1TileEntityFurnace.getSizeInventory()));
          this.craftingInventory = new ContainerFurnace(this.inventory, par1TileEntityFurnace);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -593,6 +601,7 @@
+@@ -596,6 +604,7 @@
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
          this.getNextWidowId();
@@ -51,7 +51,7 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 3, par1TileEntityDispenser.getInvName(), par1TileEntityDispenser.getSizeInventory()));
          this.craftingInventory = new ContainerDispenser(this.inventory, par1TileEntityDispenser);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -602,6 +611,7 @@
+@@ -608,6 +617,7 @@
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
          this.getNextWidowId();
@@ -59,7 +59,7 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 5, par1TileEntityBrewingStand.getInvName(), par1TileEntityBrewingStand.getSizeInventory()));
          this.craftingInventory = new ContainerBrewingStand(this.inventory, par1TileEntityBrewingStand);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -785,4 +795,38 @@
+@@ -794,4 +804,38 @@
          EntityTracker var2 = this.mcServer.getEntityTracker(this.dimension);
          var2.sendPacketToTrackedPlayersAndTrackedEntity(this, new Packet18Animation(par1Entity, 7));
      }

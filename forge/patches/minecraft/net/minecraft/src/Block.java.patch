@@ -7,16 +7,16 @@
  import java.util.ArrayList;
  import java.util.Random;
  
-@@ -443,7 +444,7 @@
+@@ -449,7 +450,7 @@
  
      public boolean func_48205_p()
      {
--        return this.field_48207_bU;
-+        return hasTileEntity(0);
+-        return this.isBlockContainer;
++	return hasTileEntity(0);
      }
  
      /**
-@@ -464,7 +465,7 @@
+@@ -470,7 +471,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -25,7 +25,7 @@
      }
  
      /**
-@@ -472,7 +473,7 @@
+@@ -478,7 +479,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -34,7 +34,7 @@
      }
  
      /**
-@@ -629,11 +630,14 @@
+@@ -635,11 +636,14 @@
      }
  
      /**
@@ -51,7 +51,7 @@
      }
  
      /**
-@@ -653,16 +657,12 @@
+@@ -659,16 +663,12 @@
          {
              int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
  
@@ -71,16 +71,16 @@
                  }
              }
          }
-@@ -972,7 +972,7 @@
+@@ -981,7 +981,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
--        if (this.renderAsNormalBlock() && !this.field_48207_bU && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-+    	if (this.renderAsNormalBlock() && !hasTileEntity(par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+-        if (this.renderAsNormalBlock() && !this.isBlockContainer && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
++        if (this.renderAsNormalBlock() && !hasTileEntity(par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1086,6 +1086,362 @@
+@@ -1099,6 +1099,362 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -379,7 +379,7 @@
 +     */
 +    public boolean hasTileEntity(int metadata)
 +    {
-+    	return field_48207_bU;
++    	return isBlockContainer;
 +    }
 +    
 +    /**

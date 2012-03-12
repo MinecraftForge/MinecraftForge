@@ -9,8 +9,8 @@
  public class ChunkProvider implements IChunkProvider
  {
      /** A set of dropped chunks. Currently not used in single player. */
-@@ -48,6 +50,11 @@
- 
+@@ -51,6 +53,11 @@
+      */
      public void dropChunk(int par1, int par2)
      {
 +        if(!ForgeHooks.canUnloadChunk(worldObj.getChunkFromChunkCoords(par1, par2)))

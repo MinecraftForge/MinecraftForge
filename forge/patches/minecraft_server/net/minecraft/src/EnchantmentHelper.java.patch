@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EnchantmentHelper.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EnchantmentHelper.java	0000-00-00 00:00:00.000000000 -0000
-@@ -348,7 +348,7 @@
+@@ -354,7 +354,7 @@
          {
              Enchantment var7 = var4[var6];
  

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityMinecart.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityMinecart.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,28 +1,48 @@
+@@ -1,30 +1,50 @@
  package net.minecraft.src;
  
 +import java.util.ArrayList;
@@ -23,6 +23,9 @@
      public double pushX;
      public double pushZ;
 -    private static final int[][][] field_855_j = new int[][][] {{{0, 0, -1}, {0, 0, 1}}, {{ -1, 0, 0}, {1, 0, 0}}, {{ -1, -1, 0}, {1, 0, 0}}, {{ -1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, { -1, 0, 0}}, {{0, 0, -1}, { -1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}}};
++    protected static final int[][][] field_855_j = new int[][][] {{{0, 0, -1}, {0, 0, 1}}, {{ -1, 0, 0}, {1, 0, 0}}, {{ -1, -1, 0}, {1, 0, 0}}, {{ -1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, { -1, 0, 0}}, {{0, 0, -1}, { -1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}}};
+ 
+     /** appears to be the progress of the turn */
 -    private int turnProgress;
 -    private double minecartX;
 -    private double minecartY;
@@ -32,7 +35,6 @@
 -    private double velocityX;
 -    private double velocityY;
 -    private double velocityZ;
-+    protected static final int[][][] field_855_j = new int[][][] {{{0, 0, -1}, {0, 0, 1}}, {{ -1, 0, 0}, {1, 0, 0}}, {{ -1, -1, 0}, {1, 0, 0}}, {{ -1, 0, 0}, {1, -1, 0}}, {{0, 0, -1}, {0, -1, 1}}, {{0, -1, -1}, {0, 0, 1}}, {{0, 0, 1}, {1, 0, 0}}, {{0, 0, 1}, { -1, 0, 0}}, {{0, 0, -1}, { -1, 0, 0}}, {{0, 0, -1}, {1, 0, 0}}};
 +    protected int turnProgress;
 +    protected double minecartX;
 +    protected double minecartY;
@@ -42,7 +44,7 @@
 +    protected double velocityX;
 +    protected double velocityY;
 +    protected double velocityZ;
-+    
++
 +    /* Forge: Minecart Compatibility Layer Integration. */
 +    public static float defaultMaxSpeedRail = 0.4f;
 +    public static float defaultMaxSpeedGround = 0.4f;
@@ -62,7 +64,7 @@
  
      public EntityMinecart(World par1World)
      {
-@@ -33,6 +53,18 @@
+@@ -35,6 +55,18 @@
          this.preventEntitySpawning = true;
          this.setSize(0.98F, 0.7F);
          this.yOffset = this.height / 2.0F;
@@ -81,7 +83,7 @@
      }
  
      /**
-@@ -58,6 +90,10 @@
+@@ -60,6 +92,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
      {
@@ -92,7 +94,7 @@
          return par1Entity.boundingBox;
      }
  
-@@ -66,6 +102,10 @@
+@@ -68,6 +104,10 @@
       */
      public AxisAlignedBB getBoundingBox()
      {
@@ -103,7 +105,7 @@
          return null;
      }
  
-@@ -74,7 +114,7 @@
+@@ -76,7 +116,7 @@
       */
      public boolean canBePushed()
      {
@@ -112,7 +114,7 @@
      }
  
      public EntityMinecart(World par1World, double par2, double par4, double par6, int par8)
-@@ -118,48 +158,7 @@
+@@ -120,48 +160,7 @@
                  }
  
                  this.setEntityDead();
@@ -162,7 +164,7 @@
              }
  
              return true;
-@@ -241,7 +240,7 @@
+@@ -243,7 +242,7 @@
              this.func_41024_b(this.func_41025_i() - 1);
          }
  
@@ -171,7 +173,7 @@
          {
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -296,25 +295,20 @@
+@@ -298,25 +297,20 @@
              double var6 = 0.0078125D;
              int var8 = this.worldObj.getBlockId(var1, var2, var3);
  
@@ -200,7 +202,7 @@
                  if (var10 >= 2 && var10 <= 5)
                  {
                      this.posY = (double)(var2 + 1);
-@@ -357,7 +351,7 @@
+@@ -359,7 +353,7 @@
                  this.motionZ = var22 * var16 / var18;
                  double var24;
  
@@ -209,7 +211,7 @@
                  {
                      var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -407,36 +401,8 @@
+@@ -409,36 +403,8 @@
                  this.posX = var26 + var14 * var24;
                  this.posZ = var28 + var16 * var24;
                  this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -248,7 +250,7 @@
  
                  if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var1 == var13[0][0] && MathHelper.floor_double(this.posZ) - var3 == var13[0][2])
                  {
-@@ -447,41 +413,7 @@
+@@ -449,41 +415,7 @@
                      this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
                  }
  
@@ -291,18 +293,16 @@
  
                  Vec3D var52 = this.func_514_g(this.posX, this.posY, this.posZ);
  
-@@ -511,29 +443,14 @@
+@@ -513,29 +445,14 @@
  
                  double var41;
  
 -                if (this.minecartType == 2)
-+                updatePushForces();
-+                
-+                if (shouldDoRailFunctions())
-                 {
+-                {
 -                    var41 = (double)MathHelper.sqrt_double(this.pushX * this.pushX + this.pushZ * this.pushZ);
--
--                    if (var41 > 0.01D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.001D)
++		updatePushForces();
+ 
+-                    if (var41 > 0.01D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.0010D)
 -                    {
 -                        this.pushX /= var41;
 -                        this.pushZ /= var41;
@@ -318,6 +318,8 @@
 -                            this.pushZ = this.motionZ;
 -                        }
 -                    }
++		if(shouldDoRailFunctions())
++                {
 +                    ((BlockRail)Block.blocksList[var8]).onMinecartPass(worldObj, this, var1, var2, var3);
                  }
  
@@ -326,7 +328,7 @@
                  {
                      var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -569,41 +486,7 @@
+@@ -571,41 +488,7 @@
              }
              else
              {
@@ -369,7 +371,7 @@
              }
  
              this.rotationPitch = 0.0F;
-@@ -639,7 +522,18 @@
+@@ -641,7 +524,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -389,7 +391,7 @@
  
              if (var15 != null && var15.size() > 0)
              {
-@@ -664,17 +558,8 @@
+@@ -666,17 +560,8 @@
                  this.riddenByEntity = null;
              }
  
@@ -409,7 +411,7 @@
          }
      }
  
-@@ -697,12 +582,7 @@
+@@ -699,12 +584,7 @@
          }
          else
          {
@@ -423,7 +425,7 @@
  
              par3 = (double)var10;
  
-@@ -748,14 +628,9 @@
+@@ -750,14 +630,9 @@
  
          if (BlockRail.isRailBlock(var10))
          {
@@ -439,7 +441,7 @@
              if (var11 >= 2 && var11 <= 5)
              {
                  par3 = (double)(var8 + 1);
-@@ -820,13 +695,14 @@
+@@ -822,13 +697,14 @@
      {
          par1NBTTagCompound.setInteger("Type", this.minecartType);
  
@@ -457,7 +459,7 @@
          {
              NBTTagList var2 = new NBTTagList();
  
-@@ -852,13 +728,14 @@
+@@ -854,13 +730,14 @@
      {
          this.minecartType = par1NBTTagCompound.getInteger("Type");
  
@@ -475,7 +477,7 @@
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -886,11 +763,19 @@
+@@ -888,11 +765,19 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -496,7 +498,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -936,7 +821,7 @@
+@@ -938,7 +823,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -505,7 +507,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -944,7 +829,7 @@
+@@ -946,7 +831,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -514,7 +516,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -979,7 +864,7 @@
+@@ -981,7 +866,7 @@
       */
      public int getSizeInventory()
      {
@@ -523,7 +525,7 @@
      }
  
      /**
-@@ -1081,7 +966,12 @@
+@@ -1084,7 +969,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -537,7 +539,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1093,14 +983,14 @@
+@@ -1096,14 +986,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -554,7 +556,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1159,7 +1049,7 @@
+@@ -1162,7 +1052,7 @@
      /**
       * Is this minecart powered (Fuel > 0)
       */
@@ -563,7 +565,7 @@
      {
          return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1212,4 +1102,348 @@
+@@ -1215,4 +1105,348 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }

@@ -1,7 +1,7 @@
 --- ../src_base/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -140,6 +140,9 @@
-     public boolean ignoreFrustrumCheck;
+@@ -171,6 +171,9 @@
+     public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
  
 +    /** Forge: Used to store custom data for each entity. */
@@ -10,7 +10,7 @@
      public Entity(World par1World)
      {
          this.entityId = nextEntityID++;
-@@ -181,6 +184,20 @@
+@@ -212,6 +215,20 @@
  
      protected abstract void entityInit();
  
@@ -31,7 +31,7 @@
      public DataWatcher getDataWatcher()
      {
          return this.dataWatcher;
-@@ -1128,6 +1145,10 @@
+@@ -1188,6 +1205,10 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -42,7 +42,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1169,6 +1190,10 @@
+@@ -1229,6 +1250,10 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);

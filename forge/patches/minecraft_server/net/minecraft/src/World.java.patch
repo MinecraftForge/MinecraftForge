@@ -9,7 +9,7 @@
  public class World implements IBlockAccess
  {
      /**
-@@ -66,7 +68,7 @@
+@@ -79,7 +81,7 @@
       * Contains a timestamp from when the World object was created. Is used in the session.lock file
       */
      private long lockTimestamp = System.currentTimeMillis();
@@ -18,7 +18,7 @@
  
      /** Whether monsters are enabled or not. (1 = on, 0 = off) */
      public int difficultySetting;
-@@ -324,7 +326,8 @@
+@@ -349,7 +351,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -28,7 +28,7 @@
      }
  
      public boolean func_48084_h(int par1, int par2, int par3)
-@@ -1549,7 +1552,7 @@
+@@ -1595,7 +1598,7 @@
  
                      if (var7 != null)
                      {
@@ -37,7 +37,7 @@
                      }
                  }
              }
-@@ -1579,14 +1582,16 @@
+@@ -1625,14 +1628,16 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -56,7 +56,7 @@
                          }
                      }
  
-@@ -1603,13 +1608,13 @@
+@@ -1649,13 +1654,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -76,7 +76,7 @@
          }
      }
  
-@@ -1841,6 +1846,13 @@
+@@ -1900,6 +1905,13 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -90,7 +90,7 @@
                          }
                      }
                  }
-@@ -2121,25 +2133,21 @@
+@@ -2183,25 +2195,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -129,7 +129,7 @@
          }
      }
  
-@@ -2148,27 +2156,10 @@
+@@ -2210,27 +2218,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -160,7 +160,7 @@
          }
      }
  
-@@ -2191,7 +2182,8 @@
+@@ -2256,7 +2247,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -170,7 +170,7 @@
      }
  
      /**
-@@ -2463,6 +2455,7 @@
+@@ -2531,6 +2523,7 @@
                  }
              }
          }
@@ -178,7 +178,7 @@
  
          Profiler.endSection();
  
-@@ -2785,7 +2778,7 @@
+@@ -2853,7 +2846,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -187,7 +187,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3267,6 +3260,11 @@
+@@ -3339,6 +3332,11 @@
              {
                  var8 = null;
              }
@@ -199,7 +199,7 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3735,4 +3733,38 @@
+@@ -3846,4 +3844,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }

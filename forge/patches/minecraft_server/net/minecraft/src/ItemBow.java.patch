@@ -8,8 +8,8 @@
  public class ItemBow extends Item
  {
      public ItemBow(int par1)
-@@ -11,6 +13,10 @@
- 
+@@ -14,6 +16,10 @@
+      */
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
 +        if (ForgeHooks.onArrowLoose(par1ItemStack, par2World, par3EntityPlayer, getMaxItemUseDuration(par1ItemStack) - par4))
@@ -19,7 +19,7 @@
          boolean var5 = par3EntityPlayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
          if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
-@@ -100,6 +106,12 @@
+@@ -103,6 +109,12 @@
       */
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {

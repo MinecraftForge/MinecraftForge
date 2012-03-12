@@ -11,9 +11,9 @@
 +
 +public class EntitySheep extends EntityAnimal implements IShearable
  {
-     public static final float[][] fleeceColorTable = new float[][] {{1.0F, 1.0F, 1.0F}, {0.95F, 0.7F, 0.2F}, {0.9F, 0.5F, 0.85F}, {0.6F, 0.7F, 0.95F}, {0.9F, 0.9F, 0.2F}, {0.5F, 0.8F, 0.1F}, {0.95F, 0.7F, 0.8F}, {0.3F, 0.3F, 0.3F}, {0.6F, 0.6F, 0.6F}, {0.3F, 0.6F, 0.7F}, {0.7F, 0.4F, 0.9F}, {0.2F, 0.4F, 0.8F}, {0.5F, 0.4F, 0.3F}, {0.4F, 0.5F, 0.2F}, {0.8F, 0.3F, 0.3F}, {0.1F, 0.1F, 0.1F}};
- 
-@@ -94,27 +97,6 @@
+     /**
+      * Holds the RGB table of the sheep colors - in OpenGL glColor3f values - used to render the sheep colored fleece.
+@@ -97,27 +100,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -41,7 +41,7 @@
          return super.interact(par1EntityPlayer);
      }
  
-@@ -237,4 +219,23 @@
+@@ -246,4 +228,23 @@
              this.setGrowingAge(var1);
          }
      }

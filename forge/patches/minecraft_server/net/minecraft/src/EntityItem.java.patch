@@ -8,7 +8,7 @@
  public class EntityItem extends Entity
  {
      /** The item stack of this EntityItem. */
-@@ -171,6 +173,20 @@
+@@ -175,6 +177,20 @@
          if (!this.worldObj.isRemote)
          {
              int var2 = this.item.stackSize;
@@ -29,7 +29,7 @@
  
              if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(this.item))
              {
-@@ -194,6 +210,7 @@
+@@ -198,6 +214,7 @@
                      par1EntityPlayer.triggerAchievement(AchievementList.blazeRod);
                  }
  

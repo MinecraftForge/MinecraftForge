@@ -9,7 +9,7 @@
  {
      /** Reference to the World object. */
      private World worldObj;
-@@ -14,6 +14,7 @@
+@@ -18,6 +18,7 @@
      private List connectedTracks;
  
      final BlockRail rail;
@@ -17,7 +17,7 @@
  
      public RailLogic(BlockRail par1BlockRail, World par2World, int par3, int par4, int par5)
      {
-@@ -24,17 +25,11 @@
+@@ -28,17 +29,11 @@
          this.trackY = par4;
          this.trackZ = par5;
          int var6 = par2World.getBlockId(par3, par4, par5);
@@ -39,7 +39,7 @@
  
          this.setConnections(var7);
      }
-@@ -251,7 +246,7 @@
+@@ -258,7 +253,7 @@
              }
          }
  
@@ -48,7 +48,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX, this.trackY + 1, this.trackZ - 1))
              {
-@@ -264,7 +259,7 @@
+@@ -271,7 +266,7 @@
              }
          }
  
@@ -57,7 +57,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX + 1, this.trackY + 1, this.trackZ))
              {
-@@ -415,7 +410,7 @@
+@@ -422,7 +417,7 @@
              }
          }
  
@@ -66,7 +66,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX, this.trackY + 1, this.trackZ - 1))
              {
-@@ -428,7 +423,7 @@
+@@ -435,7 +430,7 @@
              }
          }
  
@@ -75,7 +75,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX + 1, this.trackY + 1, this.trackZ))
              {
-@@ -478,7 +473,7 @@
+@@ -485,7 +480,7 @@
      /**
       * get number of adjacent tracks
       */

@@ -20,7 +20,7 @@
          boolean var5 = par3EntityPlayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
          if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
-@@ -97,6 +104,12 @@
+@@ -103,6 +110,12 @@
       */
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
