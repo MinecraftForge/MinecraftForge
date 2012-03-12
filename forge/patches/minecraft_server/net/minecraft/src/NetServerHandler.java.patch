@@ -34,7 +34,28 @@
              {
                  this.playerEntity.itemInWorldManager.activeBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8);
              }
-@@ -954,4 +960,49 @@
+@@ -761,9 +767,10 @@
+      */
+     public void handleRespawn(Packet9Respawn par1Packet9Respawn)
+     {
++        int dim = (this.mcServer.getWorldManager(this.playerEntity.dimension).worldProvider.canRespawnHere() ? this.playerEntity.dimension : 0);        
+         if (this.playerEntity.gameOver)
+         {
+-            this.playerEntity = this.mcServer.configManager.recreatePlayerEntity(this.playerEntity, 0, true);
++            this.playerEntity = this.mcServer.configManager.recreatePlayerEntity(this.playerEntity, dim, true);
+         }
+         else
+         {
+@@ -772,7 +779,7 @@
+                 return;
+             }
+ 
+-            this.playerEntity = this.mcServer.configManager.recreatePlayerEntity(this.playerEntity, 0, false);
++            this.playerEntity = this.mcServer.configManager.recreatePlayerEntity(this.playerEntity, dim, false);
+         }
+     }
+ 
+@@ -954,4 +961,49 @@
      {
          return true;
      }
