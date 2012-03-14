@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 public class MinecraftForge
 {
     private static LinkedList<IBucketHandler> bucketHandlers = new LinkedList<IBucketHandler>();
+    private static LinkedList<IStrikeEntityHandler> strikeEntityHandlers = new LinkedList<IStrikeEntityHandler>();
 
     /**
      * Register a new custom bucket handler.
@@ -112,6 +113,15 @@ public class MinecraftForge
     }
 
     /**
+     * Register a new entity strike handler.
+     * @param handler The Handler to be registered
+     */
+    public static void registerStrikeEntityHandler(IStrikeEntityHandler handler)
+    {
+    	strikeEntityHandlers.add(handler);
+    }
+
+    /**
      * This is not supposed to be called outside of Minecraft internals.
      */
     public static ItemStack fillCustomBucket(World world, int X, int Y, int Z)
@@ -126,6 +136,23 @@ public class MinecraftForge
             }
         }
 
+        return null;
+    }
+
+    /**
+     * This is not supposed to be called outside of Minecraft internals.
+     */
+    public static ItemStack strikeEntity(ItemStack stack, EntityPlayer player, Entity entity)
+    {
+        for (IStrikeEntityHandler handler : strikeEntityHandlers)
+        {
+            ItemStack stackNew = handler.strikeEntity(stack, player, entity);
+
+            if (stack != null)
+            {
+                return stackNew;
+            }
+        }
         return null;
     }
 
