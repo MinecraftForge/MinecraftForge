@@ -105,20 +105,6 @@
              Iterator var3 = inGameHooks.entrySet().iterator();
  
              while (var3.hasNext())
-@@ -863,11 +889,11 @@
- 
-             if (var0 instanceof ChunkProviderGenerate)
-             {
--                var10.generateSurface(var3, var4, var1 << 4, var2 << 4);
-+                var10.generateSurface(var3, var4, var1, var2);
-             }
-             else if (var0 instanceof ChunkProviderHell)
-             {
--                var10.generateNether(var3, var4, var1 << 4, var2 << 4);
-+                var10.generateNether(var3, var4, var1, var2);
-             }
-         }
-     }
 @@ -1111,6 +1137,12 @@
          }
      }
