@@ -49,7 +49,7 @@
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
 -                if (var7 > 0 && Block.blocksList[var7] instanceof BlockContainer)
-+                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.func_48598_b(par1, par3 & 15, par3)))
++                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.func_48598_b(par1, par2 & 15, par3)))
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
