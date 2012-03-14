@@ -9,7 +9,7 @@
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -210,6 +212,7 @@
+@@ -206,6 +208,7 @@
              }
              else
              {
@@ -17,11 +17,11 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.func_35201_a(var1, 5);
-@@ -609,7 +612,16 @@
+@@ -605,7 +608,16 @@
  
      public EntityItem func_48152_as()
      {
--        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
+-        return this.func_48151_a(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
 +        ItemStack stack = inventory.getCurrentItem();
 +        if (stack == null)
 +        {
@@ -29,13 +29,13 @@
 +        }
 +        if (stack.getItem().onDroppedByPlayer(stack, this))
 +        {
-+            return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++            return func_48151_a(inventory.decrStackSize(inventory.currentItem, 1), false);
 +        }
 +        return null;
      }
  
-     /**
-@@ -674,14 +686,22 @@
+     public EntityItem func_48153_a(ItemStack par1ItemStack)
+@@ -664,14 +676,22 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -60,7 +60,7 @@
          {
              var3 = var2 + (float)(var4 * var4 + 1);
          }
-@@ -973,7 +993,11 @@
+@@ -960,7 +980,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -73,7 +73,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1034,7 +1058,9 @@
+@@ -1021,7 +1045,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -83,11 +83,12 @@
      }
  
      /**
-@@ -1063,6 +1089,11 @@
+@@ -1050,6 +1076,12 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
 +        ItemStack stack = getCurrentEquippedItem();
++        
 +        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, par1Entity))
 +        {
 +            return;
@@ -95,7 +96,15 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1205,6 +1236,12 @@
+@@ -1148,6 +1180,7 @@
+                 }
+ 
+                 this.addExhaustion(0.3F);
++                MinecraftForge.strikeEntity(stack, this, par1Entity);
+             }
+         }
+     }
+@@ -1192,6 +1225,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -108,7 +117,25 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1687,6 +1724,7 @@
+@@ -1474,7 +1513,7 @@
+ 
+         if (this.isSprinting())
+         {
+-            this.addExhaustion(0.8F);
++            this.addExhaustion(0.4F);
+         }
+         else
+         {
+@@ -1554,7 +1593,7 @@
+ 
+                     if (this.isSprinting())
+                     {
+-                        this.addExhaustion(0.099999994F * (float)var7 * 0.01F);
++                        this.addExhaustion(0.02F * (float)var7 * 0.01F);
+                     }
+                     else
+                     {
+@@ -1674,6 +1713,7 @@
                      return 101;
                  }
              }
@@ -116,7 +143,7 @@
          }
  
          return var3;
-@@ -1857,4 +1895,30 @@
+@@ -1841,4 +1881,30 @@
      {
          return !this.capabilities.isFlying;
      }
