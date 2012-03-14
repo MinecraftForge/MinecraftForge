@@ -183,6 +183,19 @@ public class ForgeHooks
         return true;
     }
     static LinkedList<IChunkLoadHandler> chunkLoadHandlers = new LinkedList<IChunkLoadHandler>();
+    
+    public static boolean onEntityInteract(EntityPlayer player, Entity entity, boolean isAttack)
+    {
+        for (IEntityInteractHandler handler : entityInteractHandlers)
+        {
+            if (!handler.onEntityInteract(player, entity, isAttack))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    static LinkedList<IEntityInteractHandler> entityInteractHandlers = new LinkedList<IEntityInteractHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
