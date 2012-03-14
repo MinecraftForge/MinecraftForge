@@ -8,6 +8,7 @@ package net.minecraft.src.forge;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
