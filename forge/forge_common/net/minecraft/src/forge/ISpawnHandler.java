@@ -15,7 +15,7 @@ public interface ISpawnHandler
      *
      * @param data The packet data stream
      */
-    public void writeSpawnData(DataOutputStream data);
+    public void writeSpawnData(DataOutputStream data) throws IOException;
 
     /**
      * Called by the client when it receives a Entity spawn packet.
@@ -23,5 +23,5 @@ public interface ISpawnHandler
      *
      * @param data The packet data stream
      */
-    public void readSpawnData(DataInputStream data);
+    public void readSpawnData(DataInputStream data) throws IOException;
 }
