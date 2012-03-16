@@ -250,20 +250,25 @@ public class ForgeHooksClient
         }
     }
 
-    public static void renderCustomItem(ICustomItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata, float brightness)
+    public static void renderEquippedItem(IEquippedItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, int itemID, int metadata)
     {
-        Tessellator tessellator = Tessellator.instance;
-        if (renderBlocks.useInventoryTint)
+        if (MinecraftForgeClient.renderEquippedItemAsBlock(itemID))
         {
-            int j = 0xffffff;//block.getRenderColor(i);
-            float f1 = (float) (j >> 16 & 0xff) / 255F;
-            float f3 = (float) (j >> 8 & 0xff) / 255F;
-            float f5 = (float) (j & 0xff) / 255F;
-            GL11.glColor4f(f1 * brightness, f3 * brightness, f5 * brightness, 1.0F);
+            customRenderer.renderEquippedItem(renderBlocks, entity, itemID, metadata);
         }
-
-        //ModLoader.RenderInvBlock(this, block, i, k);
-        customRenderer.renderInventory(renderBlocks, itemID, metadata);
+        else
+        {
+            GL11.glPushMatrix();
+            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+            GL11.glTranslatef(0.0F, 0.3F, 0.0F);
+            GL11.glScalef(1.5F, 1.5F, 1.5F);
+            GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
+            GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
+            customRenderer.renderEquippedItem(renderBlocks, entity, itemID, metadata);
+            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+            GL11.glPopMatrix();
+        }
     }
 }
 

@@ -5,23 +5,30 @@
  
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooksClient;
-+import net.minecraft.src.forge.ICustomItemRenderer;
++import net.minecraft.src.forge.IEquippedItemRenderer;
 +import net.minecraft.src.forge.MinecraftForgeClient;
 +
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -33,21 +37,27 @@
+@@ -33,21 +37,34 @@
      public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
-+        ICustomItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(par2ItemStack.itemID);
++        IEquippedItemRenderer customRenderer = MinecraftForgeClient.getEquippedItemRenderer(par2ItemStack.itemID);
  
 -        if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        if (customRenderer != null)
 +        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
-+            ForgeHooksClient.renderCustomItem(customRenderer, renderBlocksInstance, par2ItemStack.itemID,  par2ItemStack.getItemDamage(), par1EntityLiving.getEntityBrightness(1.0F)); 
++            if (par2ItemStack.itemID < 256)
++            {
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
++            }
++            else
++            {
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/gui/items.png", par2ItemStack.getItem())));
++            }
++            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack.itemID,  par2ItemStack.getItemDamage());
 +        }
 +        else if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
