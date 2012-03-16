@@ -127,14 +127,14 @@ public class MinecraftForgeClient
     }
 
     private static IInventoryItemRenderer[] customInventoryItemRenderers = new IInventoryItemRenderer[Item.itemsList.length];
-    private static boolean[] render3dInventoryItem = new boolean[Item.itemsList.length];
+    private static boolean[] renderInInventoryAsBlock = new boolean[Item.itemsList.length];
 
     /** Register a custom renderer for an item being displayed in an inventory slot.
      */
-    public static void registerInventoryItemRenderer(int itemID, IInventoryItemRenderer renderer, boolean renderIn3d)
+    public static void registerInventoryItemRenderer(int itemID, IInventoryItemRenderer renderer, boolean renderAsBlock)
     {
         customInventoryItemRenderers[itemID] = renderer;
-        render3dInventoryItem[itemID] = renderIn3d;
+        renderInInventoryAsBlock[itemID] = renderAsBlock;
     }
 
     public static IInventoryItemRenderer getInventoryItemRenderer(int itemID)
@@ -142,9 +142,9 @@ public class MinecraftForgeClient
         return customInventoryItemRenderers[itemID];
     }
 
-    public static boolean renderInventoryItemIn3d(int itemID)
+    public static boolean renderInventoryItemAsBlock(int itemID)
     {
-        return render3dInventoryItem[itemID];
+        return renderInInventoryAsBlock[itemID];
     }
 
     private static boolean hasInit = false;
