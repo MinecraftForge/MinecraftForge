@@ -16,6 +16,8 @@ import net.minecraft.src.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
+import net.minecraft.src.*;
+import org.lwjgl.opengl.GL12;
 
 public class ForgeHooksClient
 {
@@ -249,7 +251,12 @@ public class ForgeHooksClient
             return def;
         }
     }
-
+    
+    public static void renderEntityItem(IEntityItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item, int itemID, int metadata)
+    {
+        customRenderer.renderEntityItem(renderBlocks, item, itemID, metadata);
+    }
+    
     public static void renderEquippedItem(IEquippedItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, int itemID, int metadata)
     {
         if (MinecraftForgeClient.renderEquippedItemAsBlock(itemID))
@@ -270,5 +277,9 @@ public class ForgeHooksClient
             GL11.glPopMatrix();
         }
     }
+    
+    public static void renderInventoryItem(IInventoryItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata)
+    {
+        customRenderer.renderInventoryItem(renderBlocks, itemID, metadata);
+    }
 }
-

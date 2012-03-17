@@ -100,7 +100,7 @@ public class MinecraftForgeClient
         return customEntityItemRenderers[itemID];
     }
 
-    public boolean applyEntityItemRotationEffect(int itemID)
+    public static boolean applyEntityItemRotationEffect(int itemID)
     {
         return applyEntityItemRotation[itemID];
     }
