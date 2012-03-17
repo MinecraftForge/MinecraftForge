@@ -94,7 +94,7 @@
                  }
  
                  if (this.field_27004_a)
-@@ -187,9 +239,62 @@
+@@ -187,9 +239,65 @@
          float var12;
          float var13;
  
@@ -138,6 +138,8 @@
 +            else
 +            {
 +                GL11.glDisable(GL11.GL_LIGHTING);
++                GL11.glPushMatrix();
++                GL11.glTranslatef((float)(par6), (float)(par7), -3.0F + this.zLevel);
 +                
 +                int var8 = Item.itemsList[par3].getColorFromDamage(par4, 0);
 +                float var14 = (float)(var8 >> 16 & 255) / 255.0F;
@@ -150,6 +152,7 @@
 +                }
 +                
 +                ForgeHooksClient.renderInventoryItem(customRenderer, renderBlocks, par3, par4);
++                GL11.glPopMatrix();
 +                GL11.glEnable(GL11.GL_LIGHTING);
 +            }
 +        }
@@ -159,7 +162,7 @@
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -221,7 +326,7 @@
+@@ -221,7 +329,7 @@
              if (Item.itemsList[par3].func_46058_c())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -168,7 +171,7 @@
  
                  for (var8 = 0; var8 <= 1; ++var8)
                  {
-@@ -247,11 +352,11 @@
+@@ -247,11 +355,11 @@
  
                  if (par3 < 256)
                  {

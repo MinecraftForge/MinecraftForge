@@ -267,7 +267,7 @@ public class ForgeHooksClient
         {
             GL11.glPushMatrix();
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            GL11.glTranslatef(0.0F, 0.3F, 0.0F);
+            GL11.glTranslatef(0.0F, -0.3F, 0.0F);
             GL11.glScalef(1.5F, 1.5F, 1.5F);
             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
