@@ -252,14 +252,14 @@ public class ForgeHooksClient
         }
     }
     
-    public static void renderEntityItem(IEntityItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item, int itemID, int metadata)
+    public static void renderEntityItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item, int itemID, int metadata)
     {
         customRenderer.renderEntityItem(renderBlocks, item, itemID, metadata);
     }
     
-    public static void renderEquippedItem(IEquippedItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, int itemID, int metadata)
+    public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, int itemID, int metadata)
     {
-        if (MinecraftForgeClient.renderEquippedItemAsBlock(itemID))
+        if (customRenderer.renderEquippedItemAsBlock())
         {
             customRenderer.renderEquippedItem(renderBlocks, entity, itemID, metadata);
         }
@@ -278,7 +278,7 @@ public class ForgeHooksClient
         }
     }
     
-    public static void renderInventoryItem(IInventoryItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata)
+    public static void renderInventoryItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata)
     {
         customRenderer.renderInventoryItem(renderBlocks, itemID, metadata);
     }

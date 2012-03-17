@@ -84,74 +84,27 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
-    private static IEntityItemRenderer[] customEntityItemRenderers = new IEntityItemRenderer[Item.itemsList.length];
-    private static boolean[] applyEntityItemRotation = new boolean[Item.itemsList.length];
-    private static boolean[] applyEntityItemBobbing = new boolean[Item.itemsList.length];
+    private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
-    /** Register a custom renderer for an item that is dropped or thrown on the ground.
+    /** Register a custom renderer for a specific item. This can be used to
+     * render the item in-world as an EntityItem, when the item is equipped, or
+     * when the item is in an inventory slot.
+     * @param itemID The item ID (shifted index) to handle rendering.
+     * @param renderer The IItemRenderer interface that handles rendering for
+     * this item.
      */
-    public static void registerEntityItemRenderer(int itemID, IEntityItemRenderer renderer, boolean applyRotationEffect, boolean applyBobbingEffect)
+    public static void registerItemRenderer(int itemID, IItemRenderer renderer)
     {
-        customEntityItemRenderers[itemID] = renderer;
-        applyEntityItemRotation[itemID] = applyRotationEffect;
-        applyEntityItemBobbing[itemID] = applyBobbingEffect;
+        customItemRenderers[itemID] = renderer;
     }
 
-    public static IEntityItemRenderer getEntityItemRenderer(int itemID)
+    public static IItemRenderer getItemRenderer(int itemID, ItemRenderType type)
     {
-        return customEntityItemRenderers[itemID];
-    }
-
-    public static boolean applyEntityItemRotationEffect(int itemID)
-    {
-        return applyEntityItemRotation[itemID];
-    }
-    
-    public static boolean applyEntityItemBobbingEffect(int itemID)
-    {
-        return applyEntityItemBobbing[itemID];
-    }
-
-    private static IEquippedItemRenderer[] customEquippedItemRenderers = new IEquippedItemRenderer[Item.itemsList.length];
-    private static boolean[] renderEquippedAsBlock = new boolean[Item.itemsList.length];
-
-    /** Register a custom renderer for an item that is currently held in-hand.
-     */
-    public static void registerEquippedItemRenderer(int itemID, IEquippedItemRenderer renderer, boolean renderAsBlock)
-    {
-        customEquippedItemRenderers[itemID] = renderer;
-        renderEquippedAsBlock[itemID] = renderAsBlock;
-    }
-
-    public static IEquippedItemRenderer getEquippedItemRenderer(int itemID)
-    {
-        return customEquippedItemRenderers[itemID];
-    }
-
-    public static boolean renderEquippedItemAsBlock(int itemID)
-    {
-        return renderEquippedAsBlock[itemID];
-    }
-
-    private static IInventoryItemRenderer[] customInventoryItemRenderers = new IInventoryItemRenderer[Item.itemsList.length];
-    private static boolean[] renderInInventoryAsBlock = new boolean[Item.itemsList.length];
-
-    /** Register a custom renderer for an item being displayed in an inventory slot.
-     */
-    public static void registerInventoryItemRenderer(int itemID, IInventoryItemRenderer renderer, boolean renderAsBlock)
-    {
-        customInventoryItemRenderers[itemID] = renderer;
-        renderInInventoryAsBlock[itemID] = renderAsBlock;
-    }
-
-    public static IInventoryItemRenderer getInventoryItemRenderer(int itemID)
-    {
-        return customInventoryItemRenderers[itemID];
-    }
-
-    public static boolean renderInventoryItemAsBlock(int itemID)
-    {
-        return renderInInventoryAsBlock[itemID];
+        IItemRenderer renderer = customItemRenderers[itemID];
+        if (renderer != null && renderer.handleRenderType(type)) {
+            return customItemRenderers[itemID];
+        }
+        return null;
     }
 
     private static boolean hasInit = false;
