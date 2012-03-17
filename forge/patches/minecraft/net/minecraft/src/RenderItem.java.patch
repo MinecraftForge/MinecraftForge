@@ -6,8 +6,8 @@
  import java.util.Random;
 +
 +import net.minecraft.src.forge.ForgeHooksClient;
-+import net.minecraft.src.forge.IEntityItemRenderer;
-+import net.minecraft.src.forge.IInventoryItemRenderer;
++import net.minecraft.src.forge.IItemRenderer;
++import net.minecraft.src.forge.ItemRenderType;
 +import net.minecraft.src.forge.MinecraftForgeClient;
 +
  import org.lwjgl.opengl.GL11;
@@ -17,14 +17,14 @@
          float var18;
          float var23;
  
-+        IEntityItemRenderer customRenderer = MinecraftForgeClient.getEntityItemRenderer(var10.itemID);
++        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var10.itemID, ItemRenderType.ENTITY);
 +        if (customRenderer != null)
 +        {
-+            if (MinecraftForgeClient.applyEntityItemRotationEffect(var10.itemID))
++            if (customRenderer.useEntityItemRotationEffect())
 +            {
 +                GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
 +            }
-+            if (!MinecraftForgeClient.applyEntityItemBobbingEffect(var10.itemID))
++            if (!customRenderer.useEntityItemBobbingEffect())
 +            {
 +                GL11.glTranslatef(0.0F, -var11, 0.0F);
 +            }
@@ -58,7 +58,7 @@
 +            }
 +            else
 +            {
-+                this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png", var10.getItem()));
++                this.loadTexture(ForgeHooksClient.getTexture(var10.itemID < 256 ? "/terrain.png" : "/gui/items.png", var10.getItem()));
 +                GL11.glScalef(0.5F, 0.5F, 0.5F);
 +                ForgeHooksClient.renderEntityItem(customRenderer, renderBlocks, par1EntityItem, var10.itemID, var10.getItemDamage());
 +            }
@@ -95,25 +95,18 @@
                  }
  
                  if (this.field_27004_a)
-@@ -187,9 +240,65 @@
+@@ -187,9 +240,58 @@
          float var12;
          float var13;
  
 -        if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
-+        IInventoryItemRenderer customRenderer = MinecraftForgeClient.getInventoryItemRenderer(par3);
++        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par3, ItemRenderType.INVENTORY);
 +        if (customRenderer != null) 
          {
 -            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-+            if (par3 < 256)
-+            {
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", Item.itemsList[par3])));
-+            }
-+            else
-+            {
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[par3])));
-+            }
++            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture(par3 < 256 ? "/terrain.png" : "/gui/items.png", Item.itemsList[par3])));
 +            
-+            if (MinecraftForgeClient.renderInventoryItemAsBlock(par3))
++            if (customRenderer.renderInventoryItemAsBlock())
 +            {
 +                GL11.glPushMatrix();
 +                GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
@@ -163,7 +156,7 @@
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -221,7 +330,7 @@
+@@ -221,7 +323,7 @@
              if (Item.itemsList[par3].func_46058_c())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -172,7 +165,7 @@
  
                  for (var8 = 0; var8 <= 1; ++var8)
                  {
-@@ -247,11 +356,11 @@
+@@ -247,11 +349,11 @@
  
                  if (par3 < 256)
                  {
