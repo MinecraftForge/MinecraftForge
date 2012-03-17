@@ -13,17 +13,18 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -55,10 +61,56 @@
+@@ -55,10 +61,57 @@
          float var18;
          float var23;
  
 +        IEntityItemRenderer customRenderer = MinecraftForgeClient.getEntityItemRenderer(var10.itemID);
 +        if (customRenderer != null)
 +        {
-+            if (MinecraftForgeClient.applyEntityItemRotationEffect(var10.itemID)) {
++            if (MinecraftForgeClient.applyEntityItemRotationEffect(var10.itemID))
++            {
 +                GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
 +            }
-+            else
++            if (!MinecraftForgeClient.applyEntityItemBobbingEffect(var10.itemID))
 +            {
 +                GL11.glTranslatef(0.0F, -var11, 0.0F);
 +            }
@@ -71,7 +72,7 @@
              float var21 = 0.25F;
              var15 = Block.blocksList[var10.itemID].getRenderType();
  
-@@ -94,7 +146,7 @@
+@@ -94,7 +147,7 @@
              if (var10.getItem().func_46058_c())
              {
                  GL11.glScalef(0.5F, 0.5F, 0.5F);
@@ -80,7 +81,7 @@
  
                  for (var14 = 0; var14 <= 1; ++var14)
                  {
-@@ -120,11 +172,11 @@
+@@ -120,11 +173,11 @@
  
                  if (var10.itemID < 256)
                  {
@@ -94,7 +95,7 @@
                  }
  
                  if (this.field_27004_a)
-@@ -187,9 +239,65 @@
+@@ -187,9 +240,65 @@
          float var12;
          float var13;
  
@@ -162,7 +163,7 @@
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -221,7 +329,7 @@
+@@ -221,7 +330,7 @@
              if (Item.itemsList[par3].func_46058_c())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -171,7 +172,7 @@
  
                  for (var8 = 0; var8 <= 1; ++var8)
                  {
-@@ -247,11 +355,11 @@
+@@ -247,11 +356,11 @@
  
                  if (par3 < 256)
                  {

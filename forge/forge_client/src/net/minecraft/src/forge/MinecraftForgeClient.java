@@ -86,13 +86,15 @@ public class MinecraftForgeClient
 
     private static IEntityItemRenderer[] customEntityItemRenderers = new IEntityItemRenderer[Item.itemsList.length];
     private static boolean[] applyEntityItemRotation = new boolean[Item.itemsList.length];
+    private static boolean[] applyEntityItemBobbing = new boolean[Item.itemsList.length];
 
-    /** Register a custom renderer for an item when it is dropped or thrown on the ground.
+    /** Register a custom renderer for an item that is dropped or thrown on the ground.
      */
-    public static void registerEntityItemRenderer(int itemID, IEntityItemRenderer renderer, boolean applyRotationEffect)
+    public static void registerEntityItemRenderer(int itemID, IEntityItemRenderer renderer, boolean applyRotationEffect, boolean applyBobbingEffect)
     {
         customEntityItemRenderers[itemID] = renderer;
         applyEntityItemRotation[itemID] = applyRotationEffect;
+        applyEntityItemBobbing[itemID] = applyBobbingEffect;
     }
 
     public static IEntityItemRenderer getEntityItemRenderer(int itemID)
@@ -103,6 +105,11 @@ public class MinecraftForgeClient
     public static boolean applyEntityItemRotationEffect(int itemID)
     {
         return applyEntityItemRotation[itemID];
+    }
+    
+    public static boolean applyEntityItemBobbingEffect(int itemID)
+    {
+        return applyEntityItemBobbing[itemID];
     }
 
     private static IEquippedItemRenderer[] customEquippedItemRenderers = new IEquippedItemRenderer[Item.itemsList.length];
