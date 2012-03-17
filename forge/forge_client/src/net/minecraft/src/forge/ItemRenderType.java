@@ -2,7 +2,7 @@ package net.minecraft.src.forge;
 
 public enum ItemRenderType
 {
-    ENTITY,
-    EQUIPPED,
-    INVENTORY;
+    ENTITY, // Render type for in-world EntityItems
+    EQUIPPED, // Render type for an item equipped in-hand
+    INVENTORY; // Render type for items shown in a GUI inventory slot
 }

@@ -252,16 +252,19 @@ public class ForgeHooksClient
         }
     }
     
-    public static void renderEntityItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item, int itemID, int metadata)
+    public static void renderEntityItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item)
     {
-        customRenderer.renderEntityItem(renderBlocks, item, itemID, metadata);
+        customRenderer.renderEntityItem(renderBlocks, item);
     }
     
-    public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, int itemID, int metadata)
+    public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
     {
-        if (customRenderer.renderEquippedItemAsBlock())
+        if (customRenderer.renderEquippedItemAsBlock(item.itemID))
         {
-            customRenderer.renderEquippedItem(renderBlocks, entity, itemID, metadata);
+            GL11.glPushMatrix();
+            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+            customRenderer.renderEquippedItem(renderBlocks, entity, item);
+            GL11.glPopMatrix();
         }
         else
         {
@@ -272,14 +275,14 @@ public class ForgeHooksClient
             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-            customRenderer.renderEquippedItem(renderBlocks, entity, itemID, metadata);
+            customRenderer.renderEquippedItem(renderBlocks, entity, item);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
         }
     }
     
-    public static void renderInventoryItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata)
+    public static void renderInventoryItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, ItemStack item)
     {
-        customRenderer.renderInventoryItem(renderBlocks, itemID, metadata);
+        customRenderer.renderInventoryItem(renderBlocks, item);
     }
 }

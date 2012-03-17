@@ -2,16 +2,18 @@ package net.minecraft.src.forge;
 
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.RenderBlocks;
 
 public interface IItemRenderer
 {
-    /** Checks if this renderer should handle a specific item render type
+    /** Checks if this renderer should handle a specific item's render type
+     * @param itemID The item we are trying to render
      * @param type A render type to check if this renderer handles
      * @return true if this renderer should handle the given render type,
      * otherwise false
      */
-    public boolean handleRenderType(ItemRenderType type);
+    public boolean handleRenderType(int itemID, ItemRenderType type);
     
     /** Called to render an in-world item, e.g. one that has been thrown or
      * dropped. The appropriate OpenGL transformations and scaling have already
@@ -19,22 +21,20 @@ public interface IItemRenderer
      * EntityItem.
      * @param render The RenderBlocks instance
      * @param item The in-world item to be rendered
-     * @param itemID The item's ID (shifted index)
-     * @param metadata The item's metadata or damage value
      */
-    public void renderEntityItem(RenderBlocks render, EntityItem item, int itemID, int metadata);
+    public void renderEntityItem(RenderBlocks render, EntityItem item);
     
     /** Determines if a rotation effect should be used when rendering an
      * EntityItem, like most default blocks do.
      * @return true if the EntityItem should rotate, otherwise false
      */
-    public boolean useEntityItemRotationEffect();
+    public boolean useEntityItemRotationEffect(int itemID);
     
     /** Determines if an up-and-down bobbing effect should be used when
      * rendering an EntityItem, like all default blocks and items do.
      * @return true if the EntityItem should bob up and down, otherwise false
      */
-    public boolean useEntityItemBobbingEffect();
+    public boolean useEntityItemBobbingEffect(int itemID);
     
     /** Called to render an item currently held in-hand by a living entity. If
      * rendering as a 3D block, the item will be rotated to a 45-degree angle.
@@ -43,17 +43,16 @@ public interface IItemRenderer
      * in local coordinates from (0,0,0)-(1,1,1).
      * @param render The RenderBlocks instance
      * @param entity The entity holding this item
-     * @param itemID The item's ID (shifted index)
-     * @param metadata The item's metadata or damage value
+     * @param item The equipped item to be rendered
      */
-    public void renderEquippedItem(RenderBlocks render, EntityLiving entity, int itemID, int metadata);
+    public void renderEquippedItem(RenderBlocks render, EntityLiving entity, ItemStack item);
     
     /** Determines if the currently equipped item should be rendered as a 3D
      * block or as a 2D texture.
      * @return true if the equipped item should be rendered as a 3D block,
      * otherwise false
      */
-    public boolean renderEquippedItemAsBlock();
+    public boolean renderEquippedItemAsBlock(int itemID);
     
     /** Called to render an item in a GUI inventory slot. If rendering as a 3D
      * block, the appropriate OpenGL translations and scaling have already been
@@ -61,16 +60,15 @@ public interface IItemRenderer
      * (0,0,0)-(1,1,1). If rendering as a 2D texture, the rendering should be in
      * GUI pixel coordinates from (0, 0, 0)-(16, 16, 0).
      * @param render The RenderBlocks instance
-     * @param itemID The item's ID (shifted index)
-     * @param metadata The item's metadata or damage value
+     * @param item The item stack to render
      */
-    public void renderInventoryItem(RenderBlocks render, int itemID, int metadata);
+    public void renderInventoryItem(RenderBlocks render, ItemStack item);
     
     /** Determines if the item should be rendered in GUI inventory slots as a 3D
      * block or as a 2D texture.
      * @return true if the inventory item should be rendered as a 3D block,
      * otherwise false
      */
-    public boolean renderInventoryItemAsBlock();
-    
+    public boolean renderInventoryItemAsBlock(int itemID);
+   
 }

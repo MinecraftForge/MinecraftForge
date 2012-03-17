@@ -101,8 +101,8 @@ public class MinecraftForgeClient
     public static IItemRenderer getItemRenderer(int itemID, ItemRenderType type)
     {
         IItemRenderer renderer = customItemRenderers[itemID];
-        if (renderer != null && renderer.handleRenderType(type)) {
-            return customItemRenderers[itemID];
+        if (renderer != null && renderer.handleRenderType(itemID, type)) {
+            return renderer;
         }
         return null;
     }
