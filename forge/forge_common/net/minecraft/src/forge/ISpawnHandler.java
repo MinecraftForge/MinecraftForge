@@ -2,6 +2,7 @@ package net.minecraft.src.forge;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
  * A interface for Entities that need extra information to be communicated

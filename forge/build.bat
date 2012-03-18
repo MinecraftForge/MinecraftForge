@@ -2,11 +2,11 @@
 echo =================================== Build Start =================================
 cd ..
 
-rem rmdir /S /Q src
-rem mkdir src
+rmdir /S /Q src
+mkdir src
 
 echo src_work -^> src
-rem xcopy /Q /Y /E src_work\* src\
+xcopy /Q /Y /E src_work\* src\
 echo.
 
 echo forge_client -^> minecraft
