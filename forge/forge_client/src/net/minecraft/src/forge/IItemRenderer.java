@@ -8,12 +8,12 @@ import net.minecraft.src.RenderBlocks;
 public interface IItemRenderer
 {
     /** Checks if this renderer should handle a specific item's render type
-     * @param itemID The item we are trying to render
+     * @param item The item we are trying to render
      * @param type A render type to check if this renderer handles
      * @return true if this renderer should handle the given render type,
      * otherwise false
      */
-    public boolean handleRenderType(int itemID, ItemRenderType type);
+    public boolean handleRenderType(ItemStack item, ItemRenderType type);
     
     /** Called to render an in-world item, e.g. one that has been thrown or
      * dropped. The appropriate OpenGL transformations and scaling have already
@@ -26,15 +26,17 @@ public interface IItemRenderer
     
     /** Determines if a rotation effect should be used when rendering an
      * EntityItem, like most default blocks do.
+     * @param item the item we are trying to render
      * @return true if the EntityItem should rotate, otherwise false
      */
-    public boolean useEntityItemRotationEffect(int itemID);
+    public boolean useEntityItemRotationEffect(ItemStack item);
     
     /** Determines if an up-and-down bobbing effect should be used when
      * rendering an EntityItem, like all default blocks and items do.
+     * @param item the item we are trying to render
      * @return true if the EntityItem should bob up and down, otherwise false
      */
-    public boolean useEntityItemBobbingEffect(int itemID);
+    public boolean useEntityItemBobbingEffect(ItemStack item);
     
     /** Called to render an item currently held in-hand by a living entity. If
      * rendering as a 3D block, the item will be rotated to a 45-degree angle.
@@ -49,10 +51,11 @@ public interface IItemRenderer
     
     /** Determines if the currently equipped item should be rendered as a 3D
      * block or as a 2D texture.
+     * @param item the item we are trying to render
      * @return true if the equipped item should be rendered as a 3D block,
      * otherwise false
      */
-    public boolean renderEquippedItemAsBlock(int itemID);
+    public boolean renderEquippedItemAsBlock(ItemStack item);
     
     /** Called to render an item in a GUI inventory slot. If rendering as a 3D
      * block, the appropriate OpenGL translations and scaling have already been
@@ -66,9 +69,10 @@ public interface IItemRenderer
     
     /** Determines if the item should be rendered in GUI inventory slots as a 3D
      * block or as a 2D texture.
+     * @param item the item we are trying to render
      * @return true if the inventory item should be rendered as a 3D block,
      * otherwise false
      */
-    public boolean renderInventoryItemAsBlock(int itemID);
-   
+    public boolean renderInventoryItemAsBlock(ItemStack item);
+
 }

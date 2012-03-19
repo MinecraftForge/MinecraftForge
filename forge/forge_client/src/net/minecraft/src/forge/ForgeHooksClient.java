@@ -259,7 +259,7 @@ public class ForgeHooksClient
     
     public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
     {
-        if (customRenderer.renderEquippedItemAsBlock(item.itemID))
+        if (customRenderer.renderEquippedItemAsBlock(item))
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);

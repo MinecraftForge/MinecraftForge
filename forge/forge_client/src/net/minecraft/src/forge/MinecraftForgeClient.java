@@ -7,6 +7,7 @@ package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 
@@ -98,11 +99,11 @@ public class MinecraftForgeClient
         customItemRenderers[itemID] = renderer;
     }
 
-    public static IItemRenderer getItemRenderer(int itemID, ItemRenderType type)
+    public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
-        IItemRenderer renderer = customItemRenderers[itemID];
-        if (renderer != null && renderer.handleRenderType(itemID, type)) {
-            return renderer;
+        IItemRenderer renderer = customItemRenderers[item.itemID];
+        if (renderer != null && renderer.handleRenderType(item, type)) {
+            return customItemRenderers[item.itemID];
         }
         return null;
     }
