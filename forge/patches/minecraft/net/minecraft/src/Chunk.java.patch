@@ -5,7 +5,7 @@
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
 -                else if (Block.blocksList[var8] instanceof BlockContainer && var8 != par4)
-+                else if (Block.blocksList[var8] != null && Block.blocksList[var8].hasTileEntity(getBlockMetadata(par1, par2, par3)))
++                if (Block.blocksList[var8] != null && Block.blocksList[var8].hasTileEntity(getBlockMetadata(par1, par2, par3)))
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
