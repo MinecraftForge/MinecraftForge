@@ -7,6 +7,7 @@ package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 
@@ -84,16 +85,27 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
-    private static ICustomItemRenderer[] customItemRenderers = new ICustomItemRenderer[Item.itemsList.length];
+    private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
-    public static void registerCustomItemRenderer(int itemID, ICustomItemRenderer renderer)
+    /** Register a custom renderer for a specific item. This can be used to
+     * render the item in-world as an EntityItem, when the item is equipped, or
+     * when the item is in an inventory slot.
+     * @param itemID The item ID (shifted index) to handle rendering.
+     * @param renderer The IItemRenderer interface that handles rendering for
+     * this item.
+     */
+    public static void registerItemRenderer(int itemID, IItemRenderer renderer)
     {
         customItemRenderers[itemID] = renderer;
     }
 
-    public static ICustomItemRenderer getCustomItemRenderer (int itemID)
+    public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
-        return customItemRenderers[itemID];
+        IItemRenderer renderer = customItemRenderers[item.itemID];
+        if (renderer != null && renderer.handleRenderType(item, type)) {
+            return customItemRenderers[item.itemID];
+        }
+        return null;
     }
 
     private static boolean hasInit = false;

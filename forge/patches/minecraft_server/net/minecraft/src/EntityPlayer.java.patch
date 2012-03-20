@@ -81,7 +81,22 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
+<<<<<<< HEAD
 @@ -926,7 +956,9 @@
+=======
+@@ -930,6 +960,10 @@
+      */
+     public void useCurrentItemOnEntity(Entity par1Entity)
+     {
++        if (!ForgeHooks.onEntityInteract(this, par1Entity, false))
++        {
++            return;
++        }
+         if (!par1Entity.interact(this))
+         {
+             ItemStack var2 = this.getCurrentEquippedItem();
+@@ -960,7 +994,9 @@
+>>>>>>> upstream/master
       */
      public void destroyCurrentEquippedItem()
      {
@@ -91,10 +106,18 @@
      }
  
      /**
+<<<<<<< HEAD
 @@ -955,6 +987,12 @@
+=======
+@@ -989,6 +1025,16 @@
+>>>>>>> upstream/master
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
++        if (!ForgeHooks.onEntityInteract(this, par1Entity, true))
++        {
++            return;
++        }
 +        ItemStack stack = getCurrentEquippedItem();
 +        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, par1Entity))
 +        {
@@ -104,6 +127,7 @@
          if (par1Entity.func_48313_k_())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
+<<<<<<< HEAD
 @@ -1053,6 +1091,7 @@
                  }
  
@@ -113,6 +137,9 @@
          }
      }
 @@ -1093,6 +1132,12 @@
+=======
+@@ -1127,6 +1173,12 @@
+>>>>>>> upstream/master
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -125,6 +152,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
+<<<<<<< HEAD
 @@ -1326,7 +1371,7 @@
  
          if (this.isSprinting())
@@ -144,6 +172,9 @@
                      else
                      {
 @@ -1643,4 +1688,16 @@
+=======
+@@ -1708,4 +1760,16 @@
+>>>>>>> upstream/master
      {
          return !this.capabilities.isFlying;
      }

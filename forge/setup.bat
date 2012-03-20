@@ -1,4 +1,5 @@
-echo off
+@echo off
+echo =================================== Setup Start =================================
 pushd .. >nul
 
   if "%1"=="-skipdecompile" (
@@ -14,12 +15,12 @@ pushd .. >nul
       exit 1
     )
     rmdir /S /Q src
-    @echo | cmd /C decompile.bat -r
+    echo | cmd /C decompile.bat -r
   )
   
   .\runtime\bin\python\python_mcp forge\clean_src.py src  
 
-  @echo | cmd /C updatemd5.bat -f
+  echo | cmd /C updatemd5.bat -f
 
   rmdir /S /Q src_base
   rmdir /S /Q src_work
@@ -37,7 +38,6 @@ pushd .. >nul
     echo Applying patches
     for /f %%i in ('find ../forge/patches -type f') do (
       set file=%%i
-      rem Have to do this to filter out .svn entries 
       if /I "!file:~-6!" EQU ".patch" (
         ..\runtime\bin\python\python_mcp ..\forge\lfcr.py %%i ..\forge\temp.patch
         ..\runtime\bin\applydiff.exe -uf -p2 -i ..\forge\temp.patch
@@ -46,5 +46,8 @@ pushd .. >nul
     )
   popd >nul
 popd >nul
-echo finished
-pause
+echo =================================== Setup Finished =================================
+
+if NOT "%1"=="-skipdecompile" (
+  pause
+)

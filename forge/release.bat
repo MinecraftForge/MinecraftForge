@@ -1,15 +1,16 @@
-@cmd /C build.bat
+@echo off
 
-if %ERRORLEVEL% NEQ 0 exit 1
+call build.bat
+if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%
 
-@cd ..
+echo =================================== Release Start =================================
 
-@echo | cmd /C reobfuscate.bat
+cd ..
+runtime\bin\python\python_mcp runtime\reobfuscate.py
+cd forge
 
-@set PATH=E:\cygwin\bin;%PATH%
+set PATH=E:\cygwin\bin;%PATH%
+sh package.sh
 
-@cd forge
-
-@sh package.sh
-
-pause
+echo =================================== Release Finished %ERRORLEVEL% =================================
+if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%

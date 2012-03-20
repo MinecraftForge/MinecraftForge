@@ -2,6 +2,7 @@ package net.minecraft.src.forge;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
  * A interface for Entities that need extra information to be communicated
@@ -15,7 +16,7 @@ public interface ISpawnHandler
      *
      * @param data The packet data stream
      */
-    public void writeSpawnData(DataOutputStream data);
+    public void writeSpawnData(DataOutputStream data) throws IOException;
 
     /**
      * Called by the client when it receives a Entity spawn packet.
@@ -23,5 +24,5 @@ public interface ISpawnHandler
      *
      * @param data The packet data stream
      */
-    public void readSpawnData(DataInputStream data);
+    public void readSpawnData(DataInputStream data) throws IOException;
 }

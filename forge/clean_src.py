@@ -15,7 +15,7 @@ if __name__ == '__main__':
                 ret = match.group('full').rstrip('0')
                 if ret[-1] == '.':
                     ret += '0'
-                return ret
+                return ret + match.group('type')
                 
             buf = trailing.sub(strip_zeros_match, buf) #Strip trailing zeroes: 1.0040D -> 1.004D
 

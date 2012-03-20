@@ -36,6 +36,15 @@
              {
                  this.onPlayerDestroyBlock(par1, par2, par3, par4);
              }
+@@ -117,7 +124,7 @@
+                 }
+ 
+                 Block var6 = Block.blocksList[var5];
+-                this.curBlockDamage += var6.blockStrength(this.mc.thePlayer);
++                this.curBlockDamage += var6.blockStrength(mc.theWorld, this.mc.thePlayer, par1, par2, par3);
+ 
+                 if (this.blockDestroySoundCounter % 4.0F == 0.0F && var6 != null)
+                 {
 @@ -195,8 +202,34 @@
       */
      public boolean onPlayerRightClick(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7)

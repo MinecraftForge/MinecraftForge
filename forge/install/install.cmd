@@ -17,7 +17,9 @@ pushd .. >nul
 
 xcopy /Y /E /I forge\conf\* conf
 
-runtime\bin\python\python_mcp runtime\cleanup.py 
+if exist ".\src" (
+    runtime\bin\python\python_mcp runtime\cleanup.py 
+)
 if exist ".\src" (
     echo  Please make sure to backup your modified files, and say yes when it asks you to do cleanup.
     exit 1
@@ -50,7 +52,7 @@ pushd src >nul
     )
 popd >nul
 
-cmd /C updatemcp.bat -f
-cmd /C updatenames.bat -f
+runtime\bin\python\python_mcp runtime\updatemcp.py -f
+runtime\bin\python\python_mcp runtime\updatenames.py -f
 runtime\bin\python\python_mcp runtime\updatemd5.py -f
 pause

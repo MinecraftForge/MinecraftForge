@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -57,12 +57,21 @@
+@@ -57,18 +57,22 @@
  
              this.itemList.add(new ItemStack(var2[var10], 1, var11));
          }
@@ -8,21 +8,25 @@
 -        for (var10 = 256; var10 < Item.itemsList.length; ++var10)
 +        
 +        for (Block block : Block.blocksList)
-+        {
+         {
+-            if (Item.itemsList[var10] != null && Item.itemsList[var10].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[var10].shiftedIndex != Item.monsterPlacer.shiftedIndex)
 +            if (block != null)
-+            {
+             {
+-                this.itemList.add(new ItemStack(Item.itemsList[var10]));
 +                block.addCreativeItems((ArrayList)itemList);
-+            }
-+        }
+             }
+         }
+-
+-        for (var10 = 1; var10 < 16; ++var10)
 +        
 +        int x = 0;
 +        for (Item item : Item.itemsList)
          {
--            if (Item.itemsList[var10] != null && Item.itemsList[var10].shiftedIndex != Item.potion.shiftedIndex && Item.itemsList[var10].shiftedIndex != Item.monsterPlacer.shiftedIndex)
+-            this.itemList.add(new ItemStack(Item.dyePowder.shiftedIndex, 1, var10));
 +            if (x++ >= 256 && item != null)
-             {
--                this.itemList.add(new ItemStack(Item.itemsList[var10]));
++            {
 +                item.addCreativeItems((ArrayList)itemList);
-             }
++            }
          }
  
+         Iterator var14 = EntityList.entityEggs.keySet().iterator();
