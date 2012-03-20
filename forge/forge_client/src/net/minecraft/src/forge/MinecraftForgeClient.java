@@ -5,6 +5,8 @@
 
 package net.minecraft.src.forge;
 
+import org.lwjgl.opengl.Display;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -85,6 +87,23 @@ public class MinecraftForgeClient
         return ForgeHooksClient.renderPass;
     }
 
+    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
+    private static ICustomItemRenderer[] customItemRenderersOld = new ICustomItemRenderer[Item.itemsList.length];
+
+    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
+    public static void registerCustomItemRenderer(int itemID, ICustomItemRenderer renderer)
+    {
+        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 MinecraftForgeClient.registerCustomItemRenderer on: %version%");
+        customItemRenderersOld[itemID] = renderer;
+    }
+
+    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
+    public static ICustomItemRenderer getCustomItemRenderer (int itemID)
+    {
+        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 MinecraftForgeClient.getCustomItemRenderer on: %version%");
+        return customItemRenderersOld[itemID];
+    }
+    
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
     /** Register a custom renderer for a specific item. This can be used to
@@ -122,5 +141,21 @@ public class MinecraftForgeClient
     static
     {
         init();
+    }
+    
+    /***
+     * This is a function that is used to enforce deprecation of code.
+     * It checks the current Display's title against the passed in argument.
+     * If they do not match (such is the case in different versionf of MC) it exits the process with a error
+     * 
+     * @param version The version to find, usually "Minecraft Minecraft 1.2.3"
+     * @param message The error message to display int eh crash log
+     */
+    public static void checkMinecraftVersion(String version, String message)
+    {
+        if (!Display.getTitle().equals(version))
+        {
+            MinecraftForge.killMinecraft("Minecraft Forge", message.replaceAll("%version%", Display.getTitle()));
+        }
     }
 }
