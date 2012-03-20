@@ -414,6 +414,41 @@ public class MinecraftForge
         }
     }
 
+    /** 
+     * Returns a given block's harvest level against a specific tool
+     *
+     * @param block The block to search for.
+     * @param metadata The metadata for the block subtype.
+     * @param toolClass The tool class to check against
+     * @return Harvest level of the block
+     */
+
+    public static int getBlockHarvestLevel(Block block, int metadata, String toolclass)
+    {
+        Integer lvl = (Integer)ForgeHooks.toolHarvestLevels.get(Arrays.asList(block.blockID, metadata, toolclass));
+        return (lvl == null ? 0 : lvl);
+    }
+
+    /** 
+     * Returns a given block's harvest level
+     * 
+     * @param block The block to search for.
+     * @param metadata The metadata for the block subtype.
+     * @return Harvest level of the block
+     */
+
+    public static int getBlockHarvestLevel(Block block, int metadata)
+    {        
+        for (List key : (Set<List>)ForgeHooks.toolHarvestLevels.keySet())
+        {
+            if (key.get(0).equals(block.blockID) && key.get(1).equals(metadata)) 
+            {
+                return (Integer)ForgeHooks.toolHarvestLevels.get(key);
+            }
+        }
+        return 0;
+    }
+
     /**
 * Kill minecraft with an error message.
 */
