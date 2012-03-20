@@ -11,7 +11,7 @@
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -172,6 +176,7 @@
+@@ -158,6 +162,7 @@
              }
              else
              {
@@ -19,7 +19,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.func_35208_b(var1, 5);
-@@ -355,6 +360,10 @@
+@@ -341,6 +346,10 @@
       */
      protected void closeScreen()
      {
@@ -30,11 +30,11 @@
          this.craftingInventory = this.inventorySlots;
      }
  
-@@ -535,7 +544,16 @@
+@@ -514,7 +523,16 @@
  
      public EntityItem func_48347_R()
      {
--        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
+-        return this.func_48349_a(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
 +        ItemStack stack = inventory.getCurrentItem();
 +        if (stack == null)
 +        {
@@ -42,13 +42,13 @@
 +        }
 +        if (stack.getItem().onDroppedByPlayer(stack, this))
 +        {
-+            return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++            return func_48349_a(inventory.decrStackSize(inventory.currentItem, 1), false);
 +        }
 +        return null;
      }
  
-     /**
-@@ -600,10 +618,18 @@
+     public EntityItem func_48348_b(ItemStack par1ItemStack)
+@@ -573,10 +591,18 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -68,7 +68,7 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -899,7 +925,11 @@
+@@ -868,7 +894,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -81,6 +81,9 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
+<<<<<<< HEAD
+@@ -926,7 +956,9 @@
+=======
 @@ -930,6 +960,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
@@ -93,6 +96,7 @@
          {
              ItemStack var2 = this.getCurrentEquippedItem();
 @@ -960,7 +994,9 @@
+>>>>>>> upstream/master
       */
      public void destroyCurrentEquippedItem()
      {
@@ -102,7 +106,11 @@
      }
  
      /**
+<<<<<<< HEAD
+@@ -955,6 +987,12 @@
+=======
 @@ -989,6 +1025,16 @@
+>>>>>>> upstream/master
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -116,10 +124,22 @@
 +            return;
 +        }
 +        
-         if (par1Entity.canAttackWithItem())
+         if (par1Entity.func_48313_k_())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
+<<<<<<< HEAD
+@@ -1053,6 +1091,7 @@
+                 }
+ 
+                 this.addExhaustion(0.3F);
++                MinecraftForge.strikeEntity(stack, this, par1Entity);
+             }
+         }
+     }
+@@ -1093,6 +1132,12 @@
+=======
 @@ -1127,6 +1173,12 @@
+>>>>>>> upstream/master
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -132,7 +152,29 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
+<<<<<<< HEAD
+@@ -1326,7 +1371,7 @@
+ 
+         if (this.isSprinting())
+         {
+-            this.addExhaustion(0.8F);
++            this.addExhaustion(0.4F);
+         }
+         else
+         {
+@@ -1403,7 +1448,7 @@
+ 
+                     if (this.isSprinting())
+                     {
+-                        this.addExhaustion(0.099999994F * (float)var7 * 0.01F);
++                        this.addExhaustion(0.02F * (float)var7 * 0.01F);
+                     }
+                     else
+                     {
+@@ -1643,4 +1688,16 @@
+=======
 @@ -1708,4 +1760,16 @@
+>>>>>>> upstream/master
      {
          return !this.capabilities.isFlying;
      }

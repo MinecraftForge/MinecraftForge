@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java 0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java 0000-00-00 00:00:00.000000000 -0000
 @@ -3,6 +3,8 @@
  import java.util.Iterator;
  import java.util.List;
@@ -13,7 +13,7 @@
              }
              else
              {
-+                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
++ itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.func_35201_a(var1, 5);
@@ -21,17 +21,17 @@
  
      public EntityItem func_48152_as()
      {
--        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
-+        ItemStack stack = inventory.getCurrentItem();
-+        if (stack == null)
-+        {
-+            return null;
-+        }
-+        if (stack.getItem().onDroppedByPlayer(stack, this))
-+        {
-+            return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
-+        }
-+        return null;
+- return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
++ ItemStack stack = inventory.getCurrentItem();
++ if (stack == null)
++ {
++ return null;
++ }
++ if (stack.getItem().onDroppedByPlayer(stack, this))
++ {
++ return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++ }
++ return null;
      }
  
      /**
@@ -39,24 +39,24 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
-+     * Deprecated in favor of the metadata-sensitive version
++ * Deprecated in favor of the metadata-sensitive version
       */
-+    @Deprecated
++ @Deprecated
      public float getCurrentPlayerStrVsBlock(Block par1Block)
      {
--        float var2 = this.inventory.getStrVsBlock(par1Block);
-+        return getCurrentPlayerStrVsBlock(par1Block, 0);
-+    }
-+    
-+    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
-+    {
-+        ItemStack stack = inventory.getCurrentItem();
-+        float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));        
+- float var2 = this.inventory.getStrVsBlock(par1Block);
++ return getCurrentPlayerStrVsBlock(par1Block, 0);
++ }
++
++ public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
++ {
++ ItemStack stack = inventory.getCurrentItem();
++ float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
--        if (var4 > 0 && this.inventory.canHarvestBlock(par1Block))
-+        if (var4 > 0 && ForgeHooks.canHarvestBlock(par1Block, this, meta))
+- if (var4 > 0 && this.inventory.canHarvestBlock(par1Block))
++ if (var4 > 0 && ForgeHooks.canHarvestBlock(par1Block, this, meta))
          {
              var3 = var2 + (float)(var4 * var4 + 1);
          }
@@ -64,12 +64,12 @@
              par2 = 1 + par2 >> 1;
          }
  
--        par2 = this.applyArmorCalculations(par1DamageSource, par2);
-+        par2 = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
-+        if (par2 <= 0)
-+        {
-+            return;
-+        }
+- par2 = this.applyArmorCalculations(par1DamageSource, par2);
++ par2 = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
++ if (par2 <= 0)
++ {
++ return;
++ }
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
@@ -77,10 +77,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
-+        if (!ForgeHooks.onEntityInteract(this, par1Entity, false))
-+        {
-+            return;
-+        }
++ if (!ForgeHooks.onEntityInteract(this, par1Entity, false))
++ {
++ return;
++ }
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
@@ -88,9 +88,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
-+        ItemStack orig = inventory.getCurrentItem();
++ ItemStack orig = inventory.getCurrentItem();
          this.inventory.setInventorySlotContents(this.inventory.currentItem, (ItemStack)null);
-+        ForgeHooks.onDestroyCurrentItem(this, orig);
++ ForgeHooks.onDestroyCurrentItem(this, orig);
      }
  
      /**
@@ -98,15 +98,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
-+        if (!ForgeHooks.onEntityInteract(this, par1Entity, true))
-+        {
-+            return;
-+        }
-+        ItemStack stack = getCurrentEquippedItem();
-+        if (stack != null && stack.getItem().onLeftClickEntity(stack, this, par1Entity))
-+        {
-+            return;
-+        }
++ if (!ForgeHooks.onEntityInteract(this, par1Entity, true))
++ {
++ return;
++ }
++ ItemStack stack = getCurrentEquippedItem();
++ if (stack != null && stack.getItem().onLeftClickEntity(stack, this, par1Entity))
++ {
++ return;
++ }
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
@@ -114,12 +114,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
-+        EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, par1, par2, par3);
-+        if (customSleep != null)
-+        {
-+            return customSleep;
-+        }
-+        
++ EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, par1, par2, par3);
++ if (customSleep != null)
++ {
++ return customSleep;
++ }
++
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
@@ -127,7 +127,7 @@
                      return 101;
                  }
              }
-+            var3 = par1ItemStack.getItem().getIconIndex(par1ItemStack, par2, this, itemInUse, itemInUseCount);
++ var3 = par1ItemStack.getItem().getIconIndex(par1ItemStack, par2, this, itemInUse, itemInUseCount);
          }
  
          return var3;
@@ -135,30 +135,30 @@
      {
          return !this.capabilities.isFlying;
      }
-+    
-+    /**
-+     * Opens a Gui for the player. 
-+     * 
-+     * @param mod The mod associated with the gui
-+     * @param ID The ID number for the Gui
-+     * @param world The World
-+     * @param X X Position
-+     * @param Y Y Position
-+     * @param Z Z Position
-+     */
-+    public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z)
-+    {
-+        if (this instanceof EntityPlayerSP)
-+        {
-+            IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
-+            if (handler != null)
-+            {
-+                GuiScreen screen = handler.getGuiScreen(ID, (EntityPlayerSP)this, world, X, Y, Z);
-+                if (screen != null)
-+                {
-+                    ModLoader.getMinecraftInstance().displayGuiScreen(screen);
-+                }
-+            }
-+        }
-+    }
++
++ /**
++ * Opens a Gui for the player.
++ *
++ * @param mod The mod associated with the gui
++ * @param ID The ID number for the Gui
++ * @param world The World
++ * @param X X Position
++ * @param Y Y Position
++ * @param Z Z Position
++ */
++ public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z)
++ {
++ if (this instanceof EntityPlayerSP)
++ {
++ IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
++ if (handler != null)
++ {
++ GuiScreen screen = handler.getGuiScreen(ID, (EntityPlayerSP)this, world, X, Y, Z);
++ if (screen != null)
++ {
++ ModLoader.getMinecraftInstance().displayGuiScreen(screen);
++ }
++ }
++ }
++ }
  }
