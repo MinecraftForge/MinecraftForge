@@ -104,7 +104,7 @@ public class PacketHandlerClient implements IPacketHandler
             }
 
             entity.serverPosX    = packet.posX;
-            entity.serverPosY    = packet.posX;
+            entity.serverPosY    = packet.posY;
             entity.serverPosZ    = packet.posZ;
             entity.rotationYaw   = 0.0F;
             entity.rotationPitch = 0.0F;
