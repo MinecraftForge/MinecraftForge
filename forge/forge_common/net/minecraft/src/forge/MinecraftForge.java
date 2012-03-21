@@ -912,7 +912,7 @@ public class MinecraftForge
         for (Map.Entry<Class, EntityTrackerInfo> entry : ForgeHooks.entityTrackerMap.entrySet())
         {
             EntityTrackerInfo info = entry.getValue();
-            if (type == info.ID && modID == info.Mod.toString().hashCode())
+            if (type == info.ID && modID == getModID(info.Mod))
             {
                 return entry.getKey();
             }
