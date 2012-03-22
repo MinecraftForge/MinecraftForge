@@ -37,7 +37,72 @@
 +                }
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
- 
+/** SOOOO SINCE I HAVE NO IDEA HOW TO CODE FOR THESE PATCHES, I'M JUST GONNA LEAVE THIS HERE FOR YOU. SORRY I COULDN'T BE MORE HELPFUL :(
+*/
+
+    /**
+     * Added If/Else statement
+     * Found a workaround for FOV when rendering from another entity
+     */
+    private void updateFovModifierHand()
+    {
+     if(mc.renderViewEntity instanceof EntityPlayerSP){               
+        EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
+        this.fovMultiplierTemp = var1.getFOVMultiplier();
+    	}
+    	else{
+    	this.fovMultiplierTemp = mc.thePlayer.getFOVMultiplier();
+    	}
+        this.fovModifierHandPrev = this.fovModifierHand;
+        this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
+    }
+
+    /**
+     * Changes the field of view of the player depending on if they are underwater or not
+     */
+    
+    
+    /**
+     * Changed cast of EntityPlayerSP to EntityLiving
+     */
+    private float getFOVModifier(float par1, boolean par2)
+    {
+        if (this.debugViewDirection > 0)
+        {
+            return 90.0F;
+        }
+        else
+        {
+            EntityLiving var3 = (EntityLiving)this.mc.renderViewEntity; //CHANGED
+            float var4 = 70.0F;
+
+            if (par2)
+            {
+                var4 += this.mc.gameSettings.fovSetting * 40.0F;
+                var4 *= this.fovModifierHandPrev + (this.fovModifierHand - this.fovModifierHandPrev) * par1;
+            }
+
+            if (var3.getEntityHealth() <= 0)
+            {
+                float var5 = (float)var3.deathTime + par1;
+                var4 /= (1.0F - 500.0F / (var5 + 500.0F)) * 2.0F + 1.0F;
+            }
+
+            int var6 = ActiveRenderInfo.getBlockIdAtEntityViewpoint(this.mc.theWorld, var3, par1);
+
+            if (var6 != 0 && Block.blocksList[var6].blockMaterial == Material.water)
+            {
+                var4 = var4 * 60.0F / 70.0F;
+            }
+
+            return var4 + this.prevDebugCamFOV + (this.debugCamFOV - this.prevDebugCamFOV) * par1;
+        }
+    }
+
+
+
+
+
 @@ -1196,6 +1205,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
