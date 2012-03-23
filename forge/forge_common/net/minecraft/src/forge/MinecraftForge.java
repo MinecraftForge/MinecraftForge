@@ -1006,6 +1006,24 @@ public class MinecraftForge
         ForgeHooks.arrowLooseHandlers.add(handler);
     }
     
+    private static int isClient = -1;
+    public static boolean isClient()
+    {
+        if (isClient == -1)
+        {
+            try 
+            {
+                Class.forName("net.minecraft.client.Minecraft", false, MinecraftForge.class.getClassLoader());
+                isClient = 1;
+            } 
+            catch (ClassNotFoundException e) 
+            {
+                isClient = 0;
+            }   
+        }
+        return isClient == 1;
+    }
+    
     static
     {
         addDungeonMob("Skeleton", 1.0f);

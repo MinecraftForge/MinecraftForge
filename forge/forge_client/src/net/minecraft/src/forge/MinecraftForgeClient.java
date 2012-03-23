@@ -121,7 +121,8 @@ public class MinecraftForgeClient
     public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
         IItemRenderer renderer = customItemRenderers[item.itemID];
-        if (renderer != null && renderer.handleRenderType(item, type)) {
+        if (renderer != null && renderer.handleRenderType(item, type)) 
+        {
             return customItemRenderers[item.itemID];
         }
         return null;
@@ -149,7 +150,7 @@ public class MinecraftForgeClient
      * If they do not match (such is the case in different versionf of MC) it exits the process with a error
      * 
      * @param version The version to find, usually "Minecraft Minecraft 1.2.3"
-     * @param message The error message to display int eh crash log
+     * @param message The error message to display in the crash log
      */
     public static void checkMinecraftVersion(String version, String message)
     {
