@@ -85,7 +85,7 @@ public class Configuration
             }
             else
             {
-                for (int j = /*Block.blocksList.length*/ 256 - 1; j >= 0; --j)
+                for (int j = configBlocks.length - 1; j >= 0; --j)
                 {
                     if (Block.blocksList[j] == null && !configBlocks[j])
                     {
