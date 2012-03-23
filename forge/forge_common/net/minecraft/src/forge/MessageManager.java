@@ -406,6 +406,11 @@ public class MessageManager
 
     public void dispatchIncomingMessage(NetworkManager manager, String channel, byte[] data)
     {
+        if (data == null)
+        {
+            data = new byte[0];
+        }
+        
         if (channel.equals("Forge"))
         {
             if (ForgeHooks.getPacketHandler() != null)
