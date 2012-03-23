@@ -61,15 +61,7 @@ public class Configuration
         categories.put(CATEGORY_BLOCK, generalProperties);
         categories.put(CATEGORY_ITEM, itemProperties);
     }
-    
-    /**
-     * Creates a new category, call before calling load().
-     * @param category The category name
-     */
-    public final void createCategory(String category){
-        categories.put(category.toLowerCase(), new TreeMap<String, Property>());
-    }
-    
+ 
     /**
      * Helper for depreciated functions
      */
@@ -188,7 +180,8 @@ public class Configuration
         Map<String, Property> source = categories.get(category);
         
         if(source == null){
-            throw new RuntimeException("unknown section " + category);                                    
+            source = new TreeMap<String, Property>();
+            categories.put(category, source);                                  
         }
 
         if (source.containsKey(key))
@@ -273,7 +266,8 @@ public class Configuration
                                     currentMap = categories.get(scopeName);
                                     if (currentMap == null)
                                     {
-                                        throw new RuntimeException("unknown section " + scopeName);
+                                        currentMap = new TreeMap<String, Property>();
+                                        categories.put(scopeName, currentMap);    
                                     }
 
                                     break;
