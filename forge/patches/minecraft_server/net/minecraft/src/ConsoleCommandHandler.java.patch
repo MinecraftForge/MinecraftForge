@@ -1,14 +1,19 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,7 @@
+@@ -1,9 +1,12 @@
+ package net.minecraft.src;
+ 
+ import java.util.Iterator;
++
  import java.util.Set;
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
++import net.minecraft.src.forge.ForgeHooks;
  
  public class ConsoleCommandHandler
  {
-@@ -52,10 +53,9 @@
+@@ -52,10 +55,9 @@
                          var5.savePlayerStates();
                      }
  
@@ -21,7 +26,7 @@
                      }
  
                      this.sendNoticeToOps(var4, "Save complete.");
-@@ -64,20 +64,18 @@
+@@ -64,20 +66,18 @@
                  {
                      this.sendNoticeToOps(var4, "Disabling level saving..");
  
@@ -46,7 +51,7 @@
                      }
                  }
                  else
-@@ -353,20 +351,18 @@
+@@ -353,20 +353,18 @@
  
                                              if ("add".equalsIgnoreCase(var20))
                                              {
@@ -71,7 +76,18 @@
                                                  }
  
                                                  this.sendNoticeToOps(var4, "Set time to " + var8);
-@@ -411,7 +407,7 @@
+@@ -385,7 +383,9 @@
+                                     {
+                                         var2 = var2.substring(var2.indexOf(" ")).trim();
+                                         minecraftLogger.info("[" + var4 + "] " + var2);
+-                                        var5.sendPacketToAllPlayers(new Packet3Chat("\u00a7d[Server] " + var2));
++                                        var2 = ForgeHooks.onChatMessage(var2, var4);
++                                        if(var2 != null)
++                                            var5.sendPacketToAllPlayers(new Packet3Chat("\u00a7d[Server] " + var2));
+                                     }
+                                     else if (var2.toLowerCase().startsWith("tell "))
+                                     {
+@@ -411,7 +411,7 @@
                                      }
                                      else if (var2.toLowerCase().startsWith("toggledownfall"))
                                      {

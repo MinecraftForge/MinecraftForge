@@ -119,6 +119,15 @@ public class MinecraftForge
     {
         ForgeHooks.entityInteractHandlers.add(handler);
     }
+    
+    /**
+     * Register a new chat handler. Will only be called on server.
+     * @param handler The Handler to be registered
+     */
+    public static void registerChatHandler(IChatHandler handler)
+    {
+        ForgeHooks.chatHandlers.add(handler);
+    }
 
     /**
      * This is not supposed to be called outside of Minecraft internals.
