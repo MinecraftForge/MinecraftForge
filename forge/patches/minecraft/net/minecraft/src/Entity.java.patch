@@ -53,3 +53,22 @@
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
+@@ -1714,8 +1739,17 @@
+     */
+    public boolean isRiding()
+    {
+-        return this.ridingEntity != null || this.getFlag(2);
++        return (this.ridingEntity != null && this.ridingEntity.shouldRiderSit()) || this.getFlag(2);
+    }
++
++   /**
++    * Forge: Return false to prevent an entity that is mounted to this entity from playing the 'sitting' animation.
++    * Client-side only as it only deals with the model rendering.
++    */
++   public boolean shouldRiderSit()
++   {
++        return true;
++   }
+
+    /**
+     * Returns if this entity is sneaking.
