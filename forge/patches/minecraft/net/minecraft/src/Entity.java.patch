@@ -10,7 +10,7 @@
  
      public Entity(World par1World)
      {
-@@ -214,6 +217,20 @@
+@@ -214,6 +217,29 @@
      }
  
      protected abstract void entityInit();
@@ -28,10 +28,19 @@
 +    	}
 +    	return customEntityData;
 +    }
++    
++    /**
++     * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
++     * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
++     */
++    public boolean shouldRiderSit()
++    {
++        return true;
++    }
  
      public DataWatcher getDataWatcher()
      {
-@@ -1286,6 +1303,10 @@
+@@ -1286,6 +1312,10 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -42,7 +51,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1327,6 +1348,10 @@
+@@ -1327,6 +1357,10 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -53,3 +62,12 @@
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
+@@ -1685,7 +1719,7 @@
+      */
+     public boolean isRiding()
+     {
+-        return this.ridingEntity != null || this.getFlag(2);
++        return (this.ridingEntity != null && ridingEntity.shouldRiderSit()) || this.getFlag(2);
+     }
+ 
+     /**
