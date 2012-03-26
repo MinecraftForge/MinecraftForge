@@ -58,15 +58,17 @@ public class Configuration
     {
         this.file = file;
         categories.put(CATEGORY_GENERAL, generalProperties);
-        categories.put(CATEGORY_BLOCK, generalProperties);
+        categories.put(CATEGORY_BLOCK, blockProperties);
         categories.put(CATEGORY_ITEM, itemProperties);
     }
  
     /**
      * Helper for depreciated functions
      */
-    private String getCategoryFromIndex(int kind){
-        switch(kind){
+    private String getCategoryFromIndex(int kind)
+    {
+        switch(kind)
+        {
             case 1:
                 return CATEGORY_BLOCK;
             case 2:
@@ -131,7 +133,8 @@ public class Configuration
     }
 
     @Deprecated
-    public Property getOrCreateIntProperty(String key, int kind, int defaultValue){
+    public Property getOrCreateIntProperty(String key, int kind, int defaultValue)
+    {
         return getOrCreateIntProperty(key, getCategoryFromIndex(kind), defaultValue);
     }
     
@@ -151,7 +154,8 @@ public class Configuration
     }
     
     @Deprecated
-    public Property getOrCreateBooleanProperty(String key, int kind, boolean defaultValue){
+    public Property getOrCreateBooleanProperty(String key, int kind, boolean defaultValue)
+    {
         return getOrCreateBooleanProperty(key, getCategoryFromIndex(kind), defaultValue);
     }
     
@@ -170,7 +174,8 @@ public class Configuration
     }
 
     @Deprecated
-    public Property getOrCreateProperty(String key, int kind, String defaultValue){
+    public Property getOrCreateProperty(String key, int kind, String defaultValue)
+    {
         return getOrCreateProperty(key, getCategoryFromIndex(kind), defaultValue);
     }
     
@@ -179,7 +184,8 @@ public class Configuration
         category = category.toLowerCase();
         Map<String, Property> source = categories.get(category);
         
-        if(source == null){
+        if(source == null)
+        {
             source = new TreeMap<String, Property>();
             categories.put(category, source);                                  
         }
@@ -296,7 +302,6 @@ public class Configuration
                         }
                     }
                 }
-
             }
         }
         catch (IOException e)
@@ -328,7 +333,8 @@ public class Configuration
                 buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
                 buffer.write("\r\n");
                 
-                for(Map.Entry<String, Map<String, Property>> category : categories.entrySet()){
+                for(Map.Entry<String, Map<String, Property>> category : categories.entrySet())
+                {
                     buffer.write("####################\r\n");
                     buffer.write("# " + category.getKey() + " \r\n");
                     buffer.write("####################\r\n\r\n");
