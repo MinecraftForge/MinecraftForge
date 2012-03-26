@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/Chunk.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/Chunk.java	0000-00-00 00:00:00.000000000 -0000
-@@ -511,7 +511,7 @@
+@@ -529,7 +529,7 @@
                  {
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
@@ -9,7 +9,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -549,31 +549,23 @@
+@@ -567,31 +567,23 @@
                      Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                  }
  
@@ -44,30 +44,31 @@
  
              this.isModified = true;
              return true;
-@@ -605,7 +597,7 @@
-                 var5.func_48585_b(par1, par2 & 15, par3, par4);
+@@ -623,7 +615,7 @@
+                 var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
 -                if (var7 > 0 && Block.blocksList[var7] instanceof BlockContainer)
-+                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.func_48598_b(par1, par2 & 15, par3)))
++                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(var5.getExtBlockMetadata(par1, par2 & 15, par3)))
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -772,33 +764,30 @@
+@@ -789,34 +781,31 @@
+     {
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
- 
++        
 +        if (var5 != null && var5.isInvalid())
 +        {
 +            chunkTileEntityMap.remove(var4);
 +            var5 = null;
 +        }
-+
+ 
          if (var5 == null)
          {
              int var6 = this.getBlockID(par1, par2, par3);
 -
--            if (var6 <= 0 || !Block.blocksList[var6].func_48124_n())
+-            if (var6 <= 0 || !Block.blocksList[var6].hasTileEntity())
 +            int meta = getBlockMetadata(par1, par2, par3);
 +            if (var6 <= 0 || Block.blocksList[var6] == null || !Block.blocksList[var6].hasTileEntity(meta))
              {
@@ -97,7 +98,7 @@
      }
  
      /**
-@@ -813,7 +802,7 @@
+@@ -831,7 +820,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -106,7 +107,7 @@
          }
      }
  
-@@ -828,8 +817,14 @@
+@@ -846,8 +835,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -122,7 +123,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -1227,4 +1222,18 @@
+@@ -1264,4 +1259,18 @@
              }
          }
      }

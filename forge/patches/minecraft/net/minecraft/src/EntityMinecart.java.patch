@@ -117,7 +117,7 @@
 @@ -120,48 +160,7 @@
                  }
  
-                 this.setEntityDead();
+                 this.setDead();
 -                this.dropItemWithOffset(Item.minecartEmpty.shiftedIndex, 1, 0.0F);
 -
 -                if (this.minecartType == 1)

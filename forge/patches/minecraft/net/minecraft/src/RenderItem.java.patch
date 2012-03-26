@@ -84,7 +84,7 @@
 +                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
 +                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F);
 +                }
-+                ForgeHooksClient.renderCustomItem(customRendererOld, renderBlocks, var10.itemID, var10.getItemDamage(), par1EntityItem.getEntityBrightness(par9));
++                ForgeHooksClient.renderCustomItem(customRendererOld, renderBlocks, var10.itemID, var10.getItemDamage(), par1EntityItem.getBrightness(par9));
 +                GL11.glPopMatrix();
 +            }
 +        }

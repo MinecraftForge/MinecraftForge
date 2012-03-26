@@ -20,7 +20,7 @@
 +                par1EntityPlayer.onItemPickup(this, var2);
 +                if (item.stackSize <= 0)
 +                {
-+                    setEntityDead();
++                    setDead();
 +                }
 +                return;
 +            }

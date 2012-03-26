@@ -8,7 +8,7 @@
  public class ItemBow extends Item
  {
      public ItemBow(int par1)
-@@ -14,6 +16,10 @@
+@@ -14,6 +16,11 @@
       */
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
@@ -16,10 +16,11 @@
 +        {
 +            return;
 +        }
-         boolean var5 = par3EntityPlayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
++        
+         boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
          if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
-@@ -103,6 +109,12 @@
+@@ -103,6 +110,12 @@
       */
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
@@ -29,6 +30,6 @@
 +            return stack;
 +        }
 +        
-         if (par3EntityPlayer.capabilities.depleteBuckets || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
          {
              par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

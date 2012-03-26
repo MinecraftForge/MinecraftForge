@@ -54,22 +54,24 @@
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -830,33 +821,31 @@
+@@ -829,34 +820,33 @@
+     {
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
- 
++        
 +        if (var5 != null && var5.isInvalid())
 +        {
 +            chunkTileEntityMap.remove(var4);
 +            var5 = null;
 +        }
-+        
+ 
          if (var5 == null)
          {
              int var6 = this.getBlockID(par1, par2, par3);
 -
--            if (var6 <= 0 || !Block.blocksList[var6].func_48205_p())
+-            if (var6 <= 0 || !Block.blocksList[var6].hasTileEntity())
 +            int meta = getBlockMetadata(par1, par2, par3);
++            
 +            if (var6 <= 0 || Block.blocksList[var6] == null || !Block.blocksList[var6].hasTileEntity(meta))
              {
                  return null;
@@ -98,7 +100,7 @@
      }
  
      /**
-@@ -871,7 +860,7 @@
+@@ -871,7 +861,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -107,7 +109,7 @@
          }
      }
  
-@@ -886,8 +875,14 @@
+@@ -886,8 +876,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -123,7 +125,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -1201,6 +1196,16 @@
+@@ -1205,6 +1201,16 @@
  
      public void func_48494_a(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -140,7 +142,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1304,6 +1309,29 @@
+@@ -1308,6 +1314,29 @@
              TileEntity var9 = (TileEntity)var10.next();
              var9.updateContainingBlockInfo();
          }
@@ -170,7 +172,7 @@
      }
  
      public BiomeGenBase func_48490_a(int par1, int par2, WorldChunkManager par3WorldChunkManager)
-@@ -1407,4 +1435,18 @@
+@@ -1411,4 +1440,18 @@
              }
          }
      }

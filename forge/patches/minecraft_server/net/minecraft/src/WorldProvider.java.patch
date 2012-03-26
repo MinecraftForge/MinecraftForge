@@ -19,7 +19,7 @@
      /**
 @@ -139,4 +141,36 @@
      {
-         return this.terrainType == WorldType.field_48458_c ? 4 : 64;
+         return this.terrainType == WorldType.FLAT ? 4 : 64;
      }
 +    
 +    /**

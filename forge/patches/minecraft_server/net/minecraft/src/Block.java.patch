@@ -9,16 +9,16 @@
  public class Block
  {
      public static final StepSound soundPowderFootstep = new StepSound("stone", 1.0F, 1.0F);
-@@ -446,7 +448,7 @@
+@@ -397,7 +399,7 @@
  
-     public boolean func_48124_n()
+     public boolean hasTileEntity()
      {
 -        return this.isBlockContainer;
-+	return hasTileEntity(0);
++        return hasTileEntity(0);
      }
  
      /**
-@@ -585,12 +587,16 @@
+@@ -536,12 +538,16 @@
          return this.blockID;
      }
  
@@ -37,7 +37,7 @@
      }
  
      /**
-@@ -609,17 +615,13 @@
+@@ -560,17 +566,13 @@
          if (!par1World.isRemote)
          {
              int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
@@ -59,7 +59,7 @@
                  }
              }
          }
-@@ -902,7 +904,7 @@
+@@ -853,7 +855,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -68,7 +68,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1010,6 +1012,376 @@
+@@ -962,6 +964,376 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  

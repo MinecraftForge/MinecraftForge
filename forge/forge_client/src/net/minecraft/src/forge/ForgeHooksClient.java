@@ -117,7 +117,7 @@ public class ForgeHooksClient
         {
             renderTextures.add(key);
             tess.startDrawingQuads();
-            tess.setTranslationD(defaultTessellator.xOffset, defaultTessellator.yOffset, defaultTessellator.zOffset);
+            tess.setTranslation(defaultTessellator.xOffset, defaultTessellator.yOffset, defaultTessellator.zOffset);
         }
         Tessellator.instance = tess;
     }

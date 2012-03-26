@@ -7,16 +7,16 @@
  import java.util.ArrayList;
  import java.util.Random;
  
-@@ -449,7 +450,7 @@
+@@ -397,7 +398,7 @@
  
-     public boolean func_48205_p()
+     public boolean hasTileEntity()
      {
 -        return this.isBlockContainer;
-+	return hasTileEntity(0);
++        return hasTileEntity(0);
      }
  
      /**
-@@ -470,7 +471,7 @@
+@@ -418,7 +419,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -25,7 +25,7 @@
      }
  
      /**
-@@ -478,7 +479,7 @@
+@@ -426,7 +427,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -34,7 +34,7 @@
      }
  
      /**
-@@ -635,11 +636,14 @@
+@@ -583,11 +584,14 @@
      }
  
      /**
@@ -51,7 +51,7 @@
      }
  
      /**
-@@ -659,16 +663,12 @@
+@@ -607,16 +611,12 @@
          {
              int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
  
@@ -71,7 +71,7 @@
                  }
              }
          }
-@@ -981,7 +981,7 @@
+@@ -929,7 +929,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -80,7 +80,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1099,6 +1099,376 @@
+@@ -1046,6 +1046,376 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  

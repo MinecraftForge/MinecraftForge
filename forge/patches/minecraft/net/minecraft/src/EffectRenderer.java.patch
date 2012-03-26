@@ -50,7 +50,7 @@
 +                    {
 +                        continue;
 +                    }
-                     var10.setBrightness(var12.getEntityBrightnessForRender(par2));
+                     var10.setBrightness(var12.getBrightnessForRender(par2));
                      var12.renderParticle(var10, par2, var3, var7, var4, var5, var6);
                  }
  
@@ -65,7 +65,7 @@
 +                for (int y = 0; y < entry.effects.size(); y++)
 +                {
 +                    EntityFX entryfx = (EntityFX)entry.effects.get(y);
-+                    tessallator.setBrightness(entryfx.getEntityBrightnessForRender(par2));
++                    tessallator.setBrightness(entryfx.getBrightnessForRender(par2));
 +                    entryfx.renderParticle(tessallator, par2, var3, var7, var4, var5, var6);
 +                }
 +                tessallator.draw();

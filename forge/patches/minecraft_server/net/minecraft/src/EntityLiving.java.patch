@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
-@@ -55,7 +55,7 @@
+@@ -59,7 +59,7 @@
       * in each step in the damage calculations, this is set to the 'carryover' that would result if someone was damaged
       * .25 hearts (for example), and added to the damage in the next step
       */
@@ -9,7 +9,7 @@
  
      /** Number of ticks since this EntityLiving last produced its sound */
      private int livingSoundTime;
-@@ -1288,7 +1288,7 @@
+@@ -1298,7 +1298,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);

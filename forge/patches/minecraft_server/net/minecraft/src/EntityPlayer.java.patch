@@ -18,8 +18,8 @@
 +                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
-                     this.func_35208_b(var1, 5);
-@@ -355,6 +360,10 @@
+                     this.updateItemUse(var1, 5);
+@@ -361,6 +366,10 @@
       */
      protected void closeScreen()
      {
@@ -30,9 +30,9 @@
          this.craftingInventory = this.inventorySlots;
      }
  
-@@ -535,7 +544,16 @@
- 
-     public EntityItem func_48347_R()
+@@ -544,7 +553,16 @@
+      */
+     public EntityItem dropOneItem()
      {
 -        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
 +        ItemStack stack = inventory.getCurrentItem();
@@ -48,7 +48,7 @@
      }
  
      /**
-@@ -600,10 +618,18 @@
+@@ -609,10 +627,18 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -68,7 +68,7 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -899,7 +925,11 @@
+@@ -908,7 +934,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -81,7 +81,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -930,6 +960,10 @@
+@@ -939,6 +969,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -92,7 +92,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -960,7 +994,9 @@
+@@ -969,7 +1003,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -102,7 +102,7 @@
      }
  
      /**
-@@ -989,6 +1025,16 @@
+@@ -998,6 +1034,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -119,7 +119,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1127,6 +1173,12 @@
+@@ -1136,6 +1182,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -132,7 +132,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1708,4 +1760,16 @@
+@@ -1717,4 +1769,16 @@
      {
          return !this.capabilities.isFlying;
      }
