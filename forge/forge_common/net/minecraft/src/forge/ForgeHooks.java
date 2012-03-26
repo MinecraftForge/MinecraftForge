@@ -196,6 +196,18 @@ public class ForgeHooks
         return true;
     }
     static LinkedList<IEntityInteractHandler> entityInteractHandlers = new LinkedList<IEntityInteractHandler>();
+    
+    public static String onChatMessage(String message, String username)
+    {
+      	for (IChatHandler handler : chatHandlers)
+       	{
+      	    message = handler.processChat(message, username);
+      	    if(message == null)
+      	        return null;
+       	}
+       	return message;
+    }
+    static LinkedList<IChatHandler> chatHandlers = new LinkedList<IChatHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
