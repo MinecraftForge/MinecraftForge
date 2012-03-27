@@ -1,36 +1,212 @@
 diff -r -U 3 minecraft_server\net\minecraft\server\MinecraftServer.java minecraft_server_patched\net\minecraft\server\MinecraftServer.java
---- minecraft_server\net\minecraft\server\MinecraftServer.java	Sat Mar 03 17:55:41 2012
-+++ minecraft_server_patched\net\minecraft\server\MinecraftServer.java	Sat Mar 03 18:14:53 2012
-@@ -400,6 +400,9 @@
-                     interruptedexception1.printStackTrace();
-                 }
-             }
-+        }
-+        finally
-+        {
-             try
-             {
-                 func_6013_g();
-@@ -413,6 +416,8 @@
-             {
-                 System.exit(0);
-             }
-+        }
-+/*
-             break MISSING_BLOCK_LABEL_346;
-         }
-         try
-@@ -445,6 +450,7 @@
-             System.exit(0);
-         }
-         throw exception2;
-+*/
+--- minecraft_server\net\minecraft\server\MinecraftServer.java	Sat Mar 24 02:09:24 2012
++++ minecraft_server_patched\net\minecraft\server\MinecraftServer.java	Sat Mar 24 03:22:36 2012
+@@ -330,122 +330,73 @@
+         field_6025_n = false;
      }
  
+-    public void run()
+-    {
+-        try
+-        {
+-            if(func_6008_d())
+-            {
+-                long l = System.currentTimeMillis();
+-                long l1 = 0L;
+-                while(field_6025_n)
+-                {
+-                    long l2 = System.currentTimeMillis();
+-                    long l3 = l2 - l;
+-                    if(l3 > 2000L)
+-                    {
+-                        field_6038_a.warning("Can't keep up! Did the system time change, or is the server overloaded?");
+-                        l3 = 2000L;
++    public void run() {
++        try {
++           if(this.func_6008_d()) {
++              long var1 = System.currentTimeMillis();
++
++              for(long var3 = 0L; this.field_6025_n; Thread.sleep(1L)) {
++                 long var5 = System.currentTimeMillis();
++                 long var7 = var5 - var1;
++                 if(var7 > 2000L) {
++                    field_6038_a.warning("Can\'t keep up! Did the system time change, or is the server overloaded?");
++                    var7 = 2000L;
++                 }
++
++                 if(var7 < 0L) {
++                    field_6038_a.warning("Time ran backwards! Did the system time change?");
++                    var7 = 0L;
++                 }
++
++                 var3 += var7;
++                 var1 = var5;
++                 if(this.field_6034_e[0].func_22084_q()) {
++                    this.func_6018_h();
++                    var3 = 0L;
++                 } else {
++                    while(var3 > 50L) {
++                       var3 -= 50L;
++                       this.func_6018_h();
+                     }
+-                    if(l3 < 0L)
+-                    {
+-                        field_6038_a.warning("Time ran backwards! Did the system time change?");
+-                        l3 = 0L;
+-                    }
+-                    l1 += l3;
+-                    l = l2;
+-                    if(field_6034_e[0].func_22084_q())
+-                    {
+-                        func_6018_h();
+-                        l1 = 0L;
+-                    } else
+-                    {
+-                        while(l1 > 50L)
+-                        {
+-                            l1 -= 50L;
+-                            func_6018_h();
+-                        }
+-                    }
+-                    Thread.sleep(1L);
+-                }
+-            } else
+-            {
+-                while(field_6025_n)
+-                {
+-                    func_6021_b();
+-                    try
+-                    {
+-                        Thread.sleep(10L);
+-                    }
+-                    catch(InterruptedException interruptedexception)
+-                    {
+-                        interruptedexception.printStackTrace();
+-                    }
+-                }
+-            }
+-        }
+-        catch(Throwable throwable1)
+-        {
+-            throwable1.printStackTrace();
+-            field_6038_a.log(Level.SEVERE, "Unexpected exception", throwable1);
+-            while(field_6025_n)
+-            {
+-                func_6021_b();
+-                try
+-                {
++                 }
++              }
++           } else {
++              while(this.field_6025_n) {
++                 this.func_6021_b();
++
++                 try {
+                     Thread.sleep(10L);
+-                }
+-                catch(InterruptedException interruptedexception1)
+-                {
+-                    interruptedexception1.printStackTrace();
+-                }
+-            }
+-            try
+-            {
+-                func_6013_g();
+-                field_6032_g = true;
+-            }
+-            catch(Throwable throwable2)
+-            {
+-                throwable2.printStackTrace();
+-            }
+-            finally
+-            {
+-                System.exit(0);
+-            }
+-            break MISSING_BLOCK_LABEL_346;
+-        }
+-        try
+-        {
+-            func_6013_g();
+-            field_6032_g = true;
+-        }
+-        catch(Throwable throwable)
+-        {
+-            throwable.printStackTrace();
+-        }
+-        finally
+-        {
+-            System.exit(0);
+-        }
+-        break MISSING_BLOCK_LABEL_346;
+-        Exception exception2;
+-        exception2;
+-        try
+-        {
+-            func_6013_g();
+-            field_6032_g = true;
+-        }
+-        catch(Throwable throwable3)
+-        {
+-            throwable3.printStackTrace();
+-        }
+-        finally
+-        {
+-            System.exit(0);
++                 } catch (InterruptedException var57) {
++                    var57.printStackTrace();
++                 }
++              }
++           }
++        } catch (Throwable var58) {
++           var58.printStackTrace();
++           field_6038_a.log(Level.SEVERE, "Unexpected exception", var58);
++
++           while(this.field_6025_n) {
++              this.func_6021_b();
++
++              try {
++                 Thread.sleep(10L);
++              } catch (InterruptedException var56) {
++                 var56.printStackTrace();
++              }
++           }
++        } finally {
++           try {
++              this.func_6013_g();
++              this.field_6032_g = true;
++           } catch (Throwable var54) {
++              var54.printStackTrace();
++           } finally {
++              System.exit(0);
++           }
++
+         }
+-        throw exception2;
+-    }
++
++     }
+ 
      private void func_6018_h()
+     {
 diff -r -U 3 minecraft_server\net\minecraft\src\Block.java minecraft_server_patched\net\minecraft\src\Block.java
---- minecraft_server\net\minecraft\src\Block.java	Sat Mar 03 17:55:41 2012
-+++ minecraft_server_patched\net\minecraft\src\Block.java	Sat Mar 03 18:38:14 2012
+--- minecraft_server\net\minecraft\src\Block.java	Sat Mar 24 02:09:24 2012
++++ minecraft_server_patched\net\minecraft\src\Block.java	Sat Mar 24 03:39:13 2012
+@@ -51,11 +51,11 @@
+     public static final StepSound field_9022_k;
+     public static final StepSound field_9021_l;
+     public static final Block field_542_n[];
+-    public static final boolean field_540_p[] = new boolean[4096];
+-    public static final int field_538_r[] = new int[4096];
++    public static final boolean field_540_p[];
++    public static final int field_538_r[];
+     public static final boolean field_537_s[];
+-    public static final int field_536_t[] = new int[4096];
+-    public static final boolean field_28029_t[] = new boolean[4096];
++    public static final int field_536_t[];
++    public static final boolean field_28029_t[];
+     public static boolean field_40166_bL[];
+     public static final Block field_535_u;
+     public static final BlockGrass field_534_v;
 @@ -81,18 +81,18 @@
      public static final Block field_9041_O;
      public static final Block field_9040_P;
@@ -79,10 +255,22 @@ diff -r -U 3 minecraft_server\net\minecraft\src\Block.java minecraft_server_patc
      public static final Block field_40174_bI;
      public static final Block field_40167_bJ;
      public static final Block field_40168_bK;
-@@ -795,13 +795,18 @@
+@@ -774,7 +774,11 @@
+         field_9022_k = new StepSound("cloth", 1.0F, 1.0F);
+         field_9021_l = new StepSoundSand("sand", 1.0F, 1.0F);
+         field_542_n = new Block[4096];
++        field_540_p = new boolean[4096];
++        field_538_r = new int[4096];
+         field_537_s = new boolean[4096];
++        field_536_t = new int[4096];
++        field_28029_t = new boolean[4096];
+         field_40166_bL = new boolean[4096];
+         field_535_u = (new BlockStone(1, 1)).func_237_c(1.5F).func_232_b(10F).func_4026_a(field_9025_h).func_20037_a("stone");
+         field_534_v = (BlockGrass)(new BlockGrass(2)).func_237_c(0.6F).func_4026_a(field_9026_g).func_20037_a("grass");
+@@ -800,13 +804,18 @@
          field_9041_O = (new Block(22, 144, Material.field_523_d)).func_237_c(3F).func_232_b(5F).func_4026_a(field_9025_h).func_20037_a("blockLapis");
          field_9040_P = (new BlockDispenser(23)).func_237_c(3.5F).func_4026_a(field_9025_h).func_20037_a("dispenser").func_28027_k();
-         field_9039_Q = (new BlockSandStone(24)).func_4026_a(field_9025_h).func_237_c(0.8F).func_20037_a("sandStone");
+         field_9039_Q = (new BlockSandStone(24)).func_4026_a(field_9025_h).func_237_c(0.8F).func_20037_a("sandStone").func_28027_k();
 +        field_9038_R = (new BlockNote(25)).func_237_c(0.8F).func_20037_a("musicBlock").func_28027_k();
 +        field_9037_S = (new BlockBed(26)).func_237_c(0.2F).func_20037_a("bed").func_27021_h().func_28027_k();
          field_9036_T = (new BlockRail(27, 179, true)).func_237_c(0.7F).func_4026_a(field_9024_i).func_20037_a("goldenRail").func_28027_k();
@@ -98,7 +286,7 @@ diff -r -U 3 minecraft_server\net\minecraft\src\Block.java minecraft_server_patc
          field_4072_ae = (BlockFlower)(new BlockFlower(37, 13)).func_237_c(0.0F).func_4026_a(field_9026_g).func_20037_a("flower");
          field_4071_af = (BlockFlower)(new BlockFlower(38, 12)).func_237_c(0.0F).func_4026_a(field_9026_g).func_20037_a("rose");
          field_4070_ag = (BlockFlower)(new BlockMushroom(39, 29)).func_237_c(0.0F).func_4026_a(field_9026_g).func_224_a(0.125F).func_20037_a("mushroom");
-@@ -862,6 +867,7 @@
+@@ -867,6 +876,7 @@
          field_22010_bi = (new BlockRedstoneRepeater(94, true)).func_237_c(0.0F).func_224_a(0.625F).func_4026_a(field_9028_e).func_20037_a("diode").func_27021_h().func_28027_k();
          field_25013_bj = (new BlockLockedChest(95)).func_237_c(0.0F).func_224_a(1.0F).func_4026_a(field_9028_e).func_20037_a("lockedchest").func_231_a(true).func_28027_k();
          field_28030_bl = (new BlockTrapDoor(96, Material.field_524_c)).func_237_c(3F).func_4026_a(field_9028_e).func_20037_a("trapdoor").func_27021_h().func_28027_k();
@@ -106,7 +294,7 @@ diff -r -U 3 minecraft_server\net\minecraft\src\Block.java minecraft_server_patc
          field_35052_bn = (new BlockStoneBrick(98)).func_237_c(1.5F).func_232_b(10F).func_4026_a(field_9025_h).func_20037_a("stonebricksmooth");
          field_35053_bo = (new BlockMushroomCap(99, Material.field_524_c, 142, 0)).func_237_c(0.2F).func_4026_a(field_9028_e).func_20037_a("mushroom").func_28027_k();
          field_35054_bp = (new BlockMushroomCap(100, Material.field_524_c, 142, 1)).func_237_c(0.2F).func_4026_a(field_9028_e).func_20037_a("mushroom").func_28027_k();
-@@ -879,6 +885,10 @@
+@@ -884,6 +894,10 @@
          field_40171_bB = (new Block(112, 224, Material.field_523_d)).func_237_c(2.0F).func_232_b(10F).func_4026_a(field_9025_h).func_20037_a("netherBrick");
          field_40172_bC = (new BlockFence(113, 224, Material.field_523_d)).func_237_c(2.0F).func_232_b(10F).func_4026_a(field_9025_h).func_20037_a("netherFence");
          field_40169_bD = (new BlockStairs(114, field_40171_bB)).func_20037_a("stairsNetherBrick").func_28027_k();
@@ -118,12 +306,14 @@ diff -r -U 3 minecraft_server\net\minecraft\src\Block.java minecraft_server_patc
          field_40167_bJ = (new BlockEndPortalFrame(120)).func_4026_a(field_9023_j).func_224_a(0.125F).func_237_c(-1F).func_20037_a("endPortalFrame").func_28027_k().func_232_b(6000000F);
          field_40168_bK = (new Block(121, 175, Material.field_523_d)).func_237_c(3F).func_232_b(15F).func_4026_a(field_9025_h).func_20037_a("whiteStone");
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentNetherBridgePiece.java minecraft_server_patched\net\minecraft\src\ComponentNetherBridgePiece.java
---- minecraft_server\net\minecraft\src\ComponentNetherBridgePiece.java	Sat Mar 03 17:55:43 2012
-+++ minecraft_server_patched\net\minecraft\src\ComponentNetherBridgePiece.java	Sat Mar 03 18:28:22 2012
-@@ -37,48 +37,40 @@
+--- minecraft_server\net\minecraft\src\ComponentNetherBridgePiece.java	Sat Mar 24 02:09:25 2012
++++ minecraft_server_patched\net\minecraft\src\ComponentNetherBridgePiece.java	Sat Mar 24 03:24:16 2012
+@@ -35,51 +35,41 @@
+         return flag ? i : -1;
+     }
  
-     private ComponentNetherBridgePiece func_40284_a(ComponentNetherBridgeStartPiece p_40284_1_, List p_40284_2_, List p_40284_3_, Random p_40284_4_, int p_40284_5_, int p_40284_6_, int p_40284_7_, int p_40284_8_, int p_40284_9_)
-     {
+-    private ComponentNetherBridgePiece func_40284_a(ComponentNetherBridgeStartPiece p_40284_1_, List p_40284_2_, List p_40284_3_, Random p_40284_4_, int p_40284_5_, int p_40284_6_, int p_40284_7_, int p_40284_8_, int p_40284_9_)
+-    {
 -        int i;
 -        boolean flag;
 -        int j;
@@ -134,38 +324,38 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentNetherBridgePiece.java 
 -        int k;
 -        Iterator iterator;
 -        if(j >= 5 || !flag)
+-        {
+-            break MISSING_BLOCK_LABEL_195;
++    private ComponentNetherBridgePiece func_40284_a(ComponentNetherBridgeStartPiece p_40284_1_, List p_40284_2_, List p_40284_3_, Random p_40284_4_, int p_40284_5_, int p_40284_6_, int p_40284_7_, int p_40284_8_, int p_40284_9_) {
 +        int var10 = this.func_40282_a(p_40284_2_);
 +        boolean var11 = var10 > 0 && p_40284_9_ <= 30;
 +        int var12 = 0;
-+        while(var12 < 5 && var11)
-         {
--            break MISSING_BLOCK_LABEL_195;
-+            ++var12;
-+            int var13 = p_40284_4_.nextInt(var10);
-+            Iterator var14 = p_40284_2_.iterator();
-+            while(var14.hasNext())
-+            {
-+                StructureNetherBridgePieceWeight var15 = (StructureNetherBridgePieceWeight)var14.next();
-+                var13 -= var15.field_40653_b;
-+                if(var13 < 0)
-+                {
-+                    if(!var15.func_40649_a(p_40284_9_) || var15 == p_40284_1_.field_40296_a && !var15.field_40652_e)
-+                    {
-+                        break;
++
++        while(var12 < 5 && var11) {
++           ++var12;
++           int var13 = p_40284_4_.nextInt(var10);
++           Iterator var14 = p_40284_2_.iterator();
++
++           while(var14.hasNext()) {
++              StructureNetherBridgePieceWeight var15 = (StructureNetherBridgePieceWeight)var14.next();
++              var13 -= var15.field_40653_b;
++              if(var13 < 0) {
++                 if(!var15.func_40649_a(p_40284_9_) || var15 == p_40284_1_.field_40296_a && !var15.field_40652_e) {
++                    break;
++                 }
++
++                 ComponentNetherBridgePiece var16 = StructureNetherBridgePieces.func_40538_a(var15, p_40284_3_, p_40284_4_, p_40284_5_, p_40284_6_, p_40284_7_, p_40284_8_, p_40284_9_);
++                 if(var16 != null) {
++                    ++var15.field_40654_c;
++                    p_40284_1_.field_40296_a = var15;
++                    if(!var15.func_40650_a()) {
++                       p_40284_2_.remove(var15);
 +                    }
-+                    ComponentNetherBridgePiece var16 = StructureNetherBridgePieces.func_40538_a(var15, p_40284_3_, p_40284_4_, p_40284_5_, p_40284_6_, p_40284_7_, p_40284_8_, p_40284_9_);
-+                    if(var16 != null)
-+                    {
-+                        ++var15.field_40654_c;
-+                        p_40284_1_.field_40296_a = var15;
-+                        if(!var15.func_40650_a())
-+                        {
-+                            p_40284_2_.remove(var15);
-+                        }
-+                        return var16;
-+                    }
-+                }
-+            }
++
++                    return var16;
++                 }
++              }
++           }
          }
 -        j++;
 -        k = p_40284_4_.nextInt(i);
@@ -196,20 +386,23 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentNetherBridgePiece.java 
 -        return componentnetherbridgepiece;
 -        ComponentNetherBridgeEnd componentnetherbridgeend = ComponentNetherBridgeEnd.func_40301_a(p_40284_3_, p_40284_4_, p_40284_5_, p_40284_6_, p_40284_7_, p_40284_8_, p_40284_9_);
 -        return componentnetherbridgeend;
+-    }
++
 +        ComponentNetherBridgeEnd var17 = ComponentNetherBridgeEnd.func_40301_a(p_40284_3_, p_40284_4_, p_40284_5_, p_40284_6_, p_40284_7_, p_40284_8_, p_40284_9_);
 +        return var17;
-     }
++     }
  
      private StructureComponent func_40283_a(ComponentNetherBridgeStartPiece p_40283_1_, List p_40283_2_, Random p_40283_3_, int p_40283_4_, int p_40283_5_, int p_40283_6_, int p_40283_7_, int p_40283_8_, boolean p_40283_9_)
+     {
 diff -r -U 3 minecraft_server\net\minecraft\src\GenLayer.java minecraft_server_patched\net\minecraft\src\GenLayer.java
---- minecraft_server\net\minecraft\src\GenLayer.java	Sat Mar 03 17:55:44 2012
-+++ minecraft_server_patched\net\minecraft\src\GenLayer.java	Sat Mar 03 18:15:52 2012
+--- minecraft_server\net\minecraft\src\GenLayer.java	Sat Mar 24 02:09:27 2012
++++ minecraft_server_patched\net\minecraft\src\GenLayer.java	Sat Mar 24 03:24:42 2012
 @@ -20,7 +20,7 @@
  
      public static GenLayer[] func_48391_a(long p_48391_0_, WorldType p_48391_2_)
      {
 -        Object obj = new GenLayerIsland(1L);
-+        GenLayer obj = new GenLayerIsland(1L);
++    	GenLayer obj = new GenLayerIsland(1L);
          obj = new GenLayerFuzzyZoom(2000L, ((GenLayer) (obj)));
          obj = new GenLayerAddIsland(1L, ((GenLayer) (obj)));
          obj = new GenLayerZoom(2001L, ((GenLayer) (obj)));
@@ -230,298 +423,335 @@ diff -r -U 3 minecraft_server\net\minecraft\src\GenLayer.java minecraft_server_p
          obj2 = new GenLayerBiome(200L, ((GenLayer) (obj2)), p_48391_2_);
          obj2 = GenLayerZoom.func_35025_a(1000L, ((GenLayer) (obj2)), 2);
 diff -r -U 3 minecraft_server\net\minecraft\src\GuiStatsComponent.java minecraft_server_patched\net\minecraft\src\GuiStatsComponent.java
---- minecraft_server\net\minecraft\src\GuiStatsComponent.java	Sat Mar 03 17:55:44 2012
-+++ minecraft_server_patched\net\minecraft\src\GuiStatsComponent.java	Sat Mar 03 18:17:17 2012
-@@ -47,22 +47,20 @@
+--- minecraft_server\net\minecraft\src\GuiStatsComponent.java	Sat Mar 24 02:09:27 2012
++++ minecraft_server_patched\net\minecraft\src\GuiStatsComponent.java	Sat Mar 24 03:26:45 2012
+@@ -45,24 +45,14 @@
+         field_768_c[2] = (new StringBuilder()).append("Avg tick: ").append(field_40573_a.format(func_48551_a(field_40572_e.field_40027_f) * 9.9999999999999995E-007D)).append(" ms").toString();
+         field_768_c[3] = (new StringBuilder()).append("Avg sent: ").append((int)func_48551_a(field_40572_e.field_48080_u)).append(", Avg size: ").append((int)func_48551_a(field_40572_e.field_48079_v)).toString();
          field_768_c[4] = (new StringBuilder()).append("Avg rec: ").append((int)func_48551_a(field_40572_e.field_48078_w)).append(", Avg size: ").append((int)func_48551_a(field_40572_e.field_48082_x)).toString();
-         if(field_40572_e.field_6034_e == null)
-         {
+-        if(field_40572_e.field_6034_e == null)
+-        {
 -            break MISSING_BLOCK_LABEL_446;
-+            return;
-         }
-         i = 0;
+-        }
+-        i = 0;
 -_L3:
 -        if(!(i >= field_40572_e.field_6034_e.length))
 -## JADFIX _L1 _L2
 -_L1:
-+        while(!(i >= field_40572_e.field_6034_e.length))
-+        {
-         field_768_c[5 + i] = (new StringBuilder()).append("Lvl ").append(i).append(" tick: ").append(field_40573_a.format(func_48551_a(field_40572_e.field_40028_g[i]) * 9.9999999999999995E-007D)).append(" ms").toString();
-         if(field_40572_e.field_6034_e[i] == null || field_40572_e.field_6034_e[i].field_20911_y == null)
-         {
-+            i++;
-             continue; /* Loop/switch isn't completed */
-         }
-         field_768_c[5 + i] += ", " + field_40572_e.field_6034_e[i].field_20911_y.func_46040_d();
-         i++;
+-        field_768_c[5 + i] = (new StringBuilder()).append("Lvl ").append(i).append(" tick: ").append(field_40573_a.format(func_48551_a(field_40572_e.field_40028_g[i]) * 9.9999999999999995E-007D)).append(" ms").toString();
+-        if(field_40572_e.field_6034_e[i] == null || field_40572_e.field_6034_e[i].field_20911_y == null)
+-        {
+-            continue; /* Loop/switch isn't completed */
+-        }
+-        field_768_c[5 + i] += ", " + field_40572_e.field_6034_e[i].field_20911_y.func_46040_d();
+-        i++;
 -          goto _L3
 -_L2:
-+        }
++        if(this.field_40572_e.field_6034_e != null) {
++            for(int var3 = 0; var3 < this.field_40572_e.field_6034_e.length; ++var3) {
++               this.field_768_c[5 + var3] = "Lvl " + var3 + " tick: " + field_40573_a.format(this.func_48551_a(this.field_40572_e.field_40028_g[var3]) * 1.0E-6D) + " ms";
++               if(this.field_40572_e.field_6034_e[var3] != null && this.field_40572_e.field_6034_e[var3].field_20911_y != null) {
++                  this.field_768_c[5 + var3] = this.field_768_c[5 + var3] + ", " + this.field_40572_e.field_6034_e[var3].field_20911_y.func_46040_d();
++               }
++            }
++         }
          field_767_a[field_766_b++ & 0xff] = (int)((func_48551_a(field_40572_e.field_48079_v) * 100D) / 12500D);
          repaint();
          return;
 diff -r -U 3 minecraft_server\net\minecraft\src\MapGenCaves.java minecraft_server_patched\net\minecraft\src\MapGenCaves.java
---- minecraft_server\net\minecraft\src\MapGenCaves.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\MapGenCaves.java	Sat Mar 03 18:18:45 2012
-@@ -74,11 +74,11 @@
+--- minecraft_server\net\minecraft\src\MapGenCaves.java	Sat Mar 24 02:09:28 2012
++++ minecraft_server_patched\net\minecraft\src\MapGenCaves.java	Sat Mar 24 03:27:50 2012
+@@ -117,9 +117,9 @@
+                 i1 = 16;
+             }
+             boolean flag2 = false;
+-            for(int j1 = d4; !flag2 && j1 < k; j1++)
++            for(int j1 = (int) d4; !flag2 && j1 < k; j1++)
+             {
+-                for(int l1 = d6; !flag2 && l1 < i1; l1++)
++                for(int l1 = (int) d6; !flag2 && l1 < i1; l1++)
+                 {
+                     for(int i2 = l + 1; !flag2 && i2 >= d5 - 1; i2--)
+                     {
+@@ -134,7 +134,7 @@
+                         }
+                         if(i2 != d5 - 1 && j1 != d4 && j1 != k - 1 && l1 != d6 && l1 != i1 - 1)
+                         {
+-                            i2 = d5;
++                            i2 = (int) d5;
+                         }
+                     }
+ 
+@@ -146,11 +146,11 @@
              {
                  continue;
              }
--            double d4 = p_668_6_ - d;
--            double d5 = p_668_10_ - d1;
--            double d6 = p_668_16_ - p_668_15_;
-+            double d4a = p_668_6_ - d;
-+            double d5a = p_668_10_ - d1;
-+            double d6a = p_668_16_ - p_668_15_;
-             double d7 = p_668_12_ + 2.0F + 16F;
--            if((d4 * d4 + d5 * d5) - d6 * d6 > d7 * d7)
-+            if((d4a * d4a + d5a * d5a) - d6a * d6a > d7 * d7)
+-            for(int k1 = d4; k1 < k; k1++)
++            for(int k1 = (int) d4; k1 < k; k1++)
              {
-                 return;
-             }
-@@ -86,11 +86,11 @@
-             {
-                 continue;
-             }
--            d4 = MathHelper.func_584_b(p_668_6_ - d2) - p_668_3_ * 16 - 1;
-+            int d4 = MathHelper.func_584_b(p_668_6_ - d2) - p_668_3_ * 16 - 1;
-             int k = (MathHelper.func_584_b(p_668_6_ + d2) - p_668_3_ * 16) + 1;
--            d5 = MathHelper.func_584_b(p_668_8_ - d3) - 1;
-+            int d5 = MathHelper.func_584_b(p_668_8_ - d3) - 1;
-             int l = MathHelper.func_584_b(p_668_8_ + d3) + 1;
--            d6 = MathHelper.func_584_b(p_668_10_ - d2) - p_668_4_ * 16 - 1;
-+            int d6 = MathHelper.func_584_b(p_668_10_ - d2) - p_668_4_ * 16 - 1;
-             int i1 = (MathHelper.func_584_b(p_668_10_ + d2) - p_668_4_ * 16) + 1;
-             if(d4 < 0)
-             {
+                 double d8 = (((double)(k1 + p_668_3_ * 16) + 0.5D) - p_668_6_) / d2;
+ label0:
+-                for(int k2 = d6; k2 < i1; k2++)
++                for(int k2 = (int) d6; k2 < i1; k2++)
+                 {
+                     double d9 = (((double)(k2 + p_668_4_ * 16) + 0.5D) - p_668_10_) / d2;
+                     int l2 = (k1 * 16 + k2) * 128 + l;
 diff -r -U 3 minecraft_server\net\minecraft\src\MapGenCavesHell.java minecraft_server_patched\net\minecraft\src\MapGenCavesHell.java
---- minecraft_server\net\minecraft\src\MapGenCavesHell.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\MapGenCavesHell.java	Sat Mar 03 18:19:04 2012
-@@ -74,11 +74,11 @@
+--- minecraft_server\net\minecraft\src\MapGenCavesHell.java	Sat Mar 24 02:09:28 2012
++++ minecraft_server_patched\net\minecraft\src\MapGenCavesHell.java	Sat Mar 24 03:27:50 2012
+@@ -117,9 +117,9 @@
+                 i1 = 16;
+             }
+             boolean flag2 = false;
+-            for(int j1 = d4; !flag2 && j1 < k; j1++)
++            for(int j1 = (int) d4; !flag2 && j1 < k; j1++)
+             {
+-                for(int l1 = d6; !flag2 && l1 < i1; l1++)
++                for(int l1 = (int) d6; !flag2 && l1 < i1; l1++)
+                 {
+                     for(int i2 = l + 1; !flag2 && i2 >= d5 - 1; i2--)
+                     {
+@@ -134,7 +134,7 @@
+                         }
+                         if(i2 != d5 - 1 && j1 != d4 && j1 != k - 1 && l1 != d6 && l1 != i1 - 1)
+                         {
+-                            i2 = d5;
++                            i2 = (int) d5;
+                         }
+                     }
+ 
+@@ -146,10 +146,10 @@
              {
                  continue;
              }
--            double d4 = p_4105_4_ - d;
--            double d5 = p_4105_8_ - d1;
--            double d6 = p_4105_14_ - p_4105_13_;
-+            double d4a = p_4105_4_ - d;
-+            double d5a = p_4105_8_ - d1;
-+            double d6a = p_4105_14_ - p_4105_13_;
-             double d7 = p_4105_10_ + 2.0F + 16F;
--            if((d4 * d4 + d5 * d5) - d6 * d6 > d7 * d7)
-+            if((d4a * d4a + d5a * d5a) - d6a * d6a > d7 * d7)
+-            for(int k1 = d4; k1 < k; k1++)
++            for(int k1 = (int) d4; k1 < k; k1++)
              {
-                 return;
-             }
-@@ -86,11 +86,11 @@
-             {
-                 continue;
-             }
--            d4 = MathHelper.func_584_b(p_4105_4_ - d2) - p_4105_1_ * 16 - 1;
-+            int d4 = MathHelper.func_584_b(p_4105_4_ - d2) - p_4105_1_ * 16 - 1;
-             int k = (MathHelper.func_584_b(p_4105_4_ + d2) - p_4105_1_ * 16) + 1;
--            d5 = MathHelper.func_584_b(p_4105_6_ - d3) - 1;
-+            int d5 = MathHelper.func_584_b(p_4105_6_ - d3) - 1;
-             int l = MathHelper.func_584_b(p_4105_6_ + d3) + 1;
--            d6 = MathHelper.func_584_b(p_4105_8_ - d2) - p_4105_2_ * 16 - 1;
-+            int d6 = MathHelper.func_584_b(p_4105_8_ - d2) - p_4105_2_ * 16 - 1;
-             int i1 = (MathHelper.func_584_b(p_4105_8_ + d2) - p_4105_2_ * 16) + 1;
-             if(d4 < 0)
-             {
+                 double d8 = (((double)(k1 + p_4105_1_ * 16) + 0.5D) - p_4105_4_) / d2;
+-                for(int k2 = d6; k2 < i1; k2++)
++                for(int k2 = (int) d6; k2 < i1; k2++)
+                 {
+                     double d9 = (((double)(k2 + p_4105_2_ * 16) + 0.5D) - p_4105_8_) / d2;
+                     int l2 = (k1 * 16 + k2) * 128 + l;
 diff -r -U 3 minecraft_server\net\minecraft\src\MapGenRavine.java minecraft_server_patched\net\minecraft\src\MapGenRavine.java
---- minecraft_server\net\minecraft\src\MapGenRavine.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\MapGenRavine.java	Sat Mar 03 18:19:23 2012
-@@ -70,11 +70,11 @@
+--- minecraft_server\net\minecraft\src\MapGenRavine.java	Sat Mar 24 02:09:28 2012
++++ minecraft_server_patched\net\minecraft\src\MapGenRavine.java	Sat Mar 24 03:27:50 2012
+@@ -113,9 +113,9 @@
+                 i1 = 16;
+             }
+             boolean flag1 = false;
+-            for(int j1 = d4; !flag1 && j1 < k; j1++)
++            for(int j1 = (int) d4; !flag1 && j1 < k; j1++)
+             {
+-                for(int l1 = d6; !flag1 && l1 < i1; l1++)
++                for(int l1 = (int) d6; !flag1 && l1 < i1; l1++)
+                 {
+                     for(int i2 = l + 1; !flag1 && i2 >= d5 - 1; i2--)
+                     {
+@@ -130,7 +130,7 @@
+                         }
+                         if(i2 != d5 - 1 && j1 != d4 && j1 != k - 1 && l1 != d6 && l1 != i1 - 1)
+                         {
+-                            i2 = d5;
++                            i2 = (int) d5;
+                         }
+                     }
+ 
+@@ -142,11 +142,11 @@
              {
                  continue;
              }
--            double d4 = p_35539_6_ - d;
--            double d5 = p_35539_10_ - d1;
--            double d6 = p_35539_16_ - p_35539_15_;
-+            double d4a = p_35539_6_ - d;
-+            double d5a = p_35539_10_ - d1;
-+            double d6a = p_35539_16_ - p_35539_15_;
-             double d7 = p_35539_12_ + 2.0F + 16F;
--            if((d4 * d4 + d5 * d5) - d6 * d6 > d7 * d7)
-+            if((d4a * d4a + d5a * d5a) - d6a * d6a > d7 * d7)
+-            for(int k1 = d4; k1 < k; k1++)
++            for(int k1 = (int) d4; k1 < k; k1++)
              {
-                 return;
-             }
-@@ -82,11 +82,11 @@
-             {
-                 continue;
-             }
--            d4 = MathHelper.func_584_b(p_35539_6_ - d2) - p_35539_3_ * 16 - 1;
-+            int d4 = MathHelper.func_584_b(p_35539_6_ - d2) - p_35539_3_ * 16 - 1;
-             int k = (MathHelper.func_584_b(p_35539_6_ + d2) - p_35539_3_ * 16) + 1;
--            d5 = MathHelper.func_584_b(p_35539_8_ - d3) - 1;
-+            int d5 = MathHelper.func_584_b(p_35539_8_ - d3) - 1;
-             int l = MathHelper.func_584_b(p_35539_8_ + d3) + 1;
--            d6 = MathHelper.func_584_b(p_35539_10_ - d2) - p_35539_4_ * 16 - 1;
-+            int d6 = MathHelper.func_584_b(p_35539_10_ - d2) - p_35539_4_ * 16 - 1;
-             int i1 = (MathHelper.func_584_b(p_35539_10_ + d2) - p_35539_4_ * 16) + 1;
-             if(d4 < 0)
-             {
+                 double d8 = (((double)(k1 + p_35539_3_ * 16) + 0.5D) - p_35539_6_) / d2;
+ label0:
+-                for(int k2 = d6; k2 < i1; k2++)
++                for(int k2 = (int) d6; k2 < i1; k2++)
+                 {
+                     double d9 = (((double)(k2 + p_35539_4_ * 16) + 0.5D) - p_35539_10_) / d2;
+                     int l2 = (k1 * 16 + k2) * 128 + l;
+diff -r -U 3 minecraft_server\net\minecraft\src\NetworkMasterThread.java minecraft_server_patched\net\minecraft\src\NetworkMasterThread.java
+--- minecraft_server\net\minecraft\src\NetworkMasterThread.java	Sat Mar 24 16:09:33 2012
++++ minecraft_server_patched\net\minecraft\src\NetworkMasterThread.java	Sat Mar 24 16:12:56 2012
+@@ -17,6 +17,7 @@
+         field_829_a = p_i577_1_;
+     }
+ 
++    @SuppressWarnings("deprecation")
+     public void run()
+     {
+         try
 diff -r -U 3 minecraft_server\net\minecraft\src\NetworkReaderThread.java minecraft_server_patched\net\minecraft\src\NetworkReaderThread.java
---- minecraft_server\net\minecraft\src\NetworkReaderThread.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\NetworkReaderThread.java	Sat Mar 03 18:19:56 2012
-@@ -24,6 +24,8 @@
+--- minecraft_server\net\minecraft\src\NetworkReaderThread.java	Sat Mar 24 02:09:28 2012
++++ minecraft_server_patched\net\minecraft\src\NetworkReaderThread.java	Sat Mar 24 03:28:41 2012
+@@ -24,6 +24,7 @@
          {
              NetworkManager.field_1052_b++;
          }
-+        try
-+        {
++        try {
          while(NetworkManager.func_743_a(field_827_a) && !NetworkManager.func_740_b(field_827_a))
          {
              while(NetworkManager.func_751_c(field_827_a)) ;
-@@ -33,10 +35,15 @@
+@@ -33,17 +34,11 @@
              }
              catch(InterruptedException interruptedexception) { }
          }
-+        }
-+        finally
-+        {
++        } finally {
          synchronized(NetworkManager.field_1053_a)
          {
              NetworkManager.field_1052_b--;
          }
-+        }
-+/*
-         break MISSING_BLOCK_LABEL_131;
-         Exception exception2;
-         exception2;
-@@ -45,5 +52,6 @@
-             NetworkManager.field_1052_b--;
+-        break MISSING_BLOCK_LABEL_131;
+-        Exception exception2;
+-        exception2;
+-        synchronized(NetworkManager.field_1053_a)
+-        {
+-            NetworkManager.field_1052_b--;
          }
-         throw exception2;
-+*/
+-        throw exception2;
      }
  }
 diff -r -U 3 minecraft_server\net\minecraft\src\NetworkWriterThread.java minecraft_server_patched\net\minecraft\src\NetworkWriterThread.java
---- minecraft_server\net\minecraft\src\NetworkWriterThread.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\NetworkWriterThread.java	Sat Mar 03 18:20:36 2012
-@@ -27,6 +27,8 @@
+--- minecraft_server\net\minecraft\src\NetworkWriterThread.java	Sat Mar 24 02:09:28 2012
++++ minecraft_server_patched\net\minecraft\src\NetworkWriterThread.java	Sat Mar 24 03:28:41 2012
+@@ -27,6 +27,7 @@
          {
              NetworkManager.field_1051_c++;
          }
-+        try
-+        {
++        try {
          while(NetworkManager.func_743_a(field_826_a))
          {
              while(NetworkManager.func_749_d(field_826_a)) ;
-@@ -51,10 +53,15 @@
+@@ -51,17 +52,11 @@
              }
              catch(InterruptedException interruptedexception) { }
          }
-+        }
-+        finally
-+        {
++        } finally {
          synchronized(NetworkManager.field_1053_a)
          {
              NetworkManager.field_1051_c--;
          }
-+        }
-+/*
-         break MISSING_BLOCK_LABEL_167;
-         Exception exception2;
-         exception2;
-@@ -63,5 +70,6 @@
-             NetworkManager.field_1051_c--;
+-        break MISSING_BLOCK_LABEL_167;
+-        Exception exception2;
+-        exception2;
+-        synchronized(NetworkManager.field_1053_a)
+-        {
+-            NetworkManager.field_1051_c--;
          }
-         throw exception2;
-+*/
+-        throw exception2;
      }
  }
 diff -r -U 3 minecraft_server\net\minecraft\src\PathNavigate.java minecraft_server_patched\net\minecraft\src\PathNavigate.java
---- minecraft_server\net\minecraft\src\PathNavigate.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\PathNavigate.java	Sat Mar 03 18:47:44 2012
-@@ -184,7 +184,7 @@
+--- minecraft_server\net\minecraft\src\PathNavigate.java	Sat Mar 24 02:09:28 2012
++++ minecraft_server_patched\net\minecraft\src\PathNavigate.java	Sat Mar 24 03:29:53 2012
+@@ -184,21 +184,21 @@
      {
          Vec3D vec3d = func_48665_h();
          int i = field_46038_c.func_48424_d();
 -        float f = field_46038_c.func_48423_e();
-+        int f = field_46038_c.func_48423_e();
++        int i2 = field_46038_c.func_48423_e();
          do
          {
-             if(f >= field_46038_c.func_48424_d())
-@@ -198,10 +198,10 @@
+-            if(f >= field_46038_c.func_48424_d())
++            if(i2 >= field_46038_c.func_48424_d())
+             {
+                 break;
              }
-             f++;
+-            if(field_46038_c.func_48429_a(f).field_1015_b != (int)vec3d.field_1054_b)
++            if(field_46038_c.func_48429_a(i2).field_1015_b != (int)vec3d.field_1054_b)
+             {
+-                i = f;
++                i = i2;
+                 break;
+             }
+-            f++;
++            i2++;
          } while(true);
 -        f = field_46039_a.field_300_D * field_46039_a.field_300_D;
-+        float fa = field_46039_a.field_300_D * field_46039_a.field_300_D;
++        float f = field_46039_a.field_300_D * field_46039_a.field_300_D;
          for(int j = field_46038_c.func_48423_e(); j < i; j++)
          {
--            if(vec3d.func_764_b(field_46038_c.func_48428_a(field_46039_a, j)) < (double)f)
-+            if(vec3d.func_764_b(field_46038_c.func_48428_a(field_46039_a, j)) < (double)fa)
-             {
-                 field_46038_c.func_48422_c(j + 1);
-             }
+             if(vec3d.func_764_b(field_46038_c.func_48428_a(field_46039_a, j)) < (double)f)
 diff -r -U 3 minecraft_server\net\minecraft\src\SpawnerAnimals.java minecraft_server_patched\net\minecraft\src\SpawnerAnimals.java
---- minecraft_server\net\minecraft\src\SpawnerAnimals.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\SpawnerAnimals.java	Sat Mar 03 18:29:41 2012
-@@ -35,169 +35,141 @@
+--- minecraft_server\net\minecraft\src\SpawnerAnimals.java	Sat Mar 24 02:09:29 2012
++++ minecraft_server_patched\net\minecraft\src\SpawnerAnimals.java	Sat Mar 24 03:30:44 2012
+@@ -33,172 +33,127 @@
+         return new ChunkPosition(i, j, k);
+     }
  
-     public static final int func_4111_a(World p_4111_0_, boolean p_4111_1_, boolean p_4111_2_)
-     {
+-    public static final int func_4111_a(World p_4111_0_, boolean p_4111_1_, boolean p_4111_2_)
+-    {
 -        int j;
 -        ChunkCoordinates chunkcoordinates;
 -        EnumCreatureType aenumcreaturetype[];
 -        int i1;
 -        int j1;
-         if(!p_4111_1_ && !p_4111_2_)
-         {
-             return 0;
-         }
+-        if(!p_4111_1_ && !p_4111_2_)
+-        {
+-            return 0;
+-        }
 -        field_4311_a.clear();
 -        for(int i = 0; i < p_4111_0_.field_805_k.size(); i++)
-+        else
-         {
+-        {
 -            EntityPlayer entityplayer = (EntityPlayer)p_4111_0_.field_805_k.get(i);
 -            int k = MathHelper.func_584_b(entityplayer.field_322_l / 16D);
 -            int l = MathHelper.func_584_b(entityplayer.field_320_n / 16D);
 -            byte byte0 = 8;
 -            for(int k1 = -byte0; k1 <= byte0; k1++)
-+            field_4311_a.clear();
-+            int var3;
-+            int var6;
-+            for(var3 = 0; var3 < p_4111_0_.field_805_k.size(); ++var3)
-             {
+-            {
 -                for(int l1 = -byte0; l1 <= byte0; l1++)
-+                EntityPlayer var4 = (EntityPlayer)p_4111_0_.field_805_k.get(var3);
-+                int var5 = MathHelper.func_584_b(var4.field_322_l / 16.0D);
-+                var6 = MathHelper.func_584_b(var4.field_320_n / 16.0D);
-+                byte var7 = 8;
-+                for(int var8 = -var7; var8 <= var7; ++var8)
-                 {
+-                {
 -                    boolean flag = k1 == -byte0 || k1 == byte0 || l1 == -byte0 || l1 == byte0;
 -                    ChunkCoordIntPair chunkcoordintpair1 = new ChunkCoordIntPair(k1 + k, l1 + l);
 -                    if(!flag)
-+                    for(int var9 = -var7; var9 <= var7; ++var9)
-                     {
+-                    {
 -                        field_4311_a.put(chunkcoordintpair1, Boolean.valueOf(false));
 -                        continue;
 -                    }
 -                    if(!field_4311_a.containsKey(chunkcoordintpair1))
 -                    {
 -                        field_4311_a.put(chunkcoordintpair1, Boolean.valueOf(true));
-+                        boolean var10 = var8 == -var7 || var8 == var7 || var9 == -var7 || var9 == var7;
-+                        ChunkCoordIntPair var11 = new ChunkCoordIntPair(var8 + var5, var9 + var6);
-+                        if(!var10)
-+                        {
-+                            field_4311_a.put(var11, Boolean.valueOf(false));
-+                        }
-+                        else if(!field_4311_a.containsKey(var11))
-+                        {
-+                            field_4311_a.put(var11, Boolean.valueOf(true));
-+                        }
++    public static final int func_4111_a(World p_4111_0_, boolean p_4111_1_, boolean p_4111_2_) {
++        if(!p_4111_1_ && !p_4111_2_) {
++           return 0;
++        } else {
++           field_4311_a.clear();
++
++           int var3;
++           int var6;
++           for(var3 = 0; var3 < p_4111_0_.field_805_k.size(); ++var3) {
++              EntityPlayer var4 = (EntityPlayer)p_4111_0_.field_805_k.get(var3);
++              int var5 = MathHelper.func_584_b(var4.field_322_l / 16.0D);
++              var6 = MathHelper.func_584_b(var4.field_320_n / 16.0D);
++              byte var7 = 8;
++
++              for(int var8 = -var7; var8 <= var7; ++var8) {
++                 for(int var9 = -var7; var9 <= var7; ++var9) {
++                    boolean var10 = var8 == -var7 || var8 == var7 || var9 == -var7 || var9 == var7;
++                    ChunkCoordIntPair var11 = new ChunkCoordIntPair(var8 + var5, var9 + var6);
++                    if(!var10) {
++                       field_4311_a.put(var11, Boolean.valueOf(false));
++                    } else if(!field_4311_a.containsKey(var11)) {
++                       field_4311_a.put(var11, Boolean.valueOf(true));
                      }
-                 }
--
-             }
--
+-                }
++                 }
++              }
++           }
+ 
+-            }
++           var3 = 0;
++           ChunkCoordinates var31 = p_4111_0_.func_22078_l();
++           EnumCreatureType[] var32 = EnumCreatureType.values();
++           var6 = var32.length;
+ 
 -        }
--
++           for(int var33 = 0; var33 < var6; ++var33) {
++              EnumCreatureType var34 = var32[var33];
++              if((!var34.func_21103_d() || p_4111_2_) && (var34.func_21103_d() || p_4111_1_) && p_4111_0_.func_487_a(var34.func_21105_a()) <= var34.func_21104_b() * field_4311_a.size() / 256) {
++                 Iterator var35 = field_4311_a.keySet().iterator();
+ 
 -        j = 0;
 -        chunkcoordinates = p_4111_0_.func_22078_l();
 -        aenumcreaturetype = EnumCreatureType.values();
@@ -549,108 +779,11 @@ diff -r -U 3 minecraft_server\net\minecraft\src\SpawnerAnimals.java minecraft_se
 -        {
 -            ChunkCoordIntPair chunkcoordintpair;
 -            do
-+            var3 = 0;
-+            ChunkCoordinates var31 = p_4111_0_.func_22078_l();
-+            EnumCreatureType[] var32 = EnumCreatureType.values();
-+            var6 = var32.length;
-+            for(int var33 = 0; var33 < var6; ++var33)
-             {
+-            {
 -                if(!iterator.hasNext())
-+                EnumCreatureType var34 = var32[var33];
-+                if((!var34.func_21103_d() || p_4111_2_) && (var34.func_21103_d() || p_4111_1_) && p_4111_0_.func_487_a(var34.func_21105_a()) <= var34.func_21104_b() * field_4311_a.size() / 256)
-                 {
+-                {
 -                    continue; /* Loop/switch isn't completed */
-+                    Iterator var35 = field_4311_a.keySet().iterator();
-+                    label108: while(var35.hasNext())
-+                    {
-+                        ChunkCoordIntPair var37 = (ChunkCoordIntPair)var35.next();
-+                        if(!((Boolean)field_4311_a.get(var37)).booleanValue())
-+                        {
-+                            ChunkPosition var36 = func_4112_a(p_4111_0_, var37.field_152_a, var37.field_151_b);
-+                            int var12 = var36.field_846_a;
-+                            int var13 = var36.field_845_b;
-+                            int var14 = var36.field_847_c;
-+                            if(!p_4111_0_.func_445_d(var12, var13, var14) && p_4111_0_.func_443_c(var12, var13, var14) == var34.func_21102_c())
-+                            {
-+                                int var15 = 0;
-+                                int var16 = 0;
-+                                while(var16 < 3)
-+                                {
-+                                    int var17 = var12;
-+                                    int var18 = var13;
-+                                    int var19 = var14;
-+                                    byte var20 = 6;
-+                                    SpawnListEntry var21 = null;
-+                                    int var22 = 0;
-+                                    while(true)
-+                                    {
-+                                        if(var22 < 4)
-+                                        {
-+                                            label101:
-+                                            {
-+                                                var17 += p_4111_0_.field_803_m.nextInt(var20) - p_4111_0_.field_803_m.nextInt(var20);
-+                                                var18 += p_4111_0_.field_803_m.nextInt(1) - p_4111_0_.field_803_m.nextInt(1);
-+                                                var19 += p_4111_0_.field_803_m.nextInt(var20) - p_4111_0_.field_803_m.nextInt(var20);
-+                                                if(func_21167_a(var34, p_4111_0_, var17, var18, var19))
-+                                                {
-+                                                    float var23 = (float)var17 + 0.5F;
-+                                                    float var24 = (float)var18;
-+                                                    float var25 = (float)var19 + 0.5F;
-+                                                    if(p_4111_0_.func_456_a((double)var23, (double)var24, (double)var25, 24.0D) == null)
-+                                                    {
-+                                                        float var26 = var23 - (float)var31.field_22216_a;
-+                                                        float var27 = var24 - (float)var31.field_529_a;
-+                                                        float var28 = var25 - (float)var31.field_528_b;
-+                                                        float var29 = var26 * var26 + var27 * var27 + var28 * var28;
-+                                                        if(var29 >= 576.0F)
-+                                                        {
-+                                                            if(var21 == null)
-+                                                            {
-+                                                                var21 = p_4111_0_.func_40216_a(var34, var17, var18, var19);
-+                                                                if(var21 == null)
-+                                                                {
-+                                                                    break label101;
-+                                                                }
-+                                                            }
-+                                                            EntityLiving var38;
-+                                                            try
-+                                                            {
-+                                                                var38 = (EntityLiving)var21.field_25145_a.getConstructor(new Class[]
-+                                                                { World.class }).newInstance(new Object[]
-+                                                                { p_4111_0_ });
-+                                                            }
-+                                                            catch(Exception var30)
-+                                                            {
-+                                                                var30.printStackTrace();
-+                                                                return var3;
-+                                                            }
-+                                                            var38.func_107_c((double)var23, (double)var24, (double)var25, p_4111_0_.field_803_m.nextFloat() * 360.0F, 0.0F);
-+                                                            if(var38.func_155_a())
-+                                                            {
-+                                                                ++var15;
-+                                                                p_4111_0_.func_526_a(var38);
-+                                                                func_21166_a(var38, p_4111_0_, var23, var24, var25);
-+                                                                if(var15 >= var38.func_4045_i())
-+                                                                {
-+                                                                    continue label108;
-+                                                                }
-+                                                            }
-+                                                            var3 += var15;
-+                                                        }
-+                                                    }
-+                                                }
-+                                                ++var22;
-+                                                continue;
-+                                            }
-+                                        }
-+                                        ++var16;
-+                                        break;
-+                                    }
-+                                }
-+                            }
-+                        }
-+                    }
-                 }
+-                }
 -                chunkcoordintpair = (ChunkCoordIntPair)iterator.next();
 -            } while(((Boolean)field_4311_a.get(chunkcoordintpair)).booleanValue());
 -            ChunkPosition chunkposition = func_4112_a(p_4111_0_, chunkcoordintpair.field_152_a, chunkcoordintpair.field_151_b);
@@ -709,9 +842,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\SpawnerAnimals.java minecraft_se
 -            if(spawnlistentry == null)
 -            {
 -                break; /* Loop/switch isn't completed */
-             }
-+            return var3;
-         }
+-            }
+-        }
 -        try
 -        {
 -            entityliving = (EntityLiving)spawnlistentry.field_25145_a.getConstructor(new Class[] {
@@ -729,7 +861,89 @@ diff -r -U 3 minecraft_server\net\minecraft\src\SpawnerAnimals.java minecraft_se
 -        if(!entityliving.func_155_a())
 -        {
 -            break; /* Loop/switch isn't completed */
--        }
++                 label108:
++                 while(var35.hasNext()) {
++                    ChunkCoordIntPair var37 = (ChunkCoordIntPair)var35.next();
++                    if(!((Boolean)field_4311_a.get(var37)).booleanValue()) {
++                       ChunkPosition var36 = func_4112_a(p_4111_0_, var37.field_152_a, var37.field_151_b);
++                       int var12 = var36.field_846_a;
++                       int var13 = var36.field_845_b;
++                       int var14 = var36.field_847_c;
++                       if(!p_4111_0_.func_445_d(var12, var13, var14) && p_4111_0_.func_443_c(var12, var13, var14) == var34.func_21102_c()) {
++                          int var15 = 0;
++                          int var16 = 0;
++
++                          while(var16 < 3) {
++                             int var17 = var12;
++                             int var18 = var13;
++                             int var19 = var14;
++                             byte var20 = 6;
++                             SpawnListEntry var21 = null;
++                             int var22 = 0;
++
++                             while(true) {
++                                if(var22 < 4) {
++                                   label101: {
++                                      var17 += p_4111_0_.field_803_m.nextInt(var20) - p_4111_0_.field_803_m.nextInt(var20);
++                                      var18 += p_4111_0_.field_803_m.nextInt(1) - p_4111_0_.field_803_m.nextInt(1);
++                                      var19 += p_4111_0_.field_803_m.nextInt(var20) - p_4111_0_.field_803_m.nextInt(var20);
++                                      if(func_21167_a(var34, p_4111_0_, var17, var18, var19)) {
++                                         float var23 = (float)var17 + 0.5F;
++                                         float var24 = (float)var18;
++                                         float var25 = (float)var19 + 0.5F;
++                                         if(p_4111_0_.func_456_a((double)var23, (double)var24, (double)var25, 24.0D) == null) {
++                                            float var26 = var23 - (float)var31.field_22216_a;
++                                            float var27 = var24 - (float)var31.field_529_a;
++                                            float var28 = var25 - (float)var31.field_528_b;
++                                            float var29 = var26 * var26 + var27 * var27 + var28 * var28;
++                                            if(var29 >= 576.0F) {
++                                               if(var21 == null) {
++                                                  var21 = p_4111_0_.func_40216_a(var34, var17, var18, var19);
++                                                  if(var21 == null) {
++                                                     break label101;
++                                                  }
++                                               }
++
++                                               EntityLiving var38;
++                                               try {
++                                                  var38 = (EntityLiving)var21.field_25145_a.getConstructor(new Class[]{World.class}).newInstance(new Object[]{p_4111_0_});
++                                               } catch (Exception var30) {
++                                                  var30.printStackTrace();
++                                                  return var3;
++                                               }
++
++                                               var38.func_107_c((double)var23, (double)var24, (double)var25, p_4111_0_.field_803_m.nextFloat() * 360.0F, 0.0F);
++                                               if(var38.func_155_a()) {
++                                                  ++var15;
++                                                  p_4111_0_.func_526_a(var38);
++                                                  func_21166_a(var38, p_4111_0_, var23, var24, var25);
++                                                  if(var15 >= var38.func_4045_i()) {
++                                                     continue label108;
++                                                  }
++                                               }
++
++                                               var3 += var15;
++                                            }
++                                         }
++                                      }
++
++                                      ++var22;
++                                      continue;
++                                   }
++                                }
++
++                                ++var16;
++                                break;
++                             }
++                          }
++                       }
++                    }
++                 }
++              }
++           }
++
++           return var3;
+         }
 -        l2++;
 -        p_4111_0_.func_526_a(entityliving);
 -        func_21166_a(entityliving, p_4111_0_, f, f1, f2);
@@ -746,22 +960,63 @@ diff -r -U 3 minecraft_server\net\minecraft\src\SpawnerAnimals.java minecraft_se
 -          goto _L10
 -_L2:
 -        return j;
-     }
+-    }
++     }
  
      public static boolean func_21167_a(EnumCreatureType p_21167_0_, World p_21167_1_, int p_21167_2_, int p_21167_3_, int p_21167_4_)
-diff -r -U 3 minecraft_server\net\minecraft\src\StringTranslate.java minecraft_server_patched\net\minecraft\src\StringTranslate.java
---- minecraft_server\net\minecraft\src\StringTranslate.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\StringTranslate.java	Sat Mar 03 18:30:17 2012
-@@ -73,60 +73,51 @@
- 
-     public void func_44010_a(String p_44010_1_)
      {
+diff -r -U 3 minecraft_server\net\minecraft\src\StringTranslate.java minecraft_server_patched\net\minecraft\src\StringTranslate.java
+--- minecraft_server\net\minecraft\src\StringTranslate.java	Sat Mar 24 02:09:29 2012
++++ minecraft_server_patched\net\minecraft\src\StringTranslate.java	Sat Mar 24 03:31:30 2012
+@@ -71,63 +71,46 @@
+ 
+     }
+ 
+-    public void func_44010_a(String p_44010_1_)
+-    {
 -        Properties properties;
 -        if(p_44010_1_.equals(field_44012_d))
-+        if(!p_44010_1_.equals(this.field_44012_d))
-         {
+-        {
 -            return;
--        }
++    public void func_44010_a(String p_44010_1_) {
++        if(!p_44010_1_.equals(this.field_44012_d)) {
++           Properties var2 = new Properties();
++
++           try {
++              this.func_44011_a(var2, "en_US");
++           } catch (IOException var8) {
++              ;
++           }
++
++           this.field_46121_e = false;
++           if(!"en_US".equals(p_44010_1_)) {
++              try {
++                 this.func_44011_a(var2, p_44010_1_);
++                 Enumeration var3 = var2.propertyNames();
++
++                 while(var3.hasMoreElements() && !this.field_46121_e) {
++                    Object var4 = var3.nextElement();
++                    Object var5 = var2.get(var4);
++                    if(var5 != null) {
++                       String var6 = var5.toString();
++
++                       for(int var7 = 0; var7 < var6.length(); ++var7) {
++                          if(var6.charAt(var7) >= 256) {
++                             this.field_46121_e = true;
++                             break;
++                          }
++                       }
++                    }
++                 }
++              } catch (IOException var9) {
++                 var9.printStackTrace();
++                 return;
++              }
++           }
++
++           this.field_44012_d = p_44010_1_;
++           this.field_25081_b = var2;
+         }
 -        properties = new Properties();
 -        try
 -        {
@@ -783,12 +1038,9 @@ diff -r -U 3 minecraft_server\net\minecraft\src\StringTranslate.java minecraft_s
 -        do
 -        {
 -            if(!enumeration.hasMoreElements() || field_46121_e)
-+            Properties var2 = new Properties();
-+            try
-             {
+-            {
 -                break MISSING_BLOCK_LABEL_152;
-+                this.func_44011_a(var2, "en_US");
-             }
+-            }
 -            Object obj = enumeration.nextElement();
 -            obj1 = properties.get(obj);
 -        } while(obj1 == null);
@@ -814,114 +1066,80 @@ diff -r -U 3 minecraft_server\net\minecraft\src\StringTranslate.java minecraft_s
 -        field_25081_b = properties;
 -        return;
 -          goto _L2
-+            catch(IOException var8)
-+            {
-+                ;
-+            }
-+            this.field_46121_e = false;
-+            if(!"en_US".equals(p_44010_1_))
-+            {
-+                try
-+                {
-+                    this.func_44011_a(var2, p_44010_1_);
-+                    Enumeration var3 = var2.propertyNames();
-+                    while(var3.hasMoreElements() && !this.field_46121_e)
-+                    {
-+                        Object var4 = var3.nextElement();
-+                        Object var5 = var2.get(var4);
-+                        if(var5 != null)
-+                        {
-+                            String var6 = var5.toString();
-+                            for(int var7 = 0; var7 < var6.length(); ++var7)
-+                            {
-+                                if(var6.charAt(var7) >= 256)
-+                                {
-+                                    this.field_46121_e = true;
-+                                    break;
-+                                }
-+                            }
-+                        }
-+                    }
-+                }
-+                catch(IOException var9)
-+                {
-+                    var9.printStackTrace();
-+                    return;
-+                }
-+            }
-+            this.field_44012_d = p_44010_1_;
-+            this.field_25081_b = var2;
-+        }
-     }
+-    }
++     }
  
      public String func_25080_a(String p_25080_1_)
-diff -r -U 3 minecraft_server\net\minecraft\src\StructureStrongholdPieces.java minecraft_server_patched\net\minecraft\src\StructureStrongholdPieces.java
---- minecraft_server\net\minecraft\src\StructureStrongholdPieces.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\StructureStrongholdPieces.java	Sat Mar 03 18:31:03 2012
-@@ -110,62 +110,60 @@
- 
-     private static ComponentStronghold func_35623_b(ComponentStrongholdStairs2 p_35623_0_, List p_35623_1_, Random p_35623_2_, int p_35623_3_, int p_35623_4_, int p_35623_5_, int p_35623_6_, int p_35623_7_)
      {
+diff -r -U 3 minecraft_server\net\minecraft\src\StructureStrongholdPieces.java minecraft_server_patched\net\minecraft\src\StructureStrongholdPieces.java
+--- minecraft_server\net\minecraft\src\StructureStrongholdPieces.java	Sat Mar 24 02:09:29 2012
++++ minecraft_server_patched\net\minecraft\src\StructureStrongholdPieces.java	Sat Mar 24 03:32:20 2012
+@@ -108,66 +108,55 @@
+         return ((ComponentStronghold) (obj));
+     }
+ 
+-    private static ComponentStronghold func_35623_b(ComponentStrongholdStairs2 p_35623_0_, List p_35623_1_, Random p_35623_2_, int p_35623_3_, int p_35623_4_, int p_35623_5_, int p_35623_6_, int p_35623_7_)
+-    {
 -        int i;
-         if(!func_35626_c())
-         {
-             return null;
+-        if(!func_35626_c())
+-        {
+-            return null;
++    private static ComponentStronghold func_35623_b(ComponentStrongholdStairs2 p_35623_0_, List p_35623_1_, Random p_35623_2_, int p_35623_3_, int p_35623_4_, int p_35623_5_, int p_35623_6_, int p_35623_7_) {
++        if(!func_35626_c()) {
++           return null;
++        } else {
++           if(field_40542_d != null) {
++              ComponentStronghold var8 = func_35620_a(field_40542_d, p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_, p_35623_7_);
++              field_40542_d = null;
++              if(var8 != null) {
++                 return var8;
++              }
++           }
++
++           int var13 = 0;
++
++           while(var13 < 5) {
++              ++var13;
++              int var9 = p_35623_2_.nextInt(field_35630_a);
++              Iterator var10 = field_35629_c.iterator();
++
++              while(var10.hasNext()) {
++                 StructureStrongholdPieceWeight var11 = (StructureStrongholdPieceWeight)var10.next();
++                 var9 -= var11.field_35578_b;
++                 if(var9 < 0) {
++                    if(!var11.func_35575_a(p_35623_7_) || var11 == p_35623_0_.field_35329_a) {
++                       break;
++                    }
++
++                    ComponentStronghold var12 = func_35620_a(var11.field_35580_a, p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_, p_35623_7_);
++                    if(var12 != null) {
++                       ++var11.field_35579_c;
++                       p_35623_0_.field_35329_a = var11;
++                       if(!var11.func_35576_a()) {
++                          field_35629_c.remove(var11);
++                       }
++
++                       return var12;
++                    }
++                 }
++              }
++           }
++
++           StructureBoundingBox var14 = ComponentStrongholdCorridor.func_35342_a(p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_);
++           if(var14 != null && var14.field_35676_b > 1) {
++              return new ComponentStrongholdCorridor(p_35623_7_, p_35623_2_, var14, p_35623_6_);
++           } else {
++              return null;
++           }
          }
 -        if(field_40542_d != null)
-+        else
-         {
+-        {
 -            ComponentStronghold componentstronghold = func_35620_a(field_40542_d, p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_, p_35623_7_);
 -            field_40542_d = null;
 -            if(componentstronghold != null)
-+            if(field_40542_d != null)
-             {
+-            {
 -                return componentstronghold;
-+                ComponentStronghold var8 = func_35620_a(field_40542_d, p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_, p_35623_7_);
-+                field_40542_d = null;
-+                if(var8 != null)
-+                {
-+                    return var8;
-+                }
-+            }
-+            int var13 = 0;
-+            while(var13 < 5)
-+            {
-+                ++var13;
-+                int var9 = p_35623_2_.nextInt(field_35630_a);
-+                Iterator var10 = field_35629_c.iterator();
-+                while(var10.hasNext())
-+                {
-+                    StructureStrongholdPieceWeight var11 = (StructureStrongholdPieceWeight)var10.next();
-+                    var9 -= var11.field_35578_b;
-+                    if(var9 < 0)
-+                    {
-+                        if(!var11.func_35575_a(p_35623_7_) || var11 == p_35623_0_.field_35329_a)
-+                        {
-+                            break;
-+                        }
-+                        ComponentStronghold var12 = func_35620_a(var11.field_35580_a, p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_, p_35623_7_);
-+                        if(var12 != null)
-+                        {
-+                            ++var11.field_35579_c;
-+                            p_35623_0_.field_35329_a = var11;
-+                            if(!var11.func_35576_a())
-+                            {
-+                                field_35629_c.remove(var11);
-+                            }
-+                            return var12;
-+                        }
-+                    }
-+                }
-+            }
-+            StructureBoundingBox var14 = ComponentStrongholdCorridor.func_35342_a(p_35623_1_, p_35623_2_, p_35623_3_, p_35623_4_, p_35623_5_, p_35623_6_);
-+            if(var14 != null && var14.field_35676_b > 1)
-+            {
-+                return new ComponentStrongholdCorridor(p_35623_7_, p_35623_2_, var14, p_35623_6_);
-+            }
-+            else
-+            {
-+                return null;
-             }
+-            }
 -        }
 -        i = 0;
 -_L2:
@@ -965,32 +1183,74 @@ diff -r -U 3 minecraft_server\net\minecraft\src\StructureStrongholdPieces.java m
 -        } else
 -        {
 -            return null;
-         }
+-        }
+-    }
++     }
+ 
+     private static StructureComponent func_35621_c(ComponentStrongholdStairs2 p_35621_0_, List p_35621_1_, Random p_35621_2_, int p_35621_3_, int p_35621_4_, int p_35621_5_, int p_35621_6_, int p_35621_7_)
+     {
+diff -r -U 3 minecraft_server\net\minecraft\src\StructureVillagePieces.java minecraft_server_patched\net\minecraft\src\StructureVillagePieces.java
+--- minecraft_server\net\minecraft\src\StructureVillagePieces.java	Sat Mar 24 02:09:29 2012
++++ minecraft_server_patched\net\minecraft\src\StructureVillagePieces.java	Sat Mar 24 03:32:55 2012
+@@ -107,59 +107,48 @@
+         return ((ComponentVillage) (obj));
      }
  
-diff -r -U 3 minecraft_server\net\minecraft\src\StructureVillagePieces.java minecraft_server_patched\net\minecraft\src\StructureVillagePieces.java
---- minecraft_server\net\minecraft\src\StructureVillagePieces.java	Sat Mar 03 17:55:45 2012
-+++ minecraft_server_patched\net\minecraft\src\StructureVillagePieces.java	Sat Mar 03 18:31:47 2012
-@@ -109,55 +109,52 @@
- 
-     private static ComponentVillage func_35643_c(ComponentVillageStartPiece p_35643_0_, List p_35643_1_, Random p_35643_2_, int p_35643_3_, int p_35643_4_, int p_35643_5_, int p_35643_6_, int p_35643_7_)
-     {
+-    private static ComponentVillage func_35643_c(ComponentVillageStartPiece p_35643_0_, List p_35643_1_, Random p_35643_2_, int p_35643_3_, int p_35643_4_, int p_35643_5_, int p_35643_6_, int p_35643_7_)
+-    {
 -        int i;
 -        int j;
 -        i = func_35645_a(p_35643_0_.field_35388_d);
 -        if(i <= 0)
+-        {
+-            return null;
++    private static ComponentVillage func_35643_c(ComponentVillageStartPiece p_35643_0_, List p_35643_1_, Random p_35643_2_, int p_35643_3_, int p_35643_4_, int p_35643_5_, int p_35643_6_, int p_35643_7_) {
 +        int var8 = func_35645_a(p_35643_0_.field_35388_d);
-+        if(var8 <= 0)
-         {
-             return null;
++        if(var8 <= 0) {
++           return null;
++        } else {
++           int var9 = 0;
++
++           while(var9 < 5) {
++              ++var9;
++              int var10 = p_35643_2_.nextInt(var8);
++              Iterator var11 = p_35643_0_.field_35388_d.iterator();
++
++              while(var11.hasNext()) {
++                 StructureVillagePieceWeight var12 = (StructureVillagePieceWeight)var11.next();
++                 var10 -= var12.field_35494_b;
++                 if(var10 < 0) {
++                    if(!var12.func_35491_a(p_35643_7_) || var12 == p_35643_0_.field_35391_c && p_35643_0_.field_35388_d.size() > 1) {
++                       break;
++                    }
++
++                    ComponentVillage var13 = func_35639_a(var12, p_35643_1_, p_35643_2_, p_35643_3_, p_35643_4_, p_35643_5_, p_35643_6_, p_35643_7_);
++                    if(var13 != null) {
++                       ++var12.field_35495_c;
++                       p_35643_0_.field_35391_c = var12;
++                       if(!var12.func_35492_a()) {
++                          p_35643_0_.field_35388_d.remove(var12);
++                       }
++
++                       return var13;
++                    }
++                 }
++              }
++           }
++
++           StructureBoundingBox var14 = ComponentVillageTorch.func_35382_a(p_35643_1_, p_35643_2_, p_35643_3_, p_35643_4_, p_35643_5_, p_35643_6_);
++           if(var14 != null) {
++              return new ComponentVillageTorch(p_35643_7_, p_35643_2_, var14, p_35643_6_);
++           } else {
++              return null;
++           }
          }
 -        j = 0;
 -_L2:
 -        int k;
 -        Iterator iterator;
 -        if(j >= 5)
-+        else
-         {
+-        {
 -            break MISSING_BLOCK_LABEL_182;
 -        }
 -        j++;
@@ -1027,45 +1287,21 @@ diff -r -U 3 minecraft_server\net\minecraft\src\StructureVillagePieces.java mine
 -        } else
 -        {
 -            return null;
-+            int var9 = 0;
-+            while(var9 < 5)
-+            {
-+                ++var9;
-+                int var10 = p_35643_2_.nextInt(var8);
-+                Iterator var11 = p_35643_0_.field_35388_d.iterator();
-+                while(var11.hasNext())
-+                {
-+                    StructureVillagePieceWeight var12 = (StructureVillagePieceWeight)var11.next();
-+                    var10 -= var12.field_35494_b;
-+                    if(var10 < 0)
-+                    {
-+                        if(!var12.func_35491_a(p_35643_7_) || var12 == p_35643_0_.field_35391_c && p_35643_0_.field_35388_d.size() > 1)
-+                        {
-+                            break;
-+                        }
-+                        ComponentVillage var13 = func_35639_a(var12, p_35643_1_, p_35643_2_, p_35643_3_, p_35643_4_, p_35643_5_, p_35643_6_, p_35643_7_);
-+                        if(var13 != null)
-+                        {
-+                            ++var12.field_35495_c;
-+                            p_35643_0_.field_35391_c = var12;
-+                            if(!var12.func_35492_a())
-+                            {
-+                                p_35643_0_.field_35388_d.remove(var12);
-+                            }
-+                            return var13;
-+                        }
-+                    }
-+                }
-+            }
-+            StructureBoundingBox var14 = ComponentVillageTorch.func_35382_a(p_35643_1_, p_35643_2_, p_35643_3_, p_35643_4_, p_35643_5_, p_35643_6_);
-+            if(var14 != null)
-+            {
-+                return new ComponentVillageTorch(p_35643_7_, p_35643_2_, var14, p_35643_6_);
-+            }
-+            else
-+            {
-+                return null;
-+            }
-         }
-     }
+-        }
+-    }
++     }
  
+     private static StructureComponent func_35641_d(ComponentVillageStartPiece p_35641_0_, List p_35641_1_, Random p_35641_2_, int p_35641_3_, int p_35641_4_, int p_35641_5_, int p_35641_6_, int p_35641_7_)
+     {
+diff -r -U 3 minecraft_server\net\minecraft\src\WorldGenerator.java minecraft_server_patched\net\minecraft\src\WorldGenerator.java
+--- minecraft_server\net\minecraft\src\WorldGenerator.java	Sat Mar 24 02:09:29 2012
++++ minecraft_server_patched\net\minecraft\src\WorldGenerator.java	Sat Mar 24 16:57:05 2012
+@@ -41,7 +41,7 @@
+         {
+             p_41043_1_.func_507_b(p_41043_2_, p_41043_3_, p_41043_4_, p_41043_5_, p_41043_6_);
+         } else
+-        if(p_41043_1_.func_492_a(p_41043_2_ >> 4, p_41043_4_ >> 4).field_50025_o)
++        if(p_41043_1_.func_492_a(p_41043_2_, p_41043_4_).field_50025_o)
+         {
+             if(p_41043_1_.func_470_a(p_41043_2_, p_41043_3_, p_41043_4_, p_41043_5_, p_41043_6_))
+             {

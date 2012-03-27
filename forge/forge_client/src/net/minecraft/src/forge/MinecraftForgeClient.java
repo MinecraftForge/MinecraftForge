@@ -86,23 +86,6 @@ public class MinecraftForgeClient
     {
         return ForgeHooksClient.renderPass;
     }
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    private static ICustomItemRenderer[] customItemRenderersOld = new ICustomItemRenderer[Item.itemsList.length];
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    public static void registerCustomItemRenderer(int itemID, ICustomItemRenderer renderer)
-    {
-        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 MinecraftForgeClient.registerCustomItemRenderer on: %version%");
-        customItemRenderersOld[itemID] = renderer;
-    }
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    public static ICustomItemRenderer getCustomItemRenderer (int itemID)
-    {
-        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 MinecraftForgeClient.getCustomItemRenderer on: %version%");
-        return customItemRenderersOld[itemID];
-    }
     
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 

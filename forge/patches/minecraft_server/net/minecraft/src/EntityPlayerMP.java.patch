@@ -48,9 +48,9 @@
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 5, par1TileEntityBrewingStand.getInvName(), par1TileEntityBrewingStand.getSizeInventory()));
          this.craftingInventory = new ContainerBrewingStand(this.inventory, par1TileEntityBrewingStand);
          this.craftingInventory.windowId = this.currentWindowId;
-@@ -797,4 +803,18 @@
-         EntityTracker var2 = this.mcServer.getEntityTracker(this.dimension);
-         var2.sendPacketToTrackedPlayersAndTrackedEntity(this, new Packet18Animation(par1Entity, 7));
+@@ -805,4 +811,18 @@
+             this.playerNetServerHandler.sendPacket(new Packet202PlayerAbilities(this.capabilities));
+         }
      }
 +    
 +    /* These functions are added to have compatibility with PlayerAPI. 

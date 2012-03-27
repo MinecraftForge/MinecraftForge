@@ -507,7 +507,6 @@ func_22068_a,setText,0,Sets the text of the textbox.
 func_22069_a,mouseClicked,0,"Args: x, y, buttonClicked"
 func_22070_b,updateCursorCounter,0,Increments the cursor counter
 func_22071_a,getText,0,Returns the text beign edited on the textbox.
-func_22072_a,textboxKeyTyped,0,Call this method from you GuiScreen to process the keys into textbox.
 func_22083_c,getSelectButton,0,returns the select button
 func_22084_k,loadSaves,0,loads the saves
 func_22085_d,getRenameButton,0,returns the rename button
@@ -779,8 +778,6 @@ func_270_i,getGrowthRate,0,"Gets the growth rate for the crop. Setup to encourag
 func_27100_a,drawHorizontalLine,0,
 func_27101_b,queueAchievementInformation,0,Queue a information about a achievement to be displayed.
 func_27102_a,queueTakenAchievement,0,Queue a taken achievement to be displayed.
-func_27106_a,setFocused,0,
-func_27108_j,selectNextField,0,
 func_27109_b,genAchievementBackground,0,
 func_27127_n,getFontRenderer10,0,there are 11 identical methods like this
 func_27128_a,drawSprite,0,Draws a sprite from /gui/slot.png.
@@ -1633,7 +1630,6 @@ func_4012_a,doRenderFireball,0,
 func_40132_ae,createInstance,0,
 func_40135_ac,getSlimeParticle,0,Returns the name of a particle effect that may be randomly created by EntitySlime.onUpdate()
 func_4013_a,setRenderPassModel,0,Sets the model to be used in the current render pass (the first render pass is done after the primary model is rendered) Args: model
-func_40140_ac,setTextureByProfession,0,This is the function which sets a Villager's skin based on its villagerProfession value
 func_40143_a,isWheat,0,Checks if the parameter is an wheat item.
 func_40144_b,procreate,0,Creates a baby animal according to the animal type of the target at the actual position and spawns 'love' particles.
 func_40145_a,spawnBabyAnimal,0,This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
@@ -1793,7 +1789,6 @@ func_40601_a,writeCapabilitiesToNBT,0,
 func_40602_a,setTextureOffset,0,
 func_40603_a,addBox,0,
 func_40604_a,addBox,0,
-func_40609_a,drawSplitString,0,Splits and draws a String with wordwrap (maximum length is parameter k) and with darker drop shadow color if flag is set
 func_4060_a,generateTerrain,0,Generates the shape of the terrain for the chunk though its all stone though the water is frozen if the temperature is low enough
 func_40610_g,getEffectiveness,0,
 func_40611_e,getStatusIconIndex,0,Returns the index for the icon to display when the potion is active.
@@ -2008,9 +2003,7 @@ func_44025_a,loadLanguage,0,
 func_44028_a,handleCustomPayload,0,
 func_44029_a,renderStringAtPos,0,"Render a single line string at the current (posX,posY) and update posX"
 func_44030_b,loadGlyphTexture,0,Load one of the /font/glyph_XX.png into a new GL texture and store the texture ID in glyphTextureName array.
-func_44031_a,renderDefaultChar,0,"Render a single character with the default.png font at current (posX,posY) location."
 func_44032_a,setUnicodeFlag,0,Set unicodeFlag controlling whether strings should be rendered with Unicode fonts instead of the default.png font.
-func_44033_a,renderUnicodeChar,0,"Render a single Unicode character at current (posX,posY) location using one of the /font/glyph_XX.png files."
 func_44040_a,getStringFromID,0,Finds the class using IDtoClassMapping and classToStringMapping
 func_440_b,setCreeperFlashTime,0,Connects the the creeper flashes to the creeper's color multiplier
 func_441_c,setSlimeSize,0,
@@ -2282,6 +2275,10 @@ func_494_a,getCurrentItem,0,Returns the item stack currently held by the player.
 func_496_a,setCurrentItem,0,Sets a specific itemID as the current item being held (only if it exists on the hotbar)
 func_498_a,changeCurrentItem,0,Switch the current item to the next one or the previous one
 func_499_j,getFirstEmptyStack,0,Returns the first item stack that is empty.
+func_50015_e,isChatOpen,0,Return true if chat gui is open
+func_50057_d,completePlayerName,0,Autocompletes player name
+func_50098_a,nameStartsWith,0,Returns true if the current player name starts with string specified value.
+func_50103_a,drawStringWithShadow,0,Draws the specified string with a shadow.
 func_502_a,getDamageVsEntity,0,"Return damage vs an entity done by the current held weapon, or 1 if nothing is held"
 func_503_g,dropAllItems,0,Drop all armor and main inventory items.
 func_504_a,addItemStackToInventory,0,"Adds the item stack to the inventory, returns false if it is impossible."
@@ -2336,7 +2333,7 @@ func_564_d,handleInput,0,Delegates mouse and keyboard input.
 func_565_a,mouseClicked,0,Called when the mouse is clicked.
 func_566_e,handleMouseInput,0,Handles mouse input.
 func_567_a,drawWorldBackground,0,
-func_568_a,deleteWorld,0,Deletes the selected world.
+func_568_a,confirmClicked,0,
 func_569_f,handleKeyboardInput,0,Handles keyboard input.
 func_570_g,updateScreen,0,Called from the main game loop to update the screen.
 func_571_a,drawScreen,0,Draws the screen and all the components in it.
@@ -2666,9 +2663,7 @@ func_868_a,recursiveGenerate,0,Recursively called by generate() (func_867_a) and
 func_869_a,generateCaveNode,0,Generates a node in the current cave system recursion tree.
 func_870_a,generateLargeCaveNode,0,Generates a larger initial cave node than usual. Called 25% of the time.
 func_871_a,getStringWidth,0,Returns the width of this string. Equivalent of FontMetrics.stringWidth(String s).
-func_872_a,renderString,0,The actual rendering takes place here.
 func_873_b,drawString,0,Draws the specified string.
-func_874_a,drawStringWithShadow,0,Draws the specified string with a drop shadow.
 func_876_e,getCanBurn,0,Returns if the block can burn or not.
 func_878_a,isSolid,0,
 func_879_d,isLiquid,0,Returns if blocks of these materials are liquids.
@@ -3881,7 +3876,6 @@ func_40108_b,removeExperience,1,Removes the specified number of experience level
 func_40109_c,onEnchantmentCritical,1,
 func_4010_d,handleSlashCommand,1,Processes a / command
 func_40110_a,displayGUIBrewingStand,1,Displays the GUI for interacting with a brewing stand.
-func_40111_y,setTextureByProfession,1,This is the function which sets a Villager's skin based on its profession value
 func_40114_y,createInstance,1,
 func_40120_w,getSlimeParticle,1,Returns the name of a particle effect that may be randomly created by EntitySlime.onUpdate()
 func_40123_y,isValidLightLevel,1,Checks to make sure the light is not too bright where the mob is spawning

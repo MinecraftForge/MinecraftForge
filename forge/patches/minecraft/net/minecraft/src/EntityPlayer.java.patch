@@ -131,10 +131,10 @@
          }
  
          return var3;
-@@ -1867,4 +1913,30 @@
-     {
-         return !this.capabilities.isFlying;
+@@ -1869,4 +1915,30 @@
      }
+ 
+     public void func_50009_aI() {}
 +    
 +    /**
 +     * Opens a Gui for the player. 
@@ -142,18 +142,18 @@
 +     * @param mod The mod associated with the gui
 +     * @param ID The ID number for the Gui
 +     * @param world The World
-+     * @param X X Position
-+     * @param Y Y Position
-+     * @param Z Z Position
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
 +     */
-+    public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z)
++    public void openGui(BaseMod mod, int ID, World world, int x, int y, int z)
 +    {
 +        if (this instanceof EntityPlayerSP)
 +        {
 +            IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
 +            if (handler != null)
 +            {
-+                GuiScreen screen = handler.getGuiScreen(ID, (EntityPlayerSP)this, world, X, Y, Z);
++                GuiScreen screen = handler.getGuiScreen(ID, (EntityPlayerSP)this, world, x, y, z);
 +                if (screen != null)
 +                {
 +                    ModLoader.getMinecraftInstance().displayGuiScreen(screen);

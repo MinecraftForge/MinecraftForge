@@ -40,7 +40,7 @@
  
      public DataWatcher getDataWatcher()
      {
-@@ -1286,6 +1312,10 @@
+@@ -1318,6 +1344,10 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -51,7 +51,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1327,6 +1357,10 @@
+@@ -1359,6 +1389,10 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -62,7 +62,7 @@
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1685,7 +1719,7 @@
+@@ -1717,7 +1751,7 @@
       */
      public boolean isRiding()
      {

@@ -21,12 +21,3 @@
          if (this.world.worldProvider.canRespawnHere())
          {
              ChunkCoordinates var3 = this.world.getSpawnPoint();
-@@ -200,7 +207,7 @@
-             if (this.serverChunkGenerator != null)
-             {
-                 this.serverChunkGenerator.populate(par1IChunkProvider, par2, par3);
--                ModLoader.populateChunk(this.serverChunkGenerator, par2 << 4, par3 << 4, this.world);
-+                ModLoader.populateChunk(this.serverChunkGenerator, par2, par3, this.world);
-                 var4.setChunkModified();
-             }
-         }

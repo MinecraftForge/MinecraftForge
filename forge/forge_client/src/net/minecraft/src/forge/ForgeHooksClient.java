@@ -251,24 +251,6 @@ public class ForgeHooksClient
             return def;
         }
     }
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    public static void renderCustomItem(ICustomItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata, float brightness)
-    {
-        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 ForgeHooksClient.renderCustomItem on: %version%");
-        Tessellator tessellator = Tessellator.instance;
-        if (renderBlocks.useInventoryTint)
-        {
-            int j = 0xffffff;//block.getRenderColor(i);
-            float f1 = (float) (j >> 16 & 0xff) / 255F;
-            float f3 = (float) (j >> 8 & 0xff) / 255F;
-            float f5 = (float) (j & 0xff) / 255F;
-            GL11.glColor4f(f1 * brightness, f3 * brightness, f5 * brightness, 1.0F);
-        }
-
-        //ModLoader.RenderInvBlock(this, block, i, k);
-        customRenderer.renderInventory(renderBlocks, itemID, metadata);
-    }
     
     public static void renderEntityItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item)
     {

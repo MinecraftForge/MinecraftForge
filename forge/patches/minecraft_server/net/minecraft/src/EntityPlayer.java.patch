@@ -136,10 +136,10 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1717,4 +1773,45 @@
-     {
-         return !this.capabilities.isFlying;
+@@ -1719,4 +1775,45 @@
      }
+ 
+     public void func_50022_L() {}
 +    
 +    /**
 +     * Opens a Gui for the player. 

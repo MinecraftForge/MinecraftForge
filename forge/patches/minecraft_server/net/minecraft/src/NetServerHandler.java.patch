@@ -55,9 +55,9 @@
          }
      }
  
-@@ -960,4 +967,49 @@
+@@ -965,4 +972,49 @@
      {
-         return true;
+         this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.field_50005_b && this.playerEntity.capabilities.allowFlying;
      }
 +    
 +    public EntityPlayerMP getPlayerEntity()

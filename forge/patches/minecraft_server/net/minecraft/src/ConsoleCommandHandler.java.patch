@@ -8,7 +8,7 @@
  
  public class ConsoleCommandHandler
  {
-@@ -52,10 +53,9 @@
+@@ -52,9 +53,9 @@
                          var5.savePlayerStates();
                      }
  
@@ -16,12 +16,11 @@
 +                    for (World world : DimensionManager.getWorlds())
                      {
 -                        var7 = this.minecraftServer.worldMngr[var6];
--                        var7.saveWorld(true, (IProgressUpdate)null);
-+                        world.saveWorld(true, null);
-                     }
- 
-                     this.sendNoticeToOps(var4, "Save complete.");
-@@ -64,20 +64,18 @@
++                        var7 = (WorldServer)world;
+                         boolean var8 = var7.levelSaving;
+                         var7.levelSaving = false;
+                         var7.saveWorld(true, (IProgressUpdate)null);
+@@ -67,20 +68,18 @@
                  {
                      this.sendNoticeToOps(var4, "Disabling level saving..");
  
@@ -46,32 +45,32 @@
                      }
                  }
                  else
-@@ -353,20 +351,18 @@
+@@ -356,20 +355,18 @@
  
                                              if ("add".equalsIgnoreCase(var20))
                                              {
 -                                                for (var19 = 0; var19 < this.minecraftServer.worldMngr.length; ++var19)
 +                                                for (World world : DimensionManager.getWorlds())
                                                  {
--                                                    var22 = this.minecraftServer.worldMngr[var19];
--                                                    var22.advanceTime(var22.getWorldTime() + (long)var8);
-+                                                    world.advanceTime(world.getWorldTime() + (long)var8);
+-                                                    var23 = this.minecraftServer.worldMngr[var19];
+-                                                    var23.advanceTime(var23.getWorldTime() + (long)var18);
++                                                    world.advanceTime(world.getWorldTime() + (long)var18);
                                                  }
  
-                                                 this.sendNoticeToOps(var4, "Added " + var8 + " to time");
+                                                 this.sendNoticeToOps(var4, "Added " + var18 + " to time");
                                              }
                                              else if ("set".equalsIgnoreCase(var20))
                                              {
 -                                                for (var19 = 0; var19 < this.minecraftServer.worldMngr.length; ++var19)
 +                                                for (World world : DimensionManager.getWorlds())
                                                  {
--                                                    var22 = this.minecraftServer.worldMngr[var19];
--                                                    var22.advanceTime((long)var8);
-+                                                    world.advanceTime((long)var8);
+-                                                    var23 = this.minecraftServer.worldMngr[var19];
+-                                                    var23.advanceTime((long)var18);
++                                                    world.advanceTime((long)var18);
                                                  }
  
-                                                 this.sendNoticeToOps(var4, "Set time to " + var8);
-@@ -411,7 +407,7 @@
+                                                 this.sendNoticeToOps(var4, "Set time to " + var18);
+@@ -414,7 +411,7 @@
                                      }
                                      else if (var2.toLowerCase().startsWith("toggledownfall"))
                                      {

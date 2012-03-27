@@ -33,15 +33,6 @@ public class Configuration
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_BLOCK   = "block";
     public static final String CATEGORY_ITEM    = "item";
-    
-    @Deprecated
-    public static final int GENERAL_PROPERTY = 0;
-    
-    @Deprecated
-    public static final int BLOCK_PROPERTY   = 1;
-    
-    @Deprecated
-    public static final int ITEM_PROPERTY    = 2;
 
     File file;
     
@@ -60,22 +51,6 @@ public class Configuration
         categories.put(CATEGORY_GENERAL, generalProperties);
         categories.put(CATEGORY_BLOCK, blockProperties);
         categories.put(CATEGORY_ITEM, itemProperties);
-    }
- 
-    /**
-     * Helper for depreciated functions
-     */
-    private String getCategoryFromIndex(int kind)
-    {
-        switch(kind)
-        {
-            case 1:
-                return CATEGORY_BLOCK;
-            case 2:
-                return CATEGORY_ITEM;      
-            default:
-                return CATEGORY_GENERAL;          
-        }
     }
 
     /**
@@ -131,12 +106,6 @@ public class Configuration
             }
         }
     }
-
-    @Deprecated
-    public Property getOrCreateIntProperty(String key, int kind, int defaultValue)
-    {
-        return getOrCreateIntProperty(key, getCategoryFromIndex(kind), defaultValue);
-    }
     
     public Property getOrCreateIntProperty(String key, String category, int defaultValue)
     {
@@ -153,12 +122,6 @@ public class Configuration
         }
     }
     
-    @Deprecated
-    public Property getOrCreateBooleanProperty(String key, int kind, boolean defaultValue)
-    {
-        return getOrCreateBooleanProperty(key, getCategoryFromIndex(kind), defaultValue);
-    }
-    
     public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
     {
         Property prop = getOrCreateProperty(key, category, Boolean.toString(defaultValue));
@@ -171,12 +134,6 @@ public class Configuration
             prop.value = Boolean.toString(defaultValue);
             return prop;
         }
-    }
-
-    @Deprecated
-    public Property getOrCreateProperty(String key, int kind, String defaultValue)
-    {
-        return getOrCreateProperty(key, getCategoryFromIndex(kind), defaultValue);
     }
     
     public Property getOrCreateProperty(String key, String category, String defaultValue)

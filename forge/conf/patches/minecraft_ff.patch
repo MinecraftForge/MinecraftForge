@@ -1,7 +1,7 @@
 diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net\minecraft\client\Minecraft.java
---- minecraft\net\minecraft\client\Minecraft.java	Tue Mar 06 11:25:27 2012
-+++ minecraft_patched\net\minecraft\client\Minecraft.java	Tue Mar 06 11:39:29 2012
-@@ -1626,11 +1626,13 @@
+--- minecraft\net\minecraft\client\Minecraft.java	Sun Mar 25 05:06:23 2012
++++ minecraft_patched\net\minecraft\client\Minecraft.java	Sun Mar 25 05:08:08 2012
+@@ -1631,11 +1631,13 @@
  
              this.field_6324_e.func_600_a(var6.field_22395_a + var10, 64, var6.field_22396_c + var8);
              if(!this.field_6327_b.func_35643_e()) {
@@ -15,18 +15,8 @@ diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net
              }
           }
        }
-@@ -1746,13 +1748,17 @@
-    }
- 
-    public static void func_6269_a(String p_6269_0_, String p_6269_1_) {
-+      try {
-       func_6253_a(p_6269_0_, p_6269_1_, (String)null);
-+      }
-+      catch (LWJGLException e) {
-+      }
-    }
- 
-    public static void func_6253_a(String p_6253_0_, String p_6253_1_, String p_6253_2_) throws LWJGLException {
+@@ -1757,7 +1759,7 @@
+    public static void func_6253_a(String p_6253_0_, String p_6253_1_, String p_6253_2_) {
        boolean var3 = false;
        Frame var5 = new Frame("Minecraft");
 -      AWTGLCanvas var6 = new AWTGLCanvas();
@@ -35,8 +25,8 @@ diff -r -U 3 minecraft\net\minecraft\client\Minecraft.java minecraft_patched\net
        var5.add(var6, "Center");
        var6.setPreferredSize(new Dimension(854, 480));
 diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\minecraft\src\CodecMus.java
---- minecraft\net\minecraft\src\CodecMus.java	Tue Mar 06 11:25:28 2012
-+++ minecraft_patched\net\minecraft\src\CodecMus.java	Tue Mar 06 11:37:54 2012
+--- minecraft\net\minecraft\src\CodecMus.java	Sun Mar 25 05:06:23 2012
++++ minecraft_patched\net\minecraft\src\CodecMus.java	Sun Mar 25 05:08:08 2012
 @@ -1,5 +1,6 @@
  package net.minecraft.src;
  
@@ -57,8 +47,8 @@ diff -r -U 3 minecraft\net\minecraft\src\CodecMus.java minecraft_patched\net\min
     }
  }
 diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\minecraft\src\ItemMap.java
---- minecraft\net\minecraft\src\ItemMap.java	Tue Mar 06 11:25:30 2012
-+++ minecraft_patched\net\minecraft\src\ItemMap.java	Tue Mar 06 11:37:54 2012
+--- minecraft\net\minecraft\src\ItemMap.java	Sun Mar 25 05:06:23 2012
++++ minecraft_patched\net\minecraft\src\ItemMap.java	Sun Mar 25 05:08:08 2012
 @@ -19,7 +19,6 @@
     }
  
@@ -76,8 +66,8 @@ diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\mine
        if(var4 == null) {
           p_28012_1_.func_28156_b(p_28012_2_.func_28101_b("map"));
 diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\net\minecraft\src\MusInputStream.java
---- minecraft\net\minecraft\src\MusInputStream.java	Tue Mar 06 11:25:31 2012
-+++ minecraft_patched\net\minecraft\src\MusInputStream.java	Tue Mar 06 11:37:54 2012
+--- minecraft\net\minecraft\src\MusInputStream.java	Sun Mar 25 05:06:23 2012
++++ minecraft_patched\net\minecraft\src\MusInputStream.java	Sun Mar 25 05:08:08 2012
 @@ -1,5 +1,6 @@
  package net.minecraft.src;
  
@@ -98,9 +88,20 @@ diff -r -U 3 minecraft\net\minecraft\src\MusInputStream.java minecraft_patched\n
  
        for(int var4 = 0; var4 < p_read_3_; ++var4) {
           byte var5 = p_read_1_[p_read_2_ + var4] = (byte)(p_read_1_[p_read_2_ + var4] ^ this.field_1516_c >> 8);
+diff -r -U 3 minecraft\net\minecraft\src\NetworkMasterThread.java minecraft_patched\net\minecraft\src\NetworkMasterThread.java
+--- minecraft\net\minecraft\src\NetworkMasterThread.java	Sun Mar 25 05:06:23 2012
++++ minecraft_patched\net\minecraft\src\NetworkMasterThread.java	Sun Mar 25 05:08:08 2012
+@@ -11,6 +11,7 @@
+       this.field_1086_a = p_i570_1_;
+    }
+ 
++   @SuppressWarnings("deprecation")
+    public void run() {
+       try {
+          Thread.sleep(5000L);
 diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
---- minecraft\net\minecraft\src\RenderGlobal.java	Tue Mar 06 11:25:31 2012
-+++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Tue Mar 06 11:37:54 2012
+--- minecraft\net\minecraft\src\RenderGlobal.java	Sun Mar 25 05:06:24 2012
++++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Sun Mar 25 05:08:08 2012
 @@ -1458,7 +1458,7 @@
           double var15 = this.field_1439_t.field_22009_h.field_611_ak - p_40193_2_;
           double var17 = this.field_1439_t.field_22009_h.field_610_al - p_40193_4_;
@@ -111,8 +112,8 @@ diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net
              this.field_1439_t.field_6321_h.func_1192_a(var21 = new EntityHugeExplodeFX(this.field_1448_k, p_40193_2_, p_40193_4_, p_40193_6_, p_40193_8_, p_40193_10_, p_40193_12_));
           } else if(p_40193_1_.equals("largeexplode")) {
 diff -r -U 3 minecraft\net\minecraft\src\ThreadedFileIOBase.java minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Tue Mar 06 11:25:32 2012
-+++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Tue Mar 06 11:37:54 2012
+--- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Sun Mar 25 05:06:24 2012
++++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Sun Mar 25 05:08:08 2012
 @@ -20,7 +20,9 @@
     }
  
@@ -123,3 +124,15 @@ diff -r -U 3 minecraft\net\minecraft\src\ThreadedFileIOBase.java minecraft_patch
     }
  
     private void func_40568_b() {
+diff -r -U 3 minecraft\net\minecraft\src\WorldGenerator.java minecraft_patched\net\minecraft\src\WorldGenerator.java
+--- minecraft\net\minecraft\src\WorldGenerator.java	Sun Mar 25 05:06:24 2012
++++ minecraft_patched\net\minecraft\src\WorldGenerator.java	Sun Mar 25 05:09:17 2012
+@@ -26,7 +26,7 @@
+    protected void func_41060_a(World p_41060_1_, int p_41060_2_, int p_41060_3_, int p_41060_4_, int p_41060_5_, int p_41060_6_) {
+       if(this.field_41061_a) {
+          p_41060_1_.func_688_b(p_41060_2_, p_41060_3_, p_41060_4_, p_41060_5_, p_41060_6_);
+-      } else if(p_41060_1_.func_673_a(p_41060_2_ >> 4, p_41060_4_ >> 4).field_50120_o) {
++      } else if(p_41060_1_.func_673_a(p_41060_2_, p_41060_4_).field_50120_o) {
+          if(p_41060_1_.func_643_a(p_41060_2_, p_41060_3_, p_41060_4_, p_41060_5_, p_41060_6_)) {
+             p_41060_1_.func_665_h(p_41060_2_, p_41060_3_, p_41060_4_);
+          }

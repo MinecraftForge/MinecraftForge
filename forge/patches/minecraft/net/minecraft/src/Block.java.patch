@@ -75,12 +75,12 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
--        if (this.renderAsNormalBlock() && !this.isBlockContainer && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-+        if (this.renderAsNormalBlock() && !hasTileEntity(par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+-        if (this.func_50074_q() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
++        if (canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1046,6 +1046,376 @@
+@@ -1051,6 +1051,396 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -452,6 +452,26 @@
 +    		}
 +    	}
 +    	return ret;
++    }
++    
++    /**
++     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
++     * 
++     * @param world The world
++     * @param player The player doing the harvesting
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param metadata The metadata
++     * @return True if the block can be directly harvested using silk touch
++     */
++    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
++    {
++    	if (this instanceof BlockGlass)
++    	{
++    		return true;
++    	}
++    	return renderAsNormalBlock() && !hasTileEntity(metadata);
 +    }
 +    
      static

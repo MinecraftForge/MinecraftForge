@@ -34,7 +34,6 @@ rm -rf src src_work src_forge
 
 if [ ! -d src_base ] ; then
 	./decompile.sh
-    python forge/clean_src.py src
 	mv src src_base
 fi
 

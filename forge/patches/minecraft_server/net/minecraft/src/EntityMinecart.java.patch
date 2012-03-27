@@ -163,8 +163,8 @@
              }
  
              return true;
-@@ -230,7 +234,7 @@
-             this.func_41018_e_(this.func_41020_o() - 1);
+@@ -241,7 +245,7 @@
+             this.kill();
          }
  
 -        if (this.isMinecartPowered() && this.rand.nextInt(4) == 0)
@@ -172,7 +172,7 @@
          {
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -285,25 +289,20 @@
+@@ -296,25 +300,20 @@
              double var6 = 0.0078125D;
              int var8 = this.worldObj.getBlockId(var1, var2, var3);
  
@@ -201,7 +201,7 @@
                  if (var10 >= 2 && var10 <= 5)
                  {
                      this.posY = (double)(var2 + 1);
-@@ -346,7 +345,7 @@
+@@ -357,7 +356,7 @@
                  this.motionZ = var22 * var16 / var18;
                  double var24;
  
@@ -210,7 +210,7 @@
                  {
                      var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -396,36 +395,8 @@
+@@ -407,36 +406,8 @@
                  this.posX = var26 + var14 * var24;
                  this.posZ = var28 + var16 * var24;
                  this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -249,7 +249,7 @@
  
                  if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var1 == var13[0][0] && MathHelper.floor_double(this.posZ) - var3 == var13[0][2])
                  {
-@@ -436,41 +407,7 @@
+@@ -447,41 +418,7 @@
                      this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
                  }
  
@@ -292,7 +292,7 @@
  
                  Vec3D var52 = this.func_182_g(this.posX, this.posY, this.posZ);
  
-@@ -499,30 +436,15 @@
+@@ -510,30 +447,15 @@
                  }
  
                  double var41;
@@ -329,7 +329,7 @@
                  {
                      var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -558,41 +480,7 @@
+@@ -569,41 +491,7 @@
              }
              else
              {
@@ -372,7 +372,7 @@
              }
  
              this.rotationPitch = 0.0F;
-@@ -628,7 +516,18 @@
+@@ -639,7 +527,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -392,7 +392,7 @@
  
              if (var15 != null && var15.size() > 0)
              {
-@@ -653,17 +552,8 @@
+@@ -664,17 +563,8 @@
                  this.riddenByEntity = null;
              }
  
@@ -412,7 +412,7 @@
          }
      }
  
-@@ -682,14 +572,9 @@
+@@ -693,14 +583,9 @@
  
          if (BlockRail.isRailBlock(var10))
          {
@@ -428,7 +428,7 @@
              if (var11 >= 2 && var11 <= 5)
              {
                  par3 = (double)(var8 + 1);
-@@ -754,13 +639,13 @@
+@@ -765,13 +650,13 @@
      {
          par1NBTTagCompound.setInteger("Type", this.minecartType);
  
@@ -445,7 +445,7 @@
          {
              NBTTagList var2 = new NBTTagList();
  
-@@ -786,13 +671,13 @@
+@@ -797,13 +682,13 @@
      {
          this.minecartType = par1NBTTagCompound.getInteger("Type");
  
@@ -462,7 +462,7 @@
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -815,11 +700,18 @@
+@@ -826,11 +711,18 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -482,7 +482,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -865,7 +757,7 @@
+@@ -876,7 +768,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -491,7 +491,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -873,7 +765,7 @@
+@@ -884,7 +776,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -500,7 +500,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -908,7 +800,7 @@
+@@ -919,7 +811,7 @@
       */
      public int getSizeInventory()
      {
@@ -509,7 +509,7 @@
      }
  
      /**
-@@ -1011,7 +903,12 @@
+@@ -1022,7 +914,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -523,7 +523,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1023,14 +920,14 @@
+@@ -1034,14 +931,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -540,7 +540,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1062,7 +959,7 @@
+@@ -1073,7 +970,7 @@
      /**
       * Is this minecart powered (Fuel > 0)
       */
@@ -549,7 +549,7 @@
      {
          return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1115,4 +1012,348 @@
+@@ -1126,4 +1023,348 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }

@@ -805,7 +805,6 @@ field_22077_f,width,0,
 field_22078_e,yPos,0,
 field_22079_d,xPos,0,
 field_22080_c,fontRenderer,0,Have the font renderer from GuiScreen to render the textbox text into the screen.
-field_22081_b,isEnabled,0,"If this value is true along isFocused, keyTyped will process the keys."
 field_22082_a,isFocused,0,"If this value is true along isEnabled, keyTyped will process the keys."
 field_22095_r,buttonRename,0,the rename button in the world selection gui
 field_22096_q,deleting,0,set to true if you arein the process of deleteing a world/save
@@ -1169,7 +1168,6 @@ field_270_aq,painting,0,
 field_27103_i,haveAchiement,0,
 field_27104_h,itemRender,0,"Holds a instance of RenderItem, used to draw the achievement icons on screen (is based on ItemStack)"
 field_27105_f,theAchievement,0,Holds the achievement that will be displayed on the GUI.
-field_27107_l,parentGuiScreen,0,"Holds the GuiScreen that the textfield is attached, used for tab purposes."
 field_27113_p,guiMapY,0,The y position of the achievement map
 field_27114_o,guiMapX,0,The x position of the achievement map
 field_27117_l,mouseY,0,The current mouse y coordinate
@@ -2838,6 +2836,7 @@ field_493_e,metadata,0,Metadata of the block.
 field_494_d,type,0,The new block type for the block.
 field_495_c,zPosition,0,Block Z position.
 field_499_b,xPosition,0,The X position of the object.
+field_50099_c,nameinLowerCase,0,Player name in lowercase.
 field_500_a,entityId,0,Entity ID of the object.
 field_501_e,type,0,The type of object.
 field_502_d,zPosition,0,The Z position of the object.
@@ -3414,8 +3413,6 @@ field_981_l,lowerChestInventory,0,
 field_982_j,upperChestInventory,0,
 field_983_a,netHandler,0,Network object that downloads the terrain data.
 field_984_h,updateCounter,0,Counts the number of screen updates.
-field_985_a,message,0,The chat message.
-field_986_h,updateCounter,0,Counts the number of screen updates. Used to make the caret flash.
 field_989_j,updateCounter,0,Counts the number of screen updates.
 field_992_a,errorMessage,0,The error message.
 field_993_h,errorDetail,0,The details about the error.

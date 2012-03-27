@@ -36,7 +36,7 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -1106,8 +1115,11 @@
+@@ -1102,8 +1111,11 @@
                      var20 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      Profiler.endStartSection("outline");
@@ -50,7 +50,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1171,8 +1183,12 @@
+@@ -1167,8 +1179,12 @@
                  var20 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  Profiler.endStartSection("outline");
@@ -65,7 +65,7 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-@@ -1196,6 +1212,9 @@
+@@ -1192,6 +1208,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }
