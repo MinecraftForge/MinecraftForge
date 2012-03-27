@@ -891,7 +891,7 @@ public class MinecraftForge
         {
             if (entry.getKey().isInstance(entity))
             {
-                if (!checkSupers || entry.getKey() == entry.getClass())
+                if (!checkSupers || entry.getKey() == entity.getClass())
                 {
                     return entry.getValue();
                 }
