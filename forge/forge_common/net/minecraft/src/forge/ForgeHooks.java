@@ -127,7 +127,7 @@ public class ForgeHooks
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.OnConnect(network);
+            handler.onConnect(network);
         }
     }
 
@@ -135,7 +135,7 @@ public class ForgeHooks
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.OnLogin(network, login);
+            handler.onLogin(network, login);
         }
     }
 
@@ -143,7 +143,7 @@ public class ForgeHooks
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.OnDisconnect(network, message, args);
+            handler.onDisconnect(network, message, args);
         }
     }
     static LinkedList<IConnectionHandler> connectionHandlers = new LinkedList<IConnectionHandler>();
