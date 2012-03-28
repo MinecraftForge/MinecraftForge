@@ -2,12 +2,16 @@ package fml.stubs.mcpserver;
 
 import java.util.Random;
 
+import fml.Mod;
+
+
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
 
+@Mod(name="blah",version="blah")
 public interface BaseMod {
   int addFuel(int id, int metadata);
 
@@ -25,8 +29,10 @@ public interface BaseMod {
   abstract String getVersion();
 
   // void keyboardEvent(KeyBinding event);
+  @Mod.PreInit
   abstract void load();
 
+  @Mod.Init
   void modsLoaded();
 
   void onItemPickup(EntityPlayer player, ItemStack item);
