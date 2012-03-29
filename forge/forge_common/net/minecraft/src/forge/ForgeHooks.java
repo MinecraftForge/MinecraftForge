@@ -182,6 +182,19 @@ public class ForgeHooks
         }
         return true;
     }
+    
+    
+    public static boolean canUpdateEntity(Entity entity)
+    {
+        for(IChunkLoadHandler loader : chunkLoadHandlers)
+        {
+            if(loader.canUpdateEntity(entity))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     static LinkedList<IChunkLoadHandler> chunkLoadHandlers = new LinkedList<IChunkLoadHandler>();
     
     public static boolean onEntityInteract(EntityPlayer player, Entity entity, boolean isAttack)
