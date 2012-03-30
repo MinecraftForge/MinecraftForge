@@ -138,7 +138,7 @@
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src"/>
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
       <zipfileset dir="${basedir}/install" includes="*" prefix="fml"/>
-      <zipfileset dir="${mcp.dir}/conf" includes="**" prefix="fml/conf"/>
+      <zipfileset dir="${mcp.home}/conf" includes="**" prefix="fml/conf"/>
       <zipfileset dir="${basedir}" includes="LICENSE" prefix="fml"/>
     </zip>
   </target>
