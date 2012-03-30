@@ -134,12 +134,13 @@
   <target name="build-source-pack">
     <property name="jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${jarname}.zip">
-      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src"/>
-      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src"/>
-      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
       <zipfileset dir="${basedir}/install" includes="*" prefix="fml"/>
-      <zipfileset dir="${mcp.home}/conf" includes="**" prefix="fml/conf"/>
       <zipfileset dir="${basedir}" includes="LICENSE" prefix="fml"/>
+      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
+      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
+      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft"/>
+      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
+      <zipfileset dir="${mcp.home}/conf" includes="**" prefix="fml/conf"/>
     </zip>
   </target>
   
