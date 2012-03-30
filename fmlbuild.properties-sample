@@ -1,0 +1,2 @@
+default.dev.home=/home/cpw/projects/mcworkspace
+default.mcp.home=${default.dev.home}/vanillamcp
