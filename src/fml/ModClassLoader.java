@@ -1,5 +1,5 @@
 /*
- * The FML Forge ModLoader suite.
+ * The FML Forge Mod Loader suite.
  * Copyright (C) 2012 cpw
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
