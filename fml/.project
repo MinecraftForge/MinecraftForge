@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>minecraft_server</name>
+			<type>2</type>
+			<location>/home/cpw/projects/mcworkspace/vanillamcp/src-work/minecraft_server</location>
+		</link>
+	</linkedResources>
 </projectDescription>

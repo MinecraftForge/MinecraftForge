@@ -13,16 +13,16 @@
  */
 package fml;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public class LoaderException extends RuntimeException {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -5675297950958861378L;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Mod {
-  String name() default "";
-  String version() default "";
-  boolean wantsPreInit() default false;
-  boolean wantsPostInit() default false;
-  public @interface PreInit {}
-  public @interface Init {}
-  public @interface PostInit {}
+  public LoaderException(Exception wrapped) {
+    super(wrapped);
+  }
+
+  public LoaderException() {
+  }
 }
