@@ -1,7 +1,11 @@
-package fml.stubs.mcpserver;
+package net.minecraft.src;
 
 import java.util.List;
 import java.util.logging.Logger;
+
+import fml.CommonRegistry;
+import fml.server.Loader;
+import fml.server.ModLoaderModContainer;
 
 import net.minecraft.src.Achievement;
 import net.minecraft.src.BiomeGenBase;
@@ -25,13 +29,6 @@ public class ModLoader {
   static int addAllFuel(int id, int metadata) {
     return 0;
   }
-
-  // static void addAllRenderers(Map<Class<? extends Entity>, Render> renderers)
-  // {
-  // }
-
-  // static void addAnimation(TextureFX anim) {
-  // }
 
   static int addArmor(String armor) {
     return 0;
@@ -95,10 +92,6 @@ public class ModLoader {
     return null;
   }
 
-  // static Minecraft getMinecraftInstance() {
-  // return null;
-  // }
-
   static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex) {
     return null;
   }
@@ -119,10 +112,6 @@ public class ModLoader {
     return 0;
   }
 
-  // static boolean isGUIOpen(Class<? extends GuiScreen> gui) {
-  // return false;
-  // }
-
   static boolean isModLoaded(String modname) {
     return false;
   }
@@ -130,18 +119,8 @@ public class ModLoader {
   static void loadConfig() {
   }
 
-  // static BufferedImage loadImage(RenderEngine texCache, String path) {
-  // return null;
-  // }
-
   static void onItemPickup(EntityPlayer player, ItemStack item) {
   }
-
-  // static void onTick(float tick, net.minecraft.client.Minecraft game) {
-  // }
-
-  // static void openGUI(EntityPlayer player, GuiScreen gui) {
-  // }
 
   static void populateChunk(IChunkProvider generator, int chunkX, int chunkZ, World world) {
   }
@@ -149,66 +128,48 @@ public class ModLoader {
   static void receivePacket(Packet250CustomPayload packet) {
   }
 
-  // static KeyBinding[] registerAllKeys(KeyBinding[] keys) {
-  // return keys;
-  // }
-
-  // static void registerAllTextureOverrides(RenderEngine cache) {
-  // }
-
   static void registerBlock(Block block) {
+    CommonRegistry.registerBlock(block);
   }
 
   static void registerBlock(Block block, Class<? extends ItemBlock> itemclass) {
+    CommonRegistry.registerBlock(block, itemclass);
   }
 
   static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id) {
+    CommonRegistry.registerEntityID(entityClass, entityName, id);
   }
 
   static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int background, int foreground) {
+    CommonRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
   }
-
-  // static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean
-  // allowRepeat) {
-  // }
 
   static void registerPacketChannel(BaseMod mod, String channel) {
   }
 
   static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
+    CommonRegistry.registerTileEntity(tileEntityClass, id);
   }
 
-  // static void registerTileEntity(Class<? extends TileEntity> tileEntityClass,
-  // String id, TileEntitySpecialRenderer renderer) {
-  // }
-
   static void removeBiome(BiomeGenBase biome) {
+    CommonRegistry.removeBiome(biome);
   }
 
   static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList) {
+    CommonRegistry.removeSpawn(entityClass, spawnList);
   }
 
   static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList, BiomeGenBase... biomes) {
+    CommonRegistry.removeSpawn(entityClass, spawnList, biomes);
   }
 
   static void removeSpawn(String entityName, EnumCreatureType spawnList) {
+    CommonRegistry.removeSpawn(entityName, spawnList);
   }
 
   static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes) {
+    CommonRegistry.removeSpawn(entityName, spawnList, biomes);
   }
-
-  static boolean renderBlockIsItemFull3D(int modelID) {
-    return false;
-  }
-
-  // static void renderInvBlock(RenderBlocks renderer, Block block, int
-  // metadata, int modelID) {
-  // }
-
-  // static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world,
-  // int x, int y, int z, Block block, int modelID) {
-  // return false;
-  // }
 
   static void saveConfig() {
   }
@@ -216,14 +177,9 @@ public class ModLoader {
   static void serverChat(String text) {
   }
 
-  // static void serverLogin(NetClientHandler handler, Packet1Login loginPacket)
-  // {
-  // }
-
   static void setInGameHook(BaseMod mod, boolean enable, boolean useClock) {
-  }
-
-  static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock) {
+    ModLoaderModContainer mlmc=(ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
+    mlmc.setTicking(enable);
   }
 
   static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value) {

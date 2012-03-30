@@ -6,4 +6,8 @@ public interface ModContainer {
   void preInit();
   void init();
   void postInit();
+  String getName();
+  void tickStart(float tickTime);
+  void tickEnd(float tickTime);
+  boolean matches(Object mod);
 }
