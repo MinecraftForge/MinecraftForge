@@ -4,6 +4,7 @@ import fml.Mod;
 
 public class FMLModContainer implements ModContainer {
   private Mod modDescriptor;
+  private 
   private Object modInstance;
   public FMLModContainer(Class<?> clazz) {
     modDescriptor=clazz.getAnnotation(Mod.class);
