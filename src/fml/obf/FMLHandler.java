@@ -11,18 +11,34 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml;
+package fml.obf;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import fml.FMLHooks;
+import fml.Loader;
+import net.minecraft.server.MinecraftServer;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Mod {
-  String name() default "";
-  String version() default "";
-  boolean wantsPreInit() default false;
-  boolean wantsPostInit() default false;
-  public @interface PreInit {}
-  public @interface Init {}
-  public @interface PostInit {}
+public enum FMLHandler {
+  INSTANCE;
+  private MinecraftServer server;
+
+  public void onPreLoad(MinecraftServer minecraftServer) {
+    INSTANCE.server=minecraftServer;
+    Loader.INSTANCE.loadMods();
+  }
+
+  public void onLoadComplete() {
+    Loader.INSTANCE.initializeMods();
+  }
+
+  public void onPreTick() {
+    FMLHooks.INSTANCE.serverTickStart();
+  }
+
+  public void onPostTick() {
+    FMLHooks.INSTANCE.serverTickEnd();
+  }
+
+  public MinecraftServer getServer() {
+    return server;
+  }
 }

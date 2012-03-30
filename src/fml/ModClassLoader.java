@@ -13,16 +13,19 @@
  */
 package fml;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Mod {
-  String name() default "";
-  String version() default "";
-  boolean wantsPreInit() default false;
-  boolean wantsPostInit() default false;
-  public @interface PreInit {}
-  public @interface Init {}
-  public @interface PostInit {}
+public class ModClassLoader extends URLClassLoader {
+
+  public ModClassLoader() {
+    super(new URL[0]);
+  }
+
+  public void addFile(File modFile) throws MalformedURLException {
+    URL url=modFile.toURI().toURL();
+    super.addURL(url);
+  }
 }

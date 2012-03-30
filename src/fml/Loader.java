@@ -1,4 +1,17 @@
-package fml.server;
+/*
+ * The FML Forge ModLoader suite.
+ * Copyright (C) 2012 cpw
+ * 
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+package fml;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -19,9 +32,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import net.minecraft.src.BaseMod;
-import fml.Mod;
+import fml.ml.ModLoaderModContainer;
 
-public class Loader {
+public enum Loader {
+  INSTANCE;
   private enum State {
     NOINIT, LOADING, PREINIT, INIT, POSTINIT, UP, ERRORED
   };
@@ -38,8 +52,6 @@ public class Loader {
   private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
   private static Pattern modClass = Pattern.compile("(.*/)(mod\\_[^\\s]+).class$");
 
-  public static Loader instance;
-
   public static void run() {
     LOG.setLevel(Level.ALL);
     FileHandler fileHandler;
@@ -52,20 +64,9 @@ public class Loader {
     } catch (Exception e) {
       // Whatever - give up
     }
-    instance = new Loader();
   }
 
   private Loader() {
-    mods = new ArrayList<ModContainer>();
-    state = State.NOINIT;
-    load();
-    sortModList();
-    preModInit();
-    modInit();
-    postModInit();
-    state = State.UP;
-    // Make mod list immutable
-    mods=Collections.unmodifiableList(mods);
   }
 
   private void sortModList() {
@@ -228,5 +229,21 @@ public class Loader {
 
   public static List<ModContainer> getModList() {
     return mods;
+  }
+
+  public void loadMods() {
+    state = State.NOINIT;
+    mods = new ArrayList<ModContainer>();
+    load();
+    sortModList();
+    // Make mod list immutable
+    mods=Collections.unmodifiableList(mods);
+    preModInit();
+  }
+
+  public void initializeMods() {
+    modInit();
+    postModInit();
+    state = State.UP;
   }
 }
