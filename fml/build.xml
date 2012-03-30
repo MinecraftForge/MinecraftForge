@@ -44,7 +44,7 @@
     <condition property="mcp.home" value="${env.WORKSPACE}/mcpworkspace" else="${default.mcp.home}">
       <isset property="env.WORKSPACE" />
     </condition>
-    <condition property="python.exe" value="${mcp.home}/runtime/bin/python.exe" else="python">
+    <condition property="python.exe" value="${mcp.home}/runtime/bin/python/python_mcp" else="python">
       <os family="Windows"/>
     </condition>
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
@@ -134,11 +134,12 @@
   <target name="build-source-pack">
     <property name="jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${jarname}.zip">
-      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="src"/>
-      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="src"/>
-      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="patches"/>
-      <zipfileset dir="${basedir}/install" includes="*"/>
-      <zipfileset dir="${basedir}" includes="LICENSE"/>
+      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src"/>
+      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src"/>
+      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
+      <zipfileset dir="${basedir}/install" includes="*" prefix="fml"/>
+      <zipfileset dir="${mcp.dir}/conf" includes="**" prefix="fml/conf"/>
+      <zipfileset dir="${basedir}" includes="LICENSE" prefix="fml"/>
     </zip>
   </target>
   
