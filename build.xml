@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     30 Mar 2012 13:35:40                                                        
+
+     FML    
+     The Forge Mod Loader
+                   
+     cpw                                                                
+     ====================================================================== -->
+<project name="FML" default="build">
+  <description>The Forge Mod Loader</description>
+  <macrodef name="side">
+    <attribute name="prop" />
+    <attribute name="src" />
+    <attribute name="side" />
+    <sequential>
+      <property name="@{prop}" value="${@{side}.@{src}}" />
+      <condition property="is.client">
+        <equals arg1="@{side}" arg2="client" />
+      </condition>
+      <condition property="is.server">
+        <equals arg1="@{side}" arg2="server" />
+      </condition>
+    </sequential>
+  </macrodef>
+
+  <target name="init">
+    <tstamp>
+      <format pattern="yyMMddHHmmss" property="timestamp" />
+    </tstamp>
+    <property environment="env" />
+    <property file="fmlbuild.properties" />
+    <property name="modname" value="fml" />
+    <property name="version.major" value="0" />
+    <property name="version.minor" value="0" />
+    <property name="version.rev" value="0" />
+    <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
+      <isset property="env.BUILD_NUMBER" />
+    </condition>
+    <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
+    <condition property="dev.home" value="${env.WORKSPACE}" else="${default.dev.home}">
+      <isset property="env.WORKSPACE" />
+    </condition>
+    <condition property="mcp.home" value="${env.WORKSPACE}/mcpworkspace" else="${default.mcp.home}">
+      <isset property="env.WORKSPACE" />
+    </condition>
+    <condition property="python.exe" value="${mcp.home}/runtime/bin/python.exe" else="python">
+      <os family="Windows"/>
+    </condition>
+    <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
+    <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
+    <property name="server.mcp.obfoutput" location="${mcp.obfoutput}/minecraft_server" />
+    <property name="mcp.srcdir" location="${mcp.home}/src" />
+    <property name="client.mcp.srcdir" location="${mcp.srcdir}/minecraft" />
+    <property name="server.mcp.srcdir" location="${mcp.srcdir}/minecraft_server" />
+    <property name="common.src.dir" location="${basedir}/common" />
+    <property name="client.src.dir" location="${basedir}/client" />
+    <property name="server.src.dir" location="${basedir}/server" />
+    <property name="patch.src.dir" location="${basedir}/patches" />
+  </target>
+  
+  <target name="clean">
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/cleanup.py"/>
+      <arg value="-f" />
+    </exec>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/decompile.py"/>
+      <arg value="-l" />
+      <arg value="-g" />
+    </exec>
+  </target>
+
+  <target name="buildandreobfmcp" depends="init">
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/recompile.py"/>
+    </exec>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/reobfuscate.py"/>
+    </exec>
+  </target>
+
+  <target name="merge-client" depends="init,clean">
+    <antcall target="merge-source">
+      <param name="side" value="client" />
+    </antcall>
+  </target>
+
+  <target name="merge-server" depends="init,clean">
+    <antcall target="merge-source">
+      <param name="side" value="server" />
+    </antcall>
+  </target>
+
+  <target name="merge-source">
+    <side prop="merge-to" src="mcp.srcdir" side="${side}" />
+    <side prop="side-from" src="src.dir" side="${side}" />
+
+    <copy todir="${merge-to}" overwrite="true" verbose="true">
+      <fileset dir="${side-from}" includes="**/*.java" />
+      <fileset dir="${common.src.dir}" includes="**/*.java" />
+      <filterchain>
+        <replacetokens>
+          <token key="MAJOR" value="${version.major}" />
+          <token key="MINOR" value="${version.minor}" />
+          <token key="REV" value="${version.rev}" />
+          <token key="BUILD" value="${version.build}" />
+        </replacetokens>
+      </filterchain>
+    </copy>
+  </target>
+
+  <target name="build-client" depends="init,merge-client,buildandreobfmcp">
+    <antcall target="extract-built-jar">
+      <param name="side" value="client" />
+    </antcall>
+  </target>
+
+  <target name="build-server" depends="init,clean,merge-server,buildandreobfmcp">
+    <antcall target="extract-built-jar">
+      <param name="side" value="server" />
+    </antcall>
+  </target>
+
+  <target name="extract-built-jar">
+    <side prop="output" src="mcp.obfoutput" side="${side}" />
+    <property name="jarname" value="${modname}-${side}-${version}" />
+    <mkdir dir="${basedir}/target" />
+    <jar destfile="${basedir}/target/${jarname}.zip">
+      <fileset dir="${output}" includes="**/*.class" />
+    </jar>
+  </target>
+
+  <target name="build-source-pack">
+    <property name="jarname" value="${modname}-src-${version}" />
+    <zip destfile="${basedir}/target/${jarname}.zip">
+      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="src"/>
+      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="src"/>
+      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="patches"/>
+      <zipfileset dir="${basedir}/install" includes="*"/>
+      <zipfileset dir="${basedir}" includes="LICENSE"/>
+    </zip>
+  </target>
+  
+  <target name="build" depends="init,clean,merge-server,patch,build-server,build-source-pack" />
+
+  <target name="patch" depends="init">
+  </target>
+
+</project>
