@@ -11,49 +11,47 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml;
+package net.minecraft.src;
 
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.TileEntity;
 
 public class CommonRegistry {
-  static void addRecipe(ItemStack output, Object... params) {
+  public static void addRecipe(ItemStack output, Object... params) {
+    CraftingManager.getInstance().addRecipe(output, params);
   }
 
-  static void addShapelessRecipe(ItemStack output, Object... params) {
+  public static void addShapelessRecipe(ItemStack output, Object... params) {
+    CraftingManager.getInstance().addShapelessRecipe(output, params);
   }
 
-  static void addSmelting(int input, ItemStack output) {
+  public static void addSmelting(int input, ItemStack output) {
+    FurnaceRecipes.smelting().addSmelting(input, output);
   }
 
   public static void registerBlock(Block block) {
-    Block.blocksList[block.blockID]=block;
+    registerBlock(block,ItemBlock.class);
   }
 
   public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass) {
-    registerBlock(block);
     try {
-      ItemBlock bl=itemclass.getConstructor(int.class).newInstance(block.blockID);
-      Item.itemsList[bl.shiftedIndex-256]=bl;
+      assert block!=null : "registerBlock: block cannot be null";
+      assert itemclass!=null : "registerBlock: itemclass cannot be null";
+      int blockItemId=block.blockID-256;
+      itemclass.getConstructor(int.class).newInstance(blockItemId);
     } catch (Exception e) {
       //HMMM
     }
   }
 
   public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id) {
+    EntityList.addNewMapping(entityClass, entityName, id);
   }
 
-  public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int background, int foreground) {
+  public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour) {
+    EntityList.addNewMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
   }
 
   public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
+    TileEntity.addTileEntityMapping(tileEntityClass, id);
   }
 
   public static void addBiome(BiomeGenBase biome) {

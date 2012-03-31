@@ -13,6 +13,9 @@
  */
 package fml.ml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fml.Loader;
 import fml.LoaderException;
 import fml.ModContainer;
@@ -86,5 +89,15 @@ public class ModLoaderModContainer implements ModContainer {
 
   public void setTicking(boolean enable) {
     isTicking=enable;
+  }
+
+  public static List<BaseMod> findAll() {
+    ArrayList<BaseMod> modList=new ArrayList<BaseMod>();
+    for (ModContainer mc : Loader.getModList()) {
+      if (mc instanceof ModLoaderModContainer) {
+        modList.add(((ModLoaderModContainer)mc).mod);
+      }
+    }
+    return modList;
   }
 }

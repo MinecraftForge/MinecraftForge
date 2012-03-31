@@ -13,6 +13,8 @@
  */
 package fml.obf;
 
+import java.util.logging.Logger;
+
 import fml.FMLHooks;
 import fml.Loader;
 import net.minecraft.server.MinecraftServer;
@@ -40,5 +42,9 @@ public enum FMLHandler {
 
   public MinecraftServer getServer() {
     return server;
+  }
+
+  public static Logger getMinecraftLogger() {
+    return MinecraftServer.logger;
   }
 }
