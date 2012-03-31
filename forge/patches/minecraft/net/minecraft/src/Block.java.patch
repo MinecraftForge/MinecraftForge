@@ -75,12 +75,12 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
--        if (this.func_50074_q() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-+        if (canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+-        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
++        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1051,6 +1051,396 @@
+@@ -1054,6 +1054,396 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
