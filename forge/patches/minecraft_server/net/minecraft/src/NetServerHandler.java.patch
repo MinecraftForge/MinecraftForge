@@ -1,15 +1,16 @@
 --- ../src_base/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,8 @@
+@@ -4,6 +4,9 @@
  import java.util.Random;
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
++import net.minecraft.src.forge.ForgeHooksServer;
 +import net.minecraft.src.forge.MessageManager;
 +import java.io.UnsupportedEncodingException;
  
  public class NetServerHandler extends NetHandler implements ICommandListener
  {
-@@ -372,8 +374,11 @@
+@@ -372,8 +375,11 @@
                  double var10 = this.playerEntity.posY - ((double)var6 + 0.5D) + 1.5D;
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
@@ -22,7 +23,7 @@
                  {
                      return;
                  }
-@@ -465,8 +470,9 @@
+@@ -465,8 +471,9 @@
              {
                  var12 = var11;
              }
@@ -34,7 +35,18 @@
              {
                  this.playerEntity.itemInWorldManager.activeBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8);
              }
-@@ -764,9 +770,10 @@
+@@ -599,7 +606,9 @@
+             {
+                 var2 = "<" + this.playerEntity.username + "> " + var2;
+                 logger.info(var2);
+-                this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(var2));
++                var2 = ForgeHooksServer.onChatMessage(var2, this.playerEntity.username);
++                if(var2 != null)
++                    this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(var2));
+             }
+ 
+             this.field_45001_m += 20;
+@@ -764,9 +773,10 @@
       */
      public void handleRespawn(Packet9Respawn par1Packet9Respawn)
      {
@@ -46,7 +58,7 @@
          }
          else
          {
-@@ -775,7 +782,7 @@
+@@ -775,7 +785,7 @@
                  return;
              }
  
@@ -55,9 +67,9 @@
          }
      }
  
-@@ -965,4 +972,49 @@
+@@ -968,4 +978,49 @@
      {
-         this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.field_50005_b && this.playerEntity.capabilities.allowFlying;
+         this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.isFlying && this.playerEntity.capabilities.allowFlying;
      }
 +    
 +    public EntityPlayerMP getPlayerEntity()

@@ -1,14 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,7 @@
+@@ -4,6 +4,8 @@
  import java.util.Set;
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
++import net.minecraft.src.forge.ForgeHooksServer;
  
  public class ConsoleCommandHandler
  {
-@@ -52,9 +53,9 @@
+@@ -52,9 +54,9 @@
                          var5.savePlayerStates();
                      }
  
@@ -20,7 +21,7 @@
                          boolean var8 = var7.levelSaving;
                          var7.levelSaving = false;
                          var7.saveWorld(true, (IProgressUpdate)null);
-@@ -67,20 +68,18 @@
+@@ -67,20 +69,18 @@
                  {
                      this.sendNoticeToOps(var4, "Disabling level saving..");
  
@@ -45,7 +46,7 @@
                      }
                  }
                  else
-@@ -356,20 +355,18 @@
+@@ -356,20 +356,18 @@
  
                                              if ("add".equalsIgnoreCase(var20))
                                              {
@@ -70,7 +71,18 @@
                                                  }
  
                                                  this.sendNoticeToOps(var4, "Set time to " + var18);
-@@ -414,7 +411,7 @@
+@@ -388,7 +386,9 @@
+                                     {
+                                         var2 = var2.substring(var2.indexOf(" ")).trim();
+                                         minecraftLogger.info("[" + var4 + "] " + var2);
+-                                        var5.sendPacketToAllPlayers(new Packet3Chat("\u00a7d[Server] " + var2));
++                                        var2 = ForgeHooksServer.onChatMessage(var2, var4);
++                                        if(var2 != null)
++                                            var5.sendPacketToAllPlayers(new Packet3Chat("\u00a7d[Server] " + var2));
+                                     }
+                                     else if (var2.toLowerCase().startsWith("tell "))
+                                     {
+@@ -414,7 +414,7 @@
                                      }
                                      else if (var2.toLowerCase().startsWith("toggledownfall"))
                                      {

@@ -15,7 +15,7 @@
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -172,6 +180,7 @@
+@@ -175,6 +183,7 @@
              }
              else
              {
@@ -23,7 +23,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -361,6 +370,10 @@
+@@ -364,6 +373,10 @@
       */
      protected void closeScreen()
      {
@@ -34,7 +34,7 @@
          this.craftingInventory = this.inventorySlots;
      }
  
-@@ -544,7 +557,16 @@
+@@ -547,7 +560,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -52,7 +52,7 @@
      }
  
      /**
-@@ -609,10 +631,18 @@
+@@ -613,10 +635,18 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -72,7 +72,7 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -908,7 +938,11 @@
+@@ -912,7 +942,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -85,7 +85,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -939,6 +973,10 @@
+@@ -943,6 +977,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -96,7 +96,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -969,7 +1007,9 @@
+@@ -973,7 +1011,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -106,7 +106,7 @@
      }
  
      /**
-@@ -998,6 +1038,16 @@
+@@ -1002,6 +1042,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -123,7 +123,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1136,6 +1186,12 @@
+@@ -1140,6 +1190,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -136,7 +136,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1719,4 +1775,45 @@
+@@ -1723,4 +1779,45 @@
      }
  
      public void func_50022_L() {}

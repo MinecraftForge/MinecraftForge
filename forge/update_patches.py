@@ -25,7 +25,7 @@ def cleanDirs(path):
         os.rmdir(path)
         
 def main():
-    print Creating patches
+    print 'Creating patches'
     base = os.path.normpath(os.path.join('..', 'src_base'))
     work = os.path.normpath(os.path.join('..', 'src_work'))
     timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
@@ -33,8 +33,8 @@ def main():
     for path, _, filelist in os.walk(work, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.java'):
             #print cur_file + " " + path[12:]
-            file_base = os.path.normpath(os.path.join(base, path[12:], cur_file))
-            file_work = os.path.normpath(os.path.join(work, path[12:], cur_file))
+            file_base = os.path.normpath(os.path.join(base, path[12:], cur_file)).replace(os.path.sep, '/')	#this is ok on every platform we support
+            file_work = os.path.normpath(os.path.join(work, path[12:], cur_file)).replace(os.path.sep, '/')
             patch = ''
             cmd = 'diff -u %s %s -r --strip-trailing-cr --new-file' % (file_base, file_work)
             process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
@@ -49,7 +49,7 @@ def main():
                 
                 if not os.path.exists(patch_dir):
                     os.makedirs(patch_dir)
-                with open(patch_file, 'w') as fh:
+                with open(patch_file, 'wb') as fh:
                     fh.write(patch)
             else:
                 if os.path.isfile(patch_file):

@@ -9,7 +9,7 @@
  public class GuiIngame extends Gui
  {
      private static RenderItem itemRenderer = new RenderItem();
-@@ -140,7 +142,19 @@
+@@ -142,7 +144,19 @@
  
                  int var50 = var7 - 39;
                  var22 = var50 - 10;

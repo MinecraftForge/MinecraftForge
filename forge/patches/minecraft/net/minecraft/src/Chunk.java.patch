@@ -172,7 +172,7 @@
      }
  
      public BiomeGenBase func_48490_a(int par1, int par2, WorldChunkManager par3WorldChunkManager)
-@@ -1434,4 +1463,18 @@
+@@ -1435,4 +1464,18 @@
              }
          }
      }
