@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.FileHandler;
@@ -265,6 +266,7 @@ public class Loader {
   public void loadMods() {
     state = State.NOINIT;
     mods = new ArrayList<ModContainer>();
+    namedMods = new HashMap<String,ModContainer>();
     load();
     sortModList();
     // Make mod list immutable
