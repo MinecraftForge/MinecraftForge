@@ -40,7 +40,7 @@ public class Loader {
   };
 
   private static Loader instance;
-  private static Logger LOG = Logger.getLogger("ForgeModLoader.Loader");
+  private static Logger LOG = Logger.getLogger("ForgeModLoader");
 
   private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
   private static Pattern modClass = Pattern.compile("(.*/)(mod\\_[^\\s]+).class$");
@@ -67,14 +67,12 @@ public class Loader {
     FileHandler fileHandler;
     try {
       fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
-      System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tc %2$s%n%4$s: %5$s%6$s%n");
-      fileHandler.setFormatter(new SimpleFormatter());
       fileHandler.setLevel(Level.ALL);
       Loader.LOG.addHandler(fileHandler);
     } catch (Exception e) {
       // Whatever - give up
     }
-    LOG.info(String.format("Forge ModLoader version %d.%d.%d.%d for Minecraft %s loading.",major,minor,rev,build,mcversion));
+    LOG.info(String.format("Forge Mod Loader version %d.%d.%d.%d for Minecraft %s loading.",major,minor,rev,build,mcversion));
   }
 
   private void sortModList() {
