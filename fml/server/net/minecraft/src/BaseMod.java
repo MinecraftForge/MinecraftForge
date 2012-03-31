@@ -1,6 +1,5 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
+ * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
@@ -39,7 +38,9 @@ public abstract class BaseMod {
   public void generateSurface(World world, Random random, int chunkX, int chunkZ) {
   }
 
-  public String getName() { return ""; }
+  public String getName() {
+    return getClass().getSimpleName();
+  }
 
   public String getPriorities() {
     return null;
@@ -55,7 +56,11 @@ public abstract class BaseMod {
   public void onItemPickup(EntityPlayer player, ItemStack item) {
   }
 
-  // boolean onTickInGame(float tick, Minecraft game);
+  /**
+   * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
+   * @param minecraftServer the server
+   * @return true to continue receiving ticks
+   */
   public boolean onTickInGame(MinecraftServer minecraftServer) {
     return false;
   }

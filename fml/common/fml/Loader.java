@@ -120,6 +120,10 @@ public class Loader {
   }
 
   private void load() {
+    log.fine("Attempting to load mods contained in the minecraft jar file");
+    
+    attemptFileLoad(new File(".","minecraft_server.jar"));
+    
     File modsDir = new File(".", "mods");
     String canonicalModsPath;
     try {
