@@ -29,7 +29,7 @@ def main():
     print("Creating patches")
     base = 'src-reference'
     work = 'src-work'
-    patched_dir=os.path.join(sys.argv[1],work)
+    patched_dir=os.path.normpath(os.path.join(sys.argv[1],work))
     timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
     
     for path, _, filelist in os.walk(patched_dir, followlinks=True):
@@ -40,7 +40,7 @@ def main():
             cmd = 'diff -u %s %s -r --strip-trailing-cr --new-file' % (file_base, file_work)
             process = subprocess.Popen(cmdsplit(cmd), cwd=os.path.normpath(sys.argv[1]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
             patch, _ = process.communicate()
-            patch_dir = os.path.join(sys.argv[2],'patches', path[len(work)+1:])
+            patch_dir = os.path.join(sys.argv[2],path[len(patched_dir)+1:])
             patch_file = os.path.join(patch_dir, cur_file + '.patch')
             
             if len(patch) > 0:
