@@ -126,9 +126,9 @@
     <side prop="output" src="mcp.obfoutput" side="${side}" />
     <property name="jarname" value="${modname}-${side}-${version}" />
     <mkdir dir="${basedir}/target" />
-    <jar destfile="${basedir}/target/${jarname}.zip">
+    <zip destfile="${basedir}/target/${jarname}.zip">
       <fileset dir="${output}" includes="**/*.class" />
-    </jar>
+    </zip>
   </target>
 
   <target name="build-source-pack">
