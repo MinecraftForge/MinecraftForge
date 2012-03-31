@@ -16,9 +16,9 @@ package net.minecraft.src;
 import java.util.List;
 import java.util.logging.Logger;
 
-import fml.CommonRegistry;
 import fml.Loader;
 import fml.ml.ModLoaderModContainer;
+import fml.obf.FMLHandler;
 
 import net.minecraft.src.Achievement;
 import net.minecraft.src.BiomeGenBase;
@@ -70,24 +70,31 @@ public class ModLoader {
   }
 
   static void addRecipe(ItemStack output, Object... params) {
+    CraftingManager.getInstance().addRecipe(output, params);
   }
 
   static void addShapelessRecipe(ItemStack output, Object... params) {
+    CraftingManager.getInstance().addShapelessRecipe(output, params);
   }
 
   static void addSmelting(int input, ItemStack output) {
+    FurnaceRecipes.smelting().addSmelting(input, output);
   }
 
   static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList) {
+    CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList);
   }
 
   static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes) {
+    CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
   }
 
   static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList) {
+    CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList);
   }
 
   static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes) {
+    CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
   }
 
   static boolean dispenseEntity(World world, double x, double y, double z, int xVel, int zVel, ItemStack item) {
@@ -98,11 +105,11 @@ public class ModLoader {
   }
 
   static List<BaseMod> getLoadedMods() {
-    return null;
+    return ModLoaderModContainer.findAll();
   }
 
   static Logger getLogger() {
-    return null;
+    return FMLHandler.getMinecraftLogger();
   }
 
   static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex) {
@@ -113,29 +120,12 @@ public class ModLoader {
     return null;
   }
 
-  static int getUniqueBlockModelID(BaseMod mod, boolean full3DItem) {
-    return 0;
-  }
-
   static int getUniqueEntityId() {
     return 0;
   }
 
-  static int getUniqueSpriteIndex(String path) {
-    return 0;
-  }
-
   static boolean isModLoaded(String modname) {
-    return false;
-  }
-
-  static void loadConfig() {
-  }
-
-  static void onItemPickup(EntityPlayer player, ItemStack item) {
-  }
-
-  static void populateChunk(IChunkProvider generator, int chunkX, int chunkZ, World world) {
+    return Loader.isModLoaded(modname);
   }
 
   static void receivePacket(Packet250CustomPayload packet) {

@@ -33,6 +33,7 @@ import java.util.zip.ZipFile;
 
 import net.minecraft.src.BaseMod;
 import fml.ml.ModLoaderModContainer;
+import fml.obf.FMLHandler;
 
 public class Loader {
   private enum State {
@@ -40,7 +41,7 @@ public class Loader {
   };
 
   private static Loader instance;
-  private static Logger LOG = Logger.getLogger("ForgeModLoader");
+  private static Logger log = Logger.getLogger("ForgeModLoader");
 
   private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
   private static Pattern modClass = Pattern.compile("(.*/)(mod\\_[^\\s]+).class$");
@@ -63,16 +64,16 @@ public class Loader {
     return instance; 
   }
   private Loader() {
-    Loader.LOG.setLevel(Level.ALL);
+    Loader.log.setParent(FMLHandler.getMinecraftLogger());
     FileHandler fileHandler;
     try {
       fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
       fileHandler.setLevel(Level.ALL);
-      Loader.LOG.addHandler(fileHandler);
+      Loader.log.addHandler(fileHandler);
     } catch (Exception e) {
       // Whatever - give up
     }
-    LOG.info(String.format("Forge Mod Loader version %d.%d.%d.%d for Minecraft %s loading.",major,minor,rev,build,mcversion));
+    log.info(String.format("Forge Mod Loader version %d.%d.%d.%d for Minecraft %s loading.",major,minor,rev,build,mcversion));
   }
 
   private void sortModList() {
@@ -83,7 +84,7 @@ public class Loader {
     state = State.PREINIT;
     for (ModContainer mod : mods) {
       if (mod.wantsPreInit()) {
-        LOG.finer(String.format("Pre-initializing %s", mod.getName()));
+        log.finer(String.format("Pre-initializing %s", mod.getName()));
         mod.preInit();
         namedMods.put(mod.getName(), mod);
       }
@@ -93,7 +94,7 @@ public class Loader {
   private void modInit() {
     state = State.INIT;
     for (ModContainer mod : mods) {
-      LOG.finer(String.format("Initializing %s", mod.getName()));
+      log.finer(String.format("Initializing %s", mod.getName()));
       mod.init();
     }
   }
@@ -102,7 +103,7 @@ public class Loader {
     state = State.POSTINIT;
     for (ModContainer mod : mods) {
       if (mod.wantsPostInit()) {
-        LOG.finer(String.format("Post-initializing %s", mod.getName()));
+        log.finer(String.format("Post-initializing %s", mod.getName()));
         mod.postInit();
       }
     }
@@ -114,23 +115,23 @@ public class Loader {
     try {
       canonicalModsPath = modsDir.getCanonicalPath();
     } catch (IOException ioe) {
-      LOG.severe(String.format("Failed to resolve mods directory mods %s", modsDir.getAbsolutePath()));
-      LOG.throwing("fml.server.Loader", "initialize", ioe);
+      log.severe(String.format("Failed to resolve mods directory mods %s", modsDir.getAbsolutePath()));
+      log.throwing("fml.server.Loader", "initialize", ioe);
       throw new LoaderException(ioe);
     }
     if (!modsDir.exists()) {
-      LOG.fine(String.format("No mod directory found, creating one: %s", canonicalModsPath));
+      log.fine(String.format("No mod directory found, creating one: %s", canonicalModsPath));
       try {
         modsDir.mkdir();
       } catch (Exception e) {
-        LOG.throwing("fml.server.Loader", "initialize", e);
+        log.throwing("fml.server.Loader", "initialize", e);
         throw new LoaderException(e);
       }
     }
     if (!modsDir.isDirectory()) {
-      LOG.severe(String.format("Attempting to load mods from %s, which is not a directory", canonicalModsPath));
+      log.severe(String.format("Attempting to load mods from %s, which is not a directory", canonicalModsPath));
       LoaderException loaderException = new LoaderException();
-      LOG.throwing("fml.server.Loader", "initialize", loaderException);
+      log.throwing("fml.server.Loader", "initialize", loaderException);
       throw loaderException;
     }
     File[] modList = modsDir.listFiles();
@@ -140,20 +141,20 @@ public class Loader {
     state = State.LOADING;
     for (File modFile : modList) {
       if (modFile.isDirectory()) {
-        LOG.info(String.format("Found directory %s. Attempting load", modFile.getName()));
+        log.info(String.format("Found directory %s. Attempting load", modFile.getName()));
         attemptDirLoad(modFile);
-        LOG.info(String.format("Directory %s loaded successfully", modFile.getName()));
+        log.info(String.format("Directory %s loaded successfully", modFile.getName()));
       } else {
         Matcher matcher = zipJar.matcher(modFile.getName());
         if (matcher.matches()) {
-          LOG.info(String.format("Found zip or jar file %s. Attempting load.", matcher.group(0)));
+          log.info(String.format("Found zip or jar file %s. Attempting load.", matcher.group(0)));
           attemptFileLoad(modFile);
-          LOG.info(String.format("File %s loaded successfully.", matcher.group(0)));
+          log.info(String.format("File %s loaded successfully.", matcher.group(0)));
         }
       }
     }
     if (state == State.ERRORED) {
-      LOG.severe("A problem has occured during mod loading. Giving up now");
+      log.severe("A problem has occured during mod loading. Giving up now");
       throw new RuntimeException("Giving up please");
     }
   }
@@ -169,9 +170,9 @@ public class Loader {
     });
     for (File modClassFile : content) {
       String clazzName = modClass.matcher(modClassFile.getName()).group(2);
-      LOG.fine(String.format("Found a mod class %s in directory %s. Attempting to load it", clazzName, modDir.getName()));
+      log.fine(String.format("Found a mod class %s in directory %s. Attempting to load it", clazzName, modDir.getName()));
       loadModClass(modDir, modClassFile.getName(), clazzName);
-      LOG.fine(String.format("Successfully loaded mod class %s", modClassFile.getName()));
+      log.fine(String.format("Successfully loaded mod class %s", modClassFile.getName()));
     }
   }
 
@@ -184,18 +185,18 @@ public class Loader {
         // an FML mod
         mods.add(FMLModContainer.buildFor(clazz));
       } else if (BaseMod.class.isAssignableFrom(clazz)) {
-        LOG.fine(String.format("ModLoader BaseMod class found: %s. Loading", clazzName));
+        log.fine(String.format("ModLoader BaseMod class found: %s. Loading", clazzName));
         @SuppressWarnings("unchecked")
         Class<? extends BaseMod> bmClazz = (Class<? extends BaseMod>) clazz;
         ModContainer mc=new ModLoaderModContainer(bmClazz);
         mods.add(mc);
-        LOG.fine(String.format("ModLoader BaseMod class loaded: %s.", clazzName));
+        log.fine(String.format("ModLoader BaseMod class loaded: %s.", clazzName));
       } else {
         // Unrecognized
       }
     } catch (Exception e) {
-      LOG.warning(String.format("Failed to load mod class %s in %s", classFileName, classSource.getName()));
-      LOG.throwing("fml.server.Loader", "attemptLoad", e);
+      log.warning(String.format("Failed to load mod class %s in %s", classFileName, classSource.getName()));
+      log.throwing("fml.server.Loader", "attemptLoad", e);
       state = State.ERRORED;
     }
   }
@@ -221,14 +222,14 @@ public class Loader {
         if (match.matches()) {
           String pkg = match.group(1).replace('/', '.');
           String clazzName = pkg + match.group(2);
-          LOG.fine(String.format("Found a mod class %s in file %s. Attempting to load it", clazzName, modFile.getName()));
+          log.fine(String.format("Found a mod class %s in file %s. Attempting to load it", clazzName, modFile.getName()));
           loadModClass(modFile, ze.getName(), clazzName);
-          LOG.fine(String.format("Mod class %s loaded successfully", clazzName, modFile.getName()));
+          log.fine(String.format("Mod class %s loaded successfully", clazzName, modFile.getName()));
         }
       }
     } catch (Exception e) {
-      LOG.warning(String.format("Zip file %s failed to read properly", modFile.getName()));
-      LOG.throwing("fml.server.Loader", "attemptFileLoad", e);
+      log.warning(String.format("Zip file %s failed to read properly", modFile.getName()));
+      log.throwing("fml.server.Loader", "attemptFileLoad", e);
       state = State.ERRORED;
     }
   }
@@ -251,6 +252,9 @@ public class Loader {
     modInit();
     postModInit();
     state = State.UP;
-    LOG.info("Forge Mod Loader load complete");
+    log.info("Forge Mod Loader load complete");
+  }
+  public static boolean isModLoaded(String modname) {
+    return instance().namedMods.containsKey(modname);
   }
 }
