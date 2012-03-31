@@ -26,8 +26,10 @@ public class ModLoaderModContainer implements ModContainer {
   private Class<? extends BaseMod> modClazz;
   private BaseMod mod;
   private boolean isTicking;
-  public ModLoaderModContainer(Class<? extends BaseMod> modClazz) {
+  private String modSource ;
+  public ModLoaderModContainer(Class<? extends BaseMod> modClazz, String modSource) {
     this.modClazz=modClazz;
+    this.modSource =modSource;
   }
 
   public boolean wantsPreInit() {
@@ -99,5 +101,10 @@ public class ModLoaderModContainer implements ModContainer {
       }
     }
     return modList;
+  }
+
+  @Override
+  public String getSource() {
+    return modSource;
   }
 }
