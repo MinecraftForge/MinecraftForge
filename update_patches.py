@@ -27,19 +27,20 @@ def cleanDirs(path):
         
 def main():
     print("Creating patches")
-    base = os.path.normpath(os.path.join(sys.argv[1], 'src-reference'))
-    work = os.path.normpath(os.path.join(sys.argv[1], 'src-work'))
+    base = 'src-reference'
+    work = 'src-work'
+    patched_dir=os.path.join(sys.argv[1],work)
     timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
     
-    for path, _, filelist in os.walk(work, followlinks=True):
+    for path, _, filelist in os.walk(patched_dir, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.java'):
-            file_base = os.path.normpath(os.path.join(base, path[len(work)+1:], cur_file))
-            file_work = os.path.normpath(os.path.join(work, path[len(work)+1:], cur_file))
+            file_base = os.path.normpath(os.path.join(base, path[len(patched_dir)+1:], cur_file))
+            file_work = os.path.normpath(os.path.join(work, path[len(patched_dir)+1:], cur_file))
             patch = ''
             cmd = 'diff -u %s %s -r --strip-trailing-cr --new-file' % (file_base, file_work)
-            process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
+            process = subprocess.Popen(cmdsplit(cmd), cwd=os.path.normpath(sys.argv[1]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
             patch, _ = process.communicate()
-            patch_dir = os.path.join(sys.argv[2]+'patches', path[len(work)+1:])
+            patch_dir = os.path.join(sys.argv[2],'patches', path[len(work)+1:])
             patch_file = os.path.join(patch_dir, cur_file + '.patch')
             
             if len(patch) > 0:

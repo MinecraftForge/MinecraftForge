@@ -147,6 +147,12 @@
   <target name="build" depends="init,clean,merge-server,patch,build-server,build-source-pack" />
 
   <target name="patch" depends="init">
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/applypatches.py"/>
+      <arg value="${patch.src.dir}"/>
+      <arg value="${mcp.srcdir}"/>
+    </exec>
+    
   </target>
 
 </project>
