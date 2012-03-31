@@ -57,7 +57,10 @@ public class Loader {
   private Map<String,ModContainer> namedMods;
 
   public static Loader instance() {
-    return instance;
+    if (instance==null) {
+      instance=new Loader();
+    }
+    return instance; 
   }
   private Loader() {
     Loader.LOG.setLevel(Level.ALL);
