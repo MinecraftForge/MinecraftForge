@@ -10,14 +10,14 @@
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AnvilSaveHandler;
  import net.minecraft.src.AxisAlignedBB;
-@@ -143,6 +146,7 @@
-         var1.setDaemon(true);
+@@ -144,6 +147,7 @@
          var1.start();
          ConsoleLogManager.init();
-+        FMLHandler.INSTANCE.onPreLoad(this);
          logger.info("Starting minecraft server version 1.2.4");
++        FMLHandler.INSTANCE.onPreLoad(this);
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
+         {
 @@ -190,6 +194,8 @@
              logger.warning("To change this, set \"online-mode\" to \"true\" in the server.settings file.");
          }
