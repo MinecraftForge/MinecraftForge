@@ -65,12 +65,13 @@ public class Loader {
   }
   private Loader() {
     Loader.log.setParent(FMLHandler.getMinecraftLogger());
+    Loader.log.setLevel(Level.ALL);
     FileHandler fileHandler;
     try {
       fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
-      fileHandler.setLevel(Level.ALL);
       // We're stealing minecraft's log formatter
       fileHandler.setFormatter(FMLHandler.getMinecraftLogger().getHandlers()[0].getFormatter());
+      fileHandler.setLevel(Level.ALL);
       Loader.log.addHandler(fileHandler);
     } catch (Exception e) {
       // Whatever - give up
