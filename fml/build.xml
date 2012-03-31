@@ -31,6 +31,7 @@
     <property environment="env" />
     <property file="fmlbuild.properties" />
     <property name="modname" value="fml" />
+    <property name="version.minecraft" value="1.2.4" />
     <property name="version.major" value="0" />
     <property name="version.minor" value="0" />
     <property name="version.rev" value="0" />
@@ -105,6 +106,7 @@
           <token key="MINOR" value="${version.minor}" />
           <token key="REV" value="${version.rev}" />
           <token key="BUILD" value="${version.build}" />
+          <token key="MCVERSION" value="${version.minecraft}" />
         </replacetokens>
       </filterchain>
     </copy>
