@@ -1,0 +1,15 @@
+--- src-reference/minecraft_server/net/minecraft/src/EntityList.java	0000-00-00 00:00:00.000000000 -0000
++++ src-work/minecraft_server/net/minecraft/src/EntityList.java	0000-00-00 00:00:00.000000000 -0000
+@@ -201,4 +201,12 @@
+         addMapping(EntityVillager.class, "Villager", 120, 5651507, 12422002);
+         addMapping(EntityEnderCrystal.class, "EnderCrystal", 200);
+     }
++
++    public static void addNewMapping(Class<? extends Entity> entityClass, String entityName, int id) {
++      addMapping(entityClass, entityName, id);
++    }
++
++    public static void addNewMapping(Class<? extends Entity> entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour) {
++      addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
++    }
+ }
