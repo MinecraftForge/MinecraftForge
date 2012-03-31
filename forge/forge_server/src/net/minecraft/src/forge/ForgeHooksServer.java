@@ -1,5 +1,6 @@
 package net.minecraft.src.forge;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 import net.minecraft.src.*;
@@ -25,6 +26,18 @@ public class ForgeHooksServer
         }
         return false;
     }
+    
+    public static String onChatMessage(String message, String username)
+    {
+      	for (IChatHandler handler : chatHandlers)
+       	{
+      	    message = handler.processChat(message, username);
+      	    if(message == null)
+      	        return null;
+       	}
+       	return message;
+    }
+    static LinkedList<IChatHandler> chatHandlers = new LinkedList<IChatHandler>();
 
     public static void sendModListRequest(NetworkManager net)
     {
