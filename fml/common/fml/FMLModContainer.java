@@ -82,4 +82,10 @@ public class FMLModContainer implements ModContainer {
     return false;
   }
 
+  @Override
+  public String getSource() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
