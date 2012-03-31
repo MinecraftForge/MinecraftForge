@@ -73,7 +73,7 @@
   </target>
 
   <target name="buildandreobfmcp" depends="init">
-    <exec executable="${python.exe}" dir="${mcp.home}">
+    <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py"/>
     </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
