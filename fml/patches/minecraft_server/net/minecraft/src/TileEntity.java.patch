@@ -1,0 +1,11 @@
+--- src-reference/minecraft_server/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
++++ src-work/minecraft_server/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
+@@ -200,4 +200,8 @@
+         addMapping(TileEntityEnchantmentTable.class, "EnchantTable");
+         addMapping(TileEntityEndPortal.class, "Airportal");
+     }
++
++    public static void addTileEntityMapping(Class<? extends TileEntity> tileEntityClass, String id) {
++      addMapping(tileEntityClass, id);
++    }
+ }
