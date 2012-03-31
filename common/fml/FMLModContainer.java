@@ -88,4 +88,10 @@ public class FMLModContainer implements ModContainer {
     return null;
   }
 
+  @Override
+  public Object getMod() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

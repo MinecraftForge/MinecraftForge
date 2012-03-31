@@ -20,6 +20,7 @@ import fml.Loader;
 import fml.ml.ModLoaderModContainer;
 import fml.obf.FMLHandler;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Achievement;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
@@ -108,7 +109,7 @@ public class ModLoader {
     return ModLoaderModContainer.findAll();
   }
 
-  static Logger getLogger() {
+  public static Logger getLogger() {
     return FMLHandler.getMinecraftLogger();
   }
 
@@ -180,6 +181,13 @@ public class ModLoader {
   static void serverChat(String text) {
   }
 
+  /**
+   * Indicate that you want to receive ticks
+   * 
+   * @param mod receiving the events
+   * @param enable indicates whether you want to recieve them or not
+   * @param useClock Not used in server side: all ticks are sent on the server side (no render subticks)
+   */
   static void setInGameHook(BaseMod mod, boolean enable, boolean useClock) {
     ModLoaderModContainer mlmc=(ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
     mlmc.setTicking(enable);
@@ -198,5 +206,9 @@ public class ModLoader {
   }
 
   static void throwException(String message, Throwable e) {
+  }
+
+  public static MinecraftServer getMinecraftServerInstance() {
+    return FMLHandler.INSTANCE.getServer();
   }
 }

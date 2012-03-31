@@ -107,4 +107,9 @@ public class ModLoaderModContainer implements ModContainer {
   public String getSource() {
     return modSource;
   }
+
+  @Override
+  public Object getMod() {
+    return mod;
+  }
 }

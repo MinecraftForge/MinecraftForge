@@ -24,4 +24,5 @@ public interface ModContainer {
   void tickEnd();
   boolean matches(Object mod);
   String getSource();
+  Object getMod();
 }
