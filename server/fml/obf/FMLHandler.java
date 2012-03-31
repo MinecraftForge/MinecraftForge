@@ -23,11 +23,11 @@ public enum FMLHandler {
 
   public void onPreLoad(MinecraftServer minecraftServer) {
     INSTANCE.server=minecraftServer;
-    Loader.INSTANCE.loadMods();
+    Loader.instance().loadMods();
   }
 
   public void onLoadComplete() {
-    Loader.INSTANCE.initializeMods();
+    Loader.instance().initializeMods();
   }
 
   public void onPreTick() {
