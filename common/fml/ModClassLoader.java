@@ -21,7 +21,7 @@ import java.net.URLClassLoader;
 public class ModClassLoader extends URLClassLoader {
 
   public ModClassLoader() {
-    super(new URL[0]);
+    super(new URL[0],ModClassLoader.class.getClassLoader());
   }
 
   public void addFile(File modFile) throws MalformedURLException {
