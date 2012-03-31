@@ -34,39 +34,44 @@ import java.util.zip.ZipFile;
 import net.minecraft.src.BaseMod;
 import fml.ml.ModLoaderModContainer;
 
-public enum Loader {
-  INSTANCE;
+public class Loader {
   private enum State {
     NOINIT, LOADING, PREINIT, INIT, POSTINIT, UP, ERRORED
   };
 
-  private static State state;
+  private static Loader instance;
   private static Logger LOG = Logger.getLogger("ForgeModLoader.Loader");
-
-  private static List<ModContainer> mods;
-
-  private static Map<String,ModContainer> namedMods;
-  
-  private static ModClassLoader modClassLoader;
 
   private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
   private static Pattern modClass = Pattern.compile("(.*/)(mod\\_[^\\s]+).class$");
 
-  public static void run() {
-    LOG.setLevel(Level.ALL);
+  private static int major=Integer.parseInt("@MAJOR@");
+  private static int minor=Integer.parseInt("@MINOR@");
+  private static int rev  =Integer.parseInt("@REV@");
+  private static int build=Integer.parseInt("@BUILD@");
+  private static String mcversion="@MCVERSION@";
+  
+  private State state;
+  private ModClassLoader modClassLoader;
+  private List<ModContainer> mods;
+  private Map<String,ModContainer> namedMods;
+
+  public static Loader instance() {
+    return instance;
+  }
+  private Loader() {
+    Loader.LOG.setLevel(Level.ALL);
     FileHandler fileHandler;
     try {
       fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
       System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tc %2$s%n%4$s: %5$s%6$s%n");
       fileHandler.setFormatter(new SimpleFormatter());
       fileHandler.setLevel(Level.ALL);
-      LOG.addHandler(fileHandler);
+      Loader.LOG.addHandler(fileHandler);
     } catch (Exception e) {
       // Whatever - give up
     }
-  }
-
-  private Loader() {
+    LOG.info(String.format("Forge ModLoader version %d.%d.%d.%d for Minecraft %s loading.",major,minor,rev,build,mcversion));
   }
 
   private void sortModList() {
@@ -228,7 +233,7 @@ public enum Loader {
   }
 
   public static List<ModContainer> getModList() {
-    return mods;
+    return instance().mods;
   }
 
   public void loadMods() {
@@ -245,5 +250,6 @@ public enum Loader {
     modInit();
     postModInit();
     state = State.UP;
+    LOG.info("Forge Mod Loader load complete");
   }
 }

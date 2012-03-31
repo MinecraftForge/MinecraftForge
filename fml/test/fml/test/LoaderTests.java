@@ -31,6 +31,6 @@ public class LoaderTests {
 
   @Test
   public void testModLoading() {
-    Loader.run();
+    Loader.instance().loadMods();
   }
 }
