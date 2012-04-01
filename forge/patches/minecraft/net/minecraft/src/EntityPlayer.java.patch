@@ -123,7 +123,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1697,6 +1742,7 @@
+@@ -1688,6 +1733,7 @@
                      return 101;
                  }
              }
@@ -131,7 +131,7 @@
          }
  
          return var3;
-@@ -1869,4 +1915,30 @@
+@@ -1860,4 +1906,30 @@
      }
  
      public void func_50009_aI() {}

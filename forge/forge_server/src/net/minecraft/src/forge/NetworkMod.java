@@ -1,13 +1,13 @@
 package net.minecraft.src.forge;
 
-import net.minecraft.src.BaseModMp;
+import net.minecraft.src.BaseMod;
 
 /**
  * This is for mods that are designed to be used on the server side alone,
  * or both the client and server side. This class is used when registering
  * various things relating to network traffic. Entity ID's, GUI Id's, etc..
  */
-public abstract class NetworkMod extends BaseModMp
+public abstract class NetworkMod extends BaseMod
 {
     /**
      * Returns true if every client is required to have this

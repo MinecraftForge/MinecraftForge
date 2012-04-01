@@ -136,7 +136,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1719,4 +1775,45 @@
+@@ -1713,4 +1769,45 @@
      }
  
      public void func_50022_L() {}

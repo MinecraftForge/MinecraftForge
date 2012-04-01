@@ -6,10 +6,12 @@ rm -rf src bin src_forge
 
 cp -a src_work src_forge
 
-cp -a forge/forge_client/src/net/* src_forge/minecraft/net/
+#cp -a forge/forge_client/src/net/* src_forge/minecraft/net/
 cp -a forge/forge_server/src/net/* src_forge/minecraft_server/net/
-cp -a forge/forge_common/net/* src_forge/minecraft/net/
+cp -a fml/server/* src_forge/minecraft_server/
+#cp -a forge/forge_common/net/* src_forge/minecraft/net/
 cp -a forge/forge_common/net/* src_forge/minecraft_server/net/
+cp -a fml/common/* src_forge/minecraft_server/
 
 pushd forge > /dev/null
 ./inject_version.sh $OLDPWD/src_forge/minecraft/net/minecraft/src/forge/ForgeHooks.java

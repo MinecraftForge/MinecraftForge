@@ -25,7 +25,7 @@ def cleanDirs(path):
         os.rmdir(path)
         
 def main():
-    print Creating patches
+    print "Creating patches"
     base = os.path.normpath(os.path.join('..', 'src_base'))
     work = os.path.normpath(os.path.join('..', 'src_work'))
     timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
