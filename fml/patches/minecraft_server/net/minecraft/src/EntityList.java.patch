@@ -5,11 +5,11 @@
          addMapping(EntityEnderCrystal.class, "EnderCrystal", 200);
      }
 +
-+    public static void addNewMapping(Class<? extends Entity> entityClass, String entityName, int id) {
++    public static void addNewEntityListMapping(Class<? extends Entity> entityClass, String entityName, int id) {
 +      addMapping(entityClass, entityName, id);
 +    }
 +
-+    public static void addNewMapping(Class<? extends Entity> entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour) {
++    public static void addNewEntityListMapping(Class<? extends Entity> entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour) {
 +      addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
 +    }
  }

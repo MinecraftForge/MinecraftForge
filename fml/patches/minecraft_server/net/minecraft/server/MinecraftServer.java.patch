@@ -18,24 +18,23 @@
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
          {
-@@ -190,6 +194,8 @@
+@@ -190,6 +194,7 @@
              logger.warning("To change this, set \"online-mode\" to \"true\" in the server.settings file.");
          }
  
 +        FMLHandler.INSTANCE.onLoadComplete();
-+
          this.configManager = new ServerConfigurationManager(this);
          this.entityTracker[0] = new EntityTracker(this, 0);
          this.entityTracker[1] = new EntityTracker(this, -1);
-@@ -433,6 +439,7 @@
+@@ -430,6 +435,7 @@
+                         var7 = 0L;
+                     }
+ 
++                    FMLHandler.INSTANCE.onPreTick();
                      var3 += var7;
                      var1 = var5;
  
-+                    FMLHandler.INSTANCE.onPreTick();
-                     if (this.worldMngr[0].isAllPlayersFullyAsleep())
-                     {
-                         this.doTick();
-@@ -446,6 +453,7 @@
+@@ -446,6 +452,7 @@
                              this.doTick();
                          }
                      }

@@ -42,15 +42,15 @@ public class Loader {
   };
 
   private static Loader instance;
-  private static Logger log = Logger.getLogger("ForgeModLoader");
+  public static Logger log = Logger.getLogger("ForgeModLoader");
 
   private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
   private static Pattern modClass = Pattern.compile("(.*/?)(mod\\_[^\\s]+).class$");
 
-  private static int major=Integer.parseInt("@MAJOR@");
-  private static int minor=Integer.parseInt("@MINOR@");
-  private static int rev  =Integer.parseInt("@REV@");
-  private static int build=Integer.parseInt("@BUILD@");
+  private static String major="@MAJOR@";
+  private static String minor="@MINOR@";
+  private static String rev  ="@REV@";
+  private static String build="@BUILD@";
   private static String mcversion="@MCVERSION@";
   
   private State state;
@@ -77,7 +77,7 @@ public class Loader {
     } catch (Exception e) {
       // Whatever - give up
     }
-    log.info(String.format("Forge Mod Loader version %d.%d.%d.%d for Minecraft %s loading",major,minor,rev,build,mcversion));
+    log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading",major,minor,rev,build,mcversion));
   }
 
   private void sortModList() {

@@ -25,4 +25,7 @@ public interface ModContainer {
   boolean matches(Object mod);
   String getSource();
   Object getMod();
+  boolean generatesWorld();
+  IWorldGenerator getWorldGenerator();
+  int lookupFuelValue(int itemId, int itemDamage);
 }

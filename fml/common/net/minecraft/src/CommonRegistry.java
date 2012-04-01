@@ -43,15 +43,15 @@ public class CommonRegistry {
   }
 
   public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id) {
-    EntityList.addNewMapping(entityClass, entityName, id);
+    EntityList.addNewEntityListMapping(entityClass, entityName, id);
   }
 
   public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour) {
-    EntityList.addNewMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
+    EntityList.addNewEntityListMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
   }
 
   public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
-    TileEntity.addTileEntityMapping(tileEntityClass, id);
+    TileEntity.addNewTileEntityMapping(tileEntityClass, id);
   }
 
   public static void addBiome(BiomeGenBase biome) {

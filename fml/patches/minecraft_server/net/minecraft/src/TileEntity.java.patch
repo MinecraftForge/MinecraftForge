@@ -5,7 +5,7 @@
          addMapping(TileEntityEndPortal.class, "Airportal");
      }
 +
-+    public static void addTileEntityMapping(Class<? extends TileEntity> tileEntityClass, String id) {
++    public static void addNewTileEntityMapping(Class<? extends TileEntity> tileEntityClass, String id) {
 +      addMapping(tileEntityClass, id);
 +    }
  }
