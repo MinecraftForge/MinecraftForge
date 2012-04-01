@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,8 @@
+@@ -5,6 +5,8 @@
  import java.util.List;
  import java.util.Set;
  
@@ -9,7 +9,7 @@
  public class EntityTrackerEntry
  {
      /** The entity that this EntityTrackerEntry tracks. */
-@@ -287,6 +289,11 @@
+@@ -286,6 +288,11 @@
          {
              System.out.println("Fetching addPacket for removed entity");
          }
@@ -19,5 +19,5 @@
 +            return pkt;
 +        }
  
-         EntityTrackerEntry2 var1 = ModLoaderMp.handleEntityTrackerEntries(this.trackedEntity);
- 
+         if (this.trackedEntity instanceof EntityItem)
+         {

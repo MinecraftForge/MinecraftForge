@@ -34,7 +34,7 @@
              {
                  this.playerEntity.itemInWorldManager.activeBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8);
              }
-@@ -764,9 +770,10 @@
+@@ -760,9 +766,10 @@
       */
      public void handleRespawn(Packet9Respawn par1Packet9Respawn)
      {
@@ -46,7 +46,7 @@
          }
          else
          {
-@@ -775,7 +782,7 @@
+@@ -771,7 +778,7 @@
                  return;
              }
  
@@ -55,7 +55,7 @@
          }
      }
  
-@@ -965,4 +972,49 @@
+@@ -961,4 +968,49 @@
      {
          this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.field_50005_b && this.playerEntity.capabilities.allowFlying;
      }

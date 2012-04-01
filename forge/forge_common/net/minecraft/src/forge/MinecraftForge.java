@@ -17,6 +17,9 @@ import net.minecraft.src.World;
 import java.util.*;
 import java.util.Map.Entry;
 
+import fml.Loader;
+import fml.ModContainer;
+
 public class MinecraftForge
 {
     private static LinkedList<IBucketHandler> bucketHandlers = new LinkedList<IBucketHandler>();
@@ -956,11 +959,11 @@ public class MinecraftForge
     public static NetworkMod[] getNetworkMods()
     {
         ArrayList<NetworkMod> ret = new ArrayList<NetworkMod>();
-        for (BaseMod mod : (List<BaseMod>)ModLoader.getLoadedMods())
+        for (ModContainer mod : (List<ModContainer>)Loader.getModList())
         {
-            if (mod instanceof NetworkMod)
+            if (mod.getMod() instanceof NetworkMod)
             {
-                ret.add((NetworkMod)mod);
+                ret.add((NetworkMod)mod.getMod());
             }
         }
         return ret.toArray(new NetworkMod[0]);

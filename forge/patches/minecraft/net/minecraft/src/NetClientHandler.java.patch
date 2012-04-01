@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -16,6 +16,10 @@
+@@ -15,6 +15,10 @@
  import java.util.Map;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
@@ -11,7 +11,7 @@
  
  public class NetClientHandler extends NetHandler
  {
-@@ -47,6 +51,8 @@
+@@ -46,6 +50,8 @@
          this.mc = par1Minecraft;
          Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
          this.netManager = new NetworkManager(var4, "Client", this);
@@ -20,7 +20,7 @@
      }
  
      /**
-@@ -74,6 +80,29 @@
+@@ -73,6 +79,29 @@
          this.mc.thePlayer.entityId = par1Packet1Login.protocolVersion;
          this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
          ((PlayerControllerMP)this.mc.playerController).setCreative(par1Packet1Login.serverMode == 1);
@@ -50,7 +50,7 @@
          ModLoader.serverLogin(this, par1Packet1Login);
      }
  
-@@ -675,7 +704,19 @@
+@@ -631,7 +660,19 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
@@ -71,7 +71,7 @@
          }
          else
          {
-@@ -688,7 +729,19 @@
+@@ -644,7 +685,19 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
@@ -92,7 +92,7 @@
                  }
                  else
                  {
-@@ -1156,5 +1209,40 @@
+@@ -1108,5 +1161,40 @@
      public void handleCustomPayload(Packet250CustomPayload var1)
      {
          ModLoader.receivePacket(var1);

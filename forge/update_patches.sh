@@ -11,7 +11,6 @@ do
 	rmdir "$i"
 done
 
-mkdir -p $fdir/conf
-cp -r conf/* $fdir/conf
+cp -r ../conf $fdir
 
 echo Finished
