@@ -13,11 +13,16 @@
  */
 package fml.obf;
 
+import java.util.Random;
 import java.util.logging.Logger;
 
 import fml.FMLHooks;
 import fml.Loader;
+import fml.ModContainer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.BaseMod;
+import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.World;
 
 public enum FMLHandler {
   INSTANCE;
@@ -46,5 +51,27 @@ public enum FMLHandler {
 
   public static Logger getMinecraftLogger() {
     return MinecraftServer.logger;
+  }
+
+  public void onChunkPopulate(IChunkProvider chunkProvider, int chunkX, int chunkZ, World world, IChunkProvider generator) {
+    Random fmlRandom=new Random(world.getSeed());
+    long xSeed=fmlRandom.nextLong()>>2 + 1L;
+    long zSeed=fmlRandom.nextLong()>>2 + 1L;
+    
+    fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ)^world.getSeed());
+    
+    for (ModContainer mod : Loader.getModList()) {
+      if (mod.generatesWorld()) {
+        mod.getWorldGenerator().generate(fmlRandom, chunkX, chunkZ, world, generator, chunkProvider);
+      }
+    }
+  }
+
+  public int fuelLookup(int itemId, int itemDamage) {
+    int fv=0;
+    for (ModContainer mod : Loader.getModList()) {
+      fv=Math.max(fv, mod.lookupFuelValue(itemId, itemDamage));
+    }
+    return fv;
   }
 }

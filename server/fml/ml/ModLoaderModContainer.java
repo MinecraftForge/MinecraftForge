@@ -16,6 +16,7 @@ package fml.ml;
 import java.util.ArrayList;
 import java.util.List;
 
+import fml.IWorldGenerator;
 import fml.Loader;
 import fml.LoaderException;
 import fml.ModContainer;
@@ -111,5 +112,20 @@ public class ModLoaderModContainer implements ModContainer {
   @Override
   public Object getMod() {
     return mod;
+  }
+
+  @Override
+  public boolean generatesWorld() {
+    return true;
+  }
+
+  @Override
+  public IWorldGenerator getWorldGenerator() {
+    return mod;
+  }
+
+  @Override
+  public int lookupFuelValue(int itemId, int itemDamage) {
+    return mod.addFuel(itemId, itemDamage);
   }
 }

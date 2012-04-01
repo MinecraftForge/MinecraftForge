@@ -1,0 +1,19 @@
+--- src-reference/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
++++ src-work/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,6 +7,8 @@
+ import java.util.List;
+ import java.util.Set;
+ 
++import fml.obf.FMLHandler;
++
+ public class ChunkProviderServer implements IChunkProvider
+ {
+     private Set droppedChunksSet = new HashSet();
+@@ -200,6 +202,7 @@
+             if (this.serverChunkGenerator != null)
+             {
+                 this.serverChunkGenerator.populate(par1IChunkProvider, par2, par3);
++                FMLHandler.INSTANCE.onChunkPopulate(par1IChunkProvider, par2, par3,this.world,this.serverChunkGenerator);
+                 var4.setChunkModified();
+             }
+         }

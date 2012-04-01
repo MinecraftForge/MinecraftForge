@@ -14,7 +14,9 @@ package net.minecraft.src;
 
 import java.util.Random;
 
+import fml.IWorldGenerator;
 import fml.Mod;
+import fml.obf.FMLHandler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayer;
@@ -23,8 +25,8 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
 
-public abstract class BaseMod {
-  int addFuel(int id, int metadata) {
+public abstract class BaseMod implements IWorldGenerator {
+  public int addFuel(int id, int metadata) {
     return 0;
   }
 
@@ -32,6 +34,18 @@ public abstract class BaseMod {
     return false;
   }
 
+  @Override
+  public void generate(Random random, int chunkX, int chunkZ, Object... additionalData) {
+    World w=(World) additionalData[0];
+    IChunkProvider cp=(IChunkProvider) additionalData[1];
+    
+    if (cp instanceof ChunkProviderGenerate) {
+      generateSurface(w, random, chunkX<<4, chunkZ<<4);
+    } else if (cp instanceof ChunkProviderHell){
+      generateNether(w, random, chunkX<<4, chunkZ<<4);
+    }
+  }
+  
   public void generateNether(World world, Random random, int chunkX, int chunkZ) {
   }
 
@@ -84,4 +98,9 @@ public abstract class BaseMod {
   // boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
   // boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui);
   // void keyboardEvent(KeyBinding event);
+  
+  @Override
+  public String toString() {
+    return getName()+" "+getVersion();
+  }
 }
