@@ -4,16 +4,16 @@
  import java.util.List;
  import java.util.Set;
  
-+import fml.obf.FMLHandler;
++import cpw.mods.fml.server.FMLHandler;
 +
  public class ChunkProviderServer implements IChunkProvider
  {
-     private Set droppedChunksSet = new HashSet();
-@@ -200,6 +202,7 @@
-             if (this.serverChunkGenerator != null)
+     private Set field_725_a = new HashSet();
+@@ -174,6 +176,7 @@
+             if (this.field_730_c != null)
              {
-                 this.serverChunkGenerator.populate(par1IChunkProvider, par2, par3);
-+                FMLHandler.INSTANCE.onChunkPopulate(par1IChunkProvider, par2, par3,this.world,this.serverChunkGenerator);
-                 var4.setChunkModified();
+                 this.field_730_c.func_4055_a(p_4055_1_, p_4055_2_, p_4055_3_);
++                FMLHandler.INSTANCE.onChunkPopulate(p_4055_1_, p_4055_2_, p_4055_3_, this.field_726_g, this.field_730_c);
+                 var4.func_336_e();
              }
          }

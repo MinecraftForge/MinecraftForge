@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml;
+package cpw.mods.fml.common;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -26,15 +26,12 @@ import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.minecraft.src.BaseMod;
-import fml.ml.ModLoaderModContainer;
-import fml.obf.FMLHandler;
+import cpw.mods.fml.server.FMLHandler;
 
 public class Loader {
   private enum State {
@@ -210,11 +207,9 @@ public class Loader {
       if (clazz.isAnnotationPresent(Mod.class)) {
         // an FML mod
         mods.add(FMLModContainer.buildFor(clazz));
-      } else if (BaseMod.class.isAssignableFrom(clazz)) {
+      } else if (FMLHandler.INSTANCE.isModLoaderMod(clazz)) {
         log.fine(String.format("ModLoader BaseMod class %s found, loading", clazzName));
-        @SuppressWarnings("unchecked")
-        Class<? extends BaseMod> bmClazz = (Class<? extends BaseMod>) clazz;
-        ModContainer mc=new ModLoaderModContainer(bmClazz,classSource.getCanonicalPath());
+        ModContainer mc=FMLHandler.INSTANCE.loadBaseModMod(clazz,classSource.getCanonicalPath());
         mods.add(mc);
         log.fine(String.format("ModLoader BaseMod class %s loaded", clazzName));
       } else {

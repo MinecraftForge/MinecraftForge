@@ -15,9 +15,11 @@ package net.minecraft.src;
 import java.util.List;
 import java.util.logging.Logger;
 
-import fml.Loader;
-import fml.ml.ModLoaderModContainer;
-import fml.obf.FMLHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.server.FMLHandler;
+import cpw.mods.fml.server.ModLoaderModContainer;
+import cpw.mods.fml.server.ReflectionHelper;
+
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Achievement;
@@ -70,15 +72,15 @@ public class ModLoader {
   }
 
   public static void addRecipe(ItemStack output, Object... params) {
-    CraftingManager.getInstance().addRecipe(output, params);
+    CommonRegistry.addRecipe(output, params);
   }
 
   public static void addShapelessRecipe(ItemStack output, Object... params) {
-    CraftingManager.getInstance().addShapelessRecipe(output, params);
+    CommonRegistry.addShapelessRecipe(output, params);
   }
 
   public static void addSmelting(int input, ItemStack output) {
-    FurnaceRecipes.smelting().addSmelting(input, output);
+    CommonRegistry.addSmelting(input, output);
   }
 
   public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList) {
@@ -109,15 +111,15 @@ public class ModLoader {
   }
 
   public static Logger getLogger() {
-    return FMLHandler.getMinecraftLogger();
+    return FMLHandler.getFMLLogger();
   }
 
   public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex) {
-    return null;
+    return ReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
   }
 
   public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, String field) {
-    return null;
+    return ReflectionHelper.getPrivateValue(instanceclass, instance, field);
   }
 
   public static int getUniqueEntityId() {
@@ -196,9 +198,11 @@ public class ModLoader {
   }
 
   public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value) {
+    ReflectionHelper.setPrivateValue(instanceclass, instance, fieldindex, value);
   }
 
   public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, String field, E value) {
+    ReflectionHelper.setPrivateValue(instanceclass, instance, field, value);
   }
 
   public static void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory matrix) {
@@ -208,6 +212,7 @@ public class ModLoader {
   }
 
   public static void throwException(String message, Throwable e) {
+    FMLHandler.INSTANCE.raiseException(e, message, true);
   }
 
   public static MinecraftServer getMinecraftServerInstance() {

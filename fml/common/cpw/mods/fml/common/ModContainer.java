@@ -11,18 +11,27 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml;
+package cpw.mods.fml.common;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Mod {
-  String name() default "";
-  String version() default "";
-  boolean wantsPreInit() default false;
-  boolean wantsPostInit() default false;
-  public @interface PreInit {}
-  public @interface Init {}
-  public @interface PostInit {}
+
+public interface ModContainer {
+  boolean wantsPreInit();
+  boolean wantsPostInit();
+  void preInit();
+  void init();
+  void postInit();
+  String getName();
+  void tickStart();
+  void tickEnd();
+  boolean matches(Object mod);
+  String getSource();
+  Object getMod();
+  boolean generatesWorld();
+  IWorldGenerator getWorldGenerator();
+  int lookupFuelValue(int itemId, int itemDamage);
+  boolean wantsPickupNotification();
+  IPickupNotifier getPickupNotifier();
+  boolean wantsToDispense();
+  IDispenseHandler getDispenseHandler();
 }

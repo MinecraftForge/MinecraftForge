@@ -11,18 +11,10 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml;
+package cpw.mods.fml.common;
 
-public class LoaderException extends RuntimeException {
-  /**
-   * 
-   */
-  private static final long serialVersionUID = -5675297950958861378L;
+import java.util.Random;
 
-  public LoaderException(Exception wrapped) {
-    super(wrapped);
-  }
-
-  public LoaderException() {
-  }
+public interface IWorldGenerator {
+  public void generate(Random random, int chunkX, int chunkZ, Object...additionalData);
 }
