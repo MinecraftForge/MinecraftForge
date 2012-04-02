@@ -69,7 +69,6 @@
       <arg value="${mcp.home}/runtime/decompile.py"/>
       <arg value="-d" />
       <arg value="-n" />
-      <arg value="-r" />
     </exec>
   </target>
 
