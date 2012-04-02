@@ -50,7 +50,22 @@
          ModLoader.serverLogin(this, par1Packet1Login);
      }
  
-@@ -675,7 +704,19 @@
+@@ -587,8 +616,12 @@
+ 
+     public void handleChat(Packet3Chat par1Packet3Chat)
+     {
+-        this.mc.ingameGUI.addChatMessage(par1Packet3Chat.message);
+-        ModLoader.serverChat(par1Packet3Chat.message);
++        par1Packet3Chat.message = ForgeHooks.onClientChatRecv(par1Packet3Chat.message);
++        if (par1Packet3Chat.message != null)
++        {
++            this.mc.ingameGUI.addChatMessage(par1Packet3Chat.message);
++            ModLoader.serverChat(par1Packet3Chat.message);
++        }
+     }
+ 
+     public void handleAnimation(Packet18Animation par1Packet18Animation)
+@@ -675,7 +708,19 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
@@ -71,7 +86,7 @@
          }
          else
          {
-@@ -688,7 +729,19 @@
+@@ -688,7 +733,19 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
@@ -92,7 +107,7 @@
                  }
                  else
                  {
-@@ -1156,5 +1209,40 @@
+@@ -1156,5 +1213,40 @@
      public void handleCustomPayload(Packet250CustomPayload var1)
      {
          ModLoader.receivePacket(var1);

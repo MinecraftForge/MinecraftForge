@@ -209,6 +209,70 @@ public class ForgeHooks
     }
     static LinkedList<IEntityInteractHandler> entityInteractHandlers = new LinkedList<IEntityInteractHandler>();
 
+    public static String onServerChat(EntityPlayer player, String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onServerChat(player, message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    
+    public static boolean onChatCommand(EntityPlayer player, boolean isOp, String command)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            if (handler.onChatCommand(player, isOp, command))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean onServerCommand(Object listener, String username, String command)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            if (handler.onServerCommand(listener, username, command))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static String onServerCommandSay(Object listener, String username, String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onServerCommandSay(listener, username, message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    
+    public static String onClientChatRecv(String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onClientChatRecv(message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    static LinkedList<IChatHandler> chatHandlers = new LinkedList<IChatHandler>();
+
     // Plant Management
     // ------------------------------------------------------------
     static class ProbableItem

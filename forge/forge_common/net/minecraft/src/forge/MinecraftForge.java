@@ -121,6 +121,15 @@ public class MinecraftForge
     }
 
     /**
+     * Registers a new chat handler.
+     * @param handler The Handler to be registered
+     */
+    public static void registerChatHandler(IChatHandler handler)
+    {
+        ForgeHooks.chatHandlers.add(handler);
+    }
+
+    /**
      * This is not supposed to be called outside of Minecraft internals.
      */
     public static ItemStack fillCustomBucket(World world, int X, int Y, int Z)
