@@ -71,8 +71,8 @@ public class Configuration
             }
         }
         
-        Map<String, Property> blockProperties = categories.get(CATEGORY_BLOCK);
-        if (blockProperties.containsKey(key))
+        Map<String, Property> properties = categories.get(CATEGORY_BLOCK);
+        if (properties.containsKey(key))
         {
             Property property = getOrCreateIntProperty(key, Configuration.CATEGORY_BLOCK, defaultId);
             configBlocks[Integer.parseInt(property.value)] = true;
@@ -81,7 +81,7 @@ public class Configuration
         else
         {
             Property property = new Property();
-            blockProperties.put(key, property);
+            properties.put(key, property);
             property.name = key;
 
             if (Block.blocksList[defaultId] == null && !configBlocks[defaultId])

@@ -30,7 +30,7 @@ public class EnumHelper
         {EnumToolMaterial.class, int.class, int.class, float.class, int.class, int.class}
     };
 
-    private static boolean[] decompiled = new boolean[ctrs.length];
+    private static boolean[] decompiledFlags = new boolean[ctrs.length];
 
     public static EnumAction addAction(String name)
     {
@@ -39,7 +39,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[0], EnumAction.class, name,
+        return addEnum(decompiledFlags[0], EnumAction.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -50,7 +50,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[1], EnumArmorMaterial.class, name,
+        return addEnum(decompiledFlags[1], EnumArmorMaterial.class, name,
                 new Class[] { int.class,  int[].class,      int.class      },
                 new Object[]{ durability, reductionAmounts, enchantability });
     }
@@ -61,7 +61,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[2], EnumArt.class, name,
+        return addEnum(decompiledFlags[2], EnumArt.class, name,
                 new Class[] {String.class, int.class, int.class, int.class, int.class},
                 new Object[]{tile,         sizeX,     sizeY,     offsetX,   offsetY});
     }
@@ -72,7 +72,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[3], EnumCreatureAttribute.class, name,
+        return addEnum(decompiledFlags[3], EnumCreatureAttribute.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -83,7 +83,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[4], EnumCreatureType.class, name,
+        return addEnum(decompiledFlags[4], EnumCreatureType.class, name,
                 new Class[] {Class.class, int.class, Material.class, boolean.class},
                 new Object[]{typeClass,   maxNumber, material,       peaceful});
     }
@@ -94,7 +94,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[5], EnumDoor.class, name,
+        return addEnum(decompiledFlags[5], EnumDoor.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -105,7 +105,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[6], EnumEnchantmentType.class, name,
+        return addEnum(decompiledFlags[6], EnumEnchantmentType.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -116,7 +116,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[7], EnumMobType.class, name,
+        return addEnum(decompiledFlags[7], EnumMobType.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -127,7 +127,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[8], EnumMovingObjectType.class, name,
+        return addEnum(decompiledFlags[8], EnumMovingObjectType.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -138,7 +138,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[9], EnumSkyBlock.class, name,
+        return addEnum(decompiledFlags[9], EnumSkyBlock.class, name,
                 new Class[] {int.class },
                 new Object[]{lightValue});
     }
@@ -149,7 +149,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[10], EnumStatus.class, name,
+        return addEnum(decompiledFlags[10], EnumStatus.class, name,
                 new Class[] {},
                 new Object[]{});
     }
@@ -160,7 +160,7 @@ public class EnumHelper
             setup();
         }
 
-        return addEnum(decompiled[11], EnumToolMaterial.class, name,
+        return addEnum(decompiledFlags[11], EnumToolMaterial.class, name,
                 new Class[] { int.class,    int.class, float.class,  int.class, int.class       },
                 new Object[]{ harvestLevel, maxUses,   efficiency,   damage,    enchantability  });
     }
@@ -189,7 +189,7 @@ public class EnumHelper
                 }
 
                 ctrs[x][0].getDeclaredConstructor(enumHeaders);
-                decompiled[x] = true;
+                decompiledFlags[x] = true;
 
             }
             catch (Exception e)
