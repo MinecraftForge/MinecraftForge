@@ -11,17 +11,18 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml.ml;
+package cpw.mods.fml.server;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fml.IWorldGenerator;
-import fml.Loader;
-import fml.LoaderException;
-import fml.ModContainer;
-import fml.obf.FMLHandler;
 import net.minecraft.src.BaseMod;
+import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IPickupNotifier;
+import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderException;
+import cpw.mods.fml.common.ModContainer;
 
 public class ModLoaderModContainer implements ModContainer {
   private Class<? extends BaseMod> modClazz;
@@ -127,5 +128,31 @@ public class ModLoaderModContainer implements ModContainer {
   @Override
   public int lookupFuelValue(int itemId, int itemDamage) {
     return mod.addFuel(itemId, itemDamage);
+  }
+
+  @Override
+  public boolean wantsPickupNotification() {
+    return true;
+  }
+
+  @Override
+  public IPickupNotifier getPickupNotifier() {
+    return mod;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#wantsToDispense()
+   */
+  @Override
+  public boolean wantsToDispense() {
+    return true;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getDispenseHandler()
+   */
+  @Override
+  public IDispenseHandler getDispenseHandler() {
+    return mod;
   }
 }

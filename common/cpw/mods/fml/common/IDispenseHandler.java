@@ -1,6 +1,5 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
+ * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
@@ -11,27 +10,10 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml.test;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import cpw.mods.fml.common.Loader;
+package cpw.mods.fml.common;
 
 
-public class LoaderTests {
+public interface IDispenseHandler {
+  boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data);
 
-  @Before
-  public void setUp() throws Exception {
-  }
-
-  @After
-  public void tearDown() throws Exception {
-  }
-
-  @Test
-  public void testModLoading() {
-    Loader.instance().loadMods();
-  }
 }

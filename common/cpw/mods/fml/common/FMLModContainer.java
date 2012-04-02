@@ -1,6 +1,5 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
+ * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  * 
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
@@ -11,17 +10,17 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package fml;
-
+package cpw.mods.fml.common;
 
 public class FMLModContainer implements ModContainer {
   private Mod modDescriptor;
   private Object modInstance;
+
   public FMLModContainer(Class<?> clazz) {
-    modDescriptor=clazz.getAnnotation(Mod.class);
-    
+    modDescriptor = clazz.getAnnotation(Mod.class);
+
     try {
-      modInstance=clazz.newInstance();
+      modInstance = clazz.newInstance();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -39,7 +38,7 @@ public class FMLModContainer implements ModContainer {
 
   @Override
   public void preInit() {
-    
+
   }
 
   @Override
@@ -67,13 +66,13 @@ public class FMLModContainer implements ModContainer {
   @Override
   public void tickStart() {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void tickEnd() {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -110,6 +109,36 @@ public class FMLModContainer implements ModContainer {
   public int lookupFuelValue(int itemId, int itemDamage) {
     // TODO Auto-generated method stub
     return 0;
+  }
+
+  @Override
+  public boolean wantsPickupNotification() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public IPickupNotifier getPickupNotifier() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#wantsToDispense()
+   */
+  @Override
+  public boolean wantsToDispense() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getDispenseHandler()
+   */
+  @Override
+  public IDispenseHandler getDispenseHandler() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

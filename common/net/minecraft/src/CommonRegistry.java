@@ -16,15 +16,15 @@ package net.minecraft.src;
 
 public class CommonRegistry {
   public static void addRecipe(ItemStack output, Object... params) {
-    CraftingManager.getInstance().addRecipe(output, params);
+    CraftingManager.func_20151_a().func_20153_a(output, params);
   }
 
   public static void addShapelessRecipe(ItemStack output, Object... params) {
-    CraftingManager.getInstance().addShapelessRecipe(output, params);
+    CraftingManager.func_20151_a().func_21146_b(output, params);
   }
 
   public static void addSmelting(int input, ItemStack output) {
-    FurnaceRecipes.smelting().addSmelting(input, output);
+    FurnaceRecipes.func_21162_a().func_21160_a(input, output);
   }
 
   public static void registerBlock(Block block) {
@@ -35,7 +35,7 @@ public class CommonRegistry {
     try {
       assert block!=null : "registerBlock: block cannot be null";
       assert itemclass!=null : "registerBlock: itemclass cannot be null";
-      int blockItemId=block.blockID-256;
+      int blockItemId=block.field_573_bc-256;
       itemclass.getConstructor(int.class).newInstance(blockItemId);
     } catch (Exception e) {
       //HMMM

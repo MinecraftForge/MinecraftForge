@@ -18,7 +18,7 @@
 		<link>
 			<name>minecraft_server</name>
 			<type>2</type>
-			<location>/home/cpw/projects/mcworkspace/vanillamcp/src-work/minecraft_server</location>
+			<location>/home/cpw/projects/mcworkspace/vanilla125/src-work/minecraft_server</location>
 		</link>
 	</linkedResources>
 </projectDescription>

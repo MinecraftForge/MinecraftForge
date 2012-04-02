@@ -14,26 +14,32 @@ package net.minecraft.src;
 
 import java.util.Random;
 
-import fml.IWorldGenerator;
-import fml.Mod;
-import fml.obf.FMLHandler;
-
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.World;
+import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IPickupNotifier;
+import cpw.mods.fml.common.IWorldGenerator;
 
-public abstract class BaseMod implements IWorldGenerator {
+public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler {
   public int addFuel(int id, int metadata) {
     return 0;
   }
 
+  @Override
+  public boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data) {
+    return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
+  }
+  
   public boolean dispenseEntity(World world, double x, double y, double z, int xVel, int zVel, ItemStack item) {
     return false;
   }
 
+  @Override
+  public void notifyPickup(Object... pickupData) {
+    EntityItem item=(EntityItem) pickupData[0];
+    EntityPlayer player=(EntityPlayer) pickupData[1];
+    onItemPickup(player, item.field_429_a);
+  }
+  
   @Override
   public void generate(Random random, int chunkX, int chunkZ, Object... additionalData) {
     World w=(World) additionalData[0];

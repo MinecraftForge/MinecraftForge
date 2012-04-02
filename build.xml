@@ -31,8 +31,8 @@
     <property environment="env" />
     <property file="fmlbuild.properties" />
     <property name="modname" value="fml" />
-    <property name="version.minecraft" value="1.2.4" />
-    <property name="version.major" value="0" />
+    <property name="version.minecraft" value="1.2.5" />
+    <property name="version.major" value="1" />
     <property name="version.minor" value="0" />
     <property name="version.rev" value="0" />
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
@@ -67,8 +67,9 @@
     </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/decompile.py"/>
-      <arg value="-l" />
-      <arg value="-g" />
+      <arg value="-d" />
+      <arg value="-n" />
+      <arg value="-r" />
     </exec>
   </target>
 
@@ -140,9 +141,7 @@
       <zipfileset dir="${basedir}" includes="LICENSE" prefix="fml"/>
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
-      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft"/>
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
-      <zipfileset dir="${mcp.home}/conf" includes="**" prefix="fml/conf"/>
     </zip>
   </target>
   
