@@ -60,3 +60,12 @@
              }
          }
  
+@@ -99,7 +117,7 @@
+             var6 = var5;
+         }
+ 
+-        return var6 > 16 || this.mcServer.configManager.isOp(par1EntityPlayer.username);
++        return var6 >= mcServer.spawnProtectionSize || this.mcServer.configManager.isOp(par1EntityPlayer.username);
+     }
+ 
+     /**
