@@ -303,4 +303,11 @@ public class Loader {
   public static boolean isModLoaded(String modname) {
     return instance().namedMods.containsKey(modname);
   }
+  /**
+   * @return
+   */
+  public File getConfigDir() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }
