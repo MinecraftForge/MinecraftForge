@@ -41,4 +41,7 @@ public interface ModContainer {
   List<String> getDependencies();
   List<String> getPreDepends();
   List<String> getPostDepends();
+  boolean wantsNetworkPackets();
+  INetworkHandler getNetworkHandler();
+  boolean ownsNetworkChannel(String channel);
 }

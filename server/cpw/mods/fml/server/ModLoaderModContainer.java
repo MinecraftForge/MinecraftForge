@@ -26,8 +26,10 @@ import java.util.StringTokenizer;
 
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.MLProp;
+import cpw.mods.fml.common.FMLHooks;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
@@ -357,5 +359,20 @@ public class ModLoaderModContainer implements ModContainer {
   
   public String toString() {
     return modSource;
+  }
+
+  @Override
+  public boolean wantsNetworkPackets() {
+    return true;
+  }
+
+  @Override
+  public INetworkHandler getNetworkHandler() {
+    return mod;
+  }
+
+  @Override
+  public boolean ownsNetworkChannel(String channel) {
+    return FMLHooks.instance().getChannelListFor(this).contains(channel);
   }
 }

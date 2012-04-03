@@ -17,10 +17,11 @@ import java.util.Random;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 
-public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler {
+public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler {
   // CALLBACK MECHANISMS
   @Override
   public void onCrafting(Object... craftingParameters) {
@@ -36,6 +37,20 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
   }
 
+  @Override
+  public boolean onChat(Object... data) {
+    return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
+  }
+  @Override
+  public void onLogin(Object... data) {
+      onClientLogin((Packet1Login)data[0],(NetworkManager)data[1]);
+  }
+  
+  @Override
+  public void onPacket250Packet(Object... data) {
+    onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
+  }
+  
   @Override
   public void notifyPickup(Object... pickupData) {
     EntityItem item=(EntityItem) pickupData[0];
@@ -194,6 +209,34 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     return getName()+" "+getVersion();
   }
 
+  /**
+   * Called when a 250 packet is received on a channel registered to this mod
+   * 
+   * @param source
+   * @param payload
+   */
+  public void onPacket250Received(EntityPlayer source, Packet250CustomPayload payload) {
+    
+  }
+  
+  /**
+   * Called when a new client logs in. Ensure you register your Packet250 channels with them
+   * @param login
+   * @param data
+   */
+  public void onClientLogin(Packet1Login login, NetworkManager data) {
+    
+  }
+  
+  /**
+   * Called when a chat message is received. Return true to stop further processing
+   * @param source
+   * @param chat
+   * @return
+   */
+  public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat) {
+    return false;
+  }
   // Spare client junk
   // -------
   // void addRenderer(Map<Class<? extends Entity>, Render> renderers);

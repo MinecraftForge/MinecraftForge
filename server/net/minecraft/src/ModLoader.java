@@ -15,27 +15,12 @@ package net.minecraft.src;
 import java.util.List;
 import java.util.logging.Logger;
 
+import net.minecraft.server.MinecraftServer;
+import cpw.mods.fml.common.FMLHooks;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.server.FMLHandler;
 import cpw.mods.fml.server.ModLoaderModContainer;
-
-
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.Achievement;
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
 
 public class ModLoader {
   /**
@@ -232,7 +217,7 @@ public class ModLoader {
   }
 
   /**
-   * Currently unimplemented
+   * Remove a container and drop all the items in it on the ground around
    * @param world
    * @param x
    * @param y
@@ -332,7 +317,7 @@ public class ModLoader {
   }
 
   /**
-   * Unimplemented on the server. New code that didn't exist prior to this implementation
+   * This method is a call in hook from modified external code. Implemented elsewhere.
    * @param packet
    */
   @Deprecated
@@ -379,11 +364,13 @@ public class ModLoader {
   }
 
   /**
-   * Unimplemented at present
+   * Register the mod for packets on this channel. This only registers the channel with Forge Mod Loader, not
+   * with clients connecting- use BaseMod.onClientLogin to tell them about your custom channel
    * @param mod
    * @param channel
    */
   public static void registerPacketChannel(BaseMod mod, String channel) {
+    FMLHooks.instance().registerChannel(ModLoaderModContainer.findContainerFor(mod),channel);
   }
 
   /**

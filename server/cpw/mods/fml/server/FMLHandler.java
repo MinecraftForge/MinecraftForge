@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import cpw.mods.fml.common.FMLHooks;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
@@ -28,7 +24,14 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet1Login;
+import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.World;
+import cpw.mods.fml.common.FMLHooks;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 
 public class FMLHandler {
   private static final FMLHandler INSTANCE=new FMLHandler();
@@ -167,6 +170,30 @@ public class FMLHandler {
     for (ModContainer mod : Loader.getModList()) {
       if (mod.wantsCraftingNotification()) {
         mod.getCraftingHandler().onSmelting(player,smeltedItem);
+      }
+    }
+  }
+
+  public boolean handleChatPacket(Packet3Chat chat, EntityPlayer player) {
+    for (ModContainer mod : Loader.getModList()) {
+      if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat,player)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public void handlePacket250(Packet250CustomPayload packet, EntityPlayer player) {
+    ModContainer mod = FMLHooks.instance().getModForChannel(packet.field_44005_a);
+    if (mod!=null) {
+      mod.getNetworkHandler().onPacket250Packet(packet, player);
+    }
+  }
+
+  public void handleLogin(Packet1Login packet, NetworkManager networkManager) {
+    for (ModContainer mod : Loader.getModList()) {
+      if (mod.wantsNetworkPackets()) {
+        mod.getNetworkHandler().onLogin(packet, networkManager);
       }
     }
   }

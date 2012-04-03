@@ -203,4 +203,31 @@ public class FMLModContainer implements ModContainer {
   public String toString() {
     return getSource();
   }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#wantsNetworkPackets()
+   */
+  @Override
+  public boolean wantsNetworkPackets() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getNetworkHandler()
+   */
+  @Override
+  public INetworkHandler getNetworkHandler() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#ownsNetworkChannel(java.lang.String)
+   */
+  @Override
+  public boolean ownsNetworkChannel(String channel) {
+    // TODO Auto-generated method stub
+    return false;
+  }
 }
