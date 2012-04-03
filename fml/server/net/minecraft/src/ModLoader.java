@@ -239,6 +239,41 @@ public class ModLoader {
    * @param z
    */
   public static void genericContainerRemoval(World world, int x, int y, int z) {
+    TileEntity te=world.func_451_k(x, y, z);
+    if (!(te instanceof IInventory)) {
+      return;
+    }
+    IInventory inv=(IInventory)te;
+    for (int l = 0; l < inv.func_83_a(); l++)
+    {
+        ItemStack itemstack = inv.func_82_a(l);
+        if (itemstack == null)
+        {
+            continue;
+        }
+        float f = world.field_803_m.nextFloat() * 0.8F + 0.1F;
+        float f1 = world.field_803_m.nextFloat() * 0.8F + 0.1F;
+        float f2 = world.field_803_m.nextFloat() * 0.8F + 0.1F;
+        while (itemstack.field_853_a > 0)
+        {
+            int i1 = world.field_803_m.nextInt(21) + 10;
+            if (i1 > itemstack.field_853_a)
+            {
+                i1 = itemstack.field_853_a ;
+            }
+            itemstack.field_853_a  -= i1;
+            EntityItem entityitem = new EntityItem(world, (float)te.field_478_b + f, (float)te.field_483_c + f1, (float)te.field_482_d + f2, new ItemStack(itemstack.field_855_c, i1, itemstack.func_21125_h()));
+            float f3 = 0.05F;
+            entityitem.field_319_o = (float)world.field_803_m.nextGaussian() * f3;
+            entityitem.field_318_p = (float)world.field_803_m.nextGaussian() * f3 + 0.2F;
+            entityitem.field_317_q = (float)world.field_803_m.nextGaussian() * f3;
+            if (itemstack.func_40608_n())
+            {
+              entityitem.field_429_a.func_40604_d((NBTTagCompound)itemstack.func_40607_o().func_40468_b());
+            }
+            world.func_526_a(entityitem);
+        }
+    }
   }
 
   /**
@@ -408,8 +443,9 @@ public class ModLoader {
   }
 
   /**
-   * This implementation of the modloader API does not have "configuration" to save.
+   * Configuration is handled elsewhere
    */
+  @Deprecated
   public static void saveConfig() {
   }
 
