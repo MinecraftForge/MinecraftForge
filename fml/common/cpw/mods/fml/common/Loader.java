@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.server.FMLHandler;
 
 public class Loader {
@@ -78,6 +79,7 @@ public class Loader {
   }
 
   private void sortModList() {
+    log.fine("Verifying mod dependencies are satisfied");
     for (ModContainer mod : mods) {
       if (!namedMods.keySet().containsAll(mod.getDependencies())) {
         log.severe(String.format("The mod %s requires mods %s to be available, one or more are not", mod.getName(),mod.getDependencies()));
@@ -85,6 +87,17 @@ public class Loader {
         log.throwing("Loader", "sortModList", le);
         throw new LoaderException();
       }
+    }
+    log.fine("All dependencies are satisfied");
+    ModSorter sorter=new ModSorter(mods,namedMods);
+    try {
+      log.fine("Sorting mods into an ordered list");
+      mods=sorter.sort();
+      log.fine(String.format("Mod list sorted %s",mods));
+    } catch (IllegalArgumentException iae) {
+      log.severe("A dependency cycle was detected in the input mod set so they cannot load them in order");
+      log.throwing("Loader", "sortModList", iae);
+      throw new LoaderException(iae);
     }
   }
 

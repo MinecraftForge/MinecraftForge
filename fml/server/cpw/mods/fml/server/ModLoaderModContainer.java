@@ -14,7 +14,6 @@
 package cpw.mods.fml.server;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -32,6 +31,9 @@ public class ModLoaderModContainer implements ModContainer {
   private BaseMod mod;
   private boolean isTicking;
   private String modSource ;
+  private ArrayList<String> dependencies;
+  private ArrayList<String> preDependencies;
+  private ArrayList<String> postDependencies;
   public ModLoaderModContainer(Class<? extends BaseMod> modClazz, String modSource) {
     this.modClazz=modClazz;
     this.modSource =modSource;
@@ -174,15 +176,13 @@ public class ModLoaderModContainer implements ModContainer {
   public ICraftingHandler getCraftingHandler() {
     return mod;
   }
-
-  /* (non-Javadoc)
-   * @see cpw.mods.fml.common.ModContainer#getDependencies()
-   */
-  @Override
-  public List<String> getDependencies() {
-    ArrayList<String> dependencies=new ArrayList<String>(10);
+  
+  private void computeDependencies() {
+    dependencies = new ArrayList<String>();
+    preDependencies = new ArrayList<String>();
+    postDependencies = new ArrayList<String>();
     if (mod.getPriorities()==null || mod.getPriorities().length()==0) {
-      return dependencies;
+      return;
     }
     StringTokenizer st=new StringTokenizer(mod.getPriorities(),";");
     for (; st.hasMoreTokens(); ) {
@@ -194,19 +194,44 @@ public class ModLoaderModContainer implements ModContainer {
       if ("required-before".equals(depparts[0]) || "required-after".equals(depparts[0])) {
         dependencies.add(depparts[1]);
       }
+      
+      if ("required-before".equals(depparts[0]) || "before".equals(depparts[0])) {
+        preDependencies.add(depparts[1]);
+      }
+      
+      if ("required-after".equals(depparts[0]) || "after".equals(depparts[0])) {
+        postDependencies.add(depparts[1]);
+      }
+    }
+  }
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getDependencies()
+   */
+  @Override
+  public List<String> getDependencies() {
+    if (dependencies==null) {
+      computeDependencies();
     }
     return dependencies;
   }
 
   @Override
   public List<String> getPreDepends() {
-    // TODO Auto-generated method stub
-    return null;
+    if (dependencies==null) {
+      computeDependencies();
+    }
+    return preDependencies;
   }
 
   @Override
   public List<String> getPostDepends() {
-    // TODO Auto-generated method stub
-    return null;
+    if (dependencies==null) {
+      computeDependencies();
+    }
+    return postDependencies;
+  }
+  
+  public String toString() {
+    return modSource;
   }
 }

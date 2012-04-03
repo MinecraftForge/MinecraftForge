@@ -18,8 +18,16 @@ import java.util.List;
 public class FMLModContainer implements ModContainer {
   private Mod modDescriptor;
   private Object modInstance;
+  private String source;
 
+  public FMLModContainer(String source) {
+    this.source=source;
+  }
+  
   public FMLModContainer(Class<?> clazz) {
+    if (clazz==null) {
+      return;
+    }
     modDescriptor = clazz.getAnnotation(Mod.class);
 
     try {
@@ -86,8 +94,7 @@ public class FMLModContainer implements ModContainer {
 
   @Override
   public String getSource() {
-    // TODO Auto-generated method stub
-    return null;
+    return source;
   }
 
   @Override
@@ -189,4 +196,11 @@ public class FMLModContainer implements ModContainer {
     return new ArrayList<String>(0);
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return getSource();
+  }
 }
