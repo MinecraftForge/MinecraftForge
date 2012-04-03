@@ -21,5 +21,4 @@ public interface INetworkHandler {
   boolean onChat(Object... data);
   void onPacket250Packet(Object... data);
   void onLogin(Object... data);
-  boolean ownsChannel(String channelName);
 }
