@@ -13,10 +13,18 @@
  */
 package cpw.mods.fml.common;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 
 
 public class FMLHooks {
   private static final FMLHooks INSTANCE=new FMLHooks();
+  private Map<ModContainer,Set<String>> channelList=new HashMap<ModContainer,Set<String>>();
+  private Map<String,ModContainer> modChannels=new HashMap<String,ModContainer>();
+  
   public void gameTickStart() {
     for (ModContainer mod : Loader.getModList()) {
       mod.tickStart();
@@ -34,5 +42,29 @@ public class FMLHooks {
    */
   public static FMLHooks instance() {
     return INSTANCE;
+  }
+
+  public ModContainer getModForChannel(String channel) {
+    return modChannels.get(channel);
+  }
+  /**
+   * @param modLoaderModContainer
+   * @return
+   */
+  public Set<String> getChannelListFor(ModContainer container) {
+    return channelList.get(container);
+  }
+  
+  public void registerChannel(ModContainer container, String channelName) {
+    if (modChannels.containsKey(channelName)) {
+      Loader.log.severe(String.format("Mod %s tried to register network channel %s, already registered to %s", container, channelName, modChannels.get(channelName)));
+      throw new LoaderException();
+    }
+    Set<String> list=channelList.get(container);
+    if (list==null) {
+      list=new HashSet<String>();
+      channelList.put(container, list);
+    }
+    list.add(channelName);
   }
 }
