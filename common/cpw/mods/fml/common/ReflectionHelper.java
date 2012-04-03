@@ -10,9 +10,11 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package cpw.mods.fml.server;
+package cpw.mods.fml.common;
 
 import java.lang.reflect.Field;
+
+import cpw.mods.fml.server.FMLHandler;
 
 public class ReflectionHelper {
   @SuppressWarnings("unchecked")

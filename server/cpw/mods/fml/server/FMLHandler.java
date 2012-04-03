@@ -12,6 +12,7 @@
  */
 package cpw.mods.fml.server;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -21,18 +22,23 @@ import cpw.mods.fml.common.ModContainer;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
+import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
-public enum FMLHandler {
-  INSTANCE;
+public class FMLHandler {
+  private static final FMLHandler INSTANCE=new FMLHandler();
+  
   private MinecraftServer server;
 
+  private BiomeGenBase[] defaultOverworldBiomes;
+
   public void onPreLoad(MinecraftServer minecraftServer) {
-    INSTANCE.server = minecraftServer;
+    server = minecraftServer;
     Loader.instance().loadMods();
   }
 
@@ -41,11 +47,11 @@ public enum FMLHandler {
   }
 
   public void onPreTick() {
-    FMLHooks.INSTANCE.serverTickStart();
+    FMLHooks.instance().gameTickStart();
   }
 
   public void onPostTick() {
-    FMLHooks.INSTANCE.serverTickEnd();
+    FMLHooks.instance().gameTickEnd();
   }
 
   public MinecraftServer getServer() {
@@ -122,5 +128,46 @@ public enum FMLHandler {
       }
     }
     return false;
+  }
+
+  /**
+   * @return the instance
+   */
+  public static FMLHandler instance() {
+    return INSTANCE;
+  }
+
+  /**
+   * @return
+   */
+  public BiomeGenBase[] getDefaultOverworldBiomes() {
+    if (defaultOverworldBiomes==null) {
+      ArrayList<BiomeGenBase> biomes=new ArrayList<BiomeGenBase>(20);
+      for (int i=0; i<23; i++) {
+        if ("Sky".equals(BiomeGenBase.field_35521_a[i].field_6163_m) || "Hell".equals(BiomeGenBase.field_35521_a[i].field_6163_m)) {
+          continue;
+        }
+        biomes.add(BiomeGenBase.field_35521_a[i]);
+      }
+      defaultOverworldBiomes=new BiomeGenBase[biomes.size()];
+      biomes.toArray(defaultOverworldBiomes);
+    }
+    return defaultOverworldBiomes;
+  }
+  
+  public void onItemCrafted(EntityPlayer player, ItemStack craftedItem, IInventory craftingGrid) {
+    for (ModContainer mod : Loader.getModList()) {
+      if (mod.wantsCraftingNotification()) {
+        mod.getCraftingHandler().onCrafting(player,craftedItem,craftingGrid);
+      }
+    }
+  }
+  
+  public void onItemSmelted(EntityPlayer player, ItemStack smeltedItem) {
+    for (ModContainer mod : Loader.getModList()) {
+      if (mod.wantsCraftingNotification()) {
+        mod.getCraftingHandler().onSmelting(player,smeltedItem);
+      }
+    }
   }
 }

@@ -13,6 +13,8 @@
  */
 package net.minecraft.src;
 
+import java.util.Collections;
+import java.util.List;
 
 public class CommonRegistry {
   public static void addRecipe(ItemStack output, Object... params) {
@@ -55,33 +57,56 @@ public class CommonRegistry {
   }
 
   public static void addBiome(BiomeGenBase biome) {
+    //NOOP because the implementation idea is broken. Creating a BiomeGenBase adds the biome already.
   }
 
-  public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList) {
+  public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes) {
+    for (BiomeGenBase biome : biomes) {
+      @SuppressWarnings("unchecked")
+      List<SpawnListEntry> spawns=biome.func_25055_a(typeOfCreature);
+      for (SpawnListEntry entry : spawns) {
+        //Adjusting an existing spawn entry
+        if (entry.field_25145_a==entityClass) {
+          entry.field_35483_d=weightedProb;
+          entry.field_35484_b=min;
+          entry.field_35485_c=max;
+          break;
+        }
+      }
+      spawns.add(new SpawnListEntry(entityClass, weightedProb, min, max));
+    }
   }
 
-  public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes) {
-  }
-
-  public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList) {
-  }
-
+  @SuppressWarnings("unchecked")
   public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes) {
+    Class<? extends Entity> entityClazz=EntityList.getEntityToClassMapping().get(entityName);
+    if (EntityLiving.class.isAssignableFrom(entityClazz)) {
+      addSpawn((Class<? extends EntityLiving>) entityClazz,weightedProb,min,max,spawnList,biomes);
+    }
   }
 
   public static void removeBiome(BiomeGenBase biome) {
+    // NOOP because broken
   }
 
-  public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList) {
+  public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes) {
+    for (BiomeGenBase biome : biomes) {
+      @SuppressWarnings("unchecked")
+      List<SpawnListEntry> spawns=biome.func_25055_a(typeOfCreature);
+      for (SpawnListEntry entry : Collections.unmodifiableList(spawns)) {
+        if (entry.field_25145_a==entityClass) {
+          spawns.remove(entry);
+        }
+      }
+    }
   }
 
-  public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList, BiomeGenBase... biomes) {
-  }
-
-  public static void removeSpawn(String entityName, EnumCreatureType spawnList) {
-  }
-
+  @SuppressWarnings("unchecked")
   public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes) {
+    Class<? extends Entity> entityClazz=EntityList.getEntityToClassMapping().get(entityName);
+    if (EntityLiving.class.isAssignableFrom(entityClazz)) {
+      removeSpawn((Class<? extends EntityLiving>) entityClazz,spawnList,biomes);
+    }
   }
 
 }

@@ -12,7 +12,7 @@
  
              if (this.field_433_ad == 0 && p_6093_1_.field_416_aj.func_201_a(this.field_429_a))
              {
-+                FMLHandler.INSTANCE.notifyItemPickup(this,p_6093_1_);
++                FMLHandler.instance().notifyItemPickup(this,p_6093_1_);
                  if (this.field_429_a.field_855_c == Block.field_582_K.field_573_bc)
                  {
                      p_6093_1_.func_27017_a(AchievementList.field_25131_c);

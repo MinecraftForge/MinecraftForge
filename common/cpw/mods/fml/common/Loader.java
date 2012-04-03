@@ -78,7 +78,14 @@ public class Loader {
   }
 
   private void sortModList() {
-    // NOOP for a minute
+    for (ModContainer mod : mods) {
+      if (!namedMods.keySet().containsAll(mod.getDependencies())) {
+        log.severe(String.format("The mod %s requires mods %s to be available, one or more are not", mod.getName(),mod.getDependencies()));
+        LoaderException le=new LoaderException();
+        log.throwing("Loader", "sortModList", le);
+        throw new LoaderException();
+      }
+    }
   }
 
   private void preModInit() {
@@ -207,9 +214,9 @@ public class Loader {
       if (clazz.isAnnotationPresent(Mod.class)) {
         // an FML mod
         mods.add(FMLModContainer.buildFor(clazz));
-      } else if (FMLHandler.INSTANCE.isModLoaderMod(clazz)) {
+      } else if (FMLHandler.instance().isModLoaderMod(clazz)) {
         log.fine(String.format("ModLoader BaseMod class %s found, loading", clazzName));
-        ModContainer mc=FMLHandler.INSTANCE.loadBaseModMod(clazz,classSource.getCanonicalPath());
+        ModContainer mc=FMLHandler.instance().loadBaseModMod(clazz,classSource.getCanonicalPath());
         mods.add(mc);
         log.fine(String.format("ModLoader BaseMod class %s loaded", clazzName));
       } else {
@@ -267,10 +274,10 @@ public class Loader {
     mods = new ArrayList<ModContainer>();
     namedMods = new HashMap<String,ModContainer>();
     load();
+    preModInit();
     sortModList();
     // Make mod list immutable
     mods=Collections.unmodifiableList(mods);
-    preModInit();
   }
 
   public void initializeMods() {

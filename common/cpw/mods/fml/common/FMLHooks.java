@@ -15,17 +15,24 @@ package cpw.mods.fml.common;
 
 
 
-public enum FMLHooks {
-  INSTANCE;
-  public void serverTickStart() {
+public class FMLHooks {
+  private static final FMLHooks INSTANCE=new FMLHooks();
+  public void gameTickStart() {
     for (ModContainer mod : Loader.getModList()) {
       mod.tickStart();
     }
   }
   
-  public void serverTickEnd() {
+  public void gameTickEnd() {
     for (ModContainer mod : Loader.getModList()) {
       mod.tickEnd();
     }
+  }
+
+  /**
+   * @return the instance
+   */
+  public static FMLHooks instance() {
+    return INSTANCE;
   }
 }

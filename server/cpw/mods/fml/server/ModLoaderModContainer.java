@@ -14,9 +14,12 @@
 package cpw.mods.fml.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import net.minecraft.src.BaseMod;
+import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
@@ -64,7 +67,7 @@ public class ModLoaderModContainer implements ModContainer {
   @Override
   public void tickStart() {
     if (isTicking) {
-      isTicking=mod.onTickInGame(FMLHandler.INSTANCE.getServer());
+      isTicking=mod.onTickInGame(FMLHandler.instance().getServer());
     }
   }
   @Override
@@ -154,5 +157,56 @@ public class ModLoaderModContainer implements ModContainer {
   @Override
   public IDispenseHandler getDispenseHandler() {
     return mod;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#wantsCraftingNotification()
+   */
+  @Override
+  public boolean wantsCraftingNotification() {
+    return true;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getCraftingHandler()
+   */
+  @Override
+  public ICraftingHandler getCraftingHandler() {
+    return mod;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getDependencies()
+   */
+  @Override
+  public List<String> getDependencies() {
+    ArrayList<String> dependencies=new ArrayList<String>(10);
+    if (mod.getPriorities()==null || mod.getPriorities().length()==0) {
+      return dependencies;
+    }
+    StringTokenizer st=new StringTokenizer(mod.getPriorities(),";");
+    for (; st.hasMoreTokens(); ) {
+      String dep=st.nextToken();
+      String[] depparts=dep.split(":");
+      if (depparts.length<2) {
+        throw new LoaderException();
+      }
+      if ("required-before".equals(depparts[0]) || "required-after".equals(depparts[0])) {
+        dependencies.add(depparts[1]);
+      }
+    }
+    return dependencies;
+  }
+
+  @Override
+  public List<String> getPreDepends() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<String> getPostDepends() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
