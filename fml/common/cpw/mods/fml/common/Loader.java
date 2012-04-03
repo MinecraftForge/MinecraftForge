@@ -55,6 +55,8 @@ public class Loader {
   private ModClassLoader modClassLoader;
   private List<ModContainer> mods;
   private Map<String,ModContainer> namedMods;
+  private File canonicalConfigDir;
+  private File canonicalMinecraftDir;
 
   public static Loader instance() {
     if (instance==null) {
@@ -137,14 +139,16 @@ public class Loader {
   }
 
   private void load() {
-    log.fine("Attempting to load mods contained in the minecraft jar file");
-    
-    attemptFileLoad(new File(".","minecraft_server.jar"));
-    
-    File modsDir = new File(".", "mods");
+    File minecraftDir = new File(".");
+    File modsDir = new File(minecraftDir, "mods");
+    File configDir=new File(minecraftDir, "config");
     String canonicalModsPath;
+    String canonicalConfigPath;
     try {
+      canonicalMinecraftDir=minecraftDir.getCanonicalFile();
       canonicalModsPath = modsDir.getCanonicalPath();
+      canonicalConfigPath=configDir.getCanonicalPath();
+      canonicalConfigDir=configDir.getCanonicalFile();
     } catch (IOException ioe) {
       log.severe(String.format("Failed to resolve mods directory mods %s", modsDir.getAbsolutePath()));
       log.throwing("fml.server.Loader", "initialize", ioe);
@@ -159,12 +163,32 @@ public class Loader {
         throw new LoaderException(e);
       }
     }
+    if (!configDir.exists()) {
+      log.fine(String.format("No config directory found, creating one: %s", canonicalConfigPath));
+      try {
+        configDir.mkdir();
+      } catch (Exception e) {
+        log.throwing("fml.server.Loader", "initialize", e);
+        throw new LoaderException(e);
+      }
+    }
     if (!modsDir.isDirectory()) {
       log.severe(String.format("Attempting to load mods from %s, which is not a directory", canonicalModsPath));
       LoaderException loaderException = new LoaderException();
       log.throwing("fml.server.Loader", "initialize", loaderException);
       throw loaderException;
     }
+    if (!configDir.isDirectory()) {
+      log.severe(String.format("Attempting to load configuration from %s, which is not a directory", canonicalConfigPath));
+      LoaderException loaderException = new LoaderException();
+      log.throwing("fml.server.Loader", "initialize", loaderException);
+      throw loaderException;
+    }
+    
+    log.fine("Attempting to load mods contained in the minecraft jar file");
+    attemptFileLoad(new File(minecraftDir,"minecraft_server.jar"));
+    log.fine("Minecraft jar mods loaded successfully");
+    
     log.info(String.format("Loading mods from %s",canonicalModsPath));
     File[] modList = modsDir.listFiles();
     // Sort the files into alphabetical order first
@@ -307,7 +331,6 @@ public class Loader {
    * @return
    */
   public File getConfigDir() {
-    // TODO Auto-generated method stub
-    return null;
+    return canonicalConfigDir;
   }
 }
