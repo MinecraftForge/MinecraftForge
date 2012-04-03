@@ -12,6 +12,9 @@
  */
 package cpw.mods.fml.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FMLModContainer implements ModContainer {
   private Mod modDescriptor;
   private Object modInstance;
@@ -139,6 +142,51 @@ public class FMLModContainer implements ModContainer {
   public IDispenseHandler getDispenseHandler() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#wantsCraftingNotification()
+   */
+  @Override
+  public boolean wantsCraftingNotification() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getCraftingHandler()
+   */
+  @Override
+  public ICraftingHandler getCraftingHandler() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getDependencies()
+   */
+  @Override
+  public List<String> getDependencies() {
+    // TODO Auto-generated method stub
+    return new ArrayList<String>(0);
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getPreDepends()
+   */
+  @Override
+  public List<String> getPreDepends() {
+    // TODO Auto-generated method stub
+    return new ArrayList<String>(0);
+  }
+
+  /* (non-Javadoc)
+   * @see cpw.mods.fml.common.ModContainer#getPostDepends()
+   */
+  @Override
+  public List<String> getPostDepends() {
+    // TODO Auto-generated method stub
+    return new ArrayList<String>(0);
   }
 
 }

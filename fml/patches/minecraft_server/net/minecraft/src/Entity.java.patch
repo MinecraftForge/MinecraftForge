@@ -1,0 +1,11 @@
+--- src-reference/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
++++ src-work/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1463,4 +1463,8 @@
+     {
+         return true;
+     }
++    
++    public static int getNextId() {
++      return field_384_a++;
++    }
+ }

@@ -13,32 +13,22 @@
  */
 package cpw.mods.fml.common;
 
-import java.util.List;
+/**
+ * @author cpw
+ *
+ */
+public interface ICraftingHandler {
 
+  /**
+   * @param player
+   * @param craftedItem
+   * @param craftingGrid
+   */
+  void onCrafting(Object... craftingParameters);
 
-
-public interface ModContainer {
-  boolean wantsPreInit();
-  boolean wantsPostInit();
-  void preInit();
-  void init();
-  void postInit();
-  String getName();
-  void tickStart();
-  void tickEnd();
-  boolean matches(Object mod);
-  String getSource();
-  Object getMod();
-  boolean generatesWorld();
-  IWorldGenerator getWorldGenerator();
-  int lookupFuelValue(int itemId, int itemDamage);
-  boolean wantsPickupNotification();
-  IPickupNotifier getPickupNotifier();
-  boolean wantsToDispense();
-  IDispenseHandler getDispenseHandler();
-  boolean wantsCraftingNotification();
-  ICraftingHandler getCraftingHandler();
-  List<String> getDependencies();
-  List<String> getPreDepends();
-  List<String> getPostDepends();
+  /**
+   * @param player
+   * @param smeltedItem
+   */
+  void onSmelting(Object... smeltingParameters);
 }
