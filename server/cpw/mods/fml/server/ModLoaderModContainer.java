@@ -13,11 +13,19 @@
  */
 package cpw.mods.fml.server;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import net.minecraft.src.BaseMod;
+import net.minecraft.src.MLProp;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IPickupNotifier;
@@ -50,12 +58,128 @@ public class ModLoaderModContainer implements ModContainer {
   @Override
   public void preInit() {
     try {
+      configureMod();
       mod=modClazz.newInstance();
     } catch (Exception e) {
       throw new LoaderException(e);
     }
   }
 
+  /**
+   * 
+   */
+  private void configureMod() {
+    File configDir=Loader.instance().getConfigDir();
+    File modConfig=new File(configDir,String.format("%s.cfg", modClazz.getSimpleName()));
+    Properties props=new Properties();
+    if (modConfig.exists()) {
+      try {
+        FileReader configReader = new FileReader(modConfig);
+        props.load(configReader);
+        configReader.close();
+      } catch (Exception e) {
+        Loader.log.severe(String.format("Error occured reading mod configuration file %s",modConfig.getName()));
+        Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
+        throw new LoaderException(e);
+      }
+    }
+    
+    StringBuffer comments = new StringBuffer();
+    comments.append("MLProperties: name (type:default) min:max -- information\n");
+    try {
+      for (Field f : modClazz.getDeclaredFields()) {
+        if (!Modifier.isStatic(f.getModifiers())) {
+          continue;
+        }
+
+        if (!f.isAnnotationPresent(MLProp.class)) {
+          continue;
+        }
+
+        MLProp property = f.getAnnotation(MLProp.class);
+        String propertyName = property.name().length() > 0 ? property.name() : f.getName();
+        String propertyValue = null;
+        Object defaultValue = null;
+        try {
+          defaultValue = f.get(null);
+          propertyValue = props.getProperty(propertyName, extractValue(defaultValue));
+          Object currentValue = parseValue(propertyValue, property, f.getType());
+          if (currentValue != null && !currentValue.equals(defaultValue)) {
+            f.set(null, currentValue);
+          }
+        } catch (Exception e) {
+          Loader.log.severe(String.format("Invalid configuration found for %s in %s", propertyName, modConfig.getName()));
+          Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
+          throw new LoaderException(e);
+        } finally {
+          comments.append(String.format("MLProp : %s (%s:%s", propertyName, f.getType().getName(), defaultValue));
+          if (property.min() != Double.MIN_VALUE) {
+            comments.append(",>=").append(String.format("%.1f", property.min()));
+          }
+          if (property.max() != Double.MAX_VALUE) {
+            comments.append(",<=").append(String.format("%.1f", property.max()));
+          }
+          comments.append(")");
+          if (property.info().length() > 0) {
+            comments.append(" -- ").append(property.info());
+          }
+          if (propertyValue != null) {
+            props.setProperty(propertyName, extractValue(propertyValue));
+          }
+        }
+      }
+    } finally {
+      try {
+        FileWriter configWriter=new FileWriter(modConfig);
+        props.store(configWriter, comments.toString());
+        configWriter.close();
+      } catch (IOException e) {
+        Loader.log.warning(String.format("Error trying to write the config file %s",modConfig.getName()));
+        Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
+        throw new LoaderException(e);
+      }
+    }
+  }
+
+  private Object parseValue(String val, MLProp property, Class<?> type) {
+    if (type.isAssignableFrom(String.class)) {
+      return (String)val;
+    } else if (type.isAssignableFrom(Boolean.TYPE)) {
+      return Boolean.parseBoolean(val);
+    } else if (Number.class.isAssignableFrom(type)) {
+      Number n=null;
+      if (type.isAssignableFrom(Double.TYPE)) {
+        n=Double.parseDouble(val);
+      } else if (type.isAssignableFrom(Float.TYPE)) {
+        n=Float.parseFloat(val);
+      } else if (type.isAssignableFrom(Long.TYPE)) {
+        n=Long.parseLong(val);
+      } else if (type.isAssignableFrom(Integer.TYPE)) {
+        n=Integer.parseInt(val);
+      } else if (type.isAssignableFrom(Short.TYPE)) {
+        n=Short.parseShort(val);
+      } else if (type.isAssignableFrom(Byte.TYPE)) {
+        n=Byte.parseByte(val);
+      } else { 
+        throw new IllegalArgumentException("MLProp declared on non-standard type");
+      }
+      if (n.doubleValue()<property.min() || n.doubleValue()>property.max()) {
+        return null;
+      } else {
+        return n;
+      }
+    }
+    return null;
+  }
+  private String extractValue(Object value) {
+    if (String.class.isInstance(value)) {
+      return (String)value;
+    } else if (Number.class.isInstance(value)) {
+      return String.valueOf(value);
+    } else {
+      throw new IllegalArgumentException("MLProp declared on non-standard type");
+    }
+  }
   @Override
   public void init() {
     mod.load();
