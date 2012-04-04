@@ -16,34 +16,22 @@ fi
 
 pushd .. > /dev/null
 
-rm -rf conf 
-mkdir conf
-cp -r fml/conf/* conf
-
 ./cleanup.sh
+
 if [ -d "src" ]
 then
     echo "Failed to cleanup the MCP folder, please backup your modified files and run this script again and say yes when prompted."
     exit 1
 fi
-./decompile.sh
+
+./decompile.sh -d -n -r
 
 pushd src > /dev/null
-    if [ -f ../jars/bin/minecraft.jar ];
-    then
-        for i in `find ../fml/patches/minecraft/ -type f`
-        do
-            patch -p2 -i $i
-        done
-        cp -r ../fml/src/minecraft/* minecraft
-    fi
-
-
     if [ -f ../jars/minecraft_server.jar ];
     then
         for i in `find ../fml/patches/minecraft_server/ -type f`
         do
-            patch -p2 -i $i
+            patch -p1 -i $i
         done
         cp -r ../fml/src/minecraft_server/* minecraft_server
     fi

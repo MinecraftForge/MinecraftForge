@@ -59,7 +59,7 @@
     <property name="server.src.dir" location="${basedir}/server" />
     <property name="patch.src.dir" location="${basedir}/patches" />
   </target>
-  
+
   <target name="clean">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py"/>
@@ -130,20 +130,45 @@
     <mkdir dir="${basedir}/target" />
     <zip destfile="${basedir}/target/${jarname}.zip">
       <fileset dir="${output}" includes="**/*.class" />
+      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
+      <mappedresources>
+        <fileset dir="${basedir}/install" excludes="install.*" />
+        <filterchain>
+          <replacetokens>
+            <token key="MAJOR" value="${version.major}" />
+            <token key="MINOR" value="${version.minor}" />
+            <token key="REV" value="${version.rev}" />
+            <token key="BUILD" value="${version.build}" />
+            <token key="MCVERSION" value="${version.minecraft}" />
+          </replacetokens>
+        </filterchain>
+      </mappedresources>
     </zip>
   </target>
 
   <target name="build-source-pack">
     <property name="jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${jarname}.zip">
-      <zipfileset dir="${basedir}/install" includes="*" prefix="fml"/>
-      <zipfileset dir="${basedir}" includes="LICENSE" prefix="fml"/>
+      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" prefix="fml"/>
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
+      <mappedresources>
+        <fileset dir="${basedir}/install" includes="*" />
+        <filterchain>
+          <replacetokens>
+            <token key="MAJOR" value="${version.major}" />
+            <token key="MINOR" value="${version.minor}" />
+            <token key="REV" value="${version.rev}" />
+            <token key="BUILD" value="${version.build}" />
+            <token key="MCVERSION" value="${version.minecraft}" />
+          </replacetokens>
+        </filterchain>
+        <globmapper handledirsep="true" from="*" to="fml/" />
+      </mappedresources>
     </zip>
   </target>
-  
+
   <target name="build" depends="init,clean,merge-server,patch,build-server,build-source-pack" />
 
   <target name="patch" depends="init">
@@ -152,7 +177,7 @@
       <arg value="${patch.src.dir}"/>
       <arg value="${mcp.srcdir}"/>
     </exec>
-    
+
   </target>
 
 </project>

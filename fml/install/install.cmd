@@ -15,8 +15,6 @@ if not exist "..\runtime\bin\fernflower.jar" (
     
 pushd .. >nul
 
-xcopy /Y /E /I fml\conf\* conf
-
 if exist ".\src" (
     runtime\bin\python\python_mcp runtime\cleanup.py 
 )
@@ -24,30 +22,19 @@ if exist ".\src" (
     echo  Please make sure to backup your modified files, and say yes when it asks you to do cleanup.
     exit 1
 )
-runtime\bin\python\python_mcp runtime\decompile.py
+runtime\bin\python\python_mcp runtime\decompile.py -d -n -r
 
 pushd src >nul
 
-    if exist ..\jars\bin\minecraft.jar (
-        for /f "delims=" %%a in ('dir /a -d /b /S ..\fml\patches\minecraft') do (
-            pushd "%%a" 2>nul
-            if errorlevel 1 (
-                ..\runtime\bin\python\python_mcp ..\fml\lfcr.py "%%a" "%%a"
-                ..\runtime\bin\applydiff.exe -uf -p2 -i "%%a"
-            ) else popd
-        )
-        xcopy /Y /E ..\fml\src\minecraft\* minecraft
-    )
-    
     if exist ..\jars\minecraft_server.jar (
         for /f "delims=" %%a in ('dir /a -d /b /S ..\fml\patches\minecraft_server') do (
             pushd "%%a" 2>nul
             if errorlevel 1 (
                 ..\runtime\bin\python\python_mcp ..\fml\lfcr.py "%%a" "%%a"
-                ..\runtime\bin\applydiff.exe -uf -p2 -i "%%a"
+                ..\runtime\bin\applydiff.exe -uf -p1 -i "%%a"
             ) else popd
         )
-        xcopy /Y /E ..\fml\src\server\* minecraft_server    
+        xcopy /Y /E ..\fml\src\* minecraft_server    
     )
 popd >nul
 
