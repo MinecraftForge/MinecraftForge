@@ -12,6 +12,7 @@
  */
 package cpw.mods.fml.server;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -184,17 +185,47 @@ public class FMLHandler {
   }
   
   public void handlePacket250(Packet250CustomPayload packet, EntityPlayer player) {
+    if ("REGISTER".equals(packet.field_44005_a) || "UNREGISTER".equals(packet.field_44005_a)) {
+      handleClientRegistration(packet, player);
+      return;
+    }
     ModContainer mod = FMLHooks.instance().getModForChannel(packet.field_44005_a);
     if (mod!=null) {
       mod.getNetworkHandler().onPacket250Packet(packet, player);
     }
   }
 
-  public void handleLogin(Packet1Login packet, NetworkManager networkManager) {
+  /**
+   * @param packet
+   */
+  private void handleClientRegistration(Packet250CustomPayload packet, EntityPlayer player) {
+    try {
+      for (String channel : new String(packet.field_44004_c,"UTF8").split("\0")) {
+        // Skip it if we don't know it
+        if (FMLHooks.instance().getModForChannel(channel)==null) {
+          continue;
+        }
+        if ("REGISTER".equals(packet.field_44005_a)) {
+          FMLHooks.instance().activateChannel(player,channel);
+        } else {
+          FMLHooks.instance().deactivateChannel(player,channel);
+        }
+      }
+    } catch (UnsupportedEncodingException e) {
+      getMinecraftLogger().warning("Received invalid registration packet");
+    }
+  }
+
+  public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager) {
     for (ModContainer mod : Loader.getModList()) {
       if (mod.wantsNetworkPackets()) {
-        mod.getNetworkHandler().onLogin(packet, networkManager);
+        mod.getNetworkHandler().onLogin(loginPacket, networkManager);
       }
     }
+    Packet250CustomPayload packet=new Packet250CustomPayload();
+    packet.field_44005_a="REGISTER";
+    packet.field_44004_c=FMLHooks.instance().getPacketRegistry();
+    packet.field_44003_b=packet.field_44004_c.length;
+    networkManager.func_745_a(packet);
   }
 }

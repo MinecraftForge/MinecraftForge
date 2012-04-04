@@ -516,4 +516,16 @@ public class ModLoader {
   public static MinecraftServer getMinecraftServerInstance() {
     return FMLHandler.instance().getServer();
   }
+  
+  /**
+   * To properly implement packet 250 protocol you should always check your channel
+   * is active prior to sending the packet
+   * 
+   * @param player
+   * @param channel
+   * @return
+   */
+  public static boolean isChannelActive(EntityPlayer player, String channel) {
+    return FMLHooks.instance().isChannelActive(channel,player);
+  }
 }
