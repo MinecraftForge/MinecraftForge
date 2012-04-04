@@ -24,42 +24,42 @@ import cpw.mods.fml.common.IWorldGenerator;
 public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler {
   // CALLBACK MECHANISMS
   @Override
-  public void onCrafting(Object... craftingParameters) {
+  public final void onCrafting(Object... craftingParameters) {
     takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
   }
 
   @Override
-  public void onSmelting(Object... smeltingParameters) {
+  public final void onSmelting(Object... smeltingParameters) {
     takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
   }
   @Override
-  public boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data) {
+  public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data) {
     return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
   }
 
   @Override
-  public boolean onChat(Object... data) {
+  public final boolean onChat(Object... data) {
     return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
   }
   @Override
-  public void onLogin(Object... data) {
+  public final void onLogin(Object... data) {
       onClientLogin((Packet1Login)data[0],(NetworkManager)data[1]);
   }
   
   @Override
-  public void onPacket250Packet(Object... data) {
+  public final void onPacket250Packet(Object... data) {
     onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
   }
   
   @Override
-  public void notifyPickup(Object... pickupData) {
+  public final void notifyPickup(Object... pickupData) {
     EntityItem item=(EntityItem) pickupData[0];
     EntityPlayer player=(EntityPlayer) pickupData[1];
     onItemPickup(player, item.field_429_a);
   }
   
   @Override
-  public void generate(Random random, int chunkX, int chunkZ, Object... additionalData) {
+  public final void generate(Random random, int chunkX, int chunkZ, Object... additionalData) {
     World w=(World) additionalData[0];
     IChunkProvider cp=(IChunkProvider) additionalData[1];
     
@@ -168,6 +168,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
   /**
    * Not implemented because on the server you don't know who it's from
+   * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
    * @param text
    */
   @Deprecated
@@ -176,6 +177,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
   /**
    * Not implemented because on the server you don't know who it's from
+   * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
    * @param packet
    */
   @Deprecated
@@ -220,7 +222,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
   }
   
   /**
-   * Called when a new client logs in. Ensure you register your Packet250 channels with them
+   * Called when a new client logs in. Make sure modloader knows about your channels
    * @param login
    * @param data
    */
