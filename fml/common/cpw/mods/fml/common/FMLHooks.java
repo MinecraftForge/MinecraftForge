@@ -13,10 +13,13 @@
  */
 package cpw.mods.fml.common;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import net.minecraft.src.EntityPlayer;
 
 
 
@@ -24,6 +27,7 @@ public class FMLHooks {
   private static final FMLHooks INSTANCE=new FMLHooks();
   private Map<ModContainer,Set<String>> channelList=new HashMap<ModContainer,Set<String>>();
   private Map<String,ModContainer> modChannels=new HashMap<String,ModContainer>();
+  private Map<Object,Set<String>> activeChannels=new HashMap<Object,Set<String>>();
   
   public void gameTickStart() {
     for (ModContainer mod : Loader.getModList()) {
@@ -57,8 +61,7 @@ public class FMLHooks {
   
   public void registerChannel(ModContainer container, String channelName) {
     if (modChannels.containsKey(channelName)) {
-      Loader.log.severe(String.format("Mod %s tried to register network channel %s, already registered to %s", container, channelName, modChannels.get(channelName)));
-      throw new LoaderException();
+      // NOOP
     }
     Set<String> list=channelList.get(container);
     if (list==null) {
@@ -66,5 +69,56 @@ public class FMLHooks {
       channelList.put(container, list);
     }
     list.add(channelName);
+  }
+
+  /**
+   * @param player
+   */
+  public void activateChannel(Object player, String channel) {
+    Set<String> active=activeChannels.get(player);
+    if (active==null) {
+      active=new HashSet<String>();
+      activeChannels.put(player, active);
+    }
+    active.add(channel);
+  }
+
+  /**
+   * @param player
+   * @param channel
+   */
+  public void deactivateChannel(EntityPlayer player, String channel) {
+    Set<String> active=activeChannels.get(player);
+    if (active==null) {
+      active=new HashSet<String>();
+      activeChannels.put(player, active);
+    }
+    active.remove(channel);
+  }
+
+  /**
+   * @return
+   */
+  public byte[] getPacketRegistry() {
+    StringBuffer sb=new StringBuffer();
+    for (String chan : modChannels.keySet()) {
+      sb.append(chan).append("\0");
+    }
+    try {
+      return sb.toString().getBytes("UTF8");
+    } catch (UnsupportedEncodingException e) {
+      Loader.log.warning("Error building registration list");
+      Loader.log.throwing("FMLHooks", "getPacketRegistry", e);
+      return new byte[0];
+    }
+  }
+
+  /**
+   * @param channel
+   * @param player
+   * @return
+   */
+  public boolean isChannelActive(String channel, Object player) {
+    return activeChannels.get(player).contains(channel);
   }
 }
