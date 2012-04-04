@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockChest.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockChest.java	0000-00-00 00:00:00.000000000 -0000
-@@ -497,23 +497,23 @@
+@@ -497,7 +497,7 @@
          {
              return true;
          }
@@ -9,23 +9,27 @@
          {
              return true;
          }
--        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && par1World.isBlockNormalCube(par2 - 1, par3 + 1, par4))
-+        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && par1World.isBlockSolidOnSide(par2 - 1, par3 + 1, par4, 0))
+@@ -505,19 +505,19 @@
          {
              return true;
          }
--        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && par1World.isBlockNormalCube(par2 + 1, par3 + 1, par4))
-+        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && par1World.isBlockSolidOnSide(par2 + 1, par3 + 1, par4, 0))
+-        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 - 1, par3 + 1, par4) || func_50075_j(par1World, par2 - 1, par3, par4)))
++        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && (par1World.isBlockSolidOnSide(par2 - 1, par3 + 1, par4, 0) || func_50075_j(par1World, par2 - 1, par3, par4)))
          {
              return true;
          }
--        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && par1World.isBlockNormalCube(par2, par3 + 1, par4 - 1))
-+        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && par1World.isBlockSolidOnSide(par2, par3 + 1, par4 - 1, 0))
+-        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 + 1, par3 + 1, par4) || func_50075_j(par1World, par2 + 1, par3, par4)))
++        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockSolidOnSide(par2 + 1, par3 + 1, par4, 0) || func_50075_j(par1World, par2 + 1, par3, par4)))
          {
              return true;
          }
--        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && par1World.isBlockNormalCube(par2, par3 + 1, par4 + 1))
-+        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && par1World.isBlockSolidOnSide(par2, par3 + 1, par4 + 1, 0))
+-        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 - 1) || func_50075_j(par1World, par2, par3, par4 - 1)))
++        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockSolidOnSide(par2, par3 + 1, par4 - 1, 0) || func_50075_j(par1World, par2, par3, par4 - 1)))
+         {
+             return true;
+         }
+-        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 + 1) || func_50075_j(par1World, par2, par3, par4 + 1)))
++        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockSolidOnSide(par2, par3 + 1, par4 + 1, 0) || func_50075_j(par1World, par2, par3, par4 + 1)))
          {
              return true;
          }

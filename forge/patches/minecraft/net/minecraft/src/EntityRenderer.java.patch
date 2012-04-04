@@ -9,7 +9,34 @@
  import org.lwjgl.input.Mouse;
  import org.lwjgl.opengl.Display;
  import org.lwjgl.opengl.GL11;
-@@ -1106,8 +1108,11 @@
+@@ -287,8 +289,15 @@
+      */
+     private void updateFovModifierHand()
+     {
+-        EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
+-        this.fovMultiplierTemp = var1.getFOVMultiplier();
++        if (mc.renderViewEntity instanceof EntityPlayerSP)
++        {
++            EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
++            this.fovMultiplierTemp = var1.getFOVMultiplier();
++        }
++        else
++        {
++            this.fovMultiplierTemp = mc.thePlayer.getFOVMultiplier();
++        }
+         this.fovModifierHandPrev = this.fovModifierHand;
+         this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
+     }
+@@ -304,7 +313,7 @@
+         }
+         else
+         {
+-            EntityPlayer var3 = (EntityPlayer)this.mc.renderViewEntity;
++            EntityLiving var3 = (EntityLiving)this.mc.renderViewEntity;
+             float var4 = 70.0F;
+ 
+             if (par2)
+@@ -1102,8 +1111,11 @@
                      var20 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      Profiler.endStartSection("outline");
@@ -23,7 +50,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1171,8 +1176,12 @@
+@@ -1167,8 +1179,12 @@
                  var20 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  Profiler.endStartSection("outline");
@@ -38,7 +65,7 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-@@ -1196,6 +1205,9 @@
+@@ -1192,6 +1208,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }

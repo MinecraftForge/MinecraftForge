@@ -92,7 +92,7 @@
              }
  
              Iterator var20 = modList.iterator();
-@@ -786,9 +811,10 @@
+@@ -774,9 +799,10 @@
  
          long var1 = 0L;
  
@@ -105,7 +105,7 @@
              Iterator var3 = inGameHooks.entrySet().iterator();
  
              while (var3.hasNext())
-@@ -1111,6 +1137,12 @@
+@@ -1099,6 +1125,12 @@
          }
      }
  
@@ -118,7 +118,7 @@
      public static void registerTileEntity(Class var0, String var1)
      {
          try
-@@ -1220,6 +1252,18 @@
+@@ -1208,6 +1240,18 @@
          }
      }
  
@@ -137,7 +137,7 @@
      public static void setPrivateValue(Class var0, Object var1, int var2, Object var3) throws IllegalArgumentException, SecurityException, NoSuchFieldException
      {
          try
-@@ -1646,4 +1690,9 @@
+@@ -1634,4 +1678,9 @@
  
          init();
      }

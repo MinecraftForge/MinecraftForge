@@ -16,8 +16,8 @@ public class GuiControlsScrollPanel extends GuiSlot
     private GameSettings options;
     private Minecraft mc;
     private String[] message;
-    private int mouseX;
-    private int mouseY;
+    private int _mouseX;
+    private int _mouseY;
     private int selected = -1;
 
     public GuiControlsScrollPanel(GuiControls controls, GameSettings options, Minecraft mc)
@@ -64,8 +64,8 @@ public class GuiControlsScrollPanel extends GuiSlot
     @Override
     public void drawScreen(int mX, int mY, float f)
     {
-        mouseX = mX;
-        mouseY = mY;
+        _mouseX = mX;
+        _mouseY = mY;
 
         if (selected != -1 && !Mouse.isButtonDown(0) && Mouse.getDWheel() == 0)
         {
@@ -87,7 +87,7 @@ public class GuiControlsScrollPanel extends GuiSlot
         int width = 70;
         int height = 20;
         xPosition -= 20;
-        boolean flag = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+        boolean flag = _mouseX >= xPosition && _mouseY >= yPosition && _mouseX < xPosition + width && _mouseY < yPosition + height;
         int k = (flag ? 2 : 1);
 
         GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/gui/gui.png"));

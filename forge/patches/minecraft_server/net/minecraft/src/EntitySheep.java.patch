@@ -13,7 +13,7 @@
  {
      /**
       * Holds the RGB table of the sheep colors - in OpenGL glColor3f values - used to render the sheep colored fleece.
-@@ -97,27 +100,6 @@
+@@ -99,27 +102,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -41,7 +41,7 @@
          return super.interact(par1EntityPlayer);
      }
  
-@@ -246,4 +228,23 @@
+@@ -252,4 +234,23 @@
              this.setGrowingAge(var1);
          }
      }

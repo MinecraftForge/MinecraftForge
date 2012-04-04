@@ -1,14 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,7 @@
+@@ -4,6 +4,8 @@
  import java.util.Set;
  import java.util.logging.Logger;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
++import net.minecraft.src.forge.ForgeHooks;
  
  public class ConsoleCommandHandler
  {
-@@ -52,10 +53,9 @@
+@@ -52,9 +54,9 @@
                          var5.savePlayerStates();
                      }
  
@@ -16,12 +17,11 @@
 +                    for (World world : DimensionManager.getWorlds())
                      {
 -                        var7 = this.minecraftServer.worldMngr[var6];
--                        var7.saveWorld(true, (IProgressUpdate)null);
-+                        world.saveWorld(true, null);
-                     }
- 
-                     this.sendNoticeToOps(var4, "Save complete.");
-@@ -64,20 +64,18 @@
++                        var7 = (WorldServer)world;
+                         boolean var8 = var7.levelSaving;
+                         var7.levelSaving = false;
+                         var7.saveWorld(true, (IProgressUpdate)null);
+@@ -67,20 +69,18 @@
                  {
                      this.sendNoticeToOps(var4, "Disabling level saving..");
  
@@ -46,32 +46,47 @@
                      }
                  }
                  else
-@@ -353,20 +351,18 @@
+@@ -356,20 +356,18 @@
  
                                              if ("add".equalsIgnoreCase(var20))
                                              {
 -                                                for (var19 = 0; var19 < this.minecraftServer.worldMngr.length; ++var19)
 +                                                for (World world : DimensionManager.getWorlds())
                                                  {
--                                                    var22 = this.minecraftServer.worldMngr[var19];
--                                                    var22.advanceTime(var22.getWorldTime() + (long)var8);
-+                                                    world.advanceTime(world.getWorldTime() + (long)var8);
+-                                                    var23 = this.minecraftServer.worldMngr[var19];
+-                                                    var23.advanceTime(var23.getWorldTime() + (long)var18);
++                                                    world.advanceTime(world.getWorldTime() + (long)var18);
                                                  }
  
-                                                 this.sendNoticeToOps(var4, "Added " + var8 + " to time");
+                                                 this.sendNoticeToOps(var4, "Added " + var18 + " to time");
                                              }
                                              else if ("set".equalsIgnoreCase(var20))
                                              {
 -                                                for (var19 = 0; var19 < this.minecraftServer.worldMngr.length; ++var19)
 +                                                for (World world : DimensionManager.getWorlds())
                                                  {
--                                                    var22 = this.minecraftServer.worldMngr[var19];
--                                                    var22.advanceTime((long)var8);
-+                                                    world.advanceTime((long)var8);
+-                                                    var23 = this.minecraftServer.worldMngr[var19];
+-                                                    var23.advanceTime((long)var18);
++                                                    world.advanceTime((long)var18);
                                                  }
  
-                                                 this.sendNoticeToOps(var4, "Set time to " + var8);
-@@ -411,7 +407,7 @@
+                                                 this.sendNoticeToOps(var4, "Set time to " + var18);
+@@ -387,8 +385,12 @@
+                                     else if (var2.toLowerCase().startsWith("say "))
+                                     {
+                                         var2 = var2.substring(var2.indexOf(" ")).trim();
+-                                        minecraftLogger.info("[" + var4 + "] " + var2);
+-                                        var5.sendPacketToAllPlayers(new Packet3Chat("\u00a7d[Server] " + var2));
++                                        var2 = ForgeHooks.onServerCommandSay(var3, var3.getUsername(), var2);
++                                        if (var2 != null)
++                                        {
++                                            minecraftLogger.info("[" + var4 + "] " + var2);
++                                            var5.sendPacketToAllPlayers(new Packet3Chat("\u00a7d[Server] " + var2));
++                                        }
+                                     }
+                                     else if (var2.toLowerCase().startsWith("tell "))
+                                     {
+@@ -414,7 +416,7 @@
                                      }
                                      else if (var2.toLowerCase().startsWith("toggledownfall"))
                                      {
@@ -80,3 +95,14 @@
                                          var3.log("Toggling rain and snow, hold on...");
                                      }
                                      else if (var2.toLowerCase().startsWith("banlist"))
+@@ -433,6 +435,10 @@
+                                             var3.log("Ban list:" + this.func_40648_a(this.minecraftServer.getBannedPlayersList(), ", "));
+                                         }
+                                     }
++                                    else if (ForgeHooks.onServerCommand(var3, var3.getUsername(), var2))
++                                    {
++                                        //Nom Nom Nom, Do we need to log anything, Let the command handle it themselves.
++                                    }
+                                     else
+                                     {
+                                         minecraftLogger.info("Unknown console command. Type \"help\" for help.");

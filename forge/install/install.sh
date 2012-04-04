@@ -27,7 +27,6 @@ then
     exit 1
 fi
 ./decompile.sh
-python forge/clean_src.py src
 
 pushd src > /dev/null
     if [ -f ../jars/bin/minecraft.jar ];

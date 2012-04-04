@@ -5,6 +5,8 @@
 
 package net.minecraft.src.forge;
 
+import org.lwjgl.opengl.Display;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -84,7 +86,7 @@ public class MinecraftForgeClient
     {
         return ForgeHooksClient.renderPass;
     }
-
+    
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
     /** Register a custom renderer for a specific item. This can be used to
@@ -102,7 +104,8 @@ public class MinecraftForgeClient
     public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
         IItemRenderer renderer = customItemRenderers[item.itemID];
-        if (renderer != null && renderer.handleRenderType(item, type)) {
+        if (renderer != null && renderer.handleRenderType(item, type)) 
+        {
             return customItemRenderers[item.itemID];
         }
         return null;
@@ -122,5 +125,21 @@ public class MinecraftForgeClient
     static
     {
         init();
+    }
+    
+    /***
+     * This is a function that is used to enforce deprecation of code.
+     * It checks the current Display's title against the passed in argument.
+     * If they do not match (such is the case in different versionf of MC) it exits the process with a error
+     * 
+     * @param version The version to find, usually "Minecraft Minecraft 1.2.3"
+     * @param message The error message to display in the crash log
+     */
+    public static void checkMinecraftVersion(String version, String message)
+    {
+        if (!Display.getTitle().equals(version))
+        {
+            MinecraftForge.killMinecraft("Minecraft Forge", message.replaceAll("%version%", Display.getTitle()));
+        }
     }
 }

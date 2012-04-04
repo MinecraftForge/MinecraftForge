@@ -18,14 +18,14 @@
          }
 -        else if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.getGrowingAge() >= 0)
 -        {
--            this.setEntityDead();
+-            this.setDead();
 -            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
 -
 -            if (!this.worldObj.isRemote)
 -            {
 -                EntityCow var3 = new EntityCow(this.worldObj);
 -                var3.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
--                var3.setEntityHealth(this.getEntityHealth());
+-                var3.setEntityHealth(this.getHealth());
 -                var3.renderYawOffset = this.renderYawOffset;
 -                this.worldObj.spawnEntityInWorld(var3);
 -
@@ -54,10 +54,10 @@
 +    @Override
 +    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
 +    {
-+        setEntityDead();
++        setDead();
 +        EntityCow entitycow = new EntityCow(worldObj);
 +        entitycow.setLocationAndAngles(posX, posY, posZ, rotationYaw, rotationPitch);
-+        entitycow.setEntityHealth(getEntityHealth());
++        entitycow.setEntityHealth(getHealth());
 +        entitycow.renderYawOffset = renderYawOffset;
 +        worldObj.spawnEntityInWorld(entitycow);
 +        worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);

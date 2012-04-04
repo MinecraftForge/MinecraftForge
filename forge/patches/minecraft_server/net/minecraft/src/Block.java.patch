@@ -9,16 +9,16 @@
  public class Block
  {
      public static final StepSound soundPowderFootstep = new StepSound("stone", 1.0F, 1.0F);
-@@ -446,7 +448,7 @@
+@@ -397,7 +399,7 @@
  
-     public boolean func_48124_n()
+     public boolean hasTileEntity()
      {
 -        return this.isBlockContainer;
-+	return hasTileEntity(0);
++        return hasTileEntity(0);
      }
  
      /**
-@@ -585,12 +587,16 @@
+@@ -536,12 +538,16 @@
          return this.blockID;
      }
  
@@ -37,7 +37,7 @@
      }
  
      /**
-@@ -609,17 +615,13 @@
+@@ -560,17 +566,13 @@
          if (!par1World.isRemote)
          {
              int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
@@ -59,16 +59,16 @@
                  }
              }
          }
-@@ -902,7 +904,7 @@
+@@ -853,7 +855,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
--        if (this.renderAsNormalBlock() && !this.isBlockContainer && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-+        if (this.renderAsNormalBlock() && !hasTileEntity(par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+-        if (this.func_50008_h() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
++        if (canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1010,6 +1012,376 @@
+@@ -967,6 +969,396 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -440,7 +440,27 @@
 +            }
 +        }
 +        return ret;
-+    }    
++    }
++    
++    /**
++     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
++     * 
++     * @param world The world
++     * @param player The player doing the harvesting
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param metadata The metadata
++     * @return True if the block can be directly harvested using silk touch
++     */
++    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
++    {
++    	if (this instanceof BlockGlass)
++    	{
++    		return true;
++    	}
++    	return renderAsNormalBlock() && !hasTileEntity(metadata);
++    }
 +    
      static
      {

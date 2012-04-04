@@ -3,6 +3,7 @@ package net.minecraft.src.forge;
 import java.util.Set;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.Entity;
 import net.minecraft.src.World;
 
 /**
@@ -24,4 +25,11 @@ public interface IChunkLoadHandler
      * @param chunk The chunk to be unloaded
      */
     public boolean canUnloadChunk(Chunk chunk);
+    
+    /**
+     * Called from World.updateEntityWithOptionalForce.
+     * Return true to allow this entity to update.
+     * @param entity The entity to update
+     */
+    public boolean canUpdateEntity(Entity entity);
 }

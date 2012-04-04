@@ -10,7 +10,7 @@ import net.minecraft.src.ItemStack;
  */
 public class DungeonLoot
 {
-    private ItemStack item;
+    private ItemStack itemStack;
     private int minCount = 1;
     private int maxCount = 1;
 
@@ -21,7 +21,7 @@ public class DungeonLoot
      */
     public DungeonLoot(ItemStack item, int min, int max)
     {
-        this.item = item;
+        this.itemStack = item;
         minCount = min;
         maxCount = max;
     }
@@ -34,18 +34,18 @@ public class DungeonLoot
      */
     public ItemStack generateStack(Random rand)
     {
-        ItemStack ret = this.item.copy();
+        ItemStack ret = this.itemStack.copy();
         ret.stackSize = minCount + (rand.nextInt(maxCount - minCount + 1));
         return ret;
     }
 
     public boolean equals(ItemStack item, int min, int max)
     {
-        return (min == minCount && max == maxCount && item.isItemEqual(this.item));
+        return (min == minCount && max == maxCount && item.isItemEqual(this.itemStack));
     }
 
     public boolean equals(ItemStack item)
     {
-        return item.isItemEqual(this.item);
+        return item.isItemEqual(this.itemStack);
     }
 }

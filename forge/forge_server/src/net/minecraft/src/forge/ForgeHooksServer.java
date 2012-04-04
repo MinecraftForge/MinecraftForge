@@ -28,7 +28,14 @@ public class ForgeHooksServer
 
     public static void sendModListRequest(NetworkManager net)
     {
+        NetworkMod[] list = MinecraftForge.getNetworkMods();
         PacketModList pkt = new PacketModList(true);
+        
+        for (NetworkMod mod : list)
+        {
+            pkt.ModIDs.put(MinecraftForge.getModID(mod), mod.toString());
+        }
+        
         ((NetServerHandler)net.getNetHandler()).sendPacket(pkt.getPacket());
         if (((PacketHandlerServer)ForgeHooks.getPacketHandler()).DEBUG)
         {

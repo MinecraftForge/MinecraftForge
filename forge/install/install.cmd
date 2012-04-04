@@ -25,7 +25,6 @@ if exist ".\src" (
     exit 1
 )
 runtime\bin\python\python_mcp runtime\decompile.py
-runtime\bin\python\python_mcp forge\clean_src.py src
 
 pushd src >nul
 

@@ -91,10 +91,6 @@ public class PacketHandlerServer implements IPacketHandler
         {
             doMissingMods(net, missing);
         }
-        else
-        {
-            sendModIDs(net, serverMods);
-        }
     }
 
     /**
@@ -117,29 +113,7 @@ public class PacketHandlerServer implements IPacketHandler
         net.sendPacket(pkt.getPacket());
         disconnectUser(net);
     }
-
-
-    /**
-     * Sends a list of mod id mappings to the client.
-     * Only mod ID's are sent, not item or blocks.
-     *
-     * @param net The network handler
-     * @param list A list of network mods
-     */
-    private void sendModIDs(NetServerHandler net, NetworkMod[] list)
-    {
-        PacketModIDs pkt = new PacketModIDs();
-        for (NetworkMod mod : list)
-        {
-            pkt.Mods.put(MinecraftForge.getModID(mod), mod.toString());
-        }
-        net.sendPacket(pkt.getPacket());
-        if (DEBUG)
-        {
-            System.out.println("S->C: " + pkt.toString(true));
-        }
-    }
-
+    
     /**
      * Disconnects the player just like kicking them, just without the kick message.
      * @param net The network handler

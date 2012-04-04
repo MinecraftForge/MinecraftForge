@@ -17,8 +17,6 @@ pushd .. >nul
     rmdir /S /Q src
     echo | cmd /C decompile.bat -r
   )
-  
-  .\runtime\bin\python\python_mcp forge\clean_src.py src  
 
   echo | cmd /C updatemd5.bat -f
 

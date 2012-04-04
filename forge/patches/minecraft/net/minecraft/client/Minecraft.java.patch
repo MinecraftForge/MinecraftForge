@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1966,86 +1966,54 @@
+@@ -1972,86 +1972,54 @@
       */
      public void usePortal(int par1)
      {
