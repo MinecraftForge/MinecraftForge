@@ -46,7 +46,7 @@
       <isset property="env.WORKSPACE" />
     </condition>
     <condition property="python.exe" value="${mcp.home}/runtime/bin/python/python_mcp" else="python">
-      <os family="Windows"/>
+      <os family="Windows" />
     </condition>
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
     <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
@@ -62,11 +62,11 @@
 
   <target name="clean">
     <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/cleanup.py"/>
+      <arg value="${mcp.home}/runtime/cleanup.py" />
       <arg value="-f" />
     </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/decompile.py"/>
+      <arg value="${mcp.home}/runtime/decompile.py" />
       <arg value="-d" />
       <arg value="-n" />
     </exec>
@@ -74,10 +74,15 @@
 
   <target name="buildandreobfmcp" depends="init">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
-      <arg value="${mcp.home}/runtime/recompile.py"/>
+      <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/reobfuscate.py"/>
+      <arg value="${mcp.home}/runtime/reobfuscate.py" />
+    </exec>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${basedir}/generatechangedfilelist.py"/>
+      <arg value="${mcp.home}"/>
+      <arg value="${basedir}/difflist.txt"/>
     </exec>
   </target>
 
@@ -131,17 +136,21 @@
     <zip destfile="${basedir}/target/${jarname}.zip">
       <fileset dir="${output}" includes="**/*.class" />
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
+      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" />
       <mappedresources>
-        <fileset dir="${basedir}/install" excludes="install.*" />
-        <filterchain>
-          <replacetokens>
-            <token key="MAJOR" value="${version.major}" />
-            <token key="MINOR" value="${version.minor}" />
-            <token key="REV" value="${version.rev}" />
-            <token key="BUILD" value="${version.build}" />
-            <token key="MCVERSION" value="${version.minecraft}" />
-          </replacetokens>
-        </filterchain>
+        <concat>
+          <fileset dir="${basedir}/install" includes="README.txt" />
+          <filterchain>
+            <replacetokens>
+              <token key="MAJOR" value="${version.major}" />
+              <token key="MINOR" value="${version.minor}" />
+              <token key="REV" value="${version.rev}" />
+              <token key="BUILD" value="${version.build}" />
+              <token key="MCVERSION" value="${version.minecraft}" />
+            </replacetokens>
+          </filterchain>
+        </concat>
+        <mergemapper to="README-fml.txt" />
       </mappedresources>
     </zip>
   </target>
@@ -149,23 +158,26 @@
   <target name="build-source-pack">
     <property name="jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${jarname}.zip">
-      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" prefix="fml"/>
-      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
-      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server"/>
-      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches"/>
+      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt" prefix="fml" />
+      <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server" />
+      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server" />
+      <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
       <mappedresources>
-        <fileset dir="${basedir}/install" includes="*" />
-        <filterchain>
-          <replacetokens>
-            <token key="MAJOR" value="${version.major}" />
-            <token key="MINOR" value="${version.minor}" />
-            <token key="REV" value="${version.rev}" />
-            <token key="BUILD" value="${version.build}" />
-            <token key="MCVERSION" value="${version.minecraft}" />
-          </replacetokens>
-        </filterchain>
-        <globmapper handledirsep="true" from="*" to="fml/" />
+        <concat>
+          <fileset dir="${basedir}/install" includes="README.txt" />
+          <filterchain>
+            <replacetokens>
+              <token key="MAJOR" value="${version.major}" />
+              <token key="MINOR" value="${version.minor}" />
+              <token key="REV" value="${version.rev}" />
+              <token key="BUILD" value="${version.build}" />
+              <token key="MCVERSION" value="${version.minecraft}" />
+            </replacetokens>
+          </filterchain>
+        </concat>
+        <mergemapper to="fml/README-fml.txt" />
       </mappedresources>
+      <zipfileset dir="${basedir}/install" excludes="README.txt" prefix="fml" />
     </zip>
   </target>
 
@@ -173,9 +185,9 @@
 
   <target name="patch" depends="init">
     <exec executable="${python.exe}" dir="${basedir}">
-      <arg value="${basedir}/applypatches.py"/>
-      <arg value="${patch.src.dir}"/>
-      <arg value="${mcp.srcdir}"/>
+      <arg value="${basedir}/applypatches.py" />
+      <arg value="${patch.src.dir}" />
+      <arg value="${mcp.srcdir}" />
     </exec>
 
   </target>
