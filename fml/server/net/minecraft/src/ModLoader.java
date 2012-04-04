@@ -24,17 +24,19 @@ import cpw.mods.fml.server.ModLoaderModContainer;
 
 public class ModLoader {
   /**
+   * Not used on the server.
    * 
    * @param achievement
    * @param name
    * @param description
    */
   public static void addAchievementDesc(Achievement achievement, String name, String description) {
-    // NOOP on the server??
   }
 
   /**
    * This method is a call in hook from modified external code. Implemented elsewhere.
+   * 
+   * {@link FMLHandler#fuelLookup(int, int)}
    * @param id
    * @param metadata
    * @return
@@ -45,7 +47,7 @@ public class ModLoader {
   }
 
   /**
-   * This method has been unimplemented in server implementations for some time.
+   * This method is unimplemented in server versions to date.
    * 
    * @param armor
    * @return
@@ -56,7 +58,7 @@ public class ModLoader {
   }
 
   /**
-   * This method does not work. Creation of a BiomeGenBase is sufficient to populate this array
+   * This method does not work. Creation of a BiomeGenBase is sufficient to populate this array. Using this method will likely corrupt worlds.
    * 
    * @param biome
    */
@@ -202,6 +204,7 @@ public class ModLoader {
 
   /**
    * This method is a call in hook from modified external code. Implemented elsewhere.
+   * {@link FMLHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
    * @param world
    * @param x
    * @param y
@@ -263,6 +266,7 @@ public class ModLoader {
 
   /**
    * Get a list of all BaseMod loaded into the system
+   * {@link ModLoaderModContainer#findAll}
    * @return
    */
   public static List<BaseMod> getLoadedMods() {
@@ -271,6 +275,7 @@ public class ModLoader {
 
   /**
    * Get a logger instance
+   * {@link FMLHandler#getFMLLogger()}
    * @return
    */
   public static Logger getLogger() {
@@ -279,6 +284,7 @@ public class ModLoader {
 
   /**
    * Get a value from a field using reflection 
+   * {@link ReflectionHelper#getPrivateValue(Class, Object, int)}
    * @param instanceclass
    * @param instance
    * @param fieldindex
@@ -290,6 +296,7 @@ public class ModLoader {
 
   /**
    * Get a value from a field using reflection
+   * {@link ReflectionHelper#getPrivateValue(Class, Object, String)}
    * @param instanceclass
    * @param instance
    * @param field
@@ -301,6 +308,7 @@ public class ModLoader {
 
   /**
    * Get a new unique entity id
+   * {@link Entity#getNextId()}
    * @return
    */
   public static int getUniqueEntityId() {
@@ -309,6 +317,7 @@ public class ModLoader {
 
   /**
    * Is the named mod loaded?
+   * {@link Loader#isModLoaded(String)}
    * @param modname
    * @return
    */
@@ -318,6 +327,7 @@ public class ModLoader {
 
   /**
    * This method is a call in hook from modified external code. Implemented elsewhere.
+   * {@link FMLHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
    * @param packet
    */
   @Deprecated
@@ -366,6 +376,7 @@ public class ModLoader {
   /**
    * Register the mod for packets on this channel. This only registers the channel with Forge Mod Loader, not
    * with clients connecting- use BaseMod.onClientLogin to tell them about your custom channel
+   * {@link FMLHooks#registerChannel(cpw.mods.fml.common.ModContainer, String)}
    * @param mod
    * @param channel
    */
@@ -383,7 +394,7 @@ public class ModLoader {
   }
 
   /**
-   * Remove a biome. This code will probably not work correctly.
+   * Remove a biome. This code will probably not work correctly and will likely corrupt worlds.
    * @param biome
    */
   @Deprecated
@@ -431,6 +442,7 @@ public class ModLoader {
 
   /**
    * Configuration is handled elsewhere
+   * {@link ModLoaderModContainer}
    */
   @Deprecated
   public static void saveConfig() {
@@ -438,6 +450,7 @@ public class ModLoader {
 
   /**
    * This method is unimplemented on the server: it is meant for clients to send chat to the server
+   * {@link FMLHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
    * @param text
    */
   @Deprecated
@@ -461,6 +474,7 @@ public class ModLoader {
 
   /**
    * Set a private field to a value using reflection
+   * {@link ReflectionHelper#setPrivateValue(Class, Object, int, Object)}
    * @param instanceclass
    * @param instance
    * @param fieldindex
@@ -472,6 +486,7 @@ public class ModLoader {
   
   /**
    * Set a private field to a value using reflection
+   * {@link ReflectionHelper#setPrivateValue(Class, Object, String, Object)}
    * @param instanceclass
    * @param instance
    * @param field
@@ -483,6 +498,7 @@ public class ModLoader {
 
   /**
    * This method is a call in hook from modified external code. Implemented elsewhere.
+   * {@link FMLHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
    * @param player
    * @param item
    * @param matrix
@@ -493,6 +509,7 @@ public class ModLoader {
 
   /**
    * This method is a call in hook from modified external code. Implemented elsewhere.
+   * {@link FMLHandler#onItemSmelted(EntityPlayer, ItemStack)}
    * @param player
    * @param item
    */
@@ -502,6 +519,7 @@ public class ModLoader {
 
   /**
    * Throw the offered exception. Likely will stop the game.
+   * {@link FMLHandler#raiseException(Throwable, String, boolean)}
    * @param message
    * @param e
    */
@@ -511,6 +529,7 @@ public class ModLoader {
 
   /**
    * Get the minecraft server instance
+   * {@link FMLHandler#getServer()}
    * @return
    */
   public static MinecraftServer getMinecraftServerInstance() {
