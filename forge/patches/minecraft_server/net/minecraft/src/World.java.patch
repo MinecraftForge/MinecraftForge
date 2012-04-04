@@ -18,7 +18,23 @@
  
      /** Whether monsters are enabled or not. (1 = on, 0 = off) */
      public int difficultySetting;
-@@ -352,7 +354,8 @@
+@@ -214,6 +216,7 @@
+ 
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
++        ForgeHooks.onWorldLoad(this);
+     }
+ 
+     /**
+@@ -329,6 +332,7 @@
+         this.checkSessionLock();
+         this.saveHandler.saveWorldInfoAndPlayer(this.worldInfo, this.playerEntities);
+         this.mapStorage.saveAllData();
++        ForgeHooks.onWorldSave(this);
+     }
+ 
+     /**
+@@ -349,7 +353,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -28,7 +44,7 @@
      }
  
      public boolean func_48084_h(int par1, int par2, int par3)
-@@ -1598,7 +1601,7 @@
+@@ -1595,7 +1600,7 @@
  
                      if (var7 != null)
                      {
@@ -37,7 +53,7 @@
                      }
                  }
              }
-@@ -1628,14 +1631,16 @@
+@@ -1625,14 +1630,16 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -56,7 +72,7 @@
                          }
                      }
  
-@@ -1652,13 +1657,13 @@
+@@ -1649,13 +1656,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -76,7 +92,7 @@
          }
      }
  
-@@ -1680,7 +1685,7 @@
+@@ -1677,7 +1684,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -85,7 +101,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -1903,6 +1908,13 @@
+@@ -1900,6 +1907,13 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -99,7 +115,7 @@
                          }
                      }
                  }
-@@ -2186,25 +2198,21 @@
+@@ -2183,25 +2197,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -138,7 +154,7 @@
          }
      }
  
-@@ -2213,27 +2221,10 @@
+@@ -2210,27 +2220,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -169,7 +185,7 @@
          }
      }
  
-@@ -2259,7 +2250,8 @@
+@@ -2256,7 +2249,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -179,7 +195,7 @@
      }
  
      /**
-@@ -2534,6 +2526,7 @@
+@@ -2531,6 +2525,7 @@
                  }
              }
          }
@@ -187,7 +203,7 @@
  
          Profiler.endSection();
  
-@@ -2856,7 +2849,7 @@
+@@ -2853,7 +2848,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -196,7 +212,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3342,6 +3335,11 @@
+@@ -3339,6 +3334,11 @@
              {
                  var8 = null;
              }
@@ -208,7 +224,7 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3849,4 +3847,38 @@
+@@ -3846,4 +3846,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }

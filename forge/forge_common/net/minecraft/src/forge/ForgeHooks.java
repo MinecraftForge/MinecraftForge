@@ -18,6 +18,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
@@ -93,6 +94,54 @@ public class ForgeHooks
     }
     static LinkedList<ISleepHandler> sleepHandlers = new LinkedList<ISleepHandler>();
 
+    public static void onWorldLoad(World world) 
+    {
+		for (ICustomSaveHandler handler : saveHandlers) 
+		{
+			handler.onWorldLoad(world);
+		}
+	}
+	
+	public static void onWorldSave(World world) 
+	{
+		for (ICustomSaveHandler handler : saveHandlers) 
+		{
+			handler.onWorldSave(world);
+		}
+	}
+	
+	public static void onChunkLoad(World world, Chunk chunk)
+	{
+		for (ICustomSaveHandler handler : saveHandlers) 
+		{
+			handler.onChunkLoad(world, chunk);
+		}
+	}
+	
+	public static void onChunkUnload(World world, Chunk chunk)
+	{
+		for (ICustomSaveHandler handler : saveHandlers) 
+		{
+			handler.onChunkUnload(world, chunk);
+		}
+	}
+	
+	public static void saveChunkData(World world, Chunk chunk, NBTTagCompound nbttagcompound)
+	{
+		for (ICustomSaveHandler handler : saveHandlers) 
+		{
+			handler.saveChunkData(world, chunk, nbttagcompound);
+		}
+	}
+	
+	public static void loadChunkData(World world, Chunk chunk, NBTTagCompound nbttagcompound)
+	{
+		for (ICustomSaveHandler handler : saveHandlers) 
+		{
+			handler.loadChunkData(world, chunk, nbttagcompound);
+		}
+	}
+	static LinkedList<ICustomSaveHandler> saveHandlers = new LinkedList<ICustomSaveHandler>();
 
     public static void onMinecartUpdate(EntityMinecart minecart, int x, int y, int z)
     {

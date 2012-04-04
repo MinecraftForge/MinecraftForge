@@ -44,3 +44,22 @@
              }
  
              Tessellator var4 = Tessellator.instance;
+@@ -246,7 +257,7 @@
+         float var11;
+         float var13;
+ 
+-        if (var14 != null && var14.itemID == Item.map.shiftedIndex)
++        if (var14 != null && var14.getItem() instanceof ItemMap)
+         {
+             GL11.glPushMatrix();
+             var7 = 0.8F;
+@@ -313,8 +324,7 @@
+             var26.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
+             var26.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
+             var26.draw();
+-            MapData var23 = Item.map.getMapData(var14, this.mc.theWorld);
+-            this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var23);
++            ForgeHooksClient.renderMap(var14, mc.theWorld, mc.thePlayer, mc.renderEngine, mapItemRenderer);
+             GL11.glPopMatrix();
+         }
+         else if (var14 != null)

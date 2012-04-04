@@ -6,6 +6,8 @@
 package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.ItemMap;
+import net.minecraft.src.MapItemRenderer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
@@ -44,6 +46,31 @@ public class ForgeHooksClient
 
     public static LinkedList<IHighlightHandler> highlightHandlers = new LinkedList<IHighlightHandler>();
     public static LinkedList<IRenderWorldLastHandler> renderWorldLastHandlers = new LinkedList<IRenderWorldLastHandler>();
+    
+    public static void renderMap(ItemStack itemstack, World world, EntityPlayer player, RenderEngine renderEngine, MapItemRenderer defaultrenderer)
+	{
+		ItemMap mapitem = (ItemMap) itemstack.getItem();
+	    MapData mapdata = mapitem.getMapData(itemstack, world);
+	    MapItemRenderer maprenderer = (MapItemRenderer) mapRenderers.get(mapitem);
+	    if(maprenderer == null)
+	    {
+	    	defaultrenderer.renderMap(player, renderEngine, mapdata);
+	    }
+	    else
+	    {
+	    	maprenderer.renderMap(player, renderEngine, mapdata);
+	    }
+	}	
+    public static HashMap<ItemMap, MapItemRenderer> mapRenderers=new HashMap<ItemMap, MapItemRenderer>();
+	
+	public static void onTextureLoad(String textureName)
+	{
+		for(ITextureLoadHandler handler : textureLoadHandlers)
+		{
+			handler.onTextureLoad(textureName);
+		}
+	}	
+	public static LinkedList<ITextureLoadHandler> textureLoadHandlers=new LinkedList<ITextureLoadHandler>();
 
     public static boolean canRenderInPass(Block block, int pass)
     {

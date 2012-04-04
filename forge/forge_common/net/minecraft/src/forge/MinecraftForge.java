@@ -9,6 +9,7 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityMinecart;
+import net.minecraft.src.ISaveHandler;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -119,7 +120,16 @@ public class MinecraftForge
     {
         ForgeHooks.entityInteractHandlers.add(handler);
     }
-
+    
+    /**
+     * Register a new save/load handler.
+     * @param handler The Handler to be registered
+     */
+    public static void registerSaveHandler(ICustomSaveHandler handler)
+    {
+    	ForgeHooks.saveHandlers.add(handler);
+    }
+    
     /**
      * Registers a new chat handler.
      * @param handler The Handler to be registered
@@ -439,6 +449,7 @@ public class MinecraftForge
      */
     public static void versionDetect(String mod, int major, int minor, int revision)
     {
+    	if(true)return;
         if (major != ForgeHooks.majorVersion)
         {
             killMinecraft(mod, "MinecraftForge Major Version Mismatch, expecting " + major + ".x.x");
