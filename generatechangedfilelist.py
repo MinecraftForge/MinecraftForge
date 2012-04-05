@@ -21,17 +21,20 @@ def main():
     cmd = 'diff --unchanged-group-format='' --old-group-format='' --new-group-format=\'%%>\' --changed-group-format=\'%%>\' %s %s' % (prelist, postlist)
     process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, bufsize=-1)
     difflist,_= process.communicate()
-    srg_data = parse_srg(os.path.join(mcp_root,"temp","server_rg.srg")
+    srg_data = parse_srg(os.path.join(mcp_root,"temp","server_rg.srg"))
     classes = {}
     for row in srg_data['CL']:
       classes[row['deobf_name']] = row['obf_name']
 
     with open(list_file, 'w') as fh:
-      for diff in difflist:
-        (clazz,md5)=diff.strip().split()
+      for diff in difflist.splitlines():
+        diffrow=diff.strip().split()
+        clazz=diffrow[0]
         if clazz in classes:
           clazz=classes[clazz]
-        fh.write("%s\n" %(clazz))
+        if clazz.startswith("net/minecraft/src/"):
+          clazz=clazz[len("net/minecraft/src/"):]
+        fh.write("minecraft_server/%s\n" %(clazz))
 
     
 if __name__ == '__main__':
