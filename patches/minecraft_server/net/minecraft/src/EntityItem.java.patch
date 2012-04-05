@@ -3,7 +3,7 @@
 @@ -1,5 +1,7 @@
  package net.minecraft.src;
  
-+import cpw.mods.fml.server.FMLHandler;
++import cpw.mods.fml.server.FMLServerHandler;
 +
  public class EntityItem extends Entity
  {
@@ -12,7 +12,7 @@
  
              if (this.field_433_ad == 0 && p_6093_1_.field_416_aj.func_201_a(this.field_429_a))
              {
-+                FMLHandler.instance().notifyItemPickup(this,p_6093_1_);
++                FMLServerHandler.instance().notifyItemPickup(this,p_6093_1_);
                  if (this.field_429_a.field_855_c == Block.field_582_K.field_573_bc)
                  {
                      p_6093_1_.func_27017_a(AchievementList.field_25131_c);
