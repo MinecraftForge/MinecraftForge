@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IChunkProvider;
@@ -29,6 +30,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.ServerRegistry;
 import net.minecraft.src.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
@@ -46,6 +48,8 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void onPreLoad(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
+        FMLCommonHandler.instance().registerSidedDelegate(this);
+        CommonRegistry.registerRegistry(new ServerRegistry());
         Loader.instance().loadMods();
     }
 

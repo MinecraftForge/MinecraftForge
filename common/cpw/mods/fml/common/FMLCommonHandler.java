@@ -31,21 +31,13 @@ public class FMLCommonHandler
     private Map<String, ModContainer> modChannels = new HashMap<String, ModContainer>();
     private Map<Object, Set<String>> activeChannels = new HashMap<Object, Set<String>>();
     private IFMLSidedHandler sidedDelegate;
-    
-    private FMLCommonHandler() {
-        try {
-            Class.forName("net.minecraft.client.Minecraft");
-            sidedDelegate=(IFMLSidedHandler) Class.forName("cpw.mods.fml.client.FMLClientHandler").newInstance();
-        } catch (Exception ex) {
-            try {
-                sidedDelegate=(IFMLSidedHandler) Class.forName("cpw.mods.fml.server.FMLServerHandler").newInstance();
-            } catch (Exception ex2) {
-                Loader.log.severe("A severe installation issue has occured with FML, we cannot continue");
-                throw new LoaderException(ex2);
-            }
-        }
+
+
+    public void registerSidedDelegate(IFMLSidedHandler handler)
+    {
+        sidedDelegate = handler;
     }
-    
+
     public void gameTickStart()
     {
         for (ModContainer mod : Loader.getModList())
@@ -167,12 +159,14 @@ public class FMLCommonHandler
     {
         return activeChannels.get(player).contains(channel);
     }
-    
-    public Logger getFMLLogger() {
+
+    public Logger getFMLLogger()
+    {
         return Loader.log;
     }
-    
-    public Logger getMinecraftLogger() {
+
+    public Logger getMinecraftLogger()
+    {
         return sidedDelegate.getMinecraftLogger();
     }
 
