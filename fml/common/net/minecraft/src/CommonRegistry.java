@@ -13,131 +13,90 @@
  */
 package net.minecraft.src;
 
-import java.util.Collections;
-import java.util.List;
 
 public class CommonRegistry
 {
+    private static IMinecraftRegistry instance;
+
+    public static void registerRegistry(IMinecraftRegistry registry)
+    {
+        if (instance != null)
+        {
+            throw new RuntimeException("Illegal attempt to replace FML registry");
+        }
+
+        instance = registry;
+    }
     public static void addRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_20151_a().func_20153_a(output, params);
+        instance.addRecipe(output, params);
     }
 
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_20151_a().func_21146_b(output, params);
+        instance.addShapelessRecipe(output, params);
     }
 
     public static void addSmelting(int input, ItemStack output)
     {
-        FurnaceRecipes.func_21162_a().func_21160_a(input, output);
+        instance.addSmelting(input, output);
     }
 
     public static void registerBlock(Block block)
     {
-        registerBlock(block, ItemBlock.class);
+        instance.registerBlock(block);
     }
 
     public static void registerBlock(Block block, Class <? extends ItemBlock > itemclass)
     {
-        try
-        {
-            assert block != null : "registerBlock: block cannot be null";
-            assert itemclass != null : "registerBlock: itemclass cannot be null";
-            int blockItemId = block.field_573_bc - 256;
-            itemclass.getConstructor(int.class).newInstance(blockItemId);
-        }
-        catch (Exception e)
-        {
-            //HMMM
-        }
+        instance.registerBlock(block, itemclass);
     }
 
     public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
-        EntityList.addNewEntityListMapping(entityClass, entityName, id);
+        instance.registerEntityID(entityClass, entityName, id);
     }
 
     public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
     {
-        EntityList.addNewEntityListMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
+        instance.registerEntityID(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
     }
 
     public static void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)
     {
-        TileEntity.addNewTileEntityMapping(tileEntityClass, id);
+        instance.registerTileEntity(tileEntityClass, id);
     }
 
     public static void addBiome(BiomeGenBase biome)
     {
-        //NOOP because the implementation idea is broken. Creating a BiomeGenBase adds the biome already.
+        instance.addBiome(biome);
     }
 
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
-        for (BiomeGenBase biome : biomes)
-        {
-            @SuppressWarnings("unchecked")
-            List<SpawnListEntry> spawns = biome.func_25055_a(typeOfCreature);
-
-            for (SpawnListEntry entry : spawns)
-            {
-                //Adjusting an existing spawn entry
-                if (entry.field_25145_a == entityClass)
-                {
-                    entry.field_35483_d = weightedProb;
-                    entry.field_35484_b = min;
-                    entry.field_35485_c = max;
-                    break;
-                }
-            }
-
-            spawns.add(new SpawnListEntry(entityClass, weightedProb, min, max));
-        }
+        instance.addSpawn(entityClass, weightedProb, min, max, typeOfCreature, biomes);
     }
 
     @SuppressWarnings("unchecked")
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        Class <? extends Entity > entityClazz = EntityList.getEntityToClassMapping().get(entityName);
-
-        if (EntityLiving.class.isAssignableFrom(entityClazz))
-        {
-            addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, spawnList, biomes);
-        }
+        instance.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
     public static void removeBiome(BiomeGenBase biome)
     {
-        // NOOP because broken
+        instance.removeBiome(biome);
     }
 
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
-        for (BiomeGenBase biome : biomes)
-        {
-            @SuppressWarnings("unchecked")
-            List<SpawnListEntry> spawns = biome.func_25055_a(typeOfCreature);
-
-            for (SpawnListEntry entry : Collections.unmodifiableList(spawns))
-            {
-                if (entry.field_25145_a == entityClass)
-                {
-                    spawns.remove(entry);
-                }
-            }
-        }
+        instance.removeSpawn(entityClass, typeOfCreature, biomes);
     }
 
     @SuppressWarnings("unchecked")
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        Class <? extends Entity > entityClazz = EntityList.getEntityToClassMapping().get(entityName);
-
-        if (EntityLiving.class.isAssignableFrom(entityClazz))
-        {
-            removeSpawn((Class <? extends EntityLiving >) entityClazz, spawnList, biomes);
-        }
+        instance.removeSpawn(entityName, spawnList, biomes);
     }
 
 }
