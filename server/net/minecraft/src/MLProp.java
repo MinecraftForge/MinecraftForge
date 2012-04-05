@@ -1,12 +1,12 @@
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
@@ -19,29 +19,30 @@ import static java.lang.annotation.ElementType.*;
 
 /**
  * @author cpw
- * 
+ *
  */
 @Retention(value = RUNTIME)
 @Target(value = FIELD)
-public @interface MLProp {
-  /**
-   * Adds additional help to top of configuration file.
-   */
-  String info() default "";
+public @interface MLProp
+{
+    /**
+     * Adds additional help to top of configuration file.
+     */
+String info() default "";
 
-  /**
-   * Maximum value allowed if field is a number.
-   */
-  double max() default 1D;
+    /**
+     * Maximum value allowed if field is a number.
+     */
+double max() default 1D;
 
-  /**
-   * Minimum value allowed if field is a number.
-   */
-  double min() default -1D;
+    /**
+     * Minimum value allowed if field is a number.
+     */
+double min() default -1D;
 
-  /**
-   * Overrides the field name for property key.
-   */
-  String name() default "";
+    /**
+     * Overrides the field name for property key.
+     */
+String name() default "";
 
 }
