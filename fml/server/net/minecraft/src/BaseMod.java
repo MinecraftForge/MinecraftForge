@@ -1,12 +1,12 @@
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
@@ -21,230 +21,256 @@ import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 
-public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler {
-  // CALLBACK MECHANISMS
-  @Override
-  public final void onCrafting(Object... craftingParameters) {
-    takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
-  }
-
-  @Override
-  public final void onSmelting(Object... smeltingParameters) {
-    takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
-  }
-  @Override
-  public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data) {
-    return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
-  }
-
-  @Override
-  public final boolean onChat(Object... data) {
-    return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
-  }
-  @Override
-  public final void onLogin(Object... data) {
-      onClientLogin((Packet1Login)data[0],(NetworkManager)data[1]);
-  }
-  
-  @Override
-  public final void onPacket250Packet(Object... data) {
-    onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
-  }
-  
-  @Override
-  public final void notifyPickup(Object... pickupData) {
-    EntityItem item=(EntityItem) pickupData[0];
-    EntityPlayer player=(EntityPlayer) pickupData[1];
-    onItemPickup(player, item.field_429_a);
-  }
-  
-  @Override
-  public final void generate(Random random, int chunkX, int chunkZ, Object... additionalData) {
-    World w=(World) additionalData[0];
-    IChunkProvider cp=(IChunkProvider) additionalData[1];
-    
-    if (cp instanceof ChunkProviderGenerate) {
-      generateSurface(w, random, chunkX<<4, chunkZ<<4);
-    } else if (cp instanceof ChunkProviderHell){
-      generateNether(w, random, chunkX<<4, chunkZ<<4);
+public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler
+{
+    // CALLBACK MECHANISMS
+    @Override
+    public final void onCrafting(Object... craftingParameters)
+    {
+        takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
     }
-  }
-  
-  // BASEMOD API
-  /**
-   * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
-   * @param id
-   * @param metadata
-   * @return
-   */
-  public int addFuel(int id, int metadata) {
-    return 0;
-  }
 
-  /**
-   * Override if you wish to perform some action other than just dispensing the item from the dispenser
-   * @param world
-   * @param x
-   * @param y
-   * @param z
-   * @param xVel
-   * @param zVel
-   * @param item
-   * @return
-   */
-  public boolean dispenseEntity(World world, double x, double y, double z, int xVel, int zVel, ItemStack item) {
-    return false;
-  }
+    @Override
+    public final void onSmelting(Object... smeltingParameters)
+    {
+        takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
+    }
+    @Override
+    public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
+    {
+        return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
+    }
 
-  /**
-   * Override if you wish to generate Nether (Hell biome) blocks
-   * @param world
-   * @param random
-   * @param chunkX
-   * @param chunkZ
-   */
-  public void generateNether(World world, Random random, int chunkX, int chunkZ) {
-  }
+    @Override
+    public final boolean onChat(Object... data)
+    {
+        return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
+    }
+    @Override
+    public final void onLogin(Object... data)
+    {
+        onClientLogin((Packet1Login)data[0], (NetworkManager)data[1]);
+    }
 
-  /**
-   * Override if you wish to generate Overworld (not hell or the end) blocks
-   * @param world
-   * @param random
-   * @param chunkX
-   * @param chunkZ
-   */
-  public void generateSurface(World world, Random random, int chunkX, int chunkZ) {
-  }
+    @Override
+    public final void onPacket250Packet(Object... data)
+    {
+        onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
+    }
 
-  /**
-   * Return the name of your mod. Defaults to the class name
-   * @return
-   */
-  public String getName() {
-    return getClass().getSimpleName();
-  }
+    @Override
+    public final void notifyPickup(Object... pickupData)
+    {
+        EntityItem item = (EntityItem) pickupData[0];
+        EntityPlayer player = (EntityPlayer) pickupData[1];
+        onItemPickup(player, item.field_429_a);
+    }
 
-  /**
-   * Get your mod priorities
-   * @return
-   */
-  public String getPriorities() {
-    return null;
-  }
+    @Override
+    public final void generate(Random random, int chunkX, int chunkZ, Object... additionalData)
+    {
+        World w = (World) additionalData[0];
+        IChunkProvider cp = (IChunkProvider) additionalData[1];
 
-  /**
-   * Return the version of your mod
-   * @return
-   */
-  public abstract String getVersion();
+        if (cp instanceof ChunkProviderGenerate)
+        {
+            generateSurface(w, random, chunkX << 4, chunkZ << 4);
+        }
+        else if (cp instanceof ChunkProviderHell)
+        {
+            generateNether(w, random, chunkX << 4, chunkZ << 4);
+        }
+    }
 
-  /**
-   * Load your mod
-   */
-  public abstract void load();
+    // BASEMOD API
+    /**
+     * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
+     * @param id
+     * @param metadata
+     * @return
+     */
+    public int addFuel(int id, int metadata)
+    {
+        return 0;
+    }
 
-  /**
-   * Finish loading your mod
-   */
-  public void modsLoaded() {
-  }
+    /**
+     * Override if you wish to perform some action other than just dispensing the item from the dispenser
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param xVel
+     * @param zVel
+     * @param item
+     * @return
+     */
+    public boolean dispenseEntity(World world, double x, double y, double z, int xVel, int zVel, ItemStack item)
+    {
+        return false;
+    }
 
-  /**
-   * Handle item pickup
-   * @param player
-   * @param item
-   */
-  public void onItemPickup(EntityPlayer player, ItemStack item) {
-  }
+    /**
+     * Override if you wish to generate Nether (Hell biome) blocks
+     * @param world
+     * @param random
+     * @param chunkX
+     * @param chunkZ
+     */
+    public void generateNether(World world, Random random, int chunkX, int chunkZ)
+    {
+    }
 
-  /**
-   * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
-   * @param minecraftServer the server
-   * @return true to continue receiving ticks
-   */
-  public boolean onTickInGame(MinecraftServer minecraftServer) {
-    return false;
-  }
+    /**
+     * Override if you wish to generate Overworld (not hell or the end) blocks
+     * @param world
+     * @param random
+     * @param chunkX
+     * @param chunkZ
+     */
+    public void generateSurface(World world, Random random, int chunkX, int chunkZ)
+    {
+    }
 
-  /**
-   * Not implemented because on the server you don't know who it's from
-   * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
-   * @param text
-   */
-  @Deprecated
-  public void receiveChatPacket(String text) {
-  }
+    /**
+     * Return the name of your mod. Defaults to the class name
+     * @return
+     */
+    public String getName()
+    {
+        return getClass().getSimpleName();
+    }
 
-  /**
-   * Not implemented because on the server you don't know who it's from
-   * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
-   * @param packet
-   */
-  @Deprecated
-  public void receiveCustomPacket(Packet250CustomPayload packet) {
-  }
+    /**
+     * Get your mod priorities
+     * @return
+     */
+    public String getPriorities()
+    {
+        return null;
+    }
 
-  /**
-   * Called when someone crafts an item from a crafting table
-   * @param player
-   * @param item
-   * @param matrix
-   */
-  public void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory matrix) {
-  }
+    /**
+     * Return the version of your mod
+     * @return
+     */
+    public abstract String getVersion();
 
-  /**
-   * Called when someone takes a smelted item from a furnace
-   * 
-   * @param player
-   * @param item
-   */
-  public void takenFromFurnace(EntityPlayer player, ItemStack item) {
+    /**
+     * Load your mod
+     */
+    public abstract void load();
 
-  }
+    /**
+     * Finish loading your mod
+     */
+    public void modsLoaded()
+    {
+    }
 
-  /**
-   * The identifier string for the mod- used in client<->server negotiation
-   */
-  @Override
-  public String toString() {
-    return getName()+" "+getVersion();
-  }
+    /**
+     * Handle item pickup
+     * @param player
+     * @param item
+     */
+    public void onItemPickup(EntityPlayer player, ItemStack item)
+    {
+    }
 
-  /**
-   * Called when a 250 packet is received on a channel registered to this mod
-   * 
-   * @param source
-   * @param payload
-   */
-  public void onPacket250Received(EntityPlayer source, Packet250CustomPayload payload) {
-    
-  }
-  
-  /**
-   * Called when a new client logs in. Make sure modloader knows about your channels
-   * @param login
-   * @param data
-   */
-  public void onClientLogin(Packet1Login login, NetworkManager data) {
-    
-  }
-  
-  /**
-   * Called when a chat message is received. Return true to stop further processing
-   * @param source
-   * @param chat
-   * @return
-   */
-  public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat) {
-    return false;
-  }
-  // Spare client junk
-  // -------
-  // void addRenderer(Map<Class<? extends Entity>, Render> renderers);
-  // void registerAnimation(Minecraft game);
-  // void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID);
-  // boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
-  // boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui);
-  // void keyboardEvent(KeyBinding event);
+    /**
+     * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
+     * @param minecraftServer the server
+     * @return true to continue receiving ticks
+     */
+    public boolean onTickInGame(MinecraftServer minecraftServer)
+    {
+        return false;
+    }
+
+    /**
+     * Not implemented because on the server you don't know who it's from
+     * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
+     * @param text
+     */
+    @Deprecated
+    public void receiveChatPacket(String text)
+    {
+    }
+
+    /**
+     * Not implemented because on the server you don't know who it's from
+     * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
+     * @param packet
+     */
+    @Deprecated
+    public void receiveCustomPacket(Packet250CustomPayload packet)
+    {
+    }
+
+    /**
+     * Called when someone crafts an item from a crafting table
+     * @param player
+     * @param item
+     * @param matrix
+     */
+    public void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory matrix)
+    {
+    }
+
+    /**
+     * Called when someone takes a smelted item from a furnace
+     *
+     * @param player
+     * @param item
+     */
+    public void takenFromFurnace(EntityPlayer player, ItemStack item)
+    {
+    }
+
+    /**
+     * The identifier string for the mod- used in client<->server negotiation
+     */
+    @Override
+    public String toString()
+    {
+        return getName() + " " + getVersion();
+    }
+
+    /**
+     * Called when a 250 packet is received on a channel registered to this mod
+     *
+     * @param source
+     * @param payload
+     */
+    public void onPacket250Received(EntityPlayer source, Packet250CustomPayload payload)
+    {
+    }
+
+    /**
+     * Called when a new client logs in. Make sure modloader knows about your channels
+     * @param login
+     * @param data
+     */
+    public void onClientLogin(Packet1Login login, NetworkManager data)
+    {
+    }
+
+    /**
+     * Called when a chat message is received. Return true to stop further processing
+     * @param source
+     * @param chat
+     * @return
+     */
+    public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat)
+    {
+        return false;
+    }
+    // Spare client junk
+    // -------
+    // void addRenderer(Map<Class<? extends Entity>, Render> renderers);
+    // void registerAnimation(Minecraft game);
+    // void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID);
+    // boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
+    // boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui);
+    // void keyboardEvent(KeyBinding event);
 }
