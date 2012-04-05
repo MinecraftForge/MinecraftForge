@@ -30,13 +30,14 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.World;
-import cpw.mods.fml.common.FMLHooks;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
-public class FMLHandler
+public class FMLServerHandler implements IFMLSidedHandler
 {
-    private static final FMLHandler INSTANCE = new FMLHandler();
+    private static final FMLServerHandler INSTANCE = new FMLServerHandler();
 
     private MinecraftServer server;
 
@@ -55,12 +56,12 @@ public class FMLHandler
 
     public void onPreTick()
     {
-        FMLHooks.instance().gameTickStart();
+        FMLCommonHandler.instance().gameTickStart();
     }
 
     public void onPostTick()
     {
-        FMLHooks.instance().gameTickEnd();
+        FMLCommonHandler.instance().gameTickEnd();
     }
 
     public MinecraftServer getServer()
@@ -68,7 +69,7 @@ public class FMLHandler
         return server;
     }
 
-    public static Logger getMinecraftLogger()
+    public Logger getMinecraftLogger()
     {
         return MinecraftServer.field_6038_a;
     }
@@ -124,14 +125,9 @@ public class FMLHandler
         }
     }
 
-    public static Logger getFMLLogger()
-    {
-        return Loader.log;
-    }
-
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
-        getFMLLogger().throwing("FMLHandler", "raiseException", exception);
+        FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
         throw new RuntimeException(exception);
     }
 
@@ -161,7 +157,7 @@ public class FMLHandler
     /**
      * @return the instance
      */
-    public static FMLHandler instance()
+    public static FMLServerHandler instance()
     {
         return INSTANCE;
     }
@@ -235,7 +231,7 @@ public class FMLHandler
             return;
         }
 
-        ModContainer mod = FMLHooks.instance().getModForChannel(packet.field_44005_a);
+        ModContainer mod = FMLCommonHandler.instance().getModForChannel(packet.field_44005_a);
 
         if (mod != null)
         {
@@ -253,18 +249,18 @@ public class FMLHandler
             for (String channel : new String(packet.field_44004_c, "UTF8").split("\0"))
             {
                 // Skip it if we don't know it
-                if (FMLHooks.instance().getModForChannel(channel) == null)
+                if (FMLCommonHandler.instance().getModForChannel(channel) == null)
                 {
                     continue;
                 }
 
                 if ("REGISTER".equals(packet.field_44005_a))
                 {
-                    FMLHooks.instance().activateChannel(player, channel);
+                    FMLCommonHandler.instance().activateChannel(player, channel);
                 }
                 else
                 {
-                    FMLHooks.instance().deactivateChannel(player, channel);
+                    FMLCommonHandler.instance().deactivateChannel(player, channel);
                 }
             }
         }
@@ -286,8 +282,20 @@ public class FMLHandler
 
         Packet250CustomPayload packet = new Packet250CustomPayload();
         packet.field_44005_a = "REGISTER";
-        packet.field_44004_c = FMLHooks.instance().getPacketRegistry();
+        packet.field_44004_c = FMLCommonHandler.instance().getPacketRegistry();
         packet.field_44003_b = packet.field_44004_c.length;
         networkManager.func_745_a(packet);
+    }
+
+    @Override
+    public boolean isServer()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isClient()
+    {
+        return false;
     }
 }

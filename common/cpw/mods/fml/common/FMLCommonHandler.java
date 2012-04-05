@@ -18,18 +18,34 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import net.minecraft.src.EntityPlayer;
 
 
 
-public class FMLHooks
+public class FMLCommonHandler
 {
-    private static final FMLHooks INSTANCE = new FMLHooks();
+    private static final FMLCommonHandler INSTANCE = new FMLCommonHandler();
     private Map<ModContainer, Set<String>> channelList = new HashMap<ModContainer, Set<String>>();
     private Map<String, ModContainer> modChannels = new HashMap<String, ModContainer>();
     private Map<Object, Set<String>> activeChannels = new HashMap<Object, Set<String>>();
-
+    private IFMLSidedHandler sidedDelegate;
+    
+    private FMLCommonHandler() {
+        try {
+            Class.forName("net.minecraft.client.Minecraft");
+            sidedDelegate=(IFMLSidedHandler) Class.forName("cpw.mods.fml.client.FMLClientHandler").newInstance();
+        } catch (Exception ex) {
+            try {
+                sidedDelegate=(IFMLSidedHandler) Class.forName("cpw.mods.fml.server.FMLServerHandler").newInstance();
+            } catch (Exception ex2) {
+                Loader.log.severe("A severe installation issue has occured with FML, we cannot continue");
+                throw new LoaderException(ex2);
+            }
+        }
+    }
+    
     public void gameTickStart()
     {
         for (ModContainer mod : Loader.getModList())
@@ -49,7 +65,7 @@ public class FMLHooks
     /**
      * @return the instance
      */
-    public static FMLHooks instance()
+    public static FMLCommonHandler instance()
     {
         return INSTANCE;
     }
@@ -150,5 +166,23 @@ public class FMLHooks
     public boolean isChannelActive(String channel, Object player)
     {
         return activeChannels.get(player).contains(channel);
+    }
+    
+    public Logger getFMLLogger() {
+        return Loader.log;
+    }
+    
+    public Logger getMinecraftLogger() {
+        return sidedDelegate.getMinecraftLogger();
+    }
+
+    public boolean isModLoaderMod(Class<?> clazz)
+    {
+        return sidedDelegate.isModLoaderMod(clazz);
+    }
+
+    public ModContainer loadBaseModMod(Class<?> clazz, String canonicalPath)
+    {
+        return sidedDelegate.loadBaseModMod(clazz, canonicalPath);
     }
 }

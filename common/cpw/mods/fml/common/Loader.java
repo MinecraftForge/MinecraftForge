@@ -32,7 +32,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import cpw.mods.fml.common.toposort.ModSorter;
-import cpw.mods.fml.server.FMLHandler;
 
 public class Loader
 {
@@ -71,7 +70,7 @@ public class Loader
     }
     private Loader()
     {
-        Loader.log.setParent(FMLHandler.getMinecraftLogger());
+        Loader.log.setParent(FMLCommonHandler.instance().getMinecraftLogger());
         Loader.log.setLevel(Level.ALL);
         FileHandler fileHandler;
 
@@ -79,7 +78,7 @@ public class Loader
         {
             fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
             // We're stealing minecraft's log formatter
-            fileHandler.setFormatter(FMLHandler.getMinecraftLogger().getHandlers()[0].getFormatter());
+            fileHandler.setFormatter(FMLCommonHandler.instance().getMinecraftLogger().getHandlers()[0].getFormatter());
             fileHandler.setLevel(Level.ALL);
             Loader.log.addHandler(fileHandler);
         }
@@ -331,10 +330,10 @@ public class Loader
                 // an FML mod
                 mods.add(FMLModContainer.buildFor(clazz));
             }
-            else if (FMLHandler.instance().isModLoaderMod(clazz))
+            else if (FMLCommonHandler.instance().isModLoaderMod(clazz))
             {
                 log.fine(String.format("ModLoader BaseMod class %s found, loading", clazzName));
-                ModContainer mc = FMLHandler.instance().loadBaseModMod(clazz, classSource.getCanonicalPath());
+                ModContainer mc = FMLCommonHandler.instance().loadBaseModMod(clazz, classSource.getCanonicalPath());
                 mods.add(mc);
                 log.fine(String.format("ModLoader BaseMod class %s loaded", clazzName));
             }
