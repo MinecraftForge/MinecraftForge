@@ -188,6 +188,7 @@
       <arg value="${basedir}/applypatches.py" />
       <arg value="${patch.src.dir}" />
       <arg value="${mcp.srcdir}" />
+      <arg value="${mcp.home}" />
     </exec>
 
   </target>
