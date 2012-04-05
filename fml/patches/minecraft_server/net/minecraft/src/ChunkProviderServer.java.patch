@@ -1,5 +1,5 @@
---- src-reference/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
-+++ src-work/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src-base/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
 @@ -7,6 +7,8 @@
  import java.util.List;
  import java.util.Set;

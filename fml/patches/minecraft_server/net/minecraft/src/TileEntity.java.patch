@@ -1,5 +1,5 @@
---- src-reference/minecraft_server/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
-+++ src-work/minecraft_server/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src-base/minecraft_server/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
 @@ -145,4 +145,8 @@
          func_187_a(TileEntityEnchantmentTable.class, "EnchantTable");
          func_187_a(TileEntityEndPortal.class, "Airportal");
