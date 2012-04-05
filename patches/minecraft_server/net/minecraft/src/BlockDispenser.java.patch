@@ -1,5 +1,5 @@
---- src-reference/minecraft_server/net/minecraft/src/BlockDispenser.java	0000-00-00 00:00:00.000000000 -0000
-+++ src-work/minecraft_server/net/minecraft/src/BlockDispenser.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src-base/minecraft_server/net/minecraft/src/BlockDispenser.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/BlockDispenser.java	0000-00-00 00:00:00.000000000 -0000
 @@ -2,6 +2,8 @@
  
  import java.util.Random;
