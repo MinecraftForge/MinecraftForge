@@ -32,33 +32,90 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import cpw.mods.fml.common.toposort.ModSorter;
+import cpw.mods.fml.common.toposort.TopologicalSort;
 
+/**
+ * The loader class performs the actual loading of the mod code from disk.
+ * 
+ * <p>There are several {@link State}s to mod loading, triggered in two different stages from the FML handler code's hooks into the
+ * minecraft code.</p>
+ * 
+ * <ol>
+ * <li>LOADING. Scanning the filesystem for mod containers to load (zips, jars, directories), adding them to the {@link #modClassLoader}
+ * Scanning, the loaded containers for mod classes to load and registering them appropriately.</li>
+ * <li>PREINIT. The mod classes are configured, they are sorted into a load order, and instances of the mods are constructed.</li>
+ * <li>INIT. The mod instances are initialized. For BaseMod mods, this involves calling the load method.</li>
+ * <li>POSTINIT. The mod instances are post initialized. For BaseMod mods this involves calling the modsLoaded method.</li>
+ * <li>UP. The Loader is complete</li>
+ * <li>ERRORED. The loader encountered an error during the LOADING phase and dropped to this state instead. It will not complete
+ * loading from this state, but it attempts to continue loading before abandoning and giving a fatal error.</li>
+ * </ol>
+ * 
+ * Phase 1 code triggers the LOADING and PREINIT states. Phase 2 code triggers the INIT and POSTINIT states.
+ * 
+ * @author cpw
+ * 
+ */
 public class Loader
 {
+    private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
+    private static Pattern modClass = Pattern.compile("(.*/?)(mod\\_[^\\s]+).class$");
+
+    /**
+     * The state enum used to help track state progression for the loader
+     * @author cpw
+     *
+     */
     private enum State
     {
         NOINIT, LOADING, PREINIT, INIT, POSTINIT, UP, ERRORED
     };
 
+    /**
+     * The singleton instance
+     */
     private static Loader instance;
+    /**
+     * Our special logger for logging issues to. We copy various assets from the Minecraft logger to acheive a similar appearance.
+     */
     public static Logger log = Logger.getLogger("ForgeModLoader");
 
-    private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
-    private static Pattern modClass = Pattern.compile("(.*/?)(mod\\_[^\\s]+).class$");
 
+    /**
+     * Build information for tracking purposes.
+     */
     private static String major = "@MAJOR@";
     private static String minor = "@MINOR@";
-    private static String rev  = "@REV@";
+    private static String rev = "@REV@";
     private static String build = "@BUILD@";
     private static String mcversion = "@MCVERSION@";
 
+    /**
+     * The {@link State} of the loader
+     */
     private State state;
+    /**
+     * The class loader we load the mods into.
+     */
     private ModClassLoader modClassLoader;
+    /**
+     * The sorted list of mods.
+     */
     private List<ModContainer> mods;
+    /**
+     * A named list of mods
+     */
     private Map<String, ModContainer> namedMods;
+    /**
+     * The canonical configuration directory
+     */
     private File canonicalConfigDir;
+    /**
+     * The canonical minecraft directory
+     */
     private File canonicalMinecraftDir;
 
+    
     public static Loader instance()
     {
         if (instance == null)
@@ -68,6 +125,7 @@ public class Loader
 
         return instance;
     }
+
     private Loader()
     {
         Loader.log.setParent(FMLCommonHandler.instance().getMinecraftLogger());
@@ -90,6 +148,10 @@ public class Loader
         log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", major, minor, rev, build, mcversion));
     }
 
+    /**
+     * Sort the mods into a sorted list, using dependency information from the containers. The sorting is performed
+     * using a {@link TopologicalSort} based on the pre- and post- dependency information provided by the mods.
+     */
     private void sortModList()
     {
         log.fine("Verifying mod dependencies are satisfied");
@@ -112,16 +174,20 @@ public class Loader
         {
             log.fine("Sorting mods into an ordered list");
             mods = sorter.sort();
-            log.fine(String.format("Mod list sorted %s", mods));
+            log.fine(String.format("Sorted mod list %s", mods));
         }
         catch (IllegalArgumentException iae)
         {
-            log.severe("A dependency cycle was detected in the input mod set so they cannot load them in order");
+            log.severe("A dependency cycle was detected in the input mod set so they cannot be loaded in order");
             log.throwing("Loader", "sortModList", iae);
             throw new LoaderException(iae);
         }
     }
 
+    /**
+     * The first mod initialization stage, performed immediately after the jar files and mod classes are loaded,
+     * {@link State#PREINIT}. The mods are configured from their configuration data and instantiated (for BaseMod mods).
+     */
     private void preModInit()
     {
         state = State.PREINIT;
@@ -140,6 +206,9 @@ public class Loader
         log.fine("Mod pre-initialization complete");
     }
 
+    /**
+     * The main mod initialization stage, performed on the sorted mod list.
+     */
     private void modInit()
     {
         state = State.INIT;
@@ -171,9 +240,25 @@ public class Loader
         log.fine("Mod post-initialization complete");
     }
 
+    /**
+     * The primary loading code
+     * 
+     * This is visited during first initialization by Minecraft to scan and load the mods 
+     * from all sources
+     * 1. The minecraft jar itself (for loading of in jar mods- I would like to remove this if possible but forge depends on it at present)
+     * 2. The mods directory with expanded subdirs, searching for mods named mod_*.class
+     * 3. The mods directory for zip and jar files, searching for mod classes named mod_*.class again
+     * 
+     * The found resources are first loaded into the {@link #modClassLoader} (always) then scanned for class resources matching the specification above.
+     * 
+     * If they provide the {@link Mod} annotation, they will be loaded as "FML mods", which currently is effectively a NO-OP.
+     * If they are determined to be {@link net.minecraft.src.BaseMod} subclasses they are loaded as such.
+     * 
+     * Finally, if they are successfully loaded as classes, they are then added to the available mod list.
+     */
     private void load()
     {
-        File minecraftDir = new File(".");
+        File minecraftDir = FMLCommonHandler.instance().getMinecraftRootDirectory();
         File modsDir = new File(minecraftDir, "mods");
         File configDir = new File(minecraftDir, "config");
         String canonicalModsPath;
@@ -406,6 +491,10 @@ public class Loader
         return instance().mods;
     }
 
+    /**
+     * Called from the hook to start mod loading. We trigger the {@link #load()} and {@link #preModInit()} phases here.
+     * Finally, the mod list is frozen completely and is consider immutable from then on.
+     */
     public void loadMods()
     {
         state = State.NOINIT;
@@ -418,6 +507,9 @@ public class Loader
         mods = Collections.unmodifiableList(mods);
     }
 
+    /**
+     * Complete the initialization of the mods {@link #initializeMods()} and {@link #postModInit()} and mark ourselves up and ready to run.
+     */
     public void initializeMods()
     {
         modInit();
@@ -426,10 +518,17 @@ public class Loader
         log.info(String.format("Forge Mod Loader load complete, %d mods loaded", mods.size()));
     }
 
+    /**
+     * Query if we know of a mod named modname
+     * 
+     * @param modname
+     * @return
+     */
     public static boolean isModLoaded(String modname)
     {
         return instance().namedMods.containsKey(modname);
     }
+
     /**
      * @return
      */

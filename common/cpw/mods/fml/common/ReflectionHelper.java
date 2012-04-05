@@ -13,7 +13,12 @@
 package cpw.mods.fml.common;
 
 import java.lang.reflect.Field;
-
+/**
+ * Some reflection helper code.
+ * 
+ * @author cpw
+ *
+ */
 public class ReflectionHelper
 {
     @SuppressWarnings("unchecked")

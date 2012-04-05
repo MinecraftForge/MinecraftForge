@@ -18,6 +18,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+/**
+ * A simple delegating class loader used to load mods into the system
+ * 
+ * 
+ * @author cpw
+ *
+ */
 public class ModClassLoader extends URLClassLoader
 {
 

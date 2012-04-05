@@ -51,11 +51,13 @@ public class ModLoaderModContainer implements ModContainer
         this.modSource = modSource;
     }
 
+    @Override
     public boolean wantsPreInit()
     {
         return true;
     }
 
+    @Override
     public boolean wantsPostInit()
     {
         return true;
@@ -310,6 +312,10 @@ public class ModLoaderModContainer implements ModContainer
         isTicking = enable;
     }
 
+    /**
+     * Find all the BaseMods in the system 
+     * @return
+     */
     public static List<BaseMod> findAll()
     {
         ArrayList<BaseMod> modList = new ArrayList<BaseMod>();
@@ -367,36 +373,24 @@ public class ModLoaderModContainer implements ModContainer
         return mod;
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsToDispense()
-     */
     @Override
     public boolean wantsToDispense()
     {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getDispenseHandler()
-     */
     @Override
     public IDispenseHandler getDispenseHandler()
     {
         return mod;
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsCraftingNotification()
-     */
     @Override
     public boolean wantsCraftingNotification()
     {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getCraftingHandler()
-     */
     @Override
     public ICraftingHandler getCraftingHandler()
     {
@@ -442,9 +436,7 @@ public class ModLoaderModContainer implements ModContainer
             }
         }
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getDependencies()
-     */
+
     @Override
     public List<String> getDependencies()
     {

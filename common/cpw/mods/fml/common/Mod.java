@@ -16,6 +16,12 @@ package cpw.mods.fml.common;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * A possible future way to indicate mods to the system is to use an annotation style
+ * 
+ * @author cpw
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Mod
 {
