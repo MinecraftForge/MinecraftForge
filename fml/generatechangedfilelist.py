@@ -26,7 +26,6 @@ def main():
     for row in srg_data['CL']:
       classes[row['deobf_name']] = row['obf_name']
 
-    print(difflist)
     with open(list_file, 'w') as fh:
       for diff in difflist.splitlines():
         diffrow=diff.strip().split()
