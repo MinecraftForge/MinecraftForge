@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.common.FMLHooks;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ReflectionHelper;
-import cpw.mods.fml.server.FMLHandler;
+import cpw.mods.fml.server.FMLServerHandler;
 import cpw.mods.fml.server.ModLoaderModContainer;
 
 public class ModLoader
@@ -38,7 +38,7 @@ public class ModLoader
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
      *
-     * {@link FMLHandler#fuelLookup(int, int)}
+     * {@link FMLServerHandler#fuelLookup(int, int)}
      * @param id
      * @param metadata
      * @return
@@ -176,7 +176,7 @@ public class ModLoader
      */
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -203,7 +203,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -222,7 +222,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
+     * {@link FMLServerHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
      * @param world
      * @param x
      * @param y
@@ -307,12 +307,12 @@ public class ModLoader
 
     /**
      * Get a logger instance
-     * {@link FMLHandler#getFMLLogger()}
+     * {@link FMLServerHandler#getFMLLogger()}
      * @return
      */
     public static Logger getLogger()
     {
-        return FMLHandler.getFMLLogger();
+        return FMLCommonHandler.instance().getFMLLogger();
     }
 
     /**
@@ -364,7 +364,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
+     * {@link FMLServerHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
      * @param packet
      */
     @Deprecated
@@ -418,13 +418,13 @@ public class ModLoader
     /**
      * Register the mod for packets on this channel. This only registers the channel with Forge Mod Loader, not
      * with clients connecting- use BaseMod.onClientLogin to tell them about your custom channel
-     * {@link FMLHooks#registerChannel(cpw.mods.fml.common.ModContainer, String)}
+     * {@link FMLCommonHandler#registerChannel(cpw.mods.fml.common.ModContainer, String)}
      * @param mod
      * @param channel
      */
     public static void registerPacketChannel(BaseMod mod, String channel)
     {
-        FMLHooks.instance().registerChannel(ModLoaderModContainer.findContainerFor(mod), channel);
+        FMLCommonHandler.instance().registerChannel(ModLoaderModContainer.findContainerFor(mod), channel);
     }
 
     /**
@@ -454,7 +454,7 @@ public class ModLoader
      */
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType spawnList)
     {
-        CommonRegistry.removeSpawn(entityClass, spawnList, FMLHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.removeSpawn(entityClass, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -475,7 +475,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList)
     {
-        CommonRegistry.removeSpawn(entityName, spawnList, FMLHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.removeSpawn(entityName, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -500,7 +500,7 @@ public class ModLoader
 
     /**
      * This method is unimplemented on the server: it is meant for clients to send chat to the server
-     * {@link FMLHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
+     * {@link FMLServerHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
      * @param text
      */
     @Deprecated
@@ -552,7 +552,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
+     * {@link FMLServerHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
      * @param player
      * @param item
      * @param matrix
@@ -564,7 +564,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLHandler#onItemSmelted(EntityPlayer, ItemStack)}
+     * {@link FMLServerHandler#onItemSmelted(EntityPlayer, ItemStack)}
      * @param player
      * @param item
      */
@@ -575,23 +575,23 @@ public class ModLoader
 
     /**
      * Throw the offered exception. Likely will stop the game.
-     * {@link FMLHandler#raiseException(Throwable, String, boolean)}
+     * {@link FMLServerHandler#raiseException(Throwable, String, boolean)}
      * @param message
      * @param e
      */
     public static void throwException(String message, Throwable e)
     {
-        FMLHandler.instance().raiseException(e, message, true);
+        FMLServerHandler.instance().raiseException(e, message, true);
     }
 
     /**
      * Get the minecraft server instance
-     * {@link FMLHandler#getServer()}
+     * {@link FMLServerHandler#getServer()}
      * @return
      */
     public static MinecraftServer getMinecraftServerInstance()
     {
-        return FMLHandler.instance().getServer();
+        return FMLServerHandler.instance().getServer();
     }
 
     /**
@@ -604,6 +604,6 @@ public class ModLoader
      */
     public static boolean isChannelActive(EntityPlayer player, String channel)
     {
-        return FMLHooks.instance().isChannelActive(channel, player);
+        return FMLCommonHandler.instance().isChannelActive(channel, player);
     }
 }

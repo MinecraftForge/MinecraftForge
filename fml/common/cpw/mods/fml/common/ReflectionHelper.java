@@ -14,8 +14,6 @@ package cpw.mods.fml.common;
 
 import java.lang.reflect.Field;
 
-import cpw.mods.fml.server.FMLHandler;
-
 public class ReflectionHelper
 {
     @SuppressWarnings("unchecked")
@@ -29,8 +27,8 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            FMLHandler.getFMLLogger().severe(String.format("There was a problem getting field %d from %s", fieldIndex, classToAccess.getName()));
-            FMLHandler.getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem getting field %d from %s", fieldIndex, classToAccess.getName()));
+            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
             throw new RuntimeException(e);
         }
     }
@@ -46,8 +44,8 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            FMLHandler.getFMLLogger().severe(String.format("There was a problem getting field %s from %s", fieldName, classToAccess.getName()));
-            FMLHandler.getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem getting field %s from %s", fieldName, classToAccess.getName()));
+            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
             throw new RuntimeException(e);
         }
     }
@@ -62,8 +60,8 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            FMLHandler.getFMLLogger().severe(String.format("There was a problem setting field %d from %s", fieldIndex, classToAccess.getName()));
-            FMLHandler.getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem setting field %d from %s", fieldIndex, classToAccess.getName()));
+            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
             throw new RuntimeException(e);
         }
     }
@@ -78,8 +76,8 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            FMLHandler.getFMLLogger().severe(String.format("There was a problem setting field %s from %s", fieldName, classToAccess.getName()));
-            FMLHandler.getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem setting field %s from %s", fieldName, classToAccess.getName()));
+            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
             throw new RuntimeException(e);
         }
     }

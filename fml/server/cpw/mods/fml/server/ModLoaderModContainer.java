@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.MLProp;
-import cpw.mods.fml.common.FMLHooks;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.INetworkHandler;
@@ -271,7 +271,7 @@ public class ModLoaderModContainer implements ModContainer
     {
         if (isTicking)
         {
-            isTicking = mod.onTickInGame(FMLHandler.instance().getServer());
+            isTicking = mod.onTickInGame(FMLServerHandler.instance().getServer());
         }
     }
     @Override
@@ -498,6 +498,6 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public boolean ownsNetworkChannel(String channel)
     {
-        return FMLHooks.instance().getChannelListFor(this).contains(channel);
+        return FMLCommonHandler.instance().getChannelListFor(this).contains(channel);
     }
 }
