@@ -6,6 +6,7 @@ incorporating API implementations of client side ModLoader by Risugami.
 It can be installed on its own, or as part of Minecraft Forge.
 
 If you have downloaded the server zip file you can install it as follows:
+
 Installation
 ============
 To install this on it's own into a minecraft server, simply copy the contents
@@ -16,7 +17,25 @@ Forge Installation
 This code also ships as a part of Minecraft Forge. You do not need to install it
 separately from your Minecraft Forge installation.
 
-If you have downloaded the source code pack, you can install it as follows:
+NOTE: there is no companion client side installation. This is, at present, a
+server-side only installation.
+
+-------------------------------------------
+Source installation information for modders
+-------------------------------------------
+This code follows the Minecraft Forge installation methodology. It will apply
+some small patches to your MCP extracted source code, giving you and it access 
+to some of the data and functions you need to build a successful mod.
+
+It uses the fernflower decompiler to decompile minecraft, and the patches will
+only work with fernflower decompiled source. It will attempt to download 
+fernflower and fail if it cannot. You can also install fernflower manually
+if you wish.
+
+Note also that the patches are built against "unrenamed" MCP source code- this
+means that you will not be able to read them directly against normal code.
+
+Source pack installation information:
 
 Standalone source installation
 ==============================
