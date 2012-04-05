@@ -5,21 +5,33 @@ import fnmatch
 import re
 import subprocess, shlex
 
+mcp_root = os.path.abspath(sys.argv[1])
+sys.path.append(os.path.join(mcp_root,"runtime"))
+from filehandling.srgshandler import parse_srg
+
 def cmdsplit(args):
     if os.sep == '\\':
         args = args.replace('\\', '\\\\')
     return shlex.split(args)
 
 def main():
-    md5dir = os.path.abspath(sys.argv[1])
     list_file = os.path.abspath(sys.argv[2])
-    prelist = os.path.join(md5dir,"temp","server.md5")
-    postlist = os.path.join(md5dir,"temp","server_reobf.md5")
+    prelist = os.path.join(mcp_root,"temp","server.md5")
+    postlist = os.path.join(mcp_root,"temp","server_reobf.md5")
     cmd = 'diff --unchanged-group-format='' --old-group-format='' --new-group-format=\'%%>\' --changed-group-format=\'%%>\' %s %s' % (prelist, postlist)
     process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, bufsize=-1)
     difflist,_= process.communicate()
+    srg_data = parse_srg(os.path.join(mcp_root,"temp","server_rg.srg")
+    classes=dict()
+    for row in srg_data['CL']:
+      classes[row['deobf_name']] = row['obf_name']
+
     with open(list_file, 'w') as fh:
-      fh.write(difflist)
+      for diff in difflist:
+        (clazz,md5)=diff.strip().split()
+        if clazz in classes:
+          clazz=classes[clazz]
+        fh.write("%s\n" %(clazz))
 
     
 if __name__ == '__main__':
