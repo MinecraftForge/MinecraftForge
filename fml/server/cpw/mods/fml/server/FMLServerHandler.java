@@ -12,6 +12,8 @@
  */
 package cpw.mods.fml.server;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,14 +39,43 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
+/**
+ * Handles primary communication from hooked code into the system
+ * 
+ * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from {@link MinecraftServer}
+ * 
+ * Obfuscated code should focus on this class and other members of the "server" (or "client") code
+ * 
+ * The actual mod loading is handled at arms length by {@link Loader}
+ * 
+ * It is expected that a similar class will exist for each target environment: Bukkit and Client side.
+ * 
+ * It should not be directly modified.
+ * 
+ * @author cpw
+ *
+ */
 public class FMLServerHandler implements IFMLSidedHandler
 {
+    /**
+     * The singleton
+     */
     private static final FMLServerHandler INSTANCE = new FMLServerHandler();
 
+    /**
+     * A reference to the server itself
+     */
     private MinecraftServer server;
 
+    /**
+     * A handy list of the default overworld biomes
+     */
     private BiomeGenBase[] defaultOverworldBiomes;
 
+    /**
+     * Called to start the whole game off from {@link MinecraftServer#startServer}
+     * @param minecraftServer
+     */
     public void onPreLoad(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
@@ -53,31 +84,59 @@ public class FMLServerHandler implements IFMLSidedHandler
         Loader.instance().loadMods();
     }
 
+    /**
+     * Called a bit later on during server initialization to finish loading mods
+     */
     public void onLoadComplete()
     {
         Loader.instance().initializeMods();
     }
 
+    /**
+     * Every tick just before world and other ticks occur
+     */
     public void onPreTick()
     {
         FMLCommonHandler.instance().gameTickStart();
     }
 
+    /**
+     * Every tick just after world and other ticks occur
+     */
     public void onPostTick()
     {
         FMLCommonHandler.instance().gameTickEnd();
     }
 
+    /**
+     * Get the server instance
+     * @return
+     */
     public MinecraftServer getServer()
     {
         return server;
     }
 
+    /**
+     * Get a handle to the server's logger instance
+     */
     public Logger getMinecraftLogger()
     {
         return MinecraftServer.field_6038_a;
     }
 
+    /**
+     * Called from ChunkProviderServer when a chunk needs to be populated
+     * 
+     * To avoid polluting the worldgen seed, we generate a new random from the world seed and
+     * generate a seed from that
+     * 
+     * @param chunkProvider
+     * @param chunkX
+     * @param chunkZ
+     * @param world
+     * @param generator
+     */
     public void onChunkPopulate(IChunkProvider chunkProvider, int chunkX, int chunkZ, World world, IChunkProvider generator)
     {
         Random fmlRandom = new Random(world.func_22079_j());
@@ -94,6 +153,13 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
     }
 
+    /**
+     * Called from the furnace to lookup fuel values
+     * 
+     * @param itemId
+     * @param itemDamage
+     * @return
+     */
     public int fuelLookup(int itemId, int itemDamage)
     {
         int fv = 0;
@@ -106,11 +172,17 @@ public class FMLServerHandler implements IFMLSidedHandler
         return fv;
     }
 
+    /**
+     * Is the offered class and instance of BaseMod and therefore a ModLoader mod?
+     */
     public boolean isModLoaderMod(Class<?> clazz)
     {
         return BaseMod.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * Load the supplied mod class into a mod container
+     */
     public ModContainer loadBaseModMod(Class<?> clazz, String canonicalPath)
     {
         @SuppressWarnings("unchecked")
@@ -118,6 +190,11 @@ public class FMLServerHandler implements IFMLSidedHandler
         return new ModLoaderModContainer(bmClazz, canonicalPath);
     }
 
+    /**
+     * Called to notify that an item was picked up from the world
+     * @param entityItem
+     * @param entityPlayer
+     */
     public void notifyItemPickup(EntityItem entityItem, EntityPlayer entityPlayer)
     {
         for (ModContainer mod : Loader.getModList())
@@ -129,6 +206,12 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
     }
 
+    /**
+     * Raise an exception
+     * @param exception
+     * @param message
+     * @param stopGame
+     */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
         FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
@@ -136,13 +219,15 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /**
-     * @param p_21036_1_
-     * @param var13
-     * @param var15
-     * @param var17
-     * @param var9
-     * @param var10
-     * @param var12
+     * Attempt to dispense the item as an entity other than just as a the item itself
+     * 
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param xVelocity
+     * @param zVelocity
+     * @param item
      * @return
      */
     public boolean tryDispensingEntity(World world, double x, double y, double z, byte xVelocity, byte zVelocity, ItemStack item)
@@ -167,6 +252,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /**
+     * Build a list of default overworld biomes
      * @return
      */
     public BiomeGenBase[] getDefaultOverworldBiomes()
@@ -192,6 +278,12 @@ public class FMLServerHandler implements IFMLSidedHandler
         return defaultOverworldBiomes;
     }
 
+    /**
+     * Called when an item is crafted
+     * @param player
+     * @param craftedItem
+     * @param craftingGrid
+     */
     public void onItemCrafted(EntityPlayer player, ItemStack craftedItem, IInventory craftingGrid)
     {
         for (ModContainer mod : Loader.getModList())
@@ -203,6 +295,12 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
     }
 
+    /**
+     * Called when an item is smelted
+     * 
+     * @param player
+     * @param smeltedItem
+     */
     public void onItemSmelted(EntityPlayer player, ItemStack smeltedItem)
     {
         for (ModContainer mod : Loader.getModList())
@@ -214,6 +312,13 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
     }
 
+    /**
+     * Called when a chat packet is received
+     * 
+     * @param chat
+     * @param player
+     * @return true if you want the packet to stop processing and not echo to the rest of the world
+     */
     public boolean handleChatPacket(Packet3Chat chat, EntityPlayer player)
     {
         for (ModContainer mod : Loader.getModList())
@@ -227,6 +332,11 @@ public class FMLServerHandler implements IFMLSidedHandler
         return false;
     }
 
+    /**
+     * Called when a packet 250 packet is received from the player
+     * @param packet
+     * @param player
+     */
     public void handlePacket250(Packet250CustomPayload packet, EntityPlayer player)
     {
         if ("REGISTER".equals(packet.field_44005_a) || "UNREGISTER".equals(packet.field_44005_a))
@@ -244,6 +354,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /**
+     * Handle register requests for packet 250 channels
      * @param packet
      */
     private void handleClientRegistration(Packet250CustomPayload packet, EntityPlayer player)
@@ -274,6 +385,11 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
     }
 
+    /**
+     * Handle a login
+     * @param loginPacket
+     * @param networkManager
+     */
     public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager)
     {
         for (ModContainer mod : Loader.getModList())
@@ -291,15 +407,31 @@ public class FMLServerHandler implements IFMLSidedHandler
         networkManager.func_745_a(packet);
     }
 
+    /**
+     * Are we a server?
+     */
     @Override
     public boolean isServer()
     {
         return true;
     }
 
+    /**
+     * Are we a client?
+     */
     @Override
     public boolean isClient()
     {
         return false;
+    }
+
+    @Override
+    public File getMinecraftRootDirectory()
+    {
+        try {
+            return server.func_6009_a(".").getCanonicalFile();
+        } catch (IOException ioe) {
+            return new File(".");
+        }
     }
 }

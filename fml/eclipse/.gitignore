@@ -1,2 +1,6 @@
 /*/bin
 /*/.settings/org.eclipse.ltk.core.refactoring.prefs
+*.cdt.*
+*.ajdt.*
+/.log
+*.m2e.*

@@ -14,6 +14,8 @@
 package cpw.mods.fml.common;
 
 /**
+ * Return a crafting handler for the mod container to call
+ * 
  * @author cpw
  *
  */
@@ -21,6 +23,8 @@ public interface ICraftingHandler
 {
 
     /**
+     * The object array contains these three arguments
+     * 
      * @param player
      * @param craftedItem
      * @param craftingGrid
@@ -28,6 +32,7 @@ public interface ICraftingHandler
     void onCrafting(Object... craftingParameters);
 
     /**
+     * The object array contains these two arguments
      * @param player
      * @param smeltedItem
      */
