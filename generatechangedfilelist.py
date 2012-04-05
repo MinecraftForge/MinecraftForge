@@ -22,7 +22,7 @@ def main():
     process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, bufsize=-1)
     difflist,_= process.communicate()
     srg_data = parse_srg(os.path.join(mcp_root,"temp","server_rg.srg")
-    classes=dict()
+    classes = {}
     for row in srg_data['CL']:
       classes[row['deobf_name']] = row['obf_name']
 
