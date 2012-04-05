@@ -5,7 +5,7 @@
  import java.util.Random;
  import java.util.logging.Logger;
 +
-+import cpw.mods.fml.server.FMLHandler;
++import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler implements ICommandListener
@@ -14,7 +14,7 @@
              }
  
 -            if (var2.startsWith("/"))
-+            if (FMLHandler.instance().handleChatPacket(p_23_1_,field_16_e)) {
++            if (FMLServerHandler.instance().handleChatPacket(p_23_1_,field_16_e)) {
 +              // We handled it
 +            }
 +            else if (var2.startsWith("/"))
@@ -28,6 +28,6 @@
 +
 +    @Override
 +    public void func_44001_a(Packet250CustomPayload p_44001_1_) {
-+      FMLHandler.instance().handlePacket250(p_44001_1_, field_16_e);
++      FMLServerHandler.instance().handlePacket250(p_44001_1_, field_16_e);
 +    }
  }

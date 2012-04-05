@@ -1,1 +1,1 @@
-python update_patches.py patches .. patches
+python update_patches.py .. patches

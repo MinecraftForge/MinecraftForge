@@ -5,7 +5,7 @@
  import java.util.logging.Level;
  import java.util.logging.Logger;
 +
-+import cpw.mods.fml.server.FMLHandler;
++import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AnvilSaveHandler;
  import net.minecraft.src.AxisAlignedBB;
@@ -13,7 +13,7 @@
          var1.start();
          ConsoleLogManager.func_641_a();
          field_6038_a.info("Starting minecraft server version 1.2.5");
-+        FMLHandler.instance().onPreLoad(this);
++        FMLServerHandler.instance().onPreLoad(this);
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
          {
@@ -21,7 +21,7 @@
              field_6038_a.warning("To change this, set \"online-mode\" to \"true\" in the server.settings file.");
          }
  
-+        FMLHandler.instance().onLoadComplete();
++        FMLServerHandler.instance().onLoadComplete();
          this.field_6033_f = new ServerConfigurationManager(this);
          this.field_6028_k[0] = new EntityTracker(this, 0);
          this.field_6028_k[1] = new EntityTracker(this, -1);
@@ -29,7 +29,7 @@
                          var7 = 0L;
                      }
  
-+                    FMLHandler.instance().onPreTick();
++                    FMLServerHandler.instance().onPreTick();
                      var3 += var7;
                      var1 = var5;
  
@@ -37,7 +37,7 @@
                              this.func_6018_h();
                          }
                      }
-+                    FMLHandler.instance().onPostTick();
++                    FMLServerHandler.instance().onPostTick();
                  }
              }
              else
