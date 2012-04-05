@@ -12,6 +12,7 @@ def cmdsplit(args):
                     
 def main():
     print("Applying patches")
+    sys.stdout.flush()
     patches = os.path.abspath(sys.argv[1])
     work = os.path.normpath(sys.argv[2])
     mcp = os.path.normpath(sys.argv[3])
