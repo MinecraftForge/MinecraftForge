@@ -26,6 +26,7 @@ def main():
     for row in srg_data['CL']:
       classes[row['deobf_name']] = row['obf_name']
 
+    print(difflist)
     with open(list_file, 'w') as fh:
       for diff in difflist.splitlines():
         diffrow=diff.strip().split()
@@ -34,7 +35,7 @@ def main():
           clazz=classes[clazz]
         if clazz.startswith("net/minecraft/src/"):
           clazz=clazz[len("net/minecraft/src/"):]
-        fh.write("minecraft_server/%s\n" %(clazz))
+        fh.write("minecraft_server/%s.class\n" %(clazz))
 
     
 if __name__ == '__main__':
