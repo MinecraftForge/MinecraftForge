@@ -42,7 +42,7 @@ public class ModClassLoader extends URLClassLoader
             URLClassLoader ucl=(URLClassLoader) cl;
             URL url = modFile.toURI().toURL();
             try {
-                Method addUrl=URLClassLoader.class.getDeclaredMethod("addUrl", URL.class);
+                Method addUrl=URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                 addUrl.setAccessible(true);
                 addUrl.invoke(ucl, url);
             } catch (Exception e) {
