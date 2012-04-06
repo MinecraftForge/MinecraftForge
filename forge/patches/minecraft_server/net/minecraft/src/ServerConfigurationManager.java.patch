@@ -62,7 +62,7 @@
      }
  
      /**
-@@ -285,6 +290,10 @@
+@@ -286,6 +291,10 @@
       */
      public void sendPlayerToOtherDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -73,7 +73,7 @@
          int var3 = par1EntityPlayerMP.dimension;
          WorldServer var4 = this.mcServer.getWorldManager(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -292,33 +301,14 @@
+@@ -293,33 +302,14 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacket(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.itemInWorldManager.getGameType()));
          var4.removePlayer(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
@@ -113,7 +113,7 @@
          {
              ChunkCoordinates var12 = var5.getEntrancePortalLocation();
              var6 = (double)var12.posX;
-@@ -338,7 +328,7 @@
+@@ -339,7 +329,7 @@
              par1EntityPlayerMP.setLocationAndAngles(var6, par1EntityPlayerMP.posY, var8, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
              var5.updateEntityWithOptionalForce(par1EntityPlayerMP, false);
              var5.chunkProviderServer.chunkLoadOverride = true;
@@ -122,7 +122,7 @@
              var5.chunkProviderServer.chunkLoadOverride = false;
          }
  
-@@ -366,9 +356,9 @@
+@@ -367,9 +357,9 @@
              this.sendPacketToAllPlayers(new Packet201PlayerInfo(var1.username, true, var1.ping));
          }
  
@@ -134,3 +134,12 @@
          }
      }
  
+@@ -902,7 +892,7 @@
+ 
+     public String[] func_52019_t()
+     {
+-        return this.mcServer.worldMngr[0].getSaveHandler().getPlayerNBTManager().func_52007_g();
++        return DimensionManager.getWorld(0).getSaveHandler().getPlayerNBTManager().func_52007_g();
+     }
+ 
+     private void func_52018_u()

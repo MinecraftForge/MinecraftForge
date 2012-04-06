@@ -92,42 +92,51 @@
          {
              super.keyTyped(par1, par2);
          }
-@@ -107,37 +81,9 @@
+@@ -107,47 +81,8 @@
      public void drawScreen(int par1, int par2, float par3)
      {
          this.drawDefaultBackground();
 -        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
 -        int var4 = this.func_20080_j();
+-        int var5 = 0;
 -
--        for (int var5 = 0; var5 < this.options.keyBindings.length; ++var5)
+-        while (var5 < this.options.keyBindings.length)
 -        {
 -            boolean var6 = false;
+-            int var7 = 0;
 -
--            for (int var7 = 0; var7 < this.options.keyBindings.length; ++var7)
+-            while (true)
 -            {
--                if (var7 != var5 && this.options.keyBindings[var5].keyCode == this.options.keyBindings[var7].keyCode)
+-                if (var7 < this.options.keyBindings.length)
 -                {
+-                    if (var7 == var5 || this.options.keyBindings[var5].keyCode != this.options.keyBindings[var7].keyCode)
+-                    {
+-                        ++var7;
+-                        continue;
+-                    }
+-
 -                    var6 = true;
 -                }
--            }
 -
--            if (this.buttonId == var5)
--            {
--                ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
--            }
--            else if (var6)
--            {
--                ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7c" + this.options.getOptionDisplayString(var5);
--            }
--            else
--            {
--                ((GuiButton)this.controlList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
--            }
+-                if (this.buttonId == var5)
+-                {
+-                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
+-                }
+-                else if (var6)
+-                {
+-                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7c" + this.options.getOptionDisplayString(var5);
+-                }
+-                else
+-                {
+-                    ((GuiButton)this.controlList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
+-                }
 -
--            this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(var5), var4 + var5 % 2 * 160 + 70 + 6, this.height / 6 + 24 * (var5 >> 1) + 7, -1);
+-                this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(var5), var4 + var5 % 2 * 160 + 70 + 6, this.height / 6 + 24 * (var5 >> 1) + 7, -1);
+-                ++var5;
+-                break;
+-            }
 -        }
 -
-+        
 +        scrollPane.drawScreen(par1, par2, par3);
 +        drawCenteredString(fontRenderer, screenTitle, width / 2, 4, 0xffffff);
          super.drawScreen(par1, par2, par3);

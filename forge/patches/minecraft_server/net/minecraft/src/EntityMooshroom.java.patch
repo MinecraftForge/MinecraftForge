@@ -12,11 +12,12 @@
  {
      public EntityMooshroom(World par1World)
      {
-@@ -21,27 +25,6 @@
-             par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(Item.bowlSoup));
-             return true;
+@@ -30,32 +34,7 @@
+                 return true;
+             }
          }
--        else if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.getGrowingAge() >= 0)
+-
+-        if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.getGrowingAge() >= 0)
 -        {
 -            this.setDead();
 -            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
@@ -37,10 +38,15 @@
 -
 -            return true;
 -        }
-         else
-         {
-             return super.interact(par1EntityPlayer);
-@@ -55,4 +38,29 @@
+-        else
+-        {
+-            return super.interact(par1EntityPlayer);
+-        }
++        return super.interact(par1EntityPlayer);
+     }
+ 
+     /**
+@@ -65,4 +44,29 @@
      {
          return new EntityMooshroom(this.worldObj);
      }
