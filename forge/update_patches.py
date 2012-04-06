@@ -54,7 +54,14 @@ def main():
                 if os.path.isfile(patch_file):
                     print 'Deleting empty patch: ' + patch_file
                     os.remove(patch_file)
-
+    
+    for path, _, filelist in os.walk('patches', followlinks=True):
+        for cur_file in fnmatch.filter(filelist, '*.patch'):
+            src_file = os.path.normpath(os.path.join(work, path[8:], cur_file[:-6]))
+            if not os.path.isfile(src_file):
+                print 'Deleting empty patch: %s' % os.path.join(path, cur_file)
+                os.remove(os.path.join(path, cur_file))
+        
     cleanDirs('patches')
     print 'Grabing copy of Conf'
     if os.path.exists('conf'):
