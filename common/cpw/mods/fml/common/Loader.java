@@ -324,14 +324,26 @@ public class Loader
             throw loaderException;
         }
 
+        state = State.LOADING;
+        modClassLoader = new ModClassLoader();
         log.fine("Attempting to load mods contained in the minecraft jar file");
-        attemptFileLoad(new File(minecraftDir, "minecraft_server.jar"));
+        File minecraftSource=modClassLoader.getParentSource();
+        if (minecraftSource.isFile()) {
+            log.fine(String.format("Minecraft is a file at %s, loading",minecraftSource.getName()));
+            attemptFileLoad(minecraftSource);
+        } else if (minecraftSource.isDirectory()) {
+            log.fine(String.format("Minecraft is a directory at %s, loading",minecraftSource.getName()));
+            attemptDirLoad(minecraftSource);
+        } else {
+            log.severe(String.format("Unable to locate minecraft data at %s\n",minecraftSource.getName()));
+            throw new LoaderException();
+        }
         log.fine("Minecraft jar mods loaded successfully");
+        
         log.info(String.format("Loading mods from %s", canonicalModsPath));
         File[] modList = modsDir.listFiles();
         // Sort the files into alphabetical order first
         Arrays.sort(modList);
-        state = State.LOADING;
 
         for (File modFile : modList)
         {
@@ -437,11 +449,6 @@ public class Loader
 
     private void extendClassLoader(File file)
     {
-        if (modClassLoader == null)
-        {
-            modClassLoader = new ModClassLoader();
-        }
-
         try
         {
             modClassLoader.addFile(file);
