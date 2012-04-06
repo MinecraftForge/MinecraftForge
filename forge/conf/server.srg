@@ -43,6 +43,9 @@ CL: abi net/minecraft/src/ItemFood
 CL: abj net/minecraft/src/SlotCrafting
 CL: abk net/minecraft/src/EntityWeatherEffect
 CL: abl net/minecraft/src/ChunkCoordIntPair
+CL: abm net/minecraft/src/PostHttp
+CL: abn net/minecraft/src/PlayerUsageSnooper
+CL: abo net/minecraft/src/PlayerUsageSnooperThread
 CL: ac net/minecraft/src/BlockDirectional
 CL: ad net/minecraft/src/RecipesArmor
 CL: ae net/minecraft/src/EntityAIOcelotSit
@@ -861,6 +864,9 @@ FD: abj/f net/minecraft/src/SlotCrafting/field_25004_e
 FD: abj/g net/minecraft/src/SlotCrafting/field_48418_g
 FD: abl/a net/minecraft/src/ChunkCoordIntPair/field_152_a
 FD: abl/b net/minecraft/src/ChunkCoordIntPair/field_151_b
+FD: abn/a net/minecraft/src/PlayerUsageSnooper/field_52016_a
+FD: abn/b net/minecraft/src/PlayerUsageSnooper/field_52015_b
+FD: abo/a net/minecraft/src/PlayerUsageSnooperThread/field_52017_a
 FD: ad/a net/minecraft/src/RecipesArmor/field_20174_a
 FD: ad/b net/minecraft/src/RecipesArmor/field_20173_b
 FD: ae/a net/minecraft/src/EntityAIOcelotSit/field_50019_a
@@ -870,6 +876,7 @@ FD: ae/d net/minecraft/src/EntityAIOcelotSit/field_50015_d
 FD: ae/e net/minecraft/src/EntityAIOcelotSit/field_50016_e
 FD: ae/f net/minecraft/src/EntityAIOcelotSit/field_50013_f
 FD: ae/g net/minecraft/src/EntityAIOcelotSit/field_50014_g
+FD: ae/h net/minecraft/src/EntityAIOcelotSit/field_52005_h
 FD: af/a net/minecraft/src/ContainerPlayer/field_20143_a
 FD: af/b net/minecraft/src/ContainerPlayer/field_20142_b
 FD: af/c net/minecraft/src/ContainerPlayer/field_20144_c
@@ -2695,6 +2702,7 @@ FD: qq/w net/minecraft/src/NetworkManager/field_1036_r
 FD: qq/x net/minecraft/src/NetworkManager/field_1035_s
 FD: qq/y net/minecraft/src/NetworkManager/field_20175_w
 FD: qr/a net/minecraft/src/Packet3Chat/field_150_a
+FD: qr/b net/minecraft/src/Packet3Chat/field_52004_b
 FD: qs/a net/minecraft/src/Packet108EnchantItem/field_40265_a
 FD: qs/b net/minecraft/src/Packet108EnchantItem/field_40264_b
 FD: qt/a net/minecraft/src/WorldGenerator/field_41044_a
@@ -3789,6 +3797,14 @@ MD: abl/b ()I net/minecraft/src/ChunkCoordIntPair/func_40660_b ()I
 MD: abl/equals (Ljava/lang/Object;)Z net/minecraft/src/ChunkCoordIntPair/equals (Ljava/lang/Object;)Z
 MD: abl/hashCode ()I net/minecraft/src/ChunkCoordIntPair/hashCode ()I
 MD: abl/toString ()Ljava/lang/String; net/minecraft/src/ChunkCoordIntPair/toString ()Ljava/lang/String;
+MD: abm/a (Ljava/net/URL;Ljava/lang/String;Z)Ljava/lang/String; net/minecraft/src/PostHttp/func_52009_a (Ljava/net/URL;Ljava/lang/String;Z)Ljava/lang/String;
+MD: abm/a (Ljava/net/URL;Ljava/util/Map;Z)Ljava/lang/String; net/minecraft/src/PostHttp/func_52010_a (Ljava/net/URL;Ljava/util/Map;Z)Ljava/lang/String;
+MD: abm/a (Ljava/util/Map;)Ljava/lang/String; net/minecraft/src/PostHttp/func_52008_a (Ljava/util/Map;)Ljava/lang/String;
+MD: abn/a ()V net/minecraft/src/PlayerUsageSnooper/func_52012_a ()V
+MD: abn/a (Labn;)Ljava/net/URL; net/minecraft/src/PlayerUsageSnooper/func_52013_a (Lnet/minecraft/src/PlayerUsageSnooper;)Ljava/net/URL;
+MD: abn/a (Ljava/lang/String;Ljava/lang/Object;)V net/minecraft/src/PlayerUsageSnooper/func_52014_a (Ljava/lang/String;Ljava/lang/Object;)V
+MD: abn/b (Labn;)Ljava/util/Map; net/minecraft/src/PlayerUsageSnooper/func_52011_b (Lnet/minecraft/src/PlayerUsageSnooper;)Ljava/util/Map;
+MD: abo/run ()V net/minecraft/src/PlayerUsageSnooperThread/run ()V
 MD: ac/b (I)I net/minecraft/src/BlockDirectional/func_48132_b (I)I
 MD: ad/a (Ljb;)V net/minecraft/src/RecipesArmor/func_20172_a (Lnet/minecraft/src/CraftingManager;)V
 MD: ae/a ()Z net/minecraft/src/EntityAIOcelotSit/func_46090_a ()Z
@@ -4867,6 +4883,7 @@ MD: gq/c ()Lfj; net/minecraft/src/SaveHandler/func_22096_c ()Lnet/minecraft/src/
 MD: gq/d ()Ljv; net/minecraft/src/SaveHandler/func_22090_d ()Lnet/minecraft/src/IPlayerFileData;
 MD: gq/e ()V net/minecraft/src/SaveHandler/func_22093_e ()V
 MD: gq/f ()V net/minecraft/src/SaveHandler/func_22098_f ()V
+MD: gq/g ()[Ljava/lang/String; net/minecraft/src/SaveHandler/func_52007_g ()[Ljava/lang/String;
 MD: gr/a (Lge;Ljava/util/Random;III)Z net/minecraft/src/WorldGenMinable/func_419_a (Lnet/minecraft/src/World;Ljava/util/Random;III)Z
 MD: gs/a ()Z net/minecraft/src/EntityAIOwnerHurtByTarget/func_46090_a ()Z
 MD: gs/c ()V net/minecraft/src/EntityAIOwnerHurtByTarget/func_46088_e ()V
@@ -5444,6 +5461,8 @@ MD: jg/p ()V net/minecraft/src/ServerConfigurationManager/func_9249_i ()V
 MD: jg/q ()V net/minecraft/src/ServerConfigurationManager/func_9239_j ()V
 MD: jg/r ()V net/minecraft/src/ServerConfigurationManager/func_22168_m ()V
 MD: jg/s ()V net/minecraft/src/ServerConfigurationManager/func_22160_n ()V
+MD: jg/t ()[Ljava/lang/String; net/minecraft/src/ServerConfigurationManager/func_52019_t ()[Ljava/lang/String;
+MD: jg/u ()V net/minecraft/src/ServerConfigurationManager/func_52018_u ()V
 MD: jh/a ()I net/minecraft/src/Packet16BlockItemSwitch/func_71_a ()I
 MD: jh/a (Ljava/io/DataInputStream;)V net/minecraft/src/Packet16BlockItemSwitch/func_70_a (Ljava/io/DataInputStream;)V
 MD: jh/a (Ljava/io/DataOutputStream;)V net/minecraft/src/Packet16BlockItemSwitch/func_68_a (Ljava/io/DataOutputStream;)V
@@ -5485,6 +5504,7 @@ MD: js/toString ()Ljava/lang/String; net/minecraft/src/NBTTagIntArray/toString (
 MD: jt/a (Lkp;Lih;Lge;IIII)Z net/minecraft/src/ItemRedstone/func_78_a (Lnet/minecraft/src/ItemStack;Lnet/minecraft/src/EntityPlayer;Lnet/minecraft/src/World;IIII)Z
 MD: jv/a (Lih;)V net/minecraft/src/IPlayerFileData/func_726_a (Lnet/minecraft/src/EntityPlayer;)V
 MD: jv/b (Lih;)V net/minecraft/src/IPlayerFileData/func_725_b (Lnet/minecraft/src/EntityPlayer;)V
+MD: jv/g ()[Ljava/lang/String; net/minecraft/src/IPlayerFileData/func_52007_g ()[Ljava/lang/String;
 MD: jw/a ()I net/minecraft/src/Packet10Flying/func_71_a ()I
 MD: jw/a (Ljava/io/DataInputStream;)V net/minecraft/src/Packet10Flying/func_70_a (Ljava/io/DataInputStream;)V
 MD: jw/a (Ljava/io/DataOutputStream;)V net/minecraft/src/Packet10Flying/func_68_a (Ljava/io/DataOutputStream;)V
@@ -6278,6 +6298,7 @@ MD: net/minecraft/server/MinecraftServer/e (Ljava/lang/String;)V net/minecraft/s
 MD: net/minecraft/server/MinecraftServer/f ()Ljava/lang/String; net/minecraft/server/MinecraftServer/func_40009_f ()Ljava/lang/String;
 MD: net/minecraft/server/MinecraftServer/f (Ljava/lang/String;)V net/minecraft/server/MinecraftServer/func_40006_f (Ljava/lang/String;)V
 MD: net/minecraft/server/MinecraftServer/g ()I net/minecraft/server/MinecraftServer/func_40022_g ()I
+MD: net/minecraft/server/MinecraftServer/getServerModName ()Ljava/lang/String; net/minecraft/server/MinecraftServer/func_52003_getServerModName ()Ljava/lang/String;
 MD: net/minecraft/server/MinecraftServer/h ()Ljava/lang/String; net/minecraft/server/MinecraftServer/func_40014_h ()Ljava/lang/String;
 MD: net/minecraft/server/MinecraftServer/i ()Ljava/lang/String; net/minecraft/server/MinecraftServer/func_40012_i ()Ljava/lang/String;
 MD: net/minecraft/server/MinecraftServer/j ()I net/minecraft/server/MinecraftServer/func_40018_j ()I
@@ -7189,6 +7210,7 @@ MD: tr/a (Lih;)Z net/minecraft/src/TileEntityFurnace/func_20067_a_ (Lnet/minecra
 MD: tr/a (Lkp;)I net/minecraft/src/TileEntityFurnace/func_194_a (Lnet/minecraft/src/ItemStack;)I
 MD: tr/a (Lph;)V net/minecraft/src/TileEntityFurnace/func_186_a (Lnet/minecraft/src/NBTTagCompound;)V
 MD: tr/b (I)Lkp; net/minecraft/src/TileEntityFurnace/func_48315_b (I)Lnet/minecraft/src/ItemStack;
+MD: tr/b (Lkp;)Z net/minecraft/src/TileEntityFurnace/func_52006_b (Lnet/minecraft/src/ItemStack;)Z
 MD: tr/b (Lph;)V net/minecraft/src/TileEntityFurnace/func_188_b (Lnet/minecraft/src/NBTTagCompound;)V
 MD: tr/c ()I net/minecraft/src/TileEntityFurnace/func_83_a ()I
 MD: tr/e ()Ljava/lang/String; net/minecraft/src/TileEntityFurnace/func_20068_b ()Ljava/lang/String;
