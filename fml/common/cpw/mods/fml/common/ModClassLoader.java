@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -37,5 +38,23 @@ public class ModClassLoader extends URLClassLoader
     {
         URL url = modFile.toURI().toURL();
         super.addURL(url);
+    }
+    
+    public File getParentSource() {
+        ClassLoader cl=getParent();
+        if (cl instanceof URLClassLoader) {
+            URLClassLoader ucl=(URLClassLoader) cl;
+            URL pUrl=ucl.getURLs()[0];
+            try
+            {
+                return new File(pUrl.toURI());
+            }
+            catch (URISyntaxException e)
+            {
+                // NOOP
+            }
+        }
+        Loader.log.severe("Unable to process our input to locate the minecraft code");
+        throw new LoaderException();
     }
 }
