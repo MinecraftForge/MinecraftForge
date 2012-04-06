@@ -553,10 +553,10 @@ public class ForgeHooks
     }
     public static ArrayList<IArrowNockHandler> arrowNockHandlers = new ArrayList<IArrowNockHandler>();
 
-    public static final int majorVersion=0;
-    public static final int minorVersion=0;
-    public static final int revisionVersion=0;
-    public static final int buildVersion=0;
+    public static final int majorVersion    = 3;
+    public static final int minorVersion    = 0;
+    public static final int revisionVersion = 0;
+    public static final int buildVersion    = 0;
     static
     {
         plantGrassList = new ArrayList<ProbableItem>();
