@@ -417,7 +417,11 @@ public class Loader
                 foundAModClass|=attemptDirLoad(file);
                 continue;
             }
-            String clazzName = modClass.matcher(file.getName()).group(2);
+            Matcher fname = modClass.matcher(file.getName());
+            if (!fname.find()) {
+                continue;
+            }
+            String clazzName=fname.group(2);
             log.fine(String.format("Found a mod class %s in directory %s, attempting to load it", clazzName, modDir.getName()));
             loadModClass(modDir, file.getName(), clazzName);
             log.fine(String.format("Successfully loaded mod class %s", file.getName()));
