@@ -1,0 +1,18 @@
+--- ../src-base/minecraft_server/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.server.FMLServerHandler;
++
+ public class SlotCrafting extends Slot
+ {
+     private final IInventory field_20103_a;
+@@ -83,6 +85,7 @@
+ 
+     public void func_20091_b(ItemStack p_20091_1_)
+     {
++        FMLServerHandler.instance().onItemCrafted(field_25004_e, p_20091_1_, field_20096_b);
+         this.func_48416_b(p_20091_1_);
+ 
+         for (int var2 = 0; var2 < this.field_20103_a.func_83_a(); ++var2)

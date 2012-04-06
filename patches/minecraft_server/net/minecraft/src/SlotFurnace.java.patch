@@ -1,0 +1,19 @@
+--- ../src-base/minecraft_server/net/minecraft/src/SlotFurnace.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/SlotFurnace.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.server.FMLServerHandler;
++
+ public class SlotFurnace extends Slot
+ {
+     private EntityPlayer field_27007_d;
+@@ -43,6 +45,8 @@
+         p_48416_1_.func_48584_a(this.field_27007_d.field_9093_l, this.field_27007_d, this.field_48419_f);
+         this.field_48419_f = 0;
+ 
++        FMLServerHandler.instance().onItemSmelted(field_27007_d, p_48416_1_);
++        
+         if (p_48416_1_.field_855_c == Item.field_166_m.field_234_aS)
+         {
+             this.field_27007_d.func_25046_a(AchievementList.field_27108_k, 1);
