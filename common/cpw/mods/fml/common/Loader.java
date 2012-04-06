@@ -338,7 +338,7 @@ public class Loader
                     attemptFileLoad(minecraftSources[i]);
                 } else if (minecraftSources[i].isDirectory()) {
                     log.fine(String.format("Found a minecraft related directory at %s, loading",minecraftSources[i].getAbsolutePath()));
-                    attemptDirLoad(minecraftSources[i]);
+                    attemptDirLoad(minecraftSources[i],"");
                 }
             }
         }
@@ -354,7 +354,7 @@ public class Loader
             if (modFile.isDirectory())
             {
                 log.fine(String.format("Found a directory %s, attempting to load it", modFile.getName()));
-                boolean modFound = attemptDirLoad(modFile);
+                boolean modFound = attemptDirLoad(modFile,"");
 
                 if (modFound)
                 {
@@ -395,9 +395,11 @@ public class Loader
         log.info(String.format("Forge Mod Loader has loaded %d mods", mods.size()));
     }
 
-    private boolean attemptDirLoad(File modDir)
+    private boolean attemptDirLoad(File modDir, String path)
     {
-        extendClassLoader(modDir);
+        if (path.length()==0) {
+            extendClassLoader(modDir);
+        }
         boolean foundAModClass = false;
         File[] content = modDir.listFiles(new FileFilter()
         {
@@ -414,14 +416,14 @@ public class Loader
         {
             if (file.isDirectory()) {
                 log.finest(String.format("Recursing into subdirectory %s", file.getName()));
-                foundAModClass|=attemptDirLoad(file);
+                foundAModClass|=attemptDirLoad(file,path+".");
                 continue;
             }
             Matcher fname = modClass.matcher(file.getName());
             if (!fname.find()) {
                 continue;
             }
-            String clazzName=fname.group(2);
+            String clazzName=path+fname.group(2);
             log.fine(String.format("Found a mod class %s in directory %s, attempting to load it", clazzName, modDir.getName()));
             loadModClass(modDir, file.getName(), clazzName);
             log.fine(String.format("Successfully loaded mod class %s", file.getName()));
