@@ -161,9 +161,9 @@ def inject_version(src_file, build=0):
             pass
         return match.group(0)
         
-    buf = version_reg.sub(mapname, buf)
+    buf = version_reg.sub(mapname, buf).replace('\r\n', '\n')
     
-    with open(tmp_file, 'w') as fh:
+    with open(tmp_file, 'wb') as fh:
         fh.write(buf)
     shutil.move(tmp_file, src_file)
     

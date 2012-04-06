@@ -43,16 +43,16 @@ def main():
     except SystemExit, e:
         print 'Reobfusicate Exception: %d ' % e.code
         error_level = e.code
+    
+    extract_fml_obfed()
+    version = load_version(build_num)
+    version_str = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
         
     out_folder = os.path.join(forge_dir, 'forge-%s' % version_str)
     if os.path.isdir(out_folder):
         shutil.rmtree(out_folder)
         
     os.makedirs(out_folder)
-    
-    extract_fml_obfed()
-    version = load_version(build_num)
-    version_str = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
     
     zip_start('minecraftforge-client-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
@@ -66,6 +66,7 @@ def main():
     zip_add('license.txt')
     zip_end()
     
+    inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), build_num)
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
     zip_add('forge_client/src', 'src/minecraft')
     zip_add('forge_server/src', 'src/minecraft_server')
@@ -80,9 +81,9 @@ def main():
     zip_add('install/README.txt')
     zip_add('install/install.py')
     zip_add('forge.py')
-    zip_add('minecraftforge_credits.txt')
     zip_add('license.txt')
     zip_end()
+    inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), 0)
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
