@@ -9,7 +9,9 @@ import org.lwjgl.opengl.Display;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
+import net.minecraft.src.ItemMap;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.MapItemRenderer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 
@@ -21,6 +23,30 @@ public class MinecraftForgeClient
     public static void registerHighlightHandler(IHighlightHandler handler)
     {
         ForgeHooksClient.highlightHandlers.add(handler);
+    }
+    
+    /**
+     * Registers a new render last handler.
+     */
+    public static void registerRenderLastHandler(IRenderWorldLastHandler handler) 
+    {
+		ForgeHooksClient.renderWorldLastHandlers.add(handler);
+	}
+    
+    /**
+	 * Registers a new map renderer.
+	 */
+	public static void registerCustomMapRenderer(ItemMap mapitem, MapItemRenderer maprenderer)
+    {
+    	ForgeHooksClient.mapRenderers.put(mapitem, maprenderer);
+    }
+    
+    /**
+     * Registers a texture load handler
+     */
+    public static void registerTextureLoadHandler(ITextureLoadHandler handler)
+    {
+    	ForgeHooksClient.textureLoadHandlers.add(handler);
     }
 
     /** Register a new render context handler.  A render context is a block
