@@ -326,17 +326,21 @@ public class Loader
 
         state = State.LOADING;
         modClassLoader = new ModClassLoader();
-        log.fine("Attempting to load mods contained in the minecraft jar file");
-        File minecraftSource=modClassLoader.getParentSource();
-        if (minecraftSource.isFile()) {
-            log.fine(String.format("Minecraft is a file at %s, loading",minecraftSource.getName()));
-            attemptFileLoad(minecraftSource);
-        } else if (minecraftSource.isDirectory()) {
-            log.fine(String.format("Minecraft is a directory at %s, loading",minecraftSource.getName()));
-            attemptDirLoad(minecraftSource);
+        log.fine("Attempting to load mods contained in the minecraft jar file and associated classes");
+        File[] minecraftSources=modClassLoader.getParentSources();
+        if (minecraftSources.length==1 && minecraftSources[0].isFile()) {
+            log.fine(String.format("Minecraft is a file at %s, loading",minecraftSources[0].getAbsolutePath()));
+            attemptFileLoad(minecraftSources[0]);
         } else {
-            log.severe(String.format("Unable to locate minecraft data at %s\n",minecraftSource.getName()));
-            throw new LoaderException();
+            for (int i=0; i<minecraftSources.length; i++) {
+                if (minecraftSources[i].isFile()) {
+                    log.fine(String.format("Found a minecraft related file at %s, loading",minecraftSources[i].getAbsolutePath()));
+                    attemptFileLoad(minecraftSources[i]);
+                } else if (minecraftSources[i].isDirectory()) {
+                    log.fine(String.format("Found a minecraft related directory at %s, loading",minecraftSources[i].getAbsolutePath()));
+                    attemptDirLoad(minecraftSources[i]);
+                }
+            }
         }
         log.fine("Minecraft jar mods loaded successfully");
         

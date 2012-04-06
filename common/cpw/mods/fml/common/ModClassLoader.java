@@ -52,18 +52,22 @@ public class ModClassLoader extends URLClassLoader
         }
     }
     
-    public File getParentSource() {
+    public File[] getParentSources() {
         ClassLoader cl=getParent();
         if (cl instanceof URLClassLoader) {
             URLClassLoader ucl=(URLClassLoader) cl;
-            URL pUrl=ucl.getURLs()[0];
+            URL[] pUrl=ucl.getURLs();
+            File[] sources=new File[pUrl.length];
             try
             {
-                return new File(pUrl.toURI());
+                for (int i=0; i<pUrl.length; i++) {
+                    sources[i]=new File(pUrl[i].toURI());
+                }
+                return sources;
             }
             catch (URISyntaxException e)
             {
-                // NOOP
+                Loader.log.throwing("ModClassLoader", "getParentSources", e);
             }
         }
         Loader.log.severe("Unable to process our input to locate the minecraft code");
