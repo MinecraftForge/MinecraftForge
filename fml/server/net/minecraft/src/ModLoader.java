@@ -606,4 +606,13 @@ public class ModLoader
     {
         return FMLCommonHandler.instance().isChannelActive(channel, player);
     }
+    
+    /**
+     * Stubbed method on the server to return a unique model id
+     * 
+     */
+    @Deprecated
+    public static int getUniqueBlockModelID(BaseMod mod, boolean flag) {
+        return 0;
+    }
 }
