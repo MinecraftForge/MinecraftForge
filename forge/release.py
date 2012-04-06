@@ -9,7 +9,7 @@ src_dir = os.path.join(mcp_dir, 'src')
 sys.path.append(mcp_dir)
 from runtime.reobfuscate import reobfuscate
 
-from forge import reset_logger, load_version, zip_folder, zip_create
+from forge import reset_logger, load_version, zip_folder, zip_create, inject_version
 from build import build
 
 reobf_dir = os.path.join(mcp_dir, 'reobf')

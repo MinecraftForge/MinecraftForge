@@ -2337,7 +2337,7 @@ func_516_a,generate,0,
 func_517_a,setScale,0,"Rescales the generator settings, only used in WorldGenBigTree"
 func_518_b,generateLeaves,0,Generates the leaf portion of the tree as specified by the leafNodes list.
 func_519_e,validTreeLocation,0,"Returns a boolean indicating whether or not the current location for the tree, spanning basePos to to the height limit, is valid."
-func_52003_C,getVersion,0,Returns the version of Minecraft as a string
+func_52003_C,getVersion,0,Returns the client version string
 func_52004_D,createAndSendReport,0,Creates and sends anonymous system information to Mojang's stats server
 func_52013_a,updatePlayerMoveState,0,
 func_52014_d,stripColorCodes,0,Remove all embedded color codes from a string
@@ -3871,7 +3871,7 @@ func_40007_e,logSevere,1,Log severe error message
 func_40008_d,handleRConCommand,1,Handle a command received by an RCon instance
 func_40009_f,getHostname,1,Returns the server hostname
 func_40011_a,getIntProperty,1,"Returns the specified property value as an int, or a default if the property doesn't exist"
-func_40012_i,getVersionString,1,Returns the server version string
+func_40012_i,getVersion,1,Returns the server version string
 func_40013_e,getSettingsFilename,1,Returns the filename where server properties are stored
 func_40014_h,getMotd,1,Returns the server message of the day
 func_40015_k,getMaxPlayers,1,Returns the maximum number of players allowed on the server
@@ -4171,6 +4171,7 @@ func_40641_a,getEnchantmentModifierLiving,1,Return the (magic) extra damage of t
 func_40642_a,calcItemStackEnchantability,1,"Returns the enchantability of itemstack, it's uses a singular formula for each index (2nd parameter: 0, 1 and 2), cutting to the max enchantability power of the table (3rd parameter)"
 func_40643_c,getUnbreakingModifier,1,Returns the unbreaking enchantment modifier on current equipped item of player.
 func_40644_d,getSilkTouchModifier,1,Returns the silk touch status of enchantments on current equipped item of player.
+func_40648_a,joinStrings,1,Joins array elements with the delimiter String.
 func_4064_a,loadBlockGeneratorData,1,"Returns biomes to use for the blocks and loads the other data like temperature and humidity onto the WorldChunkManager Args: oldBiomeList, x, z, width, depth"
 func_40656_c,getPropertiesFile,1,Returns this PropertyManager's file object used for property saving.
 func_40657_a,setProperty,1,Saves an Object with the given property name
@@ -4573,6 +4574,14 @@ func_516_a,canBlockBePlacedAt,1,"Returns true if the specified block can be plac
 func_517_a,getBlockLightValue_do,1,"Gets the light value of a block location. This is the actual function that gets the value and has a bool flag that indicates if its a half step block to get the maximum light value of a direct neighboring block (left, right, forward, back, and up)"
 func_518_a,tickUpdates,1,Runs through the list of updates to run and ticks them
 func_519_b,markBlocksDirty,1,
+func_52003_getServerModName,getServerBrand,1,"Returns the brand name of this server. Usually overridden/changed by server mods, such as Bukkit."
+func_52008_a,buildPostString,1,Builds an encoded HTTP POST content string from a string map
+func_52009_a,sendPost,1,Sends a HTTP POST request to the given URL with data from a string
+func_52010_a,sendPost,1,Sends a HTTP POST request to the given URL with data from a map
+func_52011_b,getDataMap,1,Returns the data map for the given usage snooper
+func_52012_a,sendReport,1,Starts a new thread to send the information to the report server
+func_52013_a,getServerURL,1,Returns the server URL for the given usage snooper
+func_52014_a,addData,1,Adds information to the report
 func_520_e,updateEntity,1,Will update the entity in the world if the chunk the entity is in is currently loaded. Args: entity
 func_521_f,markBlockNeedsUpdate,1,"Marks the block as needing an update with the renderer. Args: x, y, z"
 func_522_a,checkIfAABBIsClear,1,"Returns true if there are no solid, live entities in the specified AxisAlignedBB"

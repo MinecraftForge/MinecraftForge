@@ -3171,7 +3171,7 @@ field_838_c,lowerChest,0,Inventory object corresponding to double chest lower pa
 field_840_a,stackList,0,List of the stacks in the crafting matrix.
 field_841_c,eventHandler,0,Class containing the callbacks for the events on_GUIClosed and on_CraftMaxtrixChanged.
 field_842_b,armorInventory,0,An array of 4 item stacks containing the currently worn armor pieces.
-field_843_a,mainInventory,0,An array of 37 item stacks (but only filled with 36?) indicating the main player inventory (including the visible bar).
+field_843_a,mainInventory,0,An array of 36 item stacks indicating the main player inventory (including the visible bar).
 field_844_g,player,0,The player whose inventory this is.
 field_845_f,inventoryChanged,0,Set true whenever the inventory changes. Nothing sets it false so you will have to write your own code to check it and reset the value.
 field_847_d,currentItem,0,The index of the currently held item (0-8).
@@ -5279,7 +5279,7 @@ field_492_f,mobID,1,"The string ID of the mobs being spawned from this spawner. 
 field_493_e,delay,1,The stored delay before a new spawn.
 field_494_e,chestContents,1,
 field_495_b,armorInventory,1,An array of 4 item stacks containing the currently worn armor pieces.
-field_496_a,mainInventory,1,An array of 37 item stacks (but only filled with 36?) indicating the main player inventory (including the visible bar).
+field_496_a,mainInventory,1,An array of 36 item stacks indicating the main player inventory (including the visible bar).
 field_497_f,player,1,The player whose inventory this is.
 field_498_e,inventoryChanged,1,Set true whenever the inventory changes. Nothing sets it false so you will have to write your own code to check it and reset the value.
 field_499_d,currentItem,1,The index of the currently held item (0-8).
