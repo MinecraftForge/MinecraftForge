@@ -14,6 +14,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -36,8 +37,19 @@ public class ModClassLoader extends URLClassLoader
 
     public void addFile(File modFile) throws MalformedURLException
     {
-        URL url = modFile.toURI().toURL();
-        super.addURL(url);
+        ClassLoader cl=getParent();
+        if (cl instanceof URLClassLoader) {
+            URLClassLoader ucl=(URLClassLoader) cl;
+            URL url = modFile.toURI().toURL();
+            try {
+                Method addUrl=URLClassLoader.class.getMethod("addUrl", URL.class);
+                addUrl.setAccessible(true);
+                addUrl.invoke(ucl, url);
+            } catch (Exception e) {
+                Loader.log.severe("A fatal error occured attempting to load a file into the classloader");
+                throw new LoaderException(e);
+            }
+        }
     }
     
     public File getParentSource() {
