@@ -14,7 +14,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -399,21 +399,28 @@ public class Loader
     {
         extendClassLoader(modDir);
         boolean foundAModClass = false;
-        File[] content = modDir.listFiles(new FilenameFilter()
+        File[] content = modDir.listFiles(new FileFilter()
         {
             @Override
-            public boolean accept(File dir, String name)
+            public boolean accept(File file)
             {
-                return modClass.matcher(name).find();
+                return (file.isFile() && modClass.matcher(file.getName()).find()) || file.isDirectory();
             }
         });
 
-        for (File modClassFile : content)
+        // Always sort our content
+        Arrays.sort(content);
+        for (File file : content)
         {
-            String clazzName = modClass.matcher(modClassFile.getName()).group(2);
+            if (file.isDirectory()) {
+                log.finest(String.format("Recursing into subdirectory %s", file.getName()));
+                foundAModClass|=attemptDirLoad(file);
+                continue;
+            }
+            String clazzName = modClass.matcher(file.getName()).group(2);
             log.fine(String.format("Found a mod class %s in directory %s, attempting to load it", clazzName, modDir.getName()));
-            loadModClass(modDir, modClassFile.getName(), clazzName);
-            log.fine(String.format("Successfully loaded mod class %s", modClassFile.getName()));
+            loadModClass(modDir, file.getName(), clazzName);
+            log.fine(String.format("Successfully loaded mod class %s", file.getName()));
             foundAModClass = true;
         }
 
