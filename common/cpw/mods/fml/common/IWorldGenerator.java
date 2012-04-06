@@ -15,8 +15,6 @@ package cpw.mods.fml.common;
 
 import java.util.Random;
 
-import cpw.mods.fml.server.FMLServerHandler;
-
 /**
  * This is called back during world generation. The {@link #generate(Random, int, int, Object...)} method passes in some additional data that 
  * can be cast into minecraft objects.

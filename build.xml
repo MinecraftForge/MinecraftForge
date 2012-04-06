@@ -175,7 +175,7 @@
             </replacetokens>
           </filterchain>
         </concat>
-        <mergemapper to="fml/cpw/mods/fml/common/Loader.java" />
+        <mergemapper to="fml/src/minecraft_server/cpw/mods/fml/common/Loader.java" />
       </mappedresources>
       <mappedresources>
         <concat>
