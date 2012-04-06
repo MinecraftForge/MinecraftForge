@@ -416,7 +416,7 @@ public class Loader
         {
             if (file.isDirectory()) {
                 log.finest(String.format("Recursing into subdirectory %s", file.getName()));
-                foundAModClass|=attemptDirLoad(file,path+".");
+                foundAModClass|=attemptDirLoad(file,path+file.getName()+".");
                 continue;
             }
             Matcher fname = modClass.matcher(file.getName());
