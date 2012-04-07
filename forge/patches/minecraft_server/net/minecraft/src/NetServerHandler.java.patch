@@ -32,6 +32,15 @@
                  {
                      return;
                  }
+@@ -397,7 +403,7 @@
+ 
+             if (par1Packet14BlockDig.status == 0)
+             {
+-                if (var20 <= 16 && !var3)
++                if (var20 <= mcServer.spawnProtectionSize && !var3)
+                 {
+                     this.playerEntity.playerNetServerHandler.sendPacket(new Packet53BlockChange(var5, var6, var7, var2));
+                 }
 @@ -467,8 +473,9 @@
              {
                  var12 = var11;
@@ -40,7 +49,7 @@
 -            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > 16 || var9))
 +            double dist = playerEntity.itemInWorldManager.getBlockReachDistance() + 1;
 +            dist *= dist;
-+            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > 16 || var9))
++            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > mcServer.spawnProtectionSize || var9))
              {
                  this.playerEntity.itemInWorldManager.activeBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8);
              }

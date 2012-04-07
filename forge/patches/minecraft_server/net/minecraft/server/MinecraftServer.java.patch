@@ -44,7 +44,24 @@
  
      /** True if the server is in online mode. */
      public boolean onlineMode;
-@@ -195,9 +199,11 @@
+@@ -129,6 +133,8 @@
+     public long[] field_48082_x = new long[100];
+     private RConThreadQuery rconQueryThread;
+     private RConThreadMain rconMainThread;
++    
++    public int spawnProtectionSize = 16;
+ 
+     public MinecraftServer()
+     {
+@@ -163,6 +169,7 @@
+         this.allowFlight = this.propertyManagerObj.getBooleanProperty("allow-flight", false);
+         this.motd = this.propertyManagerObj.getStringProperty("motd", "A Minecraft Server");
+         this.motd.replace('\u00a7', '$');
++        spawnProtectionSize = this.propertyManagerObj.getIntProperty("spawn-protection-size", 16);
+         InetAddress var2 = null;
+ 
+         if (this.hostname.length() > 0)
+@@ -195,9 +202,11 @@
  
          FMLServerHandler.instance().onLoadComplete();
          this.configManager = new ServerConfigurationManager(this);
@@ -56,7 +73,7 @@
          long var3 = System.nanoTime();
          String var5 = this.propertyManagerObj.getStringProperty("level-name", "world");
          String var6 = this.propertyManagerObj.getStringProperty("level-seed", "");
-@@ -265,53 +271,36 @@
+@@ -265,53 +274,36 @@
              logger.info("Converting map!");
              par1ISaveFormat.convertMapFormat(par2Str, new ConvertProgressUpdater(this));
          }
@@ -126,7 +143,7 @@
              ChunkCoordinates var15 = var14.getSpawnPoint();
  
              for (int var16 = -var22; var16 <= var22 && this.serverRunning; var16 += 16)
-@@ -372,9 +361,9 @@
+@@ -372,9 +364,9 @@
      {
          logger.info("Saving chunks");
  
@@ -138,7 +155,7 @@
              var2.saveWorld(true, (IProgressUpdate)null);
              var2.func_30006_w();
          }
-@@ -392,13 +381,14 @@
+@@ -392,13 +384,14 @@
              this.configManager.savePlayerStates();
          }
  
@@ -155,7 +172,7 @@
              }
          }
      }
-@@ -440,7 +430,7 @@
+@@ -440,7 +433,7 @@
                      var3 += var7;
                      var1 = var5;
  
@@ -164,7 +181,7 @@
                      {
                          this.doTick();
                          var3 = 0L;
-@@ -542,13 +532,13 @@
+@@ -542,13 +535,13 @@
          Vec3D.initialize();
          ++this.deathTime;
  
@@ -181,7 +198,7 @@
  
                  if (this.deathTime % 20 == 0)
                  {
-@@ -567,15 +557,15 @@
+@@ -567,15 +560,15 @@
                  }
              }
  
@@ -200,7 +217,7 @@
          }
  
          for (var9 = 0; var9 < this.playersOnline.size(); ++var9)
-@@ -689,7 +679,8 @@
+@@ -689,7 +682,8 @@
       */
      public WorldServer getWorldManager(int par1)
      {
@@ -210,7 +227,7 @@
      }
  
      /**
-@@ -697,7 +688,7 @@
+@@ -697,7 +691,7 @@
       */
      public EntityTracker getEntityTracker(int par1)
      {
