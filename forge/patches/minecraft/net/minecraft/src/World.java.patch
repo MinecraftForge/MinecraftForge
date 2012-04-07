@@ -18,7 +18,39 @@
  
      /** Option > Difficulty setting (0 - 3) */
      public int difficultySetting;
-@@ -559,7 +561,8 @@
+@@ -214,6 +216,7 @@
+         this.chunkProvider = this.createChunkProvider();
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
++        ForgeHooks.onWorldLoad(this);
+     }
+ 
+     public World(World par1World, WorldProvider par2WorldProvider)
+@@ -259,6 +262,7 @@
+         this.chunkProvider = this.createChunkProvider();
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
++        ForgeHooks.onWorldLoad(this);
+     }
+ 
+     public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings)
+@@ -340,6 +344,7 @@
+ 
+         this.calculateInitialSkylight();
+         this.calculateInitialWeather();
++        ForgeHooks.onWorldLoad(this);
+     }
+ 
+     /**
+@@ -507,6 +512,7 @@
+             }
+ 
+             this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
++            ForgeHooks.onWorldSave(this);
+         }
+     }
+ 
+@@ -559,7 +565,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -28,7 +60,7 @@
      }
  
      /**
-@@ -2067,7 +2070,7 @@
+@@ -2067,7 +2074,7 @@
  
                      if (var7 != null)
                      {
@@ -37,7 +69,7 @@
                      }
                  }
              }
-@@ -2097,18 +2100,18 @@
+@@ -2097,18 +2104,18 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -60,7 +92,7 @@
                  }
              }
  
-@@ -2121,13 +2124,13 @@
+@@ -2121,13 +2128,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -80,7 +112,7 @@
          }
      }
  
-@@ -2149,7 +2152,7 @@
+@@ -2149,7 +2156,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -89,7 +121,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2326,7 +2329,14 @@
+@@ -2326,7 +2333,14 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -105,7 +137,7 @@
                      }
                  }
              }
-@@ -2630,25 +2640,19 @@
+@@ -2630,25 +2644,19 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -143,7 +175,7 @@
          }
      }
  
-@@ -2657,27 +2661,10 @@
+@@ -2657,27 +2665,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -174,7 +206,7 @@
          }
      }
  
-@@ -2703,7 +2690,8 @@
+@@ -2703,7 +2694,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -184,7 +216,7 @@
      }
  
      /**
-@@ -2984,6 +2972,7 @@
+@@ -2984,6 +2976,7 @@
                  }
              }
          }
@@ -192,7 +224,7 @@
  
          Profiler.endSection();
  
-@@ -3307,7 +3296,7 @@
+@@ -3307,7 +3300,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -201,7 +233,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3839,7 +3828,10 @@
+@@ -3839,7 +3832,10 @@
              {
                  var8 = null;
              }
@@ -213,7 +245,7 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -4443,4 +4435,39 @@
+@@ -4443,4 +4439,39 @@
      {
          return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
      }

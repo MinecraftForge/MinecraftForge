@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/src/AnvilChunkLoader.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/AnvilChunkLoader.java	0000-00-00 00:00:00.000000000 -0000
+@@ -10,6 +10,8 @@
+ import java.util.List;
+ import java.util.Set;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
+ {
+     private List field_48451_a = new ArrayList();
+@@ -88,6 +90,7 @@
+             }
+ 
+             var5.removeUnknownBlocks();
++            ForgeHooks.onChunkLoadData(par1World, var5, par4NBTTagCompound);
+             return var5;
+         }
+     }
+@@ -103,6 +106,7 @@
+             var3.setTag("Level", var4);
+             this.writeChunkToNBT(par2Chunk, par1World, var4);
+             this.func_48446_a(par2Chunk.getChunkCoordIntPair(), var3);
++            ForgeHooks.onChunkSaveData(par1World, par2Chunk, var3);
+         }
+         catch (Exception var5)
+         {
