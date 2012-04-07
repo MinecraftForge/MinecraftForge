@@ -96,7 +96,7 @@
                          }
                          else if (var4.equalsIgnoreCase("banlist"))
 @@ -402,6 +404,10 @@
-                                 var6.log("Ban list:" + this.func_40648_a(this.minecraftServer.getBannedPlayersList(), ", "));
+                                 var6.log("Ban list:" + this.joinStrings(this.minecraftServer.getBannedPlayersList(), ", "));
                              }
                          }
 +                        else if (ForgeHooks.onServerCommand(var6, var6.getUsername(), var2))
