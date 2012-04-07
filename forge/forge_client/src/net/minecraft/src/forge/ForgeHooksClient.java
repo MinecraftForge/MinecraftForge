@@ -44,6 +44,15 @@ public class ForgeHooksClient
 
     public static LinkedList<IHighlightHandler> highlightHandlers = new LinkedList<IHighlightHandler>();
     public static LinkedList<IRenderWorldLastHandler> renderWorldLastHandlers = new LinkedList<IRenderWorldLastHandler>();
+    
+    public static void onTextureLoad(String textureName, int textureID)
+    {
+        for (ITextureLoadHandler handler: textureLoadHandlers)
+        {
+            handler.onTextureLoad(textureName, textureID);
+        }
+    }
+    public static LinkedList<ITextureLoadHandler> textureLoadHandlers = new LinkedList<ITextureLoadHandler>();
 
     public static boolean canRenderInPass(Block block, int pass)
     {

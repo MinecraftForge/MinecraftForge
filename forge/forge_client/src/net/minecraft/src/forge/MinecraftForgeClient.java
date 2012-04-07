@@ -36,6 +36,24 @@ public class MinecraftForgeClient
     {
         ForgeHooksClient.registerRenderContextHandler(texture, subid, handler);
     }
+    
+    /**
+     * Registers a Texture Load Handler
+     * @param handler The handler
+     */
+    public static void registerTextureLoadHandler(ITextureLoadHandler handler)
+    {
+        ForgeHooksClient.textureLoadHandlers.add(handler);
+    }
+    
+    /**
+     * Registers a Render Last Handler
+     * @param handler The handler
+     */
+    public static void registerRenderLastHandler(IRenderWorldLastHandler handler)
+    {
+        ForgeHooksClient.renderWorldLastHandlers.add(handler);
+    }
 
     /** Bind a texture.  This is used to bind a texture file when
      * performing your own rendering, rather than using ITextureProvider.
