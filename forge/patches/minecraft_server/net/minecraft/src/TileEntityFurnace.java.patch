@@ -1,7 +1,8 @@
 --- ../src_base/minecraft_server/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,6 +1,8 @@
- package net.minecraft.src;
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.server.FMLServerHandler;
  
 -public class TileEntityFurnace extends TileEntity implements IInventory
 +import net.minecraft.src.forge.ISidedInventory;
@@ -10,7 +11,7 @@
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -249,8 +251,12 @@
+@@ -251,8 +253,12 @@
          }
          else
          {
@@ -25,7 +26,7 @@
          }
      }
  
-@@ -261,13 +267,13 @@
+@@ -263,13 +269,13 @@
      {
          if (this.canSmelt())
          {
@@ -41,16 +42,7 @@
              {
                  ++this.furnaceItemStacks[2].stackSize;
              }
-@@ -285,7 +291,7 @@
-      * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
-      * fuel
-      */
--    private int getItemBurnTime(ItemStack par1ItemStack)
-+    public int getItemBurnTime(ItemStack par1ItemStack)
-     {
-         if (par1ItemStack == null)
-         {
-@@ -309,4 +315,18 @@
+@@ -316,4 +322,18 @@
      public void openChest() {}
  
      public void closeChest() {}

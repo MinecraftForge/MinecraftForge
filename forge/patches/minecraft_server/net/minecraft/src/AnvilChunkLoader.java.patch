@@ -13,15 +13,15 @@
              }
  
              var5.removeUnknownBlocks();
-+            ForgeHooks.loadChunkData(par1World, var5, par4NBTTagCompound);
++            ForgeHooks.onChunkLoadData(par1World, var5, par4NBTTagCompound);
              return var5;
          }
      }
 @@ -103,6 +106,7 @@
              var3.setTag("Level", var4);
-             this.func_48462_a(par2Chunk, par1World, var4);
+             this.writeChunkToNBT(par2Chunk, par1World, var4);
              this.func_48463_a(par2Chunk.getChunkCoordIntPair(), var3);
-+            ForgeHooks.saveChunkData(par1World, par2Chunk, var3);
++            ForgeHooks.onChunkSaveData(par1World, par2Chunk, var3);
          }
          catch (Exception var5)
          {

@@ -138,6 +138,15 @@ public class MinecraftForge
     {
         ForgeHooks.chatHandlers.add(handler);
     }
+    
+    /**
+     * Register a new Save handler
+     * @param handler The handler to be registered
+     */
+    public static void registerSaveHandler(ISaveEventHandler handler)
+    {
+        ForgeHooks.saveHandlers.add(handler);
+    }
 
     /**
      * This is not supposed to be called outside of Minecraft internals.

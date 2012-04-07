@@ -321,6 +321,55 @@ public class ForgeHooks
         return message;
     }
     static LinkedList<IChatHandler> chatHandlers = new LinkedList<IChatHandler>();
+    
+    public static void onWorldLoad(World world)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onWorldLoad(world);
+        }
+    }
+
+    public static void onWorldSave(World world)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onWorldSave(world);
+        }
+    }
+
+    public static void onChunkLoad(World world, Chunk chunk)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkLoad(world, chunk);
+        }
+    }
+
+    public static void onChunkUnload(World world, Chunk chunk)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkUnload(world, chunk);
+        }
+    }
+
+    public static void onChunkLoadData(World world, Chunk chunk, NBTTagCompound data)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkLoadData(world, chunk, data);
+        }
+    }
+
+    public static void onChunkSaveData(World world, Chunk chunk, NBTTagCompound data)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkSaveData(world, chunk, data);
+        }
+    }
+    static LinkedList<ISaveEventHandler> saveHandlers = new LinkedList<ISaveEventHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
@@ -602,10 +651,10 @@ public class ForgeHooks
     }
     public static ArrayList<IArrowNockHandler> arrowNockHandlers = new ArrayList<IArrowNockHandler>();
 
-    public static final int majorVersion=0;
-    public static final int minorVersion=0;
-    public static final int revisionVersion=0;
-    public static final int buildVersion=0;
+    public static final int majorVersion    = 3;
+    public static final int minorVersion    = 0;
+    public static final int revisionVersion = 0;
+    public static final int buildVersion    = 5;
     static
     {
         plantGrassList = new ArrayList<ProbableItem>();

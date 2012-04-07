@@ -9,7 +9,7 @@
  
      /** Number of ticks since this EntityLiving last produced its sound */
      private int livingSoundTime;
-@@ -1298,7 +1298,7 @@
+@@ -1301,7 +1301,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);

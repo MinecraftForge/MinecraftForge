@@ -91,6 +91,10 @@ public class PacketHandlerServer implements IPacketHandler
         {
             doMissingMods(net, missing);
         }
+        else
+        {
+            finishLogin(net);
+        }
     }
 
     /**
@@ -126,5 +130,33 @@ public class PacketHandlerServer implements IPacketHandler
         mc.configManager.sendPacketToAllPlayers(new Packet3Chat("\247e" + net.getUsername() + " left the game."));
         mc.configManager.playerLoggedOut(net.getPlayerEntity());
         net.connectionClosed = true;
+    }
+    
+    private void finishLogin(NetServerHandler net)
+    {
+        EntityPlayerMP player = net.getPlayerEntity();
+        WorldServer world = net.mcServer.getWorldManager(player.dimension);
+        ChunkCoordinates spawn = world.getSpawnPoint();
+        
+        net.sendPacket(new Packet1Login("", player.entityId, world.getWorldInfo().getTerrainType(), 
+                player.itemInWorldManager.getGameType(), world.worldProvider.worldType, 
+                (byte)world.difficultySetting,          (byte)world.getHeight(), 
+                (byte)net.mcServer.configManager.getMaxPlayers()));
+        
+        net.sendPacket(new Packet6SpawnPosition(spawn.posX, spawn.posY, spawn.posZ));
+        net.sendPacket(new Packet202PlayerAbilities(player.capabilities));
+        net.mcServer.configManager.updateTimeAndWeather(player, world);
+        net.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat("\u00a7e" + player.username + " joined the game."));
+        net.mcServer.configManager.playerLoggedIn(player);
+        
+        net.teleportTo(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
+        net.sendPacket(new Packet4UpdateTime(world.getWorldTime()));
+        
+        for (Object efx : player.getActivePotionEffects())
+        {
+            net.sendPacket(new Packet41EntityEffect(player.entityId, (PotionEffect)efx));
+        }
+        
+        player.func_20057_k();
     }
 }

@@ -1,6 +1,6 @@
 package net.minecraft.src.forge;
 
-public interface ITextureLoadHandler
+public interface ITextureLoadHandler 
 {
-	public void onTextureLoad(String textureName);
+    public void onTextureLoad(String textureName, int textureID);
 }

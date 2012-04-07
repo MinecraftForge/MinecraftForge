@@ -21,6 +21,14 @@ public class mod_MinecraftForge extends NetworkMod
     public void load()
     {
         MinecraftForge.getDungeonLootTries(); //Random thing to make things Initialize
+        int x = 0;
+        for (BaseMod mod : ModLoader.getLoadedMods())
+        {
+            if (mod instanceof NetworkMod)
+            {
+                ForgeHooks.networkMods.put(x++, (NetworkMod)mod);
+            }
+        }
     }
 
 	@Override

@@ -63,14 +63,14 @@ public class ForgeHooksClient
 	}	
     public static HashMap<ItemMap, MapItemRenderer> mapRenderers=new HashMap<ItemMap, MapItemRenderer>();
 	
-	public static void onTextureLoad(String textureName)
-	{
-		for(ITextureLoadHandler handler : textureLoadHandlers)
-		{
-			handler.onTextureLoad(textureName);
-		}
-	}	
-	public static LinkedList<ITextureLoadHandler> textureLoadHandlers=new LinkedList<ITextureLoadHandler>();
+    public static void onTextureLoad(String textureName, int textureID)
+    {
+        for (ITextureLoadHandler handler: textureLoadHandlers)
+        {
+            handler.onTextureLoad(textureName, textureID);
+        }
+    }
+    public static LinkedList<ITextureLoadHandler> textureLoadHandlers = new LinkedList<ITextureLoadHandler>();
 
     public static boolean canRenderInPass(Block block, int pass)
     {

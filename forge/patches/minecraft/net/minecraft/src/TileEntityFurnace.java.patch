@@ -41,16 +41,7 @@
              {
                  this.furnaceItemStacks[2].stackSize += var1.stackSize;
              }
-@@ -322,7 +328,7 @@
-      * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
-      * fuel
-      */
--    private int getItemBurnTime(ItemStack par1ItemStack)
-+    public int getItemBurnTime(ItemStack par1ItemStack)
-     {
-         if (par1ItemStack == null)
-         {
-@@ -346,4 +352,18 @@
+@@ -351,4 +357,18 @@
      public void openChest() {}
  
      public void closeChest() {}

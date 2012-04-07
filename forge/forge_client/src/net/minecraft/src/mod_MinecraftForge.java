@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import net.minecraft.src.forge.ForgeHooks;
 import net.minecraft.src.forge.MinecraftForge;
+import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 
 /**
@@ -21,6 +22,7 @@ public class mod_MinecraftForge extends NetworkMod
     public void load()
     {
         MinecraftForge.getDungeonLootTries(); //Random thing to make things Initialize
+        MinecraftForgeClient.init();
     }
 
 	@Override

@@ -9,10 +9,10 @@
  public class GuiIngame extends Gui
  {
      private static RenderItem itemRenderer = new RenderItem();
-@@ -140,7 +142,19 @@
+@@ -142,7 +144,19 @@
  
-                 int var50 = var7 - 39;
-                 var22 = var50 - 10;
+                 var46 = var7 - 39;
+                 var22 = var46 - 10;
 -                var23 = this.mc.thePlayer.getTotalArmorValue();
 +                var23 = 0;
 +                for (int x = 0; x < mc.thePlayer.inventory.armorInventory.length; x++)

@@ -1,15 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ChunkProviderServer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -7,6 +7,8 @@
- import java.util.List;
- import java.util.Set;
+@@ -9,6 +9,8 @@
+ 
+ import cpw.mods.fml.server.FMLServerHandler;
  
 +import net.minecraft.src.forge.ForgeHooks;
 +
  public class ChunkProviderServer implements IChunkProvider
  {
      private Set droppedChunksSet = new HashSet();
-@@ -49,6 +51,11 @@
+@@ -51,6 +53,11 @@
  
      public void dropChunk(int par1, int par2)
      {

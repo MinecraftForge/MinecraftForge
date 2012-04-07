@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
---- minecraft_server\net\minecraft\src\ItemMap.java	Sun Mar 25 05:06:56 2012
-+++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Sun Mar 25 05:08:42 2012
+--- minecraft_server\net\minecraft\src\ItemMap.java	Fri Mar 30 23:27:06 2012
++++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Fri Mar 30 23:40:00 2012
 @@ -22,7 +22,6 @@
     }
  
@@ -10,8 +10,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_pa
        if(var4 == null) {
           p_28023_1_.func_28145_b(p_28023_2_.func_28104_b("map"));
 diff -r -U 3 minecraft_server\net\minecraft\src\NetworkMasterThread.java minecraft_server_patched\net\minecraft\src\NetworkMasterThread.java
---- minecraft_server\net\minecraft\src\NetworkMasterThread.java	Sun Mar 25 05:06:57 2012
-+++ minecraft_server_patched\net\minecraft\src\NetworkMasterThread.java	Sun Mar 25 05:08:42 2012
+--- minecraft_server\net\minecraft\src\NetworkMasterThread.java	Fri Mar 30 23:27:07 2012
++++ minecraft_server_patched\net\minecraft\src\NetworkMasterThread.java	Fri Mar 30 23:40:00 2012
 @@ -11,6 +11,7 @@
        this.field_829_a = p_i577_1_;
     }
@@ -21,8 +21,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\NetworkMasterThread.java minecra
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sun Mar 25 05:06:57 2012
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sun Mar 25 05:08:42 2012
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 30 23:27:07 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 30 23:40:00 2012
 @@ -20,7 +20,9 @@
     }
  
@@ -33,15 +33,3 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraf
     }
  
     private void func_40509_b() {
-diff -r -U 3 minecraft_server\net\minecraft\src\WorldGenerator.java minecraft_server_patched\net\minecraft\src\WorldGenerator.java
---- minecraft_server\net\minecraft\src\WorldGenerator.java	Sun Mar 25 05:06:57 2012
-+++ minecraft_server_patched\net\minecraft\src\WorldGenerator.java	Sun Mar 25 05:11:32 2012
-@@ -26,7 +26,7 @@
-    protected void func_41043_a(World p_41043_1_, int p_41043_2_, int p_41043_3_, int p_41043_4_, int p_41043_5_, int p_41043_6_) {
-       if(this.field_41044_a) {
-          p_41043_1_.func_507_b(p_41043_2_, p_41043_3_, p_41043_4_, p_41043_5_, p_41043_6_);
--      } else if(p_41043_1_.func_492_a(p_41043_2_ >> 4, p_41043_4_ >> 4).field_50025_o) {
-+      } else if(p_41043_1_.func_492_a(p_41043_2_, p_41043_4_).field_50025_o) {
-          if(p_41043_1_.func_470_a(p_41043_2_, p_41043_3_, p_41043_4_, p_41043_5_, p_41043_6_)) {
-             p_41043_1_.func_521_f(p_41043_2_, p_41043_3_, p_41043_4_);
-          }
