@@ -223,6 +223,32 @@ public class ForgeHooks
         return message;
     }
     
+    public static String onServerMeCommand(EntityPlayer player, String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onServerMeCommand(player, message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    
+    public static String onServerTellCommand(EntityPlayer player, String target, String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onServerTellCommand(player, target, message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    
     public static boolean onChatCommand(EntityPlayer player, boolean isOp, String command)
     {
         for (IChatHandler handler : chatHandlers)

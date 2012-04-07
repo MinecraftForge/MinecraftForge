@@ -18,6 +18,33 @@ public interface IChatHandler
     public String onServerChat(EntityPlayer player, String message);
     
     /**
+     * Called when a player sends a /me command to the server,
+     * you can manipulate the message parameter by returning a modified 
+     * version from this function.
+     * 
+     * This is only called on the server side.
+     * 
+     * @param player The player issuing the message
+     * @param message The message the player is sending
+     * @return The message to be displayed, normal case is the 'message' parameter. Return null to cancel displaying this message.
+     */
+    public String onServerMeCommand(EntityPlayer player, String message);
+    
+    /**
+     * Called when a player sends a /tell command to the server,
+     * you can manipulate the message parameter by returning a modified 
+     * version from this function.
+     * 
+     * This is only called on the server side.
+     * 
+     * @param player The player issuing the message
+     * @param target The player being whispered to
+     * @param message The message the player is sending
+     * @return The message to be displayed, normal case is the 'message' parameter. Return null to cancel displaying this message.
+     */
+    public String onServerTellCommand(EntityPlayer player, String target, String message);
+    
+    /**
      * Called when a player sends a normal chat message to the server
      * that starts with a '/'.
      * 
