@@ -10,6 +10,15 @@
  
  public class NetServerHandler extends NetHandler implements ICommandListener
  {
+@@ -19,7 +22,7 @@
+     public boolean connectionClosed = false;
+ 
+     /** Reference to the MinecraftServer object. */
+-    private MinecraftServer mcServer;
++    public MinecraftServer mcServer;
+ 
+     /** Reference to the EntityPlayerMP object. */
+     private EntityPlayerMP playerEntity;
 @@ -374,8 +377,11 @@
                  double var10 = this.playerEntity.posY - ((double)var6 + 0.5D) + 1.5D;
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);

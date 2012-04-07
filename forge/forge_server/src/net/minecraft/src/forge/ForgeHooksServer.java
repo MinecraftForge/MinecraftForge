@@ -1,8 +1,10 @@
 package net.minecraft.src.forge;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import net.minecraft.src.*;
+import net.minecraft.src.forge.packets.ForgePacket;
 import net.minecraft.src.forge.packets.PacketModList;
 
 public class ForgeHooksServer
@@ -40,6 +42,38 @@ public class ForgeHooksServer
         if (((PacketHandlerServer)ForgeHooks.getPacketHandler()).DEBUG)
         {
             System.out.println("S->C: " + pkt.toString(true));
+        }
+    }
+    
+    public static void handleLoginPacket(Packet1Login pktLogin, NetServerHandler net, NetworkManager manager)
+    {
+        init();
+        if (pktLogin.serverMode == ForgePacket.FORGE_ID)
+        {
+            ForgeHooks.onLogin(manager, pktLogin);  
+            
+            String[] channels = MessageManager.getInstance().getRegisteredChannels(manager);
+            StringBuilder tmp = new StringBuilder();
+            tmp.append("Forge");
+            for(String channel : channels)
+            {
+                tmp.append("\0");
+                tmp.append(channel);
+            }
+            Packet250CustomPayload pkt = new Packet250CustomPayload(); 
+            pkt.channel = "REGISTER";
+            try {
+                pkt.data = tmp.toString().getBytes("UTF8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            pkt.length = pkt.data.length;
+            net.sendPacket(pkt);
+            ForgeHooksServer.sendModListRequest(manager);
+        }
+        else
+        {
+            net.kickPlayer("This server requires you to have Minecraft Forge installed.");
         }
     }
 
