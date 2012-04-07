@@ -43,11 +43,12 @@ def build(build_num=0):
     error_level = 0
     try:
         os.chdir(mcp_dir)
+        reset_logger()
         recompile(None)
         reset_logger()
         os.chdir(forge_dir)
     except SystemExit, e:
-        print 'Decompile Exception: %d ' % e.code
+        print 'Recompile Exception: %d ' % e.code
         error_level = e.code
         
     print '=================================== Build Finished %d =================================' % error_level

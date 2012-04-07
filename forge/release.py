@@ -37,6 +37,7 @@ def main():
     error_level = 0
     try:
         os.chdir(mcp_dir)
+        reset_logger()
         reobfuscate(None, False, True, True)
         reset_logger()
         os.chdir(forge_dir)

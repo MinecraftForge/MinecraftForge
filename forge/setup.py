@@ -79,7 +79,7 @@ def setup_fml():
     if os.path.isdir(fml_dir):
         shutil.rmtree(fml_dir)
         
-    print 'Extracting Forge ModLoader: %s' % os.path.basename(fml[0]) 
+    print 'Extracting: %s' % os.path.basename(fml[0]) 
     
     zf = zipfile.ZipFile(fml[0])
     zf.extractall(forge_dir)

@@ -606,7 +606,7 @@ public class ForgeHooks
     public static final int majorVersion    = 3;
     public static final int minorVersion    = 0;
     public static final int revisionVersion = 0;
-    public static final int buildVersion    = 5;
+    public static final int buildVersion    = 0;
     static
     {
         plantGrassList = new ArrayList<ProbableItem>();
