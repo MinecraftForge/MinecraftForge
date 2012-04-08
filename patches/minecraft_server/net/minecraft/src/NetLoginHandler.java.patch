@@ -14,7 +14,7 @@
  
              var2.func_20057_k();
 +            
-+            FMLServerHandler.instance().handleLogin(p_6007_1_, field_8_b);
++            FMLServerHandler.instance().handleLogin(p_6007_1_, field_8_b, var2);
          }
  
          this.field_7_c = true;
