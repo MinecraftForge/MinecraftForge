@@ -156,4 +156,12 @@ public interface ModContainer
      * @return
      */
     boolean ownsNetworkChannel(String channel);
+    
+    /**
+     * Does this mod want commands from the console?
+     * @return
+     */
+    boolean wantsConsoleCommands();
+    
+    IConsoleHandler getConsoleHandler();
 }

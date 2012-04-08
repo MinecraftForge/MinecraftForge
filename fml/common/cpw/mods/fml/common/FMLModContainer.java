@@ -261,4 +261,24 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return false;
     }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#wantsConsoleCommands()
+     */
+    @Override
+    public boolean wantsConsoleCommands()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getConsoleHandler()
+     */
+    @Override
+    public IConsoleHandler getConsoleHandler()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

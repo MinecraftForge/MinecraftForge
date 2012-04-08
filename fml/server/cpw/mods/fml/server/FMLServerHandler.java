@@ -440,4 +440,18 @@ public class FMLServerHandler implements IFMLSidedHandler
             return new File(".");
         }
     }
+
+    /**
+     * @param var2
+     * @return
+     */
+    public boolean handleServerCommand(String command)
+    {
+        for (ModContainer mod : Loader.getModList()) {
+            if (mod.wantsConsoleCommands() && mod.getConsoleHandler().handleCommand(command)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
