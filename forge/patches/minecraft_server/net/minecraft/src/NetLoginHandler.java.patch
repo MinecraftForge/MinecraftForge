@@ -1,8 +1,8 @@
 --- ../src_base/minecraft_server/net/minecraft/src/NetLoginHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/NetLoginHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,9 @@
- import java.util.Random;
- import java.util.logging.Logger;
+@@ -8,6 +8,9 @@
+ 
+ import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.*;
 +import net.minecraft.src.forge.packets.*;
@@ -10,7 +10,7 @@
  
  public class NetLoginHandler extends NetHandler
  {
-@@ -46,6 +49,7 @@
+@@ -48,6 +51,7 @@
          this.mcServer = par1MinecraftServer;
          this.netManager = new NetworkManager(par2Socket, par3Str, this);
          this.netManager.chunkDataSendCounter = 0;
@@ -18,7 +18,7 @@
      }
  
      /**
-@@ -146,6 +150,7 @@
+@@ -148,6 +152,7 @@
              ChunkCoordinates var4 = var3.getSpawnPoint();
              var2.itemInWorldManager.func_35695_b(var3.getWorldInfo().getGameType());
              NetServerHandler var5 = new NetServerHandler(this.mcServer, this.netManager, var2);
@@ -26,7 +26,7 @@
              var5.sendPacket(new Packet1Login("", var2.entityId, var3.getWorldInfo().getTerrainType(), var2.itemInWorldManager.getGameType(), var3.worldProvider.worldType, (byte)var3.difficultySetting, (byte)var3.getHeight(), (byte)this.mcServer.configManager.getMaxPlayers()));
              var5.sendPacket(new Packet6SpawnPosition(var4.posX, var4.posY, var4.posZ));
              var5.sendPacket(new Packet202PlayerAbilities(var2.capabilities));
-@@ -153,7 +158,9 @@
+@@ -155,7 +160,9 @@
              this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat("\u00a7e" + var2.username + " joined the game."));
              this.mcServer.configManager.playerLoggedIn(var2);
              var5.teleportTo(var2.posX, var2.posY, var2.posZ, var2.rotationYaw, var2.rotationPitch);
@@ -36,12 +36,13 @@
              var5.sendPacket(new Packet4UpdateTime(var3.getWorldTime()));
              Iterator var6 = var2.getActivePotionEffects().iterator();
  
-@@ -164,6 +171,8 @@
+@@ -166,7 +173,8 @@
              }
  
              var2.func_20057_k();
+-            
 +            */
 +            ForgeHooksServer.handleLoginPacket(par1Packet1Login, var5, netManager);
+             FMLServerHandler.instance().handleLogin(par1Packet1Login, netManager, var2);
          }
  
-         this.finishedProcessing = true;

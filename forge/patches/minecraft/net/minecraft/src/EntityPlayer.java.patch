@@ -153,7 +153,7 @@
 +            IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
 +            if (handler != null)
 +            {
-+                GuiScreen screen = handler.getGuiScreen(ID, (EntityPlayerSP)this, world, x, y, z);
++                GuiScreen screen = (GuiScreen)handler.getGuiElement(ID, this, world, x, y, z);
 +                if (screen != null)
 +                {
 +                    ModLoader.getMinecraftInstance().displayGuiScreen(screen);

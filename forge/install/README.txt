@@ -4,8 +4,8 @@ Extract the download archive directly into your MCP-directiory.
 It should create a folder "forge" within that directory, containing all 
 extracted files.
 
-You should use freshly downloaded jars, solely including ModLoader & 
-ModLoaderMP. Anything else can eventually cause conflicts.
+You should use freshly downloaded jars, solely including ModLoader in the 
+client jar. Anything else can eventually cause conflicts.
 
 You also need to install the FernFlower decompiler, you can download it at 
 http://goo.gl/PnJHp. Extract fernflower.jar into your MCP's runtime/bin folder.

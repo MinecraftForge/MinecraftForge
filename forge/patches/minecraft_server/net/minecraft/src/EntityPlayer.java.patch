@@ -168,7 +168,7 @@
 +        IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
 +        if (handler != null)
 +        {
-+            Container container = handler.getGuiContainer(ID, player, world, x, y, z);
++            Container container = (Container)handler.getGuiElement(ID, player, world, x, y, z);
 +            if (container != null)
 +            {
 +                player.realGetNextWidowId();
