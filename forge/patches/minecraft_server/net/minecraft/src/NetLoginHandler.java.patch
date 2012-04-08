@@ -36,13 +36,15 @@
              var5.sendPacket(new Packet4UpdateTime(var3.getWorldTime()));
              Iterator var6 = var2.getActivePotionEffects().iterator();
  
-@@ -166,7 +173,8 @@
+@@ -166,9 +173,10 @@
              }
  
              var2.func_20057_k();
--            
 +            */
 +            ForgeHooksServer.handleLoginPacket(par1Packet1Login, var5, netManager);
-             FMLServerHandler.instance().handleLogin(par1Packet1Login, netManager, var2);
+             
+             FMLServerHandler.instance().handleLogin(par1Packet1Login, netManager);
+-            FMLServerHandler.instance().announceLogin(var2);
          }
  
+         this.finishedProcessing = true;
