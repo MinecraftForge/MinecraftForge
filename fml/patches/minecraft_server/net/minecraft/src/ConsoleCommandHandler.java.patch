@@ -9,12 +9,14 @@
  import net.minecraft.server.MinecraftServer;
  
  public class ConsoleCommandHandler
-@@ -397,7 +399,7 @@
+@@ -397,6 +399,10 @@
                                  var6.func_2_b("Ban list:" + this.func_40648_a(this.field_22116_b.func_40025_r(), ", "));
                              }
                          }
--                        else
-+                        else if (!FMLServerHandler.instance().handleServerCommand(var2, var6.func_1_c(), var6))
++                        else if (FMLServerHandler.instance().handleServerCommand(var2, var6.func_1_c(), var6))
++                        {
++                            
++                        }
+                         else
                          {
                              field_22117_a.info("Unknown console command. Type \"help\" for help.");
-                         }
