@@ -450,7 +450,7 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public List<String> getPreDepends()
+    public List<String> getPostDepends()
     {
         if (dependencies == null)
         {
@@ -461,7 +461,7 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public List<String> getPostDepends()
+    public List<String> getPreDepends()
     {
         if (dependencies == null)
         {
