@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import cpw.mods.fml.server.FMLServerHandler;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.*;
 import net.minecraft.src.forge.packets.*;
@@ -158,5 +160,6 @@ public class PacketHandlerServer implements IPacketHandler
         }
         
         player.func_20057_k();
+        FMLServerHandler.instance().announceLogin(player);
     }
 }
