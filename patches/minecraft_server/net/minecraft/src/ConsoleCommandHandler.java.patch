@@ -14,7 +14,7 @@
                              }
                          }
 -                        else
-+                        else if (!FMLServerHandler.instance().handleServerCommand(var2))
++                        else if (!FMLServerHandler.instance().handleServerCommand(var2, var6.func_1_c(), var6))
                          {
                              field_22117_a.info("Unknown console command. Type \"help\" for help.");
                          }

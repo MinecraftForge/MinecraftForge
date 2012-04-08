@@ -84,19 +84,10 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     @Override
-    public final boolean handleCommand(String command)
+    public final boolean handleCommand(String command, Object... data)
     {
-        return onServerCommand(command);
+        return onServerCommand(command, (String)data[0], (ICommandListener)data[1]);
     }
-    /**
-     * @param command
-     * @return
-     */
-    private boolean onServerCommand(String command)
-    {
-        return false;
-    }
-
     // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
@@ -281,6 +272,15 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         return false;
     }
+    /**
+     * @param command
+     * @return
+     */
+    public boolean onServerCommand(String command, String sender, ICommandListener listener)
+    {
+        return false;
+    }
+
     // Spare client junk
     // -------
     // void addRenderer(Map<Class<? extends Entity>, Render> renderers);

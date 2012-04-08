@@ -26,6 +26,7 @@ import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.ICommandListener;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetworkManager;
@@ -445,10 +446,10 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param var2
      * @return
      */
-    public boolean handleServerCommand(String command)
+    public boolean handleServerCommand(String command, String player, ICommandListener listener)
     {
         for (ModContainer mod : Loader.getModList()) {
-            if (mod.wantsConsoleCommands() && mod.getConsoleHandler().handleCommand(command)) {
+            if (mod.wantsConsoleCommands() && mod.getConsoleHandler().handleCommand(command, player, listener)) {
                 return true;
             }
         }
