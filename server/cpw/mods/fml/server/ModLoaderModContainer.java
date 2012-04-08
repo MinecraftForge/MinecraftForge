@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.MLProp;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.INetworkHandler;
@@ -491,5 +492,17 @@ public class ModLoaderModContainer implements ModContainer
     public boolean ownsNetworkChannel(String channel)
     {
         return FMLCommonHandler.instance().getChannelListFor(this).contains(channel);
+    }
+
+    @Override
+    public boolean wantsConsoleCommands()
+    {
+        return true;
+    }
+
+    @Override
+    public IConsoleHandler getConsoleHandler()
+    {
+        return mod;
     }
 }

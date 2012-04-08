@@ -15,13 +15,14 @@ package net.minecraft.src;
 import java.util.Random;
 
 import net.minecraft.server.MinecraftServer;
+import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 
-public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler
+public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler
 {
     // CALLBACK MECHANISMS
     @Override
@@ -80,6 +81,20 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         {
             generateNether(w, random, chunkX << 4, chunkZ << 4);
         }
+    }
+
+    @Override
+    public final boolean handleCommand(String command)
+    {
+        return onServerCommand(command);
+    }
+    /**
+     * @param command
+     * @return
+     */
+    private boolean onServerCommand(String command)
+    {
+        return false;
     }
 
     // BASEMOD API
