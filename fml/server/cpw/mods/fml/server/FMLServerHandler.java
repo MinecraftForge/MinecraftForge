@@ -393,13 +393,13 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param loginPacket
      * @param networkManager
      */
-    public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager)
+    public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager, EntityPlayer player)
     {
         for (ModContainer mod : Loader.getModList())
         {
             if (mod.wantsNetworkPackets())
             {
-                mod.getNetworkHandler().onLogin(loginPacket, networkManager);
+                mod.getNetworkHandler().onLogin(loginPacket, networkManager, player);
             }
         }
 

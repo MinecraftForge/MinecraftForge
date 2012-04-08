@@ -49,7 +49,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onLogin(Object... data)
     {
-        onClientLogin((Packet1Login)data[0], (NetworkManager)data[1]);
+        onClientLogin((Packet1Login)data[0], (NetworkManager)data[1], (EntityPlayer) data[2]);
     }
 
     @Override
@@ -250,8 +250,9 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * Called when a new client logs in. Make sure modloader knows about your channels
      * @param login
      * @param data
+     * @param player 
      */
-    public void onClientLogin(Packet1Login login, NetworkManager data)
+    public void onClientLogin(Packet1Login login, NetworkManager data, EntityPlayer player)
     {
     }
 
