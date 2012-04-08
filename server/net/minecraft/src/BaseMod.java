@@ -49,7 +49,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onLogin(Object... data)
     {
-        onClientLogin((Packet1Login)data[0], (NetworkManager)data[1], (EntityPlayer) data[2]);
+        onClientLogin((EntityPlayer) data[0]);
     }
 
     @Override
@@ -252,7 +252,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param data
      * @param player 
      */
-    public void onClientLogin(Packet1Login login, NetworkManager data, EntityPlayer player)
+    public void onClientLogin(EntityPlayer player)
     {
     }
 

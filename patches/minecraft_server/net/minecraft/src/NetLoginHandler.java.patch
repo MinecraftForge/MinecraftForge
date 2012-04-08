@@ -9,12 +9,13 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetLoginHandler extends NetHandler
-@@ -132,6 +134,8 @@
+@@ -132,6 +134,9 @@
              }
  
              var2.func_20057_k();
 +            
-+            FMLServerHandler.instance().handleLogin(p_6007_1_, field_8_b, var2);
++            FMLServerHandler.instance().handleLogin(p_6007_1_, field_8_b);
++            FMLServerHandler.instance().announceLogin(var2);
          }
  
          this.field_7_c = true;
