@@ -393,16 +393,8 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param loginPacket
      * @param networkManager
      */
-    public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager, EntityPlayer player)
+    public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsNetworkPackets())
-            {
-                mod.getNetworkHandler().onLogin(loginPacket, networkManager, player);
-            }
-        }
-
         Packet250CustomPayload packet = new Packet250CustomPayload();
         packet.field_44005_a = "REGISTER";
         packet.field_44004_c = FMLCommonHandler.instance().getPacketRegistry();
@@ -410,6 +402,15 @@ public class FMLServerHandler implements IFMLSidedHandler
         networkManager.func_745_a(packet);
     }
 
+    public void announceLogin(EntityPlayer player) {
+        for (ModContainer mod : Loader.getModList())
+        {
+            if (mod.wantsNetworkPackets())
+            {
+                mod.getNetworkHandler().onLogin(player);
+            }
+        }
+    }
     /**
      * Are we a server?
      */
