@@ -415,7 +415,7 @@ public class Loader
         for (File file : content)
         {
             if (file.isDirectory()) {
-                log.finest(String.format("Recursing into subdirectory %s", file.getName()));
+                log.finest(String.format("Recursing into package %s", path+file.getName()));
                 foundAModClass|=attemptDirLoad(file,path+file.getName()+".");
                 continue;
             }

@@ -1,0 +1,21 @@
+--- ../src-base/minecraft_server/net/minecraft/src/ServerGUI.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/ServerGUI.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,6 +3,7 @@
+ import java.awt.BorderLayout;
+ import java.awt.Component;
+ import java.awt.Dimension;
++import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import javax.swing.JComponent;
+ import javax.swing.JFrame;
+@@ -78,7 +79,9 @@
+     {
+         JPanel var1 = new JPanel(new BorderLayout());
+         JTextArea var2 = new JTextArea();
+-        field_22_a.addHandler(new GuiLogOutputHandler(var2));
++        GuiLogOutputHandler guihandler=new GuiLogOutputHandler(var2);
++        guihandler.setLevel(Level.FINE);
++        field_22_a.addHandler(guihandler);
+         JScrollPane var3 = new JScrollPane(var2, 22, 30);
+         var2.setEditable(false);
+         JTextField var4 = new JTextField();
