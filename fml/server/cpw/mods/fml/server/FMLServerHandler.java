@@ -399,7 +399,9 @@ public class FMLServerHandler implements IFMLSidedHandler
         packet.field_44005_a = "REGISTER";
         packet.field_44004_c = FMLCommonHandler.instance().getPacketRegistry();
         packet.field_44003_b = packet.field_44004_c.length;
-        networkManager.func_745_a(packet);
+        if (packet.field_44003_b>0) {
+            networkManager.func_745_a(packet);
+        }
     }
 
     public void announceLogin(EntityPlayer player) {
