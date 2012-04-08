@@ -1,5 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,7 +5,7 @@
+ 
+ public abstract class Entity
+ {
+-    private static int nextEntityID = 0;
++    public static int nextEntityID = 0;
+     public int entityId;
+     public double renderDistanceWeight;
+ 
 @@ -173,6 +173,9 @@
       */
      public boolean ignoreFrustumCheck;
@@ -40,7 +49,7 @@
  
      public DataWatcher getDataWatcher()
      {
-@@ -1318,6 +1344,10 @@
+@@ -1318,6 +1344,11 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -48,10 +57,11 @@
 +        {
 +            par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
 +        }
++        par1NBTTagCompound.setInteger("entityID", entityId);
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1359,6 +1389,10 @@
+@@ -1359,6 +1390,14 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -59,10 +69,14 @@
 +        {
 +            customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
 +        }
++        if (par1NBTTagCompound.hasKey("entityID"))
++        {
++        	entityId = par1NBTTagCompound.getInteger("entityID");
++        }
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1717,7 +1751,7 @@
+@@ -1717,7 +1756,7 @@
       */
      public boolean isRiding()
      {

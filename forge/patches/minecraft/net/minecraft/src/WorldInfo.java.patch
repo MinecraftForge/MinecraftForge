@@ -1,0 +1,23 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldInfo.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldInfo.java	0000-00-00 00:00:00.000000000 -0000
+@@ -115,6 +115,11 @@
+             this.playerTag = par1NBTTagCompound.getCompoundTag("Player");
+             this.dimension = this.playerTag.getInteger("Dimension");
+         }
++        
++        if (par1NBTTagCompound.hasKey("nextEntityID"))
++        {
++        	Entity.nextEntityID = par1NBTTagCompound.getInteger("nextEntityID");
++        }
+     }
+ 
+     public WorldInfo(WorldSettings par1WorldSettings, String par2Str)
+@@ -213,6 +218,8 @@
+         {
+             par1NBTTagCompound.setCompoundTag("Player", par2NBTTagCompound);
+         }
++        
++        par1NBTTagCompound.setInteger("nextEntityID", Entity.nextEntityID);
+     }
+ 
+     /**
