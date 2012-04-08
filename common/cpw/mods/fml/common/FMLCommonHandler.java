@@ -137,6 +137,7 @@ public class FMLCommonHandler
         }
 
         list.add(channelName);
+        modChannels.put(channelName, container);
     }
 
     /**
