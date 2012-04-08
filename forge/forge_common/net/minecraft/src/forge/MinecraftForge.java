@@ -122,15 +122,6 @@ public class MinecraftForge
     }
     
     /**
-     * Register a new save/load handler.
-     * @param handler The Handler to be registered
-     */
-    public static void registerSaveHandler(ICustomSaveHandler handler)
-    {
-    	ForgeHooks.saveHandlers.add(handler);
-    }
-    
-    /**
      * Registers a new chat handler.
      * @param handler The Handler to be registered
      */
