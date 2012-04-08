@@ -1,0 +1,17 @@
+--- ../src_base/minecraft_server/cpw/mods/fml/server/ModLoaderModContainer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/cpw/mods/fml/server/ModLoaderModContainer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -427,12 +427,12 @@
+ 
+             if ("required-before".equals(depparts[0]) || "before".equals(depparts[0]))
+             {
+-                preDependencies.add(depparts[1]);
++            	postDependencies.add(depparts[1]);
+             }
+ 
+             if ("required-after".equals(depparts[0]) || "after".equals(depparts[0]))
+             {
+-                postDependencies.add(depparts[1]);
++                preDependencies.add(depparts[1]);
+             }
+         }
+     }

@@ -93,8 +93,7 @@ public class ForgeHooks
         return null;
     }
     static LinkedList<ISleepHandler> sleepHandlers = new LinkedList<ISleepHandler>();
-
-
+    
     public static void onMinecartUpdate(EntityMinecart minecart, int x, int y, int z)
     {
         for (IMinecartHandler handler : minecartHandlers)
