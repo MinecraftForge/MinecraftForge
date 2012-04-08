@@ -359,6 +359,9 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     private void handleClientRegistration(Packet250CustomPayload packet, EntityPlayer player)
     {
+        if (packet.field_44004_c==null) {
+            return;
+        }
         try
         {
             for (String channel : new String(packet.field_44004_c, "UTF8").split("\0"))
