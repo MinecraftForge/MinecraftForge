@@ -164,4 +164,8 @@ public interface ModContainer
     boolean wantsConsoleCommands();
     
     IConsoleHandler getConsoleHandler();
+    
+    boolean wantsPlayerTracking();
+    
+    IPlayerTracker getPlayerTracker();
 }

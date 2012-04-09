@@ -32,6 +32,7 @@ import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
+import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -193,7 +194,7 @@ public class ModLoaderModContainer implements ModContainer
         {
             return (String)val;
         }
-        else if (type.isAssignableFrom(Boolean.TYPE))
+        else if (type.isAssignableFrom(Boolean.TYPE) || type.isAssignableFrom(Boolean.class))
         {
             return Boolean.parseBoolean(val);
         }
@@ -201,27 +202,27 @@ public class ModLoaderModContainer implements ModContainer
         {
             Number n = null;
 
-            if (type.isAssignableFrom(Double.TYPE))
+            if (Double.class.isAssignableFrom(type))
             {
                 n = Double.parseDouble(val);
             }
-            else if (type.isAssignableFrom(Float.TYPE))
+            if (Float.class.isAssignableFrom(type))
             {
                 n = Float.parseFloat(val);
             }
-            else if (type.isAssignableFrom(Long.TYPE))
+            if (Long.class.isAssignableFrom(type))
             {
                 n = Long.parseLong(val);
             }
-            else if (type.isAssignableFrom(Integer.TYPE))
+            if (Integer.class.isAssignableFrom(type))
             {
                 n = Integer.parseInt(val);
             }
-            else if (type.isAssignableFrom(Short.TYPE))
+            if (Short.class.isAssignableFrom(type))
             {
                 n = Short.parseShort(val);
             }
-            else if (type.isAssignableFrom(Byte.TYPE))
+            if (Byte.class.isAssignableFrom(type))
             {
                 n = Byte.parseByte(val);
             }
@@ -248,7 +249,7 @@ public class ModLoaderModContainer implements ModContainer
         {
             return (String)value;
         }
-        else if (Number.class.isInstance(value))
+        else if (Number.class.isInstance(value) || Boolean.class.isInstance(value))
         {
             return String.valueOf(value);
         }
@@ -502,6 +503,18 @@ public class ModLoaderModContainer implements ModContainer
 
     @Override
     public IConsoleHandler getConsoleHandler()
+    {
+        return mod;
+    }
+
+    @Override
+    public boolean wantsPlayerTracking()
+    {
+        return true;
+    }
+
+    @Override
+    public IPlayerTracker getPlayerTracker()
     {
         return mod;
     }
