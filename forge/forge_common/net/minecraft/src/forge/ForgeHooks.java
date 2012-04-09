@@ -322,6 +322,17 @@ public class ForgeHooks
         }
     }
     static LinkedList<ISaveEventHandler> saveHandlers = new LinkedList<ISaveEventHandler>();
+    
+    public static int onUseFuel(ItemStack stack)
+    {
+    	for (IFuelHandler handler : fuelHandlers)
+    	{
+    		int fv = handler.onUseFuel(stack);
+    		if (fv > 0) return fv;
+    	}
+    	return 0;
+    }
+    static LinkedList<IFuelHandler> fuelHandlers = new LinkedList<IFuelHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
