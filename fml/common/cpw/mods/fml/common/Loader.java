@@ -58,8 +58,8 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
  */
 public class Loader
 {
-    private static Pattern zipJar = Pattern.compile("([^\\s]+).(zip|jar)$");
-    private static Pattern modClass = Pattern.compile("(.*/?)(mod\\_[^\\s]+).class$");
+    private static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
+    private static Pattern modClass = Pattern.compile("(.+/|)(mod\\_[^\\s$]+).class$");
 
     /**
      * The state enum used to help track state progression for the loader
