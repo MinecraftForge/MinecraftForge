@@ -1,0 +1,28 @@
+--- ../src-base/minecraft_server/net/minecraft/src/ServerConfigurationManager.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/ServerConfigurationManager.java	0000-00-00 00:00:00.000000000 -0000
+@@ -11,6 +11,8 @@
+ import java.util.List;
+ import java.util.Set;
+ import java.util.logging.Logger;
++
++import cpw.mods.fml.server.FMLServerHandler;
+ import net.minecraft.server.MinecraftServer;
+ 
+ public class ServerConfigurationManager
+@@ -115,6 +117,7 @@
+ 
+     public void func_616_c(EntityPlayerMP p_616_1_)
+     {
++        FMLServerHandler.instance().announceLogout(p_616_1_);
+         this.field_914_l.func_726_a(p_616_1_);
+         this.field_923_c.func_28004_a(p_616_1_.field_4110_as).func_22085_d(p_616_1_);
+         this.field_924_b.remove(p_616_1_);
+@@ -287,6 +290,8 @@
+         p_28168_1_.field_425_ad.func_35694_a(var5);
+         this.func_28170_a(p_28168_1_, var5);
+         this.func_30008_g(p_28168_1_);
++        
++        FMLServerHandler.instance().announceDimensionChange(p_28168_1_);
+     }
+ 
+     public void func_637_b()
