@@ -20,9 +20,10 @@ import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
+import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 
-public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler
+public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
 {
     // CALLBACK MECHANISMS
     @Override
@@ -48,9 +49,21 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
     }
     @Override
-    public final void onLogin(Object... data)
+    public final void onPlayerLogin(Object player)
     {
-        onClientLogin((EntityPlayer) data[0]);
+        onClientLogin((EntityPlayer) player);
+    }
+
+    @Override
+    public void onPlayerLogout(Object player)
+    {
+        onClientLogout((EntityPlayer)player);
+    }
+    
+    @Override
+    public void onPlayerChangedDimension(Object player)
+    {
+        onClientDimensionChanged((EntityPlayer)player);
     }
 
     @Override
@@ -253,9 +266,28 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Called when a new client logs in. Make sure modloader knows about your channels
-     * @param login
-     * @param data
+     * Called when a chat message is received. Return true to stop further processing
+     * @param source
+     * @param chat
+     * @return true if you want to consume the message so it is not available for further processing
+     */
+    public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat)
+    {
+        return false;
+    }
+    /**
+     * Called when a server command is received
+     * @param command
+     * @return true if you want to consume the message so it is not available for further processing
+     */
+    public boolean onServerCommand(String command, String sender, ICommandListener listener)
+    {
+        return false;
+    }
+
+    /**
+     * Called when a new client logs in.
+     * 
      * @param player 
      */
     public void onClientLogin(EntityPlayer player)
@@ -263,22 +295,24 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Called when a chat message is received. Return true to stop further processing
-     * @param source
-     * @param chat
-     * @return
+     * Called when a client logs out of the server.
+     * 
+     * @param player
      */
-    public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat)
+    public void onClientLogout(EntityPlayer player)
     {
-        return false;
+        
     }
+
     /**
-     * @param command
-     * @return
+     * 
+     * Called when a client changes dimensions on the server.
+     * 
+     * @param player
      */
-    public boolean onServerCommand(String command, String sender, ICommandListener listener)
+    public void onClientDimensionChanged(EntityPlayer player)
     {
-        return false;
+        
     }
 
     // Spare client junk

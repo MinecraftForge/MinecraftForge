@@ -281,4 +281,24 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#wantsPlayerTracking()
+     */
+    @Override
+    public boolean wantsPlayerTracking()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getPlayerTracker()
+     */
+    @Override
+    public IPlayerTracker getPlayerTracker()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

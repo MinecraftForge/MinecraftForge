@@ -25,6 +25,7 @@ import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.ICommandListener;
 import net.minecraft.src.IInventory;
@@ -408,9 +409,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void announceLogin(EntityPlayer player) {
         for (ModContainer mod : Loader.getModList())
         {
-            if (mod.wantsNetworkPackets())
+            if (mod.wantsPlayerTracking())
             {
-                mod.getNetworkHandler().onLogin(player);
+                mod.getPlayerTracker().onPlayerLogin(player);
             }
         }
     }
@@ -454,5 +455,33 @@ public class FMLServerHandler implements IFMLSidedHandler
             }
         }
         return false;
+    }
+
+    /**
+     * @param player
+     */
+    public void announceLogout(EntityPlayer player)
+    {
+        for (ModContainer mod : Loader.getModList())
+        {
+            if (mod.wantsPlayerTracking())
+            {
+                mod.getPlayerTracker().onPlayerLogout(player);
+            }
+        }
+    }
+
+    /**
+     * @param p_28168_1_
+     */
+    public void announceDimensionChange(EntityPlayer player)
+    {
+        for (ModContainer mod : Loader.getModList())
+        {
+            if (mod.wantsPlayerTracking())
+            {
+                mod.getPlayerTracker().onPlayerChangedDimension(player);
+            }
+        }
     }
 }
