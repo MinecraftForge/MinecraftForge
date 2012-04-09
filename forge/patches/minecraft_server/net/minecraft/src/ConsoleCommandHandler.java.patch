@@ -1,15 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ConsoleCommandHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,6 +4,8 @@
- import java.util.Set;
- import java.util.logging.Logger;
+@@ -6,6 +6,8 @@
+ 
+ import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
 +import net.minecraft.src.forge.ForgeHooks;
  
  public class ConsoleCommandHandler
  {
-@@ -55,9 +57,9 @@
+@@ -57,9 +59,9 @@
                          var8.savePlayerStates();
                      }
  
@@ -21,7 +21,7 @@
                          boolean var11 = var10.levelSaving;
                          var10.levelSaving = false;
                          var10.saveWorld(true, (IProgressUpdate)null);
-@@ -70,20 +72,18 @@
+@@ -72,20 +74,18 @@
                  {
                      this.sendNoticeToOps(var7, "Disabling level saving..");
  
@@ -46,7 +46,7 @@
                      }
                  }
                  else if (var4.equalsIgnoreCase("op"))
-@@ -330,20 +330,18 @@
+@@ -332,20 +332,18 @@
  
                                  if ("add".equalsIgnoreCase(var19))
                                  {
@@ -71,7 +71,7 @@
                                      }
  
                                      this.sendNoticeToOps(var7, "Set time to " + var23);
-@@ -360,8 +358,12 @@
+@@ -362,8 +360,12 @@
                          }
                          else if (var4.equalsIgnoreCase("say") && var5.length() > 0)
                          {
@@ -86,7 +86,7 @@
                          }
                          else if (var4.equalsIgnoreCase("tell"))
                          {
-@@ -385,7 +387,7 @@
+@@ -387,7 +389,7 @@
                          }
                          else if (var4.equalsIgnoreCase("toggledownfall"))
                          {
@@ -95,9 +95,9 @@
                              var6.log("Toggling rain and snow, hold on...");
                          }
                          else if (var4.equalsIgnoreCase("banlist"))
-@@ -402,6 +404,10 @@
-                                 var6.log("Ban list:" + this.joinStrings(this.minecraftServer.getBannedPlayersList(), ", "));
-                             }
+@@ -408,6 +410,10 @@
+                         {
+                             
                          }
 +                        else if (ForgeHooks.onServerCommand(var6, var6.getUsername(), var2))
 +                        {
