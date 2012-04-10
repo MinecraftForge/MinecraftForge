@@ -19,6 +19,9 @@ import java.util.*;
 import net.minecraft.src.*;
 import org.lwjgl.opengl.GL12;
 
+import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.*;
+import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.*;
+
 public class ForgeHooksClient
 {
 
@@ -261,18 +264,13 @@ public class ForgeHooksClient
         }
     }
     
-    public static void renderEntityItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item)
-    {
-        customRenderer.renderEntityItem(renderBlocks, item);
-    }
-    
     public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
     {
-        if (customRenderer.renderEquippedItemAsBlock(item))
+        if (customRenderer.shouldUseRenderHelper(EQUIPPED, item, EQUIPPED_BLOCK))
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-            customRenderer.renderEquippedItem(renderBlocks, entity, item);
+            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
             GL11.glPopMatrix();
         }
         else
@@ -284,14 +282,9 @@ public class ForgeHooksClient
             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-            customRenderer.renderEquippedItem(renderBlocks, entity, item);
+            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
         }
-    }
-    
-    public static void renderInventoryItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, ItemStack item)
-    {
-        customRenderer.renderInventoryItem(renderBlocks, item);
     }
 }

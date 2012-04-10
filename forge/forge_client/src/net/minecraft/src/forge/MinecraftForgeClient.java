@@ -12,6 +12,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
 {

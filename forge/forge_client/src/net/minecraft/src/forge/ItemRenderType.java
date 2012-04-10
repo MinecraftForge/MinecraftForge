@@ -1,5 +1,6 @@
 package net.minecraft.src.forge;
 
+@Deprecated //Now consolidated into IITemRenderer
 public enum ItemRenderType
 {
     ENTITY, // Render type for in-world EntityItems
