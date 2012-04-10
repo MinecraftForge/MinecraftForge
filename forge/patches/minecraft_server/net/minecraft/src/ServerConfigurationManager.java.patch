@@ -1,14 +1,14 @@
 --- ../src_base/minecraft_server/net/minecraft/src/ServerConfigurationManager.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/ServerConfigurationManager.java	0000-00-00 00:00:00.000000000 -0000
-@@ -12,6 +12,7 @@
- import java.util.Set;
- import java.util.logging.Logger;
+@@ -14,6 +14,7 @@
+ 
+ import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.DimensionManager;
  
  public class ServerConfigurationManager
  {
-@@ -25,7 +26,7 @@
+@@ -27,7 +28,7 @@
      private MinecraftServer mcServer;
  
      /** Reference to the PlayerManager object. */
@@ -17,7 +17,7 @@
  
      /** the maximum amount of players that can be connected */
      private int maxPlayers;
-@@ -71,9 +72,11 @@
+@@ -73,9 +74,11 @@
          this.opFile = par1MinecraftServer.getFile("ops.txt");
          this.whitelistPlayersFile = par1MinecraftServer.getFile("white-list.txt");
          int var2 = par1MinecraftServer.propertyManagerObj.getIntProperty("view-distance", 10);
@@ -29,7 +29,7 @@
          this.maxPlayers = par1MinecraftServer.propertyManagerObj.getIntProperty("max-players", 20);
          this.whiteListEnforced = par1MinecraftServer.propertyManagerObj.getBooleanProperty("white-list", false);
          this.readBannedPlayers();
-@@ -100,9 +103,10 @@
+@@ -102,9 +105,10 @@
       */
      public void joinNewPlayerManager(EntityPlayerMP par1EntityPlayerMP)
      {
@@ -43,7 +43,7 @@
          this.getPlayerManager(par1EntityPlayerMP.dimension).addPlayer(par1EntityPlayerMP);
          WorldServer var2 = this.mcServer.getWorldManager(par1EntityPlayerMP.dimension);
          var2.chunkProviderServer.loadChunk((int)par1EntityPlayerMP.posX >> 4, (int)par1EntityPlayerMP.posZ >> 4);
-@@ -110,7 +114,7 @@
+@@ -112,7 +116,7 @@
  
      public int getMaxTrackingDistance()
      {
@@ -52,7 +52,7 @@
      }
  
      /**
-@@ -118,7 +122,8 @@
+@@ -120,7 +124,8 @@
       */
      private PlayerManager getPlayerManager(int par1)
      {
@@ -62,7 +62,7 @@
      }
  
      /**
-@@ -286,6 +291,10 @@
+@@ -289,6 +294,10 @@
       */
      public void sendPlayerToOtherDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -73,7 +73,7 @@
          int var3 = par1EntityPlayerMP.dimension;
          WorldServer var4 = this.mcServer.getWorldManager(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -293,33 +302,14 @@
+@@ -296,33 +305,14 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacket(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.itemInWorldManager.getGameType()));
          var4.removePlayer(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
@@ -113,7 +113,7 @@
          {
              ChunkCoordinates var12 = var5.getEntrancePortalLocation();
              var6 = (double)var12.posX;
-@@ -339,7 +329,7 @@
+@@ -342,7 +332,7 @@
              par1EntityPlayerMP.setLocationAndAngles(var6, par1EntityPlayerMP.posY, var8, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
              var5.updateEntityWithOptionalForce(par1EntityPlayerMP, false);
              var5.chunkProviderServer.chunkLoadOverride = true;
@@ -122,7 +122,7 @@
              var5.chunkProviderServer.chunkLoadOverride = false;
          }
  
-@@ -367,9 +357,9 @@
+@@ -372,9 +362,9 @@
              this.sendPacketToAllPlayers(new Packet201PlayerInfo(var1.username, true, var1.ping));
          }
  
@@ -134,7 +134,7 @@
          }
      }
  
-@@ -902,7 +892,7 @@
+@@ -907,7 +897,7 @@
  
      public String[] func_52019_t()
      {
