@@ -28,7 +28,7 @@
          Vec3D var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          MovingObjectPosition var24 = par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
          return var24;
-@@ -509,4 +517,149 @@
+@@ -509,4 +517,164 @@
      {
          StatList.initStats();
      }
@@ -176,5 +176,20 @@
 +        }
 +         */
 +        return 0;
++    }
++    
++    /**
++     * Returns the number of render passes/layers this item has.
++     * Usually equates to ItemRenderer.renderItem being called for this many passes.
++     * Does not get called unless func_46058_c() is true;
++     * 
++     * Not called on the server
++     * 
++     * @param metadata The item's metadata
++     * @return The number of passes to run.
++     */
++    public int getRenderPasses(int metadata)
++    {
++        return 1; //return func_46058_c() ? 2 : 1;
 +    }
  }

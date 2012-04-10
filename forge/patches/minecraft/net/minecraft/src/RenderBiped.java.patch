@@ -1,0 +1,37 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderBiped.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/RenderBiped.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,10 @@
+ package net.minecraft.src;
+ 
++import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.EQUIPPED;
++import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.BLOCK_3D;
++import net.minecraft.src.forge.IItemRenderer;
++import net.minecraft.src.forge.MinecraftForgeClient;
++
+ import org.lwjgl.opengl.GL11;
+ 
+ public class RenderBiped extends RenderLiving
+@@ -32,7 +37,10 @@
+             GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
+             float var4;
+ 
+-            if (var3.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var3, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var3, BLOCK_3D));
++            
++            if (var3.itemID < 256 && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType())))
+             {
+                 var4 = 0.5F;
+                 GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
+@@ -72,7 +80,10 @@
+ 
+             if (var3.getItem().func_46058_c())
+             {
+-                this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, 1);
++                for (int x = 1; x < var3.getItem().getRenderPasses(var3.getItemDamage()); x++)
++                {
++                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, 1);
++                }
+             }
+ 
+             GL11.glPopMatrix();

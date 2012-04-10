@@ -69,6 +69,7 @@ public interface IItemRenderer
         
         /** 
          * Determines if an up-and-down bobbing effect should be used when
+         * rendering an EntityItem, like most default items do.
          */
         ENTITY_BOBBING,
 
@@ -77,6 +78,12 @@ public interface IItemRenderer
          * block or as a 2D texture.
          */
         EQUIPPED_BLOCK,
+        
+        /**
+         * Determines if the item should equate to a block that has 
+         * RenderBlocks.renderItemIn3d return true
+         */
+        BLOCK_3D,
 
         /** 
          * Determines if the item should be rendered in GUI inventory slots as a 3D

@@ -75,3 +75,25 @@
              GL11.glPopMatrix();
          }
          else if (var14 != null)
+@@ -414,12 +435,15 @@
+             if (var14.getItem().func_46058_c())
+             {
+                 this.renderItem(var3, var14, 0);
+-                var9 = Item.itemsList[var14.itemID].getColorFromDamage(var14.getItemDamage(), 1);
+-                var10 = (float)(var9 >> 16 & 255) / 255.0F;
+-                var11 = (float)(var9 >> 8 & 255) / 255.0F;
+-                var12 = (float)(var9 & 255) / 255.0F;
+-                GL11.glColor4f(var6 * var10, var6 * var11, var6 * var12, 1.0F);
+-                this.renderItem(var3, var14, 1);
++                for (int x = 1; x < var14.getItem().getRenderPasses(var14.getItemDamage()); x++)
++                {
++                    var9 = Item.itemsList[var14.itemID].getColorFromDamage(var14.getItemDamage(), 1);
++                    var10 = (float)(var9 >> 16 & 255) / 255.0F;
++                    var11 = (float)(var9 >> 8 & 255) / 255.0F;
++                    var12 = (float)(var9 & 255) / 255.0F;
++                    GL11.glColor4f(var6 * var10, var6 * var11, var6 * var12, 1.0F);
++                    this.renderItem(var3, var14, 1);
++                }
+             }
+             else
+             {
