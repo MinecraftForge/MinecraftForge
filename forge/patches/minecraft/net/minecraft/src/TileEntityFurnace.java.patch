@@ -1,16 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,9 @@
  package net.minecraft.src;
  
 -public class TileEntityFurnace extends TileEntity implements IInventory
++import net.minecraft.src.forge.ForgeHooks;
 +import net.minecraft.src.forge.ISidedInventory;
 +
 +public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -279,8 +281,12 @@
+@@ -279,8 +282,12 @@
          }
          else
          {
@@ -25,7 +26,7 @@
          }
      }
  
-@@ -291,13 +297,13 @@
+@@ -291,13 +298,13 @@
      {
          if (this.canSmelt())
          {
@@ -41,7 +42,16 @@
              {
                  this.furnaceItemStacks[2].stackSize += var1.stackSize;
              }
-@@ -351,4 +357,18 @@
+@@ -331,7 +338,7 @@
+         else
+         {
+             int var1 = par1ItemStack.getItem().shiftedIndex;
+-            return var1 < 256 && Block.blocksList[var1].blockMaterial == Material.wood ? 300 : (var1 == Item.stick.shiftedIndex ? 100 : (var1 == Item.coal.shiftedIndex ? 1600 : (var1 == Item.bucketLava.shiftedIndex ? 20000 : (var1 == Block.sapling.blockID ? 100 : (var1 == Item.blazeRod.shiftedIndex ? 2400 : ModLoader.addAllFuel(par1ItemStack.itemID, par1ItemStack.getItemDamage()))))));
++            return var1 < 256 && Block.blocksList[var1].blockMaterial == Material.wood ? 300 : (var1 == Item.stick.shiftedIndex ? 100 : (var1 == Item.coal.shiftedIndex ? 1600 : (var1 == Item.bucketLava.shiftedIndex ? 20000 : (var1 == Block.sapling.blockID ? 100 : (var1 == Item.blazeRod.shiftedIndex ? 2400 : ForgeHooks.onUseFuel(par1ItemStack))))));
+         }
+     }
+ 
+@@ -351,4 +358,18 @@
      public void openChest() {}
  
      public void closeChest() {}

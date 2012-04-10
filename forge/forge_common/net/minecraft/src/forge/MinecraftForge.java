@@ -137,6 +137,15 @@ public class MinecraftForge
     {
         ForgeHooks.saveHandlers.add(handler);
     }
+    
+    /**
+     * Register a new Fuel handler
+     * @param handler The handler to be registered
+     */
+    public static void registerFuelHandler(IFuelHandler handler)
+    {
+    	ForgeHooks.fuelHandlers.add(handler);
+    }
 
     /**
      * This is not supposed to be called outside of Minecraft internals.
