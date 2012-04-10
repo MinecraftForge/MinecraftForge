@@ -1,17 +1,18 @@
 --- ../src_base/minecraft_server/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,7 +2,9 @@
+@@ -2,7 +2,10 @@
  
  import cpw.mods.fml.server.FMLServerHandler;
  
 -public class TileEntityFurnace extends TileEntity implements IInventory
++import net.minecraft.src.forge.ForgeHooks;
 +import net.minecraft.src.forge.ISidedInventory;
 +
 +public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -251,8 +253,12 @@
+@@ -251,8 +254,12 @@
          }
          else
          {
@@ -26,7 +27,7 @@
          }
      }
  
-@@ -263,13 +269,13 @@
+@@ -263,13 +270,13 @@
      {
          if (this.canSmelt())
          {
@@ -42,7 +43,23 @@
              {
                  ++this.furnaceItemStacks[2].stackSize;
              }
-@@ -316,4 +322,18 @@
+@@ -296,7 +303,14 @@
+         else
+         {
+             int var1 = par1ItemStack.getItem().shiftedIndex;
+-            return var1 < 256 && Block.blocksList[var1].blockMaterial == Material.wood ? 300 : (var1 == Item.stick.shiftedIndex ? 100 : (var1 == Item.coal.shiftedIndex ? 1600 : (var1 == Item.bucketLava.shiftedIndex ? 20000 : (var1 == Block.sapling.blockID ? 100 : (var1 == Item.blazeRod.shiftedIndex ? 2400 : FMLServerHandler.instance().fuelLookup(var1, par1ItemStack.getItemDamage()))))));
++            if (var1 < 256 && Block.blocksList[var1].blockMaterial == Material.wood) return 300;
++            if (var1 == Item.stick.shiftedIndex)      return 100; 
++            if (var1 == Item.coal.shiftedIndex)       return 1600; 
++            if (var1 == Item.bucketLava.shiftedIndex) return 20000; 
++            if (var1 == Block.sapling.blockID)        return 100; 
++            if (var1 == Item.blazeRod.shiftedIndex)   return 2400;
++            int ret = ForgeHooks.getItemBurnTime(par1ItemStack);
++            return (ret > 0 ? ret : FMLServerHandler.instance().fuelLookup(var1, par1ItemStack.getItemDamage()));
+         }
+     }
+ 
+@@ -316,4 +330,18 @@
      public void openChest() {}
  
      public void closeChest() {}

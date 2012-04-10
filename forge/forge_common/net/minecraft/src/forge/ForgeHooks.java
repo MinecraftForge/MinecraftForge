@@ -323,6 +323,20 @@ public class ForgeHooks
     }
     static LinkedList<ISaveEventHandler> saveHandlers = new LinkedList<ISaveEventHandler>();
 
+    public static int getItemBurnTime(ItemStack stack) 
+    {
+        for (IFuelHandler handler : fuelHandlers)
+        {
+            int ret = handler.getItemBurnTime(stack);
+            if (ret > 0)
+            {
+                return ret;
+            }
+        }
+        return 0;
+    }
+    static LinkedList<IFuelHandler> fuelHandlers = new LinkedList<IFuelHandler>();
+
     // Plant Management
     // ------------------------------------------------------------
     static class ProbableItem

@@ -139,6 +139,15 @@ public class MinecraftForge
     }
 
     /**
+     * Register a new Fuel handler
+     * @param handler The handler to be registered
+     */
+    public static void registerFuelHandler(IFuelHandler handler)
+    {
+        ForgeHooks.fuelHandlers.add(handler);
+    }
+
+    /**
      * This is not supposed to be called outside of Minecraft internals.
      */
     public static ItemStack fillCustomBucket(World world, int X, int Y, int Z)
