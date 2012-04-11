@@ -38,9 +38,8 @@
          this.field_48076_G = Packet.field_48101_l;
          this.field_48082_x[this.field_9014_h % 100] = Packet.field_48102_m - this.field_48077_H;
          this.field_48077_H = Packet.field_48102_m;
-+        
++
 +        FMLServerHandler.instance().onPostTick();
-                     }
+     }
  
      public void func_6010_a(String p_6010_1_, ICommandListener p_6010_2_)
- 
