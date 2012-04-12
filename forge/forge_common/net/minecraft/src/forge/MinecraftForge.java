@@ -421,6 +421,26 @@ public class MinecraftForge
             ForgeHooks.toolEffectiveness.add(key);
         }
     }
+    
+    /** Returns the block harvest level for a particular tool class.
+     *
+     * @param block The block to check.
+     * @param metadata The metadata for the block subtype.
+     * @param toolClass The tool class to check as able to remove this block.
+     * @see setToolClass for details on tool classes.
+     * @return The harvest level or -1 if no mapping exists.
+     */
+    public static int getBlockHarvestLevel(Block block, int metadata, String toolClass)
+    {
+        ForgeHooks.initTools();
+        List key = Arrays.asList(block.blockID, metadata, toolClass);
+        Integer harvestLevel = (Integer)ForgeHooks.toolHarvestLevels.get(key);
+        if(harvestLevel == null)
+        {
+            return -1;
+        }
+        return harvestLevel;
+    }
 
     /** Remove a block effectiveness mapping.  Since setBlockHarvestLevel
      * makes the tool class effective against the block by default, this can be
