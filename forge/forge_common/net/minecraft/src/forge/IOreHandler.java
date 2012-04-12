@@ -10,7 +10,7 @@ import net.minecraft.src.ItemStack;
 /** The current list of known classes.
  * oreTin, oreCopper, oreSilver, oreUranium
  * ingotTin, ingotCopper, ingotSilver, ingotBrass, ingotBronze
- * ingotUranium, ingotRefinedIron
+ * ingotUranium, ingotRefinedIron, ingotSteel
  * dyeBlue
  * gemRuby, gemEmerald, gemSapphire
  * itemDropUranium
