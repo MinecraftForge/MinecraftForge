@@ -95,7 +95,7 @@
 +        }
 +        else
 +        {
-+        	changeWorld(var9, pOld.getWelcomeMessage(), thePlayer);
++        	changeWorld(var9, pNew.getWelcomeMessage(), thePlayer);
          }
  
          this.thePlayer.worldObj = this.theWorld;
