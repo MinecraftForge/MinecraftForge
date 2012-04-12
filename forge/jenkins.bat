@@ -24,5 +24,5 @@ for /f "delims=\" %%a in ("%cd%") do SET VERSION=%%~nxa
 SET VERSION=%VERSION:~6%
 echo Forge Version: %VERSION%
 
-E:\MediafireUploader.exe Forge-%VERSION% minecraftforge-client-%VERSION%.zip minecraftforge-server-%VERSION%.zip minecraftforge-src-%VERSION%.zip
+..\..\MediafireUploader.exe Forge-%VERSION% minecraftforge-client-%VERSION%.zip minecraftforge-server-%VERSION%.zip minecraftforge-src-%VERSION%.zip
 
