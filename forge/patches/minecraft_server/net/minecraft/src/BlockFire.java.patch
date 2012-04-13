@@ -16,7 +16,7 @@
  
      protected BlockFire(int par1, int par2)
      {
-@@ -42,8 +42,7 @@
+@@ -44,8 +44,7 @@
       */
      private void setBurnRate(int par1, int par2, int par3)
      {
@@ -26,7 +26,7 @@
      }
  
      /**
-@@ -101,7 +100,8 @@
+@@ -103,7 +102,8 @@
       */
      public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
      {
@@ -36,7 +36,7 @@
  
          if (par1World.worldProvider instanceof WorldProviderEnd && par1World.getBlockId(par2, par3 - 1, par4) == Block.bedrock.blockID)
          {
-@@ -130,12 +130,12 @@
+@@ -132,12 +132,12 @@
  
              if (!var6 && !this.canNeighborBurn(par1World, par2, par3, par4))
              {
@@ -51,16 +51,16 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
              }
-@@ -149,12 +149,12 @@
+@@ -151,12 +151,12 @@
                      var9 = -50;
                  }
  
--                this.func_48133_a(par1World, par2 + 1, par3, par4, 300 + var9, par5Random, var7);
--                this.func_48133_a(par1World, par2 - 1, par3, par4, 300 + var9, par5Random, var7);
--                this.func_48133_a(par1World, par2, par3 - 1, par4, 250 + var9, par5Random, var7);
--                this.func_48133_a(par1World, par2, par3 + 1, par4, 250 + var9, par5Random, var7);
--                this.func_48133_a(par1World, par2, par3, par4 - 1, 300 + var9, par5Random, var7);
--                this.func_48133_a(par1World, par2, par3, par4 + 1, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3 + 1, par4, 250 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3, par4 - 1, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3, par4 + 1, 300 + var9, par5Random, var7);
 +                this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + var9, par5Random, var7, 4);
 +                this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + var9, par5Random, var7, 5);
 +                this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + var9, par5Random, var7, 1);
@@ -70,13 +70,13 @@
  
                  for (int var10 = par2 - 1; var10 <= par2 + 1; ++var10)
                  {
-@@ -202,9 +202,21 @@
+@@ -204,9 +204,21 @@
          }
      }
  
 +    /** Deprecated for a side-sensitive version */
 +    @Deprecated
-     private void func_48133_a(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7)
+     private void tryToCatchBlockOnFire(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7)
      {
 -        int var8 = this.abilityToCatchFire[par1World.getBlockId(par2, par3, par4)];
 +        tryToCatchBlockOnFire(par1World, par2, par3, par4, par5, par6Random, par7, 0);
@@ -93,7 +93,7 @@
  
          if (par6Random.nextInt(par5) < var8)
          {
-@@ -238,7 +250,12 @@
+@@ -240,7 +252,12 @@
       */
      private boolean canNeighborBurn(World par1World, int par2, int par3, int par4)
      {
@@ -107,7 +107,7 @@
      }
  
      /**
-@@ -254,15 +271,15 @@
+@@ -256,15 +273,15 @@
          }
          else
          {
@@ -130,7 +130,7 @@
  
      /**
       * Returns if this block is collidable (only used by Fire). Args: x, y, z
-@@ -274,21 +291,24 @@
+@@ -276,21 +293,24 @@
  
      /**
       * Checks the specified block coordinate to see if it can catch fire.  Args: blockAccess, x, y, z
@@ -158,7 +158,7 @@
      }
  
      /**
-@@ -296,7 +316,7 @@
+@@ -298,7 +318,7 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -167,7 +167,7 @@
      }
  
      /**
-@@ -305,7 +325,7 @@
+@@ -307,7 +327,7 @@
       */
      public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -176,7 +176,7 @@
          {
              par1World.setBlockWithNotify(par2, par3, par4, 0);
          }
-@@ -318,7 +338,7 @@
+@@ -320,7 +340,7 @@
      {
          if (par1World.worldProvider.worldType > 0 || par1World.getBlockId(par2, par3 - 1, par4) != Block.obsidian.blockID || !Block.portal.tryToCreatePortal(par1World, par2, par3, par4))
          {
@@ -185,7 +185,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
              }
-@@ -328,4 +348,46 @@
+@@ -330,4 +350,46 @@
              }
          }
      }

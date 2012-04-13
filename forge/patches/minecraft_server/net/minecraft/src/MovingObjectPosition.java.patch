@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/MovingObjectPosition.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/MovingObjectPosition.java	0000-00-00 00:00:00.000000000 -0000
-@@ -25,6 +25,9 @@
+@@ -26,6 +26,9 @@
      /** The hit entity */
      public Entity entityHit;
  

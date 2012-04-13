@@ -1,25 +1,29 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,10 @@
+@@ -3,6 +3,14 @@
  import java.util.Iterator;
  import java.util.List;
  
 +import net.minecraft.src.forge.ArmorProperties;
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.IGuiHandler;
 +import net.minecraft.src.forge.ISpecialArmor;
++import net.minecraft.src.forge.MinecraftForge;
++import net.minecraft.src.forge.NetworkMod;
++import net.minecraft.src.forge.packets.PacketOpenGUI;
 +
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -172,6 +176,7 @@
+@@ -177,6 +185,7 @@
              }
              else
              {
 +                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
-                     this.func_35208_b(var1, 5);
-@@ -355,6 +360,10 @@
+                     this.updateItemUse(var1, 5);
+@@ -366,6 +375,10 @@
       */
      protected void closeScreen()
      {
@@ -30,9 +34,9 @@
          this.craftingInventory = this.inventorySlots;
      }
  
-@@ -535,7 +544,16 @@
- 
-     public EntityItem func_48347_R()
+@@ -549,7 +562,16 @@
+      */
+     public EntityItem dropOneItem()
      {
 -        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
 +        ItemStack stack = inventory.getCurrentItem();
@@ -48,7 +52,7 @@
      }
  
      /**
-@@ -600,10 +618,18 @@
+@@ -615,10 +637,18 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -68,7 +72,7 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -899,7 +925,11 @@
+@@ -914,7 +944,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -81,7 +85,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -930,6 +960,10 @@
+@@ -945,6 +979,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -92,7 +96,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -960,7 +994,9 @@
+@@ -975,7 +1013,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -102,7 +106,7 @@
      }
  
      /**
-@@ -989,6 +1025,16 @@
+@@ -1004,6 +1044,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -119,7 +123,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1127,6 +1173,12 @@
+@@ -1142,6 +1192,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -132,10 +136,10 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1708,4 +1760,16 @@
-     {
-         return !this.capabilities.isFlying;
+@@ -1725,4 +1781,45 @@
      }
+ 
+     public void func_50022_L() {}
 +    
 +    /**
 +     * Opens a Gui for the player. 
@@ -147,5 +151,34 @@
 +     * @param Y Y Position
 +     * @param Z Z Position
 +     */
-+    public void openGui(BaseMod mod, int ID, World world, int x, int y, int z){}
++    public void openGui(BaseMod mod, int ID, World world, int x, int y, int z)
++    {
++        if (!(this instanceof EntityPlayerMP))
++        {
++            return;
++        }
++        
++        EntityPlayerMP player = (EntityPlayerMP)this;
++
++        if (!(mod instanceof NetworkMod))
++        {
++            return;
++        }
++        
++        IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
++        if (handler != null)
++        {
++            Container container = (Container)handler.getGuiElement(ID, player, world, x, y, z);
++            if (container != null)
++            {
++                player.realGetNextWidowId();
++                player.closeCraftingGui();
++                PacketOpenGUI pkt = new PacketOpenGUI(player.getCurrentWindowIdField(), MinecraftForge.getModID((NetworkMod)mod), ID, x, y, z);
++                player.playerNetServerHandler.sendPacket(pkt.getPacket());
++                craftingInventory = container; 
++                craftingInventory.windowId = player.getCurrentWindowIdField();
++                craftingInventory.onCraftGuiOpened(player);
++            }
++        }
++    }
  }

@@ -8,7 +8,7 @@
  public abstract class WorldProvider
  {
      /** world object being used */
-@@ -181,7 +183,7 @@
+@@ -174,7 +176,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -17,7 +17,7 @@
      }
  
      /**
-@@ -227,4 +229,36 @@
+@@ -225,4 +227,36 @@
      {
          return false;
      }

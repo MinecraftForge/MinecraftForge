@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiIngame.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/GuiIngame.java	0000-00-00 00:00:00.000000000 -0000
-@@ -8,6 +8,8 @@
+@@ -9,6 +9,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -9,10 +9,10 @@
  public class GuiIngame extends Gui
  {
      private static RenderItem itemRenderer = new RenderItem();
-@@ -139,7 +141,19 @@
+@@ -142,7 +144,19 @@
  
-                 var51 = var7 - 39;
-                 var22 = var51 - 10;
+                 var46 = var7 - 39;
+                 var22 = var46 - 10;
 -                var23 = this.mc.thePlayer.getTotalArmorValue();
 +                var23 = 0;
 +                for (int x = 0; x < mc.thePlayer.inventory.armorInventory.length; x++)

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Enchantment.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Enchantment.java	0000-00-00 00:00:00.000000000 -0000
-@@ -192,4 +192,14 @@
+@@ -191,4 +191,14 @@
          String var2 = StatCollector.translateToLocal(this.getName());
          return var2 + " " + StatCollector.translateToLocal("enchantment.level." + par1);
      }

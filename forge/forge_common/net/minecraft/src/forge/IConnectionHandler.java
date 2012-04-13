@@ -9,7 +9,7 @@ public interface IConnectionHandler
      * Raised when a Client successfully connects it's socket to the Server.
      * @param network The new NetworkManager associated with this connection.
      */
-    public void OnConnect(NetworkManager network);
+    public void onConnect(NetworkManager network);
 
     /**
      * Raised when you receive a Packet1Login.
@@ -22,7 +22,7 @@ public interface IConnectionHandler
      * @param network The NetoworkManager associated with this connection.
      * @param login The login packet
      */
-    public void OnLogin(NetworkManager network, Packet1Login login);
+    public void onLogin(NetworkManager network, Packet1Login login);
 
     /**
      * Raised whenever the socket is closed, can be caused by various reasons.
@@ -32,5 +32,5 @@ public interface IConnectionHandler
      * @param args Any additional arguments that the code may of provided.
      *   Sometimes this is further explanation, or a Throwable, in the case of errors.
      */
-    public void OnDisconnect(NetworkManager network, String message, Object[] args);
+    public void onDisconnect(NetworkManager network, String message, Object[] args);
 }

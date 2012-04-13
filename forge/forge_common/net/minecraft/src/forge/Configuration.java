@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.src.Block;
@@ -29,12 +30,14 @@ public class Configuration
 
     private boolean configBlocks[] = null;
 
-    public static final int GENERAL_PROPERTY = 0;
-    public static final int BLOCK_PROPERTY   = 1;
-    public static final int ITEM_PROPERTY    = 2;
+    public static final String CATEGORY_GENERAL = "general";
+    public static final String CATEGORY_BLOCK   = "block";
+    public static final String CATEGORY_ITEM    = "item";
 
     File file;
-
+    
+    public Map<String, Map<String, Property>> categories = new TreeMap<String, Map<String, Property>>();
+    
     public TreeMap<String, Property> blockProperties   = new TreeMap<String, Property>();
     public TreeMap<String, Property> itemProperties    = new TreeMap<String, Property>();
     public TreeMap<String, Property> generalProperties = new TreeMap<String, Property>();
@@ -45,6 +48,9 @@ public class Configuration
     public Configuration(File file)
     {
         this.file = file;
+        categories.put(CATEGORY_GENERAL, generalProperties);
+        categories.put(CATEGORY_BLOCK, blockProperties);
+        categories.put(CATEGORY_ITEM, itemProperties);
     }
 
     /**
@@ -64,17 +70,18 @@ public class Configuration
                 configBlocks[i] = false;
             }
         }
-
-        if (blockProperties.containsKey(key))
+        
+        Map<String, Property> properties = categories.get(CATEGORY_BLOCK);
+        if (properties.containsKey(key))
         {
-            Property property = getOrCreateIntProperty(key, Configuration.BLOCK_PROPERTY, defaultId);
+            Property property = getOrCreateIntProperty(key, Configuration.CATEGORY_BLOCK, defaultId);
             configBlocks[Integer.parseInt(property.value)] = true;
             return property;
         }
         else
         {
             Property property = new Property();
-            blockProperties.put(key, property);
+            properties.put(key, property);
             property.name = key;
 
             if (Block.blocksList[defaultId] == null && !configBlocks[defaultId])
@@ -85,7 +92,7 @@ public class Configuration
             }
             else
             {
-                for (int j = /*Block.blocksList.length*/ 256 - 1; j >= 0; --j)
+                for (int j = configBlocks.length - 1; j >= 0; --j)
                 {
                     if (Block.blocksList[j] == null && !configBlocks[j])
                     {
@@ -99,10 +106,10 @@ public class Configuration
             }
         }
     }
-
-    public Property getOrCreateIntProperty(String key, int kind, int defaultValue)
+    
+    public Property getOrCreateIntProperty(String key, String category, int defaultValue)
     {
-        Property prop = getOrCreateProperty(key, kind, Integer.toString(defaultValue));
+        Property prop = getOrCreateProperty(key, category, Integer.toString(defaultValue));
         try
         {
             Integer.parseInt(prop.value);
@@ -114,10 +121,10 @@ public class Configuration
             return prop;
         }
     }
-
-    public Property getOrCreateBooleanProperty(String key, int kind, boolean defaultValue)
+    
+    public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
     {
-        Property prop = getOrCreateProperty(key, kind, Boolean.toString(defaultValue));
+        Property prop = getOrCreateProperty(key, category, Boolean.toString(defaultValue));
         if ("true".equals(prop.value.toLowerCase()) || "false".equals(prop.value.toLowerCase()))
         {
             return prop;
@@ -128,21 +135,16 @@ public class Configuration
             return prop;
         }
     }
-
-    public Property getOrCreateProperty(String key, int kind, String defaultValue)
+    
+    public Property getOrCreateProperty(String key, String category, String defaultValue)
     {
-        TreeMap<String, Property> source = null;
-        switch (kind)
+        category = category.toLowerCase();
+        Map<String, Property> source = categories.get(category);
+        
+        if(source == null)
         {
-            case GENERAL_PROPERTY:
-                source = generalProperties;
-                break;
-            case BLOCK_PROPERTY:
-                source = blockProperties;
-                break;
-            case ITEM_PROPERTY:
-                source = itemProperties;
-                break;
+            source = new TreeMap<String, Property>();
+            categories.put(category, source);                                  
         }
 
         if (source.containsKey(key))
@@ -185,7 +187,7 @@ public class Configuration
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(fileinputstream, "8859_1"));
 
                 String line;
-                TreeMap<String, Property> currentMap = null;
+                Map<String, Property> currentMap = null;
 
                 while (true)
                 {
@@ -224,21 +226,11 @@ public class Configuration
                                 case '{':
                                     String scopeName = line.substring(nameStart, nameEnd + 1);
 
-                                    if (scopeName.equals("general"))
+                                    currentMap = categories.get(scopeName);
+                                    if (currentMap == null)
                                     {
-                                        currentMap = generalProperties;
-                                    }
-                                    else if (scopeName.equals("block"))
-                                    {
-                                        currentMap = blockProperties;
-                                    }
-                                    else if (scopeName.equals("item"))
-                                    {
-                                        currentMap = itemProperties;
-                                    }
-                                    else
-                                    {
-                                        throw new RuntimeException("unknown section " + scopeName);
+                                        currentMap = new TreeMap<String, Property>();
+                                        categories.put(scopeName, currentMap);    
                                     }
 
                                     break;
@@ -267,7 +259,6 @@ public class Configuration
                         }
                     }
                 }
-
             }
         }
         catch (IOException e)
@@ -298,29 +289,17 @@ public class Configuration
                 buffer.write("# Configuration file\r\n");
                 buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
                 buffer.write("\r\n");
-                buffer.write("###########\r\n");
-                buffer.write("# General #\r\n");
-                buffer.write("###########\r\n\r\n");
+                
+                for(Map.Entry<String, Map<String, Property>> category : categories.entrySet())
+                {
+                    buffer.write("####################\r\n");
+                    buffer.write("# " + category.getKey() + " \r\n");
+                    buffer.write("####################\r\n\r\n");
 
-                buffer.write("general {\r\n");
-                writeProperties(buffer, generalProperties.values());
-                buffer.write("}\r\n\r\n");
-
-                buffer.write("#########\r\n");
-                buffer.write("# Block #\r\n");
-                buffer.write("#########\r\n\r\n");
-
-                buffer.write("block {\r\n");
-                writeProperties(buffer, blockProperties.values());
-                buffer.write("}\r\n\r\n");
-
-                buffer.write("########\r\n");
-                buffer.write("# Item #\r\n");
-                buffer.write("########\r\n\r\n");
-
-                buffer.write("item {\r\n");
-                writeProperties(buffer, itemProperties.values());
-                buffer.write("}\r\n\r\n");
+                    buffer.write(category.getKey() + " {\r\n");
+                    writeProperties(buffer, category.getValue().values());
+                    buffer.write("}\r\n\r\n");
+                }
 
                 buffer.close();
                 fos.close();

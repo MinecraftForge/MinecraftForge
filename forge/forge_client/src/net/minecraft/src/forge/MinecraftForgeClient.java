@@ -12,6 +12,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
 {
@@ -35,6 +36,24 @@ public class MinecraftForgeClient
     public static void registerRenderContextHandler(String texture, int subid, IRenderContextHandler handler)
     {
         ForgeHooksClient.registerRenderContextHandler(texture, subid, handler);
+    }
+    
+    /**
+     * Registers a Texture Load Handler
+     * @param handler The handler
+     */
+    public static void registerTextureLoadHandler(ITextureLoadHandler handler)
+    {
+        ForgeHooksClient.textureLoadHandlers.add(handler);
+    }
+    
+    /**
+     * Registers a Render Last Handler
+     * @param handler The handler
+     */
+    public static void registerRenderLastHandler(IRenderWorldLastHandler handler)
+    {
+        ForgeHooksClient.renderWorldLastHandlers.add(handler);
     }
 
     /** Bind a texture.  This is used to bind a texture file when
@@ -86,23 +105,6 @@ public class MinecraftForgeClient
     {
         return ForgeHooksClient.renderPass;
     }
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    private static ICustomItemRenderer[] customItemRenderersOld = new ICustomItemRenderer[Item.itemsList.length];
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    public static void registerCustomItemRenderer(int itemID, ICustomItemRenderer renderer)
-    {
-        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 MinecraftForgeClient.registerCustomItemRenderer on: %version%");
-        customItemRenderersOld[itemID] = renderer;
-    }
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    public static ICustomItemRenderer getCustomItemRenderer (int itemID)
-    {
-        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 MinecraftForgeClient.getCustomItemRenderer on: %version%");
-        return customItemRenderersOld[itemID];
-    }
     
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
@@ -121,7 +123,8 @@ public class MinecraftForgeClient
     public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
         IItemRenderer renderer = customItemRenderers[item.itemID];
-        if (renderer != null && renderer.handleRenderType(item, type)) {
+        if (renderer != null && renderer.handleRenderType(item, type)) 
+        {
             return customItemRenderers[item.itemID];
         }
         return null;
@@ -149,7 +152,7 @@ public class MinecraftForgeClient
      * If they do not match (such is the case in different versionf of MC) it exits the process with a error
      * 
      * @param version The version to find, usually "Minecraft Minecraft 1.2.3"
-     * @param message The error message to display int eh crash log
+     * @param message The error message to display in the crash log
      */
     public static void checkMinecraftVersion(String version, String message)
     {

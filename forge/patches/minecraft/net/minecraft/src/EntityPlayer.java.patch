@@ -16,10 +16,10 @@
 +                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
-                     this.func_35201_a(var1, 5);
-@@ -609,7 +612,16 @@
- 
-     public EntityItem func_48152_as()
+                     this.updateItemUse(var1, 5);
+@@ -618,7 +621,16 @@
+      */
+     public EntityItem dropOneItem()
      {
 -        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
 +        ItemStack stack = inventory.getCurrentItem();
@@ -35,7 +35,7 @@
      }
  
      /**
-@@ -674,14 +686,22 @@
+@@ -684,14 +696,22 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -60,7 +60,7 @@
          {
              var3 = var2 + (float)(var4 * var4 + 1);
          }
-@@ -973,7 +993,11 @@
+@@ -983,7 +1003,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -73,7 +73,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1004,6 +1028,10 @@
+@@ -1014,6 +1038,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -84,7 +84,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -1034,7 +1062,9 @@
+@@ -1044,7 +1072,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -94,7 +94,7 @@
      }
  
      /**
-@@ -1063,6 +1093,15 @@
+@@ -1073,6 +1103,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -110,7 +110,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1205,6 +1244,12 @@
+@@ -1215,6 +1254,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -123,7 +123,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1687,6 +1732,7 @@
+@@ -1697,6 +1742,7 @@
                      return 101;
                  }
              }
@@ -131,10 +131,10 @@
          }
  
          return var3;
-@@ -1857,4 +1903,30 @@
-     {
-         return !this.capabilities.isFlying;
+@@ -1869,4 +1915,30 @@
      }
+ 
+     public void func_50009_aI() {}
 +    
 +    /**
 +     * Opens a Gui for the player. 
@@ -142,18 +142,18 @@
 +     * @param mod The mod associated with the gui
 +     * @param ID The ID number for the Gui
 +     * @param world The World
-+     * @param X X Position
-+     * @param Y Y Position
-+     * @param Z Z Position
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
 +     */
-+    public void openGui(BaseMod mod, int ID, World world, int X, int Y, int Z)
++    public void openGui(BaseMod mod, int ID, World world, int x, int y, int z)
 +    {
 +        if (this instanceof EntityPlayerSP)
 +        {
 +            IGuiHandler handler = MinecraftForge.getGuiHandler(mod);
 +            if (handler != null)
 +            {
-+                GuiScreen screen = handler.getGuiScreen(ID, (EntityPlayerSP)this, world, X, Y, Z);
++                GuiScreen screen = (GuiScreen)handler.getGuiElement(ID, this, world, x, y, z);
 +                if (screen != null)
 +                {
 +                    ModLoader.getMinecraftInstance().displayGuiScreen(screen);

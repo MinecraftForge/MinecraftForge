@@ -19,6 +19,9 @@ import java.util.*;
 import net.minecraft.src.*;
 import org.lwjgl.opengl.GL12;
 
+import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.*;
+import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.*;
+
 public class ForgeHooksClient
 {
 
@@ -44,6 +47,15 @@ public class ForgeHooksClient
 
     public static LinkedList<IHighlightHandler> highlightHandlers = new LinkedList<IHighlightHandler>();
     public static LinkedList<IRenderWorldLastHandler> renderWorldLastHandlers = new LinkedList<IRenderWorldLastHandler>();
+    
+    public static void onTextureLoad(String textureName, int textureID)
+    {
+        for (ITextureLoadHandler handler: textureLoadHandlers)
+        {
+            handler.onTextureLoad(textureName, textureID);
+        }
+    }
+    public static LinkedList<ITextureLoadHandler> textureLoadHandlers = new LinkedList<ITextureLoadHandler>();
 
     public static boolean canRenderInPass(Block block, int pass)
     {
@@ -117,7 +129,7 @@ public class ForgeHooksClient
         {
             renderTextures.add(key);
             tess.startDrawingQuads();
-            tess.setTranslationD(defaultTessellator.xOffset, defaultTessellator.yOffset, defaultTessellator.zOffset);
+            tess.setTranslation(defaultTessellator.xOffset, defaultTessellator.yOffset, defaultTessellator.zOffset);
         }
         Tessellator.instance = tess;
     }
@@ -251,37 +263,14 @@ public class ForgeHooksClient
             return def;
         }
     }
-
-    @Deprecated //Deprecated in favor of new more Robust IItemRenderer, Remove in next MC version
-    public static void renderCustomItem(ICustomItemRenderer customRenderer, RenderBlocks renderBlocks, int itemID, int metadata, float brightness)
-    {
-        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.3", "Deprecated call to MC 1.2.3 ForgeHooksClient.renderCustomItem on: %version%");
-        Tessellator tessellator = Tessellator.instance;
-        if (renderBlocks.useInventoryTint)
-        {
-            int j = 0xffffff;//block.getRenderColor(i);
-            float f1 = (float) (j >> 16 & 0xff) / 255F;
-            float f3 = (float) (j >> 8 & 0xff) / 255F;
-            float f5 = (float) (j & 0xff) / 255F;
-            GL11.glColor4f(f1 * brightness, f3 * brightness, f5 * brightness, 1.0F);
-        }
-
-        //ModLoader.RenderInvBlock(this, block, i, k);
-        customRenderer.renderInventory(renderBlocks, itemID, metadata);
-    }
-    
-    public static void renderEntityItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityItem item)
-    {
-        customRenderer.renderEntityItem(renderBlocks, item);
-    }
     
     public static void renderEquippedItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, EntityLiving entity, ItemStack item)
     {
-        if (customRenderer.renderEquippedItemAsBlock(item))
+        if (customRenderer.shouldUseRenderHelper(EQUIPPED, item, EQUIPPED_BLOCK))
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-            customRenderer.renderEquippedItem(renderBlocks, entity, item);
+            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
             GL11.glPopMatrix();
         }
         else
@@ -293,14 +282,9 @@ public class ForgeHooksClient
             GL11.glRotatef(50.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(335.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-0.9375F, -0.0625F, 0.0F);
-            customRenderer.renderEquippedItem(renderBlocks, entity, item);
+            customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
         }
-    }
-    
-    public static void renderInventoryItem(IItemRenderer customRenderer, RenderBlocks renderBlocks, ItemStack item)
-    {
-        customRenderer.renderInventoryItem(renderBlocks, item);
     }
 }

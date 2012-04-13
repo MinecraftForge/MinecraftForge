@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -16,6 +16,10 @@
+@@ -15,6 +15,10 @@
  import java.util.Map;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
@@ -11,7 +11,7 @@
  
  public class NetClientHandler extends NetHandler
  {
-@@ -47,6 +51,8 @@
+@@ -46,6 +50,8 @@
          this.mc = par1Minecraft;
          Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
          this.netManager = new NetworkManager(var4, "Client", this);
@@ -20,7 +20,7 @@
      }
  
      /**
-@@ -74,6 +80,29 @@
+@@ -73,6 +79,30 @@
          this.mc.thePlayer.entityId = par1Packet1Login.protocolVersion;
          this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
          ((PlayerControllerMP)this.mc.playerController).setCreative(par1Packet1Login.serverMode == 1);
@@ -47,14 +47,30 @@
 +        }
 +        pkt.length = pkt.data.length;
 +        addToSendQueue(pkt);
++        
+         ModLoader.serverConnect(this, par1Packet1Login);
      }
  
-     public void handlePickupSpawn(Packet21PickupSpawn par1Packet21PickupSpawn)
-@@ -677,7 +706,19 @@
+@@ -545,8 +575,12 @@
+ 
+     public void handleChat(Packet3Chat par1Packet3Chat)
+     {
+-        this.mc.ingameGUI.addChatMessage(par1Packet3Chat.message);
+-        ModLoader.serverChat(par1Packet3Chat.message);
++        par1Packet3Chat.message = ForgeHooks.onClientChatRecv(par1Packet3Chat.message);
++        if (par1Packet3Chat.message != null)
++        {
++            this.mc.ingameGUI.addChatMessage(par1Packet3Chat.message);
++            ModLoader.serverChat(par1Packet3Chat.message);
++        }
+     }
+ 
+     public void handleAnimation(Packet18Animation par1Packet18Animation)
+@@ -633,7 +667,19 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
--            this.addToSendQueue(new Packet1Login(this.mc.session.username, 28));
+-            this.addToSendQueue(new Packet1Login(this.mc.session.username, 29));
 +            /**
 +             * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
 +             * This allows modded clients to connect to Vanilla server without crashing.
@@ -64,18 +80,18 @@
 +             * identifier so we are certain it is not random, and it is Forge installed.
 +             * The C->S dimension is set to the current Forge build number, in case we need to do any quick version checks.
 +             */
-+            Packet1Login pkt = new Packet1Login(mc.session.username, 28);
++            Packet1Login pkt = new Packet1Login(mc.session.username, 29);
 +            pkt.serverMode    = ForgePacket.FORGE_ID;
 +            pkt.field_48170_e = ForgeHooks.buildVersion;
 +            addToSendQueue(pkt);
          }
          else
          {
-@@ -690,7 +731,19 @@
+@@ -646,7 +692,19 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
--                    this.addToSendQueue(new Packet1Login(this.mc.session.username, 28));
+-                    this.addToSendQueue(new Packet1Login(this.mc.session.username, 29));
 +                    /**
 +                     * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
 +                     * This allows modded clients to connect to Vanilla server without crashing.
@@ -85,27 +101,23 @@
 +                     * identifier so we are certain it is not random, and it is Forge installed.
 +                     * The C->S dimension is set to the current Forge build number, in case we need to do any quick version checks.
 +                     */
-+                    Packet1Login pkt = new Packet1Login(mc.session.username, 28);
++                    Packet1Login pkt = new Packet1Login(mc.session.username, 29);
 +                    pkt.serverMode    = ForgePacket.FORGE_ID;
 +                    pkt.field_48170_e = ForgeHooks.buildVersion;
 +                    addToSendQueue(pkt);
                  }
                  else
                  {
-@@ -1143,4 +1196,44 @@
+@@ -1114,5 +1172,40 @@
+     public void handleCustomPayload(Packet250CustomPayload var1)
      {
-         this.addToSendQueue(new Packet0KeepAlive(par1Packet0KeepAlive.randomId));
-     }
-+    
-+    @Override
-+    public void handleCustomPayload(Packet250CustomPayload pkt)
-+    {
+         ModLoader.receivePacket(var1);
 +        MessageManager inst = MessageManager.getInstance();
-+        if (pkt.channel.equals("REGISTER")) 
++        if (var1.channel.equals("REGISTER")) 
 +        {
 +            try 
 +            {
-+                String channels = new String(pkt.data, "UTF8");
++                String channels = new String(var1.data, "UTF8");
 +                for (String channel : channels.split("\0")) 
 +                {
 +                    inst.addActiveChannel(netManager, channel);
@@ -116,11 +128,11 @@
 +                ModLoader.throwException("NetClientHandler.handleCustomPayload", ex);
 +            }
 +        } 
-+        else if (pkt.channel.equals("UNREGISTER")) 
++        else if (var1.channel.equals("UNREGISTER")) 
 +        {
 +            try 
 +            {
-+                String channels = new String(pkt.data, "UTF8");
++                String channels = new String(var1.data, "UTF8");
 +                for (String channel : channels.split("\0")) 
 +                {
 +                    inst.removeActiveChannel(netManager, channel);
@@ -133,7 +145,7 @@
 +        } 
 +        else 
 +        {
-+            inst.dispatchIncomingMessage(netManager, pkt.channel, pkt.data);
++            inst.dispatchIncomingMessage(netManager, var1.channel, var1.data);
 +        }
-+    }
+     }
  }

@@ -18,6 +18,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.Item;
 import net.minecraft.src.EnumStatus;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
@@ -127,7 +128,7 @@ public class ForgeHooks
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.OnConnect(network);
+            handler.onConnect(network);
         }
     }
 
@@ -135,7 +136,7 @@ public class ForgeHooks
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.OnLogin(network, login);
+            handler.onLogin(network, login);
         }
     }
 
@@ -143,7 +144,7 @@ public class ForgeHooks
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.OnDisconnect(network, message, args);
+            handler.onDisconnect(network, message, args);
         }
     }
     static LinkedList<IConnectionHandler> connectionHandlers = new LinkedList<IConnectionHandler>();
@@ -182,6 +183,18 @@ public class ForgeHooks
         }
         return true;
     }
+    
+    public static boolean canUpdateEntity(Entity entity)
+    {
+        for(IChunkLoadHandler loader : chunkLoadHandlers)
+        {
+            if(loader.canUpdateEntity(entity))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     static LinkedList<IChunkLoadHandler> chunkLoadHandlers = new LinkedList<IChunkLoadHandler>();
     
     public static boolean onEntityInteract(EntityPlayer player, Entity entity, boolean isAttack)
@@ -196,6 +209,133 @@ public class ForgeHooks
         return true;
     }
     static LinkedList<IEntityInteractHandler> entityInteractHandlers = new LinkedList<IEntityInteractHandler>();
+
+    public static String onServerChat(EntityPlayer player, String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onServerChat(player, message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    
+    public static boolean onChatCommand(EntityPlayer player, boolean isOp, String command)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            if (handler.onChatCommand(player, isOp, command))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean onServerCommand(Object listener, String username, String command)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            if (handler.onServerCommand(listener, username, command))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static String onServerCommandSay(Object listener, String username, String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onServerCommandSay(listener, username, message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    
+    public static String onClientChatRecv(String message)
+    {
+        for (IChatHandler handler : chatHandlers)
+        {
+            message = handler.onClientChatRecv(message);
+            if (message == null)
+            {
+                return null;
+            }
+        }
+        return message;
+    }
+    static LinkedList<IChatHandler> chatHandlers = new LinkedList<IChatHandler>();
+    
+    public static void onWorldLoad(World world)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onWorldLoad(world);
+        }
+    }
+
+    public static void onWorldSave(World world)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onWorldSave(world);
+        }
+    }
+
+    public static void onChunkLoad(World world, Chunk chunk)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkLoad(world, chunk);
+        }
+    }
+
+    public static void onChunkUnload(World world, Chunk chunk)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkUnload(world, chunk);
+        }
+    }
+
+    public static void onChunkLoadData(World world, Chunk chunk, NBTTagCompound data)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkLoadData(world, chunk, data);
+        }
+    }
+
+    public static void onChunkSaveData(World world, Chunk chunk, NBTTagCompound data)
+    {
+        for (ISaveEventHandler handler : saveHandlers)
+        {
+            handler.onChunkSaveData(world, chunk, data);
+        }
+    }
+    static LinkedList<ISaveEventHandler> saveHandlers = new LinkedList<ISaveEventHandler>();
+
+    public static int getItemBurnTime(ItemStack stack) 
+    {
+        for (IFuelHandler handler : fuelHandlers)
+        {
+            int ret = handler.getItemBurnTime(stack);
+            if (ret > 0)
+            {
+                return ret;
+            }
+        }
+        return 0;
+    }
+    static LinkedList<IFuelHandler> fuelHandlers = new LinkedList<IFuelHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
@@ -477,10 +617,14 @@ public class ForgeHooks
     }
     public static ArrayList<IArrowNockHandler> arrowNockHandlers = new ArrayList<IArrowNockHandler>();
 
-    public static final int majorVersion=0;
-    public static final int minorVersion=0;
-    public static final int revisionVersion=0;
-    public static final int buildVersion=0;
+    //This number is incremented every Minecraft version, and never reset
+    public static final int majorVersion    = 3;
+    //This number is incremented every official release, and reset every Minecraft version
+    public static final int minorVersion    = 0;
+    //This number is incremented every time a interface changes, and reset every Minecraft version
+    public static final int revisionVersion = 1;
+    //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
+    public static final int buildVersion    = 0;
     static
     {
         plantGrassList = new ArrayList<ProbableItem>();

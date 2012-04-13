@@ -5,20 +5,19 @@
  
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooksClient;
-+import net.minecraft.src.forge.ICustomItemRenderer;
 +import net.minecraft.src.forge.IItemRenderer;
-+import net.minecraft.src.forge.ItemRenderType;
 +import net.minecraft.src.forge.MinecraftForgeClient;
++import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.*;
++import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.*;
 +
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -33,21 +39,35 @@
+@@ -35,21 +41,27 @@
      public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
-+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, ItemRenderType.EQUIPPED);        
-+        ICustomItemRenderer customRendererOld = MinecraftForgeClient.getCustomItemRenderer(par2ItemStack.itemID);
++        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, EQUIPPED);
  
 -        if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        if (customRenderer != null)
@@ -26,13 +25,6 @@
 +            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture(par2ItemStack.itemID < 256 ? "/terrain.png" : "/gui/items.png", par2ItemStack.getItem())));
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
-+        //Deprecation Start
-+        else if (customRendererOld != null)
-+        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
-+            ForgeHooksClient.renderCustomItem(customRendererOld, renderBlocksInstance, par2ItemStack.itemID,  par2ItemStack.getItemDamage(), par1EntityLiving.getEntityBrightness(1.0F)); 
-+        }
-+        //Deprecation End
 +        else if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
 -            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
@@ -53,3 +45,55 @@
              }
  
              Tessellator var4 = Tessellator.instance;
+@@ -246,8 +258,10 @@
+         float var11;
+         float var13;
+ 
+-        if (var14 != null && var14.itemID == Item.map.shiftedIndex)
++        if (var14 != null && var14.getItem() instanceof ItemMap)
+         {
++            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(var14, FIRST_PERSON_MAP);
++            
+             GL11.glPushMatrix();
+             var7 = 0.8F;
+             var17 = var3.getSwingProgress(par1);
+@@ -313,8 +327,15 @@
+             var26.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
+             var26.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
+             var26.draw();
+-            MapData var23 = Item.map.getMapData(var14, this.mc.theWorld);
+-            this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var23);
++            MapData var23 = ((ItemMap)var14.getItem()).getMapData(var14, this.mc.theWorld);
++            if (custom == null)
++            {
++                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var23);
++            }
++            else
++            {
++                custom.renderItem(FIRST_PERSON_MAP, var14, mc.thePlayer, mc.renderEngine, var23);
++            }
+             GL11.glPopMatrix();
+         }
+         else if (var14 != null)
+@@ -414,12 +435,15 @@
+             if (var14.getItem().func_46058_c())
+             {
+                 this.renderItem(var3, var14, 0);
+-                var9 = Item.itemsList[var14.itemID].getColorFromDamage(var14.getItemDamage(), 1);
+-                var10 = (float)(var9 >> 16 & 255) / 255.0F;
+-                var11 = (float)(var9 >> 8 & 255) / 255.0F;
+-                var12 = (float)(var9 & 255) / 255.0F;
+-                GL11.glColor4f(var6 * var10, var6 * var11, var6 * var12, 1.0F);
+-                this.renderItem(var3, var14, 1);
++                for (int x = 1; x < var14.getItem().getRenderPasses(var14.getItemDamage()); x++)
++                {
++                    var9 = Item.itemsList[var14.itemID].getColorFromDamage(var14.getItemDamage(), 1);
++                    var10 = (float)(var9 >> 16 & 255) / 255.0F;
++                    var11 = (float)(var9 >> 8 & 255) / 255.0F;
++                    var12 = (float)(var9 & 255) / 255.0F;
++                    GL11.glColor4f(var6 * var10, var6 * var11, var6 * var12, 1.0F);
++                    this.renderItem(var3, var14, 1);
++                }
+             }
+             else
+             {

@@ -37,23 +37,15 @@ public class PacketHandlerClient implements IPacketHandler
                     break;
 
                 case ForgePacket.MODLIST:
-                    /*
                     pkt = new PacketModList(false);
                     pkt.readData(data);
-                    */
-                    onModListCheck(net);
+                    onModListCheck(net, (PacketModList)pkt);
                     break;
 
                 case ForgePacket.MOD_MISSING:
                     pkt = new PacketMissingMods(false);
                     pkt.readData(data);
                     onMissingMods((PacketMissingMods)pkt, net);
-                    break;
-
-                case ForgePacket.MOD_IDS:
-                    pkt = new PacketModIDs();
-                    pkt.readData(data);
-                    onModIDs((PacketModIDs)pkt);
                     break;
 
                 case ForgePacket.OPEN_GUI:
@@ -104,7 +96,7 @@ public class PacketHandlerClient implements IPacketHandler
             }
 
             entity.serverPosX    = packet.posX;
-            entity.serverPosY    = packet.posX;
+            entity.serverPosY    = packet.posY;
             entity.serverPosZ    = packet.posZ;
             entity.rotationYaw   = 0.0F;
             entity.rotationPitch = 0.0F;
@@ -142,16 +134,45 @@ public class PacketHandlerClient implements IPacketHandler
     }
 
     /**
+     * Sets up the list of ID to mod mappings.
+     * TODO; Make it display an error, and prompt if the user wishes to continue anyways
+     * if it detects that the server does not have a corresponding mod to one it has installed.
+     * 
      * Sends a list of all loaded mods to the server.
      * For now, it it simple a String[] of mod.toString()
+     * 
      * @param network The network connection to send the packet on.
+     * @param packet The Server to client packet containing a list of NetworkMod ID's
      */
-    private void onModListCheck(NetClientHandler net)
+    private void onModListCheck(NetClientHandler net, PacketModList packet)
     {
         if (DEBUG)
         {
-            System.out.println("S->C: " + (new PacketModList(false)).toString(true));
+            System.out.println("S->C: " + packet.toString(true));
         }
+
+        ForgeHooks.networkMods.clear();
+        NetworkMod[] mods = MinecraftForge.getNetworkMods();
+        for (NetworkMod mod : mods)
+        {
+            for (Entry<Integer, String> entry : packet.ModIDs.entrySet())
+            {
+                if (mod.toString().equals(entry.getValue()))
+                {
+                    ForgeHooks.networkMods.put(entry.getKey(), mod);
+                }
+            }
+        }
+        ArrayList<NetworkMod> missing = new ArrayList<NetworkMod>();
+        for (NetworkMod mod : mods)
+        {
+            if (MinecraftForge.getModID(mod) == -1 && mod.serverSideRequired())
+            {
+                missing.add(mod);
+            }
+        }
+        //TODO: Display error/confirmation screen
+        
         PacketModList pkt = new PacketModList(false);
         pkt.Mods = new String[ModLoader.getLoadedMods().size()];
         int x = 0;
@@ -183,42 +204,6 @@ public class PacketHandlerClient implements IPacketHandler
         Minecraft mc = ModLoader.getMinecraftInstance();
         mc.changeWorld1(null);
         mc.displayGuiScreen(new GuiMissingMods(pkt));
-    }
-
-    /**
-     * Sets up the list of ID to mod mappings.
-     * TODO; Make it display an error, and prompt if the user wishes to continue anyways
-     * if it detects that the server does not have a corresponding mod to one it has installed.
-     *
-     * @param pkt The mod id packet
-     */
-    private void onModIDs(PacketModIDs pkt)
-    {
-        if (DEBUG)
-        {
-            System.out.println("S->C: " + pkt.toString(true));
-        }
-        ForgeHooks.networkMods.clear();
-        NetworkMod[] mods = MinecraftForge.getNetworkMods();
-        for (NetworkMod mod : mods)
-        {
-            for (Entry<Integer, String> entry : pkt.Mods.entrySet())
-            {
-                if (mod.toString().equals(entry.getValue()))
-                {
-                    ForgeHooks.networkMods.put(entry.getKey(), mod);
-                }
-            }
-        }
-        ArrayList<NetworkMod> missing = new ArrayList<NetworkMod>();
-        for (NetworkMod mod : mods)
-        {
-            if (MinecraftForge.getModID(mod) == -1 && mod.serverSideRequired())
-            {
-                missing.add(mod);
-            }
-        }
-        //TODO: Display error/confirmation screen
     }
 
     /**

@@ -94,7 +94,7 @@ public class PacketEntitySpawn extends ForgePacket
         {
             speedX = data.readShort();
             speedY = data.readShort();
-            speedX = data.readShort();
+            speedZ = data.readShort();
         }
     }
     @Override

@@ -15,7 +15,7 @@
 -            boolean var8 = var5.setBlockWithNotify(par1, par2, par3, 0);
 +            boolean var8 = var6.removeBlockByPlayer(var5, mc.thePlayer, par1, par2, par3);
  
-             if (var6 != null && var8)
+             if (var8)
              {
 @@ -86,6 +87,7 @@
              if (var5.stackSize == 0)

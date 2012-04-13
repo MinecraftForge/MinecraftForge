@@ -1,16 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,9 @@
  package net.minecraft.src;
  
 -public class TileEntityFurnace extends TileEntity implements IInventory
++import net.minecraft.src.forge.ForgeHooks;
 +import net.minecraft.src.forge.ISidedInventory;
 +
 +public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -279,8 +281,12 @@
+@@ -279,8 +282,12 @@
          }
          else
          {
@@ -25,7 +26,7 @@
          }
      }
  
-@@ -291,13 +297,13 @@
+@@ -291,13 +298,13 @@
      {
          if (this.canSmelt())
          {
@@ -41,16 +42,23 @@
              {
                  this.furnaceItemStacks[2].stackSize += var1.stackSize;
              }
-@@ -322,7 +328,7 @@
-      * Returns the number of ticks that the supplied fuel item will keep the furnace burning, or 0 if the item isn't
-      * fuel
-      */
--    private int getItemBurnTime(ItemStack par1ItemStack)
-+    public int getItemBurnTime(ItemStack par1ItemStack)
-     {
-         if (par1ItemStack == null)
+@@ -331,7 +338,14 @@
+         else
          {
-@@ -346,4 +352,18 @@
+             int var1 = par1ItemStack.getItem().shiftedIndex;
+-            return var1 < 256 && Block.blocksList[var1].blockMaterial == Material.wood ? 300 : (var1 == Item.stick.shiftedIndex ? 100 : (var1 == Item.coal.shiftedIndex ? 1600 : (var1 == Item.bucketLava.shiftedIndex ? 20000 : (var1 == Block.sapling.blockID ? 100 : (var1 == Item.blazeRod.shiftedIndex ? 2400 : ModLoader.addAllFuel(par1ItemStack.itemID, par1ItemStack.getItemDamage()))))));
++            if (var1 < 256 && Block.blocksList[var1].blockMaterial == Material.wood) return 300;
++            if (var1 == Item.stick.shiftedIndex)      return 100; 
++            if (var1 == Item.coal.shiftedIndex)       return 1600; 
++            if (var1 == Item.bucketLava.shiftedIndex) return 20000; 
++            if (var1 == Block.sapling.blockID)        return 100; 
++            if (var1 == Item.blazeRod.shiftedIndex)   return 2400;
++            int ret = ForgeHooks.getItemBurnTime(par1ItemStack);
++            return (ret > 0 ? ret : ModLoader.addAllFuel(par1ItemStack.itemID, par1ItemStack.getItemDamage()));
+         }
+     }
+ 
+@@ -351,4 +365,18 @@
      public void openChest() {}
  
      public void closeChest() {}

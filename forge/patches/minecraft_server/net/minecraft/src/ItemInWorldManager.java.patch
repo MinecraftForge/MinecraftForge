@@ -12,7 +12,7 @@
      /** The world object that this object is connected to. */
      public World thisWorld;
  
-@@ -81,7 +85,7 @@
+@@ -83,7 +87,7 @@
              if (var2 != 0)
              {
                  Block var3 = Block.blocksList[var2];
@@ -21,7 +21,7 @@
  
                  if (var4 >= 1.0F)
                  {
-@@ -116,7 +120,7 @@
+@@ -118,7 +122,7 @@
                  Block.blocksList[var5].onBlockClicked(this.thisWorld, par1, par2, par3, this.thisPlayer);
              }
  
@@ -30,7 +30,7 @@
              {
                  this.blockHarvessted(par1, par2, par3);
              }
-@@ -139,7 +143,7 @@
+@@ -141,7 +145,7 @@
              if (var5 != 0)
              {
                  Block var6 = Block.blocksList[var5];
@@ -39,7 +39,7 @@
  
                  if (var7 >= 0.7F)
                  {
-@@ -166,7 +170,7 @@
+@@ -168,7 +172,7 @@
      {
          Block var4 = Block.blocksList[this.thisWorld.getBlockId(par1, par2, par3)];
          int var5 = this.thisWorld.getBlockMetadata(par1, par2, par3);
@@ -48,7 +48,7 @@
  
          if (var4 != null && var6)
          {
-@@ -178,6 +182,11 @@
+@@ -180,6 +184,11 @@
  
      public boolean blockHarvessted(int par1, int par2, int par3)
      {
@@ -60,7 +60,7 @@
          int var4 = this.thisWorld.getBlockId(par1, par2, par3);
          int var5 = this.thisWorld.getBlockMetadata(par1, par2, par3);
          this.thisWorld.playAuxSFXAtEntity(this.thisPlayer, 2001, par1, par2, par3, var4 + (this.thisWorld.getBlockMetadata(par1, par2, par3) << 12));
-@@ -190,7 +199,7 @@
+@@ -192,7 +201,7 @@
          else
          {
              ItemStack var7 = this.thisPlayer.getCurrentEquippedItem();
@@ -69,7 +69,7 @@
  
              if (var7 != null)
              {
-@@ -200,6 +209,7 @@
+@@ -202,6 +211,7 @@
                  {
                      var7.onItemDestroyedByUse(this.thisPlayer);
                      this.thisPlayer.destroyCurrentEquippedItem();
@@ -77,7 +77,7 @@
                  }
              }
  
-@@ -246,6 +256,11 @@
+@@ -248,6 +258,11 @@
       */
      public boolean activeBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7)
      {
@@ -89,7 +89,7 @@
          int var8 = par2World.getBlockId(par4, par5, par6);
  
          if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
-@@ -267,7 +282,15 @@
+@@ -269,7 +284,15 @@
          }
          else
          {
@@ -106,7 +106,7 @@
          }
      }
  
-@@ -278,4 +301,13 @@
+@@ -280,4 +303,13 @@
      {
          this.thisWorld = par1WorldServer;
      }

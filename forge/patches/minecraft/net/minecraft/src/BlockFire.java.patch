@@ -57,12 +57,12 @@
                      var9 = -50;
                  }
  
--                this.func_48211_a(par1World, par2 + 1, par3, par4, 300 + var9, par5Random, var7);
--                this.func_48211_a(par1World, par2 - 1, par3, par4, 300 + var9, par5Random, var7);
--                this.func_48211_a(par1World, par2, par3 - 1, par4, 250 + var9, par5Random, var7);
--                this.func_48211_a(par1World, par2, par3 + 1, par4, 250 + var9, par5Random, var7);
--                this.func_48211_a(par1World, par2, par3, par4 - 1, 300 + var9, par5Random, var7);
--                this.func_48211_a(par1World, par2, par3, par4 + 1, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3 + 1, par4, 250 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3, par4 - 1, 300 + var9, par5Random, var7);
+-                this.tryToCatchBlockOnFire(par1World, par2, par3, par4 + 1, 300 + var9, par5Random, var7);
 +                this.tryToCatchBlockOnFire(par1World, par2 + 1, par3, par4, 300 + var9, par5Random, var7, 4);
 +                this.tryToCatchBlockOnFire(par1World, par2 - 1, par3, par4, 300 + var9, par5Random, var7, 5);
 +                this.tryToCatchBlockOnFire(par1World, par2, par3 - 1, par4, 250 + var9, par5Random, var7, 1);
@@ -72,18 +72,20 @@
  
                  for (int var10 = par2 - 1; var10 <= par2 + 1; ++var10)
                  {
-@@ -204,9 +204,21 @@
+@@ -203,10 +203,22 @@
+             }
          }
      }
- 
+-
++    
 +    /** Deprecated for a side-sensitive version */
 +    @Deprecated
-     private void func_48211_a(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7)
+     private void tryToCatchBlockOnFire(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7)
      {
 -        int var8 = this.abilityToCatchFire[par1World.getBlockId(par2, par3, par4)];
 +        tryToCatchBlockOnFire(par1World, par2, par3, par4, par5, par6Random, par7, 0);
 +    }
-+
++    
 +    private void tryToCatchBlockOnFire(World par1World, int par2, int par3, int par4, int par5, Random par6Random, int par7, int face)
 +    {
 +        int var8 = 0;

@@ -121,6 +121,33 @@ public class MinecraftForge
     }
 
     /**
+     * Registers a new chat handler.
+     * @param handler The Handler to be registered
+     */
+    public static void registerChatHandler(IChatHandler handler)
+    {
+        ForgeHooks.chatHandlers.add(handler);
+    }
+    
+    /**
+     * Register a new Save handler
+     * @param handler The handler to be registered
+     */
+    public static void registerSaveHandler(ISaveEventHandler handler)
+    {
+        ForgeHooks.saveHandlers.add(handler);
+    }
+
+    /**
+     * Register a new Fuel handler
+     * @param handler The handler to be registered
+     */
+    public static void registerFuelHandler(IFuelHandler handler)
+    {
+        ForgeHooks.fuelHandlers.add(handler);
+    }
+
+    /**
      * This is not supposed to be called outside of Minecraft internals.
      */
     public static ItemStack fillCustomBucket(World world, int X, int Y, int Z)
@@ -393,6 +420,26 @@ public class MinecraftForge
             ForgeHooks.toolHarvestLevels.put(key, harvestLevel);
             ForgeHooks.toolEffectiveness.add(key);
         }
+    }
+    
+    /** Returns the block harvest level for a particular tool class.
+     *
+     * @param block The block to check.
+     * @param metadata The metadata for the block subtype.
+     * @param toolClass The tool class to check as able to remove this block.
+     * @see setToolClass for details on tool classes.
+     * @return The harvest level or -1 if no mapping exists.
+     */
+    public static int getBlockHarvestLevel(Block block, int metadata, String toolClass)
+    {
+        ForgeHooks.initTools();
+        List key = Arrays.asList(block.blockID, metadata, toolClass);
+        Integer harvestLevel = (Integer)ForgeHooks.toolHarvestLevels.get(key);
+        if(harvestLevel == null)
+        {
+            return -1;
+        }
+        return harvestLevel;
     }
 
     /** Remove a block effectiveness mapping.  Since setBlockHarvestLevel
@@ -891,7 +938,7 @@ public class MinecraftForge
         {
             if (entry.getKey().isInstance(entity))
             {
-                if (!checkSupers || entry.getKey() == entry.getClass())
+                if (!checkSupers || entry.getKey() == entity.getClass())
                 {
                     return entry.getValue();
                 }
@@ -912,7 +959,7 @@ public class MinecraftForge
         for (Map.Entry<Class, EntityTrackerInfo> entry : ForgeHooks.entityTrackerMap.entrySet())
         {
             EntityTrackerInfo info = entry.getValue();
-            if (type == info.ID && modID == info.Mod.toString().hashCode())
+            if (type == info.ID && modID == getModID(info.Mod))
             {
                 return entry.getKey();
             }
@@ -1004,6 +1051,24 @@ public class MinecraftForge
     public static void registerArrowLooseHandler(IArrowLooseHandler handler)
     {
         ForgeHooks.arrowLooseHandlers.add(handler);
+    }
+    
+    private static int isClient = -1;
+    public static boolean isClient()
+    {
+        if (isClient == -1)
+        {
+            try 
+            {
+                Class.forName("net.minecraft.client.Minecraft", false, MinecraftForge.class.getClassLoader());
+                isClient = 1;
+            } 
+            catch (ClassNotFoundException e) 
+            {
+                isClient = 0;
+            }   
+        }
+        return isClient == 1;
     }
     
     static

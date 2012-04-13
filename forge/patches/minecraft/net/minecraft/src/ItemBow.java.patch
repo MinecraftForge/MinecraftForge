@@ -17,7 +17,7 @@
 +            return;
 +        }
 +        
-         boolean var5 = par3EntityPlayer.capabilities.depleteBuckets || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
+         boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
          if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
 @@ -103,6 +110,12 @@
@@ -30,6 +30,6 @@
 +            return stack;
 +        }
 +        
-         if (par3EntityPlayer.capabilities.depleteBuckets || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
          {
              par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

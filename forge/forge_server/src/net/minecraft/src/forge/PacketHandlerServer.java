@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import cpw.mods.fml.server.FMLServerHandler;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.*;
 import net.minecraft.src.forge.packets.*;
@@ -93,7 +95,7 @@ public class PacketHandlerServer implements IPacketHandler
         }
         else
         {
-            sendModIDs(net, serverMods);
+            finishLogin(net);
         }
     }
 
@@ -117,29 +119,7 @@ public class PacketHandlerServer implements IPacketHandler
         net.sendPacket(pkt.getPacket());
         disconnectUser(net);
     }
-
-
-    /**
-     * Sends a list of mod id mappings to the client.
-     * Only mod ID's are sent, not item or blocks.
-     *
-     * @param net The network handler
-     * @param list A list of network mods
-     */
-    private void sendModIDs(NetServerHandler net, NetworkMod[] list)
-    {
-        PacketModIDs pkt = new PacketModIDs();
-        for (NetworkMod mod : list)
-        {
-            pkt.Mods.put(MinecraftForge.getModID(mod), mod.toString());
-        }
-        net.sendPacket(pkt.getPacket());
-        if (DEBUG)
-        {
-            System.out.println("S->C: " + pkt.toString(true));
-        }
-    }
-
+    
     /**
      * Disconnects the player just like kicking them, just without the kick message.
      * @param net The network handler
@@ -152,5 +132,34 @@ public class PacketHandlerServer implements IPacketHandler
         mc.configManager.sendPacketToAllPlayers(new Packet3Chat("\247e" + net.getUsername() + " left the game."));
         mc.configManager.playerLoggedOut(net.getPlayerEntity());
         net.connectionClosed = true;
+    }
+    
+    private void finishLogin(NetServerHandler net)
+    {
+        EntityPlayerMP player = net.getPlayerEntity();
+        WorldServer world = net.mcServer.getWorldManager(player.dimension);
+        ChunkCoordinates spawn = world.getSpawnPoint();
+        
+        net.sendPacket(new Packet1Login("", player.entityId, world.getWorldInfo().getTerrainType(), 
+                player.itemInWorldManager.getGameType(), world.worldProvider.worldType, 
+                (byte)world.difficultySetting,          (byte)world.getHeight(), 
+                (byte)net.mcServer.configManager.getMaxPlayers()));
+        
+        net.sendPacket(new Packet6SpawnPosition(spawn.posX, spawn.posY, spawn.posZ));
+        net.sendPacket(new Packet202PlayerAbilities(player.capabilities));
+        net.mcServer.configManager.updateTimeAndWeather(player, world);
+        net.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat("\u00a7e" + player.username + " joined the game."));
+        net.mcServer.configManager.playerLoggedIn(player);
+        
+        net.teleportTo(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
+        net.sendPacket(new Packet4UpdateTime(world.getWorldTime()));
+        
+        for (Object efx : player.getActivePotionEffects())
+        {
+            net.sendPacket(new Packet41EntityEffect(player.entityId, (PotionEffect)efx));
+        }
+        
+        player.func_20057_k();
+        FMLServerHandler.instance().announceLogin(player);
     }
 }
