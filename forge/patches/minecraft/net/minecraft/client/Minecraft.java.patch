@@ -47,9 +47,12 @@
 -            var9 = null;
 -            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
 -            this.changeWorld(var9, "Entering the Nether", this.thePlayer);
--        }
++            this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
+         }
 -        else if (this.thePlayer.dimension == 0)
--        {
++        
++        if (thePlayer.dimension == 1)
+         {
 -            if (this.thePlayer.isEntityAlive())
 -            {
 -                this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
@@ -67,12 +70,9 @@
 -            {
 -                this.changeWorld(var9, "Leaving the End", this.thePlayer);
 -            }
-+            this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
-         }
+-        }
 -        else
-+        
-+        if (thePlayer.dimension == 1)
-         {
+-        {
 -            var9 = null;
 -            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
              ChunkCoordinates var10 = var9.getEntrancePortalLocation();
@@ -87,7 +87,7 @@
 -            }
 -
 -            this.changeWorld(var9, "Entering the End", this.thePlayer);
-+        }
+         }
 +        
 +        if (thePlayer.dimension == 0)
 +        {
@@ -95,8 +95,8 @@
 +        }
 +        else
 +        {
-+        	changeWorld(var9, pOld.getWelcomeMessage(), thePlayer);
-         }
++        	changeWorld(var9, pNew.getWelcomeMessage(), thePlayer);
++        }
  
          this.thePlayer.worldObj = this.theWorld;
          System.out.println("Teleported to " + this.theWorld.worldProvider.worldType);
@@ -111,3 +111,12 @@
          }
      }
  
+@@ -2365,7 +2333,7 @@
+             this.thePlayer.copyPlayer(var9);
+         }
+         
+-        this.thePlayer.dimension = par2;
++        this.thePlayer.dimension = (!this.theWorld.isRemote && this.theWorld.worldProvider.canRespawnHere()) ? this.theWorld.worldProvider.worldType : par2;
+         this.renderViewEntity = this.thePlayer;
+         this.thePlayer.preparePlayerToSpawn();
+         
