@@ -30,7 +30,7 @@
 -                this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, 1);
 +                for (int x = 1; x < var3.getItem().getRenderPasses(var3.getItemDamage()); x++)
 +                {
-+                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, 1);
++                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, x);
 +                }
              }
  
