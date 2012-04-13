@@ -32,24 +32,24 @@
          var3 *= var7;
          var5 *= var7;
 -        World var9;
-+        World var9 = new World(theWorld, pNew);
- 
+-
 -        if (this.thePlayer.dimension == -1)
-+        if (this.thePlayer.isEntityAlive())
-         {
+-        {
 -            this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
 -
 -            if (this.thePlayer.isEntityAlive())
 -            {
 -                this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
 -            }
--
++        World var9 = new World(theWorld, pNew);
+ 
 -            var9 = null;
 -            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
 -            this.changeWorld(var9, "Entering the Nether", this.thePlayer);
 -        }
 -        else if (this.thePlayer.dimension == 0)
--        {
++        if (this.thePlayer.isEntityAlive())
+         {
 -            if (this.thePlayer.isEntityAlive())
 -            {
 -                this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
@@ -95,7 +95,7 @@
 +        }
 +        else
 +        {
-+        	changeWorld(var9, pOld.getWelcomeMessage(), thePlayer);
++        	changeWorld(var9, pNew.getWelcomeMessage(), thePlayer);
          }
  
          this.thePlayer.worldObj = this.theWorld;
@@ -111,3 +111,15 @@
          }
      }
  
+@@ -2312,6 +2280,11 @@
+         {
+             this.usePortal(0);
+         }
++        
++        if (!this.theWorld.isRemote && this.theWorld.worldProvider.canRespawnHere())
++        {
++        	par2 = this.theWorld.worldProvider.worldType; //Fix for vanilla always re-spawning to the over world.
++        }
+ 
+         ChunkCoordinates var4 = null;
+         ChunkCoordinates var5 = null;
