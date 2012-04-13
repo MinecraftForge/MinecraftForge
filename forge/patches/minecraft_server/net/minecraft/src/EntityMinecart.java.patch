@@ -172,7 +172,7 @@
          {
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -296,25 +300,20 @@
+@@ -296,49 +300,26 @@
              double var6 = 0.0078125D;
              int var8 = this.worldObj.getBlockId(var1, var2, var3);
  
@@ -201,7 +201,32 @@
                  if (var10 >= 2 && var10 <= 5)
                  {
                      this.posY = (double)(var2 + 1);
-@@ -357,7 +356,7 @@
+                 }
+ 
+-                if (var10 == 2)
+-                {
+-                    this.motionX -= var6;
+-                }
+-
+-                if (var10 == 3)
+-                {
+-                    this.motionX += var6;
+-                }
+-
+-                if (var10 == 4)
+-                {
+-                    this.motionZ += var6;
+-                }
+-
+-                if (var10 == 5)
+-                {
+-                    this.motionZ -= var6;
+-                }
++                adjustSlopeVelocities(var10);
+ 
+                 int[][] var13 = field_468_ak[var10];
+                 double var14 = (double)(var13[1][0] - var13[0][0]);
+@@ -357,7 +338,7 @@
                  this.motionZ = var22 * var16 / var18;
                  double var24;
  
@@ -210,7 +235,7 @@
                  {
                      var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -407,36 +406,8 @@
+@@ -407,36 +388,8 @@
                  this.posX = var26 + var14 * var24;
                  this.posZ = var28 + var16 * var24;
                  this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -249,7 +274,7 @@
  
                  if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var1 == var13[0][0] && MathHelper.floor_double(this.posZ) - var3 == var13[0][2])
                  {
-@@ -447,41 +418,7 @@
+@@ -447,41 +400,7 @@
                      this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
                  }
  
@@ -292,7 +317,7 @@
  
                  Vec3D var52 = this.func_182_g(this.posX, this.posY, this.posZ);
  
-@@ -510,30 +447,15 @@
+@@ -510,30 +429,15 @@
                  }
  
                  double var41;
@@ -329,7 +354,7 @@
                  {
                      var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -569,41 +491,7 @@
+@@ -569,41 +473,7 @@
              }
              else
              {
@@ -372,7 +397,7 @@
              }
  
              this.rotationPitch = 0.0F;
-@@ -639,7 +527,18 @@
+@@ -639,7 +509,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -392,7 +417,7 @@
  
              if (var15 != null && var15.size() > 0)
              {
-@@ -664,17 +563,8 @@
+@@ -664,17 +545,8 @@
                  this.riddenByEntity = null;
              }
  
@@ -412,7 +437,7 @@
          }
      }
  
-@@ -693,14 +583,9 @@
+@@ -693,14 +565,9 @@
  
          if (BlockRail.isRailBlock(var10))
          {
@@ -428,7 +453,7 @@
              if (var11 >= 2 && var11 <= 5)
              {
                  par3 = (double)(var8 + 1);
-@@ -765,13 +650,13 @@
+@@ -765,13 +632,13 @@
      {
          par1NBTTagCompound.setInteger("Type", this.minecartType);
  
@@ -445,7 +470,7 @@
          {
              NBTTagList var2 = new NBTTagList();
  
-@@ -797,13 +682,13 @@
+@@ -797,13 +664,13 @@
      {
          this.minecartType = par1NBTTagCompound.getInteger("Type");
  
@@ -462,7 +487,7 @@
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -826,11 +711,18 @@
+@@ -826,11 +693,18 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -482,7 +507,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -876,7 +768,7 @@
+@@ -876,7 +750,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -491,7 +516,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -884,7 +776,7 @@
+@@ -884,7 +758,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -500,7 +525,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -919,7 +811,7 @@
+@@ -919,7 +793,7 @@
       */
      public int getSizeInventory()
      {
@@ -509,7 +534,7 @@
      }
  
      /**
-@@ -1022,7 +914,12 @@
+@@ -1022,7 +896,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -523,7 +548,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1034,14 +931,14 @@
+@@ -1034,14 +913,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -540,7 +565,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1073,7 +970,7 @@
+@@ -1073,7 +952,7 @@
      /**
       * Is this minecart powered (Fuel > 0)
       */
@@ -549,7 +574,7 @@
      {
          return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1126,4 +1023,348 @@
+@@ -1126,4 +1005,373 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }
@@ -835,6 +860,31 @@
 +        if (fuel <= 0) pushX = pushZ = 0.0D;
 +        setMinecartPowered(fuel > 0);
 +    }
++    
++    /**
++     * Moved to allow overrides, This code handle slopes affecting velocity.
++     * @param metadata The blocks position metadata 
++     */
++    protected void adjustSlopeVelocities(int metadata) 
++    {
++        double acceleration = 0.0078125D;
++        if (metadata == 2)
++        {
++            motionX -= acceleration;
++        }
++        else if (metadata == 3)
++        {
++            motionX += acceleration;
++        }
++        else if (metadata == 4)
++        {
++            motionZ += acceleration;
++        }
++        else if (metadata == 5)
++        {
++            motionZ -= acceleration;
++        }
++	}
 +    
 +    /**
 +     * Getters/setters for physics variables
