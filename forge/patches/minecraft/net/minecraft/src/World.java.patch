@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -9,6 +9,8 @@
+@@ -9,8 +9,17 @@
  import java.util.Set;
  import java.util.TreeSet;
  
@@ -8,8 +8,17 @@
 +
  public class World implements IBlockAccess
  {
++	/**
++	 * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
++	 * Modders should change this variable to a higher value if it is less then the radius 
++	 * of one of there entities.
++	 */
++	public static double MAX_ENTITY_RADIUS = 2.0D;
++	
      /**
-@@ -79,7 +81,7 @@
+      * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
+      */
+@@ -79,7 +88,7 @@
       * Contains a timestamp from when the World object was created. Is used in the session.lock file
       */
      private long lockTimestamp;
@@ -18,7 +27,7 @@
  
      /** Option > Difficulty setting (0 - 3) */
      public int difficultySetting;
-@@ -214,6 +216,7 @@
+@@ -214,6 +223,7 @@
          this.chunkProvider = this.createChunkProvider();
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
@@ -26,7 +35,7 @@
      }
  
      public World(World par1World, WorldProvider par2WorldProvider)
-@@ -259,6 +262,7 @@
+@@ -259,6 +269,7 @@
          this.chunkProvider = this.createChunkProvider();
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
@@ -34,7 +43,7 @@
      }
  
      public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings)
-@@ -340,6 +344,7 @@
+@@ -340,6 +351,7 @@
  
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
@@ -42,7 +51,7 @@
      }
  
      /**
-@@ -507,6 +512,7 @@
+@@ -507,6 +519,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -50,7 +59,7 @@
          }
      }
  
-@@ -559,7 +565,8 @@
+@@ -559,7 +572,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -60,7 +69,7 @@
      }
  
      /**
-@@ -2067,7 +2074,7 @@
+@@ -2067,7 +2081,7 @@
  
                      if (var7 != null)
                      {
@@ -69,7 +78,7 @@
                      }
                  }
              }
-@@ -2097,18 +2104,18 @@
+@@ -2097,18 +2111,18 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -92,7 +101,7 @@
                  }
              }
  
-@@ -2121,13 +2128,13 @@
+@@ -2121,13 +2135,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -112,7 +121,7 @@
          }
      }
  
-@@ -2149,7 +2156,7 @@
+@@ -2149,7 +2163,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -121,7 +130,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2326,7 +2333,14 @@
+@@ -2326,7 +2340,14 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -137,7 +146,7 @@
                      }
                  }
              }
-@@ -2630,25 +2644,19 @@
+@@ -2630,25 +2651,19 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -175,7 +184,7 @@
          }
      }
  
-@@ -2657,27 +2665,10 @@
+@@ -2657,27 +2672,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -206,7 +215,7 @@
          }
      }
  
-@@ -2703,7 +2694,8 @@
+@@ -2703,7 +2701,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -216,7 +225,16 @@
      }
  
      /**
-@@ -2984,6 +2976,7 @@
+@@ -2719,7 +2718,7 @@
+             if (var5 != null && !var5.isEmpty())
+             {
+                 Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-                return var6 == null ? false : var6.blockMaterial.isOpaque() && var6.renderAsNormalBlock();
++                return var6 == null ? false : isBlockNormalCube(par1, par2, par3);
+             }
+             else
+             {
+@@ -2984,6 +2983,7 @@
                  }
              }
          }
@@ -224,7 +242,7 @@
  
          Profiler.endSection();
  
-@@ -3307,7 +3300,7 @@
+@@ -3307,7 +3307,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -233,7 +251,37 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3839,7 +3832,10 @@
+@@ -3667,10 +3667,10 @@
+     public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
+     {
+         this.entitiesWithinAABBExcludingEntity.clear();
+-        int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
+-        int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
+-        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
+-        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
++        int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
++        int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
++        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
++        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+ 
+         for (int var7 = var3; var7 <= var4; ++var7)
+         {
+@@ -3691,10 +3691,10 @@
+      */
+     public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
+     {
+-        int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
+-        int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
+-        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
+-        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
++        int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
++        int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
++        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
++        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+         ArrayList var7 = new ArrayList();
+ 
+         for (int var8 = var3; var8 <= var4; ++var8)
+@@ -3839,7 +3839,10 @@
              {
                  var8 = null;
              }
@@ -245,7 +293,7 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -4443,4 +4439,39 @@
+@@ -4443,4 +4446,39 @@
      {
          return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
      }
