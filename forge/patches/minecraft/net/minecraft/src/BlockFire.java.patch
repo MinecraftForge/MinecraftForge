@@ -1,22 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,13 +5,13 @@
- public class BlockFire extends Block
- {
-     /** The chance this block will encourage nearby blocks to catch on fire */
--    private int[] chanceToEncourageFire = new int[256];
-+    private int[] chanceToEncourageFire = Block.blockFireSpreadSpeed;
- 
-     /**
-      * This is an array indexed by block ID the larger the number in the array the more likely a block type will catch
-      * fires
+@@ -25,6 +25,8 @@
       */
--    private int[] abilityToCatchFire = new int[256];
-+    private int[] abilityToCatchFire = Block.blockFlammability;
- 
-     protected BlockFire(int par1, int par2)
+     public void initializeBlock()
      {
-@@ -44,8 +44,7 @@
++        abilityToCatchFire = Block.blockFlammability;
++        chanceToEncourageFire = Block.blockFireSpreadSpeed;
+         this.setBurnRate(Block.planks.blockID, 5, 20);
+         this.setBurnRate(Block.fence.blockID, 5, 20);
+         this.setBurnRate(Block.stairCompactPlanks.blockID, 5, 20);
+@@ -44,8 +46,7 @@
       */
      private void setBurnRate(int par1, int par2, int par3)
      {
@@ -26,7 +19,7 @@
      }
  
      /**
-@@ -103,8 +102,9 @@
+@@ -103,8 +104,9 @@
       */
      public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
      {
@@ -38,7 +31,7 @@
          if (par1World.worldProvider instanceof WorldProviderEnd && par1World.getBlockId(par2, par3 - 1, par4) == Block.bedrock.blockID)
          {
              var6 = true;
-@@ -132,12 +132,12 @@
+@@ -132,12 +134,12 @@
  
              if (!var6 && !this.canNeighborBurn(par1World, par2, par3, par4))
              {
@@ -53,7 +46,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
              }
-@@ -151,12 +151,12 @@
+@@ -151,12 +153,12 @@
                      var9 = -50;
                  }
  
@@ -72,7 +65,7 @@
  
                  for (int var10 = par2 - 1; var10 <= par2 + 1; ++var10)
                  {
-@@ -203,10 +203,22 @@
+@@ -203,10 +205,22 @@
              }
          }
      }
@@ -97,7 +90,7 @@
  
          if (par6Random.nextInt(par5) < var8)
          {
-@@ -240,7 +252,12 @@
+@@ -240,7 +254,12 @@
       */
      private boolean canNeighborBurn(World par1World, int par2, int par3, int par4)
      {
@@ -111,7 +104,7 @@
      }
  
      /**
-@@ -256,12 +273,12 @@
+@@ -256,12 +275,12 @@
          }
          else
          {
@@ -130,7 +123,7 @@
              return var6;
          }
      }
-@@ -276,21 +293,24 @@
+@@ -276,21 +295,24 @@
  
      /**
       * Checks the specified block coordinate to see if it can catch fire.  Args: blockAccess, x, y, z
@@ -158,7 +151,7 @@
      }
  
      /**
-@@ -298,7 +318,7 @@
+@@ -298,7 +320,7 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -167,7 +160,7 @@
      }
  
      /**
-@@ -307,7 +327,7 @@
+@@ -307,7 +329,7 @@
       */
      public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -176,7 +169,7 @@
          {
              par1World.setBlockWithNotify(par2, par3, par4, 0);
          }
-@@ -320,7 +340,7 @@
+@@ -320,7 +342,7 @@
      {
          if (par1World.worldProvider.worldType > 0 || par1World.getBlockId(par2, par3 - 1, par4) != Block.obsidian.blockID || !Block.portal.tryToCreatePortal(par1World, par2, par3, par4))
          {
@@ -185,7 +178,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
              }
-@@ -346,9 +366,9 @@
+@@ -346,9 +368,9 @@
          float var8;
          float var9;
  
@@ -197,7 +190,7 @@
              {
                  for (var6 = 0; var6 < 2; ++var6)
                  {
-@@ -359,7 +379,7 @@
+@@ -359,7 +381,7 @@
                  }
              }
  
@@ -206,7 +199,7 @@
              {
                  for (var6 = 0; var6 < 2; ++var6)
                  {
-@@ -370,7 +390,7 @@
+@@ -370,7 +392,7 @@
                  }
              }
  
@@ -215,7 +208,7 @@
              {
                  for (var6 = 0; var6 < 2; ++var6)
                  {
-@@ -381,7 +401,7 @@
+@@ -381,7 +403,7 @@
                  }
              }
  
@@ -224,7 +217,7 @@
              {
                  for (var6 = 0; var6 < 2; ++var6)
                  {
-@@ -392,7 +412,7 @@
+@@ -392,7 +414,7 @@
                  }
              }
  
@@ -233,7 +226,7 @@
              {
                  for (var6 = 0; var6 < 2; ++var6)
                  {
-@@ -414,4 +434,46 @@
+@@ -414,4 +436,46 @@
              }
          }
      }

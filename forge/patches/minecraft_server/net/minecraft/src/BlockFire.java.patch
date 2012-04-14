@@ -1,22 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/BlockFire.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,13 +5,13 @@
- public class BlockFire extends Block
- {
-     /** The chance this block will encourage nearby blocks to catch on fire */
--    private int[] chanceToEncourageFire = new int[256];
-+    private int[] chanceToEncourageFire = Block.blockFireSpreadSpeed;
- 
-     /**
-      * This is an array indexed by block ID the larger the number in the array the more likely a block type will catch
-      * fires
+@@ -25,6 +25,8 @@
       */
--    private int[] abilityToCatchFire = new int[256];
-+    private int[] abilityToCatchFire = Block.blockFlammability;
- 
-     protected BlockFire(int par1, int par2)
+     public void initializeBlock()
      {
-@@ -44,8 +44,7 @@
++        abilityToCatchFire = Block.blockFlammability;
++        chanceToEncourageFire = Block.blockFireSpreadSpeed;
+         this.setBurnRate(Block.planks.blockID, 5, 20);
+         this.setBurnRate(Block.fence.blockID, 5, 20);
+         this.setBurnRate(Block.stairCompactPlanks.blockID, 5, 20);
+@@ -44,8 +46,7 @@
       */
      private void setBurnRate(int par1, int par2, int par3)
      {
@@ -26,7 +19,7 @@
      }
  
      /**
-@@ -103,7 +102,8 @@
+@@ -103,7 +104,8 @@
       */
      public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
      {
@@ -36,7 +29,7 @@
  
          if (par1World.worldProvider instanceof WorldProviderEnd && par1World.getBlockId(par2, par3 - 1, par4) == Block.bedrock.blockID)
          {
-@@ -132,12 +132,12 @@
+@@ -132,12 +134,12 @@
  
              if (!var6 && !this.canNeighborBurn(par1World, par2, par3, par4))
              {
@@ -51,7 +44,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
              }
-@@ -151,12 +151,12 @@
+@@ -151,12 +153,12 @@
                      var9 = -50;
                  }
  
@@ -70,7 +63,7 @@
  
                  for (int var10 = par2 - 1; var10 <= par2 + 1; ++var10)
                  {
-@@ -204,9 +204,21 @@
+@@ -204,9 +206,21 @@
          }
      }
  
@@ -93,7 +86,7 @@
  
          if (par6Random.nextInt(par5) < var8)
          {
-@@ -240,7 +252,12 @@
+@@ -240,7 +254,12 @@
       */
      private boolean canNeighborBurn(World par1World, int par2, int par3, int par4)
      {
@@ -107,7 +100,7 @@
      }
  
      /**
-@@ -256,15 +273,15 @@
+@@ -256,15 +275,15 @@
          }
          else
          {
@@ -130,7 +123,7 @@
  
      /**
       * Returns if this block is collidable (only used by Fire). Args: x, y, z
-@@ -276,21 +293,24 @@
+@@ -276,21 +295,24 @@
  
      /**
       * Checks the specified block coordinate to see if it can catch fire.  Args: blockAccess, x, y, z
@@ -158,7 +151,7 @@
      }
  
      /**
-@@ -298,7 +318,7 @@
+@@ -298,7 +320,7 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -167,7 +160,7 @@
      }
  
      /**
-@@ -307,7 +327,7 @@
+@@ -307,7 +329,7 @@
       */
      public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -176,7 +169,7 @@
          {
              par1World.setBlockWithNotify(par2, par3, par4, 0);
          }
-@@ -320,7 +340,7 @@
+@@ -320,7 +342,7 @@
      {
          if (par1World.worldProvider.worldType > 0 || par1World.getBlockId(par2, par3 - 1, par4) != Block.obsidian.blockID || !Block.portal.tryToCreatePortal(par1World, par2, par3, par4))
          {
@@ -185,7 +178,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
              }
-@@ -330,4 +350,46 @@
+@@ -330,4 +352,46 @@
              }
          }
      }
