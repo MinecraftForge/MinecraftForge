@@ -27,7 +27,7 @@ public interface IWorldGenerator
     /**
      * Generate some world
      * 
-     * @param random the chunk specific {@link Random} as built in {@link FMLServerHandler#onChunkPopulate(net.minecraft.src.IChunkProvider, int, int, net.minecraft.src.World, net.minecraft.src.IChunkProvider)}.
+     * @param random the chunk specific {@link Random} as built in {@link FMLBukkitHandler#onChunkPopulate(net.minecraft.src.IChunkProvider, int, int, net.minecraft.src.World, net.minecraft.src.IChunkProvider)}.
      * @param chunkX the block X coordinate of this chunk.
      * @param chunkZ the block Z coordinate of this chunk.
      * @param world : additionalData[0] The minecraft {@link net.minecraft.src.World} we're generating for.

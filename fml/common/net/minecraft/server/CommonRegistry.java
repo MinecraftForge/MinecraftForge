@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package net.minecraft.src;
+package net.minecraft.server;
 
 
 public class CommonRegistry
@@ -67,34 +67,34 @@ public class CommonRegistry
         instance.registerTileEntity(tileEntityClass, id);
     }
 
-    public static void addBiome(BiomeGenBase biome)
+    public static void addBiome(Object biome)
     {
         instance.addBiome(biome);
     }
 
-    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Object... biomes)
     {
         instance.addSpawn(entityClass, weightedProb, min, max, typeOfCreature, biomes);
     }
 
     @SuppressWarnings("unchecked")
-    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, Object... biomes)
     {
         instance.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
-    public static void removeBiome(BiomeGenBase biome)
+    public static void removeBiome(Object biome)
     {
         instance.removeBiome(biome);
     }
 
-    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, Object... biomes)
     {
         instance.removeSpawn(entityClass, typeOfCreature, biomes);
     }
 
     @SuppressWarnings("unchecked")
-    public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void removeSpawn(String entityName, EnumCreatureType spawnList, Object... biomes)
     {
         instance.removeSpawn(entityName, spawnList, biomes);
     }

@@ -1,19 +1,19 @@
-package net.minecraft.src;
+package net.minecraft.server;
 
 public interface IMinecraftRegistry
 {
 
-    public abstract void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes);
+    public abstract void removeSpawn(String entityName, EnumCreatureType spawnList, Object... biomes);
 
-    public abstract void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes);
+    public abstract void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, Object... biomes);
 
-    public abstract void removeBiome(BiomeGenBase biome);
+    public abstract void removeBiome(Object biome);
 
-    public abstract void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes);
+    public abstract void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, Object... biomes);
 
-    public abstract void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes);
+    public abstract void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Object... biomes);
 
-    public abstract void addBiome(BiomeGenBase biome);
+    public abstract void addBiome(Object biome);
 
     public abstract void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id);
 
