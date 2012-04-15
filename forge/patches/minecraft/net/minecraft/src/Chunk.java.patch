@@ -167,13 +167,10 @@
          int var5 = 0;
          int var6;
  
-@@ -1324,12 +1334,26 @@
+@@ -1331,6 +1341,29 @@
+             TileEntity var9 = (TileEntity)var10.next();
+             var9.updateContainingBlockInfo();
          }
- 
-         this.generateHeightMap();
--        Iterator var10 = this.chunkTileEntityMap.values().iterator();
--
--        while (var10.hasNext())
 +        
 +        List<TileEntity> invalidList = new ArrayList<TileEntity>();
 +        iterator = chunkTileEntityMap.values().iterator();
@@ -183,23 +180,24 @@
 +            int x = tileEntity.xCoord & 15;
 +            int y = tileEntity.yCoord;
 +            int z = tileEntity.zCoord & 15;
++            /* This function is called when an entire chunk is sent, so we don't need to check the bounds.
++            if (x >= xStart && x <= xStop && y >= yStart && y <= yEnd && z >= zStart && z <= zStop)
++             */
 +            Block block = tileEntity.getBlockType();
 +            if (block == null || block.blockID != getBlockID(x, y, z) || tileEntity.getBlockMetadata() != getBlockMetadata(x, y, z))
 +            {
 +                invalidList.add(tileEntity);
 +            }
-+            tileEntity.updateContainingBlockInfo();
 +        }
 +        
 +        for (TileEntity tileEntity : invalidList)
-         {
--            TileEntity var9 = (TileEntity)var10.next();
--            var9.updateContainingBlockInfo();
++        {
 +            tileEntity.invalidate();
-         }
++        }
      }
  
-@@ -1435,4 +1459,18 @@
+     public BiomeGenBase func_48490_a(int par1, int par2, WorldChunkManager par3WorldChunkManager)
+@@ -1435,4 +1468,18 @@
              }
          }
      }

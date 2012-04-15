@@ -5,6 +5,7 @@
 
 package net.minecraft.src.forge;
 
+import net.minecraft.src.Achievement;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
@@ -901,6 +902,69 @@ public class MinecraftForge
             ret.add(item.copy());
         }
         return ret;
+    }
+    
+    //Achievement Pages ----------------------------------------
+    private static LinkedList<AchievementPage> achievementPages = new LinkedList<AchievementPage>();
+    
+    /**
+     * Registers an achievement page.
+     * @param page The page.
+     */
+    public static void registerAchievementPage(AchievementPage page)
+    {
+    	String name = page.getName();
+    	if (getAchievementPage(name) != null)
+    	{
+    		throw new RuntimeException("Duplicate achievement page name \""+name+"\"!");
+    	}
+    	achievementPages.add(page);
+    }
+    
+    /**
+     * Will return an achievement page by its index on the list.
+     * @param index The page's index.
+     * @return the achievement page corresponding to the index or null if invalid index
+     */
+    public static AchievementPage getAchievementPage(int index)
+    {
+    	return achievementPages.get(index);
+    }
+    
+    /**
+     * Will return an achievement page by its name.
+     * @param name The page's name.
+     * @return the achievement page with the given name or null if no such page
+     */
+    public static AchievementPage getAchievementPage(String name)
+    {
+    	for (AchievementPage page : achievementPages)
+    	{
+    		if (page.getName().equals(name)) return page;
+    	}
+    	return null;
+    }
+    
+    /**
+     * Will return the list of achievement pages.
+     * @return the list's size
+     */
+    public static Set<AchievementPage> getAchievementPages()
+    {
+    	return new HashSet<AchievementPage>(achievementPages);
+    }
+    
+    /**
+     * Will return whether an achievement is in any page or not.
+     * @param achievement The achievement.
+     */
+    public static boolean isAchievementInPages(Achievement achievement)
+    {
+    	for (AchievementPage page : achievementPages)
+    	{
+    		if (page.getAchievements().contains(achievement)) return true;
+    	}
+    	return false;
     }
 
     /**
