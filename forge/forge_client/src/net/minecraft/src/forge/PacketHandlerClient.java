@@ -85,9 +85,12 @@ public class PacketHandlerClient implements IPacketHandler
         double posX = (double)packet.posX / 32D;
         double posY = (double)packet.posY / 32D;
         double posZ = (double)packet.posZ / 32D;
+        float  yaw     = (float)(packet.yaw * 360) / 256.0F;
+        float  pitch   = (float)(packet.pitch * 360) / 256.0F;
+        float  yawHead = (float)(packet.yawHead * 360) / 256.0F;
         try
         {
-            Entity entity = (Entity)(cls.getConstructor(World.class, double.class, double.class, double.class).newInstance(world, posX, posY, posZ));
+            Entity entity = (Entity)(cls.getConstructor(World.class).newInstance(world));
             if (entity instanceof IThrowableEntity)
             {
                 Minecraft mc = ModLoader.getMinecraftInstance();
@@ -95,11 +98,9 @@ public class PacketHandlerClient implements IPacketHandler
                 ((IThrowableEntity)entity).setThrower(thrower);
             }
 
-            entity.serverPosX    = packet.posX;
-            entity.serverPosY    = packet.posY;
-            entity.serverPosZ    = packet.posZ;
-            entity.rotationYaw   = 0.0F;
-            entity.rotationPitch = 0.0F;
+            entity.serverPosX = packet.posX;
+            entity.serverPosY = packet.posY;
+            entity.serverPosZ = packet.posZ;
 
             Entity parts[] = entity.getParts();
             if (parts != null)
@@ -112,6 +113,17 @@ public class PacketHandlerClient implements IPacketHandler
             }
 
             entity.entityId = packet.entityID;
+            entity.setPositionAndRotation(posX, posY, posZ, yaw, pitch);
+            
+            if (entity instanceof EntityLiving)
+            {
+            	((EntityLiving)entity).rotationYawHead = yawHead;
+            }
+            
+            if (packet.metadata != null)
+            {
+                entity.getDataWatcher().updateWatchedObjectsFromList((List)packet.metadata);
+            }
 
             if (packet.throwerID > 0)
             {

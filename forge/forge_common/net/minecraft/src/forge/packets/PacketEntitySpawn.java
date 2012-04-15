@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.DataWatcher;
 import net.minecraft.src.MathHelper;
 import net.minecraft.src.forge.ISpawnHandler;
 import net.minecraft.src.forge.IThrowableEntity;
@@ -13,16 +15,20 @@ import net.minecraft.src.forge.NetworkMod;
 
 public class PacketEntitySpawn extends ForgePacket
 {
+    public int modID;
     public int entityID;
+    public int typeID;
     public int posX;
     public int posY;
     public int posZ;
+    public byte yaw;
+    public byte pitch;
+    public byte yawHead;
+    public int throwerID;
     public int speedX;
     public int speedY;
     public int speedZ;
-    public int typeID;
-    public int modID;
-    public int throwerID;
+    public Object metadata;
     private ISpawnHandler handler;
 
     public PacketEntitySpawn(){}
@@ -36,6 +42,11 @@ public class PacketEntitySpawn extends ForgePacket
 
         typeID = type;
         modID = MinecraftForge.getModID(mod);
+
+        yaw      = (byte)(ent.rotationYaw * 256.0F / 360.0F);
+        pitch    = (byte)(ent.rotationPitch * 256.0F / 360.0F);
+        yawHead  = (byte)(ent instanceof EntityLiving ? ((EntityLiving)ent).rotationYawHead * 256.0F / 360.0F : 0);
+        metadata = ent.getDataWatcher();
 
         if (ent instanceof IThrowableEntity)
         {
@@ -68,6 +79,10 @@ public class PacketEntitySpawn extends ForgePacket
         data.writeInt(posX);
         data.writeInt(posY);
         data.writeInt(posZ);
+        data.writeByte(yaw);
+        data.writeByte(pitch);
+        data.writeByte(yawHead);
+        ((DataWatcher)metadata).writeWatchableObjects(data);
         data.writeInt(throwerID);
         if (throwerID != 0)
         {
@@ -89,6 +104,10 @@ public class PacketEntitySpawn extends ForgePacket
         posX      = data.readInt();
         posY      = data.readInt();
         posZ      = data.readInt();
+        yaw       = data.readByte();
+        pitch     = data.readByte();
+        yawHead   = data.readByte();
+        metadata  = DataWatcher.readWatchableObjects(data);
         throwerID = data.readInt();
         if (throwerID != 0)
         {
