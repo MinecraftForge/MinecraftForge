@@ -31,13 +31,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onCrafting(Object... craftingParameters)
     {
-        takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
+        takenFromCrafting((EntityHuman)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
     }
 
     @Override
     public final void onSmelting(Object... smeltingParameters)
     {
-        takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
+        takenFromFurnace((EntityHuman)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
     }
     @Override
     public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
@@ -48,37 +48,37 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final boolean onChat(Object... data)
     {
-        return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
+        return onChatMessageReceived((EntityHuman)data[1], (Packet3Chat)data[0]);
     }
     @Override
     public final void onPlayerLogin(Object player)
     {
-        onClientLogin((EntityPlayer) player);
+        onClientLogin((EntityHuman) player);
     }
 
     @Override
     public void onPlayerLogout(Object player)
     {
-        onClientLogout((EntityPlayer)player);
+        onClientLogout((EntityHuman)player);
     }
     
     @Override
     public void onPlayerChangedDimension(Object player)
     {
-        onClientDimensionChanged((EntityPlayer)player);
+        onClientDimensionChanged((EntityHuman)player);
     }
 
     @Override
     public final void onPacket250Packet(Object... data)
     {
-        onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
+        onPacket250Received((EntityHuman)data[1], (Packet250CustomPayload)data[0]);
     }
 
     @Override
     public final void notifyPickup(Object... pickupData)
     {
         EntityItem item = (EntityItem) pickupData[0];
-        EntityPlayer player = (EntityPlayer) pickupData[1];
+        EntityHuman player = (EntityHuman) pickupData[1];
         onItemPickup(player, item.itemStack);
     }
 
@@ -194,7 +194,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param player
      * @param item
      */
-    public void onItemPickup(EntityPlayer player, ItemStack item)
+    public void onItemPickup(EntityHuman player, ItemStack item)
     {
     }
 
@@ -210,7 +210,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Not implemented because on the server you don't know who it's from
-     * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
+     * {@link #onChatMessageReceived(EntityHuman, Packet3Chat)}
      * @param text
      */
     @Deprecated
@@ -220,7 +220,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Not implemented because on the server you don't know who it's from
-     * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
+     * {@link #onPacket250Received(EntityHuman, Packet250CustomPayload)}
      * @param packet
      */
     @Deprecated
@@ -234,7 +234,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param item
      * @param matrix
      */
-    public void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory matrix)
+    public void takenFromCrafting(EntityHuman player, ItemStack item, IInventory matrix)
     {
     }
 
@@ -244,7 +244,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param player
      * @param item
      */
-    public void takenFromFurnace(EntityPlayer player, ItemStack item)
+    public void takenFromFurnace(EntityHuman player, ItemStack item)
     {
     }
 
@@ -263,7 +263,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param source
      * @param payload
      */
-    public void onPacket250Received(EntityPlayer source, Packet250CustomPayload payload)
+    public void onPacket250Received(EntityHuman source, Packet250CustomPayload payload)
     {
     }
 
@@ -273,7 +273,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param chat
      * @return true if you want to consume the message so it is not available for further processing
      */
-    public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat)
+    public boolean onChatMessageReceived(EntityHuman source, Packet3Chat chat)
     {
         return false;
     }
@@ -292,7 +292,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * 
      * @param player 
      */
-    public void onClientLogin(EntityPlayer player)
+    public void onClientLogin(EntityHuman player)
     {
     }
 
@@ -301,7 +301,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * 
      * @param player
      */
-    public void onClientLogout(EntityPlayer player)
+    public void onClientLogout(EntityHuman player)
     {
         
     }
@@ -312,7 +312,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * 
      * @param player
      */
-    public void onClientDimensionChanged(EntityPlayer player)
+    public void onClientDimensionChanged(EntityHuman player)
     {
         
     }

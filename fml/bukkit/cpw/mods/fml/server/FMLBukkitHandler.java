@@ -25,7 +25,6 @@ import net.minecraft.server.BiomeBase;
 import net.minecraft.server.CommonRegistry;
 import net.minecraft.server.EntityItem;
 import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.IChunkProvider;
 import net.minecraft.server.ICommandListener;
 import net.minecraft.server.IInventory;
