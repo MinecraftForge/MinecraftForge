@@ -9,7 +9,18 @@
  public class Chunk
  {
      /**
-@@ -585,7 +587,7 @@
+@@ -120,7 +122,9 @@
+             {
+                 for (int var8 = 0; var8 < var5; ++var8)
+                 {
+-                    byte var9 = par2ArrayOfByte[var6 << 11 | var7 << 7 | var8];
++                    /* FORGE: The following change, a cast from unsigned byte to int,
++                     * fixes a vanilla bug when generating new chunks that contain a block ID > 127 */
++                    int var9 = par2ArrayOfByte[var6 << 11 | var7 << 7 | var8] & 0xFF;
+ 
+                     if (var9 != 0)
+                     {
+@@ -585,7 +589,7 @@
                  {
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
@@ -18,7 +29,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -629,32 +631,23 @@
+@@ -629,32 +633,23 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                      }
  
@@ -54,7 +65,7 @@
                  this.isModified = true;
                  return true;
              }
-@@ -686,7 +679,7 @@
+@@ -686,7 +681,7 @@
                  var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
@@ -63,7 +74,7 @@
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -852,34 +845,33 @@
+@@ -852,34 +847,33 @@
      {
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
@@ -109,7 +120,7 @@
      }
  
      /**
-@@ -894,7 +886,7 @@
+@@ -894,7 +888,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -118,7 +129,7 @@
          }
      }
  
-@@ -909,8 +901,14 @@
+@@ -909,8 +903,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -134,7 +145,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -946,6 +944,7 @@
+@@ -946,6 +946,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[var1]);
          }
@@ -142,7 +153,7 @@
      }
  
      /**
-@@ -966,6 +965,7 @@
+@@ -966,6 +967,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[var3]);
          }
@@ -150,7 +161,7 @@
      }
  
      /**
-@@ -1228,6 +1228,16 @@
+@@ -1228,6 +1230,16 @@
  
      public void func_48494_a(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -167,7 +178,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1324,12 +1334,26 @@
+@@ -1324,12 +1336,26 @@
          }
  
          this.generateHeightMap();
@@ -199,7 +210,7 @@
          }
      }
  
-@@ -1435,4 +1459,18 @@
+@@ -1435,4 +1461,18 @@
              }
          }
      }
