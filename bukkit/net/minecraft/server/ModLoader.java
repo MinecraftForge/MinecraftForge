@@ -363,7 +363,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLBukkitHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
+     * {@link FMLBukkitHandler#handlePacket250(Packet250CustomPayload, EntityHuman)}
      * @param packet
      */
     @Deprecated
@@ -499,7 +499,7 @@ public class ModLoader
 
     /**
      * This method is unimplemented on the server: it is meant for clients to send chat to the server
-     * {@link FMLBukkitHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
+     * {@link FMLBukkitHandler#handleChatPacket(Packet3Chat, EntityHuman)}
      * @param text
      */
     @Deprecated
@@ -551,24 +551,24 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLBukkitHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
+     * {@link FMLBukkitHandler#onItemCrafted(EntityHuman, ItemStack, IInventory)}
      * @param player
      * @param item
      * @param matrix
      */
     @Deprecated
-    public static void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory matrix)
+    public static void takenFromCrafting(EntityHuman player, ItemStack item, IInventory matrix)
     {
     }
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLBukkitHandler#onItemSmelted(EntityPlayer, ItemStack)}
+     * {@link FMLBukkitHandler#onItemSmelted(EntityHuman, ItemStack)}
      * @param player
      * @param item
      */
     @Deprecated
-    public static void takenFromFurnace(EntityPlayer player, ItemStack item)
+    public static void takenFromFurnace(EntityHuman player, ItemStack item)
     {
     }
 
@@ -601,7 +601,7 @@ public class ModLoader
      * @param channel
      * @return
      */
-    public static boolean isChannelActive(EntityPlayer player, String channel)
+    public static boolean isChannelActive(EntityHuman player, String channel)
     {
         return FMLCommonHandler.instance().isChannelActive(channel, player);
     }
