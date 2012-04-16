@@ -14,6 +14,9 @@ package net.minecraft.server;
 
 import java.util.Random;
 
+import org.bukkit.craftbukkit.generator.NetherChunkGenerator;
+import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
+
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
@@ -85,13 +88,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         World w = (World) additionalData[0];
         IChunkProvider cp = (IChunkProvider) additionalData[1];
 
-        if (cp instanceof ChunkProviderGenerate)
-        {
-            generateSurface(w, random, chunkX << 4, chunkZ << 4);
-        }
-        else if (cp instanceof ChunkProviderHell)
+        if (cp instanceof ChunkProviderHell || cp instanceof NetherChunkGenerator)
         {
             generateNether(w, random, chunkX << 4, chunkZ << 4);
+        }
+        else if (cp instanceof ChunkProviderGenerate || cp instanceof NormalChunkGenerator)
+        {
+            generateSurface(w, random, chunkX << 4, chunkZ << 4);
         }
     }
 
