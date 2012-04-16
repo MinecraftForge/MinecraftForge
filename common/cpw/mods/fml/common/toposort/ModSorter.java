@@ -73,7 +73,9 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(before, mod);
-                    modGraph.addEdge(nameLookup.get(dep), mod);
+                    if (nameLookup.containsKey(dep)) {
+                        modGraph.addEdge(nameLookup.get(dep), mod);
+                    }
                 }
             }
 
@@ -91,7 +93,9 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(mod, after);
-                    modGraph.addEdge(mod, nameLookup.get(dep));
+                    if (nameLookup.containsKey(dep)) {
+                        modGraph.addEdge(mod, nameLookup.get(dep));
+                    }
                 }
             }
 
