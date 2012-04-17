@@ -1,0 +1,108 @@
+--- ../src_base/minecraft/net/minecraft/src/GuiAchievements.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/GuiAchievements.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,6 +1,11 @@
+ package net.minecraft.src;
+ 
++import java.util.LinkedList;
++import java.util.List;
+ import java.util.Random;
++
++import net.minecraft.src.forge.MinecraftForge;
++
+ import org.lwjgl.input.Mouse;
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+@@ -40,6 +45,10 @@
+     /** Whether the Mouse Button is down or not */
+     private int isMouseButtonDown = 0;
+     private StatFileWriter statFileWriter;
++    
++    private int currentPage = -1;
++    private GuiSmallButton button;
++    private LinkedList<Achievement> minecraftAchievements = new LinkedList<Achievement>();
+ 
+     public GuiAchievements(StatFileWriter par1StatFileWriter)
+     {
+@@ -48,6 +57,15 @@
+         short var3 = 141;
+         this.field_27116_m = this.guiMapX = this.field_27112_q = (double)(AchievementList.openInventory.displayColumn * 24 - var2 / 2 - 12);
+         this.field_27115_n = this.guiMapY = this.field_27111_r = (double)(AchievementList.openInventory.displayRow * 24 - var3 / 2);
++
++        minecraftAchievements.clear();
++        for (Object achievement : AchievementList.achievementList)
++        {
++            if (!MinecraftForge.isAchievementInPages((Achievement)achievement))
++            {
++                minecraftAchievements.add((Achievement)achievement);
++            }
++        }
+     }
+ 
+     /**
+@@ -57,6 +75,8 @@
+     {
+         this.controlList.clear();
+         this.controlList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
++        button = new GuiSmallButton(2, (width - achievementsPaneWidth) / 2 + 24, height / 2 + 74, 125, 20, getAchievementPageTitle(currentPage));
++        this.controlList.add(button);
+     }
+ 
+     /**
+@@ -69,6 +89,16 @@
+             this.mc.displayGuiScreen((GuiScreen)null);
+             this.mc.setIngameFocus();
+         }
++        
++        if (par1GuiButton.id == 2) 
++        {
++            currentPage++;
++            if (currentPage >= MinecraftForge.getAchievementPages().size())
++            {
++                currentPage = -1;
++            }
++            button.displayString = getAchievementPageTitle(currentPage);
++        }
+ 
+         super.actionPerformed(par1GuiButton);
+     }
+@@ -289,11 +319,12 @@
+         int var27;
+         int var30;
+ 
+-        for (var22 = 0; var22 < AchievementList.achievementList.size(); ++var22)
++        List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : MinecraftForge.getAchievementPage(currentPage).getAchievements());
++        for (var22 = 0; var22 < achievementList.size(); ++var22)
+         {
+-            Achievement var33 = (Achievement)AchievementList.achievementList.get(var22);
++            Achievement var33 = achievementList.get(var22);
+ 
+-            if (var33.parentAchievement != null)
++            if (var33.parentAchievement != null && achievementList.contains(var33.parentAchievement))
+             {
+                 var24 = var33.displayColumn * 24 - var4 + 11 + var10;
+                 var25 = var33.displayRow * 24 - var5 + 11 + var11;
+@@ -327,9 +358,9 @@
+         int var42;
+         int var41;
+ 
+-        for (var24 = 0; var24 < AchievementList.achievementList.size(); ++var24)
++        for (var24 = 0; var24 < achievementList.size(); ++var24)
+         {
+-            Achievement var35 = (Achievement)AchievementList.achievementList.get(var24);
++            Achievement var35 = achievementList.get(var24);
+             var26 = var35.displayColumn * 24 - var4;
+             var27 = var35.displayRow * 24 - var5;
+ 
+@@ -453,4 +484,12 @@
+     {
+         return true;
+     }
++    
++    /**
++     * FORGE: Gets the name for an achievement page by its index
++     */
++    public static String getAchievementPageTitle(int index)
++    {
++        return index == -1 ? "Minecraft" : MinecraftForge.getAchievementPage(index).getName();
++    }
+ }
