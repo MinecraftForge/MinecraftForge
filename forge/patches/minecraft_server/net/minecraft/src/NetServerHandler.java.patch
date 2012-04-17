@@ -53,24 +53,53 @@
              {
                  this.playerEntity.itemInWorldManager.activeBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8);
              }
-@@ -602,9 +609,13 @@
-             }
+@@ -603,8 +610,12 @@
              else
              {
--                var2 = "<" + this.playerEntity.username + "> " + var2;
+                 var2 = "<" + this.playerEntity.username + "> " + var2;
 -                logger.info(var2);
 -                this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(var2));
 +                var2 = ForgeHooks.onServerChat(playerEntity, var2);
 +                if (var2 != null)
 +                {
-+                    var2 = "<" + this.playerEntity.username + "> " + var2;
 +                    logger.info(var2);
 +                    this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(var2));
 +                }
              }
  
              this.field_45001_m += 20;
-@@ -648,6 +659,10 @@
+@@ -624,8 +635,12 @@
+         if (par1Str.toLowerCase().startsWith("/me "))
+         {
+             par1Str = "* " + this.playerEntity.username + " " + par1Str.substring(par1Str.indexOf(" ")).trim();
+-            logger.info(par1Str);
+-            this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(par1Str));
++            par1Str = ForgeHooks.onServerMeCommand(playerEntity, par1Str);
++            if(par1Str != null)
++            {
++                logger.info(par1Str);
++                this.mcServer.configManager.sendPacketToAllPlayers(new Packet3Chat(par1Str));
++            }
+         }
+         else if (par1Str.toLowerCase().startsWith("/kill"))
+         {
+@@ -640,14 +655,22 @@
+                 par1Str = par1Str.substring(par1Str.indexOf(" ")).trim();
+                 par1Str = par1Str.substring(par1Str.indexOf(" ")).trim();
+                 par1Str = "\u00a77" + this.playerEntity.username + " whispers " + par1Str;
+-                logger.info(par1Str + " to " + var2[1]);
+-
+-                if (!this.mcServer.configManager.sendPacketToPlayer(var2[1], new Packet3Chat(par1Str)))
++                par1Str = ForgeHooks.onServerTellCommand(playerEntity, var2[1], par1Str);
++                if(par1Str != null)
+                 {
+-                    this.sendPacket(new Packet3Chat("\u00a7cThere\'s no player by that name online."));
++                    logger.info(par1Str + " to " + var2[1]);
++    
++                    if (!this.mcServer.configManager.sendPacketToPlayer(var2[1], new Packet3Chat(par1Str)))
++                    {
++                        this.sendPacket(new Packet3Chat("\u00a7cThere\'s no player by that name online."));
++                    }
                  }
              }
          }
@@ -81,7 +110,7 @@
          else
          {
              String var3;
-@@ -765,9 +780,10 @@
+@@ -765,9 +788,10 @@
       */
      public void handleRespawn(Packet9Respawn par1Packet9Respawn)
      {
@@ -93,7 +122,7 @@
          }
          else
          {
-@@ -776,7 +792,7 @@
+@@ -776,7 +800,7 @@
                  return;
              }
  
@@ -102,7 +131,7 @@
          }
      }
  
-@@ -969,9 +985,50 @@
+@@ -969,9 +993,50 @@
      {
          this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.isFlying && this.playerEntity.capabilities.allowFlying;
      }
