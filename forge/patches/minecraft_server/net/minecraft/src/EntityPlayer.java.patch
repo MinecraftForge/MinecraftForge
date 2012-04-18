@@ -15,7 +15,7 @@
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -177,6 +185,7 @@
+@@ -172,6 +180,7 @@
              }
              else
              {
@@ -23,7 +23,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -366,6 +375,10 @@
+@@ -361,6 +370,10 @@
       */
      protected void closeScreen()
      {
@@ -34,7 +34,7 @@
          this.craftingInventory = this.inventorySlots;
      }
  
-@@ -549,7 +562,16 @@
+@@ -544,7 +557,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -52,7 +52,7 @@
      }
  
      /**
-@@ -615,10 +637,18 @@
+@@ -609,10 +631,18 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -72,7 +72,7 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -914,7 +944,11 @@
+@@ -908,7 +938,11 @@
              par2 = 1 + par2 >> 1;
          }
  
@@ -85,7 +85,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -945,6 +979,10 @@
+@@ -939,6 +973,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -96,7 +96,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -975,7 +1013,9 @@
+@@ -969,7 +1007,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -106,7 +106,7 @@
      }
  
      /**
-@@ -1004,6 +1044,16 @@
+@@ -998,6 +1038,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -123,7 +123,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1142,6 +1192,12 @@
+@@ -1136,6 +1186,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -136,7 +136,55 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1725,4 +1781,45 @@
+@@ -1173,8 +1229,8 @@
+ 
+         if (this.worldObj.blockExists(par1, par2, par3))
+         {
+-            int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
+-            int var5 = BlockBed.getDirection(var9);
++            int blockId = this.worldObj.getBlockId(par1, par2, par3);
++            int var5 = Block.blocksList[blockId].getBedOrientation(this.worldObj, par1, par2, par3);
+             float var10 = 0.5F;
+             float var7 = 0.5F;
+ 
+@@ -1250,11 +1306,12 @@
+         this.resetHeight();
+         ChunkCoordinates var4 = this.playerLocation;
+         ChunkCoordinates var5 = this.playerLocation;
++        int blockId = this.worldObj.getBlockId(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ);
+ 
+-        if (var4 != null && this.worldObj.getBlockId(var4.posX, var4.posY, var4.posZ) == Block.bed.blockID)
++        if (Block.blocksList[blockId].getIsBed())
+         {
+-            BlockBed.setBedOccupied(this.worldObj, var4.posX, var4.posY, var4.posZ, false);
+-            var5 = BlockBed.getNearestEmptyChunkCoordinates(this.worldObj, var4.posX, var4.posY, var4.posZ, 0);
++            Block.blocksList[blockId].setBedOccupied(this.worldObj, var4.posX, var4.posY, var4.posZ, false);
++            var5 = Block.blocksList[blockId].getNearestEmptyChunkCoordinates(this.worldObj, var4.posX, var4.posY, var4.posZ, 0);
+ 
+             if (var5 == null)
+             {
+@@ -1291,7 +1348,8 @@
+      */
+     private boolean isInBed()
+     {
+-        return this.worldObj.getBlockId(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ) == Block.bed.blockID;
++        int blockId = this.worldObj.getBlockId(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ);
++        return Block.blocksList[blockId].getIsBed();
+     }
+ 
+     /**
+@@ -1305,8 +1363,9 @@
+         var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ - 3 >> 4);
+         var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
+         var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
++        int blockId = par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ);
+ 
+-        if (par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) != Block.bed.blockID)
++        if (!Block.blocksList[blockId].getIsBed())
+         {
+             return null;
+         }
+@@ -1719,4 +1778,45 @@
      }
  
      public void func_50022_L() {}
