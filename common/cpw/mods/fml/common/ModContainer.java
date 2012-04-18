@@ -13,6 +13,7 @@
  */
 package cpw.mods.fml.common;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -69,10 +70,10 @@ public interface ModContainer
      */
     boolean matches(Object mod);
     /**
-     * The source of this mod: usually the file name on the file system
+     * The source of this mod: the file on the file system
      * @return
      */
-    String getSource();
+    File getSource();
     /**
      * The actual mod object itself
      * @return

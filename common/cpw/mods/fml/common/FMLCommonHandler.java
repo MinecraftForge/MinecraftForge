@@ -245,9 +245,9 @@ public class FMLCommonHandler
      * @param canonicalPath
      * @return
      */
-    public ModContainer loadBaseModMod(Class<?> clazz, String canonicalPath)
+    public ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile)
     {
-        return sidedDelegate.loadBaseModMod(clazz, canonicalPath);
+        return sidedDelegate.loadBaseModMod(clazz, canonicalFile);
     }
     
     public File getMinecraftRootDirectory() {

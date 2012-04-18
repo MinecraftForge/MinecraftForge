@@ -8,7 +8,7 @@ public interface IFMLSidedHandler
     Logger getMinecraftLogger();
     File getMinecraftRootDirectory();
     boolean isModLoaderMod(Class<?> clazz);
-    ModContainer loadBaseModMod(Class<?> clazz, String canonicalPath);
+    ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile);
     boolean isServer();
     boolean isClient();
 }
