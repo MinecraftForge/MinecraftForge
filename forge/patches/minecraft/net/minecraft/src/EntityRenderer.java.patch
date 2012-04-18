@@ -1,4 +1,4 @@
---- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java 0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
 @@ -5,6 +5,8 @@
  import java.util.List;
@@ -36,7 +36,20 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -1095,8 +1104,11 @@
+@@ -393,10 +402,9 @@
+             {
+                 int var10 = this.mc.theWorld.getBlockId(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+ 
+-                if (var10 == Block.bed.blockID)
++                if (Block.blocksList[var10].getIsBed())
+                 {
+-                    int var11 = this.mc.theWorld.getBlockMetadata(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+-                    int var12 = var11 & 3;
++                    int var12 = Block.blocksList[var10].getBedOrientation(var2.worldObj, MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+                     GL11.glRotatef((float)(var12 * 90), 0.0F, 1.0F, 0.0F);
+                 }
+ 
+@@ -1095,8 +1103,11 @@
                      var20 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      Profiler.endStartSection("outline");
@@ -50,70 +63,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1119,28 +1131,31 @@
-                     GL11.glShadeModel(GL11.GL_SMOOTH);
-                 }
- 
--                GL11.glColorMask(false, false, false, false);
--                var16 = var5.sortAndRender(var4, 1, (double)par1);
--
--                if (this.mc.gameSettings.anaglyph)
--                {
--                    if (anaglyphField == 0)
--                    {
--                        GL11.glColorMask(false, true, true, true);
--                    }
--                    else
--                    {
--                        GL11.glColorMask(true, false, false, true);
--                    }
--                }
--                else
-+                for (int x=1; x<3; x++)
-                 {
--                    GL11.glColorMask(true, true, true, true);
--                }
-+                	GL11.glColorMask(false, false, false, false);
-+                	var16 = var5.sortAndRender(var4, x, (double)par1);
- 
--                if (var16 > 0)
--                {
--                    var5.renderAllRenderLists(1, (double)par1);
-+                	if (this.mc.gameSettings.anaglyph)
-+                	{
-+                		if (anaglyphField == 0)
-+                		{
-+                			GL11.glColorMask(false, true, true, true);
-+                		}
-+                		else
-+                		{
-+                			GL11.glColorMask(true, false, false, true);
-+                		}
-+                	}
-+                	else
-+                	{
-+                		GL11.glColorMask(true, true, true, true);
-+                	}
-+
-+                	if (var16 > 0)
-+                	{
-+                		var5.renderAllRenderLists(x, (double)par1);
-+                	}
-                 }
- 
-                 GL11.glShadeModel(GL11.GL_FLAT);
-@@ -1149,6 +1164,10 @@
-             {
-                 Profiler.endStartSection("water");
-                 var5.sortAndRender(var4, 1, (double)par1);
-+                GL11.glColorMask(false, false, false, false);
-+                var16 = var5.sortAndRender(var4, 2, (double)par1);
-+                GL11.glColorMask(true, true, true, true);
-+                if (var16 > 0) var5.renderAllRenderLists(2, (double)par1);
-             }
- 
-             GL11.glDepthMask(true);
-@@ -1160,8 +1179,12 @@
+@@ -1160,8 +1171,12 @@
                  var20 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  Profiler.endStartSection("outline");
@@ -128,7 +78,7 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-@@ -1185,6 +1208,9 @@
+@@ -1185,6 +1200,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }

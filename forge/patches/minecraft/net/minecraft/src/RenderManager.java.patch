@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderManager.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/RenderManager.java	0000-00-00 00:00:00.000000000 -0000
+@@ -127,10 +127,9 @@
+         {
+             int var7 = par1World.getBlockId(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+ 
+-            if (var7 == Block.bed.blockID)
++            if (Block.blocksList[var7].getIsBed())
+             {
+-                int var8 = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+-                int var9 = var8 & 3;
++                int var9 = Block.blocksList[var7].getBedOrientation(par4EntityLiving.worldObj, MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+                 this.playerViewY = (float)(var9 * 90 + 180);
+                 this.playerViewX = 0.0F;
+             }
