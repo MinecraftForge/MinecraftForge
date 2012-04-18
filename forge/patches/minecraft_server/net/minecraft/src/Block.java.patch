@@ -9,6 +9,15 @@
  public class Block
  {
      public static final StepSound soundPowderFootstep = new StepSound("stone", 1.0F, 1.0F);
+@@ -64,7 +66,7 @@
+     public static final Block dispenser = (new BlockDispenser(23)).setHardness(3.5F).setStepSound(soundStoneFootstep).setBlockName("dispenser").setRequiresSelfNotify();
+     public static final Block sandStone = (new BlockSandStone(24)).setStepSound(soundStoneFootstep).setHardness(0.8F).setBlockName("sandStone").setRequiresSelfNotify();
+     public static final Block music = (new BlockNote(25)).setHardness(0.8F).setBlockName("musicBlock").setRequiresSelfNotify();
+-    public static final Block bed = (new BlockBed(26)).setHardness(0.2F).setBlockName("bed").disableStats().setRequiresSelfNotify();
++    public static final Block bed = (new BlockBed(26)).setHardness(0.2F).setBlockName("bed").disableStats().setRequiresSelfNotify().setIsBed();
+     public static final Block railPowered = (new BlockRail(27, 179, true)).setHardness(0.7F).setStepSound(soundMetalFootstep).setBlockName("goldenRail").setRequiresSelfNotify();
+     public static final Block railDetector = (new BlockDetectorRail(28, 195)).setHardness(0.7F).setStepSound(soundMetalFootstep).setBlockName("detectorRail").setRequiresSelfNotify();
+     public static final Block pistonStickyBase = (new BlockPistonBase(29, 106, true)).setBlockName("pistonStickyBase").setRequiresSelfNotify();
 @@ -397,7 +399,7 @@
  
      public boolean hasTileEntity()
@@ -59,16 +68,7 @@
                  }
              }
          }
-@@ -853,7 +855,7 @@
-         par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
-         par2EntityPlayer.addExhaustion(0.025F);
- 
--        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-+        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-         {
-             ItemStack var8 = this.createStackedBlock(par6);
- 
-@@ -970,6 +972,396 @@
+@@ -967,6 +969,396 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -465,3 +465,44 @@
      static
      {
          Item.itemsList[cloth.blockID] = (new ItemCloth(cloth.blockID - 256)).setItemName("cloth");
+@@ -1022,4 +1414,40 @@
+         canBlockGrass[0] = true;
+         StatList.initBreakableStats();
+     }
++
++    protected boolean isBed;
++
++    protected Block setIsBed()
++    {
++        this.isBed = true;
++        return this;
++    }
++
++    public boolean getIsBed()
++    {
++        return this.isBed;
++    }
++
++    public int getBedOrientation(World world, int x, int y, int z)
++    {
++        int meta = world.getBlockMetadata(x, y, z);
++        return meta & 3;
++    }
++
++    public static void setBedOccupied(World par0World, int par1, int par2, int par3, boolean par4){}
++
++    public static ChunkCoordinates getNearestEmptyChunkCoordinates(World par0World, int par1, int par2, int par3, int par4)
++    {
++        return null;
++    }
++
++    public StepSound getStepSound(int meta)
++    {
++        return null;
++    }
++
++    public StepSound getBreakSound(int meta)
++    {
++        return null;
++    }
+ }
