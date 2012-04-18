@@ -1,0 +1,19 @@
+--- ../src_base/minecraft_server/net/minecraft/src/ItemBlock.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/ItemBlock.java	0000-00-00 00:00:00.000000000 -0000
+@@ -89,7 +89,15 @@
+                     Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer);
+                 }
+ 
+-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var9.stepSound.getStepSound(), (var9.stepSound.getVolume() + 1.0F) / 2.0F, var9.stepSound.getPitch() * 0.8F);
++                int meta = par3World.getBlockMetadata(par4, par5, par6);
++                StepSound breakSound = var9.getBreakSound(meta);
++
++                if (breakSound == null)
++                {
++                    breakSound = Block.blocksList[this.blockID].stepSound;
++                }
++
++                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), breakSound.getStepSound(), (breakSound.getVolume() + 1.0F) / 2.0F, breakSound.getPitch() * 0.8F);
+                 --par1ItemStack.stackSize;
+             }
+ 

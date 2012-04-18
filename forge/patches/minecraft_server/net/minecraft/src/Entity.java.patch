@@ -40,7 +40,23 @@
      public DataWatcher getDataWatcher()
      {
          return this.dataWatcher;
-@@ -1215,6 +1241,10 @@
+@@ -801,7 +827,14 @@
+      */
+     protected void playStepSound(int par1, int par2, int par3, int par4)
+     {
+-        StepSound var5 = Block.blocksList[par4].stepSound;
++        Block block = Block.blocksList[par4];
++        int meta = this.worldObj.getBlockMetadata(par1, par2, par3);
++        StepSound var5 = block.getStepSound(meta);
++
++        if (var5 == null)
++        {
++            var5 = Block.blocksList[par4].stepSound;
++        }
+ 
+         if (this.worldObj.getBlockId(par1, par2 + 1, par3) == Block.snow.blockID)
+         {
+@@ -1215,6 +1248,10 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -51,7 +67,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1256,6 +1286,10 @@
+@@ -1256,6 +1293,10 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
