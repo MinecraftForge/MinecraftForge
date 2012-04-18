@@ -185,11 +185,11 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Load the supplied mod class into a mod container
      */
-    public ModContainer loadBaseModMod(Class<?> clazz, String canonicalPath)
+    public ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile)
     {
         @SuppressWarnings("unchecked")
         Class <? extends BaseMod > bmClazz = (Class <? extends BaseMod >) clazz;
-        return new ModLoaderModContainer(bmClazz, canonicalPath);
+        return new ModLoaderModContainer(bmClazz, canonicalFile);
     }
 
     /**
