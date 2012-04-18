@@ -9,7 +9,26 @@
  
      /** Number of ticks since this EntityLiving last produced its sound */
      private int livingSoundTime;
-@@ -1333,7 +1333,7 @@
+@@ -1162,8 +1162,16 @@
+ 
+             if (var3 > 0)
+             {
+-                StepSound var4 = Block.blocksList[var3].stepSound;
+-                this.worldObj.playSoundAtEntity(this, var4.getStepSound(), var4.getVolume() * 0.5F, var4.getPitch() * 0.75F);
++                Block block = Block.blocksList[var3];
++                int meta = this.worldObj.getBlockMetadata(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - 0.20000000298023224D - (double)this.yOffset), MathHelper.floor_double(this.posZ));
++                StepSound var4 = block.getBreakSound(meta);
++
++                if (var4 == null)
++                {
++                    var4 = Block.blocksList[var3].stepSound;
++                }
++
++            	this.worldObj.playSoundAtEntity(this, var4.getStepSound(), var4.getVolume() * 0.5F, var4.getPitch() * 0.75F);
+             }
+         }
+     }
+@@ -1330,7 +1338,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);

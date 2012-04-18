@@ -36,16 +36,28 @@
              {
                  this.onPlayerDestroyBlock(par1, par2, par3, par4);
              }
-@@ -117,7 +124,7 @@
+@@ -117,11 +124,18 @@
                  }
  
                  Block var6 = Block.blocksList[var5];
 -                this.curBlockDamage += var6.blockStrength(this.mc.thePlayer);
 +                this.curBlockDamage += var6.blockStrength(mc.theWorld, this.mc.thePlayer, par1, par2, par3);
++                int meta = mc.theWorld.getBlockMetadata(par1, par2, par3);
++                StepSound breakSound = var6.getBreakSound(meta);
++
++                if (breakSound == null)
++                {
++                    breakSound = Block.blocksList[var5].stepSound;
++                }
  
                  if (this.blockDestroySoundCounter % 4.0F == 0.0F && var6 != null)
                  {
-@@ -195,8 +202,34 @@
+-                    this.mc.sndManager.playSound(var6.stepSound.getStepSound(), (float)par1 + 0.5F, (float)par2 + 0.5F, (float)par3 + 0.5F, (var6.stepSound.getVolume() + 1.0F) / 8.0F, var6.stepSound.getPitch() * 0.5F);
++                    this.mc.sndManager.playSound(breakSound.getStepSound(), (float)par1 + 0.5F, (float)par2 + 0.5F, (float)par3 + 0.5F, (breakSound.getVolume() + 1.0F) / 8.0F, breakSound.getPitch() * 0.5F);
+                 }
+ 
+                 ++this.blockDestroySoundCounter;
+@@ -195,8 +209,34 @@
       */
      public boolean onPlayerRightClick(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7)
      {

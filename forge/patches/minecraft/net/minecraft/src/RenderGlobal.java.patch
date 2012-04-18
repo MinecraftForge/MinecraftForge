@@ -1,4 +1,4 @@
---- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java     0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java	0000-00-00 00:00:00.000000000 -0000
 @@ -15,10 +15,10 @@
      public List tileEntities = new ArrayList();
@@ -26,33 +26,6 @@
  
      /** OpenGL occlusion query base */
      private IntBuffer glOcclusionQueryBase;
-@@ -149,7 +149,7 @@
-         this.renderEngine = par2RenderEngine;
-         byte var3 = 34;
-         byte var4 = 32;
--        this.glRenderListBase = GLAllocation.generateDisplayLists(var3 * var3 * var4 * 3);
-+        this.glRenderListBase = GLAllocation.generateDisplayLists(var3 * var3 * var4 * 4);
-         this.occlusionEnabled = OpenGlCapsChecker.checkARBOcclusion();
- 
-         if (this.occlusionEnabled)
-@@ -356,7 +356,7 @@
-                         this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4].markDirty();
-                         this.sortedWorldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4] = this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4];
-                         this.worldRenderersToUpdate.add(this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4]);
--                        var2 += 3;
-+                        var2 += 4;
-                     }
-                 }
-             }
-@@ -1385,7 +1385,7 @@
-         }
-         else
-         {
--            byte var4 = 2;
-+            byte var4 = 3;
-             RenderSorter var5 = new RenderSorter(par1EntityLiving);
-             WorldRenderer[] var6 = new WorldRenderer[var4];
-             ArrayList var7 = null;
 @@ -1835,6 +1835,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
@@ -98,3 +71,20 @@
                      }
  
                      return (EntityFX)var21;
+@@ -2157,7 +2162,15 @@
+                 if (var8 > 0)
+                 {
+                     Block var34 = Block.blocksList[var8];
+-                    this.mc.sndManager.playSound(var34.stepSound.getBreakSound(), (float)par3 + 0.5F, (float)par4 + 0.5F, (float)par5 + 0.5F, (var34.stepSound.getVolume() + 1.0F) / 2.0F, var34.stepSound.getPitch() * 0.8F);
++                    int meta = this.worldObj.getBlockMetadata(par3, par4, par5);
++                    StepSound breakSound = var34.getBreakSound(meta);
++
++                    if (breakSound == null)
++                    {
++                        breakSound = Block.blocksList[var8].stepSound;
++                    }
++
++                    this.mc.sndManager.playSound(breakSound.getBreakSound(), (float)par3 + 0.5F, (float)par4 + 0.5F, (float)par5 + 0.5F, (breakSound.getVolume() + 1.0F) / 2.0F, breakSound.getPitch() * 0.8F);
+                 }
+ 
+                 this.mc.effectRenderer.addBlockDestroyEffects(par3, par4, par5, par6 & 4095, par6 >> 12 & 255);
