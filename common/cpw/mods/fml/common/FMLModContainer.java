@@ -12,6 +12,7 @@
  */
 package cpw.mods.fml.common;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +20,13 @@ public class FMLModContainer implements ModContainer
 {
     private Mod modDescriptor;
     private Object modInstance;
-    private String source;
+    private File source;
 
-    public FMLModContainer(String source)
+    public FMLModContainer(String dummy)
+    {
+        this(new File(dummy));
+    }
+    public FMLModContainer(File source)
     {
         this.source = source;
     }
@@ -106,7 +111,7 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public String getSource()
+    public File getSource()
     {
         return source;
     }
@@ -229,7 +234,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public String toString()
     {
-        return getSource();
+        return getSource().getName();
     }
 
     /* (non-Javadoc)

@@ -43,11 +43,11 @@ public class ModLoaderModContainer implements ModContainer
     private Class <? extends BaseMod > modClazz;
     private BaseMod mod;
     private boolean isTicking;
-    private String modSource ;
+    private File modSource ;
     private ArrayList<String> dependencies;
     private ArrayList<String> preDependencies;
     private ArrayList<String> postDependencies;
-    public ModLoaderModContainer(Class <? extends BaseMod > modClazz, String modSource)
+    public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
         this.modSource = modSource;
@@ -334,7 +334,7 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public String getSource()
+    public File getSource()
     {
         return modSource;
     }
@@ -475,7 +475,7 @@ public class ModLoaderModContainer implements ModContainer
 
     public String toString()
     {
-        return modSource;
+        return modSource.getName();
     }
 
     @Override

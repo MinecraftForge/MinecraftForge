@@ -447,7 +447,7 @@ public class Loader
             else if (FMLCommonHandler.instance().isModLoaderMod(clazz))
             {
                 log.fine(String.format("ModLoader BaseMod class %s found, loading", clazzName));
-                ModContainer mc = FMLCommonHandler.instance().loadBaseModMod(clazz, classSource.getCanonicalPath());
+                ModContainer mc = FMLCommonHandler.instance().loadBaseModMod(clazz, classSource.getCanonicalFile());
                 mods.add(mc);
                 log.fine(String.format("ModLoader BaseMod class %s loaded", clazzName));
             }
