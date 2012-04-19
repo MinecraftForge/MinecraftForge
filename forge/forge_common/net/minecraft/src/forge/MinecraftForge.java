@@ -13,6 +13,8 @@ import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 
 import java.util.*;
@@ -1119,6 +1121,17 @@ public class MinecraftForge
     public static void registerArrowLooseHandler(IArrowLooseHandler handler)
     {
         ForgeHooks.arrowLooseHandlers.add(handler);
+    }
+    
+    /**
+     * Sends a packet on the specified NetworkManager
+     * 
+     * @param net The manager to send the packet on
+     * @param packet The packet to be sent
+     */
+    public static void sendPacket(NetworkManager net, Packet packet)
+    {
+        ForgeHooks.getPacketHandler().sendPacket(net, packet);
     }
     
     private static int isClient = -1;

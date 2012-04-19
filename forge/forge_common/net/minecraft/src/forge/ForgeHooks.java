@@ -25,6 +25,7 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.packets.PacketEntitySpawn;
+import net.minecraft.src.forge.packets.PacketHandlerBase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -645,8 +646,8 @@ public class ForgeHooks
     static HashMap toolHarvestLevels = new HashMap();
     static HashSet toolEffectiveness = new HashSet();
 
-    private static IPacketHandler forgePacketHandler = null;
-    public static void setPacketHandler(IPacketHandler handler)
+    private static PacketHandlerBase forgePacketHandler = null;
+    public static void setPacketHandler(PacketHandlerBase handler)
     {
         if (forgePacketHandler != null)
         {
@@ -654,7 +655,7 @@ public class ForgeHooks
         }
         forgePacketHandler = handler;
     }
-    public static IPacketHandler getPacketHandler()
+    public static PacketHandlerBase getPacketHandler()
     {
         return forgePacketHandler;
     }

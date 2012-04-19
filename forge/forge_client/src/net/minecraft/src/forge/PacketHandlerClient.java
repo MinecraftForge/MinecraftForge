@@ -14,10 +14,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
 import net.minecraft.src.forge.packets.*;
 
-public class PacketHandlerClient implements IPacketHandler
+public class PacketHandlerClient extends PacketHandlerBase
 {
-    private static boolean DEBUG = false;
-
     @Override
     public void onPacketData(NetworkManager network, String channel, byte[] bytes)
     {
@@ -236,5 +234,12 @@ public class PacketHandlerClient implements IPacketHandler
             player.openGui(mod, pkt.GuiID, player.worldObj, pkt.X, pkt.Y, pkt.Z);
             player.craftingInventory.windowId = pkt.WindowID;
         }
+    }
+
+    @Override
+    public void sendPacket(NetworkManager network, Packet packet) 
+    {
+        NetClientHandler net = (NetClientHandler)network.getNetHandler();
+        net.addToSendQueue(packet);
     }
 }

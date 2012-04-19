@@ -16,9 +16,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.*;
 import net.minecraft.src.forge.packets.*;
 
-public class PacketHandlerServer implements IPacketHandler
+public class PacketHandlerServer extends PacketHandlerBase
 {
-    public static boolean DEBUG = false;
     @Override
     public void onPacketData(NetworkManager network, String channel, byte[] bytes)
     {
@@ -161,5 +160,12 @@ public class PacketHandlerServer implements IPacketHandler
         
         player.func_20057_k();
         FMLServerHandler.instance().announceLogin(player);
+    }
+
+    @Override
+    public void sendPacket(NetworkManager network, Packet packet) 
+    {
+        NetServerHandler net = (NetServerHandler)network.getNetHandler();
+        net.sendPacket(packet);
     }
 }
