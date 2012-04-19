@@ -100,7 +100,7 @@ public class PacketEntitySpawn extends ForgePacket
     {
         modID     = data.readInt();
         entityID  = data.readInt();
-        typeID    = data.readByte();
+        typeID    = data.readByte() & 0xFF;
         posX      = data.readInt();
         posY      = data.readInt();
         posZ      = data.readInt();
