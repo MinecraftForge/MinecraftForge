@@ -16,6 +16,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet131MapData;
+import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.World;
 
 import java.util.*;
@@ -1161,6 +1162,32 @@ public class MinecraftForge
         pkt.itemID   = (short)getModID(mod);
         pkt.uniqueID = id;
         pkt.itemData = data;
+        sendPacket(net, pkt);
+    }
+    
+    /**
+     * Helper function for wrapping and sending a Packet132TileEntityData packet,
+     * useful so we don't have to edit the packet class itself to add the constructor on the client side.
+     * 
+     * @param net The manager to send the packet to
+     * @param x Position X
+     * @param y Position Y
+     * @param z Position Z
+     * @param action Action ID
+     * @param par1 Custom Parameter 1
+     * @param par2 Custom Parameter 2
+     * @param par3 Custom Parameter 3
+     */
+    public static void sendTileEntityPacket(NetworkManager net, int x, short y, int z, byte action, int par1, int par2, int par3)
+    {
+        Packet132TileEntityData pkt = new Packet132TileEntityData();
+        pkt.xPosition    = x;
+        pkt.yPosition    = y;
+        pkt.zPosition    = z;
+        pkt.actionType   = action;
+        pkt.customParam1 = par1;
+        pkt.customParam2 = par2;
+        pkt.customParam3 = par3;
         sendPacket(net, pkt);
     }
     

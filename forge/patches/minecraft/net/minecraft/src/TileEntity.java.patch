@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -216,4 +216,13 @@
+@@ -216,4 +216,24 @@
          addMapping(TileEntityEnchantmentTable.class, "EnchantTable");
          addMapping(TileEntityEndPortal.class, "Airportal");
      }
@@ -13,4 +13,15 @@
 +    {
 +        return true;
 +    }
++    
++    /**
++     * Called when you receive a TileEntityData packet for the location this
++     * TileEntity is currently in. On the client, the NetworkManager will always
++     * be the remote server. On the server, it will be whomever is responsible for 
++     * sending the packet.
++     * 
++     * @param net The NetworkManager the packet originated from 
++     * @param pkt The data packet
++     */
++    public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt){}
  }

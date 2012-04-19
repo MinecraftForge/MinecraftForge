@@ -35,8 +35,9 @@ public class mod_MinecraftForge extends NetworkMod
                 ForgeHooks.networkMods.put(x++, (NetworkMod)mod);
             }
         }
-        //Add 131 to C->S list
+        //Add 131 & 132 to C->S list
         ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(131);
+        ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(132);
         
     }
 }
