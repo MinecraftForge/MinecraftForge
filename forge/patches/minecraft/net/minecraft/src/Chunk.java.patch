@@ -20,7 +20,56 @@
  
                      if (var9 != 0)
                      {
-@@ -585,7 +589,7 @@
+@@ -139,6 +143,48 @@
+     }
+ 
+     /**
++     * Metadata sensitive Chunk constructor for use in new ChunkProviders that 
++     * use metadata sensitive blocks during generation.
++     * 
++     * @param world The world this chunk belongs to
++     * @param ids A ByteArray containing all the BlockID's to set this chunk to 
++     * @param metadata A ByteArray containing all the metadata to set this chunk to
++     * @param chunkX The chunk's X position
++     * @param chunkZ The Chunk's Z position
++     */
++    public Chunk(World world, byte[] ids, byte[] metadata, int chunkX, int chunkZ)
++    {
++        this(world, chunkX, chunkZ);
++        int height = ids.length / 256;
++
++        for (int x = 0; x < 16; ++x)
++        {
++            for (int z = 0; z < 16; ++z)
++            {
++                for (int y = 0; y < height; ++y)
++                {
++                    int index = x << 11 | z << 7 | y;
++                    int id    = ids[index] & 0xFF;
++                    int meta  = metadata[index] & 0x0F;
++
++                    if (id != 0)
++                    {
++                        int chunkY = y >> 4;
++
++                        if (storageArrays[chunkY] == null)
++                        {
++                            storageArrays[chunkY] = new ExtendedBlockStorage(chunkY << 4);
++                        }
++
++                        storageArrays[chunkY].setExtBlockID(x, y & 15, z, id);
++                        storageArrays[chunkY].setExtBlockMetadata(x, y & 15, z, meta);
++                    }
++                }
++            }
++        }
++    }
++
++    /**
+      * Checks whether the chunk is at the X/Z location specified
+      */
+     public boolean isAtLocation(int par1, int par2)
+@@ -585,7 +631,7 @@
                  {
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
@@ -29,7 +78,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -629,32 +633,23 @@
+@@ -629,32 +675,23 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                      }
  
@@ -65,7 +114,7 @@
                  this.isModified = true;
                  return true;
              }
-@@ -686,7 +681,7 @@
+@@ -686,7 +723,7 @@
                  var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
@@ -74,7 +123,7 @@
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -852,34 +847,33 @@
+@@ -852,34 +889,33 @@
      {
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
@@ -120,7 +169,7 @@
      }
  
      /**
-@@ -894,7 +888,7 @@
+@@ -894,7 +930,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -129,7 +178,7 @@
          }
      }
  
-@@ -909,8 +903,14 @@
+@@ -909,8 +945,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -145,7 +194,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -946,6 +946,7 @@
+@@ -946,6 +988,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[var1]);
          }
@@ -153,7 +202,7 @@
      }
  
      /**
-@@ -966,6 +967,7 @@
+@@ -966,6 +1009,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[var3]);
          }
@@ -161,7 +210,7 @@
      }
  
      /**
-@@ -982,8 +984,8 @@
+@@ -982,8 +1026,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -172,7 +221,7 @@
  
          if (var4 < 0)
          {
-@@ -1030,8 +1032,8 @@
+@@ -1030,8 +1074,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -183,7 +232,7 @@
  
          if (var4 < 0)
          {
-@@ -1228,6 +1230,16 @@
+@@ -1228,6 +1272,16 @@
  
      public void func_48494_a(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -200,7 +249,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1324,12 +1336,26 @@
+@@ -1324,12 +1378,26 @@
          }
  
          this.generateHeightMap();
@@ -232,7 +281,7 @@
          }
      }
  
-@@ -1435,4 +1461,18 @@
+@@ -1435,4 +1503,18 @@
              }
          }
      }
