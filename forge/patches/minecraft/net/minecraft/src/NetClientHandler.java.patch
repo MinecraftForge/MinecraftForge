@@ -108,7 +108,18 @@
                  }
                  else
                  {
-@@ -1114,5 +1172,40 @@
+@@ -1012,6 +1070,10 @@
+         {
+             ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).func_28171_a(par1Packet131MapData.itemData);
+         }
++        else if (ForgeHooks.onItemDataPacket(netManager, par1Packet131MapData))
++        {
++            ;
++        }
+         else
+         {
+             System.out.println("Unknown itemid: " + par1Packet131MapData.uniqueID);
+@@ -1114,5 +1176,40 @@
      public void handleCustomPayload(Packet250CustomPayload var1)
      {
          ModLoader.receivePacket(var1);

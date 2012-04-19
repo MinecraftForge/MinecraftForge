@@ -24,16 +24,4 @@ public class mod_MinecraftForge extends NetworkMod
         MinecraftForge.getDungeonLootTries(); //Random thing to make things Initialize
         MinecraftForgeClient.init();
     }
-
-	@Override
-	public boolean clientSideRequired() 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean serverSideRequired() 
-	{
-		return false;
-	}
 }

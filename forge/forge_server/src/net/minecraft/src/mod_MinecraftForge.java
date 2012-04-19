@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import java.util.Set;
+
 import net.minecraft.src.forge.ForgeHooks;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.NetworkMod;
@@ -26,20 +28,15 @@ public class mod_MinecraftForge extends NetworkMod
         {
             if (mod instanceof NetworkMod)
             {
+                if (x == Item.map.shiftedIndex)
+                {
+                    x++;
+                }
                 ForgeHooks.networkMods.put(x++, (NetworkMod)mod);
             }
         }
+        //Add 131 to C->S list
+        ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(131);
+        
     }
-
-	@Override
-	public boolean clientSideRequired() 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean serverSideRequired() 
-	{
-		return false;
-	}
 }

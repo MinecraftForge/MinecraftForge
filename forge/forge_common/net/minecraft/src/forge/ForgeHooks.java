@@ -21,6 +21,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
@@ -32,6 +33,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class ForgeHooks
 {
@@ -658,6 +660,18 @@ public class ForgeHooks
     public static PacketHandlerBase getPacketHandler()
     {
         return forgePacketHandler;
+    }
+
+    public static boolean onItemDataPacket(NetworkManager net, Packet131MapData pkt) 
+    {
+        NetworkMod mod = MinecraftForge.getModByID(pkt.itemID);
+        if (mod == null)
+        {
+            ModLoader.getLogger().log(Level.WARNING, String.format("Received Unknown MapData packet %d:%d", pkt.itemID, pkt.uniqueID));
+            return false;
+        }
+        mod.onPacketData(net, pkt.uniqueID, pkt.itemData);
+        return true;
     }
 }
 

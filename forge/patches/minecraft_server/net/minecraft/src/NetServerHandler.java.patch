@@ -102,7 +102,7 @@
          }
      }
  
-@@ -969,9 +985,50 @@
+@@ -969,9 +985,56 @@
      {
          this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.isFlying && this.playerEntity.capabilities.allowFlying;
      }
@@ -154,5 +154,11 @@
 +        {
 +            inst.dispatchIncomingMessage(netManager, pkt.channel, pkt.data);
 +        }
++    }
++    
++    @Override
++    public void handleMapData(Packet131MapData par1Packet131MapData)
++    {
++        ForgeHooks.onItemDataPacket(netManager, par1Packet131MapData);
      }
  }

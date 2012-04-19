@@ -15,6 +15,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.World;
 
 import java.util.*;
@@ -1132,6 +1133,35 @@ public class MinecraftForge
     public static void sendPacket(NetworkManager net, Packet packet)
     {
         ForgeHooks.getPacketHandler().sendPacket(net, packet);
+    }
+    
+    /**
+     * Sends a 'small' payload packet to the specified manager.
+     * It uses the Packet131MapData packet for it's communication
+     * so things are limited.
+     * 
+     * @param net The manager to send the packet to
+     * @param mod The mod associated with this packet
+     * @param id The ID number used to identify this packet
+     * @param data The data to be sent, must be no larger then 255 bytes.
+     */
+    public static void sendPacket(NetworkManager net, NetworkMod mod, short id, byte[] data)
+    {   
+        if (data == null)
+        {
+            data = new byte[0];
+        }
+        
+        if (data.length > 255)
+        {
+            throw new IllegalArgumentException(String.format("Data argument was to long, must not be longer then 255 bytes was %d", data.length));
+        }
+        
+        Packet131MapData pkt = new Packet131MapData();
+        pkt.itemID   = (short)getModID(mod);
+        pkt.uniqueID = id;
+        pkt.itemData = data;
+        sendPacket(net, pkt);
     }
     
     private static int isClient = -1;
