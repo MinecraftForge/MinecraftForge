@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -14,7 +14,13 @@
+@@ -14,7 +14,14 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Random;
@@ -8,13 +8,14 @@
 +
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.ForgeHooksClient;
 +import net.minecraft.src.forge.MessageManager;
 +import net.minecraft.src.forge.packets.ForgePacket;
 +import java.io.UnsupportedEncodingException;
  
  public class NetClientHandler extends NetHandler
  {
-@@ -46,6 +52,8 @@
+@@ -46,6 +53,8 @@
          this.mc = par1Minecraft;
          Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
          this.netManager = new NetworkManager(var4, "Client", this);
@@ -23,7 +24,7 @@
      }
  
      /**
-@@ -73,6 +81,30 @@
+@@ -73,6 +82,30 @@
          this.mc.thePlayer.entityId = par1Packet1Login.protocolVersion;
          this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
          ((PlayerControllerMP)this.mc.playerController).setCreative(par1Packet1Login.serverMode == 1);
@@ -54,7 +55,27 @@
          ModLoader.serverConnect(this, par1Packet1Login);
      }
  
-@@ -545,8 +577,12 @@
+@@ -178,6 +211,19 @@
+         {
+             var8 = new EntityFallingSand(this.worldClient, var2, var4, var6, Block.dragonEgg.blockID);
+         }
++        
++        try 
++        {
++            var8 = ForgeHooksClient.tryMLMPVehicleSpawn(par1Packet23VehicleSpawn.type,
++                    worldClient, var2, var4, var6,
++                    getEntityByID(par1Packet23VehicleSpawn.throwerEntityId));
++        }
++        catch (Exception e)
++        {
++            ModLoader.getLogger().throwing("NetClientHandler", "handleVehicleSpawn", e);
++            ModLoader.throwException(String.format("Error initalizing entity of type %d", par1Packet23VehicleSpawn.type), e);
++            return;
++        }
+ 
+         if (var8 != null)
+         {
+@@ -545,8 +591,12 @@
  
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
@@ -69,7 +90,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -633,7 +669,19 @@
+@@ -633,7 +683,19 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
@@ -90,7 +111,7 @@
          }
          else
          {
-@@ -646,7 +694,19 @@
+@@ -646,7 +708,19 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
@@ -111,7 +132,18 @@
                  }
                  else
                  {
-@@ -939,6 +999,19 @@
+@@ -833,6 +907,10 @@
+             case 5:
+                 var2.displayGUIBrewingStand(new TileEntityBrewingStand());
+                 var2.craftingInventory.windowId = par1Packet100OpenWindow.windowId;
++                break;
++            
++            default:
++                ForgeHooksClient.tryMLMPOpenWindow(par1Packet100OpenWindow);
+         }
+     }
+ 
+@@ -939,6 +1017,19 @@
              {
                  ((TileEntityMobSpawner)var2).setMobID(EntityList.getStringFromID(par1Packet132TileEntityData.customParam1));
              }
@@ -131,7 +163,7 @@
          }
      }
  
-@@ -1012,6 +1085,10 @@
+@@ -1012,6 +1103,10 @@
          {
              ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).func_28171_a(par1Packet131MapData.itemData);
          }
@@ -142,7 +174,7 @@
          else
          {
              System.out.println("Unknown itemid: " + par1Packet131MapData.uniqueID);
-@@ -1114,5 +1191,40 @@
+@@ -1114,5 +1209,40 @@
      public void handleCustomPayload(Packet250CustomPayload var1)
      {
          ModLoader.receivePacket(var1);

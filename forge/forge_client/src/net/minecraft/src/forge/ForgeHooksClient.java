@@ -6,15 +6,21 @@
 package net.minecraft.src.forge;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.Packet100OpenWindow;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.RenderGlobal;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.WorldClient;
+
 import org.lwjgl.opengl.GL11;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import net.minecraft.src.*;
 import org.lwjgl.opengl.GL12;
@@ -285,6 +291,105 @@ public class ForgeHooksClient
             customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
+        }
+    }
+    
+    /**
+     * Trys to get the class for the specified name, will also try the 
+     * net.minecraft.src package in case we are in MCP
+     * Returns null if not found.
+     * 
+     * @param name The class name
+     * @return The Class, or null if not found
+     */
+    private static Class getClass(String name)
+    {
+        try 
+        {
+            return Class.forName(name);
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                return Class.forName("net.minecraft.src." + name);
+            }
+            catch (Exception e2)
+            {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Helper function to try and invoke ModLoaderMp's NetClientHandler.handleVehicleSpawn modifications
+     * if ModLoaderMp is install along side Forge.
+     */
+    public static Object tryMLMPVehicleSpawn(int type, World world, double x, double y, double z, Entity thrower) throws Exception
+    {
+        Class mlmp = getClass("ModLoaderMp"); 
+        if (mlmp == null)
+        {
+            return null;
+        }
+        
+        Object entry = mlmp.getDeclaredMethod("handleNetClientHandlerEntities", int.class).invoke(null, type);
+        if (entry == null)
+        {
+            return null;
+        }
+        
+        Class entityClass = (Class)entry.getClass().getDeclaredField("entityClass").get(entry);
+        Object ret = (Entity)entityClass.getConstructor(World.class, Double.TYPE, Double.TYPE, Double.TYPE).newInstance(world, x, y, z);
+
+        if (entry.getClass().getDeclaredField("entityHasOwner").getBoolean(entry))
+        {
+            Field owner = entityClass.getField("owner");
+
+            if (!Entity.class.isAssignableFrom(owner.getType()))
+            {
+                throw new Exception(String.format("Entity\'s owner field must be of type Entity, but it is of type %s.", owner.getType()));
+            }
+
+            if (thrower == null)
+            {
+                System.out.println("Received spawn packet for entity with owner, but owner was not found.");
+                ModLoader.getLogger().fine("Received spawn packet for entity with owner, but owner was not found.");
+            }
+            else
+            {
+                if (!owner.getType().isAssignableFrom(thrower.getClass()))
+                {
+                    throw new Exception(String.format("Tried to assign an entity of type %s to entity owner, which is of type %s.", thrower.getClass(), owner.getType()));
+                }
+
+                owner.set(ret, thrower);
+            }
+        }
+        return ret;
+    }
+    
+    /**
+     * helper function to try and call ModLoaderMp's handleGUI function
+     * if ModLoaderMp is installed client side along with Forge.
+     * 
+     * @param pkt The open window packet
+     */
+    public static void tryMLMPOpenWindow(Packet100OpenWindow pkt) 
+    {
+        Class mlmp = getClass("ModLoaderMp"); 
+        if (mlmp == null)
+        {
+            return;
+        }
+        
+        try 
+        {
+            mlmp.getDeclaredMethod("handleGUI", Packet100OpenWindow.class).invoke(null, pkt);
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
         }
     }
 }
