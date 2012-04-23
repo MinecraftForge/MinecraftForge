@@ -1,0 +1,52 @@
+--- ../src_base/minecraft/net/minecraft/src/SoundPool.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/SoundPool.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,7 @@
+ 
+ import java.io.File;
+ import java.net.MalformedURLException;
++import java.net.URL;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+@@ -33,6 +34,25 @@
+      */
+     public SoundPoolEntry addSound(String par1Str, File par2File)
+     {
++        try 
++        {
++            return addSound(par1Str, par2File.toURI().toURL());
++        }
++        catch (MalformedURLException ex)
++        {
++            ex.printStackTrace();
++            throw new RuntimeException(ex);
++        }
++    }
++    /**
++     * URL version of addSound, as the back-end sound engine has full support for various types of URLs
++     * 
++     * @param par1Str The name of the sound to add
++     * @param url The url of the sound resource
++     * @return A SoundPoolEntry for the newly added sound
++     */
++    public SoundPoolEntry addSound(String par1Str, URL url)
++    {
+         try
+         {
+             String var3 = par1Str;
+@@ -53,13 +73,13 @@
+                 this.nameToSoundPoolEntriesMapping.put(par1Str, new ArrayList());
+             }
+ 
+-            SoundPoolEntry var4 = new SoundPoolEntry(var3, par2File.toURI().toURL());
++            SoundPoolEntry var4 = new SoundPoolEntry(var3, url);
+             ((List)this.nameToSoundPoolEntriesMapping.get(par1Str)).add(var4);
+             this.allSoundPoolEntries.add(var4);
+             ++this.numberOfSoundPoolEntries;
+             return var4;
+         }
+-        catch (MalformedURLException var5)
++        catch (Exception var5)
+         {
+             var5.printStackTrace();
+             throw new RuntimeException(var5);

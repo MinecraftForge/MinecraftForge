@@ -10,6 +10,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet100OpenWindow;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.SoundPoolEntry;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.RenderGlobal;
 import net.minecraft.src.EntityPlayer;
@@ -391,5 +392,74 @@ public class ForgeHooksClient
         {
             e.printStackTrace();
         }
+    }
+
+    public static LinkedList<ISoundHandler> soundHandlers = new LinkedList<ISoundHandler>();
+    public static void onSetupAudio(SoundManager soundManager) 
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            handler.onSetupAudio(soundManager);
+        }
+    }
+
+    public static void onLoadSoundSettings(SoundManager soundManager) 
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            handler.onLoadSoundSettings(soundManager);
+        }
+    }
+
+    public static SoundPoolEntry onPlayBackgroundMusic(SoundManager soundManager, SoundPoolEntry entry) 
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            entry = handler.onPlayBackgroundMusic(soundManager, entry);
+            if (entry == null)
+            {
+                return null;
+            }
+        }
+        return entry;
+    }
+
+    public static SoundPoolEntry onPlayStreaming(SoundManager soundManager, SoundPoolEntry entry, String soundName, float x, float y, float z)
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            entry = handler.onPlayStreaming(soundManager, entry, soundName, x, y, z);
+            if (entry == null)
+            {
+                return null;
+            }
+        }
+        return entry;
+    }
+
+    public static SoundPoolEntry onPlaySound(SoundManager soundManager, SoundPoolEntry entry, String soundName, float x, float y, float z, float volume, float pitch)
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            entry = handler.onPlaySound(soundManager, entry, soundName, x, y, z, volume, pitch);
+            if (entry == null)
+            {
+                return null;
+            }
+        }
+        return entry;
+    }
+
+    public static SoundPoolEntry onPlaySoundEffect(SoundManager soundManager, SoundPoolEntry entry, String soundName, float volume, float pitch) 
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            entry = handler.onPlaySoundEffect(soundManager, entry, soundName,volume, pitch);
+            if (entry == null)
+            {
+                return null;
+            }
+        }
+        return entry;
     }
 }

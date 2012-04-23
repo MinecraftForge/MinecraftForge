@@ -55,6 +55,15 @@ public class MinecraftForgeClient
     {
         ForgeHooksClient.renderWorldLastHandlers.add(handler);
     }
+    
+    /**
+     * Registers a Sound Handler
+     * @param handler The handler
+     */
+    public static void registerSoundHandler(ISoundHandler handler)
+    {
+        ForgeHooksClient.soundHandlers.add(handler);
+    }
 
     /** Bind a texture.  This is used to bind a texture file when
      * performing your own rendering, rather than using ITextureProvider.
