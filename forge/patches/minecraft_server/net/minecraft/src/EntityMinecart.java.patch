@@ -470,7 +470,7 @@
          {
              NBTTagList var2 = new NBTTagList();
  
-@@ -797,13 +664,13 @@
+@@ -797,13 +664,20 @@
      {
          this.minecartType = par1NBTTagCompound.getInteger("Type");
  
@@ -480,14 +480,21 @@
              this.pushX = par1NBTTagCompound.getDouble("PushX");
              this.pushZ = par1NBTTagCompound.getDouble("PushZ");
 -            this.fuel = par1NBTTagCompound.getShort("Fuel");
-+            this.fuel = par1NBTTagCompound.getInteger("Fuel");
++            try
++            {
++                this.fuel = par1NBTTagCompound.getInteger("Fuel");
++            }
++            catch (ClassCastException e)
++            {
++                this.fuel = par1NBTTagCompound.getShort("Fuel");
++            }
          }
 -        else if (this.minecartType == 1)
 +        if (getSizeInventory() > 0)
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -826,11 +693,18 @@
+@@ -826,11 +700,18 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -507,7 +514,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -876,7 +750,7 @@
+@@ -876,7 +757,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -516,7 +523,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -884,7 +758,7 @@
+@@ -884,7 +765,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -525,7 +532,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -919,7 +793,7 @@
+@@ -919,7 +800,7 @@
       */
      public int getSizeInventory()
      {
@@ -534,7 +541,7 @@
      }
  
      /**
-@@ -1022,7 +896,12 @@
+@@ -1022,7 +903,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -548,7 +555,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1034,14 +913,14 @@
+@@ -1034,14 +920,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -565,7 +572,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1073,7 +952,7 @@
+@@ -1073,7 +959,7 @@
      /**
       * Is this minecart powered (Fuel > 0)
       */
@@ -574,7 +581,7 @@
      {
          return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1126,4 +1005,373 @@
+@@ -1126,4 +1012,373 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }
