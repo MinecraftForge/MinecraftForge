@@ -11,6 +11,9 @@ import net.minecraft.src.forge.NetworkMod;
  */
 public class mod_MinecraftForge extends NetworkMod
 {
+    @MLProp(info = "Set to false to reproduce a vinella bug that prevents mobs from spawning on inverted half-slabs and inverted stairs.")
+    public static boolean SPAWNER_ALLOW_ON_INVERTED = true;
+    
     @Override
     public String getVersion()
     {
@@ -38,6 +41,5 @@ public class mod_MinecraftForge extends NetworkMod
         //Add 131 & 132 to C->S list
         ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(131);
         ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(132);
-        
     }
 }

@@ -80,7 +80,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1054,6 +1054,396 @@
+@@ -1054,6 +1054,435 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -472,6 +472,45 @@
 +    		return true;
 +    	}
 +    	return renderAsNormalBlock() && !hasTileEntity(metadata);
++    }
++    
++    /**
++     * Determines if a specified mob type can spawn on this block, returning false will 
++     * prevent any mob from spawning on the block.
++     * 
++     * @param type The Mob Category Type
++     * @param world The current world
++     * @param x The X Position
++     * @param y The Y Position
++     * @param z The Z Position
++     * @return True to allow a mob of the specified category to spawn, false to prevent it.
++     */
++    public boolean canCreatureSpawn(EnumCreatureType type, World world, int x, int y, int z) 
++    {
++        int meta = world.getBlockMetadata(x, y, z);
++        if (this instanceof BlockStep)
++        {
++            if (mod_MinecraftForge.SPAWNER_ALLOW_ON_INVERTED)
++            {
++                return (((meta & 8) == 8) || isOpaqueCube());   
++            }
++            else
++            {
++                return isNormalCube(this.blockID);
++            }
++        }
++        else if (this instanceof BlockStairs)
++        {
++            if (mod_MinecraftForge.SPAWNER_ALLOW_ON_INVERTED)
++            {
++                return ((meta & 4) != 0);
++            }
++            else
++            {
++                return isNormalCube(this.blockID);
++            }
++        }
++        return isBlockSolidOnSide(world, x, y, z, 1);
 +    }
 +    
      static

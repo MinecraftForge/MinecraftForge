@@ -11,6 +11,7 @@ import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
@@ -339,6 +340,19 @@ public class ForgeHooks
         return 0;
     }
     static LinkedList<IFuelHandler> fuelHandlers = new LinkedList<IFuelHandler>();
+    
+    public static boolean onEntitySpawnSpecial(EntityLiving entity, World world, float x, float y, float z) 
+    {
+        for (ISpecialMobSpawnHandler handler : specialMobSpawnHandlers)
+        {
+            if (handler.onSpecialEntitySpawn(entity, world, x, y, z))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    static LinkedList<ISpecialMobSpawnHandler> specialMobSpawnHandlers = new LinkedList<ISpecialMobSpawnHandler>();
 
     // Plant Management
     // ------------------------------------------------------------

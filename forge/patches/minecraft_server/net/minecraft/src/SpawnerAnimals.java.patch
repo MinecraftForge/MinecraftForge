@@ -1,11 +1,42 @@
 --- ../src_base/minecraft_server/net/minecraft/src/SpawnerAnimals.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/SpawnerAnimals.java	0000-00-00 00:00:00.000000000 -0000
-@@ -202,7 +202,7 @@
+@@ -5,6 +5,8 @@
+ import java.util.List;
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public final class SpawnerAnimals
+ {
+     /** The 17x17 area around the player where mobs can spawn */
+@@ -20,7 +22,7 @@
+     {
+         Chunk var3 = par0World.getChunkFromChunkCoords(par1, par2);
+         int var4 = par1 * 16 + par0World.rand.nextInt(16);
+-        int var5 = par0World.rand.nextInt(var3 == null ? 128 : Math.max(128, var3.getTopFilledSegment()));
++        int var5 = par0World.rand.nextInt(var3 == null ? 128 : Math.max(128, var3.getTopFilledSegment() + 15)); //Vanilla Bug that causes mobs to not spawn on the topmost chunk with blocks.
+         int var6 = par2 * 16 + par0World.rand.nextInt(16);
+         return new ChunkPosition(var4, var5, var6);
+     }
+@@ -202,7 +204,8 @@
          else
          {
              int var5 = par1World.getBlockId(par2, par3 - 1, par4);
 -            return Block.isNormalCube(var5) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
-+            return par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
++            boolean spawnBlock = (Block.blocksList[var5] != null && Block.blocksList[var5].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4));
++            return spawnBlock && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
          }
      }
  
+@@ -211,6 +214,11 @@
+      */
+     private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
+     {
++        if (ForgeHooks.onEntitySpawnSpecial(par0EntityLiving, par1World, par2, par3, par4))
++        {
++            return;
++        }
++
+         if (par0EntityLiving instanceof EntitySpider && par1World.rand.nextInt(100) == 0)
+         {
+             EntitySkeleton var7 = new EntitySkeleton(par1World);
