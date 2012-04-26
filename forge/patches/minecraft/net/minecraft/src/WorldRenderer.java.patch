@@ -1,4 +1,4 @@
---- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java 0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java	0000-00-00 00:00:00.000000000 -0000
 @@ -3,6 +3,9 @@
  import java.util.ArrayList;
@@ -18,6 +18,42 @@
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
+@@ -36,7 +38,7 @@
+     public boolean isInFrustum = false;
+ 
+     /** Should this renderer skip this render pass */
+-    public boolean[] skipRenderPass = new boolean[2];
++    public boolean[] skipRenderPass = new boolean[3];
+ 
+     /** Pos X plus */
+     public int posXPlus;
+@@ -108,7 +110,7 @@
+             this.posZMinus = par3 - this.posZClip;
+             float var4 = 6.0F;
+             this.rendererBoundingBox = AxisAlignedBB.getBoundingBox((double)((float)par1 - var4), (double)((float)par2 - var4), (double)((float)par3 - var4), (double)((float)(par1 + 16) + var4), (double)((float)(par2 + 16) + var4), (double)((float)(par3 + 16) + var4));
+-            GL11.glNewList(this.glRenderList + 2, GL11.GL_COMPILE);
++            GL11.glNewList(this.glRenderList + 3, GL11.GL_COMPILE);
+             RenderItem.renderAABB(AxisAlignedBB.getBoundingBoxFromPool((double)((float)this.posXClip - var4), (double)((float)this.posYClip - var4), (double)((float)this.posZClip - var4), (double)((float)(this.posXClip + 16) + var4), (double)((float)(this.posYClip + 16) + var4), (double)((float)(this.posZClip + 16) + var4)));
+             GL11.glEndList();
+             this.markDirty();
+@@ -135,7 +137,7 @@
+             int var5 = this.posY + 16;
+             int var6 = this.posZ + 16;
+ 
+-            for (int var7 = 0; var7 < 2; ++var7)
++            for (int var7 = 0; var7 < 3; ++var7)
+             {
+                 this.skipRenderPass[var7] = true;
+             }
+@@ -153,7 +155,7 @@
+                 RenderBlocks var10 = new RenderBlocks(var9);
+                 this.bytesDrawn = 0;
+ 
+-                for (int var11 = 0; var11 < 2; ++var11)
++                for (int var11 = 0; var11 < 3; ++var11)
+                 {
+                     boolean var12 = false;
+                     boolean var13 = false;
 @@ -179,11 +181,12 @@
                                          GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
                                          GL11.glScalef(var19, var19, var19);
@@ -69,3 +105,30 @@
                      }
                      else
                      {
+@@ -261,7 +268,7 @@
+      */
+     public void setDontDraw()
+     {
+-        for (int var1 = 0; var1 < 2; ++var1)
++        for (int var1 = 0; var1 < 3; ++var1)
+         {
+             this.skipRenderPass[var1] = true;
+         }
+@@ -294,7 +301,7 @@
+      */
+     public void callOcclusionQueryList()
+     {
+-        GL11.glCallList(this.glRenderList + 2);
++        GL11.glCallList(this.glRenderList + 3);
+     }
+ 
+     /**
+@@ -302,7 +309,7 @@
+      */
+     public boolean skipAllRenderPasses()
+     {
+-        return !this.isInitialized ? false : this.skipRenderPass[0] && this.skipRenderPass[1];
++        return !this.isInitialized ? false : this.skipRenderPass[0] && this.skipRenderPass[1] && this.skipRenderPass[2];
+     }
+ 
+     /**

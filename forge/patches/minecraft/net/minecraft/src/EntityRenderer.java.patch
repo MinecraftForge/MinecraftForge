@@ -1,4 +1,4 @@
---- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java 0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
 @@ -5,6 +5,8 @@
  import java.util.List;
@@ -50,7 +50,70 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1160,8 +1172,12 @@
+@@ -1119,28 +1131,31 @@
+                     GL11.glShadeModel(GL11.GL_SMOOTH);
+                 }
+ 
+-                GL11.glColorMask(false, false, false, false);
+-                var16 = var5.sortAndRender(var4, 1, (double)par1);
+-
+-                if (this.mc.gameSettings.anaglyph)
+-                {
+-                    if (anaglyphField == 0)
+-                    {
+-                        GL11.glColorMask(false, true, true, true);
+-                    }
+-                    else
+-                    {
+-                        GL11.glColorMask(true, false, false, true);
+-                    }
+-                }
+-                else
++                for (int x=1; x<3; x++)
+                 {
+-                    GL11.glColorMask(true, true, true, true);
+-                }
++                	GL11.glColorMask(false, false, false, false);
++                	var16 = var5.sortAndRender(var4, x, (double)par1);
+ 
+-                if (var16 > 0)
+-                {
+-                    var5.renderAllRenderLists(1, (double)par1);
++                	if (this.mc.gameSettings.anaglyph)
++                	{
++                		if (anaglyphField == 0)
++                		{
++                			GL11.glColorMask(false, true, true, true);
++                		}
++                		else
++                		{
++                			GL11.glColorMask(true, false, false, true);
++                		}
++                	}
++                	else
++                	{
++                		GL11.glColorMask(true, true, true, true);
++                	}
++
++                	if (var16 > 0)
++                	{
++                		var5.renderAllRenderLists(x, (double)par1);
++                	}
+                 }
+ 
+                 GL11.glShadeModel(GL11.GL_FLAT);
+@@ -1149,6 +1164,10 @@
+             {
+                 Profiler.endStartSection("water");
+                 var5.sortAndRender(var4, 1, (double)par1);
++                GL11.glColorMask(false, false, false, false);
++                var16 = var5.sortAndRender(var4, 2, (double)par1);
++                GL11.glColorMask(true, true, true, true);
++                if (var16 > 0) var5.renderAllRenderLists(2, (double)par1);
+             }
+ 
+             GL11.glDepthMask(true);
+@@ -1160,8 +1179,12 @@
                  var20 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  Profiler.endStartSection("outline");
@@ -65,7 +128,7 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-@@ -1185,6 +1201,9 @@
+@@ -1185,6 +1208,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }
