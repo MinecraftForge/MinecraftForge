@@ -1,6 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1375,7 +1375,7 @@
+@@ -424,9 +424,8 @@
+     public boolean renderBlockBed(Block par1Block, int par2, int par3, int par4)
+     {
+         Tessellator var5 = Tessellator.instance;
+-        int var6 = this.blockAccess.getBlockMetadata(par2, par3, par4);
+-        int var7 = BlockBed.getDirection(var6);
+-        boolean var8 = BlockBed.isBlockFootOfBed(var6);
++        int var7 = par1Block.getBedDirection(blockAccess, par2, par3, par4);
++        boolean var8 = par1Block.isBedFoot(blockAccess, par2, par3, par4);
+         float var9 = 0.5F;
+         float var10 = 1.0F;
+         float var11 = 0.8F;
+@@ -1375,7 +1374,7 @@
          double var28;
          double var30;
  
@@ -9,7 +21,7 @@
          {
              float var36 = 0.2F;
              float var33 = 0.0625F;
-@@ -1395,7 +1395,7 @@
+@@ -1395,7 +1394,7 @@
                  var9 = var18;
              }
  
@@ -18,7 +30,7 @@
              {
                  var5.addVertexWithUV((double)((float)par2 + var36), (double)((float)par3 + var17 + var33), (double)(par4 + 1), var11, var13);
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + var33), (double)(par4 + 1), var11, var15);
-@@ -1407,7 +1407,7 @@
+@@ -1407,7 +1406,7 @@
                  var5.addVertexWithUV((double)((float)par2 + var36), (double)((float)par3 + var17 + var33), (double)(par4 + 1), var11, var13);
              }
  
@@ -27,7 +39,7 @@
              {
                  var5.addVertexWithUV((double)((float)(par2 + 1) - var36), (double)((float)par3 + var17 + var33), (double)(par4 + 0), var9, var13);
                  var5.addVertexWithUV((double)(par2 + 1 - 0), (double)((float)(par3 + 0) + var33), (double)(par4 + 0), var9, var15);
-@@ -1419,7 +1419,7 @@
+@@ -1419,7 +1418,7 @@
                  var5.addVertexWithUV((double)((float)(par2 + 1) - var36), (double)((float)par3 + var17 + var33), (double)(par4 + 0), var9, var13);
              }
  
@@ -36,7 +48,7 @@
              {
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + var17 + var33), (double)((float)par4 + var36), var11, var13);
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + var33), (double)(par4 + 0), var11, var15);
-@@ -1431,7 +1431,7 @@
+@@ -1431,7 +1430,7 @@
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + var17 + var33), (double)((float)par4 + var36), var11, var13);
              }
  
@@ -45,7 +57,7 @@
              {
                  var5.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + var17 + var33), (double)((float)(par4 + 1) - var36), var9, var13);
                  var5.addVertexWithUV((double)(par2 + 1), (double)((float)(par3 + 0) + var33), (double)(par4 + 1 - 0), var9, var15);
-@@ -1443,7 +1443,7 @@
+@@ -1443,7 +1442,7 @@
                  var5.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + var17 + var33), (double)((float)(par4 + 1) - var36), var9, var13);
              }
  
@@ -54,7 +66,7 @@
              {
                  var18 = (double)par2 + 0.5D + 0.5D;
                  var20 = (double)par2 + 0.5D - 0.5D;
-@@ -3601,7 +3601,7 @@
+@@ -3601,7 +3600,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
              this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -63,7 +75,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -3724,7 +3724,7 @@
+@@ -3724,7 +3723,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
              this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3));
  
@@ -72,7 +84,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -3847,7 +3847,7 @@
+@@ -3847,7 +3846,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
              this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -81,7 +93,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -3970,7 +3970,7 @@
+@@ -3970,7 +3969,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
              this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -90,7 +102,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -4082,7 +4082,7 @@
+@@ -4082,7 +4081,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
              this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -99,7 +111,7 @@
              {
                  var8.setColorOpaque_F(var18 * par5, var21 * par6, var24 * par7);
                  this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -4098,7 +4098,7 @@
+@@ -4098,7 +4097,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
              this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -108,7 +120,7 @@
              {
                  var8.setColorOpaque_F(var18 * par5, var21 * par6, var24 * par7);
                  this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -4114,7 +4114,7 @@
+@@ -4114,7 +4113,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
              this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -117,7 +129,7 @@
              {
                  var8.setColorOpaque_F(var19 * par5, var22 * par6, var25 * par7);
                  this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -4130,7 +4130,7 @@
+@@ -4130,7 +4129,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
              this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  

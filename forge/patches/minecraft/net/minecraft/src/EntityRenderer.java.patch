@@ -36,7 +36,27 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -1095,8 +1104,11 @@
+@@ -391,12 +400,14 @@
+ 
+             if (!this.mc.gameSettings.debugCamEnable)
+             {
+-                int var10 = this.mc.theWorld.getBlockId(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+-
+-                if (var10 == Block.bed.blockID)
++                int x = MathHelper.floor_double(var2.posX);
++                int y = MathHelper.floor_double(var2.posY);
++                int z = MathHelper.floor_double(var2.posZ);
++                Block block = Block.blocksList[mc.theWorld.getBlockId(x, y, z)];
++                
++                if (block != null && block.isBed(mc.theWorld, x, y, z, var2))
+                 {
+-                    int var11 = this.mc.theWorld.getBlockMetadata(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+-                    int var12 = var11 & 3;
++                    int var12 = block.getBedDirection(mc.theWorld, x, y, z);
+                     GL11.glRotatef((float)(var12 * 90), 0.0F, 1.0F, 0.0F);
+                 }
+ 
+@@ -1095,8 +1106,11 @@
                      var20 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      Profiler.endStartSection("outline");
@@ -50,7 +70,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1160,8 +1172,12 @@
+@@ -1160,8 +1174,12 @@
                  var20 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  Profiler.endStartSection("outline");
@@ -65,7 +85,7 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-@@ -1185,6 +1201,9 @@
+@@ -1185,6 +1203,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }

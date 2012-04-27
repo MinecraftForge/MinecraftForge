@@ -80,7 +80,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1054,6 +1054,435 @@
+@@ -1054,6 +1054,512 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -511,6 +511,83 @@
 +            }
 +        }
 +        return isBlockSolidOnSide(world, x, y, z, 1);
++    }
++    
++    /**
++     * Determines if this block is classified as a Bed, Allowing 
++     * players to sleep in it, though the block has to specifically 
++     * perform the sleeping functionality in it's activated event.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param player The player or camera entity, null in some cases.
++     * @return True to treat this as a bed
++     */
++    public boolean isBed(World world, int x, int y, int z, EntityLiving player)
++    {
++        return blockID == Block.bed.blockID;
++    }
++    
++    /**
++     * Returns the position that the player is moved to upon 
++     * waking up, or respawning at the bed.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param player The player or camera entity, null in some cases.
++     * @return The spawn position
++     */
++    public ChunkCoordinates getBedSpawnPosition(World world, int x, int y, int z, EntityPlayer player)
++    {
++        return BlockBed.getNearestEmptyChunkCoordinates(world, x, y, z, 0);
++    }
++
++    /**
++     * Called when a user either starts or stops sleeping in the bed.
++     *  
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param player The player or camera entity, null in some cases.
++     * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
++     */
++    public void setBedOccupied(World world, int x, int y, int z, EntityPlayer player, boolean occupied)
++    {
++        BlockBed.setBedOccupied(world,  x, y, z, occupied);        
++    }
++
++    /**
++     * Returns the direction of the block. Same values that 
++     * are returned by BlockDirectional
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return Bed direction
++     */
++    public int getBedDirection(IBlockAccess world, int x, int y, int z) 
++    {
++        return BlockBed.getDirection(world.getBlockMetadata(x,  y, z));
++    }
++    
++    /**
++     * Determines if the current block is the foot half of the bed.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True if the current block is the foot side of a bed.
++     */
++    public boolean isBedFoot(IBlockAccess world, int x, int y, int z)
++    {
++        return BlockBed.isBlockFootOfBed(world.getBlockMetadata(x,  y, z));
 +    }
 +    
      static

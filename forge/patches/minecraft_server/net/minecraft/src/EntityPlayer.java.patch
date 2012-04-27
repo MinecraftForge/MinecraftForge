@@ -136,7 +136,64 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1725,4 +1781,45 @@
+@@ -1181,6 +1237,11 @@
+         {
+             int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
+             int var5 = BlockBed.getDirection(var9);
++            Block block = Block.blocksList[worldObj.getBlockId(par1, par2, par3)];
++            if (block != null)
++            {
++                var5 = block.getBedDirection(worldObj, par1, par2, par3);
++            }
+             float var10 = 0.5F;
+             float var7 = 0.5F;
+ 
+@@ -1256,11 +1317,12 @@
+         this.resetHeight();
+         ChunkCoordinates var4 = this.playerLocation;
+         ChunkCoordinates var5 = this.playerLocation;
++        Block block = (var4 == null ? null : Block.blocksList[worldObj.getBlockId(var4.posX, var4.posY, var4.posZ)]);
+ 
+-        if (var4 != null && this.worldObj.getBlockId(var4.posX, var4.posY, var4.posZ) == Block.bed.blockID)
++        if (var4 != null && block != null && block.isBed(worldObj, var4.posX, var4.posY, var4.posZ, this))
+         {
+-            BlockBed.setBedOccupied(this.worldObj, var4.posX, var4.posY, var4.posZ, false);
+-            var5 = BlockBed.getNearestEmptyChunkCoordinates(this.worldObj, var4.posX, var4.posY, var4.posZ, 0);
++            block.setBedOccupied(this.worldObj, var4.posX, var4.posY, var4.posZ, this, false);
++            var5 = block.getBedSpawnPosition(worldObj, var4.posX, var4.posY, var4.posZ, this);
+ 
+             if (var5 == null)
+             {
+@@ -1297,7 +1359,9 @@
+      */
+     private boolean isInBed()
+     {
+-        return this.worldObj.getBlockId(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ) == Block.bed.blockID;
++        ChunkCoordinates c = playerLocation;
++        int blockID = worldObj.getBlockId(c.posX, c.posY, c.posZ);
++        return Block.blocksList[blockID] != null && Block.blocksList[blockID].isBed(worldObj, c.posX, c.posY, c.posZ, this);
+     }
+ 
+     /**
+@@ -1312,13 +1376,15 @@
+         var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
+         var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
+ 
+-        if (par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) != Block.bed.blockID)
++        ChunkCoordinates c = par1ChunkCoordinates;
++        Block block = Block.blocksList[par0World.getBlockId(c.posX, c.posY, c.posZ)];
++        if (block == null || !block.isBed(par0World, c.posX, c.posY, c.posZ, null))
+         {
+             return null;
+         }
+         else
+         {
+-            ChunkCoordinates var3 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
++            ChunkCoordinates var3 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
+             return var3;
+         }
+     }
+@@ -1725,4 +1791,45 @@
      }
  
      public void func_50022_L() {}
