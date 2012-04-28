@@ -136,7 +136,7 @@
     <zip destfile="${basedir}/target/${jarname}.zip">
       <fileset dir="${output}" includes="**/*.class" />
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
-      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" prefix="/"/>
+      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />
