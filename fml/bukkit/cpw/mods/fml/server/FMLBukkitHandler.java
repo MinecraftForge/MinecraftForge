@@ -82,7 +82,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
         try
         {
             Class.forName("BaseModMp", false, getClass().getClassLoader());
-            MinecraftServer.field_6038_a.severe(""
+            MinecraftServer.log.severe(""
                     + "Forge Mod Loader has detected that this server has an ModLoaderMP installed alongside Forge Mod Loader.\n"
                     + "This will cause a serious problem with compatibility. To protect your worlds, this minecraft server will now shutdown.\n"
                     + "You should follow the installation instructions of either Minecraft Forge of Forge Mod Loader and NOT install ModLoaderMP \n"
