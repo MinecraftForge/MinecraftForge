@@ -44,18 +44,21 @@ import cpw.mods.fml.common.ModContainer;
 /**
  * Handles primary communication from hooked code into the system
  * 
- * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from {@link MinecraftServer}
+ * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from
+ * {@link MinecraftServer}
  * 
- * Obfuscated code should focus on this class and other members of the "server" (or "client") code
+ * Obfuscated code should focus on this class and other members of the "server"
+ * (or "client") code
  * 
  * The actual mod loading is handled at arms length by {@link Loader}
  * 
- * It is expected that a similar class will exist for each target environment: Bukkit and Client side.
+ * It is expected that a similar class will exist for each target environment:
+ * Bukkit and Client side.
  * 
  * It should not be directly modified.
  * 
  * @author cpw
- *
+ * 
  */
 public class FMLServerHandler implements IFMLSidedHandler
 {
@@ -75,11 +78,41 @@ public class FMLServerHandler implements IFMLSidedHandler
     private BiomeGenBase[] defaultOverworldBiomes;
 
     /**
-     * Called to start the whole game off from {@link MinecraftServer#startServer}
+     * Called to start the whole game off from
+     * {@link MinecraftServer#startServer}
+     * 
      * @param minecraftServer
      */
     public void onPreLoad(MinecraftServer minecraftServer)
     {
+        try
+        {
+            Class.forName("BaseModMp", false, getClass().getClassLoader());
+            MinecraftServer.field_6038_a.severe(""
+                    + "Forge Mod Loader has detected that this server has an ModLoaderMP installed alongside Forge Mod Loader.\n"
+                    + "This will cause a serious problem with compatibility. To protect your worlds, this minecraft server will now shutdown.\n"
+                    + "You should follow the installation instructions of either Minecraft Forge of Forge Mod Loader and NOT install ModLoaderMP \n"
+                    + "into the minecraft_server.jar file "
+                    + "before this server will be allowed to start up.\n\nFailure to do so will simply result in more startup failures.\n\n"
+                    + "The authors of Minecraft Forge and Forge Mod Loader strongly suggest you talk to your mod's authors and get them to\nupdate their "
+                    + "requirements. ModLoaderMP is not compatible with Minecraft Forge on the server and they will need to update their mod\n"
+                    + "for Minecraft Forge and other server compatibility, unless they are Minecraft Forge mods, in which case they already\n"
+                    + "don't need ModLoaderMP and the mod author simply has failed to update his requirements and should be informed appropriately.\n\n"
+                    + "The authors of Forge Mod Loader would like to be compatible with ModLoaderMP but it is closed source and owned by SDK.\n"
+                    + "SDK, the author of ModLoaderMP, has a standing invitation to submit compatibility patches \n"
+                    + "to the open source community project that is Forge Mod Loader so that this incompatibility doesn't last. \n"
+                    + "Users who wish to enjoy mods of both types are "
+                    + "encouraged to request of SDK that he submit a\ncompatibility patch to the Forge Mod Loader project at \n"
+                    + "http://github.com/cpw/FML.\nPosting on the minecraft forums at\nhttp://www.minecraftforum.net/topic/86765- (the MLMP thread)\n"
+                    + "may encourage him in this effort. However, I ask that your requests be polite.\n"
+                    + "Now, the server has to shutdown so you can reinstall your minecraft_server.jar\nproperly, until such time as we can work together.");
+            throw new RuntimeException(
+                    "This FML based server has detected an installation of ModLoaderMP alongside. This will cause serious compatibility issues, so the server will now shut down.");
+        }
+        catch (ClassNotFoundException e)
+        {
+            // We're safe. continue
+        }
         server = minecraftServer;
         FMLCommonHandler.instance().registerSidedDelegate(this);
         CommonRegistry.registerRegistry(new ServerRegistry());
@@ -112,6 +145,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Get the server instance
+     * 
      * @return
      */
     public MinecraftServer getServer()
@@ -130,8 +164,8 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Called from ChunkProviderServer when a chunk needs to be populated
      * 
-     * To avoid polluting the worldgen seed, we generate a new random from the world seed and
-     * generate a seed from that
+     * To avoid polluting the worldgen seed, we generate a new random from the
+     * world seed and generate a seed from that
      * 
      * @param chunkProvider
      * @param chunkX
@@ -175,7 +209,8 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /**
-     * Is the offered class and instance of BaseMod and therefore a ModLoader mod?
+     * Is the offered class and instance of BaseMod and therefore a ModLoader
+     * mod?
      */
     public boolean isModLoaderMod(Class<?> clazz)
     {
@@ -188,12 +223,13 @@ public class FMLServerHandler implements IFMLSidedHandler
     public ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile)
     {
         @SuppressWarnings("unchecked")
-        Class <? extends BaseMod > bmClazz = (Class <? extends BaseMod >) clazz;
+        Class<? extends BaseMod> bmClazz = (Class<? extends BaseMod>) clazz;
         return new ModLoaderModContainer(bmClazz, canonicalFile);
     }
 
     /**
      * Called to notify that an item was picked up from the world
+     * 
      * @param entityItem
      * @param entityPlayer
      */
@@ -210,6 +246,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Raise an exception
+     * 
      * @param exception
      * @param message
      * @param stopGame
@@ -221,7 +258,8 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /**
-     * Attempt to dispense the item as an entity other than just as a the item itself
+     * Attempt to dispense the item as an entity other than just as a the item
+     * itself
      * 
      * @param world
      * @param x
@@ -255,6 +293,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Build a list of default overworld biomes
+     * 
      * @return
      */
     public BiomeGenBase[] getDefaultOverworldBiomes()
@@ -282,6 +321,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is crafted
+     * 
      * @param player
      * @param craftedItem
      * @param craftingGrid
@@ -319,7 +359,8 @@ public class FMLServerHandler implements IFMLSidedHandler
      * 
      * @param chat
      * @param player
-     * @return true if you want the packet to stop processing and not echo to the rest of the world
+     * @return true if you want the packet to stop processing and not echo to
+     *         the rest of the world
      */
     public boolean handleChatPacket(Packet3Chat chat, EntityPlayer player)
     {
@@ -336,6 +377,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called when a packet 250 packet is received from the player
+     * 
      * @param packet
      * @param player
      */
@@ -357,11 +399,13 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Handle register requests for packet 250 channels
+     * 
      * @param packet
      */
     private void handleClientRegistration(Packet250CustomPayload packet, EntityPlayer player)
     {
-        if (packet.field_44004_c==null) {
+        if (packet.field_44004_c == null)
+        {
             return;
         }
         try
@@ -392,6 +436,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Handle a login
+     * 
      * @param loginPacket
      * @param networkManager
      */
@@ -401,12 +446,14 @@ public class FMLServerHandler implements IFMLSidedHandler
         packet.field_44005_a = "REGISTER";
         packet.field_44004_c = FMLCommonHandler.instance().getPacketRegistry();
         packet.field_44003_b = packet.field_44004_c.length;
-        if (packet.field_44003_b>0) {
+        if (packet.field_44003_b > 0)
+        {
             networkManager.func_745_a(packet);
         }
     }
 
-    public void announceLogin(EntityPlayer player) {
+    public void announceLogin(EntityPlayer player)
+    {
         for (ModContainer mod : Loader.getModList())
         {
             if (mod.wantsPlayerTracking())
@@ -415,6 +462,7 @@ public class FMLServerHandler implements IFMLSidedHandler
             }
         }
     }
+
     /**
      * Are we a server?
      */
@@ -436,9 +484,12 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public File getMinecraftRootDirectory()
     {
-        try {
+        try
+        {
             return server.func_6009_a(".").getCanonicalFile();
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe)
+        {
             return new File(".");
         }
     }
@@ -449,8 +500,10 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     public boolean handleServerCommand(String command, String player, ICommandListener listener)
     {
-        for (ModContainer mod : Loader.getModList()) {
-            if (mod.wantsConsoleCommands() && mod.getConsoleHandler().handleCommand(command, player, listener)) {
+        for (ModContainer mod : Loader.getModList())
+        {
+            if (mod.wantsConsoleCommands() && mod.getConsoleHandler().handleCommand(command, player, listener))
+            {
                 return true;
             }
         }
