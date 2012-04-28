@@ -85,13 +85,15 @@ public class ModLoaderModContainer implements ModContainer
     private void configureMod()
     {
         File configDir = Loader.instance().getConfigDir();
-        File modConfig = new File(configDir, String.format("%s.cfg", modClazz.getSimpleName()));
+        String modConfigName = modClazz.getSimpleName();
+        File modConfig = new File(configDir, String.format("%s.cfg", modConfigName));
         Properties props = new Properties();
 
         if (modConfig.exists())
         {
             try
             {
+                Loader.log.fine(String.format("Reading existing configuration file for %s : %s", modConfigName, modConfig.getName()));
                 FileReader configReader = new FileReader(modConfig);
                 props.load(configReader);
                 configReader.close();
@@ -130,10 +132,12 @@ public class ModLoaderModContainer implements ModContainer
                 {
                     defaultValue = f.get(null);
                     propertyValue = props.getProperty(propertyName, extractValue(defaultValue));
-                    Object currentValue = parseValue(propertyValue, property, f.getType());
+                    Object currentValue = parseValue(propertyValue, property, f.getType(), propertyName, modConfigName);
+                    Loader.log.finest(String.format("Configuration for %s.%s found values default: %s, configured: %s, interpreted: %s", modConfigName, propertyName, defaultValue, propertyValue, currentValue));
 
                     if (currentValue != null && !currentValue.equals(defaultValue))
                     {
+                        Loader.log.finest(String.format("Configuration for %s.%s value set to: %s", modConfigName, propertyName, currentValue));
                         f.set(null, currentValue);
                     }
                 }
@@ -168,6 +172,7 @@ public class ModLoaderModContainer implements ModContainer
                     {
                         props.setProperty(propertyName, extractValue(propertyValue));
                     }
+                    comments.append("\n");
                 }
             }
         }
@@ -178,6 +183,7 @@ public class ModLoaderModContainer implements ModContainer
                 FileWriter configWriter = new FileWriter(modConfig);
                 props.store(configWriter, comments.toString());
                 configWriter.close();
+                Loader.log.fine(String.format("Configuration for %s written to %s", modConfigName, modConfig.getName()));
             }
             catch (IOException e)
             {
@@ -188,7 +194,7 @@ public class ModLoaderModContainer implements ModContainer
         }
     }
 
-    private Object parseValue(String val, MLProp property, Class<?> type)
+    private Object parseValue(String val, MLProp property, Class<?> type, String propertyName, String modConfigName)
     {
         if (type.isAssignableFrom(String.class))
         {
@@ -198,41 +204,42 @@ public class ModLoaderModContainer implements ModContainer
         {
             return Boolean.parseBoolean(val);
         }
-        else if (Number.class.isAssignableFrom(type))
+        else if (Number.class.isAssignableFrom(type) || type.isPrimitive())
         {
             Number n = null;
 
-            if (Double.class.isAssignableFrom(type))
+            if (type.isAssignableFrom(Double.TYPE) || Double.class.isAssignableFrom(type))
             {
                 n = Double.parseDouble(val);
             }
-            if (Float.class.isAssignableFrom(type))
+            else if (type.isAssignableFrom(Float.TYPE) || Float.class.isAssignableFrom(type))
             {
                 n = Float.parseFloat(val);
             }
-            if (Long.class.isAssignableFrom(type))
+            else if (type.isAssignableFrom(Long.TYPE) || Long.class.isAssignableFrom(type))
             {
                 n = Long.parseLong(val);
             }
-            if (Integer.class.isAssignableFrom(type))
+            else if (type.isAssignableFrom(Integer.TYPE) || Integer.class.isAssignableFrom(type))
             {
                 n = Integer.parseInt(val);
             }
-            if (Short.class.isAssignableFrom(type))
+            else if (type.isAssignableFrom(Short.TYPE) || Short.class.isAssignableFrom(type))
             {
                 n = Short.parseShort(val);
             }
-            if (Byte.class.isAssignableFrom(type))
+            else if (type.isAssignableFrom(Byte.TYPE) || Byte.class.isAssignableFrom(type))
             {
                 n = Byte.parseByte(val);
             }
             else
             {
-                throw new IllegalArgumentException("MLProp declared on non-standard type");
+                throw new IllegalArgumentException(String.format("MLProp declared on %s of type %s, an unsupported type",propertyName, type.getName()));
             }
 
             if (n.doubleValue() < property.min() || n.doubleValue() > property.max())
             {
+                Loader.log.warning(String.format("Configuration for %s.%s found value %s outside acceptable range %s,%s", modConfigName,propertyName, n, property.min(), property.max()));
                 return null;
             }
             else
@@ -241,7 +248,7 @@ public class ModLoaderModContainer implements ModContainer
             }
         }
 
-        return null;
+        throw new IllegalArgumentException(String.format("MLProp declared on %s of type %s, an unsupported type",propertyName, type.getName()));
     }
     private String extractValue(Object value)
     {

@@ -33,12 +33,12 @@ String info() default "";
     /**
      * Maximum value allowed if field is a number.
      */
-double max() default 1D;
+    double max() default Double.MAX_VALUE;
 
     /**
      * Minimum value allowed if field is a number.
      */
-double min() default -1D;
+    double min() default Double.MIN_VALUE;
 
     /**
      * Overrides the field name for property key.
