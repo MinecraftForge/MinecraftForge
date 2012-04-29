@@ -17,7 +17,7 @@ from runtime.updatemcp import updatemcp
 from forge import apply_patches, copytree, reset_logger, download_ff
 
 def main():
-    print '=================================== Minecraft Forge Setup Start ================================='
+    print '========================= Minecraft Forge Setup Start ========================='
     
     if os.path.isdir(os.path.join(mcp_dir, 'conf')):
         shutil.rmtree(os.path.join(mcp_dir, 'conf'))
@@ -92,7 +92,7 @@ def main():
     reset_logger()
     os.chdir(forge_dir)
     
-    print '=================================== Minecraft Forge Setup Finished ================================='
+    print '======================== Minecraft Forge Setup Finished ========================'
     
 if __name__ == '__main__':
     main()
