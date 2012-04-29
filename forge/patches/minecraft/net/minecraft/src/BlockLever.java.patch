@@ -64,13 +64,13 @@
              boolean var7 = false;
  
 -            if (!par1World.isBlockNormalCube(par2 - 1, par3, par4) && var6 == 1)
-+            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, 1) && var6 == 1)
++            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, 5) && var6 == 1)
              {
                  var7 = true;
              }
  
 -            if (!par1World.isBlockNormalCube(par2 + 1, par3, par4) && var6 == 2)
-+            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, 2) && var6 == 2)
++            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, 4) && var6 == 2)
              {
                  var7 = true;
              }
@@ -82,19 +82,19 @@
              }
  
 -            if (!par1World.isBlockNormalCube(par2, par3, par4 + 1) && var6 == 4)
-+            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, 4) && var6 == 4)
++            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, 2) && var6 == 4)
              {
                  var7 = true;
              }
  
 -            if (!par1World.isBlockNormalCube(par2, par3 - 1, par4) && var6 == 5)
-+            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 5) && var6 == 5)
++            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) && var6 == 5)
              {
                  var7 = true;
              }
  
 -            if (!par1World.isBlockNormalCube(par2, par3 - 1, par4) && var6 == 6)
-+            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 6) && var6 == 6)
++            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, 1) && var6 == 6)
              {
                  var7 = true;
              }
