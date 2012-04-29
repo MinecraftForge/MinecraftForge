@@ -642,6 +642,27 @@ public class ForgeHooks
     public static final int revisionVersion = 3;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
+    
+    public static int getMajorVersion()
+    {
+        return majorVersion;
+    }
+    
+    public static int getMinorVersion()
+    {
+        return minorVersion;
+    }
+    
+    public static int getRevisionVersion()
+    {
+        return revisionVersion;
+    }
+    
+    public static int getBuildVersion()
+    {
+        return buildVersion;
+    }    
+    
     static
     {
         plantGrassList = new ArrayList<ProbableItem>();
