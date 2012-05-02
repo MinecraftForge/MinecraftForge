@@ -235,3 +235,12 @@
      }
  
      /**
+@@ -869,7 +863,7 @@
+      */
+     public String getServerBrand()
+     {
+-        return "vanilla";
++        return "forge";
+     }
+ 
+     /**

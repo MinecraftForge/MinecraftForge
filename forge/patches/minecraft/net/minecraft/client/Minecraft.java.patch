@@ -123,3 +123,11 @@
  
          ChunkCoordinates var4 = null;
          ChunkCoordinates var5 = null;
+@@ -2575,6 +2548,7 @@
+         var0.addData("java_version", System.getProperty("java.version"));
+         var0.addData("opengl_version", GL11.glGetString(GL11.GL_VERSION));
+         var0.addData("opengl_vendor", GL11.glGetString(GL11.GL_VENDOR));
++        var0.addData("client_brand", "forge");
+         var0.sendReport();
+     }
+ }
