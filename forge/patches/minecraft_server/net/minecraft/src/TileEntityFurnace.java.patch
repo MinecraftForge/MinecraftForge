@@ -23,7 +23,7 @@
 +            if (this.furnaceItemStacks[2] == null) return true;
 +            if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
 +            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
-+            return (result < this.getInventoryStackLimit() && result < this.furnaceItemStacks[2].getMaxStackSize());
++            return (result <= this.getInventoryStackLimit() && result <= this.furnaceItemStacks[2].getMaxStackSize());
          }
      }
  
