@@ -166,7 +166,7 @@
  
 @@ -1012,6 +1104,10 @@
          {
-             ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).func_28171_a(par1Packet131MapData.itemData);
+             ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).updateMPMapData(par1Packet131MapData.itemData);
          }
 +        else if (ForgeHooks.onItemDataPacket(netManager, par1Packet131MapData))
 +        {

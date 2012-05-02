@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -216,4 +216,24 @@
+@@ -219,4 +219,24 @@
          addMapping(TileEntityEnchantmentTable.class, "EnchantTable");
          addMapping(TileEntityEndPortal.class, "Airportal");
      }

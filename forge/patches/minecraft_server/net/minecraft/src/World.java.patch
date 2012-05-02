@@ -272,7 +272,7 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3855,4 +3862,38 @@
+@@ -3856,4 +3863,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }

@@ -293,7 +293,7 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -4443,4 +4446,39 @@
+@@ -4444,4 +4447,39 @@
      {
          return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
      }

@@ -9,8 +9,8 @@
      }
  
      /**
-@@ -47,4 +47,14 @@
-             var7.onTileEntityPowered(par5, par6);
+@@ -51,4 +51,14 @@
+             var7.receiveClientEvent(par5, par6);
          }
      }
 +    

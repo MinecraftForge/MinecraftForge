@@ -364,7 +364,7 @@ func_21014_i,hasContainerItem,0,True if this Item has a container item (a.k.a. c
 func_21015_a,setHasSubtypes,0,
 func_21016_h,getContainerItem,0,
 func_21017_a,setContainerItem,0,
-func_21024_a,powerBlock,0,
+func_21024_a,receiveClientEvent,0,"Called when the block receives a client event - see World.sendClientEvent. By default, passes it on to the tile entity at this location. Args: world, x, y, z, event number, parameter"
 func_21025_b,damageDropped,0,Determines the damage on the item the block drops. Used in cloth and wood.
 func_21027_c_,fertilize,0,Apply bonemeal to the crops.
 func_21028_c,growTree,0,Attempts to grow a sapling into a tree
@@ -410,7 +410,7 @@ func_21110_c,setCurrentChunkOver,0,"This is the chunk that the player is current
 func_21111_d,canChunkExist,0,"Checks if the chunk coordinate could actually be stored within the chunk cache. Args: chunkX, chunkZ"
 func_21114_a,setAllowedSpawnTypes,0,Set which types of mobs are allowed to spawn (peaceful vs hostile).
 func_21115_j,markBlockAsNeedsUpdate,0,calls the 'MarkBlockAsNeedsUpdate' in all block accesses in this world
-func_21116_c,playNoteAt,0,"plays a given note at x, y, z. args: x, y, z, instrument, note"
+func_21116_c,sendClientEvent,0,"Calls receiveClientEvent of the tile entity at the given location on the server and all nearby clients with the given event number and parameter. Args: X, Y, Z, event number, parameter"
 func_21117_a,doChunksNearChunkExist,0,Checks if any of the chunks within distance (argument 4) blocks of the given block exist
 func_21118_q,getChunkProvider,0,gets the IChunkProvider this world uses.
 func_21119_g,getProviderName,0,"Returns the name of the current chunk provider, by calling chunkprovider.makeString()"
@@ -1002,6 +1002,8 @@ func_28163_a,readFromNBT,0,reads in data from the NBTTagCompound into this MapDa
 func_28164_a,markDirty,0,"Marks this MapDataBase dirty, to be saved to disk when the level next saves."
 func_28165_a,setDirty,0,"Sets the dirty state of this MapDataBase, whether it needs saving to disk."
 func_28166_b,isDirty,0,Whether this MapDataBase needs saving to disk.
+func_28169_a,updateVisiblePlayers,0,Adds the player passed to the list of visible players and checks to see which players are visible
+func_28171_a,updateMPMapData,0,Updates the client's map with information from other players in MP
 func_28181_a,setGrassBiomeColorizer,0,
 func_28182_a,setWaterBiomeColorizer,0,
 func_28184_a,setData,0,"Assigns the given String id to the given MapDataBase, removing any existing ones of the same id."
@@ -1194,7 +1196,7 @@ func_35120_i,getTextureByXP,0,Returns a number from 1 to 10 based on how much XP
 func_35121_b,getXPSplit,0,Get xp split rate (Is called until the xp drop code in EntityLiving.onEntityUpdate is complete)
 func_35141_y_,closeChest,0,
 func_35142_x_,openChest,0,
-func_35143_b,onTileEntityPowered,0,
+func_35143_b,receiveClientEvent,0,"Called when a client event is received with the event number and argument, see World.sendClientEvent"
 func_35144_b,updateContainingBlockInfo,0,"Causes the TileEntity to reset all it's cached values for it's container block, blockID, metaData and in the case of chests, the adjcacent chest check"
 func_35147_g,checkForAdjacentChests,0,Performs the check for adjacent chests to determine if this chest is double or not.
 func_35157_d,hasItem,0,Get if a specifiied item id is inside the inventory.
@@ -1634,6 +1636,8 @@ func_40143_a,isWheat,0,Checks if the parameter is an wheat item.
 func_40144_b,procreate,0,Creates a baby animal according to the animal type of the target at the actual position and spawns 'love' particles.
 func_40145_a,spawnBabyAnimal,0,This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
 func_40147_Y,isValidLightLevel,0,Checks to make sure the light is not too bright where the mob is spawning
+func_40148_a,setBesideClimbableBlock,0,"Updates the WatchableObject (Byte) created in entityInit(), setting it to 0x01 if par1 is true or 0x00 if it is false."
+func_40149_l_,isBesideClimbableBlock,0,Returns true if the WatchableObject (Byte) is 0x01 otherwise returns false. The WatchableObject is updated using setBesideClimableBlock.
 func_40155_e,superAttackFrom,0,"Returns a super of attackEntityFrom in EntityDragonBase, because the normal attackEntityFrom is overriden"
 func_40156_a,attackEntityFromPart,0,
 func_40158_a,destroyBlocksInAABB,0,Destroys all blocks that aren't associated with 'The End' inside the given bounding box.
@@ -1999,6 +2003,7 @@ func_437_a,attackEntity,0,Basic mob attack. Default to touch of death in EntityC
 func_438_i,findPlayerToAttack,0,"Finds the closest player within 16 blocks to attack, or null if this Entity isn't interested in attacking (Animals, Spiders at day, peaceful PigZombies)."
 func_439_a,getBlockPathWeight,0,"Takes a coordinate in and returns a weight to determine how likely this creature will try to path to the block. Args: x, y, z"
 func_44001_ad,isClientWorld,0,Returns whether the entity is in a local (client) world
+func_44005_a,Returns,0,the private theGameSettings field.
 func_44020_i,getName,0,
 func_44021_d,loadLanguageList,0,
 func_44022_b,getLanguageList,0,
@@ -2034,6 +2039,7 @@ func_46011_aM,getAge,0,
 func_46014_aS,updateAITasks,0,
 func_46024_b,setDamage,0,
 func_46025_l,getDamage,0,
+func_46028_b,getDoneButton,0,Returns the private doneButton field.
 func_46034_a,onUpdateMoveHelper,0,
 func_46051_a,generate,0,
 func_46059_i,doesContainerItemLeaveCraftingGrid,0,"If this returns true, after a recipe involving this item is crafted the container item will be added to the player's inventory instead of remaining in the crafting grid."
@@ -2125,6 +2131,7 @@ func_48141_af,isSitting,0,
 func_48143_a,setOwner,0,
 func_48144_ah,getOwner,0,
 func_48145_ag,getOwnerName,0,
+func_48147_c,setTameSkin,0,
 func_48151_a,dropPlayerItemWithRandomChoice,0,"Args: itemstack, flag"
 func_48152_as,dropOneItem,0,Called when player presses the drop item key
 func_48153_a,dropPlayerItem,0,Args: itemstack - called when player drops an item stack that's not in his inventory (like items still placed in a workbench while the workbench'es GUI gets closed)
@@ -2292,20 +2299,27 @@ func_494_a,getCurrentItem,0,Returns the item stack currently held by the player.
 func_496_a,setCurrentItem,0,Sets a specific itemID as the current item being held (only if it exists on the hotbar)
 func_498_a,changeCurrentItem,0,Switch the current item to the next one or the previous one
 func_499_j,getFirstEmptyStack,0,Returns the first item stack that is empty.
+func_50006_a,setEditable,0,Sets the sign's isEditable flag to the specified parameter.
 func_50007_a,isEditable,0,
 func_50011_a,adjustHistoryOffset,0,increment/decrement history scroll offset
+func_50012_a,getChatClickDataFromMouse,0,"gets the click data from mouse position args:( mouse x, mouse y)"
 func_50013_c,getSentMessageList,0,Returns the list with the sent chat messages in it.
 func_50015_e,isChatOpen,0,Return true if chat gui is open
 func_50022_i,getEnableBackgroundDrawing,0,get enable drawing background and outline
 func_50025_j,getIsFocused,0,getter for the focused field
+func_50026_c,setCanLoseFocus,0,if true the textbox can lose focus by clicking elsewhere on the screen
 func_50027_a,setEnableBackgroundDrawing,0,enable drawing background and outline
 func_50033_b,setFocused,0,setter for the focused field
 func_50037_a,textboxKeyTyped,0,Call this method from you GuiScreen to process the keys into textbox.
+func_50049_m,isShiftKeyDown,0,
 func_50050_a,setClipboardString,0,store a string in the system clipboard
+func_50051_l,isCtrlKeyDown,0,
 func_50057_d,completePlayerName,0,Autocompletes player name
+func_50058_a,getSentHistory,0,"input is relative and is applied directly to the sentHistoryCursor so -1 is the previous message, 1 is the next message from the current cursor position"
 func_50073_a,setBlock,0,"Sets the block without metadata in the world, notifying neighbors if enabled."
 func_50074_q,canSilkHarvest,0,"Return true if a player with SlikTouch can harvest this block directly, and not it's normal drops."
 func_50086_b,setEnableSnow,0,sets enableSnow to true during biome initialization. returns BiomeGenBase.
+func_50089_b,getURI,0,computes the URI from the clicked chat data object
 func_50098_a,nameStartsWith,0,Returns true if the current player name starts with string specified value.
 func_50100_a,handlePlayerAbilities,0,Handle a player abilities packet.
 func_50101_a,renderString,0,
@@ -2339,11 +2353,13 @@ func_518_b,generateLeaves,0,Generates the leaf portion of the tree as specified 
 func_519_e,validTreeLocation,0,"Returns a boolean indicating whether or not the current location for the tree, spanning basePos to to the height limit, is valid."
 func_52003_C,getVersion,0,Returns the client version string
 func_52004_D,createAndSendReport,0,Creates and sends anonymous system information to Mojang's stats server
+func_52005_b,isItemFuel,0,Return true if item is a fuel source (getItemBurnTime() > 0).
 func_52013_a,updatePlayerMoveState,0,
 func_52014_d,stripColorCodes,0,Remove all embedded color codes from a string
 func_52016_a,buildPostString,0,Builds an encoded HTTP POST content string from a string map
 func_52017_a,sendPost,0,Sends a HTTP POST request to the given URL with data from a string
 func_52018_a,sendPost,0,Sends a HTTP POST request to the given URL with data from a map
+func_52019_a,filerAllowedCharacters,0,Filter string by only keeping those characters for which isAllowedCharacter() returns true.
 func_52020_b,getDataMap,0,Returns the data map for the given usage snooper
 func_52021_a,sendReport,0,Starts a new thread to send the information to the report server
 func_52022_a,addData,0,Adds information to the report
@@ -2936,7 +2952,7 @@ func_20055_a,updateCraftingInventorySlot,1,inform the player of a change in a si
 func_20056_a,updateCraftingInventoryInfo,1,send information about the crafting inventory to the client(currently only for furnace times)
 func_20058_J,updateHeldItem,1,"updates item held by mouse, This method always returns before doing anything..."
 func_20059_K,closeCraftingGui,1,close the current crafting gui
-func_20060_R,getNextWidowId,1,get the next window id to use
+func_20060_R,getNextWindowId,1,get the next window id to use
 func_20063_a,getTileEntityInfo,1,gets description packets from all TileEntity's that override func_20070
 func_20067_a_,isUseableByPlayer,1,Do not make give this method the name canInteractWith because it clashes with Container
 func_20068_b,getInvName,1,Returns the name of the inventory.
@@ -2993,7 +3009,7 @@ func_21001_a,handleEntityAction,1,runs registerPacket on the given Packet19Entit
 func_21002_a,handleEntityMetadata,1,Packet handler
 func_21003_a,handleEntityPainting,1,Packet handler
 func_21004_a,handlePlayNoteBlock,1,
-func_21024_a,powerBlock,1,
+func_21024_a,receiveClientEvent,1,"Called when the block receives a client event - see World.sendClientEvent. By default, passes it on to the tile entity at this location. Args: world, x, y, z, event number, parameter"
 func_21025_b,damageDropped,1,Determines the damage on the item the block drops. Used in cloth and wood.
 func_21027_b,growTree,1,Attempts to grow a sapling into a tree
 func_21028_c,fertilize,1,Apply bonemeal to the crops.
@@ -3044,7 +3060,7 @@ func_21104_b,getMaxNumberOfCreature,1,
 func_21105_a,getCreatureClass,1,
 func_21114_a,getRandomWorldGenForTrees,1,Gets a WorldGen appropriate for this biome.
 func_21116_a,setAllowedSpawnTypes,1,first boolean for hostile mobs and second for peaceful mobs
-func_21117_c,playNoteAt,1,"plays a given note at x, y, z. args: x, y, z, instrument, note"
+func_21117_c,sendClientEvent,1,"Calls receiveClientEvent of the tile entity at the given location on the server and all nearby clients with the given event number and parameter. Args: X, Y, Z, event number, parameter"
 func_21118_a,doChunksNearChunkExist,1,Checks if any of the chunks within distance (argument 4) blocks of the given block exist
 func_21119_h,markBlockAsNeedsUpdate,1,calls the 'MarkBlockAsNeedsUpdate' in all block accesses in this world
 func_21125_h,getItemDamage,1,gets the damage of an itemstack
@@ -3582,7 +3598,7 @@ func_35152_b,getXPSplit,1,Get a fragment of the maximum experience points value 
 func_35153_j_,getXpValue,1,Returns the XP value of this XP orb.
 func_35161_e,openChest,1,
 func_35162_t_,closeChest,1,
-func_35163_b,onTileEntityPowered,1,
+func_35163_b,receiveClientEvent,1,"Called when a client event is received with the event number and argument, see World.sendClientEvent"
 func_35164_g,updateContainingBlockInfo,1,"Causes the TileEntity to reset all it's cached values for it's container block, blockID, metaData and in the case of chests, the adjcacent chest check"
 func_35167_h,checkForAdjacentChests,1,Performs the check for adjacent chests to determine if this chest is double or not.
 func_35177_c,hasItem,1,Get if a specifiied item id is inside the inventory.
@@ -3932,6 +3948,8 @@ func_40110_a,displayGUIBrewingStand,1,Displays the GUI for interacting with a br
 func_40114_y,createInstance,1,
 func_40120_w,getSlimeParticle,1,Returns the name of a particle effect that may be randomly created by EntitySlime.onUpdate()
 func_40123_y,isValidLightLevel,1,Checks to make sure the light is not too bright where the mob is spawning
+func_40124_p_,isBesideClimbableBlock,1,Returns true if the WatchableObject (Byte) is 0x01 otherwise returns false. The WatchableObject is updated using setBesideClimableBlock.
+func_40125_a,setBesideClimbableBlock,1,"Updates the WatchableObject (Byte) created in entityInit(), setting it to 0x01 if par1 is true or 0x00 if it is false."
 func_40131_b,procreate,1,Creates a baby animal according to the animal type of the target at the actual position and spawns 'love' particles.
 func_40133_a,spawnBabyAnimal,1,This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
 func_40134_a,isWheat,1,Checks if the parameter is an wheat item.
@@ -4417,6 +4435,7 @@ func_48369_c,setSitting,1,
 func_48371_v_,isSitting,1,
 func_48372_a,setOwner,1,
 func_48373_u_,isTamed,1,
+func_48376_c_,setTameSkin,1,
 func_48380_l_,getVillage,1,
 func_48392_a,setTerrainType,1,
 func_48409_a,isAllowedCharacter,1,
@@ -4575,6 +4594,7 @@ func_517_a,getBlockLightValue_do,1,"Gets the light value of a block location. Th
 func_518_a,tickUpdates,1,Runs through the list of updates to run and ticks them
 func_519_b,markBlocksDirty,1,
 func_52003_getServerModName,getServerBrand,1,"Returns the brand name of this server. Usually overridden/changed by server mods, such as Bukkit."
+func_52006_b,isItemFuel,1,Return true if item is a fuel source (getItemBurnTime() > 0).
 func_52008_a,buildPostString,1,Builds an encoded HTTP POST content string from a string map
 func_52009_a,sendPost,1,Sends a HTTP POST request to the given URL with data from a string
 func_52010_a,sendPost,1,Sends a HTTP POST request to the given URL with data from a map
@@ -4705,6 +4725,7 @@ func_6152_a,onItemRightClick,1,"Called whenever this item is equipped and the ri
 func_6154_a,itemUsed,1,
 func_6156_d,updatingLighting,1,Updates lighting. Returns true if there are more lighting updates to update
 func_6157_a,canMineBlock,1,Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
+func_6158_a,getEntityByID,1,"Returns the Entity with the given ID, or null if it doesn't exist in this World."
 func_6168_a,useItemRightClick,1,"Called whenever this item stack is equipped and right clicked. Returns the new item stack to put in the position where this item is. Args: world, player"
 func_616_c,playerLoggedOut,1,Called when a player disconnects from the game. Writes player data to disk and removes them from the world.
 func_617_d,savePlayerStates,1,Saves all of the player's states

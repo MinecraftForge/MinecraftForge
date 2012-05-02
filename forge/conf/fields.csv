@@ -592,7 +592,7 @@ field_1792_b,zoom,0,
 field_1793_a,currentRender,0,
 field_185_a,fullscreen,0,
 field_186_a,mainFrame,0,"Reference to the main frame, in this case, the applet window itself."
-field_188_b,chunkZPosition,0,The Z position of this Chunk Coordinate Pair
+field_188_b,chunkZPos,0,The Z position of this Chunk Coordinate Pair
 field_189_a,chunkXPos,0,The X position of this Chunk Coordinate Pair
 field_191_a,renderManager,0,
 field_194_c,shadowOpaque,0,Determines the darkness of the object's shadow. Higher value makes a darker shadow.
@@ -1346,7 +1346,10 @@ field_28160_d,fontRenderer,0,
 field_28161_c,gameSettings,0,
 field_28167_b,dirty,0,Whether this MapDataBase needs saving to disk.
 field_28168_a,mapName,0,The name of the map data nbt
+field_28172_j,playersHashMap,0,Holds a reference to the players who own a copy of the map and a reference to their MapInfo
 field_28173_i,playersVisibleOnMap,0,
+field_28174_h,playersArrayList,0,Holds a reference to the MapInfo of the players who own a copy of the map
+field_28175_g,randomEffect,0,"Incremented each update of the map item, used for the patchy updating map effect and the spinning player icons while in the End and Nether."
 field_28176_f,colors,0,colours
 field_28177_e,scale,0,
 field_28178_d,dimension,0,
@@ -2496,6 +2499,7 @@ field_432_aP,oreRedstoneGlowing,0,
 field_433_aO,oreRedstone,0,
 field_435_aM,doorSteel,0,
 field_44004_b,sheepTimer,0,Used to control movement as well as wool regrowth. Set to 40 on handleHealthUpdate and counts down with each tick.
+field_44006_d,theGameSettings,0,For saving the user's language selection to disk.
 field_44007_b,updateTimer,0,"Timer used to update texture packs, decreases every tick and is reset to 20 and updates texture packs upon reaching 0."
 field_44008_c,languageList,0,This GUI's language list.
 field_44009_a,parentGui,0,This GUI's parent GUI.
@@ -2854,11 +2858,20 @@ field_50016_f,sentMessageList,0,A list with all the sent chat messages in it.
 field_50017_n,historyOffset,0,
 field_50043_m,isEnabled,0,"If this value is true along isFocused, keyTyped will process the keys."
 field_50044_j,enableBackgroundDrawing,0,
+field_50045_k,canLoseFocus,0,if true the textbox can lose focus by clicking elsewhere on the screen
+field_50046_r,disabledColor,0,
+field_50047_q,enabledColor,0,
+field_50063_c,sentHistoryCursor,0,"keeps position of which chat message you will select when you press up, (does not increase for duplicated messages sent immediately after each other)"
 field_50064_a,inputField,0,Chat entry field
+field_50065_j,clickedURI,0,used to pass around the URI to various dialogues and to the host os
+field_50066_k,defaultInputFieldText,0,is the text that appears when you press the chat key and the input box appears pre-filled
 field_50069_d,isCreativeMode,0,"Used to determine if creative mode is enabled, and therefore if items should be depleted on usage"
 field_50070_b,isFlying,0,Indicates whether the player is flying or not.
 field_50071_c,allowFlying,0,Whether or not to allow the player to fly when they double jump.
 field_50072_a,disableDamage,0,Disables player damage.
+field_50095_b,fontR,0,
+field_50096_c,line,0,
+field_50097_a,pattern,0,
 field_50099_c,nameinLowerCase,0,Player name in lowercase.
 field_500_a,entityId,0,Entity ID of the object.
 field_50115_n,red,0,Used to specify new red value for the current color.
@@ -2886,6 +2899,8 @@ field_518_b,username,0,The name of the user attempting to login.
 field_519_a,protocolVersion,0,The protocol version in use. Current version is 2.
 field_52007_b,height,0,Button height in pixels
 field_52008_a,width,0,Button width in pixels
+field_52009_d,lastServerName,0,Remembers the last hostname or IP address entered into text field between invocations of the GUI.
+field_52010_b,maxChatLength,0,Maximum number of characters allowed in chat string in each packet.
 field_52015_r,colorCodeRegex,0,Compiled regular expression pattern for matching color codes in a string
 field_52024_b,serverUrl,0,URL of the server to send the report to
 field_52025_a,dataMap,0,String map for report data
@@ -5302,6 +5317,7 @@ field_514_m,sand,1,
 field_515_l,fire,1,
 field_517_j,sponge,1,
 field_518_i,plants,1,
+field_52004_b,maxChatLength,1,Maximum number of characters allowed in chat string in each packet.
 field_520_g,lava,1,
 field_521_f,water,1,
 field_522_e,iron,1,

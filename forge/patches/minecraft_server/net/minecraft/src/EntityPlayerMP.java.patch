@@ -3,7 +3,7 @@
 @@ -551,6 +551,7 @@
      public void displayWorkbenchGUI(int par1, int par2, int par3)
      {
-         this.getNextWidowId();
+         this.getNextWindowId();
 +        closeCraftingGui(); //NOTE: This is a bug fix for chests staying open in SMP
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 1, "Crafting", 9));
          this.craftingInventory = new ContainerWorkbench(this.inventory, this.worldObj, par1, par2, par3);
@@ -11,7 +11,7 @@
 @@ -560,6 +561,7 @@
      public void displayGUIEnchantment(int par1, int par2, int par3)
      {
-         this.getNextWidowId();
+         this.getNextWindowId();
 +        closeCraftingGui(); //NOTE: This is a bug fix for chests staying open in SMP
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 4, "Enchanting", 9));
          this.craftingInventory = new ContainerEnchantment(this.inventory, this.worldObj, par1, par2, par3);
@@ -19,7 +19,7 @@
 @@ -572,6 +574,7 @@
      public void displayGUIChest(IInventory par1IInventory)
      {
-         this.getNextWidowId();
+         this.getNextWindowId();
 +        closeCraftingGui(); //NOTE: This is a bug fix for chests staying open in SMP
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 0, par1IInventory.getInvName(), par1IInventory.getSizeInventory()));
          this.craftingInventory = new ContainerChest(this.inventory, par1IInventory);
@@ -27,7 +27,7 @@
 @@ -584,6 +587,7 @@
      public void displayGUIFurnace(TileEntityFurnace par1TileEntityFurnace)
      {
-         this.getNextWidowId();
+         this.getNextWindowId();
 +        closeCraftingGui(); //NOTE: This is a bug fix for chests staying open in SMP
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 2, par1TileEntityFurnace.getInvName(), par1TileEntityFurnace.getSizeInventory()));
          this.craftingInventory = new ContainerFurnace(this.inventory, par1TileEntityFurnace);
@@ -35,7 +35,7 @@
 @@ -596,6 +600,7 @@
      public void displayGUIDispenser(TileEntityDispenser par1TileEntityDispenser)
      {
-         this.getNextWidowId();
+         this.getNextWindowId();
 +        closeCraftingGui(); //NOTE: This is a bug fix for chests staying open in SMP
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 3, par1TileEntityDispenser.getInvName(), par1TileEntityDispenser.getSizeInventory()));
          this.craftingInventory = new ContainerDispenser(this.inventory, par1TileEntityDispenser);
@@ -43,7 +43,7 @@
 @@ -608,6 +613,7 @@
      public void displayGUIBrewingStand(TileEntityBrewingStand par1TileEntityBrewingStand)
      {
-         this.getNextWidowId();
+         this.getNextWindowId();
 +        closeCraftingGui(); //NOTE: This is a bug fix for chests staying open in SMP
          this.playerNetServerHandler.sendPacket(new Packet100OpenWindow(this.currentWindowId, 5, par1TileEntityBrewingStand.getInvName(), par1TileEntityBrewingStand.getSizeInventory()));
          this.craftingInventory = new ContainerBrewingStand(this.inventory, par1TileEntityBrewingStand);
@@ -59,7 +59,7 @@
 +     */
 +    public final void realGetNextWidowId()
 +    {
-+        getNextWidowId();
++        getNextWindowId();
 +    }
 +
 +    public final int getCurrentWindowIdField()

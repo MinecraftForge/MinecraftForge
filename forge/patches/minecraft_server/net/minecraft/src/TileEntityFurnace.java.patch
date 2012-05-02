@@ -59,7 +59,7 @@
          }
      }
  
-@@ -316,4 +330,18 @@
+@@ -319,4 +333,18 @@
      public void openChest() {}
  
      public void closeChest() {}
