@@ -1,3 +1,4 @@
+package net.minecraft.src;
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  *
@@ -10,7 +11,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package net.minecraft.src;
+
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -19,8 +20,8 @@ import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ReflectionHelper;
-import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.server.FMLServerHandler;
+import cpw.mods.fml.server.ModLoaderModContainer;
 
 public class ModLoader
 {

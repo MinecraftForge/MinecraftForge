@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package cpw.mods.fml.server;
+package cpw.mods.fml.common.modloader;
 
 import java.io.File;
 import java.io.FileReader;
@@ -37,6 +37,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.server.FMLServerHandler;
 
 public class ModLoaderModContainer implements ModContainer
 {
