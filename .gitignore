@@ -4,3 +4,5 @@
 /fmlbuild.properties
 /difflist.txt
 /.metadata/
+/eclipse/.metadata/
+/target
