@@ -36,6 +36,7 @@ import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.ServerRegistry;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldType;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -536,5 +537,13 @@ public class FMLServerHandler implements IFMLSidedHandler
                 mod.getPlayerTracker().onPlayerChangedDimension(player);
             }
         }
+    }
+
+    /**
+     * @param biome
+     */
+    public void addBiomeToDefaultWorldGenerator(BiomeGenBase biome)
+    {
+        WorldType.field_48457_b.addNewBiome(biome);
     }
 }

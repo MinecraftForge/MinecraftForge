@@ -33,6 +33,7 @@ public class ModLoader
      */
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
+        
     }
 
     /**
@@ -62,13 +63,13 @@ public class ModLoader
     }
 
     /**
-     * This method does not work. Creation of a BiomeGenBase is sufficient to populate this array. Using this method will likely corrupt worlds.
+     * This method adds the supplied biome to the set of candidate biomes for the default world generator type.
      *
      * @param biome
      */
-    @Deprecated
     public static void addBiome(BiomeGenBase biome)
     {
+        FMLServerHandler.instance().addBiomeToDefaultWorldGenerator(biome);
     }
 
     /**
