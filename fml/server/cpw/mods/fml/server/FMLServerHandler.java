@@ -41,6 +41,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
  * Handles primary communication from hooked code into the system
