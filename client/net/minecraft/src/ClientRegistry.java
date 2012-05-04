@@ -1,4 +1,4 @@
-package cpw.mods.fml.client;
+package net.minecraft.src;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,19 +9,19 @@ public class ClientRegistry implements IMinecraftRegistry
     @Override
     public void addRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_20151_a().func_20153_a(output, params);
+        CraftingManager.func_1120_a().func_1121_a(output, params);
     }
 
     @Override
     public void addShapelessRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_20151_a().func_21146_b(output, params);
+        CraftingManager.func_1120_a().func_21187_b(output, params);
     }
 
     @Override
     public void addSmelting(int input, ItemStack output)
     {
-        FurnaceRecipes.func_21162_a().func_21160_a(input, output);
+        FurnaceRecipes.func_21200_a().func_21199_a(input, output);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ClientRegistry implements IMinecraftRegistry
         {
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
-            int blockItemId = block.field_573_bc - 256;
+            int blockItemId = block.field_376_bc - 256;
             itemclass.getConstructor(int.class).newInstance(blockItemId);
         }
         catch (Exception e)
@@ -76,16 +76,16 @@ public class ClientRegistry implements IMinecraftRegistry
         for (BiomeGenBase biome : biomes)
         {
             @SuppressWarnings("unchecked")
-            List<SpawnListEntry> spawns = biome.func_25055_a(typeOfCreature);
+            List<SpawnListEntry> spawns = biome.func_25063_a(typeOfCreature);
     
             for (SpawnListEntry entry : spawns)
             {
                 //Adjusting an existing spawn entry
-                if (entry.field_25145_a == entityClass)
+                if (entry.field_25212_a == entityClass)
                 {
-                    entry.field_35483_d = weightedProb;
-                    entry.field_35484_b = min;
-                    entry.field_35485_c = max;
+                    entry.field_35590_d = weightedProb;
+                    entry.field_35591_b = min;
+                    entry.field_35592_c = max;
                     break;
                 }
             }
@@ -118,11 +118,11 @@ public class ClientRegistry implements IMinecraftRegistry
         for (BiomeGenBase biome : biomes)
         {
             @SuppressWarnings("unchecked")
-            List<SpawnListEntry> spawns = biome.func_25055_a(typeOfCreature);
+            List<SpawnListEntry> spawns = biome.func_25063_a(typeOfCreature);
     
             for (SpawnListEntry entry : Collections.unmodifiableList(spawns))
             {
-                if (entry.field_25145_a == entityClass)
+                if (entry.field_25212_a == entityClass)
                 {
                     spawns.remove(entry);
                 }

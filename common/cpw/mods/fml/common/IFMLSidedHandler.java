@@ -11,4 +11,5 @@ public interface IFMLSidedHandler
     ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile);
     boolean isServer();
     boolean isClient();
+    Object getMinecraftInstance();
 }

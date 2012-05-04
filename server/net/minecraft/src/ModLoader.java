@@ -349,7 +349,7 @@ public class ModLoader
      */
     public static int getUniqueEntityId()
     {
-        return Entity.getNextId();
+        return FMLCommonHandler.instance().nextUniqueEntityListId();
     }
 
     /**

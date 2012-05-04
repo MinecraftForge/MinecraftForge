@@ -37,7 +37,6 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.server.FMLServerHandler;
 
 public class ModLoaderModContainer implements ModContainer
 {
@@ -283,7 +282,7 @@ public class ModLoaderModContainer implements ModContainer
     {
         if (isTicking)
         {
-            isTicking = mod.onTickInGame(FMLServerHandler.instance().getServer());
+            isTicking = mod.doTickInGame(FMLCommonHandler.instance().getMinecraftInstance());
         }
     }
     @Override

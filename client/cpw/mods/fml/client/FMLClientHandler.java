@@ -10,7 +10,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package cpw.mods.fml.server;
+package cpw.mods.fml.client;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,22 +19,20 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.ClientRegistry;
 import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.ICommandListener;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
-import net.minecraft.src.ServerRegistry;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -62,17 +60,19 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
  * @author cpw
  * 
  */
-public class FMLServerHandler implements IFMLSidedHandler
+public class FMLClientHandler implements IFMLSidedHandler
 {
     /**
      * The singleton
      */
-    private static final FMLServerHandler INSTANCE = new FMLServerHandler();
+    private static final FMLClientHandler INSTANCE = new FMLClientHandler();
 
     /**
      * A reference to the server itself
      */
-    private MinecraftServer server;
+    private Minecraft client;
+    
+    private boolean preInitializationComplete;
 
     /**
      * A handy list of the default overworld biomes
@@ -85,12 +85,12 @@ public class FMLServerHandler implements IFMLSidedHandler
      * 
      * @param minecraftServer
      */
-    public void onPreLoad(MinecraftServer minecraftServer)
+    public void onPreLoad(Minecraft minecraft)
     {
-        try
+/*        try
         {
             Class.forName("BaseModMp", false, getClass().getClassLoader());
-            MinecraftServer.field_6038_a.severe(""
+            Minecraft.field_6301_A.severe(""
                     + "Forge Mod Loader has detected that this server has an ModLoaderMP installed alongside Forge Mod Loader.\n"
                     + "This will cause a serious problem with compatibility. To protect your worlds, this minecraft server will now shutdown.\n"
                     + "You should follow the installation instructions of either Minecraft Forge of Forge Mod Loader and NOT install ModLoaderMP \n"
@@ -114,11 +114,12 @@ public class FMLServerHandler implements IFMLSidedHandler
         catch (ClassNotFoundException e)
         {
             // We're safe. continue
-        }
-        server = minecraftServer;
+        }*/
+        client = minecraft;
         FMLCommonHandler.instance().registerSidedDelegate(this);
-        CommonRegistry.registerRegistry(new ServerRegistry());
+        CommonRegistry.registerRegistry(new ClientRegistry());
         Loader.instance().loadMods();
+        preInitializationComplete=true;
     }
 
     /**
@@ -150,21 +151,22 @@ public class FMLServerHandler implements IFMLSidedHandler
      * 
      * @return
      */
-    public MinecraftServer getServer()
+    public Minecraft getClient()
     {
-        return server;
+        return client;
     }
 
     /**
-     * Get a handle to the server's logger instance
+     * Get a handle to the client's logger instance
+     * The client actually doesn't have one- so we return null
      */
     public Logger getMinecraftLogger()
     {
-        return MinecraftServer.field_6038_a;
+        return null;
     }
 
     /**
-     * Called from ChunkProviderServer when a chunk needs to be populated
+     * Called from ChunkProvider when a chunk needs to be populated
      * 
      * To avoid polluting the worldgen seed, we generate a new random from the
      * world seed and generate a seed from that
@@ -177,10 +179,10 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     public void onChunkPopulate(IChunkProvider chunkProvider, int chunkX, int chunkZ, World world, IChunkProvider generator)
     {
-        Random fmlRandom = new Random(world.func_22079_j());
+        Random fmlRandom = new Random(world.func_22138_q());
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ world.func_22079_j());
+        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ world.func_22138_q());
 
         for (ModContainer mod : Loader.getModList())
         {
@@ -288,7 +290,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * @return the instance
      */
-    public static FMLServerHandler instance()
+    public static FMLClientHandler instance()
     {
         return INSTANCE;
     }
@@ -306,12 +308,12 @@ public class FMLServerHandler implements IFMLSidedHandler
 
             for (int i = 0; i < 23; i++)
             {
-                if ("Sky".equals(BiomeGenBase.field_35521_a[i].field_6163_m) || "Hell".equals(BiomeGenBase.field_35521_a[i].field_6163_m))
+                if ("Sky".equals(BiomeGenBase.field_35486_a[i].field_6504_m) || "Hell".equals(BiomeGenBase.field_35486_a[i].field_6504_m))
                 {
                     continue;
                 }
 
-                biomes.add(BiomeGenBase.field_35521_a[i]);
+                biomes.add(BiomeGenBase.field_35486_a[i]);
             }
 
             defaultOverworldBiomes = new BiomeGenBase[biomes.size()];
@@ -383,19 +385,19 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param packet
      * @param player
      */
-    public void handlePacket250(Packet250CustomPayload packet, EntityPlayer player)
+    public void handlePacket250(Packet250CustomPayload packet)
     {
-        if ("REGISTER".equals(packet.field_44005_a) || "UNREGISTER".equals(packet.field_44005_a))
+        if ("REGISTER".equals(packet.field_44012_a) || "UNREGISTER".equals(packet.field_44012_a))
         {
-            handleClientRegistration(packet, player);
+            handleServerRegistration(packet);
             return;
         }
 
-        ModContainer mod = FMLCommonHandler.instance().getModForChannel(packet.field_44005_a);
+        ModContainer mod = FMLCommonHandler.instance().getModForChannel(packet.field_44012_a);
 
         if (mod != null)
         {
-            mod.getNetworkHandler().onPacket250Packet(packet, player);
+            mod.getNetworkHandler().onPacket250Packet(packet);
         }
     }
 
@@ -404,15 +406,15 @@ public class FMLServerHandler implements IFMLSidedHandler
      * 
      * @param packet
      */
-    private void handleClientRegistration(Packet250CustomPayload packet, EntityPlayer player)
+    private void handleServerRegistration(Packet250CustomPayload packet)
     {
-        if (packet.field_44004_c == null)
+        if (packet.field_44011_c == null)
         {
             return;
         }
         try
         {
-            for (String channel : new String(packet.field_44004_c, "UTF8").split("\0"))
+            for (String channel : new String(packet.field_44011_c, "UTF8").split("\0"))
             {
                 // Skip it if we don't know it
                 if (FMLCommonHandler.instance().getModForChannel(channel) == null)
@@ -420,13 +422,13 @@ public class FMLServerHandler implements IFMLSidedHandler
                     continue;
                 }
 
-                if ("REGISTER".equals(packet.field_44005_a))
+                if ("REGISTER".equals(packet.field_44012_a))
                 {
-                    FMLCommonHandler.instance().activateChannel(player, channel);
+                    FMLCommonHandler.instance().activateChannel(client.field_6322_g,channel);
                 }
                 else
                 {
-                    FMLCommonHandler.instance().deactivateChannel(player, channel);
+                    FMLCommonHandler.instance().deactivateChannel(client.field_6322_g,channel);
                 }
             }
         }
@@ -437,41 +439,12 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /**
-     * Handle a login
-     * 
-     * @param loginPacket
-     * @param networkManager
-     */
-    public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager)
-    {
-        Packet250CustomPayload packet = new Packet250CustomPayload();
-        packet.field_44005_a = "REGISTER";
-        packet.field_44004_c = FMLCommonHandler.instance().getPacketRegistry();
-        packet.field_44003_b = packet.field_44004_c.length;
-        if (packet.field_44003_b > 0)
-        {
-            networkManager.func_745_a(packet);
-        }
-    }
-
-    public void announceLogin(EntityPlayer player)
-    {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsPlayerTracking())
-            {
-                mod.getPlayerTracker().onPlayerLogin(player);
-            }
-        }
-    }
-
-    /**
      * Are we a server?
      */
     @Override
     public boolean isServer()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -480,36 +453,13 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public boolean isClient()
     {
-        return false;
+        return true;
     }
 
     @Override
     public File getMinecraftRootDirectory()
     {
-        try
-        {
-            return server.func_6009_a(".").getCanonicalFile();
-        }
-        catch (IOException ioe)
-        {
-            return new File(".");
-        }
-    }
-
-    /**
-     * @param var2
-     * @return
-     */
-    public boolean handleServerCommand(String command, String player, ICommandListener listener)
-    {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsConsoleCommands() && mod.getConsoleHandler().handleCommand(command, player, listener))
-            {
-                return true;
-            }
-        }
-        return false;
+        return client.field_6297_D;
     }
 
     /**
@@ -545,15 +495,15 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     public void addBiomeToDefaultWorldGenerator(BiomeGenBase biome)
     {
-        WorldType.field_48457_b.addNewBiome(biome);
+        //WorldType.field_48635_b.addNewBiome(biome);
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#getMinecraftInstance()
+    /**
+     * Return the minecraft instance
      */
     @Override
     public Object getMinecraftInstance()
     {
-        return server;
+        return client;
     }
 }

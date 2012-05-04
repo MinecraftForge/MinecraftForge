@@ -128,7 +128,9 @@ public class Loader
 
     private Loader()
     {
-        Loader.log.setParent(FMLCommonHandler.instance().getMinecraftLogger());
+        if (FMLCommonHandler.instance().getMinecraftLogger()!=null) {
+            Loader.log.setParent(FMLCommonHandler.instance().getMinecraftLogger());
+        }
         Loader.log.setLevel(Level.ALL);
         FileHandler fileHandler;
 
