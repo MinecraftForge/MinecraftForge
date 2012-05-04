@@ -16,12 +16,13 @@ package net.minecraft.src;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.client.Minecraft;
+
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ReflectionHelper;
-import cpw.mods.fml.server.FMLServerHandler;
-import cpw.mods.fml.server.ModLoaderModContainer;
+import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 public class ModLoader
 {
@@ -40,7 +41,7 @@ public class ModLoader
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
      *
-     * {@link FMLServerHandler#fuelLookup(int, int)}
+     * {@link FMLClientHandler#fuelLookup(int, int)}
      * @param id
      * @param metadata
      * @return
@@ -70,7 +71,7 @@ public class ModLoader
      */
     public static void addBiome(BiomeGenBase biome)
     {
-        FMLServerHandler.instance().addBiomeToDefaultWorldGenerator(biome);
+        FMLClientHandler.instance().addBiomeToDefaultWorldGenerator(biome);
     }
 
     /**
@@ -178,7 +179,7 @@ public class ModLoader
      */
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -205,7 +206,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -224,7 +225,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLServerHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
+     * {@link FMLClientHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
      * @param world
      * @param x
      * @param y
@@ -249,7 +250,7 @@ public class ModLoader
      */
     public static void genericContainerRemoval(World world, int x, int y, int z)
     {
-        TileEntity te = world.func_451_k(x, y, z);
+        TileEntity te = world.func_603_b(x, y, z);
 
         if (!(te instanceof IInventory))
         {
@@ -258,41 +259,41 @@ public class ModLoader
 
         IInventory inv = (IInventory)te;
 
-        for (int l = 0; l < inv.func_83_a(); l++)
+        for (int l = 0; l < inv.func_469_c(); l++)
         {
-            ItemStack itemstack = inv.func_82_a(l);
+            ItemStack itemstack = inv.func_468_c(l);
 
             if (itemstack == null)
             {
                 continue;
             }
 
-            float f = world.field_803_m.nextFloat() * 0.8F + 0.1F;
-            float f1 = world.field_803_m.nextFloat() * 0.8F + 0.1F;
-            float f2 = world.field_803_m.nextFloat() * 0.8F + 0.1F;
+            float f = world.field_1037_n.nextFloat() * 0.8F + 0.1F;
+            float f1 = world.field_1037_n.nextFloat() * 0.8F + 0.1F;
+            float f2 = world.field_1037_n.nextFloat() * 0.8F + 0.1F;
 
-            while (itemstack.field_853_a > 0)
+            while (itemstack.field_1615_a > 0)
             {
-                int i1 = world.field_803_m.nextInt(21) + 10;
+                int i1 = world.field_1037_n.nextInt(21) + 10;
 
-                if (i1 > itemstack.field_853_a)
+                if (i1 > itemstack.field_1615_a)
                 {
-                    i1 = itemstack.field_853_a ;
+                    i1 = itemstack.field_1615_a ;
                 }
 
-                itemstack.field_853_a  -= i1;
-                EntityItem entityitem = new EntityItem(world, (float)te.field_478_b + f, (float)te.field_483_c + f1, (float)te.field_482_d + f2, new ItemStack(itemstack.field_855_c, i1, itemstack.func_21125_h()));
+                itemstack.field_1615_a  -= i1;
+                EntityItem entityitem = new EntityItem(world, (float)te.field_823_f + f, (float)te.field_822_g + f1, (float)te.field_821_h + f2, new ItemStack(itemstack.field_1617_c, i1, itemstack.func_21181_i()));
                 float f3 = 0.05F;
-                entityitem.field_319_o = (float)world.field_803_m.nextGaussian() * f3;
-                entityitem.field_318_p = (float)world.field_803_m.nextGaussian() * f3 + 0.2F;
-                entityitem.field_317_q = (float)world.field_803_m.nextGaussian() * f3;
+                entityitem.field_608_an = (float)world.field_1037_n.nextGaussian() * f3;
+                entityitem.field_607_ao = (float)world.field_1037_n.nextGaussian() * f3 + 0.2F;
+                entityitem.field_606_ap = (float)world.field_1037_n.nextGaussian() * f3;
 
-                if (itemstack.func_40608_n())
+                if (itemstack.func_40710_n())
                 {
-                    entityitem.field_429_a.func_40604_d((NBTTagCompound)itemstack.func_40607_o().func_40468_b());
+                    entityitem.field_801_a.func_40706_d((NBTTagCompound)itemstack.func_40709_o().func_40195_b());
                 }
 
-                world.func_526_a(entityitem);
+                world.func_674_a(entityitem);
             }
         }
     }
@@ -309,7 +310,7 @@ public class ModLoader
 
     /**
      * Get a logger instance
-     * {@link FMLServerHandler#getFMLLogger()}
+     * {@link FMLClientHandler#getFMLLogger()}
      * @return
      */
     public static Logger getLogger()
@@ -350,7 +351,7 @@ public class ModLoader
      */
     public static int getUniqueEntityId()
     {
-        return Entity.getNextId();
+        return FMLCommonHandler.instance().nextUniqueEntityListId();
     }
 
     /**
@@ -366,7 +367,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLServerHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
+     * {@link FMLClientHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
      * @param packet
      */
     @Deprecated
@@ -456,7 +457,7 @@ public class ModLoader
      */
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType spawnList)
     {
-        CommonRegistry.removeSpawn(entityClass, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.removeSpawn(entityClass, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -477,7 +478,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList)
     {
-        CommonRegistry.removeSpawn(entityName, spawnList, FMLServerHandler.instance().getDefaultOverworldBiomes());
+        CommonRegistry.removeSpawn(entityName, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -502,7 +503,7 @@ public class ModLoader
 
     /**
      * This method is unimplemented on the server: it is meant for clients to send chat to the server
-     * {@link FMLServerHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
+     * {@link FMLClientHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
      * @param text
      */
     @Deprecated
@@ -554,7 +555,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLServerHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
+     * {@link FMLClientHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
      * @param player
      * @param item
      * @param matrix
@@ -566,7 +567,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLServerHandler#onItemSmelted(EntityPlayer, ItemStack)}
+     * {@link FMLClientHandler#onItemSmelted(EntityPlayer, ItemStack)}
      * @param player
      * @param item
      */
@@ -577,23 +578,23 @@ public class ModLoader
 
     /**
      * Throw the offered exception. Likely will stop the game.
-     * {@link FMLServerHandler#raiseException(Throwable, String, boolean)}
+     * {@link FMLClientHandler#raiseException(Throwable, String, boolean)}
      * @param message
      * @param e
      */
     public static void throwException(String message, Throwable e)
     {
-        FMLServerHandler.instance().raiseException(e, message, true);
+        FMLClientHandler.instance().raiseException(e, message, true);
     }
 
     /**
      * Get the minecraft server instance
-     * {@link FMLServerHandler#getServer()}
+     * {@link FMLClientHandler#getServer()}
      * @return
      */
-    public static MinecraftServer getMinecraftServerInstance()
+    public static Minecraft getMinecraftServerInstance()
     {
-        return FMLServerHandler.instance().getServer();
+        return FMLClientHandler.instance().getClient();
     }
 
     /**

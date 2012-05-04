@@ -56,6 +56,8 @@ public class FMLCommonHandler
      * The delegate for side specific data and functions 
      */
     private IFMLSidedHandler sidedDelegate;
+    
+    private int uniqueEntityListId = 250;
 
 
     /**
@@ -252,5 +254,21 @@ public class FMLCommonHandler
     
     public File getMinecraftRootDirectory() {
         return sidedDelegate.getMinecraftRootDirectory();
+    }
+
+    /**
+     * @return
+     */
+    public Object getMinecraftInstance()
+    {
+        return sidedDelegate.getMinecraftInstance();
+    }
+
+    /**
+     * @return
+     */
+    public int nextUniqueEntityListId()
+    {
+        return uniqueEntityListId++;
     }
 }

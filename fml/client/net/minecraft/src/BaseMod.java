@@ -15,7 +15,7 @@ package net.minecraft.src;
 
 import java.util.Random;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.client.Minecraft;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
@@ -27,6 +27,16 @@ import cpw.mods.fml.common.IWorldGenerator;
 public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
 {
     // CALLBACK MECHANISMS
+
+    /**
+     * @param minecraftInstance
+     * @return
+     */
+    public final boolean doTickInGame(Object minecraftInstance)
+    {
+        return onTickInGame((Minecraft)minecraftInstance);
+    }
+
     @Override
     public final void onCrafting(Object... craftingParameters)
     {
@@ -78,7 +88,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         EntityItem item = (EntityItem) pickupData[0];
         EntityPlayer player = (EntityPlayer) pickupData[1];
-        onItemPickup(player, item.field_429_a);
+        onItemPickup(player, item.field_801_a);
     }
 
     @Override
@@ -97,10 +107,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         }
     }
 
+    /**
+     * NO-OP on client side
+     */
     @Override
     public final boolean handleCommand(String command, Object... data)
     {
-        return onServerCommand(command, (String)data[0], (ICommandListener)data[1]);
+        return false;
     }
     // BASEMOD API
     /**
@@ -202,7 +215,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param minecraftServer the server
      * @return true to continue receiving ticks
      */
-    public boolean onTickInGame(MinecraftServer minecraftServer)
+    public boolean onTickInGame(Object minecraftInstance)
     {
         return false;
     }
@@ -276,15 +289,6 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         return false;
     }
-    /**
-     * Called when a server command is received
-     * @param command
-     * @return true if you want to consume the message so it is not available for further processing
-     */
-    public boolean onServerCommand(String command, String sender, ICommandListener listener)
-    {
-        return false;
-    }
 
     /**
      * Called when a new client logs in.
@@ -315,7 +319,6 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         
     }
-
     // Spare client junk
     // -------
     // void addRenderer(Map<Class<? extends Entity>, Render> renderers);
