@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
+@@ -158,4 +158,8 @@
+         func_476_a(TileEntityEnchantmentTable.class, "EnchantTable");
+         func_476_a(TileEntityEndPortal.class, "Airportal");
+     }
++
++    public static void addNewTileEntityMapping(Class<? extends TileEntity> tileEntityClass, String id) {
++        func_476_a(tileEntityClass, id);
++    }
+ }

@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/src/EntityList.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/EntityList.java	0000-00-00 00:00:00.000000000 -0000
+@@ -166,4 +166,17 @@
+         func_46152_a(EntityVillager.class, "Villager", 120, 5651507, 12422002);
+         func_1080_a(EntityEnderCrystal.class, "EnderCrystal", 200);
+     }
++
++    public static void addNewEntityListMapping(Class<? extends Entity> entityClass, String entityName, int id) {
++        func_1080_a(entityClass,entityName,id);
++    }
++
++    public static void addNewEntityListMapping(Class<? extends Entity> entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour) {
++        func_46152_a(entityClass,entityName,id,backgroundEggColour,foregroundEggColour);
++    }
++
++    @SuppressWarnings("unchecked")
++    public static Map<String,Class<? extends Entity>> getEntityToClassMapping() {
++      return field_1611_a;
++    }
+ }
