@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
+@@ -117,6 +117,8 @@
+ import org.lwjgl.opengl.PixelFormat;
+ import org.lwjgl.util.glu.GLU;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++
+ public abstract class Minecraft implements Runnable
+ {
+     public static byte[] field_28006_b = new byte[10485760];
+@@ -282,6 +284,7 @@
+ 
+         OpenGlHelper.func_40453_a();
+         this.field_6297_D = func_6240_b();
++        FMLClientHandler.instance().onPreLoad(this);
+         this.field_22008_V = new AnvilSaveConverter(new File(this.field_6297_D, "saves"));
+         this.field_6304_y = new GameSettings(this, this.field_6297_D);
+         this.field_6298_C = new TexturePackList(this, this.field_6297_D);
