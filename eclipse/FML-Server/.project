@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>build.xml</name>
+			<type>1</type>
+			<location>/home/cpw/projects/mcworkspace/fmltestbed/FML/build.xml</location>
+		</link>
+		<link>
 			<name>common</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/FML/common</locationURI>

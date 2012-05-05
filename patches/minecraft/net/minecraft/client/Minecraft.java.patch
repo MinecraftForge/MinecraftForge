@@ -17,3 +17,11 @@
          this.field_22008_V = new AnvilSaveConverter(new File(this.field_6297_D, "saves"));
          this.field_6304_y = new GameSettings(this, this.field_6297_D);
          this.field_6298_C = new TexturePackList(this, this.field_6297_D);
+@@ -330,6 +333,7 @@
+         GL11.glMatrixMode(GL11.GL_PROJECTION);
+         GL11.glLoadIdentity();
+         GL11.glMatrixMode(GL11.GL_MODELVIEW);
++        FMLClientHandler.instance().onLoadComplete();
+         this.func_6250_c("Startup");
+         this.field_6286_O = new OpenGlCapsChecker();
+         this.field_6301_A.func_340_a(this.field_6304_y);
