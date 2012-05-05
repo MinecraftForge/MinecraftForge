@@ -6,6 +6,9 @@ import java.util.List;
 public class ClientRegistry implements IMinecraftRegistry
 {
 
+    public static ClientRegistry instance() {
+        return (ClientRegistry) CommonRegistry.instance();
+    }
     @Override
     public void addRecipe(ItemStack output, Object... params)
     {
@@ -62,6 +65,12 @@ public class ClientRegistry implements IMinecraftRegistry
     public void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)
     {
         TileEntity.addNewTileEntityMapping(tileEntityClass, id);
+    }
+
+    public void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id, TileEntitySpecialRenderer specialRenderer)
+    {
+        registerTileEntity(tileEntityClass, id);
+        TileEntityRenderer.setTileEntityRenderer(tileEntityClass, specialRenderer);
     }
 
     @Override

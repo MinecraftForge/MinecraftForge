@@ -98,5 +98,12 @@ public class CommonRegistry
     {
         instance.removeSpawn(entityName, spawnList, biomes);
     }
+    /**
+     * @return
+     */
+    public static IMinecraftRegistry instance()
+    {
+        return instance;
+    }
 
 }

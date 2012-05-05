@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,17 +129,22 @@ public class Loader
 
     private Loader()
     {
+        FMLLogFormatter formatter=new FMLLogFormatter();
         if (FMLCommonHandler.instance().getMinecraftLogger()!=null) {
             Loader.log.setParent(FMLCommonHandler.instance().getMinecraftLogger());
+        } else {
+            ConsoleHandler ch=new ConsoleHandler();
+            Loader.log.setUseParentHandlers(false);
+            Loader.log.addHandler(ch);
+            ch.setFormatter(formatter);
+            
         }
         Loader.log.setLevel(Level.ALL);
-        FileHandler fileHandler;
-
         try
         {
-            fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
+            FileHandler fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
             // We're stealing minecraft's log formatter
-            fileHandler.setFormatter(FMLCommonHandler.instance().getMinecraftLogger().getHandlers()[0].getFormatter());
+            fileHandler.setFormatter(new FMLLogFormatter());
             fileHandler.setLevel(Level.ALL);
             Loader.log.addHandler(fileHandler);
         }

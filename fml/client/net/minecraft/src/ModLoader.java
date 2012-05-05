@@ -1,4 +1,5 @@
 package net.minecraft.src;
+
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  *
@@ -12,8 +13,9 @@ package net.minecraft.src;
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-
+import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
@@ -28,20 +30,22 @@ public class ModLoader
 {
     /**
      * Not used on the server.
-     *
+     * 
      * @param achievement
      * @param name
      * @param description
      */
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
-        
+
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented elsewhere.
-     *
+     * This method is a call in hook from modified external code. Implemented
+     * elsewhere.
+     * 
      * {@link FMLClientHandler#fuelLookup(int, int)}
+     * 
      * @param id
      * @param metadata
      * @return
@@ -52,21 +56,30 @@ public class ModLoader
         return 0;
     }
 
+    static void addAllRenderers(Map<Class<? extends Entity>, Render> renderers)
+    {
+    }
+
+    static void addAnimation(TextureFX anim)
+    {
+    }
+
     /**
      * This method is unimplemented in server versions to date.
-     *
+     * 
      * @param armor
      * @return
      */
-    @Deprecated
     public static int addArmor(String armor)
     {
+        // TODO
         return 0;
     }
 
     /**
-     * This method adds the supplied biome to the set of candidate biomes for the default world generator type.
-     *
+     * This method adds the supplied biome to the set of candidate biomes for
+     * the default world generator type.
+     * 
      * @param biome
      */
     public static void addBiome(BiomeGenBase biome)
@@ -76,71 +89,78 @@ public class ModLoader
 
     /**
      * Unimplemented on the server as it does not generate names
+     * 
      * @param key
      * @param value
      */
-    @Deprecated
     public static void addLocalization(String key, String value)
     {
+        // TODO
     }
 
     /**
      * Unimplemented on the server as it does not generate names
+     * 
      * @param key
      * @param lang
      * @param value
      */
-    @Deprecated
     public static void addLocalization(String key, String lang, String value)
     {
+        // TODO
     }
 
     /**
      * Unimplemented on the server as it does not generate names
+     * 
      * @param instance
      * @param name
      */
-    @Deprecated
     public static void addName(Object instance, String name)
     {
+        // TODO
     }
 
     /**
      * Unimplemented on the server as it does not generate names
+     * 
      * @param instance
      * @param lang
      * @param name
      */
-    @Deprecated
     public static void addName(Object instance, String lang, String name)
     {
+        // TODO
     }
 
     /**
      * Unimplemented on the server as it does not render textures
+     * 
      * @param fileToOverride
      * @param fileToAdd
      * @return
      */
-    @Deprecated
     public static int addOverride(String fileToOverride, String fileToAdd)
     {
+        // TODO
         return 0;
     }
 
     /**
      * Unimplemented on the server as it does not render textures
+     * 
      * @param path
      * @param overlayPath
      * @param index
      */
-    @Deprecated
     public static void addOverride(String path, String overlayPath, int index)
     {
+        // TODO
     }
 
     /**
      * Add a Shaped Recipe
+     * 
      * @param output
      * @param params
      */
@@ -151,6 +171,7 @@ public class ModLoader
 
     /**
      * Add a shapeless recipe
+     * 
      * @param output
      * @param params
      */
@@ -161,6 +182,7 @@ public class ModLoader
 
     /**
      * Add a new product to be smelted
+     * 
      * @param input
      * @param output
      */
@@ -171,19 +193,21 @@ public class ModLoader
 
     /**
      * Add a mob to the spawn list
+     * 
      * @param entityClass
      * @param weightedProb
      * @param min
      * @param max
      * @param spawnList
      */
-    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
+    public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
         CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
      * Add a mob to the spawn list
+     * 
      * @param entityClass
      * @param weightedProb
      * @param min
@@ -191,13 +215,15 @@ public class ModLoader
      * @param spawnList
      * @param biomes
      */
-    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList,
+            BiomeGenBase... biomes)
     {
         CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
      * Add a mob to the spawn list
+     * 
      * @param entityName
      * @param weightedProb
      * @param min
@@ -211,6 +237,7 @@ public class ModLoader
 
     /**
      * Add a mob to the spawn list
+     * 
      * @param entityName
      * @param weightedProb
      * @param min
@@ -224,8 +251,10 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented elsewhere.
+     * This method is a call in hook from modified external code. Implemented
+     * elsewhere.
      * {@link FMLClientHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
+     * 
      * @param world
      * @param x
      * @param y
@@ -243,6 +272,7 @@ public class ModLoader
 
     /**
      * Remove a container and drop all the items in it on the ground around
+     * 
      * @param world
      * @param x
      * @param y
@@ -257,7 +287,7 @@ public class ModLoader
             return;
         }
 
-        IInventory inv = (IInventory)te;
+        IInventory inv = (IInventory) te;
 
         for (int l = 0; l < inv.func_469_c(); l++)
         {
@@ -278,19 +308,20 @@ public class ModLoader
 
                 if (i1 > itemstack.field_1615_a)
                 {
-                    i1 = itemstack.field_1615_a ;
+                    i1 = itemstack.field_1615_a;
                 }
 
-                itemstack.field_1615_a  -= i1;
-                EntityItem entityitem = new EntityItem(world, (float)te.field_823_f + f, (float)te.field_822_g + f1, (float)te.field_821_h + f2, new ItemStack(itemstack.field_1617_c, i1, itemstack.func_21181_i()));
+                itemstack.field_1615_a -= i1;
+                EntityItem entityitem = new EntityItem(world, (float) te.field_823_f + f, (float) te.field_822_g + f1, (float) te.field_821_h + f2,
+                        new ItemStack(itemstack.field_1617_c, i1, itemstack.func_21181_i()));
                 float f3 = 0.05F;
-                entityitem.field_608_an = (float)world.field_1037_n.nextGaussian() * f3;
-                entityitem.field_607_ao = (float)world.field_1037_n.nextGaussian() * f3 + 0.2F;
-                entityitem.field_606_ap = (float)world.field_1037_n.nextGaussian() * f3;
+                entityitem.field_608_an = (float) world.field_1037_n.nextGaussian() * f3;
+                entityitem.field_607_ao = (float) world.field_1037_n.nextGaussian() * f3 + 0.2F;
+                entityitem.field_606_ap = (float) world.field_1037_n.nextGaussian() * f3;
 
                 if (itemstack.func_40710_n())
                 {
-                    entityitem.field_801_a.func_40706_d((NBTTagCompound)itemstack.func_40709_o().func_40195_b());
+                    entityitem.field_801_a.func_40706_d((NBTTagCompound) itemstack.func_40709_o().func_40195_b());
                 }
 
                 world.func_674_a(entityitem);
@@ -301,6 +332,7 @@ public class ModLoader
     /**
      * Get a list of all BaseMod loaded into the system
      * {@link ModLoaderModContainer#findAll}
+     * 
      * @return
      */
     public static List<BaseMod> getLoadedMods()
@@ -309,8 +341,8 @@ public class ModLoader
     }
 
     /**
-     * Get a logger instance
-     * {@link FMLClientHandler#getFMLLogger()}
+     * Get a logger instance {@link FMLClientHandler#getFMLLogger()}
+     * 
      * @return
      */
     public static Logger getLogger()
@@ -318,15 +350,32 @@ public class ModLoader
         return FMLCommonHandler.instance().getFMLLogger();
     }
 
+    static Minecraft getMinecraftInstance()
+    {
+        return FMLClientHandler.instance().getClient();
+    }
+
+    /**
+     * This is not the server {@link FMLClientHandler#getServer()}
+     * 
+     * @return
+     */
+    @Deprecated
+    public static Minecraft getMinecraftServerInstance()
+    {
+        return null;
+    }
+
     /**
      * Get a value from a field using reflection
      * {@link ReflectionHelper#getPrivateValue(Class, Object, int)}
+     * 
      * @param instanceclass
      * @param instance
      * @param fieldindex
      * @return
      */
-    public static <T, E> T getPrivateValue(Class <? super E > instanceclass, E instance, int fieldindex)
+    public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex)
     {
         return ReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
     }
@@ -334,19 +383,30 @@ public class ModLoader
     /**
      * Get a value from a field using reflection
      * {@link ReflectionHelper#getPrivateValue(Class, Object, String)}
+     * 
      * @param instanceclass
      * @param instance
      * @param field
      * @return
      */
-    public static <T, E> T getPrivateValue(Class <? super E > instanceclass, E instance, String field)
+    public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, String field)
     {
         return ReflectionHelper.getPrivateValue(instanceclass, instance, field);
     }
 
     /**
-     * Get a new unique entity id
-     * {@link Entity#getNextId()}
+     * Stubbed method on the server to return a unique model id
+     * 
+     */
+    public static int getUniqueBlockModelID(BaseMod mod, boolean flag)
+    {
+        // TODO
+        return 0;
+    }
+
+    /**
+     * Get a new unique entity id {@link Entity#getNextId()}
+     * 
      * @return
      */
     public static int getUniqueEntityId()
@@ -354,9 +414,34 @@ public class ModLoader
         return FMLCommonHandler.instance().nextUniqueEntityListId();
     }
 
+    static int getUniqueSpriteIndex(String path)
+    {
+        // TODO
+        return 0;
+    }
+
     /**
-     * Is the named mod loaded?
-     * {@link Loader#isModLoaded(String)}
+     * To properly implement packet 250 protocol you should always check your
+     * channel is active prior to sending the packet
+     * 
+     * @param player
+     * @param channel
+     * @return
+     */
+    public static boolean isChannelActive(EntityPlayer player, String channel)
+    {
+        return FMLCommonHandler.instance().isChannelActive(channel, player);
+    }
+
+    static boolean isGUIOpen(Class<? extends GuiScreen> gui)
+    {
+        //TODO
+        return false;
+    }
+
+    /**
+     * Is the named mod loaded? {@link Loader#isModLoaded(String)}
+     * 
      * @param modname
      * @return
      */
@@ -366,8 +451,49 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented elsewhere.
+     * Implemented elsewhere
+     */
+    @Deprecated
+    static void loadConfig()
+    {
+    }
+
+    static BufferedImage loadImage(RenderEngine texCache, String path)
+    {
+        //TODO
+        return null;
+    }
+
+    /**
+     * Call in from elsewhere. Unimplemented here.
+     * @param player
+     * @param item
+     */
+    @Deprecated
+    static void onItemPickup(EntityPlayer player, ItemStack item)
+    {
+    }
+
+    static void onTick(float tick, Minecraft game)
+    {
+        //TODO
+    }
+
+    static void openGUI(EntityPlayer player, GuiScreen gui)
+    {
+        //TODO
+    }
+
+    @Deprecated
+    static void populateChunk(IChunkProvider generator, int chunkX, int chunkZ, World world)
+    {
+    }
+
+    /**
+     * This method is a call in hook from modified external code. Implemented
+     * elsewhere.
      * {@link FMLClientHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
+     * 
      * @param packet
      */
     @Deprecated
@@ -375,8 +501,20 @@ public class ModLoader
     {
     }
 
+    static KeyBinding[] registerAllKeys(KeyBinding[] keys)
+    {
+        //TODO
+        return keys;
+    }
+
+    static void registerAllTextureOverrides(RenderEngine cache)
+    {
+        //TODO
+    }
+
     /**
      * Register a new block
+     * 
      * @param block
      */
     public static void registerBlock(Block block)
@@ -386,42 +524,52 @@ public class ModLoader
 
     /**
      * Register a new block
+     * 
      * @param block
      * @param itemclass
      */
-    public static void registerBlock(Block block, Class <? extends ItemBlock > itemclass)
+    public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass)
     {
         CommonRegistry.registerBlock(block, itemclass);
     }
 
     /**
      * Register a new entity ID
+     * 
      * @param entityClass
      * @param entityName
      * @param id
      */
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
+    public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id)
     {
         CommonRegistry.registerEntityID(entityClass, entityName, id);
     }
 
     /**
      * Register a new entity ID
+     * 
      * @param entityClass
      * @param entityName
      * @param id
      * @param background
      * @param foreground
      */
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int background, int foreground)
+    public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int background, int foreground)
     {
         CommonRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
     }
 
+    static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
+    {
+        //TODO
+    }
+
     /**
-     * Register the mod for packets on this channel. This only registers the channel with Forge Mod Loader, not
-     * with clients connecting- use BaseMod.onClientLogin to tell them about your custom channel
+     * Register the mod for packets on this channel. This only registers the
+     * channel with Forge Mod Loader, not with clients connecting- use
+     * BaseMod.onClientLogin to tell them about your custom channel
      * {@link FMLCommonHandler#registerChannel(cpw.mods.fml.common.ModContainer, String)}
+     * 
      * @param mod
      * @param channel
      */
@@ -432,19 +580,25 @@ public class ModLoader
 
     /**
      * Register a new tile entity class
+     * 
      * @param tileEntityClass
      * @param id
      */
-    public static void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)
+    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
         CommonRegistry.registerTileEntity(tileEntityClass, id);
     }
 
+    static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id, TileEntitySpecialRenderer renderer)
+    {
+        ClientRegistry.instance().registerTileEntity(tileEntityClass, id, renderer);
+    }
+
     /**
-     * Remove a biome. This code will probably not work correctly and will likely corrupt worlds.
+     * Remove a biome from the list of generated biomes
+     *  
      * @param biome
      */
-    @Deprecated
     public static void removeBiome(BiomeGenBase biome)
     {
         CommonRegistry.removeBiome(biome);
@@ -452,27 +606,30 @@ public class ModLoader
 
     /**
      * Remove a spawn
+     * 
      * @param entityClass
      * @param spawnList
      */
-    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType spawnList)
+    public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList)
     {
         CommonRegistry.removeSpawn(entityClass, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
      * Remove a spawn
+     * 
      * @param entityClass
      * @param spawnList
      * @param biomes
      */
-    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         CommonRegistry.removeSpawn(entityClass, spawnList, biomes);
     }
 
     /**
      * Remove a spawn
+     * 
      * @param entityName
      * @param spawnList
      */
@@ -483,6 +640,7 @@ public class ModLoader
 
     /**
      * Remove a spawn
+     * 
      * @param entityName
      * @param spawnList
      * @param biomes
@@ -492,9 +650,25 @@ public class ModLoader
         CommonRegistry.removeSpawn(entityName, spawnList, biomes);
     }
 
+    static boolean renderBlockIsItemFull3D(int modelID)
+    {
+        //TODO
+        return false;
+    }
+
+    static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
+    {
+        //TODO
+    }
+
+    static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
+    {
+        //TODO
+        return false;
+    }
+
     /**
-     * Configuration is handled elsewhere
-     * {@link ModLoaderModContainer}
+     * Configuration is handled elsewhere {@link ModLoaderModContainer}
      */
     @Deprecated
     public static void saveConfig()
@@ -502,24 +676,32 @@ public class ModLoader
     }
 
     /**
-     * This method is unimplemented on the server: it is meant for clients to send chat to the server
+     * Send a chat message to the server
+     * 
      * {@link FMLClientHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
+     * 
      * @param text
      */
-    @Deprecated
     public static void serverChat(String text)
     {
+        //TODO
+    }
+
+    static void serverLogin(NetClientHandler handler, Packet1Login loginPacket)
+    {
+        //TODO
     }
 
     /**
      * Indicate that you want to receive ticks
-     *
+     * 
      * @param mod
-     *          receiving the events
+     *            receiving the events
      * @param enable
-     *          indicates whether you want to recieve them or not
+     *            indicates whether you want to recieve them or not
      * @param useClock
-     *          Not used in server side: all ticks are sent on the server side (no render subticks)
+     *            Not used in server side: all ticks are sent on the server side
+     *            (no render subticks)
      */
     public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
@@ -527,15 +709,22 @@ public class ModLoader
         mlmc.setTicking(enable);
     }
 
+    
+    static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock)
+    {
+        //TODO
+    }
+
     /**
      * Set a private field to a value using reflection
      * {@link ReflectionHelper#setPrivateValue(Class, Object, int, Object)}
+     * 
      * @param instanceclass
      * @param instance
      * @param fieldindex
      * @param value
      */
-    public static <T, E> void setPrivateValue(Class <? super T > instanceclass, T instance, int fieldindex, E value)
+    public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value)
     {
         ReflectionHelper.setPrivateValue(instanceclass, instance, fieldindex, value);
     }
@@ -543,19 +732,22 @@ public class ModLoader
     /**
      * Set a private field to a value using reflection
      * {@link ReflectionHelper#setPrivateValue(Class, Object, String, Object)}
+     * 
      * @param instanceclass
      * @param instance
      * @param field
      * @param value
      */
-    public static <T, E> void setPrivateValue(Class <? super T > instanceclass, T instance, String field, E value)
+    public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, String field, E value)
     {
         ReflectionHelper.setPrivateValue(instanceclass, instance, field, value);
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented elsewhere.
+     * This method is a call in hook from modified external code. Implemented
+     * elsewhere.
      * {@link FMLClientHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
+     * 
      * @param player
      * @param item
      * @param matrix
@@ -566,8 +758,10 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented elsewhere.
+     * This method is a call in hook from modified external code. Implemented
+     * elsewhere.
      * {@link FMLClientHandler#onItemSmelted(EntityPlayer, ItemStack)}
+     * 
      * @param player
      * @param item
      */
@@ -579,43 +773,12 @@ public class ModLoader
     /**
      * Throw the offered exception. Likely will stop the game.
      * {@link FMLClientHandler#raiseException(Throwable, String, boolean)}
+     * 
      * @param message
      * @param e
      */
     public static void throwException(String message, Throwable e)
     {
         FMLClientHandler.instance().raiseException(e, message, true);
-    }
-
-    /**
-     * Get the minecraft server instance
-     * {@link FMLClientHandler#getServer()}
-     * @return
-     */
-    public static Minecraft getMinecraftServerInstance()
-    {
-        return FMLClientHandler.instance().getClient();
-    }
-
-    /**
-     * To properly implement packet 250 protocol you should always check your channel
-     * is active prior to sending the packet
-     *
-     * @param player
-     * @param channel
-     * @return
-     */
-    public static boolean isChannelActive(EntityPlayer player, String channel)
-    {
-        return FMLCommonHandler.instance().isChannelActive(channel, player);
-    }
-    
-    /**
-     * Stubbed method on the server to return a unique model id
-     * 
-     */
-    @Deprecated
-    public static int getUniqueBlockModelID(BaseMod mod, boolean flag) {
-        return 0;
     }
 }

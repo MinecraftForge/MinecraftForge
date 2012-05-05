@@ -13,6 +13,7 @@ package net.minecraft.src;
  */
 
 
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
@@ -127,6 +128,9 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         return 0;
     }
 
+    public void addRenderer(Map<Class<? extends Entity>, Render> renderers) {
+        
+    }
     /**
      * Override if you wish to perform some action other than just dispensing the item from the dispenser
      * @param world
@@ -192,6 +196,9 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     /**
      * Load your mod
      */
+    public void keyboardEvent(KeyBinding event) {
+        
+    }
     public abstract void load();
 
     /**
@@ -220,26 +227,38 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         return false;
     }
 
+    public boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui)
+    {
+        return false;
+    }
     /**
-     * Not implemented because on the server you don't know who it's from
      * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
      * @param text
      */
-    @Deprecated
     public void receiveChatPacket(String text)
     {
+        //TODO
     }
 
     /**
-     * Not implemented because on the server you don't know who it's from
      * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
      * @param packet
      */
-    @Deprecated
     public void receiveCustomPacket(Packet250CustomPayload packet)
     {
+        //TODO
     }
 
+    public void registerAnimation(Minecraft game) {
+        
+    }
+    public void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID) {
+        
+    }
+    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
+        return false;
+        
+    }
     /**
      * Called when someone crafts an item from a crafting table
      * @param player
@@ -319,12 +338,4 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         
     }
-    // Spare client junk
-    // -------
-    // void addRenderer(Map<Class<? extends Entity>, Render> renderers);
-    // void registerAnimation(Minecraft game);
-    // void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID);
-    // boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
-    // boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui);
-    // void keyboardEvent(KeyBinding event);
 }

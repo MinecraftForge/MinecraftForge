@@ -196,7 +196,7 @@
     </zip>
   </target>
 
-  <target name="build" depends="init,clean,merge-server,patch,build-server,build-source-pack" />
+  <target name="build" depends="init,clean,merge-server,merge-client,patch,build-server,build-client,build-source-pack" />
 
   <target name="patch" depends="init">
     <exec executable="${python.exe}" dir="${basedir}">
