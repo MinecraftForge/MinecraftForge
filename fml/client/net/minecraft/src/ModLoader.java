@@ -95,7 +95,7 @@ public class ModLoader
      */
     public static void addLocalization(String key, String value)
     {
-        // TODO
+        addLocalization(key, "en_US", value);
     }
 
     /**
@@ -107,7 +107,7 @@ public class ModLoader
      */
     public static void addLocalization(String key, String lang, String value)
     {
-        // TODO
+        FMLCommonHandler.instance().addStringLocalization(key, lang, value);
     }
 
     /**
@@ -118,7 +118,7 @@ public class ModLoader
      */
     public static void addName(Object instance, String name)
     {
-        // TODO
+        addName(instance,"en_US",name);
     }
 
     /**
@@ -130,7 +130,18 @@ public class ModLoader
      */
     public static void addName(Object instance, String lang, String name)
     {
-        // TODO
+        String objectName;
+        if (instance instanceof Item) {
+            objectName=((Item)instance).func_20009_a();
+        } else if (instance instanceof Block) {
+            objectName=((Block)instance).func_20013_i();
+        } else if (instance instanceof ItemStack) {
+            objectName=Item.field_233_c[((ItemStack)instance).field_1617_c].func_21011_b((ItemStack)instance);
+        } else {
+            throw new IllegalArgumentException(String.format("Illegal object for naming %s",instance));
+        }
+        objectName+=".name";
+        addLocalization(objectName, lang, name);
     }
 
     /**

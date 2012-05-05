@@ -18,8 +18,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import net.minecraft.src.StringTranslate;
 
 /**
  * The main class for non-obfuscated hook handling code
@@ -270,5 +273,38 @@ public class FMLCommonHandler
     public int nextUniqueEntityListId()
     {
         return uniqueEntityListId++;
+    }
+
+    private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
+    /**
+     * @param key
+     * @param lang
+     * @param value
+     */
+    public void addStringLocalization(String key, String lang, String value)
+    {
+        Properties langPack=modLanguageData.get(lang);
+        if (langPack==null) {
+            langPack=new Properties();
+            modLanguageData.put(lang, langPack);
+        }
+        langPack.put(key,value);
+        
+        if (StringTranslate.func_20162_a().func_44024_c().equals(lang)) {
+            handleLanguageLoad(langPack, lang);
+        }
+    }
+
+    /**
+     * @param languagePack
+     * @param lang
+     */
+    public void handleLanguageLoad(Properties languagePack, String lang)
+    {
+        Properties langPack=modLanguageData.get(lang);
+        if (langPack==null) {
+            return;
+        }
+        languagePack.putAll(langPack);
     }
 }
