@@ -1,3 +1,4 @@
+package net.minecraft.src;
 public class mod_testMod extends BaseMod {
 
 
