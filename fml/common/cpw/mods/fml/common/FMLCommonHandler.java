@@ -60,7 +60,7 @@ public class FMLCommonHandler
      */
     private IFMLSidedHandler sidedDelegate;
     
-    private int uniqueEntityListId = 250;
+    private int uniqueEntityListId = 220;
 
 
     /**
@@ -306,5 +306,15 @@ public class FMLCommonHandler
             return;
         }
         languagePack.putAll(langPack);
+    }
+
+    /**
+     * @param modLoaderModContainer
+     * @return
+     */
+    public boolean shouldTickMod(ModContainer modContainer)
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

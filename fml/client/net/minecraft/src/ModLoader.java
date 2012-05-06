@@ -720,12 +720,15 @@ public class ModLoader
     {
         ModLoaderModContainer mlmc = (ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
         mlmc.setTicking(enable);
+        mlmc.setClockTicks(useClock);
     }
 
     
-    static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock)
+    public static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock)
     {
-        //TODO
+        ModLoaderModContainer mlmc = (ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
+        mlmc.setGUITicking(enable);
+        mlmc.setGUIClockTicks(useClock);
     }
 
     /**

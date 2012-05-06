@@ -56,13 +56,19 @@ public interface ModContainer
      */
     String getName();
     /**
+     * Should the mod tick
+     * @param clock
+     * @return
+     */
+    boolean shouldTick(float clock);
+    /**
      * A tick has started
      */
-    void tickStart();
+    void tickStart(float clock);
     /**
      * A tick has ended
      */
-    void tickEnd();
+    void tickEnd(float clock);
     /**
      * Does this mod match the supplied mod?
      * @param mod
