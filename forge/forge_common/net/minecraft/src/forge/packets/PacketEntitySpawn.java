@@ -75,7 +75,7 @@ public class PacketEntitySpawn extends ForgePacket
     {
         data.writeInt(modID);
         data.writeInt(entityID);
-        data.writeByte(typeID);
+        data.writeByte(typeID & 0xFF);
         data.writeInt(posX);
         data.writeInt(posY);
         data.writeInt(posZ);
