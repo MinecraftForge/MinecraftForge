@@ -35,7 +35,21 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      */
     public final boolean doTickInGame(float clock, Object minecraftInstance)
     {
-        return onTickInGame((Minecraft)minecraftInstance);
+        Minecraft mc = (Minecraft)minecraftInstance;
+        if (mc.field_6324_e != null)
+        {
+            return onTickInGame(mc);
+        }
+        return true;
+    }
+    public final boolean doTickInGui(float clock, Object minecraftInstance)
+    {
+        Minecraft mc = (Minecraft)minecraftInstance;
+        if (mc.field_40007_r != null)
+        {
+            return onTickInGUI(clock, mc, mc.field_6313_p);
+        }
+        return true;
     }
 
     @Override
@@ -222,7 +236,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param minecraftServer the server
      * @return true to continue receiving ticks
      */
-    public boolean onTickInGame(Object minecraftInstance)
+    public boolean onTickInGame(Minecraft minecraftInstance)
     {
         return false;
     }

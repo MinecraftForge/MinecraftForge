@@ -568,4 +568,14 @@ public class Loader
     {
         return canonicalConfigDir;
     }
+    
+    public String getCrashInformation()
+    {
+        String ret = String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s\n", major, minor, rev, build, mcversion);
+        for (ModContainer mod : mods)
+        {
+            ret += mod.getName() + "\n";
+        }
+        return ret;
+    }
 }

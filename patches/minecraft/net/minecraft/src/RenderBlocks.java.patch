@@ -1,0 +1,428 @@
+--- ../src-base/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,94 +7,95 @@
+ public class RenderBlocks
+ {
+     public IBlockAccess field_1772_a;
+-    private int field_1771_b = -1;
+-    private boolean field_1774_c = false;
+-    private boolean field_1773_d = false;
++    public int field_1771_b = -1;
++    public boolean field_1774_c = false;
++    public boolean field_1773_d = false;
+     public static boolean field_27406_a = true;
++    public static boolean cfgGrassFix = true; 
+     public boolean field_31088_b = true;
+-    private int field_31087_g = 0;
+-    private int field_31086_h = 0;
+-    private int field_31085_i = 0;
+-    private int field_31084_j = 0;
+-    private int field_31083_k = 0;
+-    private int field_31082_l = 0;
+-    private boolean field_22385_e;
+-    private float field_22384_f;
+-    private float field_22383_g;
+-    private float field_22382_h;
+-    private float field_22381_i;
+-    private float field_22380_j;
+-    private float field_22379_k;
+-    private float field_22378_l;
+-    private float field_22377_m;
+-    private float field_22376_n;
+-    private float field_22375_o;
+-    private float field_22374_p;
+-    private float field_22373_q;
+-    private float field_22372_r;
+-    private float field_22371_s;
+-    private float field_22370_t;
+-    private float field_22369_u;
+-    private float field_22368_v;
+-    private float field_22367_w;
+-    private float field_22366_x;
+-    private float field_22365_y;
+-    private float field_22364_z;
+-    private float field_22362_A;
+-    private float field_22360_B;
+-    private float field_22358_C;
+-    private float field_22356_D;
+-    private float field_22354_E;
+-    private float field_22353_F;
+-    private int field_35936_P;
+-    private int field_35935_Q;
+-    private int field_35938_R;
+-    private int field_35937_S;
+-    private int field_35932_T;
+-    private int field_35931_U;
+-    private int field_35934_V;
+-    private int field_35933_W;
+-    private int field_35940_X;
+-    private int field_35939_Y;
+-    private int field_35941_Z;
+-    private int field_35951_aa;
+-    private int field_35952_ab;
+-    private int field_35949_ac;
+-    private int field_35950_ad;
+-    private int field_35955_ae;
+-    private int field_35956_af;
+-    private int field_35953_ag;
+-    private int field_35954_ah;
+-    private int field_35945_ai;
+-    private int field_35946_aj = 1;
+-    private int field_35943_ak;
+-    private int field_35944_al;
+-    private int field_35947_am;
+-    private int field_35948_an;
+-    private float field_22351_H;
+-    private float field_22350_I;
+-    private float field_22349_J;
+-    private float field_22348_K;
+-    private float field_22347_L;
+-    private float field_22346_M;
+-    private float field_22345_N;
+-    private float field_22344_O;
+-    private float field_22343_P;
+-    private float field_22342_Q;
+-    private float field_22341_R;
+-    private float field_22340_S;
+-    private boolean field_22339_T;
+-    private boolean field_22338_U;
+-    private boolean field_22337_V;
+-    private boolean field_22336_W;
+-    private boolean field_22335_X;
+-    private boolean field_22334_Y;
+-    private boolean field_22333_Z;
+-    private boolean field_22363_aa;
+-    private boolean field_22361_ab;
+-    private boolean field_22359_ac;
+-    private boolean field_22357_ad;
+-    private boolean field_22355_ae;
++    public int field_31087_g = 0;
++    public int field_31086_h = 0;
++    public int field_31085_i = 0;
++    public int field_31084_j = 0;
++    public int field_31083_k = 0;
++    public int field_31082_l = 0;
++    public boolean field_22385_e;
++    public float field_22384_f;
++    public float field_22383_g;
++    public float field_22382_h;
++    public float field_22381_i;
++    public float field_22380_j;
++    public float field_22379_k;
++    public float field_22378_l;
++    public float field_22377_m;
++    public float field_22376_n;
++    public float field_22375_o;
++    public float field_22374_p;
++    public float field_22373_q;
++    public float field_22372_r;
++    public float field_22371_s;
++    public float field_22370_t;
++    public float field_22369_u;
++    public float field_22368_v;
++    public float field_22367_w;
++    public float field_22366_x;
++    public float field_22365_y;
++    public float field_22364_z;
++    public float field_22362_A;
++    public float field_22360_B;
++    public float field_22358_C;
++    public float field_22356_D;
++    public float field_22354_E;
++    public float field_22353_F;
++    public int field_35936_P;
++    public int field_35935_Q;
++    public int field_35938_R;
++    public int field_35937_S;
++    public int field_35932_T;
++    public int field_35931_U;
++    public int field_35934_V;
++    public int field_35933_W;
++    public int field_35940_X;
++    public int field_35939_Y;
++    public int field_35941_Z;
++    public int field_35951_aa;
++    public int field_35952_ab;
++    public int field_35949_ac;
++    public int field_35950_ad;
++    public int field_35955_ae;
++    public int field_35956_af;
++    public int field_35953_ag;
++    public int field_35954_ah;
++    public int field_35945_ai;
++    public int field_35946_aj = 1;
++    public int field_35943_ak;
++    public int field_35944_al;
++    public int field_35947_am;
++    public int field_35948_an;
++    public float field_22351_H;
++    public float field_22350_I;
++    public float field_22349_J;
++    public float field_22348_K;
++    public float field_22347_L;
++    public float field_22346_M;
++    public float field_22345_N;
++    public float field_22344_O;
++    public float field_22343_P;
++    public float field_22342_Q;
++    public float field_22341_R;
++    public float field_22340_S;
++    public boolean field_22339_T;
++    public boolean field_22338_U;
++    public boolean field_22337_V;
++    public boolean field_22336_W;
++    public boolean field_22335_X;
++    public boolean field_22334_Y;
++    public boolean field_22333_Z;
++    public boolean field_22363_aa;
++    public boolean field_22361_ab;
++    public boolean field_22359_ac;
++    public boolean field_22357_ad;
++    public boolean field_22355_ae;
+ 
+     public RenderBlocks(IBlockAccess p_i647_1_)
+     {
+@@ -126,10 +127,40 @@
+     {
+         int var5 = p_1234_1_.func_210_f();
+         p_1234_1_.func_238_a(this.field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_);
+-        return var5 == 0 ? this.func_1228_k(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 4 ? this.func_1222_j(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 13 ? this.func_1233_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 1 ? this.func_1226_h(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 19 ? this.func_1232_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 23 ? this.func_40726_m(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 6 ? this.func_35930_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 2 ? this.func_1241_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 3 ? this.func_1235_d(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 5 ? this.func_1242_e(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 8 ? this.func_1221_g(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 7 ? this.func_1218_o(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 9 ? this.func_1216_f((BlockRail)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 10 ? this.func_1214_n(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 27 ? this.func_41088_a((BlockDragonEgg)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 11 ? this.func_35925_a((BlockFence)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 12 ? this.func_1229_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 14 ? this.func_22331_p(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 15 ? this.func_22332_q(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 16 ? this.func_31074_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, false) : (var5 == 17 ? this.func_31080_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, true) : (var5 == 18 ? this.func_35922_a((BlockPane)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 20 ? this.func_35929_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 21 ? this.func_35923_a((BlockFenceGate)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 24 ? this.func_40728_a((BlockCauldron)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 25 ? this.func_40730_a((BlockBrewingStand)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 26 ? this.func_40729_s(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : false))))))))))))))))))))))))));
++        switch (var5)
++        {
++            case 0:  return func_1228_k(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 4:  return func_1222_j(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 13: return func_1233_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 1:  return func_1226_h(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 19: return func_1232_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 23: return func_40726_m(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 6:  return func_35930_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 2:  return func_1241_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 3:  return func_1235_d(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 5:  return func_1242_e(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 8:  return func_1221_g(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 7:  return func_1218_o(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 9:  return func_1216_f((BlockRail)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 10: return func_1214_n(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 27: return func_41088_a((BlockDragonEgg)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 11: return func_35925_a((BlockFence)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 12: return func_1229_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 14: return func_22331_p(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 15: return func_22332_q(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 16: return func_31074_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, false);
++            case 17: return func_31080_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, true);
++            case 18: return func_35922_a((BlockPane)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 20: return func_35929_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 21: return func_35923_a((BlockFenceGate)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 24: return func_40728_a((BlockCauldron)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 25: return func_40730_a((BlockBrewingStand)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            case 26: return func_40729_s(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++            default: return ModLoader.renderWorldBlock(this, field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_, p_1234_1_, var5);
++        }
+     }
+ 
+-    private boolean func_40729_s(Block p_40729_1_, int p_40729_2_, int p_40729_3_, int p_40729_4_)
++    public boolean func_40729_s(Block p_40729_1_, int p_40729_2_, int p_40729_3_, int p_40729_4_)
+     {
+         int var5 = this.field_1772_a.func_602_e(p_40729_2_, p_40729_3_, p_40729_4_);
+         int var6 = var5 & 3;
+@@ -169,7 +200,7 @@
+         }
+     }
+ 
+-    private boolean func_22331_p(Block p_22331_1_, int p_22331_2_, int p_22331_3_, int p_22331_4_)
++    public boolean func_22331_p(Block p_22331_1_, int p_22331_2_, int p_22331_3_, int p_22331_4_)
+     {
+         Tessellator var5 = Tessellator.field_1512_a;
+         int var6 = this.field_1772_a.func_602_e(p_22331_2_, p_22331_3_, p_22331_4_);
+@@ -313,7 +344,7 @@
+         return true;
+     }
+ 
+-    private boolean func_40730_a(BlockBrewingStand p_40730_1_, int p_40730_2_, int p_40730_3_, int p_40730_4_)
++    public boolean func_40730_a(BlockBrewingStand p_40730_1_, int p_40730_2_, int p_40730_3_, int p_40730_4_)
+     {
+         p_40730_1_.func_213_a(0.4375F, 0.0F, 0.4375F, 0.5625F, 0.875F, 0.5625F);
+         this.func_1228_k(p_40730_1_, p_40730_2_, p_40730_3_, p_40730_4_);
+@@ -387,7 +418,7 @@
+         return true;
+     }
+ 
+-    private boolean func_40728_a(BlockCauldron p_40728_1_, int p_40728_2_, int p_40728_3_, int p_40728_4_)
++    public boolean func_40728_a(BlockCauldron p_40728_1_, int p_40728_2_, int p_40728_3_, int p_40728_4_)
+     {
+         this.func_1228_k(p_40728_1_, p_40728_2_, p_40728_3_, p_40728_4_);
+         Tessellator var5 = Tessellator.field_1512_a;
+@@ -470,7 +501,7 @@
+         return true;
+     }
+ 
+-    private boolean func_22332_q(Block p_22332_1_, int p_22332_2_, int p_22332_3_, int p_22332_4_)
++    public boolean func_22332_q(Block p_22332_1_, int p_22332_2_, int p_22332_3_, int p_22332_4_)
+     {
+         int var5 = this.field_1772_a.func_602_e(p_22332_2_, p_22332_3_, p_22332_4_);
+         int var6 = var5 & 3;
+@@ -563,7 +594,7 @@
+         this.field_1773_d = false;
+     }
+ 
+-    private boolean func_31074_b(Block p_31074_1_, int p_31074_2_, int p_31074_3_, int p_31074_4_, boolean p_31074_5_)
++    public boolean func_31074_b(Block p_31074_1_, int p_31074_2_, int p_31074_3_, int p_31074_4_, boolean p_31074_5_)
+     {
+         int var6 = this.field_1772_a.func_602_e(p_31074_2_, p_31074_3_, p_31074_4_);
+         boolean var7 = p_31074_5_ || (var6 & 8) != 0;
+@@ -676,7 +707,7 @@
+         return true;
+     }
+ 
+-    private void func_31076_a(double p_31076_1_, double p_31076_3_, double p_31076_5_, double p_31076_7_, double p_31076_9_, double p_31076_11_, float p_31076_13_, double p_31076_14_)
++    public void func_31076_a(double p_31076_1_, double p_31076_3_, double p_31076_5_, double p_31076_7_, double p_31076_9_, double p_31076_11_, float p_31076_13_, double p_31076_14_)
+     {
+         int var16 = 108;
+ 
+@@ -699,7 +730,7 @@
+         var19.func_983_a(p_31076_3_, p_31076_7_, p_31076_11_, var24, var26);
+     }
+ 
+-    private void func_31081_b(double p_31081_1_, double p_31081_3_, double p_31081_5_, double p_31081_7_, double p_31081_9_, double p_31081_11_, float p_31081_13_, double p_31081_14_)
++    public void func_31081_b(double p_31081_1_, double p_31081_3_, double p_31081_5_, double p_31081_7_, double p_31081_9_, double p_31081_11_, float p_31081_13_, double p_31081_14_)
+     {
+         int var16 = 108;
+ 
+@@ -722,7 +753,7 @@
+         var19.func_983_a(p_31081_3_, p_31081_7_, p_31081_11_, var24, var26);
+     }
+ 
+-    private void func_31077_c(double p_31077_1_, double p_31077_3_, double p_31077_5_, double p_31077_7_, double p_31077_9_, double p_31077_11_, float p_31077_13_, double p_31077_14_)
++    public void func_31077_c(double p_31077_1_, double p_31077_3_, double p_31077_5_, double p_31077_7_, double p_31077_9_, double p_31077_11_, float p_31077_13_, double p_31077_14_)
+     {
+         int var16 = 108;
+ 
+@@ -752,7 +783,7 @@
+         this.field_1773_d = false;
+     }
+ 
+-    private boolean func_31080_c(Block p_31080_1_, int p_31080_2_, int p_31080_3_, int p_31080_4_, boolean p_31080_5_)
++    public boolean func_31080_c(Block p_31080_1_, int p_31080_2_, int p_31080_3_, int p_31080_4_, boolean p_31080_5_)
+     {
+         int var6 = this.field_1772_a.func_602_e(p_31080_2_, p_31080_3_, p_31080_4_);
+         int var7 = BlockPistonExtension.func_31050_c(var6);
+@@ -2728,7 +2759,7 @@
+         }
+     }
+ 
+-    private float func_1224_a(int p_1224_1_, int p_1224_2_, int p_1224_3_, Material p_1224_4_)
++    public float func_1224_a(int p_1224_1_, int p_1224_2_, int p_1224_3_, Material p_1224_4_)
+     {
+         int var5 = 0;
+         float var6 = 0.0F;
+@@ -3260,7 +3291,7 @@
+             var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 2);
+             this.func_1220_c(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
+ 
+-            if (field_27406_a && var27 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var27 == 3 && this.field_1771_b < 0)
+             {
+                 this.field_22351_H *= p_22330_5_;
+                 this.field_22350_I *= p_22330_5_;
+@@ -3383,7 +3414,7 @@
+             var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 3);
+             this.func_1225_d(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 3));
+ 
+-            if (field_27406_a && var27 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var27 == 3 && this.field_1771_b < 0)
+             {
+                 this.field_22351_H *= p_22330_5_;
+                 this.field_22350_I *= p_22330_5_;
+@@ -3506,7 +3537,7 @@
+             var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 4);
+             this.func_1231_e(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
+ 
+-            if (field_27406_a && var27 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var27 == 3 && this.field_1771_b < 0)
+             {
+                 this.field_22351_H *= p_22330_5_;
+                 this.field_22350_I *= p_22330_5_;
+@@ -3629,7 +3660,7 @@
+             var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 5);
+             this.func_1236_f(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
+ 
+-            if (field_27406_a && var27 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var27 == 3 && this.field_1771_b < 0)
+             {
+                 this.field_22351_H *= p_22330_5_;
+                 this.field_22350_I *= p_22330_5_;
+@@ -3653,7 +3684,7 @@
+         return var8;
+     }
+ 
+-    private int func_35924_c(int p_35924_1_, int p_35924_2_, int p_35924_3_, int p_35924_4_)
++    public int func_35924_c(int p_35924_1_, int p_35924_2_, int p_35924_3_, int p_35924_4_)
+     {
+         if (p_35924_1_ == 0)
+         {
+@@ -3735,7 +3766,7 @@
+             var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 2);
+             this.func_1220_c(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
+ 
+-            if (field_27406_a && var28 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var28 == 3 && this.field_1771_b < 0)
+             {
+                 var8.func_987_a(var18 * p_4152_5_, var21 * p_4152_6_, var24 * p_4152_7_);
+                 this.func_1220_c(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
+@@ -3751,7 +3782,7 @@
+             var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 3);
+             this.func_1225_d(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
+ 
+-            if (field_27406_a && var28 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var28 == 3 && this.field_1771_b < 0)
+             {
+                 var8.func_987_a(var18 * p_4152_5_, var21 * p_4152_6_, var24 * p_4152_7_);
+                 this.func_1225_d(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
+@@ -3767,7 +3798,7 @@
+             var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 4);
+             this.func_1231_e(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
+ 
+-            if (field_27406_a && var28 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var28 == 3 && this.field_1771_b < 0)
+             {
+                 var8.func_987_a(var19 * p_4152_5_, var22 * p_4152_6_, var25 * p_4152_7_);
+                 this.func_1231_e(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
+@@ -3783,7 +3814,7 @@
+             var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 5);
+             this.func_1236_f(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
+ 
+-            if (field_27406_a && var28 == 3 && this.field_1771_b < 0)
++            if (cfgGrassFix && var28 == 3 && this.field_1771_b < 0)
+             {
+                 var8.func_987_a(var19 * p_4152_5_, var22 * p_4152_6_, var25 * p_4152_7_);
+                 this.func_1236_f(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
+@@ -5291,6 +5322,10 @@
+ 
+                 p_1227_1_.func_213_a(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+             }
++            else
++            {
++                ModLoader.renderInvBlock(this, p_1227_1_, p_1227_2_, var6);
++            }
+         }
+         else
+         {
+@@ -5347,6 +5382,17 @@
+ 
+     public static boolean func_1219_a(int p_1219_0_)
+     {
+-        return p_1219_0_ == 0 ? true : (p_1219_0_ == 13 ? true : (p_1219_0_ == 10 ? true : (p_1219_0_ == 11 ? true : (p_1219_0_ == 27 ? true : (p_1219_0_ == 22 ? true : (p_1219_0_ == 21 ? true : p_1219_0_ == 16))))));
++        switch (p_1219_0_)
++        {
++            case 0:
++            case 13:
++            case 10:
++            case 11:
++            case 27:
++            case 22:
++            case 21:
++            case 16: return true;
++            default: return ModLoader.renderBlockIsItemFull3D(p_1219_0_);
++        }
+     }
+ }

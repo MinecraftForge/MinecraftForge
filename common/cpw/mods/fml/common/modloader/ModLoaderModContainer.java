@@ -50,6 +50,7 @@ public class ModLoaderModContainer implements ModContainer
     private boolean clockTicks;
     private boolean guiTicks;
     private boolean guiClockTicks;
+    private long lastClock;
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
@@ -283,13 +284,29 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public boolean shouldTick(float clock)
     {
-        return isTicking && ((!clockTicks || clock!=lastClock ) || ()  
+        if (isTicking && (!clockTicks || clock != lastClock))
+        {
+            return true;
+        }
+        if (guiTicks && (!guiClockTicks || clock != lastClock))
+        {
+            return true;
+        }
         return false;
     }
     @Override
     public void tickStart(float clock)
     {
-        isTicking = mod.doTickInGame(clock, FMLCommonHandler.instance().getMinecraftInstance());
+        Object inst = FMLCommonHandler.instance().getMinecraftInstance();
+        if (isTicking)
+        {
+            isTicking = mod.doTickInGame(clock, inst);
+        }
+        if (guiTicks)
+        {
+            guiTicks = mod.doTickInGui(clock, inst);
+        }
+        lastClock = clock;
     }
     @Override
     public void tickEnd(float clock)

@@ -495,7 +495,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void addBiomeToDefaultWorldGenerator(BiomeGenBase biome)
     {
-        //WorldType.field_48635_b.addNewBiome(biome);
+        WorldType.field_48635_b.addNewBiome(biome);
     }
 
     /**
