@@ -14,6 +14,8 @@ package net.minecraft.src;
  */
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -28,6 +30,15 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 public class ModLoader
 {
+    private static class OverrideInfo
+    {
+        public String texture;
+        public String override;
+        public int index;
+    }
+    private static HashMap<String, boolean[]> spriteInfo = new HashMap<String, boolean[]>();
+    private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
+    
     /**
      * Not used on the server.
      * 
@@ -155,8 +166,9 @@ public class ModLoader
      */
     public static int addOverride(String fileToOverride, String fileToAdd)
     {
-        // TODO
-        return 0;
+        int idx = getUniqueSpriteIndex(fileToOverride);
+        addOverride(fileToOverride, fileToAdd, idx);
+        return idx;
     }
 
     /**
@@ -168,7 +180,16 @@ public class ModLoader
      */
     public static void addOverride(String path, String overlayPath, int index)
     {
-        // TODO
+        if (!overrideInfo.containsKey(path))
+        {
+            overrideInfo.put(path, new ArrayList<OverrideInfo>());
+        }
+        ArrayList<OverrideInfo> list = overrideInfo.get(path);
+        OverrideInfo info = new OverrideInfo();
+        info.index = index;
+        info.override = overlayPath;
+        info.texture = path;
+        list.add(info);
     }
 
     /**
@@ -427,10 +448,93 @@ public class ModLoader
         return FMLCommonHandler.instance().nextUniqueEntityListId();
     }
 
-    static int getUniqueSpriteIndex(String path)
+    public static int getUniqueSpriteIndex(String path)
     {
-        // TODO
-        return 0;
+        boolean[] slots = spriteInfo.get(path);
+        if (slots == null)
+        {
+            if (path.equals("/terrain.png"))
+            {
+                slots = toBooleanArray(
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000011111100" +
+                        "0000000011111111" +
+                        "0000000011111000" +
+                        "0000000111111100" +
+                        "0000000111111000" +
+                        "0000000000000000");
+                spriteInfo.put("/terrain.png", slots);
+            }
+            else if (path.equals("/gui/items.png"))
+            {
+                slots = toBooleanArray(
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000000000000000" +
+                        "0000001000000000" +
+                        "0000001110000000" +
+                        "0000001000000000" +
+                        "1111111010000000" +
+                        "1111111010100000" +
+                        "1111111111111100" +
+                        "1111111111111111" +
+                        "1111111111111111" +
+                        "1111111111111111" +
+                        "0000000000000000");
+                spriteInfo.put("/gui/items.png", slots);
+            }
+            else
+            {
+                Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
+                Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+                throwException(ex);
+                return 0;
+            }
+        }
+        int ret = getFreeSlot(slots);
+        if (ret == -1)
+        {
+            Exception ex = new Exception(String.format("No more sprite indicies left for: %s", path));
+            Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+            throwException(ex);
+            return 0;
+        }
+        return ret;
+    }
+    
+    private static boolean[] toBooleanArray(String data)
+    {
+        boolean[] ret = new boolean[data.length()];
+        for (int x = 0; x < data.length(); x++)
+        {
+            ret[x] = data.charAt(x) == '1';
+        }
+        return ret;
+    }
+    
+    private static int getFreeSlot(boolean[] slots)
+    {
+        for (int x = 0; x < slots.length; x++)
+        {
+            if (slots[x])
+            {
+                slots[x] = false;
+                return x;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -796,5 +900,10 @@ public class ModLoader
     public static void throwException(String message, Throwable e)
     {
         FMLClientHandler.instance().raiseException(e, message, true);
+    }
+    
+    public static void throwException(Throwable e)
+    {
+        throwException("Exception in ModLoader", e);
     }
 }

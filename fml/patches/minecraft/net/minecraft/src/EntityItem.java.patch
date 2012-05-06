@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/src/EntityItem.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/EntityItem.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++
+ public class EntityItem extends Entity
+ {
+     public ItemStack field_801_a;
+@@ -140,6 +142,7 @@
+ 
+             if (this.field_805_c == 0 && p_6378_1_.field_778_b.func_504_a(this.field_801_a))
+             {
++                FMLClientHandler.instance().notifyItemPickup(this, p_6378_1_);
+                 if (this.field_801_a.field_1617_c == Block.field_385_K.field_376_bc)
+                 {
+                     p_6378_1_.func_27026_a(AchievementList.field_25198_c);
