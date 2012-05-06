@@ -33,7 +33,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param minecraftInstance
      * @return
      */
-    public final boolean doTickInGame(Object minecraftInstance)
+    public final boolean doTickInGame(float clock, Object minecraftInstance)
     {
         return onTickInGame((Minecraft)minecraftInstance);
     }

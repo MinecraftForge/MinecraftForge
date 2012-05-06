@@ -47,6 +47,9 @@ public class ModLoaderModContainer implements ModContainer
     private ArrayList<String> dependencies;
     private ArrayList<String> preDependencies;
     private ArrayList<String> postDependencies;
+    private boolean clockTicks;
+    private boolean guiTicks;
+    private boolean guiClockTicks;
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
@@ -278,15 +281,18 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public void tickStart()
+    public boolean shouldTick(float clock)
     {
-        if (isTicking)
-        {
-            isTicking = mod.doTickInGame(FMLCommonHandler.instance().getMinecraftInstance());
-        }
+        return isTicking && ((!clockTicks || clock!=lastClock ) || ()  
+        return false;
     }
     @Override
-    public void tickEnd()
+    public void tickStart(float clock)
+    {
+        isTicking = mod.doTickInGame(clock, FMLCommonHandler.instance().getMinecraftInstance());
+    }
+    @Override
+    public void tickEnd(float clock)
     {
         // NOOP for modloader
     }
@@ -525,5 +531,29 @@ public class ModLoaderModContainer implements ModContainer
     public IPlayerTracker getPlayerTracker()
     {
         return mod;
+    }
+
+    /**
+     * @param useClock
+     */
+    public void setClockTicks(boolean useClock)
+    {
+        this.clockTicks=useClock;
+    }
+
+    /**
+     * @param enable
+     */
+    public void setGUITicking(boolean enable)
+    {
+        this.guiTicks=enable;
+    }
+
+    /**
+     * @param useClock
+     */
+    public void setGUIClockTicks(boolean useClock)
+    {
+        this.guiClockTicks=useClock;
     }
 }
