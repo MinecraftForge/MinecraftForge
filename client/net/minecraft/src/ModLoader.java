@@ -37,7 +37,9 @@ public class ModLoader
      */
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
-
+        String achName=achievement.func_44020_i();
+        addLocalization(achName, name);
+        addLocalization(achName+".desc", description);
     }
 
     /**
