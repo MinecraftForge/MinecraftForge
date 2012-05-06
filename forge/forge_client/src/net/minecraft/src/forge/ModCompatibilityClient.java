@@ -78,10 +78,10 @@ public class ModCompatibilityClient
             return;
         }
         audioModSoundPoolCave = new SoundPool();
-        audioModLoadModAudio("minecraft/resources/mod/sound", mngr.getSoundsPool());
-        audioModLoadModAudio("minecraft/resources/mod/streaming", mngr.getStreamingPool());
-        audioModLoadModAudio("minecraft/resources/mod/music", mngr.getMusicPool());
-        audioModLoadModAudio("minecraft/resources/mod/cavemusic", audioModSoundPoolCave);
+        audioModLoadModAudio("resources/mod/sound", mngr.getSoundsPool());
+        audioModLoadModAudio("resources/mod/streaming", mngr.getStreamingPool());
+        audioModLoadModAudio("resources/mod/music", mngr.getMusicPool());
+        audioModLoadModAudio("resources/mod/cavemusic", audioModSoundPoolCave);
         
         if (mngr.MUSIC_INTERVAL == 12000)
         {
@@ -96,7 +96,7 @@ public class ModCompatibilityClient
      */
     private static void audioModLoadModAudio(String path, SoundPool pool)
     {
-        File folder = Minecraft.getAppDir(path);
+        File folder = new File(Minecraft.getMinecraftDir(), path);
 
         try
         {
