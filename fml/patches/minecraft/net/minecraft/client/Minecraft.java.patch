@@ -25,19 +25,29 @@
          this.func_6250_c("Startup");
          this.field_6286_O = new OpenGlCapsChecker();
          this.field_6301_A.func_340_a(this.field_6304_y);
-@@ -1340,6 +1344,7 @@
+@@ -745,7 +749,9 @@
+                 }
+ 
+                 Profiler.func_40661_c("gameRenderer");
++                FMLClientHandler.instance().onRenderTickStart(this.field_9237_P.field_1378_c);
+                 this.field_9243_r.func_4136_b(this.field_9237_P.field_1378_c);
++                FMLClientHandler.instance().onRenderTickEnd(this.field_9237_P.field_1378_c);
+                 Profiler.func_40662_b();
+             }
+ 
+@@ -1340,6 +1346,7 @@
              this.func_28001_B();
          }
  
-+        FMLClientHandler.instance().onPreTick();
++        FMLClientHandler.instance().onPreWorldTick();
          Profiler.func_40663_a("stats");
          this.field_25001_G.func_27178_d();
          Profiler.func_40661_c("gui");
-@@ -1730,6 +1735,7 @@
+@@ -1730,6 +1737,7 @@
          }
  
          Profiler.func_40662_b();
-+        FMLClientHandler.instance().onPostTick();
++        FMLClientHandler.instance().onPostWorldTick();
          this.field_6287_N = System.currentTimeMillis();
      }
  

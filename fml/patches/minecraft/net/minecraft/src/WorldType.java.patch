@@ -1,56 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,10 @@
- package net.minecraft.src;
- 
-+import static net.minecraft.src.BiomeGenBase.*;
-+
-+import java.util.Arrays;
-+import java.util.List;
-+
- public class WorldType
- {
-     public static final WorldType[] field_48637_a = new WorldType[16];
-@@ -10,6 +15,8 @@
-     private final int field_48632_f;
-     private boolean field_48633_g;
-     private boolean field_48638_h;
-+    
-+    private BiomeGenBase[] biomesForWorldType;
- 
-     private WorldType(int p_i1080_1_, String p_i1080_2_)
-     {
-@@ -22,6 +29,15 @@
-         this.field_48632_f = p_i1081_3_;
-         this.field_48633_g = true;
-         field_48637_a[p_i1081_1_] = this;
-+        switch(p_i1081_1_)
-+        {
-+            case 8:
-+                biomesForWorldType = new BiomeGenBase[]{field_4249_h, field_4253_d, field_35483_e, field_4255_b, field_35485_c, field_4250_g};
-+                break;
-+            default:
-+                biomesForWorldType = new BiomeGenBase[]{field_4249_h, field_4253_d, field_35483_e, field_4255_b, field_35485_c, field_4250_g, field_48416_w};
-+                break;
-+        }
-     }
- 
-     public String func_48628_a()
-@@ -78,4 +94,17 @@
+@@ -78,4 +78,11 @@
  
          return null;
      }
-+    
-+    public BiomeGenBase[] getBiomesForWorldType()
-+    {
-+        return biomesForWorldType;
-+    }
-+    
++
++    /**
++     * @param biome
++     */
 +    public void addNewBiome(BiomeGenBase biome)
 +    {
-+        List<BiomeGenBase> biomes = Arrays.asList(biomesForWorldType);
-+        biomes.add(biome);
-+        biomesForWorldType = biomes.toArray(new BiomeGenBase[0]);
 +    }
-+    
  }

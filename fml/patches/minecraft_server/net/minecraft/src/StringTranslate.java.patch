@@ -1,0 +1,11 @@
+--- ../src-base/minecraft_server/net/minecraft/src/StringTranslate.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/StringTranslate.java	0000-00-00 00:00:00.000000000 -0000
+@@ -139,4 +139,8 @@
+         String var3 = this.field_25081_b.getProperty(p_25078_1_, p_25078_1_);
+         return String.format(var3, p_25078_2_);
+     }
++    
++    public String getCurrentLanguage() {
++        return this.field_44012_d;
++    }
+ }

@@ -75,22 +75,22 @@ public class FMLCommonHandler
     /**
      * Pre-tick the mods 
      */
-    public void gameTickStart()
+    public void worldTickStart()
     {
         for (ModContainer mod : Loader.getModList())
         {
-            mod.tickStart();
+            mod.tickStart(ModContainer.TickType.WORLD,0.0);
         }
     }
 
     /**
      * Post-tick the mods
      */
-    public void gameTickEnd()
+    public void worldTickEnd()
     {
         for (ModContainer mod : Loader.getModList())
         {
-            mod.tickEnd();
+            mod.tickEnd(ModContainer.TickType.WORLD,0.0);
         }
     }
 
@@ -290,7 +290,7 @@ public class FMLCommonHandler
         }
         langPack.put(key,value);
         
-        if (StringTranslate.func_20162_a().func_44024_c().equals(lang)) {
+        if (sidedDelegate.getCurrentLanguage().equals(lang)) {
             handleLanguageLoad(langPack, lang);
         }
     }
@@ -316,5 +316,21 @@ public class FMLCommonHandler
     {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isServer()
+    {
+        return sidedDelegate.isServer();
+    }
+
+    /**
+     * @return
+     */
+    public boolean isClient()
+    {
+        return sidedDelegate.isClient();
     }
 }

@@ -33,12 +33,14 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
@@ -133,19 +135,31 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      * Every tick just before world and other ticks occur
      */
-    public void onPreTick()
+    public void onPreWorldTick()
     {
-        FMLCommonHandler.instance().gameTickStart();
+        FMLCommonHandler.instance().worldTickStart();
     }
 
     /**
      * Every tick just after world and other ticks occur
      */
-    public void onPostTick()
+    public void onPostWorldTick()
     {
-        FMLCommonHandler.instance().gameTickEnd();
+        FMLCommonHandler.instance().worldTickEnd();
     }
 
+    public void onRenderTickStart(float partialTickTime) {
+        for (ModContainer mod : Loader.getModList()) {
+            mod.tickStart(TickType.RENDER, partialTickTime);
+        }
+    }
+    
+    public void onRenderTickEnd(float partialTickTime) {
+        for (ModContainer mod : Loader.getModList()) {
+            mod.tickEnd(TickType.RENDER, partialTickTime);
+        }
+        
+    }
     /**
      * Get the server instance
      * 
@@ -505,5 +519,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     public Object getMinecraftInstance()
     {
         return client;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#getCurrentLanguage()
+     */
+    @Override
+    public String getCurrentLanguage()
+    {
+        return StringTranslate.func_20162_a().func_44024_c();
     }
 }

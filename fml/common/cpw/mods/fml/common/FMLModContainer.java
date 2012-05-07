@@ -92,13 +92,13 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public void tickStart()
+    public void tickStart(TickType type, Object ... data)
     {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void tickEnd()
+    public void tickEnd(TickType type, Object ... data)
     {
         // TODO Auto-generated method stub
     }

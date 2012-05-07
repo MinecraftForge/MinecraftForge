@@ -1,4 +1,5 @@
 package net.minecraft.src;
+
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  *
@@ -11,7 +12,6 @@ package net.minecraft.src;
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
 
 import java.util.Map;
 import java.util.Random;
@@ -33,21 +33,22 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param minecraftInstance
      * @return
      */
-    public final boolean doTickInGame(float clock, Object minecraftInstance)
+    public final boolean doTickInGame(Object minecraftInstance, Object... data)
     {
-        Minecraft mc = (Minecraft)minecraftInstance;
+        Minecraft mc = (Minecraft) minecraftInstance;
         if (mc.field_6324_e != null)
         {
-            return onTickInGame(mc);
+            return onTickInGame((Float) data[0], mc);
         }
         return true;
     }
-    public final boolean doTickInGui(float clock, Object minecraftInstance)
+
+    public final boolean doTickInGui(Object minecraftInstance, Object... data)
     {
-        Minecraft mc = (Minecraft)minecraftInstance;
+        Minecraft mc = (Minecraft) minecraftInstance;
         if (mc.field_40007_r != null)
         {
-            return onTickInGUI(clock, mc, mc.field_6313_p);
+            return onTickInGUI((Float)data[0], mc, mc.field_6313_p);
         }
         return true;
     }
@@ -55,25 +56,27 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onCrafting(Object... craftingParameters)
     {
-        takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
+        takenFromCrafting((EntityPlayer) craftingParameters[0], (ItemStack) craftingParameters[1], (IInventory) craftingParameters[2]);
     }
 
     @Override
     public final void onSmelting(Object... smeltingParameters)
     {
-        takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
+        takenFromFurnace((EntityPlayer) smeltingParameters[0], (ItemStack) smeltingParameters[1]);
     }
+
     @Override
     public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
     {
-        return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
+        return dispenseEntity((World) data[0], x, y, z, xVelocity, zVelocity, (ItemStack) data[1]);
     }
 
     @Override
     public final boolean onChat(Object... data)
     {
-        return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
+        return onChatMessageReceived((EntityPlayer) data[1], (Packet3Chat) data[0]);
     }
+
     @Override
     public final void onPlayerLogin(Object player)
     {
@@ -83,19 +86,19 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public void onPlayerLogout(Object player)
     {
-        onClientLogout((EntityPlayer)player);
+        onClientLogout((EntityPlayer) player);
     }
-    
+
     @Override
     public void onPlayerChangedDimension(Object player)
     {
-        onClientDimensionChanged((EntityPlayer)player);
+        onClientDimensionChanged((EntityPlayer) player);
     }
 
     @Override
     public final void onPacket250Packet(Object... data)
     {
-        onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
+        onPacket250Received((EntityPlayer) data[1], (Packet250CustomPayload) data[0]);
     }
 
     @Override
@@ -130,9 +133,12 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         return false;
     }
+
     // BASEMOD API
     /**
-     * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
+     * Override if you wish to provide a fuel item for the furnace and return
+     * the fuel value of the item
+     * 
      * @param id
      * @param metadata
      * @return
@@ -142,11 +148,15 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         return 0;
     }
 
-    public void addRenderer(Map<Class<? extends Entity>, Render> renderers) {
-        
+    public void addRenderer(Map<Class<? extends Entity>, Render> renderers)
+    {
+
     }
+
     /**
-     * Override if you wish to perform some action other than just dispensing the item from the dispenser
+     * Override if you wish to perform some action other than just dispensing
+     * the item from the dispenser
+     * 
      * @param world
      * @param x
      * @param y
@@ -163,6 +173,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Override if you wish to generate Nether (Hell biome) blocks
+     * 
      * @param world
      * @param random
      * @param chunkX
@@ -174,6 +185,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Override if you wish to generate Overworld (not hell or the end) blocks
+     * 
      * @param world
      * @param random
      * @param chunkX
@@ -185,6 +197,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Return the name of your mod. Defaults to the class name
+     * 
      * @return
      */
     public String getName()
@@ -194,6 +207,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Get your mod priorities
+     * 
      * @return
      */
     public String getPriorities()
@@ -203,6 +217,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Return the version of your mod
+     * 
      * @return
      */
     public abstract String getVersion();
@@ -210,9 +225,11 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     /**
      * Load your mod
      */
-    public void keyboardEvent(KeyBinding event) {
-        
+    public void keyboardEvent(KeyBinding event)
+    {
+
     }
+
     public abstract void load();
 
     /**
@@ -224,6 +241,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Handle item pickup
+     * 
      * @param player
      * @param item
      */
@@ -232,11 +250,14 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
-     * @param minecraftServer the server
+     * Ticked every game tick if you have subscribed to tick events through
+     * {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
+     * 
+     * @param minecraftServer
+     *            the server
      * @return true to continue receiving ticks
      */
-    public boolean onTickInGame(Minecraft minecraftInstance)
+    public boolean onTickInGame(float time, Minecraft minecraftInstance)
     {
         return false;
     }
@@ -245,36 +266,46 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         return false;
     }
+
     /**
      * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
+     * 
      * @param text
      */
     public void receiveChatPacket(String text)
     {
-        //TODO
+        // TODO
     }
 
     /**
      * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
+     * 
      * @param packet
      */
     public void receiveCustomPacket(Packet250CustomPayload packet)
     {
-        //TODO
+        // TODO
     }
 
-    public void registerAnimation(Minecraft game) {
-        
+    public void registerAnimation(Minecraft game)
+    {
+
     }
-    public void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID) {
-        
+
+    public void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
+    {
+
     }
-    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
+
+    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
+    {
         return false;
-        
+
     }
+
     /**
      * Called when someone crafts an item from a crafting table
+     * 
      * @param player
      * @param item
      * @param matrix
@@ -285,7 +316,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Called when someone takes a smelted item from a furnace
-     *
+     * 
      * @param player
      * @param item
      */
@@ -304,7 +335,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Called when a 250 packet is received on a channel registered to this mod
-     *
+     * 
      * @param source
      * @param payload
      */
@@ -313,10 +344,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Called when a chat message is received. Return true to stop further processing
+     * Called when a chat message is received. Return true to stop further
+     * processing
+     * 
      * @param source
      * @param chat
-     * @return true if you want to consume the message so it is not available for further processing
+     * @return true if you want to consume the message so it is not available
+     *         for further processing
      */
     public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat)
     {
@@ -326,7 +360,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     /**
      * Called when a new client logs in.
      * 
-     * @param player 
+     * @param player
      */
     public void onClientLogin(EntityPlayer player)
     {
@@ -339,7 +373,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      */
     public void onClientLogout(EntityPlayer player)
     {
-        
+
     }
 
     /**
@@ -350,6 +384,6 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      */
     public void onClientDimensionChanged(EntityPlayer player)
     {
-        
+
     }
 }

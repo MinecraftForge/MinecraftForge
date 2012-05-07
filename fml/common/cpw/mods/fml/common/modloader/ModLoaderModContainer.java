@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -37,26 +40,29 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModContainer.TickType;
 
 public class ModLoaderModContainer implements ModContainer
 {
     private Class <? extends BaseMod > modClazz;
     private BaseMod mod;
-    private boolean isTicking;
-    private File modSource ;
+    private EnumSet<TickType> ticks;
+    private File modSource;
     private ArrayList<String> dependencies;
     private ArrayList<String> preDependencies;
     private ArrayList<String> postDependencies;
-    private boolean clockTicks;
-    private boolean guiTicks;
-    private boolean guiClockTicks;
-    private long lastClock;
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
         this.modSource = modSource;
+        this.ticks = EnumSet.noneOf(TickType.class);
     }
 
+    ModLoaderModContainer(BaseMod instance) {
+        this.mod=instance;
+        this.ticks = EnumSet.noneOf(TickType.class);
+    }
+    
     @Override
     public boolean wantsPreInit()
     {
@@ -282,36 +288,19 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public boolean shouldTick(float clock)
+    public void tickStart(TickType tick, Object ... data)
     {
-        if (isTicking && (!clockTicks || clock != lastClock))
-        {
-            return true;
+        if (ticks.contains(tick) && tick==TickType.WORLD) {
+            mod.doTickInGame(FMLCommonHandler.instance().getMinecraftInstance(), data);
         }
-        if (guiTicks && (!guiClockTicks || clock != lastClock))
-        {
-            return true;
-        }
-        return false;
     }
+    
     @Override
-    public void tickStart(float clock)
+    public void tickEnd(TickType tick, Object ... data)
     {
-        Object inst = FMLCommonHandler.instance().getMinecraftInstance();
-        if (isTicking)
-        {
-            isTicking = mod.doTickInGame(clock, inst);
+        if (ticks.contains(tick) && tick!=TickType.WORLD) {
+            mod.doTickInGame(FMLCommonHandler.instance().getMinecraftInstance(), data);
         }
-        if (guiTicks)
-        {
-            guiTicks = mod.doTickInGui(clock, inst);
-        }
-        lastClock = clock;
-    }
-    @Override
-    public void tickEnd(float clock)
-    {
-        // NOOP for modloader
     }
 
     @Override
@@ -339,9 +328,9 @@ public class ModLoaderModContainer implements ModContainer
         return modClazz.isInstance(mod);
     }
 
-    public void setTicking(boolean enable)
+    public void setTickType(EnumSet<TickType> type)
     {
-        isTicking = enable;
+        this.ticks=EnumSet.copyOf(type);
     }
 
     /**
@@ -551,26 +540,10 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     /**
-     * @param useClock
+     * @return
      */
-    public void setClockTicks(boolean useClock)
+    public EnumSet<TickType> getTickTypes()
     {
-        this.clockTicks=useClock;
-    }
-
-    /**
-     * @param enable
-     */
-    public void setGUITicking(boolean enable)
-    {
-        this.guiTicks=enable;
-    }
-
-    /**
-     * @param useClock
-     */
-    public void setGUIClockTicks(boolean useClock)
-    {
-        this.guiClockTicks=useClock;
+        return ticks;
     }
 }
