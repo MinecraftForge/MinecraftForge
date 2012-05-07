@@ -173,4 +173,6 @@ public interface ModContainer
     public enum TickType {
         WORLD, RENDER, GUI, WORLDGUI;
     }
+
+    List<IKeyHandler> getKeys();
 }

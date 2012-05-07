@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/src/RenderEngine.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/RenderEngine.java	0000-00-00 00:00:00.000000000 -0000
+@@ -635,4 +635,8 @@
+             GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
+         }
+     }
++    
++    public TexturePackList getTexturePackList() {
++        return field_6527_k;
++    }
+ }

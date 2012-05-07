@@ -116,6 +116,19 @@ public class FMLCommonHandler
             mod.tickEnd(type, data);
         }
     }
+    
+    public List<IKeyHandler> gatherKeyBindings() {
+        List<IKeyHandler> allKeys=new ArrayList<IKeyHandler>();
+        for (ModContainer mod : Loader.getModList())
+        {
+            allKeys.addAll(mod.getKeys());
+        }
+        for (ModContainer mod : extraTickers)
+        {
+            allKeys.addAll(mod.getKeys());
+        }
+        return allKeys;
+    }
     /**
      * @return the instance
      */

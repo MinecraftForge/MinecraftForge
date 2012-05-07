@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -33,9 +34,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.IBlockRenderInfo;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -51,6 +54,9 @@ public class ModLoaderModContainer implements ModContainer
     private ArrayList<String> dependencies;
     private ArrayList<String> preDependencies;
     private ArrayList<String> postDependencies;
+    private ArrayList<IBlockRenderInfo> blockRenderInfos;
+    private ArrayList<IKeyHandler> keyHandlers;
+    
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
@@ -550,5 +556,29 @@ public class ModLoaderModContainer implements ModContainer
     public EnumSet<TickType> getTickTypes()
     {
         return ticks;
+    }
+
+    /**
+     * @param renderId
+     * @param inventoryRenderer
+     */
+    public void addRenderHandler(IBlockRenderInfo handler)
+    {
+        blockRenderInfos.add(handler);
+    }
+
+    /**
+     * @param keyHandler
+     * @param allowRepeat
+     */
+    public void addKeyHandler(IKeyHandler handler)
+    {
+        keyHandlers.add(handler);
+    }
+
+    @Override
+    public List<IKeyHandler> getKeys()
+    {
+        return keyHandlers;
     }
 }

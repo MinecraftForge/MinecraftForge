@@ -84,13 +84,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     @Override
-    public void onPlayerLogout(Object player)
+    public final void onPlayerLogout(Object player)
     {
         onClientLogout((EntityPlayer) player);
     }
 
     @Override
-    public void onPlayerChangedDimension(Object player)
+    public final void onPlayerChangedDimension(Object player)
     {
         onClientDimensionChanged((EntityPlayer) player);
     }

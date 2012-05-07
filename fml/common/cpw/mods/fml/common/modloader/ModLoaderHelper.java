@@ -28,18 +28,11 @@ import cpw.mods.fml.common.ModContainer.TickType;
  */
 public class ModLoaderHelper
 {
-    private static Map<BaseMod, ModLoaderModContainer> tickers=new HashMap<BaseMod, ModLoaderModContainer>();
+    private static Map<BaseMod, ModLoaderModContainer> notModCallbacks=new HashMap<BaseMod, ModLoaderModContainer>();
 
     public static void updateStandardTicks(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc=(ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
-        if (mlmc==null) {
-            mlmc=tickers.get(mod);
-            if (mlmc==null) {
-                mlmc=new ModLoaderModContainer(mod);
-                tickers.put(mod, mlmc);
-            }
-        }
+        ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
         EnumSet<TickType> ticks = mlmc.getTickTypes();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock && FMLCommonHandler.instance().isClient()) {
@@ -57,14 +50,7 @@ public class ModLoaderHelper
 
     public static void updateGUITicks(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc=(ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
-        if (mlmc==null) {
-            mlmc=tickers.get(mod);
-            if (mlmc==null) {
-                mlmc=new ModLoaderModContainer(mod);
-                tickers.put(mod, mlmc);
-            }
-        }
+        ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
         EnumSet<TickType> ticks = mlmc.getTickTypes();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock && FMLCommonHandler.instance().isClient()) {
@@ -78,5 +64,37 @@ public class ModLoaderHelper
         } else {
             ticks.remove(TickType.WORLDGUI);
         }
+    }
+
+    /**
+     * @param mod
+     * @return
+     */
+    private static ModLoaderModContainer findOrBuildModContainer(BaseMod mod)
+    {
+        ModLoaderModContainer mlmc=(ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
+        if (mlmc==null) {
+            mlmc=notModCallbacks.get(mod);
+            if (mlmc==null) {
+                mlmc=new ModLoaderModContainer(mod);
+                notModCallbacks.put(mod, mlmc);
+            }
+        }
+        return mlmc;
+    }
+    
+    public static ModLoaderModContainer registerRenderHelper(BaseMod mod) {
+        ModLoaderModContainer mlmc=findOrBuildModContainer(mod);
+        return mlmc;
+    }
+
+    /**
+     * @param mod
+     * @return
+     */
+    public static ModLoaderModContainer registerKeyHelper(BaseMod mod)
+    {
+        ModLoaderModContainer mlmc=findOrBuildModContainer(mod);
+        return mlmc;
     }
 }
