@@ -15,6 +15,7 @@ package net.minecraft.src;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,9 @@ import net.minecraft.client.Minecraft;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 public class ModLoader
@@ -822,17 +825,13 @@ public class ModLoader
      */
     public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = (ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
-        mlmc.setTicking(enable);
-        mlmc.setClockTicks(useClock);
+        ModLoaderHelper.updateStandardTicks(mod, enable, useClock);
     }
 
     
     public static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = (ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
-        mlmc.setGUITicking(enable);
-        mlmc.setGUIClockTicks(useClock);
+        ModLoaderHelper.updateGUITicks(mod, enable, useClock);
     }
 
     /**

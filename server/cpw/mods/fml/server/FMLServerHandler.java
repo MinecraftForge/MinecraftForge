@@ -35,6 +35,7 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.ServerRegistry;
+import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -134,7 +135,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     public void onPreTick()
     {
-        FMLCommonHandler.instance().gameTickStart();
+        FMLCommonHandler.instance().worldTickStart();
     }
 
     /**
@@ -142,7 +143,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     public void onPostTick()
     {
-        FMLCommonHandler.instance().gameTickEnd();
+        FMLCommonHandler.instance().worldTickEnd();
     }
 
     /**
@@ -555,5 +556,14 @@ public class FMLServerHandler implements IFMLSidedHandler
     public Object getMinecraftInstance()
     {
         return server;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#getCurrentLanguage()
+     */
+    @Override
+    public String getCurrentLanguage()
+    {
+        return StringTranslate.func_25079_a().getCurrentLanguage();
     }
 }

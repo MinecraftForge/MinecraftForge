@@ -56,19 +56,13 @@ public interface ModContainer
      */
     String getName();
     /**
-     * Should the mod tick
-     * @param clock
-     * @return
-     */
-    boolean shouldTick(float clock);
-    /**
      * A tick has started
      */
-    void tickStart(float clock);
+    void tickStart(TickType tick, Object ... data);
     /**
      * A tick has ended
      */
-    void tickEnd(float clock);
+    void tickEnd(TickType tick, Object ... data);
     /**
      * Does this mod match the supplied mod?
      * @param mod
@@ -175,4 +169,8 @@ public interface ModContainer
     boolean wantsPlayerTracking();
     
     IPlayerTracker getPlayerTracker();
+    
+    public enum TickType {
+        WORLD, RENDER, GUI, WORLDGUI;
+    }
 }

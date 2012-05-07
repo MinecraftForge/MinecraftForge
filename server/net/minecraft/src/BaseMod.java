@@ -26,7 +26,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
 {
     // CALLBACK MECHANISMS
-    public boolean doTickInGame(Object minecraftInstance)
+    public boolean doTickInGame(Object minecraftInstance, Object ... data)
     {
         return onTickInGame((MinecraftServer)minecraftInstance);
     }

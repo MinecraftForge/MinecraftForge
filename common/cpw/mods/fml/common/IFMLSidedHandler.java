@@ -12,4 +12,5 @@ public interface IFMLSidedHandler
     boolean isServer();
     boolean isClient();
     Object getMinecraftInstance();
+    String getCurrentLanguage();
 }

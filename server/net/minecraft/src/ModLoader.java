@@ -12,13 +12,16 @@
  */
 package net.minecraft.src;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.server.FMLServerHandler;
 
@@ -521,8 +524,7 @@ public class ModLoader
      */
     public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = (ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
-        mlmc.setTicking(enable);
+        ModLoaderHelper.updateStandardTicks(mod, enable, useClock);
     }
 
     /**
