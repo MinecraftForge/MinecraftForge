@@ -14,9 +14,7 @@ package net.minecraft.src;
  */
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -34,14 +32,6 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 public class ModLoader
 {
-    private static class OverrideInfo
-    {
-        public String texture;
-        public String override;
-        public int index;
-    }
-    private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
-    
     /**
      * Not used on the server.
      * 
@@ -88,8 +78,7 @@ public class ModLoader
      */
     public static int addArmor(String armor)
     {
-        // TODO
-        return 0;
+        return FMLClientHandler.instance().addNewArmourRendererPrefix(armor);
     }
 
     /**
@@ -183,16 +172,7 @@ public class ModLoader
      */
     public static void addOverride(String path, String overlayPath, int index)
     {
-        if (!overrideInfo.containsKey(path))
-        {
-            overrideInfo.put(path, new ArrayList<OverrideInfo>());
-        }
-        ArrayList<OverrideInfo> list = overrideInfo.get(path);
-        OverrideInfo info = new OverrideInfo();
-        info.index = index;
-        info.override = overlayPath;
-        info.texture = path;
-        list.add(info);
+        FMLClientHandler.instance().addNewTextureOverride(path, overlayPath, index);
     }
 
     /**
@@ -435,10 +415,9 @@ public class ModLoader
      * Stubbed method on the server to return a unique model id
      * 
      */
-    public static int getUniqueBlockModelID(BaseMod mod, boolean flag)
+    public static int getUniqueBlockModelID(BaseMod mod, boolean inventoryRenderer)
     {
-        // TODO
-        return 0;
+        return FMLClientHandler.instance().obtainBlockModelIdFor(mod, inventoryRenderer);
     }
 
     /**
@@ -471,8 +450,7 @@ public class ModLoader
 
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
-        //TODO
-        return false;
+        return FMLClientHandler.instance().getClient().field_6313_p!=null && FMLClientHandler.instance().getClient().field_6313_p.equals(gui);
     }
 
     /**
@@ -494,10 +472,9 @@ public class ModLoader
     {
     }
 
-    public static BufferedImage loadImage(RenderEngine texCache, String path)
+    public static BufferedImage loadImage(RenderEngine renderEngine, String path) throws Exception
     {
-        //TODO
-        return null;
+        return FMLClientHandler.instance().loadImageFromTexturePack(renderEngine, path);
     }
 
     /**
@@ -519,7 +496,7 @@ public class ModLoader
 
     public static void openGUI(EntityPlayer player, GuiScreen gui)
     {
-        //TODO
+        FMLClientHandler.instance().displayGuiScreen(player, gui);
     }
 
     @Deprecated
@@ -539,15 +516,15 @@ public class ModLoader
     {
     }
 
-    static KeyBinding[] registerAllKeys(KeyBinding[] keys)
+    @Deprecated
+    public static KeyBinding[] registerAllKeys(KeyBinding[] keys)
     {
-        //TODO
         return keys;
     }
 
+    @Deprecated
     static void registerAllTextureOverrides(RenderEngine cache)
     {
-        //TODO
     }
 
     /**
@@ -597,9 +574,9 @@ public class ModLoader
         CommonRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
     }
 
-    static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
+    public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
-        //TODO
+        FMLClientHandler.instance().registerKeyHandler(mod, keyHandler, allowRepeat);
     }
 
     /**

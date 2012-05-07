@@ -12,12 +12,18 @@
  */
 package cpw.mods.fml.client;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
@@ -26,21 +32,27 @@ import net.minecraft.src.ClientRegistry;
 import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.GuiScreen;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.KeyBinding;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.RenderEngine;
+import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
+import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
@@ -74,12 +86,14 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     private Minecraft client;
     
-    private boolean preInitializationComplete;
-
     /**
      * A handy list of the default overworld biomes
      */
     private BiomeGenBase[] defaultOverworldBiomes;
+
+    private int nextRenderId;
+
+    private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
 
     /**
      * Called to start the whole game off from
@@ -121,17 +135,28 @@ public class FMLClientHandler implements IFMLSidedHandler
         FMLCommonHandler.instance().registerSidedDelegate(this);
         CommonRegistry.registerRegistry(new ClientRegistry());
         Loader.instance().loadMods();
-        preInitializationComplete=true;
     }
 
     /**
-     * Called a bit later on during server initialization to finish loading mods
+     * Called a bit later on during initialization to finish loading mods
+     * Also initializes key bindings
+     * 
      */
     public void onLoadComplete()
     {
         Loader.instance().initializeMods();
+        client.field_6304_y.loadModKeySettings(harvestKeyBindings());
     }
 
+    public KeyBinding[] harvestKeyBindings() {
+        List<IKeyHandler> allKeys=FMLCommonHandler.instance().gatherKeyBindings();
+        KeyBinding[] keys=new KeyBinding[allKeys.size()];
+        int i=0;
+        for (IKeyHandler key : allKeys) {
+            keys[i++]=(KeyBinding)key.getKeyBinding();
+        }
+        return keys;
+    }
     /**
      * Every tick just before world and other ticks occur
      */
@@ -525,5 +550,80 @@ public class FMLClientHandler implements IFMLSidedHandler
     public String getCurrentLanguage()
     {
         return StringTranslate.func_20162_a().func_44024_c();
+    }
+
+    /**
+     * @param armor
+     * @return
+     */
+    public int addNewArmourRendererPrefix(String armor)
+    {
+        return RenderPlayer.addNewArmourPrefix(armor);
+    }
+
+    public void addNewTextureOverride(String textureToOverride, String overridingTexturePath, int location) {
+        if (!overrideInfo.containsKey(textureToOverride))
+        {
+            overrideInfo.put(textureToOverride, new ArrayList<OverrideInfo>());
+        }
+        ArrayList<OverrideInfo> list = overrideInfo.get(textureToOverride);
+        OverrideInfo info = new OverrideInfo();
+        info.index = location;
+        info.override = overridingTexturePath;
+        info.texture = textureToOverride;
+        list.add(info);
+    }
+    /**
+     * @param mod
+     * @param inventoryRenderer
+     * @return
+     */
+    public int obtainBlockModelIdFor(BaseMod mod, boolean inventoryRenderer)
+    {
+        ModLoaderModContainer mlmc=ModLoaderHelper.registerRenderHelper(mod);
+        int renderId=nextRenderId++;
+        mlmc.addRenderHandler(new BlockRenderInfo(renderId, inventoryRenderer));
+        return renderId;
+    }
+
+    /**
+     * @param renderEngine
+     * @param path
+     * @return
+     */
+    public BufferedImage loadImageFromTexturePack(RenderEngine renderEngine, String path) throws IOException
+    {
+        InputStream image=renderEngine.getTexturePackList().field_6534_a.func_6481_a(path);
+        if (image==null) {
+            throw new RuntimeException(String.format("The requested image path %s is not found",path));
+        }
+        BufferedImage result=ImageIO.read(image);
+        if (result==null)
+        {
+            throw new RuntimeException(String.format("The requested image path %s appears to be corrupted",path));
+        }
+        return result;
+    }
+
+    /**
+     * @param player
+     * @param gui
+     */
+    public void displayGuiScreen(EntityPlayer player, GuiScreen gui)
+    {
+        if (client.field_22009_h==player && gui != null) {
+            client.func_6272_a(gui);
+        }
+    }
+
+    /**
+     * @param mod
+     * @param keyHandler
+     * @param allowRepeat
+     */
+    public void registerKeyHandler(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
+    {
+        ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
+        mlmc.addKeyHandler(new KeyBindingHandler(keyHandler, allowRepeat));
     }
 }

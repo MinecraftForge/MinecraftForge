@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/src/GameSettings.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/GameSettings.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,6 +5,9 @@
+ import java.io.FileReader;
+ import java.io.FileWriter;
+ import java.io.PrintWriter;
++import java.util.Arrays;
++import java.util.List;
++
+ import net.minecraft.client.Minecraft;
+ import org.lwjgl.input.Keyboard;
+ 
+@@ -477,4 +480,18 @@
+     {
+         return this.field_1580_e < 2 && this.field_40445_l;
+     }
++
++    /**
++     * @param harvestKeyBindings
++     */
++    public void loadModKeySettings(KeyBinding[] modKeyBindings)
++    {
++        KeyBinding[] allKeys=new KeyBinding[field_1564_t.length+modKeyBindings.length];
++        System.arraycopy(field_1564_t, 0, allKeys, 0, field_1564_t.length);
++        System.arraycopy(modKeyBindings, 0, allKeys, field_1564_t.length, modKeyBindings.length);
++        field_1564_t=allKeys;
++        
++        // Reload settings with mod keys in place
++        func_6519_a();
++    }
+ }

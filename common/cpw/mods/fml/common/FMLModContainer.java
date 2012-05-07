@@ -306,4 +306,13 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getKeys()
+     */
+    @Override
+    public List<IKeyHandler> getKeys()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
