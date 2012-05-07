@@ -1,14 +1,55 @@
 --- ../src-base/minecraft/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
-@@ -78,4 +78,11 @@
+@@ -1,5 +1,8 @@
+ package net.minecraft.src;
+ 
++import java.util.Arrays;
++import java.util.List;
++
+ public class WorldType
+ {
+     public static final WorldType[] field_48637_a = new WorldType[16];
+@@ -11,6 +14,8 @@
+     private boolean field_48633_g;
+     private boolean field_48638_h;
+ 
++    private BiomeGenBase[] biomesForWorldType;
++
+     private WorldType(int p_i1080_1_, String p_i1080_2_)
+     {
+         this(p_i1080_1_, p_i1080_2_, 0);
+@@ -22,6 +27,13 @@
+         this.field_48632_f = p_i1081_3_;
+         this.field_48633_g = true;
+         field_48637_a[p_i1081_1_] = this;
++        switch (p_i1081_1_) {
++            case 8:
++                biomesForWorldType = new BiomeGenBase[] {BiomeGenBase.field_4249_h, BiomeGenBase.field_4253_d, BiomeGenBase.field_35483_e, BiomeGenBase.field_4255_b, BiomeGenBase.field_35485_c, BiomeGenBase.field_4250_g};
++                break;
++            default:
++                biomesForWorldType = new BiomeGenBase[] {BiomeGenBase.field_4249_h, BiomeGenBase.field_4253_d, BiomeGenBase.field_35483_e, BiomeGenBase.field_4255_b, BiomeGenBase.field_35485_c, BiomeGenBase.field_4250_g, BiomeGenBase.field_48416_w};
++        }
+     }
+ 
+     public String func_48628_a()
+@@ -78,4 +90,20 @@
  
          return null;
      }
 +
-+    /**
-+     * @param biome
-+     */
-+    public void addNewBiome(BiomeGenBase biome)
-+    {
++    public BiomeGenBase[] getBiomesForWorldType() {
++        return biomesForWorldType;
++    }
++    
++    public void addNewBiome(BiomeGenBase biome) {
++        List<BiomeGenBase> biomes=Arrays.asList(biomesForWorldType);
++        biomes.add(biome);
++        biomesForWorldType=biomes.toArray(new BiomeGenBase[0]);
++    }
++    
++    public void removeBiome(BiomeGenBase biome) {
++        List<BiomeGenBase> biomes=Arrays.asList(biomesForWorldType);
++        biomes.remove(biome);
++        biomesForWorldType=biomes.toArray(new BiomeGenBase[0]);
 +    }
  }
