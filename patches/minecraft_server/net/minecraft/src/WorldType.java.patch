@@ -9,7 +9,7 @@
  public class WorldType
  {
      public static final WorldType[] field_48459_a = new WorldType[16];
-@@ -11,9 +14,20 @@
+@@ -11,6 +14,8 @@
      private boolean field_48455_g;
      private boolean field_48460_h;
  
@@ -18,7 +18,11 @@
      private WorldType(int p_i1025_1_, String p_i1025_2_)
      {
          this(p_i1025_1_, p_i1025_2_, 0);
-+        switch (p_i1025_1_) {
+@@ -22,6 +27,15 @@
+         this.field_48454_f = p_i1026_3_;
+         this.field_48455_g = true;
+         field_48459_a[p_i1026_1_] = this;
++        switch (p_i1026_1_) {
 +            case 8:
 +                biomesForWorldType = new BiomeGenBase[] { BiomeGenBase.field_4293_h, BiomeGenBase.field_4297_d, BiomeGenBase.field_35518_e,
 +                        BiomeGenBase.field_4299_b, BiomeGenBase.field_35520_c, BiomeGenBase.field_4294_g };
@@ -26,10 +30,10 @@
 +            default:
 +                biomesForWorldType = new BiomeGenBase[] { BiomeGenBase.field_4293_h, BiomeGenBase.field_4297_d, BiomeGenBase.field_35518_e,
 +                        BiomeGenBase.field_4299_b, BiomeGenBase.field_35520_c, BiomeGenBase.field_4294_g, BiomeGenBase.field_48443_w };
-+    }            
++        }            
      }
  
-     private WorldType(int p_i1026_1_, String p_i1026_2_, int p_i1026_3_)
+     public String func_48449_a()
 @@ -68,4 +82,14 @@
  
          return null;
