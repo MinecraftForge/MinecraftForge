@@ -58,7 +58,12 @@ public class ModLoaderModContainer implements ModContainer
         this.ticks = EnumSet.noneOf(TickType.class);
     }
 
+    /**
+     * We only instantiate this for "not mod mods"
+     * @param instance
+     */
     ModLoaderModContainer(BaseMod instance) {
+        FMLCommonHandler.instance().registerTicker(this);
         this.mod=instance;
         this.ticks = EnumSet.noneOf(TickType.class);
     }
