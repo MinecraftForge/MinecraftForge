@@ -148,17 +148,14 @@ public class FMLClientHandler implements IFMLSidedHandler
         FMLCommonHandler.instance().worldTickEnd();
     }
 
-    public void onRenderTickStart(float partialTickTime) {
-        for (ModContainer mod : Loader.getModList()) {
-            mod.tickStart(TickType.RENDER, partialTickTime);
-        }
+    public void onRenderTickStart(float partialTickTime)
+    {
+        FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
     }
     
-    public void onRenderTickEnd(float partialTickTime) {
-        for (ModContainer mod : Loader.getModList()) {
-            mod.tickEnd(TickType.RENDER, partialTickTime);
-        }
-        
+    public void onRenderTickEnd(float partialTickTime)
+    {
+        FMLCommonHandler.instance().tickEnd(TickType.RENDER, partialTickTime);
     }
     /**
      * Get the server instance

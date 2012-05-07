@@ -15,12 +15,16 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import cpw.mods.fml.common.ModContainer.TickType;
 
 import net.minecraft.src.StringTranslate;
 
@@ -62,6 +66,7 @@ public class FMLCommonHandler
     
     private int uniqueEntityListId = 220;
 
+    private List<ModContainer> extraTickers = new ArrayList<ModContainer>();
 
     /**
      * We register our delegate here
@@ -77,10 +82,7 @@ public class FMLCommonHandler
      */
     public void worldTickStart()
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            mod.tickStart(ModContainer.TickType.WORLD,0.0);
-        }
+        tickStart(ModContainer.TickType.WORLD,0.0);
     }
 
     /**
@@ -88,12 +90,32 @@ public class FMLCommonHandler
      */
     public void worldTickEnd()
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            mod.tickEnd(ModContainer.TickType.WORLD,0.0);
-        }
+        tickEnd(ModContainer.TickType.WORLD,0.0);
     }
 
+    public void tickStart(TickType type, Object ... data)
+    {
+        for (ModContainer mod : Loader.getModList())
+        {
+            mod.tickStart(type, data);
+        }
+        for (ModContainer mod : extraTickers)
+        {
+            mod.tickStart(type, data);
+        }
+    }
+    
+    public void tickEnd(TickType type, Object ... data)
+    {
+        for (ModContainer mod : Loader.getModList())
+        {
+            mod.tickEnd(type, data);
+        }
+        for (ModContainer mod : extraTickers)
+        {
+            mod.tickEnd(type, data);
+        }
+    }
     /**
      * @return the instance
      */
@@ -309,16 +331,6 @@ public class FMLCommonHandler
     }
 
     /**
-     * @param modLoaderModContainer
-     * @return
-     */
-    public boolean shouldTickMod(ModContainer modContainer)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
      * @return
      */
     public boolean isServer()
@@ -332,5 +344,10 @@ public class FMLCommonHandler
     public boolean isClient()
     {
         return sidedDelegate.isClient();
+    }
+    
+    public void registerTicker(ModContainer ticker)
+    {
+        extraTickers.add(ticker);
     }
 }
