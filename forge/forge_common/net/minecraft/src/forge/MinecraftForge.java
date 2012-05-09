@@ -1255,7 +1255,7 @@ public class MinecraftForge
 
     /** This registers a new IEntityDeathHandler.
      * IEntityDeathHandlers can be used to modify the EntityLiving.onDeath(DamageSource) method, 
-     * which is run after a player is killed. The code in the method can be either added to or switched out, 
+     * which is run after an EntityLiving is killed. The code in the method can be either added to or switched out, 
      * depending on the method used from the interface. Further explanation is contained within the comments for
      * the interface methods.
      * 

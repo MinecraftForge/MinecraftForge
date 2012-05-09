@@ -25,9 +25,10 @@ public interface IEntityDeathHandler
 	
 	/** This method is executed when an EntityLiving dies. It allows the user to completely override
 	 * code within the EntityLiving.onDeath(DamageSource) method. 
-	 * If this returns true, the new code will be executed rather than the vanilla code.
-	 * If you do not need to use this method in your implementation, simply have it return false.
-	 * Note: this method takes precedence over (is run before) IEntityDeathHandler.onEntityDeath(EntityLiving, DamageSource).
+	 * If this returns true, the following vanilla code will not be run.
+	 * If you do not need to use this method in your implementation, simply leave it empty and have it return false.
+	 * Note1: this method takes precedence over (is run before) IEntityDeathHandler.onEntityDeath(EntityLiving, DamageSource).
+	 * Note2: please be aware that any code in this method that runs prior it to returning will execute regardless of return type
 	 * 
 	 * @param entity The instance of the EntityLiving that has died
 	 * @param damagesource The damagesource by which the EntityLiving was killed */
