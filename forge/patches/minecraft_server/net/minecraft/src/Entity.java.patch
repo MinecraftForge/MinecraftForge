@@ -1,6 +1,15 @@
 --- ../src_base/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -165,6 +165,9 @@
+@@ -3,6 +3,8 @@
+ import java.util.List;
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.*;
++
+ public abstract class Entity
+ {
+     private static int nextEntityID = 0;
+@@ -165,6 +167,9 @@
      public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
  
@@ -10,7 +19,7 @@
      public Entity(World par1World)
      {
          this.entityId = nextEntityID++;
-@@ -206,6 +209,29 @@
+@@ -206,6 +211,29 @@
  
      protected abstract void entityInit();
  
@@ -40,7 +49,30 @@
      public DataWatcher getDataWatcher()
      {
          return this.dataWatcher;
-@@ -1215,6 +1241,10 @@
+@@ -274,6 +302,10 @@
+     public void onEntityUpdate()
+     {
+         Profiler.startSection("entityBaseTick");
++        
++        	/* NEW */
++	ForgeHooks.entityUpdateStartHandler(this);
++	/* END NEW */
+ 
+         if (this.ridingEntity != null && this.ridingEntity.isDead)
+         {
+@@ -386,6 +418,11 @@
+         }
+ 
+         this.firstUpdate = false;
++        
++        	/* NEW */
++	ForgeHooks.entityUpdateEndHandler(this);
++	/* END NEW */
++        
+         Profiler.endSection();
+     }
+ 
+@@ -1215,6 +1252,10 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -51,7 +83,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1256,6 +1286,10 @@
+@@ -1256,6 +1297,10 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);

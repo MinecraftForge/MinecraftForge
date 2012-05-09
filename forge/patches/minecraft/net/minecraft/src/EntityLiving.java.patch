@@ -1,6 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java	0000-00-00 00:00:00.000000000 -0000
-@@ -59,7 +59,7 @@
+@@ -6,6 +6,8 @@
+ import java.util.List;
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.*;
++
+ public abstract class EntityLiving extends Entity
+ {
+     public int heartsHalvesLife = 20;
+@@ -59,7 +61,7 @@
       * in each step in the damage calculations, this is set to the 'carryover' that would result if someone was damaged
       * .25 hearts (for example), and added to the damage in the next step
       */
@@ -9,7 +18,23 @@
  
      /** Number of ticks since this EntityLiving last produced its sound */
      private int livingSoundTime;
-@@ -1333,7 +1333,7 @@
+@@ -1063,6 +1065,15 @@
+      */
+     public void onDeath(DamageSource par1DamageSource)
+     {
++	/* Start Forge Hook code */
++	if (ForgeHooks.onOverrideEntityDeathHandler(this, par1DamageSource))
++	{
++	return;
++	}
++        
++	ForgeHooks.onEntityDeathHandler(this, par1DamageSource);
++	/* End Forge Hook code */
++        
+         Entity var2 = par1DamageSource.getEntity();
+ 
+         if (this.scoreValue >= 0 && var2 != null)
+@@ -1330,7 +1341,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
