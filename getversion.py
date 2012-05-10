@@ -27,7 +27,7 @@ def cleanDirs(path):
         
 def main():
     print("Obtaining version information from git")
-    cmd = "git describe --long"
+    cmd = "git describe --long --match='[^(jenkins)]*'"
     try:
       process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
       vers, _ = process.communicate()
