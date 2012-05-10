@@ -1,4 +1,3 @@
-LexicalSortingAction.isChecked=true
 content_assist_favorite_static_members=
 content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="net.minecraft.src.IMinecraftRegistry"><rhs name\="net.minecraft.src.ServerRegistry"/></lhs><lhs name\="java.lang.ClassLoader"><rhs name\="java.net.URLClassLoader"/></lhs><lhs name\="java.util.logging.Level"><rhs name\="java.util.logging.Level"/></lhs></history>
 content_assist_number_of_computers=13

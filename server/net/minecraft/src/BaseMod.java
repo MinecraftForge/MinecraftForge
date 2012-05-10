@@ -122,31 +122,6 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         return onServerCommand(command, (String)data[0], (ICommandListener)data[1]);
     }
-
-    /**
-     * @param renderer
-     * @param block
-     * @param metadata
-     * @param modelID
-     */
-    public final void onRenderInventoryBlock(Object renderer, Block block, int metadata, int modelID)
-    {
-        // NOOP
-    }
-
-    /**
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param block
-     * @param modelID
-     * @param renderer
-     */
-    public final boolean onRenderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer)
-    {
-        return false;
-    }
     // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item

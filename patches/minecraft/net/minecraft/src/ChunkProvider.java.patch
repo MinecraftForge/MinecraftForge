@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/src/ChunkProvider.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/ChunkProvider.java	0000-00-00 00:00:00.000000000 -0000
+@@ -6,6 +6,8 @@
+ import java.util.List;
+ import java.util.Set;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++
+ public class ChunkProvider implements IChunkProvider
+ {
+     private Set field_28065_a = new HashSet();
+@@ -162,6 +164,7 @@
+             if (this.field_28070_c != null)
+             {
+                 this.field_28070_c.func_534_a(p_534_1_, p_534_2_, p_534_3_);
++                FMLClientHandler.instance().onChunkPopulate(p_534_1_, p_534_2_, p_534_3_, field_28066_g, field_28070_c);
+                 var4.func_1006_f();
+             }
+         }

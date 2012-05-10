@@ -42,7 +42,6 @@ import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.IBlockRenderInfo;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -59,7 +58,6 @@ public class ModLoaderModContainer implements ModContainer
     private ArrayList<String> dependencies;
     private ArrayList<String> preDependencies;
     private ArrayList<String> postDependencies;
-    private ArrayList<IBlockRenderInfo> blockRenderInfos;
     private ArrayList<IKeyHandler> keyHandlers;
     private ModState state;
     
@@ -593,18 +591,6 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     /**
-     * @param renderId
-     * @param inventoryRenderer
-     */
-    public void addRenderHandler(IBlockRenderInfo handler)
-    {
-        if (blockRenderInfos==null) {
-            blockRenderInfos=new ArrayList<IBlockRenderInfo>();
-        }
-        blockRenderInfos.add(handler);
-    }
-
-    /**
      * @param keyHandler
      * @param allowRepeat
      */
@@ -623,25 +609,5 @@ public class ModLoaderModContainer implements ModContainer
             return Collections.emptyList();
         }
         return keyHandlers;
-    }
-
-    /**
-     * @param block
-     * @param metadata
-     * @param modelID
-     * @param renderer
-     */
-    public void renderInventoryBlock(Block block, int metadata, int modelID, Object renderer)
-    {
-        mod.onRenderInventoryBlock(renderer, block, metadata, modelID);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#renderWorldBlock(net.minecraft.src.IBlockAccess, int, int, int, net.minecraft.src.Block, int, java.lang.Object)
-     */
-    @Override
-    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer)
-    {
-        return mod.onRenderWorldBlock(world, x, y, z, block, modelID, renderer);
     }
 }

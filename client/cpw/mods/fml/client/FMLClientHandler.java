@@ -100,7 +100,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     // Cached lookups
     private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
-    private static HashMap<Integer, ModContainer> blockModelIds = new HashMap<Integer, ModContainer>();
+    private static HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
     private static HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
 
     /**
@@ -562,8 +562,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         ModLoaderModContainer mlmc=ModLoaderHelper.registerRenderHelper(mod);
         int renderId=nextRenderId++;
-        mlmc.addRenderHandler(new BlockRenderInfo(renderId, inventoryRenderer));
-        blockModelIds.put(renderId, mlmc);
+        BlockRenderInfo bri=new BlockRenderInfo(renderId, inventoryRenderer, mlmc);
+        blockModelIds.put(renderId, bri);
         return renderId;
     }
 
@@ -615,18 +615,16 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param y
      * @param z
      * @param block
-     * @param modelID
+     * @param modelId
      * @return
      */
-    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
+    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelId)
     {
-        ModContainer mod = blockModelIds.get(modelID);
-        if (mod == null)
-        {
+        if (!blockModelIds.containsKey(modelId)) {
             return false;
         }
-        mod.renderWorldBlock(world, x, y, z, block, modelID, renderer);
-        return ((BaseMod)mod.getMod()).renderWorldBlock(renderer, world, x, y, z, block, modelID);
+        BlockRenderInfo bri = blockModelIds.get(modelId);
+        return bri.renderWorldBlock(world, x, y, z, block, modelId, renderer);
     }
 
     /**
@@ -637,11 +635,11 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        ModContainer mod = blockModelIds.get(modelID);
-        if (mod != null)
-        {
-            mod.renderInventoryBlock(block, metadata, modelID, renderer);
+        if (!blockModelIds.containsKey(modelID)) {
+            return;
         }
+        BlockRenderInfo bri=blockModelIds.get(modelID);
+        bri.renderInventoryBlock(block, metadata, modelID, renderer);
     }
 
     /**
@@ -650,6 +648,10 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public boolean renderItemAsFull3DBlock(int modelId)
     {
+        BlockRenderInfo bri = blockModelIds.get(modelId);
+        if (bri!=null) {
+            return bri.shouldRender3DInInventory();
+        }
         return false;
     }
     
