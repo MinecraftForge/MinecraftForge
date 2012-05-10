@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -37,6 +38,7 @@ import net.minecraft.src.GuiScreen;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.KeyBinding;
 import net.minecraft.src.NetworkManager;
@@ -96,8 +98,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private int nextRenderId = 30;
 
+    // Cached lookups
     private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
-    private static HashMap<Integer, ModLoaderModContainer> blockModelIds = new HashMap<Integer, ModLoaderModContainer>();
+    private static HashMap<Integer, ModContainer> blockModelIds = new HashMap<Integer, ModContainer>();
+    private static HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
 
     /**
      * Called to start the whole game off from
@@ -158,6 +162,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         int i=0;
         for (IKeyHandler key : allKeys) {
             keys[i++]=(KeyBinding)key.getKeyBinding();
+            keyBindings.put((KeyBinding) key.getKeyBinding(), key.getOwningContainer());
         }
         return keys;
     }
@@ -234,25 +239,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
-     * Called from the furnace to lookup fuel values
-     * 
-     * @param itemId
-     * @param itemDamage
-     * @return
-     */
-    public int fuelLookup(int itemId, int itemDamage)
-    {
-        int fv = 0;
-
-        for (ModContainer mod : Loader.getModList())
-        {
-            fv = Math.max(fv, mod.lookupFuelValue(itemId, itemDamage));
-        }
-
-        return fv;
-    }
-
-    /**
      * Is the offered class and instance of BaseMod and therefore a ModLoader
      * mod?
      */
@@ -286,19 +272,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                 mod.getPickupNotifier().notifyPickup(entityItem, entityPlayer);
             }
         }
-    }
-
-    /**
-     * Raise an exception
-     * 
-     * @param exception
-     * @param message
-     * @param stopGame
-     */
-    public void raiseException(Throwable exception, String message, boolean stopGame)
-    {
-        FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
-        throw new RuntimeException(exception);
     }
 
     /**
@@ -556,6 +529,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         return StringTranslate.func_20162_a().func_44024_c();
     }
 
+    public Properties getCurrentLanguageTable() {
+        return StringTranslate.func_20162_a().getTranslationTable();
+    }
     /**
      * @param armor
      * @return
@@ -629,7 +605,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void registerKeyHandler(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
-        mlmc.addKeyHandler(new KeyBindingHandler(keyHandler, allowRepeat));
+        mlmc.addKeyHandler(new KeyBindingHandler(keyHandler, allowRepeat, mlmc));
     }
 
     /**
@@ -642,13 +618,14 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param modelID
      * @return
      */
-    public boolean onRenderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
+    public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
-        ModLoaderModContainer mod = blockModelIds.get(modelID);
+        ModContainer mod = blockModelIds.get(modelID);
         if (mod == null)
         {
             return false;
         }
+        mod.renderWorldBlock(world, x, y, z, block, modelID, renderer);
         return ((BaseMod)mod.getMod()).renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 
@@ -658,12 +635,36 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param metadata
      * @param modelID
      */
-    public void onRenderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
+    public void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        ModLoaderModContainer mod = blockModelIds.get(modelID);
+        ModContainer mod = blockModelIds.get(modelID);
         if (mod != null)
         {
-            ((BaseMod)mod.getMod()).renderInvBlock(renderer, block, metadata, modelID);
+            mod.renderInventoryBlock(block, metadata, modelID, renderer);
         }
+    }
+
+    /**
+     * @param p_1219_0_
+     * @return
+     */
+    public boolean renderItemAsFull3DBlock(int modelId)
+    {
+        return false;
+    }
+    
+    public String getObjectName(Object instance) {
+        String objectName;
+        if (instance instanceof Item) {
+            objectName=((Item)instance).func_20009_a();
+        } else if (instance instanceof Block) {
+            objectName=((Block)instance).func_20013_i();
+        } else if (instance instanceof ItemStack) {
+            objectName=Item.field_233_c[((ItemStack)instance).field_1617_c].func_21011_b((ItemStack)instance);
+        } else {
+            throw new IllegalArgumentException(String.format("Illegal object for naming %s",instance));
+        }
+        objectName+=".name";
+        return objectName;
     }
 }

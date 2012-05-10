@@ -19,6 +19,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.client.FMLClientHandler;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -47,7 +49,7 @@ public class ModTextureAnimation extends TextureFX
     public ModTextureAnimation(int icon, int size, String target, BufferedImage image, int tickCount)
     {
         super(icon);
-        RenderEngine re = ModLoader.getMinecraftInstance().field_6315_n;
+        RenderEngine re = FMLClientHandler.instance().getClient().field_6315_n;
         
         targetTex = target;
         field_1129_e = size;

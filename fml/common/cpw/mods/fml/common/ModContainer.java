@@ -16,6 +16,9 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.util.List;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
+
 /**
  * The container that wraps around mods in the system.
  * <p>The philosophy is that individual mod implementation technologies should not impact the actual loading and management
@@ -200,4 +203,22 @@ public interface ModContainer
     }
 
     List<IKeyHandler> getKeys();
+    /**
+     * @param block
+     * @param metadata
+     * @param modelID
+     * @param renderer
+     */
+    void renderInventoryBlock(Block block, int metadata, int modelID, Object renderer);
+    /**
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param block
+     * @param modelID
+     * @param renderer
+     * @return 
+     */
+    boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer);
 }

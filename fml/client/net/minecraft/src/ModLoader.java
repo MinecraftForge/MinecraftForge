@@ -1,5 +1,3 @@
-package net.minecraft.src;
-
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  *
@@ -12,6 +10,7 @@ package net.minecraft.src;
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+package net.minecraft.src;
 
 import java.awt.image.BufferedImage;
 import java.util.EnumSet;
@@ -47,10 +46,9 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented
-     * elsewhere.
+     * This method is a call in hook from modified external code. Implemented elsewhere.
      * 
-     * {@link FMLClientHandler#fuelLookup(int, int)}
+     * {@link FMLCommonHandler#fuelLookup(int, int)}
      * 
      * @param id
      * @param metadata
@@ -72,7 +70,7 @@ public class ModLoader
 
     /**
      * This method is unimplemented in server versions to date.
-     * 
+     *
      * @param armor
      * @return
      */
@@ -82,9 +80,8 @@ public class ModLoader
     }
 
     /**
-     * This method adds the supplied biome to the set of candidate biomes for
-     * the default world generator type.
-     * 
+     * This method adds the supplied biome to the set of candidate biomes for the default world generator type.
+     *
      * @param biome
      */
     public static void addBiome(BiomeGenBase biome)
@@ -93,8 +90,8 @@ public class ModLoader
     }
 
     /**
-     * Unimplemented on the server as it does not generate names
-     * 
+     * Add localization for the specified string
+     *
      * @param key
      * @param value
      */
@@ -104,8 +101,8 @@ public class ModLoader
     }
 
     /**
-     * Unimplemented on the server as it does not generate names
-     * 
+     * Add localization for the specified string
+     *
      * @param key
      * @param lang
      * @param value
@@ -116,8 +113,8 @@ public class ModLoader
     }
 
     /**
-     * Unimplemented on the server as it does not generate names
-     * 
+     * Name the specified minecraft object with the supplied name
+     *
      * @param instance
      * @param name
      */
@@ -128,25 +125,14 @@ public class ModLoader
 
     /**
      * Unimplemented on the server as it does not generate names
-     * 
+     *
      * @param instance
      * @param lang
      * @param name
      */
     public static void addName(Object instance, String lang, String name)
     {
-        String objectName;
-        if (instance instanceof Item) {
-            objectName=((Item)instance).func_20009_a();
-        } else if (instance instanceof Block) {
-            objectName=((Block)instance).func_20013_i();
-        } else if (instance instanceof ItemStack) {
-            objectName=Item.field_233_c[((ItemStack)instance).field_1617_c].func_21011_b((ItemStack)instance);
-        } else {
-            throw new IllegalArgumentException(String.format("Illegal object for naming %s",instance));
-        }
-        objectName+=".name";
-        addLocalization(objectName, lang, name);
+        FMLCommonHandler.instance().addNameForObject(instance, lang, name);
     }
 
     /**
@@ -177,7 +163,7 @@ public class ModLoader
 
     /**
      * Add a Shaped Recipe
-     * 
+     *
      * @param output
      * @param params
      */
@@ -188,7 +174,7 @@ public class ModLoader
 
     /**
      * Add a shapeless recipe
-     * 
+     *
      * @param output
      * @param params
      */
@@ -199,7 +185,7 @@ public class ModLoader
 
     /**
      * Add a new product to be smelted
-     * 
+     *
      * @param input
      * @param output
      */
@@ -210,7 +196,7 @@ public class ModLoader
 
     /**
      * Add a mob to the spawn list
-     * 
+     *
      * @param entityClass
      * @param weightedProb
      * @param min
@@ -232,15 +218,14 @@ public class ModLoader
      * @param spawnList
      * @param biomes
      */
-    public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList,
-            BiomeGenBase... biomes)
+    public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
      * Add a mob to the spawn list
-     * 
+     *
      * @param entityName
      * @param weightedProb
      * @param min
@@ -268,8 +253,7 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented
-     * elsewhere.
+     * This method is a call in hook from modified external code. Implemented elsewhere.
      * {@link FMLClientHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
      * 
      * @param world
@@ -289,7 +273,7 @@ public class ModLoader
 
     /**
      * Remove a container and drop all the items in it on the ground around
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -304,7 +288,7 @@ public class ModLoader
             return;
         }
 
-        IInventory inv = (IInventory) te;
+        IInventory inv = (IInventory)te;
 
         for (int l = 0; l < inv.func_469_c(); l++)
         {
@@ -329,8 +313,7 @@ public class ModLoader
                 }
 
                 itemstack.field_1615_a -= i1;
-                EntityItem entityitem = new EntityItem(world, (float) te.field_823_f + f, (float) te.field_822_g + f1, (float) te.field_821_h + f2,
-                        new ItemStack(itemstack.field_1617_c, i1, itemstack.func_21181_i()));
+                EntityItem entityitem = new EntityItem(world, (float)te.field_823_f + f, (float)te.field_822_g + f1, (float)te.field_821_h + f2, new ItemStack(itemstack.field_1617_c, i1, itemstack.func_21181_i()));
                 float f3 = 0.05F;
                 entityitem.field_608_an = (float) world.field_1037_n.nextGaussian() * f3;
                 entityitem.field_607_ao = (float) world.field_1037_n.nextGaussian() * f3 + 0.2F;
@@ -349,7 +332,7 @@ public class ModLoader
     /**
      * Get a list of all BaseMod loaded into the system
      * {@link ModLoaderModContainer#findAll}
-     * 
+     *
      * @return
      */
     public static List<BaseMod> getLoadedMods()
@@ -358,8 +341,8 @@ public class ModLoader
     }
 
     /**
-     * Get a logger instance {@link FMLClientHandler#getFMLLogger()}
-     * 
+     * Get a logger instance {@link FMLCommonHandler#getFMLLogger()}
+     *
      * @return
      */
     public static Logger getLogger()
@@ -373,20 +356,20 @@ public class ModLoader
     }
 
     /**
-     * This is not the server {@link FMLClientHandler#getServer()}
+     * This is not the server
+     * {@link FMLClientHandler#getServer()}
      * 
      * @return
      */
-    @Deprecated
-    public static Minecraft getMinecraftServerInstance()
+    public static Object getMinecraftServerInstance()
     {
-        return null;
+        return getMinecraftInstance();
     }
 
     /**
      * Get a value from a field using reflection
      * {@link ReflectionHelper#getPrivateValue(Class, Object, int)}
-     * 
+     *
      * @param instanceclass
      * @param instance
      * @param fieldindex
@@ -421,8 +404,9 @@ public class ModLoader
     }
 
     /**
-     * Get a new unique entity id {@link Entity#getNextId()}
-     * 
+     * Get a new unique entity id
+     * {@link Entity#getNextId()}
+     *
      * @return
      */
     public static int getUniqueEntityId()
@@ -454,7 +438,8 @@ public class ModLoader
     }
 
     /**
-     * Is the named mod loaded? {@link Loader#isModLoaded(String)}
+     * Is the named mod loaded?
+     * {@link Loader#isModLoaded(String)}
      * 
      * @param modname
      * @return
@@ -505,9 +490,8 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented
-     * elsewhere.
-     * {@link FMLClientHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
+     * This method is a call in hook from modified external code. Implemented elsewhere.
+     * {@link FMLServerHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
      * 
      * @param packet
      */
@@ -665,24 +649,27 @@ public class ModLoader
         CommonRegistry.removeSpawn(entityName, spawnList, biomes);
     }
 
+    @Deprecated
     public static boolean renderBlockIsItemFull3D(int modelID)
     {
-        //TODO
         return false;
     }
 
+    @Deprecated
     public static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        FMLClientHandler.instance().onRenderInvBlock(renderer, block, metadata, modelID);
+        FMLClientHandler.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
+    @Deprecated
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
-        return FMLClientHandler.instance().onRenderWorldBlock(renderer, world, x, y, z, block, modelID);
+        return FMLClientHandler.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 
     /**
-     * Configuration is handled elsewhere {@link ModLoaderModContainer}
+     * Configuration is handled elsewhere
+     * {@link ModLoaderModContainer}
      */
     @Deprecated
     public static void saveConfig()
@@ -691,16 +678,17 @@ public class ModLoader
 
     /**
      * Send a chat message to the server
-     * 
      * {@link FMLClientHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
      * 
      * @param text
      */
+    @Deprecated
     public static void serverChat(String text)
     {
         //TODO
     }
 
+    @Deprecated
     public static void serverLogin(NetClientHandler handler, Packet1Login loginPacket)
     {
         //TODO
@@ -708,14 +696,10 @@ public class ModLoader
 
     /**
      * Indicate that you want to receive ticks
-     * 
-     * @param mod
-     *            receiving the events
-     * @param enable
-     *            indicates whether you want to recieve them or not
-     * @param useClock
-     *            Not used in server side: all ticks are sent on the server side
-     *            (no render subticks)
+     *
+     * @param mod receiving the events
+     * @param enable indicates whether you want to recieve them or not
+     * @param useClock don't receive render subticks, just world ticks
      */
     public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
@@ -757,8 +741,7 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented
-     * elsewhere.
+     * This method is a call in hook from modified external code. Implemented elsewhere.
      * {@link FMLClientHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
      * 
      * @param player
@@ -771,8 +754,7 @@ public class ModLoader
     }
 
     /**
-     * This method is a call in hook from modified external code. Implemented
-     * elsewhere.
+     * This method is a call in hook from modified external code. Implemented elsewhere.
      * {@link FMLClientHandler#onItemSmelted(EntityPlayer, ItemStack)}
      * 
      * @param player
@@ -792,7 +774,7 @@ public class ModLoader
      */
     public static void throwException(String message, Throwable e)
     {
-        FMLClientHandler.instance().raiseException(e, message, true);
+        FMLCommonHandler.instance().raiseException(e, message, true);
     }
     
     public static void throwException(Throwable e)

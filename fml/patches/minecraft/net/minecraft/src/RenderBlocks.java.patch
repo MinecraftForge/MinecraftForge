@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/RenderBlocks.java	0000-00-00 00:00:00.000000000 -0000
-@@ -7,94 +7,95 @@
+@@ -4,97 +4,100 @@
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++
  public class RenderBlocks
  {
      public IBlockAccess field_1772_a;
@@ -182,7 +187,7 @@
  
      public RenderBlocks(IBlockAccess p_i647_1_)
      {
-@@ -126,10 +127,40 @@
+@@ -126,10 +129,40 @@
      {
          int var5 = p_1234_1_.func_210_f();
          p_1234_1_.func_238_a(this.field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_);
@@ -216,7 +221,7 @@
 +            case 24: return func_40728_a((BlockCauldron)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
 +            case 25: return func_40730_a((BlockBrewingStand)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
 +            case 26: return func_40729_s(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
-+            default: return ModLoader.renderWorldBlock(this, field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_, p_1234_1_, var5);
++            default: return FMLClientHandler.instance().renderWorldBlock(this, field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_, p_1234_1_, var5);
 +        }
      }
  
@@ -225,7 +230,7 @@
      {
          int var5 = this.field_1772_a.func_602_e(p_40729_2_, p_40729_3_, p_40729_4_);
          int var6 = var5 & 3;
-@@ -169,7 +200,7 @@
+@@ -169,7 +202,7 @@
          }
      }
  
@@ -234,7 +239,7 @@
      {
          Tessellator var5 = Tessellator.field_1512_a;
          int var6 = this.field_1772_a.func_602_e(p_22331_2_, p_22331_3_, p_22331_4_);
-@@ -310,7 +341,7 @@
+@@ -310,7 +343,7 @@
          return true;
      }
  
@@ -243,7 +248,7 @@
      {
          p_40730_1_.func_213_a(0.4375F, 0.0F, 0.4375F, 0.5625F, 0.875F, 0.5625F);
          this.func_1228_k(p_40730_1_, p_40730_2_, p_40730_3_, p_40730_4_);
-@@ -384,7 +415,7 @@
+@@ -384,7 +417,7 @@
          return true;
      }
  
@@ -252,7 +257,7 @@
      {
          this.func_1228_k(p_40728_1_, p_40728_2_, p_40728_3_, p_40728_4_);
          Tessellator var5 = Tessellator.field_1512_a;
-@@ -467,7 +498,7 @@
+@@ -467,7 +500,7 @@
          return true;
      }
  
@@ -261,7 +266,7 @@
      {
          int var5 = this.field_1772_a.func_602_e(p_22332_2_, p_22332_3_, p_22332_4_);
          int var6 = var5 & 3;
-@@ -557,7 +588,7 @@
+@@ -557,7 +590,7 @@
          this.field_1773_d = false;
      }
  
@@ -270,7 +275,7 @@
      {
          int var6 = this.field_1772_a.func_602_e(p_31074_2_, p_31074_3_, p_31074_4_);
          boolean var7 = p_31074_5_ || (var6 & 8) != 0;
-@@ -660,7 +691,7 @@
+@@ -660,7 +693,7 @@
          return true;
      }
  
@@ -279,7 +284,7 @@
      {
          int var16 = 108;
  
-@@ -683,7 +714,7 @@
+@@ -683,7 +716,7 @@
          var19.func_983_a(p_31076_3_, p_31076_7_, p_31076_11_, var24, var26);
      }
  
@@ -288,7 +293,7 @@
      {
          int var16 = 108;
  
-@@ -706,7 +737,7 @@
+@@ -706,7 +739,7 @@
          var19.func_983_a(p_31081_3_, p_31081_7_, p_31081_11_, var24, var26);
      }
  
@@ -297,7 +302,7 @@
      {
          int var16 = 108;
  
-@@ -736,7 +767,7 @@
+@@ -736,7 +769,7 @@
          this.field_1773_d = false;
      }
  
@@ -306,7 +311,7 @@
      {
          int var6 = this.field_1772_a.func_602_e(p_31080_2_, p_31080_3_, p_31080_4_);
          int var7 = BlockPistonExtension.func_31050_c(var6);
-@@ -2707,7 +2738,7 @@
+@@ -2707,7 +2740,7 @@
          }
      }
  
@@ -315,7 +320,7 @@
      {
          int var5 = 0;
          float var6 = 0.0F;
-@@ -3239,7 +3270,7 @@
+@@ -3239,7 +3272,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 2);
              this.func_1220_c(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
  
@@ -324,7 +329,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -3362,7 +3393,7 @@
+@@ -3362,7 +3395,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 3);
              this.func_1225_d(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 3));
  
@@ -333,7 +338,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -3485,7 +3516,7 @@
+@@ -3485,7 +3518,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 4);
              this.func_1231_e(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
  
@@ -342,7 +347,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -3608,7 +3639,7 @@
+@@ -3608,7 +3641,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 5);
              this.func_1236_f(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
  
@@ -351,7 +356,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -3632,7 +3663,7 @@
+@@ -3632,7 +3665,7 @@
          return var8;
      }
  
@@ -360,7 +365,7 @@
      {
          if (p_35924_1_ == 0)
          {
-@@ -3714,7 +3745,7 @@
+@@ -3714,7 +3747,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 2);
              this.func_1220_c(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -369,7 +374,7 @@
              {
                  var8.func_987_a(var18 * p_4152_5_, var21 * p_4152_6_, var24 * p_4152_7_);
                  this.func_1220_c(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -3730,7 +3761,7 @@
+@@ -3730,7 +3763,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 3);
              this.func_1225_d(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -378,7 +383,7 @@
              {
                  var8.func_987_a(var18 * p_4152_5_, var21 * p_4152_6_, var24 * p_4152_7_);
                  this.func_1225_d(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -3746,7 +3777,7 @@
+@@ -3746,7 +3779,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 4);
              this.func_1231_e(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -387,7 +392,7 @@
              {
                  var8.func_987_a(var19 * p_4152_5_, var22 * p_4152_6_, var25 * p_4152_7_);
                  this.func_1231_e(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -3762,7 +3793,7 @@
+@@ -3762,7 +3795,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 5);
              this.func_1236_f(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -396,18 +401,18 @@
              {
                  var8.func_987_a(var19 * p_4152_5_, var22 * p_4152_6_, var25 * p_4152_7_);
                  this.func_1236_f(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -5270,6 +5301,10 @@
+@@ -5270,6 +5303,10 @@
  
                  p_1227_1_.func_213_a(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
              }
 +            else
 +            {
-+                ModLoader.renderInvBlock(this, p_1227_1_, p_1227_2_, var6);
++                FMLClientHandler.instance().renderInventoryBlock(this, p_1227_1_, p_1227_2_, var6);
 +            }
          }
          else
          {
-@@ -5326,6 +5361,17 @@
+@@ -5326,6 +5363,17 @@
  
      public static boolean func_1219_a(int p_1219_0_)
      {
@@ -422,7 +427,7 @@
 +            case 22:
 +            case 21:
 +            case 16: return true;
-+            default: return ModLoader.renderBlockIsItemFull3D(p_1219_0_);
++            default: return FMLClientHandler.instance().renderItemAsFull3DBlock(p_1219_0_);
 +        }
      }
  }

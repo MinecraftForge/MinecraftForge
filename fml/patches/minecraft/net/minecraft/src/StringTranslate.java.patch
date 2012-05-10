@@ -18,3 +18,12 @@
      }
  
      public void func_44023_a(String p_44023_1_)
+@@ -164,4 +168,8 @@
+     {
+         return "ar_SA".equals(p_46109_0_) || "he_IL".equals(p_46109_0_);
+     }
++    
++    public Properties getTranslationTable() {
++        return field_20164_b;
++    }
+ }

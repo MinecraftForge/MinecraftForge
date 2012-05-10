@@ -1,0 +1,11 @@
+--- ../src-base/minecraft_server/net/minecraft/src/StatBase.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/StatBase.java	0000-00-00 00:00:00.000000000 -0000
+@@ -55,4 +55,8 @@
+     {
+         return StatCollector.func_25136_a(this.field_25062_e);
+     }
++    
++    public String getName() {
++        return field_25062_e;
++    }
+ }

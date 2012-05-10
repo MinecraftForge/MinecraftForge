@@ -23,4 +23,9 @@ public interface IKeyHandler
 
     Object getKeyBinding();
 
+    /**
+     * @return
+     */
+    ModContainer getOwningContainer();
+
 }

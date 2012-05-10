@@ -3,7 +3,7 @@
 @@ -1,5 +1,7 @@
  package net.minecraft.src;
  
-+import cpw.mods.fml.server.FMLServerHandler;
++import cpw.mods.fml.common.FMLCommonHandler;
 +
  public class TileEntityFurnace extends TileEntity implements IInventory
  {
@@ -13,7 +13,7 @@
          {
              int var1 = p_194_1_.func_569_a().field_234_aS;
 -            return var1 < 256 && Block.field_542_n[var1].field_553_bn == Material.field_524_c ? 300 : (var1 == Item.field_209_B.field_234_aS ? 100 : (var1 == Item.field_168_k.field_234_aS ? 1600 : (var1 == Item.field_201_aw.field_234_aS ? 20000 : (var1 == Block.field_6047_y.field_573_bc ? 100 : (var1 == Item.field_40239_bm.field_234_aS ? 2400 : 0)))));
-+            return var1 < 256 && Block.field_542_n[var1].field_553_bn == Material.field_524_c ? 300 : (var1 == Item.field_209_B.field_234_aS ? 100 : (var1 == Item.field_168_k.field_234_aS ? 1600 : (var1 == Item.field_201_aw.field_234_aS ? 20000 : (var1 == Block.field_6047_y.field_573_bc ? 100 : (var1 == Item.field_40239_bm.field_234_aS ? 2400 : FMLServerHandler.instance().fuelLookup(var1, p_194_1_.func_21125_h()))))));
++            return var1 < 256 && Block.field_542_n[var1].field_553_bn == Material.field_524_c ? 300 : (var1 == Item.field_209_B.field_234_aS ? 100 : (var1 == Item.field_168_k.field_234_aS ? 1600 : (var1 == Item.field_201_aw.field_234_aS ? 20000 : (var1 == Block.field_6047_y.field_573_bc ? 100 : (var1 == Item.field_40239_bm.field_234_aS ? 2400 : FMLCommonHandler.instance().fuelLookup(var1, p_194_1_.func_21125_h()))))));
          }
      }
  
