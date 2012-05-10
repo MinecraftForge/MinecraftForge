@@ -337,22 +337,4 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#renderInventoryBlock(net.minecraft.src.Block, int, int, java.lang.Object)
-     */
-    @Override
-    public void renderInventoryBlock(Block block, int metadata, int modelID, Object renderer)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#renderWorldBlock(net.minecraft.src.IBlockAccess, int, int, int, net.minecraft.src.Block, int, java.lang.Object)
-     */
-    @Override
-    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
 }

@@ -203,22 +203,4 @@ public interface ModContainer
     }
 
     List<IKeyHandler> getKeys();
-    /**
-     * @param block
-     * @param metadata
-     * @param modelID
-     * @param renderer
-     */
-    void renderInventoryBlock(Block block, int metadata, int modelID, Object renderer);
-    /**
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param block
-     * @param modelID
-     * @param renderer
-     * @return 
-     */
-    boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer);
 }

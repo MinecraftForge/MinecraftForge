@@ -14,36 +14,67 @@
 
 package cpw.mods.fml.client;
 
-import cpw.mods.fml.common.IBlockRenderInfo;
+import net.minecraft.src.BaseMod;
+import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.RenderBlocks;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
  * @author cpw
  *
  */
-public class BlockRenderInfo implements IBlockRenderInfo
+public class BlockRenderInfo
 {
     private int renderId;
-    private boolean forInventory;
+    private boolean render3dInInventory;
+    private ModContainer modContainer;
 
     /**
+     * @param modContainer 
      * 
      */
-    public BlockRenderInfo(int renderId, boolean forInventory)
+    public BlockRenderInfo(int renderId, boolean render3dInInventory, ModContainer modContainer)
     {
         this.renderId=renderId;
-        this.forInventory=forInventory;
+        this.render3dInInventory=render3dInInventory;
+        this.modContainer=modContainer;
     }
     
-    @Override
     public int getRenderId()
     {
         return renderId;
     }
 
-    @Override
-    public boolean getInventoryRendering()
+    public boolean shouldRender3DInInventory()
     {
-        return forInventory;
+        return render3dInInventory;
+    }
+
+    /**
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param block
+     * @param modelId
+     * @param renderer
+     */
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer)
+    {
+        return ((BaseMod)modContainer.getMod()).renderWorldBlock(renderer, world, x, y, z, block, modelId);
+    }
+
+    /**
+     * @param block
+     * @param metadata
+     * @param modelID
+     * @param renderer
+     */
+    public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer)
+    {
+        ((BaseMod)modContainer.getMod()).renderInvBlock(renderer, block, metadata, modelID);
     }
 
 }
