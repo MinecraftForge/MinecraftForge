@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/src/RenderPlayer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/RenderPlayer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,8 @@
+@@ -1,5 +1,9 @@
  package net.minecraft.src;
  
++import java.util.ArrayList;
 +import java.util.Arrays;
 +import java.util.List;
 +
  import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  
-@@ -8,7 +11,7 @@
+@@ -8,7 +12,7 @@
      private ModelBiped field_209_f;
      private ModelBiped field_208_g;
      private ModelBiped field_207_h;
@@ -18,13 +19,13 @@
  
      public RenderPlayer()
      {
-@@ -407,4 +410,11 @@
+@@ -407,4 +411,11 @@
      {
          this.func_188_a((EntityPlayer)p_147_1_, p_147_2_, p_147_4_, p_147_6_, p_147_8_, p_147_9_);
      }
 +    
 +    public static int addNewArmourPrefix(String prefix) {
-+        List<String> armours=Arrays.asList(field_206_i);
++        List<String> armours=new ArrayList(Arrays.asList(field_206_i));
 +        armours.add(prefix);
 +        field_206_i=armours.toArray(new String[0]);
 +        return armours.indexOf(prefix);

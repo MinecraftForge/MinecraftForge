@@ -82,7 +82,7 @@ public class FMLCommonHandler
      */
     public void worldTickStart()
     {
-        tickStart(ModContainer.TickType.WORLD,0.0);
+        tickStart(ModContainer.TickType.WORLD,0.0f);
     }
 
     /**
@@ -90,7 +90,7 @@ public class FMLCommonHandler
      */
     public void worldTickEnd()
     {
-        tickEnd(ModContainer.TickType.WORLD,0.0);
+        tickEnd(ModContainer.TickType.WORLD,0.0f);
     }
 
     public void tickStart(TickType type, Object ... data)

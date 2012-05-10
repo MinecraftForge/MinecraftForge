@@ -21,6 +21,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -564,6 +566,9 @@ public class ModLoaderModContainer implements ModContainer
      */
     public void addRenderHandler(IBlockRenderInfo handler)
     {
+        if (blockRenderInfos==null) {
+            blockRenderInfos=new ArrayList<IBlockRenderInfo>();
+        }
         blockRenderInfos.add(handler);
     }
 
@@ -573,12 +578,18 @@ public class ModLoaderModContainer implements ModContainer
      */
     public void addKeyHandler(IKeyHandler handler)
     {
+        if (keyHandlers==null) {
+            keyHandlers=new ArrayList<IKeyHandler>();
+        }
         keyHandlers.add(handler);
     }
 
     @Override
     public List<IKeyHandler> getKeys()
     {
+        if (keyHandlers==null) {
+            return Collections.emptyList();
+        }
         return keyHandlers;
     }
 }
