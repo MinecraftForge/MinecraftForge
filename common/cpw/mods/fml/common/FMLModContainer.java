@@ -92,6 +92,25 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
+    public ModState getModState()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public void nextState()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    @Override
+    public String getSortingRules()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
     public void tickStart(TickType type, Object ... data)
     {
         // TODO Auto-generated method stub

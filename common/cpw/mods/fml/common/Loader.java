@@ -16,6 +16,7 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -85,11 +87,11 @@ public class Loader
     /**
      * Build information for tracking purposes.
      */
-    private static String major = "@MAJOR@";
-    private static String minor = "@MINOR@";
-    private static String rev = "@REV@";
-    private static String build = "@BUILD@";
-    private static String mcversion = "@MCVERSION@";
+    private static String major;
+    private static String minor;
+    private static String rev;
+    private static String build;
+    private static String mcversion;
 
     /**
      * The {@link State} of the loader
@@ -142,7 +144,8 @@ public class Loader
         Loader.log.setLevel(Level.ALL);
         try
         {
-            FileHandler fileHandler = new FileHandler("ForgeModLoader-%g.log", 0, 3);
+            File logPath=new File(FMLCommonHandler.instance().getMinecraftRootDirectory().getCanonicalPath(),"ForgeModLoader-%g.log");
+            FileHandler fileHandler = new FileHandler(logPath.getPath(), 0, 3);
             // We're stealing minecraft's log formatter
             fileHandler.setFormatter(new FMLLogFormatter());
             fileHandler.setLevel(Level.ALL);
@@ -151,6 +154,22 @@ public class Loader
         catch (Exception e)
         {
             // Whatever - give up
+        }
+        InputStream stream = Loader.class.getClassLoader().getResourceAsStream("fmlversion.properties");
+        Properties properties = new Properties();
+
+        if (stream != null) {
+            try {
+                properties.load(stream);
+                major     = properties.getProperty("fmlbuild.major.number");
+                minor     = properties.getProperty("fmlbuild.minor.number");
+                rev       = properties.getProperty("fmlbuild.revision.number");
+                build     = properties.getProperty("fmlbuild.build.number");
+                mcversion = properties.getProperty("fmlbuild.mcversion");
+            } catch (IOException ex) {
+                Loader.log.log(Level.SEVERE,"Could not get FML version information - corrupted installation detected!", ex);
+                throw new LoaderException(ex);
+            }
         }
 
         log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", major, minor, rev, build, mcversion));
@@ -185,7 +204,7 @@ public class Loader
             log.fine("Sorted mod list:");
             for (ModContainer mod : mods)
             {
-                log.fine(String.format("    %s: %s", mod.getName(), mod.getSource().getName()));
+                log.fine(String.format("\t%s: %s (%s)", mod.getName(), mod.getSource().getName(), mod.getSortingRules()));
             }
         }
         catch (IllegalArgumentException iae)
@@ -213,6 +232,7 @@ public class Loader
                 mod.preInit();
                 namedMods.put(mod.getName(), mod);
             }
+            mod.nextState();
         }
 
         log.fine("Mod pre-initialization complete");
@@ -230,6 +250,7 @@ public class Loader
         {
             log.finer(String.format("Initializing %s", mod.getName()));
             mod.init();
+            mod.nextState();
         }
 
         log.fine("Mod initialization complete");
@@ -246,6 +267,7 @@ public class Loader
             {
                 log.finer(String.format("Post-initializing %s", mod.getName()));
                 mod.postInit();
+                mod.nextState();
             }
         }
 
@@ -451,21 +473,27 @@ public class Loader
         {
             Class<?> clazz = Class.forName(clazzName, false, modClassLoader);
 
+            ModContainer mod=null;
             if (clazz.isAnnotationPresent(Mod.class))
             {
                 // an FML mod
-                mods.add(FMLModContainer.buildFor(clazz));
+                log.fine(String.format("FML mod class %s found, loading", clazzName));
+                mod = FMLModContainer.buildFor(clazz);
+                log.fine(String.format("FML mod class %s loaded", clazzName));
             }
             else if (FMLCommonHandler.instance().isModLoaderMod(clazz))
             {
                 log.fine(String.format("ModLoader BaseMod class %s found, loading", clazzName));
-                ModContainer mc = FMLCommonHandler.instance().loadBaseModMod(clazz, classSource.getCanonicalFile());
-                mods.add(mc);
+                mod = FMLCommonHandler.instance().loadBaseModMod(clazz, classSource.getCanonicalFile());
                 log.fine(String.format("ModLoader BaseMod class %s loaded", clazzName));
             }
             else
             {
                 // Unrecognized
+            }
+            if (mod!=null) {
+                mods.add(mod);
+                mod.nextState();
             }
         }
         catch (Exception e)
@@ -550,6 +578,9 @@ public class Loader
     {
         modInit();
         postModInit();
+        for (ModContainer mod : getModList()) {
+            mod.nextState();
+        }
         state = State.UP;
         log.info(String.format("Forge Mod Loader load complete, %d mods loaded", mods.size()));
     }
@@ -575,11 +606,12 @@ public class Loader
     
     public String getCrashInformation()
     {
-        String ret = String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s\n", major, minor, rev, build, mcversion);
+        StringBuffer ret = new StringBuffer();
+        ret.append(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s\n", major, minor, rev, build, mcversion));
         for (ModContainer mod : mods)
         {
-            ret += mod.getName() + "\n";
+            ret.append(String.format("\t%s : %s (%s)\n",mod.getName(), mod.getModState(), mod.getSource().getName()));
         }
-        return ret;
+        return ret.toString();
     }
 }

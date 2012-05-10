@@ -34,7 +34,6 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.MLProp;
-import net.minecraft.src.RenderBlocks;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -48,6 +47,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModContainer.ModState;
 import cpw.mods.fml.common.ModContainer.TickType;
 
 public class ModLoaderModContainer implements ModContainer
@@ -61,12 +61,15 @@ public class ModLoaderModContainer implements ModContainer
     private ArrayList<String> postDependencies;
     private ArrayList<IBlockRenderInfo> blockRenderInfos;
     private ArrayList<IKeyHandler> keyHandlers;
+    private ModState state;
     
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
         this.modSource = modSource;
         this.ticks = EnumSet.noneOf(TickType.class);
+        // We are unloaded
+        nextState();
     }
 
     /**
@@ -105,6 +108,23 @@ public class ModLoaderModContainer implements ModContainer
         }
     }
 
+    @Override
+    public ModState getModState()
+    {
+        return state;
+    }
+
+    @Override
+    public void nextState()
+    {
+        if (state==null) {
+            state=ModState.UNLOADED;
+            return;
+        }
+        if (state.ordinal()+1<ModState.values().length) {
+            state=ModState.values()[state.ordinal()+1];
+        }
+    }
     /**
      *
      */
@@ -322,7 +342,7 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public String getName()
     {
-        return mod != null ? mod.getName() : null;
+        return mod != null ? mod.getName() : getSource().getName();
     }
 
     public static ModContainer findContainerFor(BaseMod mod)
@@ -338,6 +358,15 @@ public class ModLoaderModContainer implements ModContainer
         return null;
     }
 
+    @Override
+    public String getSortingRules()
+    {
+        if (mod!=null) {
+            return mod.getPriorities();
+        } else {
+            return "";
+        }
+    }
     @Override
     public boolean matches(Object mod)
     {
