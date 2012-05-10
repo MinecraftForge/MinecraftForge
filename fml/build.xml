@@ -160,6 +160,8 @@
     <zip destfile="${basedir}/target/${jarname}.zip">
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" excludes="**/Loader.java" prefix="fml/src/minecraft_server" />
+      <zipfileset dir="${common.src.dir}" includes="**/*.java" excludes="**/Loader.java" prefix="fml/src/minecraft" />
+      <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/src/minecraft" />
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
       <mappedresources>
@@ -177,6 +179,21 @@
         </concat>
         <mergemapper to="fml/src/minecraft_server/cpw/mods/fml/common/Loader.java" />
       </mappedresources>
+        <mappedresources>
+          <concat>
+            <fileset dir="${common.src.dir}" includes="cpw/mods/fml/common/Loader.java" />
+            <filterchain>
+              <replacetokens>
+                <token key="MAJOR" value="${version.major}" />
+                <token key="MINOR" value="${version.minor}" />
+                <token key="REV" value="${version.rev}" />
+                <token key="BUILD" value="${version.build}" />
+                <token key="MCVERSION" value="${version.minecraft}" />
+              </replacetokens>
+            </filterchain>
+          </concat>
+          <mergemapper to="fml/src/minecraft/cpw/mods/fml/common/Loader.java" />
+        </mappedresources>
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />
