@@ -180,7 +180,8 @@
       <zipfileset dir="${common.src.dir}" includes="**/*.java" excludes="**/Loader.java" prefix="fml/src/minecraft" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/src/minecraft" />
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server" />
-      <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml/src/minecraft" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml/src/minecraft_server" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
       <mappedresources>
         <concat>
