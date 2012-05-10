@@ -678,8 +678,7 @@ public class ModLoader
 
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
-        //TODO
-        return false;
+        return FMLClientHandler.instance().onRenderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 
     /**

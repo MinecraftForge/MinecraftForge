@@ -182,7 +182,11 @@ public class Loader
         {
             log.fine("Sorting mods into an ordered list");
             mods = sorter.sort();
-            log.fine(String.format("Sorted mod list %s", mods));
+            log.fine("Sorted mod list:");
+            for (ModContainer mod : mods)
+            {
+                log.fine(String.format("    %s: %s", mod.getName(), mod.getSource().getName()));
+            }
         }
         catch (IllegalArgumentException iae)
         {

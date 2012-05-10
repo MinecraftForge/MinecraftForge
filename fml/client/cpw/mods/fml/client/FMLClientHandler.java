@@ -28,11 +28,13 @@ import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.Block;
 import net.minecraft.src.ClientRegistry;
 import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiScreen;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
@@ -41,6 +43,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.StringTranslate;
@@ -94,6 +97,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private int nextRenderId = 30;
 
     private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
+    private static HashMap<Integer, ModLoaderModContainer> blockModelIds = new HashMap<Integer, ModLoaderModContainer>();
 
     /**
      * Called to start the whole game off from
@@ -583,6 +587,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         ModLoaderModContainer mlmc=ModLoaderHelper.registerRenderHelper(mod);
         int renderId=nextRenderId++;
         mlmc.addRenderHandler(new BlockRenderInfo(renderId, inventoryRenderer));
+        blockModelIds.put(renderId, mlmc);
         return renderId;
     }
 
@@ -625,5 +630,25 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
         mlmc.addKeyHandler(new KeyBindingHandler(keyHandler, allowRepeat));
+    }
+
+    /**
+     * @param renderer
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param block
+     * @param modelID
+     * @return
+     */
+    public boolean onRenderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
+    {
+        ModLoaderModContainer mod = blockModelIds.get(modelID);
+        if (mod == null)
+        {
+            return false;
+        }
+        return ((BaseMod)mod.getMod()).renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 }
