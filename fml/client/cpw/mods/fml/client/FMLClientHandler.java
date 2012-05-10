@@ -91,7 +91,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     private BiomeGenBase[] defaultOverworldBiomes;
 
-    private int nextRenderId;
+    private int nextRenderId = 30;
 
     private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
 
