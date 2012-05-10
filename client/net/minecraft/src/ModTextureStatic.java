@@ -19,6 +19,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.client.FMLClientHandler;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ModTextureStatic extends TextureFX
@@ -41,7 +43,7 @@ public class ModTextureStatic extends TextureFX
     public ModTextureStatic(int icon, int size, String target, BufferedImage image)
     {
         super(icon);
-        RenderEngine re = ModLoader.getMinecraftInstance().field_6315_n;
+        RenderEngine re = FMLClientHandler.instance().getClient().field_6315_n;
         
         targetTex = target;
         field_1129_e = size;

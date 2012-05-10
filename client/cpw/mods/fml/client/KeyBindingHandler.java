@@ -16,6 +16,8 @@ package cpw.mods.fml.client;
 
 import net.minecraft.src.KeyBinding;
 import cpw.mods.fml.common.IKeyHandler;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
  * @author cpw
@@ -26,15 +28,18 @@ public class KeyBindingHandler implements IKeyHandler
 
     private boolean shouldRepeat;
     private KeyBinding keyBinding;
+    private ModContainer modContainer;
 
     /**
      * @param keyHandler
      * @param allowRepeat
+     * @param modContainer 
      */
-    public KeyBindingHandler(KeyBinding keyHandler, boolean allowRepeat)
+    public KeyBindingHandler(KeyBinding keyHandler, boolean allowRepeat, ModContainer modContainer)
     {
         this.keyBinding=keyHandler;
         this.shouldRepeat=allowRepeat;
+        this.modContainer=modContainer;
     }
 
     @Override
@@ -43,4 +48,11 @@ public class KeyBindingHandler implements IKeyHandler
         return this.keyBinding;
     }
 
+    /**
+     * @return the modContainer
+     */
+    public ModContainer getOwningContainer()
+    {
+        return modContainer;
+    }
 }

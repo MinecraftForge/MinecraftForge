@@ -1,6 +1,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 public interface IFMLSidedHandler
@@ -13,4 +14,6 @@ public interface IFMLSidedHandler
     boolean isClient();
     Object getMinecraftInstance();
     String getCurrentLanguage();
+    Properties getCurrentLanguageTable();
+    String getObjectName(Object minecraftObject);
 }

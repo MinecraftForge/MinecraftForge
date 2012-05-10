@@ -66,8 +66,9 @@ public class FMLCommonHandler
     
     private int uniqueEntityListId = 220;
 
-    private List<ModContainer> extraTickers = new ArrayList<ModContainer>();
+    private List<ModContainer> auxilliaryContainers = new ArrayList<ModContainer>();
 
+    private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
     /**
      * We register our delegate here
      * @param handler
@@ -99,7 +100,7 @@ public class FMLCommonHandler
         {
             mod.tickStart(type, data);
         }
-        for (ModContainer mod : extraTickers)
+        for (ModContainer mod : auxilliaryContainers)
         {
             mod.tickStart(type, data);
         }
@@ -111,7 +112,7 @@ public class FMLCommonHandler
         {
             mod.tickEnd(type, data);
         }
-        for (ModContainer mod : extraTickers)
+        for (ModContainer mod : auxilliaryContainers)
         {
             mod.tickEnd(type, data);
         }
@@ -123,7 +124,7 @@ public class FMLCommonHandler
         {
             allKeys.addAll(mod.getKeys());
         }
-        for (ModContainer mod : extraTickers)
+        for (ModContainer mod : auxilliaryContainers)
         {
             allKeys.addAll(mod.getKeys());
         }
@@ -310,7 +311,6 @@ public class FMLCommonHandler
         return uniqueEntityListId++;
     }
 
-    private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
     /**
      * @param key
      * @param lang
@@ -326,7 +326,8 @@ public class FMLCommonHandler
         langPack.put(key,value);
         
         if (sidedDelegate.getCurrentLanguage().equals(lang)) {
-            handleLanguageLoad(langPack, lang);
+            // Inject new translations into current language table
+            handleLanguageLoad(sidedDelegate.getCurrentLanguageTable(), lang);
         }
     }
 
@@ -359,8 +360,47 @@ public class FMLCommonHandler
         return sidedDelegate.isClient();
     }
     
-    public void registerTicker(ModContainer ticker)
+    public void addAuxilliaryModContainer(ModContainer ticker)
     {
-        extraTickers.add(ticker);
+        auxilliaryContainers.add(ticker);
     }
+
+    /**
+     * Called from the furnace to lookup fuel values
+     * 
+     * @param itemId
+     * @param itemDamage
+     * @return
+     */
+    public int fuelLookup(int itemId, int itemDamage)
+    {
+        int fv = 0;
+    
+        for (ModContainer mod : Loader.getModList())
+        {
+            fv = Math.max(fv, mod.lookupFuelValue(itemId, itemDamage));
+        }
+    
+        return fv;
+    }
+    
+    public void addNameForObject(Object minecraftObject, String lang, String name) {
+        String label=sidedDelegate.getObjectName(minecraftObject);
+        addStringLocalization(label, lang, name);
+    }
+    
+    
+    /**
+     * Raise an exception
+     * 
+     * @param exception
+     * @param message
+     * @param stopGame
+     */
+    public void raiseException(Throwable exception, String message, boolean stopGame)
+    {
+        FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
+        throw new RuntimeException(exception);
+    }
+
 }

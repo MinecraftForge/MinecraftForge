@@ -1,5 +1,3 @@
-package net.minecraft.src;
-
 /*
  * The FML Forge Mod Loader suite. Copyright (C) 2012 cpw
  *
@@ -12,6 +10,7 @@ package net.minecraft.src;
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
+package net.minecraft.src;
 
 import java.util.Map;
 import java.util.Random;
@@ -56,25 +55,25 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onCrafting(Object... craftingParameters)
     {
-        takenFromCrafting((EntityPlayer) craftingParameters[0], (ItemStack) craftingParameters[1], (IInventory) craftingParameters[2]);
+        takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
     }
 
     @Override
     public final void onSmelting(Object... smeltingParameters)
     {
-        takenFromFurnace((EntityPlayer) smeltingParameters[0], (ItemStack) smeltingParameters[1]);
+        takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
     }
 
     @Override
     public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
     {
-        return dispenseEntity((World) data[0], x, y, z, xVelocity, zVelocity, (ItemStack) data[1]);
+        return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
     }
 
     @Override
     public final boolean onChat(Object... data)
     {
-        return onChatMessageReceived((EntityPlayer) data[1], (Packet3Chat) data[0]);
+        return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
     }
 
     @Override
@@ -86,19 +85,19 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onPlayerLogout(Object player)
     {
-        onClientLogout((EntityPlayer) player);
+        onClientLogout((EntityPlayer)player);
     }
 
     @Override
     public final void onPlayerChangedDimension(Object player)
     {
-        onClientDimensionChanged((EntityPlayer) player);
+        onClientDimensionChanged((EntityPlayer)player);
     }
 
     @Override
     public final void onPacket250Packet(Object... data)
     {
-        onPacket250Received((EntityPlayer) data[1], (Packet250CustomPayload) data[0]);
+        onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
     }
 
     @Override
@@ -134,10 +133,33 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         return false;
     }
 
+    /**
+     * @param renderer
+     * @param block
+     * @param metadata
+     * @param modelID
+     */
+    public final void onRenderInventoryBlock(Object renderer, Block block, int metadata, int modelID)
+    {
+        renderInvBlock((RenderBlocks)renderer, block, metadata, modelID);
+    }
+
+    /**
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param block
+     * @param modelID
+     * @param renderer
+     */
+    public final boolean onRenderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer)
+    {
+        return renderWorldBlock((RenderBlocks)renderer, world, x, y, z, block, modelID);
+    }
     // BASEMOD API
     /**
-     * Override if you wish to provide a fuel item for the furnace and return
-     * the fuel value of the item
+     * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
      * 
      * @param id
      * @param metadata
@@ -154,8 +176,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Override if you wish to perform some action other than just dispensing
-     * the item from the dispenser
+     * Override if you wish to perform some action other than just dispensing the item from the dispenser
      * 
      * @param world
      * @param x
@@ -222,14 +243,14 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      */
     public abstract String getVersion();
 
-    /**
-     * Load your mod
-     */
     public void keyboardEvent(KeyBinding event)
     {
 
     }
 
+    /**
+     * Load your mod
+     */
     public abstract void load();
 
     /**
@@ -250,11 +271,10 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Ticked every game tick if you have subscribed to tick events through
-     * {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
+     * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
      * 
-     * @param minecraftServer
-     *            the server
+     * @param time the rendering subtick time (0.0-1.0)
+     * @param minecraftInstance the client
      * @return true to continue receiving ticks
      */
     public boolean onTickInGame(float time, Minecraft minecraftInstance)
@@ -268,6 +288,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
+     * Only implemented on the client side
      * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
      * 
      * @param text
@@ -278,6 +299,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
+     * Only called on the client side
      * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
      * 
      * @param packet
@@ -316,7 +338,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Called when someone takes a smelted item from a furnace
-     * 
+     *
      * @param player
      * @param item
      */
@@ -335,7 +357,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     /**
      * Called when a 250 packet is received on a channel registered to this mod
-     * 
+     *
      * @param source
      * @param payload
      */
@@ -344,15 +366,22 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     /**
-     * Called when a chat message is received. Return true to stop further
-     * processing
+     * Called when a chat message is received. Return true to stop further processing
      * 
      * @param source
      * @param chat
-     * @return true if you want to consume the message so it is not available
-     *         for further processing
+     * @return true if you want to consume the message so it is not available for further processing
      */
     public boolean onChatMessageReceived(EntityPlayer source, Packet3Chat chat)
+    {
+        return false;
+    }
+    /**
+     * Called when a server command is received
+     * @param command
+     * @return true if you want to consume the message so it is not available for further processing
+     */
+    public boolean onServerCommand(String command, String sender, Object listener)
     {
         return false;
     }
@@ -386,4 +415,5 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
 
     }
+
 }

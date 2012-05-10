@@ -18,6 +18,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 
 import net.minecraft.src.ModLoader;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 
 /**
@@ -79,8 +80,7 @@ public class SpriteHelper
             {
                 Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
                 Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
-                ModLoader.throwException(ex);
-                return 0;
+                FMLCommonHandler.instance().raiseException(ex,"Invalid request to getUniqueSpriteIndex",true);
             }
         }
         int ret = SpriteHelper.getFreeSlot(slots);
@@ -88,7 +88,7 @@ public class SpriteHelper
         {
             Exception ex = new Exception(String.format("No more sprite indicies left for: %s", path));
             Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
-            ModLoader.throwException(ex);
+            FMLCommonHandler.instance().raiseException(ex,"No more sprite indicies left", true);
         }
         return ret;
     }

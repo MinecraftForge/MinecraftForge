@@ -16,12 +16,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.Block;
 import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -29,6 +31,7 @@ import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.ICommandListener;
 import net.minecraft.src.IInventory;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
@@ -549,21 +552,38 @@ public class FMLServerHandler implements IFMLSidedHandler
         WorldType.field_48457_b.addNewBiome(biome);
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#getMinecraftInstance()
-     */
     @Override
     public Object getMinecraftInstance()
     {
         return server;
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#getCurrentLanguage()
-     */
     @Override
     public String getCurrentLanguage()
     {
         return StringTranslate.func_25079_a().getCurrentLanguage();
+    }
+
+    @Override
+    public Properties getCurrentLanguageTable()
+    {
+        return StringTranslate.func_25079_a().getCurrentLanguageTable();
+    }
+
+    @Override
+    public String getObjectName(Object instance)
+    {
+        String objectName;
+        if (instance instanceof Item) {
+            objectName=((Item)instance).func_20106_a();
+        } else if (instance instanceof Block) {
+            objectName=((Block)instance).func_20036_e();
+        } else if (instance instanceof ItemStack) {
+            objectName=Item.field_176_c[((ItemStack)instance).field_855_c].func_35407_a((ItemStack)instance);
+        } else {
+            throw new IllegalArgumentException(String.format("Illegal object for naming %s",instance));
+        }
+        objectName+=".name";
+        return objectName;
     }
 }

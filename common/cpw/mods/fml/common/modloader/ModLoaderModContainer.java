@@ -77,7 +77,7 @@ public class ModLoaderModContainer implements ModContainer
      * @param instance
      */
     ModLoaderModContainer(BaseMod instance) {
-        FMLCommonHandler.instance().registerTicker(this);
+        FMLCommonHandler.instance().addAuxilliaryModContainer(this);
         this.mod=instance;
         this.ticks = EnumSet.noneOf(TickType.class);
     }
@@ -623,5 +623,25 @@ public class ModLoaderModContainer implements ModContainer
             return Collections.emptyList();
         }
         return keyHandlers;
+    }
+
+    /**
+     * @param block
+     * @param metadata
+     * @param modelID
+     * @param renderer
+     */
+    public void renderInventoryBlock(Block block, int metadata, int modelID, Object renderer)
+    {
+        mod.onRenderInventoryBlock(renderer, block, metadata, modelID);
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#renderWorldBlock(net.minecraft.src.IBlockAccess, int, int, int, net.minecraft.src.Block, int, java.lang.Object)
+     */
+    @Override
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelID, Object renderer)
+    {
+        return mod.onRenderWorldBlock(world, x, y, z, block, modelID, renderer);
     }
 }
