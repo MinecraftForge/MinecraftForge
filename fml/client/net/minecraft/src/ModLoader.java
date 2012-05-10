@@ -673,7 +673,7 @@ public class ModLoader
 
     public static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        //TODO
+        FMLClientHandler.instance().onRenderInvBlock(renderer, block, metadata, modelID);
     }
 
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)

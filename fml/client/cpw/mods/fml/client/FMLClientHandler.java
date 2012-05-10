@@ -651,4 +651,19 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         return ((BaseMod)mod.getMod()).renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
+
+    /**
+     * @param renderer
+     * @param block
+     * @param metadata
+     * @param modelID
+     */
+    public void onRenderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
+    {
+        ModLoaderModContainer mod = blockModelIds.get(modelID);
+        if (mod != null)
+        {
+            ((BaseMod)mod.getMod()).renderInvBlock(renderer, block, metadata, modelID);
+        }
+    }
 }
