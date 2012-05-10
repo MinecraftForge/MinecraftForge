@@ -23,28 +23,14 @@
       </condition>
     </sequential>
   </macrodef>
-  <target name="revision">
+  <target name="writeversion">
+    <exec executable="${python.exe}" dir="${basedir}" failonerror="true">
+      <arg value="${basedir}/getversion.py" />
+    </exec>
     <propertyfile file="fmlversion.properties">
-      <entry key="fmlbuild.revision.number" type="int" operation="+" value="1" pattern="0" />
       <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
     </propertyfile>
   </target>
-
-  <target name="minor">
-    <propertyfile file="fmlversion.properties">
-      <entry key="fmlbuild.minor.number" type="int" operation="+" value="1" pattern="0" />
-      <entry key="fmlbuild.revision.number" type="int" value="0" pattern="0" />
-    </propertyfile>
-  </target>
-
-  <target name="major">
-    <propertyfile file="fmlversion.properties">
-      <entry key="fmlbuild.major.number" type="int" operation="+" value="1" pattern="0" />
-      <entry key="fmlbuild.minor.number" type="int" value="0" pattern="0" />
-      <entry key="fmlbuild.revision.number" type="int" value="0" pattern="0" />
-    </propertyfile>
-  </target>
-
 
   <target name="init">
     <tstamp>
@@ -52,18 +38,7 @@
     </tstamp>
     <property environment="env" />
     <property file="fmlbuild.properties" />
-    <property file="fmlversion.properties" />
-    <property name="build.number" value="${fmlbuild.major.number}.${fmlbuild.minor.number}.${fmlbuild.revision.number}" />
-    <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
-      <isset property="env.BUILD_NUMBER" />
-    </condition>
-    <antcall target="revision" />
     <property name="modname" value="fml" />
-    <property name="version.minecraft" value="${fmlbuild.mcversion}" />
-    <property name="version.major" value="${fmlbuild.major.number}" />
-    <property name="version.minor" value="${fmlbuild.minor.number}" />
-    <property name="version.rev" value="${fmlbuild.revision.number}" />
-    <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
     <condition property="dev.home" value="${env.WORKSPACE}" else="${default.dev.home}">
       <isset property="env.WORKSPACE" />
     </condition>
@@ -83,6 +58,17 @@
     <property name="client.src.dir" location="${basedir}/client" />
     <property name="server.src.dir" location="${basedir}/server" />
     <property name="patch.src.dir" location="${basedir}/patches" />
+    <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
+      <isset property="env.BUILD_NUMBER" />
+    </condition>
+    <antcall target="writeversion" />
+    <property file="fmlversion.properties" />
+    <property name="build.number" value="${fmlbuild.major.number}.${fmlbuild.minor.number}.${fmlbuild.revision.number}" />
+    <property name="version.minecraft" value="${fmlbuild.mcversion}" />
+    <property name="version.major" value="${fmlbuild.major.number}" />
+    <property name="version.minor" value="${fmlbuild.minor.number}" />
+    <property name="version.rev" value="${fmlbuild.revision.number}" />
+    <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
   </target>
 
   <target name="clean">
