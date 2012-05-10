@@ -23,6 +23,28 @@
       </condition>
     </sequential>
   </macrodef>
+  <target name="revision">
+    <propertyfile file="fmlversion.properties">
+      <entry key="fmlbuild.revision.number" type="int" operation="+" value="1" pattern="0" />
+      <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
+    </propertyfile>
+  </target>
+
+  <target name="minor">
+    <propertyfile file="fmlversion.properties">
+      <entry key="fmlbuild.minor.number" type="int" operation="+" value="1" pattern="0" />
+      <entry key="fmlbuild.revision.number" type="int" value="0" pattern="0" />
+    </propertyfile>
+  </target>
+
+  <target name="major">
+    <propertyfile file="fmlversion.properties">
+      <entry key="fmlbuild.major.number" type="int" operation="+" value="1" pattern="0" />
+      <entry key="fmlbuild.minor.number" type="int" value="0" pattern="0" />
+      <entry key="fmlbuild.revision.number" type="int" value="0" pattern="0" />
+    </propertyfile>
+  </target>
+
 
   <target name="init">
     <tstamp>
@@ -30,14 +52,17 @@
     </tstamp>
     <property environment="env" />
     <property file="fmlbuild.properties" />
-    <property name="modname" value="fml" />
-    <property name="version.minecraft" value="1.2.5" />
-    <property name="version.major" value="1" />
-    <property name="version.minor" value="0" />
-    <property name="version.rev" value="0" />
+    <property file="fmlversion.properties" />
+    <property name="build.number" value="${fmlbuild.major.number}.${fmlbuild.minor.number}.${fmlbuild.revision.number}" />
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
       <isset property="env.BUILD_NUMBER" />
     </condition>
+    <antcall target="revision" />
+    <property name="modname" value="fml" />
+    <property name="version.minecraft" value="${fmlbuild.mcversion}" />
+    <property name="version.major" value="${fmlbuild.major.number}" />
+    <property name="version.minor" value="${fmlbuild.minor.number}" />
+    <property name="version.rev" value="${fmlbuild.revision.number}" />
     <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
     <condition property="dev.home" value="${env.WORKSPACE}" else="${default.dev.home}">
       <isset property="env.WORKSPACE" />
@@ -105,15 +130,6 @@
     <copy todir="${merge-to}" overwrite="true" verbose="true">
       <fileset dir="${side-from}" includes="**/*.java" />
       <fileset dir="${common.src.dir}" includes="**/*.java" />
-      <filterchain>
-        <replacetokens>
-          <token key="MAJOR" value="${version.major}" />
-          <token key="MINOR" value="${version.minor}" />
-          <token key="REV" value="${version.rev}" />
-          <token key="BUILD" value="${version.build}" />
-          <token key="MCVERSION" value="${version.minecraft}" />
-        </replacetokens>
-      </filterchain>
     </copy>
   </target>
 
@@ -135,6 +151,7 @@
     <mkdir dir="${basedir}/target" />
     <zip destfile="${basedir}/target/${jarname}.zip">
       <fileset dir="${output}" includes="**/*.class" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
       <mappedresources>
@@ -163,37 +180,8 @@
       <zipfileset dir="${common.src.dir}" includes="**/*.java" excludes="**/Loader.java" prefix="fml/src/minecraft" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/src/minecraft" />
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/src/minecraft_server" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
-      <mappedresources>
-        <concat>
-          <fileset dir="${common.src.dir}" includes="cpw/mods/fml/common/Loader.java" />
-          <filterchain>
-            <replacetokens>
-              <token key="MAJOR" value="${version.major}" />
-              <token key="MINOR" value="${version.minor}" />
-              <token key="REV" value="${version.rev}" />
-              <token key="BUILD" value="${version.build}" />
-              <token key="MCVERSION" value="${version.minecraft}" />
-            </replacetokens>
-          </filterchain>
-        </concat>
-        <mergemapper to="fml/src/minecraft_server/cpw/mods/fml/common/Loader.java" />
-      </mappedresources>
-        <mappedresources>
-          <concat>
-            <fileset dir="${common.src.dir}" includes="cpw/mods/fml/common/Loader.java" />
-            <filterchain>
-              <replacetokens>
-                <token key="MAJOR" value="${version.major}" />
-                <token key="MINOR" value="${version.minor}" />
-                <token key="REV" value="${version.rev}" />
-                <token key="BUILD" value="${version.build}" />
-                <token key="MCVERSION" value="${version.minecraft}" />
-              </replacetokens>
-            </filterchain>
-          </concat>
-          <mergemapper to="fml/src/minecraft/cpw/mods/fml/common/Loader.java" />
-        </mappedresources>
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />

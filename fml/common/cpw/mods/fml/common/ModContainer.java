@@ -28,6 +28,17 @@ import java.util.List;
 
 public interface ModContainer
 {
+    public enum ModState {
+        UNLOADED("Unloaded"), LOADED("Loaded"), PREINITIALIZED("Pre-initialized"), INITIALIZED("Initialized"), POSTINITIALIZED("Post-initialized"), AVAILABLE("Available");
+        private String label;
+
+        private ModState(String label) {
+            this.label=label;
+        }
+        public String toString() {
+            return this.label;
+        }
+    }
     /**
      * The enclosed mod wants to be called during pre-initialization.
      * @return
@@ -56,6 +67,15 @@ public interface ModContainer
      */
     String getName();
     /**
+     * The state of the mod
+     * @return
+     */
+    ModState getModState();
+    /**
+     * Move to the next mod state
+     */
+    void nextState();
+    /**
      * A tick has started
      */
     void tickStart(TickType tick, Object ... data);
@@ -74,6 +94,11 @@ public interface ModContainer
      * @return
      */
     File getSource();
+    /**
+     * Returns the sorting rules as a string for printing
+     * @return
+     */
+    String getSortingRules();
     /**
      * The actual mod object itself
      * @return
