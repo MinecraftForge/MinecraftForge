@@ -15,6 +15,7 @@ package cpw.mods.fml.common.toposort;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Topological sort for mod loading
@@ -34,8 +37,9 @@ public class TopologicalSort
 {
     public static class DirectedGraph<T> implements Iterable<T>
     {
-        private final Map<T, Set<T>> graph = new HashMap<T, Set<T>>();
-
+        private final Map<T, SortedSet<T>> graph = new HashMap<T, SortedSet<T>>();
+        private List<T> orderedNodes = new ArrayList<T>();
+        
         public boolean addNode(T node)
         {
             // Ignore nodes already added
@@ -44,7 +48,13 @@ public class TopologicalSort
                 return false;
             }
 
-            graph.put(node, new HashSet<T>());
+            orderedNodes.add(node);
+            graph.put(node, new TreeSet<T>(new Comparator<T>()
+            {
+                public int compare(T o1, T o2) {
+                    return orderedNodes.indexOf(o1)-orderedNodes.indexOf(o2);
+                }
+            }));
             return true;
         }
 
@@ -85,12 +95,12 @@ public class TopologicalSort
                 throw new NoSuchElementException("Missing node from graph");
             }
 
-            return Collections.unmodifiableSet(graph.get(from));
+            return Collections.unmodifiableSortedSet(graph.get(from));
         }
         @Override
         public Iterator<T> iterator()
         {
-            return graph.keySet().iterator();
+            return orderedNodes.iterator();
         }
 
         public int size()

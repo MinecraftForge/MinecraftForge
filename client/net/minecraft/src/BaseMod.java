@@ -212,7 +212,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      */
     public String getPriorities()
     {
-        return null;
+        return "";
     }
 
     /**
