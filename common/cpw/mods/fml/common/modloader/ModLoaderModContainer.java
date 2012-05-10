@@ -31,7 +31,10 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import net.minecraft.src.BaseMod;
+import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.MLProp;
+import net.minecraft.src.RenderBlocks;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
