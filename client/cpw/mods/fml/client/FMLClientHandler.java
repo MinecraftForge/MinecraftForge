@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -42,6 +43,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.KeyBinding;
+import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
@@ -51,6 +53,7 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.StringTranslate;
+import net.minecraft.src.TexturePackBase;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
@@ -103,6 +106,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private BiomeGenBase[] defaultOverworldBiomes;
 
     private int nextRenderId = 30;
+
+    private TexturePackBase fallbackTexturePack;
 
     // Cached lookups
     private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
@@ -160,6 +165,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         Loader.instance().initializeMods();
         client.field_6304_y.loadModKeySettings(harvestKeyBindings());
+        onTexturePackChange(fallbackTexturePack);
     }
 
     public KeyBinding[] harvestKeyBindings() {
@@ -676,6 +682,23 @@ public class FMLClientHandler implements IFMLSidedHandler
         return false;
     }
     
+    public void registerTextureOverrides(RenderEngine renderer) {
+        for (String fileToOverride : overrideInfo.keySet()) {
+            for (OverrideInfo override : overrideInfo.get(fileToOverride)) {
+                try
+                {
+                    BufferedImage image=loadImageFromTexturePack(renderer, override.override);
+                    ModTextureStatic mts=new ModTextureStatic(override.index, 1, override.texture, image);
+                    renderer.func_1066_a(mts);
+                }
+                catch (IOException e)
+                {
+                    FMLCommonHandler.instance().getFMLLogger().throwing("FMLClientHandler", "registerTextureOverrides", e);
+                }
+            }
+        }
+    }
+    
     public String getObjectName(Object instance) {
         String objectName;
         if (instance instanceof Item) {
@@ -702,5 +725,26 @@ public class FMLClientHandler implements IFMLSidedHandler
         meta.name=root.func_27213_a("name");
         meta.description=root.func_27213_a("description");
         return meta;
+    }
+
+    /**
+     * @param p_6531_1_
+     */
+    public void onTexturePackChange(TexturePackBase texturePack)
+    {
+        FMLClientHandler.instance().registerTextureOverrides(client.field_6315_n);
+    }
+
+    /**
+     * @param field_6539_c
+     */
+    public void onTexturePackFallback(TexturePackBase fallback)
+    {
+        if (client==null) {
+            // We're far too early- let's wait
+            this.fallbackTexturePack=fallback;
+        } else {
+            onTexturePackChange(fallback);
+        }
     }
 }
