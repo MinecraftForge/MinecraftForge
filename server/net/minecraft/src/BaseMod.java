@@ -388,6 +388,14 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     }
 
+    /**
+     * @param renderers
+     */
+    public void onRenderHarvest(Map renderers)
+    {
+        // NOOP
+    }
+
     // Spare client junk
     // -------
     // void addRenderer(Map<Class<? extends Entity>, Render> renderers);

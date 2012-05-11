@@ -676,6 +676,9 @@ public class ModLoader
     {
     }
 
+    public static void sendPacket(Packet packet) {
+        FMLClientHandler.instance().sendPacket(packet);
+    }
     /**
      * Send a chat message to the server
      * {@link FMLClientHandler#handleChatPacket(Packet3Chat, EntityPlayer)}

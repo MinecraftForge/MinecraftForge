@@ -46,11 +46,14 @@ import net.minecraft.src.KeyBinding;
 import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.Render;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
+import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TexturePackBase;
@@ -109,6 +112,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private TexturePackBase fallbackTexturePack;
 
+    private NetClientHandler networkClient;
+
     // Cached lookups
     private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
     private static HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
@@ -164,6 +169,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onLoadComplete()
     {
         Loader.instance().initializeMods();
+        for (ModContainer mod : Loader.getModList()) {
+            mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
+            for (Render r : ((List<Render>)RenderManager.field_1233_a.getRendererList())) {
+                r.func_4009_a(RenderManager.field_1233_a);
+            }
+        }
         client.field_6304_y.loadModKeySettings(harvestKeyBindings());
         onTexturePackChange(fallbackTexturePack);
     }
@@ -406,6 +417,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void handleServerLogin(Packet1Login loginPacket, NetClientHandler handler, NetworkManager networkManager)
     {
+        this.networkClient=handler;
         Packet250CustomPayload packet = new Packet250CustomPayload();
         packet.field_44012_a = "REGISTER";
         packet.field_44011_c = FMLCommonHandler.instance().getPacketRegistry();
@@ -745,6 +757,16 @@ public class FMLClientHandler implements IFMLSidedHandler
             this.fallbackTexturePack=fallback;
         } else {
             onTexturePackChange(fallback);
+        }
+    }
+
+    /**
+     * @param packet
+     */
+    public void sendPacket(Packet packet)
+    {
+        if (this.networkClient!=null) {
+            this.networkClient.func_847_a(packet);
         }
     }
 }

@@ -642,4 +642,13 @@ public class ModLoaderModContainer implements ModContainer
     {
         this.metadata=meta;
     }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#gatherRenderers(java.util.Map)
+     */
+    @Override
+    public void gatherRenderers(Map renderers)
+    {
+        mod.onRenderHarvest(renderers);
+    }
 }
