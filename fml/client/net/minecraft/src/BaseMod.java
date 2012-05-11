@@ -73,9 +73,20 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final boolean onChat(Object... data)
     {
-        return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
+        receiveChatPacket(((Packet3Chat)data[0]).field_517_a);
+        return true;
     }
 
+
+    @Override
+    public final void onServerLogin(Object handler) {
+        serverConnect((NetClientHandler) handler);
+    }
+    
+    public final void onServerLogout() {
+        serverDisconnect();
+    }
+    
     @Override
     public final void onPlayerLogin(Object player)
     {
@@ -97,7 +108,7 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     @Override
     public final void onPacket250Packet(Object... data)
     {
-        onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
+        receiveCustomPacket((Packet250CustomPayload)data[0]);
     }
 
     @Override
@@ -300,6 +311,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
 
     }
 
+    public void serverConnect(NetClientHandler handler) {
+        
+    }
+    
+    public void serverDisconnect() {
+        
+    }
     /**
      * Called when someone crafts an item from a crafting table
      * 
