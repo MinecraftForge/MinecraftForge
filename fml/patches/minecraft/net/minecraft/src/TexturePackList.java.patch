@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/src/TexturePackList.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TexturePackList.java	0000-00-00 00:00:00.000000000 -0000
+@@ -7,6 +7,8 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++
++import cpw.mods.fml.client.FMLClientHandler;
+ import net.minecraft.client.Minecraft;
+ 
+ public class TexturePackList
+@@ -56,6 +58,7 @@
+             this.field_6537_e.field_6304_y.field_6524_j = this.field_6535_g;
+             this.field_6537_e.field_6304_y.func_1041_b();
+             this.field_6534_a.func_6482_a();
++            FMLClientHandler.instance().onTexturePackChange(p_6531_1_);
+             return true;
+         }
+     }
+@@ -140,6 +143,7 @@
+         if (this.field_6534_a == null)
+         {
+             this.field_6534_a = this.field_6539_c;
++            FMLClientHandler.instance().onTexturePackFallback(this.field_6539_c);
+         }
+ 
+         this.field_6533_b.removeAll(var1);
