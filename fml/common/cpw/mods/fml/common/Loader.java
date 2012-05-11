@@ -614,4 +614,12 @@ public class Loader
         }
         return ret.toString();
     }
+
+    /**
+     * @return
+     */
+    public String getFMLVersionString()
+    {
+        return String.format("FML v%s.%s.%s.%s", major, minor, rev, build);
+    }
 }

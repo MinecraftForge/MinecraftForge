@@ -35,6 +35,11 @@
 			<type>2</type>
 			<locationURI>MCP_LOC/src-work/minecraft</locationURI>
 		</link>
+		<link>
+			<name>common/fmlversion.properties</name>
+			<type>1</type>
+			<location>/home/cpw/projects/mcworkspace/fmltestbed/FML/fmlversion.properties</location>
+		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
