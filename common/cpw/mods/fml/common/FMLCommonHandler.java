@@ -14,6 +14,8 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +27,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
+import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.ModContainer.TickType;
 
 import net.minecraft.src.StringTranslate;
@@ -49,6 +58,7 @@ public class FMLCommonHandler
      * The singleton
      */
     private static final FMLCommonHandler INSTANCE = new FMLCommonHandler();
+    private static final Pattern metadataFile = Pattern.compile("$/modinfo.json$");;
     /**
      * A map of mods to their network channels
      */
@@ -429,6 +439,31 @@ public class FMLCommonHandler
         brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()>1?"s":""));
         Collections.reverse(brandings);
         return brandings.toArray(new String[brandings.size()]);
+    }
+
+    /**
+     * @param mod
+     */
+    public void loadMetadataFor(ModContainer mod)
+    {
+        if (mod.getSourceType()==SourceType.JAR) {
+            try
+            {
+                ZipFile jar = new ZipFile(mod.getSource());
+                ZipEntry infoFile=jar.getEntry("/modinfo.json");
+                if (infoFile!=null) {
+                    InputStream input=jar.getInputStream(infoFile);
+                    ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
+                    mod.setMetadata(data);
+                }
+            }
+            catch (Exception e)
+            {
+                // Something wrong but we don't care
+            }
+        } else {
+            getFMLLogger().fine(String.format("Unable to load metadata for mod %s as it is not a jar/zip packaged file",mod.getName()));
+        }
     }
 
 }
