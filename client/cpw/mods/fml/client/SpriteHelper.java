@@ -105,7 +105,9 @@ public class SpriteHelper
 
     public static int getFreeSlot(BitSet slots)
     {
-        return slots.nextSetBit(0);
+        int next=slots.nextSetBit(0);
+        slots.clear(next);
+        return next;
     }
 
 }
