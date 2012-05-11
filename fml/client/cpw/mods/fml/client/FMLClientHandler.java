@@ -171,7 +171,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         Loader.instance().initializeMods();
         for (ModContainer mod : Loader.getModList()) {
             mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
-            for (Render r : ((List<Render>)RenderManager.field_1233_a.getRendererList())) {
+            for (Render r : RenderManager.field_1233_a.getRendererList().values()) {
                 r.func_4009_a(RenderManager.field_1233_a);
             }
         }
