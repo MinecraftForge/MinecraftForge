@@ -47,7 +47,9 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.ModState;
+import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.ModMetadata;
 
 public class ModLoaderModContainer implements ModContainer
 {
@@ -60,6 +62,8 @@ public class ModLoaderModContainer implements ModContainer
     private ArrayList<String> postDependencies;
     private ArrayList<IKeyHandler> keyHandlers;
     private ModState state;
+    private SourceType sourceType;
+    private ModMetadata metadata;
     
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
@@ -386,7 +390,7 @@ public class ModLoaderModContainer implements ModContainer
 
         for (ModContainer mc : Loader.getModList())
         {
-            if (mc instanceof ModLoaderModContainer)
+            if (mc instanceof ModLoaderModContainer && mc.getModState().ordinal()>ModState.LOADED.ordinal())
             {
                 modList.add(((ModLoaderModContainer)mc).mod);
             }
@@ -609,5 +613,33 @@ public class ModLoaderModContainer implements ModContainer
             return Collections.emptyList();
         }
         return keyHandlers;
+    }
+
+    @Override
+    public void setSourceType(SourceType type) {
+        this.sourceType=type;
+    }
+    @Override
+    public SourceType getSourceType()
+    {
+        return sourceType;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getMetadata()
+     */
+    @Override
+    public ModMetadata getMetadata()
+    {
+        return metadata;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#setMetadata(cpw.mods.fml.common.ModMetadata)
+     */
+    @Override
+    public void setMetadata(ModMetadata meta)
+    {
+        this.metadata=meta;
     }
 }

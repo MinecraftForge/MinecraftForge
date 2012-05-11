@@ -492,6 +492,7 @@ public class Loader
                 // Unrecognized
             }
             if (mod!=null) {
+                FMLCommonHandler.instance().loadMetadataFor(mod);
                 mods.add(mod);
                 mod.nextState();
             }

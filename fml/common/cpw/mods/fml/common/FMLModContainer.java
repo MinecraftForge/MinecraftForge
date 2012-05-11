@@ -337,4 +337,40 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getSourceType()
+     */
+    @Override
+    public SourceType getSourceType()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#setSourceType(cpw.mods.fml.common.ModContainer.SourceType)
+     */
+    @Override
+    public void setSourceType(SourceType type)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getMetadata()
+     */
+    @Override
+    public ModMetadata getMetadata()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#setMetadata(cpw.mods.fml.common.ModMetadata)
+     */
+    @Override
+    public void setMetadata(ModMetadata meta)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }

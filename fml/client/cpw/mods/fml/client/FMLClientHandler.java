@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,14 +53,18 @@ import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
+import argo.jdom.JdomParser;
+import argo.jdom.JsonNode;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+
 
 /**
  * Handles primary communication from hooked code into the system
@@ -684,5 +689,18 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         objectName+=".name";
         return objectName;
+    }
+    
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#readMetadataFrom(java.io.InputStream, cpw.mods.fml.common.ModContainer)
+     */
+    @Override
+    public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception
+    {
+        JsonNode root=new JdomParser().func_27366_a(new InputStreamReader(input));
+        ModMetadata meta=new ModMetadata(mod);
+        meta.name=root.func_27213_a("name");
+        meta.description=root.func_27213_a("description");
+        return meta;
     }
 }

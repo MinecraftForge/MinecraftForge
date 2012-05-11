@@ -14,6 +14,7 @@ package cpw.mods.fml.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -45,6 +46,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
@@ -585,5 +587,14 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
         objectName+=".name";
         return objectName;
+    }
+    
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#readMetadataFrom(java.io.InputStream, cpw.mods.fml.common.ModContainer)
+     */
+    @Override
+    public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception
+    {
+        return null;
     }
 }

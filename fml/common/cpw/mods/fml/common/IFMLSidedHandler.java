@@ -1,6 +1,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -16,4 +17,5 @@ public interface IFMLSidedHandler
     String getCurrentLanguage();
     Properties getCurrentLanguageTable();
     String getObjectName(Object minecraftObject);
+    ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception;
 }

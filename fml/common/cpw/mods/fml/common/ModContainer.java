@@ -16,6 +16,8 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.util.List;
 
+import cpw.mods.fml.common.ModContainer.SourceType;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 
@@ -41,6 +43,10 @@ public interface ModContainer
         public String toString() {
             return this.label;
         }
+    }
+    
+    public enum SourceType {
+        JAR, CLASSPATH, DIR;
     }
     /**
      * The enclosed mod wants to be called during pre-initialization.
@@ -203,4 +209,11 @@ public interface ModContainer
     }
 
     List<IKeyHandler> getKeys();
+    
+    SourceType getSourceType();
+
+    void setSourceType(SourceType type);
+    
+    ModMetadata getMetadata();
+    void setMetadata(ModMetadata meta);
 }
