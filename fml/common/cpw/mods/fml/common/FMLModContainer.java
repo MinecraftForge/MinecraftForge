@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
@@ -369,6 +370,15 @@ public class FMLModContainer implements ModContainer
      */
     @Override
     public void setMetadata(ModMetadata meta)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#gatherRenderers(java.util.Map)
+     */
+    @Override
+    public void gatherRenderers(Map renderers)
     {
         // TODO Auto-generated method stub
         

@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import cpw.mods.fml.common.ModContainer.SourceType;
 
@@ -216,4 +217,8 @@ public interface ModContainer
     
     ModMetadata getMetadata();
     void setMetadata(ModMetadata meta);
+    /**
+     * 
+     */
+    void gatherRenderers(Map renderers);
 }

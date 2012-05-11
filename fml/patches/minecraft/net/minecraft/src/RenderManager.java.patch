@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/src/RenderManager.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/RenderManager.java	0000-00-00 00:00:00.000000000 -0000
+@@ -183,4 +183,8 @@
+     {
+         return this.field_1218_p;
+     }
++    
++    public Map<Class<? extends Entity>, Render> getRendererList() {
++        return field_6501_o;
++    }
+ }
