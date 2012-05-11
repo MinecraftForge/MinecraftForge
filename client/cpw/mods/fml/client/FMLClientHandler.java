@@ -41,6 +41,7 @@ import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.KeyBinding;
+import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
@@ -379,17 +380,32 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @return true if you want the packet to stop processing and not echo to
      *         the rest of the world
      */
-    public boolean handleChatPacket(Packet3Chat chat, EntityPlayer player)
+    public boolean handleChatPacket(Packet3Chat chat)
     {
         for (ModContainer mod : Loader.getModList())
         {
-            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat, player))
+            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat))
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public void handleServerLogin(Packet1Login loginPacket, NetClientHandler handler, NetworkManager networkManager)
+    {
+        Packet250CustomPayload packet = new Packet250CustomPayload();
+        packet.field_44012_a = "REGISTER";
+        packet.field_44011_c = FMLCommonHandler.instance().getPacketRegistry();
+        packet.field_44010_b = packet.field_44011_c.length;
+        if (packet.field_44010_b > 0)
+        {
+            networkManager.func_972_a(packet);
+        }
+        for (ModContainer mod : Loader.getModList()) {
+            mod.getNetworkHandler().onServerLogin(handler);
+        }
     }
 
     /**

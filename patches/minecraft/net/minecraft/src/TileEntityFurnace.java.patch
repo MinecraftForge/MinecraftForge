@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TileEntityFurnace.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,8 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++import cpw.mods.fml.common.FMLCommonHandler;
++
+ public class TileEntityFurnace extends TileEntity implements IInventory
+ {
+     private ItemStack[] field_833_a = new ItemStack[3];
+@@ -251,7 +254,13 @@
+         else
+         {
+             int var1 = p_488_1_.func_1091_a().field_291_aS;
+-            return var1 < 256 && Block.field_345_n[var1].field_356_bn == Material.field_1335_c ? 300 : (var1 == Item.field_266_B.field_291_aS ? 100 : (var1 == Item.field_225_k.field_291_aS ? 1600 : (var1 == Item.field_258_aw.field_291_aS ? 20000 : (var1 == Block.field_333_z.field_376_bc ? 100 : (var1 == Item.field_40417_bo.field_291_aS ? 2400 : 0)))));
++            if (var1 < 256 && Block.field_345_n[var1].field_356_bn == Material.field_1335_c) return 300;
++            if (var1 == Item.field_266_B.field_291_aS) return 100;
++            if (var1 == Item.field_225_k.field_291_aS) return 1600;
++            if (var1 == Item.field_258_aw.field_291_aS) return 20000;
++            if (var1 == Block.field_333_z.field_376_bc) return 100;
++            if (var1 == Item.field_40417_bo.field_291_aS) return 2400;
++            return FMLCommonHandler.instance().fuelLookup(var1, p_488_1_.func_21179_h());
+         }
+     }
+ 

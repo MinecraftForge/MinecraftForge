@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
+@@ -14,6 +14,8 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
++
++import cpw.mods.fml.client.FMLClientHandler;
+ import net.minecraft.client.Minecraft;
+ 
+ public class NetClientHandler extends NetHandler
+@@ -59,6 +61,7 @@
+         this.field_1212_e.field_6322_g.field_620_ab = p_4115_1_.field_519_a;
+         this.field_35785_d = p_4115_1_.field_35251_h;
+         ((PlayerControllerMP)this.field_1212_e.field_6327_b).func_35648_a(p_4115_1_.field_35249_d == 1);
++        FMLClientHandler.instance().handleServerLogin(p_4115_1_, this, field_1213_d);
+     }
+ 
+     public void func_832_a(Packet21PickupSpawn p_832_1_)
+@@ -510,6 +513,7 @@
+ 
+     public void func_4113_a(Packet3Chat p_4113_1_)
+     {
++        FMLClientHandler.instance().handleChatPacket(p_4113_1_);
+         this.field_1212_e.field_6308_u.func_552_a(p_4113_1_.field_517_a);
+     }
+ 
+@@ -1026,4 +1030,13 @@
+         var2.field_35212_aW.field_35759_a = p_50100_1_.field_50072_a;
+         var2.field_35212_aW.field_35758_c = p_50100_1_.field_50071_c;
+     }
++    
++    /* (non-Javadoc)
++     * @see net.minecraft.src.NetHandler#func_44028_a(net.minecraft.src.Packet250CustomPayload)
++     */
++    @Override
++    public void func_44028_a(Packet250CustomPayload p_44028_1_)
++    {
++        FMLClientHandler.instance().handlePacket250(p_44028_1_);
++    }
+ }

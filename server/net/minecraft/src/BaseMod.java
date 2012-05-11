@@ -67,6 +67,14 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     }
 
     @Override
+    public final void onServerLogin(Object handler) {
+        // NOOP
+    }
+    
+    public final void onServerLogout() {
+        // NOOP
+    }
+    @Override
     public final void onPlayerLogin(Object player)
     {
         onClientLogin((EntityPlayer) player);
