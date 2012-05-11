@@ -16,6 +16,8 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -401,6 +403,32 @@ public class FMLCommonHandler
     {
         FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
         throw new RuntimeException(exception);
+    }
+
+    /**
+     * @param string
+     * @return
+     */
+    public String[] getBrandingStrings(String mcVersion)
+    {
+        ArrayList<String> brandings=new ArrayList<String>();
+        brandings.add(mcVersion);
+        brandings.add(Loader.instance().getFMLVersionString());
+        try {
+            brandings.add((String)Class.forName("forge.MinecraftForge").getMethod("getVersionString").invoke(null));
+        } catch (Exception ex) {
+            // Ignore- forge isn't loaded
+        }
+        try {
+            Properties props=new Properties();
+            props.load(FMLCommonHandler.class.getClassLoader().getResourceAsStream("fmlbranding.properties"));
+            brandings.add(props.getProperty("fmlbranding"));
+        } catch (Exception ex) {
+            // Ignore - no branding file found
+        }
+        brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()>1?"s":""));
+        Collections.reverse(brandings);
+        return brandings.toArray(new String[brandings.size()]);
     }
 
 }
