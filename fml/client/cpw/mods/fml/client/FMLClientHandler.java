@@ -195,6 +195,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPreWorldTick()
     {
         FMLCommonHandler.instance().worldTickStart();
+        if (client.field_6313_p!=null && client.field_6324_e!=null) {
+            FMLCommonHandler.instance().tickStart(TickType.WORLDGUI, 0.0f, client.field_6313_p);
+        }
     }
 
     /**
@@ -203,16 +206,25 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPostWorldTick()
     {
         FMLCommonHandler.instance().worldTickEnd();
+        if (client.field_6313_p!=null && client.field_6324_e!=null) {
+            FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
+        }
     }
 
     public void onRenderTickStart(float partialTickTime)
     {
         FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
+        if (client.field_6313_p!=null && client.field_6324_e!=null) {
+            FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
+        }
     }
     
     public void onRenderTickEnd(float partialTickTime)
     {
         FMLCommonHandler.instance().tickEnd(TickType.RENDER, partialTickTime);
+        if (client.field_6313_p!=null && client.field_6324_e!=null) {
+            FMLCommonHandler.instance().tickEnd(TickType.GUI, partialTickTime, client.field_6313_p);
+        }
     }
     /**
      * Get the server instance

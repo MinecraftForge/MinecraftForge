@@ -23,6 +23,7 @@ import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.ModContainer.TickType;
 
 public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
 {
@@ -32,22 +33,14 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param minecraftInstance
      * @return
      */
-    public final boolean doTickInGame(Object minecraftInstance, Object... data)
+    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
     {
         Minecraft mc = (Minecraft) minecraftInstance;
-        if (mc.field_6324_e != null)
-        {
+        // World and render ticks
+        if ((tickEnd && tick==TickType.WORLD) || (!tickEnd && tick==TickType.RENDER)) {
             return onTickInGame((Float) data[0], mc);
-        }
-        return true;
-    }
-
-    public final boolean doTickInGui(Object minecraftInstance, Object... data)
-    {
-        Minecraft mc = (Minecraft) minecraftInstance;
-        if (mc.field_40007_r != null)
-        {
-            return onTickInGUI((Float)data[0], mc, mc.field_6313_p);
+        } else if (((tickEnd && tick==TickType.WORLDGUI) || (!tickEnd && tick==TickType.GUI))) {
+            return onTickInGUI((Float) data[0], mc, (GuiScreen)data[1]);
         }
         return true;
     }

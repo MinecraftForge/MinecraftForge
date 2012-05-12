@@ -207,6 +207,18 @@ public interface ModContainer
     
     public enum TickType {
         WORLD, RENDER, GUI, WORLDGUI;
+
+        /**
+         * @return
+         */
+        public TickType partnerTick()
+        {
+            if (this==WORLD) return RENDER;
+            if (this==RENDER) return WORLD;
+            if (this==GUI) return WORLDGUI;
+            if (this==WORLDGUI) return GUI;
+            return null;
+        }
     }
 
     List<IKeyHandler> getKeys();
