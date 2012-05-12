@@ -211,6 +211,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             FMLCommonHandler.instance().worldTickEnd();
             if (client.field_6313_p!=null) {
                 FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
+            }
         }
     }
 
