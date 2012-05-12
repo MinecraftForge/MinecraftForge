@@ -337,10 +337,7 @@ public class FMLCommonHandler
         }
         langPack.put(key,value);
         
-        if (sidedDelegate.getCurrentLanguage().equals(lang)) {
-            // Inject new translations into current language table
-            handleLanguageLoad(sidedDelegate.getCurrentLanguageTable(), lang);
-        }
+        handleLanguageLoad(sidedDelegate.getCurrentLanguageTable(), lang);
     }
 
     /**
