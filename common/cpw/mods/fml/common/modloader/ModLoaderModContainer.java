@@ -398,7 +398,7 @@ public class ModLoaderModContainer implements ModContainer
 
         for (ModContainer mc : Loader.getModList())
         {
-            if (mc instanceof ModLoaderModContainer && mc.getModState().ordinal()>ModState.LOADED.ordinal())
+            if (mc instanceof ModLoaderModContainer && mc.getMod()!=null)
             {
                 modList.add(((ModLoaderModContainer)mc).mod);
             }

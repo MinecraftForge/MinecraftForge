@@ -451,7 +451,7 @@ public class FMLCommonHandler
             try
             {
                 ZipFile jar = new ZipFile(mod.getSource());
-                ZipEntry infoFile=jar.getEntry("/modinfo.json");
+                ZipEntry infoFile=jar.getEntry("/mcmod.info");
                 if (infoFile!=null) {
                     InputStream input=jar.getInputStream(infoFile);
                     ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
@@ -463,7 +463,18 @@ public class FMLCommonHandler
                 // Something wrong but we don't care
             }
         } else {
-            getFMLLogger().fine(String.format("Unable to load metadata for mod %s as it is not a jar/zip packaged file",mod.getName()));
+            try
+            {
+                InputStream input=FMLCommonHandler.class.getClassLoader().getResourceAsStream("/"+mod.getName()+".info");
+                if (input!=null) {
+                    ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
+                    mod.setMetadata(data);
+                }
+            }
+            catch (Exception e)
+            {
+                // Something wrong but we don't care
+            }
         }
     }
 
