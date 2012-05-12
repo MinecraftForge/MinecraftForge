@@ -328,16 +328,24 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public void tickStart(TickType tick, Object ... data)
     {
-        if (ticks.contains(tick) && tick==TickType.WORLD) {
-            mod.doTickInGame(FMLCommonHandler.instance().getMinecraftInstance(), data);
+        if (ticks.contains(tick)) {
+            boolean keepTicking=mod.doTickInGame(tick, false, FMLCommonHandler.instance().getMinecraftInstance(), data);
+            if (!keepTicking) {
+                ticks.remove(tick);
+                ticks.remove(tick.partnerTick());
+            }
         }
     }
     
     @Override
     public void tickEnd(TickType tick, Object ... data)
     {
-        if (ticks.contains(tick) && tick!=TickType.WORLD) {
-            mod.doTickInGame(FMLCommonHandler.instance().getMinecraftInstance(), data);
+        if (ticks.contains(tick)) {
+            boolean keepTicking=mod.doTickInGame(tick, true, FMLCommonHandler.instance().getMinecraftInstance(), data);
+            if (!keepTicking) {
+                ticks.remove(tick);
+                ticks.remove(tick.partnerTick());
+            }
         }
     }
 

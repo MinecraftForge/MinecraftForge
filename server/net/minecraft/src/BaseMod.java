@@ -23,6 +23,7 @@ import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.ModContainer.TickType;
 
 public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
 {
@@ -32,14 +33,13 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
      * @param minecraftInstance
      * @return
      */
-    public final boolean doTickInGame(Object minecraftInstance, Object... data)
+    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
     {
-        return onTickInGame((MinecraftServer)minecraftInstance);
-    }
-
-    public final boolean doTickInGui(Object minecraftInstance, Object... data)
-    {
-        return true;
+        if (tick==TickType.WORLD && tickEnd) {
+            return onTickInGame((MinecraftServer)minecraftInstance);
+        } else {
+            return false;
+        }
     }
 
     @Override
