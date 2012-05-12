@@ -484,6 +484,7 @@ public class ModLoaderModContainer implements ModContainer
             return;
         }
 
+        boolean parseFailure=false;
         StringTokenizer st = new StringTokenizer(mod.getPriorities(), ";");
 
         for (; st.hasMoreTokens();)
@@ -493,24 +494,29 @@ public class ModLoaderModContainer implements ModContainer
 
             if (depparts.length < 2)
             {
-                throw new LoaderException();
+                parseFailure=true;
             }
-
-            if ("required-before".equals(depparts[0]) || "required-after".equals(depparts[0]))
+            else if ("required-before".equals(depparts[0]) || "required-after".equals(depparts[0]))
             {
-                dependencies.add(depparts[1]);
+                if (!depparts[1].trim().equals("*")) {
+                    dependencies.add(depparts[1]);
+                } else {
+                    parseFailure=true;
+                }
             }
-
-            if ("required-before".equals(depparts[0]) || "before".equals(depparts[0]))
+            else if ("required-before".equals(depparts[0]) || "before".equals(depparts[0]))
             {
             	postDependencies.add(depparts[1]);
-            }
-
-            if ("required-after".equals(depparts[0]) || "after".equals(depparts[0]))
+            } else if ("required-after".equals(depparts[0]) || "after".equals(depparts[0]))
             {
                 preDependencies.add(depparts[1]);
+            } else {
+                parseFailure=true;
             }
-
+        }
+        
+        if (parseFailure) {
+            FMLCommonHandler.instance().getFMLLogger().warning(String.format("The mod %s has an incorrect dependency string {%s}", mod.getPriorities()));
         }
     }
 
