@@ -516,7 +516,7 @@ public class ModLoaderModContainer implements ModContainer
         }
         
         if (parseFailure) {
-            FMLCommonHandler.instance().getFMLLogger().warning(String.format("The mod %s has an incorrect dependency string {%s}", mod.getPriorities()));
+            FMLCommonHandler.instance().getFMLLogger().warning(String.format("The mod %s has an incorrect dependency string {%s}", mod.getName(), mod.getPriorities()));
         }
     }
 
