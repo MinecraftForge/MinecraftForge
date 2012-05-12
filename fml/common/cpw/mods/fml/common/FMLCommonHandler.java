@@ -349,6 +349,10 @@ public class FMLCommonHandler
      */
     public void handleLanguageLoad(Properties languagePack, String lang)
     {
+        Properties usPack=modLanguageData.get("en_US");
+        if (usPack!=null) {
+            languagePack.putAll(usPack);
+        }
         Properties langPack=modLanguageData.get(lang);
         if (langPack==null) {
             return;
