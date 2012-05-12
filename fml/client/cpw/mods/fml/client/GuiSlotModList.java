@@ -15,6 +15,8 @@
 package cpw.mods.fml.client;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModMetadata;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.GuiLanguage;
 import net.minecraft.src.GuiSlot;
@@ -63,13 +65,22 @@ public class GuiSlotModList extends GuiSlot
     @Override
     protected int func_22245_b()
     {
-        return this.func_22249_a() * 18;
+        return this.func_22249_a() * 3 * (this.parent.getFontRenderer().field_41063_b +1);
     }
     
     @Override
     protected void func_22242_a(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
-        this.parent.func_548_a(this.parent.getFontRenderer(), Loader.getModList().get(listIndex).getName(), this.parent.field_951_c / 2, var3 + 1, 16777215);
+        ModContainer mc=Loader.getModList().get(listIndex);
+        ModMetadata meta=mc.getMetadata();
+        if (meta!=null) {
+            this.parent.func_548_a(this.parent.getFontRenderer(), meta.name, this.parent.field_951_c / 2, var3 + 1, 16777215);
+            this.parent.func_548_a(this.parent.getFontRenderer(), meta.description, this.parent.field_951_c / 2, var3 + this.parent.getFontRenderer().field_41063_b +1, 16777215);
+            this.parent.func_548_a(this.parent.getFontRenderer(), mc.getName(), this.parent.field_951_c / 2, var3 + this.parent.getFontRenderer().field_41063_b *2 +2, 16777215);
+        } else {
+            this.parent.func_548_a(this.parent.getFontRenderer(), mc.getName(), this.parent.field_951_c / 2, var3 + 1, 16777215);
+            this.parent.func_548_a(this.parent.getFontRenderer(), "Mod information not found", this.parent.field_951_c / 2, var3 + 1, 16777215);
+        }
     }
 
 }
