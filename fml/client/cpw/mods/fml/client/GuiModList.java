@@ -44,7 +44,7 @@ public class GuiModList extends GuiScreen
         StringTranslate translations = StringTranslate.func_20162_a();
         this.field_949_e.add(new GuiSmallButton(6, this.field_951_c / 2 - 75, this.field_950_d - 38, translations.func_20163_a("gui.done")));
         this.modList=new GuiSlotModList(this);
-        this.modList.func_22240_a(this.field_949_e, 7, 8);
+        this.modList.registerScrollButtons(this.field_949_e, 7, 8);
     }
 
     protected void func_572_a(GuiButton button) {
@@ -62,7 +62,7 @@ public class GuiModList extends GuiScreen
 
     public void func_571_a(int p_571_1_, int p_571_2_, float p_571_3_)
     {
-        this.modList.func_22243_a(p_571_1_, p_571_2_, p_571_3_);
+        this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         this.func_548_a(this.field_6451_g, "Mod List", this.field_951_c / 2, 16, 16777215);
         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);
     }

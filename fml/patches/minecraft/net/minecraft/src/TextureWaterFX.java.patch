@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/src/TextureWaterFX.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TextureWaterFX.java	0000-00-00 00:00:00.000000000 -0000
+@@ -16,15 +16,21 @@
+     public void func_783_a()
+     {
+         ++this.field_1154_k;
++        if (field_1158_g.length!=textureGridSize) {
++            field_1158_g = new float[textureGridSize];
++            field_1157_h = new float[textureGridSize];
++            field_1156_i = new float[textureGridSize];
++            field_1155_j = new float[textureGridSize];
++        }
+         int var1;
+         int var2;
+         float var3;
+         int var5;
+         int var6;
+ 
+-        for (var1 = 0; var1 < 16; ++var1)
++        for (var1 = 0; var1 < textureLength; ++var1)
+         {
+-            for (var2 = 0; var2 < 16; ++var2)
++            for (var2 = 0; var2 < textureLength; ++var2)
+             {
+                 var3 = 0.0F;
+ 
+@@ -32,29 +38,29 @@
+                 {
+                     var5 = var4 & 15;
+                     var6 = var2 & 15;
+-                    var3 += this.field_1158_g[var5 + var6 * 16];
++                    var3 += this.field_1158_g[var5 + var6 * textureLength];
+                 }
+ 
+-                this.field_1157_h[var1 + var2 * 16] = var3 / 3.3F + this.field_1156_i[var1 + var2 * 16] * 0.8F;
++                this.field_1157_h[var1 + var2 * textureLength] = var3 / 3.3F + this.field_1156_i[var1 + var2 * textureLength] * 0.8F;
+             }
+         }
+ 
+-        for (var1 = 0; var1 < 16; ++var1)
++        for (var1 = 0; var1 < textureLength; ++var1)
+         {
+-            for (var2 = 0; var2 < 16; ++var2)
++            for (var2 = 0; var2 < textureLength; ++var2)
+             {
+-                this.field_1156_i[var1 + var2 * 16] += this.field_1155_j[var1 + var2 * 16] * 0.05F;
++                this.field_1156_i[var1 + var2 * textureLength] += this.field_1155_j[var1 + var2 * textureLength] * 0.05F;
+ 
+-                if (this.field_1156_i[var1 + var2 * 16] < 0.0F)
++                if (this.field_1156_i[var1 + var2 * textureLength] < 0.0F)
+                 {
+-                    this.field_1156_i[var1 + var2 * 16] = 0.0F;
++                    this.field_1156_i[var1 + var2 * textureLength] = 0.0F;
+                 }
+ 
+-                this.field_1155_j[var1 + var2 * 16] -= 0.1F;
++                this.field_1155_j[var1 + var2 * textureLength] -= 0.1F;
+ 
+                 if (Math.random() < 0.05D)
+                 {
+-                    this.field_1155_j[var1 + var2 * 16] = 0.5F;
++                    this.field_1155_j[var1 + var2 * textureLength] = 0.5F;
+                 }
+             }
+         }
+@@ -63,7 +69,7 @@
+         this.field_1157_h = this.field_1158_g;
+         this.field_1158_g = var12;
+ 
+-        for (var2 = 0; var2 < 256; ++var2)
++        for (var2 = 0; var2 < textureGridSize; ++var2)
+         {
+             var3 = this.field_1158_g[var2];
+ 

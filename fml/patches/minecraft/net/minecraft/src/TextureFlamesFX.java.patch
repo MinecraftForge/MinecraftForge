@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
+@@ -12,35 +12,41 @@
+ 
+     public void func_783_a()
+     {
++        int fireLength = textureLength + textureLength << 2;
++        int fireGridSize = fireLength * textureLength;
++        if (field_1132_h.length != fireGridSize) {
++            field_1133_g = new float[fireGridSize];
++            field_1132_h = new float[fireGridSize];
++        }
+         int var3;
+         float var4;
+         int var6;
+ 
+-        for (int var1 = 0; var1 < 16; ++var1)
++        for (int var1 = 0; var1 < textureLength; ++var1)
+         {
+-            for (int var2 = 0; var2 < 20; ++var2)
++            for (int var2 = 0; var2 < fireLength; ++var2)
+             {
+                 var3 = 18;
+-                var4 = this.field_1133_g[var1 + (var2 + 1) % 20 * 16] * (float)var3;
++                var4 = this.field_1133_g[var1 + (var2 + 1) % fireLength * textureLength] * (float)var3;
+ 
+                 for (int var5 = var1 - 1; var5 <= var1 + 1; ++var5)
+                 {
+                     for (var6 = var2; var6 <= var2 + 1; ++var6)
+                     {
+-                        if (var5 >= 0 && var6 >= 0 && var5 < 16 && var6 < 20)
++                        if (var5 >= 0 && var6 >= 0 && var5 < textureLength && var6 < fireLength)
+                         {
+-                            var4 += this.field_1133_g[var5 + var6 * 16];
++                            var4 += this.field_1133_g[var5 + var6 * textureLength];
+                         }
+ 
+                         ++var3;
+                     }
+                 }
+ 
+-                this.field_1132_h[var1 + var2 * 16] = var4 / ((float)var3 * 1.0600001F);
++                this.field_1132_h[var1 + var2 * textureLength] = var4 / ((float)var3 * 1.0600001F);
+ 
+-                if (var2 >= 19)
++                if (var2 >= fireLength - textureLength << 4)
+                 {
+-                    this.field_1132_h[var1 + var2 * 16] = (float)(Math.random() * Math.random() * Math.random() * 4.0D + Math.random() * 0.10000000149011612D + 0.20000000298023224D);
++                    this.field_1132_h[var1 + var2 * textureLength] = (float)(Math.random() * Math.random() * Math.random() * 4.0D + Math.random() * 0.10000000149011612D + 0.20000000298023224D);
+                 }
+             }
+         }
+@@ -49,7 +55,7 @@
+         this.field_1132_h = this.field_1133_g;
+         this.field_1133_g = var13;
+ 
+-        for (var3 = 0; var3 < 256; ++var3)
++        for (var3 = 0; var3 < textureGridSize; ++var3)
+         {
+             var4 = this.field_1133_g[var3] * 1.8F;
+ 
