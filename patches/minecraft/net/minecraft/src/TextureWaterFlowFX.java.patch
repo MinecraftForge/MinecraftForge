@@ -1,0 +1,83 @@
+--- ../src-base/minecraft/net/minecraft/src/TextureWaterFlowFX.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TextureWaterFlowFX.java	0000-00-00 00:00:00.000000000 -0000
+@@ -16,46 +16,55 @@
+ 
+     public void func_783_a()
+     {
++        if (field_1138_g.length!=textureGridSize) {
++            field_1138_g = new float[textureGridSize];
++            field_1137_h = new float[textureGridSize];
++            field_1136_i = new float[textureGridSize];
++            field_1135_j = new float[textureGridSize];
++        }
+         ++this.field_1134_k;
+         int var1;
+         int var2;
+         float var3;
+         int var5;
+         int var6;
++        
++        int textureLengthMask=textureLength-1;
++        int textureGridSizeMask=textureGridSize-1;
+ 
+-        for (var1 = 0; var1 < 16; ++var1)
++        for (var1 = 0; var1 < textureLength; ++var1)
+         {
+-            for (var2 = 0; var2 < 16; ++var2)
++            for (var2 = 0; var2 < textureLength; ++var2)
+             {
+                 var3 = 0.0F;
+ 
+                 for (int var4 = var2 - 2; var4 <= var2; ++var4)
+                 {
+-                    var5 = var1 & 15;
+-                    var6 = var4 & 15;
+-                    var3 += this.field_1138_g[var5 + var6 * 16];
++                    var5 = var1 & textureLengthMask;
++                    var6 = var4 & textureLengthMask;
++                    var3 += this.field_1138_g[var5 + var6 * textureLength];
+                 }
+ 
+-                this.field_1137_h[var1 + var2 * 16] = var3 / 3.2F + this.field_1136_i[var1 + var2 * 16] * 0.8F;
++                this.field_1137_h[var1 + var2 * textureLength] = var3 / 3.2F + this.field_1136_i[var1 + var2 * textureLength] * 0.8F;
+             }
+         }
+ 
+-        for (var1 = 0; var1 < 16; ++var1)
++        for (var1 = 0; var1 < textureLength; ++var1)
+         {
+-            for (var2 = 0; var2 < 16; ++var2)
++            for (var2 = 0; var2 < textureLength; ++var2)
+             {
+-                this.field_1136_i[var1 + var2 * 16] += this.field_1135_j[var1 + var2 * 16] * 0.05F;
++                this.field_1136_i[var1 + var2 * textureLength] += this.field_1135_j[var1 + var2 * textureLength] * 0.05F;
+ 
+-                if (this.field_1136_i[var1 + var2 * 16] < 0.0F)
++                if (this.field_1136_i[var1 + var2 * textureLength] < 0.0F)
+                 {
+-                    this.field_1136_i[var1 + var2 * 16] = 0.0F;
++                    this.field_1136_i[var1 + var2 * textureLength] = 0.0F;
+                 }
+ 
+-                this.field_1135_j[var1 + var2 * 16] -= 0.3F;
++                this.field_1135_j[var1 + var2 * textureLength] -= 0.3F;
+ 
+                 if (Math.random() < 0.2D)
+                 {
+-                    this.field_1135_j[var1 + var2 * 16] = 0.5F;
++                    this.field_1135_j[var1 + var2 * textureLength] = 0.5F;
+                 }
+             }
+         }
+@@ -64,9 +73,9 @@
+         this.field_1137_h = this.field_1138_g;
+         this.field_1138_g = var12;
+ 
+-        for (var2 = 0; var2 < 256; ++var2)
++        for (var2 = 0; var2 < textureGridSize; ++var2)
+         {
+-            var3 = this.field_1138_g[var2 - this.field_1134_k * 16 & 255];
++            var3 = this.field_1138_g[var2 - this.field_1134_k * textureLength & textureGridSizeMask];
+ 
+             if (var3 > 1.0F)
+             {

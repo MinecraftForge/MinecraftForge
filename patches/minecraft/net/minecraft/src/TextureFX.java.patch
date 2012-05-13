@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/src/TextureFX.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TextureFX.java	0000-00-00 00:00:00.000000000 -0000
+@@ -10,6 +10,8 @@
+     public int field_1130_d = 0;
+     public int field_1129_e = 1;
+     public int field_1128_f = 0;
++    public int textureGridSize = 256;
++    public int textureLength = 16;
+ 
+     public TextureFX(int p_i616_1_)
+     {

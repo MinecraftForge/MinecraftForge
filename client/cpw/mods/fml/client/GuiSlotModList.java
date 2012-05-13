@@ -27,49 +27,49 @@ import net.minecraft.src.Tessellator;
  * @author cpw
  *
  */
-public class GuiSlotModList extends GuiSlot
+public class GuiSlotModList extends GuiScrollingList
 {
     private GuiModList parent;
 
     public GuiSlotModList(GuiModList parent)
     {
-        super(parent.getMinecraftInstance(), parent.field_951_c, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 18);
+        super(parent.getMinecraftInstance(), parent.field_951_c, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 18);
         this.parent=parent;
     }
 
     @Override
-    protected int func_22249_a()
+    protected int getSize()
     {
         return Loader.getModList().size();
     }
 
     @Override
-    protected void func_22247_a(int var1, boolean var2)
+    protected void elementClicked(int var1, boolean var2)
     {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    protected boolean func_22246_a(int var1)
+    protected boolean isSelected(int var1)
     {
         return false;
     }
 
     @Override
-    protected void func_22248_c()
+    protected void drawBackground()
     {
         this.parent.func_578_i();
     }
 
     @Override
-    protected int func_22245_b()
+    protected int getContentHeight()
     {
-        return this.func_22249_a() * 3 * (this.parent.getFontRenderer().field_41063_b +1);
+        return this.getSize() * 3 * (this.parent.getFontRenderer().field_41063_b +1);
     }
     
     @Override
-    protected void func_22242_a(int listIndex, int var2, int var3, int var4, Tessellator var5)
+    protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
         ModContainer mc=Loader.getModList().get(listIndex);
         ModMetadata meta=mc.getMetadata();
