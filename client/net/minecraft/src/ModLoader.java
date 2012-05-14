@@ -34,7 +34,8 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 public class ModLoader
 {
     // TODO dirty workaround for millinaire
-    public static final Map<String,Map<String,String>> languageProperties=Collections.emptyMap();
+    @Deprecated
+    public static final Map<String,Map<String,String>> localizedStrings=Collections.emptyMap();
     /**
      * Not used on the server.
      * 

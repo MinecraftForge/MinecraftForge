@@ -51,6 +51,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.Profiler;
 import net.minecraft.src.Render;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
@@ -828,5 +829,15 @@ public class FMLClientHandler implements IFMLSidedHandler
             animationSet.remove(info);
         }
         animationSet.add(info);
+    }
+    
+    @Override
+    public void profileStart(String profileLabel) {
+        Profiler.func_40663_a(profileLabel);
+    }
+    
+    @Override
+    public void profileEnd() {
+        Profiler.func_40662_b();
     }
 }

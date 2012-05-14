@@ -108,26 +108,42 @@ public class FMLCommonHandler
 
     public void tickStart(TickType type, Object ... data)
     {
+        sidedDelegate.profileStart("modTickStart");
+        sidedDelegate.profileStart(type.name());
         for (ModContainer mod : Loader.getModList())
         {
+            sidedDelegate.profileStart(mod.getName());
             mod.tickStart(type, data);
+            sidedDelegate.profileEnd();
         }
         for (ModContainer mod : auxilliaryContainers)
         {
+            sidedDelegate.profileStart(mod.getMod().getClass().getSimpleName());
             mod.tickStart(type, data);
+            sidedDelegate.profileEnd();
         }
+        sidedDelegate.profileEnd();
+        sidedDelegate.profileEnd();
     }
     
     public void tickEnd(TickType type, Object ... data)
     {
+        sidedDelegate.profileStart("modTickEnd");
+        sidedDelegate.profileStart(type.name());
         for (ModContainer mod : Loader.getModList())
         {
+            sidedDelegate.profileStart(mod.getName());
             mod.tickEnd(type, data);
+            sidedDelegate.profileEnd();
         }
         for (ModContainer mod : auxilliaryContainers)
         {
+            sidedDelegate.profileStart(mod.getMod().getClass().getSimpleName());
             mod.tickEnd(type, data);
+            sidedDelegate.profileEnd();
         }
+        sidedDelegate.profileEnd();
+        sidedDelegate.profileEnd();
     }
     
     public List<IKeyHandler> gatherKeyBindings() {
