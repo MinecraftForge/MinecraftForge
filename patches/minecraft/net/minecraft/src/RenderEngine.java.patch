@@ -9,7 +9,17 @@
  import java.awt.Color;
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
-@@ -459,23 +462,29 @@
+@@ -16,6 +19,9 @@
+ import javax.imageio.ImageIO;
+ import org.lwjgl.opengl.GL11;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++import cpw.mods.fml.common.FMLCommonHandler;
++
+ public class RenderEngine
+ {
+     public static boolean field_1609_a = false;
+@@ -459,23 +465,37 @@
          for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
@@ -18,14 +28,22 @@
 +                var3.func_782_a(this);
 +                var1 = var3.field_1126_b;
 +            }
++            Profiler.func_40663_a("hdTextureHandling");
 +            int tileSize = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >>4;
 +            var3.textureGridSize = tileSize * tileSize;
 +            var3.textureLength = tileSize;
 +            if (var3.field_1127_a==null || var3.field_1127_a.length!= var3.textureGridSize << 2) {
 +                var3.field_1127_a = new byte[var3.textureGridSize << 2];
 +            }
++            Profiler.func_40662_b();
              var3.field_1131_c = this.field_1602_h.field_1578_g;
++            Profiler.func_40663_a(var3.getClass().getSimpleName());
              var3.func_783_a();
++            Profiler.func_40662_b();
++            if (var3.field_1127_a.length!=var3.textureGridSize<<2) {
++                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Detected a texture FX discrepancy in %s (%d, %d)",var3.getClass().getSimpleName(), var3.field_1127_a.length, var3.textureGridSize<<2));
++                continue;
++            }
              this.field_1605_e.clear();
              this.field_1605_e.put(var3.field_1127_a);
              this.field_1605_e.position(0).limit(var3.field_1127_a.length);
@@ -45,7 +63,7 @@
                  }
              }
          }
-@@ -635,4 +644,8 @@
+@@ -635,4 +655,8 @@
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
          }
      }

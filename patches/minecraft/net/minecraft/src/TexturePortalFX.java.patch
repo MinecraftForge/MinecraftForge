@@ -55,7 +55,7 @@
  
      public void func_783_a()
      {
-+        if (field_4226_h[0].length!=textureLength) {
++        if (field_4226_h[0].length!=textureGridSize << 4) {
 +            setupPortalTextures();
 +        }
          ++this.field_4227_g;

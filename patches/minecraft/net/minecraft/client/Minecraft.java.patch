@@ -25,16 +25,18 @@
          this.func_6250_c("Startup");
          this.field_6286_O = new OpenGlCapsChecker();
          this.field_6301_A.func_340_a(this.field_6304_y);
-@@ -745,7 +749,9 @@
+@@ -744,9 +748,11 @@
+                     this.field_6327_b.func_6467_a(this.field_9237_P.field_1378_c);
                  }
  
-                 Profiler.func_40661_c("gameRenderer");
 +                FMLClientHandler.instance().onRenderTickStart(this.field_9237_P.field_1378_c);
+                 Profiler.func_40661_c("gameRenderer");
                  this.field_9243_r.func_4136_b(this.field_9237_P.field_1378_c);
-+                FMLClientHandler.instance().onRenderTickEnd(this.field_9237_P.field_1378_c);
                  Profiler.func_40662_b();
++                FMLClientHandler.instance().onRenderTickEnd(this.field_9237_P.field_1378_c);
              }
  
+             GL11.glFlush();
 @@ -1340,6 +1346,7 @@
              this.func_28001_B();
          }
