@@ -396,6 +396,14 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
         // NOOP
     }
 
+    /**
+     * 
+     */
+    public void onRegisterAnimations()
+    {
+        // NOOP on server
+    }
+
     // Spare client junk
     // -------
     // void addRenderer(Map<Class<? extends Entity>, Render> renderers);
