@@ -71,7 +71,7 @@
 +        for (var2 = 0; var2 < textureGridSize; ++var2)
          {
 -            var3 = this.field_1143_g[var2 - this.field_1139_k / 3 * 16 & 255] * 2.0F;
-+            var3 = this.field_1143_g[var2 - this.field_1139_k / 3 * textureLength & textureGridSizeMask] * 2.0F;
++            var3 = this.field_1143_g[(var2 - this.field_1139_k / 3 * textureLength) & textureGridSizeMask] * 2.0F;
  
              if (var3 > 1.0F)
              {

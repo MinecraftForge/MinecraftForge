@@ -33,7 +33,7 @@ public class GuiSlotModList extends GuiScrollingList
 
     public GuiSlotModList(GuiModList parent)
     {
-        super(parent.getMinecraftInstance(), parent.field_951_c, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 18);
+        super(parent.getMinecraftInstance(), 120, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 18);
         this.parent=parent;
     }
 
@@ -46,14 +46,13 @@ public class GuiSlotModList extends GuiScrollingList
     @Override
     protected void elementClicked(int var1, boolean var2)
     {
-        // TODO Auto-generated method stub
-        
+        this.parent.selectModIndex(var1);
     }
 
     @Override
     protected boolean isSelected(int var1)
     {
-        return false;
+        return this.parent.modIndexSelected(var1);
     }
 
     @Override
@@ -73,14 +72,7 @@ public class GuiSlotModList extends GuiScrollingList
     {
         ModContainer mc=Loader.getModList().get(listIndex);
         ModMetadata meta=mc.getMetadata();
-        if (meta!=null) {
-            this.parent.func_548_a(this.parent.getFontRenderer(), meta.name, this.parent.field_951_c / 2, var3 + 1, 16777215);
-            this.parent.func_548_a(this.parent.getFontRenderer(), meta.description, this.parent.field_951_c / 2, var3 + this.parent.getFontRenderer().field_41063_b +1, 16777215);
-            this.parent.func_548_a(this.parent.getFontRenderer(), mc.getName(), this.parent.field_951_c / 2, var3 + this.parent.getFontRenderer().field_41063_b *2 +2, 16777215);
-        } else {
-            this.parent.func_548_a(this.parent.getFontRenderer(), mc.getName(), this.parent.field_951_c / 2, var3 + 1, 16777215);
-            this.parent.func_548_a(this.parent.getFontRenderer(), "Mod information not found", this.parent.field_951_c / 2, var3 + 1, 16777215);
-        }
+        this.parent.func_547_b(this.parent.getFontRenderer(), mc.getName(), this.left+3, var3 + 3, 16777215);
     }
 
 }

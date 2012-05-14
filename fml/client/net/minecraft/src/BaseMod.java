@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
@@ -43,6 +44,23 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
             return onTickInGUI((Float) data[0], mc, (GuiScreen)data[1]);
         }
         return true;
+    }
+
+    /**
+     * @param renderers
+     */
+    public final void onRenderHarvest(Map renderers)
+    {
+        addRenderer((Map<Class<? extends Entity>,Render>)renderers);
+        
+    }
+
+    /**
+     * 
+     */
+    public final void onRegisterAnimations()
+    {
+        registerAnimation(FMLClientHandler.instance().getClient());
     }
 
     @Override
@@ -400,15 +418,6 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     public void onClientDimensionChanged(EntityPlayer player)
     {
 
-    }
-
-    /**
-     * @param renderers
-     */
-    public void onRenderHarvest(Map renderers)
-    {
-        addRenderer((Map<Class<? extends Entity>,Render>)renderers);
-        
     }
 
 }

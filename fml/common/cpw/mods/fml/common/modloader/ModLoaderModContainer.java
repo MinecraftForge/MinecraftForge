@@ -665,4 +665,22 @@ public class ModLoaderModContainer implements ModContainer
     {
         mod.onRenderHarvest(renderers);
     }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#requestAnimations()
+     */
+    @Override
+    public void requestAnimations()
+    {
+        mod.onRegisterAnimations();
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getVersion()
+     */
+    @Override
+    public String getVersion()
+    {
+        return mod!=null ? mod.getVersion() : "Not available";
+    }
 }

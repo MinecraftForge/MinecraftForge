@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -12,35 +12,41 @@
+@@ -12,35 +12,46 @@
  
      public void func_783_a()
      {
-+        int fireLength = textureLength + textureLength << 2;
++        int fireLength = textureLength + (textureLength >> 2);
 +        int fireGridSize = fireLength * textureLength;
 +        if (field_1132_h.length != fireGridSize) {
 +            field_1133_g = new float[fireGridSize];
@@ -15,13 +15,19 @@
          int var6;
  
 -        for (int var1 = 0; var1 < 16; ++var1)
++        float fireFactor1 = 3.0F + (float)(textureLength >> 4);
++        
++        float fireFactor2 = 1.07F - (textureLength >> 4) *0.01F;
++
 +        for (int var1 = 0; var1 < textureLength; ++var1)
          {
 -            for (int var2 = 0; var2 < 20; ++var2)
 +            for (int var2 = 0; var2 < fireLength; ++var2)
              {
-                 var3 = 18;
+-                var3 = 18;
 -                var4 = this.field_1133_g[var1 + (var2 + 1) % 20 * 16] * (float)var3;
++                var3 = fireLength - 2;//(textureLength >> 3);
++
 +                var4 = this.field_1133_g[var1 + (var2 + 1) % fireLength * textureLength] * (float)var3;
  
                  for (int var5 = var1 - 1; var5 <= var1 + 1; ++var5)
@@ -40,17 +46,17 @@
                  }
  
 -                this.field_1132_h[var1 + var2 * 16] = var4 / ((float)var3 * 1.0600001F);
-+                this.field_1132_h[var1 + var2 * textureLength] = var4 / ((float)var3 * 1.0600001F);
++                this.field_1132_h[var1 + var2 * textureLength] = var4 / ((float)var3 * fireFactor2);
  
 -                if (var2 >= 19)
-+                if (var2 >= fireLength - textureLength << 4)
++                if (var2 >= fireLength - (textureLength >> 4))
                  {
 -                    this.field_1132_h[var1 + var2 * 16] = (float)(Math.random() * Math.random() * Math.random() * 4.0D + Math.random() * 0.10000000149011612D + 0.20000000298023224D);
-+                    this.field_1132_h[var1 + var2 * textureLength] = (float)(Math.random() * Math.random() * Math.random() * 4.0D + Math.random() * 0.10000000149011612D + 0.20000000298023224D);
++                    this.field_1132_h[var1 + var2 * textureLength] = (float)(Math.random() * Math.random() * Math.random() * fireFactor1 + Math.random() * 0.1F + 0.2F);
                  }
              }
          }
-@@ -49,7 +55,7 @@
+@@ -49,7 +60,7 @@
          this.field_1132_h = this.field_1133_g;
          this.field_1133_g = var13;
  

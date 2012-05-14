@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -56,6 +57,7 @@ import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
 import net.minecraft.src.StringTranslate;
+import net.minecraft.src.TextureFX;
 import net.minecraft.src.TexturePackBase;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
@@ -114,10 +116,13 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private NetClientHandler networkClient;
 
+    private ModContainer animationCallbackMod;
+
     // Cached lookups
-    private static HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
-    private static HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
-    private static HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
+    private HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
+    private HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
+    private HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
+    private HashSet<OverrideInfo> animationSet = new HashSet<OverrideInfo>();
 
     /**
      * Called to start the whole game off from
@@ -715,6 +720,13 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
     
     public void registerTextureOverrides(RenderEngine renderer) {
+        for (ModContainer mod : Loader.getModList()) {
+            registerAnimatedTexturesFor(mod);
+        }
+        
+        for (OverrideInfo animationOverride : animationSet) {
+            renderer.func_1066_a(animationOverride.textureFX);
+        }
         for (String fileToOverride : overrideInfo.keySet()) {
             for (OverrideInfo override : overrideInfo.get(fileToOverride)) {
                 try
@@ -731,6 +743,16 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
     
+    /**
+     * @param mod
+     */
+    private void registerAnimatedTexturesFor(ModContainer mod)
+    {
+        this.animationCallbackMod=mod;
+        mod.requestAnimations();
+        this.animationCallbackMod=null;
+    }
+
     public String getObjectName(Object instance) {
         String objectName;
         if (instance instanceof Item) {
@@ -788,5 +810,23 @@ public class FMLClientHandler implements IFMLSidedHandler
         if (this.networkClient!=null) {
             this.networkClient.func_847_a(packet);
         }
+    }
+
+    /**
+     * @param anim
+     */
+    public void addAnimation(TextureFX anim)
+    {
+        if (animationCallbackMod==null) {
+            return;
+        }
+        OverrideInfo info=new OverrideInfo();
+        info.index=anim.field_1126_b;
+        info.imageIndex=anim.field_1128_f;
+        info.textureFX=anim;
+        if (animationSet.contains(info)) {
+            animationSet.remove(info);
+        }
+        animationSet.add(info);
     }
 }

@@ -233,4 +233,12 @@ public interface ModContainer
      * 
      */
     void gatherRenderers(Map renderers);
+    /**
+     * 
+     */
+    void requestAnimations();
+    /**
+     * @return
+     */
+    String getVersion();
 }
