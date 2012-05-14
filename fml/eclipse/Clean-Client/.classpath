@@ -9,12 +9,12 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/bin/lwjgl_util.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Client/jars/bin/natives"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Clean-Client/jars/bin/natives"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/bin/lwjgl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Client/jars/bin/natives"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Clean-Client/jars/bin/natives"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/bin/minecraft.jar"/>
