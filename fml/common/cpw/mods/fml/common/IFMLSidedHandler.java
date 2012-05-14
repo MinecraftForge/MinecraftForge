@@ -18,4 +18,6 @@ public interface IFMLSidedHandler
     Properties getCurrentLanguageTable();
     String getObjectName(Object minecraftObject);
     ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception;
+    void profileStart(String profileLabel);
+    void profileEnd();
 }
