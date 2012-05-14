@@ -14,6 +14,8 @@
 
 package cpw.mods.fml.client;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.GuiButton;
@@ -30,6 +32,8 @@ public class GuiModList extends GuiScreen
 
     private GuiScreen mainMenu;
     private GuiSlotModList modList;
+    private int selected = -1;
+    private ModContainer selectedMod;
 
     /**
      * @param guiMainMenu
@@ -64,6 +68,15 @@ public class GuiModList extends GuiScreen
     {
         this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         this.func_548_a(this.field_6451_g, "Mod List", this.field_951_c / 2, 16, 16777215);
+        if (selectedMod!=null) {
+            this.func_548_a(this.field_6451_g, selectedMod.getName(), this.field_951_c / 2 + 60, 28, 16777215);
+            this.func_548_a(this.field_6451_g, String.format("Version %s",selectedMod.getVersion()), this.field_951_c / 2 + 60, 38, 16777215);
+            if (selectedMod.getMetadata()!=null) {
+                this.func_548_a(this.field_6451_g, selectedMod.getMetadata().description, this.field_951_c / 2 + 60, 48, 0xFFFFFF);
+            } else {
+                this.func_548_a(this.field_6451_g, "No mod information found", this.field_951_c / 2 + 60, 48, 0xDDDDDD);
+            }
+        }
         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);
     }
 
@@ -73,5 +86,27 @@ public class GuiModList extends GuiScreen
     
     FontRenderer getFontRenderer() {
         return field_6451_g;
+    }
+
+    /**
+     * @param var1
+     */
+    public void selectModIndex(int var1)
+    {
+        this.selected=var1;
+        if (var1>=0 && var1<=Loader.getModList().size()) {
+            this.selectedMod=Loader.getModList().get(selected);
+        } else {
+            this.selectedMod=null;
+        }
+    }
+
+    /**
+     * @param var1
+     * @return
+     */
+    public boolean modIndexSelected(int var1)
+    {
+        return var1==selected;
     }
 }

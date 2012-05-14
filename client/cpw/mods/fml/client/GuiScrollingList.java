@@ -16,7 +16,7 @@ public abstract class GuiScrollingList
     protected final int top;
     protected final int bottom;
     private final int right;
-    private final int left;
+    protected final int left;
     protected final int slotHeight;
     private int scrollUpActionId;
     private int scrollDownActionId;
@@ -140,9 +140,10 @@ public abstract class GuiScrollingList
         this.mouseY = mouseY;
         this.drawBackground();
         int listLength = this.getSize();
-        int scrollBarXStart = this.listWidth / 2 + 124;
+        int scrollBarXStart = this.listWidth -6;
         int scrollBarXEnd = scrollBarXStart + 6;
-        int var9;
+        int boxLeft = this.left;
+        int boxRight = scrollBarXStart-1;
         int var10;
         int var11;
         int var13;
@@ -156,21 +157,19 @@ public abstract class GuiScrollingList
 
                 if (mouseY >= this.top && mouseY <= this.bottom)
                 {
-                    int var8 = this.listWidth / 2 - 110;
-                    var9 = this.listWidth / 2 + 110;
                     var10 = mouseY - this.top - this.field_27261_r + (int)this.scrollDistance - 4;
                     var11 = var10 / this.slotHeight;
 
-                    if (mouseX >= var8 && mouseX <= var9 && var11 >= 0 && var10 >= 0 && var11 < listLength)
+                    if (mouseX >= boxLeft && mouseX <= boxRight && var11 >= 0 && var10 >= 0 && var11 < listLength)
                     {
                         boolean var12 = var11 == this.selectedIndex && System.currentTimeMillis() - this.lastClickTime < 250L;
                         this.elementClicked(var11, var12);
                         this.selectedIndex = var11;
                         this.lastClickTime = System.currentTimeMillis();
                     }
-                    else if (mouseX >= var8 && mouseX <= var9 && var10 < 0)
+                    else if (mouseX >= boxLeft && mouseX <= boxRight && var10 < 0)
                     {
-                        this.func_27255_a(mouseX - var8, mouseY - this.top + (int)this.scrollDistance - 4);
+                        this.func_27255_a(mouseX - boxLeft, mouseY - this.top + (int)this.scrollDistance - 4);
                         var7 = false;
                     }
 
@@ -261,12 +260,12 @@ public abstract class GuiScrollingList
         var18.func_983_a((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
         var18.func_983_a((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
         var18.func_982_a();
-        var9 = this.listWidth / 2 - 92 - 16;
+//        boxRight = this.listWidth / 2 - 92 - 16;
         var10 = this.top + 4 - (int)this.scrollDistance;
 
         if (this.field_27262_q)
         {
-            this.func_27260_a(var9, var10, var18);
+            this.func_27260_a(boxRight, var10, var18);
         }
 
         int var14;
@@ -280,8 +279,8 @@ public abstract class GuiScrollingList
             {
                 if (this.field_25123_p && this.isSelected(var11))
                 {
-                    var14 = this.listWidth / 2 - 110;
-                    int var15 = this.listWidth / 2 + 110;
+                    var14 = boxLeft;
+                    int var15 = boxRight;
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
                     var18.func_977_b();
@@ -299,7 +298,7 @@ public abstract class GuiScrollingList
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
 
-                this.drawSlot(var11, var9, var19, var13, var18);
+                this.drawSlot(var11, boxRight, var19, var13, var18);
             }
         }
 

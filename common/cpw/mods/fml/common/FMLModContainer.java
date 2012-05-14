@@ -383,4 +383,22 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         
     }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#requestAnimations()
+     */
+    @Override
+    public void requestAnimations()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#getVersion()
+     */
+    @Override
+    public String getVersion()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

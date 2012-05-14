@@ -13,7 +13,9 @@
 package net.minecraft.src;
 
 import java.awt.image.BufferedImage;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -31,6 +33,8 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 public class ModLoader
 {
+    // TODO dirty workaround for millinaire
+    public static final Map<String,Map<String,String>> languageProperties=Collections.emptyMap();
     /**
      * Not used on the server.
      * 
@@ -60,12 +64,14 @@ public class ModLoader
         return 0;
     }
 
+    @Deprecated
     public static void addAllRenderers(Map<Class<? extends Entity>, Render> renderers)
     {
     }
 
     public static void addAnimation(TextureFX anim)
     {
+        FMLClientHandler.instance().addAnimation(anim);
     }
 
     /**

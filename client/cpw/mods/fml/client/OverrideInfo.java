@@ -14,9 +14,30 @@
 
 package cpw.mods.fml.client;
 
+import net.minecraft.src.TextureFX;
+
 class OverrideInfo
 {
     public String texture;
     public String override;
     public int index;
+    public int imageIndex;
+    public TextureFX textureFX;
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        try {
+            OverrideInfo inf=(OverrideInfo) obj;
+            return index==inf.index && imageIndex==inf.imageIndex;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return index+imageIndex;
+    }
 }

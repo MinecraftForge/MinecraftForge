@@ -1,0 +1,68 @@
+--- ../src-base/minecraft/net/minecraft/src/TexturePortalFX.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/TexturePortalFX.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,28 +5,34 @@
+ public class TexturePortalFX extends TextureFX
+ {
+     private int field_4227_g = 0;
+-    private byte[][] field_4226_h = new byte[32][1024];
++    private byte[][] field_4226_h;
+ 
+     public TexturePortalFX()
+     {
+         super(Block.field_4047_bf.field_378_bb);
++        setupPortalTextures();
++    }
++
++    private void setupPortalTextures()
++    {
++        field_4226_h = new byte[32][textureGridSize << 4];
+         Random var1 = new Random(100L);
+ 
+         for (int var2 = 0; var2 < 32; ++var2)
+         {
+-            for (int var3 = 0; var3 < 16; ++var3)
++            for (int var3 = 0; var3 < textureLength; ++var3)
+             {
+-                for (int var4 = 0; var4 < 16; ++var4)
++                for (int var4 = 0; var4 < textureLength; ++var4)
+                 {
+                     float var5 = 0.0F;
+                     int var6;
+ 
+                     for (var6 = 0; var6 < 2; ++var6)
+                     {
+-                        float var7 = (float)(var6 * 16) * 0.5F;
+-                        float var8 = (float)(var6 * 16) * 0.5F;
+-                        float var9 = ((float)var3 - var7) / 16.0F * 2.0F;
+-                        float var10 = ((float)var4 - var8) / 16.0F * 2.0F;
++                        float var7 = (float)(var6 * textureLength) * 0.5F;
++                        float var8 = (float)(var6 * textureLength) * 0.5F;
++                        float var9 = ((float)var3 - var7) / (float)textureLength * 2.0F;
++                        float var10 = ((float)var4 - var8) / (float)textureLength * 2.0F;
+ 
+                         if (var9 < -1.0F)
+                         {
+@@ -60,7 +66,7 @@
+                     int var13 = (int)(var5 * var5 * 200.0F + 55.0F);
+                     int var14 = (int)(var5 * var5 * var5 * var5 * 255.0F);
+                     int var15 = (int)(var5 * 100.0F + 155.0F);
+-                    int var16 = var4 * 16 + var3;
++                    int var16 = var4 * textureLength + var3;
+                     this.field_4226_h[var2][var16 * 4 + 0] = (byte)var13;
+                     this.field_4226_h[var2][var16 * 4 + 1] = (byte)var14;
+                     this.field_4226_h[var2][var16 * 4 + 2] = (byte)var6;
+@@ -72,10 +78,13 @@
+ 
+     public void func_783_a()
+     {
++        if (field_4226_h[0].length!=textureLength) {
++            setupPortalTextures();
++        }
+         ++this.field_4227_g;
+         byte[] var1 = this.field_4226_h[this.field_4227_g & 31];
+ 
+-        for (int var2 = 0; var2 < 256; ++var2)
++        for (int var2 = 0; var2 < textureGridSize; ++var2)
+         {
+             int var3 = var1[var2 * 4 + 0] & 255;
+             int var4 = var1[var2 * 4 + 1] & 255;
