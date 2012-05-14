@@ -13,6 +13,7 @@
 package cpw.mods.fml.common;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 /**
  * Some reflection helper code.
  * 
@@ -21,6 +22,8 @@ import java.lang.reflect.Field;
  */
 public class ReflectionHelper
 {
+    public static boolean obfuscation;
+
     @SuppressWarnings("unchecked")
     public static <T, E> T getPrivateValue(Class <? super E > classToAccess, E instance, int fieldIndex)
     {
@@ -49,8 +52,10 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem getting field %s from %s", fieldName, classToAccess.getName()));
-            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            if ((fieldName.length() > 3 && !obfuscation) || (fieldName.length() <= 3 && obfuscation)) {
+                FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem getting field %s from %s", fieldName, classToAccess.getName()));
+                FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            }
             throw new RuntimeException(e);
         }
     }
@@ -81,10 +86,20 @@ public class ReflectionHelper
         }
         catch (Exception e)
         {
-            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem setting field %s from %s", fieldName, classToAccess.getName()));
-            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            if ((fieldName.length() > 3 && !obfuscation) || (fieldName.length() <= 3 && obfuscation)) {
+                FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem setting field %s from %s", fieldName, classToAccess.getName()));
+                FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
+            }
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 
+     */
+    public static void detectObfuscation(Class<?> clazz)
+    {
+        obfuscation=!clazz.getSimpleName().equals("World");
     }
 
 }

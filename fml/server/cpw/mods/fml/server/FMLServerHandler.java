@@ -48,6 +48,7 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
@@ -123,6 +124,7 @@ public class FMLServerHandler implements IFMLSidedHandler
             // We're safe. continue
         }
         server = minecraftServer;
+        ReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().registerSidedDelegate(this);
         CommonRegistry.registerRegistry(new ServerRegistry());
         Loader.instance().loadMods();
