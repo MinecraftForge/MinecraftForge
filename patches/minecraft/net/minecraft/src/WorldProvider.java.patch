@@ -12,7 +12,7 @@
 -        {
 -            this.field_4215_b = new WorldChunkManager(this.field_4216_a);
 -        }
-+        this.field_46067_b.getChunkManager(field_4216_a);
++        this.field_4215_b=this.field_46067_b.getChunkManager(field_4216_a);
      }
  
      public IChunkProvider func_4094_c()

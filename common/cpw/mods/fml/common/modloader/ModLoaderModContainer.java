@@ -352,7 +352,7 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public String getName()
     {
-        return mod != null ? mod.getName() : getSource().getName();
+        return mod != null ? mod.getName() : modClazz.getSimpleName();
     }
 
     public static ModContainer findContainerFor(BaseMod mod)
@@ -555,7 +555,7 @@ public class ModLoaderModContainer implements ModContainer
 
     public String toString()
     {
-        return modSource.getName();
+        return modClazz.getSimpleName();
     }
 
     @Override
