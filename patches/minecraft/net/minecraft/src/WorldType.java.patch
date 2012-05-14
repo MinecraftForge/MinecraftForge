@@ -32,10 +32,35 @@
      }
  
      public String func_48628_a()
-@@ -78,4 +90,20 @@
+@@ -78,4 +90,47 @@
  
          return null;
      }
++
++    public WorldChunkManager getChunkManager(World var1)
++    {
++        return this == field_48636_c ? new WorldChunkManagerHell(BiomeGenBase.field_35485_c, 0.5F, 0.5F) : new WorldChunkManager(var1);
++    }
++
++    public IChunkProvider getChunkGenerator(World var1)
++    {
++        return this == field_48636_c ? new ChunkProviderFlat(var1, var1.func_22138_q(), var1.func_22144_v().func_35917_r()) : new ChunkProviderGenerate(var1, var1.func_22138_q(), var1.func_22144_v().func_35917_r());
++    }
++
++    public int getSeaLevel(World var1)
++    {
++        return this == field_48636_c ? 4 : 64;
++    }
++
++    public boolean hasVoidParticles(boolean var1)
++    {
++        return this != field_48636_c && !var1;
++    }
++
++    public double voidFadeMagnitude()
++    {
++        return this == field_48636_c ? 1.0D : 0.03125D;
++    }
 +
 +    public BiomeGenBase[] getBiomesForWorldType() {
 +        return biomesForWorldType;
@@ -52,4 +77,6 @@
 +        biomes.remove(biome);
 +        biomesForWorldType=biomes.toArray(new BiomeGenBase[0]);
 +    }
++    
++    
  }

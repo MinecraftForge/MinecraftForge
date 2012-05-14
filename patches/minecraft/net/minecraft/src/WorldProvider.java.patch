@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/src/WorldProvider.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/WorldProvider.java	0000-00-00 00:00:00.000000000 -0000
+@@ -32,19 +32,12 @@
+ 
+     protected void func_4098_a()
+     {
+-        if (this.field_4216_a.func_22144_v().func_46133_t() == WorldType.field_48636_c)
+-        {
+-            this.field_4215_b = new WorldChunkManagerHell(BiomeGenBase.field_35485_c, 0.5F, 0.5F);
+-        }
+-        else
+-        {
+-            this.field_4215_b = new WorldChunkManager(this.field_4216_a);
+-        }
++        this.field_46067_b.getChunkManager(field_4216_a);
+     }
+ 
+     public IChunkProvider func_4094_c()
+     {
+-        return (IChunkProvider)(this.field_46067_b == WorldType.field_48636_c ? new ChunkProviderFlat(this.field_4216_a, this.field_4216_a.func_22138_q(), this.field_4216_a.func_22144_v().func_35917_r()) : new ChunkProviderGenerate(this.field_4216_a, this.field_4216_a.func_22138_q(), this.field_4216_a.func_22144_v().func_35917_r()));
++        return this.field_46067_b.getChunkGenerator(field_4216_a);
+     }
+ 
+     public boolean func_4102_a(int p_4102_1_, int p_4102_2_)
+@@ -157,17 +150,17 @@
+ 
+     public int func_46066_g()
+     {
+-        return this.field_46067_b == WorldType.field_48636_c ? 4 : 64;
++        return this.field_46067_b.getSeaLevel(field_4216_a);
+     }
+ 
+     public boolean func_46064_i()
+     {
+-        return this.field_46067_b != WorldType.field_48636_c && !this.field_6478_e;
++        return this.field_46067_b.hasVoidParticles(this.field_6478_e);
+     }
+ 
+     public double func_46065_j()
+     {
+-        return this.field_46067_b == WorldType.field_48636_c ? 1.0D : 0.03125D;
++        return this.field_46067_b.voidFadeMagnitude();
+     }
+ 
+     public boolean func_48218_b(int p_48218_1_, int p_48218_2_)
