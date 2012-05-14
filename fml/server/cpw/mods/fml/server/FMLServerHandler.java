@@ -38,6 +38,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.Profiler;
 import net.minecraft.src.ServerRegistry;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
@@ -596,5 +597,23 @@ public class FMLServerHandler implements IFMLSidedHandler
     public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception
     {
         return null;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#profileStart(java.lang.String)
+     */
+    @Override
+    public void profileStart(String profileLabel)
+    {
+        Profiler.func_40518_a(profileLabel);
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#profileEnd()
+     */
+    @Override
+    public void profileEnd()
+    {
+        Profiler.func_40517_a();
     }
 }
