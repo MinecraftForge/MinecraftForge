@@ -9,10 +9,11 @@
  import java.awt.Color;
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
-@@ -13,9 +16,15 @@
+@@ -13,9 +16,16 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
++import java.util.logging.Level;
 +
  import javax.imageio.ImageIO;
 +
@@ -25,7 +26,15 @@
  public class RenderEngine
  {
      public static boolean field_1609_a = false;
-@@ -452,6 +461,7 @@
+@@ -97,6 +107,7 @@
+             }
+             catch (IOException var5)
+             {
++                FMLCommonHandler.instance().getFMLLogger().log(Level.INFO,String.format("An error occured reading texture file %s (getTexture)", p_28149_1_),var5);
+                 var5.printStackTrace();
+                 int[] var4 = this.func_28148_b(this.field_25189_l);
+                 this.field_28151_c.put(p_28149_1_, var4);
+@@ -452,6 +463,7 @@
          p_1066_1_.func_783_a();
      }
  
@@ -33,7 +42,7 @@
      public void func_1067_a()
      {
          int var1 = -1;
-@@ -459,23 +469,43 @@
+@@ -459,23 +471,43 @@
          for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
@@ -83,7 +92,15 @@
                  }
              }
          }
-@@ -635,4 +665,8 @@
+@@ -579,6 +611,7 @@
+             }
+             catch (IOException var7)
+             {
++                FMLCommonHandler.instance().getFMLLogger().log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", var9),var7);
+                 var7.printStackTrace();
+             }
+         }
+@@ -635,4 +668,8 @@
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
          }
      }
