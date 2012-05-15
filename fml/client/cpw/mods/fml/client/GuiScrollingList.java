@@ -40,7 +40,7 @@ public abstract class GuiScrollingList
         this.bottom = bottom;
         this.slotHeight = entryHeight;
         this.left = left;
-        this.right = width;
+        this.right = width + this.left;
     }
 
     public void func_27258_a(boolean p_27258_1_)
@@ -140,7 +140,7 @@ public abstract class GuiScrollingList
         this.mouseY = mouseY;
         this.drawBackground();
         int listLength = this.getSize();
-        int scrollBarXStart = this.listWidth -6;
+        int scrollBarXStart = this.left + this.listWidth - 6;
         int scrollBarXEnd = scrollBarXStart + 6;
         int boxLeft = this.left;
         int boxRight = scrollBarXStart-1;

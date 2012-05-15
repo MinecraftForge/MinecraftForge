@@ -467,7 +467,7 @@ public class FMLCommonHandler
             try
             {
                 ZipFile jar = new ZipFile(mod.getSource());
-                ZipEntry infoFile=jar.getEntry("/mcmod.info");
+                ZipEntry infoFile=jar.getEntry("mcmod.info");
                 if (infoFile!=null) {
                     InputStream input=jar.getInputStream(infoFile);
                     ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
@@ -481,7 +481,10 @@ public class FMLCommonHandler
         } else {
             try
             {
-                InputStream input=FMLCommonHandler.class.getClassLoader().getResourceAsStream("/"+mod.getName()+".info");
+                InputStream input=Loader.instance().getModClassLoader().getResourceAsStream(mod.getName()+".info");
+                if (input==null) {
+                    input=Loader.instance().getModClassLoader().getResourceAsStream("net/minecraft/src/"+mod.getName()+".info");
+                }
                 if (input!=null) {
                     ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
                     mod.setMetadata(data);

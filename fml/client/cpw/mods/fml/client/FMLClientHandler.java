@@ -19,12 +19,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -779,8 +781,32 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         JsonNode root=new JdomParser().func_27366_a(new InputStreamReader(input));
         ModMetadata meta=new ModMetadata(mod);
-        meta.name=root.func_27213_a("name");
-        meta.description=root.func_27213_a("description");
+        try {
+            meta.name=root.func_27213_a("name");
+            meta.description=root.func_27213_a("description");
+            meta.version=root.func_27213_a("version");
+            meta.credits=root.func_27213_a("credits");
+            List authors=root.func_27217_b("authors");
+            StringBuilder sb=new StringBuilder();
+            for (int i=0; i<authors.size(); i++) {
+                sb.append(((JsonNode)authors.get(i)).func_27216_b());
+                if (i<authors.size()-1) {
+                    sb.append(", ");
+                }
+            }
+            meta.authorList=sb.toString();
+            meta.logoFile=root.func_27213_a("logoFile");
+            meta.url=root.func_27213_a("url");
+            meta.updateUrl=root.func_27213_a("updateUrl");
+            meta.parent=root.func_27213_a("parent");
+            List screenshots=root.func_27217_b("screenshots");
+            meta.screenshots=new String[screenshots.size()];
+            for (int i=0; i<screenshots.size(); i++) {
+                meta.screenshots[i]=((JsonNode)screenshots.get(i)).func_27216_b();
+            }
+        } catch (Exception e) {
+            FMLCommonHandler.instance().getFMLLogger().log(Level.FINE, String.format("An error occured reading the info file for %s",mod.getName()), e);
+        }
         return meta;
     }
 

@@ -34,6 +34,7 @@ public class GuiModList extends GuiScreen
     private GuiSlotModList modList;
     private int selected = -1;
     private ModContainer selectedMod;
+    private int listWidth;
 
     /**
      * @param guiMainMenu
@@ -45,9 +46,13 @@ public class GuiModList extends GuiScreen
     
     public void func_6448_a()
     {
+        for (ModContainer mod : Loader.getModList()) {
+            listWidth=Math.max(listWidth,getFontRenderer().func_871_a(mod.getName())+10);
+            listWidth=Math.max(listWidth,getFontRenderer().func_871_a(mod.getVersion())+10);
+        }
         StringTranslate translations = StringTranslate.func_20162_a();
         this.field_949_e.add(new GuiSmallButton(6, this.field_951_c / 2 - 75, this.field_950_d - 38, translations.func_20163_a("gui.done")));
-        this.modList=new GuiSlotModList(this);
+        this.modList=new GuiSlotModList(this, listWidth);
         this.modList.registerScrollButtons(this.field_949_e, 7, 8);
     }
 
@@ -67,14 +72,21 @@ public class GuiModList extends GuiScreen
     public void func_571_a(int p_571_1_, int p_571_2_, float p_571_3_)
     {
         this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
-        this.func_548_a(this.field_6451_g, "Mod List", this.field_951_c / 2, 16, 16777215);
+        this.func_548_a(this.field_6451_g, "Mod List", this.field_951_c / 2, 16, 0xFFFFFF);
+        int detailCentre = this.listWidth / 2 + this.field_951_c / 2;
         if (selectedMod!=null) {
-            this.func_548_a(this.field_6451_g, selectedMod.getName(), this.field_951_c / 2 + 60, 28, 16777215);
-            this.func_548_a(this.field_6451_g, String.format("Version %s",selectedMod.getVersion()), this.field_951_c / 2 + 60, 38, 16777215);
             if (selectedMod.getMetadata()!=null) {
-                this.func_548_a(this.field_6451_g, selectedMod.getMetadata().description, this.field_951_c / 2 + 60, 48, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, selectedMod.getMetadata().name, detailCentre, 35, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("Version: %s", selectedMod.getMetadata().version), detailCentre, 45, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("Credits: %s", selectedMod.getMetadata().credits), detailCentre, 55, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("Authors: %s", selectedMod.getMetadata().authorList), detailCentre, 65, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("URL: %s Updates: %s", selectedMod.getMetadata().url, selectedMod.getMetadata().updateUrl), detailCentre, 75, 0xFFFFFF);
+                this.getFontRenderer().func_27278_a(selectedMod.getMetadata().description, this.listWidth + 15, 100, this.field_951_c - this.listWidth - 30, 0xDDDDDD);
             } else {
-                this.func_548_a(this.field_6451_g, "No mod information found", this.field_951_c / 2 + 60, 48, 0xDDDDDD);
+                this.func_548_a(this.field_6451_g, selectedMod.getName(), detailCentre, 35, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("Version: %s",selectedMod.getVersion()), detailCentre, 45, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, "No mod information found", detailCentre, 55, 0xDDDDDD);
+                this.func_548_a(this.field_6451_g, "Ask your mod author to provide a mod .info file", detailCentre, 65, 0xDDDDDD);
             }
         }
         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);

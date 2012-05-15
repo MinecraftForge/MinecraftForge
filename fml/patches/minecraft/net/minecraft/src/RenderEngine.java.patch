@@ -9,7 +9,7 @@
  import java.awt.Color;
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
-@@ -13,9 +16,13 @@
+@@ -13,9 +16,15 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -18,12 +18,22 @@
 +
  import org.lwjgl.opengl.GL11;
  
++import com.pclewis.mcpatcher.mod.TileSize;
++
 +import cpw.mods.fml.common.FMLCommonHandler;
 +
  public class RenderEngine
  {
      public static boolean field_1609_a = false;
-@@ -459,23 +466,40 @@
+@@ -452,6 +461,7 @@
+         p_1066_1_.func_783_a();
+     }
+ 
++    @SuppressWarnings("deprecation")
+     public void func_1067_a()
+     {
+         int var1 = -1;
+@@ -459,23 +469,43 @@
          for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
@@ -36,6 +46,9 @@
 +            int tileSize = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >>4;
 +            var3.textureGridSize = tileSize * tileSize;
 +            var3.textureLength = tileSize;
++            TileSize.int_numPixels=var3.textureGridSize;
++            TileSize.int_size=tileSize;
++            TileSize.int_sizeMinus1=tileSize-1;
 +            if (var3.field_1127_a==null || var3.field_1127_a.length!= var3.textureGridSize << 2) {
 +                var3.field_1127_a = new byte[var3.textureGridSize << 2];
 +            }
@@ -70,7 +83,7 @@
                  }
              }
          }
-@@ -635,4 +659,8 @@
+@@ -635,4 +665,8 @@
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
          }
      }

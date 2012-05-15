@@ -17,6 +17,7 @@ package cpw.mods.fml.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
@@ -37,6 +38,11 @@ public class ModMetadata
     public String updateUrl;
     
     public String logoFile;
+    public String version;
+    public String authorList;
+    public String credits;
+    public String parent;
+    public String[] screenshots;
 
     /**
      * @param mod2
