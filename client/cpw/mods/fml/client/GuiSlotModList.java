@@ -14,6 +14,8 @@
 
 package cpw.mods.fml.client;
 
+import java.util.ArrayList;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
@@ -30,17 +32,19 @@ import net.minecraft.src.Tessellator;
 public class GuiSlotModList extends GuiScrollingList
 {
     private GuiModList parent;
+    private ArrayList<ModContainer> mods;
 
-    public GuiSlotModList(GuiModList parent, int listWidth)
+    public GuiSlotModList(GuiModList parent, ArrayList<ModContainer> mods, int listWidth)
     {
         super(parent.getMinecraftInstance(), listWidth, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 25);
         this.parent=parent;
+        this.mods=mods;
     }
 
     @Override
     protected int getSize()
     {
-        return Loader.getModList().size();
+        return mods.size();
     }
 
     @Override
@@ -70,7 +74,7 @@ public class GuiSlotModList extends GuiScrollingList
     @Override
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
-        ModContainer mc=Loader.getModList().get(listIndex);
+        ModContainer mc=mods.get(listIndex);
         this.parent.getFontRenderer().func_873_b(mc.getName(), this.left + 3 , var3 + 2, 0xFFFFFF);
         this.parent.getFontRenderer().func_873_b(mc.getVersion(), this.left + 3 , var3 + 12, 0xCCCCCC);
     }

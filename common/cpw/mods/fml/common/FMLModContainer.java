@@ -25,6 +25,7 @@ public class FMLModContainer implements ModContainer
     private Mod modDescriptor;
     private Object modInstance;
     private File source;
+    private ModMetadata modMetadata;
 
     public FMLModContainer(String dummy)
     {
@@ -362,8 +363,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public ModMetadata getMetadata()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return modMetadata;
     }
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#setMetadata(cpw.mods.fml.common.ModMetadata)
@@ -371,8 +371,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public void setMetadata(ModMetadata meta)
     {
-        // TODO Auto-generated method stub
-        
+        this.modMetadata=meta;
     }
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#gatherRenderers(java.util.Map)
