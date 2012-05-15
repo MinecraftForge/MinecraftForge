@@ -623,4 +623,12 @@ public class Loader
     {
         return String.format("FML v%s.%s.%s.%s", major, minor, rev, build);
     }
+
+    /**
+     * @return
+     */
+    public ClassLoader getModClassLoader()
+    {
+        return modClassLoader;
+    }
 }

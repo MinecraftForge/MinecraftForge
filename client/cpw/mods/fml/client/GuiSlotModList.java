@@ -31,9 +31,9 @@ public class GuiSlotModList extends GuiScrollingList
 {
     private GuiModList parent;
 
-    public GuiSlotModList(GuiModList parent)
+    public GuiSlotModList(GuiModList parent, int listWidth)
     {
-        super(parent.getMinecraftInstance(), 120, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 18);
+        super(parent.getMinecraftInstance(), listWidth, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 25);
         this.parent=parent;
     }
 
@@ -64,15 +64,15 @@ public class GuiSlotModList extends GuiScrollingList
     @Override
     protected int getContentHeight()
     {
-        return this.getSize() * 3 * (this.parent.getFontRenderer().field_41063_b +1);
+        return (1 + this.getSize()) * 25;
     }
     
     @Override
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
         ModContainer mc=Loader.getModList().get(listIndex);
-        ModMetadata meta=mc.getMetadata();
-        this.parent.func_547_b(this.parent.getFontRenderer(), mc.getName(), this.left+3, var3 + 3, 16777215);
+        this.parent.getFontRenderer().func_873_b(mc.getName(), this.left + 3 , var3 + 2, 0xFFFFFF);
+        this.parent.getFontRenderer().func_873_b(mc.getVersion(), this.left + 3 , var3 + 12, 0xCCCCCC);
     }
 
 }
