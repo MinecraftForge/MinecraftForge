@@ -14,6 +14,10 @@
 
 package cpw.mods.fml.client;
 
+import java.util.ArrayList;
+
+import cpw.mods.fml.common.FMLModContainer;
+import cpw.mods.fml.common.FMLModLoaderContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.client.Minecraft;
@@ -35,6 +39,7 @@ public class GuiModList extends GuiScreen
     private int selected = -1;
     private ModContainer selectedMod;
     private int listWidth;
+    private ArrayList<ModContainer> mods;
 
     /**
      * @param guiMainMenu
@@ -42,17 +47,19 @@ public class GuiModList extends GuiScreen
     public GuiModList(GuiScreen mainMenu)
     {
         this.mainMenu=mainMenu;
+        this.mods=new ArrayList<ModContainer>(Loader.getModList());
+        mods.add(new FMLModLoaderContainer());
     }
     
     public void func_6448_a()
     {
-        for (ModContainer mod : Loader.getModList()) {
+        for (ModContainer mod : mods) {
             listWidth=Math.max(listWidth,getFontRenderer().func_871_a(mod.getName())+10);
             listWidth=Math.max(listWidth,getFontRenderer().func_871_a(mod.getVersion())+10);
         }
         StringTranslate translations = StringTranslate.func_20162_a();
         this.field_949_e.add(new GuiSmallButton(6, this.field_951_c / 2 - 75, this.field_950_d - 38, translations.func_20163_a("gui.done")));
-        this.modList=new GuiSlotModList(this, listWidth);
+        this.modList=new GuiSlotModList(this, mods, listWidth);
         this.modList.registerScrollButtons(this.field_949_e, 7, 8);
     }
 
@@ -77,10 +84,19 @@ public class GuiModList extends GuiScreen
         if (selectedMod!=null) {
             if (selectedMod.getMetadata()!=null) {
                 this.func_548_a(this.field_6451_g, selectedMod.getMetadata().name, detailCentre, 35, 0xFFFFFF);
+/*                String modInfomation=String.format(
+                        "Version: %s\n" +
+                		"Credits: %s\n" +
+                		"Authors: %s\n" +
+                		"URL    : %s\n" +
+                		"Updates: %s\n" +
+                		"Description:\n" +
+                		"%s",selectedMod.getMetadata().version,selectedMod.getMetadata().credits,selectedMod.getMetadata().authorList,selectedMod.getMetadata().url,selectedMod.getMetadata().updateUrl,selectedMod.getMetadata().description);*/
                 this.func_548_a(this.field_6451_g, String.format("Version: %s", selectedMod.getMetadata().version), detailCentre, 45, 0xFFFFFF);
                 this.func_548_a(this.field_6451_g, String.format("Credits: %s", selectedMod.getMetadata().credits), detailCentre, 55, 0xFFFFFF);
                 this.func_548_a(this.field_6451_g, String.format("Authors: %s", selectedMod.getMetadata().authorList), detailCentre, 65, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, String.format("URL: %s Updates: %s", selectedMod.getMetadata().url, selectedMod.getMetadata().updateUrl), detailCentre, 75, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("URL: %s", selectedMod.getMetadata().url), detailCentre, 75, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("Updates: %s", selectedMod.getMetadata().updateUrl), detailCentre, 85, 0xFFFFFF);
                 this.getFontRenderer().func_27278_a(selectedMod.getMetadata().description, this.listWidth + 15, 100, this.field_951_c - this.listWidth - 30, 0xDDDDDD);
             } else {
                 this.func_548_a(this.field_6451_g, selectedMod.getName(), detailCentre, 35, 0xFFFFFF);
@@ -106,8 +122,8 @@ public class GuiModList extends GuiScreen
     public void selectModIndex(int var1)
     {
         this.selected=var1;
-        if (var1>=0 && var1<=Loader.getModList().size()) {
-            this.selectedMod=Loader.getModList().get(selected);
+        if (var1>=0 && var1<=mods.size()) {
+            this.selectedMod=mods.get(selected);
         } else {
             this.selectedMod=null;
         }

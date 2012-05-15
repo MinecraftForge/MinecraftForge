@@ -453,7 +453,7 @@ public class FMLCommonHandler
         } catch (Exception ex) {
             // Ignore - no branding file found
         }
-        brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()>1?"s":""));
+        brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()!=1?"s":""));
         Collections.reverse(brandings);
         return brandings.toArray(new String[brandings.size()]);
     }
