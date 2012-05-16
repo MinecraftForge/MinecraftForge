@@ -95,9 +95,9 @@
          }
 +        GL11.glBindTexture(GL11.GL_TEXTURE_2D, func_1070_a("/terrain.png"));
 +        int tileSize = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >> 4;
-+        int tileSizeSquare = TextureFX.tileSize*TextureFX.tileSize;
-+        int tileSizeMask = TextureFX.tileSize - 1;
-+        int tileSizeSquareMask = TextureFX.tileSizeSquare - 1;
++        int tileSizeSquare = tileSize*tileSize;
++        int tileSizeMask = tileSize - 1;
++        int tileSizeSquareMask = tileSizeSquare - 1;
 +        
 +        FMLClientHandler.instance().preTexturePackChange(var1, tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
 +        
