@@ -44,27 +44,32 @@
                  var5.printStackTrace();
                  int[] var4 = this.func_28148_b(this.field_25189_l);
                  this.field_28151_c.put(p_28149_1_, var4);
-@@ -459,8 +471,11 @@
+@@ -459,8 +471,17 @@
          for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
 +            if (var3.errored) continue;
              var3.field_1131_c = this.field_1602_h.field_1578_g;
+-            var3.func_783_a();
 +            Profiler.func_40663_a(var3.getClass().getSimpleName());
-             var3.func_783_a();
++            try {
++                var3.func_783_a();
++            } catch (Exception e) {
++                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to",var3.getClass().getSimpleName()));
++                var3.errored=true;
++                continue;
++            }
 +            Profiler.func_40662_b();
              this.field_1605_e.clear();
              this.field_1605_e.put(var3.field_1127_a);
              this.field_1605_e.position(0).limit(var3.field_1127_a.length);
-@@ -470,12 +485,19 @@
+@@ -470,12 +491,17 @@
                  var3.func_782_a(this);
                  var1 = var3.field_1126_b;
              }
 +            if (var3.field_1127_a.length!=TextureFX.tileSizeSquare<<2) {
-+                if (!var3.errored) {
-+                    FMLCommonHandler.instance().getFMLLogger().warning(String.format("Detected a texture FX discrepancy in %s (%d, %d)",var3.getClass().getSimpleName(), var3.field_1127_a.length, var3.tileSizeSquare<<2));
-+                    var3.errored=true;
-+                }
++                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Detected a texture FX discrepancy in %s (%d, %d)",var3.getClass().getSimpleName(), var3.field_1127_a.length, var3.tileSizeSquare<<2));
++                var3.errored=true;
 +                continue;
 +            }
  
@@ -77,7 +82,7 @@
                  }
              }
          }
-@@ -579,6 +601,7 @@
+@@ -579,6 +605,7 @@
              }
              catch (IOException var7)
              {
@@ -85,7 +90,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -616,9 +639,28 @@
+@@ -616,9 +643,28 @@
              }
              catch (IOException var6)
              {
@@ -114,7 +119,7 @@
      }
  
      private BufferedImage func_6526_a(InputStream p_6526_1_) throws IOException
-@@ -635,4 +677,8 @@
+@@ -635,4 +681,8 @@
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
          }
      }
