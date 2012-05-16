@@ -1,26 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureLavaFlowFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureLavaFlowFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -14,6 +14,19 @@
+@@ -12,6 +12,24 @@
+     {
+         super(Block.field_397_D.field_378_bb + 1);
          this.field_1129_e = 2;
-     }
- 
++        setup();
++    }
++
 +    @Override
 +    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
 +    {
 +        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        if (field_1140_j.length!=tileSizeSquare) {
-+            field_1143_g = new float[tileSizeSquare];
-+            field_1142_h = new float[tileSizeSquare];
-+            field_1141_i = new float[tileSizeSquare];
-+            field_1140_j = new float[tileSizeSquare];
-+        }
-+        field_1139_k = 0;
++        setup();
 +    }
-+
++    
++    public void setup()
++    {
++        super.setup();
++        field_1143_g = new float[tileSizeSquare];
++        field_1142_h = new float[tileSizeSquare];
++        field_1141_i = new float[tileSizeSquare];
++        field_1140_j = new float[tileSizeSquare];
++        field_1139_k = 0;
+     }
+ 
      public void func_783_a()
-     {
-         ++this.field_1139_k;
-@@ -25,9 +38,9 @@
+@@ -25,9 +43,9 @@
          int var8;
          int var9;
  
@@ -32,7 +37,7 @@
              {
                  var3 = 0.0F;
                  int var4 = (int)(MathHelper.func_1106_a((float)var2 * (float)Math.PI * 2.0F / 16.0F) * 1.2F);
-@@ -37,25 +50,25 @@
+@@ -37,25 +55,25 @@
                  {
                      for (var7 = var2 - 1; var7 <= var2 + 1; ++var7)
                      {
@@ -67,7 +72,7 @@
                  }
              }
          }
-@@ -64,9 +77,9 @@
+@@ -64,9 +82,9 @@
          this.field_1142_h = this.field_1143_g;
          this.field_1143_g = var11;
  

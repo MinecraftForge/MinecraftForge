@@ -1,25 +1,41 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureLavaFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureLavaFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -12,6 +12,18 @@
-         super(Block.field_397_D.field_378_bb);
-     }
+@@ -2,14 +2,30 @@
  
+ public class TextureLavaFX extends TextureFX
+ {
+-    protected float[] field_1147_g = new float[256];
+-    protected float[] field_1146_h = new float[256];
+-    protected float[] field_1145_i = new float[256];
+-    protected float[] field_1144_j = new float[256];
++    protected float[] field_1147_g;
++    protected float[] field_1146_h;
++    protected float[] field_1145_i;
++    protected float[] field_1144_j;
+ 
+     public TextureLavaFX()
+     {
+         super(Block.field_397_D.field_378_bb);
++        setup();
++    }
++
 +    @Override
 +    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
 +    {
 +        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        if (field_1147_g.length != tileSizeSquare) {
-+            field_1147_g = new float[tileSizeSquare];
-+            field_1146_h = new float[tileSizeSquare];
-+            field_1145_i = new float[tileSizeSquare];
-+            field_1144_j = new float[tileSizeSquare];
-+        }
++        setup();
 +    }
-+
++    public void setup()
++    {
++        super.setup();
++        field_1147_g = new float[tileSizeSquare];
++        field_1146_h = new float[tileSizeSquare];
++        field_1145_i = new float[tileSizeSquare];
++        field_1144_j = new float[tileSizeSquare];
+     }
+ 
      public void func_783_a()
-     {
-         int var2;
-@@ -22,9 +34,9 @@
+@@ -22,9 +38,9 @@
          int var8;
          int var9;
  
@@ -31,7 +47,7 @@
              {
                  var3 = 0.0F;
                  int var4 = (int)(MathHelper.func_1106_a((float)var2 * (float)Math.PI * 2.0F / 16.0F) * 1.2F);
-@@ -36,23 +48,23 @@
+@@ -36,23 +52,23 @@
                      {
                          var8 = var6 + var4 & 15;
                          var9 = var7 + var5 & 15;
@@ -62,7 +78,7 @@
                  }
              }
          }
-@@ -61,7 +73,7 @@
+@@ -61,7 +77,7 @@
          this.field_1146_h = this.field_1147_g;
          this.field_1147_g = var11;
  

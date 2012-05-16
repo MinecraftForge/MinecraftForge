@@ -17,15 +17,17 @@
          this.field_40007_r = new FontRenderer(this.field_6304_y, "/font/alternate.png", this.field_6315_n, false);
  
          if (this.field_6304_y.field_44018_Q != null)
-@@ -330,6 +333,7 @@
+@@ -330,6 +333,9 @@
          GL11.glMatrixMode(GL11.GL_PROJECTION);
          GL11.glLoadIdentity();
          GL11.glMatrixMode(GL11.GL_MODELVIEW);
 +        FMLClientHandler.instance().onLoadComplete();
++        this.field_9231_Y.setup();
++        this.field_9232_X.setup();
          this.func_6250_c("Startup");
          this.field_6286_O = new OpenGlCapsChecker();
          this.field_6301_A.func_340_a(this.field_6304_y);
-@@ -744,9 +748,11 @@
+@@ -744,9 +750,11 @@
                      this.field_6327_b.func_6467_a(this.field_9237_P.field_1378_c);
                  }
  
@@ -37,7 +39,7 @@
              }
  
              GL11.glFlush();
-@@ -1340,6 +1346,7 @@
+@@ -1340,6 +1348,7 @@
              this.func_28001_B();
          }
  
@@ -45,7 +47,7 @@
          Profiler.func_40663_a("stats");
          this.field_25001_G.func_27178_d();
          Profiler.func_40661_c("gui");
-@@ -1730,6 +1737,7 @@
+@@ -1730,6 +1739,7 @@
          }
  
          Profiler.func_40662_b();

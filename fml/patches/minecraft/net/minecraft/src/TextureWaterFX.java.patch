@@ -1,26 +1,33 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureWaterFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureWaterFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -13,6 +13,19 @@
+@@ -11,8 +11,26 @@
+     public TextureWaterFX()
+     {
          super(Block.field_401_B.field_378_bb);
++        setup();
      }
  
 +    @Override
 +    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
 +    {
 +        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        if (field_1158_g.length!=tileSizeSquare) {
-+            field_1158_g = new float[tileSizeSquare];
-+            field_1157_h = new float[tileSizeSquare];
-+            field_1156_i = new float[tileSizeSquare];
-+            field_1155_j = new float[tileSizeSquare];
-+        }
++        setup();
++    }
++    
++    public void setup()
++    {
++        super.setup();
++        field_1158_g = new float[tileSizeSquare];
++        field_1157_h = new float[tileSizeSquare];
++        field_1156_i = new float[tileSizeSquare];
++        field_1155_j = new float[tileSizeSquare];
 +        field_1154_k = 0;
 +    }
 +    
      public void func_783_a()
      {
          ++this.field_1154_k;
-@@ -22,9 +35,9 @@
+@@ -22,9 +40,9 @@
          int var5;
          int var6;
  
@@ -32,7 +39,7 @@
              {
                  var3 = 0.0F;
  
-@@ -32,29 +45,29 @@
+@@ -32,29 +50,29 @@
                  {
                      var5 = var4 & 15;
                      var6 = var2 & 15;
@@ -71,7 +78,7 @@
                  }
              }
          }
-@@ -63,7 +76,7 @@
+@@ -63,7 +81,7 @@
          this.field_1157_h = this.field_1158_g;
          this.field_1158_g = var12;
  

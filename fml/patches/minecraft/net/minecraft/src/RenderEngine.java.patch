@@ -85,7 +85,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -616,9 +639,27 @@
+@@ -616,9 +639,28 @@
              }
              catch (IOException var6)
              {
@@ -101,19 +101,20 @@
 +        
 +        FMLClientHandler.instance().preTexturePackChange(var1, tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
 +        
-+        for (Object tex : field_1604_f) {
-+            ((TextureFX)tex).onTexturePackChange(tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
-+        }
 +        TextureFX.iconTileSize = tileSize;
 +        TextureFX.tileSizeSquare = tileSizeSquare;
 +        TextureFX.tileSizeMask = tileSizeMask;
 +        TextureFX.tileSizeSquareMask = tileSizeSquareMask;
++
++        for (Object tex : field_1604_f) {
++            ((TextureFX)tex).onTexturePackChange(tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
++        }
 +        
 +        FMLClientHandler.instance().postTexturePackChange(var1);
      }
  
      private BufferedImage func_6526_a(InputStream p_6526_1_) throws IOException
-@@ -635,4 +676,8 @@
+@@ -635,4 +677,8 @@
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
          }
      }
