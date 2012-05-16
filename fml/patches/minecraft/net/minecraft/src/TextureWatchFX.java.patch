@@ -21,11 +21,11 @@
 -            var2 = ImageIO.read(Minecraft.class.getResource("/misc/dial.png"));
 -            var2.getRGB(0, 0, 16, 16, this.field_4223_i, 0, 16);
 +            BufferedImage var2 = ImageIO.read(field_4225_g.field_6298_C.field_6534_a.func_6481_a("/gui/items.png"));
-+            int var3 = this.field_1126_b % 16 * tileSize;
-+            int var4 = this.field_1126_b / 16 * tileSize;
-+            var2.getRGB(var3, var4, tileSize, tileSize, this.field_4224_h, 0, tileSize);
++            int var3 = this.field_1126_b % 16 * iconTileSize;
++            int var4 = this.field_1126_b / 16 * iconTileSize;
++            var2.getRGB(var3, var4, iconTileSize, iconTileSize, this.field_4224_h, 0, iconTileSize);
 +            var2 = ImageIO.read(field_4225_g.field_6298_C.field_6534_a.func_6481_a("/misc/dial.png"));
-+            var2.getRGB(0, 0, tileSize, tileSize, this.field_4223_i, 0, tileSize);
++            var2.getRGB(0, 0, iconTileSize, iconTileSize, this.field_4223_i, 0, iconTileSize);
          }
          catch (IOException var5)
          {
@@ -60,15 +60,15 @@
              {
 -                double var14 = -((double)(var9 % 16) / 15.0D - 0.5D);
 -                double var16 = (double)(var9 / 16) / 15.0D - 0.5D;
-+                double var14 = -((double)(var9 % tileSize) / tileSizeMask - 0.5D);
-+                double var16 = (double)(var9 / tileSize) / tileSizeMask - 0.5D;
++                double var14 = -((double)(var9 % iconTileSize) / tileSizeMask - 0.5D);
++                double var16 = (double)(var9 / iconTileSize) / tileSizeMask - 0.5D;
                  int var18 = var11;
 -                int var19 = (int)((var14 * var7 + var16 * var5 + 0.5D) * 16.0D);
 -                int var20 = (int)((var16 * var7 - var14 * var5 + 0.5D) * 16.0D);
 -                int var21 = (var19 & 15) + (var20 & 15) * 16;
-+                int var19 = (int)((var14 * var7 + var16 * var5 + 0.5D) * tileSize);
-+                int var20 = (int)((var16 * var7 - var14 * var5 + 0.5D) * tileSize);
-+                int var21 = (var19 & tileSizeMask) + (var20 & tileSizeMask) * tileSize;
++                int var19 = (int)((var14 * var7 + var16 * var5 + 0.5D) * iconTileSize);
++                int var20 = (int)((var16 * var7 - var14 * var5 + 0.5D) * iconTileSize);
++                int var21 = (var19 & tileSizeMask) + (var20 & tileSizeMask) * iconTileSize;
                  var10 = this.field_4223_i[var21] >> 24 & 255;
                  var11 = (this.field_4223_i[var21] >> 16 & 255) * var11 / 255;
                  var12 = (this.field_4223_i[var21] >> 8 & 255) * var18 / 255;

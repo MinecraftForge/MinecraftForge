@@ -33,9 +33,9 @@
 -            int var4 = this.field_1126_b / 16 * 16;
 -            var2.getRGB(var3, var4, 16, 16, this.field_4230_h, 0, 16);
 +            BufferedImage var2 = ImageIO.read(field_4231_g.field_6298_C.field_6534_a.func_6481_a("/gui/items.png"));
-+            int var3 = this.field_1126_b % 16 * tileSize;
-+            int var4 = this.field_1126_b / 16 * tileSize;
-+            var2.getRGB(var3, var4, tileSize, tileSize, this.field_4230_h, 0, tileSize);
++            int var3 = this.field_1126_b % 16 * iconTileSize;
++            int var4 = this.field_1126_b / 16 * iconTileSize;
++            var2.getRGB(var3, var4, iconTileSize, iconTileSize, this.field_4230_h, 0, iconTileSize);
          }
          catch (IOException var5)
          {
@@ -53,14 +53,14 @@
          int var18;
  
 -        for (var9 = -4; var9 <= 4; ++var9)
-+        for (var9 = -(tileSize >> 2); var9 <= (tileSize >> 2); ++var9)
++        for (var9 = -(iconTileSize >> 2); var9 <= (iconTileSize >> 2); ++var9)
          {
 -            var10 = (int)(8.5D + var26 * (double)var9 * 0.3D);
 -            var11 = (int)(7.5D - var24 * (double)var9 * 0.3D * 0.5D);
 -            var12 = var11 * 16 + var10;
-+            var10 = (int)((tileSize >> 1) + 0.5D + var26 * (double)var9 * 0.3D);
-+            var11 = (int)((tileSize >> 1) - 0.5D - var24 * (double)var9 * 0.3D * 0.5D);
-+            var12 = var11 * tileSize + var10;
++            var10 = (int)((iconTileSize >> 1) + 0.5D + var26 * (double)var9 * 0.3D);
++            var11 = (int)((iconTileSize >> 1) - 0.5D - var24 * (double)var9 * 0.3D * 0.5D);
++            var12 = var11 * iconTileSize + var10;
              var13 = 100;
              var14 = 100;
              var15 = 100;
@@ -69,14 +69,14 @@
          }
  
 -        for (var9 = -8; var9 <= 16; ++var9)
-+        for (var9 = -(tileSize>>2); var9 <= tileSize; ++var9)
++        for (var9 = -(iconTileSize>>2); var9 <= iconTileSize; ++var9)
          {
 -            var10 = (int)(8.5D + var24 * (double)var9 * 0.3D);
 -            var11 = (int)(7.5D + var26 * (double)var9 * 0.3D * 0.5D);
 -            var12 = var11 * 16 + var10;
-+            var10 = (int)((tileSize >> 1) + 0.5D + var24 * (double)var9 * 0.3D);
-+            var11 = (int)((tileSize >> 1) - 0.5D + var26 * (double)var9 * 0.3D * 0.5D);
-+            var12 = var11 * tileSize + var10;
++            var10 = (int)((iconTileSize >> 1) + 0.5D + var24 * (double)var9 * 0.3D);
++            var11 = (int)((iconTileSize >> 1) - 0.5D + var26 * (double)var9 * 0.3D * 0.5D);
++            var12 = var11 * iconTileSize + var10;
              var13 = var9 >= 0 ? 255 : 100;
              var14 = var9 >= 0 ? 20 : 100;
              var15 = var9 >= 0 ? 20 : 100;
