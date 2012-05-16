@@ -34,14 +34,14 @@ public class ModMetadata
     public String name;
     public String description;
     
-    public String url;
-    public String updateUrl;
+    public String url="";
+    public String updateUrl="";
     
-    public String logoFile;
-    public String version;
-    public String authorList;
-    public String credits;
-    public String parent;
+    public String logoFile="";
+    public String version="";
+    public String authorList="";
+    public String credits="";
+    public String parent="";
     public String[] screenshots;
 
     /**
