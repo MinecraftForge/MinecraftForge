@@ -23,6 +23,7 @@ class OverrideInfo
     public int index;
     public int imageIndex;
     public TextureFX textureFX;
+    public boolean added;
     
     @Override
     public boolean equals(Object obj)

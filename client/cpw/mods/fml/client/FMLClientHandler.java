@@ -12,6 +12,9 @@
  */
 package cpw.mods.fml.client;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WIDTH;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -30,6 +35,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import org.lwjgl.opengl.GL11;
+
+import com.pclewis.mcpatcher.mod.TileSize;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
@@ -97,6 +106,7 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
  * @author cpw
  * 
  */
+@SuppressWarnings("deprecation")
 public class FMLClientHandler implements IFMLSidedHandler
 {
     /**
@@ -127,6 +137,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
     private HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
     private HashSet<OverrideInfo> animationSet = new HashSet<OverrideInfo>();
+
+    private List<TextureFX> addedTextureFX;
 
     /**
      * Called to start the whole game off from
@@ -186,7 +198,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
         client.field_6304_y.loadModKeySettings(harvestKeyBindings());
-        onTexturePackChange(fallbackTexturePack);
+        postTexturePackChange(fallbackTexturePack);
     }
 
     public KeyBinding[] harvestKeyBindings() {
@@ -731,7 +743,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         
         for (OverrideInfo animationOverride : animationSet) {
             renderer.func_1066_a(animationOverride.textureFX);
+            addedTextureFX.add(animationOverride.textureFX);
         }
+        
         for (String fileToOverride : overrideInfo.keySet()) {
             for (OverrideInfo override : overrideInfo.get(fileToOverride)) {
                 try
@@ -739,6 +753,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                     BufferedImage image=loadImageFromTexturePack(renderer, override.override);
                     ModTextureStatic mts=new ModTextureStatic(override.index, 1, override.texture, image);
                     renderer.func_1066_a(mts);
+                    addedTextureFX.add(mts);
                 }
                 catch (IOException e)
                 {
@@ -810,24 +825,38 @@ public class FMLClientHandler implements IFMLSidedHandler
         return meta;
     }
 
+    public void preTexturePackChange(TexturePackBase var1, int tileSize, int tileSizeSquare, int tileSizeMask, int tileSizeSquareMask)
+    {
+        ListIterator<TextureFX> li = addedTextureFX.listIterator();
+        while (li.hasNext()) {
+            TextureFX tex=li.next();
+            if (tex.unregister(client.field_6315_n)) {
+                li.remove();
+            }
+        }
+        TileSize.int_numPixels=tileSizeSquare;
+        TileSize.int_size=tileSize;
+        TileSize.int_sizeMinus1=tileSizeMask;
+    }
+
     /**
      * @param p_6531_1_
      */
-    public void onTexturePackChange(TexturePackBase texturePack)
+    public void postTexturePackChange(TexturePackBase texturePack)
     {
-        FMLClientHandler.instance().registerTextureOverrides(client.field_6315_n);
+        registerTextureOverrides(client.field_6315_n);
     }
 
     /**
      * @param field_6539_c
      */
-    public void onTexturePackFallback(TexturePackBase fallback)
+    public void onEarlyTexturePackLoad(TexturePackBase fallback)
     {
         if (client==null) {
             // We're far too early- let's wait
             this.fallbackTexturePack=fallback;
         } else {
-            onTexturePackChange(fallback);
+            postTexturePackChange(fallback);
         }
     }
 
@@ -868,4 +897,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void profileEnd() {
         Profiler.func_40662_b();
     }
+
+    /**
+     * @param var1
+     * @param tileSize
+     * @param tileSizeSquare
+     * @param tileSizeMask
+     * @param tileSizeSquareMask
+     */
 }
