@@ -1,12 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -10,6 +10,9 @@
+@@ -10,6 +10,11 @@
      public int field_1130_d = 0;
      public int field_1129_e = 1;
      public int field_1128_f = 0;
-+    public int textureGridSize = 256;
-+    public int textureLength = 16;
-+    public boolean hasWarned = false;
++    public static int tileSize = 16;
++    public static int tileSizeSquare = 256;
++    public static int tileSizeMask = 15;
++    public static int tileSizeSquareMask = 255;
++    public boolean errored = false;
  
      public TextureFX(int p_i616_1_)
      {
+@@ -29,4 +34,19 @@
+             GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_782_1_.func_1070_a("/gui/items.png"));
+         }
+     }
++    
++    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask) {
++        errored = false;
++        field_1127_a = new byte[newTileSizeSquare << 2];
++    }
++
++    /**
++     * @return 
++     * 
++     */
++    public boolean unregister(RenderEngine engine)
++    {
++        engine.field_1604_f.remove(this);
++        return true;
++    }
+ }
