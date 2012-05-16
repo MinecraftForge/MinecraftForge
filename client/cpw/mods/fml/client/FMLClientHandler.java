@@ -190,6 +190,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onLoadComplete()
     {
+        client.field_6315_n.func_1065_b();
         Loader.instance().initializeMods();
         for (ModContainer mod : Loader.getModList()) {
             mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
@@ -198,7 +199,6 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
         client.field_6304_y.loadModKeySettings(harvestKeyBindings());
-        postTexturePackChange(fallbackTexturePack);
     }
 
     public KeyBinding[] harvestKeyBindings() {
