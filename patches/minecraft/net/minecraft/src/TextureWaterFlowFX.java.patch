@@ -27,10 +27,10 @@
 -
 -        for (var1 = 0; var1 < 16; ++var1)
 +        
-+        for (var1 = 0; var1 < tileSize; ++var1)
++        for (var1 = 0; var1 < iconTileSize; ++var1)
          {
 -            for (var2 = 0; var2 < 16; ++var2)
-+            for (var2 = 0; var2 < tileSize; ++var2)
++            for (var2 = 0; var2 < iconTileSize; ++var2)
              {
                  var3 = 0.0F;
  
@@ -41,37 +41,37 @@
 -                    var3 += this.field_1138_g[var5 + var6 * 16];
 +                    var5 = var1 & tileSizeMask;
 +                    var6 = var4 & tileSizeMask;
-+                    var3 += this.field_1138_g[var5 + var6 * tileSize];
++                    var3 += this.field_1138_g[var5 + var6 * iconTileSize];
                  }
  
 -                this.field_1137_h[var1 + var2 * 16] = var3 / 3.2F + this.field_1136_i[var1 + var2 * 16] * 0.8F;
-+                this.field_1137_h[var1 + var2 * tileSize] = var3 / 3.2F + this.field_1136_i[var1 + var2 * tileSize] * 0.8F;
++                this.field_1137_h[var1 + var2 * iconTileSize] = var3 / 3.2F + this.field_1136_i[var1 + var2 * iconTileSize] * 0.8F;
              }
          }
  
 -        for (var1 = 0; var1 < 16; ++var1)
-+        for (var1 = 0; var1 < tileSize; ++var1)
++        for (var1 = 0; var1 < iconTileSize; ++var1)
          {
 -            for (var2 = 0; var2 < 16; ++var2)
-+            for (var2 = 0; var2 < tileSize; ++var2)
++            for (var2 = 0; var2 < iconTileSize; ++var2)
              {
 -                this.field_1136_i[var1 + var2 * 16] += this.field_1135_j[var1 + var2 * 16] * 0.05F;
-+                this.field_1136_i[var1 + var2 * tileSize] += this.field_1135_j[var1 + var2 * tileSize] * 0.05F;
++                this.field_1136_i[var1 + var2 * iconTileSize] += this.field_1135_j[var1 + var2 * iconTileSize] * 0.05F;
  
 -                if (this.field_1136_i[var1 + var2 * 16] < 0.0F)
-+                if (this.field_1136_i[var1 + var2 * tileSize] < 0.0F)
++                if (this.field_1136_i[var1 + var2 * iconTileSize] < 0.0F)
                  {
 -                    this.field_1136_i[var1 + var2 * 16] = 0.0F;
-+                    this.field_1136_i[var1 + var2 * tileSize] = 0.0F;
++                    this.field_1136_i[var1 + var2 * iconTileSize] = 0.0F;
                  }
  
 -                this.field_1135_j[var1 + var2 * 16] -= 0.3F;
-+                this.field_1135_j[var1 + var2 * tileSize] -= 0.3F;
++                this.field_1135_j[var1 + var2 * iconTileSize] -= 0.3F;
  
                  if (Math.random() < 0.2D)
                  {
 -                    this.field_1135_j[var1 + var2 * 16] = 0.5F;
-+                    this.field_1135_j[var1 + var2 * tileSize] = 0.5F;
++                    this.field_1135_j[var1 + var2 * iconTileSize] = 0.5F;
                  }
              }
          }
@@ -83,7 +83,7 @@
 +        for (var2 = 0; var2 < tileSizeSquare; ++var2)
          {
 -            var3 = this.field_1138_g[var2 - this.field_1134_k * 16 & 255];
-+            var3 = this.field_1138_g[var2 - this.field_1134_k * tileSize & tileSizeSquareMask];
++            var3 = this.field_1138_g[var2 - this.field_1134_k * iconTileSize & tileSizeSquareMask];
  
              if (var3 > 1.0F)
              {

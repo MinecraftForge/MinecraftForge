@@ -73,7 +73,7 @@
                  for (int var5 = 0; var5 < var3.field_1129_e; ++var5)
                  {
 -                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, var3.field_1126_b % 16 * 16 + var4 * 16, var3.field_1126_b / 16 * 16 + var5 * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_1605_e);
-+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, var3.field_1126_b % 16 * TextureFX.tileSize + var4 * TextureFX.tileSize, var3.field_1126_b / 16 * TextureFX.tileSize + var5 * TextureFX.tileSize, TextureFX.tileSize, TextureFX.tileSize, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_1605_e);
++                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, var3.field_1126_b % 16 * TextureFX.iconTileSize + var4 * TextureFX.iconTileSize, var3.field_1126_b / 16 * TextureFX.iconTileSize + var5 * TextureFX.iconTileSize, TextureFX.iconTileSize, TextureFX.iconTileSize, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_1605_e);
                  }
              }
          }
@@ -104,7 +104,7 @@
 +        for (Object tex : field_1604_f) {
 +            ((TextureFX)tex).onTexturePackChange(tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
 +        }
-+        TextureFX.tileSize = tileSize;
++        TextureFX.iconTileSize = tileSize;
 +        TextureFX.tileSizeSquare = tileSizeSquare;
 +        TextureFX.tileSizeMask = tileSizeMask;
 +        TextureFX.tileSizeSquareMask = tileSizeSquareMask;

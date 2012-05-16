@@ -4,7 +4,7 @@
      public int field_1130_d = 0;
      public int field_1129_e = 1;
      public int field_1128_f = 0;
-+    public static int tileSize = 16;
++    public static int iconTileSize = 16;
 +    public static int tileSizeSquare = 256;
 +    public static int tileSizeMask = 15;
 +    public static int tileSizeSquareMask = 255;
