@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureWatchFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureWatchFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -18,15 +18,21 @@
+@@ -18,15 +18,22 @@
          super(Item.field_4023_aQ.func_27009_a(0));
          this.field_4225_g = p_i364_1_;
          this.field_1128_f = 1;
@@ -10,6 +10,7 @@
 +    
 +    public void setup()
 +    {
++        super.setup();
 +        field_4224_h = new int[tileSizeSquare];
 +        field_4223_i = new int[tileSizeSquare];
          try
@@ -29,7 +30,7 @@
          }
          catch (IOException var5)
          {
-@@ -34,6 +40,15 @@
+@@ -34,6 +41,15 @@
          }
      }
  
@@ -45,7 +46,7 @@
      public void func_783_a()
      {
          double var1 = 0.0D;
-@@ -77,7 +92,7 @@
+@@ -77,7 +93,7 @@
          double var5 = Math.sin(this.field_4222_j);
          double var7 = Math.cos(this.field_4222_j);
  
@@ -54,7 +55,7 @@
          {
              int var10 = this.field_4224_h[var9] >> 24 & 255;
              int var11 = this.field_4224_h[var9] >> 16 & 255;
-@@ -86,12 +101,12 @@
+@@ -86,12 +102,12 @@
  
              if (var11 == var13 && var12 == 0 && var13 > 0)
              {

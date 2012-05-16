@@ -9,7 +9,7 @@
      private double field_4229_i;
      private double field_4228_j;
  
-@@ -17,13 +17,25 @@
+@@ -17,13 +17,26 @@
          super(Item.field_4025_aO.func_27009_a(0));
          this.field_4231_g = p_i617_1_;
          this.field_1128_f = 1;
@@ -25,6 +25,7 @@
  
 +    public void setup()
 +    {
++        super.setup();
 +        field_4230_h = new int[tileSizeSquare];
          try
          {
@@ -39,7 +40,7 @@
          }
          catch (IOException var5)
          {
-@@ -33,7 +45,7 @@
+@@ -33,7 +46,7 @@
  
      public void func_783_a()
      {
@@ -48,7 +49,7 @@
          {
              int var2 = this.field_4230_h[var1] >> 24 & 255;
              int var3 = this.field_4230_h[var1] >> 16 & 255;
-@@ -110,11 +122,11 @@
+@@ -110,11 +123,11 @@
          int var19;
          int var18;
  
@@ -64,7 +65,7 @@
              var13 = 100;
              var14 = 100;
              var15 = 100;
-@@ -136,11 +148,11 @@
+@@ -136,11 +149,11 @@
              this.field_1127_a[var12 * 4 + 3] = (byte)var16;
          }
  

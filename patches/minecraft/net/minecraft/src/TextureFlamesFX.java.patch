@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,43 +4,62 @@
+@@ -4,10 +4,28 @@
  {
      protected float[] field_1133_g = new float[320];
      protected float[] field_1132_h = new float[320];
@@ -10,23 +10,26 @@
      public TextureFlamesFX(int p_i474_1_)
      {
          super(Block.field_402_as.field_378_bb + p_i474_1_ * 16);
-     }
- 
++        setup();
++    }
++
 +    @Override
 +    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
 +    {
 +        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
++        setup();
++    }
++    public void setup()
++    {
++        super.setup();
 +        fireTileSize = iconTileSize + (iconTileSize >> 2);
 +        fireGridSize = fireTileSize * iconTileSize;
-+        if (field_1132_h.length != fireGridSize) {
-+            field_1133_g = new float[fireGridSize];
-+            field_1132_h = new float[fireGridSize];
-+        }
-+    }
-+
++        field_1133_g = new float[fireGridSize];
++        field_1132_h = new float[fireGridSize];
+     }
+ 
      public void func_783_a()
-     {
-         int var3;
+@@ -16,31 +34,36 @@
          float var4;
          int var6;
  
@@ -72,7 +75,7 @@
                  }
              }
          }
-@@ -49,7 +68,7 @@
+@@ -49,7 +72,7 @@
          this.field_1132_h = this.field_1133_g;
          this.field_1133_g = var13;
  

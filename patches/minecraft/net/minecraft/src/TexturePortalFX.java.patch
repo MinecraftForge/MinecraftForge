@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/TexturePortalFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TexturePortalFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,28 +5,34 @@
+@@ -5,28 +5,35 @@
  public class TexturePortalFX extends TextureFX
  {
      private int field_4227_g = 0;
@@ -15,6 +15,7 @@
 +
 +    private void setupPortalTextures()
 +    {
++        super.setup();
 +        field_4226_h = new byte[32][tileSizeSquare << 4];
          Random var1 = new Random(100L);
  
@@ -42,7 +43,7 @@
  
                          if (var9 < -1.0F)
                          {
-@@ -60,7 +66,7 @@
+@@ -60,7 +67,7 @@
                      int var13 = (int)(var5 * var5 * 200.0F + 55.0F);
                      int var14 = (int)(var5 * var5 * var5 * var5 * 255.0F);
                      int var15 = (int)(var5 * 100.0F + 155.0F);
@@ -51,7 +52,7 @@
                      this.field_4226_h[var2][var16 * 4 + 0] = (byte)var13;
                      this.field_4226_h[var2][var16 * 4 + 1] = (byte)var14;
                      this.field_4226_h[var2][var16 * 4 + 2] = (byte)var6;
-@@ -68,14 +74,24 @@
+@@ -68,14 +75,24 @@
                  }
              }
          }
