@@ -497,11 +497,10 @@ public class Loader
                 mod.nextState();
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             log.warning(String.format("Failed to load mod class %s in %s", classFileName, classSource.getAbsoluteFile()));
             log.throwing("fml.server.Loader", "attemptLoad", e);
-            state = State.ERRORED;
         }
     }
 
