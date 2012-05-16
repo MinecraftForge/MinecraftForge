@@ -9,19 +9,11 @@
  import net.minecraft.client.Minecraft;
  
  public class TexturePackList
-@@ -56,6 +58,7 @@
-             this.field_6537_e.field_6304_y.field_6524_j = this.field_6535_g;
-             this.field_6537_e.field_6304_y.func_1041_b();
-             this.field_6534_a.func_6482_a();
-+            FMLClientHandler.instance().onTexturePackChange(p_6531_1_);
-             return true;
-         }
-     }
-@@ -140,6 +143,7 @@
+@@ -140,6 +142,7 @@
          if (this.field_6534_a == null)
          {
              this.field_6534_a = this.field_6539_c;
-+            FMLClientHandler.instance().onTexturePackFallback(this.field_6539_c);
++            FMLClientHandler.instance().onEarlyTexturePackLoad(this.field_6539_c);
          }
  
          this.field_6533_b.removeAll(var1);
