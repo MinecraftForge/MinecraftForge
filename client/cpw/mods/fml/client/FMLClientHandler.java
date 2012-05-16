@@ -138,7 +138,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
     private HashSet<OverrideInfo> animationSet = new HashSet<OverrideInfo>();
 
-    private List<TextureFX> addedTextureFX;
+    private List<TextureFX> addedTextureFX = new ArrayList<TextureFX>();
 
     /**
      * Called to start the whole game off from
