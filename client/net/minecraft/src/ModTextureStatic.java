@@ -155,4 +155,17 @@ public class ModTextureStatic extends TextureFX
 
         return tmp;
     }
+    
+    /* (non-Javadoc)
+     * @see net.minecraft.src.TextureFX#unregister(net.minecraft.src.RenderEngine)
+     */
+    @Override
+    public boolean unregister(RenderEngine engine)
+    {
+        if (this.getClass()==ModTextureStatic.class) {
+            return super.unregister(engine);
+        } else {
+            return false;
+        }
+    }
 }

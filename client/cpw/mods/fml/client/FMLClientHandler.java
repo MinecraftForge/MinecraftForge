@@ -741,6 +741,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         for (OverrideInfo animationOverride : animationSet) {
             renderer.func_1066_a(animationOverride.textureFX);
             addedTextureFX.add(animationOverride.textureFX);
+            FMLCommonHandler.instance().getFMLLogger().finer(String.format("Registered texture override %d (%d) on %s (%d)", animationOverride.index, animationOverride.textureFX.field_1126_b, animationOverride.textureFX.getClass().getSimpleName(), animationOverride.textureFX.field_1128_f));
         }
         
         for (String fileToOverride : overrideInfo.keySet()) {
@@ -751,6 +752,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                     ModTextureStatic mts=new ModTextureStatic(override.index, 1, override.texture, image);
                     renderer.func_1066_a(mts);
                     addedTextureFX.add(mts);
+                    FMLCommonHandler.instance().getFMLLogger().finer(String.format("Registered texture override %d (%d) on %s (%d)", override.index, mts.field_1126_b, override.texture, mts.field_1128_f));
                 }
                 catch (IOException e)
                 {
