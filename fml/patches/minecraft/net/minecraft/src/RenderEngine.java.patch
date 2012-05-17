@@ -9,7 +9,7 @@
  import java.awt.Color;
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
-@@ -13,9 +16,17 @@
+@@ -13,9 +16,15 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -19,15 +19,13 @@
 +
  import org.lwjgl.opengl.GL11;
  
-+import com.pclewis.mcpatcher.mod.TileSize;
-+
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
 +
  public class RenderEngine
  {
      public static boolean field_1609_a = false;
-@@ -24,7 +35,7 @@
+@@ -24,7 +33,7 @@
      private IntHashMap field_1607_c = new IntHashMap();
      private IntBuffer field_1606_d = GLAllocation.func_1125_c(1);
      private ByteBuffer field_1605_e = GLAllocation.func_1127_b(16777216);
@@ -36,7 +34,7 @@
      private Map field_1603_g = new HashMap();
      private GameSettings field_1602_h;
      public boolean field_4281_i = false;
-@@ -97,6 +108,7 @@
+@@ -97,6 +106,7 @@
              }
              catch (IOException var5)
              {
@@ -44,7 +42,7 @@
                  var5.printStackTrace();
                  int[] var4 = this.func_28148_b(this.field_25189_l);
                  this.field_28151_c.put(p_28149_1_, var4);
-@@ -459,8 +471,17 @@
+@@ -459,8 +469,17 @@
          for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
@@ -63,7 +61,7 @@
              this.field_1605_e.clear();
              this.field_1605_e.put(var3.field_1127_a);
              this.field_1605_e.position(0).limit(var3.field_1127_a.length);
-@@ -470,12 +491,17 @@
+@@ -470,12 +489,17 @@
                  var3.func_782_a(this);
                  var1 = var3.field_1126_b;
              }
@@ -82,7 +80,7 @@
                  }
              }
          }
-@@ -579,6 +605,7 @@
+@@ -579,6 +603,7 @@
              }
              catch (IOException var7)
              {
@@ -90,7 +88,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -616,9 +643,28 @@
+@@ -616,9 +641,28 @@
              }
              catch (IOException var6)
              {
@@ -104,7 +102,7 @@
 +        int tileSizeMask = tileSize - 1;
 +        int tileSizeSquareMask = tileSizeSquare - 1;
 +        
-+        FMLClientHandler.instance().preTexturePackChange(var1, tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
++        FMLClientHandler.instance().pruneOldTextureFX(var1, tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
 +        
 +        TextureFX.iconTileSize = tileSize;
 +        TextureFX.tileSizeSquare = tileSizeSquare;
@@ -115,16 +113,7 @@
 +            ((TextureFX)tex).onTexturePackChange(tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
 +        }
 +        
-+        FMLClientHandler.instance().postTexturePackChange(var1);
++        FMLClientHandler.instance().loadTextures(var1);
      }
  
      private BufferedImage func_6526_a(InputStream p_6526_1_) throws IOException
-@@ -635,4 +681,8 @@
-             GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_1076_1_);
-         }
-     }
-+    
-+    public TexturePackList getTexturePackList() {
-+        return field_6527_k;
-+    }
- }

@@ -38,8 +38,6 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
-import com.pclewis.mcpatcher.mod.TileSize;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
@@ -106,7 +104,6 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
  * @author cpw
  * 
  */
-@SuppressWarnings("deprecation")
 public class FMLClientHandler implements IFMLSidedHandler
 {
     /**
@@ -655,7 +652,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public BufferedImage loadImageFromTexturePack(RenderEngine renderEngine, String path) throws IOException
     {
-        InputStream image=renderEngine.getTexturePackList().field_6534_a.func_6481_a(path);
+        InputStream image=client.field_6298_C.field_6534_a.func_6481_a(path);
         if (image==null) {
             throw new RuntimeException(String.format("The requested image path %s is not found",path));
         }
@@ -825,7 +822,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         return meta;
     }
 
-    public void preTexturePackChange(TexturePackBase var1, int tileSize, int tileSizeSquare, int tileSizeMask, int tileSizeSquareMask)
+    public void pruneOldTextureFX(TexturePackBase var1, int tileSize, int tileSizeSquare, int tileSizeMask, int tileSizeSquareMask)
     {
         ListIterator<TextureFX> li = addedTextureFX.listIterator();
         while (li.hasNext()) {
@@ -834,15 +831,12 @@ public class FMLClientHandler implements IFMLSidedHandler
                 li.remove();
             }
         }
-        TileSize.int_numPixels=tileSizeSquare;
-        TileSize.int_size=tileSize;
-        TileSize.int_sizeMinus1=tileSizeMask;
     }
 
     /**
      * @param p_6531_1_
      */
-    public void postTexturePackChange(TexturePackBase texturePack)
+    public void loadTextures(TexturePackBase texturePack)
     {
         registerTextureOverrides(client.field_6315_n);
     }
@@ -856,7 +850,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             // We're far too early- let's wait
             this.fallbackTexturePack=fallback;
         } else {
-            postTexturePackChange(fallback);
+            loadTextures(fallback);
         }
     }
 
@@ -896,6 +890,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void profileEnd() {
         Profiler.func_40662_b();
+    }
+
+    /**
+     * 
+     */
+    public void preGameLoad()
+    {
+        // NOOP at the minute
     }
 
     /**

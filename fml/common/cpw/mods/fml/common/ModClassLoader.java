@@ -35,6 +35,9 @@ public class ModClassLoader extends URLClassLoader
         super(new URL[0], ModClassLoader.class.getClassLoader());
     }
 
+    public ModClassLoader(ClassLoader parent) {
+        super(new URL[0], null);
+    }
     public void addFile(File modFile) throws MalformedURLException
     {
         ClassLoader cl=getParent();
