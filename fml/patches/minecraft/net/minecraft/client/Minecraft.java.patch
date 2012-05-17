@@ -55,15 +55,6 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -2233,7 +2243,7 @@
-         return this.field_6322_g instanceof EntityClientPlayerMP ? ((EntityClientPlayerMP)this.field_6322_g).field_797_bg : null;
-     }
- 
--    public static void main(String[] p_main_0_)
-+    public static void main(String[] p_main_0_) throws Exception
-     {
-         String var1 = null;
-         String var2 = null;
 @@ -2250,7 +2260,10 @@
          {
              var2 = p_main_0_[1];
