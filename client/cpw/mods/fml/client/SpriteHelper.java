@@ -20,6 +20,7 @@ import java.util.HashMap;
 import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderException;
 
 /**
  * @author cpw
@@ -29,61 +30,81 @@ public class SpriteHelper
 {
     private static HashMap<String, BitSet> spriteInfo = new HashMap<String, BitSet>();
 
+    private static void initMCSpriteMaps() {
+        BitSet slots = 
+                SpriteHelper.toBitSet(
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000011111100" +
+                "0000000011111111" +
+                "0000000011111000" +
+                "0000000111111100" +
+                "0000000111111000" +
+                "0000000000000000");
+        spriteInfo.put("/terrain.png", slots);
+        
+        slots = SpriteHelper.toBitSet(
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000000000000000" +
+                "0000001000000000" +
+                "0000001110000000" +
+                "0000001000000000" +
+                "1111111010000000" +
+                "1111111010100000" +
+                "1111111111111100" +
+                "1111111111111111" +
+                "1111111111111111" +
+                "1111111111111111" +
+                "0000000000000000");
+        spriteInfo.put("/gui/items.png", slots);
+    }
+    /**
+     * Register a sprite map for ModTextureStatic, to allow for other mods to override
+     * your sprite page.
+     * 
+     * 
+     */
+    public static void registerSpriteMapForFile(String file, String spriteMap) {
+        if (spriteInfo.size() == 0) {
+            initMCSpriteMaps();
+        }
+        if (spriteInfo.containsKey(file)) {
+            FMLCommonHandler.instance().getFMLLogger().severe(String.format("Duplicate attempt to register a sprite file %s for overriding",file));
+            FMLCommonHandler.instance().raiseException(new LoaderException(),"Sprite override alert", true);
+        }
+        spriteInfo.put(file, toBitSet(spriteMap));
+    }
+    
     public static int getUniqueSpriteIndex(String path)
     {
+        if (!spriteInfo.containsKey("/terrain.png"))
+        {
+            initMCSpriteMaps();
+        }
+        
         BitSet slots = spriteInfo.get(path);
+        
         if (slots == null)
         {
-            if (path.equals("/terrain.png"))
-            {
-                slots = SpriteHelper.toBitSet(
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000011111100" +
-                        "0000000011111111" +
-                        "0000000011111000" +
-                        "0000000111111100" +
-                        "0000000111111000" +
-                        "0000000000000000");
-                spriteInfo.put("/terrain.png", slots);
-            }
-            else if (path.equals("/gui/items.png"))
-            {
-                slots = SpriteHelper.toBitSet(
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000000000000000" +
-                        "0000001000000000" +
-                        "0000001110000000" +
-                        "0000001000000000" +
-                        "1111111010000000" +
-                        "1111111010100000" +
-                        "1111111111111100" +
-                        "1111111111111111" +
-                        "1111111111111111" +
-                        "1111111111111111" +
-                        "0000000000000000");
-                spriteInfo.put("/gui/items.png", slots);
-            }
-            else
-            {
-                Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
-                Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
-                FMLCommonHandler.instance().raiseException(ex,"Invalid request to getUniqueSpriteIndex",true);
-            }
+            Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
+            Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+            FMLCommonHandler.instance().raiseException(ex,"Invalid request to getUniqueSpriteIndex",true);
         }
-        int ret = SpriteHelper.getFreeSlot(slots);
+
+        int ret = getFreeSlot(slots);
+
         if (ret == -1)
         {
             Exception ex = new Exception(String.format("No more sprite indicies left for: %s", path));
