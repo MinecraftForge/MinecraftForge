@@ -55,13 +55,14 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -2250,7 +2260,10 @@
+@@ -2250,7 +2260,11 @@
          {
              var2 = p_main_0_[1];
          }
 -
-+        FMLClientHandler.instance().preGameLoad();
++        FMLClientHandler.instance().preGameLoad(var1, var2);
 +    }
++    
 +    public static void fmlReentry(String var1, String var2)
 +    {
          func_6269_a(var1, var2);

@@ -630,6 +630,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         info.override = overridingTexturePath;
         info.texture = textureToOverride;
         list.add(info);
+        FMLCommonHandler.instance().getFMLLogger().log(Level.FINE, String.format("Overriding %s @ %d with %s. %d slots remaining",textureToOverride, location, overridingTexturePath, SpriteHelper.freeSlotCount(textureToOverride)));
     }
     /**
      * @param mod
@@ -897,9 +898,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      * 
      */
-    public void preGameLoad()
+    public void preGameLoad(String user, String sessionToken)
     {
-        // NOOP at the minute
+        // Currently this does nothing, but it's possible I could relaunch Minecraft in a new classloader if I wished
+        Minecraft.fmlReentry(user, sessionToken);
     }
 
     /**
