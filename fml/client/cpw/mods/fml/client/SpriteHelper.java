@@ -110,4 +110,13 @@ public class SpriteHelper
         return next;
     }
 
+    /**
+     * @param textureToOverride
+     * @return
+     */
+    public static int freeSlotCount(String textureToOverride)
+    {
+        return spriteInfo.get(textureToOverride).cardinality();
+    }
+
 }
