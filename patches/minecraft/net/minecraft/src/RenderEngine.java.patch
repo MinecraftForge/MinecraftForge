@@ -80,9 +80,12 @@
                  }
              }
          }
-@@ -579,6 +603,7 @@
+@@ -577,8 +601,9 @@
+                 this.field_4280_j = false;
+                 this.field_4281_i = false;
              }
-             catch (IOException var7)
+-            catch (IOException var7)
++            catch (Exception var7)
              {
 +                FMLCommonHandler.instance().getFMLLogger().log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", var9),var7);
                  var7.printStackTrace();
