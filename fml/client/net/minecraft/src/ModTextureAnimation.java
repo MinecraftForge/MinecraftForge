@@ -21,6 +21,7 @@ import java.awt.image.ImageObserver;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -53,8 +54,8 @@ public class ModTextureAnimation extends TextureFX
         
         targetTex = target;
         field_1129_e = size;
-        field_1128_f = re.func_1070_a(target);        
-
+        field_1128_f = re.func_1070_a(target);
+        
         tickRate = tickCount;
         ticks = tickCount;
         
@@ -62,8 +63,9 @@ public class ModTextureAnimation extends TextureFX
         
         int sWidth  = image.getWidth();
         int sHeight = image.getHeight();
-        int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH) / 16;
-        int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) / 16;
+        int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH) >> 4;
+        int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) >> 4;
+        
         
         int frames = (int)Math.floor((double)(sHeight / sWidth));
 
@@ -75,6 +77,13 @@ public class ModTextureAnimation extends TextureFX
         {
             images = new byte[frames][];
 
+            if (tWidth != TextureFX.iconTileSize || tHeight != TextureFX.iconTileSize)
+            {
+                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Animation Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, TextureFX.iconTileSize));
+                errored = true;
+                return;
+            }
+            
             if (sWidth != tWidth)
             {
                 BufferedImage b = new BufferedImage(tWidth, tHeight * frames, 6);
