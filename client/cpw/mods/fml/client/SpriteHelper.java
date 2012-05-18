@@ -81,8 +81,8 @@ public class SpriteHelper
             initMCSpriteMaps();
         }
         if (spriteInfo.containsKey(file)) {
-            FMLCommonHandler.instance().getFMLLogger().severe(String.format("Duplicate attempt to register a sprite file %s for overriding",file));
-            FMLCommonHandler.instance().raiseException(new LoaderException(),"Sprite override alert", true);
+            FMLCommonHandler.instance().getFMLLogger().finer(String.format("Duplicate attempt to register a sprite file %s for overriding -- ignoring",file));
+            return;
         }
         spriteInfo.put(file, toBitSet(spriteMap));
     }

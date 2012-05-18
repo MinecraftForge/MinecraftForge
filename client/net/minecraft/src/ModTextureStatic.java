@@ -21,6 +21,7 @@ import java.awt.image.ImageObserver;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ModTextureStatic extends TextureFX
@@ -28,6 +29,7 @@ public class ModTextureStatic extends TextureFX
     private boolean oldanaglyph = false;
     private int[] pixels = null;
     private String targetTex = null;
+    private int storedSize;
     
     
     public ModTextureStatic(int icon, int target, BufferedImage image)
@@ -46,6 +48,7 @@ public class ModTextureStatic extends TextureFX
         RenderEngine re = FMLClientHandler.instance().getClient().field_6315_n;
         
         targetTex = target;
+        storedSize = size;
         field_1129_e = size;
         field_1128_f = re.func_1070_a(target);
         
@@ -53,13 +56,17 @@ public class ModTextureStatic extends TextureFX
 
         int sWidth  = image.getWidth();
         int sHeight = image.getHeight();
-        int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) / 16;
-        int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) / 16;
-        
-        pixels = new int[tWidth * tHeight];
-        field_1127_a = new byte[tWidth * tHeight * 4];
-        
+        int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >> 4;
+        int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) >> 4;
 
+        if (tWidth != TextureFX.iconTileSize || tHeight != TextureFX.iconTileSize)
+        {
+            FMLCommonHandler.instance().getFMLLogger().warning(String.format("Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, TextureFX.iconTileSize));
+            errored=true;
+            return;
+        }
+        pixels = new int[TextureFX.iconTileSize];
+        
         if (tWidth == sWidth && tHeight == sHeight)
         {
             image.getRGB(0, 0, sWidth, sHeight, pixels, 0, sWidth);
@@ -78,9 +85,12 @@ public class ModTextureStatic extends TextureFX
     
     public void func_783_a()
     {
+        // Force the tile size to zero: generally we only need to stamp our static image once
+        field_1129_e = 0;
         if (oldanaglyph != field_1131_c)
         {
             update();
+            field_1129_e = storedSize;
         }
     }
 
@@ -155,17 +165,10 @@ public class ModTextureStatic extends TextureFX
 
         return tmp;
     }
+
     
-    /* (non-Javadoc)
-     * @see net.minecraft.src.TextureFX#unregister(net.minecraft.src.RenderEngine)
-     */
     @Override
-    public boolean unregister(RenderEngine engine)
-    {
-        if (this.getClass()==ModTextureStatic.class) {
-            return super.unregister(engine);
-        } else {
-            return false;
-        }
+    public String toString() {
+        return String.format("ModTextureStatic %s @ %d", targetTex, field_1126_b);
     }
 }

@@ -9,11 +9,12 @@
  import java.awt.Color;
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
-@@ -13,9 +16,15 @@
+@@ -13,9 +16,16 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
 +import java.util.logging.Level;
++import java.util.logging.Logger;
 +
  import javax.imageio.ImageIO;
 +
@@ -25,7 +26,7 @@
  public class RenderEngine
  {
      public static boolean field_1609_a = false;
-@@ -24,7 +33,7 @@
+@@ -24,7 +34,7 @@
      private IntHashMap field_1607_c = new IntHashMap();
      private IntBuffer field_1606_d = GLAllocation.func_1125_c(1);
      private ByteBuffer field_1605_e = GLAllocation.func_1127_b(16777216);
@@ -34,15 +35,26 @@
      private Map field_1603_g = new HashMap();
      private GameSettings field_1602_h;
      public boolean field_4281_i = false;
-@@ -97,6 +106,7 @@
+@@ -32,6 +42,7 @@
+     private TexturePackList field_6527_k;
+     private BufferedImage field_25189_l = new BufferedImage(64, 64, 2);
+     private int field_48512_n = 16;
++    public static Logger log = FMLCommonHandler.instance().getFMLLogger();
+ 
+     public RenderEngine(TexturePackList p_i754_1_, GameSettings p_i754_2_)
+     {
+@@ -95,8 +106,9 @@
+                 this.field_28151_c.put(p_28149_1_, var3);
+                 return var3;
              }
-             catch (IOException var5)
+-            catch (IOException var5)
++            catch (Exception var5)
              {
-+                FMLCommonHandler.instance().getFMLLogger().log(Level.INFO,String.format("An error occured reading texture file %s (getTexture)", p_28149_1_),var5);
++                log.log(Level.INFO,String.format("An error occured reading texture file %s (getTexture)", p_28149_1_),var5);
                  var5.printStackTrace();
                  int[] var4 = this.func_28148_b(this.field_25189_l);
                  this.field_28151_c.put(p_28149_1_, var4);
-@@ -459,8 +469,17 @@
+@@ -459,8 +471,17 @@
          for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
@@ -53,7 +65,7 @@
 +            try {
 +                var3.func_783_a();
 +            } catch (Exception e) {
-+                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to",var3.getClass().getSimpleName()));
++                log.warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to",var3.getClass().getSimpleName()));
 +                var3.errored=true;
 +                continue;
 +            }
@@ -61,12 +73,12 @@
              this.field_1605_e.clear();
              this.field_1605_e.put(var3.field_1127_a);
              this.field_1605_e.position(0).limit(var3.field_1127_a.length);
-@@ -470,12 +489,17 @@
+@@ -470,12 +491,17 @@
                  var3.func_782_a(this);
                  var1 = var3.field_1126_b;
              }
 +            if (var3.field_1127_a.length!=TextureFX.tileSizeSquare<<2) {
-+                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Detected a texture FX discrepancy in %s (%d, %d)",var3.getClass().getSimpleName(), var3.field_1127_a.length, var3.tileSizeSquare<<2));
++                log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)",var3.getClass().getSimpleName(), var3.field_1127_a.length, var3.tileSizeSquare<<2));
 +                var3.errored=true;
 +                continue;
 +            }
@@ -80,22 +92,25 @@
                  }
              }
          }
-@@ -577,8 +601,9 @@
+@@ -577,8 +603,9 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
 -            catch (IOException var7)
 +            catch (Exception var7)
              {
-+                FMLCommonHandler.instance().getFMLLogger().log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", var9),var7);
++                log.log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", var9),var7);
                  var7.printStackTrace();
              }
          }
-@@ -616,9 +641,28 @@
+@@ -614,11 +641,30 @@
+                 this.field_4280_j = false;
+                 this.field_4281_i = false;
              }
-             catch (IOException var6)
+-            catch (IOException var6)
++            catch (Exception var6)
              {
-+                FMLCommonHandler.instance().getFMLLogger().log(Level.INFO,String.format("An error occured reading texture file data %s (refreshTexture)", var9),var6);
++                log.log(Level.INFO,String.format("An error occured reading texture file data %s (refreshTexture)", var9),var6);
                  var6.printStackTrace();
              }
          }
