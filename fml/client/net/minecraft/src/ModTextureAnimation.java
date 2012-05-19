@@ -95,9 +95,9 @@ public class ModTextureAnimation extends TextureFX
 
             for (int frame = 0; frame < frames; frame++)
             {
-                int[] pixels = new int[tWidth * tHeight];
+                int[] pixels = new int[tileSizeSquare];
                 image.getRGB(0, tHeight * frame, tWidth, tHeight, pixels, 0, tWidth);
-                images[frame] = new byte[tWidth * tHeight * 4];
+                images[frame] = new byte[tileSizeSquare << 2];
 
                 for (int i = 0; i < pixels.length; i++)
                 {
