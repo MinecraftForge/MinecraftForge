@@ -65,7 +65,7 @@ public class ModTextureStatic extends TextureFX
             errored=true;
             return;
         }
-        pixels = new int[TextureFX.iconTileSize];
+        pixels = new int[TextureFX.tileSizeSquare];
         
         if (tWidth == sWidth && tHeight == sHeight)
         {
