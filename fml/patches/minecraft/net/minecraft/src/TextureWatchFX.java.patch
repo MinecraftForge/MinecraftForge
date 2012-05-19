@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureWatchFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureWatchFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -18,15 +18,22 @@
+@@ -2,7 +2,11 @@
+ 
+ import java.awt.image.BufferedImage;
+ import java.io.IOException;
++import java.util.logging.Level;
++
+ import javax.imageio.ImageIO;
++
++import cpw.mods.fml.common.FMLCommonHandler;
+ import net.minecraft.client.Minecraft;
+ 
+ public class TextureWatchFX extends TextureFX
+@@ -18,22 +22,39 @@
          super(Item.field_4023_aQ.func_27009_a(0));
          this.field_4225_g = p_i364_1_;
          this.field_1128_f = 1;
@@ -28,9 +40,11 @@
 +            var2 = ImageIO.read(field_4225_g.field_6298_C.field_6534_a.func_6481_a("/misc/dial.png"));
 +            var2.getRGB(0, 0, iconTileSize, iconTileSize, this.field_4223_i, 0, iconTileSize);
          }
-         catch (IOException var5)
+         catch (Exception var5)
          {
-@@ -34,6 +41,15 @@
+-            var5.printStackTrace();
++            FMLCommonHandler.instance().getFMLLogger().log(Level.WARNING, String.format("A problem occurred with the watch texture: animation will be disabled"), var5);
++            errored = true;
          }
      }
  
@@ -46,7 +60,7 @@
      public void func_783_a()
      {
          double var1 = 0.0D;
-@@ -77,7 +93,7 @@
+@@ -77,7 +98,7 @@
          double var5 = Math.sin(this.field_4222_j);
          double var7 = Math.cos(this.field_4222_j);
  
@@ -55,7 +69,7 @@
          {
              int var10 = this.field_4224_h[var9] >> 24 & 255;
              int var11 = this.field_4224_h[var9] >> 16 & 255;
-@@ -86,12 +102,12 @@
+@@ -86,12 +107,12 @@
  
              if (var11 == var13 && var12 == 0 && var13 > 0)
              {
