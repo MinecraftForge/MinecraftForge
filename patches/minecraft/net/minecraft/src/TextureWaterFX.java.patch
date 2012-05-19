@@ -27,7 +27,7 @@
      public void func_783_a()
      {
          ++this.field_1154_k;
-@@ -22,9 +40,9 @@
+@@ -22,39 +40,39 @@
          int var5;
          int var6;
  
@@ -39,11 +39,13 @@
              {
                  var3 = 0.0F;
  
-@@ -32,29 +50,29 @@
+                 for (int var4 = var1 - 1; var4 <= var1 + 1; ++var4)
                  {
-                     var5 = var4 & 15;
-                     var6 = var2 & 15;
+-                    var5 = var4 & 15;
+-                    var6 = var2 & 15;
 -                    var3 += this.field_1158_g[var5 + var6 * 16];
++                    var5 = var4 & tileSizeMask;
++                    var6 = var2 & tileSizeMask;
 +                    var3 += this.field_1158_g[var5 + var6 * iconTileSize];
                  }
  
