@@ -40,7 +40,8 @@
 +            var2 = ImageIO.read(field_4225_g.field_6298_C.field_6534_a.func_6481_a("/misc/dial.png"));
 +            var2.getRGB(0, 0, iconTileSize, iconTileSize, this.field_4223_i, 0, iconTileSize);
          }
-         catch (Exception var5)
+-        catch (IOException var5)
++        catch (Exception var5)
          {
 -            var5.printStackTrace();
 +            FMLCommonHandler.instance().getFMLLogger().log(Level.WARNING, String.format("A problem occurred with the watch texture: animation will be disabled"), var5);
