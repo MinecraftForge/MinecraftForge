@@ -1241,4 +1241,32 @@ public class MinecraftForge
         registerMinecart(EntityMinecart.class, 1, new ItemStack(Item.minecartCrate));
         registerMinecart(EntityMinecart.class, 2, new ItemStack(Item.minecartPowered));
     }
+     
+    /** This registers a new IEntityUpdateHandler.
+     * IEntityUpdateHandlers can be used to add new code into Entity.onEntityUpdate(),
+     * which will be executed at the start or end of the update tick for Entities, depending on which method the
+     * code is placed in. 
+     * 
+     * @param handler The IEntityUpdateHandler to be registered*/
+    public static void registerEntityUpdateHandler(IEntityUpdateHandler handler)
+    {
+    	ForgeHooks.entityUpdateHandlers.add(handler);
+    }
+
+    /** This registers a new IEntityDeathHandler.
+     * IEntityDeathHandlers can be used to modify the EntityLiving.onDeath(DamageSource) method, 
+     * which is run after an EntityLiving is killed. The code in the method can be either added to or switched out, 
+     * depending on the method used from the interface. Further explanation is contained within the comments for
+     * the interface methods.
+     * 
+     * @param handler The IEntityDeathHandler to be registered*/
+    public static void registerEntityDeathHandler(IEntityDeathHandler handler)
+    {
+    	ForgeHooks.entityDeathHandlers.add(handler);
+    }
+
+    /** A new ArrayList of IEntityUpdateHandlers. */
+    public static ArrayList<IEntityUpdateHandler> entityUpdateHandlers = new ArrayList<IEntityUpdateHandler>();
+    /** A new ArrayList of IEntityDeathHandlers. */
+    public static ArrayList<IEntityDeathHandler> entityDeathHandlers = new ArrayList<IEntityDeathHandler>();
 }

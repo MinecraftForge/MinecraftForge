@@ -9,6 +9,7 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.DamageSource;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
@@ -708,5 +709,59 @@ public class ForgeHooks
         mod.onPacketData(net, pkt.uniqueID, pkt.itemData);
         return true;
     }
+    
+    /** Executes onEntityUpdateStart(Entity) in any registered IEntityUpdateHandler*/
+    public static void entityUpdateStartHandler(Entity entity)
+    {
+    	for (IEntityUpdateHandler handler : entityUpdateHandlers)
+    	{
+    		if (handler != null)
+    		{
+    			handler.onEntityUpdateStart(entity);
+    		}
+    	}
+    }
+
+    /** Executes onEntityUpdateEnd(Entity) in any registered IEntityUpdateHandler*/
+    public static void entityUpdateEndHandler(Entity entity)
+    {
+    	for (IEntityUpdateHandler handler : entityUpdateHandlers)
+    	{
+    		if (handler != null)
+    		{
+    			handler.onEntityUpdateEnd(entity);
+    		}
+    	}
+    }
+    
+    /** Executes onEntityDeath(EntityLiving, DamageSource) in any registered IEntityDeathHandler */
+    public static void onEntityDeathHandler(EntityLiving entity, DamageSource damagesource)
+    {
+    	for (IEntityDeathHandler handler : entityDeathHandlers)
+    	{
+    		if (handler != null)
+    		{
+    			handler.onEntityDeath(entity, damagesource);
+    		}
+    	}
+    }
+    
+    /** Executes onEntityDeath(EntityLiving, DamageSource) in any registered IEntityDeathHandler */
+    public static boolean onOverrideEntityDeathHandler(EntityLiving entity, DamageSource damagesource)
+    {
+    	for (IEntityDeathHandler handler : entityDeathHandlers)
+    	{
+    		if (handler.onOverrideEntityDeath(entity, damagesource))
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+
+    /** A new ArrayList of IEntityUpdateHandlers. */
+    public static ArrayList<IEntityUpdateHandler> entityUpdateHandlers = new ArrayList<IEntityUpdateHandler>();
+    /** A new ArrayList of IEntityDeathHandlers. */
+    public static ArrayList<IEntityDeathHandler> entityDeathHandlers = new ArrayList<IEntityDeathHandler>();
 }
 

@@ -203,7 +203,7 @@ public class Configuration
 
                     for (int i = 0; i < line.length() && !skip; ++i)
                     {
-                        if (Character.isLetterOrDigit(line.charAt(i)) || line.charAt(i) == '.')
+                        if (Character.isLetterOrDigit(line.charAt(i)) || line.charAt(i) == '.' || line.charAt(i) == '_' || line.charAt(i) == '-')
                         {
                             if (nameStart == -1)
                             {
