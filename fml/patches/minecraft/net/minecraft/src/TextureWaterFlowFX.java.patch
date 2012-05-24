@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureWaterFlowFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureWaterFlowFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -12,6 +12,24 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.src;
+ 
+-public class TextureWaterFlowFX extends TextureFX
++import cpw.mods.fml.client.FMLTextureFX;
++
++public class TextureWaterFlowFX extends FMLTextureFX
+ {
+     protected float[] field_1138_g = new float[256];
+     protected float[] field_1137_h = new float[256];
+@@ -12,6 +14,18 @@
      {
          super(Block.field_401_B.field_378_bb + 1);
          this.field_1129_e = 2;
@@ -8,12 +18,6 @@
 +    }
 +
 +    @Override
-+    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
-+    {
-+        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        setup();
-+    }
-+    
 +    public void setup()
 +    {
 +        super.setup();
@@ -25,17 +29,17 @@
      }
  
      public void func_783_a()
-@@ -22,40 +40,40 @@
+@@ -22,40 +36,40 @@
          float var3;
          int var5;
          int var6;
 -
 -        for (var1 = 0; var1 < 16; ++var1)
 +        
-+        for (var1 = 0; var1 < iconTileSize; ++var1)
++        for (var1 = 0; var1 < tileSizeBase; ++var1)
          {
 -            for (var2 = 0; var2 < 16; ++var2)
-+            for (var2 = 0; var2 < iconTileSize; ++var2)
++            for (var2 = 0; var2 < tileSizeBase; ++var2)
              {
                  var3 = 0.0F;
  
@@ -46,41 +50,41 @@
 -                    var3 += this.field_1138_g[var5 + var6 * 16];
 +                    var5 = var1 & tileSizeMask;
 +                    var6 = var4 & tileSizeMask;
-+                    var3 += this.field_1138_g[var5 + var6 * iconTileSize];
++                    var3 += this.field_1138_g[var5 + var6 * tileSizeBase];
                  }
  
 -                this.field_1137_h[var1 + var2 * 16] = var3 / 3.2F + this.field_1136_i[var1 + var2 * 16] * 0.8F;
-+                this.field_1137_h[var1 + var2 * iconTileSize] = var3 / 3.2F + this.field_1136_i[var1 + var2 * iconTileSize] * 0.8F;
++                this.field_1137_h[var1 + var2 * tileSizeBase] = var3 / 3.2F + this.field_1136_i[var1 + var2 * tileSizeBase] * 0.8F;
              }
          }
  
 -        for (var1 = 0; var1 < 16; ++var1)
-+        for (var1 = 0; var1 < iconTileSize; ++var1)
++        for (var1 = 0; var1 < tileSizeBase; ++var1)
          {
 -            for (var2 = 0; var2 < 16; ++var2)
-+            for (var2 = 0; var2 < iconTileSize; ++var2)
++            for (var2 = 0; var2 < tileSizeBase; ++var2)
              {
 -                this.field_1136_i[var1 + var2 * 16] += this.field_1135_j[var1 + var2 * 16] * 0.05F;
-+                this.field_1136_i[var1 + var2 * iconTileSize] += this.field_1135_j[var1 + var2 * iconTileSize] * 0.05F;
++                this.field_1136_i[var1 + var2 * tileSizeBase] += this.field_1135_j[var1 + var2 * tileSizeBase] * 0.05F;
  
 -                if (this.field_1136_i[var1 + var2 * 16] < 0.0F)
-+                if (this.field_1136_i[var1 + var2 * iconTileSize] < 0.0F)
++                if (this.field_1136_i[var1 + var2 * tileSizeBase] < 0.0F)
                  {
 -                    this.field_1136_i[var1 + var2 * 16] = 0.0F;
-+                    this.field_1136_i[var1 + var2 * iconTileSize] = 0.0F;
++                    this.field_1136_i[var1 + var2 * tileSizeBase] = 0.0F;
                  }
  
 -                this.field_1135_j[var1 + var2 * 16] -= 0.3F;
-+                this.field_1135_j[var1 + var2 * iconTileSize] -= 0.3F;
++                this.field_1135_j[var1 + var2 * tileSizeBase] -= 0.3F;
  
                  if (Math.random() < 0.2D)
                  {
 -                    this.field_1135_j[var1 + var2 * 16] = 0.5F;
-+                    this.field_1135_j[var1 + var2 * iconTileSize] = 0.5F;
++                    this.field_1135_j[var1 + var2 * tileSizeBase] = 0.5F;
                  }
              }
          }
-@@ -64,9 +82,9 @@
+@@ -64,9 +78,9 @@
          this.field_1137_h = this.field_1138_g;
          this.field_1138_g = var12;
  
@@ -88,7 +92,7 @@
 +        for (var2 = 0; var2 < tileSizeSquare; ++var2)
          {
 -            var3 = this.field_1138_g[var2 - this.field_1134_k * 16 & 255];
-+            var3 = this.field_1138_g[var2 - this.field_1134_k * iconTileSize & tileSizeSquareMask];
++            var3 = this.field_1138_g[var2 - this.field_1134_k * tileSizeBase & tileSizeSquareMask];
  
              if (var3 > 1.0F)
              {

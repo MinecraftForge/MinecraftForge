@@ -1,15 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/src/RenderEngine.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/RenderEngine.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,8 @@
+@@ -1,6 +1,10 @@
  package net.minecraft.src;
  
 +import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 +import static org.lwjgl.opengl.GL11.GL_TEXTURE_WIDTH;
 +
  import java.awt.Color;
++import java.awt.Dimension;
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
-@@ -13,9 +16,16 @@
+ import java.awt.image.ImageObserver;
+@@ -13,9 +17,16 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -26,7 +28,7 @@
  public class RenderEngine
  {
      public static boolean field_1609_a = false;
-@@ -24,7 +34,7 @@
+@@ -24,7 +35,7 @@
      private IntHashMap field_1607_c = new IntHashMap();
      private IntBuffer field_1606_d = GLAllocation.func_1125_c(1);
      private ByteBuffer field_1605_e = GLAllocation.func_1127_b(16777216);
@@ -35,7 +37,7 @@
      private Map field_1603_g = new HashMap();
      private GameSettings field_1602_h;
      public boolean field_4281_i = false;
-@@ -32,6 +42,7 @@
+@@ -32,6 +43,7 @@
      private TexturePackList field_6527_k;
      private BufferedImage field_25189_l = new BufferedImage(64, 64, 2);
      private int field_48512_n = 16;
@@ -43,7 +45,7 @@
  
      public RenderEngine(TexturePackList p_i754_1_, GameSettings p_i754_2_)
      {
-@@ -95,8 +106,9 @@
+@@ -95,8 +107,9 @@
                  this.field_28151_c.put(p_28149_1_, var3);
                  return var3;
              }
@@ -54,45 +56,56 @@
                  var5.printStackTrace();
                  int[] var4 = this.func_28148_b(this.field_25189_l);
                  this.field_28151_c.put(p_28149_1_, var4);
-@@ -459,8 +471,17 @@
-         for (int var2 = 0; var2 < this.field_1604_f.size(); ++var2)
+@@ -251,6 +264,7 @@
+ 
+         int var3 = p_1068_1_.getWidth();
+         int var4 = p_1068_1_.getHeight();
++        FMLClientHandler.instance().setTextureDimensions(p_1068_2_, var3, var4, (List<TextureFX>)field_1604_f);
+         int[] var5 = new int[var3 * var4];
+         byte[] var6 = new byte[var3 * var4 * 4];
+         p_1068_1_.getRGB(0, 0, var3, var4, var5, 0, var3);
+@@ -448,8 +462,10 @@
+ 
+     public void func_1066_a(TextureFX p_1066_1_)
+     {
++        FMLClientHandler.instance().onPreRegisterEffect(p_1066_1_);
+         this.field_1604_f.add(p_1066_1_);
+         p_1066_1_.func_783_a();
++        
+     }
+ 
+     public void func_1067_a()
+@@ -460,7 +476,10 @@
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
-+            if (var3.errored) continue;
              var3.field_1131_c = this.field_1602_h.field_1578_g;
 -            var3.func_783_a();
-+            Profiler.func_40663_a(var3.getClass().getSimpleName());
-+            try {
-+                var3.func_783_a();
-+            } catch (Exception e) {
-+                log.warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to",var3.getClass().getSimpleName()));
-+                var3.errored=true;
++            if (!FMLClientHandler.instance().onUpdateTextureEffect(var3))
++            {
 +                continue;
 +            }
-+            Profiler.func_40662_b();
              this.field_1605_e.clear();
              this.field_1605_e.put(var3.field_1127_a);
              this.field_1605_e.position(0).limit(var3.field_1127_a.length);
-@@ -470,12 +491,17 @@
-                 var3.func_782_a(this);
+@@ -471,11 +490,16 @@
                  var1 = var3.field_1126_b;
              }
-+            if (var3.field_1127_a.length!=TextureFX.tileSizeSquare<<2) {
-+                log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)",var3.getClass().getSimpleName(), var3.field_1127_a.length, var3.tileSizeSquare<<2));
-+                var3.errored=true;
-+                continue;
-+            }
  
++            Dimension dim = FMLClientHandler.instance().getTextureDimensions(var3);
++            int tWidth  = dim.width / 16;
++            int tHeight = dim.height / 16; 
              for (int var4 = 0; var4 < var3.field_1129_e; ++var4)
              {
++                int xOffset = var3.field_1126_b % 16 * tWidth + var4 * tWidth;
                  for (int var5 = 0; var5 < var3.field_1129_e; ++var5)
                  {
 -                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, var3.field_1126_b % 16 * 16 + var4 * 16, var3.field_1126_b / 16 * 16 + var5 * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_1605_e);
-+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, var3.field_1126_b % 16 * TextureFX.iconTileSize + var4 * TextureFX.iconTileSize, var3.field_1126_b / 16 * TextureFX.iconTileSize + var5 * TextureFX.iconTileSize, TextureFX.iconTileSize, TextureFX.iconTileSize, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_1605_e);
++                    int yOffset = var3.field_1126_b / 16 * tHeight + var5 * tHeight;
++                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_1605_e);
                  }
              }
          }
-@@ -577,8 +603,9 @@
+@@ -577,8 +601,9 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
@@ -103,7 +116,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -614,11 +641,30 @@
+@@ -614,11 +639,13 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
@@ -114,24 +127,7 @@
                  var6.printStackTrace();
              }
          }
-+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, func_1070_a("/terrain.png"));
-+        int tileSize = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >> 4;
-+        int tileSizeSquare = tileSize*tileSize;
-+        int tileSizeMask = tileSize - 1;
-+        int tileSizeSquareMask = tileSizeSquare - 1;
-+        
-+        FMLClientHandler.instance().pruneOldTextureFX(var1, tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
-+        
-+        TextureFX.iconTileSize = tileSize;
-+        TextureFX.tileSizeSquare = tileSizeSquare;
-+        TextureFX.tileSizeMask = tileSizeMask;
-+        TextureFX.tileSizeSquareMask = tileSizeSquareMask;
-+
-+        for (Object tex : field_1604_f) {
-+            ((TextureFX)tex).onTexturePackChange(tileSize, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
-+        }
-+        
-+        FMLClientHandler.instance().loadTextures(var1);
++        FMLClientHandler.instance().onTexturePackChange(this, var1, (List<TextureFX>)field_1604_f);
      }
  
      private BufferedImage func_6526_a(InputStream p_6526_1_) throws IOException

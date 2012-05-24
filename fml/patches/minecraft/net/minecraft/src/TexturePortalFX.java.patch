@@ -1,7 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/src/TexturePortalFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TexturePortalFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,28 +5,35 @@
- public class TexturePortalFX extends TextureFX
+@@ -2,31 +2,41 @@
+ 
+ import java.util.Random;
+ 
+-public class TexturePortalFX extends TextureFX
++import cpw.mods.fml.client.FMLTextureFX;
++
++public class TexturePortalFX extends FMLTextureFX
  {
      private int field_4227_g = 0;
 -    private byte[][] field_4226_h = new byte[32][1024];
@@ -10,10 +16,11 @@
      public TexturePortalFX()
      {
          super(Block.field_4047_bf.field_378_bb);
-+        setupPortalTextures();
++        setup();
 +    }
 +
-+    private void setupPortalTextures()
++    @Override
++    public void setup()
 +    {
 +        super.setup();
 +        field_4226_h = new byte[32][tileSizeSquare << 4];
@@ -22,10 +29,10 @@
          for (int var2 = 0; var2 < 32; ++var2)
          {
 -            for (int var3 = 0; var3 < 16; ++var3)
-+            for (int var3 = 0; var3 < iconTileSize; ++var3)
++            for (int var3 = 0; var3 < tileSizeBase; ++var3)
              {
 -                for (int var4 = 0; var4 < 16; ++var4)
-+                for (int var4 = 0; var4 < iconTileSize; ++var4)
++                for (int var4 = 0; var4 < tileSizeBase; ++var4)
                  {
                      float var5 = 0.0F;
                      int var6;
@@ -36,38 +43,30 @@
 -                        float var8 = (float)(var6 * 16) * 0.5F;
 -                        float var9 = ((float)var3 - var7) / 16.0F * 2.0F;
 -                        float var10 = ((float)var4 - var8) / 16.0F * 2.0F;
-+                        float var7 = (float)(var6 * iconTileSize) * 0.5F;
-+                        float var8 = (float)(var6 * iconTileSize) * 0.5F;
-+                        float var9 = ((float)var3 - var7) / (float)iconTileSize * 2.0F;
-+                        float var10 = ((float)var4 - var8) / (float)iconTileSize * 2.0F;
++                        float var7 = (float)(var6 * tileSizeBase) * 0.5F;
++                        float var8 = (float)(var6 * tileSizeBase) * 0.5F;
++                        float var9 = ((float)var3 - var7) / (float)tileSizeBase * 2.0F;
++                        float var10 = ((float)var4 - var8) / (float)tileSizeBase * 2.0F;
  
                          if (var9 < -1.0F)
                          {
-@@ -60,7 +67,7 @@
+@@ -60,7 +70,7 @@
                      int var13 = (int)(var5 * var5 * 200.0F + 55.0F);
                      int var14 = (int)(var5 * var5 * var5 * var5 * 255.0F);
                      int var15 = (int)(var5 * 100.0F + 155.0F);
 -                    int var16 = var4 * 16 + var3;
-+                    int var16 = var4 * iconTileSize + var3;
++                    int var16 = var4 * tileSizeBase + var3;
                      this.field_4226_h[var2][var16 * 4 + 0] = (byte)var13;
                      this.field_4226_h[var2][var16 * 4 + 1] = (byte)var14;
                      this.field_4226_h[var2][var16 * 4 + 2] = (byte)var6;
-@@ -68,14 +75,24 @@
+@@ -68,14 +78,15 @@
                  }
              }
          }
 +        field_4227_g = 0;
      }
- 
-+    /* (non-Javadoc)
-+     * @see net.minecraft.src.TextureFX#onTexturePackChange(int, int, int, int)
-+     */
-+    @Override
-+    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
-+    {
-+        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        setupPortalTextures();
-+    }
+-
++    
      public void func_783_a()
      {
          ++this.field_4227_g;

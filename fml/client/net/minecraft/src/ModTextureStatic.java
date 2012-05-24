@@ -21,10 +21,11 @@ import java.awt.image.ImageObserver;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.FMLTextureFX;
 import cpw.mods.fml.common.FMLCommonHandler;
 import static org.lwjgl.opengl.GL11.*;
 
-public class ModTextureStatic extends TextureFX
+public class ModTextureStatic extends FMLTextureFX
 {
     private boolean oldanaglyph = false;
     private int[] pixels = null;
@@ -59,13 +60,13 @@ public class ModTextureStatic extends TextureFX
         int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >> 4;
         int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) >> 4;
 
-        if (tWidth != TextureFX.iconTileSize || tHeight != TextureFX.iconTileSize)
+        if (tWidth != tileSizeBase || tHeight != tileSizeBase)
         {
-            FMLCommonHandler.instance().getFMLLogger().warning(String.format("Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, TextureFX.iconTileSize));
-            errored=true;
+            log.warning(String.format("Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, tileSizeBase));
+            errored = true;
             return;
         }
-        pixels = new int[TextureFX.tileSizeSquare];
+        pixels = new int[tileSizeSquare];
         
         if (tWidth == sWidth && tHeight == sHeight)
         {

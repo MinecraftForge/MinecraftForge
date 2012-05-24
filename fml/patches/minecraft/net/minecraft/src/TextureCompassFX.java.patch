@@ -1,7 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureCompassFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureCompassFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -8,7 +8,7 @@
- public class TextureCompassFX extends TextureFX
+@@ -3,12 +3,14 @@
+ import java.awt.image.BufferedImage;
+ import java.io.IOException;
+ import javax.imageio.ImageIO;
++
++import cpw.mods.fml.client.FMLTextureFX;
+ import net.minecraft.client.Minecraft;
+ 
+-public class TextureCompassFX extends TextureFX
++public class TextureCompassFX extends FMLTextureFX
  {
      private Minecraft field_4231_g;
 -    private int[] field_4230_h = new int[256];
@@ -9,20 +17,14 @@
      private double field_4229_i;
      private double field_4228_j;
  
-@@ -17,13 +17,26 @@
+@@ -17,13 +19,20 @@
          super(Item.field_4025_aO.func_27009_a(0));
          this.field_4231_g = p_i617_1_;
          this.field_1128_f = 1;
 +        setup();
 +    }
-+    
-+    @Override
-+    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
-+    {
-+        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        setup();
-+    }
  
++    @Override
 +    public void setup()
 +    {
 +        super.setup();
@@ -34,13 +36,13 @@
 -            int var4 = this.field_1126_b / 16 * 16;
 -            var2.getRGB(var3, var4, 16, 16, this.field_4230_h, 0, 16);
 +            BufferedImage var2 = ImageIO.read(field_4231_g.field_6298_C.field_6534_a.func_6481_a("/gui/items.png"));
-+            int var3 = this.field_1126_b % 16 * iconTileSize;
-+            int var4 = this.field_1126_b / 16 * iconTileSize;
-+            var2.getRGB(var3, var4, iconTileSize, iconTileSize, this.field_4230_h, 0, iconTileSize);
++            int var3 = this.field_1126_b % 16 * tileSizeBase;
++            int var4 = this.field_1126_b / 16 * tileSizeBase;
++            var2.getRGB(var3, var4, tileSizeBase, tileSizeBase, this.field_4230_h, 0, tileSizeBase);
          }
          catch (IOException var5)
          {
-@@ -33,7 +46,7 @@
+@@ -33,7 +42,7 @@
  
      public void func_783_a()
      {
@@ -49,35 +51,35 @@
          {
              int var2 = this.field_4230_h[var1] >> 24 & 255;
              int var3 = this.field_4230_h[var1] >> 16 & 255;
-@@ -110,11 +123,11 @@
+@@ -110,11 +119,11 @@
          int var19;
          int var18;
  
 -        for (var9 = -4; var9 <= 4; ++var9)
-+        for (var9 = -(iconTileSize >> 2); var9 <= (iconTileSize >> 2); ++var9)
++        for (var9 = -(tileSizeBase >> 2); var9 <= (tileSizeBase >> 2); ++var9)
          {
 -            var10 = (int)(8.5D + var26 * (double)var9 * 0.3D);
 -            var11 = (int)(7.5D - var24 * (double)var9 * 0.3D * 0.5D);
 -            var12 = var11 * 16 + var10;
-+            var10 = (int)((iconTileSize >> 1) + 0.5D + var26 * (double)var9 * 0.3D);
-+            var11 = (int)((iconTileSize >> 1) - 0.5D - var24 * (double)var9 * 0.3D * 0.5D);
-+            var12 = var11 * iconTileSize + var10;
++            var10 = (int)((tileSizeBase >> 1) + 0.5D + var26 * (double)var9 * 0.3D);
++            var11 = (int)((tileSizeBase >> 1) - 0.5D - var24 * (double)var9 * 0.3D * 0.5D);
++            var12 = var11 * tileSizeBase + var10;
              var13 = 100;
              var14 = 100;
              var15 = 100;
-@@ -136,11 +149,11 @@
+@@ -136,11 +145,11 @@
              this.field_1127_a[var12 * 4 + 3] = (byte)var16;
          }
  
 -        for (var9 = -8; var9 <= 16; ++var9)
-+        for (var9 = -(iconTileSize>>2); var9 <= iconTileSize; ++var9)
++        for (var9 = -(tileSizeBase>>2); var9 <= tileSizeBase; ++var9)
          {
 -            var10 = (int)(8.5D + var24 * (double)var9 * 0.3D);
 -            var11 = (int)(7.5D + var26 * (double)var9 * 0.3D * 0.5D);
 -            var12 = var11 * 16 + var10;
-+            var10 = (int)((iconTileSize >> 1) + 0.5D + var24 * (double)var9 * 0.3D);
-+            var11 = (int)((iconTileSize >> 1) - 0.5D + var26 * (double)var9 * 0.3D * 0.5D);
-+            var12 = var11 * iconTileSize + var10;
++            var10 = (int)((tileSizeBase >> 1) + 0.5D + var24 * (double)var9 * 0.3D);
++            var11 = (int)((tileSizeBase >> 1) - 0.5D + var26 * (double)var9 * 0.3D * 0.5D);
++            var12 = var11 * tileSizeBase + var10;
              var13 = var9 >= 0 ? 255 : 100;
              var14 = var9 >= 0 ? 20 : 100;
              var15 = var9 >= 0 ? 20 : 100;
