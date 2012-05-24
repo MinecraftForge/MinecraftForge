@@ -10,7 +10,7 @@
  import net.minecraft.client.Minecraft;
  import org.lwjgl.input.Keyboard;
  
-@@ -477,4 +480,18 @@
+@@ -483,4 +486,18 @@
      {
          return this.field_1580_e < 2 && this.field_40445_l;
      }

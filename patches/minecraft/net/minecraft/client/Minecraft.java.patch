@@ -27,7 +27,7 @@
          this.func_6250_c("Startup");
          this.field_6286_O = new OpenGlCapsChecker();
          this.field_6301_A.func_340_a(this.field_6304_y);
-@@ -744,9 +750,11 @@
+@@ -747,9 +753,11 @@
                      this.field_6327_b.func_6467_a(this.field_9237_P.field_1378_c);
                  }
  
@@ -39,7 +39,7 @@
              }
  
              GL11.glFlush();
-@@ -1340,6 +1348,7 @@
+@@ -1343,6 +1351,7 @@
              this.func_28001_B();
          }
  
@@ -47,7 +47,7 @@
          Profiler.func_40663_a("stats");
          this.field_25001_G.func_27178_d();
          Profiler.func_40661_c("gui");
-@@ -1730,6 +1739,7 @@
+@@ -1733,6 +1742,7 @@
          }
  
          Profiler.func_40662_b();
@@ -55,7 +55,7 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -2250,7 +2260,11 @@
+@@ -2253,7 +2263,11 @@
          {
              var2 = p_main_0_[1];
          }
