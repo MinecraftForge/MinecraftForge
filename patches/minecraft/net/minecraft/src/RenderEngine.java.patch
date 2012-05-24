@@ -33,7 +33,7 @@
      private IntBuffer field_1606_d = GLAllocation.func_1125_c(1);
      private ByteBuffer field_1605_e = GLAllocation.func_1127_b(16777216);
 -    private List field_1604_f = new ArrayList();
-+    List field_1604_f = new ArrayList();
++    public List field_1604_f = new ArrayList();
      private Map field_1603_g = new HashMap();
      private GameSettings field_1602_h;
      public boolean field_4281_i = false;
@@ -64,18 +64,15 @@
          int[] var5 = new int[var3 * var4];
          byte[] var6 = new byte[var3 * var4 * 4];
          p_1068_1_.getRGB(0, 0, var3, var4, var5, 0, var3);
-@@ -448,8 +462,10 @@
+@@ -448,6 +462,7 @@
  
      public void func_1066_a(TextureFX p_1066_1_)
      {
 +        FMLClientHandler.instance().onPreRegisterEffect(p_1066_1_);
          this.field_1604_f.add(p_1066_1_);
          p_1066_1_.func_783_a();
-+        
      }
- 
-     public void func_1067_a()
-@@ -460,7 +476,10 @@
+@@ -460,7 +475,10 @@
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
              var3.field_1131_c = this.field_1602_h.field_1578_g;
@@ -87,7 +84,7 @@
              this.field_1605_e.clear();
              this.field_1605_e.put(var3.field_1127_a);
              this.field_1605_e.position(0).limit(var3.field_1127_a.length);
-@@ -471,11 +490,16 @@
+@@ -471,11 +489,16 @@
                  var1 = var3.field_1126_b;
              }
  
@@ -105,7 +102,7 @@
                  }
              }
          }
-@@ -577,8 +601,9 @@
+@@ -577,8 +600,9 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
@@ -116,7 +113,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -614,11 +639,13 @@
+@@ -614,11 +638,13 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
