@@ -52,7 +52,6 @@ public class FMLTextureFX extends TextureFX implements ITextureFX
         tileSizeSquare = tileSizeBase * tileSizeBase;
         tileSizeMask = tileSizeBase - 1;
         tileSizeSquareMask = tileSizeSquare - 1;
-        System.out.format("(%d,%d) %d %d %d %d\n", width, height, tileSizeBase, tileSizeSquare, tileSizeMask, tileSizeSquareMask);
         setErrored(false);
         setup();
     }

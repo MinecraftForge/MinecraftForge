@@ -59,16 +59,15 @@
                      this.field_4226_h[var2][var16 * 4 + 0] = (byte)var13;
                      this.field_4226_h[var2][var16 * 4 + 1] = (byte)var14;
                      this.field_4226_h[var2][var16 * 4 + 2] = (byte)var6;
-@@ -68,14 +78,15 @@
+@@ -68,6 +78,7 @@
                  }
              }
          }
 +        field_4227_g = 0;
      }
--
-+    
+ 
      public void func_783_a()
-     {
+@@ -75,7 +86,7 @@
          ++this.field_4227_g;
          byte[] var1 = this.field_4226_h[this.field_4227_g & 31];
  
