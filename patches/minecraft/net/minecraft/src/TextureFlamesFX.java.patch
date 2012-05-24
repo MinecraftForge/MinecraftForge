@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TextureFlamesFX.java	0000-00-00 00:00:00.000000000 -0000
-@@ -4,10 +4,28 @@
+@@ -1,13 +1,28 @@
+ package net.minecraft.src;
+ 
+-public class TextureFlamesFX extends TextureFX
++import cpw.mods.fml.client.FMLTextureFX;
++
++public class TextureFlamesFX extends FMLTextureFX
  {
      protected float[] field_1133_g = new float[320];
      protected float[] field_1132_h = new float[320];
@@ -14,50 +20,45 @@
 +    }
 +
 +    @Override
-+    public void onTexturePackChange(int newTileSize, int newTileSizeSquare, int newTileSizeMask, int newTileSizeSquareMask)
-+    {
-+        super.onTexturePackChange(newTileSize, newTileSizeSquare, newTileSizeMask, newTileSizeSquareMask);
-+        setup();
-+    }
 +    public void setup()
 +    {
 +        super.setup();
-+        fireTileSize = iconTileSize + (iconTileSize >> 2);
-+        fireGridSize = fireTileSize * iconTileSize;
++        fireTileSize = tileSizeBase + (tileSizeBase >> 2);
++        fireGridSize = fireTileSize * tileSizeBase;
 +        field_1133_g = new float[fireGridSize];
 +        field_1132_h = new float[fireGridSize];
      }
  
      public void func_783_a()
-@@ -16,31 +34,36 @@
+@@ -16,31 +31,36 @@
          float var4;
          int var6;
  
 -        for (int var1 = 0; var1 < 16; ++var1)
-+        float fireFactor1 = 3.0F + (float)(iconTileSize >> 4);
++        float fireFactor1 = 3.0F + (float)(tileSizeBase >> 4);
 +        
-+        float fireFactor2 = 1.07F - (iconTileSize >> 4) *0.01F;
++        float fireFactor2 = 1.01F + (0.8F / tileSizeBase);
 +
-+        for (int var1 = 0; var1 < iconTileSize; ++var1)
++        for (int var1 = 0; var1 < tileSizeBase; ++var1)
          {
 -            for (int var2 = 0; var2 < 20; ++var2)
 +            for (int var2 = 0; var2 < fireTileSize; ++var2)
              {
 -                var3 = 18;
 -                var4 = this.field_1133_g[var1 + (var2 + 1) % 20 * 16] * (float)var3;
-+                var3 = fireTileSize - 2;//(tileSize >> 3);
++                var3 = fireTileSize - (tileSizeBase >> 3);
 +
-+                var4 = this.field_1133_g[var1 + (var2 + 1) % fireTileSize * iconTileSize] * (float)var3;
++                var4 = this.field_1133_g[var1 + (var2 + 1) % fireTileSize * tileSizeBase] * (float)var3;
  
                  for (int var5 = var1 - 1; var5 <= var1 + 1; ++var5)
                  {
                      for (var6 = var2; var6 <= var2 + 1; ++var6)
                      {
 -                        if (var5 >= 0 && var6 >= 0 && var5 < 16 && var6 < 20)
-+                        if (var5 >= 0 && var6 >= 0 && var5 < iconTileSize && var6 < fireTileSize)
++                        if (var5 >= 0 && var6 >= 0 && var5 < tileSizeBase && var6 < fireTileSize)
                          {
 -                            var4 += this.field_1133_g[var5 + var6 * 16];
-+                            var4 += this.field_1133_g[var5 + var6 * iconTileSize];
++                            var4 += this.field_1133_g[var5 + var6 * tileSizeBase];
                          }
  
                          ++var3;
@@ -65,17 +66,17 @@
                  }
  
 -                this.field_1132_h[var1 + var2 * 16] = var4 / ((float)var3 * 1.0600001F);
-+                this.field_1132_h[var1 + var2 * iconTileSize] = var4 / ((float)var3 * fireFactor2);
++                this.field_1132_h[var1 + var2 * tileSizeBase] = var4 / ((float)var3 * fireFactor2);
  
 -                if (var2 >= 19)
-+                if (var2 >= fireTileSize - (iconTileSize >> 4))
++                if (var2 >= fireTileSize - (tileSizeBase >> 4))
                  {
 -                    this.field_1132_h[var1 + var2 * 16] = (float)(Math.random() * Math.random() * Math.random() * 4.0D + Math.random() * 0.10000000149011612D + 0.20000000298023224D);
-+                    this.field_1132_h[var1 + var2 * iconTileSize] = (float)(Math.random() * Math.random() * Math.random() * fireFactor1 + Math.random() * 0.1F + 0.2F);
++                    this.field_1132_h[var1 + var2 * tileSizeBase] = (float)(Math.random() * Math.random() * Math.random() * fireFactor1 + Math.random() * 0.1F + 0.2F);
                  }
              }
          }
-@@ -49,7 +72,7 @@
+@@ -49,7 +69,7 @@
          this.field_1132_h = this.field_1133_g;
          this.field_1133_g = var13;
  

@@ -21,6 +21,7 @@ import java.awt.image.ImageObserver;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.FMLTextureFX;
 import cpw.mods.fml.common.FMLCommonHandler;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -28,7 +29,7 @@ import static org.lwjgl.opengl.GL11.*;
  * A texture override for animations, it takes a vertical image of 
  * texture frames and constantly rotates them in the texture.
  */
-public class ModTextureAnimation extends TextureFX
+public class ModTextureAnimation extends FMLTextureFX
 {
     private final int tickRate;
     private final byte[][] images;
@@ -77,9 +78,9 @@ public class ModTextureAnimation extends TextureFX
         {
             images = new byte[frames][];
 
-            if (tWidth != TextureFX.iconTileSize || tHeight != TextureFX.iconTileSize)
+            if (tWidth != tileSizeBase || tHeight != tileSizeBase)
             {
-                FMLCommonHandler.instance().getFMLLogger().warning(String.format("Animation Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, TextureFX.iconTileSize));
+                log.warning(String.format("Animation Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, tileSizeBase));
                 errored = true;
                 return;
             }
