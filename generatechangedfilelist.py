@@ -46,7 +46,7 @@ def main():
     for row in srg_data['CL']:
       classes[row['deobf_name']] = row['obf_name']
 
-    with open(list_file, 'w') as fh:
+    with open(list_file, 'a') as fh:
       for diff in difflist.splitlines():
         diffrow=diff.strip().split()
         clazz=diffrow[0]
