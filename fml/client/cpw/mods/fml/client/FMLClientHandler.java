@@ -846,12 +846,22 @@ public class FMLClientHandler implements IFMLSidedHandler
         return meta;
     }
 
-    public void pruneOldTextureFX(TexturePackBase var1, int tileSize, int tileSizeSquare, int tileSizeMask, int tileSizeSquareMask)
+    public void pruneOldTextureFX(TexturePackBase var1, List<TextureFX> effects)
     {
         ListIterator<TextureFX> li = addedTextureFX.listIterator();
-        while (li.hasNext()) {
-            TextureFX tex=li.next();
-            if (tex.unregister(client.field_6315_n)) {
+        while (li.hasNext()) 
+        {
+            TextureFX tex = li.next();
+            if (tex instanceof FMLTextureFX)
+            {
+                if (((FMLTextureFX)tex).unregister(client.field_6315_n, effects))
+                {
+                    li.remove();
+                }
+            }
+            else
+            {
+                effects.remove(tex);
                 li.remove();
             }
         }
@@ -925,11 +935,117 @@ public class FMLClientHandler implements IFMLSidedHandler
         Minecraft.fmlReentry(user, sessionToken);
     }
 
-    /**
-     * @param var1
-     * @param tileSize
-     * @param tileSizeSquare
-     * @param tileSizeMask
-     * @param tileSizeSquareMask
-     */
+    public void onTexturePackChange(RenderEngine engine, TexturePackBase texturepack, List<TextureFX> effects)
+    {        
+        FMLClientHandler.instance().pruneOldTextureFX(texturepack, effects);
+
+        for (TextureFX tex : effects)
+        {
+            if (tex instanceof ITextureFX)
+            {
+                ((ITextureFX)tex).onTexturePackChanged(engine, texturepack, getTextureDimensions(tex));
+            }
+        }
+        
+        FMLClientHandler.instance().loadTextures(texturepack);
+    }
+    
+    private HashMap<Integer, Dimension> textureDims = new HashMap<Integer, Dimension>();
+    private IdentityHashMap<TextureFX, Integer> effectTextures = new IdentityHashMap<TextureFX, Integer>();
+    public void setTextureDimensions(int id, int width, int height, List<TextureFX> effects)
+    {
+        Dimension dim = new Dimension(width, height);
+        textureDims.put(id, dim);
+        
+        for (TextureFX tex : effects) 
+        {
+            if (getEffectTexture(tex) == id && tex instanceof ITextureFX)
+            {
+                ((ITextureFX)tex).onTextureDimensionsUpdate(width, height);
+            }
+        }
+    }
+    
+    public Dimension getTextureDimensions(TextureFX effect)
+    {
+        return getTextureDimensions(getEffectTexture(effect));
+    }
+    
+    public Dimension getTextureDimensions(int id)
+    {
+        return textureDims.get(id);
+    }
+    
+    public int getEffectTexture(TextureFX effect)
+    {
+        Integer id = effectTextures.get(effect);
+        if (id != null)
+        {
+            return id;
+        }
+        
+        int old = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
+        
+        effect.func_782_a(client.field_6315_n);
+        
+        id = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
+        
+        GL11.glBindTexture(GL_TEXTURE_2D, old);
+        
+        effectTextures.put(effect, id);
+        
+        return id;
+    }
+    
+    public boolean onUpdateTextureEffect(TextureFX effect)
+    {
+        Logger log = FMLCommonHandler.instance().getFMLLogger();
+        ITextureFX ifx = (effect instanceof ITextureFX ? ((ITextureFX)effect) : null);
+        
+        if (ifx != null && ifx.getErrored())
+        {
+            return false;
+        }
+        
+        String name = effect.getClass().getSimpleName();
+        Profiler.func_40663_a(name);
+        
+        try 
+        {
+            effect.func_783_a();
+        } 
+        catch (Exception e) 
+        {
+            log.warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name));
+            if (ifx != null)
+            {
+                ifx.setErrored(true);
+            }
+            Profiler.func_40662_b();
+            return false;
+        }
+        Profiler.func_40662_b();
+        
+        Dimension dim = getTextureDimensions(effect);
+        int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
+        if (effect.field_1127_a.length != target) 
+        {
+            log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target));
+            if (ifx != null)
+            {
+                ifx.setErrored(true);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void onPreRegisterEffect(TextureFX effect)
+    {
+        Dimension dim = getTextureDimensions(effect);
+        if (effect instanceof ITextureFX)
+        {
+            ((ITextureFX)effect).onTextureDimensionsUpdate(dim.width, dim.height);
+        }
+    }
 }
