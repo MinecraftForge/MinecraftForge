@@ -38,9 +38,9 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
     {
         Minecraft mc = (Minecraft) minecraftInstance;
         // World and render ticks
-        if ((tickEnd && tick==TickType.WORLD) || (!tickEnd && tick==TickType.RENDER)) {
+        if ((tickEnd && tick==TickType.WORLD) || (tickEnd && tick==TickType.RENDER)) {
             return onTickInGame((Float) data[0], mc);
-        } else if (((tickEnd && tick==TickType.WORLDGUI) || (!tickEnd && tick==TickType.GUI))) {
+        } else if (((tickEnd && tick==TickType.WORLDGUI) || (tickEnd && tick==TickType.GUI))) {
             return onTickInGUI((Float) data[0], mc, (GuiScreen)data[1]);
         }
         return true;
