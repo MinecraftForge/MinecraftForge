@@ -659,7 +659,7 @@ public class ModLoader
     @Deprecated
     public static boolean renderBlockIsItemFull3D(int modelID)
     {
-        return FMLClientHandler.instance().renderItemAsFull3DBlock(modelID);
+        return false;
     }
 
     @Deprecated
