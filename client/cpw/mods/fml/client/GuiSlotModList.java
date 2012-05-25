@@ -36,7 +36,7 @@ public class GuiSlotModList extends GuiScrollingList
 
     public GuiSlotModList(GuiModList parent, ArrayList<ModContainer> mods, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 25);
+        super(parent.getMinecraftInstance(), listWidth, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 35);
         this.parent=parent;
         this.mods=mods;
     }
@@ -68,15 +68,16 @@ public class GuiSlotModList extends GuiScrollingList
     @Override
     protected int getContentHeight()
     {
-        return (1 + this.getSize()) * 25;
+        return (this.getSize()) * 35 + 1;
     }
     
     @Override
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
         ModContainer mc=mods.get(listIndex);
-        this.parent.getFontRenderer().func_873_b(mc.getName(), this.left + 3 , var3 + 2, 0xFFFFFF);
-        this.parent.getFontRenderer().func_873_b(mc.getVersion(), this.left + 3 , var3 + 12, 0xCCCCCC);
+        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getName(), listWidth - 9), this.left + 3 , var3 + 2, 0xFFFFFF);
+        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getVersion(), listWidth - 9), this.left + 3 , var3 + 12, 0xCCCCCC);
+        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 9), this.left + 3 , var3 + 22, 0xCCCCCC);
     }
 
 }

@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.TopologicalSort;
 
@@ -234,7 +235,13 @@ public class Loader
             }
             mod.nextState();
         }
-
+        // Link up mod metadatas
+        
+        for (ModContainer mod : mods) {
+            if (mod.getMetadata()!=null) {
+                mod.getMetadata().associate(namedMods);
+            }
+        }
         log.fine("Mod pre-initialization complete");
     }
 
@@ -364,15 +371,15 @@ public class Loader
         File[] minecraftSources=modClassLoader.getParentSources();
         if (minecraftSources.length==1 && minecraftSources[0].isFile()) {
             log.fine(String.format("Minecraft is a file at %s, loading",minecraftSources[0].getAbsolutePath()));
-            attemptFileLoad(minecraftSources[0]);
+            attemptFileLoad(minecraftSources[0], SourceType.CLASSPATH);
         } else {
             for (int i=0; i<minecraftSources.length; i++) {
                 if (minecraftSources[i].isFile()) {
                     log.fine(String.format("Found a minecraft related file at %s, loading",minecraftSources[i].getAbsolutePath()));
-                    attemptFileLoad(minecraftSources[i]);
+                    attemptFileLoad(minecraftSources[i], SourceType.CLASSPATH);
                 } else if (minecraftSources[i].isDirectory()) {
                     log.fine(String.format("Found a minecraft related directory at %s, loading",minecraftSources[i].getAbsolutePath()));
-                    attemptDirLoad(minecraftSources[i],"");
+                    attemptDirLoad(minecraftSources[i],"",SourceType.CLASSPATH);
                 }
             }
         }
@@ -388,7 +395,7 @@ public class Loader
             if (modFile.isDirectory())
             {
                 log.fine(String.format("Found a directory %s, attempting to load it", modFile.getName()));
-                boolean modFound = attemptDirLoad(modFile,"");
+                boolean modFound = attemptDirLoad(modFile,"", SourceType.DIR);
 
                 if (modFound)
                 {
@@ -406,7 +413,7 @@ public class Loader
                 if (matcher.matches())
                 {
                     log.fine(String.format("Found a zip or jar file %s, attempting to load it", matcher.group(0)));
-                    boolean modFound = attemptFileLoad(modFile);
+                    boolean modFound = attemptFileLoad(modFile, SourceType.JAR);
 
                     if (modFound)
                     {
@@ -429,7 +436,7 @@ public class Loader
         log.info(String.format("Forge Mod Loader has loaded %d mods", mods.size()));
     }
 
-    private boolean attemptDirLoad(File modDir, String path)
+    private boolean attemptDirLoad(File modDir, String path, SourceType sourceType)
     {
         if (path.length()==0) {
             extendClassLoader(modDir);
@@ -450,7 +457,7 @@ public class Loader
         {
             if (file.isDirectory()) {
                 log.finest(String.format("Recursing into package %s", path+file.getName()));
-                foundAModClass|=attemptDirLoad(file,path+file.getName()+".");
+                foundAModClass|=attemptDirLoad(file,path+file.getName()+".", sourceType);
                 continue;
             }
             Matcher fname = modClass.matcher(file.getName());
@@ -459,7 +466,7 @@ public class Loader
             }
             String clazzName=path+fname.group(2);
             log.fine(String.format("Found a mod class %s in directory %s, attempting to load it", clazzName, modDir.getName()));
-            loadModClass(modDir, file.getName(), clazzName);
+            loadModClass(modDir, file.getName(), clazzName, sourceType);
             log.fine(String.format("Successfully loaded mod class %s", file.getName()));
             foundAModClass = true;
         }
@@ -467,7 +474,7 @@ public class Loader
         return foundAModClass;
     }
 
-    private void loadModClass(File classSource, String classFileName, String clazzName)
+    private void loadModClass(File classSource, String classFileName, String clazzName, SourceType sourceType)
     {
         try
         {
@@ -477,9 +484,11 @@ public class Loader
             if (clazz.isAnnotationPresent(Mod.class))
             {
                 // an FML mod
-                log.fine(String.format("FML mod class %s found, loading", clazzName));
-                mod = FMLModContainer.buildFor(clazz);
-                log.fine(String.format("FML mod class %s loaded", clazzName));
+                log.severe("Currently, the FML mod type is disabled");
+                throw new LoaderException();
+//                log.fine(String.format("FML mod class %s found, loading", clazzName));
+//                mod = FMLModContainer.buildFor(clazz);
+//                log.fine(String.format("FML mod class %s loaded", clazzName));
             }
             else if (FMLCommonHandler.instance().isModLoaderMod(clazz))
             {
@@ -492,6 +501,7 @@ public class Loader
                 // Unrecognized
             }
             if (mod!=null) {
+                mod.setSourceType(sourceType);
                 FMLCommonHandler.instance().loadMetadataFor(mod);
                 mods.add(mod);
                 mod.nextState();
@@ -516,7 +526,7 @@ public class Loader
         }
     }
 
-    private boolean attemptFileLoad(File modFile)
+    private boolean attemptFileLoad(File modFile, SourceType sourceType)
     {
         extendClassLoader(modFile);
         boolean foundAModClass = false;
@@ -534,7 +544,7 @@ public class Loader
                     String pkg = match.group(1).replace('/', '.');
                     String clazzName = pkg + match.group(2);
                     log.fine(String.format("Found a mod class %s in file %s, attempting to load it", clazzName, modFile.getName()));
-                    loadModClass(modFile, ze.getName(), clazzName);
+                    loadModClass(modFile, ze.getName(), clazzName, sourceType);
                     log.fine(String.format("Mod class %s loaded successfully", clazzName, modFile.getName()));
                     foundAModClass = true;
                 }

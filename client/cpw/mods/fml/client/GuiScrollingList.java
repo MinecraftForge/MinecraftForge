@@ -11,8 +11,8 @@ import org.lwjgl.opengl.GL11;
 public abstract class GuiScrollingList
 {
     private final Minecraft client;
-    private final int listWidth;
-    private final int listHeight;
+    protected final int listWidth;
+    protected final int listHeight;
     protected final int top;
     protected final int bottom;
     private final int right;

@@ -17,7 +17,9 @@ package cpw.mods.fml.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
@@ -39,10 +41,13 @@ public class ModMetadata
     
     public String logoFile="";
     public String version="";
-    public String authorList="";
+    public List<String> authorList=new ArrayList<String>(1);
     public String credits="";
     public String parent="";
     public String[] screenshots;
+    
+    public ModContainer parentMod;
+    public List<ModContainer> childMods = new ArrayList<ModContainer>(1);
 
     /**
      * @param mod2
@@ -52,5 +57,48 @@ public class ModMetadata
     {
         this.mod=mod;
         this.type=(mod instanceof FMLModContainer ? ModType.FML : ModType.MODLOADER);
+    }
+    
+    public void associate(Map<String, ModContainer> mods) {
+        if (parent!=null && parent.length() > 0) {
+            ModContainer mc=mods.get(parent);
+            if (mc!=null && mc.getMetadata()!=null) {
+                mc.getMetadata().childMods.add(mod);
+                parentMod = mc;
+            }
+        }
+    }
+
+    /**
+     * @return
+     */
+    public String getChildModCountString()
+    {
+        return String.format("%d child mod%s", childMods.size(), childMods.size()!=1 ? "s" : "");
+    }
+
+    public String getAuthorList() {
+        StringBuilder sb=new StringBuilder();
+        for (int i=0; i<authorList.size(); i++) {
+            sb.append(authorList.get(i));
+            if (i<authorList.size()-1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+    /**
+     * @return
+     */
+    public String getChildModList()
+    {
+        StringBuilder sb=new StringBuilder();
+        for (int i=0; i<childMods.size(); i++) {
+            sb.append(childMods.get(i).getMetadata().name);
+            if (i<childMods.size()-1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 }

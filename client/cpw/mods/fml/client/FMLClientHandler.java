@@ -816,26 +816,34 @@ public class FMLClientHandler implements IFMLSidedHandler
     public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception
     {
         JsonNode root=new JdomParser().func_27366_a(new InputStreamReader(input));
+        List<JsonNode> lst=root.func_27217_b();
+        JsonNode modinfo = null;
+        for (JsonNode tmodinfo : lst) {
+            if (mod.getName().equals(tmodinfo.func_27213_a("modid"))) {
+                modinfo = tmodinfo;
+                break;
+            }
+        }
+        if (modinfo == null) {
+            FMLCommonHandler.instance().getFMLLogger().fine(String.format("Unable to process JSON modinfo file for %s", mod.getName()));
+            return null;
+        }
         ModMetadata meta=new ModMetadata(mod);
         try {
-            meta.name=root.func_27213_a("name");
-            meta.description=root.func_27213_a("description");
-            meta.version=root.func_27213_a("version");
-            meta.credits=root.func_27213_a("credits");
-            List authors=root.func_27217_b("authors");
+            meta.name=modinfo.func_27213_a("name");
+            meta.description=modinfo.func_27213_a("description");
+            meta.version=modinfo.func_27213_a("version");
+            meta.credits=modinfo.func_27213_a("credits");
+            List authors=modinfo.func_27217_b("authors");
             StringBuilder sb=new StringBuilder();
             for (int i=0; i<authors.size(); i++) {
-                sb.append(((JsonNode)authors.get(i)).func_27216_b());
-                if (i<authors.size()-1) {
-                    sb.append(", ");
-                }
+                meta.authorList.add(((JsonNode)authors.get(i)).func_27216_b());
             }
-            meta.authorList=sb.toString();
-            meta.logoFile=root.func_27213_a("logoFile");
-            meta.url=root.func_27213_a("url");
-            meta.updateUrl=root.func_27213_a("updateUrl");
-            meta.parent=root.func_27213_a("parent");
-            List screenshots=root.func_27217_b("screenshots");
+            meta.logoFile=modinfo.func_27213_a("logoFile");
+            meta.url=modinfo.func_27213_a("url");
+            meta.updateUrl=modinfo.func_27213_a("updateUrl");
+            meta.parent=modinfo.func_27213_a("parent");
+            List screenshots=modinfo.func_27217_b("screenshots");
             meta.screenshots=new String[screenshots.size()];
             for (int i=0; i<screenshots.size(); i++) {
                 meta.screenshots[i]=((JsonNode)screenshots.get(i)).func_27216_b();
