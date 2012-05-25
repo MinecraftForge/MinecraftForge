@@ -55,7 +55,15 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -2250,7 +2260,11 @@
+@@ -1985,6 +1995,7 @@
+ 
+         System.gc();
+         this.field_6287_N = 0L;
++        FMLClientHandler.instance().onWorldLoadTick();
+     }
+ 
+     private void func_22002_b(String p_22002_1_, String p_22002_2_)
+@@ -2250,7 +2261,11 @@
          {
              var2 = p_main_0_[1];
          }

@@ -46,6 +46,10 @@ public class ModLoaderHelper
         } else {
             ticks.remove(TickType.WORLD);
         }
+        
+        if (enable) {
+            ticks.add(TickType.WORLDLOADTICK);
+        }
     }
 
     public static void updateGUITicks(BaseMod mod, boolean enable, boolean useClock)
@@ -63,6 +67,9 @@ public class ModLoaderHelper
             ticks.add(TickType.WORLDGUI);
         } else {
             ticks.remove(TickType.WORLDGUI);
+        }
+        if (enable) {
+            ticks.add(TickType.GUILOADTICK);
         }
     }
 
