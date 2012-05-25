@@ -42,6 +42,10 @@ public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDisp
             return onTickInGame((Float) data[0], mc);
         } else if (((tickEnd && tick==TickType.WORLDGUI) || (tickEnd && tick==TickType.GUI))) {
             return onTickInGUI((Float) data[0], mc, (GuiScreen)data[1]);
+        } else if (tick == TickType.WORLDLOADTICK) {
+            return onTickInGame(0.0f, mc);
+        } else if (tick == TickType.GUILOADTICK) {
+            return onTickInGUI(0.0f, mc, mc.field_6313_p);
         }
         return true;
     }

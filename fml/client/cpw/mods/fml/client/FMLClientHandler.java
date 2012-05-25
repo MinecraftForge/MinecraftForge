@@ -230,9 +230,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (client.field_6324_e != null) {
             FMLCommonHandler.instance().worldTickStart();
-            if (client.field_6313_p !=null) {
-                FMLCommonHandler.instance().tickStart(TickType.WORLDGUI, 0.0f, client.field_6313_p);
-            }
+            FMLCommonHandler.instance().tickStart(TickType.WORLDGUI, 0.0f, client.field_6313_p);
         }
     }
 
@@ -243,12 +241,18 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (client.field_6324_e != null) {
             FMLCommonHandler.instance().worldTickEnd();
-            if (client.field_6313_p!=null) {
-                FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
-            }
+            FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
         }
     }
 
+    public void onWorldLoadTick()
+    {
+        if (client.field_6324_e != null) {
+            FMLCommonHandler.instance().tickStart(TickType.WORLDLOADTICK);
+            FMLCommonHandler.instance().tickStart(TickType.GUILOADTICK);
+        }
+    }
+    
     public void onRenderTickStart(float partialTickTime)
     {
         if (client.field_6324_e != null) {
@@ -257,11 +261,8 @@ public class FMLClientHandler implements IFMLSidedHandler
                 loadTextures(fallbackTexturePack);
                 firstTick = false;
             }
-        FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
-            if (client.field_6324_e!=null)
-            {
-                FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
-            }
+            FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
+            FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
         }
     }
     
@@ -269,9 +270,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (client.field_6324_e != null) {
             FMLCommonHandler.instance().tickEnd(TickType.RENDER, partialTickTime);
-            if (client.field_6324_e!=null) {
-                FMLCommonHandler.instance().tickEnd(TickType.GUI, partialTickTime, client.field_6313_p);
-            }
+            FMLCommonHandler.instance().tickEnd(TickType.GUI, partialTickTime, client.field_6313_p);
         }
     }
     /**

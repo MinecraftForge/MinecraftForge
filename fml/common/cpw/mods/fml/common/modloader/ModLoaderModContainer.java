@@ -332,7 +332,7 @@ public class ModLoaderModContainer implements ModContainer
             boolean keepTicking=mod.doTickInGame(tick, false, FMLCommonHandler.instance().getMinecraftInstance(), data);
             if (!keepTicking) {
                 ticks.remove(tick);
-                ticks.remove(tick.partnerTick());
+                ticks.removeAll(tick.partnerTicks());
             }
         }
     }
@@ -344,7 +344,7 @@ public class ModLoaderModContainer implements ModContainer
             boolean keepTicking=mod.doTickInGame(tick, true, FMLCommonHandler.instance().getMinecraftInstance(), data);
             if (!keepTicking) {
                 ticks.remove(tick);
-                ticks.remove(tick.partnerTick());
+                ticks.removeAll(tick.partnerTicks());
             }
         }
     }
