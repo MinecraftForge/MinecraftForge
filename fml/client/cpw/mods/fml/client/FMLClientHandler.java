@@ -40,11 +40,49 @@ import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
+import net.minecraft.src.BaseMod;
+import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.Block;
+import net.minecraft.src.ClientRegistry;
+import net.minecraft.src.CommonRegistry;
+import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.GameSettings;
+import net.minecraft.src.GuiScreen;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.KeyBinding;
+import net.minecraft.src.ModTextureStatic;
+import net.minecraft.src.NetClientHandler;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
+import net.minecraft.src.Packet1Login;
+import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.Packet3Chat;
+import net.minecraft.src.Profiler;
+import net.minecraft.src.Render;
+import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.RenderEngine;
+import net.minecraft.src.RenderManager;
+import net.minecraft.src.RenderPlayer;
+import net.minecraft.src.StringTranslate;
+import net.minecraft.src.TextureFX;
+import net.minecraft.src.TexturePackBase;
+import net.minecraft.src.World;
+import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
-import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.IFMLSidedHandler;
+import cpw.mods.fml.common.IKeyHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
@@ -101,6 +139,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private List<TextureFX> addedTextureFX = new ArrayList<TextureFX>();
 
+    private boolean firstTick;
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
@@ -159,7 +198,19 @@ public class FMLClientHandler implements IFMLSidedHandler
                 r.func_4009_a(RenderManager.field_1233_a);
             }
         }
-        client.field_6304_y.loadModKeySettings(harvestKeyBindings());
+        // Load the key bindings into the settings table
+        
+        GameSettings gs = client.field_6304_y;
+        KeyBinding[] modKeyBindings = harvestKeyBindings();
+        KeyBinding[] allKeys = new KeyBinding[gs.field_1564_t.length + modKeyBindings.length];
+        System.arraycopy(gs.field_1564_t, 0, allKeys, 0, gs.field_1564_t.length);
+        System.arraycopy(modKeyBindings, 0, allKeys, gs.field_1564_t.length, modKeyBindings.length);
+        gs.field_1564_t = allKeys;
+        gs.func_6519_a();
+        
+        // Mark this as a "first tick"
+        
+        firstTick = true;
     }
 
     public KeyBinding[] harvestKeyBindings() {
@@ -201,8 +252,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onRenderTickStart(float partialTickTime)
     {
         if (client.field_6324_e != null) {
+            if (firstTick)
+            {
+                loadTextures(fallbackTexturePack);
+                firstTick = false;
+            }
         FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
-            if (client.field_6324_e!=null) {
+            if (client.field_6324_e!=null)
+            {
                 FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
             }
         }
@@ -789,22 +846,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         return meta;
     }
 
-    public void pruneOldTextureFX(TexturePackBase var1, List<TextureFX> effects)
+    public void pruneOldTextureFX(TexturePackBase var1, int tileSize, int tileSizeSquare, int tileSizeMask, int tileSizeSquareMask)
     {
         ListIterator<TextureFX> li = addedTextureFX.listIterator();
-        while (li.hasNext()) 
-        {
-            TextureFX tex = li.next();
-            if (tex instanceof FMLTextureFX)
-            {
-                if (((FMLTextureFX)tex).unregister(client.field_6315_n, effects))
-                {
-                    li.remove();
-                }
-            }
-            else
-            {
-                effects.remove(tex);
+        while (li.hasNext()) {
+            TextureFX tex=li.next();
+            if (tex.unregister(client.field_6315_n)) {
                 li.remove();
             }
         }
@@ -878,117 +925,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         Minecraft.fmlReentry(user, sessionToken);
     }
 
-    public void onTexturePackChange(RenderEngine engine, TexturePackBase texturepack, List<TextureFX> effects)
-    {        
-        FMLClientHandler.instance().pruneOldTextureFX(texturepack, effects);
-
-        for (TextureFX tex : effects)
-        {
-            if (tex instanceof ITextureFX)
-            {
-                ((ITextureFX)tex).onTexturePackChanged(engine, texturepack, getTextureDimensions(tex));
-            }
-        }
-        
-        FMLClientHandler.instance().loadTextures(texturepack);
-    }
-    
-    private HashMap<Integer, Dimension> textureDims = new HashMap<Integer, Dimension>();
-    private IdentityHashMap<TextureFX, Integer> effectTextures = new IdentityHashMap<TextureFX, Integer>();
-    public void setTextureDimensions(int id, int width, int height, List<TextureFX> effects)
-    {
-        Dimension dim = new Dimension(width, height);
-        textureDims.put(id, dim);
-        
-        for (TextureFX tex : effects) 
-        {
-            if (getEffectTexture(tex) == id && tex instanceof ITextureFX)
-            {
-                ((ITextureFX)tex).onTextureDimensionsUpdate(width, height);
-            }
-        }
-    }
-    
-    public Dimension getTextureDimensions(TextureFX effect)
-    {
-        return getTextureDimensions(getEffectTexture(effect));
-    }
-    
-    public Dimension getTextureDimensions(int id)
-    {
-        return textureDims.get(id);
-    }
-    
-    public int getEffectTexture(TextureFX effect)
-    {
-        Integer id = effectTextures.get(effect);
-        if (id != null)
-        {
-            return id;
-        }
-        
-        int old = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-        
-        effect.func_782_a(client.field_6315_n);
-        
-        id = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-        
-        GL11.glBindTexture(GL_TEXTURE_2D, old);
-        
-        effectTextures.put(effect, id);
-        
-        return id;
-    }
-    
-    public boolean onUpdateTextureEffect(TextureFX effect)
-    {
-        Logger log = FMLCommonHandler.instance().getFMLLogger();
-        ITextureFX ifx = (effect instanceof ITextureFX ? ((ITextureFX)effect) : null);
-        
-        if (ifx != null && ifx.getErrored())
-        {
-            return false;
-        }
-        
-        String name = effect.getClass().getSimpleName();
-        Profiler.func_40663_a(name);
-        
-        try 
-        {
-            effect.func_783_a();
-        } 
-        catch (Exception e) 
-        {
-            log.warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name));
-            if (ifx != null)
-            {
-                ifx.setErrored(true);
-            }
-            Profiler.func_40662_b();
-            return false;
-        }
-        Profiler.func_40662_b();
-        
-        Dimension dim = getTextureDimensions(effect);
-        int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
-        if (effect.field_1127_a.length != target) 
-        {
-            log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target));
-            if (ifx != null)
-            {
-                ifx.setErrored(true);
-            }
-            return false;
-        }
-        return true;
-    }
-
-    public void onPreRegisterEffect(TextureFX effect)
-    {
-        Dimension dim = getTextureDimensions(effect);
-        if (effect instanceof ITextureFX)
-        {
-            ((ITextureFX)effect).onTextureDimensionsUpdate(dim.width, dim.height);
-        }
-    }
+    /**
+     * @param var1
+     * @param tileSize
+     * @param tileSizeSquare
+     * @param tileSizeMask
+     * @param tileSizeSquareMask
+     */
 }
