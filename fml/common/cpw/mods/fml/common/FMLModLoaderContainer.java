@@ -14,6 +14,8 @@
 
 package cpw.mods.fml.common;
 
+import java.util.Arrays;
+
 /**
  * @author cpw
  *
@@ -41,11 +43,11 @@ public class FMLModLoaderContainer extends FMLModContainer
             md.name="Forge Mod Loader";
             md.version=Loader.instance().getFMLVersionString();
             md.credits="Made possible with help from many people";
-            md.authorList="cpw, LexManos";
+            md.authorList=Arrays.asList("cpw, LexManos");
             md.description="The Forge Mod Loader provides the ability for systems to load mods " +
             		"from the file system. It also provides key capabilities for mods to be able " +
-            		"to cooperate and provide a good modding environment." +
-            		"The mod loading system is compatible with ModLoader, all your ModLoader" +
+            		"to cooperate and provide a good modding environment. " +
+            		"The mod loading system is compatible with ModLoader, all your ModLoader " +
             		"mods should work.";
             md.url="https://github.com/cpw/FML/wiki";
             md.updateUrl="https://github.com/cpw/FML/wiki";
