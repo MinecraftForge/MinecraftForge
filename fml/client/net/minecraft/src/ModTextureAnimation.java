@@ -32,11 +32,12 @@ import static org.lwjgl.opengl.GL11.*;
 public class ModTextureAnimation extends FMLTextureFX
 {
     private final int tickRate;
-    private final byte[][] images;
+    private byte[][] images;
     private int index = 0;
     private int ticks = 0;
     
     private String targetTex = null;
+    private BufferedImage imgData = null;
     
     public ModTextureAnimation(int icon, int target, BufferedImage image, int tickCount)
     {
@@ -59,13 +60,18 @@ public class ModTextureAnimation extends FMLTextureFX
         
         tickRate = tickCount;
         ticks = tickCount;
+        imgData = image;
+    }
+    
+    @Override
+    public void setup()
+    {
+        super.setup();
         
-        func_782_a(re);
-        
-        int sWidth  = image.getWidth();
-        int sHeight = image.getHeight();
-        int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH) >> 4;
-        int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) >> 4;
+        int sWidth  = imgData.getWidth();
+        int sHeight = imgData.getHeight();
+        int tWidth  = tileSizeBase;
+        int tHeight = tileSizeBase;
         
         
         int frames = (int)Math.floor((double)(sHeight / sWidth));
@@ -77,19 +83,13 @@ public class ModTextureAnimation extends FMLTextureFX
         else
         {
             images = new byte[frames][];
-
-            if (tWidth != tileSizeBase || tHeight != tileSizeBase)
-            {
-                log.warning(String.format("Animation Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, tileSizeBase));
-                errored = true;
-                return;
-            }
+            BufferedImage image = imgData;
             
             if (sWidth != tWidth)
             {
                 BufferedImage b = new BufferedImage(tWidth, tHeight * frames, 6);
                 Graphics2D g = b.createGraphics();
-                g.drawImage(image, 0, 0, tWidth, tHeight * frames, 0, 0, sWidth, sHeight, (ImageObserver)null);
+                g.drawImage(imgData, 0, 0, tWidth, tHeight * frames, 0, 0, sWidth, sHeight, (ImageObserver)null);
                 g.dispose();
                 image = b;
             }
