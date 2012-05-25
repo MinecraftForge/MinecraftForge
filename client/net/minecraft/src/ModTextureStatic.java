@@ -62,7 +62,7 @@ public class ModTextureStatic extends FMLTextureFX
 
         if (tWidth != tileSizeBase || tHeight != tileSizeBase)
         {
-            log.warning(String.format("Override %s is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, tileSizeBase));
+            log.warning(String.format("Override is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, tileSizeBase));
             errored=true;
             return;
         }
