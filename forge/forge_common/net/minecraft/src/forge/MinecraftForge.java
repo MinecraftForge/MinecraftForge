@@ -34,6 +34,16 @@ public class MinecraftForge
     {
         bucketHandlers.add(handler);
     }
+	
+	 /**
+     * Registers a new canMine handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerCanMineHandler(ICanMineHandler handler)
+    {
+        ForgeHooks.canMineHandlers.add(handler);
+    }
+    
 
     /**
      * Registers a new sleeping handler.

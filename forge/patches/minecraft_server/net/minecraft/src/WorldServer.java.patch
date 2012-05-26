@@ -65,6 +65,7 @@
          }
  
 -        return var6 > 16 || this.mcServer.configManager.isOp(par1EntityPlayer.username);
++		 if (!ForgeHooks.canMine(par1EntityPlayer, par2, par3, par4)){return false;} 
 +        return var6 > mcServer.spawnProtectionSize || this.mcServer.configManager.isOp(par1EntityPlayer.username);
      }
  
