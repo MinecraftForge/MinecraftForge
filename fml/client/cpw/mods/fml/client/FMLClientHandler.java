@@ -248,6 +248,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onWorldLoadTick()
     {
         if (client.field_6324_e != null) {
+            if (firstTick)
+            {
+                loadTextures(fallbackTexturePack);
+                firstTick = false;
+            }
             FMLCommonHandler.instance().tickStart(TickType.WORLDLOADTICK);
             FMLCommonHandler.instance().tickStart(TickType.GUILOADTICK);
         }
@@ -256,11 +261,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onRenderTickStart(float partialTickTime)
     {
         if (client.field_6324_e != null) {
-            if (firstTick)
-            {
-                loadTextures(fallbackTexturePack);
-                firstTick = false;
-            }
             FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
             FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
         }
