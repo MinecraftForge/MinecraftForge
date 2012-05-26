@@ -49,6 +49,20 @@ public class ForgeHooks
     }
     static LinkedList<ICraftingHandler> craftingHandlers = new LinkedList<ICraftingHandler>();
 
+		static LinkedList<ICanMineHandler> canMineHandlers = new LinkedList<ICanMineHandler>();
+    
+    public static boolean canMine(EntityPlayer player, int X, int Y, int Z)
+    {
+        for (ICanMineHandler handler : canMineHandlers)
+        {
+            if (handler.canMine(player, X, Y, Z))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+	
     public static void onDestroyCurrentItem(EntityPlayer player, ItemStack orig)
     {
         for (IDestroyToolHandler handler : destroyToolHandlers)
