@@ -31,6 +31,8 @@ public class ModTextureStatic extends FMLTextureFX
     private int[] pixels = null;
     private String targetTex = null;
     private int storedSize;
+    private BufferedImage overrideData = null;
+    private int needApply = 2;
     
     
     public ModTextureStatic(int icon, int target, BufferedImage image)
@@ -52,32 +54,27 @@ public class ModTextureStatic extends FMLTextureFX
         storedSize = size;
         field_1129_e = size;
         field_1128_f = re.func_1070_a(target);
-        
-        func_782_a(re);
+        overrideData = image;
+    }
+    
+    @Override
+    public void setup()
+    {
+        super.setup();
+        int sWidth  = overrideData.getWidth();
+        int sHeight = overrideData.getHeight();
 
-        int sWidth  = image.getWidth();
-        int sHeight = image.getHeight();
-        int tWidth  = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH ) >> 4;
-        int tHeight = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT) >> 4;
-
-        if (tWidth != tileSizeBase || tHeight != tileSizeBase)
-        {
-            log.warning(String.format("Override is not applied - there is a mismatch between the underlying texture (%s) size %d,%d and the current texture tile size %d", target, tWidth, tHeight, tileSizeBase));
-            errored=true;
-            return;
-        }
         pixels = new int[tileSizeSquare];
-        
-        if (tWidth == sWidth && tHeight == sHeight)
+        if (tileSizeBase == sWidth && tileSizeBase == sHeight)
         {
-            image.getRGB(0, 0, sWidth, sHeight, pixels, 0, sWidth);
+            overrideData.getRGB(0, 0, sWidth, sHeight, pixels, 0, sWidth);
         }
         else
         {
-            BufferedImage tmp = new BufferedImage(tWidth, tHeight, 6);
+            BufferedImage tmp = new BufferedImage(tileSizeBase, tileSizeBase, 6);
             Graphics2D gfx = tmp.createGraphics();
-            gfx.drawImage(image, 0, 0, tWidth, tHeight, 0, 0, sWidth, sHeight, (ImageObserver)null);
-            tmp.getRGB(0, 0, tWidth, tHeight, pixels, 0, tWidth);
+            gfx.drawImage(overrideData, 0, 0, tileSizeBase, tileSizeBase, 0, 0, sWidth, sHeight, (ImageObserver)null);
+            tmp.getRGB(0, 0, tileSizeBase, tileSizeBase, pixels, 0, tileSizeBase);
             gfx.dispose();
         }
 
@@ -86,12 +83,17 @@ public class ModTextureStatic extends FMLTextureFX
     
     public void func_783_a()
     {
-        // Force the tile size to zero: generally we only need to stamp our static image once
-        field_1129_e = 0;
         if (oldanaglyph != field_1131_c)
         {
             update();
-            field_1129_e = storedSize;
+        }
+        // This makes it so we only apply the texture to the target texture when we need to, 
+        //due to the fact that update is called when the Effect is first registered, we actually 
+        //need to wait for the next one. 
+        field_1129_e = (needApply == 0 ? 0 : storedSize);
+        if (needApply > 0)
+        {
+            needApply--;
         }
     }
 
@@ -102,6 +104,7 @@ public class ModTextureStatic extends FMLTextureFX
     
     public void update()
     {
+        needApply = 2;
         for (int idx = 0; idx < pixels.length; idx++)
         {
             int i = idx * 4;
@@ -169,7 +172,8 @@ public class ModTextureStatic extends FMLTextureFX
 
     
     @Override
-    public String toString() {
+    public String toString() 
+    {
         return String.format("ModTextureStatic %s @ %d", targetTex, field_1126_b);
     }
 }
