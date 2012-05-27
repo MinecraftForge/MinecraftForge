@@ -1,11 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -14,7 +14,15 @@
+@@ -14,9 +14,16 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Random;
 +import java.util.logging.Level;
-+
+ 
+ import cpw.mods.fml.client.FMLClientHandler;
  import net.minecraft.client.Minecraft;
 +import net.minecraft.src.forge.ForgeHooks;
 +import net.minecraft.src.forge.ForgeHooksClient;
@@ -16,7 +17,7 @@
  
  public class NetClientHandler extends NetHandler
  {
-@@ -46,6 +54,8 @@
+@@ -50,6 +57,8 @@
          this.mc = par1Minecraft;
          Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
          this.netManager = new NetworkManager(var4, "Client", this);
@@ -25,38 +26,15 @@
      }
  
      /**
-@@ -73,6 +83,30 @@
-         this.mc.thePlayer.entityId = par1Packet1Login.protocolVersion;
+@@ -78,6 +87,7 @@
          this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
          ((PlayerControllerMP)this.mc.playerController).setCreative(par1Packet1Login.serverMode == 1);
-+        
-+        ForgeHooks.onLogin(netManager, par1Packet1Login);
-+        
-+        String[] channels = MessageManager.getInstance().getRegisteredChannels(netManager);
-+        StringBuilder tmp = new StringBuilder();
-+        tmp.append("Forge");
-+        for(String channel : channels)
-+        {
-+            tmp.append("\0");
-+            tmp.append(channel);
-+        }
-+        Packet250CustomPayload pkt = new Packet250CustomPayload(); 
-+        pkt.channel = "REGISTER";
-+        try 
-+        {
-+            pkt.data = tmp.toString().getBytes("UTF8");
-+        } 
-+        catch (UnsupportedEncodingException e) 
-+        {
-+            e.printStackTrace();
-+        }
-+        pkt.length = pkt.data.length;
-+        addToSendQueue(pkt);
-+        
-         ModLoader.serverConnect(this, par1Packet1Login);
+         FMLClientHandler.instance().handleServerLogin(par1Packet1Login, this, netManager);
++        ForgeHooksClient.onLogin(par1Packet1Login, this, netManager);
      }
  
-@@ -178,6 +212,19 @@
+     public void handlePickupSpawn(Packet21PickupSpawn par1Packet21PickupSpawn)
+@@ -182,6 +192,19 @@
          {
              var8 = new EntityFallingSand(this.worldClient, var2, var4, var6, Block.dragonEgg.blockID);
          }
@@ -76,75 +54,50 @@
  
          if (var8 != null)
          {
-@@ -545,8 +592,12 @@
+@@ -547,8 +570,12 @@
  
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
+-        FMLClientHandler.instance().handleChatPacket(par1Packet3Chat);
 -        this.mc.ingameGUI.addChatMessage(par1Packet3Chat.message);
--        ModLoader.serverChat(par1Packet3Chat.message);
 +        par1Packet3Chat.message = ForgeHooks.onClientChatRecv(par1Packet3Chat.message);
 +        if (par1Packet3Chat.message != null)
 +        {
++            FMLClientHandler.instance().handleChatPacket(par1Packet3Chat);
 +            this.mc.ingameGUI.addChatMessage(par1Packet3Chat.message);
-+            ModLoader.serverChat(par1Packet3Chat.message);
 +        }
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -633,7 +684,19 @@
+@@ -638,7 +665,7 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
 -            this.addToSendQueue(new Packet1Login(this.mc.session.username, 29));
-+            /**
-+             * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
-+             * This allows modded clients to connect to Vanilla server without crashing.
-+             * It also allows unmodded clients to connect to Forge server without crashing. 
-+             * Its a bit of a dirty hack, but it doesnt interrupt the login flow, and its unused data.
-+             * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
-+             * identifier so we are certain it is not random, and it is Forge installed.
-+             * The C->S dimension is set to the current Forge build number, in case we need to do any quick version checks.
-+             */
-+            Packet1Login pkt = new Packet1Login(mc.session.username, 29);
-+            pkt.serverMode    = ForgePacket.FORGE_ID;
-+            pkt.field_48170_e = ForgeHooks.buildVersion;
-+            addToSendQueue(pkt);
++            this.addToSendQueue(ForgeHooksClient.onSendLogin(new Packet1Login(this.mc.session.username, 29)));
          }
          else
          {
-@@ -646,7 +709,19 @@
+@@ -651,7 +678,7 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
 -                    this.addToSendQueue(new Packet1Login(this.mc.session.username, 29));
-+                    /**
-+                     * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
-+                     * This allows modded clients to connect to Vanilla server without crashing.
-+                     * It also allows unmodded clients to connect to Forge server without crashing. 
-+                     * Its a bit of a dirty hack, but it doesnt interrupt the login flow, and its unused data.
-+                     * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
-+                     * identifier so we are certain it is not random, and it is Forge installed.
-+                     * The C->S dimension is set to the current Forge build number, in case we need to do any quick version checks.
-+                     */
-+                    Packet1Login pkt = new Packet1Login(mc.session.username, 29);
-+                    pkt.serverMode    = ForgePacket.FORGE_ID;
-+                    pkt.field_48170_e = ForgeHooks.buildVersion;
-+                    addToSendQueue(pkt);
++                    this.addToSendQueue(ForgeHooksClient.onSendLogin(new Packet1Login(this.mc.session.username, 29)));
                  }
                  else
                  {
-@@ -833,6 +908,10 @@
+@@ -832,6 +859,9 @@
              case 5:
                  var2.displayGUIBrewingStand(new TileEntityBrewingStand());
                  var2.craftingInventory.windowId = par1Packet100OpenWindow.windowId;
 +                break;
-+            
 +            default:
 +                ModCompatibilityClient.mlmpOpenWindow(par1Packet100OpenWindow);
          }
      }
  
-@@ -939,6 +1018,19 @@
+@@ -938,6 +968,19 @@
              {
                  ((TileEntityMobSpawner)var2).setMobID(EntityList.getStringFromID(par1Packet132TileEntityData.customParam1));
              }
@@ -164,7 +117,7 @@
          }
      }
  
-@@ -1012,6 +1104,10 @@
+@@ -1011,6 +1054,10 @@
          {
              ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).updateMPMapData(par1Packet131MapData.itemData);
          }
@@ -175,44 +128,10 @@
          else
          {
              System.out.println("Unknown itemid: " + par1Packet131MapData.uniqueID);
-@@ -1114,5 +1210,40 @@
-     public void handleCustomPayload(Packet250CustomPayload var1)
+@@ -1117,5 +1164,6 @@
+     public void handleCustomPayload(Packet250CustomPayload par1Packet250CustomPayload)
      {
-         ModLoader.receivePacket(var1);
-+        MessageManager inst = MessageManager.getInstance();
-+        if (var1.channel.equals("REGISTER")) 
-+        {
-+            try 
-+            {
-+                String channels = new String(var1.data, "UTF8");
-+                for (String channel : channels.split("\0")) 
-+                {
-+                    inst.addActiveChannel(netManager, channel);
-+                }
-+            } 
-+            catch (UnsupportedEncodingException ex) 
-+            {
-+                ModLoader.throwException("NetClientHandler.handleCustomPayload", ex);
-+            }
-+        } 
-+        else if (var1.channel.equals("UNREGISTER")) 
-+        {
-+            try 
-+            {
-+                String channels = new String(var1.data, "UTF8");
-+                for (String channel : channels.split("\0")) 
-+                {
-+                    inst.removeActiveChannel(netManager, channel);
-+                }
-+            }
-+            catch (UnsupportedEncodingException ex) 
-+            {
-+                ModLoader.throwException("NetClientHandler.handleCustomPayload", ex);
-+            }
-+        } 
-+        else 
-+        {
-+            inst.dispatchIncomingMessage(netManager, var1.channel, var1.data);
-+        }
+         FMLClientHandler.instance().handlePacket250(par1Packet250CustomPayload);
++        ForgeHooksClient.onCustomPayload(par1Packet250CustomPayload, netManager);
      }
  }

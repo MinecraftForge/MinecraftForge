@@ -5,6 +5,7 @@
 
 package net.minecraft.src.forge;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.ModLoader;
@@ -20,10 +21,13 @@ import net.minecraft.src.WorldClient;
 
 import org.lwjgl.opengl.GL11;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import net.minecraft.src.*;
+import net.minecraft.src.forge.packets.ForgePacket;
+
 import org.lwjgl.opengl.GL12;
 
 import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.*;
@@ -389,5 +393,110 @@ public class ForgeHooksClient
             }
         }
         return entry;
+    }
+    
+    public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)
+    {
+        ForgeHooks.onLogin(netManager, login);
+            
+        String[] channels = MessageManager.getInstance().getRegisteredChannels(netManager);
+        StringBuilder tmp = new StringBuilder();
+        tmp.append("Forge");
+        for(String channel : channels)
+        {
+            tmp.append("\0");
+            tmp.append(channel);
+        }
+        Packet250CustomPayload pkt = new Packet250CustomPayload(); 
+        pkt.channel = "REGISTER";
+        try 
+        {
+            pkt.data = tmp.toString().getBytes("UTF8");
+        } 
+        catch (UnsupportedEncodingException e) 
+        {
+            e.printStackTrace();
+        }
+        pkt.length = pkt.data.length;
+        net.addToSendQueue(pkt);
+    }
+
+    /**
+     * We use some of the unused fields in Packet 001 Login to identify the user as having Forge installed.
+     * This allows modded clients to connect to Vanilla server without crashing.
+     * It also allows unmodded clients to connect to Forge server without crashing. 
+     * Its a bit of a dirty hack, but it doesn't interrupt the login flow, and its unused data.
+     * The C->S serverMode is set to the hash code of the string "Forge", this should provide a fairly unique 
+     * identifier so we are certain it is not random, and it is Forge installed.
+     * The C->S dimension is set to the current Forge build number, in case we need to do any quick version checks.
+     */
+    public static Packet onSendLogin(Packet1Login pkt)
+    {
+        pkt.serverMode    = ForgePacket.FORGE_ID;
+        pkt.field_48170_e = ForgeHooks.buildVersion;
+        return pkt;
+    }
+    
+    public static void onCustomPayload(Packet250CustomPayload pkt, NetworkManager net)
+    {
+        MessageManager inst = MessageManager.getInstance();
+        if (pkt.channel.equals("REGISTER")) 
+        {
+            try 
+            {
+                String channels = new String(pkt.data, "UTF8");
+                for (String channel : channels.split("\0")) 
+                {
+                    inst.addActiveChannel(net, channel);
+                }
+            } 
+            catch (UnsupportedEncodingException ex) 
+            {
+                ModLoader.throwException("ForgeHooksClient.onCustomPayload", ex);
+            }
+        } 
+        else if (pkt.channel.equals("UNREGISTER")) 
+        {
+            try 
+            {
+                String channels = new String(pkt.data, "UTF8");
+                for (String channel : channels.split("\0")) 
+                {
+                    inst.removeActiveChannel(net, channel);
+                }
+            }
+            catch (UnsupportedEncodingException ex) 
+            {
+                ModLoader.throwException("ForgeHooksClient.onCustomPayload", ex);
+            }
+        } 
+        else 
+        {
+            inst.dispatchIncomingMessage(net, pkt.channel, pkt.data);
+        }
+    }
+    
+    /**
+     * This is added for Optifine's convenience. And to explode if a ModMaker is developing.
+     * @param texture
+     */
+    public static void onTextureLoadPre(String texture)
+    {
+        if (Tessellator.renderingWorldRenderer)
+        {
+            String msg = String.format("Warning: Texture %s not preloaded, will cause render glitches!", texture);
+            System.out.println(msg);
+            if (Tessellator.class.getPackage() != null)
+            {
+                if (Tessellator.class.getPackage().equals("net.minecraft.src"))
+                {
+                    Minecraft mc = ModLoader.getMinecraftInstance();
+                    if (mc.ingameGUI != null)
+                    {
+                        mc.ingameGUI.addChatMessage(msg);
+                    }
+                }
+            }
+        }
     }
 }

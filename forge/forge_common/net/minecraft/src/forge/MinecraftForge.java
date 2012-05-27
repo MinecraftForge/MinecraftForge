@@ -541,6 +541,15 @@ public class MinecraftForge
             killMinecraft(mod, "MinecraftForge Too Old, need at least " + major + "." + minor + "." + revision);
         }
     }
+    
+    /**
+     * Forge Branding info used by FML to display on the client's main screen.
+     * @return 'Minecraft Forge vx.x.x.x'
+     */
+    public static String getVersionString() 
+    {
+        return String.format("Minecraft Forge %d.%d.%d.%d", ForgeHooks.majorVersion, ForgeHooks.minorVersion, ForgeHooks.revisionVersion, ForgeHooks.buildVersion);
+    }
 
     private static int dungeonLootAttempts = 8;
     private static ArrayList<ObjectPair<Float, String>> dungeonMobs = new ArrayList<ObjectPair<Float, String>>();
