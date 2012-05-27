@@ -5,14 +5,14 @@ import re
                     
 def main():
     sys.stdout.flush()
-    for x in range(1, len(sys.argv):
+    for x in range(1, len(sys.argv)):
         cleanup_source(sys.argv[x])
         
 count = 0
 def cleanup_source(path):
-    print 'Cleaning %s' % path
     path = os.path.normpath(path)
-    regex_cases = re.compile(r'\r?\n(\r?\n[ \t]+case)', re.MULTILINE)
+    regex_cases_before = re.compile(r'((case|default).+\r?\n)\r?\n', re.MULTILINE) #Fixes newline after case before case body
+    regex_cases_after = re.compile(r'\r?\n(\r?\n[ \t]+(case|default))', re.MULTILINE) #Fixes newline after case body before new case
     
     def updatefile(src_file):
         global count
@@ -26,7 +26,8 @@ def cleanup_source(path):
             count += 1
             return match.group(1)
             
-        buf = regex_cases.sub(fix_cases, buf)
+        buf = regex_cases.sub(fix_cases_before, buf)
+        buf = regex_cases.sub(fix_cases_after, buf)
         if count > 0:
             with open(tmp_file, 'w') as fh:
                 fh.write(buf)
