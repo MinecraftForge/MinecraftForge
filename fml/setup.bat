@@ -26,6 +26,7 @@ pushd .. >nul
   xcopy /Y /E /Q src\* src-base
   xcopy /Y /E /Q src\* src-work
 popd >nul
+..\runtime\bin\python\python_mcp cleanup_source.py ..\src-base ..\src-work
 ..\runtime\bin\python\python_mcp applypatches.py patches ..\src-work ..
 echo =================================== Setup Finished =================================
 
