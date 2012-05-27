@@ -57,14 +57,14 @@ def main():
     
     zip_start('minecraftforge-client-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
-    zip_add('minecraftforge_credits.txt')
-    zip_add('license.txt')
+    zip_add('MinecraftForge-Credits.txt')
+    zip_add('MinecraftForge-License.txt')
     zip_end()
     
     zip_start('minecraftforge-server-%s.zip' % version_str)
     zip_folder(server_dir, '', zip)
-    zip_add('minecraftforge_credits.txt')
-    zip_add('license.txt')
+    zip_add('MinecraftForge-Credits.txt')
+    zip_add('MinecraftForge-License.txt')
     zip_end()
     
     inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), build_num)
@@ -76,13 +76,13 @@ def main():
     zip_add('patches',          'patches')
     zip_add('fml',              'fml')
     zip_add('conf',             'conf')
-    zip_add('minecraftforge_credits.txt')
     zip_add('install/install.cmd')
-    zip_add('install/install.sh')
-    zip_add('install/README.txt')
+    zip_add_perm('install/install.sh', 0777)
+    zip_add('install/README-MinecraftForge.txt')
     zip_add('install/install.py')
     zip_add('forge.py')
-    zip_add('license.txt')
+    zip_add('MinecraftForge-Credits.txt')
+    zip_add('MinecraftForge-License.txt')
     zip_end()
     inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), 0)
     
@@ -104,6 +104,23 @@ def zip_add(file, key=None):
         if os.path.isfile(file):
             print key
             zip.write(file, key)
+            
+def zip_add_perm(file, perm, key=None):
+    if key == None:
+        key = os.path.basename(file)
+    else:
+        key = key.replace('/', os.sep)
+    if not zip_base is None:
+        key = os.path.join(zip_base, key)
+    file = os.path.join(forge_dir, file.replace('/', os.sep))
+    if os.path.isfile(file):
+        print key   
+        #zip.write(file, key)
+        
+        with open(file, 'r') as fh: data = fh.read()
+        info = zipfile.ZipInfo(name)
+        info.external_attr = perm << 16L
+        zip.writestr(info, data)
     
 def zip_start(name, base=None):
     global zip, zip_name, zip_base
