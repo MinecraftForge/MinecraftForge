@@ -444,7 +444,11 @@ public class FMLCommonHandler
         try {
             brandings.add((String)Class.forName("forge.MinecraftForge").getMethod("getVersionString").invoke(null));
         } catch (Exception ex) {
-            // Ignore- forge isn't loaded
+            try {
+                brandings.add((String)Class.forName("net.minecraft.src.forge.MinecraftForge").getMethod("getVersionString").invoke(null));
+            } catch (Exception ex2) {
+                // Ignore- forge isn't loaded
+            }
         }
         try {
             Properties props=new Properties();

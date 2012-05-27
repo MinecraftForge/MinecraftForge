@@ -617,7 +617,9 @@ public class Loader
     public String getCrashInformation()
     {
         StringBuffer ret = new StringBuffer();
-        ret.append(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s\n", major, minor, rev, build, mcversion));
+        for (String brand : FMLCommonHandler.instance().getBrandingStrings(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s", major, minor, rev, build, mcversion))) {
+            ret.append(brand).append("\n");
+        }
         for (ModContainer mod : mods)
         {
             ret.append(String.format("\t%s : %s (%s)\n",mod.getName(), mod.getModState(), mod.getSource().getName()));
