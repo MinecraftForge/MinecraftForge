@@ -63,6 +63,7 @@ def main():
     zip_add('fml/CREDITS-fml.txt')
     zip_add('fml/LICENSE-fml.txt')
     zip_add('fml/README-fml.txt')
+    zip_add('fml/src/minecraft/fmlversion.properties')
     zip_end()
     
     zip_start('minecraftforge-server-%s.zip' % version_str)
@@ -73,6 +74,7 @@ def main():
     zip_add('fml/CREDITS-fml.txt')
     zip_add('fml/LICENSE-fml.txt')
     zip_add('fml/README-fml.txt')
+    zip_add('fml/src/minecraft_server/fmlversion.properties')
     zip_end()
     
     inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), build_num)
