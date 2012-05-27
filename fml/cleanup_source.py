@@ -26,8 +26,8 @@ def cleanup_source(path):
             count += 1
             return match.group(1)
             
-        buf = regex_cases.sub(fix_cases_before, buf)
-        buf = regex_cases.sub(fix_cases_after, buf)
+        buf = regex_cases_before.sub(fix_cases, buf)
+        buf = regex_cases_after.sub(fix_cases, buf)
         if count > 0:
             with open(tmp_file, 'w') as fh:
                 fh.write(buf)
