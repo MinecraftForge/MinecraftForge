@@ -1606,10 +1606,14 @@ func_40076_a,setThrowableHeading,0,"Similar to setArrowHeading, it's point the t
 func_40078_a,onImpact,0,Called when this EntityThrowable hits a block or entity.
 func_4007_a,displayUnexpectedThrowable,0,Displays an unexpected error that has come up during the game.
 func_40088_g,getPotionDamage,0,Returns the damage value of the thrown potion that this EntityPotion represents.
+func_40097_b,setRBGColorF,0,
+func_40098_n,getRedColorF,0,
 func_40099_c,setParticleTextureIndex,0,Public method to set private field particleTextureIndex.
 func_4009_a,setRenderManager,0,Sets the RenderManager.
 func_400_c,fall,0,Called when the mob is falling. Calculates and applies fall damage.
 func_40100_q,getParticleTextureIndex,0,
+func_40101_o,getGreenColorF,0,
+func_40102_p,getBlueColorF,0,
 func_40112_aN,clearActivePotions,0,
 func_40113_j,setPositionAndUpdate,0,"Move the entity to the coordinates informed, but keep yaw/pitch values."
 func_40114_aH,getHealth,0,
@@ -1698,6 +1702,7 @@ func_40349_b,isFlagSet,0,"Returns 1 if the flag is set, 0 if it is not set."
 func_4034_G,kill,0,sets the dead flag. Used when you fall off the bottom of the world.
 func_40350_a,brewBitOperations,0,"Does bit operations for brewPotionData, given data, the index of the bit being operated upon, whether the bit will be removed, whether the bit will be toggled (NOT), or whether the data field will be set to 0 if the bit is not present."
 func_40353_c,isFlagUnset,0,"Returns 0 if the flag is set, 1 if it is not set."
+func_40355_a,parsePotionEffects,0,
 func_40356_a,applyIngredient,0,"Generate a data value for a potion, given its previous data value and the encoded string of new effects it will receive"
 func_40357_a,checkFlag,0,Is the bit given set to 1?
 func_4035_j_,getCollisionBorderSize,0,
@@ -2111,8 +2116,10 @@ func_48094_aS,getAttackTarget,0,Gets the active target the Task system uses for 
 func_48095_u,eatGrassBonus,0,This function applies the benefits of growing back wool and faster growing up to the acting entity. (This function is used in the AIEatGrass)
 func_48096_f,isWithinHomeDistance,0,
 func_48097_s_,updateAITick,0,"main AI tick function, replaces updateEntityActionState"
+func_48098_g,setAIMoveSpeed,0,set the movespeed used for the new AI system
 func_48099_aV,getMaximumHomeDistance,0,
 func_480_a,getDistanceFrom,0,Returns the square of the distance between this entity and the passed in coordinates.
+func_48101_aR,getAIMoveSpeed,0,the movespeed used for the new AI system
 func_48113_aa,getVillage,0,
 func_48122_d,setGrowingAge,0,"The age value may be negative or positive or zero. If it's negative, it get's incremented on each tick, if it's positive, it get's decremented each tick. With a negative value the Entity is considered a child."
 func_48123_at,getGrowingAge,0,"The age value may be negative or positive or zero. If it's negative, it get's incremented on each tick, if it's positive, it get's decremented each tick. Don't confuse this with EntityLiving.getAge. With a negative value the Entity is considered a child."
@@ -2154,6 +2161,7 @@ func_48338_a,spawnHeartParticles,0,
 func_48339_i,giveBirth,0,
 func_48366_h,doRangedAttack,0,Performs a ranged attack according to the AI's rangedAttackID.
 func_483_c,updateDelay,0,Sets the delay before a new spawn (base delay of 200 + random number up to 600).
+func_48407_a,setIsSitting,0,Sets the sitting flag.
 func_48411_i,getFloatTemperature,0,Gets a floating point representation of this biome's temperature
 func_48412_k,getBiomeFoliageColor,0,Provides the basic foliage color based on the biome temperature and rainfall
 func_48413_d,isHighHumidity,0,Checks to see if the rainfall level of the biome is extremely high
@@ -2174,6 +2182,7 @@ func_48485_a,load,0,
 func_48486_a,convertToAnvilFormat,0,
 func_48488_a,handleEntityHeadRotation,0,
 func_48489_a,handleTileEntityData,0,
+func_48490_a,getBiomeGenForWorldCoords,0,This method retrieves the biome at a set of coordinates
 func_48491_o,enqueueRelightChecks,0,"Called once-per-chunk-per-tick, and advances the round-robin relight check index per-storage-block by up to 8 blocks at a time. In a worst-case scenario, can potentially take up to 1.6 seconds, calculated via (4096/(8*16))/20, to re-check all blocks in a chunk, which could explain both lagging light updates in certain cases as well as Nether relight"
 func_48492_c,getAreLevelsEmpty,0,Returns whether the ExtendedBlockStorages containing levels (in blocks) from arg 1 to arg 2 are fully empty (true) or not (false).
 func_48493_m,getBiomeArray,0,Returns an array containing a 16x16 mapping on the X/Z of block positions in this Chunk to biome IDs.
@@ -2236,13 +2245,15 @@ func_48619_a,setTerrainType,0,
 func_48625_a,setCanBeCreated,0,"Sets canBeCreated to the provided value, and returns this."
 func_48627_d,getCanBeCreated,0,Gets whether this WorldType can be used to generate a new world.
 func_48630_c,getGeneratorVersion,0,Returns generatorVersion.
-func_48640_a,getCurrentNodeVec3d,0,returns the current PathEntity target node as Vec3D
+func_48639_a,isDestinationSame,0,Returns true if the final PathPoint in the PathEntity is equal to Vec3D coords.
+func_48640_a,getPosition,0,returns the current PathEntity target node as Vec3D
 func_48641_b,setCurrentPathLength,0,
 func_48642_c,setCurrentPathIndex,0,
 func_48643_e,getCurrentPathIndex,0,
 func_48644_d,getCurrentPathLength,0,
 func_48645_c,getFinalPathPoint,0,returns the last PathPoint of the Array
 func_48646_a,getVectorFromIndex,0,Gets the vector of the PathPoint associated with the given index.
+func_48647_a,isSamePath,0,Returns true if the EntityPath are the same. Non instance related equals.
 func_48648_a,getPathPointFromIndex,0,"return the PathPoint located at the specified PathIndex, usually the current one"
 func_48655_c,getDistanceSquared,0,Returns the squared distance between this coordinates and the coordinates given as argument.
 func_48656_a,set,0,
@@ -2256,6 +2267,7 @@ func_48663_c,setEnterDoors,0,Sets if the entity can enter open doors
 func_48664_a,setAvoidsWater,0,
 func_48665_b,getCanBreakDoors,0,"Returns true if the entity can break doors, false otherwise"
 func_48666_a,tryMoveToXYZ,0,Try to find and set a path to XYZ. Returns true if successful.
+func_48667_a,tryMoveToEntityLiving,0,Try to find and set a path to EntityLiving. Returns true if successful.
 func_48668_i,getPathableYPos,0,Gets the safe pathing Y position for the entity depending on if it can path swim or not
 func_48669_e,setCanSwim,0,Sets if the entity can swim
 func_48670_c,getPath,0,gets the actively used PathEntity
@@ -2267,6 +2279,7 @@ func_48675_a,isSafeToStandAt,0,"Returns true when an entity could stand at a pos
 func_48676_b,isPositionClear,0,"Returns true if an entity does not collide with any solid blocks at the position. Args: xOffset, yOffset, zOffset, entityXSize, entityYSize, entityZSize, originPosition, vecX, vecZ"
 func_48677_l,removeSunnyPath,0,Trims path data from the end to the first sun covered block
 func_48678_a,setPath,0,"sets the active path data if path is 100% unique compared to old path, checks to adjust path for sun avoiding ents and stores end coords"
+func_48679_a,getPathToEntityLiving,0,Returns the path to the given EntityLiving
 func_48680_d,setAvoidSun,0,Sets if the path should avoid sunlight
 func_48690_b,setExtBlockMetadata,0,Sets the metadata of the Block at the given coordinates in this ExtendedBlockStorage to the given metadata.
 func_48691_a,setExtBlockID,0,"Sets the extended block ID for a location in a chunk, splitting bits 11..8 into a NibbleArray and bits 7..0 into a byte array. Also performs reference counting to determine whether or not to broadly cull this Chunk from the random-update tick list."
@@ -2318,6 +2331,7 @@ func_50057_d,completePlayerName,0,Autocompletes player name
 func_50058_a,getSentHistory,0,"input is relative and is applied directly to the sentHistoryCursor so -1 is the previous message, 1 is the next message from the current cursor position"
 func_50073_a,setBlock,0,"Sets the block without metadata in the world, notifying neighbors if enabled."
 func_50074_q,canSilkHarvest,0,"Return true if a player with SlikTouch can harvest this block directly, and not it's normal drops."
+func_50076_f,isSameSapling,0,Determines if the same sapling is present at the given location.
 func_50086_b,setEnableSnow,0,sets enableSnow to true during biome initialization. returns BiomeGenBase.
 func_50089_b,getURI,0,computes the URI from the clicked chat data object
 func_50098_a,nameStartsWith,0,Returns true if the current player name starts with string specified value.
@@ -3429,6 +3443,7 @@ func_28147_b,writeToNBT,1,"write data to NBTTagCompound from this MapDataBase, s
 func_28148_a,readFromNBT,1,reads in data from the NBTTagCompound into this MapDataBase
 func_28149_a,setDirty,1,"Sets the dirty state of this MapDataBase, whether it needs saving to disk."
 func_28150_b,isDirty,1,Whether this MapDataBase needs saving to disk.
+func_28155_a,updateVisiblePlayers,1,Adds the player passed to the list of visible players and checks to see which players are visible
 func_28166_b,readPlayerDataFromFile,1,called during player login. reads the player information from disk.
 func_28167_a,getPlayerManager,1,returns the player manager object for the specified dimension
 func_28168_f,sendPlayerToOtherDimension,1,moves provided player from overworld to nether or vice versa
@@ -4130,6 +4145,7 @@ func_40549_b,isFlagSet,1,"Returns 1 if the flag is set, 0 if it is not set."
 func_40550_a,getPotionEffects,1,Returns a list of effects for the specified potion damage value.
 func_40551_a,countSetFlags,1,Returns the number of 1 bits in the given integer.
 func_40552_c,isFlagUnset,1,"Returns 0 if the flag is set, 1 if it is not set."
+func_40554_a,parsePotionEffects,1,
 func_40555_a,applyIngredient,1,Returns the new potion damage value after the specified ingredient info is applied to the specified potion.
 func_4055_a,populate,1,Populates chunk with ores etc etc
 func_4056_a,replaceBlocksForBiome,1,Replaces the stone that was placed in with blocks that match the biome
@@ -4392,6 +4408,7 @@ func_48134_e,getFullMetadata,1,Returns the full metadata value created by combin
 func_48136_c,getDoorOrientation,1,"Returns 0, 1, 2 or 3 depending on where the hinge is."
 func_48176_f,doRangedAttack,1,Performs a ranged attack according to the AI's rangedAttackID.
 func_481_a,getCollidingBoundingBoxes,1,"Returns a list of bounding boxes that collide with aabb excluding the passed in entity's collision. Args: entity, aabb"
+func_48210_a,setIsSitting,1,Sets the sitting flag.
 func_48254_f,findPossibleShelter,1,
 func_48305_f,checkSufficientDoorsPresentForNewVillager,1,
 func_48306_i,giveBirth,1,
@@ -4401,6 +4418,7 @@ func_48315_b,getStackInSlotOnClosing,1,"When some containers are closed they cal
 func_48317_b,setHomeArea,1,
 func_48318_al,getEntitySenses,1,returns the EntitySenses Object for the EntityLiving
 func_48319_z,eatGrassBonus,1,This function applies the benefits of growing back wool and faster growing up to the acting entity. (This function is used in the AIEatGrass)
+func_48320_d,setAIMoveSpeed,1,set the movespeed used for the new AI system
 func_48321_b,dropRareDrop,1,
 func_48322_aw,detachHome,1,
 func_48323_au,getHomePosition,1,
@@ -4412,6 +4430,7 @@ func_48328_e,isWithinHomeDistance,1,
 func_48329_ax,hasHome,1,
 func_48330_av,getMaximumHomeDistance,1,
 func_48331_as,getAttackTarget,1,Gets the active target the Task system uses for tracking
+func_48332_ar,getAIMoveSpeed,1,the movespeed used for the new AI system
 func_48333_ak,getNavigator,1,
 func_48334_a,setRevengeTarget,1,
 func_48335_g,setLastAttackingEntity,1,
@@ -4446,6 +4465,8 @@ func_48422_c,setCurrentPathIndex,1,
 func_48423_e,getCurrentPathIndex,1,
 func_48424_d,getCurrentPathLength,1,
 func_48425_c,getFinalPathPoint,1,returns the last PathPoint of the Array
+func_48426_a,isDestinationSame,1,Returns true if the final PathPoint in the PathEntity is equal to Vec3D coords.
+func_48427_a,isSamePath,1,Returns true if the EntityPath are the same. Non instance related equals.
 func_48428_a,getVectorFromIndex,1,Gets the vector of the PathPoint associated with the given index.
 func_48429_a,getPathPointFromIndex,1,"return the PathPoint located at the specified PathIndex, usually the current one"
 func_48436_b,getSpeed,1,
@@ -4501,6 +4522,7 @@ func_48556_c,getAreLevelsEmpty,1,Returns whether the ExtendedBlockStorages conta
 func_48557_n,enqueueRelightChecks,1,"Called once-per-chunk-per-tick, and advances the round-robin relight check index by up to 8 blocks at a time. In a worst-case scenario, can potentially take up to 25.6 seconds, calculated via (4096/8)/20, to re-check all blocks in a chunk, which may explain lagging light updates on initial world generation."
 func_48558_a,setStorageArrays,1,
 func_48559_a,setBiomeArray,1,Accepts a 256-entry array that contains a 16x16 mapping on the X/Z plane of block positions in this Chunk to biome IDs.
+func_48560_a,getBiomeGenForWorldCoords,1,This method retrieves the biome at a set of coordinates
 func_48561_g,getTopFilledSegment,1,Returns the topmost ExtendedBlockStorage instance for this Chunk that actually contains a block.
 func_48582_a,getIDFromString,1,Finds the ID using stringToIDMapping
 func_48584_a,onCrafting,1,
@@ -4544,6 +4566,7 @@ func_48648_k,isInFluid,1,"Returns true if the entity is in water or lava, false 
 func_48649_a,getAvoidsWater,1,
 func_48650_a,getPathToXYZ,1,Returns the path to the given coordinates
 func_48651_j,canNavigate,1,If on ground or swimming and can swim
+func_48652_a,tryMoveToEntityLiving,1,Try to find and set a path to EntityLiving. Returns true if successful.
 func_48653_a,isDirectPathBetweenPoints,1,"Returns true when an entity of specified size could safely walk in a straight line between the two points. Args: pos1, pos2, entityXSize, entityYSize, entityZSize"
 func_48654_a,setSpeed,1,Sets the speed
 func_48655_c,setEnterDoors,1,Sets if the entity can enter open doors
@@ -4552,6 +4575,7 @@ func_48657_b,getCanBreakDoors,1,"Returns true if the entity can break doors, fal
 func_48658_a,tryMoveToXYZ,1,Try to find and set a path to XYZ. Returns true if successful.
 func_48659_i,getPathableYPos,1,Gets the safe pathing Y position for the entity depending on if it can path swim or not
 func_48660_e,setCanSwim,1,Sets if the entity can swim
+func_48661_a,getPathToEntityLiving,1,Returns the path to the given EntityLiving
 func_48662_f,clearPathEntity,1,sets active PathEntity to null
 func_48663_b,setBreakDoors,1,
 func_48664_g,pathFollow,1,

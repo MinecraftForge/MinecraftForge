@@ -90,10 +90,7 @@
          AnvilSaveHandler var9 = new AnvilSaveHandler(new File("."), par2Str, true);
 -
 -        for (int var10 = 0; var10 < this.worldMngr.length; ++var10)
-+        
-+        WorldServer overWorld = new WorldServer(this, var9, par2Str, 0, var8);
-+        for (Integer id : DimensionManager.getIDs())
-         {
+-        {
 -            byte var11 = 0;
 -
 -            if (var10 == 1)
@@ -120,6 +117,10 @@
 -            this.worldMngr[var10].setAllowedSpawnTypes(this.propertyManagerObj.getBooleanProperty("spawn-monsters", true), this.spawnPeacefulMobs);
 -            this.worldMngr[var10].getWorldInfo().setGameType(var6);
 -            this.configManager.setPlayerManager(this.worldMngr);
++        
++        WorldServer overWorld = new WorldServer(this, var9, par2Str, 0, var8);
++        for (Integer id : DimensionManager.getIDs())
++        {
 +            WorldServer world = (id == 0 ? overWorld : new WorldServerMulti(this, var9, par2Str, id, var8, overWorld));
 +            world.addWorldAccess(new WorldManager(this, world));
 +            world.difficultySetting = propertyManagerObj.getIntProperty("difficulty", 1);
@@ -171,7 +172,7 @@
              }
          }
      }
-@@ -439,7 +432,7 @@
+@@ -440,7 +433,7 @@
                      var3 += var7;
                      var1 = var5;
  
@@ -216,7 +217,7 @@
          }
  
          for (var9 = 0; var9 < this.playersOnline.size(); ++var9)
-@@ -691,7 +684,8 @@
+@@ -689,7 +682,8 @@
       */
      public WorldServer getWorldManager(int par1)
      {
@@ -226,7 +227,7 @@
      }
  
      /**
-@@ -699,7 +693,7 @@
+@@ -697,7 +691,7 @@
       */
      public EntityTracker getEntityTracker(int par1)
      {
@@ -235,7 +236,7 @@
      }
  
      /**
-@@ -869,7 +863,7 @@
+@@ -867,7 +861,7 @@
       */
      public String getServerBrand()
      {

@@ -135,7 +135,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1329,11 +1379,12 @@
+@@ -1323,11 +1373,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -151,7 +151,7 @@
  
              if (var5 == null)
              {
-@@ -1370,7 +1421,9 @@
+@@ -1364,7 +1415,9 @@
       */
      private boolean isInBed()
      {
@@ -162,7 +162,7 @@
      }
  
      /**
-@@ -1385,13 +1438,15 @@
+@@ -1379,13 +1432,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -180,7 +180,7 @@
              return var3;
          }
      }
-@@ -1403,8 +1458,11 @@
+@@ -1397,8 +1452,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -194,7 +194,7 @@
  
              switch (var2)
              {
-@@ -1697,6 +1755,7 @@
+@@ -1688,6 +1746,7 @@
                      return 101;
                  }
              }
@@ -202,7 +202,7 @@
          }
  
          return var3;
-@@ -1869,4 +1928,30 @@
+@@ -1860,4 +1919,30 @@
      }
  
      public void func_50009_aI() {}

@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/ChunkProvider.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ChunkProvider.java	0000-00-00 00:00:00.000000000 -0000
-@@ -6,6 +6,8 @@
- import java.util.List;
- import java.util.Set;
+@@ -8,6 +8,8 @@
+ 
+ import cpw.mods.fml.client.FMLClientHandler;
  
 +import net.minecraft.src.forge.ForgeHooks;
 +
  public class ChunkProvider implements IChunkProvider
  {
      /** A set of dropped chunks. Currently not used in single player. */
-@@ -51,6 +53,11 @@
+@@ -53,6 +55,11 @@
       */
      public void dropChunk(int par1, int par2)
      {

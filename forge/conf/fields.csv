@@ -1842,7 +1842,7 @@ field_35774_b,foodSaturationLevel,0,The player's food saturation.
 field_35775_c,foodExhaustionLevel,0,The player's food exhaustion.
 field_35776_a,foodLevel,0,The player's food level.
 field_35785_d,currentServerMaxPlayers,0,
-field_35786_c,playerNames,0,An ArrayList of all the player names on the current server
+field_35786_c,playerInfoList,0,An ArrayList of GuiPlayerInfo (includes all the players' GuiPlayerInfo on the current server)
 field_35787_k,playerInfoMap,0,A HashMap of all player names and their player information objects
 field_35790_f,polled,0,True if server was already polled or is in the process of polling
 field_35791_d,motd,0,Server's Message of the Day
@@ -2628,6 +2628,7 @@ field_48107_ar,navigator,0,
 field_48108_aq,bodyHelper,0,
 field_48109_aw,maximumHomeDistance,0,If -1 there is no maximum distance
 field_48110_av,homePosition,0,
+field_48111_au,AIMoveSpeed,0,
 field_48121_a,villageObj,0,
 field_48130_d,isPlayingFlag,0,
 field_48131_b,randomTickDivider,0,
@@ -2656,7 +2657,11 @@ field_48177_a,xCh,0,"The x-position of the transmitted chunk, in chunk coordinat
 field_48179_i,temp,0,A temporary storage for the compressed chunk data byte array.
 field_48193_b,woodMetadata,0,Sets the metadata for the wood blocks used
 field_48194_c,leavesMetadata,0,Sets the metadata for the leaves used in huge trees
+field_48199_d,metaLeaves,0,The metadata value of the leaves to use in tree generation.
 field_481_e,metadataArray,0,The metadata for each block changed.
+field_48200_b,growVines,0,Indicator that the tree generator needs to grown vines on the trees.
+field_48201_c,metaWood,0,The metadata value of the wood to use in tree generation.
+field_48202_a,minTreeHeight,0,The minimum height of a generated tree.
 field_48207_bU,isBlockContainer,0,true if the Block contains a Tile Entity
 field_48208_bT,needsRandomTick,0,Flags whether or not this block is of a type that needs random ticking. Ref-counted by ExtendedBlockStorage in order to broadly cull a chunk from the random chunk update list for efficiency's sake.
 field_48209_bL,redstoneLampIdle,0,
@@ -2750,6 +2755,7 @@ field_48401_b,theGolem,0,
 field_48403_a,theVillager,0,
 field_48404_b,theVillager,0,
 field_48406_a,theGolem,0,
+field_48408_b,isSitting,0,If the EntityTameable is sitting.
 field_48409_a,theEntity,0,
 field_48416_w,jungle,0,Jungle biome identifier
 field_48417_x,jungleHills,0,
@@ -4047,7 +4053,10 @@ field_28132_b,grass,1,The material used by BlockGrass
 field_28134_b,world,1,The world itself.
 field_28151_b,dirty,1,Whether this MapDataBase needs saving to disk.
 field_28152_a,mapName,1,The name of the map data nbt
+field_28156_j,playersHashMap,1,Holds a reference to the players who own a copy of the map and a reference to their MapInfo
 field_28157_i,playersVisibleOnMap,1,
+field_28158_h,playersArrayList,1,Holds a reference to the MapInfo of the players who own a copy of the map
+field_28159_g,randomEffect,1,"Incremented each update of the map item, used for the patchy updating map effect and the spinning player icons while in the End and Nether."
 field_28160_f,colors,1,colours
 field_28161_e,scale,1,
 field_28162_d,dimension,1,
@@ -5122,6 +5131,7 @@ field_48200_e,targetMate,1,
 field_48203_a,theWorld,1,
 field_48206_b,speed,1,
 field_48209_e,speed,1,
+field_48211_b,isSitting,1,If the EntityTameable is sitting.
 field_48212_a,theEntity,1,
 field_48214_b,theGolem,1,
 field_48216_a,theVillager,1,
@@ -5177,6 +5187,7 @@ field_48312_a,villageObj,1,
 field_48337_aM,targetTasks,1,
 field_48338_d,lastAttackingEntity,1,
 field_48339_c,revengeTimer,1,
+field_48340_n,AIMoveSpeed,1,
 field_48341_o,homePosition,1,
 field_48342_l,attackTarget,1,The active target the Task system uses for tracking
 field_48343_m,senses,1,
@@ -5193,7 +5204,11 @@ field_48377_b,aiTempt,1,"The tempt AI task for this mob, used to prevent taming 
 field_48387_a,villageObj,1,
 field_48388_bD,fireballCharge,1,Fire Charge. When used in a dispenser it fires a fireball similiar to a Ghast's.
 field_48389_bC,expBottle,1,Bottle o' Enchanting. Drops between 1 and 3 experience orbs when thrown.
+field_48399_d,metaLeaves,1,The metadata value of the leaves to use in tree generation.
 field_483_c,yCoord,1,The y coordinate of the tile entity.
+field_48400_b,growVines,1,Indicator that the tree generator needs to grown vines on the trees.
+field_48401_c,metaWood,1,The metadata value of the wood to use in tree generation.
+field_48402_a,minTreeHeight,1,The minimum height of a generated tree.
 field_48404_b,woodMetadata,1,Sets the metadata for the wood blocks used
 field_48405_c,leavesMetadata,1,Sets the metadata for the leaves used in huge trees
 field_48410_f,isMovementBlockAllowed,1,should the PathFinder disregard BlockMovement type materials in its path

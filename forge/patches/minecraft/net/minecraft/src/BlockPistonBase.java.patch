@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockPistonBase.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockPistonBase.java	0000-00-00 00:00:00.000000000 -0000
-@@ -373,7 +373,7 @@
+@@ -368,7 +368,7 @@
                  return false;
              }
  
