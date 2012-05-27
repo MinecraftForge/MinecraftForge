@@ -6,7 +6,7 @@ import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
 
 /**
- * This class is just here to make the Forge version show up nicely in the ModLoader logs/Crash Screen
+ * This class is just here to make the Forge version show up nicely in the ForgeModLoader logs/crash screen
  */
 public class mod_MinecraftForge extends NetworkMod
 {
