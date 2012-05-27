@@ -12,7 +12,7 @@ from runtime.decompile import decompile
 from runtime.updatenames import updatenames
 from runtime.updatemd5 import updatemd5
 
-from forge import apply_patches, copytree, reset_logger, download_ff
+from forge import apply_patches, copytree, reset_logger, download_ff, cleanup_source
 
 
 def main():
@@ -38,6 +38,8 @@ def main():
     if not os.path.isdir(src_dir):
         print 'Something went wrong, src folder not found at: %s' % src_dir
         sys.exit(1)
+        
+    cleanup_source(src_dir)
     
     setup_fml()
     

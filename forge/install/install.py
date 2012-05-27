@@ -14,7 +14,7 @@ from runtime.updatemd5 import updatemd5
 from runtime.cleanup import cleanup
 from runtime.updatemcp import updatemcp
 
-from forge import apply_patches, copytree, reset_logger, download_ff
+from forge import apply_patches, copytree, reset_logger, download_ff, cleanup_source
 
 def main():
     print '=================================== Minecraft Forge Setup Start ================================='
@@ -50,6 +50,8 @@ def main():
         print 'Something went wrong, src folder not found at: %s' % src_dir
         sys.exit(1)
         
+    cleanup_source(src_dir)
+    
     has_client = os.path.isdir(os.path.join(mcp_dir, 'src', 'minecraft'))
     has_server = os.path.isdir(os.path.join(mcp_dir, 'src', 'minecraft_server'))
     
