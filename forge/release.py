@@ -79,7 +79,7 @@ def main():
     zip_add('fml',              'fml')
     zip_add('conf',             'conf')
     zip_add('install/install.cmd')
-    zip_add_perm('install/install.sh', 0777)
+    zip_add('install/install.sh')
     zip_add('install/README-MinecraftForge.txt')
     zip_add('install/install.py')
     zip_add('forge.py')
@@ -120,8 +120,8 @@ def zip_add_perm(file, perm, key=None):
         #zip.write(file, key)
         
         with open(file, 'r') as fh: data = fh.read()
-        info = zipfile.ZipInfo(name)
-        info.external_attr = perm << 16L
+        info = zipfile.ZipInfo(key)
+        info.external_attr = 0777 << 16L
         zip.writestr(info, data)
     
 def zip_start(name, base=None):

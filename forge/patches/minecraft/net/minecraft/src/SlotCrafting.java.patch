@@ -1,7 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/SlotCrafting.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,8 @@
- package net.minecraft.src;
+@@ -2,6 +2,9 @@
+ 
+ import cpw.mods.fml.client.FMLClientHandler;
  
 +import cpw.mods.fml.client.FMLClientHandler;
 +import net.minecraft.src.forge.ForgeHooks;
@@ -9,13 +10,11 @@
  public class SlotCrafting extends Slot
  {
      /** The craft matrix inventory linked to this result slot. */
-@@ -96,6 +99,9 @@
-      */
+@@ -99,6 +102,7 @@
      public void onPickupFromSlot(ItemStack par1ItemStack)
      {
-+        FMLClientHandler.instance().onItemCrafted(thePlayer, par1ItemStack, craftMatrix);
+         FMLClientHandler.instance().onItemCrafted(thePlayer, par1ItemStack, inventory);
 +        ForgeHooks.onTakenFromCrafting(thePlayer, par1ItemStack, craftMatrix);
-+        
          this.func_48434_c(par1ItemStack);
  
          for (int var2 = 0; var2 < this.craftMatrix.getSizeInventory(); ++var2)
