@@ -19,9 +19,28 @@
      }
 @@ -103,6 +106,7 @@
              var3.setTag("Level", var4);
-             this.writeChunkToNBT(par2Chunk, par1World, var4);
+             this.func_48445_a(par2Chunk, par1World, var4);
              this.func_48446_a(par2Chunk.getChunkCoordIntPair(), var3);
 +            ForgeHooks.onChunkSaveData(par1World, par2Chunk, var3);
          }
          catch (Exception var5)
          {
+@@ -286,6 +290,8 @@
+ 
+             par3NBTTagCompound.setTag("TileTicks", var11);
+         }
++        
++        par3NBTTagCompound.setCompoundTag("ForgeData", par1Chunk.customChunkData);
+     }
+ 
+     private Chunk func_48444_a(World par1World, NBTTagCompound par2NBTTagCompound)
+@@ -371,6 +377,9 @@
+                 }
+             }
+         }
++        
++        if (par2NBTTagCompound.hasKey("ForgeData")) var5.customChunkData = par2NBTTagCompound.getCompoundTag("ForgeData");
++        else var5.customChunkData = new NBTTagCompound("ForgeData");
+ 
+         return var5;
+     }

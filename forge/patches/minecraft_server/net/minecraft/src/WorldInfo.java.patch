@@ -1,0 +1,56 @@
+--- ../src_base/minecraft_server/net/minecraft/src/WorldInfo.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/WorldInfo.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.List;
+ 
++import net.minecraft.src.forge.ForgeHooks;
++
+ public class WorldInfo
+ {
+     /** Holds the seed of the currently world. */
+@@ -54,6 +56,11 @@
+ 
+     /** Hardcore mode flag */
+     private boolean hardcore;
++    
++    /**
++     * FORGE: Custom world data stored in level.dat
++     */
++    public NBTTagCompound customWorldData;
+ 
+     public WorldInfo(NBTTagCompound par1NBTTagCompound)
+     {
+@@ -107,6 +114,8 @@
+         this.thunderTime = par1NBTTagCompound.getInteger("thunderTime");
+         this.thundering = par1NBTTagCompound.getBoolean("thundering");
+         this.hardcore = par1NBTTagCompound.getBoolean("hardcore");
++        if (par1NBTTagCompound.hasKey("ForgeData")) this.customWorldData = par1NBTTagCompound.getCompoundTag("ForgeData");
++        else this.customWorldData = new NBTTagCompound("ForgeData");
+ 
+         if (par1NBTTagCompound.hasKey("Player"))
+         {
+@@ -125,6 +134,7 @@
+         this.levelName = par2Str;
+         this.hardcore = par1WorldSettings.getHardcoreEnabled();
+         this.terrainType = par1WorldSettings.getTerrainType();
++        this.customWorldData = new NBTTagCompound("ForgeData");
+     }
+ 
+     public WorldInfo(WorldInfo par1WorldInfo)
+@@ -150,6 +160,7 @@
+         this.thunderTime = par1WorldInfo.thunderTime;
+         this.thundering = par1WorldInfo.thundering;
+         this.hardcore = par1WorldInfo.hardcore;
++        this.customWorldData = par1WorldInfo.customWorldData;
+     }
+ 
+     /**
+@@ -206,6 +217,7 @@
+         par1NBTTagCompound.setInteger("thunderTime", this.thunderTime);
+         par1NBTTagCompound.setBoolean("thundering", this.thundering);
+         par1NBTTagCompound.setBoolean("hardcore", this.hardcore);
++        par1NBTTagCompound.setCompoundTag("ForgeData", customWorldData);
+ 
+         if (par2NBTTagCompound != null)
+         {
