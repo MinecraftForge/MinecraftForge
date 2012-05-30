@@ -38,7 +38,7 @@
 		<link>
 			<name>common/fmlversion.properties</name>
 			<type>1</type>
-			<locationURI>MCP_LOC/fml/common/fmlversion.properties</locationURI>
+			<locationURI>MCP_LOC/FML/fmlversion.properties</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>

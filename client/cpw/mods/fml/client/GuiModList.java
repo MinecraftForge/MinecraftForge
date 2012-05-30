@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
+
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.FMLModLoaderContainer;
 import cpw.mods.fml.common.Loader;
@@ -79,35 +81,51 @@ public class GuiModList extends GuiScreen
             {
                 case 6:
                     this.field_945_b.func_6272_a(this.mainMenu);
-                   
+                    return;
             }
         }
-
+        super.func_572_a(button);
     }
 
+    public int drawLine(String line, int offset, int shifty)
+    {
+        this.field_6451_g.func_873_b(line, offset, shifty, 0xd7edea);
+        return shifty + 10;
+    }
     public void func_571_a(int p_571_1_, int p_571_2_, float p_571_3_)
     {
         this.modList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         this.func_548_a(this.field_6451_g, "Mod List", this.field_951_c / 2, 16, 0xFFFFFF);
-        int detailCentre = this.listWidth / 2 + this.field_951_c / 2;
-        if (selectedMod!=null) {
-            if (selectedMod.getMetadata()!=null) {
-                this.func_548_a(this.field_6451_g, selectedMod.getMetadata().name, detailCentre, 35, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, String.format("Version: %s", selectedMod.getMetadata().version), detailCentre, 45, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, String.format("Credits: %s", selectedMod.getMetadata().credits), detailCentre, 55, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, String.format("Authors: %s", selectedMod.getMetadata().getAuthorList()), detailCentre, 65, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, String.format("URL: %s", selectedMod.getMetadata().url), detailCentre, 75, 0xFFFFFF);
-                if (selectedMod.getMetadata().childMods.isEmpty()) {
-                    this.func_548_a(this.field_6451_g, "No child mods for this mod", detailCentre, 85, 0xFFFFFF);
-                } else {
-                    this.func_548_a(this.field_6451_g, String.format("Child mods: %s", selectedMod.getMetadata().getChildModList()), detailCentre, 85, 0xFFFFFF);
+        int offset = this.listWidth  + 20;
+        if (selectedMod != null) {
+            if (selectedMod.getMetadata() != null) {
+                int shifty = 35;
+                if (!selectedMod.getMetadata().logoFile.isEmpty())
+                {
+                    int texture = this.field_945_b.field_6315_n.func_1070_a(selectedMod.getMetadata().logoFile);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    this.field_945_b.field_6315_n.func_1076_b(texture);
+                    this.func_550_b(offset, 32, 0, 0, 256, 58);
+                    
+                    shifty += 65;
                 }
-                this.getFontRenderer().func_27278_a(selectedMod.getMetadata().description, this.listWidth + 15, 100, this.field_951_c - this.listWidth - 30, 0xDDDDDD);
+                this.field_6451_g.func_50103_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
+                shifty += 12;
+                
+                shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getMetadata().version, selectedMod.getVersion()), offset, shifty);
+                if (!selectedMod.getMetadata().credits.isEmpty()) {
+                   shifty = drawLine(String.format("Credits: %s", selectedMod.getMetadata().credits), offset, shifty);
+                }
+                shifty = drawLine(String.format("Authors: %s", selectedMod.getMetadata().getAuthorList()), offset, shifty);
+                shifty = drawLine(String.format("URL: %s", selectedMod.getMetadata().url), offset, shifty);
+                shifty = drawLine(selectedMod.getMetadata().childMods.isEmpty() ? "No child mods for this mod" : String.format("Child mods: %s", selectedMod.getMetadata().getChildModList()), offset, shifty);
+                this.getFontRenderer().func_27278_a(selectedMod.getMetadata().description, offset, shifty + 10, this.field_951_c - this.listWidth - 30, 0xDDDDDD);
             } else {
-                this.func_548_a(this.field_6451_g, selectedMod.getName(), detailCentre, 35, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, String.format("Version: %s",selectedMod.getVersion()), detailCentre, 45, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, "No mod information found", detailCentre, 55, 0xDDDDDD);
-                this.func_548_a(this.field_6451_g, "Ask your mod author to provide a mod .info file", detailCentre, 65, 0xDDDDDD);
+                offset = ( this.listWidth + this.field_951_c ) / 2;
+                this.func_548_a(this.field_6451_g, selectedMod.getName(), offset, 35, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, String.format("Version: %s",selectedMod.getVersion()), offset, 45, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, "No mod information found", offset, 55, 0xDDDDDD);
+                this.func_548_a(this.field_6451_g, "Ask your mod author to provide a mod .info file", offset, 65, 0xDDDDDD);
             }
         }
         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);
