@@ -22,6 +22,10 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import net.minecraft.server.Block;
+import net.minecraft.server.Item;
+import net.minecraft.server.LocaleLanguage;
+import net.minecraft.server.MLProp;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.BaseMod;
 import net.minecraft.server.BiomeBase;
@@ -37,6 +41,7 @@ import net.minecraft.server.Packet250CustomPayload;
 import net.minecraft.server.Packet3Chat;
 import net.minecraft.server.BukkitRegistry;
 import net.minecraft.server.World;
+import net.minecraft.server.WorldType;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -145,6 +150,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Get the server instance
+     * 
      * @return
      */
     public MinecraftServer getServer()
@@ -227,6 +233,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called to notify that an item was picked up from the world
+     * 
      * @param entityItem
      * @param entityPlayer
      */
@@ -243,6 +250,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Raise an exception
+     * 
      * @param exception
      * @param message
      * @param stopGame
@@ -288,6 +296,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Build a list of default overworld biomes
+     * 
      * @return
      */
     public BiomeBase[] getDefaultOverworldBiomes()
@@ -315,6 +324,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is crafted
+     * 
      * @param player
      * @param craftedItem
      * @param craftingGrid
@@ -369,6 +379,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called when a packet 250 packet is received from the player
+     * 
      * @param packet
      * @param player
      */
@@ -390,6 +401,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Handle register requests for packet 250 channels
+     * 
      * @param packet
      */
     private void handleClientRegistration(Packet250CustomPayload packet, EntityHuman player)
@@ -425,6 +437,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Handle a login
+     * 
      * @param loginPacket
      * @param networkManager
      */
@@ -448,6 +461,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
             }
         }
     }
+
     /**
      * Are we a server?
      */
@@ -518,28 +532,46 @@ public class FMLBukkitHandler implements IFMLSidedHandler
         }
     }
 
+    /**
+     * @param biome
+     */
+    public void addBiomeToDefaultWorldGenerator(BiomeBase biome)
+    {
+        WorldType.NORMAL.addNewBiome(biome);
+    }
+
 	@Override
 	public Object getMinecraftInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		return server;
 	}
 
 	@Override
-	public String getCurrentLanguage() {
-		// TODO Auto-generated method stub
-		return null;
+    public String getCurrentLanguage()
+    {
+        return LocaleLanguage.a().getCurrentLanguage();
 	}
 
 	@Override
-	public Properties getCurrentLanguageTable() {
-		// TODO Auto-generated method stub
-		return null;
+    public Properties getCurrentLanguageTable()
+    {
+        return LocaleLanguage.a().getCurrentLanguageTable();
 	}
 
 	@Override
-	public String getObjectName(Object minecraftObject) {
-		// TODO Auto-generated method stub
-		return null;
+    public String getObjectName(Object instance)
+    {
+        String objectName;
+        if (instance instanceof Item) {
+            objectName=((Item)instance).getName();
+        } else if (instance instanceof Block) {
+            objectName=((Block)instance).getName();
+        } else if (instance instanceof ItemStack) {
+            objectName=Item.byId[((ItemStack)instance).id].a((ItemStack)instance);
+        } else {
+            throw new IllegalArgumentException(String.format("Illegal object for naming %s",instance));
+        }
+        objectName+=".name";
+        return objectName;
 	}
 
 	@Override
@@ -562,7 +594,10 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
 	@Override
 	public ModProperty getModLoaderPropertyFor(Field f) {
-		// TODO Auto-generated method stub
-		return null;
+		if (f.isAnnotationPresent(MLProp.class)) {
+            MLProp prop = f.getAnnotation(MLProp.class);
+            return new ModProperty(prop.info(), prop.min(), prop.max(), prop.name());
+        }
+        return null;
 	}
 }

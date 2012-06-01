@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.src.BiomeGenBase;
 
 import cpw.mods.fml.common.registry.IMinecraftRegistry;
+import cpw.mods.fml.server.FMLBukkitHandler;
 
 public class BukkitRegistry implements IMinecraftRegistry
 {
@@ -71,7 +72,7 @@ public class BukkitRegistry implements IMinecraftRegistry
     @Override
     public void addBiome(BiomeGenBase biome)
     {
-    	//TODO
+    	FMLBukkitHandler.instance().addBiomeToDefaultWorldGenerator((BiomeBase) biome);
     }
 
     @Override
