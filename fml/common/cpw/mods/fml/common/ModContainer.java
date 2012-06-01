@@ -20,9 +20,6 @@ import java.util.Map;
 
 import cpw.mods.fml.common.ModContainer.SourceType;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-
 /**
  * The container that wraps around mods in the system.
  * <p>The philosophy is that individual mod implementation technologies should not impact the actual loading and management

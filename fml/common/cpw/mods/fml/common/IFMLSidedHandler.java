@@ -2,8 +2,11 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.logging.Logger;
+
+import cpw.mods.fml.common.modloader.ModProperty;
 
 public interface IFMLSidedHandler
 {
@@ -20,4 +23,5 @@ public interface IFMLSidedHandler
     ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception;
     void profileStart(String profileLabel);
     void profileEnd();
+    ModProperty getModLoaderPropertyFor(Field f);
 }

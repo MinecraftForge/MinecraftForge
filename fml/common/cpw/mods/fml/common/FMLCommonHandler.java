@@ -37,8 +37,6 @@ import java.util.zip.ZipInputStream;
 import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.ModContainer.TickType;
 
-import net.minecraft.src.StringTranslate;
-
 /**
  * The main class for non-obfuscated hook handling code
  * 
@@ -505,6 +503,14 @@ public class FMLCommonHandler
                 getFMLLogger().throwing("FMLCommonHandler", "loadMetadataFor", e);
             }
         }
+    }
+
+    /**
+     * @return
+     */
+    public IFMLSidedHandler getSidedDelegate()
+    {
+        return sidedDelegate;
     }
 
 }

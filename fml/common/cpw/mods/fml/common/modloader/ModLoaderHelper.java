@@ -18,7 +18,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.src.BaseMod;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ModContainer.TickType;
 

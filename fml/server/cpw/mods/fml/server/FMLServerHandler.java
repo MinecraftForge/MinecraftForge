@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
@@ -25,7 +26,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
-import net.minecraft.src.CommonRegistry;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
@@ -34,6 +34,7 @@ import net.minecraft.src.ICommandListener;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.MLProp;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
@@ -50,6 +51,8 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.registry.FMLRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -126,7 +129,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         server = minecraftServer;
         ReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().registerSidedDelegate(this);
-        CommonRegistry.registerRegistry(new ServerRegistry());
+        FMLRegistry.registerRegistry(new ServerRegistry());
         Loader.instance().loadMods();
     }
 
@@ -617,5 +620,19 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void profileEnd()
     {
         Profiler.func_40517_a();
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#getModLoaderPropertyFor(java.lang.reflect.Field)
+     */
+    @Override
+    public ModProperty getModLoaderPropertyFor(Field f)
+    {
+        if (f.isAnnotationPresent(MLProp.class))
+        {
+            MLProp prop = f.getAnnotation(MLProp.class);
+            return new ModProperty(prop.info(), prop.min(), prop.max(), prop.name());
+        }
+        return null;
     }
 }

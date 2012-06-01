@@ -3,11 +3,14 @@ package net.minecraft.src;
 import java.util.Collections;
 import java.util.List;
 
+import cpw.mods.fml.common.registry.FMLRegistry;
+import cpw.mods.fml.common.registry.IMinecraftRegistry;
+
 public class ClientRegistry implements IMinecraftRegistry
 {
 
     public static ClientRegistry instance() {
-        return (ClientRegistry) CommonRegistry.instance();
+        return (ClientRegistry) FMLRegistry.instance();
     }
     @Override
     public void addRecipe(ItemStack output, Object... params)

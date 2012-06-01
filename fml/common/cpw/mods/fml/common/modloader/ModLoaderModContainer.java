@@ -30,14 +30,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import net.minecraft.src.BaseMod;
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.MLProp;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
@@ -132,6 +129,7 @@ public class ModLoaderModContainer implements ModContainer
      */
     private void configureMod()
     {
+        IFMLSidedHandler sideHandler = FMLCommonHandler.instance().getSidedDelegate();
         File configDir = Loader.instance().getConfigDir();
         String modConfigName = modClazz.getSimpleName();
         File modConfig = new File(configDir, String.format("%s.cfg", modConfigName));
@@ -166,12 +164,11 @@ public class ModLoaderModContainer implements ModContainer
                     continue;
                 }
 
-                if (!f.isAnnotationPresent(MLProp.class))
+                ModProperty property = sideHandler.getModLoaderPropertyFor(f);
+                if (property == null)
                 {
                     continue;
                 }
-
-                MLProp property = f.getAnnotation(MLProp.class);
                 String propertyName = property.name().length() > 0 ? property.name() : f.getName();
                 String propertyValue = null;
                 Object defaultValue = null;
@@ -242,7 +239,7 @@ public class ModLoaderModContainer implements ModContainer
         }
     }
 
-    private Object parseValue(String val, MLProp property, Class<?> type, String propertyName, String modConfigName)
+    private Object parseValue(String val, ModProperty property, Class<?> type, String propertyName, String modConfigName)
     {
         if (type.isAssignableFrom(String.class))
         {

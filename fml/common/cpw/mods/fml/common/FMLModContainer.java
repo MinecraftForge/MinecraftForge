@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IBlockAccess;
-
 public class FMLModContainer implements ModContainer
 {
     private Mod modDescriptor;
