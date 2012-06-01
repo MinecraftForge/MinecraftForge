@@ -18,8 +18,10 @@ import java.util.logging.Logger;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.modloader.ModLoaderHelper;
+import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.server.FMLBukkitHandler;
-import cpw.mods.fml.server.ModLoaderModContainer;
 
 public class ModLoader
 {
@@ -142,7 +144,7 @@ public class ModLoader
      */
     public static void addRecipe(ItemStack output, Object... params)
     {
-        CommonRegistry.addRecipe(output, params);
+        FMLRegistry.addRecipe(output, params);
     }
 
     /**
@@ -152,7 +154,7 @@ public class ModLoader
      */
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
-        CommonRegistry.addShapelessRecipe(output, params);
+        FMLRegistry.addShapelessRecipe(output, params);
     }
 
     /**
@@ -162,7 +164,7 @@ public class ModLoader
      */
     public static void addSmelting(int input, ItemStack output)
     {
-        CommonRegistry.addSmelting(input, output);
+        FMLRegistry.addSmelting(input, output);
     }
 
     /**
@@ -175,7 +177,7 @@ public class ModLoader
      */
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
+        FMLRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -189,7 +191,7 @@ public class ModLoader
      */
     public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeBase... biomes)
     {
-        CommonRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
+        FMLRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
@@ -202,7 +204,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
+        FMLRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -216,7 +218,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeBase... biomes)
     {
-        CommonRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
+        FMLRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
@@ -301,7 +303,7 @@ public class ModLoader
      */
     public static List<BaseMod> getLoadedMods()
     {
-        return ModLoaderModContainer.findAll();
+        return ModLoaderModContainer.findAll(BaseMod.class);
     }
 
     /**
@@ -377,7 +379,7 @@ public class ModLoader
      */
     public static void registerBlock(Block block)
     {
-        CommonRegistry.registerBlock(block);
+        FMLRegistry.registerBlock(block);
     }
 
     /**
@@ -387,7 +389,7 @@ public class ModLoader
      */
     public static void registerBlock(Block block, Class <? extends ItemBlock > itemclass)
     {
-        CommonRegistry.registerBlock(block, itemclass);
+        FMLRegistry.registerBlock(block, itemclass);
     }
 
     /**
@@ -398,7 +400,7 @@ public class ModLoader
      */
     public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
-        CommonRegistry.registerEntityID(entityClass, entityName, id);
+        FMLRegistry.registerEntityID(entityClass, entityName, id);
     }
 
     /**
@@ -411,7 +413,7 @@ public class ModLoader
      */
     public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int background, int foreground)
     {
-        CommonRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
+        FMLRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
     }
 
     /**
@@ -433,7 +435,7 @@ public class ModLoader
      */
     public static void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)
     {
-        CommonRegistry.registerTileEntity(tileEntityClass, id);
+        FMLRegistry.registerTileEntity(tileEntityClass, id);
     }
 
     /**
@@ -443,7 +445,7 @@ public class ModLoader
     @Deprecated
     public static void removeBiome(BiomeBase biome)
     {
-        CommonRegistry.removeBiome(biome);
+        FMLRegistry.removeBiome(biome);
     }
 
     /**
@@ -453,7 +455,7 @@ public class ModLoader
      */
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType spawnList)
     {
-        CommonRegistry.removeSpawn(entityClass, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
+        FMLRegistry.removeSpawn(entityClass, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -464,7 +466,7 @@ public class ModLoader
      */
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType spawnList, BiomeBase... biomes)
     {
-        CommonRegistry.removeSpawn(entityClass, spawnList, biomes);
+        FMLRegistry.removeSpawn(entityClass, spawnList, biomes);
     }
 
     /**
@@ -474,7 +476,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList)
     {
-        CommonRegistry.removeSpawn(entityName, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
+        FMLRegistry.removeSpawn(entityName, spawnList, FMLBukkitHandler.instance().getDefaultOverworldBiomes());
     }
 
     /**
@@ -485,7 +487,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeBase... biomes)
     {
-        CommonRegistry.removeSpawn(entityName, spawnList, biomes);
+        FMLRegistry.removeSpawn(entityName, spawnList, biomes);
     }
 
     /**
@@ -519,8 +521,7 @@ public class ModLoader
      */
     public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = (ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
-        mlmc.setTicking(enable);
+    	ModLoaderHelper.updateStandardTicks(mod, enable, useClock);
     }
 
     /**
