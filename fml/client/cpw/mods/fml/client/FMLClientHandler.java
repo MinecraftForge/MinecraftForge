@@ -77,6 +77,7 @@ import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLModLoaderContainer;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
@@ -149,6 +150,9 @@ public class FMLClientHandler implements IFMLSidedHandler
      * 
      * @param minecraftServer
      */
+
+    private OptifineModContainer optifineContainer;
+    
     public void onPreLoad(Minecraft minecraft)
     {
 /*        try
@@ -184,6 +188,17 @@ public class FMLClientHandler implements IFMLSidedHandler
         FMLCommonHandler.instance().registerSidedDelegate(this);
         FMLRegistry.registerRegistry(new ClientRegistry());
         Loader.instance().loadMods();
+        try
+        {
+            Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
+            optifineContainer = new OptifineModContainer(optifineConfig);
+            ModMetadata optifineMetadata = readMetadataFrom(Loader.instance().getModClassLoader().getResourceAsStream("optifinemod.info"), optifineContainer);
+            optifineContainer.setMetadata(optifineMetadata);
+        }
+        catch (Exception e)
+        {
+            // OPTIFINE not found
+        }
     }
 
     /**
@@ -1071,5 +1086,16 @@ public class FMLClientHandler implements IFMLSidedHandler
             return new ModProperty(prop.info(), prop.min(), prop.max(), prop.name());
         }
         return null;
+    }
+
+    /**
+     * @param mods
+     */
+    public void addSpecialModEntries(ArrayList<ModContainer> mods)
+    {
+        mods.add(new FMLModLoaderContainer());
+        if (optifineContainer!=null) {
+            mods.add(optifineContainer);
+        }
     }
 }
