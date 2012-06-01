@@ -52,7 +52,7 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
      * @param data
      * @return
      */
-    boolean doTickInGame(TickType tick, boolean b, Object minecraftInstance, Object[] data);
+    boolean doTickInGame(TickType tick, boolean b, Object minecraftInstance, Object... data);
 
     /**
      * @return
