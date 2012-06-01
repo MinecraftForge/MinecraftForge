@@ -52,7 +52,7 @@ public class GuiModList extends GuiScreen
     {
         this.mainMenu=mainMenu;
         this.mods=new ArrayList<ModContainer>();
-        mods.add(new FMLModLoaderContainer());
+        FMLClientHandler.instance().addSpecialModEntries(mods);
         for (ModContainer mod : Loader.getModList()) {
             if (mod.getMetadata()!=null && mod.getMetadata().parentMod != null) {
                 continue;
