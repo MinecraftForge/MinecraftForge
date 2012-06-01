@@ -3,41 +3,45 @@ package net.minecraft.server;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.src.BiomeGenBase;
+
+import cpw.mods.fml.common.registry.IMinecraftRegistry;
+
 public class BukkitRegistry implements IMinecraftRegistry
 {
 
     @Override
-    public void addRecipe(ItemStack output, Object... params)
+    public void addRecipe(net.minecraft.src.ItemStack output, Object... params)
     {
-        CraftingManager.getInstance().registerShapedRecipe(output, params);
+        CraftingManager.getInstance().registerShapedRecipe((ItemStack) output, params);
     }
 
     @Override
-    public void addShapelessRecipe(ItemStack output, Object... params)
+    public void addShapelessRecipe(net.minecraft.src.ItemStack output, Object... params)
     {
-        CraftingManager.getInstance().registerShapelessRecipe(output, params);
+        CraftingManager.getInstance().registerShapelessRecipe((ItemStack) output, params);
     }
 
     @Override
-    public void addSmelting(int input, ItemStack output)
+    public void addSmelting(int input, net.minecraft.src.ItemStack output)
     {
-        FurnaceRecipes.getInstance().registerRecipe(input, output);
+        FurnaceRecipes.getInstance().registerRecipe(input, (ItemStack) output);
     }
 
     @Override
-    public void registerBlock(Block block)
+    public void registerBlock(net.minecraft.src.Block block)
     {
         registerBlock(block, ItemBlock.class);
     }
 
     @Override
-    public void registerBlock(Block block, Class <? extends ItemBlock > itemclass)
+    public void registerBlock(net.minecraft.src.Block block, Class <? extends net.minecraft.src.ItemBlock > itemclass)
     {
         try
         {
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
-            int blockItemId = block.id - 256;
+            int blockItemId = ((Block)block).id - 256;
             itemclass.getConstructor(int.class).newInstance(blockItemId);
         }
         catch (Exception e)
@@ -47,37 +51,37 @@ public class BukkitRegistry implements IMinecraftRegistry
     }
 
     @Override
-    public void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
+    public void registerEntityID(Class <? extends net.minecraft.src.Entity > entityClass, String entityName, int id)
     {
-        EntityTypes.addNewEntityListMapping(entityClass, entityName, id);
+        EntityTypes.addNewEntityListMapping((Class<? extends Entity>) entityClass, entityName, id);
     }
 
     @Override
-    public void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
+    public void registerEntityID(Class <? extends net.minecraft.src.Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
     {
-        EntityTypes.addNewEntityListMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
+        EntityTypes.addNewEntityListMapping((Class<? extends Entity>) entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
     }
 
     @Override
-    public void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)
+    public void registerTileEntity(Class <? extends net.minecraft.src.TileEntity > tileEntityClass, String id)
     {
-        TileEntity.addNewTileEntityMapping(tileEntityClass, id);
+        TileEntity.addNewTileEntityMapping((Class<? extends TileEntity>) tileEntityClass, id);
     }
 
     @Override
-    public void addBiome(Object biome)
+    public void addBiome(BiomeGenBase biome)
     {
-        //NOOP because the implementation idea is broken. Creating a BiomeGenBase adds the biome already.
+    	//TODO
     }
 
     @Override
-    public void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Object... biomes)
+    public void addSpawn(Class <? extends net.minecraft.src.EntityLiving > entityClass, int weightedProb, int min, int max, net.minecraft.src.EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
     	BiomeBase[] realBiomes=(BiomeBase[]) biomes;
         for (BiomeBase biome : realBiomes)
         {
             @SuppressWarnings("unchecked")
-            List<BiomeMeta> spawns = biome.getMobs(typeOfCreature);
+            List<BiomeMeta> spawns = ((BiomeBase)biome).getMobs((EnumCreatureType)typeOfCreature);
     
             for (BiomeMeta entry : spawns)
             {
@@ -97,30 +101,30 @@ public class BukkitRegistry implements IMinecraftRegistry
 
     @Override
     @SuppressWarnings("unchecked")
-    public void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, Object... biomes)
+    public void addSpawn(String entityName, int weightedProb, int min, int max, net.minecraft.src.EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = EntityTypes.getEntityToClassMapping().get(entityName);
     
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
-            addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, spawnList, biomes);
+            addSpawn((Class <? extends net.minecraft.src.EntityLiving >) entityClazz, weightedProb, min, max, spawnList, biomes);
         }
     }
 
     @Override
-    public void removeBiome(Object biome)
+    public void removeBiome(BiomeGenBase biome)
     {
-        // NOOP because broken
+        // TODO
     }
 
     @Override
-    public void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, Object... biomesO)
+    public void removeSpawn(Class <? extends net.minecraft.src.EntityLiving > entityClass, net.minecraft.src.EnumCreatureType typeOfCreature, BiomeGenBase... biomesO)
     {
     	BiomeBase[] biomes=(BiomeBase[]) biomesO;
         for (BiomeBase biome : biomes)
         {
             @SuppressWarnings("unchecked")
-            List<BiomeMeta> spawns = biome.getMobs(typeOfCreature);
+            List<BiomeMeta> spawns = ((BiomeBase)biome).getMobs((EnumCreatureType) typeOfCreature);
     
             for (BiomeMeta entry : Collections.unmodifiableList(spawns))
             {
@@ -134,13 +138,13 @@ public class BukkitRegistry implements IMinecraftRegistry
 
     @Override
     @SuppressWarnings("unchecked")
-    public void removeSpawn(String entityName, EnumCreatureType spawnList, Object... biomes)
+    public void removeSpawn(String entityName, net.minecraft.src.EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = EntityTypes.getEntityToClassMapping().get(entityName);
     
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
-            removeSpawn((Class <? extends EntityLiving >) entityClazz, spawnList, biomes);
+            removeSpawn((Class <? extends net.minecraft.src.EntityLiving >) entityClazz, spawnList, biomes);
         }
     }
 

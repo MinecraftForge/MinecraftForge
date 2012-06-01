@@ -14,15 +14,17 @@ package cpw.mods.fml.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.BaseMod;
 import net.minecraft.server.BiomeBase;
-import net.minecraft.server.CommonRegistry;
 import net.minecraft.server.EntityItem;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.IChunkProvider;
@@ -39,6 +41,10 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.registry.FMLRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -109,7 +115,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
         }
         server = minecraftServer;
         FMLCommonHandler.instance().registerSidedDelegate(this);
-        CommonRegistry.registerRegistry(new BukkitRegistry());
+        FMLRegistry.registerRegistry(new BukkitRegistry());
         Loader.instance().loadMods();
     }
 
@@ -126,7 +132,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
      */
     public void onPreTick()
     {
-        FMLCommonHandler.instance().gameTickStart();
+        FMLCommonHandler.instance().worldTickStart();
     }
 
     /**
@@ -134,7 +140,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
      */
     public void onPostTick()
     {
-        FMLCommonHandler.instance().gameTickEnd();
+        FMLCommonHandler.instance().worldTickEnd();
     }
 
     /**
@@ -511,4 +517,52 @@ public class FMLBukkitHandler implements IFMLSidedHandler
             }
         }
     }
+
+	@Override
+	public Object getMinecraftInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCurrentLanguage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Properties getCurrentLanguageTable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getObjectName(Object minecraftObject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void profileStart(String profileLabel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void profileEnd() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ModProperty getModLoaderPropertyFor(Field f) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
