@@ -1,0 +1,56 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenHugeTrees.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenHugeTrees.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenHugeTrees extends WorldGenerator
+ {
+     private final int field_48195_a;
+@@ -54,7 +56,7 @@
+                         {
+                             var12 = par1World.getBlockId(var10, var8, var11);
+ 
+-                            if (var12 != 0 && var12 != Block.leaves.blockID && var12 != Block.grass.blockID && var12 != Block.dirt.blockID && var12 != Block.wood.blockID && var12 != Block.sapling.blockID)
++                            if (var12 != 0 && !MinecraftForge.isLeaves(var12) && var12 != Block.grass.blockID && var12 != Block.dirt.blockID && !MinecraftForge.isWood(var12) && var12 != Block.sapling.blockID)
+                             {
+                                 var7 = false;
+                             }
+@@ -102,7 +104,7 @@
+                     {
+                         var11 = par1World.getBlockId(par3, par4 + var10, par5);
+ 
+-                        if (var11 == 0 || var11 == Block.leaves.blockID)
++                        if (var11 == 0 || MinecraftForge.isLeaves(var11))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var10, par5, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -124,7 +126,7 @@
+                         {
+                             var11 = par1World.getBlockId(par3 + 1, par4 + var10, par5);
+ 
+-                            if (var11 == 0 || var11 == Block.leaves.blockID)
++                            if (var11 == 0 || MinecraftForge.isLeaves(var11))
+                             {
+                                 this.setBlockAndMetadata(par1World, par3 + 1, par4 + var10, par5, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -144,7 +146,7 @@
+ 
+                             var11 = par1World.getBlockId(par3 + 1, par4 + var10, par5 + 1);
+ 
+-                            if (var11 == 0 || var11 == Block.leaves.blockID)
++                            if (var11 == 0 || MinecraftForge.isLeaves(var11))
+                             {
+                                 this.setBlockAndMetadata(par1World, par3 + 1, par4 + var10, par5 + 1, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -164,7 +166,7 @@
+ 
+                             var11 = par1World.getBlockId(par3, par4 + var10, par5 + 1);
+ 
+-                            if (var11 == 0 || var11 == Block.leaves.blockID)
++                            if (var11 == 0 || MinecraftForge.isLeaves(var11))
+                             {
+                                 this.setBlockAndMetadata(par1World, par3, par4 + var10, par5 + 1, Block.wood.blockID, this.woodMetadata);
+ 

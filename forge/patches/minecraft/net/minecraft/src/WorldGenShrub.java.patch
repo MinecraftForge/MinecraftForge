@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenShrub.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenShrub.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenShrub extends WorldGenerator
+ {
+     private int field_48197_a;
+@@ -17,7 +19,7 @@
+     {
+         int var15;
+ 
+-        for (boolean var6 = false; ((var15 = par1World.getBlockId(par3, par4, par5)) == 0 || var15 == Block.leaves.blockID) && par4 > 0; --par4)
++        for (boolean var6 = false; ((var15 = par1World.getBlockId(par3, par4, par5)) == 0 || MinecraftForge.isLeaves(var15)) && par4 > 0; --par4)
+         {
+             ;
+         }

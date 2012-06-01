@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenBigMushroom.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenBigMushroom.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenBigMushroom extends WorldGenerator
+ {
+     /** The mushroom type. 0 for brown, 1 for red. */
+@@ -54,7 +56,7 @@
+                         {
+                             var13 = par1World.getBlockId(var11, var9, var12);
+ 
+-                            if (var13 != 0 && var13 != Block.leaves.blockID)
++                            if (var13 != 0 && !MinecraftForge.isLeaves(var13))
+                             {
+                                 var8 = false;
+                             }

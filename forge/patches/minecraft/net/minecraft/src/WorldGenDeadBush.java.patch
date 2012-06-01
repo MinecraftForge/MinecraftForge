@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenDeadBush.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenDeadBush.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenDeadBush extends WorldGenerator
+ {
+     /** stores the ID for WorldGenDeadBush */
+@@ -16,7 +18,7 @@
+     {
+         int var11;
+ 
+-        for (boolean var6 = false; ((var11 = par1World.getBlockId(par3, par4, par5)) == 0 || var11 == Block.leaves.blockID) && par4 > 0; --par4)
++        for (boolean var6 = false; ((var11 = par1World.getBlockId(par3, par4, par5)) == 0 || MinecraftForge.isLeaves(var11)) && par4 > 0; --par4)
+         {
+             ;
+         }

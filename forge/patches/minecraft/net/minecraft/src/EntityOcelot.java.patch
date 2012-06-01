@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityOcelot.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EntityOcelot.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class EntityOcelot extends EntityTameable
+ {
+     /**
+@@ -318,7 +320,7 @@
+ 
+                 int var4 = this.worldObj.getBlockId(var1, var2 - 1, var3);
+ 
+-                if (var4 == Block.grass.blockID || var4 == Block.leaves.blockID)
++                if (var4 == Block.grass.blockID || MinecraftForge.isLeaves(var4))
+                 {
+                     return true;
+                 }

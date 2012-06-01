@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockLog.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/BlockLog.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class BlockLog extends Block
+ {
+     protected BlockLog(int par1)
+@@ -53,14 +55,9 @@
+                     {
+                         int var10 = par1World.getBlockId(par2 + var7, par3 + var8, par4 + var9);
+ 
+-                        if (var10 == Block.leaves.blockID)
++                        if (MinecraftForge.isLeaves(var10))
+                         {
+-                            int var11 = par1World.getBlockMetadata(par2 + var7, par3 + var8, par4 + var9);
+-
+-                            if ((var11 & 8) == 0)
+-                            {
+-                                par1World.setBlockMetadata(par2 + var7, par3 + var8, par4 + var9, var11 | 8);
+-                            }
++                        	MinecraftForge.beginLeafDecay(par1World, par2 + var7, par3 + var8, par4 + var9);
+                         }
+                     }
+                 }

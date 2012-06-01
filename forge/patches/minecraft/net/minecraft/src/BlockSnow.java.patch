@@ -1,6 +1,24 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -73,7 +73,6 @@
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class BlockSnow extends Block
+ {
+     protected BlockSnow(int par1, int par2)
+@@ -54,7 +56,7 @@
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+         int var5 = par1World.getBlockId(par2, par3 - 1, par4);
+-        return var5 != 0 && (var5 == Block.leaves.blockID || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
++        return var5 != 0 && (MinecraftForge.isLeaves(var5) || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
+     }
+ 
+     /**
+@@ -73,7 +75,6 @@
      {
          if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
          {
@@ -8,7 +26,7 @@
              par1World.setBlockWithNotify(par2, par3, par4, 0);
              return false;
          }
-@@ -89,15 +88,7 @@
+@@ -89,15 +90,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -25,7 +43,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
      }
  
-@@ -114,7 +105,7 @@
+@@ -114,7 +107,7 @@
       */
      public int quantityDropped(Random par1Random)
      {
@@ -34,7 +52,7 @@
      }
  
      /**
-@@ -124,7 +115,6 @@
+@@ -124,7 +117,6 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {

@@ -1,19 +1,49 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockLeaves.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockLeaves.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,8 +1,11 @@
+@@ -1,8 +1,13 @@
  package net.minecraft.src;
  
 +import java.util.ArrayList;
  import java.util.Random;
  
 -public class BlockLeaves extends BlockLeavesBase
++import net.minecraft.src.forge.ILeafDecayHandler;
 +import net.minecraft.src.forge.IShearable;
++import net.minecraft.src.forge.MinecraftForge;
 +
-+public class BlockLeaves extends BlockLeavesBase implements IShearable
++public class BlockLeaves extends BlockLeavesBase implements IShearable, ILeafDecayHandler
  {
      /**
       * The base index in terrain.png corresponding to the fancy version of the leaf texture. This is stored so we can
-@@ -268,15 +271,7 @@
+@@ -88,11 +93,8 @@
+                     {
+                         int var10 = par1World.getBlockId(par2 + var7, par3 + var8, par4 + var9);
+ 
+-                        if (var10 == Block.leaves.blockID)
+-                        {
+-                            int var11 = par1World.getBlockMetadata(par2 + var7, par3 + var8, par4 + var9);
+-                            par1World.setBlockMetadata(par2 + var7, par3 + var8, par4 + var9, var11 | 8);
+-                        }
++                        if (MinecraftForge.isLeaves(var10))
++                        	MinecraftForge.beginLeafDecay(par1World, par2 + var7, par3 + var8, par4 + var9);
+                     }
+                 }
+             }
+@@ -137,11 +139,11 @@
+                             {
+                                 var15 = par1World.getBlockId(par2 + var12, par3 + var13, par4 + var14);
+ 
+-                                if (var15 == Block.wood.blockID)
++                                if (MinecraftForge.canSustainLeaves(var15))
+                                 {
+                                     this.adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = 0;
+                                 }
+-                                else if (var15 == Block.leaves.blockID)
++                                else if (MinecraftForge.isLeaves(var15))
+                                 {
+                                     this.adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -2;
+                                 }
+@@ -268,15 +270,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -30,7 +60,7 @@
      }
  
      /**
-@@ -320,4 +315,18 @@
+@@ -320,4 +314,24 @@
      {
          super.onEntityWalking(par1World, par2, par3, par4, par5Entity);
      }
@@ -48,4 +78,10 @@
 +        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));
 +        return ret;
 +    }
++
++	@Override
++	public void beginDecay(World world, int x, int y, int z) {
++		int metadata = world.getBlockMetadata(x, y, z);
++		world.setBlockMetadata(x, y, z, metadata | 8);
++	}
  }

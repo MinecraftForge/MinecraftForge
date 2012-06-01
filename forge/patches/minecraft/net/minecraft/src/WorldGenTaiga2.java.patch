@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenTaiga2.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenTaiga2.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenTaiga2 extends WorldGenerator
+ {
+     public WorldGenTaiga2(boolean par1)
+@@ -45,7 +47,7 @@
+                         {
+                             var15 = par1World.getBlockId(var13, var11, var14);
+ 
+-                            if (var15 != 0 && var15 != Block.leaves.blockID)
++                            if (var15 != 0 && !MinecraftForge.isLeaves(var15))
+                             {
+                                 var10 = false;
+                             }
+@@ -117,7 +119,7 @@
+                     {
+                         var17 = par1World.getBlockId(par3, par4 + var16, par5);
+ 
+-                        if (var17 == 0 || var17 == Block.leaves.blockID)
++                        if (var17 == 0 || MinecraftForge.isLeaves(var17))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var16, par5, Block.wood.blockID, 1);
+                         }
