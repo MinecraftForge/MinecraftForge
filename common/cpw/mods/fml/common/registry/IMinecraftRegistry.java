@@ -1,4 +1,13 @@
-package net.minecraft.src;
+package cpw.mods.fml.common.registry;
+
+import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EnumCreatureType;
+import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.TileEntity;
 
 public interface IMinecraftRegistry
 {

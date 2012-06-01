@@ -11,10 +11,19 @@
  * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-package net.minecraft.src;
+package cpw.mods.fml.common.registry;
+
+import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EnumCreatureType;
+import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.TileEntity;
 
 
-public class CommonRegistry
+public class FMLRegistry
 {
     private static IMinecraftRegistry instance;
 

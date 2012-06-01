@@ -293,7 +293,7 @@ public class Loader
      * The found resources are first loaded into the {@link #modClassLoader} (always) then scanned for class resources matching the specification above.
      * 
      * If they provide the {@link Mod} annotation, they will be loaded as "FML mods", which currently is effectively a NO-OP.
-     * If they are determined to be {@link net.minecraft.src.BaseMod} subclasses they are loaded as such.
+     * If they are determined to be {@link BaseMod} subclasses they are loaded as such.
      * 
      * Finally, if they are successfully loaded as classes, they are then added to the available mod list.
      */

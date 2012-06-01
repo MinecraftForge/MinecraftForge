@@ -3,6 +3,8 @@ package net.minecraft.src;
 import java.util.Collections;
 import java.util.List;
 
+import cpw.mods.fml.common.registry.IMinecraftRegistry;
+
 public class ServerRegistry implements IMinecraftRegistry
 {
 

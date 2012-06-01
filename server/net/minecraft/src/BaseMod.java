@@ -25,7 +25,7 @@ import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.ModContainer.TickType;
 
-public abstract class BaseMod implements IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
+public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 {
     // CALLBACK MECHANISMS
 
