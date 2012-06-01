@@ -33,7 +33,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         if (tick==TickType.WORLD && tickEnd) {
             return onTickInGame((MinecraftServer)minecraftInstance);
         } else {
-            return false;
+            return true;
         }
     }
 
