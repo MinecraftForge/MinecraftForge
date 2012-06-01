@@ -329,9 +329,9 @@ public class ModLoader
      *
      * @return
      */
-    public static List<cpw.mods.fml.common.modloader.BaseMod> getLoadedMods()
+    public static List<BaseMod> getLoadedMods()
     {
-        return ModLoaderModContainer.findAll();
+        return ModLoaderModContainer.findAll(BaseMod.class);
     }
 
     /**

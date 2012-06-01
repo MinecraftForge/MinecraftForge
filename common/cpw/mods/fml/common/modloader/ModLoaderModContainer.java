@@ -387,17 +387,18 @@ public class ModLoaderModContainer implements ModContainer
 
     /**
      * Find all the BaseMods in the system 
+     * @param <A>
      * @return
      */
-    public static List<BaseMod> findAll()
+    public static <A extends BaseMod> List<A> findAll(Class<A> clazz)
     {
-        ArrayList<BaseMod> modList = new ArrayList<BaseMod>();
+        ArrayList<A> modList = new ArrayList<A>();
 
         for (ModContainer mc : Loader.getModList())
         {
             if (mc instanceof ModLoaderModContainer && mc.getMod()!=null)
             {
-                modList.add(((ModLoaderModContainer)mc).mod);
+                modList.add((A)((ModLoaderModContainer)mc).mod);
             }
         }
 
