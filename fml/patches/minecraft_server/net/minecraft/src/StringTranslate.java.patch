@@ -1,6 +1,23 @@
 --- ../src-base/minecraft_server/net/minecraft/src/StringTranslate.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft_server/net/minecraft/src/StringTranslate.java	0000-00-00 00:00:00.000000000 -0000
-@@ -139,4 +139,13 @@
+@@ -7,6 +7,8 @@
+ import java.util.Properties;
+ import java.util.TreeMap;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
++
+ public class StringTranslate
+ {
+     private static StringTranslate field_25082_a = new StringTranslate();
+@@ -71,6 +73,7 @@
+                 }
+             }
+         }
++        FMLCommonHandler.instance().handleLanguageLoad(p_44011_1_, p_44011_2_);
+     }
+ 
+     public void func_44010_a(String p_44010_1_)
+@@ -139,4 +142,13 @@
          String var3 = this.field_25081_b.getProperty(p_25078_1_, p_25078_1_);
          return String.format(var3, p_25078_2_);
      }
