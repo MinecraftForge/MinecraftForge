@@ -23,7 +23,7 @@
       </condition>
     </sequential>
   </macrodef>
-  <target name="writeversion">
+  <target name="writeversion" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}" failonerror="true">
       <arg value="${basedir}/getversion.py" />
     </exec>
@@ -32,7 +32,7 @@
     </propertyfile>
   </target>
 
-  <target name="init">
+  <target name="buildenvsetup">
     <tstamp>
       <format pattern="yyMMddHHmmss" property="timestamp" />
     </tstamp>
@@ -61,6 +61,9 @@
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
       <isset property="env.BUILD_NUMBER" />
     </condition>
+  </target>
+
+  <target name="init" depends="buildenvsetup">
     <antcall target="writeversion" />
     <property file="fmlversion.properties" />
     <property name="build.number" value="${fmlbuild.major.number}.${fmlbuild.minor.number}.${fmlbuild.revision.number}" />

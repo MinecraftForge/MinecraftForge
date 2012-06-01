@@ -12,22 +12,31 @@
  */
 package net.minecraft.server;
 
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.craftbukkit.generator.NetherChunkGenerator;
 import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
 
-import cpw.mods.fml.common.IConsoleHandler;
-import cpw.mods.fml.common.ICraftingHandler;
-import cpw.mods.fml.common.IDispenseHandler;
-import cpw.mods.fml.common.INetworkHandler;
-import cpw.mods.fml.common.IPickupNotifier;
-import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.ModContainer.TickType;
 
 public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 {
     // CALLBACK MECHANISMS
+
+    /**
+     * @param minecraftInstance
+     * @return
+     */
+    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
+    {
+        if (tick==TickType.WORLD && tickEnd) {
+            return onTickInGame((MinecraftServer)minecraftInstance);
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public final void onCrafting(Object... craftingParameters)
     {
@@ -39,6 +48,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     {
         takenFromFurnace((EntityHuman)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
     }
+
     @Override
     public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
     {
@@ -50,6 +60,15 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     {
         return onChatMessageReceived((EntityHuman)data[1], (Packet3Chat)data[0]);
     }
+
+    @Override
+    public final void onServerLogin(Object handler) {
+        // NOOP
+    }
+    
+    public final void onServerLogout() {
+        // NOOP
+    }
     @Override
     public final void onPlayerLogin(Object player)
     {
@@ -57,13 +76,13 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     }
 
     @Override
-    public void onPlayerLogout(Object player)
+    public final void onPlayerLogout(Object player)
     {
         onClientLogout((EntityHuman)player);
     }
     
     @Override
-    public void onPlayerChangedDimension(Object player)
+    public final void onPlayerChangedDimension(Object player)
     {
         onClientDimensionChanged((EntityHuman)player);
     }
@@ -98,14 +117,28 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         }
     }
 
+    /**
+     * NO-OP on client side
+     */
     @Override
     public final boolean handleCommand(String command, Object... data)
     {
         return onServerCommand(command, (String)data[0], (ICommandListener)data[1]);
     }
+    @Override
+    public void onRegisterAnimations() {
+    	// NOOP on servers
+    }
+    
+    @Override
+    public void onRenderHarvest(Map renderers) {
+    	// NOOP on servers
+    }
+    
     // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
+     * 
      * @param id
      * @param metadata
      * @return
@@ -115,8 +148,14 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         return 0;
     }
 
+    public void addRenderer(Map<Class<? extends Entity>, Object> renderers)
+    {
+
+    }
+
     /**
      * Override if you wish to perform some action other than just dispensing the item from the dispenser
+     * 
      * @param world
      * @param x
      * @param y
@@ -133,6 +172,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Override if you wish to generate Nether (Hell biome) blocks
+     * 
      * @param world
      * @param random
      * @param chunkX
@@ -144,6 +184,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Override if you wish to generate Overworld (not hell or the end) blocks
+     * 
      * @param world
      * @param random
      * @param chunkX
@@ -155,6 +196,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Return the name of your mod. Defaults to the class name
+     * 
      * @return
      */
     public String getName()
@@ -164,18 +206,25 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Get your mod priorities
+     * 
      * @return
      */
     public String getPriorities()
     {
-        return null;
+        return "";
     }
 
     /**
      * Return the version of your mod
+     * 
      * @return
      */
     public abstract String getVersion();
+
+    public void keyboardEvent(Object event)
+    {
+
+    }
 
     /**
      * Load your mod
@@ -191,6 +240,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Handle item pickup
+     * 
      * @param player
      * @param item
      */
@@ -200,6 +250,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
+     * 
      * @param minecraftServer the server
      * @return true to continue receiving ticks
      */
@@ -208,28 +259,52 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         return false;
     }
 
-    /**
-     * Not implemented because on the server you don't know who it's from
-     * {@link #onChatMessageReceived(EntityHuman, Packet3Chat)}
-     * @param text
-     */
-    @Deprecated
-    public void receiveChatPacket(String text)
+    public boolean onTickInGUI(float tick, Object game, Object gui)
     {
+        return false;
     }
 
     /**
-     * Not implemented because on the server you don't know who it's from
-     * {@link #onPacket250Received(EntityHuman, Packet250CustomPayload)}
+     * Only implemented on the client side
+     * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
+     * 
+     * @param text
+     */
+    public void receiveChatPacket(String text)
+    {
+        
+    }
+
+    /**
+     * Only called on the client side
+     * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
+     * 
      * @param packet
      */
-    @Deprecated
     public void receiveCustomPacket(Packet250CustomPayload packet)
     {
+        
+    }
+
+    public void registerAnimation(Object game)
+    {
+
+    }
+
+    public void renderInvBlock(Object renderer, Block block, int metadata, int modelID)
+    {
+
+    }
+
+    public boolean renderWorldBlock(Object renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
+    {
+        return false;
+
     }
 
     /**
      * Called when someone crafts an item from a crafting table
+     * 
      * @param player
      * @param item
      * @param matrix
@@ -269,6 +344,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Called when a chat message is received. Return true to stop further processing
+     * 
      * @param source
      * @param chat
      * @return true if you want to consume the message so it is not available for further processing
