@@ -18,3 +18,21 @@
                              {
                                  var8 = false;
                              }
+@@ -186,7 +188,7 @@
+                                     var15 = 0;
+                                 }
+ 
+-                                if ((var15 != 0 || par4 >= par4 + var7 - 1) && !Block.opaqueCubeLookup[par1World.getBlockId(var13, var11, var14)])
++                                if ((var15 != 0 || par4 >= par4 + var7 - 1) && !Block.opaqueCubeLookup[par1World.getBlockId(var13, var11, var14)] && MinecraftForge.leavesCanReplace(par1World.getBlockId(var13, var11, var14)))
+                                 {
+                                     this.setBlockAndMetadata(par1World, var13, var11, var14, Block.mushroomCapBrown.blockID + var6, var15);
+                                 }
+@@ -198,7 +200,7 @@
+                     {
+                         var12 = par1World.getBlockId(par3, par4 + var11, par5);
+ 
+-                        if (!Block.opaqueCubeLookup[var12])
++                        if (!Block.opaqueCubeLookup[var12] && MinecraftForge.leavesCanReplace(var12))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var11, par5, Block.mushroomCapBrown.blockID + var6, 10);
+                         }

@@ -18,6 +18,15 @@
                              {
                                  var10 = false;
                              }
+@@ -87,7 +89,7 @@
+                             {
+                                 int var20 = var19 - par5;
+ 
+-                                if ((Math.abs(var18) != var21 || Math.abs(var20) != var21 || var21 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var17, var16, var19)])
++                                if ((Math.abs(var18) != var21 || Math.abs(var20) != var21 || var21 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var17, var16, var19)] && MinecraftForge.leavesCanReplace(par1World.getBlockId(var17, var16, var19)))
+                                 {
+                                     this.setBlockAndMetadata(par1World, var17, var16, var19, Block.leaves.blockID, 1);
+                                 }
 @@ -117,7 +119,7 @@
                      {
                          var17 = par1World.getBlockId(par3, par4 + var16, par5);
