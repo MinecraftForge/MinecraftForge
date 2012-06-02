@@ -34,13 +34,13 @@ public class ModLoaderHelper
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
         EnumSet<TickType> ticks = mlmc.getTickTypes();
         // If we're enabled and we don't want clock ticks we get render ticks
-        if (enable && !useClock && FMLCommonHandler.instance().isClient()) {
+        if (enable && !useClock && FMLCommonHandler.instance().getSide().isClient()) {
             ticks.add(TickType.RENDER);
         } else {
             ticks.remove(TickType.RENDER);
         }
         // If we're enabled but we want clock ticks, or we're server side we get world ticks 
-        if (enable && (useClock || FMLCommonHandler.instance().isServer())) {
+        if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
             ticks.add(TickType.WORLD);
         } else {
             ticks.remove(TickType.WORLD);
@@ -56,13 +56,13 @@ public class ModLoaderHelper
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
         EnumSet<TickType> ticks = mlmc.getTickTypes();
         // If we're enabled and we don't want clock ticks we get render ticks
-        if (enable && !useClock && FMLCommonHandler.instance().isClient()) {
+        if (enable && !useClock && FMLCommonHandler.instance().getSide().isClient()) {
             ticks.add(TickType.GUI);
         } else {
             ticks.remove(TickType.GUI);
         }
         // If we're enabled but we want clock ticks, or we're server side we get world ticks 
-        if (enable && (useClock || FMLCommonHandler.instance().isServer())) {
+        if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
             ticks.add(TickType.WORLDGUI);
         } else {
             ticks.remove(TickType.WORLDGUI);

@@ -241,4 +241,8 @@ public interface ModContainer
      * @return
      */
     String getVersion();
+    /**
+     * @return
+     */
+    ProxyInjector findSidedProxy();
 }

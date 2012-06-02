@@ -70,6 +70,7 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
+import net.minecraft.src.SidedProxy;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.TexturePackBase;
@@ -85,7 +86,9 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
@@ -579,24 +582,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             getMinecraftLogger().warning("Received invalid registration packet");
         }
-    }
-
-    /**
-     * Are we a server?
-     */
-    @Override
-    public boolean isServer()
-    {
-        return false;
-    }
-
-    /**
-     * Are we a client?
-     */
-    @Override
-    public boolean isClient()
-    {
-        return true;
     }
 
     @Override
@@ -1125,5 +1110,25 @@ public class FMLClientHandler implements IFMLSidedHandler
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public Side getSide()
+    {
+        return Side.CLIENT;
+    }
+
+    @Override
+    public ProxyInjector findSidedProxyOn(cpw.mods.fml.common.modloader.BaseMod mod)
+    {
+        for (Field f : mod.getClass().getDeclaredFields())
+        {
+            if (f.isAnnotationPresent(SidedProxy.class))
+            {
+                SidedProxy sp = f.getAnnotation(SidedProxy.class);
+                return new ProxyInjector(sp.clientSide(), sp.serverSide(), sp.bukkitSide(), f);
+            }
+        }
+        return null;
     }
 }

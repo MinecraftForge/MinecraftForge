@@ -42,6 +42,7 @@ import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.Profiler;
 import net.minecraft.src.ServerRegistry;
+import net.minecraft.src.SidedProxy;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
@@ -50,7 +51,9 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
 import cpw.mods.fml.common.registry.FMLRegistry;
@@ -478,24 +481,6 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
     }
 
-    /**
-     * Are we a server?
-     */
-    @Override
-    public boolean isServer()
-    {
-        return true;
-    }
-
-    /**
-     * Are we a client?
-     */
-    @Override
-    public boolean isClient()
-    {
-        return false;
-    }
-
     @Override
     public File getMinecraftRootDirectory()
     {
@@ -643,6 +628,32 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public List<String> getAdditionalBrandingInformation()
     {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#getSide()
+     */
+    @Override
+    public Side getSide()
+    {
+        return Side.SERVER;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#findSidedProxyOn(cpw.mods.fml.common.modloader.BaseMod)
+     */
+    @Override
+    public ProxyInjector findSidedProxyOn(cpw.mods.fml.common.modloader.BaseMod mod)
+    {
+        for (Field f : mod.getClass().getDeclaredFields())
+        {
+            if (f.isAnnotationPresent(SidedProxy.class))
+            {
+                SidedProxy sp = f.getAnnotation(SidedProxy.class);
+                return new ProxyInjector(sp.clientSide(), sp.serverSide(), sp.bukkitSide(), f);
+            }
+        }
         return null;
     }
 }

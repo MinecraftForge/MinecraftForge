@@ -242,6 +242,8 @@ public class Loader
             if (mod.getMetadata()!=null) {
                 mod.getMetadata().associate(namedMods);
             }
+            
+            FMLCommonHandler.instance().injectSidedProxyDelegate(mod);
         }
         log.fine("Mod pre-initialization complete");
     }
