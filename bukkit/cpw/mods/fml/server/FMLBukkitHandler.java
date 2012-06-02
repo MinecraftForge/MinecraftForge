@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -599,5 +600,10 @@ public class FMLBukkitHandler implements IFMLSidedHandler
             return new ModProperty(prop.info(), prop.min(), prop.max(), prop.name());
         }
         return null;
+	}
+
+	@Override
+	public List<String> getAdditionalBrandingInformation() {
+		return null;
 	}
 }
