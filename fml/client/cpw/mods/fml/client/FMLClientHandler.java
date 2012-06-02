@@ -192,14 +192,25 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
             optifineContainer = new OptifineModContainer(optifineConfig);
-            ModMetadata optifineMetadata = readMetadataFrom(Loader.instance().getModClassLoader().getResourceAsStream("optifinemod.info"), optifineContainer);
-            optifineContainer.setMetadata(optifineMetadata);
-            FMLCommonHandler.instance().getFMLLogger().info(String.format("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion()));
         }
         catch (Exception e)
         {
             // OPTIFINE not found
             optifineContainer = null;
+        }
+        if (optifineContainer != null)
+        {
+            ModMetadata optifineMetadata;
+            try
+            {
+                optifineMetadata = readMetadataFrom(Loader.instance().getModClassLoader().getResourceAsStream("optifinemod.info"), optifineContainer);
+                optifineContainer.setMetadata(optifineMetadata);
+            }
+            catch (Exception e)
+            {
+                //not available
+            }
+            FMLCommonHandler.instance().getFMLLogger().info(String.format("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion()));
         }
         Loader.instance().loadMods();
     }
