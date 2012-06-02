@@ -371,20 +371,9 @@ public class FMLCommonHandler
         languagePack.putAll(langPack);
     }
 
-    /**
-     * @return
-     */
-    public boolean isServer()
+    public Side getSide()
     {
-        return sidedDelegate.isServer();
-    }
-
-    /**
-     * @return
-     */
-    public boolean isClient()
-    {
-        return sidedDelegate.isClient();
+        return sidedDelegate.getSide();
     }
     
     public void addAuxilliaryModContainer(ModContainer ticker)
@@ -512,6 +501,18 @@ public class FMLCommonHandler
     public IFMLSidedHandler getSidedDelegate()
     {
         return sidedDelegate;
+    }
+
+    /**
+     * @param mod
+     */
+    public void injectSidedProxyDelegate(ModContainer mod)
+    {
+        ProxyInjector injector = mod.findSidedProxy();
+        if (injector != null)
+        {
+            injector.inject(mod, sidedDelegate.getSide());
+        }
     }
 
 }

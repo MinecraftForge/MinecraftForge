@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import cpw.mods.fml.common.modloader.BaseMod;
 import cpw.mods.fml.common.modloader.ModProperty;
 
 public interface IFMLSidedHandler
@@ -15,8 +16,6 @@ public interface IFMLSidedHandler
     File getMinecraftRootDirectory();
     boolean isModLoaderMod(Class<?> clazz);
     ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile);
-    boolean isServer();
-    boolean isClient();
     Object getMinecraftInstance();
     String getCurrentLanguage();
     Properties getCurrentLanguageTable();
@@ -26,4 +25,6 @@ public interface IFMLSidedHandler
     void profileEnd();
     ModProperty getModLoaderPropertyFor(Field f);
     List<String> getAdditionalBrandingInformation();
+    Side getSide();
+    ProxyInjector findSidedProxyOn(BaseMod mod);
 }

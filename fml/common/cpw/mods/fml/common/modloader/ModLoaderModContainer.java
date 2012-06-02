@@ -47,6 +47,7 @@ import cpw.mods.fml.common.ModContainer.ModState;
 import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.ProxyInjector;
 
 public class ModLoaderModContainer implements ModContainer
 {
@@ -680,5 +681,14 @@ public class ModLoaderModContainer implements ModContainer
     public String getVersion()
     {
         return mod!=null ? mod.getVersion() : "Not available";
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#findSidedProxy()
+     */
+    @Override
+    public ProxyInjector findSidedProxy()
+    {
+        return FMLCommonHandler.instance().getSidedDelegate().findSidedProxyOn(mod);
     }
 }

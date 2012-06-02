@@ -397,4 +397,13 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#findSidedProxy()
+     */
+    @Override
+    public ProxyInjector findSidedProxy()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
