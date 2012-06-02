@@ -1,0 +1,29 @@
+--- ../src_base/minecraft_server/net/minecraft/src/WorldGenBigMushroom.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/WorldGenBigMushroom.java	0000-00-00 00:00:00.000000000 -0000
+@@ -54,7 +54,7 @@
+                         {
+                             var13 = par1World.getBlockId(var11, var9, var12);
+ 
+-                            if (var13 != 0 && var13 != Block.leaves.blockID)
++                            if (var13 != 0 && !Block.blocksList[var13].isLeaves(par1World, var11, var9, var12))
+                             {
+                                 var8 = false;
+                             }
+@@ -186,7 +186,7 @@
+                                     var15 = 0;
+                                 }
+ 
+-                                if ((var15 != 0 || par4 >= par4 + var7 - 1) && !Block.opaqueCubeLookup[par1World.getBlockId(var13, var11, var14)])
++                                if ((var15 != 0 || par4 >= par4 + var7 - 1) && ((var17 = par1World.getBlockId(var13, var11, var14)) == 0 || Block.blocksList[var17].canBeReplacedByLeaves(par1World, var13, var11, var14)))
+                                 {
+                                     this.setBlockAndMetadata(par1World, var13, var11, var14, Block.mushroomCapBrown.blockID + var6, var15);
+                                 }
+@@ -198,7 +198,7 @@
+                     {
+                         var12 = par1World.getBlockId(par3, par4 + var11, par5);
+ 
+-                        if (!Block.opaqueCubeLookup[var12])
++                        if (var12 == 0 || Block.blocksList[var12].canBeReplacedByLeaves(par1World, par3, par4 + var11, par5))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var11, par5, Block.mushroomCapBrown.blockID + var6, 10);
+                         }

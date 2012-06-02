@@ -1,0 +1,31 @@
+--- ../src_base/minecraft_server/net/minecraft/src/WorldGenTaiga1.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/WorldGenTaiga1.java	0000-00-00 00:00:00.000000000 -0000
+@@ -41,7 +41,7 @@
+                         {
+                             var15 = par1World.getBlockId(var13, var11, var14);
+ 
+-                            if (var15 != 0 && var15 != Block.leaves.blockID)
++                            if (var15 != 0 && !Block.blocksList[var15].isLeaves(par1World, var13, var11, var14))
+                             {
+                                 var10 = false;
+                             }
+@@ -76,8 +76,9 @@
+                             for (int var16 = par5 - var18; var16 <= par5 + var18; ++var16)
+                             {
+                                 int var17 = var16 - par5;
++                                int var19;
+ 
+-                                if ((Math.abs(var15) != var18 || Math.abs(var17) != var18 || var18 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var14, var13, var16)])
++                                if ((Math.abs(var15) != var18 || Math.abs(var17) != var18 || var18 <= 0) && ((var19 = par1World.getBlockId(var14, var13, var16)) == 0 || Block.blocksList[var19].canBeReplacedByLeaves(par1World, var14, var13, var16)))
+                                 {
+                                     this.setBlockAndMetadata(par1World, var14, var13, var16, Block.leaves.blockID, 1);
+                                 }
+@@ -98,7 +99,7 @@
+                     {
+                         var14 = par1World.getBlockId(par3, par4 + var13, par5);
+ 
+-                        if (var14 == 0 || var14 == Block.leaves.blockID)
++                        if (var14 == 0 || Block.blocksList[var14].isLeaves(par1World, par3, par4 + var13, par5))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var13, par5, Block.wood.blockID, 1);
+                         }

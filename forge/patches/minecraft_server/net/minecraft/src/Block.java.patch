@@ -581,3 +581,65 @@
      static
      {
          Item.itemsList[cloth.blockID] = (new ItemCloth(cloth.blockID - 256)).setItemName("cloth");
+@@ -1029,4 +1537,61 @@
+         canBlockGrass[0] = true;
+         StatList.initBreakableStats();
+     }
++
++	/**
++	 * Begin the process of decay. Used by leaves.
++	 * 
++	 * @param world
++	 * @param x
++	 * @param y
++	 * @param z
++	 */
++	public void beginDecay(World world, int x, int y, int z) { }
++
++	/**
++	 * @param world
++	 * @param x
++	 * @param y
++	 * @param z
++	 * @return true if the presence this block can prevent leaves from decaying.
++	 */
++	public boolean canSustainLeaves(World world, int x, int y, int z)
++	{
++		return false;
++	}
++
++	/**
++	 * @param world
++	 * @param x
++	 * @param y
++	 * @param z
++	 * @return true if this block is leaves.
++	 */
++	public boolean isLeaves(World world, int x, int y, int z)
++	{
++		return false;
++	}
++
++	/**
++	 * @param world
++	 * @param x
++	 * @param y
++	 * @param z
++	 * @return true if this block can be replaced by growing leaves.
++	 */
++	public boolean canBeReplacedByLeaves(World world, int x, int y, int z)
++	{
++		return !Block.opaqueCubeLookup[this.blockID];
++	}
++
++	/**
++	 * @param world
++	 * @param x
++	 * @param y
++	 * @param z
++	 * @return true if the block is wood (logs)
++	 */
++	public boolean isWood(World world, int x, int y, int z) {
++		return false;
++	}
+ }

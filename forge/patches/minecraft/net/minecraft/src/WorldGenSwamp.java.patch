@@ -1,0 +1,51 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenSwamp.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenSwamp.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenSwamp extends WorldGenerator
+ {
+     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
+@@ -44,7 +46,7 @@
+                         {
+                             var12 = par1World.getBlockId(var10, var8, var11);
+ 
+-                            if (var12 != 0 && var12 != Block.leaves.blockID)
++                            if (var12 != 0 && !Block.blocksList[var12].isLeaves(par1World, var10, var8, var11))
+                             {
+                                 if (var12 != Block.waterStill.blockID && var12 != Block.waterMoving.blockID)
+                                 {
+@@ -90,8 +92,9 @@
+                             for (int var14 = par5 - var11; var14 <= par5 + var11; ++var14)
+                             {
+                                 int var15 = var14 - par5;
++                                int var17;
+ 
+-                                if ((Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var12, var16, var14)])
++                                if ((Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0) && ((var17 = par1World.getBlockId(var12, var16, var14)) == 0 || Block.blocksList[var17].canBeReplacedByLeaves(par1World, var12, var16, var14)))
+                                 {
+                                     this.setBlock(par1World, var12, var16, var14, Block.leaves.blockID);
+                                 }
+@@ -103,7 +106,7 @@
+                     {
+                         var10 = par1World.getBlockId(par3, par4 + var16, par5);
+ 
+-                        if (var10 == 0 || var10 == Block.leaves.blockID || var10 == Block.waterMoving.blockID || var10 == Block.waterStill.blockID)
++                        if (var10 == 0 || Block.blocksList[var10].isLeaves(par1World, par3, par4 + var16, par5) || var10 == Block.waterMoving.blockID || var10 == Block.waterStill.blockID)
+                         {
+                             this.setBlock(par1World, par3, par4 + var16, par5, Block.wood.blockID);
+                         }
+@@ -118,7 +121,9 @@
+                         {
+                             for (var13 = par5 - var11; var13 <= par5 + var11; ++var13)
+                             {
+-                                if (par1World.getBlockId(var12, var16, var13) == Block.leaves.blockID)
++                            	int id = par1World.getBlockId(var12, var16, var13);
++
++                                if (id != 0 && Block.blocksList[id].isLeaves(par1World, var12, var16, var13))
+                                 {
+                                     if (par2Random.nextInt(4) == 0 && par1World.getBlockId(var12 - 1, var16, var13) == 0)
+                                     {

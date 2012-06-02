@@ -1,0 +1,40 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenTaiga2.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenTaiga2.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraft.src.forge.MinecraftForge;
++
+ public class WorldGenTaiga2 extends WorldGenerator
+ {
+     public WorldGenTaiga2(boolean par1)
+@@ -45,7 +47,7 @@
+                         {
+                             var15 = par1World.getBlockId(var13, var11, var14);
+ 
+-                            if (var15 != 0 && var15 != Block.leaves.blockID)
++                            if (var15 != 0 && !Block.blocksList[var15].isLeaves(par1World, var13, var11, var14))
+                             {
+                                 var10 = false;
+                             }
+@@ -86,8 +88,9 @@
+                             for (int var19 = par5 - var21; var19 <= par5 + var21; ++var19)
+                             {
+                                 int var20 = var19 - par5;
++                                int id;
+ 
+-                                if ((Math.abs(var18) != var21 || Math.abs(var20) != var21 || var21 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var17, var16, var19)])
++                                if ((Math.abs(var18) != var21 || Math.abs(var20) != var21 || var21 <= 0) && ((id = par1World.getBlockId(var17, var16, var19)) == 0 || Block.blocksList[id].canBeReplacedByLeaves(par1World, var17, var16, var19)))
+                                 {
+                                     this.setBlockAndMetadata(par1World, var17, var16, var19, Block.leaves.blockID, 1);
+                                 }
+@@ -117,7 +120,7 @@
+                     {
+                         var17 = par1World.getBlockId(par3, par4 + var16, par5);
+ 
+-                        if (var17 == 0 || var17 == Block.leaves.blockID)
++                        if (var17 == 0 || Block.blocksList[var17].isLeaves(par1World, par3, par4 + var16, par5))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var16, par5, Block.wood.blockID, 1);
+                         }
