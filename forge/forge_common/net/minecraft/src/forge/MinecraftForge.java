@@ -161,106 +161,6 @@ public class MinecraftForge
         ForgeHooks.specialMobSpawnHandlers.add(handler);
     }
 
-    // Tree / Leaf Registry
-    // ------------------------------------------------------------
-    private static TreeSet<Integer> sustainsLeavesIDs = new TreeSet<Integer>();
-    private static TreeSet<Integer> imperviousToLeavesIDs = new TreeSet<Integer>();
-    private static TreeSet<Integer> leavesBlockIds = new TreeSet<Integer>();
-    private static TreeSet<Integer> woodBlockIds = new TreeSet<Integer>();
-    private static TreeMap<Integer, ILeafDecayHandler> leafDecayHandlers = new TreeMap<Integer, ILeafDecayHandler>();
-    
-    /**
-     * register a block as wood (logs)
-     * @param blockId to register
-     * @param sustainsLeaves true if this wood prevents nearby wood from decaying
-     */
-    public static void registerWood(int blockId, boolean sustainsLeaves)
-    {
-    	woodBlockIds.add(Integer.valueOf(blockId));
-    	if (sustainsLeaves)
-    		registerLeafSustainer(blockId);
-    }
-    
-    /**
-     * @param blockId to test
-     * @return whether blockID has been registered as wood (logs)
-     */
-    public static boolean isWood(int blockId)
-    {
-    	return woodBlockIds.contains(Integer.valueOf(blockId));
-    }
-   
-    /**
-     * register a block as leaves
-     * @param blockId to register
-     * @param decayHandler object to handle leaf decay. null if leaves don't decay
-     */
-    public static void registerLeaves(int blockId, ILeafDecayHandler decayHandler)
-    {
-    	leavesBlockIds.add(Integer.valueOf(blockId));
-    	if (decayHandler != null)
-    		leafDecayHandlers.put(Integer.valueOf(blockId), decayHandler);
-    }
-   
-    /**
-     * @param blockId to test
-     * @return whether blockID has been registered as leaves
-     */
-    public static boolean isLeaves(int blockId)
-    {
-    	return leavesBlockIds.contains(Integer.valueOf(blockId));
-    }
-    
-    /**
-     * Begins decay for a registered leaf block at the given coordinates
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     */
-    public static void beginLeafDecay(World world, int x, int y, int z)
-    {
-    	ILeafDecayHandler decayHandler = leafDecayHandlers.get(Integer.valueOf(world.getBlockId(x, y, z)));
-    	if (decayHandler != null)
-    		decayHandler.beginDecay(world, x, y, z);
-    }
-    
-    /**
-     * Register a block whose presence keeps leaves from decaying (like vanilla wood)
-     * @param blockId of the Block to register
-     */
-    public static void registerLeafSustainer(int blockId) 
-    {
-    	sustainsLeavesIDs.add(Integer.valueOf(blockId));
-    }
-    
-    /**
-     * @param blockId of the block to test
-     * @return whether the presence of this block can prevent leaf decay
-     */
-    public static boolean canSustainLeaves(int blockId) 
-    {
-    	return sustainsLeavesIDs.contains(Integer.valueOf(blockId));
-    }
-    
-    /**
-     * Register a non-opaque block so that leaves won't replace it during tree growth
-     * @param blockId of the Block to register. Only non-opaque blocks need be registered.
-     */
-    public static void registerBlockNotReplacedByLeaves(int blockId) 
-    {
-    	imperviousToLeavesIDs.add(Integer.valueOf(blockId));
-    }
-    
-    /**
-     * @param blockId of the block to check
-     * @return whether leaves can replace this block
-     */
-    public static boolean leavesCanReplace(int blockId) 
-    {
-    	return !imperviousToLeavesIDs.contains(Integer.valueOf(blockId));
-    }
-    
     /**
      * This is not supposed to be called outside of Minecraft internals.
      */
@@ -1349,8 +1249,5 @@ public class MinecraftForge
         registerMinecart(EntityMinecart.class, 0, new ItemStack(Item.minecartEmpty));
         registerMinecart(EntityMinecart.class, 1, new ItemStack(Item.minecartCrate));
         registerMinecart(EntityMinecart.class, 2, new ItemStack(Item.minecartPowered));
-        
-        registerWood(Block.wood.blockID, true);
-        registerLeaves(Block.leaves.blockID, Block.leaves);
     }
 }
