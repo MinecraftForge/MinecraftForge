@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -187,18 +188,20 @@ public class FMLClientHandler implements IFMLSidedHandler
         ReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().registerSidedDelegate(this);
         FMLRegistry.registerRegistry(new ClientRegistry());
-        Loader.instance().loadMods();
         try
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
             optifineContainer = new OptifineModContainer(optifineConfig);
             ModMetadata optifineMetadata = readMetadataFrom(Loader.instance().getModClassLoader().getResourceAsStream("optifinemod.info"), optifineContainer);
             optifineContainer.setMetadata(optifineMetadata);
+            FMLCommonHandler.instance().getFMLLogger().info(String.format("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion()));
         }
         catch (Exception e)
         {
             // OPTIFINE not found
+            optifineContainer = null;
         }
+        Loader.instance().loadMods();
     }
 
     /**
@@ -1037,7 +1040,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         
         try 
         {
-            effect.func_783_a();
+            if (optifineContainer == null)
+            {
+                effect.func_783_a();
+            }
         } 
         catch (Exception e) 
         {
@@ -1096,6 +1102,17 @@ public class FMLClientHandler implements IFMLSidedHandler
         mods.add(new FMLModLoaderContainer());
         if (optifineContainer!=null) {
             mods.add(optifineContainer);
+        }
+    }
+
+    @Override
+    public List<String> getAdditionalBrandingInformation()
+    {
+        if (optifineContainer!=null)
+        {
+            return Arrays.asList(String.format("Optifine %s",optifineContainer.getVersion()));
+        } else {
+            return Collections.emptyList();
         }
     }
 }

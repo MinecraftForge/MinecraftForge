@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -633,6 +634,15 @@ public class FMLServerHandler implements IFMLSidedHandler
             MLProp prop = f.getAnnotation(MLProp.class);
             return new ModProperty(prop.info(), prop.min(), prop.max(), prop.name());
         }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.IFMLSidedHandler#getAdditionalBrandingInformation()
+     */
+    @Override
+    public List<String> getAdditionalBrandingInformation()
+    {
         return null;
     }
 }

@@ -174,6 +174,7 @@ public class Loader
         }
 
         log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", major, minor, rev, build, mcversion));
+        modClassLoader = new ModClassLoader();
     }
 
     /**
@@ -366,7 +367,6 @@ public class Loader
         }
 
         state = State.LOADING;
-        modClassLoader = new ModClassLoader();
         log.fine("Attempting to load mods contained in the minecraft jar file and associated classes");
         File[] minecraftSources=modClassLoader.getParentSources();
         if (minecraftSources.length==1 && minecraftSources[0].isFile()) {

@@ -448,6 +448,7 @@ public class FMLCommonHandler
                 // Ignore- forge isn't loaded
             }
         }
+        brandings.addAll(sidedDelegate.getAdditionalBrandingInformation());
         try {
             Properties props=new Properties();
             props.load(FMLCommonHandler.class.getClassLoader().getResourceAsStream("fmlbranding.properties"));
