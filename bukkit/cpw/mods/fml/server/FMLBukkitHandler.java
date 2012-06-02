@@ -23,6 +23,8 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.bukkit.Material;
+
 import net.minecraft.server.Block;
 import net.minecraft.server.Item;
 import net.minecraft.server.LocaleLanguage;
@@ -126,12 +128,17 @@ public class FMLBukkitHandler implements IFMLSidedHandler
     }
 
     /**
-     * Called a bit later on during server initialization to finish loading mods
-     */
-    public void onLoadComplete()
-    {
-        Loader.instance().initializeMods();
-    }
+	 * Called a bit later on during server initialization to finish loading mods
+	 */
+	public void onLoadComplete()
+	{
+	    Loader.instance().initializeMods();
+	    for (Item i : Item.byId) {
+	    	if (i!=null && Material.getMaterial(i.id).name().startsWith("X")) {
+	    		Material.setMaterialName(i.id, i.l());
+	    	}
+	    }
+	}
 
     /**
      * Every tick just before world and other ticks occur
