@@ -1,0 +1,11 @@
+--- ../src_base/minecraft_server/net/minecraft/src/WorldGenTallGrass.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/WorldGenTallGrass.java	0000-00-00 00:00:00.000000000 -0000
+@@ -18,7 +18,7 @@
+     {
+         int var11;
+ 
+-        for (boolean var6 = false; ((var11 = par1World.getBlockId(par3, par4, par5)) == 0 || var11 == Block.leaves.blockID) && par4 > 0; --par4)
++        for (boolean var6 = false; ((var11 = par1World.getBlockId(par3, par4, par5)) == 0 || Block.blocksList[var11].isLeaves(par1World, par3, par4, par5)) && par4 > 0; --par4)
+         {
+             ;
+         }
