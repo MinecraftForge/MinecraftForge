@@ -639,7 +639,7 @@ public class ForgeHooks
     //This number is incremented every official release, and reset every Minecraft version
     public static final int minorVersion    = 2;
     //This number is incremented every time a interface changes, and reset every Minecraft version
-    public static final int revisionVersion = 4;
+    public static final int revisionVersion = 5;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     
@@ -675,7 +675,7 @@ public class ForgeHooks
         seedGrassWeight = 10;
         
         System.out.printf("MinecraftForge v%d.%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion, buildVersion);
-        ModLoader.getLogger().info(String.format("MinecraftForge v%d.%d.%d.%d Initialized\n", majorVersion, minorVersion, revisionVersion, buildVersion));
+        ModLoader.getLogger().info(String.format("MinecraftForge v%d.%d.%d.%d Initialized", majorVersion, minorVersion, revisionVersion, buildVersion));
     }
 
     static boolean toolInit = false;
