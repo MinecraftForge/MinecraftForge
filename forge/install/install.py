@@ -14,7 +14,7 @@ from runtime.updatemd5 import updatemd5
 from runtime.cleanup import cleanup
 from runtime.updatemcp import updatemcp
 
-from forge import apply_patches, copytree, reset_logger, download_ff, cleanup_source
+from forge import apply_patches, copytree, reset_logger, download_ff, cleanup_source, pre_decompile, post_decompile
 
 def main():
     print '=================================== Minecraft Forge Setup Start ================================='
@@ -37,11 +37,16 @@ def main():
         sys.exit(1)
     
     try:
+        pre_decompile()
+        
         os.chdir(mcp_dir)
         #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g
         decompile(None, False, False, True, True, False, True, False, False, False, False)
         reset_logger()
         os.chdir(forge_dir)
+        
+        post_decompile()
+        
     except SystemExit, e:
         print 'Decompile Exception: %d ' % e.code
         raise e   

@@ -12,7 +12,7 @@ from runtime.decompile import decompile
 from runtime.updatenames import updatenames
 from runtime.updatemd5 import updatemd5
 
-from forge import apply_patches, copytree, reset_logger, download_ff, cleanup_source
+from forge import apply_patches, copytree, reset_logger, download_ff, cleanup_source, pre_decompile, post_decompile
 
 
 def main():
@@ -25,12 +25,19 @@ def main():
         
         if os.path.isdir(src_dir):
             shutil.rmtree(src_dir)
+            
         try:
+            
+            pre_decompile()
+        
             os.chdir(mcp_dir)
             #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g
             decompile(None, False, False, True, True, False, True, False, False, False, False)
             reset_logger()
             os.chdir(forge_dir)
+            
+            post_decompile()
+            
         except SystemExit, e:
             print 'Decompile Exception: %d ' % e.code
             raise e   

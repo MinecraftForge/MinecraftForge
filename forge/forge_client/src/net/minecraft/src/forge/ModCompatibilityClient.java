@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import paulscode.sound.SoundSystemConfig;
+import paulscode.sound.codecs.CodecIBXM;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
@@ -49,21 +50,6 @@ public class ModCompatibilityClient
      * It also lowers the interval between background music songs to 6000
      */
     public static SoundPool audioModSoundPoolCave;
-    private static int isAudioModInstalled = -1; 
-
-    /**
-     * Determine if AudioMod is installed by checking for the existence of IBMX Codec,
-     * I wish there was a less ambiguous way, but there isn't. 
-     * @return True if the IBMX codec was found (indicating AudioMod is installed)
-     */
-    public static boolean isAudioModInstalled()
-    {
-        if (isAudioModInstalled == -1)
-        {
-            isAudioModInstalled = (getClass("paulscode.sound.codecs.CodecIBXM") != null ? 1 : 0);
-        }
-        return isAudioModInstalled == 1;
-    }
     
     /**
      * Populates the sound pools with with sounds from the /resources/mods folder
@@ -73,10 +59,6 @@ public class ModCompatibilityClient
      */
     public static void audioModLoad(SoundManager mngr)
     {
-        if (!isAudioModInstalled())
-        {
-            return;
-        }
         audioModSoundPoolCave = new SoundPool();
         audioModLoadModAudio("resources/mod/sound", mngr.getSoundsPool());
         audioModLoadModAudio("resources/mod/streaming", mngr.getStreamingPool());
@@ -145,13 +127,9 @@ public class ModCompatibilityClient
      */
     public static void audioModAddCodecs() 
     {
-        Class codec = getClass("paulscode.sound.codecs.CodecIBXM");
-        if (isAudioModInstalled() && codec != null)
-        {
-            SoundSystemConfig.setCodec("xm", codec);
-            SoundSystemConfig.setCodec("s3m", codec);
-            SoundSystemConfig.setCodec("mod", codec);
-        }
+        SoundSystemConfig.setCodec("xm",  CodecIBXM.class);
+        SoundSystemConfig.setCodec("s3m", CodecIBXM.class);
+        SoundSystemConfig.setCodec("mod", CodecIBXM.class);
     }
 
     /**
@@ -165,7 +143,7 @@ public class ModCompatibilityClient
     public static SoundPoolEntry audioModPickBackgroundMusic(SoundManager soundManager, SoundPoolEntry current) 
     {
         Minecraft mc = ModLoader.getMinecraftInstance();
-        if (isAudioModInstalled() && mc != null && mc.theWorld != null && audioModSoundPoolCave != null)
+        if (mc != null && mc.theWorld != null && audioModSoundPoolCave != null)
         {
             Entity ent = mc.renderViewEntity;
             int x = MathHelper.func_40346_b(ent.posX);

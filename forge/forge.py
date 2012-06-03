@@ -216,3 +216,35 @@ def cleanup_source(path):
         for cur_file in fnmatch.filter(filelist, '*.java'):
             src_file = os.path.normpath(os.path.join(path, cur_file))
             updatefile(src_file)
+            
+            
+def pre_decompile():
+    bin_dir = os.path.join(mcp_dir, 'jars', 'bin')
+    back_jar = os.path.join(bin_dir, 'minecraft.jar.backup')
+    src_jar = os.path.join(bin_dir, 'minecraft.jar')
+    
+    if os.path.isfile(back_jar):
+        if os.path.isfile(src_jar):
+            os.remove(src_jar)
+        shutil.move(back_jar, src_jar)
+        
+def post_decompile():
+    print 'Stripping META-INF from minecraft.jar'
+    bin_dir = os.path.join(mcp_dir, 'jars', 'bin')
+    back_jar = os.path.join(bin_dir, 'minecraft.jar.backup')
+    src_jar = os.path.join(bin_dir, 'minecraft.jar')
+    
+    if os.path.isfile(back_jar):
+        os.remove(back_jar)
+    
+    shutil.move(src_jar, back_jar)
+    
+    zip_in = zipfile.ZipFile(back_jar, mode='a')
+    zip_out = zipfile.ZipFile(src_jar, 'w', zipfile.ZIP_DEFLATED)
+    for i in zip_in.filelist:
+        if not i.filename.startswith('META-INF'):
+            c = zip_in.read(i.filename)
+            zip_out.writestr(i.filename, c)
+        else:
+            print 'Skipping: %s' % i.filename
+    zip_out.close()
