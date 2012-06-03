@@ -5,7 +5,7 @@
                              var12 = par1World.getBlockId(var10, var8, var11);
  
 -                            if (var12 != 0 && var12 != Block.leaves.blockID)
-+                            if (var12 != 0 && (Block.blocksList[var12] != null && Block.blocksList[var12].isLeaves(par1World, var10, var8, var11)))
++                            if (var12 != 0 && (Block.blocksList[var12] != null && !Block.blocksList[var12].isLeaves(par1World, var10, var8, var11)))
                              {
                                  if (var12 != Block.waterStill.blockID && var12 != Block.waterMoving.blockID)
                                  {
@@ -17,7 +17,7 @@
 +                                Block block = Block.blocksList[par1World.getBlockId(var12, var16, var14)];
 +
 +                                if ((Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0) && 
-+                                        (block != null && block.canBeReplacedByLeaves(par1World, var12, var16, var14)))
++                                    (block == null || block.canBeReplacedByLeaves(par1World, var12, var16, var14)))
                                  {
                                      this.setBlock(par1World, var12, var16, var14, Block.leaves.blockID);
                                  }

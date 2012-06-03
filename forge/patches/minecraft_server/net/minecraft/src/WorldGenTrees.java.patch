@@ -8,10 +8,10 @@
 +                            Block block = Block.blocksList[var12];
 +
 +                            if (var12 != 0 && 
-+                               (block == null || !block.isLeaves(par1World, var10, var8, var11)) && 
++                               !block.isLeaves(par1World, var10, var8, var11) && 
 +                                var12 != Block.grass.blockID && 
 +                                var12 != Block.dirt.blockID && 
-+                               (block == null || !block.isWood(par1World, var10, var8, var11)))
++                               !block.isWood(par1World, var10, var8, var11))
                              {
                                  var7 = false;
                              }
