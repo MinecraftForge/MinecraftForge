@@ -13,7 +13,38 @@
  {
      /**
       * The base index in terrain.png corresponding to the fancy version of the leaf texture. This is stored so we can
-@@ -268,15 +271,7 @@
+@@ -88,10 +91,9 @@
+                     {
+                         int var10 = par1World.getBlockId(par2 + var7, par3 + var8, par4 + var9);
+ 
+-                        if (var10 == Block.leaves.blockID)
++                        if (Block.blocksList[var10] != null)
+                         {
+-                            int var11 = par1World.getBlockMetadata(par2 + var7, par3 + var8, par4 + var9);
+-                            par1World.setBlockMetadata(par2 + var7, par3 + var8, par4 + var9, var11 | 8);
++                            Block.blocksList[var10].beginLeavesDecay(par1World, par2 + var7, par3 + var8, par4 + var9);
+                         }
+                     }
+                 }
+@@ -136,12 +138,14 @@
+                             for (var14 = -var7; var14 <= var7; ++var14)
+                             {
+                                 var15 = par1World.getBlockId(par2 + var12, par3 + var13, par4 + var14);
+-
+-                                if (var15 == Block.wood.blockID)
++                                
++                                Block block = Block.blocksList[var15];
++                                
++                                if (block != null && block.canSustainLeaves(par1World, par2 + var12, par3 + var13, par4 + var14))
+                                 {
+                                     this.adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = 0;
+                                 }
+-                                else if (var15 == Block.leaves.blockID)
++                                else if (block != null && block.isLeaves(par1World, par2 + var12, par3 + var13, par4 + var14))
+                                 {
+                                     this.adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -2;
+                                 }
+@@ -268,15 +272,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -30,7 +61,7 @@
      }
  
      /**
-@@ -320,4 +315,18 @@
+@@ -320,4 +316,30 @@
      {
          super.onEntityWalking(par1World, par2, par3, par4, par5Entity);
      }
@@ -47,5 +78,17 @@
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));
 +        return ret;
++    }
++    
++    @Override
++    public void beginLeavesDecay(World world, int x, int y, int z)
++    {
++        world.setBlockMetadata(x, y, z, world.getBlockMetadata(x, y, z) | 8);
++    }
++    
++    @Override
++    public boolean isLeaves(World world, int x, int y, int z)
++    {
++        return true;
 +    }
  }

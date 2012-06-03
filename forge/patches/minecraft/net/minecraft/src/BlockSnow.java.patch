@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/BlockSnow.java	0000-00-00 00:00:00.000000000 -0000
-@@ -73,7 +73,6 @@
+@@ -54,7 +54,8 @@
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+         int var5 = par1World.getBlockId(par2, par3 - 1, par4);
+-        return var5 != 0 && (var5 == Block.leaves.blockID || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
++        Block block = Block.blocksList[var5];
++        return block != null && (block.isLeaves(par1World, par2, par3 - 1, par4) || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
+     }
+ 
+     /**
+@@ -73,7 +74,6 @@
      {
          if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
          {
@@ -8,7 +18,7 @@
              par1World.setBlockWithNotify(par2, par3, par4, 0);
              return false;
          }
-@@ -89,15 +88,7 @@
+@@ -89,15 +89,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -25,7 +35,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
      }
  
-@@ -114,7 +105,7 @@
+@@ -114,7 +106,7 @@
       */
      public int quantityDropped(Random par1Random)
      {
@@ -34,7 +44,7 @@
      }
  
      /**
-@@ -124,7 +115,6 @@
+@@ -124,7 +116,6 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {

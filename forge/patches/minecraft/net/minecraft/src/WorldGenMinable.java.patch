@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldGenMinable.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/WorldGenMinable.java	0000-00-00 00:00:00.000000000 -0000
+@@ -57,7 +57,8 @@
+                             {
+                                 double var45 = ((double)var44 + 0.5D - var24) / (var28 / 2.0D);
+ 
+-                                if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && par1World.getBlockId(var38, var41, var44) == Block.stone.blockID)
++                                Block block = Block.blocksList[par1World.getBlockId(var38, var41, var44)];
++                                if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, var38, var41, var44)))
+                                 {
+                                     par1World.setBlock(var38, var41, var44, this.minableBlockId);
+                                 }

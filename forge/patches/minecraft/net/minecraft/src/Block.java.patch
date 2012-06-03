@@ -80,7 +80,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1058,6 +1058,512 @@
+@@ -1058,6 +1058,591 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
@@ -588,6 +588,85 @@
 +    public boolean isBedFoot(IBlockAccess world, int x, int y, int z)
 +    {
 +        return BlockBed.isBlockFootOfBed(world.getBlockMetadata(x,  y, z));
++    }
++    
++    /**
++     * Called when a leaf should start its decay process.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     */
++    public void beginLeavesDecay(World world, int x, int y, int z){}
++    
++    /**
++     * Determines if this block can prevent leaves connected to it from decaying.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return true if the presence this block can prevent leaves from decaying.
++     */
++    public boolean canSustainLeaves(World world, int x, int y, int z)
++    {
++        return false;
++    }
++    
++    /**
++     * Determines if this block is considered a leaf block, used to apply the leaf decay and generation system.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return true if this block is considered leaves.
++     */
++    public boolean isLeaves(World world, int x, int y, int z)
++    {
++        return false;
++    }
++    
++    /**
++     * Used during tree growth to determine if newly generated leaves can replace this block.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return true if this block can be replaced by growing leaves.
++     */
++    public boolean canBeReplacedByLeaves(World world, int x, int y, int z)
++    {
++        return !Block.opaqueCubeLookup[this.blockID];
++    }
++    
++    /**
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return  true if the block is wood (logs)
++     */
++    public boolean isWood(World world, int x, int y, int z)
++    {
++         return false;
++    }
++    
++    /**
++     * Determines if the current block is replaceable by Ore veins during world generation.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True to allow this block to be replaced by a ore
++     */
++    public boolean isGenMineableReplaceable(World world, int x, int y, int z)
++    {
++        return blockID == stone.blockID;
 +    }
 +    
      static
