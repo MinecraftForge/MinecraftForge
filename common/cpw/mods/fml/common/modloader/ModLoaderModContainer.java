@@ -51,6 +51,7 @@ import cpw.mods.fml.common.ProxyInjector;
 
 public class ModLoaderModContainer implements ModContainer
 {
+    private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
     private Class <? extends BaseMod > modClazz;
     private BaseMod mod;
     private EnumSet<TickType> ticks;
@@ -62,6 +63,7 @@ public class ModLoaderModContainer implements ModContainer
     private ModState state;
     private SourceType sourceType;
     private ModMetadata metadata;
+    private ProxyInjector sidedProxy;
     
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
@@ -689,6 +691,13 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public ProxyInjector findSidedProxy()
     {
-        return FMLCommonHandler.instance().getSidedDelegate().findSidedProxyOn(mod);
+        if (sidedProxy==null) {
+            sidedProxy = FMLCommonHandler.instance().getSidedDelegate().findSidedProxyOn(mod);
+            if (sidedProxy == null)
+            {
+                sidedProxy = NULLPROXY;
+            }
+        }
+        return sidedProxy == NULLPROXY ? null : sidedProxy;
     }
 }

@@ -47,7 +47,7 @@ public class ProxyInjector
         }
         else if (type == Side.BUKKIT)
         {
-            return !this.bukkitName.isEmpty();
+            return this.bukkitName.isEmpty();
         }
         return false;
     }
