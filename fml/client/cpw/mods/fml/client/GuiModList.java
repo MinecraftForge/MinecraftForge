@@ -14,6 +14,7 @@
 
 package cpw.mods.fml.client;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,7 +106,8 @@ public class GuiModList extends GuiScreen
                     int texture = this.field_945_b.field_6315_n.func_1070_a(selectedMod.getMetadata().logoFile);
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     this.field_945_b.field_6315_n.func_1076_b(texture);
-                    this.func_550_b(offset, 32, 0, 0, 256, 58);
+                    Dimension dim = FMLClientHandler.instance().getTextureDimensions(texture);
+                    this.func_550_b(offset, 32, 0, 0, dim.width, dim.height);
                     
                     shifty += 65;
                 }
