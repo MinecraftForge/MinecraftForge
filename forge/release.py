@@ -58,6 +58,7 @@ def main():
     zip_start('minecraftforge-client-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
     zip_add('forge_common/mod_MinecraftForge.info', 'mod_MinecraftForge.info')
+    zip_add('forge_client/src/forge_logo.png')
     zip_add('MinecraftForge-Credits.txt')
     zip_add('MinecraftForge-License.txt')
     zip_add('fml/CREDITS-fml.txt')

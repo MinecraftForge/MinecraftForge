@@ -11,7 +11,7 @@
     "Spacetoad"
   ],
   "description": "Minecraft Forge is a common open source API allowing a broad range of mods to work cooperatively together.\nIt allows many mods to be created without them editing the main Minecraft code.",
-  "logoFile" : "",
+  "logoFile" : "/forge_logo.png",
   "updateUrl" : "http://minecraftforge.net/forum/index.php/topic,5.0.html",
   "parent" : "",
   "screenshots": [
