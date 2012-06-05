@@ -939,11 +939,11 @@ public class MinecraftForge
     public static Class<? extends EntityMinecart> getCartClassForItem(ItemStack item)
     {
         MinecartKey key = null;
-        for (ItemStack tmpKey : minecartForItem.keySet())
+        for (Map.Entry<ItemStack, MinecartKey> entry : minecartForItem.entrySet())
         {
-            if (tmpKey.isItemEqual(item))
+            if (entry.getKey().isItemEqual(item))
             {
-                key = minecartForItem.get(key);
+                key = entry.getValue();
                 break;
             }
         }
@@ -964,11 +964,11 @@ public class MinecraftForge
     public static int getCartTypeForItem(ItemStack item)
     {
         MinecartKey key = null;
-        for (ItemStack tmpKey : minecartForItem.keySet())
+        for (Map.Entry<ItemStack, MinecartKey> entry : minecartForItem.entrySet())
         {
-            if (tmpKey.isItemEqual(item))
+            if (entry.getKey().isItemEqual(item))
             {
-                key = minecartForItem.get(key);
+                key = entry.getValue();
                 break;
             }
         }
