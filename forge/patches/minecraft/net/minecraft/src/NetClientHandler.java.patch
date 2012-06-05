@@ -1,4 +1,4 @@
---- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java 0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 @@ -14,9 +14,16 @@
  import java.util.List;
@@ -54,6 +54,15 @@
  
          if (var8 != null)
          {
+@@ -483,7 +506,7 @@
+ 
+     public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
+     {
+-		this.netManager.networkShutdown("disconnect.kicked", new Object[0]);
++        this.netManager.networkShutdown("disconnect.kicked", new Object[] { par1Packet255KickDisconnect.reason });
+         this.disconnected = true;
+         this.mc.changeWorld1((World)null);
+         this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
 @@ -547,8 +570,12 @@
  
      public void handleChat(Packet3Chat par1Packet3Chat)
