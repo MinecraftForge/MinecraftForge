@@ -58,7 +58,7 @@
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
 @@ -323,7 +341,7 @@
  
-             if (var21.getItem().func_46058_c())
+             if (var21.getItem().requiresMultipleRenderPasses())
              {
 -                for (int var25 = 0; var25 <= 1; ++var25)
 +                for (int var25 = 0; var25 < var21.getItem().getRenderPasses(var21.getItemDamage()); ++var25)

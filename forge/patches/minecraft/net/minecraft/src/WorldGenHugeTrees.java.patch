@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/WorldGenHugeTrees.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/WorldGenHugeTrees.java	0000-00-00 00:00:00.000000000 -0000
-@@ -54,7 +54,12 @@
+@@ -55,7 +55,12 @@
                          {
                              var12 = par1World.getBlockId(var10, var8, var11);
  
@@ -14,7 +14,7 @@
                              {
                                  var7 = false;
                              }
-@@ -102,7 +107,7 @@
+@@ -103,7 +108,7 @@
                      {
                          var11 = par1World.getBlockId(par3, par4 + var10, par5);
  
@@ -23,7 +23,7 @@
                          {
                              this.setBlockAndMetadata(par1World, par3, par4 + var10, par5, Block.wood.blockID, this.woodMetadata);
  
-@@ -124,7 +129,7 @@
+@@ -125,7 +130,7 @@
                          {
                              var11 = par1World.getBlockId(par3 + 1, par4 + var10, par5);
  
@@ -32,7 +32,7 @@
                              {
                                  this.setBlockAndMetadata(par1World, par3 + 1, par4 + var10, par5, Block.wood.blockID, this.woodMetadata);
  
-@@ -144,7 +149,7 @@
+@@ -145,7 +150,7 @@
  
                              var11 = par1World.getBlockId(par3 + 1, par4 + var10, par5 + 1);
  
@@ -41,7 +41,7 @@
                              {
                                  this.setBlockAndMetadata(par1World, par3 + 1, par4 + var10, par5 + 1, Block.wood.blockID, this.woodMetadata);
  
-@@ -164,7 +169,7 @@
+@@ -165,7 +170,7 @@
  
                              var11 = par1World.getBlockId(par3, par4 + var10, par5 + 1);
  
@@ -50,7 +50,7 @@
                              {
                                  this.setBlockAndMetadata(par1World, par3, par4 + var10, par5 + 1, Block.wood.blockID, this.woodMetadata);
  
-@@ -215,7 +220,12 @@
+@@ -216,7 +221,12 @@
                  {
                      int var14 = var13 - par3;
  

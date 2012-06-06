@@ -1,72 +1,25 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderItem.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/RenderItem.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,6 +1,13 @@
+@@ -1,6 +1,9 @@
  package net.minecraft.src;
  
  import java.util.Random;
 +
 +import net.minecraft.src.forge.ForgeHooksClient;
-+import net.minecraft.src.forge.IItemRenderer;
-+import net.minecraft.src.forge.MinecraftForgeClient;
-+import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.*;
-+import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.*;
 +
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -55,10 +62,59 @@
+@@ -54,11 +57,15 @@
+         float var19;
          float var18;
          float var23;
- 
+-
 -        if (var10.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
-+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var10, ENTITY);
 +        
-+        if (customRenderer != null)
++        if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
 +        {
-+            if (customRenderer.shouldUseRenderHelper(ENTITY, var10, ENTITY_ROTATION))
-+            {
-+                GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
-+            }
-+            if (!customRenderer.shouldUseRenderHelper(ENTITY, var10, ENTITY_BOBBING))
-+            {
-+                GL11.glTranslatef(0.0F, -var11, 0.0F);
-+            }
-+            boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, var10, BLOCK_3D);
-+            
-+            if (var10.itemID < 256 && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType())))
-+            {
-+                this.loadTexture(ForgeHooksClient.getTexture("/terrain.png", var10.getItem()));
-+                float var21 = 0.25F;
-+                var15 = Block.blocksList[var10.itemID].getRenderType();
-+                
-+                if (var15 == 1 || var15 == 19 || var15 == 12 || var15 == 2)
-+                {
-+                    var21 = 0.5F;
-+                }
-+
-+                GL11.glScalef(var21, var21, var21);
-+                
-+                for(int j = 0; j < var13; j++)
-+                {
-+                    GL11.glPushMatrix();
-+                    if (j > 0)
-+                    {
-+                        GL11.glTranslatef(
-+                            ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
-+                            ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
-+                            ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F);
-+                    }
-+                    customRenderer.renderItem(ENTITY, var10, renderBlocks, par1EntityItem);
-+                    GL11.glPopMatrix();
-+                }
-+            }
-+            else
-+            {
-+                this.loadTexture(ForgeHooksClient.getTexture(var10.itemID < 256 ? "/terrain.png" : "/gui/items.png", var10.getItem()));
-+                GL11.glScalef(0.5F, 0.5F, 0.5F);
-+                customRenderer.renderItem(ENTITY, var10, renderBlocks, par1EntityItem);
-+            }
-+            
++        	;
 +        }
 +        else if (var10.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
          {
@@ -76,8 +29,8 @@
              float var21 = 0.25F;
              var15 = Block.blocksList[var10.itemID].getRenderType();
  
-@@ -94,10 +150,11 @@
-             if (var10.getItem().func_46058_c())
+@@ -94,10 +101,11 @@
+             if (var10.getItem().requiresMultipleRenderPasses())
              {
                  GL11.glScalef(0.5F, 0.5F, 0.5F);
 -                this.loadTexture("/gui/items.png");
@@ -90,7 +43,7 @@
                      var15 = var10.getItem().func_46057_a(var10.getItemDamage(), var14);
                      var16 = 1.0F;
  
-@@ -120,11 +177,11 @@
+@@ -120,11 +128,11 @@
  
                  if (var10.itemID < 256)
                  {
@@ -104,12 +57,8 @@
                  }
  
                  if (this.field_27004_a)
-@@ -186,10 +243,10 @@
-         float var11;
-         float var12;
-         float var13;
--
-+        
+@@ -189,7 +197,7 @@
+ 
          if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
          {
 -            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
@@ -117,8 +66,8 @@
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -221,9 +278,9 @@
-             if (Item.itemsList[par3].func_46058_c())
+@@ -221,9 +229,9 @@
+             if (Item.itemsList[par3].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
 -                par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
@@ -129,7 +78,7 @@
                  {
                      int var9 = Item.itemsList[par3].func_46057_a(par4, var8);
                      var10 = Item.itemsList[par3].getColorFromDamage(par4, var8);
-@@ -247,11 +304,11 @@
+@@ -247,11 +255,11 @@
  
                  if (par3 < 256)
                  {
@@ -143,60 +92,12 @@
                  }
  
                  var8 = Item.itemsList[par3].getColorFromDamage(par4, 0);
-@@ -279,7 +336,58 @@
+@@ -279,7 +287,10 @@
      {
          if (par3ItemStack != null)
          {
 -            this.drawItemIntoGui(par1FontRenderer, par2RenderEngine, par3ItemStack.itemID, par3ItemStack.getItemDamage(), par3ItemStack.getIconIndex(), par4, par5);
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par3ItemStack, INVENTORY);
-+            if (customRenderer != null)
-+            {
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture(par3ItemStack.itemID < 256 ? "/terrain.png" : "/gui/items.png", Item.itemsList[par3ItemStack.itemID])));
-+                if (customRenderer.shouldUseRenderHelper(INVENTORY, par3ItemStack, INVENTORY_BLOCK))
-+                {
-+                    GL11.glPushMatrix();
-+                    GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
-+                    GL11.glScalef(10F, 10F, 10F);
-+                    GL11.glTranslatef(1.0F, 0.5F, 1.0F);
-+                    GL11.glScalef(1.0F, 1.0F, -1F);
-+                    GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
-+                    GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-+                    int color = Item.itemsList[par3ItemStack.itemID].getColorFromDamage(par4, 0);
-+                    float r = (float)(color >> 16 & 0xff) / 255F;
-+                    float g = (float)(color >> 8 & 0xff) / 255F;
-+                    float b = (float)(color & 0xff) / 255F;
-+                    if(field_27004_a)
-+                    {
-+                        GL11.glColor4f(r, g, b, 1.0F);
-+                    }
-+                    GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
-+                    renderBlocks.useInventoryTint = field_27004_a;
-+                    customRenderer.renderItem(INVENTORY, par3ItemStack, renderBlocks);
-+                    renderBlocks.useInventoryTint = true;
-+                    GL11.glPopMatrix();
-+                }
-+                else
-+                {
-+                    GL11.glDisable(GL11.GL_LIGHTING);
-+                    GL11.glPushMatrix();
-+                    GL11.glTranslatef((float)(par4), (float)(par5), -3.0F + this.zLevel);
-+
-+                    int color = Item.itemsList[par3ItemStack.itemID].getColorFromDamage(par4, 0);
-+                    float r = (float)(color >> 16 & 255) / 255.0F;
-+                    float g = (float)(color >> 8 & 255) / 255.0F;
-+                    float b = (float)(color & 255) / 255.0F;
-+
-+                    if (this.field_27004_a)
-+                    {
-+                        GL11.glColor4f(r, g, b, 1.0F);
-+                    }
-+
-+                    customRenderer.renderItem(INVENTORY, par3ItemStack, renderBlocks);
-+                    GL11.glPopMatrix();
-+                    GL11.glEnable(GL11.GL_LIGHTING);
-+                }
-+            }
-+            else
++            if (!ForgeHooksClient.renderInventoryItem(renderBlocks, par2RenderEngine, par3ItemStack, field_27004_a, zLevel, (float)par4, (float)par5))
 +            {
 +                this.drawItemIntoGui(par1FontRenderer, par2RenderEngine, par3ItemStack.itemID, par3ItemStack.getItemDamage(), par3ItemStack.getIconIndex(), par4, par5);
 +            }

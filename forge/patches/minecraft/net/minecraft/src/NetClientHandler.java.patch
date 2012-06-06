@@ -54,7 +54,7 @@
  
          if (var8 != null)
          {
-@@ -483,7 +506,7 @@
+@@ -486,7 +509,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
@@ -63,7 +63,7 @@
          this.disconnected = true;
          this.mc.changeWorld1((World)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -547,8 +570,12 @@
+@@ -550,8 +573,12 @@
  
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
@@ -78,7 +78,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -638,7 +665,7 @@
+@@ -641,7 +668,7 @@
          }
          else if (par1Packet2Handshake.username.equals("-"))
          {
@@ -87,7 +87,7 @@
          }
          else
          {
-@@ -651,7 +678,7 @@
+@@ -654,7 +681,7 @@
  
                  if (var6.equalsIgnoreCase("ok"))
                  {
@@ -96,7 +96,7 @@
                  }
                  else
                  {
-@@ -832,6 +859,9 @@
+@@ -835,6 +862,9 @@
              case 5:
                  var2.displayGUIBrewingStand(new TileEntityBrewingStand());
                  var2.craftingInventory.windowId = par1Packet100OpenWindow.windowId;
@@ -106,7 +106,7 @@
          }
      }
  
-@@ -938,6 +968,19 @@
+@@ -941,6 +971,19 @@
              {
                  ((TileEntityMobSpawner)var2).setMobID(EntityList.getStringFromID(par1Packet132TileEntityData.customParam1));
              }
@@ -126,7 +126,7 @@
          }
      }
  
-@@ -1011,6 +1054,10 @@
+@@ -1014,6 +1057,10 @@
          {
              ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).updateMPMapData(par1Packet131MapData.itemData);
          }
@@ -137,7 +137,7 @@
          else
          {
              System.out.println("Unknown itemid: " + par1Packet131MapData.uniqueID);
-@@ -1117,5 +1164,6 @@
+@@ -1120,5 +1167,6 @@
      public void handleCustomPayload(Packet250CustomPayload par1Packet250CustomPayload)
      {
          FMLClientHandler.instance().handlePacket250(par1Packet250CustomPayload);

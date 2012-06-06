@@ -181,13 +181,13 @@
 +    /**
 +     * Returns the number of render passes/layers this item has.
 +     * Usually equates to ItemRenderer.renderItem being called for this many passes.
-+     * Does not get called unless func_46058_c() is true;
++     * Does not get called unless requiresMultipleRenderPasses() is true;
 +     * 
 +     * @param metadata The item's metadata
 +     * @return The number of passes to run.
 +     */
 +    public int getRenderPasses(int metadata)
 +    {
-+        return func_46058_c() ? 2 : 1;
++        return requiresMultipleRenderPasses() ? 2 : 1;
 +    }
  }

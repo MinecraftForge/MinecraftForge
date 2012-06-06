@@ -8,6 +8,7 @@ package net.minecraft.src.forge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
+import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.Packet100OpenWindow;
 import net.minecraft.src.RenderBlocks;
@@ -297,6 +298,115 @@ public class ForgeHooksClient
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
         }
+    }
+    
+    public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
+    {
+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
+        
+        if (customRenderer == null)
+        {
+        	return false;
+        }
+
+        if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))
+        {
+            GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F);
+        }
+        if (!customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_BOBBING))
+        {
+            GL11.glTranslatef(0.0F, -bobing, 0.0F);
+        }
+        boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
+        
+        if (item.itemID < 256 && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
+        {
+            engine.bindTexture(engine.getTexture(getTexture("/terrain.png", item.getItem())));
+            int renderType = Block.blocksList[item.itemID].getRenderType();
+            float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
+
+            GL11.glScalef(scale, scale, scale);
+            int size = entity.item.stackSize;
+            int count = (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1)));
+            
+            for(int j = 0; j < size; j++)
+            {
+                GL11.glPushMatrix();
+                if (j > 0)
+                {
+                    GL11.glTranslatef(
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F,
+                        ((random.nextFloat() * 2.0F - 1.0F) * 0.2F) / 0.5F);
+                }
+                customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
+                GL11.glPopMatrix();
+            }
+        }
+        else
+        {
+        	engine.bindTexture(engine.getTexture(getTexture(item.itemID < 256 ? "/terrain.png" : "/gui/items.png", item.getItem())));
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
+        }
+        return true;
+    }
+    
+    public static boolean renderInventoryItem(RenderBlocks renderBlocks, RenderEngine engine, ItemStack item, boolean inColor, float zLevel, float x, float y)
+    {
+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
+        if (customRenderer == null)
+        {
+        	return false;
+        }
+
+    	engine.bindTexture(engine.getTexture(getTexture(item.itemID < 256 ? "/terrain.png" : "/gui/items.png", Item.itemsList[item.itemID])));
+        if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
+        {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(x - 2, y + 3, -3.0F + zLevel);
+            GL11.glScalef(10F, 10F, 10F);
+            GL11.glTranslatef(1.0F, 0.5F, 1.0F);
+            GL11.glScalef(1.0F, 1.0F, -1F);
+            GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
+            
+            
+            if(inColor)
+            {
+                int color = Item.itemsList[item.itemID].getColorFromDamage(item.getItemDamage(), 0);
+                float r = (float)(color >> 16 & 0xff) / 255F;
+                float g = (float)(color >> 8 & 0xff) / 255F;
+                float b = (float)(color & 0xff) / 255F;
+                GL11.glColor4f(r, g, b, 1.0F);
+            }
+            
+            GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
+            renderBlocks.useInventoryTint = inColor;
+            customRenderer.renderItem(INVENTORY, item, renderBlocks);
+            renderBlocks.useInventoryTint = true;
+            GL11.glPopMatrix();
+        }
+        else
+        {
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glPushMatrix();
+            GL11.glTranslatef(x, y, -3.0F + zLevel);
+
+            if (inColor)
+            {
+                int color = Item.itemsList[item.itemID].getColorFromDamage(item.getItemDamage(), 0);
+                float r = (float)(color >> 16 & 255) / 255.0F;
+                float g = (float)(color >> 8 & 255) / 255.0F;
+                float b = (float)(color & 255) / 255.0F;
+                GL11.glColor4f(r, g, b, 1.0F);
+            }
+
+            customRenderer.renderItem(INVENTORY, item, renderBlocks);
+            GL11.glPopMatrix();
+            GL11.glEnable(GL11.GL_LIGHTING);
+        }
+        return true;
     }
     
     /**

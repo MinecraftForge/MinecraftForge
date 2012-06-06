@@ -76,7 +76,7 @@
          }
          else if (var14 != null)
 @@ -414,12 +435,15 @@
-             if (var14.getItem().func_46058_c())
+             if (var14.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(var3, var14, 0);
 -                var9 = Item.itemsList[var14.itemID].getColorFromDamage(var14.getItemDamage(), 1);

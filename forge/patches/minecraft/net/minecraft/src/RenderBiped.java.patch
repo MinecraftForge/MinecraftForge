@@ -25,7 +25,7 @@
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
 @@ -72,7 +80,10 @@
  
-             if (var3.getItem().func_46058_c())
+             if (var3.getItem().requiresMultipleRenderPasses())
              {
 -                this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, 1);
 +                for (int x = 1; x < var3.getItem().getRenderPasses(var3.getItemDamage()); x++)

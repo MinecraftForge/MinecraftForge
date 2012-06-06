@@ -592,7 +592,7 @@ field_1792_b,zoom,0,
 field_1793_a,currentRender,0,
 field_185_a,fullscreen,0,
 field_186_a,mainFrame,0,"Reference to the main frame, in this case, the applet window itself."
-field_188_b,chunkZPos,0,The Z position of this Chunk Coordinate Pair
+field_188_b,chunkZPosition,0,The Z position of this Chunk Coordinate Pair
 field_189_a,chunkXPos,0,The X position of this Chunk Coordinate Pair
 field_191_a,renderManager,0,
 field_194_c,shadowOpaque,0,Determines the darkness of the object's shadow. Higher value makes a darker shadow.
@@ -681,6 +681,7 @@ field_20901_a,courseChangeCooldown,0,
 field_20902_c,waypointY,0,
 field_20913_d,minecartType,0,"The type of minecart, 2 for powered, 1 for storage."
 field_20914_E,entityList,0,"Contains all entities for this client, both spawned and non-spawned."
+field_20915_C,clientChunkProvider,0,The ChunkProviderClient instance
 field_20917_a,transactionID,0,
 field_20919_a,mcFrame,0,Reference to the main frame.
 field_20920_e,mainModel,0,
@@ -2022,8 +2023,11 @@ field_40085_a,inGround,0,
 field_40086_ar,ticksInAir,0,
 field_40087_aq,ticksInGround,0,
 field_40089_d,potionDamage,0,The damage value of the thrown potion that this EntityPotion represents.
+field_40091_d,targetZ,0,'z' location the eye should float towards.
 field_40092_e,despawnTimer,0,
 field_40093_ao,shatterOrDrop,0,
+field_40094_b,targetX,0,'x' location the eye should float towards.
+field_40095_c,targetY,0,'y' location the eye should float towards.
 field_400_at,mobSpawner,0,
 field_40103_a,materialType,0,the material type for dropped items/blocks
 field_40104_aw,bobTimer,0,The height of the current bob
@@ -2263,7 +2267,8 @@ field_40527_z,thresholdEnchantability,0,"Used on the formula of base enchantabil
 field_40528_y,levelEnchantability,0,Holds how much each level increased the enchantability factor to be able to use this enchant.
 field_40529_x,baseEnchantability,0,Holds the base factor of enchantability needed to be able to use the enchant.
 field_40531_f,saveDirectoryName,0,The directory name of the world
-field_40535_e,nameColor,0,The color given to the name of items with that rarity.
+field_40532_f,rarityName,0,Rarity name.
+field_40535_e,rarityColor,0,A decimal representation of the hex color codes of a the color assigned to this rarity type. (13 becomes d as in \247d which is light purple)
 field_4053_bc,netherrack,0,
 field_40548_r,projectile,0,This kind of damage is based on a projectile or not.
 field_40549_q,fireDamage,0,This kind of damage is based on fire or not.
@@ -2339,6 +2344,8 @@ field_40723_L,spikeGen,0,
 field_40725_r,hardcore,0,Hardcore mode flag
 field_4072_a,blockType,0,Boolean used to seperate different states of blocks
 field_40732_j,enchantability,0,Defines the natural enchantability factor of the material.
+field_40733_b,textureOffsetY,0,The y coordinate offset of the texture
+field_40734_a,textureOffsetX,0,The x coordinate offset of the texture
 field_40741_v,isGapLightingUpdated,0,
 field_40752_d,strongComponentType,0,
 field_407_ao,bookShelf,0,
@@ -2546,6 +2553,7 @@ field_46019_bU,tasks,0,
 field_46020_bQ,entityLivingToAttack,0,"is only being set, has no uses as of MC 1.1"
 field_46021_am,jumpHelper,0,Entity jumping helper
 field_46026_at,damage,0,
+field_46027_au,knockbackStrength,0,The amount of knockback an arrow applies when it hits a mob.
 field_46029_e,doneButton,0,This GUI's 'Done' button.
 field_46031_f,terrainType,0,
 field_46032_d,terrainType,0,
@@ -2581,6 +2589,7 @@ field_46086_d,idleTime,0,A decrementing tick that stops the entity from being id
 field_46087_b,lookX,0,X offset to look at
 field_46088_c,lookZ,0,Z offset to look at
 field_46089_a,idleEntity,0,The entity that is looking idle.
+field_46091_d,attackTick,0,An amount of decrementing ticks that allows the entity to attack once the tick reaches 0.
 field_46094_c,entityTarget,0,
 field_46095_a,worldObj,0,
 field_46097_d,zPosition,0,
@@ -2647,6 +2656,7 @@ field_48164_e,customParam1,0,Custom parameter 1 passed to the tile entity on upd
 field_48165_b,yPosition,0,The Y position of the tile entity to update.
 field_48166_c,zPosition,0,The Z position of the tile entity to update.
 field_48167_a,xPosition,0,The X position of the tile entity to update.
+field_48169_h,headYaw,0,The yaw of the entity's head.
 field_48171_f,includeInitialize,0,Whether to initialize the Chunk before applying the effect of the Packet51MapChunk.
 field_48172_g,tempLength,0,The length of the compressed chunk data byte array.
 field_48173_d,yChMax,0,"The y-position of the highest chunk Section in the transmitted chunk, in chunk coordinates."
@@ -2657,6 +2667,7 @@ field_48177_a,xCh,0,"The x-position of the transmitted chunk, in chunk coordinat
 field_48179_i,temp,0,A temporary storage for the compressed chunk data byte array.
 field_48193_b,woodMetadata,0,Sets the metadata for the wood blocks used
 field_48194_c,leavesMetadata,0,Sets the metadata for the leaves used in huge trees
+field_48195_a,baseHeight,0,The base height of the tree
 field_48199_d,metaLeaves,0,The metadata value of the leaves to use in tree generation.
 field_481_e,metadataArray,0,The metadata for each block changed.
 field_48200_b,growVines,0,Indicator that the tree generator needs to grown vines on the trees.
@@ -2684,6 +2695,8 @@ field_48255_c,insidePosX,0,
 field_48256_a,entityObj,0,
 field_48259_d,theAnimal,0,
 field_48260_e,targetMate,0,
+field_48261_b,spawnBabyDelay,0,Delay preventing a baby from spawning immediately when two mate-able animals find each other.
+field_48262_c,moveSpeed,0,The speed the creature moves at during mating behavior.
 field_48263_a,theWorld,0,
 field_48267_b,attacker,0,
 field_48268_h,classTarget,0,
@@ -2907,6 +2920,7 @@ field_52007_b,height,0,Button height in pixels
 field_52008_a,width,0,Button width in pixels
 field_52009_d,lastServerName,0,Remembers the last hostname or IP address entered into text field between invocations of the GUI.
 field_52010_b,maxChatLength,0,Maximum number of characters allowed in chat string in each packet.
+field_52012_a,snooper,0,The PlayerUsageSnooper object.
 field_52015_r,colorCodeRegex,0,Compiled regular expression pattern for matching color codes in a string
 field_52024_b,serverUrl,0,URL of the server to send the report to
 field_52025_a,dataMap,0,String map for report data
@@ -3224,6 +3238,7 @@ field_885_a,plantBlockId,0,The ID of the plant block used in this plant generato
 field_886_b,chunkMapping,0,The mapping between ChunkCoordinates and Chunks that ChunkProviderClient maintains.
 field_887_a,blankChunk,0,The completely empty chunk used by ChunkProviderClient when field_886_b doesn't contain the requested coordinates.
 field_888_d,worldObj,0,Reference to the World object.
+field_889_c,chunkListing,0,"This may have been intended to be an iterable version of all currently loaded chunks (MultiplayerChunkCache), with identical contents to chunkMapping's values. However it is never actually added to."
 field_890_b,lastQueriedChunkZPosition,0,The last Z position of a chunk that was returned from func_553_b
 field_891_a,lastQueriedChunkXPos,0,The last X position of a chunk that was returned from func_553_b
 field_892_h,lastQueriedChunk,0,The last Chunk that was returned from func_553_b
@@ -4506,7 +4521,10 @@ field_40052_h,ticksInGround,1,
 field_40053_i,ticksInAir,1,
 field_40055_d,potionDamage,1,The damage value of the thrown potion that this EntityPotion represents.
 field_40057_f,shatterOrDrop,1,
+field_40058_d,targetZ,1,'z' location the eye should float towards.
 field_40059_e,despawnTimer,1,
+field_40060_b,targetX,1,'x' location the eye should float towards.
+field_40061_c,targetY,1,'y' location the eye should float towards.
 field_40064_f,bookSpread,1,The amount that the book is open.
 field_40065_g,bookSpreadPrev,1,The amount that the book was open last tick.
 field_40068_b,pageFlip,1,Value used for determining how the page flip should look.
@@ -4999,6 +5017,7 @@ field_46001_d,terrainType,1,
 field_46002_f,terrainType,1,
 field_46005_c,hasMadeChest,1,
 field_46006_a,chestLoot,1,
+field_46010_n,knockbackStrength,1,The amount of knockback an arrow applies when it hits a mob.
 field_46011_m,damage,1,
 field_46024_aI,entityLivingToAttack,1,"is only being set, has no uses as of MC 1.1"
 field_46025_aM,tasks,1,
@@ -5037,6 +5056,7 @@ field_46082_t,forestHills,1,Forest Hills biome.
 field_46083_s,desertHills,1,Desert Hills biome.
 field_46084_r,beach,1,Beach biome.
 field_46093_a,mutexBits,1,"A bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other."
+field_46095_d,attackTick,1,An amount of decrementing ticks that allows the entity to attack once the tick reaches 0.
 field_46098_c,entityTarget,1,
 field_46099_a,worldObj,1,
 field_46101_d,zPosition,1,
@@ -5078,6 +5098,7 @@ field_48107_b,zCh,1,"The z-position of the transmitted chunk, in chunk coordinat
 field_48108_c,yChMin,1,"The y-position of the lowest chunk Section in the transmitted chunk, in chunk coordinates."
 field_48109_a,xCh,1,"The x-position of the transmitted chunk, in chunk coordinates."
 field_48111_i,temp,1,A temporary storage for the compressed chunk data byte array.
+field_48113_h,headYaw,1,The yaw of the entity's head.
 field_48114_b,headRotationYaw,1,
 field_48115_a,entityId,1,
 field_48116_f,customParam2,1,Custom parameter 2 passed to the tile entity on update.
@@ -5128,6 +5149,8 @@ field_48192_a,theEntity,1,
 field_48199_d,theAnimal,1,
 field_481_e,nameToClassMap,1,A HashMap storing string names of classes mapping to the actual java.lang.Class type.
 field_48200_e,targetMate,1,
+field_48201_b,spawnBabyDelay,1,Delay preventing a baby from spawning immediately when two mate-able animals find each other.
+field_48202_c,moveSpeed,1,The speed the creature moves at during mating behavior.
 field_48203_a,theWorld,1,
 field_48206_b,speed,1,
 field_48209_e,speed,1,
@@ -5211,6 +5234,7 @@ field_48401_c,metaWood,1,The metadata value of the wood to use in tree generatio
 field_48402_a,minTreeHeight,1,The minimum height of a generated tree.
 field_48404_b,woodMetadata,1,Sets the metadata for the wood blocks used
 field_48405_c,leavesMetadata,1,Sets the metadata for the leaves used in huge trees
+field_48406_a,baseHeight,1,The base height of the tree
 field_48410_f,isMovementBlockAllowed,1,should the PathFinder disregard BlockMovement type materials in its path
 field_48411_g,isPathingInWater,1,
 field_48412_e,isWoddenDoorAllowed,1,should the PathFinder go through wodden door blocks
@@ -5333,6 +5357,7 @@ field_515_l,fire,1,
 field_517_j,sponge,1,
 field_518_i,plants,1,
 field_52004_b,maxChatLength,1,Maximum number of characters allowed in chat string in each packet.
+field_52017_a,snooper,1,The PlayerUsageSnooper object.
 field_520_g,lava,1,
 field_521_f,water,1,
 field_522_e,iron,1,
