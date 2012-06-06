@@ -42,12 +42,13 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
     {
         Minecraft mc = (Minecraft) minecraftInstance;
+        boolean hasWorld = mc.field_6324_e != null;
         // World and render ticks
-        if ((tickEnd && tick==TickType.WORLD) || (tickEnd && tick==TickType.RENDER)) {
+        if (((tickEnd && tick==TickType.WORLD) || (tickEnd && tick==TickType.RENDER)) && hasWorld) {
             return onTickInGame((Float) data[0], mc);
         } else if (((tickEnd && tick==TickType.WORLDGUI) || (tickEnd && tick==TickType.GUI))) {
             return onTickInGUI((Float) data[0], mc, (GuiScreen)data[1]);
-        } else if (tick == TickType.WORLDLOADTICK) {
+        } else if (tick == TickType.WORLDLOADTICK && hasWorld) {
             return onTickInGame(0.0f, mc);
         } else if (tick == TickType.GUILOADTICK) {
             return onTickInGUI(0.0f, mc, mc.field_6313_p);
