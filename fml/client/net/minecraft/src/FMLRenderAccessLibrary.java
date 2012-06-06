@@ -16,6 +16,7 @@ package net.minecraft.src;
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -33,6 +34,16 @@ public class FMLRenderAccessLibrary
     public static Logger getLogger()
     {
         return FMLCommonHandler.instance().getFMLLogger();
+    }
+    
+    public static void log(Level level, String message)
+    {
+        getLogger().log(level, message);
+    }
+    
+    public static void log(Level level, String message, Throwable throwable)
+    {
+        getLogger().log(level, message, throwable);
     }
     
     public static void setTextureDimensions(int textureId, int width, int height, List<TextureFX> textureFXList)
