@@ -1,13 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/src/Block.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Block.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,6 @@
+@@ -1,9 +1,12 @@
  package net.minecraft.src;
  
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.ITextureProvider;
++
  import java.util.ArrayList;
  import java.util.Random;
  
-@@ -397,7 +398,7 @@
+-public class Block
++public class Block implements ITextureProvider
+ {
+     public static final StepSound soundPowderFootstep = new StepSound("stone", 1.0F, 1.0F);
+     public static final StepSound soundWoodFootstep = new StepSound("wood", 1.0F, 1.0F);
+@@ -397,7 +400,7 @@
  
      public boolean hasTileEntity()
      {
@@ -16,7 +23,7 @@
      }
  
      /**
-@@ -418,7 +419,7 @@
+@@ -418,7 +421,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -25,7 +32,7 @@
      }
  
      /**
-@@ -426,7 +427,7 @@
+@@ -426,7 +429,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -34,7 +41,7 @@
      }
  
      /**
-@@ -583,11 +584,14 @@
+@@ -583,11 +586,14 @@
      }
  
      /**
@@ -51,7 +58,7 @@
      }
  
      /**
-@@ -607,16 +611,12 @@
+@@ -607,16 +613,12 @@
          {
              int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
  
@@ -71,7 +78,7 @@
                  }
              }
          }
-@@ -929,7 +929,7 @@
+@@ -929,7 +931,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -80,11 +87,16 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1058,6 +1058,591 @@
+@@ -1058,6 +1060,614 @@
       */
      public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
  
 +    /* =================================================== FORGE START =====================================*/
++    protected static int blockFireSpreadSpeed[] = new int[blocksList.length];
++    protected static int blockFlammability[] = new int[blocksList.length];
++    protected String currentTexture = "/terrain.png";
++    public boolean isDefaultTexture = true;
++    
 +    /**
 +     * Get a light value for this block, normal ranges are between 0 and 15
 +     * 
@@ -288,10 +300,7 @@
 +    public void addCreativeItems(ArrayList itemList)
 +    {    	
 +    }
-+    
-+    protected static int blockFireSpreadSpeed[] = new int[256];
-+    protected static int blockFlammability[] = new int[256];
-+    
++        
 +    /**
 +     * Chance that fire will spread and consume this block.
 +     * 300 being a 100% chance, 0, being a 0% chance.
@@ -668,7 +677,28 @@
 +    {
 +        return blockID == stone.blockID;
 +    }
-+    
++
++    /**
++     * Grabs the current texture file used for this block
++     */
++    @Override
++    public String getTextureFile()
++    {
++        return currentTexture;
++    }
++
++    /**
++     * Sets the current texture file for this block, used when rendering.
++     * Default is "/terrain.png"
++     * 
++     * @param texture The texture file
++     */
++    public void setTextureFile(String texture)
++    {
++        currentTexture = texture;
++        isDefaultTexture = false;
++    }
++
      static
      {
          Item.itemsList[cloth.blockID] = (new ItemCloth(cloth.blockID - 256)).setItemName("cloth");

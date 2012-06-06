@@ -242,21 +242,21 @@ public class ForgeHooksClient
 
     public static void beforeBlockRender(Block block, RenderBlocks render)
     {
-        if (block instanceof ITextureProvider && render.overrideBlockTexture == -1)
+        if (!block.isDefaultTexture && render.overrideBlockTexture == -1)
         {
-            bindTexture(((ITextureProvider)block).getTextureFile(), 0);
+            bindTexture(block.getTextureFile(), 0);
         }
     }
 
     public static void afterBlockRender(Block block, RenderBlocks render)
     {
-        if (block instanceof ITextureProvider && render.overrideBlockTexture == -1)
+        if (!block.isDefaultTexture && render.overrideBlockTexture == -1)
         {
             unbindTexture();
         }
     }
 
-    public static void overrideTexture (Object obj)
+    public static void overrideTexture(Object obj)
     {
         if (obj instanceof ITextureProvider)
         {
@@ -321,7 +321,7 @@ public class ForgeHooksClient
         
         if (item.itemID < 256 && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
-            engine.bindTexture(engine.getTexture(getTexture("/terrain.png", item.getItem())));
+            engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
             int renderType = Block.blocksList[item.itemID].getRenderType();
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
@@ -345,7 +345,7 @@ public class ForgeHooksClient
         }
         else
         {
-        	engine.bindTexture(engine.getTexture(getTexture(item.itemID < 256 ? "/terrain.png" : "/gui/items.png", item.getItem())));
+        	engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -360,7 +360,7 @@ public class ForgeHooksClient
         	return false;
         }
 
-    	engine.bindTexture(engine.getTexture(getTexture(item.itemID < 256 ? "/terrain.png" : "/gui/items.png", Item.itemsList[item.itemID])));
+    	engine.bindTexture(engine.getTexture(Item.itemsList[item.itemID].getTextureFile()));
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();

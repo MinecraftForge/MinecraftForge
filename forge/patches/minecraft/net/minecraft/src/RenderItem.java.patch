@@ -25,7 +25,7 @@
          {
              GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
 -            this.loadTexture("/terrain.png");
-+            this.loadTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[var10.itemID]));
++            this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
              float var21 = 0.25F;
              var15 = Block.blocksList[var10.itemID].getRenderType();
  
@@ -34,7 +34,7 @@
              {
                  GL11.glScalef(0.5F, 0.5F, 0.5F);
 -                this.loadTexture("/gui/items.png");
-+                this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[var10.itemID]));
++                this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
  
 -                for (var14 = 0; var14 <= 1; ++var14)
 +                for (var14 = 0; var14 < var10.getItem().getRenderPasses(var10.getItemDamage()); ++var14)
@@ -48,12 +48,12 @@
                  if (var10.itemID < 256)
                  {
 -                    this.loadTexture("/terrain.png");
-+                    this.loadTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[var10.itemID]));
++                    this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
                  }
                  else
                  {
 -                    this.loadTexture("/gui/items.png");
-+                    this.loadTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[var10.itemID]));
++                    this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
                  }
  
                  if (this.field_27004_a)
@@ -62,7 +62,7 @@
          if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
          {
 -            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-+            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[par3])));
++            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Block.blocksList[par3].getTextureFile()));
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
@@ -71,7 +71,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
 -                par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[par3])));
++                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[par3].getTextureFile()));
  
 -                for (var8 = 0; var8 <= 1; ++var8)
 +                for (var8 = 0; var8 < Item.itemsList[par3].getRenderPasses(par4); ++var8)
@@ -83,12 +83,12 @@
                  if (par3 < 256)
                  {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-+                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", Block.blocksList[par3])));
++                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Block.blocksList[par3].getTextureFile()));
                  }
                  else
                  {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
-+                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(ForgeHooksClient.getTexture("/gui/items.png", Item.itemsList[par3])));
++                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[par3].getTextureFile()));
                  }
  
                  var8 = Item.itemsList[par3].getColorFromDamage(par4, 0);

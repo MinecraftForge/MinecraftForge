@@ -22,13 +22,13 @@
 -        if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        if (customRenderer != null)
 +        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture(par2ItemStack.itemID < 256 ? "/terrain.png" : "/gui/items.png", par2ItemStack.getItem())));
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
 +        else if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
 -            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
          }
          else
@@ -36,12 +36,12 @@
              if (par2ItemStack.itemID < 256)
              {
 -                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
-+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/terrain.png", par2ItemStack.getItem())));
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
              }
              else
              {
 -                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/items.png"));
-+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(ForgeHooksClient.getTexture("/gui/items.png", par2ItemStack.getItem())));
++                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
              }
  
              Tessellator var4 = Tessellator.instance;
