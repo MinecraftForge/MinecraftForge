@@ -27,5 +27,7 @@ public interface IKeyHandler
      * @return
      */
     ModContainer getOwningContainer();
+    
+    void onEndTick();
 
 }

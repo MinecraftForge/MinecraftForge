@@ -700,4 +700,13 @@ public class ModLoaderModContainer implements ModContainer
         }
         return sidedProxy == NULLPROXY ? null : sidedProxy;
     }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#keyBindEvernt(java.lang.Object)
+     */
+    @Override
+    public void keyBindEvent(Object keybinding)
+    {
+        mod.keyBindingEvent(keybinding);
+    }
 }

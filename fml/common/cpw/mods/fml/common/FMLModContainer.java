@@ -406,4 +406,12 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ModContainer#keyBindEvernt(java.lang.Object)
+     */
+    @Override
+    public void keyBindEvent(Object keyBinding)
+    {
+        // TODO Auto-generated method stub        
+    }
 }

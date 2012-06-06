@@ -14,6 +14,9 @@
 
 package cpw.mods.fml.client;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
 import net.minecraft.src.KeyBinding;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.ModContainer;
@@ -29,6 +32,7 @@ public class KeyBindingHandler implements IKeyHandler
     private boolean shouldRepeat;
     private KeyBinding keyBinding;
     private ModContainer modContainer;
+    private boolean lastState = false;
 
     /**
      * @param keyHandler
@@ -54,5 +58,17 @@ public class KeyBindingHandler implements IKeyHandler
     public ModContainer getOwningContainer()
     {
         return modContainer;
+    }
+
+    @Override
+    public void onEndTick()
+    {
+        int keyCode = keyBinding.field_1370_b;
+        boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
+        if (state && (!lastState || (lastState && shouldRepeat)))
+        {
+            modContainer.keyBindEvent(keyBinding);
+        }
+        lastState = state;
     }
 }

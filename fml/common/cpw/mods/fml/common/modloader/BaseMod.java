@@ -86,4 +86,5 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
      */
     String getVersion();
 
+    void keyBindingEvent(Object keybinding);
 }

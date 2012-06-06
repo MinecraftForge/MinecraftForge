@@ -30,6 +30,11 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 {
     // CALLBACK MECHANISMS
 
+    public void keyBindingEvent(Object keybinding)
+    {
+        this.keyboardEvent((KeyBinding)keybinding);
+    }
+    
     /**
      * @param minecraftInstance
      * @return

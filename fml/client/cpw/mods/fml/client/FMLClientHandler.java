@@ -143,6 +143,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
     private HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
     private HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
+    private List<IKeyHandler> keyHandlers = new ArrayList<IKeyHandler>();
     private HashSet<OverrideInfo> animationSet = new HashSet<OverrideInfo>();
 
     private List<TextureFX> addedTextureFX = new ArrayList<TextureFX>();
@@ -256,6 +257,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             keys[i++]=(KeyBinding)key.getKeyBinding();
             keyBindings.put((KeyBinding) key.getKeyBinding(), key.getOwningContainer());
         }
+        keyHandlers = allKeys;
         return keys;
     }
     /**
@@ -277,6 +279,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         if (client.field_6324_e != null) {
             FMLCommonHandler.instance().worldTickEnd();
             FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
+        }
+        for (IKeyHandler entry : keyHandlers)
+        {
+            entry.onEndTick();
         }
     }
 
