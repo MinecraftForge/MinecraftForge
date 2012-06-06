@@ -62,7 +62,17 @@
                      }
                  }
              }
-@@ -1634,14 +1646,16 @@
+@@ -1614,6 +1626,9 @@
+ 
+         if (!this.entityRemoval.isEmpty())
+         {
++            for (Object te: this.entityRemoval) {
++                ((TileEntity)te).onUnload();
++            }
+             this.loadedTileEntityList.removeAll(this.entityRemoval);
+             this.entityRemoval.clear();
+         }
+@@ -1634,14 +1649,16 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -81,7 +91,7 @@
                          }
                      }
  
-@@ -1658,13 +1672,13 @@
+@@ -1658,13 +1675,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -101,7 +111,7 @@
          }
      }
  
-@@ -1686,7 +1700,7 @@
+@@ -1686,7 +1703,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -110,7 +120,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -1909,6 +1923,13 @@
+@@ -1909,6 +1926,13 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -124,7 +134,7 @@
                          }
                      }
                  }
-@@ -2192,25 +2213,21 @@
+@@ -2192,25 +2216,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -163,21 +173,21 @@
          }
      }
  
-@@ -2219,27 +2236,10 @@
+@@ -2219,27 +2239,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
 -        TileEntity var4 = this.getBlockTileEntity(par1, par2, par3);
 -
 -        if (var4 != null && this.scanningTileEntities)
--        {
++        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++        if (var5 != null)
+         {
 -            var4.invalidate();
 -            this.addedTileEntityList.remove(var4);
 -        }
 -        else
-+        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-+        if (var5 != null)
-         {
+-        {
 -            if (var4 != null)
 -            {
 -                this.addedTileEntityList.remove(var4);
@@ -194,7 +204,7 @@
          }
      }
  
-@@ -2265,7 +2265,8 @@
+@@ -2265,7 +2268,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -204,7 +214,7 @@
      }
  
      /**
-@@ -2281,7 +2282,7 @@
+@@ -2281,7 +2285,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -213,7 +223,7 @@
              }
              else
              {
-@@ -2540,6 +2541,7 @@
+@@ -2540,6 +2544,7 @@
                  }
              }
          }
@@ -221,7 +231,7 @@
  
          Profiler.endSection();
  
-@@ -2863,7 +2865,7 @@
+@@ -2863,7 +2868,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -230,7 +240,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3196,10 +3198,10 @@
+@@ -3196,10 +3201,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -245,7 +255,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3220,10 +3222,10 @@
+@@ -3220,10 +3225,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -260,7 +270,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3349,6 +3351,11 @@
+@@ -3349,6 +3354,11 @@
              {
                  var8 = null;
              }
@@ -272,7 +282,7 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3864,4 +3871,38 @@
+@@ -3864,4 +3874,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }
