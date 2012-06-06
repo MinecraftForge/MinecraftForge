@@ -245,4 +245,6 @@ public interface ModContainer
      * @return
      */
     ProxyInjector findSidedProxy();
+    
+    void keyBindEvent(Object keyBinding);
 }
