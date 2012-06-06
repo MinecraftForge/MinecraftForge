@@ -301,14 +301,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     
     public void onRenderTickStart(float partialTickTime)
     {
-            FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
-            FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
+        FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
+        FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
     }
     
     public void onRenderTickEnd(float partialTickTime)
     {
-            FMLCommonHandler.instance().tickEnd(TickType.RENDER, partialTickTime);
-            FMLCommonHandler.instance().tickEnd(TickType.GUI, partialTickTime, client.field_6313_p);
+        FMLCommonHandler.instance().tickEnd(TickType.RENDER, partialTickTime);
+        FMLCommonHandler.instance().tickEnd(TickType.GUI, partialTickTime, client.field_6313_p);
     }
     /**
      * Get the server instance
