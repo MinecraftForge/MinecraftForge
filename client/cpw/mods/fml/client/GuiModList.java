@@ -31,6 +31,7 @@ import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiScreen;
 import net.minecraft.src.GuiSmallButton;
 import net.minecraft.src.StringTranslate;
+import net.minecraft.src.Tessellator;
 
 /**
  * @author cpw
@@ -107,7 +108,14 @@ public class GuiModList extends GuiScreen
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     this.field_945_b.field_6315_n.func_1076_b(texture);
                     Dimension dim = FMLClientHandler.instance().getTextureDimensions(texture);
-                    this.func_550_b(offset, 32, 0, 0, dim.width, dim.height);
+                    int top = 32;
+                    Tessellator tess = Tessellator.field_1512_a;
+                    tess.func_977_b();
+                    tess.func_983_a(offset,             top + dim.height, field_923_k, 0, 1);
+                    tess.func_983_a(offset + dim.width, top + dim.height, field_923_k, 1, 1);
+                    tess.func_983_a(offset + dim.width, top,              field_923_k, 1, 0);
+                    tess.func_983_a(offset,             top,              field_923_k, 0, 0);
+                    tess.func_982_a();
                     
                     shifty += 65;
                 }
