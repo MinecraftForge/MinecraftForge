@@ -135,6 +135,7 @@ public class ForgeHooksClient
         if (tess == null)
         {
             tess = new Tessellator();
+            tess.textureID = texture;
             tessellators.put(key, tess);
         }
         if (inWorld && !renderTextures.contains(key))
