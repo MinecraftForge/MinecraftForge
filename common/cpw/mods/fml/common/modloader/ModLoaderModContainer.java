@@ -105,6 +105,7 @@ public class ModLoaderModContainer implements ModContainer
             configureMod();
             mod = modClazz.newInstance();
             this.tickHandler.setMod(mod);
+            FMLCommonHandler.instance().registerTickHandler(this.tickHandler);
         }
         catch (Exception e)
         {
