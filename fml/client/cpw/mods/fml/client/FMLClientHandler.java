@@ -161,37 +161,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     
     public void onPreLoad(Minecraft minecraft)
     {
-/*        try
-        {
-            Class.forName("BaseModMp", false, getClass().getClassLoader());
-            Minecraft.field_6301_A.severe(""
-                    + "Forge Mod Loader has detected that this server has an ModLoaderMP installed alongside Forge Mod Loader.\n"
-                    + "This will cause a serious problem with compatibility. To protect your worlds, this minecraft server will now shutdown.\n"
-                    + "You should follow the installation instructions of either Minecraft Forge of Forge Mod Loader and NOT install ModLoaderMP \n"
-                    + "into the minecraft_server.jar file "
-                    + "before this server will be allowed to start up.\n\nFailure to do so will simply result in more startup failures.\n\n"
-                    + "The authors of Minecraft Forge and Forge Mod Loader strongly suggest you talk to your mod's authors and get them to\nupdate their "
-                    + "requirements. ModLoaderMP is not compatible with Minecraft Forge on the server and they will need to update their mod\n"
-                    + "for Minecraft Forge and other server compatibility, unless they are Minecraft Forge mods, in which case they already\n"
-                    + "don't need ModLoaderMP and the mod author simply has failed to update his requirements and should be informed appropriately.\n\n"
-                    + "The authors of Forge Mod Loader would like to be compatible with ModLoaderMP but it is closed source and owned by SDK.\n"
-                    + "SDK, the author of ModLoaderMP, has a standing invitation to submit compatibility patches \n"
-                    + "to the open source community project that is Forge Mod Loader so that this incompatibility doesn't last. \n"
-                    + "Users who wish to enjoy mods of both types are "
-                    + "encouraged to request of SDK that he submit a\ncompatibility patch to the Forge Mod Loader project at \n"
-                    + "http://github.com/cpw/FML.\nPosting on the minecraft forums at\nhttp://www.minecraftforum.net/topic/86765- (the MLMP thread)\n"
-                    + "may encourage him in this effort. However, I ask that your requests be polite.\n"
-                    + "Now, the server has to shutdown so you can reinstall your minecraft_server.jar\nproperly, until such time as we can work together.");
-            throw new RuntimeException(
-                    "This FML based server has detected an installation of ModLoaderMP alongside. This will cause serious compatibility issues, so the server will now shut down.");
-        }
-        catch (ClassNotFoundException e)
-        {
-            // We're safe. continue
-        }*/
         client = minecraft;
         ReflectionHelper.detectObfuscation(World.class);
-        FMLCommonHandler.instance().registerSidedDelegate(this);
+        FMLCommonHandler.instance().beginLoading(this);
         FMLRegistry.registerRegistry(new ClientRegistry());
         try
         {
@@ -227,7 +199,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onLoadComplete()
     {
-        client.field_6315_n.func_1065_b();
         Loader.instance().initializeMods();
         for (ModContainer mod : Loader.getModList()) {
             mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());

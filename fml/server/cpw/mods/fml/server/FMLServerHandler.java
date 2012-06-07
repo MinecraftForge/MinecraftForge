@@ -134,7 +134,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         }
         server = minecraftServer;
         ReflectionHelper.detectObfuscation(World.class);
-        FMLCommonHandler.instance().registerSidedDelegate(this);
+        FMLCommonHandler.instance().beginLoading(this);
         FMLRegistry.registerRegistry(new ServerRegistry());
         Loader.instance().loadMods();
     }
