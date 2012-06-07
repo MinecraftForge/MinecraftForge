@@ -112,17 +112,6 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
-    @Override
-    public void tickStart(TickType type, Object ... data)
-    {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void tickEnd(TickType type, Object ... data)
-    {
-        // TODO Auto-generated method stub
-    }
 
     @Override
     public boolean matches(Object mod)

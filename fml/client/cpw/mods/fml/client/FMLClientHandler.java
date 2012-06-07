@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -266,8 +267,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPreWorldTick()
     {
         if (client.field_6324_e != null) {
-            FMLCommonHandler.instance().worldTickStart(client.field_6324_e);
-            FMLCommonHandler.instance().tickStart(TickType.WORLDGUI, 0.0f, client.field_6313_p);
+            // For the client world ticks and game ticks are the same
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD,TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6324_e, client.field_6313_p);
         }
     }
 
@@ -277,8 +278,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPostWorldTick()
     {
         if (client.field_6324_e != null) {
-            FMLCommonHandler.instance().worldTickEnd(client.field_6324_e);
-            FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
+            // For the client world ticks and game ticks are the same
+            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD,TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6324_e, client.field_6313_p);
         }
         for (IKeyHandler entry : keyHandlers)
         {
@@ -294,21 +295,18 @@ public class FMLClientHandler implements IFMLSidedHandler
                 loadTextures(fallbackTexturePack);
                 firstTick = false;
             }
-            FMLCommonHandler.instance().tickStart(TickType.WORLDLOADTICK);
-            FMLCommonHandler.instance().tickStart(TickType.GUILOADTICK);
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD,TickType.GUILOAD));
         }
     }
     
     public void onRenderTickStart(float partialTickTime)
     {
-        FMLCommonHandler.instance().tickStart(TickType.RENDER, partialTickTime);
-        FMLCommonHandler.instance().tickStart(TickType.GUI, partialTickTime, client.field_6313_p);
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_6313_p);
     }
     
     public void onRenderTickEnd(float partialTickTime)
     {
-        FMLCommonHandler.instance().tickEnd(TickType.RENDER, partialTickTime);
-        FMLCommonHandler.instance().tickEnd(TickType.GUI, partialTickTime, client.field_6313_p);
+        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_6313_p);
     }
     /**
      * Get the server instance

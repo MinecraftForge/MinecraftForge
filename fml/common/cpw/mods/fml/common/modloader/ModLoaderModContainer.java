@@ -54,7 +54,6 @@ public class ModLoaderModContainer implements ModContainer
     private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
     private Class <? extends BaseMod > modClazz;
     private BaseMod mod;
-    private EnumSet<TickType> ticks;
     private File modSource;
     private ArrayList<String> dependencies;
     private ArrayList<String> preDependencies;
@@ -64,12 +63,12 @@ public class ModLoaderModContainer implements ModContainer
     private SourceType sourceType;
     private ModMetadata metadata;
     private ProxyInjector sidedProxy;
+    private BaseModTicker tickHandler;
     
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
         this.modClazz = modClazz;
         this.modSource = modSource;
-        this.ticks = EnumSet.noneOf(TickType.class);
         // We are unloaded
         nextState();
     }
@@ -81,7 +80,7 @@ public class ModLoaderModContainer implements ModContainer
     ModLoaderModContainer(BaseMod instance) {
         FMLCommonHandler.instance().addAuxilliaryModContainer(this);
         this.mod=instance;
-        this.ticks = EnumSet.noneOf(TickType.class);
+        this.tickHandler = new BaseModTicker(instance);
     }
     
     @Override
@@ -101,8 +100,11 @@ public class ModLoaderModContainer implements ModContainer
     {
         try
         {
+            EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
+            this.tickHandler = new BaseModTicker(ticks);
             configureMod();
             mod = modClazz.newInstance();
+            this.tickHandler.setMod(mod);
         }
         catch (Exception e)
         {
@@ -326,30 +328,6 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public void tickStart(TickType tick, Object ... data)
-    {
-        if (ticks.contains(tick)) {
-            boolean keepTicking=mod.doTickInGame(tick, false, FMLCommonHandler.instance().getMinecraftInstance(), data);
-            if (!keepTicking) {
-                ticks.remove(tick);
-                ticks.removeAll(tick.partnerTicks());
-            }
-        }
-    }
-    
-    @Override
-    public void tickEnd(TickType tick, Object ... data)
-    {
-        if (ticks.contains(tick)) {
-            boolean keepTicking=mod.doTickInGame(tick, true, FMLCommonHandler.instance().getMinecraftInstance(), data);
-            if (!keepTicking) {
-                ticks.remove(tick);
-                ticks.removeAll(tick.partnerTicks());
-            }
-        }
-    }
-
-    @Override
     public String getName()
     {
         return mod != null ? mod.getName() : modClazz.getSimpleName();
@@ -381,11 +359,6 @@ public class ModLoaderModContainer implements ModContainer
     public boolean matches(Object mod)
     {
         return modClazz.isInstance(mod);
-    }
-
-    public void setTickType(EnumSet<TickType> type)
-    {
-        this.ticks=EnumSet.copyOf(type);
     }
 
     /**
@@ -602,14 +575,6 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     /**
-     * @return
-     */
-    public EnumSet<TickType> getTickTypes()
-    {
-        return ticks;
-    }
-
-    /**
      * @param keyHandler
      * @param allowRepeat
      */
@@ -708,5 +673,13 @@ public class ModLoaderModContainer implements ModContainer
     public void keyBindEvent(Object keybinding)
     {
         mod.keyBindingEvent(keybinding);
+    }
+
+    /**
+     * @return
+     */
+    public BaseModTicker getTickHandler()
+    {
+        return this.tickHandler;
     }
 }

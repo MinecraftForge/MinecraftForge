@@ -32,7 +32,8 @@ public class ModLoaderHelper
     public static void updateStandardTicks(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
-        EnumSet<TickType> ticks = mlmc.getTickTypes();
+        BaseModTicker ticker = mlmc.getTickHandler();
+        EnumSet<TickType> ticks = ticker.ticks();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock && FMLCommonHandler.instance().getSide().isClient()) {
             ticks.add(TickType.RENDER);
@@ -47,14 +48,14 @@ public class ModLoaderHelper
         }
         
         if (enable) {
-            ticks.add(TickType.WORLDLOADTICK);
+            ticks.add(TickType.WORLDLOAD);
         }
     }
 
     public static void updateGUITicks(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
-        EnumSet<TickType> ticks = mlmc.getTickTypes();
+        EnumSet<TickType> ticks = mlmc.getTickHandler().ticks();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock && FMLCommonHandler.instance().getSide().isClient()) {
             ticks.add(TickType.GUI);
@@ -68,7 +69,7 @@ public class ModLoaderHelper
             ticks.remove(TickType.WORLDGUI);
         }
         if (enable) {
-            ticks.add(TickType.GUILOADTICK);
+            ticks.add(TickType.GUILOAD);
         }
     }
 
