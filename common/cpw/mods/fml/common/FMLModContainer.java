@@ -132,21 +132,7 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
-
-    @Override
-    public boolean generatesWorld()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public IWorldGenerator getWorldGenerator()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
     @Override
     public int lookupFuelValue(int itemId, int itemDamage)
     {

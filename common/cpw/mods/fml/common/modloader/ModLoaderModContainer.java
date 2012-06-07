@@ -106,6 +106,7 @@ public class ModLoaderModContainer implements ModContainer
             mod = modClazz.newInstance();
             this.tickHandler.setMod(mod);
             FMLCommonHandler.instance().registerTickHandler(this.tickHandler);
+            FMLCommonHandler.instance().registerWorldGenerator(this.mod);
         }
         catch (Exception e)
         {
@@ -390,18 +391,6 @@ public class ModLoaderModContainer implements ModContainer
 
     @Override
     public Object getMod()
-    {
-        return mod;
-    }
-
-    @Override
-    public boolean generatesWorld()
-    {
-        return true;
-    }
-
-    @Override
-    public IWorldGenerator getWorldGenerator()
     {
         return mod;
     }

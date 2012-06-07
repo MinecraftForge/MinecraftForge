@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -81,7 +82,9 @@ public class FMLCommonHandler
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
     
-    private Set<ITickHandler>tickHandlers = new HashSet<ITickHandler>();
+    private Set<ITickHandler> tickHandlers = new HashSet<ITickHandler>();
+    
+    private Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
     /**
      * We register our delegate here
      * @param handler
@@ -531,8 +534,26 @@ public class FMLCommonHandler
         }
     }
 
+    public void handleWorldGeneration(int chunkX, int chunkZ, long worldSeed, Object... data)
+    {
+        Random fmlRandom = new Random(worldSeed);
+        long xSeed = fmlRandom.nextLong() >> 2 + 1L;
+        long zSeed = fmlRandom.nextLong() >> 2 + 1L;
+        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ worldSeed);
+
+        for (IWorldGenerator generator : worldGenerators)
+        {
+            generator.generate(fmlRandom, chunkX, chunkZ, data);
+        }
+    }
+    
     public void registerTickHandler(ITickHandler handler)
     {
         tickHandlers.add(handler);
+    }
+    
+    public void registerWorldGenerator(IWorldGenerator generator)
+    {
+        worldGenerators.add(generator);
     }
 }
