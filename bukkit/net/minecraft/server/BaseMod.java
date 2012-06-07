@@ -18,7 +18,7 @@ import java.util.Random;
 import org.bukkit.craftbukkit.generator.NetherChunkGenerator;
 import org.bukkit.craftbukkit.generator.NormalChunkGenerator;
 
-import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.TickType;
 
 public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 {
@@ -30,7 +30,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
      */
     public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
     {
-        if (tick==TickType.WORLD && tickEnd) {
+        if (tick==TickType.GAME && tickEnd) {
             return onTickInGame((MinecraftServer)minecraftInstance);
         } else {
             return true;
@@ -401,4 +401,9 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     // boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
     // boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui);
     // void keyboardEvent(KeyBinding event);
+    
+    @Override
+    public void keyBindingEvent(Object keybinding) {
+    	// NOOP on server
+    }
 }

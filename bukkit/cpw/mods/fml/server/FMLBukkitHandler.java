@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -53,6 +54,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
 import cpw.mods.fml.common.registry.FMLRegistry;
@@ -146,17 +148,17 @@ public class FMLBukkitHandler implements IFMLSidedHandler
     /**
      * Every tick just before world and other ticks occur
      */
-    public void onPreTick()
+    public void onPreWorldTick(World world)
     {
-        FMLCommonHandler.instance().worldTickStart();
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD),world);
     }
 
     /**
      * Every tick just after world and other ticks occur
      */
-    public void onPostTick()
+    public void onPostWorldTick(World world)
     {
-        FMLCommonHandler.instance().worldTickEnd();
+        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), world);
     }
 
     /**
@@ -613,5 +615,13 @@ public class FMLBukkitHandler implements IFMLSidedHandler
             }
         }
         return null;
+	}
+
+	public void onServerPostTick() {
+		FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME));
+	}
+
+	public void onServerPreTick() {
+		FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME));
 	}
 }
