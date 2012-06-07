@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -54,6 +55,7 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
 import cpw.mods.fml.common.registry.FMLRegistry;
@@ -145,12 +147,21 @@ public class FMLServerHandler implements IFMLSidedHandler
         Loader.instance().initializeMods();
     }
 
+    public void onPreServerTick()
+    {
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME));
+    }
+    
+    public void onPostServerTick()
+    {
+        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME));
+    }
     /**
      * Every tick just before world and other ticks occur
      */
     public void onPreWorldTick(World world)
     {
-        FMLCommonHandler.instance().worldTickStart(world);
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), world);
     }
 
     /**
@@ -158,7 +169,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     public void onPostWorldTick(World world)
     {
-        FMLCommonHandler.instance().worldTickEnd(world);
+        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), world);
     }
 
     /**

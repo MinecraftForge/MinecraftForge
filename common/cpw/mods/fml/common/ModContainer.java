@@ -83,14 +83,6 @@ public interface ModContainer
      */
     void nextState();
     /**
-     * A tick has started
-     */
-    void tickStart(TickType tick, Object ... data);
-    /**
-     * A tick has ended
-     */
-    void tickEnd(TickType tick, Object ... data);
-    /**
      * Does this mod match the supplied mod?
      * @param mod
      * @return

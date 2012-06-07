@@ -26,7 +26,15 @@
          this.field_6033_f = new ServerConfigurationManager(this);
          this.field_6028_k[0] = new EntityTracker(this, 0);
          this.field_6028_k[1] = new EntityTracker(this, -1);
-@@ -487,7 +492,9 @@
+@@ -447,6 +452,7 @@
+         long var1 = System.nanoTime();
+         ArrayList var3 = new ArrayList();
+         Iterator var4 = field_6037_b.keySet().iterator();
++        FMLServerHandler.instance().onPreServerTick();
+ 
+         while (var4.hasNext())
+         {
+@@ -487,7 +493,9 @@
                      this.field_6033_f.func_28169_a(new Packet4UpdateTime(var7.func_22080_k()), var7.field_4272_q.field_6165_g);
                  }
  
@@ -36,3 +44,11 @@
  
                  while (true)
                  {
+@@ -533,6 +541,7 @@
+         this.field_48076_G = Packet.field_48101_l;
+         this.field_48082_x[this.field_9014_h % 100] = Packet.field_48102_m - this.field_48077_H;
+         this.field_48077_H = Packet.field_48102_m;
++        FMLServerHandler.instance().onPostServerTick();
+     }
+ 
+     public void func_6010_a(String p_6010_1_, ICommandListener p_6010_2_)

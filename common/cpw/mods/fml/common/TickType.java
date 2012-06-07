@@ -19,10 +19,9 @@ import java.util.EnumSet;
 public enum TickType {
     /**
      * Fired during the world evaluation loop
-     * server and client side
+     * server side
      * 
-     * arg 0 : a float zero (the "render time")
-     * arg 1 : The world that is ticking
+     * arg 0 : The world that is ticking
      */
     WORLD,
     /**
@@ -48,13 +47,18 @@ public enum TickType {
      * client side
      * Fired once as the world loads from disk
      */
-    WORLDLOADTICK,
+    WORLDLOAD,
     /**
      * client side
      * Fired once as the world loads from disk
      * arg 0 : the open gui
      */
-    GUILOADTICK;
+    GUILOAD,
+    /**
+     * client and server side
+     * Fired once per "global tick loop"
+     */
+    GAME;
 
     /**
      * Partner ticks that are also cancelled by returning false from onTickInGame
@@ -63,12 +67,12 @@ public enum TickType {
      */
     public EnumSet<TickType> partnerTicks()
     {
-        if (this==WORLD) return EnumSet.of(RENDER,WORLDLOADTICK);
-        if (this==RENDER) return EnumSet.of(WORLD, WORLDLOADTICK);
-        if (this==GUI) return EnumSet.of(WORLDGUI, GUILOADTICK);
-        if (this==WORLDGUI) return EnumSet.of(GUI, GUILOADTICK);
-        if (this==WORLDLOADTICK) return EnumSet.of(WORLD, RENDER);
-        if (this==GUILOADTICK) return EnumSet.of(GUI, WORLDGUI);
+        if (this==WORLD) return EnumSet.of(RENDER,WORLDLOAD);
+        if (this==RENDER) return EnumSet.of(WORLD, WORLDLOAD);
+        if (this==GUI) return EnumSet.of(WORLDGUI, GUILOAD);
+        if (this==WORLDGUI) return EnumSet.of(GUI, GUILOAD);
+        if (this==WORLDLOAD) return EnumSet.of(WORLD, RENDER);
+        if (this==GUILOAD) return EnumSet.of(GUI, WORLDGUI);
         return null;
     }
 }

@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,77 +90,37 @@ public class FMLCommonHandler
         sidedDelegate = handler;
     }
 
-    /**
-     * Pre-tick the mods 
-     */
-    public void worldTickStart(Object world)
+    public void tickStart(EnumSet<TickType> ticks, Object ... data)
     {
-        tickStart(TickType.WORLD,0.0f, world);
-    }
-
-    /**
-     * Post-tick the mods
-     */
-    public void worldTickEnd(Object world)
-    {
-        tickEnd(TickType.WORLD,0.0f);
-    }
-
-    public void tickStart(TickType type, Object ... data)
-    {
-        sidedDelegate.profileStart("modTickStart");
-        sidedDelegate.profileStart(type.name());
-        for (ModContainer mod : Loader.getModList())
-        {
-            sidedDelegate.profileStart(mod.getName());
-            mod.tickStart(type, data);
-            sidedDelegate.profileEnd();
-        }
-        for (ModContainer mod : auxilliaryContainers)
-        {
-            sidedDelegate.profileStart(mod.getMod().getClass().getSimpleName());
-            mod.tickStart(type, data);
-            sidedDelegate.profileEnd();
-        }
+        sidedDelegate.profileStart("modTickStart$"+ticks);
         for (ITickHandler ticker : tickHandlers)
         {
-            if (ticker.ticks().contains(type))
+            EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
+            ticksToRun.removeAll(EnumSet.complementOf(ticks));
+            if (!ticksToRun.isEmpty())
             {
-                sidedDelegate.profileStart(ticker.getClass().getSimpleName());
-                ticker.tickStart(type, data);
+                sidedDelegate.profileStart(ticker.getLabel());
+                ticker.tickStart(ticksToRun, data);
                 sidedDelegate.profileEnd();
             }
         }
-        sidedDelegate.profileEnd();
         sidedDelegate.profileEnd();
     }
     
-    public void tickEnd(TickType type, Object ... data)
+    public void tickEnd(EnumSet<TickType> ticks, Object ... data)
     {
-        sidedDelegate.profileStart("modTickEnd");
-        sidedDelegate.profileStart(type.name());
-        for (ModContainer mod : Loader.getModList())
-        {
-            sidedDelegate.profileStart(mod.getName());
-            mod.tickEnd(type, data);
-            sidedDelegate.profileEnd();
-        }
-        for (ModContainer mod : auxilliaryContainers)
-        {
-            sidedDelegate.profileStart(mod.getMod().getClass().getSimpleName());
-            mod.tickEnd(type, data);
-            sidedDelegate.profileEnd();
-        }
+        sidedDelegate.profileStart("modTickEnd$"+ticks);
         for (ITickHandler ticker : tickHandlers)
         {
-            if (ticker.ticks().contains(type))
+            EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
+            ticksToRun.removeAll(EnumSet.complementOf(ticks));
+            if (!ticksToRun.isEmpty())
             {
-                sidedDelegate.profileStart(ticker.getClass().getSimpleName());
-                ticker.tickEnd(type, data);
+                sidedDelegate.profileStart(ticker.getLabel());
+                ticker.tickEnd(ticksToRun, data);
                 sidedDelegate.profileEnd();
             }
         }
-        sidedDelegate.profileEnd();
         sidedDelegate.profileEnd();
     }
     

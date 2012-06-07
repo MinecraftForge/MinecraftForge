@@ -37,7 +37,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     @Override
     public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
     {
-        if (tick==TickType.WORLD && tickEnd) {
+        if (tick==TickType.GAME && tickEnd) {
             return onTickInGame((MinecraftServer)minecraftInstance);
         } else {
             return true;
