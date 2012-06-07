@@ -129,7 +129,7 @@ public class GuiModList extends GuiScreen
                 shifty = drawLine(String.format("Authors: %s", selectedMod.getMetadata().getAuthorList()), offset, shifty);
                 shifty = drawLine(String.format("URL: %s", selectedMod.getMetadata().url), offset, shifty);
                 shifty = drawLine(selectedMod.getMetadata().childMods.isEmpty() ? "No child mods for this mod" : String.format("Child mods: %s", selectedMod.getMetadata().getChildModList()), offset, shifty);
-                this.getFontRenderer().func_27278_a(selectedMod.getMetadata().description, offset, shifty + 10, this.field_951_c - this.listWidth - 30, 0xDDDDDD);
+                this.getFontRenderer().func_27278_a(selectedMod.getMetadata().description, offset, shifty + 10, this.field_951_c - offset - 20, 0xDDDDDD);
             } else {
                 offset = ( this.listWidth + this.field_951_c ) / 2;
                 this.func_548_a(this.field_6451_g, selectedMod.getName(), offset, 35, 0xFFFFFF);
