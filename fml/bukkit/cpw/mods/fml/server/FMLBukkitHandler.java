@@ -198,18 +198,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
      */
     public void onChunkPopulate(IChunkProvider chunkProvider, int chunkX, int chunkZ, World world, IChunkProvider generator)
     {
-        Random fmlRandom = new Random(world.getSeed());
-        long xSeed = fmlRandom.nextLong() >> 2 + 1L;
-        long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ world.getSeed());
-
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.generatesWorld())
-            {
-                mod.getWorldGenerator().generate(fmlRandom, chunkX, chunkZ, world, generator, chunkProvider);
-            }
-        }
+    	FMLCommonHandler.instance().handleWorldGeneration(chunkX, chunkZ, world.getSeed(), world, generator, chunkProvider);
     }
 
     /**
