@@ -84,11 +84,11 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
@@ -266,7 +266,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPreWorldTick()
     {
         if (client.field_6324_e != null) {
-            FMLCommonHandler.instance().worldTickStart();
+            FMLCommonHandler.instance().worldTickStart(client.field_6324_e);
             FMLCommonHandler.instance().tickStart(TickType.WORLDGUI, 0.0f, client.field_6313_p);
         }
     }
@@ -277,7 +277,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPostWorldTick()
     {
         if (client.field_6324_e != null) {
-            FMLCommonHandler.instance().worldTickEnd();
+            FMLCommonHandler.instance().worldTickEnd(client.field_6324_e);
             FMLCommonHandler.instance().tickEnd(TickType.WORLDGUI, 0.0f, client.field_6313_p);
         }
         for (IKeyHandler entry : keyHandlers)

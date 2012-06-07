@@ -26,7 +26,6 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;

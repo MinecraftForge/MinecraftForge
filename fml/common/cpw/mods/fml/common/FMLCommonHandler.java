@@ -35,7 +35,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import cpw.mods.fml.common.ModContainer.SourceType;
-import cpw.mods.fml.common.ModContainer.TickType;
 
 /**
  * The main class for non-obfuscated hook handling code
@@ -79,6 +78,8 @@ public class FMLCommonHandler
     private List<ModContainer> auxilliaryContainers = new ArrayList<ModContainer>();
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
+    
+    private Set<ITickHandler>tickHandlers = new HashSet<ITickHandler>();
     /**
      * We register our delegate here
      * @param handler
@@ -91,17 +92,17 @@ public class FMLCommonHandler
     /**
      * Pre-tick the mods 
      */
-    public void worldTickStart()
+    public void worldTickStart(Object world)
     {
-        tickStart(ModContainer.TickType.WORLD,0.0f);
+        tickStart(TickType.WORLD,0.0f, world);
     }
 
     /**
      * Post-tick the mods
      */
-    public void worldTickEnd()
+    public void worldTickEnd(Object world)
     {
-        tickEnd(ModContainer.TickType.WORLD,0.0f);
+        tickEnd(TickType.WORLD,0.0f);
     }
 
     public void tickStart(TickType type, Object ... data)
@@ -119,6 +120,15 @@ public class FMLCommonHandler
             sidedDelegate.profileStart(mod.getMod().getClass().getSimpleName());
             mod.tickStart(type, data);
             sidedDelegate.profileEnd();
+        }
+        for (ITickHandler ticker : tickHandlers)
+        {
+            if (ticker.ticks().contains(type))
+            {
+                sidedDelegate.profileStart(ticker.getClass().getSimpleName());
+                ticker.tickStart(type, data);
+                sidedDelegate.profileEnd();
+            }
         }
         sidedDelegate.profileEnd();
         sidedDelegate.profileEnd();
@@ -139,6 +149,15 @@ public class FMLCommonHandler
             sidedDelegate.profileStart(mod.getMod().getClass().getSimpleName());
             mod.tickEnd(type, data);
             sidedDelegate.profileEnd();
+        }
+        for (ITickHandler ticker : tickHandlers)
+        {
+            if (ticker.ticks().contains(type))
+            {
+                sidedDelegate.profileStart(ticker.getClass().getSimpleName());
+                ticker.tickEnd(type, data);
+                sidedDelegate.profileEnd();
+            }
         }
         sidedDelegate.profileEnd();
         sidedDelegate.profileEnd();
@@ -515,4 +534,8 @@ public class FMLCommonHandler
         }
     }
 
+    public void registerTickHandler(ITickHandler handler)
+    {
+        tickHandlers.add(handler);
+    }
 }

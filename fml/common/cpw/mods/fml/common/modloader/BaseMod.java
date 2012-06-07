@@ -23,7 +23,7 @@ import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
-import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.TickType;
 
 /**
  * 
