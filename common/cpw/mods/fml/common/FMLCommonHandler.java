@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,9 +86,12 @@ public class FMLCommonHandler
      * We register our delegate here
      * @param handler
      */
-    public void registerSidedDelegate(IFMLSidedHandler handler)
+    public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
+        getFMLLogger().info("Attempting early MinecraftForge initialization");
+        callForgeMethod("initialize");
+        getFMLLogger().info("Completed early MinecraftForge initialization");
     }
 
     public void tickStart(EnumSet<TickType> ticks, Object ... data)
@@ -399,6 +403,42 @@ public class FMLCommonHandler
         throw new RuntimeException(exception);
     }
 
+    
+    private Class<?> forge;
+    private boolean noForge;
+    
+    private Class<?> findMinecraftForge()
+    {
+        if (forge==null && !noForge)
+        {
+            try {
+                forge = Class.forName("forge.MinecraftForge");
+            } catch (Exception ex) {
+                try {
+                    forge = Class.forName("net.minecraft.src.forge.MinecraftForge");
+                } catch (Exception ex2) {
+                    // Ignore- forge isn't loaded
+                    noForge = true;
+                }
+            }
+        }
+        return forge;
+    }
+    
+    private Object callForgeMethod(String method)
+    {
+        if (noForge)
+            return null;
+        try
+        {
+            return findMinecraftForge().getMethod(method).invoke(null);
+        }
+        catch (Exception e)
+        {
+            // No Forge installation
+            return null;
+        }
+    }
     /**
      * @param string
      * @return
@@ -408,14 +448,10 @@ public class FMLCommonHandler
         ArrayList<String> brandings=new ArrayList<String>();
         brandings.add(mcVersion);
         brandings.add(Loader.instance().getFMLVersionString());
-        try {
-            brandings.add((String)Class.forName("forge.MinecraftForge").getMethod("getVersionString").invoke(null));
-        } catch (Exception ex) {
-            try {
-                brandings.add((String)Class.forName("net.minecraft.src.forge.MinecraftForge").getMethod("getVersionString").invoke(null));
-            } catch (Exception ex2) {
-                // Ignore- forge isn't loaded
-            }
+        String forgeVersion = (String)callForgeMethod("getVersionString");
+        if (forgeVersion != null)
+        {
+            brandings.add(forgeVersion);
         }
         brandings.addAll(sidedDelegate.getAdditionalBrandingInformation());
         try {
