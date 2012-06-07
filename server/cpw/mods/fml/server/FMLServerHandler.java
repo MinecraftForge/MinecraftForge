@@ -172,6 +172,10 @@ public class FMLServerHandler implements IFMLSidedHandler
         FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), world);
     }
 
+    public void onWorldLoadTick()
+    {
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
+    }
     /**
      * Get the server instance
      * 
