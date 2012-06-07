@@ -127,7 +127,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
             // We're safe. continue
         }
         server = minecraftServer;
-        FMLCommonHandler.instance().registerSidedDelegate(this);
+        FMLCommonHandler.instance().beginLoading(this);
         FMLRegistry.registerRegistry(new BukkitRegistry());
         Loader.instance().loadMods();
     }
