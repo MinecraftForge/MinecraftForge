@@ -312,18 +312,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onChunkPopulate(IChunkProvider chunkProvider, int chunkX, int chunkZ, World world, IChunkProvider generator)
     {
-        Random fmlRandom = new Random(world.func_22138_q());
-        long xSeed = fmlRandom.nextLong() >> 2 + 1L;
-        long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ world.func_22138_q());
-
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.generatesWorld())
-            {
-                mod.getWorldGenerator().generate(fmlRandom, chunkX, chunkZ, world, generator, chunkProvider);
-            }
-        }
+        FMLCommonHandler.instance().handleWorldGeneration(chunkX, chunkZ, world.func_22138_q(), world, generator, chunkProvider);
     }
 
     /**

@@ -104,16 +104,6 @@ public interface ModContainer
      */
     Object getMod();
     /**
-     * Does this mod want to generate world data.
-     * @return
-     */
-    boolean generatesWorld();
-    /**
-     * The world generator for this mod.
-     * @return
-     */
-    IWorldGenerator getWorldGenerator();
-    /**
      * Lookup the fuel value for the supplied item/damage with this mod.
      * @param itemId
      * @param itemDamage
