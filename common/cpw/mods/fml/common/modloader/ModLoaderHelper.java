@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.ModContainer.TickType;
+import cpw.mods.fml.common.TickType;
 
 /**
  * @author cpw

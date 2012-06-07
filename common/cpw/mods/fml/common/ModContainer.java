@@ -14,7 +14,6 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -203,24 +202,6 @@ public interface ModContainer
     
     IPlayerTracker getPlayerTracker();
     
-    public enum TickType {
-        WORLD, RENDER, GUI, WORLDGUI,WORLDLOADTICK, GUILOADTICK;
-
-        /**
-         * @return
-         */
-        public EnumSet<TickType> partnerTicks()
-        {
-            if (this==WORLD) return EnumSet.of(RENDER,WORLDLOADTICK);
-            if (this==RENDER) return EnumSet.of(WORLD, WORLDLOADTICK);
-            if (this==GUI) return EnumSet.of(WORLDGUI, GUILOADTICK);
-            if (this==WORLDGUI) return EnumSet.of(GUI, GUILOADTICK);
-            if (this==WORLDLOADTICK) return EnumSet.of(WORLD, RENDER);
-            if (this==GUILOADTICK) return EnumSet.of(GUI, WORLDGUI);
-            return null;
-        }
-    }
-
     List<IKeyHandler> getKeys();
     
     SourceType getSourceType();

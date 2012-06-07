@@ -148,17 +148,17 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Every tick just before world and other ticks occur
      */
-    public void onPreTick()
+    public void onPreWorldTick(World world)
     {
-        FMLCommonHandler.instance().worldTickStart();
+        FMLCommonHandler.instance().worldTickStart(world);
     }
 
     /**
      * Every tick just after world and other ticks occur
      */
-    public void onPostTick()
+    public void onPostWorldTick(World world)
     {
-        FMLCommonHandler.instance().worldTickEnd();
+        FMLCommonHandler.instance().worldTickEnd(world);
     }
 
     /**

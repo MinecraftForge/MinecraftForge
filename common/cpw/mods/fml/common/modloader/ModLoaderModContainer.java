@@ -45,9 +45,9 @@ import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainer.ModState;
 import cpw.mods.fml.common.ModContainer.SourceType;
-import cpw.mods.fml.common.ModContainer.TickType;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
+import cpw.mods.fml.common.TickType;
 
 public class ModLoaderModContainer implements ModContainer
 {
