@@ -144,6 +144,11 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 	    	}
 	    }
 	}
+	
+	public void onWorldLoadTick()
+	{
+		FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
+	}
 
     /**
      * Every tick just before world and other ticks occur
