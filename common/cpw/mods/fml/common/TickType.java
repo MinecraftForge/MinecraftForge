@@ -19,7 +19,7 @@ import java.util.EnumSet;
 public enum TickType {
     /**
      * Fired during the world evaluation loop
-     * server side
+     * server and client side
      * 
      * arg 0 : The world that is ticking
      */
@@ -67,11 +67,11 @@ public enum TickType {
      */
     public EnumSet<TickType> partnerTicks()
     {
-        if (this==WORLD) return EnumSet.of(RENDER,WORLDLOAD);
-        if (this==RENDER) return EnumSet.of(WORLD, WORLDLOAD);
+        if (this==GAME) return EnumSet.of(RENDER,WORLDLOAD);
+        if (this==RENDER) return EnumSet.of(GAME, WORLDLOAD);
         if (this==GUI) return EnumSet.of(WORLDGUI, GUILOAD);
         if (this==WORLDGUI) return EnumSet.of(GUI, GUILOAD);
-        if (this==WORLDLOAD) return EnumSet.of(WORLD, RENDER);
+        if (this==WORLDLOAD) return EnumSet.of(GAME, RENDER);
         if (this==GUILOAD) return EnumSet.of(GUI, WORLDGUI);
         return null;
     }
