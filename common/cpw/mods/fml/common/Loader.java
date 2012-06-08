@@ -118,6 +118,7 @@ public class Loader
      * The canonical minecraft directory
      */
     private File canonicalMinecraftDir;
+    private Exception capturedError;
 
     
     public static Loader instance()
@@ -431,8 +432,8 @@ public class Loader
 
         if (state == State.ERRORED)
         {
-            log.severe("A problem has occured during mod loading, giving up now");
-            throw new RuntimeException("Giving up please");
+            log.severe("A problem has occured during mod loading. Likely a corrupt jar is located in your mods directory");
+            throw new LoaderException(capturedError);
         }
 
         log.info(String.format("Forge Mod Loader has loaded %d mods", mods.size()));
@@ -554,9 +555,10 @@ public class Loader
         }
         catch (Exception e)
         {
-            log.warning(String.format("Zip file %s failed to read properly", modFile.getName()));
+            log.severe(String.format("Zip file %s failed to read properly", modFile.getName()));
             log.throwing("fml.server.Loader", "attemptFileLoad", e);
             state = State.ERRORED;
+            capturedError = e;
         }
 
         return foundAModClass;
