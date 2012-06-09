@@ -92,6 +92,11 @@ public class FMLRegistry
         instance.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
+    public static void removeBiome(BiomeGenBase biome)
+    {
+        instance.removeBiome(biome);
+    }
+
     public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         instance.removeSpawn(entityClass, typeOfCreature, biomes);
