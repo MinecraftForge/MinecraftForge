@@ -1091,4 +1091,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         return null;
     }
+
+    /**
+     * @param biome
+     */
+    public void removeBiomeFromDefaultWorldGenerator(BiomeGenBase biome)
+    {
+        WorldType.field_48635_b.removeBiome(biome);
+    }
 }

@@ -3,6 +3,7 @@ package net.minecraft.src;
 import java.util.Collections;
 import java.util.List;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.IMinecraftRegistry;
 
@@ -79,7 +80,7 @@ public class ClientRegistry implements IMinecraftRegistry
     @Override
     public void addBiome(BiomeGenBase biome)
     {
-        //NOOP because the implementation idea is broken. Creating a BiomeGenBase adds the biome already.
+        FMLClientHandler.instance().addBiomeToDefaultWorldGenerator(biome);
     }
 
     @Override
@@ -121,7 +122,7 @@ public class ClientRegistry implements IMinecraftRegistry
     @Override
     public void removeBiome(BiomeGenBase biome)
     {
-        // NOOP because broken
+        FMLClientHandler.instance().removeBiomeFromDefaultWorldGenerator(biome);
     }
 
     @Override

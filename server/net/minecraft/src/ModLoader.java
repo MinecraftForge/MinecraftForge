@@ -83,7 +83,7 @@ public class ModLoader
      */
     public static void addBiome(BiomeGenBase biome)
     {
-        FMLServerHandler.instance().addBiomeToDefaultWorldGenerator(biome);
+        FMLRegistry.addBiome(biome);
     }
 
     /**
