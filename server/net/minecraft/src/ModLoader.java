@@ -591,7 +591,7 @@ public class ModLoader
      */
     public static void removeBiome(BiomeGenBase biome)
     {
-        FMLRegistry.removeBiome(biome);
+        FMLServerHandler.instance().removeBiomeFromDefaultWorldGenerator(biome);
     }
 
     /**

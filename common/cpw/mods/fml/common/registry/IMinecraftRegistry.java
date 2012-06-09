@@ -16,8 +16,6 @@ public interface IMinecraftRegistry
 
     public abstract void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes);
 
-    public abstract void removeBiome(BiomeGenBase biome);
-
     public abstract void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes);
 
     public abstract void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes);

@@ -550,6 +550,14 @@ public class FMLServerHandler implements IFMLSidedHandler
         WorldType.field_48457_b.addNewBiome(biome);
     }
 
+    /**
+     * @param biome
+     */
+    public void removeBiomeFromDefaultWorldGenerator(BiomeGenBase biome)
+    {
+        WorldType.field_48457_b.removeBiome(biome);
+    }
+
     @Override
     public Object getMinecraftInstance()
     {
