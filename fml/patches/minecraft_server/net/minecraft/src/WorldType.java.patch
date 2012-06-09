@@ -1,15 +1,16 @@
 --- ../src-base/minecraft_server/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft_server/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1,5 +1,8 @@
+@@ -1,5 +1,9 @@
  package net.minecraft.src;
  
++import java.util.ArrayList;
 +import java.util.Arrays;
 +import java.util.List;
 +
  public class WorldType
  {
      public static final WorldType[] field_48459_a = new WorldType[16];
-@@ -11,6 +14,8 @@
+@@ -11,6 +15,8 @@
      private boolean field_48455_g;
      private boolean field_48460_h;
  
@@ -18,7 +19,7 @@
      private WorldType(int p_i1025_1_, String p_i1025_2_)
      {
          this(p_i1025_1_, p_i1025_2_, 0);
-@@ -22,6 +27,15 @@
+@@ -22,6 +28,15 @@
          this.field_48454_f = p_i1026_3_;
          this.field_48455_g = true;
          field_48459_a[p_i1026_1_] = this;
@@ -34,7 +35,7 @@
      }
  
      public String func_48449_a()
-@@ -68,4 +82,14 @@
+@@ -68,4 +83,26 @@
  
          return null;
      }
@@ -44,8 +45,20 @@
 +    }
 +    
 +    public void addNewBiome(BiomeGenBase biome) {
-+        List<BiomeGenBase> biomes=Arrays.asList(biomesForWorldType);
-+        biomes.add(biome);
-+        biomesForWorldType=biomes.toArray(new BiomeGenBase[0]);
++		List<BiomeGenBase> newBiomesForWorld = new ArrayList<BiomeGenBase>();
++		newBiomesForWorld.addAll(Arrays.asList(biomesForWorldType));
++		
++		if (!newBiomesForWorld.contains(biome))
++			newBiomesForWorld.add(biome);
++		biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
 +    }
++    
++    public void removeBiome(BiomeGenBase biome) {
++		List<BiomeGenBase> newBiomesForWorld = new ArrayList<BiomeGenBase>();
++		newBiomesForWorld.addAll(Arrays.asList(biomesForWorldType));
++		
++		newBiomesForWorld.remove(biome);
++		biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
++    }
++
  }

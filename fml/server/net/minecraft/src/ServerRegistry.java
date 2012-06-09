@@ -109,12 +109,6 @@ public class ServerRegistry implements IMinecraftRegistry
     }
 
     @Override
-    public void removeBiome(BiomeGenBase biome)
-    {
-        // NOOP because broken
-    }
-
-    @Override
     public void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         for (BiomeGenBase biome : biomes)
