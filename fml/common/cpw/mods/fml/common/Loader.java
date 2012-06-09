@@ -468,10 +468,20 @@ public class Loader
                 continue;
             }
             String clazzName=path+fname.group(2);
-            log.fine(String.format("Found a mod class %s in directory %s, attempting to load it", clazzName, modDir.getName()));
-            loadModClass(modDir, file.getName(), clazzName, sourceType);
-            log.fine(String.format("Successfully loaded mod class %s", file.getName()));
-            foundAModClass = true;
+            try
+            {
+                log.fine(String.format("Found a mod class %s in directory %s, attempting to load it", clazzName, modDir.getName()));
+                loadModClass(modDir, file.getName(), clazzName, sourceType);
+                log.fine(String.format("Successfully loaded mod class %s", file.getName()));
+                foundAModClass = true;
+            }
+            catch (Exception e)
+            {
+                log.severe(String.format("File %s failed to read properly", file.getName()));
+                log.throwing("fml.server.Loader", "attemptDirLoad", e);
+                state = State.ERRORED;
+                capturedError = e;
+            }
         }
 
         return foundAModClass;
@@ -514,6 +524,7 @@ public class Loader
         {
             log.warning(String.format("Failed to load mod class %s in %s", classFileName, classSource.getAbsoluteFile()));
             log.throwing("fml.server.Loader", "attemptLoad", e);
+            throw new LoaderException(e);
         }
     }
 
