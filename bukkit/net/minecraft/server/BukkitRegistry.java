@@ -115,7 +115,7 @@ public class BukkitRegistry implements IMinecraftRegistry
     @Override
     public void removeBiome(BiomeGenBase biome)
     {
-        // TODO
+    	FMLBukkitHandler.instance().removeBiomeFromDefaultWorldGenerator((BiomeBase)biome);
     }
 
     @Override

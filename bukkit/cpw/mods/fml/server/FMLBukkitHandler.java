@@ -529,6 +529,14 @@ public class FMLBukkitHandler implements IFMLSidedHandler
         WorldType.NORMAL.addNewBiome(biome);
     }
 
+    /**
+     * @param biome
+     */
+    public void removeBiomeFromDefaultWorldGenerator(BiomeBase biome)
+    {
+        WorldType.NORMAL.removeBiome(biome);
+    }
+
 	@Override
 	public Object getMinecraftInstance() {
 		return server;
