@@ -18,6 +18,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.World;
+import net.minecraft.src.forge.oredict.OreDictionary;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -181,72 +182,45 @@ public class MinecraftForge
 
     // Ore Dictionary
     // ------------------------------------------------------------
-    private static LinkedList<IOreHandler> oreHandlers = new LinkedList<IOreHandler>();
-    private static TreeMap<String, List<ItemStack>> oreDict = new TreeMap<String, List<ItemStack>>();
-
-    /** Register a new ore handler.  This will automatically call the handler
-     * with all current ores during registration, and every time a new ore is
-     * added later.
-     */
+    //Deprecated in favor of OreDictionary.registerOreHandler
+    @Deprecated
     public static void registerOreHandler(IOreHandler handler)
     {
-        oreHandlers.add(handler);
-
-        for (String key : oreDict.keySet())
-        {
-            List<ItemStack> ores = oreDict.get(key);
-            for (ItemStack stack : ores)
-            {
-                handler.registerOre(key, stack);
-            }
-        }
+        OreDictionary.registerOreHandler(handler);
     }
 
-    /** Register a new item with the ore dictionary.
-     * @param oreClass The string class of the ore.
-     * @param ore The ItemStack for the ore.
-     */
+    //Deprecated in favor of OreDictionary.registerOre
+    @Deprecated
     public static void registerOre(String oreClass, ItemStack ore)
     {
-        List<ItemStack> orelist = oreDict.get(oreClass);
-        if (orelist == null)
-        {
-            orelist = new ArrayList<ItemStack>();
-            oreDict.put(oreClass, orelist);
-        }
-        orelist.add(ore);
-        for (IOreHandler ioh : oreHandlers)
-        {
-            ioh.registerOre(oreClass, ore);
-        }
+        OreDictionary.registerOre(oreClass, ore);
     }
 
-    /** Get the list of ores in a given class.
-     */
+    //Deprecated in favor of OreDictionary.getOres
+    @Deprecated
     public static List<ItemStack> getOreClass(String oreClass)
     {
-        return oreDict.get(oreClass);
+        return OreDictionary.getOres(oreClass);
     }
 
+    //Deprecated in favor of the Ore recipes, and because it is ugly as heck.
+    @Deprecated
     public static class OreQuery implements Iterable<Object[]>
     {
         Object[] proto;
 
         public class OreQueryIterator implements Iterator<Object[]>
         {
-            LinkedList itering;
-            LinkedList output;
+            LinkedList itering = new LinkedList();
+            LinkedList output = new LinkedList();
 
             private OreQueryIterator()
             {
-                itering = new LinkedList();
-                output = new LinkedList();
-
-                for (int i = 0; i < proto.length; i++)
+                for (Object input : proto)
                 {
-                    if (proto[i] instanceof Collection)
+                    if (input instanceof Collection)
                     {
-                        Iterator it = ((Collection)proto[i]).iterator();
+                        Iterator it = ((Collection)input).iterator();
                         if (!it.hasNext())
                         {
                             output = null;
@@ -257,8 +231,8 @@ public class MinecraftForge
                     }
                     else
                     {
-                        itering.addLast(proto[i]);
-                        output.addLast(proto[i]);
+                        itering.addLast(input);
+                        output.addLast(input);
                     }
                 }
             }
@@ -271,7 +245,6 @@ public class MinecraftForge
             public Object[] next()
             {
                 Object[] tr = output.toArray();
-
                 Object to;
                 while (true)
                 {
@@ -332,6 +305,8 @@ public class MinecraftForge
     /** Generate all valid legal recipe combinations.  Any Lists in pattern
      * will be fully expanded to all valid combinations.
      */
+    //Deprecated in favor of the new Ore Recipe system
+    @Deprecated
     public static OreQuery generateRecipes(Object... pattern)
     {
         return new OreQuery(pattern);
