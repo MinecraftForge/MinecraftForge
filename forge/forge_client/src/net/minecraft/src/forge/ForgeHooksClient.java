@@ -36,7 +36,9 @@ import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
-
+    private static Field textureID = null;
+    private static boolean textureIDChecked = false;
+    
     public static boolean onBlockHighlight(RenderGlobal render, EntityPlayer player, MovingObjectPosition target, int i, ItemStack itemstack, float partialTicks)
     {
         for (IHighlightHandler handler : highlightHandlers)
@@ -135,7 +137,22 @@ public class ForgeHooksClient
         if (tess == null)
         {
             tess = new Tessellator();
-            tess.textureID = texture;
+            //Hack around for waiting for Optifine to implement the feature he requested.
+            //Should make it not cause while we wait for him to update.
+            if (!textureIDChecked && textureID == null)
+            {
+                textureIDChecked = true;
+                try 
+                {
+                    textureID = Tessellator.class.getField("textureID");
+                }
+                catch (NoSuchFieldException ex){}
+            }
+            if (textureID != null)
+            {
+                tess.textureID = texture;
+            }
+            //End Hack
             tessellators.put(key, tess);
         }
         if (inWorld && !renderTextures.contains(key))
