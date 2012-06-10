@@ -72,25 +72,39 @@
          this.field_1604_f.add(p_1066_1_);
          p_1066_1_.func_783_a();
      }
-@@ -460,7 +475,10 @@
+@@ -460,10 +475,26 @@
          {
              TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
              var3.field_1131_c = this.field_1602_h.field_1578_g;
 -            var3.func_783_a();
+-            this.field_1605_e.clear();
+-            this.field_1605_e.put(var3.field_1127_a);
+-            this.field_1605_e.position(0).limit(var3.field_1127_a.length);
 +            if (!FMLClientHandler.instance().onUpdateTextureEffect(var3))
 +            {
 +                continue;
 +            }
-             this.field_1605_e.clear();
-             this.field_1605_e.put(var3.field_1127_a);
-             this.field_1605_e.position(0).limit(var3.field_1127_a.length);
-@@ -471,11 +489,16 @@
-                 var1 = var3.field_1126_b;
-             }
- 
++
 +            Dimension dim = FMLClientHandler.instance().getTextureDimensions(var3);
 +            int tWidth  = dim.width / 16;
-+            int tHeight = dim.height / 16; 
++            int tHeight = dim.height / 16;
++            int tLen = tWidth * tHeight * 4;
++            
++            if (var3.field_1127_a.length == tLen)
++            {
++                this.field_1605_e.clear();
++                this.field_1605_e.put(var3.field_1127_a);
++                this.field_1605_e.position(0).limit(var3.field_1127_a.length);
++            }
++            else
++            {
++                FMLClientHandler.instance().scaleTextureFXData(var3.field_1127_a, field_1605_e, tWidth, tLen);
++            }
+ 
+             if (var3.field_1126_b != var1)
+             {
+@@ -473,9 +504,11 @@
+ 
              for (int var4 = 0; var4 < var3.field_1129_e; ++var4)
              {
 +                int xOffset = var3.field_1126_b % 16 * tWidth + var4 * tWidth;
@@ -102,7 +116,7 @@
                  }
              }
          }
-@@ -577,8 +600,9 @@
+@@ -577,8 +610,9 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
@@ -113,7 +127,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -614,11 +638,13 @@
+@@ -614,11 +648,13 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }

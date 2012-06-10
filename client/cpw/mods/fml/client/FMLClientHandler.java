@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1012,19 +1013,58 @@ public class FMLClientHandler implements IFMLSidedHandler
             return false;
         }
         Profiler.func_40662_b();
-        
-        Dimension dim = getTextureDimensions(effect);
-        int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
-        if (effect.field_1127_a.length != target) 
+
+        if (ifx != null)
         {
-            log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target));
-            if (ifx != null)
+            Dimension dim = getTextureDimensions(effect);
+            int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
+            if (effect.field_1127_a.length != target) 
             {
+                log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target));
                 ifx.setErrored(true);
+                return false;
             }
-            return false;
         }
         return true;
+    }
+    
+    //Quick and dirty image scaling, no smoothing or fanciness, meant for speed as it will be called every tick.    
+    public void scaleTextureFXData(byte[] data, ByteBuffer buf, int target, int length)
+    {
+        int sWidth = (int)Math.sqrt(data.length / 4);
+        int factor = target / sWidth;
+        byte[] tmp = new byte[4];
+        
+        buf.clear();
+        
+        if (factor > 1)
+        {
+            for (int y = 0; y < sWidth; y++)
+            {
+                int sRowOff = sWidth * y;
+                int tRowOff = target * y * factor;
+                for (int x = 0; x < sWidth; x++)
+                {
+                    int sPos = (x + sRowOff) * 4;
+                    tmp[0] = data[sPos + 0];
+                    tmp[1] = data[sPos + 1];
+                    tmp[2] = data[sPos + 2];
+                    tmp[3] = data[sPos + 3];
+                    
+                    int tPosTop = (x * factor) + tRowOff;
+                    for (int y2 = 0; y2 < factor; y2++)
+                    {
+                        buf.position((tPosTop + (y2 * target)) * 4);
+                        for (int x2 = 0; x2 < factor; x2++)
+                        {
+                            buf.put(tmp);
+                        }
+                    }
+                }
+            }
+        }
+        
+        buf.position(0).limit(length);
     }
 
     public void onPreRegisterEffect(TextureFX effect)
