@@ -8,20 +8,17 @@
  
  public class BlockCrops extends BlockFlower
  {
-@@ -129,31 +130,24 @@
-         return 6;
-     }
- 
--    /**
--     * Drops the block items with a specified chance of dropping the specified items
--     */
--    public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
-+    @Override
-+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
+@@ -135,25 +136,26 @@
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
--        super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
 -
 -        if (!par1World.isRemote)
++    }
++    
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        if (metadata == 7)
          {
