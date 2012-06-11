@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -573,6 +574,17 @@ public class ModLoaderModContainer implements ModContainer
         if (keyHandlers==null) {
             keyHandlers=new ArrayList<IKeyHandler>();
         }
+        
+        Iterator<IKeyHandler> itr = keyHandlers.iterator();
+        while(itr.hasNext())
+        {
+            IKeyHandler old = itr.next();
+            if (old.getKeyBinding() == handler.getKeyBinding())
+            {
+                itr.remove();
+            }
+        }
+        
         keyHandlers.add(handler);
     }
 
@@ -637,7 +649,11 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public String getVersion()
     {
-        return mod!=null ? mod.getVersion() : "Not available";
+        if (mod == null || mod.getVersion() == null)
+        {
+            return "Not available";
+        }
+        return mod.getVersion();
     }
 
     /* (non-Javadoc)
