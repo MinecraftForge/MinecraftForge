@@ -82,7 +82,7 @@ public class ForgeHooks
         }
         return false;
     }
-    static LinkedList<IHoeHandler> hoeHandlers = new LinkedList<IHoeHandler>();
+    public static LinkedList<IHoeHandler> hoeHandlers = new LinkedList<IHoeHandler>();
 
     public static EnumStatus sleepInBedAt(EntityPlayer player, int x, int y, int z)
     {
