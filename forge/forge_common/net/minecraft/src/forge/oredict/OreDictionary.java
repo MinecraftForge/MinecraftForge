@@ -2,6 +2,7 @@ package net.minecraft.src.forge.oredict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -96,12 +97,15 @@ public class OreDictionary
     {
         oreHandlers.add(handler);
 
-        for (Map.Entry<String, Integer> entry : oreIDs.entrySet())
+        Iterator<Map.Entry<String, Integer>> itr = oreIDs.entrySet().iterator();
+        while(itr.hasNext())
         {
-            List<ItemStack> ores = getOres(entry.getValue());
-            for (ItemStack stack : ores)
+            Map.Entry<String, Integer> entry = itr.next();
+            
+            Iterator<ItemStack> ores = getOres(entry.getValue()).iterator();
+            while (ores.hasNext())
             {
-                handler.registerOre(entry.getKey(), stack);
+                handler.registerOre(entry.getKey(), ores.next());
             }
         }
     }
