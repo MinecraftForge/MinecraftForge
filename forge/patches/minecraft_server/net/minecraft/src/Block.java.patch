@@ -16,7 +16,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
-+        isDefaultTexture = getTextureFile().equalsIgnoreCase("/terrain.png");
++        isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
      }
  
      /**
