@@ -96,16 +96,14 @@ public class OreDictionary
     public static void registerOreHandler(IOreHandler handler)
     {
         oreHandlers.add(handler);
-
-        Iterator<Map.Entry<String, Integer>> itr = oreIDs.entrySet().iterator();
-        while(itr.hasNext())
+        
+        HashMap<String, Integer> tmp = (HashMap<String, Integer>)oreIDs.clone();
+        
+        for(Map.Entry<String, Integer> entry : tmp.entrySet())
         {
-            Map.Entry<String, Integer> entry = itr.next();
-            
-            Iterator<ItemStack> ores = getOres(entry.getValue()).iterator();
-            while (ores.hasNext())
+            for(ItemStack stack : getOres(entry.getValue()))
             {
-                handler.registerOre(entry.getKey(), ores.next());
+                handler.registerOre(entry.getKey(), stack);
             }
         }
     }
