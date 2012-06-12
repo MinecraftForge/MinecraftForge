@@ -527,7 +527,15 @@ public class ForgeHooksClient
     {
 		for (ISoundHandler handler : soundHandlers)
         {
-            handler.onPlaySoundAtEntity(entity, soundName, volume, pitch);
+			try {
+				Class[] params = {Entity.class, String.class, float.class, float.class };
+				handler.getClass().getDeclaredMethod("onPlaySoundAtEntity",params);
+				handler.onPlaySoundAtEntity(entity, soundName, volume, pitch);
+			} catch (Exception e) {
+				// Mod built against older version of Forge. Print a stacktrace.
+				e.printStackTrace();
+			}
+            
         }
     }
     
