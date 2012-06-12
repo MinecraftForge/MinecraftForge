@@ -2,6 +2,7 @@ package net.minecraft.src.forge;
 
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
+import net.minecraft.src.Entity;
 
 public interface ISoundHandler 
 {
@@ -91,5 +92,18 @@ public interface ISoundHandler
      * @return The new sound entry to play, or the current one passed in.
      */
     SoundPoolEntry onPlaySoundEffect(SoundManager soundManager, SoundPoolEntry entry, String soundName, float volume, float pitch);
+
+	/**
+	 * Raised when an entity attempts to play a sound via World's playSoundAtEntity
+	 * function. This is so that additional data about the state of the entity can
+	 * be obtained efficiently without using AABBs. An important thing to note:
+	 * This hook will be called even if the sound is off.
+	 * 
+	 * @param entity The entity that the sound should be played at. Always the calling Entity or the Player.
+	 * @param soundName The name of the requested sound.
+	 * @param volume The sound's volume, between 0.0 and 1.0.
+	 * @param pitch The sound's pitch	 
+	 */
+	void onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch);
 
 }

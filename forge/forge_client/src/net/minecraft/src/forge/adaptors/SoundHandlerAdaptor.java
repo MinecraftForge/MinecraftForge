@@ -2,6 +2,7 @@ package net.minecraft.src.forge.adaptors;
 
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
+import net.minecraft.src.Entity;
 import net.minecraft.src.forge.ISoundHandler;
 
 /**
@@ -39,4 +40,7 @@ public class SoundHandlerAdaptor implements ISoundHandler
     {
         return entry;
     }
+	
+	@Override
+	public void onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch){}
 }

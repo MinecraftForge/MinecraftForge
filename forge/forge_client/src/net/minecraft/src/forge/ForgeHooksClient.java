@@ -522,6 +522,14 @@ public class ForgeHooksClient
         }
         return entry;
     }
+	
+	public static void onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch)
+    {
+		for (ISoundHandler handler : soundHandlers)
+        {
+            handler.onPlaySoundAtEntity(entity, soundName, volume, pitch);
+        }
+    }
     
     public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)
     {
