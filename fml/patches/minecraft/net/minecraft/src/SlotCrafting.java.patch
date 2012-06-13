@@ -12,7 +12,7 @@
  
      public void func_4103_a(ItemStack p_4103_1_)
      {
-+        FMLClientHandler.instance().onItemCrafted(field_25015_e, p_4103_1_, field_1118_b);
++        FMLClientHandler.instance().onItemCrafted(field_25015_e, p_4103_1_, field_1125_c);
          this.func_48434_c(p_4103_1_);
  
          for (int var2 = 0; var2 < this.field_1125_c.func_469_c(); ++var2)
