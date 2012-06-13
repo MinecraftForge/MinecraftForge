@@ -522,6 +522,22 @@ public class ForgeHooksClient
         }
         return entry;
     }
+	
+	public static void onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch)
+    {
+		for (ISoundHandler handler : soundHandlers)
+        {
+			try {
+				Class[] params = {Entity.class, String.class, float.class, float.class };
+				handler.getClass().getDeclaredMethod("onPlaySoundAtEntity",params);
+				handler.onPlaySoundAtEntity(entity, soundName, volume, pitch);
+			} catch (Exception e) {
+				// Mod built against older version of Forge. Print a stacktrace.
+				e.printStackTrace();
+			}
+            
+        }
+    }
     
     public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)
     {

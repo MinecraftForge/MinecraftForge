@@ -29,11 +29,25 @@ def main():
     base = os.path.normpath(os.path.join('..', 'src_base'))
     work = os.path.normpath(os.path.join('..', 'src_work'))
     timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
+    crlf = re.compile('\r\n')
     
     for path, _, filelist in os.walk(work, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.java'):
             file_base = os.path.normpath(os.path.join(base, path[12:], cur_file)).replace(os.path.sep, '/')
             file_work = os.path.normpath(os.path.join(work, path[12:], cur_file)).replace(os.path.sep, '/')
+            file_base_data = open(file_base,"rb").read()
+            file_base_newdata = crlf.sub("\n",file_base_data)
+            if file_base_data != file_base_newdata:
+                with open(file_base,"wb") as f:
+                    f.write(file_base_newdata)
+                    f.close()
+            file_work_data = open(file_work,"rb").read()
+            file_work_newdata = crlf.sub("\n",file_work_data)
+            if file_work_data != file_work_newdata:
+                with open(file_work,"wb") as f:				
+                    f.write(file_work_newdata)
+                    f.close()
+            
             patch = ''
             cmd = 'diff -u %s %s -r --strip-trailing-cr --new-file' % (file_base, file_work)
             process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
