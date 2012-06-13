@@ -75,8 +75,8 @@ public class GuiSlotModList extends GuiScrollingList
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
         ModContainer mc=mods.get(listIndex);
-        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getName(), listWidth - 9), this.left + 3 , var3 + 2, 0xFFFFFF);
-        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getVersion(), listWidth - 9), this.left + 3 , var3 + 12, 0xCCCCCC);
+        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getName(), listWidth - 11), this.left + 3 , var3 + 2, 0xFFFFFF);
+        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getVersion(), listWidth - 11), this.left + 3 , var3 + 12, 0xCCCCCC);
         this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 9), this.left + 3 , var3 + 22, 0xCCCCCC);
     }
 
