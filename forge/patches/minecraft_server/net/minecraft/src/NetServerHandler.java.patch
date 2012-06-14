@@ -1,6 +1,6 @@
 --- ../src_base/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -2,10 +2,14 @@
+@@ -2,10 +2,15 @@
  
  import java.util.ArrayList;
  import java.util.Random;
@@ -10,12 +10,13 @@
  import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.ForgeHooksServer;
 +import net.minecraft.src.forge.MessageManager;
 +import java.io.UnsupportedEncodingException;
  
  public class NetServerHandler extends NetHandler implements ICommandListener
  {
-@@ -19,7 +23,7 @@
+@@ -19,7 +24,7 @@
      public boolean connectionClosed = false;
  
      /** Reference to the MinecraftServer object. */
@@ -24,7 +25,24 @@
  
      /** Reference to the EntityPlayerMP object. */
      private EntityPlayerMP playerEntity;
-@@ -374,8 +378,11 @@
+@@ -353,7 +358,7 @@
+         {
+             boolean var3 = var2.disableSpawnProtection = var2.worldProvider.worldType != 0 || this.mcServer.configManager.isOp(this.playerEntity.username);
+             boolean var4 = false;
+-
++            
+             if (par1Packet14BlockDig.status == 0)
+             {
+                 var4 = true;
+@@ -367,15 +372,18 @@
+             int var5 = par1Packet14BlockDig.xPosition;
+             int var6 = par1Packet14BlockDig.yPosition;
+             int var7 = par1Packet14BlockDig.zPosition;
+-
++            
+             if (var4)
+             {
+                 double var8 = this.playerEntity.posX - ((double)var5 + 0.5D);
                  double var10 = this.playerEntity.posY - ((double)var6 + 0.5D) + 1.5D;
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
@@ -37,16 +55,33 @@
                  {
                      return;
                  }
-@@ -397,7 +404,7 @@
- 
+@@ -394,10 +402,14 @@
+             {
+                 var20 = var9;
+             }
+-
++            
              if (par1Packet14BlockDig.status == 0)
              {
 -                if (var20 <= 16 && !var3)
-+                if (var20 <= mcServer.spawnProtectionSize && !var3)
++            	if (!ForgeHooksServer.canMineBlock(this.playerEntity, var5, var6, var7))
++            	{
++            		this.playerEntity.playerNetServerHandler.sendPacket(new Packet53BlockChange(var5, var6, var7, var2));
++            	}
++            	else if (var20 <= mcServer.spawnProtectionSize && !var3)
                  {
                      this.playerEntity.playerNetServerHandler.sendPacket(new Packet53BlockChange(var5, var6, var7, var2));
                  }
-@@ -467,8 +474,9 @@
+@@ -442,7 +454,7 @@
+         int var7 = par1Packet15Place.zPosition;
+         int var8 = par1Packet15Place.direction;
+         boolean var9 = var2.disableSpawnProtection = var2.worldProvider.worldType != 0 || this.mcServer.configManager.isOp(this.playerEntity.username);
+-
++        if (!ForgeHooksServer.canPlaceBlock(this.playerEntity, var5, var6, var7)){var4 = true;} 
+         if (par1Packet15Place.direction == 255)
+         {
+             if (var3 == null)
+@@ -467,8 +479,9 @@
              {
                  var12 = var11;
              }
@@ -58,7 +93,7 @@
              {
                  this.playerEntity.itemInWorldManager.activeBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8);
              }
-@@ -602,9 +610,13 @@
+@@ -602,9 +615,13 @@
              }
              else
              {
@@ -75,7 +110,7 @@
              }
  
              this.field_45001_m += 20;
-@@ -648,6 +660,10 @@
+@@ -648,6 +665,10 @@
                  }
              }
          }
@@ -86,7 +121,16 @@
          else
          {
              String var3;
-@@ -765,9 +781,10 @@
+@@ -734,7 +755,7 @@
+     public void handleUseEntity(Packet7UseEntity par1Packet7UseEntity)
+     {
+         WorldServer var2 = this.mcServer.getWorldManager(this.playerEntity.dimension);
+-        Entity var3 = var2.func_6158_a(par1Packet7UseEntity.targetEntity);
++        Entity var3 = var2.getEntityByID(par1Packet7UseEntity.targetEntity);
+ 
+         if (var3 != null)
+         {
+@@ -765,9 +786,10 @@
       */
      public void handleRespawn(Packet9Respawn par1Packet9Respawn)
      {
@@ -98,7 +142,7 @@
          }
          else
          {
-@@ -776,7 +793,7 @@
+@@ -776,7 +798,7 @@
                  return;
              }
  
@@ -107,10 +151,19 @@
          }
      }
  
-@@ -969,9 +986,78 @@
-     {
-         this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.isFlying && this.playerEntity.capabilities.allowFlying;
+@@ -962,13 +984,85 @@
+         return true;
      }
+ 
+-    public void func_50003_a(Packet202PlayerAbilities par1Packet202PlayerAbilities)
++    /**
++     * Handle a player abilities packet.
++     */
++    public void handlePlayerAbilities(Packet202PlayerAbilities par1Packet202PlayerAbilities)
+     {
+-        this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.field_50005_b && this.playerEntity.capabilities.allowFlying;
++        this.playerEntity.capabilities.isFlying = par1Packet202PlayerAbilities.isFlying && this.playerEntity.capabilities.allowFlying;
++    }
 +    
 +    public EntityPlayerMP getPlayerEntity()
 +    {
@@ -162,7 +215,7 @@
 +    public void handleMapData(Packet131MapData par1Packet131MapData)
 +    {
 +        ForgeHooks.onItemDataPacket(netManager, par1Packet131MapData);
-+    }
+     }
  
      @Override
 -    public void handleCustomPayload(Packet250CustomPayload par1Packet250CustomPayload) {
