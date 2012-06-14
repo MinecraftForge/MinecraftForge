@@ -1,7 +1,6 @@
 package net.minecraft.src.forge;
 
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
 import java.util.Map;
 
 import net.minecraft.src.*;
@@ -29,34 +28,6 @@ public class ForgeHooksServer
         return false;
     }
 
-    static LinkedList<ICanPlaceBlockHandler> canPlaceBlockHandlers = new LinkedList<ICanPlaceBlockHandler>();
-    
-    public static boolean canPlaceBlock(EntityPlayer player, int X, int Y, int Z)
-    {
-   	 for (ICanPlaceBlockHandler handler : canPlaceBlockHandlers)
-        {
-            if (!handler.canPlaceBlock(player, X, Y, Z))
-            {
-                return false;
-            }
-        }
-        return true;
-   }
-    
-    static LinkedList<ICanMineBlockHandler> onMineBlockHandlers = new LinkedList<ICanMineBlockHandler>();
-    
-    public static boolean canMineBlock(EntityPlayer player, int X, int Y, int Z)
-    {
-    	 for (ICanMineBlockHandler handler : onMineBlockHandlers)
-         {
-             if (!handler.canMineBlock(player, X, Y, Z))
-             {
-                 return false;
-             }
-         }
-         return true;
-    }
-    
     public static void sendModListRequest(NetworkManager net)
     {
         NetworkMod[] list = MinecraftForge.getNetworkMods();
