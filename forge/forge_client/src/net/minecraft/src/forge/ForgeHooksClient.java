@@ -535,7 +535,7 @@ public class ForgeHooksClient
                 return null;
             }
         }
-        return null;
+        return soundName;
     }
     
     public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)
