@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -223,4 +223,24 @@
+@@ -223,4 +223,30 @@
      public static void addNewTileEntityMapping(Class<? extends TileEntity> tileEntityClass, String id) {
          addMapping(tileEntityClass, id);
      }
@@ -24,4 +24,10 @@
 +     * @param pkt The data packet
 +     */
 +    public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt){}
++    
++    /**
++     * Called when the chunk this TileEntity is located on is unloaded
++     * Note: it wont be called when the TileEntity is removed from the world
++     */
++    public void onUnload(){}
  }
