@@ -12,7 +12,7 @@
  
      public void func_20091_b(ItemStack p_20091_1_)
      {
-+        FMLServerHandler.instance().onItemCrafted(field_25004_e, p_20091_1_, field_20096_b);
++        FMLServerHandler.instance().onItemCrafted(field_25004_e, p_20091_1_, field_20103_a);
          this.func_48416_b(p_20091_1_);
  
          for (int var2 = 0; var2 < this.field_20103_a.func_83_a(); ++var2)
