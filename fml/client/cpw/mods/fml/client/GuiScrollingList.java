@@ -389,9 +389,9 @@ public abstract class GuiScrollingList
         var5.func_977_b();
         var5.func_6513_a(4210752, p_22239_4_);
         var5.func_983_a(0.0D, (double)p_22239_2_, 0.0D, 0.0D, (double)((float)p_22239_2_ / var6));
-        var5.func_983_a((double)this.listWidth, (double)p_22239_2_, 0.0D, (double)((float)this.listWidth / var6), (double)((float)p_22239_2_ / var6));
+        var5.func_983_a((double)this.listWidth + 30, (double)p_22239_2_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_2_ / var6));
         var5.func_6513_a(4210752, p_22239_3_);
-        var5.func_983_a((double)this.listWidth, (double)p_22239_1_, 0.0D, (double)((float)this.listWidth / var6), (double)((float)p_22239_1_ / var6));
+        var5.func_983_a((double)this.listWidth + 30, (double)p_22239_1_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_1_ / var6));
         var5.func_983_a(0.0D, (double)p_22239_1_, 0.0D, 0.0D, (double)((float)p_22239_1_ / var6));
         var5.func_982_a();
     }
