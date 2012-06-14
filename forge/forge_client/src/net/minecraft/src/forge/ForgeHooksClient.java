@@ -455,6 +455,7 @@ public class ForgeHooksClient
     }
 
     public static LinkedList<ISoundHandler> soundHandlers = new LinkedList<ISoundHandler>();
+    public static LinkedList<ISoundHandler> soundHandlers2 = new LinkedList<ISoundHandler>();
     public static void onSetupAudio(SoundManager soundManager) 
     {
         for (ISoundHandler handler : soundHandlers)
@@ -514,13 +515,27 @@ public class ForgeHooksClient
     {
         for (ISoundHandler handler : soundHandlers)
         {
-            entry = handler.onPlaySoundEffect(soundManager, entry, soundName,volume, pitch);
+            entry = handler.onPlaySoundEffect(soundManager, entry, soundName, volume, pitch);
             if (entry == null)
             {
                 return null;
             }
         }
         return entry;
+    }
+
+    public static String onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch)
+    {
+        MinecraftForgeClient.checkMinecraftVersion("Minecraft Minecraft 1.2.5", "Interface check in onPlaySoundAtEntity, remove it Mods should be updated");
+        for (ISoundHandler handler : soundHandlers2)
+        {
+            soundName = handler.onPlaySoundAtEntity(entity, soundName,volume, pitch);
+            if (soundName == null)
+            {
+                return null;
+            }
+        }
+        return null;
     }
     
     public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)

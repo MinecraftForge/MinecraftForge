@@ -1,5 +1,6 @@
 package net.minecraft.src.forge.adaptors;
 
+import net.minecraft.src.Entity;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
 import net.minecraft.src.forge.ISoundHandler;
@@ -38,5 +39,11 @@ public class SoundHandlerAdaptor implements ISoundHandler
     public SoundPoolEntry onPlaySoundEffect(SoundManager soundManager, SoundPoolEntry entry, String soundName, float volume, float pitch)
     {
         return entry;
+    }
+
+    @Override
+    public String onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch)
+    {
+        return soundName;
     }
 }

@@ -8,6 +8,7 @@ package net.minecraft.src.forge;
 import org.lwjgl.opengl.Display;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
@@ -63,6 +64,21 @@ public class MinecraftForgeClient
     public static void registerSoundHandler(ISoundHandler handler)
     {
         ForgeHooksClient.soundHandlers.add(handler);
+        checkMinecraftVersion("Minecraft Minecraft 1.2.5", "Interface check in registerSoundHandler, remove it Mods should be updated");
+        try
+        {
+            if (handler.getClass().getDeclaredMethod("onPlaySoundAtEntity", Entity.class, String.class, float.class, float.class) != null)
+            {
+                ForgeHooksClient.soundHandlers2.add(handler);
+            }
+        }
+        catch (Exception e) 
+        {
+            if (MinecraftForgeClient.class.getPackage().getName().equals("net.minecraft.src.forge"))
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     /** Bind a texture.  This is used to bind a texture file when
