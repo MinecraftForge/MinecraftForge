@@ -37,15 +37,32 @@
                  {
                      return;
                  }
-@@ -397,7 +404,7 @@
- 
+@@ -394,10 +402,14 @@
+              {
+                 var20 = var9;
+             }
+-
++           
              if (par1Packet14BlockDig.status == 0)
              {
 -                if (var20 <= 16 && !var3)
-+                if (var20 <= mcServer.spawnProtectionSize && !var3)
++				if (!ForgeHooksServer.canMineBlock(this.playerEntity, var5, var6, var7))
++            	{
++            		this.playerEntity.playerNetServerHandler.sendPacket(new Packet53BlockChange(var5, var6, var7, var2));
++            	}
++            	else if (var20 <= mcServer.spawnProtectionSize && !var3)
                  {
                      this.playerEntity.playerNetServerHandler.sendPacket(new Packet53BlockChange(var5, var6, var7, var2));
-                 }
+                 }	 
+@@ -442,7 +454,7 @@
+         int var7 = par1Packet15Place.zPosition;
+         int var8 = par1Packet15Place.direction;
+         boolean var9 = var2.disableSpawnProtection = var2.worldProvider.worldType != 0 || this.mcServer.configManager.isOp(this.playerEntity.username);
+-
++        if (!ForgeHooksServer.canPlaceBlock(this.playerEntity, var5, var6, var7)){var4 = true;} 
+         if (par1Packet15Place.direction == 255)
+         {
+             if (var3 == null)
 @@ -467,8 +474,9 @@
              {
                  var12 = var11;
