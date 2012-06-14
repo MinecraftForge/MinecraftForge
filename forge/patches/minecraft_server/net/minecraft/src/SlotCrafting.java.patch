@@ -9,12 +9,11 @@
  public class SlotCrafting extends Slot
  {
      /** The craft matrix inventory linked to this result slot. */
-@@ -99,6 +101,8 @@
+@@ -99,6 +101,7 @@
      public void onPickupFromSlot(ItemStack par1ItemStack)
      {
-         FMLServerHandler.instance().onItemCrafted(thePlayer, par1ItemStack, inventory);
+         FMLServerHandler.instance().onItemCrafted(thePlayer, par1ItemStack, craftMatrix);
 +        ForgeHooks.onTakenFromCrafting(thePlayer, par1ItemStack, craftMatrix);
-+
          this.func_48416_b(par1ItemStack);
  
          for (int var2 = 0; var2 < this.craftMatrix.getSizeInventory(); ++var2)
