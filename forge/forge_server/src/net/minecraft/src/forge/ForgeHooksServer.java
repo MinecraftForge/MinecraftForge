@@ -73,7 +73,7 @@ public class ForgeHooksServer
         }
         else
         {
-            net.kickPlayer("This server requires you to have Minecraft Forge installed.");
+            net.kickPlayer(mod_MinecraftForge.NO_FORGE_KICK_MESSAGE);
         }
     }
 

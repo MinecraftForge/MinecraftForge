@@ -14,6 +14,9 @@ public class mod_MinecraftForge extends NetworkMod
     @MLProp(info = "Set to false to reproduce a vinella bug that prevents mobs from spawning on inverted half-slabs and inverted stairs.")
     public static boolean SPAWNER_ALLOW_ON_INVERTED = true;
     
+    @MLProp(info = "The kick message used when a client tries to connect but does nto have Minecraft Forge installed.")
+    public static String NO_FORGE_KICK_MESSAGE = "This server requires you to have Minecraft Forge installed. http://MinecraftForge.net/";
+    
     @Override
     public String getVersion()
     {
