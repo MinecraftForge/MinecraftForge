@@ -353,6 +353,43 @@ public class ForgeHooks
         return false;
     }
     static LinkedList<ISpecialMobSpawnHandler> specialMobSpawnHandlers = new LinkedList<ISpecialMobSpawnHandler>();
+	
+	public static boolean onBlockCreate(int x, int y, int z, int blockID, int metadata)
+	{
+		for (IBlockModificationHandler handler : blockModificationHandlers)
+		{
+			if (handler.onBlockCreate(x, y, z, blockID, metadata))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean onBlockChange(int x, int y, int z, int blockID, int metadata)
+	{
+		for (IBlockModificationHandler handler : blockModificationHandlers)
+		{
+			if (handler.onBlockChange(x, y, z, blockID, metadata))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean onBlockDestroy(int x, int y, int z, int blockID, int metadata)
+	{
+		for (IBlockModificationHandler handler : blockModificationHandlers)
+		{
+			if (handler.onBlockDestroy(x, y, z, blockID, metadata))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	static LinkedList<IBlockModificationHandler> blockModificationHandlers = new LinkedList<IBlockModificationHandler>();
 
     // Plant Management
     // ------------------------------------------------------------

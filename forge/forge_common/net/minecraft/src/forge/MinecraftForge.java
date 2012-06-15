@@ -162,6 +162,15 @@ public class MinecraftForge
         ForgeHooks.specialMobSpawnHandlers.add(handler);
     }
 
+	/**
+     * Register a new block modification handler
+     * @param handler The handler to be registered
+     */
+    public static void registerBlockModificationHandler(IBlockModificationHandler handler)
+    {
+        ForgeHooks.blockModificationHandlers.add(handler);
+    }
+	
     /**
      * This is not supposed to be called outside of Minecraft internals.
      */

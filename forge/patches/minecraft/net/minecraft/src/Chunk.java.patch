@@ -87,7 +87,35 @@
          {
              return 0;
          }
-@@ -561,6 +607,11 @@
+@@ -555,12 +601,39 @@
+         int var7 = this.heightMap[var6];
+         int var8 = this.getBlockID(par1, par2, par3);
+ 
++		if(par4 == 0)
++		{
++			if(ForgeHooks.onBlockDestroy(par1,par2,par3,par4,par5))
++			{
++				return false;
++			}
++		}
++		else if(par4 == var8 && this.getBlockMetadata(par1, par2, par3) != par5)
++		{
++			if(ForgeHooks.onBlockChange(par1,par2,par3,par4,par5))
++			{
++				return false;
++			}
++		}
++		else
++		{
++			if(ForgeHooks.onBlockCreate(par1,par2,par3,par4,par5))
++			{
++				return false;
++			}
++		}
++		
+         if (var8 == par4 && this.getBlockMetadata(par1, par2, par3) == par5)
+         {
+             return false;
          }
          else
          {
@@ -99,7 +127,7 @@
              ExtendedBlockStorage var9 = this.storageArrays[par2 >> 4];
              boolean var10 = false;
  
-@@ -585,7 +636,7 @@
+@@ -585,7 +658,7 @@
                  {
                      Block.blocksList[var8].onBlockRemoval(this.worldObj, var11, par2, var12);
                  }
@@ -108,7 +136,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var11, par2, var12);
                  }
-@@ -629,32 +680,23 @@
+@@ -629,32 +702,23 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, var11, par2, var12);
                      }
  
@@ -144,7 +172,7 @@
                  this.isModified = true;
                  return true;
              }
-@@ -666,7 +708,7 @@
+@@ -666,7 +730,7 @@
       */
      public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
      {
@@ -153,7 +181,7 @@
  
          if (var5 == null)
          {
-@@ -686,7 +728,7 @@
+@@ -686,7 +750,7 @@
                  var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
@@ -162,7 +190,7 @@
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -707,7 +749,7 @@
+@@ -707,7 +771,7 @@
       */
      public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
      {
@@ -171,7 +199,7 @@
          return var5 == null ? par1EnumSkyBlock.defaultLightValue : (par1EnumSkyBlock == EnumSkyBlock.Sky ? var5.getExtSkylightValue(par2, par3 & 15, par4) : (par1EnumSkyBlock == EnumSkyBlock.Block ? var5.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
      }
  
-@@ -717,6 +759,11 @@
+@@ -717,6 +781,11 @@
       */
      public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
      {
@@ -183,7 +211,7 @@
          ExtendedBlockStorage var6 = this.storageArrays[par3 >> 4];
  
          if (var6 == null)
-@@ -750,7 +797,7 @@
+@@ -750,7 +819,7 @@
       */
      public int getBlockLightValue(int par1, int par2, int par3, int par4)
      {
@@ -192,7 +220,7 @@
  
          if (var5 == null)
          {
-@@ -852,34 +899,33 @@
+@@ -852,34 +921,33 @@
      {
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
@@ -238,7 +266,7 @@
      }
  
      /**
-@@ -894,7 +940,7 @@
+@@ -894,7 +962,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -247,7 +275,7 @@
          }
      }
  
-@@ -909,8 +955,14 @@
+@@ -909,8 +977,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -263,7 +291,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -946,6 +998,7 @@
+@@ -946,6 +1020,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[var1]);
          }
@@ -271,7 +299,7 @@
      }
  
      /**
-@@ -966,6 +1019,7 @@
+@@ -966,6 +1041,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[var3]);
          }
@@ -279,7 +307,7 @@
      }
  
      /**
-@@ -982,8 +1036,8 @@
+@@ -982,8 +1058,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -290,7 +318,7 @@
  
          if (var4 < 0)
          {
-@@ -1030,8 +1084,8 @@
+@@ -1030,8 +1106,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -301,7 +329,7 @@
  
          if (var4 < 0)
          {
-@@ -1228,6 +1282,16 @@
+@@ -1228,6 +1304,16 @@
  
      public void func_48494_a(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -318,7 +346,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1324,12 +1388,26 @@
+@@ -1324,12 +1410,26 @@
          }
  
          this.generateHeightMap();
@@ -350,7 +378,7 @@
          }
      }
  
-@@ -1438,4 +1516,18 @@
+@@ -1438,4 +1538,18 @@
              }
          }
      }
