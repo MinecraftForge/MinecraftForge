@@ -11,7 +11,13 @@
  import org.lwjgl.opengl.GL11;
  
  public class RenderSnowMan extends RenderLiving
-@@ -24,7 +29,10 @@
+@@ -19,12 +24,15 @@
+         super.renderEquippedItems(par1EntitySnowman, par2);
+         ItemStack var3 = new ItemStack(Block.pumpkin, 1);
+ 
+-        if (var3 != null && var3.getItem().shiftedIndex < 256)
++        if (var3 != null && var3.getItem() instanceof ItemBlock)
+         {
              GL11.glPushMatrix();
              this.snowmanModel.field_40305_c.postRender(0.0625F);
  
