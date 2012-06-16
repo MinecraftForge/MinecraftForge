@@ -2,6 +2,7 @@ package net.minecraft.src.forge.packets;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
@@ -13,6 +14,7 @@ public class PacketModList extends ForgePacket
     public String[] Mods;
     public Hashtable<Integer, String> ModIDs = new Hashtable<Integer, String>();
     public int Length = -1;
+    public boolean has4096 = false;
 
     public PacketModList(boolean server)
     {
@@ -39,6 +41,7 @@ public class PacketModList extends ForgePacket
                 data.writeUTF(entry.getValue());
             }
         }
+        data.writeBoolean(true);
     }
 
     @Override
@@ -63,6 +66,15 @@ public class PacketModList extends ForgePacket
             {
                 ModIDs.put(data.readInt(), data.readUTF());
             }
+        }
+        
+        try 
+        {
+            has4096 = data.readBoolean();
+        }
+        catch (EOFException e)
+        {
+            has4096 = false;
         }
     }
 

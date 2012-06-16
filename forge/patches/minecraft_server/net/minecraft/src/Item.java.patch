@@ -23,6 +23,15 @@
  
      protected Item(int par1)
      {
+@@ -198,7 +204,7 @@
+ 
+         if (itemsList[256 + par1] != null)
+         {
+-            System.out.println("CONFLICT @ " + par1);
++            System.out.println("CONFLICT @ " + par1 + " item slot already occupied by " + itemsList[256 + par1] + " while adding " + this);
+         }
+ 
+         itemsList[256 + par1] = this;
 @@ -492,6 +498,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;

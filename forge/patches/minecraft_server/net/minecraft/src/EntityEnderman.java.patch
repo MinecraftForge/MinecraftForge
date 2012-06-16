@@ -1,0 +1,11 @@
+--- ../src_base/minecraft_server/net/minecraft/src/EntityEnderman.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/EntityEnderman.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,7 +2,7 @@
+ 
+ public class EntityEnderman extends EntityMob
+ {
+-    private static boolean[] canCarryBlocks = new boolean[256];
++    private static boolean[] canCarryBlocks = new boolean[Block.blocksList.length];
+ 
+     /** Is the enderman attacking another entity? */
+     public boolean isAttacking = false;

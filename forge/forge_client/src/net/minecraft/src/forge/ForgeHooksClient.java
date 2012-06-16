@@ -38,6 +38,7 @@ public class ForgeHooksClient
 {
     private static Field textureID = null;
     private static boolean textureIDChecked = false;
+    public static boolean enable4096 = false; //If the server has told us that 4096 is enabled.
     
     public static boolean onBlockHighlight(RenderGlobal render, EntityPlayer player, MovingObjectPosition target, int i, ItemStack itemstack, float partialTicks)
     {
@@ -575,6 +576,7 @@ public class ForgeHooksClient
      */
     public static Packet onSendLogin(Packet1Login pkt)
     {
+        enable4096 = false; //Disable 4096 packet modification untill the server says yes.
         pkt.serverMode    = ForgePacket.FORGE_ID;
         pkt.field_48170_e = ForgeHooks.buildVersion;
         return pkt;

@@ -13,7 +13,7 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -35,21 +41,27 @@
+@@ -35,22 +41,21 @@
      public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
@@ -25,7 +25,7 @@
 +            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
-+        else if (par2ItemStack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
++        else if (par2ItemStack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
 -            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
 +            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
@@ -33,19 +33,19 @@
          }
          else
          {
-             if (par2ItemStack.itemID < 256)
-             {
+-            if (par2ItemStack.itemID < 256)
+-            {
 -                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
-+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
-             }
-             else
-             {
+-            }
+-            else
+-            {
 -                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/items.png"));
-+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
-             }
+-            }
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
  
              Tessellator var4 = Tessellator.instance;
-@@ -246,8 +258,10 @@
+             int var5 = par1EntityLiving.getItemIcon(par2ItemStack, par3);
+@@ -246,8 +251,10 @@
          float var11;
          float var13;
  
@@ -57,7 +57,7 @@
              GL11.glPushMatrix();
              var7 = 0.8F;
              var17 = var3.getSwingProgress(par1);
-@@ -313,8 +327,15 @@
+@@ -313,8 +320,15 @@
              var26.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
              var26.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
              var26.draw();
@@ -75,7 +75,7 @@
              GL11.glPopMatrix();
          }
          else if (var14 != null)
-@@ -414,12 +435,15 @@
+@@ -414,12 +428,15 @@
              if (var14.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(var3, var14, 0);

@@ -21,7 +21,7 @@
 +        {
 +        	;
 +        }
-+        else if (var10.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
++        else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
          {
              GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
 -            this.loadTexture("/terrain.png");
@@ -43,30 +43,37 @@
                      var15 = var10.getItem().func_46057_a(var10.getItemDamage(), var14);
                      var16 = 1.0F;
  
-@@ -120,11 +128,11 @@
- 
-                 if (var10.itemID < 256)
-                 {
+@@ -117,15 +125,8 @@
+             {
+                 GL11.glScalef(0.5F, 0.5F, 0.5F);
+                 var14 = var10.getIconIndex();
+-
+-                if (var10.itemID < 256)
+-                {
 -                    this.loadTexture("/terrain.png");
-+                    this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
-                 }
-                 else
-                 {
+-                }
+-                else
+-                {
 -                    this.loadTexture("/gui/items.png");
-+                    this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
-                 }
+-                }
++                
++                this.loadTexture(var10.getItem().getTextureFile());
  
                  if (this.field_27004_a)
-@@ -189,7 +197,7 @@
+                 {
+@@ -187,9 +188,9 @@
+         float var12;
+         float var13;
  
-         if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
+-        if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
++        if (Item.itemsList[par3] instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
          {
 -            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
 +            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Block.blocksList[par3].getTextureFile()));
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -221,9 +229,9 @@
+@@ -221,9 +222,9 @@
              if (Item.itemsList[par3].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -78,21 +85,23 @@
                  {
                      int var9 = Item.itemsList[par3].func_46057_a(par4, var8);
                      var10 = Item.itemsList[par3].getColorFromDamage(par4, var8);
-@@ -247,11 +255,11 @@
+@@ -245,14 +246,7 @@
+             {
+                 GL11.glDisable(GL11.GL_LIGHTING);
  
-                 if (par3 < 256)
-                 {
+-                if (par3 < 256)
+-                {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-+                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Block.blocksList[par3].getTextureFile()));
-                 }
-                 else
-                 {
+-                }
+-                else
+-                {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
-+                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[par3].getTextureFile()));
-                 }
+-                }
++                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[par3].getTextureFile()));
  
                  var8 = Item.itemsList[par3].getColorFromDamage(par4, 0);
-@@ -279,7 +287,10 @@
+                 float var14 = (float)(var8 >> 16 & 255) / 255.0F;
+@@ -279,7 +273,10 @@
      {
          if (par3ItemStack != null)
          {

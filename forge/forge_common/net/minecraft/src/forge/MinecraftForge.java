@@ -12,6 +12,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
@@ -20,6 +21,7 @@ import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.oredict.OreDictionary;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -1200,6 +1202,35 @@ public class MinecraftForge
             }   
         }
         return isClient == 1;
+    }
+    
+    /**
+     * Method invoked by FML before any other mods are loaded.
+     */
+    public static void initialize()
+    {
+        //Cause the classes to initialize if they already haven't
+        Block.stone.getTextureFile();
+        Item.appleGold.getTextureFile();
+        
+        Block filler = null;
+        try 
+        {
+            filler = Block.class.getConstructor(int.class, Material.class).newInstance(256, Material.air);
+        }catch (Exception e){}
+        
+        if (filler == null)
+        {
+            throw new RuntimeException("Could not create Forge filler block");
+        }
+        
+        for (int x = 256; x < 4096; x++)
+        {
+            if (Item.itemsList[x - 256] != null)
+            {
+                Block.blocksList[x] = filler;
+            }
+        }
     }
     
     static

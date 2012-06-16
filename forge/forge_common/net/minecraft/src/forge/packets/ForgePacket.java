@@ -21,7 +21,6 @@ public abstract class ForgePacket
 
     public Packet getPacket()
     {
-
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         DataOutputStream data = new DataOutputStream(bytes);
         try

@@ -1,0 +1,51 @@
+--- ../src_base/minecraft/net/minecraft/src/Packet53BlockChange.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/Packet53BlockChange.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,8 @@
+ import java.io.DataOutputStream;
+ import java.io.IOException;
+ 
++import net.minecraft.src.forge.ForgeHooksClient;
++
+ public class Packet53BlockChange extends Packet
+ {
+     /** Block X position. */
+@@ -34,7 +36,14 @@
+         this.xPosition = par1DataInputStream.readInt();
+         this.yPosition = par1DataInputStream.read();
+         this.zPosition = par1DataInputStream.readInt();
+-        this.type = par1DataInputStream.read();
++        if (ForgeHooksClient.enable4096)
++        {
++            this.type = par1DataInputStream.readInt();
++        }
++        else
++        {
++            this.type = par1DataInputStream.read();
++        }
+         this.metadata = par1DataInputStream.read();
+     }
+ 
+@@ -46,7 +55,14 @@
+         par1DataOutputStream.writeInt(this.xPosition);
+         par1DataOutputStream.write(this.yPosition);
+         par1DataOutputStream.writeInt(this.zPosition);
+-        par1DataOutputStream.write(this.type);
++        if (ForgeHooksClient.enable4096)
++        {
++            par1DataOutputStream.writeInt(this.type);
++        }
++        else
++        {
++            par1DataOutputStream.write(this.type);   
++        }
+         par1DataOutputStream.write(this.metadata);
+     }
+ 
+@@ -63,6 +79,6 @@
+      */
+     public int getPacketSize()
+     {
+-        return 11;
++        return ForgeHooksClient.enable4096 ? 14 : 11;
+     }
+ }

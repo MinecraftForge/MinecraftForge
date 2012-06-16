@@ -160,6 +160,8 @@ public class PacketHandlerClient extends PacketHandlerBase
         {
             System.out.println("S->C: " + packet.toString(true));
         }
+        
+        ForgeHooksClient.enable4096 = packet.has4096;
 
         ForgeHooks.networkMods.clear();
         NetworkMod[] mods = MinecraftForge.getNetworkMods();

@@ -14,7 +14,7 @@
  {
      /** The RNG used by the Item subclasses. */
      protected static Random itemRand = new Random();
-@@ -188,7 +191,10 @@
+@@ -188,14 +191,17 @@
  
      /** full name of item from language file */
      private String itemName;
@@ -26,6 +26,14 @@
      protected Item(int par1)
      {
          this.shiftedIndex = 256 + par1;
+ 
+         if (itemsList[256 + par1] != null)
+         {
+-            System.out.println("CONFLICT @ " + par1);
++            System.out.println("CONFLICT @ " + par1 + " item slot already occupied by " + itemsList[256 + par1] + " while adding " + this);
+         }
+ 
+         itemsList[256 + par1] = this;
 @@ -551,7 +557,7 @@
          float var17 = MathHelper.sin(-var5 * 0.017453292F);
          float var18 = var15 * var16;
