@@ -1,0 +1,20 @@
+--- ../src_base/minecraft_server/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/WorldType.java	0000-00-00 00:00:00.000000000 -0000
+@@ -28,14 +28,14 @@
+     private boolean canBeCreated;
+     private boolean field_48460_h;
+ 
+-    private BiomeGenBase[] biomesForWorldType;
++    protected BiomeGenBase[] biomesForWorldType;
+     
+-    private WorldType(int par1, String par2Str)
++    protected WorldType(int par1, String par2Str)
+     {
+         this(par1, par2Str, 0);
+     }
+ 
+-    private WorldType(int par1, String par2Str, int par3)
++    protected WorldType(int par1, String par2Str, int par3)
+     {
+         this.worldType = par2Str;
+         this.generatorVersion = par3;
