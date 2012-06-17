@@ -39,7 +39,7 @@
      }
  
      public String func_48628_a()
-@@ -78,4 +91,65 @@
+@@ -78,4 +91,69 @@
  
          return null;
      }
@@ -103,5 +103,9 @@
 +		biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
 +    }
 +    
++    /**
++     * Called when 'Create New World' button is pressed before starting game
++     */
++    public void onGUICreateWorldPress() { }
 +    
  }
