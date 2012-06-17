@@ -67,11 +67,11 @@ public enum TickType {
      */
     public EnumSet<TickType> partnerTicks()
     {
-        if (this==GAME) return EnumSet.of(RENDER,WORLDLOAD);
-        if (this==RENDER) return EnumSet.of(GAME, WORLDLOAD);
+        if (this==GAME) return EnumSet.of(RENDER);
+        if (this==RENDER) return EnumSet.of(GAME);
         if (this==GUI) return EnumSet.of(WORLDGUI, GUILOAD);
         if (this==WORLDGUI) return EnumSet.of(GUI, GUILOAD);
-        if (this==WORLDLOAD) return EnumSet.of(GAME, RENDER);
+        if (this==WORLDLOAD) return EnumSet.noneOf(TickType.class);
         if (this==GUILOAD) return EnumSet.of(GUI, WORLDGUI);
         return null;
     }
