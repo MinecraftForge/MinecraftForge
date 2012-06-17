@@ -34,7 +34,7 @@ public class ModLoaderHelper
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
         BaseModTicker ticker = mlmc.getTickHandler();
         EnumSet<TickType> ticks = ticker.ticks();
-        // If we're enabled and we don't want clock ticks we get render ticks
+        // If we're enabled we get render ticks
         if (enable) {
             ticks.add(TickType.RENDER);
         } else {
@@ -45,10 +45,6 @@ public class ModLoaderHelper
             ticks.add(TickType.GAME);
         } else {
             ticks.remove(TickType.GAME);
-        }
-        
-        if (enable) {
-            ticks.add(TickType.WORLDLOAD);
         }
     }
 
@@ -67,9 +63,6 @@ public class ModLoaderHelper
             ticks.add(TickType.WORLDGUI);
         } else {
             ticks.remove(TickType.WORLDGUI);
-        }
-        if (enable) {
-            ticks.add(TickType.GUILOAD);
         }
     }
 
