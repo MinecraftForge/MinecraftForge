@@ -10,16 +10,22 @@
  public class WorldType
  {
      public static final WorldType[] field_48459_a = new WorldType[16];
-@@ -11,6 +15,8 @@
+@@ -11,17 +15,28 @@
      private boolean field_48455_g;
      private boolean field_48460_h;
  
-+    private BiomeGenBase[] biomesForWorldType;
+-    private WorldType(int p_i1025_1_, String p_i1025_2_)
++    protected BiomeGenBase[] biomesForWorldType;
 +    
-     private WorldType(int p_i1025_1_, String p_i1025_2_)
++    protected WorldType(int p_i1025_1_, String p_i1025_2_)
      {
          this(p_i1025_1_, p_i1025_2_, 0);
-@@ -22,6 +28,15 @@
+     }
+ 
+-    private WorldType(int p_i1026_1_, String p_i1026_2_, int p_i1026_3_)
++    protected WorldType(int p_i1026_1_, String p_i1026_2_, int p_i1026_3_)
+     {
+         this.field_46052_c = p_i1026_2_;
          this.field_48454_f = p_i1026_3_;
          this.field_48455_g = true;
          field_48459_a[p_i1026_1_] = this;
@@ -35,11 +41,26 @@
      }
  
      public String func_48449_a()
-@@ -68,4 +83,26 @@
+@@ -68,4 +83,41 @@
  
          return null;
      }
-+    
++
++    public WorldChunkManager getChunkManager(World world)
++    {
++       return this == field_48458_c ? new WorldChunkManagerHell(BiomeGenBase.field_35520_c, 0.5F, 0.5F) : new WorldChunkManager(world);
++    }
++
++    public IChunkProvider getChunkGenerator(World var1)
++    {
++        return this == field_48458_c ? new ChunkProviderFlat(var1, var1.func_22079_j(), var1.func_22081_n().func_35499_o()) : new ChunkProviderGenerate(var1, var1.func_22079_j(), var1.func_22081_n().func_35499_o());
++    }
++
++    public int getMinimumSpawnHeight(World world)
++    {
++        return this == field_48458_c ? 4 : 64;
++    }
++
 +    public BiomeGenBase[] getBiomesForWorldType() {
 +        return biomesForWorldType;
 +    }
