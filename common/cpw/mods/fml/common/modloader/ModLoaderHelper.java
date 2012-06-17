@@ -35,7 +35,7 @@ public class ModLoaderHelper
         BaseModTicker ticker = mlmc.getTickHandler();
         EnumSet<TickType> ticks = ticker.ticks();
         // If we're enabled and we don't want clock ticks we get render ticks
-        if (enable && !useClock && FMLCommonHandler.instance().getSide().isClient()) {
+        if (enable) {
             ticks.add(TickType.RENDER);
         } else {
             ticks.remove(TickType.RENDER);
