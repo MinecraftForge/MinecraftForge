@@ -9,6 +9,7 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.DamageSource;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
@@ -353,16 +354,72 @@ public class ForgeHooks
         return false;
     }
     static LinkedList<ISpecialMobSpawnHandler> specialMobSpawnHandlers = new LinkedList<ISpecialMobSpawnHandler>();
-	
-    public static void onEntityLivingAttacked(EntityLiving entity, DamageSource attack, int damage)
+    
+    public static boolean onEntityLivingDeath(EntityLiving entity, DamageSource killer)
     {
-        for (IEntityLivingAttackedHandler handler : attackedHandlers)
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
         {
-            handler.onEntityLivingAttacked(entity, attack, damage);
+            if (!handler.onEntityLivingDeath(entity, killer))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean onEntityLivingUpdate(EntityLiving entity)
+    {
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
+        {
+            if (!handler.onEntityLivingUpdate(entity))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static void onEntityLivingJump(EntityLiving entity)
+    {
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
+        {
+            handler.onEntityLivingJump(entity);
         }
     }
-    static LinkedList<IEntityLivingAttackedHandler> attackedHandlers = new LinkedList<IEntityLivingAttackedHandler>();
-
+    
+    public static boolean onEntityLivingFall(EntityLiving entity, float distance)
+    {
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
+        {
+            if (!handler.onEntityLivingFall(entity, distance))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean onEntityLivingAttacked(EntityLiving entity, DamageSource attack, int damage)
+    {
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
+        {
+            if (!handler.onEntityLivingAttacked(entity, attack, damage))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static void onEntityLivingSetAttackTarget(EntityLiving entity, EntityLiving target)
+    {
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
+        {
+            handler.onEntityLivingSetAttackTarget(entity, target);
+        }
+    }
+    static LinkedList<IEntityLivingEventsHandler> entityLivingEventHandlers = new LinkedList<IEntityLivingEventsHandler>();
+    
     // Plant Management
     // ------------------------------------------------------------
     static class ProbableItem
