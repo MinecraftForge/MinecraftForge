@@ -39,7 +39,7 @@
      }
  
      public String func_48628_a()
-@@ -78,4 +91,60 @@
+@@ -78,4 +91,65 @@
  
          return null;
      }
@@ -65,6 +65,11 @@
 +    public int getMinimumSpawnHeight(World world)
 +    {
 +        return this == field_48636_c ? 4 : 64;
++    }
++
++    public double getHorizon(World world)
++    {
++        return this == field_48636_c ? 0.0D : 63.0D;
 +    }
 +
 +    public boolean hasVoidParticles(boolean var1)
