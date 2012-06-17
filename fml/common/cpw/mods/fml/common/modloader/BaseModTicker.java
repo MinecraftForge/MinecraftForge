@@ -29,6 +29,7 @@ public class BaseModTicker implements ITickHandler
 
     private BaseMod mod;
     private EnumSet<TickType> ticks;
+    private boolean clockTickTrigger;
     
     
     BaseModTicker(BaseMod mod)
@@ -56,6 +57,15 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
+        if (end && types.contains(TickType.GAME) && ticks.contains(TickType.GAME))
+        {
+            clockTickTrigger =  true;
+        }
+        if (end && clockTickTrigger && (types.contains(TickType.RENDER) || FMLCommonHandler.instance().getSide().isServer()))
+        {
+            types.add(TickType.GAME);
+            types.remove(TickType.RENDER);
+        }
         for (TickType type : types)
         {
             if (!ticks.contains(type))
