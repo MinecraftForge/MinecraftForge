@@ -65,6 +65,7 @@ public class BaseModTicker implements ITickHandler
         {
             types.add(TickType.GAME);
             types.remove(TickType.RENDER);
+            clockTickTrigger = false;
         }
         for (TickType type : types)
         {
