@@ -9,7 +9,19 @@
  
      /** Number of ticks since this EntityLiving last produced its sound */
      private int livingSoundTime;
-@@ -1307,7 +1307,7 @@
+@@ -808,6 +808,11 @@
+      */
+     public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
+     {
++		if (ForgeHooks.onEntityLivingAttacked(this, par1DamageSource, par2))
++		{
++			return false;
++		}
++		
+         if (this.worldObj.isRemote)
+         {
+             return false;
+@@ -1307,7 +1312,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);

@@ -353,6 +353,15 @@ public class ForgeHooks
         return false;
     }
     static LinkedList<ISpecialMobSpawnHandler> specialMobSpawnHandlers = new LinkedList<ISpecialMobSpawnHandler>();
+	
+    public static void onEntityLivingAttacked(EntityLiving entity, DamageSource attack, int damage)
+    {
+        for (IEntityLivingAttackedHandler handler : attackedHandlers)
+        {
+            handler.onEntityLivingAttacked(entity, attack, damage);
+        }
+    }
+    static LinkedList<IEntityLivingAttackedHandler> attackedHandlers = new LinkedList<IEntityLivingAttackedHandler>();
 
     // Plant Management
     // ------------------------------------------------------------
