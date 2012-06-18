@@ -154,16 +154,16 @@ public class MinecraftForge
     {
         ForgeHooks.fuelHandlers.add(handler);
     }
-
+    
     /**
-     * Register a new Special Mob Spawn handler
+     * Register a new EntityLiving Event handler
      * @param handler The handler to be registered
      */
-    public static void registerSpecialMobSpawnHandler(ISpecialMobSpawnHandler handler)
+    public static void registerEntityLivingEventHandler(IEntityLivingEventsHandler handler)
     {
-        ForgeHooks.specialMobSpawnHandlers.add(handler);
+        ForgeHooks.entityLivingEventHandlers.add(handler);
     }
-
+    
     /**
      * This is not supposed to be called outside of Minecraft internals.
      */
