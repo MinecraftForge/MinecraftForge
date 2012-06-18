@@ -342,18 +342,17 @@ public class ForgeHooks
     }
     static LinkedList<IFuelHandler> fuelHandlers = new LinkedList<IFuelHandler>();
     
-    public static boolean onEntitySpawnSpecial(EntityLiving entity, World world, float x, float y, float z) 
+    public static boolean onEntityLivingSpawn(EntityLiving entity, World world, float x, float y, float z) 
     {
-        for (ISpecialMobSpawnHandler handler : specialMobSpawnHandlers)
+        for (IEntityLivingEventsHandler handler : entityLivingEventHandlers)
         {
-            if (handler.onSpecialEntitySpawn(entity, world, x, y, z))
+            if (handler.onEntityLivingSpawn(entity, world, x, y, z))
             {
                 return true;
             }
         }
         return false;
     }
-    static LinkedList<ISpecialMobSpawnHandler> specialMobSpawnHandlers = new LinkedList<ISpecialMobSpawnHandler>();
     
     public static boolean onEntityLivingDeath(EntityLiving entity, DamageSource killer)
     {
