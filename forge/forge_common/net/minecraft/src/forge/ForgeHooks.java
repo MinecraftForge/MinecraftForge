@@ -9,6 +9,7 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
+import net.minecraft.src.DamageSource;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
@@ -340,7 +341,8 @@ public class ForgeHooks
         return 0;
     }
     static LinkedList<IFuelHandler> fuelHandlers = new LinkedList<IFuelHandler>();
-    
+
+    @SuppressWarnings("deprecation") //Internal use only, I don't want to see these yet
     public static boolean onEntitySpawnSpecial(EntityLiving entity, World world, float x, float y, float z) 
     {
         for (ISpecialMobSpawnHandler handler : specialMobSpawnHandlers)
@@ -352,7 +354,108 @@ public class ForgeHooks
         }
         return false;
     }
+    @SuppressWarnings("deprecation")
     static LinkedList<ISpecialMobSpawnHandler> specialMobSpawnHandlers = new LinkedList<ISpecialMobSpawnHandler>();
+    
+    
+    public static boolean onEntityLivingSpawn(EntityLiving entity, World world, float x, float y, float z) 
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            if (handler.onEntityLivingSpawn(entity, world, x, y, z))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean onEntityLivingDeath(EntityLiving entity, DamageSource killer)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            if (handler.onEntityLivingDeath(entity, killer))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean onEntityLivingUpdate(EntityLiving entity)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            if (handler.onEntityLivingUpdate(entity))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static void onEntityLivingJump(EntityLiving entity)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            handler.onEntityLivingJump(entity);
+        }
+    }
+    
+    public static boolean onEntityLivingFall(EntityLiving entity, float distance)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            if (handler.onEntityLivingFall(entity, distance))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean onEntityLivingAttacked(EntityLiving entity, DamageSource attack, int damage)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            if (handler.onEntityLivingAttacked(entity, attack, damage))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static void onEntityLivingSetAttackTarget(EntityLiving entity, EntityLiving target)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            handler.onEntityLivingSetAttackTarget(entity, target);
+        }
+    }
+
+    public static int onEntityLivingHurt(EntityLiving entity, DamageSource source, int damage)
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            damage = handler.onEntityLivingHurt(entity, source, damage);
+            if (damage == 0)
+            {
+                return 0;
+            }
+        }
+        return damage;
+    }
+
+    public static void onEntityLivingDrops(EntityLiving entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue) 
+    {
+        for (IEntityLivingHandler handler : entityLivingHandlers)
+        {
+            handler.onEntityLivingDrops(entity, source, drops, lootingLevel, recentlyHit, specialDropValue);
+        }
+    }
+
+    static LinkedList<IEntityLivingHandler> entityLivingHandlers = new LinkedList<IEntityLivingHandler>();
 
     // Plant Management
     // ------------------------------------------------------------

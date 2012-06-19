@@ -72,7 +72,18 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -914,7 +944,11 @@
+@@ -909,12 +939,22 @@
+      */
+     protected void damageEntity(DamageSource par1DamageSource, int par2)
+     {
++        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
++        if (par2 == 0)
++        {
++            return;
++        }
++
+         if (!par1DamageSource.isUnblockable() && this.isBlocking())
+         {
              par2 = 1 + par2 >> 1;
          }
  
@@ -85,7 +96,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -945,6 +979,10 @@
+@@ -945,6 +985,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -96,7 +107,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -975,7 +1013,9 @@
+@@ -975,7 +1019,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -106,7 +117,7 @@
      }
  
      /**
-@@ -1004,6 +1044,16 @@
+@@ -1004,6 +1050,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -123,7 +134,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1142,6 +1192,12 @@
+@@ -1142,6 +1198,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -136,7 +147,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1181,6 +1237,11 @@
+@@ -1181,6 +1243,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -148,7 +159,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1250,11 +1311,12 @@
+@@ -1250,11 +1317,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -164,7 +175,7 @@
  
              if (var5 == null)
              {
-@@ -1291,7 +1353,9 @@
+@@ -1291,7 +1359,9 @@
       */
      private boolean isInBed()
      {
@@ -175,7 +186,7 @@
      }
  
      /**
-@@ -1306,13 +1370,15 @@
+@@ -1306,13 +1376,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -193,7 +204,7 @@
              return var3;
          }
      }
-@@ -1719,4 +1785,45 @@
+@@ -1719,4 +1791,45 @@
      }
  
      public void func_50022_L() {}

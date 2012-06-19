@@ -1,16 +1,25 @@
 --- ../src_base/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -173,6 +173,9 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+ 
+@@ -173,6 +174,11 @@
       */
      public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
 +    
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
++    protected boolean captureDrops = false;
++    protected ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
  
      public Entity(World par1World)
      {
-@@ -214,6 +217,29 @@
+@@ -214,6 +220,29 @@
      }
  
      protected abstract void entityInit();
@@ -40,7 +49,7 @@
  
      public DataWatcher getDataWatcher()
      {
-@@ -1318,6 +1344,10 @@
+@@ -1318,6 +1347,10 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
@@ -51,7 +60,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1359,6 +1389,10 @@
+@@ -1359,6 +1392,10 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -62,7 +71,23 @@
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1717,7 +1751,7 @@
+@@ -1444,7 +1481,14 @@
+     {
+         EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
+         var3.delayBeforeCanPickup = 10;
+-        this.worldObj.spawnEntityInWorld(var3);
++        if (captureDrops)
++        {
++            capturedDrops.add(var3);
++        }
++        else
++        {
++            this.worldObj.spawnEntityInWorld(var3);
++        }
+         return var3;
+     }
+ 
+@@ -1717,7 +1761,7 @@
       */
      public boolean isRiding()
      {

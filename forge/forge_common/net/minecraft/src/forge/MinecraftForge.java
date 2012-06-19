@@ -9,6 +9,7 @@ import net.minecraft.src.Achievement;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityMinecart;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -159,10 +160,25 @@ public class MinecraftForge
      * Register a new Special Mob Spawn handler
      * @param handler The handler to be registered
      */
+    @Deprecated
     public static void registerSpecialMobSpawnHandler(ISpecialMobSpawnHandler handler)
     {
+        if (EntityLiving.class.getPackage() != null)
+        {
+            throw new RuntimeException("Still using deprecated method/interface MinecraftForge.registerSpecialModSpawnHandler()");
+        }
         ForgeHooks.specialMobSpawnHandlers.add(handler);
     }
+
+    /**
+     * Register a new EntityLiving Handler
+     * @param handler The handler to be registered
+     */
+    public static void registerEnitityLivingHandler(IEntityLivingHandler handler)
+    {
+        ForgeHooks.entityLivingHandlers.add(handler);
+    }    
+    
 
     /**
      * This is not supposed to be called outside of Minecraft internals.

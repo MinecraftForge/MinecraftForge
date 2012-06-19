@@ -28,11 +28,16 @@
          }
      }
  
-@@ -211,6 +214,11 @@
+@@ -211,6 +214,16 @@
       */
      private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
      {
-+        if (ForgeHooks.onEntitySpawnSpecial(par0EntityLiving, par1World, par2, par3, par4))
++        if (ForgeHooks.onEntitySpawnSpecial(par0EntityLiving, par1World, par2, par3, par4)) //Deprecated in 1.2.5, remove in 1.3
++        {
++            return;
++        }
++
++        if (ForgeHooks.onEntityLivingSpawn(par0EntityLiving, par1World, par2, par3, par4))
 +        {
 +            return;
 +        }

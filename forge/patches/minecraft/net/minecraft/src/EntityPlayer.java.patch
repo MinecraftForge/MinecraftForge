@@ -60,7 +60,18 @@
          {
              var3 = var2 + (float)(var4 * var4 + 1);
          }
-@@ -983,7 +1003,11 @@
+@@ -978,12 +998,22 @@
+      */
+     protected void damageEntity(DamageSource par1DamageSource, int par2)
+     {
++        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
++        if (par2 == 0)
++        {
++            return;
++        }
++
+         if (!par1DamageSource.isUnblockable() && this.isBlocking())
+         {
              par2 = 1 + par2 >> 1;
          }
  
@@ -73,7 +84,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1014,6 +1038,10 @@
+@@ -1014,6 +1044,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -84,7 +95,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -1044,7 +1072,9 @@
+@@ -1044,7 +1078,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -94,7 +105,7 @@
      }
  
      /**
-@@ -1073,6 +1103,15 @@
+@@ -1073,6 +1109,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -110,7 +121,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1215,6 +1254,12 @@
+@@ -1215,6 +1260,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -123,7 +134,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1254,6 +1299,11 @@
+@@ -1254,6 +1305,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -135,7 +146,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1323,11 +1373,12 @@
+@@ -1323,11 +1379,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -151,7 +162,7 @@
  
              if (var5 == null)
              {
-@@ -1364,7 +1415,9 @@
+@@ -1364,7 +1421,9 @@
       */
      private boolean isInBed()
      {
@@ -162,7 +173,7 @@
      }
  
      /**
-@@ -1379,13 +1432,15 @@
+@@ -1379,13 +1438,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -180,7 +191,7 @@
              return var3;
          }
      }
-@@ -1397,8 +1452,11 @@
+@@ -1397,8 +1458,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -194,7 +205,7 @@
  
              switch (var2)
              {
-@@ -1688,6 +1746,7 @@
+@@ -1688,6 +1752,7 @@
                      return 101;
                  }
              }
@@ -202,7 +213,7 @@
          }
  
          return var3;
-@@ -1860,4 +1919,30 @@
+@@ -1860,4 +1925,30 @@
      }
  
      public void func_50009_aI() {}
