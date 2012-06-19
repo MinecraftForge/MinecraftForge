@@ -269,7 +269,7 @@ public class EnumHelper
         return enumClass.cast(newInstance.invoke(getConstructorAccessor(decompiled, enumClass, additionalTypes), new Object[] {parms}));
     }
 
-    private static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
+    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
     {
         field.setAccessible(true);
         Field modifiersField = Field.class.getDeclaredField("modifiers");
