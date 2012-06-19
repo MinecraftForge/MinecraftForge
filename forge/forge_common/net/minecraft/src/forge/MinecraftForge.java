@@ -174,7 +174,7 @@ public class MinecraftForge
      * Register a new EntityLiving Handler
      * @param handler The handler to be registered
      */
-    public static void registerEnitityLivingHandler(IEntityLivingHandler handler)
+    public static void registerEntityLivingHandler(IEntityLivingHandler handler)
     {
         ForgeHooks.entityLivingHandlers.add(handler);
     }    
