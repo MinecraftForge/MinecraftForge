@@ -1,6 +1,7 @@
 package net.minecraft.server;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.src.BiomeGenBase;
@@ -127,11 +128,13 @@ public class BukkitRegistry implements IMinecraftRegistry
             @SuppressWarnings("unchecked")
             List<BiomeMeta> spawns = ((BiomeBase)biome).getMobs((EnumCreatureType) typeOfCreature);
     
-            for (BiomeMeta entry : Collections.unmodifiableList(spawns))
+            Iterator<BiomeMeta> entries = spawns.iterator();
+            while (entries.hasNext())
             {
+            	BiomeMeta entry = entries.next();
                 if (entry.a == entityClass)
                 {
-                    spawns.remove(entry);
+                    entries.remove();
                 }
             }
         }
