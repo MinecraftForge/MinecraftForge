@@ -827,6 +827,11 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         } catch (Exception e) {
             FMLCommonHandler.instance().getFMLLogger().log(Level.FINE, String.format("An error occured reading the info file for %s",mod.getName()), e);
+            if (Item.class.getPackage() != null) //Print the error if we are in MCP so mod devs see it
+            {
+                System.out.println(String.format("An error occured reading the info file for %s",mod.getName()));
+                e.printStackTrace();
+            }
         }
         return meta;
     }
