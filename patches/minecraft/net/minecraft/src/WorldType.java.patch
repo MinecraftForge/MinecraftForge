@@ -10,16 +10,22 @@
  public class WorldType
  {
      public static final WorldType[] field_48637_a = new WorldType[16];
-@@ -11,6 +15,8 @@
+@@ -11,17 +15,26 @@
      private boolean field_48633_g;
      private boolean field_48638_h;
  
-+    private BiomeGenBase[] biomesForWorldType;
+-    private WorldType(int p_i1080_1_, String p_i1080_2_)
++    protected BiomeGenBase[] biomesForWorldType;
 +
-     private WorldType(int p_i1080_1_, String p_i1080_2_)
++    protected WorldType(int p_i1080_1_, String p_i1080_2_)
      {
          this(p_i1080_1_, p_i1080_2_, 0);
-@@ -22,6 +28,13 @@
+     }
+ 
+-    private WorldType(int p_i1081_1_, String p_i1081_2_, int p_i1081_3_)
++    protected WorldType(int p_i1081_1_, String p_i1081_2_, int p_i1081_3_)
+     {
+         this.field_46139_c = p_i1081_2_;
          this.field_48632_f = p_i1081_3_;
          this.field_48633_g = true;
          field_48637_a[p_i1081_1_] = this;
@@ -33,7 +39,7 @@
      }
  
      public String func_48628_a()
-@@ -78,4 +91,52 @@
+@@ -78,4 +91,69 @@
  
          return null;
      }
@@ -48,9 +54,22 @@
 +        return this == field_48636_c ? new ChunkProviderFlat(var1, var1.func_22138_q(), var1.func_22144_v().func_35917_r()) : new ChunkProviderGenerate(var1, var1.func_22138_q(), var1.func_22144_v().func_35917_r());
 +    }
 +
++    /**
++     * @deprecated Use {@link #getMinimumSpawnHeight(World)} instead
++     */
 +    public int getSeaLevel(World var1)
 +    {
++        return getMinimumSpawnHeight(var1);
++    }
++
++    public int getMinimumSpawnHeight(World world)
++    {
 +        return this == field_48636_c ? 4 : 64;
++    }
++
++    public double getHorizon(World world)
++    {
++        return this == field_48636_c ? 0.0D : 63.0D;
 +    }
 +
 +    public boolean hasVoidParticles(boolean var1)
@@ -84,5 +103,9 @@
 +		biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
 +    }
 +    
++    /**
++     * Called when 'Create New World' button is pressed before starting game
++     */
++    public void onGUICreateWorldPress() { }
 +    
  }

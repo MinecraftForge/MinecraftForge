@@ -27,7 +27,7 @@
      public int func_46066_g()
      {
 -        return this.field_46067_b == WorldType.field_48636_c ? 4 : 64;
-+        return this.field_46067_b.getSeaLevel(field_4216_a);
++        return this.field_46067_b.getMinimumSpawnHeight(field_4216_a);
      }
  
      public boolean func_46064_i()
