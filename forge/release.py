@@ -1,6 +1,6 @@
 import os, os.path, sys
 import shutil, fnmatch
-import logging, zipfile
+import logging, zipfile, re
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
 mcp_dir = os.path.abspath('..')
@@ -55,6 +55,8 @@ def main():
         
     os.makedirs(out_folder)
     
+    update_info('forge_common/mod_MinecraftForge.info', version_str)
+    
     zip_start('minecraftforge-client-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
     zip_add('forge_common/mod_MinecraftForge.info', 'mod_MinecraftForge.info')
@@ -100,6 +102,8 @@ def main():
     zip_add('Paulscode SoundSystem CodecIBXM License.txt')
     zip_end()
     inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), 0)
+    
+    shutil.move(os.path.join(forge_dir, 'file.backup'), os.path.join(forge_dir, 'forge_common/mod_MinecraftForge.info'.replace('/', os.sep)))
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
@@ -152,6 +156,20 @@ def zip_end():
     print '=================================== %s Finished =================================' % zip_name
     zip_name = None
     zip_base = None
+    
+def update_info(input, version):
+        input = os.path.join(forge_dir, input.replace('/', os.sep))
+        temp = os.path.join(forge_dir, 'file.backup')
+        
+        shutil.move(input, temp)
+        
+        with open(temp, 'r') as fh:
+            buf = fh.read()
+            
+        buf = re.sub(r'{version}', version, buf)
+            
+        with open(input, 'w') as fh:
+            fh.write(buf)
     
 def extract_fml_obfed():
     fml_file = os.path.join(forge_dir, 'fml', 'difflist.txt')
