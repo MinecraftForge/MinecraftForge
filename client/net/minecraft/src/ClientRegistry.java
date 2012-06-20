@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -131,13 +132,14 @@ public class ClientRegistry implements IMinecraftRegistry
         for (BiomeGenBase biome : biomes)
         {
             @SuppressWarnings("unchecked")
-            List<SpawnListEntry> spawns = biome.func_25063_a(typeOfCreature);
+            Iterator<SpawnListEntry> spawns = biome.func_25063_a(typeOfCreature).iterator();
     
-            for (SpawnListEntry entry : Collections.unmodifiableList(spawns))
+            while (spawns.hasNext())
             {
+                SpawnListEntry entry = spawns.next();
                 if (entry.field_25212_a == entityClass)
                 {
-                    spawns.remove(entry);
+                    spawns.remove();
                 }
             }
         }
