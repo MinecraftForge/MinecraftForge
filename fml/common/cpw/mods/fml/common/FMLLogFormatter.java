@@ -51,7 +51,7 @@ final class FMLLogFormatter extends Formatter
         }
 
         msg.append(record.getMessage());
-        msg.append(System.lineSeparator());
+        msg.append(System.getProperty("line.separator"));
         Throwable thr = record.getThrown();
 
         if (thr != null)
