@@ -320,7 +320,7 @@
      }
 @@ -4449,4 +4463,39 @@
      {
-         return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
+         return this.worldInfo.getTerrainType().getHorizon(this);
      }
 +    
 +

@@ -8,7 +8,7 @@
  public abstract class WorldProvider
  {
      /** world object being used */
-@@ -124,7 +126,7 @@
+@@ -117,7 +119,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -17,9 +17,9 @@
      }
  
      /**
-@@ -139,4 +141,36 @@
+@@ -132,4 +134,36 @@
      {
-         return this.terrainType == WorldType.FLAT ? 4 : 64;
+         return this.terrainType.getMinimumSpawnHeight(worldObj);
      }
 +    
 +    /**
