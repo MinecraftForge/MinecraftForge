@@ -808,7 +808,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         ModMetadata meta=new ModMetadata(mod);
         try {
             meta.name=modinfo.func_27213_a("name");
-            meta.description=modinfo.func_27213_a("description");
+            meta.description=modinfo.func_27213_a("description").replace("\r", "");
             meta.version=modinfo.func_27213_a("version");
             meta.credits=modinfo.func_27213_a("credits");
             List authors=modinfo.func_27217_b("authors");
