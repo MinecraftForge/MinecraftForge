@@ -70,7 +70,92 @@
      }
  
      /**
-@@ -1453,6 +1468,12 @@
+@@ -638,6 +653,15 @@
+      */
+     public boolean setBlockAndMetadata(int par1, int par2, int par3, int par4, int par5)
+     {
++        return setBlockAndMetadata(par1, par2, par3, par4, par5, true);
++    }
++
++    /**
++     * The triggerHook boolen is to be used from machines that don't want to
++     * trigger the onBlockChange forge hook
++     */
++    public boolean setBlockAndMetadata(int par1, int par2, int par3, int par4, int par5, boolean triggerHook)
++    {
+         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
+         {
+             if (par2 < 0)
+@@ -650,6 +674,11 @@
+             }
+             else
+             {
++                if (triggerHook && ForgeHooks.onBlockChange(this, par1, par2, par3, par4, par5))
++                {
++                    return false;
++                }
++
+                 Chunk var6 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+                 boolean var7 = var6.setBlockIDWithMetadata(par1 & 15, par2, par3 & 15, par4, par5);
+                 Profiler.startSection("checkLight");
+@@ -669,6 +698,15 @@
+      */
+     public boolean setBlock(int par1, int par2, int par3, int par4)
+     {
++        return setBlock(par1, par2, par3, par4, true);
++    }
++
++    /**
++     * The triggerHook boolen is to be used from machines that don't want to
++     * trigger the onBlockChange forge hook
++     */
++    public boolean setBlock(int par1, int par2, int par3, int par4, boolean triggerHook)
++    {
+         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
+         {
+             if (par2 < 0)
+@@ -681,6 +719,11 @@
+             }
+             else
+             {
++                if (triggerHook && ForgeHooks.onBlockChange(this, par1, par2, par3, par4, 0))
++                {
++                    return false;
++                }
++
+                 Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+                 boolean var6 = var5.setBlockID(par1 & 15, par2, par3 & 15, par4);
+                 Profiler.startSection("checkLight");
+@@ -758,6 +801,16 @@
+      */
+     public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
+     {
++        return setBlockMetadata(par1, par2, par3, par4, true);
++    }
++
++    /**
++     * The triggerHook boolen is to be used from machines that don't want to
++     * trigger the onBlockChange forge hook
++     */
++
++    public boolean setBlockMetadata(int par1, int par2, int par3, int par4, boolean triggerHook)
++    {
+         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
+         {
+             if (par2 < 0)
+@@ -770,6 +823,11 @@
+             }
+             else
+             {
++                if (triggerHook && ForgeHooks.onBlockChange(this, par1, par2, par3, -1, par4))
++                {
++                    return false;
++                }
++
+                 Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+                 par1 &= 15;
+                 par3 &= 15;
+@@ -1453,6 +1511,12 @@
       */
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -83,7 +168,7 @@
          for (int var5 = 0; var5 < this.worldAccesses.size(); ++var5)
          {
              ((IWorldAccess)this.worldAccesses.get(var5)).playSound(par2Str, par1Entity.posX, par1Entity.posY - (double)par1Entity.yOffset, par1Entity.posZ, par3, par4);
-@@ -2068,7 +2089,7 @@
+@@ -2068,7 +2132,7 @@
  
                      if (var7 != null)
                      {
@@ -92,7 +177,7 @@
                      }
                  }
              }
-@@ -2078,6 +2099,10 @@
+@@ -2078,6 +2142,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -103,7 +188,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -2098,18 +2123,18 @@
+@@ -2098,18 +2166,18 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -126,18 +211,18 @@
                  }
              }
  
-@@ -2122,13 +2147,13 @@
+@@ -2122,13 +2190,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
 -        if (this.scanningTileEntities)
-+        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
-+        for(Object entity : par1Collection) 
-         {
+-        {
 -            this.addedTileEntityList.addAll(par1Collection);
 -        }
 -        else
--        {
++        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
++        for(Object entity : par1Collection) 
+         {
 -            this.loadedTileEntityList.addAll(par1Collection);
 +            if(((TileEntity)entity).canUpdate())
 +            {
@@ -146,7 +231,7 @@
          }
      }
  
-@@ -2150,7 +2175,7 @@
+@@ -2150,7 +2218,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -155,7 +240,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2327,7 +2352,14 @@
+@@ -2327,7 +2395,14 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -171,7 +256,7 @@
                      }
                  }
              }
-@@ -2631,25 +2663,19 @@
+@@ -2631,25 +2706,19 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -209,7 +294,7 @@
          }
      }
  
-@@ -2658,27 +2684,10 @@
+@@ -2658,27 +2727,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -240,7 +325,7 @@
          }
      }
  
-@@ -2704,7 +2713,8 @@
+@@ -2704,7 +2756,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -250,7 +335,7 @@
      }
  
      /**
-@@ -2720,7 +2730,7 @@
+@@ -2720,7 +2773,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -259,7 +344,7 @@
              }
              else
              {
-@@ -2985,6 +2995,7 @@
+@@ -2985,6 +3038,7 @@
                  }
              }
          }
@@ -267,7 +352,7 @@
  
          Profiler.endSection();
  
-@@ -3308,7 +3319,7 @@
+@@ -3308,7 +3362,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -276,7 +361,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3668,10 +3679,10 @@
+@@ -3668,10 +3722,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -291,7 +376,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3692,10 +3703,10 @@
+@@ -3692,10 +3746,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -306,7 +391,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3840,7 +3851,10 @@
+@@ -3840,7 +3894,10 @@
              {
                  var8 = null;
              }
@@ -318,7 +403,7 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -4449,4 +4463,39 @@
+@@ -4449,4 +4506,39 @@
      {
          return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
      }
