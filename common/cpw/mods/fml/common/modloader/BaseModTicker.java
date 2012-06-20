@@ -52,7 +52,7 @@ public class BaseModTicker implements ITickHandler
     @Override
     public void tickEnd(EnumSet<TickType> types, Object... tickData)
     {
-        tickBaseMod(ticks, true, tickData);
+        tickBaseMod(types, true, tickData);
     }
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
@@ -61,6 +61,7 @@ public class BaseModTicker implements ITickHandler
         {
             clockTickTrigger =  true;
         }
+        
         if (end && clockTickTrigger && types.contains(TickType.RENDER))
         {
             types.add(TickType.GAME);
