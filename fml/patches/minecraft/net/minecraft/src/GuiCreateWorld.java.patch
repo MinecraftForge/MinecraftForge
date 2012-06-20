@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/src/GuiCreateWorld.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/GuiCreateWorld.java	0000-00-00 00:00:00.000000000 -0000
+@@ -164,6 +164,7 @@
+                     this.field_945_b.field_6327_b = new PlayerControllerSP(this.field_945_b);
+                 }
+ 
++                WorldType.field_48637_a[this.field_46030_z].onGUICreateWorldPress();
+                 this.field_945_b.func_6247_b(this.field_22132_k, this.field_22134_h.func_22071_a(), new WorldSettings(var2, var9, this.field_35365_g, this.field_40232_h, WorldType.field_48637_a[this.field_46030_z]));
+                 this.field_945_b.func_6272_a((GuiScreen)null);
+             }

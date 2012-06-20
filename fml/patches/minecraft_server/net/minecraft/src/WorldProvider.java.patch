@@ -1,0 +1,32 @@
+--- ../src-base/minecraft_server/net/minecraft/src/WorldProvider.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/src/WorldProvider.java	0000-00-00 00:00:00.000000000 -0000
+@@ -32,19 +32,12 @@
+ 
+     protected void func_4090_a()
+     {
+-        if (this.field_4302_a.func_22081_n().func_46069_q() == WorldType.field_48458_c)
+-        {
+-            this.field_4301_b = new WorldChunkManagerHell(BiomeGenBase.field_35520_c, 0.5F, 0.5F);
+-        }
+-        else
+-        {
+-            this.field_4301_b = new WorldChunkManager(this.field_4302_a);
+-        }
++        this.field_4301_b = this.field_4302_a.func_22081_n().func_46069_q().getChunkManager(field_4302_a);
+     }
+ 
+     public IChunkProvider func_4087_c()
+     {
+-        return (IChunkProvider)(this.field_46120_b == WorldType.field_48458_c ? new ChunkProviderFlat(this.field_4302_a, this.field_4302_a.func_22079_j(), this.field_4302_a.func_22081_n().func_35499_o()) : new ChunkProviderGenerate(this.field_4302_a, this.field_4302_a.func_22079_j(), this.field_4302_a.func_22081_n().func_35499_o()));
++        return this.field_46120_b.getChunkGenerator(this.field_4302_a);
+     }
+ 
+     public boolean func_4092_a(int p_4092_1_, int p_4092_2_)
+@@ -96,6 +89,6 @@
+ 
+     public int func_46119_e()
+     {
+-        return this.field_46120_b == WorldType.field_48458_c ? 4 : 64;
++        return this.field_46120_b.getMinimumSpawnHeight(field_4302_a);
+     }
+ }
