@@ -90,6 +90,16 @@
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
+  	<fail message="Compilation failed">
+  		<condition>
+  	        <not>
+  	        	<and>
+  	        		<available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
+                    <available file="${mcp.home}/bin/minecraft_server/net/minecraft/server/MinecraftServer.class"/>
+  	        	</and>
+  	        </not>
+  		</condition>
+  	</fail>
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/reobfuscate.py" />
     </exec>
