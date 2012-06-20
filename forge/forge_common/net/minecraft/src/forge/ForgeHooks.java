@@ -168,7 +168,20 @@ public class ForgeHooks
         return cont;
     }
     static LinkedList<IPickupHandler> pickupHandlers = new LinkedList<IPickupHandler>();
-    
+
+    public static boolean onBlockChange(World w, int x, int y, int z, int blockID, int metadata)
+    {
+        for (IBlockChangeHandler handler : blockChangeHandlers)
+        {
+            if (!handler.onBlockChange(w, x, y, z, blockID, metadata))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    static LinkedList<IBlockChangeHandler> blockChangeHandlers = new LinkedList<IBlockChangeHandler>();
+
     public static void addActiveChunks(World world, Set<ChunkCoordIntPair> chunkList)
     {
         for(IChunkLoadHandler loader : chunkLoadHandlers)

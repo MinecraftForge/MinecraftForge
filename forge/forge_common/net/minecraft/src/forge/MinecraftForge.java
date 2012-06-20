@@ -121,6 +121,15 @@ public class MinecraftForge
     }
 
     /**
+     * Registers a new onBlockChange event handler
+     * @param handler The Handler to be registered
+     */
+    public static void registerSetBlockHandler(IBlockChangeHandler handler)
+    {
+        ForgeHooks.blockChangeHandlers.add(handler);
+    }
+    
+    /**
      * Register a new entity interact handler.
      * @param handler The Handler to be registered
      */
