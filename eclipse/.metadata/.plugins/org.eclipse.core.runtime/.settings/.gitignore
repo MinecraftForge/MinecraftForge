@@ -7,3 +7,6 @@
 /org.eclipse.ui.workbench.prefs
 /org.eclipse.wst.sse.core.prefs
 /org.eclipse.epp.usagedata.gathering.prefs
+/org.eclipse.debug.ui.prefs
+/org.eclipse.jdt.ui.prefs
+/org.eclipse.ui.ide.prefs
