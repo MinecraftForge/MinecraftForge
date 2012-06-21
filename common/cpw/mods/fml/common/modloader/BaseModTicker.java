@@ -57,17 +57,28 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
-        if (end && (types.contains(TickType.GAME) && ticks.contains(TickType.GAME)) || (types.contains(TickType.WORLDLOAD) && ticks.contains(TickType.WORLDLOAD)))
+        if (FMLCommonHandler.instance().getSide().isServer() || ticks.contains(TickType.RENDER))
         {
-            clockTickTrigger =  true;
+            sendTick(types, end, tickData);
+        }
+        else
+        {
+            if (end && ticks.contains(TickType.GAME) && (types.contains(TickType.GAME) || types.contains(TickType.WORLDLOAD)))
+            {
+                clockTickTrigger =  true;
+            }
+            
+            if (end && clockTickTrigger && types.contains(TickType.RENDER))
+            {
+                clockTickTrigger = false;
+                sendTick(EnumSet.of(TickType.GAME),end,tickData);
+            }
         }
         
-        if (end && clockTickTrigger && types.contains(TickType.RENDER))
-        {
-            types.add(TickType.GAME);
-            types.remove(TickType.RENDER);
-            clockTickTrigger = false;
-        }
+    }
+        
+    private void sendTick(EnumSet<TickType> types, boolean end, Object... tickData)
+    {
         for (TickType type : types)
         {
             if (!ticks.contains(type))
@@ -85,7 +96,7 @@ public class BaseModTicker implements ITickHandler
     @Override
     public EnumSet<TickType> ticks()
     {
-        return ticks;
+        return (clockTickTrigger ? EnumSet.of(TickType.RENDER) : ticks);
     }
 
     @Override
