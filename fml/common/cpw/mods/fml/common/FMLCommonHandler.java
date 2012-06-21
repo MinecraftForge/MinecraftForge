@@ -280,6 +280,11 @@ public class FMLCommonHandler
      */
     public Logger getMinecraftLogger()
     {
+        if (sidedDelegate == null)
+        {
+            throw new RuntimeException("sidedDelegate null when attempting to getMinecraftLogger, this is generally caused by you not installing FML properly, " +
+            "or installing some other mod that edits Minecraft.class on top of FML such as ModLoader, do not do this. Reinstall FML properly and try again.");
+        }
         return sidedDelegate.getMinecraftLogger();
     }
 
