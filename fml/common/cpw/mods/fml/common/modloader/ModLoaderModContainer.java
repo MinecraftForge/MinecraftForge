@@ -143,6 +143,9 @@ public class ModLoaderModContainer implements ModContainer
         File modConfig = new File(configDir, String.format("%s.cfg", modConfigName));
         Properties props = new Properties();
 
+        boolean existingConfigFound = false;
+        boolean mlPropFound = false;
+        
         if (modConfig.exists())
         {
             try
@@ -158,6 +161,7 @@ public class ModLoaderModContainer implements ModContainer
                 Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
                 throw new LoaderException(e);
             }
+            existingConfigFound = true;
         }
 
         StringBuffer comments = new StringBuffer();
@@ -227,10 +231,33 @@ public class ModLoaderModContainer implements ModContainer
                     }
                     comments.append("\n");
                 }
+                mlPropFound = true;
             }
         }
         finally
         {
+            if (!mlPropFound && !existingConfigFound)
+            {
+                Loader.log.fine(String.format("No MLProp configuration for %s found or required. No file written", modConfigName));
+                return;
+            }
+            
+            if (!mlPropFound && existingConfigFound)
+            {
+                File mlPropBackup = new File(modConfig.getParent(),modConfig.getName()+".bak");
+                Loader.log.fine(String.format("MLProp configuration file for %s found but not required. Attempting to rename file to %s", modConfigName, mlPropBackup.getName()));
+                boolean renamed = modConfig.renameTo(mlPropBackup);
+                if (renamed)
+                {
+                    Loader.log.fine(String.format("Unused MLProp configuration file for %s renamed successfully to %s", modConfigName, mlPropBackup.getName()));
+                }
+                else
+                {
+                    Loader.log.fine(String.format("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", modConfigName, mlPropBackup.getName()));
+                }
+                
+                return;
+            }
             try
             {
                 FileWriter configWriter = new FileWriter(modConfig);
