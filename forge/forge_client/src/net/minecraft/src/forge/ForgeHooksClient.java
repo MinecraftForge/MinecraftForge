@@ -338,7 +338,7 @@ public class ForgeHooksClient
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
         
-        if (item.itemID < 256 && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
+        if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
             engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
             int renderType = Block.blocksList[item.itemID].getRenderType();
