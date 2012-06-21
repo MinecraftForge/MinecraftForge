@@ -27,3 +27,15 @@
                      {
                          if (par1World.isAirBlock(var14, var20, var17))
                          {
+@@ -304,9 +304,9 @@
+                 var10 = 70;
+             }
+ 
+-            if (var10 > 118)
++            if (var10 > par1World.getHeight() - 10) //BugFix
+             {
+-                var10 = 118;
++                var10 = par1World.getHeight() - 10; //BugFix
+             }
+ 
+             var16 = var10;

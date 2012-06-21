@@ -283,6 +283,15 @@
  
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
+@@ -3827,7 +3838,7 @@
+      */
+     public int getHeight()
+     {
+-        return 256;
++        return worldProvider.hasNoSky ? 128 : 256; //Nether is 128, overworld is 256, Bugfix related to Portal generation
+     }
+ 
+     /**
 @@ -3864,4 +3875,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);

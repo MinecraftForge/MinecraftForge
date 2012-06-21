@@ -318,6 +318,15 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
+@@ -4399,7 +4413,7 @@
+      */
+     public int getHeight()
+     {
+-        return 256;
++        return worldProvider.hasNoSky ? 128 : 256; //Nether is 128, overworld is 256, Bugfix related to Portal generation
+     }
+ 
+     /**
 @@ -4449,4 +4463,39 @@
      {
          return this.worldInfo.getTerrainType().getHorizon(this);
