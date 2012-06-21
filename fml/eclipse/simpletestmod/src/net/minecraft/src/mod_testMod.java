@@ -1,22 +1,15 @@
 package net.minecraft.src;
-public class mod_testMod extends BaseMod {
 
+import java.util.EnumSet;
 
-    @MLProp
-    public static byte byteptest = 5; 
-    @MLProp
-    public static short shortptest = 5; 
-    @MLProp
-    public static int intptest = 5; 
-    @MLProp
-    public static long longptest = 5; 
-    @MLProp
-    public static float floatptest = 5; 
-    @MLProp
-    public static double doubleptest = 5; 
-    @MLProp
-    public static boolean booleanptest = false; 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.TickType;
+import net.minecraft.client.Minecraft;
 
+public class mod_testMod extends BaseMod implements ITickHandler {
+    private long ts;
+    private long tsg;
     @Override
     public String getVersion() {
         return "test";
@@ -24,13 +17,51 @@ public class mod_testMod extends BaseMod {
 
     @Override
     public void load() {
-        System.out.println("byte : "+byteptest);
-        System.out.println("short : "+shortptest);
-        System.out.println("int : "+intptest);
-        System.out.println("long : "+longptest);
-        System.out.println("float : "+floatptest);
-        System.out.println("double : "+doubleptest);
-        System.out.println("bool : "+booleanptest);
+        ModLoader.setInGameHook(this, true, true);
+        FMLCommonHandler.instance().registerTickHandler(this);
+        ts=System.currentTimeMillis();
+        tsg=ts;
+    }
+    
+    @Override
+    public boolean onTickInGame(float time, Minecraft minecraftInstance)
+    {
+        long now = System.currentTimeMillis();
+        long del=now-ts;
+        ts=now;
+        System.out.printf("%d %d %d %d MLTICK\n",del, ts, tsg, now);
+        return true;
+    }
+
+    @Override
+    public void tickStart(EnumSet<TickType> type, Object... tickData)
+    {
+        
+    }
+
+    @Override
+    public void tickEnd(EnumSet<TickType> type, Object... tickData)
+    {
+        long now = System.currentTimeMillis();
+        long del=now-tsg;
+        tsg=now;
+        System.out.printf("%d %d %d %d GAMETICK\n",del, ts, tsg, now);
+    }
+
+    @Override
+    public EnumSet<TickType> ticks()
+    {
+        return EnumSet.of(TickType.GAME);
+    }
+
+    /* (non-Javadoc)
+     * @see cpw.mods.fml.common.ITickHandler#getLabel()
+     */
+    @Override
+    public String getLabel()
+    {
+        // TODO Auto-generated method stub
+        return "TickTester";
     }
 
 }
