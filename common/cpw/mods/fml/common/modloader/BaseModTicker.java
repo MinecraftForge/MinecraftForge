@@ -57,24 +57,31 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
-        if (FMLCommonHandler.instance().getSide().isServer() || ticks.contains(TickType.RENDER))
+        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDGUI)))
         {
-            sendTick(types, end, tickData);
-        }
-        else
-        {
-            if (end && ticks.contains(TickType.GAME) && (types.contains(TickType.GAME) || types.contains(TickType.WORLDLOAD)))
+            EnumSet cTypes=EnumSet.copyOf(types);
+            if (end && ( types.contains(TickType.GAME) || types.contains(TickType.WORLDLOAD) || types.contains(TickType.WORLDGUI)))
             {
                 clockTickTrigger =  true;
+                cTypes.remove(TickType.GAME);
+                cTypes.remove(TickType.WORLDLOAD);
+                cTypes.remove(TickType.WORLDGUI);
             }
             
             if (end && clockTickTrigger && types.contains(TickType.RENDER))
             {
                 clockTickTrigger = false;
-                sendTick(EnumSet.of(TickType.GAME),end,tickData);
+                cTypes.remove(TickType.RENDER);
+                if (ticks.contains(TickType.GAME)) cTypes.add(TickType.GAME);
+                if (ticks.contains(TickType.WORLDGUI)) cTypes.add(TickType.WORLDGUI);
             }
+            
+            sendTick(cTypes, end, tickData);
         }
-        
+        else
+        {
+            sendTick(types, end, tickData);
+        }
     }
         
     private void sendTick(EnumSet<TickType> types, boolean end, Object... tickData)

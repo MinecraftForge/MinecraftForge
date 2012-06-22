@@ -46,7 +46,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         // World and render ticks
         if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME ) && hasWorld) {
             return onTickInGame((Float) data[0], mc);
-        } else if (((tickEnd && tick==TickType.WORLDGUI) || (tickEnd && tick==TickType.GUI))) {
+        } else if (tickEnd && (tick==TickType.WORLDGUI || tick==TickType.GUI) && data[1]!=null) {
             return onTickInGUI((Float) data[0], mc, (GuiScreen)data[1]);
         }
         return true;
