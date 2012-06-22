@@ -487,6 +487,7 @@ public class ModLoaderModContainer implements ModContainer
             if (depparts.length < 2)
             {
                 parseFailure=true;
+                continue;
             }
             else if ("required-before".equals(depparts[0]) || "required-after".equals(depparts[0]))
             {
@@ -494,9 +495,11 @@ public class ModLoaderModContainer implements ModContainer
                     dependencies.add(depparts[1]);
                 } else {
                     parseFailure=true;
+                    continue;
                 }
             }
-            else if ("required-before".equals(depparts[0]) || "before".equals(depparts[0]))
+            
+            if ("required-before".equals(depparts[0]) || "before".equals(depparts[0]))
             {
             	postDependencies.add(depparts[1]);
             } else if ("required-after".equals(depparts[0]) || "after".equals(depparts[0]))
