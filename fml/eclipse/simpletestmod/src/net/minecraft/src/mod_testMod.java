@@ -18,6 +18,7 @@ public class mod_testMod extends BaseMod implements ITickHandler {
     @Override
     public void load() {
         ModLoader.setInGameHook(this, true, true);
+        ModLoader.setInGUIHook(this, true, false);
         FMLCommonHandler.instance().registerTickHandler(this);
         ts=System.currentTimeMillis();
         tsg=ts;
@@ -30,6 +31,13 @@ public class mod_testMod extends BaseMod implements ITickHandler {
         long del=now-ts;
         ts=now;
         System.out.printf("%d %d %d %d MLTICK\n",del, ts, tsg, now);
+        return true;
+    }
+    
+    @Override
+    public boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui)
+    {
+        System.out.printf("%d MLGUITICK\n",System.currentTimeMillis());
         return true;
     }
 
