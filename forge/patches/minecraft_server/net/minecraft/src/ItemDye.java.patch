@@ -33,8 +33,14 @@
                  if (var8 == Block.sapling.blockID)
                  {
                      if (!par3World.isRemote)
-@@ -109,13 +118,9 @@
+@@ -107,15 +116,15 @@
+                             {
+                                 if (itemRand.nextInt(10) != 0)
                                  {
++                                    if (mod_MinecraftForge.DISABLE_DARK_ROOMS && !Block.tallGrass.canBlockStay(par3World, var10, var11, var12))
++                                    {
++                                        continue;
++                                    }
                                      par3World.setBlockAndMetadataWithNotify(var10, var11, var12, Block.tallGrass.blockID, 1);
                                  }
 -                                else if (itemRand.nextInt(3) != 0)

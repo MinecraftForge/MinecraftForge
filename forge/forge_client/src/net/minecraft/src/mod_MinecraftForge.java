@@ -10,6 +10,9 @@ import net.minecraft.src.forge.NetworkMod;
  */
 public class mod_MinecraftForge extends NetworkMod
 {
+    @MLProp(info = "Set to true to disable darkrooms, it adds a extra check when planting the grass and plants to check that they won't instantly die.")
+    public static boolean DISABLE_DARK_ROOMS = false;
+    
     @MLProp(info = "Set to false to reproduce a vinella bug that prevents mobs from spawning on inverted half-slabs and inverted stairs.")
     public static boolean SPAWNER_ALLOW_ON_INVERTED = true;
     

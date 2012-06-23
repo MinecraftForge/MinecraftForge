@@ -27,6 +27,7 @@ import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
+import net.minecraft.src.mod_MinecraftForge;
 import net.minecraft.src.forge.packets.PacketEntitySpawn;
 import net.minecraft.src.forge.packets.PacketHandlerBase;
 
@@ -510,7 +511,11 @@ public class ForgeHooks
     {
         int index = world.rand.nextInt(plantGrassWeight);
         ProbableItem item = getRandomItem(plantGrassList, index);
-        if (item == null)
+        if (item == null || Block.blocksList[item.ItemID] == null)
+        {
+            return;
+        }
+        if (mod_MinecraftForge.DISABLE_DARK_ROOMS && !Block.blocksList[item.ItemID].canBlockStay(world, x, y, z))
         {
             return;
         }
