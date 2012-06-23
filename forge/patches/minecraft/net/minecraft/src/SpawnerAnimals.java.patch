@@ -1,6 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/src/SpawnerAnimals.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/SpawnerAnimals.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,8 @@
+@@ -1,10 +1,14 @@
+ package net.minecraft.src;
+ 
++import java.util.ArrayList;
++import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
  
@@ -9,7 +15,7 @@
  public final class SpawnerAnimals
  {
      /** The 17x17 area around the player where mobs can spawn */
-@@ -20,7 +22,7 @@
+@@ -20,7 +24,7 @@
      {
          Chunk var3 = par0World.getChunkFromChunkCoords(par1, par2);
          int var4 = par1 * 16 + par0World.rand.nextInt(16);
@@ -18,7 +24,20 @@
          int var6 = par2 * 16 + par0World.rand.nextInt(16);
          return new ChunkPosition(var4, var5, var6);
      }
-@@ -202,7 +204,8 @@
+@@ -78,6 +82,12 @@
+                 if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && par0World.countEntities(var34.getCreatureClass()) <= var34.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
+                 {
+                     Iterator var35 = eligibleChunksForSpawning.keySet().iterator();
++                    if (mod_MinecraftForge.SPAWNER_MAKE_MORE_RANDOM)
++                    {
++                        ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
++                        Collections.shuffle(tmp);
++                        var35 = tmp.iterator();
++                    }
+                     label108:
+ 
+                     while (var35.hasNext())
+@@ -202,7 +212,8 @@
          else
          {
              int var5 = par1World.getBlockId(par2, par3 - 1, par4);
@@ -28,7 +47,7 @@
          }
      }
  
-@@ -211,6 +214,16 @@
+@@ -211,6 +222,16 @@
       */
      private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
      {

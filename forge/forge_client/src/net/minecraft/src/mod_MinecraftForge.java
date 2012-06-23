@@ -13,6 +13,9 @@ public class mod_MinecraftForge extends NetworkMod
     @MLProp(info = "Set to false to reproduce a vinella bug that prevents mobs from spawning on inverted half-slabs and inverted stairs.")
     public static boolean SPAWNER_ALLOW_ON_INVERTED = true;
     
+    @MLProp(info = "Set to true to randomly shuffle the potential chunks for spawning, this is useful in FTB challange maps where you don't want one side hogging the spawns")
+    public static boolean SPAWNER_MAKE_MORE_RANDOM = false;
+    
     @Override
     public String getVersion()
     {
