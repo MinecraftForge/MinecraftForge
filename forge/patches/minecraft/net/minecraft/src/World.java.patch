@@ -70,7 +70,18 @@
      }
  
      /**
-@@ -1453,6 +1468,12 @@
+@@ -1253,7 +1268,9 @@
+                 int var12 = this.getBlockMetadata(var8, var9, var10);
+                 Block var13 = Block.blocksList[var11];
+ 
+-                if ((!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) && var11 > 0 && var13.canCollideCheck(var12, par3))
++                if (var13 != null &&  //BugFix NPE on misconfigured block ids.
++                   (!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) && 
++                   var11 > 0 && var13.canCollideCheck(var12, par3))
+                 {
+                     MovingObjectPosition var14 = var13.collisionRayTrace(this, var8, var9, var10, par1Vec3D, par2Vec3D);
+ 
+@@ -1453,6 +1470,12 @@
       */
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -83,7 +94,7 @@
          for (int var5 = 0; var5 < this.worldAccesses.size(); ++var5)
          {
              ((IWorldAccess)this.worldAccesses.get(var5)).playSound(par2Str, par1Entity.posX, par1Entity.posY - (double)par1Entity.yOffset, par1Entity.posZ, par3, par4);
-@@ -2068,7 +2089,7 @@
+@@ -2068,7 +2091,7 @@
  
                      if (var7 != null)
                      {
@@ -92,7 +103,7 @@
                      }
                  }
              }
-@@ -2078,6 +2099,10 @@
+@@ -2078,6 +2101,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -103,7 +114,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -2098,18 +2123,18 @@
+@@ -2098,18 +2125,18 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -126,7 +137,7 @@
                  }
              }
  
-@@ -2122,13 +2147,13 @@
+@@ -2122,13 +2149,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -146,7 +157,7 @@
          }
      }
  
-@@ -2150,7 +2175,7 @@
+@@ -2150,7 +2177,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -155,7 +166,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2327,7 +2352,14 @@
+@@ -2327,7 +2354,14 @@
                          if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
                          {
                              return true;
@@ -171,7 +182,7 @@
                      }
                  }
              }
-@@ -2631,25 +2663,19 @@
+@@ -2631,25 +2665,19 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -209,7 +220,7 @@
          }
      }
  
-@@ -2658,27 +2684,10 @@
+@@ -2658,27 +2686,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -240,7 +251,7 @@
          }
      }
  
-@@ -2704,7 +2713,8 @@
+@@ -2704,7 +2715,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -250,7 +261,7 @@
      }
  
      /**
-@@ -2720,7 +2730,7 @@
+@@ -2720,7 +2732,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -259,7 +270,7 @@
              }
              else
              {
-@@ -2985,6 +2995,7 @@
+@@ -2985,6 +2997,7 @@
                  }
              }
          }
@@ -267,7 +278,7 @@
  
          Profiler.endSection();
  
-@@ -3308,7 +3319,7 @@
+@@ -3308,7 +3321,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -276,7 +287,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3668,10 +3679,10 @@
+@@ -3668,10 +3681,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -291,7 +302,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3692,10 +3703,10 @@
+@@ -3692,10 +3705,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -306,7 +317,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3840,7 +3851,10 @@
+@@ -3840,7 +3853,10 @@
              {
                  var8 = null;
              }
@@ -318,7 +329,7 @@
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -4399,7 +4413,7 @@
+@@ -4399,7 +4415,7 @@
       */
      public int getHeight()
      {
@@ -327,7 +338,7 @@
      }
  
      /**
-@@ -4449,4 +4463,39 @@
+@@ -4449,4 +4465,39 @@
      {
          return this.worldInfo.getTerrainType().getHorizon(this);
      }
