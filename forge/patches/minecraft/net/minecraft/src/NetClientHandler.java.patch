@@ -54,6 +54,15 @@
  
          if (var8 != null)
          {
+@@ -438,7 +461,7 @@
+                 {
+                     short var6 = var4.readShort();
+                     short var7 = var4.readShort();
+-                    int var8 = (var7 & 4095) >> 4;
++                    int var8 = (var7 & 0xFFF0) >> 4; //4096 fix, And vanilla bug fix
+                     int var9 = var7 & 15;
+                     int var10 = var6 >> 12 & 15;
+                     int var11 = var6 >> 8 & 15;
 @@ -486,7 +509,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
