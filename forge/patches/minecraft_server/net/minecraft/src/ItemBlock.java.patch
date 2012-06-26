@@ -1,0 +1,12 @@
+--- ../src_base/minecraft_server/net/minecraft/src/ItemBlock.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft_server/net/minecraft/src/ItemBlock.java	0000-00-00 00:00:00.000000000 -0000
+@@ -32,7 +32,8 @@
+         {
+             par7 = 1;
+         }
+-        else if (var8 != Block.vine.blockID && var8 != Block.tallGrass.blockID && var8 != Block.deadBush.blockID)
++        else if (var8 != Block.vine.blockID && var8 != Block.tallGrass.blockID && var8 != Block.deadBush.blockID
++                && (Block.blocksList[var8] != null && !Block.blocksList[var8].isBlockReplaceable(par3World, par4, par5, par6)))
+         {
+             if (par7 == 0)
+             {
