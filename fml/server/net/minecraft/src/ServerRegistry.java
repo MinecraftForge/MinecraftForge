@@ -23,6 +23,12 @@ public class ServerRegistry implements IMinecraftRegistry
     }
 
     @Override
+    public void addRecipe(IRecipe recipe)
+    {
+        CraftingManager.func_20151_a().func_25126_b().add(recipe);
+    }
+
+    @Override
     public void addSmelting(int input, ItemStack output)
     {
         FurnaceRecipes.func_21162_a().func_21160_a(input, output);
@@ -81,7 +87,7 @@ public class ServerRegistry implements IMinecraftRegistry
         {
             @SuppressWarnings("unchecked")
             List<SpawnListEntry> spawns = biome.func_25055_a(typeOfCreature);
-    
+
             for (SpawnListEntry entry : spawns)
             {
                 //Adjusting an existing spawn entry
@@ -93,7 +99,7 @@ public class ServerRegistry implements IMinecraftRegistry
                     break;
                 }
             }
-    
+
             spawns.add(new SpawnListEntry(entityClass, weightedProb, min, max));
         }
     }
@@ -103,7 +109,7 @@ public class ServerRegistry implements IMinecraftRegistry
     public void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = EntityList.getEntityToClassMapping().get(entityName);
-    
+
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
             addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, spawnList, biomes);
@@ -123,7 +129,7 @@ public class ServerRegistry implements IMinecraftRegistry
         {
             @SuppressWarnings("unchecked")
             Iterator<SpawnListEntry> spawns = biome.func_25055_a(typeOfCreature).iterator();
-    
+
             while (spawns.hasNext())
             {
                 SpawnListEntry entry = spawns.next();
@@ -140,7 +146,7 @@ public class ServerRegistry implements IMinecraftRegistry
     public void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = EntityList.getEntityToClassMapping().get(entityName);
-    
+
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
             removeSpawn((Class <? extends EntityLiving >) entityClazz, spawnList, biomes);

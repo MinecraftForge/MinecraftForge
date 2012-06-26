@@ -5,6 +5,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EnumCreatureType;
+import net.minecraft.src.IRecipe;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
@@ -39,5 +40,7 @@ public interface IMinecraftRegistry
     public abstract void addShapelessRecipe(ItemStack output, Object... params);
 
     public abstract void addRecipe(ItemStack output, Object... params);
+
+    public abstract void addRecipe(IRecipe recipe);
 
 }
