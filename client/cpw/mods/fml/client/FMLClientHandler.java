@@ -99,22 +99,22 @@ import cpw.mods.fml.common.registry.FMLRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
- * 
+ *
  * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from
  * {@link MinecraftServer}
- * 
+ *
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code
- * 
+ *
  * The actual mod loading is handled at arms length by {@link Loader}
- * 
+ *
  * It is expected that a similar class will exist for each target environment:
  * Bukkit and Client side.
- * 
+ *
  * It should not be directly modified.
- * 
+ *
  * @author cpw
- * 
+ *
  */
 public class FMLClientHandler implements IFMLSidedHandler
 {
@@ -127,7 +127,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * A reference to the server itself
      */
     private Minecraft client;
-    
+
     /**
      * A handy list of the default overworld biomes
      */
@@ -154,12 +154,12 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
-     * 
+     *
      * @param minecraftServer
      */
 
     private OptifineModContainer optifineContainer;
-    
+
     public void onPreLoad(Minecraft minecraft)
     {
         client = minecraft;
@@ -196,7 +196,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      * Called a bit later on during initialization to finish loading mods
      * Also initializes key bindings
-     * 
+     *
      */
     public void onLoadComplete()
     {
@@ -208,7 +208,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
         // Load the key bindings into the settings table
-        
+
         GameSettings gs = client.field_6304_y;
         KeyBinding[] modKeyBindings = harvestKeyBindings();
         KeyBinding[] allKeys = new KeyBinding[gs.field_1564_t.length + modKeyBindings.length];
@@ -216,9 +216,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         System.arraycopy(modKeyBindings, 0, allKeys, gs.field_1564_t.length, modKeyBindings.length);
         gs.field_1564_t = allKeys;
         gs.func_6519_a();
-        
+
         // Mark this as a "first tick"
-        
+
         firstTick = true;
     }
 
@@ -270,19 +270,19 @@ public class FMLClientHandler implements IFMLSidedHandler
             FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD,TickType.GUILOAD));
         }
     }
-    
+
     public void onRenderTickStart(float partialTickTime)
     {
         FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_6313_p);
     }
-    
+
     public void onRenderTickEnd(float partialTickTime)
     {
         FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_6313_p);
     }
     /**
      * Get the server instance
-     * 
+     *
      * @return
      */
     public Minecraft getClient()
@@ -301,10 +301,10 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Called from ChunkProvider when a chunk needs to be populated
-     * 
+     *
      * To avoid polluting the worldgen seed, we generate a new random from the
      * world seed and generate a seed from that
-     * 
+     *
      * @param chunkProvider
      * @param chunkX
      * @param chunkZ
@@ -337,7 +337,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Called to notify that an item was picked up from the world
-     * 
+     *
      * @param entityItem
      * @param entityPlayer
      */
@@ -355,7 +355,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      * Attempt to dispense the item as an entity other than just as a the item
      * itself
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -388,7 +388,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Build a list of default overworld biomes
-     * 
+     *
      * @return
      */
     public BiomeGenBase[] getDefaultOverworldBiomes()
@@ -416,7 +416,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is crafted
-     * 
+     *
      * @param player
      * @param craftedItem
      * @param craftingGrid
@@ -434,7 +434,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is smelted
-     * 
+     *
      * @param player
      * @param smeltedItem
      */
@@ -451,7 +451,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Called when a chat packet is received
-     * 
+     *
      * @param chat
      * @param player
      * @return true if you want the packet to stop processing and not echo to
@@ -488,7 +488,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Called when a packet 250 packet is received from the player
-     * 
+     *
      * @param packet
      * @param player
      */
@@ -510,7 +510,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * Handle register requests for packet 250 channels
-     * 
+     *
      * @param packet
      */
     private void handleServerRegistration(Packet250CustomPayload packet)
@@ -731,18 +731,18 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         return false;
     }
-    
+
     public void registerTextureOverrides(RenderEngine renderer) {
         for (ModContainer mod : Loader.getModList()) {
             registerAnimatedTexturesFor(mod);
         }
-        
+
         for (OverrideInfo animationOverride : animationSet) {
             renderer.func_1066_a(animationOverride.textureFX);
             addedTextureFX.add(animationOverride.textureFX);
             FMLCommonHandler.instance().getFMLLogger().finer(String.format("Registered texture override %d (%d) on %s (%d)", animationOverride.index, animationOverride.textureFX.field_1126_b, animationOverride.textureFX.getClass().getSimpleName(), animationOverride.textureFX.field_1128_f));
         }
-        
+
         for (String fileToOverride : overrideInfo.keySet()) {
             for (OverrideInfo override : overrideInfo.get(fileToOverride)) {
                 try
@@ -760,7 +760,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
     }
-    
+
     /**
      * @param mod
      */
@@ -785,7 +785,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         objectName+=".name";
         return objectName;
     }
-    
+
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.IFMLSidedHandler#readMetadataFrom(java.io.InputStream, cpw.mods.fml.common.ModContainer)
      */
@@ -839,7 +839,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void pruneOldTextureFX(TexturePackBase var1, List<TextureFX> effects)
     {
         ListIterator<TextureFX> li = addedTextureFX.listIterator();
-        while (li.hasNext()) 
+        while (li.hasNext())
         {
             TextureFX tex = li.next();
             if (tex instanceof FMLTextureFX)
@@ -905,19 +905,19 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         animationSet.add(info);
     }
-    
+
     @Override
     public void profileStart(String profileLabel) {
         Profiler.func_40663_a(profileLabel);
     }
-    
+
     @Override
     public void profileEnd() {
         Profiler.func_40662_b();
     }
 
     /**
-     * 
+     *
      */
     public void preGameLoad(String user, String sessionToken)
     {
@@ -926,7 +926,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     public void onTexturePackChange(RenderEngine engine, TexturePackBase texturepack, List<TextureFX> effects)
-    {        
+    {
         FMLClientHandler.instance().pruneOldTextureFX(texturepack, effects);
 
         for (TextureFX tex : effects)
@@ -936,18 +936,18 @@ public class FMLClientHandler implements IFMLSidedHandler
                 ((ITextureFX)tex).onTexturePackChanged(engine, texturepack, getTextureDimensions(tex));
             }
         }
-        
+
         FMLClientHandler.instance().loadTextures(texturepack);
     }
-    
+
     private HashMap<Integer, Dimension> textureDims = new HashMap<Integer, Dimension>();
     private IdentityHashMap<TextureFX, Integer> effectTextures = new IdentityHashMap<TextureFX, Integer>();
     public void setTextureDimensions(int id, int width, int height, List<TextureFX> effects)
     {
         Dimension dim = new Dimension(width, height);
         textureDims.put(id, dim);
-        
-        for (TextureFX tex : effects) 
+
+        for (TextureFX tex : effects)
         {
             if (getEffectTexture(tex) == id && tex instanceof ITextureFX)
             {
@@ -955,17 +955,17 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
         }
     }
-    
+
     public Dimension getTextureDimensions(TextureFX effect)
     {
         return getTextureDimensions(getEffectTexture(effect));
     }
-    
+
     public Dimension getTextureDimensions(int id)
     {
         return textureDims.get(id);
     }
-    
+
     public int getEffectTexture(TextureFX effect)
     {
         Integer id = effectTextures.get(effect);
@@ -973,41 +973,41 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             return id;
         }
-        
+
         int old = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-        
+
         effect.func_782_a(client.field_6315_n);
-        
+
         id = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-        
+
         GL11.glBindTexture(GL_TEXTURE_2D, old);
-        
+
         effectTextures.put(effect, id);
-        
+
         return id;
     }
-    
+
     public boolean onUpdateTextureEffect(TextureFX effect)
     {
         Logger log = FMLCommonHandler.instance().getFMLLogger();
         ITextureFX ifx = (effect instanceof ITextureFX ? ((ITextureFX)effect) : null);
-        
+
         if (ifx != null && ifx.getErrored())
         {
             return false;
         }
-        
+
         String name = effect.getClass().getSimpleName();
         Profiler.func_40663_a(name);
-        
-        try 
+
+        try
         {
             if (optifineContainer == null)
             {
                 effect.func_783_a();
             }
-        } 
-        catch (Exception e) 
+        }
+        catch (Exception e)
         {
             log.warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name));
             if (ifx != null)
@@ -1023,7 +1023,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Dimension dim = getTextureDimensions(effect);
             int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
-            if (effect.field_1127_a.length != target) 
+            if (effect.field_1127_a.length != target)
             {
                 log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target));
                 ifx.setErrored(true);
@@ -1032,16 +1032,16 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         return true;
     }
-    
-    //Quick and dirty image scaling, no smoothing or fanciness, meant for speed as it will be called every tick.    
+
+    //Quick and dirty image scaling, no smoothing or fanciness, meant for speed as it will be called every tick.
     public void scaleTextureFXData(byte[] data, ByteBuffer buf, int target, int length)
     {
         int sWidth = (int)Math.sqrt(data.length / 4);
         int factor = target / sWidth;
         byte[] tmp = new byte[4];
-        
+
         buf.clear();
-        
+
         if (factor > 1)
         {
             for (int y = 0; y < sWidth; y++)
@@ -1055,7 +1055,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                     tmp[1] = data[sPos + 1];
                     tmp[2] = data[sPos + 2];
                     tmp[3] = data[sPos + 3];
-                    
+
                     int tPosTop = (x * factor) + tRowOff;
                     for (int y2 = 0; y2 < factor; y2++)
                     {
@@ -1068,7 +1068,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 }
             }
         }
-        
+
         buf.position(0).limit(length);
     }
 
