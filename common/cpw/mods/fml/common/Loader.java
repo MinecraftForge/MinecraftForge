@@ -40,10 +40,10 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
- * 
+ *
  * <p>There are several {@link State}s to mod loading, triggered in two different stages from the FML handler code's hooks into the
  * minecraft code.</p>
- * 
+ *
  * <ol>
  * <li>LOADING. Scanning the filesystem for mod containers to load (zips, jars, directories), adding them to the {@link #modClassLoader}
  * Scanning, the loaded containers for mod classes to load and registering them appropriately.</li>
@@ -54,11 +54,11 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
  * <li>ERRORED. The loader encountered an error during the LOADING phase and dropped to this state instead. It will not complete
  * loading from this state, but it attempts to continue loading before abandoning and giving a fatal error.</li>
  * </ol>
- * 
+ *
  * Phase 1 code triggers the LOADING and PREINIT states. Phase 2 code triggers the INIT and POSTINIT states.
- * 
+ *
  * @author cpw
- * 
+ *
  */
 public class Loader
 {
@@ -120,7 +120,7 @@ public class Loader
     private File canonicalMinecraftDir;
     private Exception capturedError;
 
-    
+
     public static Loader instance()
     {
         if (instance == null)
@@ -141,7 +141,7 @@ public class Loader
             Loader.log.setUseParentHandlers(false);
             Loader.log.addHandler(ch);
             ch.setFormatter(formatter);
-            
+
         }
         Loader.log.setLevel(Level.ALL);
         try
@@ -163,11 +163,11 @@ public class Loader
         if (stream != null) {
             try {
                 properties.load(stream);
-                major     = properties.getProperty("fmlbuild.major.number");
-                minor     = properties.getProperty("fmlbuild.minor.number");
-                rev       = properties.getProperty("fmlbuild.revision.number");
-                build     = properties.getProperty("fmlbuild.build.number");
-                mcversion = properties.getProperty("fmlbuild.mcversion");
+                major     = properties.getProperty("fmlbuild.major.number","none");
+                minor     = properties.getProperty("fmlbuild.minor.number","none");
+                rev       = properties.getProperty("fmlbuild.revision.number","none");
+                build     = properties.getProperty("fmlbuild.build.number","none");
+                mcversion = properties.getProperty("fmlbuild.mcversion","none");
             } catch (IOException ex) {
                 Loader.log.log(Level.SEVERE,"Could not get FML version information - corrupted installation detected!", ex);
                 throw new LoaderException(ex);
@@ -238,12 +238,12 @@ public class Loader
             mod.nextState();
         }
         // Link up mod metadatas
-        
+
         for (ModContainer mod : mods) {
             if (mod.getMetadata()!=null) {
                 mod.getMetadata().associate(namedMods);
             }
-            
+
             FMLCommonHandler.instance().injectSidedProxyDelegate(mod);
         }
         log.fine("Mod pre-initialization complete");
@@ -287,18 +287,18 @@ public class Loader
 
     /**
      * The primary loading code
-     * 
-     * This is visited during first initialization by Minecraft to scan and load the mods 
+     *
+     * This is visited during first initialization by Minecraft to scan and load the mods
      * from all sources
      * 1. The minecraft jar itself (for loading of in jar mods- I would like to remove this if possible but forge depends on it at present)
      * 2. The mods directory with expanded subdirs, searching for mods named mod_*.class
      * 3. The mods directory for zip and jar files, searching for mod classes named mod_*.class again
-     * 
+     *
      * The found resources are first loaded into the {@link #modClassLoader} (always) then scanned for class resources matching the specification above.
-     * 
+     *
      * If they provide the {@link Mod} annotation, they will be loaded as "FML mods", which currently is effectively a NO-OP.
      * If they are determined to be {@link BaseMod} subclasses they are loaded as such.
-     * 
+     *
      * Finally, if they are successfully loaded as classes, they are then added to the available mod list.
      */
     private void load()
@@ -387,7 +387,7 @@ public class Loader
             }
         }
         log.fine("Minecraft jar mods loaded successfully");
-        
+
         log.info(String.format("Loading mods from %s", canonicalModsPath));
         File[] modList = modsDir.listFiles();
         // Sort the files into alphabetical order first
@@ -545,9 +545,10 @@ public class Loader
         extendClassLoader(modFile);
         boolean foundAModClass = false;
 
+        ZipFile jar = null;
         try
         {
-            ZipFile jar = new ZipFile(modFile);
+            jar = new ZipFile(modFile);
 
             for (ZipEntry ze : Collections.list(jar.entries()))
             {
@@ -570,6 +571,19 @@ public class Loader
             log.throwing("fml.server.Loader", "attemptFileLoad", e);
             state = State.ERRORED;
             capturedError = e;
+        }
+        finally
+        {
+            if (jar != null)
+            {
+                try
+                {
+                    jar.close();
+                }
+                catch (Exception e)
+                {
+                }
+            }
         }
 
         return foundAModClass;
@@ -612,7 +626,7 @@ public class Loader
 
     /**
      * Query if we know of a mod named modname
-     * 
+     *
      * @param modname
      * @return
      */
@@ -628,7 +642,7 @@ public class Loader
     {
         return canonicalConfigDir;
     }
-    
+
     public String getCrashInformation()
     {
         StringBuffer ret = new StringBuffer();

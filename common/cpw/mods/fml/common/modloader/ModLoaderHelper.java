@@ -40,7 +40,7 @@ public class ModLoaderHelper
         } else {
             ticks.remove(TickType.RENDER);
         }
-        // If we're enabled but we want clock ticks, or we're server side we get game ticks 
+        // If we're enabled but we want clock ticks, or we're server side we get game ticks
         if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
             ticks.add(TickType.GAME);
         } else {
@@ -58,7 +58,7 @@ public class ModLoaderHelper
         } else {
             ticks.remove(TickType.GUI);
         }
-        // If we're enabled but we want clock ticks, or we're server side we get world ticks 
+        // If we're enabled but we want clock ticks, or we're server side we get world ticks
         if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
             ticks.add(TickType.WORLDGUI);
         } else {
@@ -72,7 +72,7 @@ public class ModLoaderHelper
      */
     private static ModLoaderModContainer findOrBuildModContainer(BaseMod mod)
     {
-        ModLoaderModContainer mlmc=(ModLoaderModContainer) ModLoaderModContainer.findContainerFor(mod);
+        ModLoaderModContainer mlmc=(ModLoaderModContainer) FMLCommonHandler.instance().findContainerFor(mod);
         if (mlmc==null) {
             mlmc=notModCallbacks.get(mod);
             if (mlmc==null) {
@@ -82,7 +82,7 @@ public class ModLoaderHelper
         }
         return mlmc;
     }
-    
+
     public static ModLoaderModContainer registerRenderHelper(BaseMod mod) {
         ModLoaderModContainer mlmc=findOrBuildModContainer(mod);
         return mlmc;
