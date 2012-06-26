@@ -41,14 +41,14 @@ import cpw.mods.fml.common.ModContainer.SourceType;
 
 /**
  * The main class for non-obfuscated hook handling code
- * 
- * Anything that doesn't require obfuscated or client/server specific code should 
+ *
+ * Anything that doesn't require obfuscated or client/server specific code should
  * go in this handler
- * 
+ *
  * It also contains a reference to the sided handler instance that is valid
  * allowing for common code to access specific properties from the obfuscated world
  * without a direct dependency
- * 
+ *
  * @author cpw
  *
  */
@@ -72,18 +72,18 @@ public class FMLCommonHandler
      */
     private Map<Object, Set<String>> activeChannels = new HashMap<Object, Set<String>>();
     /**
-     * The delegate for side specific data and functions 
+     * The delegate for side specific data and functions
      */
     private IFMLSidedHandler sidedDelegate;
-    
+
     private int uniqueEntityListId = 220;
 
     private List<ModContainer> auxilliaryContainers = new ArrayList<ModContainer>();
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
-    
+
     private Set<ITickHandler> tickHandlers = new HashSet<ITickHandler>();
-    
+
     private Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
     /**
      * We register our delegate here
@@ -113,7 +113,7 @@ public class FMLCommonHandler
         }
         sidedDelegate.profileEnd();
     }
-    
+
     public void tickEnd(EnumSet<TickType> ticks, Object ... data)
     {
         sidedDelegate.profileStart("modTickEnd$"+ticks);
@@ -130,7 +130,7 @@ public class FMLCommonHandler
         }
         sidedDelegate.profileEnd();
     }
-    
+
     public List<IKeyHandler> gatherKeyBindings() {
         List<IKeyHandler> allKeys=new ArrayList<IKeyHandler>();
         for (ModContainer mod : Loader.getModList())
@@ -150,7 +150,22 @@ public class FMLCommonHandler
     {
         return INSTANCE;
     }
-
+    /**
+     * Find the container that associates with the supplied mod object
+     * @param mod
+     * @return
+     */
+    public ModContainer findContainerFor(Object mod)
+    {
+        for (ModContainer mc : Loader.getModList())
+        {
+            if (mc.matches(mod))
+            {
+                return mc;
+            }
+        }
+        return null;
+    }
     /**
      * Lookup the mod for a channel
      * @param channel
@@ -308,7 +323,7 @@ public class FMLCommonHandler
     {
         return sidedDelegate.loadBaseModMod(clazz, canonicalFile);
     }
-    
+
     public File getMinecraftRootDirectory() {
         return sidedDelegate.getMinecraftRootDirectory();
     }
@@ -342,7 +357,7 @@ public class FMLCommonHandler
             modLanguageData.put(lang, langPack);
         }
         langPack.put(key,value);
-        
+
         handleLanguageLoad(sidedDelegate.getCurrentLanguageTable(), lang);
     }
 
@@ -367,7 +382,7 @@ public class FMLCommonHandler
     {
         return sidedDelegate.getSide();
     }
-    
+
     public void addAuxilliaryModContainer(ModContainer ticker)
     {
         auxilliaryContainers.add(ticker);
@@ -375,7 +390,7 @@ public class FMLCommonHandler
 
     /**
      * Called from the furnace to lookup fuel values
-     * 
+     *
      * @param itemId
      * @param itemDamage
      * @return
@@ -383,24 +398,24 @@ public class FMLCommonHandler
     public int fuelLookup(int itemId, int itemDamage)
     {
         int fv = 0;
-    
+
         for (ModContainer mod : Loader.getModList())
         {
             fv = Math.max(fv, mod.lookupFuelValue(itemId, itemDamage));
         }
-    
+
         return fv;
     }
-    
+
     public void addNameForObject(Object minecraftObject, String lang, String name) {
         String label=sidedDelegate.getObjectName(minecraftObject);
         addStringLocalization(label, lang, name);
     }
-    
-    
+
+
     /**
      * Raise an exception
-     * 
+     *
      * @param exception
      * @param message
      * @param stopGame
@@ -411,10 +426,10 @@ public class FMLCommonHandler
         throw new RuntimeException(exception);
     }
 
-    
+
     private Class<?> forge;
     private boolean noForge;
-    
+
     private Class<?> findMinecraftForge()
     {
         if (forge==null && !noForge)
@@ -432,7 +447,7 @@ public class FMLCommonHandler
         }
         return forge;
     }
-    
+
     private Object callForgeMethod(String method)
     {
         if (noForge)
@@ -551,12 +566,12 @@ public class FMLCommonHandler
             generator.generate(fmlRandom, chunkX, chunkZ, data);
         }
     }
-    
+
     public void registerTickHandler(ITickHandler handler)
     {
         tickHandlers.add(handler);
     }
-    
+
     public void registerWorldGenerator(IWorldGenerator generator)
     {
         worldGenerators.add(generator);
