@@ -61,17 +61,17 @@ import cpw.mods.fml.common.registry.FMLRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
- * 
+ *
  * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from {@link MinecraftServer}
- * 
+ *
  * Obfuscated code should focus on this class and other members of the "server" (or "client") code
- * 
+ *
  * The actual mod loading is handled at arms length by {@link Loader}
- * 
+ *
  * It is expected that a similar class will exist for each target environment: Bukkit and Client side.
- * 
+ *
  * It should not be directly modified.
- * 
+ *
  * @author cpw
  *
  */
@@ -91,6 +91,8 @@ public class FMLBukkitHandler implements IFMLSidedHandler
      * A handy list of the default overworld biomes
      */
     private BiomeBase[] defaultOverworldBiomes;
+
+	FMLBukkitProfiler profiler;
 
     /**
      * Called to start the whole game off from {@link MinecraftServer#startServer}
@@ -144,7 +146,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 	    	}
 	    }
 	}
-	
+
 	public void onWorldLoadTick()
 	{
 		FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
@@ -168,7 +170,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Get the server instance
-     * 
+     *
      * @return
      */
     public MinecraftServer getServer()
@@ -186,10 +188,10 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called from ChunkProviderServer when a chunk needs to be populated
-     * 
+     *
      * To avoid polluting the worldgen seed, we generate a new random from the world seed and
      * generate a seed from that
-     * 
+     *
      * @param chunkProvider
      * @param chunkX
      * @param chunkZ
@@ -203,7 +205,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called from the furnace to lookup fuel values
-     * 
+     *
      * @param itemId
      * @param itemDamage
      * @return
@@ -240,7 +242,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called to notify that an item was picked up from the world
-     * 
+     *
      * @param entityItem
      * @param entityPlayer
      */
@@ -257,7 +259,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Raise an exception
-     * 
+     *
      * @param exception
      * @param message
      * @param stopGame
@@ -270,7 +272,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Attempt to dispense the item as an entity other than just as a the item itself
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -303,7 +305,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Build a list of default overworld biomes
-     * 
+     *
      * @return
      */
     public BiomeBase[] getDefaultOverworldBiomes()
@@ -331,7 +333,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is crafted
-     * 
+     *
      * @param player
      * @param craftedItem
      * @param craftingGrid
@@ -349,7 +351,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is smelted
-     * 
+     *
      * @param player
      * @param smeltedItem
      */
@@ -366,7 +368,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called when a chat packet is received
-     * 
+     *
      * @param chat
      * @param player
      * @return true if you want the packet to stop processing and not echo to the rest of the world
@@ -386,7 +388,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Called when a packet 250 packet is received from the player
-     * 
+     *
      * @param packet
      * @param player
      */
@@ -408,7 +410,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Handle register requests for packet 250 channels
-     * 
+     *
      * @param packet
      */
     private void handleClientRegistration(Packet250CustomPayload packet, EntityHuman player)
@@ -444,7 +446,7 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
     /**
      * Handle a login
-     * 
+     *
      * @param loginPacket
      * @param networkManager
      */
@@ -579,12 +581,18 @@ public class FMLBukkitHandler implements IFMLSidedHandler
 
 	@Override
 	public void profileStart(String profileLabel) {
-		// NOOP on bukkit
+		if (profiler!=null)
+		{
+			profiler.start(profileLabel);
+		}
 	}
 
 	@Override
 	public void profileEnd() {
-		// NOOP on bukkit
+		if (profiler!=null)
+		{
+			profiler.end();
+		}
 	}
 
 	@Override
