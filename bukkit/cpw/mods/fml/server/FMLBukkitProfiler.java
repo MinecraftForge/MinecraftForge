@@ -35,6 +35,7 @@ public class FMLBukkitProfiler {
 
 	public static void resetProfiling()
 	{
+		endProfiling();
 		lastInstance = null;
 	}
 
