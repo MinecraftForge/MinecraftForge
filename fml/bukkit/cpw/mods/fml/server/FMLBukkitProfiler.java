@@ -34,7 +34,7 @@ public class FMLBukkitProfiler {
 		}
 		if (endTime > now)
 		{
-			return endTime - now;
+			return (endTime - now) / 1000;
 		}
 		else
 		{
