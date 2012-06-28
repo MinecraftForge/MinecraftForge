@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
@@ -82,13 +83,41 @@ public class FMLCommonHandler
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
 
-    private Set<ITickHandler> tickHandlers = new HashSet<ITickHandler>();
+    private PriorityQueue<TickQueueElement> tickHandlers = new PriorityQueue<TickQueueElement>();
 
     private Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
     /**
      * We register our delegate here
      * @param handler
      */
+
+    private static class TickQueueElement implements Comparable<TickQueueElement>
+    {
+        static long tickCounter = 0;
+        public TickQueueElement(IScheduledTickHandler ticker)
+        {
+            this.ticker = ticker;
+        }
+        @Override
+        public int compareTo(TickQueueElement o)
+        {
+            return (int)(o.next - next);
+        }
+
+        public void update()
+        {
+            next = tickCounter + ticker.nextTickSpacing();
+        }
+
+        private long next;
+        private IScheduledTickHandler ticker;
+
+        public boolean scheduledNow()
+        {
+            return tickCounter == next;
+        }
+    }
+
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
@@ -100,8 +129,13 @@ public class FMLCommonHandler
     public void tickStart(EnumSet<TickType> ticks, Object ... data)
     {
         sidedDelegate.profileStart("modTickStart$"+ticks);
-        for (ITickHandler ticker : tickHandlers)
+        for (int i = 0; i < tickHandlers.size(); i++)
         {
+            if (!tickHandlers.peek().scheduledNow())
+            {
+                break;
+            }
+            IScheduledTickHandler ticker = tickHandlers.peek().ticker;
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
@@ -117,8 +151,14 @@ public class FMLCommonHandler
     public void tickEnd(EnumSet<TickType> ticks, Object ... data)
     {
         sidedDelegate.profileStart("modTickEnd$"+ticks);
-        for (ITickHandler ticker : tickHandlers)
+        for (int i = 0; i < tickHandlers.size(); i++)
         {
+            if (!tickHandlers.peek().scheduledNow())
+            {
+                break;
+            }
+            TickQueueElement tickQueueElement  = tickHandlers.poll();
+            IScheduledTickHandler ticker = tickQueueElement.ticker;
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
@@ -127,6 +167,8 @@ public class FMLCommonHandler
                 ticker.tickEnd(ticksToRun, data);
                 sidedDelegate.profileEnd();
             }
+            tickQueueElement.update();
+            tickHandlers.offer(tickQueueElement);
         }
         sidedDelegate.profileEnd();
     }
@@ -495,9 +537,10 @@ public class FMLCommonHandler
     public void loadMetadataFor(ModContainer mod)
     {
         if (mod.getSourceType()==SourceType.JAR) {
+            ZipFile jar = null;
             try
             {
-                ZipFile jar = new ZipFile(mod.getSource());
+                jar = new ZipFile(mod.getSource());
                 ZipEntry infoFile=jar.getEntry("mcmod.info");
                 if (infoFile!=null) {
                     InputStream input=jar.getInputStream(infoFile);
@@ -512,6 +555,20 @@ public class FMLCommonHandler
                 // Something wrong but we don't care
                 getFMLLogger().fine(String.format("Failed to find mcmod.info file in %s for %s", mod.getSource().getName(), mod.getName()));
                 getFMLLogger().throwing("FMLCommonHandler", "loadMetadataFor", e);
+            }
+            finally
+            {
+                if (jar!=null)
+                {
+                    try
+                    {
+                        jar.close();
+                    }
+                    catch (IOException e)
+                    {
+                        // GO AWAY
+                    }
+                }
             }
         } else {
             try
@@ -569,7 +626,12 @@ public class FMLCommonHandler
 
     public void registerTickHandler(ITickHandler handler)
     {
-        tickHandlers.add(handler);
+        registerScheduledTickHandler(new SingleIntervalHandler(handler));
+    }
+
+    public void registerScheduledTickHandler(IScheduledTickHandler handler)
+    {
+        tickHandlers.add(new TickQueueElement(handler));
     }
 
     public void registerWorldGenerator(IWorldGenerator generator)
