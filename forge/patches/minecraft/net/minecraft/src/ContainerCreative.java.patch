@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/ContainerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -68,17 +68,21 @@
+@@ -68,17 +68,20 @@
              this.itemList.add(new ItemStack(var2[var12], 1, var13));
          }
  
@@ -17,11 +17,10 @@
 -
 -        for (var12 = 1; var12 < 16; ++var12)
 +        
-+        int x = 0;
 +        for (Item item : Item.itemsList)
          {
 -            this.itemList.add(new ItemStack(Item.dyePowder.shiftedIndex, 1, var12));
-+            if (x++ >= 256 && item != null)
++            if (item != null && !(item instanceof ItemBlock))
 +            {
 +                item.addCreativeItems((ArrayList)itemList);
 +            }
