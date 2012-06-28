@@ -58,6 +58,7 @@ public class PacketHandlerServer extends PacketHandlerBase
         if (!pkt.has4096)
         {
             net.kickPlayer("Must have Forge build #136+ (4096 fix) to connect to this server");
+            return;
         }
         if (pkt.Mods.length == 0)
         {
