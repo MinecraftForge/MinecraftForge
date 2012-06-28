@@ -1,0 +1,59 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderLiving.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/RenderLiving.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,6 +3,7 @@
+ import net.minecraft.client.Minecraft;
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
++import net.minecraft.src.forge.ForgeHooksClient;
+ 
+ public class RenderLiving extends Render
+ {
+@@ -95,8 +96,15 @@
+             }
+ 
+             GL11.glEnable(GL11.GL_ALPHA_TEST);
+-            this.mainModel.setLivingAnimations(par1EntityLiving, var16, var15, par9);
+-            this.renderModel(par1EntityLiving, var16, var15, var13, var11 - var10, var12, var14);
++			
++			boolean forgeOverride = ForgeHooksClient.overrideRenderLivingRender(this, mainModel, renderPassModel, par1EntityLiving);
++			
++			if (!forgeOverride)
++			{
++				this.mainModel.setLivingAnimations(par1EntityLiving, var16, var15, par9);
++				this.renderModel(par1EntityLiving, var16, var15, var13, var11 - var10, var12, var14);
++			}
++			ForgeHooksClient.onPostRenderLivingRender(this, mainModel, renderPassModel, par1EntityLiving);
+             float var19;
+             int var18;
+             float var20;
+@@ -106,7 +114,7 @@
+             {
+                 var18 = this.shouldRenderPass(par1EntityLiving, var17, par9);
+ 
+-                if (var18 > 0)
++                if (!forgeOverride && var18 > 0)
+                 {
+                     this.renderPassModel.setLivingAnimations(par1EntityLiving, var16, var15, par9);
+                     this.renderPassModel.render(par1EntityLiving, var16, var15, var13, var11 - var10, var12, var14);
+@@ -152,15 +160,19 @@
+                     GL11.glEnable(GL11.GL_ALPHA_TEST);
+                 }
+             }
++			ForgeHooksClient.onPostRenderLivingRenderPasses(this, mainModel, renderPassModel, par1EntityLiving);
+ 
+-            this.renderEquippedItems(par1EntityLiving, par9);
++			if (!forgeOverride)
++			{
++				this.renderEquippedItems(par1EntityLiving, par9);
++			}
+             float var26 = par1EntityLiving.getBrightness(par9);
+             var18 = this.getColorMultiplier(par1EntityLiving, var26, par9);
+             OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+             GL11.glDisable(GL11.GL_TEXTURE_2D);
+             OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+ 
+-            if ((var18 >> 24 & 255) > 0 || par1EntityLiving.hurtTime > 0 || par1EntityLiving.deathTime > 0)
++            if (!forgeOverride && ((var18 >> 24 & 255) > 0 || par1EntityLiving.hurtTime > 0 || par1EntityLiving.deathTime > 0))
+             {
+                 GL11.glDisable(GL11.GL_TEXTURE_2D);
+                 GL11.glDisable(GL11.GL_ALPHA_TEST);

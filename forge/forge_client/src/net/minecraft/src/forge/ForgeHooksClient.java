@@ -8,10 +8,13 @@ package net.minecraft.src.forge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.Item;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.ModelBase;
 import net.minecraft.src.Packet100OpenWindow;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.RenderLiving;
 import net.minecraft.src.SoundPoolEntry;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.RenderGlobal;
@@ -644,4 +647,34 @@ public class ForgeHooksClient
             }
         }
     }
+    
+    public static boolean overrideRenderLivingRender(RenderLiving renderer, ModelBase mainModel, ModelBase renderPassModel, EntityLiving entity)
+    {
+        for (IRenderLivingHandler handler : renderLivingHandlers)
+        {
+            if (handler.overrideRender(renderer, mainModel, renderPassModel, entity))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static void onPostRenderLivingRender(RenderLiving renderer, ModelBase mainModel, ModelBase renderPassModel, EntityLiving entity)
+    {
+        for (IRenderLivingHandler handler : renderLivingHandlers)
+        {
+            handler.postRender(renderer, mainModel, renderPassModel, entity);
+        }
+    }
+    
+    public static void onPostRenderLivingRenderPasses(RenderLiving renderer, ModelBase mainModel, ModelBase renderPassModel, EntityLiving entity)
+    {
+        for (IRenderLivingHandler handler : renderLivingHandlers)
+        {
+            handler.postRenderPasses(renderer, mainModel, renderPassModel, entity);
+        }
+    }
+
+    public static LinkedList<IRenderLivingHandler> renderLivingHandlers = new LinkedList<IRenderLivingHandler>();
 }
