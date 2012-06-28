@@ -20,7 +20,7 @@ public enum TickType {
     /**
      * Fired during the world evaluation loop
      * server and client side
-     * 
+     *
      * arg 0 : The world that is ticking
      */
     WORLD,
@@ -58,11 +58,18 @@ public enum TickType {
      * client and server side
      * Fired once per "global tick loop"
      */
-    GAME;
+    GAME,
+    /**
+     * client and server side.
+     * Fired whenever the players update loop runs.
+     * arg 0 : the player
+     * arg 1 : the world the player is in
+     */
+    PLAYER;
 
     /**
      * Partner ticks that are also cancelled by returning false from onTickInGame
-     * 
+     *
      * @return
      */
     public EnumSet<TickType> partnerTicks()
@@ -71,8 +78,7 @@ public enum TickType {
         if (this==RENDER) return EnumSet.of(GAME);
         if (this==GUI) return EnumSet.of(WORLDGUI, GUILOAD);
         if (this==WORLDGUI) return EnumSet.of(GUI, GUILOAD);
-        if (this==WORLDLOAD) return EnumSet.noneOf(TickType.class);
         if (this==GUILOAD) return EnumSet.of(GUI, WORLDGUI);
-        return null;
+        return EnumSet.noneOf(TickType.class);
     }
 }
