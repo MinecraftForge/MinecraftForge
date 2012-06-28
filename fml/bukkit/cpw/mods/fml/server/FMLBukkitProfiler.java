@@ -30,7 +30,7 @@ public class FMLBukkitProfiler {
 		{
 			lastInstance = new FMLBukkitProfiler();
 			FMLBukkitHandler.instance().profiler = lastInstance;
-			endTime = now + seconds;
+			endTime = now + seconds * 1000;
 		}
 		if (endTime > now)
 		{
