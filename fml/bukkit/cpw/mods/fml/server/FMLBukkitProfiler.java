@@ -91,7 +91,7 @@ public class FMLBukkitProfiler {
 			{
 				break;
 			}
-			timeLine.add(String.format("%s : %d microseconds, %d invocations. %.2f % of overall time",hit.getElement(), hit.getCount(), hitCounter.count(hit.getElement()), 100.0 * hit.getCount()/totalTime));
+			timeLine.add(String.format("%s : %d microseconds, %d invocations. %.2f %% of overall time",hit.getElement(), hit.getCount(), hitCounter.count(hit.getElement()), 100.0 * hit.getCount()/totalTime));
 		}
 		return timeLine.toArray(new String[0]);
 	}
