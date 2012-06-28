@@ -240,7 +240,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (client.field_6324_e != null) {
             // For the client world ticks and game ticks are the same
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD,TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
         }
     }
 
@@ -251,7 +252,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (client.field_6324_e != null) {
             // For the client world ticks and game ticks are the same
-            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD,TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
+            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
+            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
         }
         for (IKeyHandler entry : keyHandlers)
         {
