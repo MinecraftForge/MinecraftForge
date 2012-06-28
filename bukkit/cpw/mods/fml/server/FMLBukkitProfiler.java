@@ -25,13 +25,21 @@ public class FMLBukkitProfiler {
 
 	public static long beginProfiling(int seconds)
 	{
+		long now = System.currentTimeMillis();
 		if (lastInstance == null)
 		{
 			lastInstance = new FMLBukkitProfiler();
 			FMLBukkitHandler.instance().profiler = lastInstance;
-			endTime = System.currentTimeMillis() + seconds;
+			endTime = now + seconds;
 		}
-		return endTime - System.currentTimeMillis();
+		if (endTime > now)
+		{
+			return endTime - now;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	public static long endProfiling()
@@ -69,7 +77,7 @@ public class FMLBukkitProfiler {
 	{
 		if (lastInstance == null)
 		{
-			return new String[0];
+			return new String[] { "No profile data available" };
 		}
 
 		if (endTime > System.currentTimeMillis())
