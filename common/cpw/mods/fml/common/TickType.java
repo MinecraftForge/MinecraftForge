@@ -65,7 +65,13 @@ public enum TickType {
      * arg 0 : the player
      * arg 1 : the world the player is in
      */
-    PLAYER;
+    PLAYER,
+    /**
+     * This is a special internal tick type that is
+     * not sent to mods. It resets the scheduler for
+     * the next tick pass.
+     */
+    RESETMARKER;
 
     /**
      * Partner ticks that are also cancelled by returning false from onTickInGame
