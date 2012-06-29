@@ -10,11 +10,11 @@
  {
 +	/**
 +	 * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
-+	 * Modders should change this variable to a higher value if it is less then the radius 
++	 * Modders should change this variable to a higher value if it is less then the radius
 +	 * of one of there entities.
 +	 */
 +	public static double MAX_ENTITY_RADIUS = 2.0D;
-+	
++
      /**
       * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
       */
@@ -53,18 +53,28 @@
      }
  
      /**
-@@ -956,7 +968,9 @@
+@@ -363,7 +375,8 @@
+     public boolean blockHasTileEntity(int par1, int par2, int par3)
+     {
+         int var4 = this.getBlockId(par1, par2, par3);
+-        return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity();
++        int md = this.getBlockMetadata(par1, par2, par3);
++        return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity(md);
+     }
+ 
+     /**
+@@ -956,7 +969,9 @@
                  int var12 = this.getBlockMetadata(var8, var9, var10);
                  Block var13 = Block.blocksList[var11];
  
 -                if ((!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) && var11 > 0 && var13.canCollideCheck(var12, par3))
 +                if (var13 != null &&  //BugFix NPE on missconfigured block ids.
-+                   (!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) && 
++                   (!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) &&
 +                   var11 > 0 && var13.canCollideCheck(var12, par3))
                  {
                      MovingObjectPosition var14 = var13.collisionRayTrace(this, var8, var9, var10, par1Vec3D, par2Vec3D);
  
-@@ -1604,7 +1618,7 @@
+@@ -1604,7 +1619,7 @@
  
                      if (var7 != null)
                      {
@@ -73,7 +83,7 @@
                      }
                  }
              }
-@@ -1614,6 +1628,10 @@
+@@ -1614,6 +1629,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -84,7 +94,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -1634,14 +1652,16 @@
+@@ -1634,14 +1653,16 @@
                      {
                          this.loadedTileEntityList.add(var8);
                      }
@@ -103,7 +113,7 @@
                          }
                      }
  
-@@ -1658,13 +1678,13 @@
+@@ -1658,13 +1679,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -116,14 +126,14 @@
 -        else
 -        {
 -            this.loadedTileEntityList.addAll(par1Collection);
-+            if(((TileEntity)entity).canUpdate()) 
++            if(((TileEntity)entity).canUpdate())
 +            {
 +                dest.add(entity);
 +            }
          }
      }
  
-@@ -1686,7 +1706,7 @@
+@@ -1686,7 +1707,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
  
@@ -132,21 +142,21 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -1909,6 +1929,13 @@
-                         if (var11 == Block.fire.blockID || var11 == Block.lavaMoving.blockID || var11 == Block.lavaStill.blockID)
+@@ -1910,6 +1931,13 @@
                          {
                              return true;
-+                        } 
-+                        else 
+                         }
++                        else
 +                        {
 +                            if (var11 > 0 && Block.blocksList[var11] != null && Block.blocksList[var11].isBlockBurning(this, var8, var9, var10))
 +                            {
 +                                return true;
 +                            }
-                         }
++                        }
                      }
                  }
-@@ -2192,25 +2219,21 @@
+             }
+@@ -2192,25 +2220,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -171,35 +181,35 @@
 +        {
 +            dest.add(par4TileEntity);
 +        }
-+        
-+        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
  
 -                if (var5 != null)
 -                {
 -                    var5.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
 -                }
 -            }
++        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++
 +        if (var5 != null)
 +        {
 +            var5.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
          }
      }
  
-@@ -2219,27 +2242,10 @@
+@@ -2219,27 +2243,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
 -        TileEntity var4 = this.getBlockTileEntity(par1, par2, par3);
 -
 -        if (var4 != null && this.scanningTileEntities)
-+        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-+        if (var5 != null)
-         {
+-        {
 -            var4.invalidate();
 -            this.addedTileEntityList.remove(var4);
 -        }
 -        else
--        {
++        Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++        if (var5 != null)
+         {
 -            if (var4 != null)
 -            {
 -                this.addedTileEntityList.remove(var4);
@@ -216,7 +226,7 @@
          }
      }
  
-@@ -2265,7 +2271,8 @@
+@@ -2265,7 +2272,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -226,7 +236,7 @@
      }
  
      /**
-@@ -2281,7 +2288,7 @@
+@@ -2281,7 +2289,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -235,7 +245,7 @@
              }
              else
              {
-@@ -2540,6 +2547,7 @@
+@@ -2540,6 +2548,7 @@
                  }
              }
          }
@@ -243,7 +253,7 @@
  
          Profiler.endSection();
  
-@@ -2863,7 +2871,7 @@
+@@ -2863,7 +2872,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -252,7 +262,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3196,10 +3204,10 @@
+@@ -3196,10 +3205,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -267,7 +277,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3220,10 +3228,10 @@
+@@ -3220,10 +3229,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -282,19 +292,19 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3349,6 +3357,11 @@
-             {
+@@ -3350,6 +3359,11 @@
                  var8 = null;
              }
-+            
+ 
 +            if (var8 != null && var8.isBlockReplaceable(this, par2, par3, par4))
 +            {
 +                var8 = null;
 +            }
- 
++
              return par1 > 0 && var8 == null && var9.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
-@@ -3827,7 +3840,7 @@
+     }
+@@ -3827,7 +3841,7 @@
       */
      public int getHeight()
      {
@@ -303,7 +313,7 @@
      }
  
      /**
-@@ -3864,4 +3877,38 @@
+@@ -3864,4 +3878,38 @@
      {
          return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
      }
@@ -313,7 +323,7 @@
 +     * TODO: Eloraam fully describe the bug this fixes.
 +     * @param entity The TileEntity to be added.
 +     */
-+    public void addTileEntity(TileEntity entity) 
++    public void addTileEntity(TileEntity entity)
 +    {
 +        List dest = scanningTileEntities ? addedTileEntityList : loadedTileEntityList;
 +        if(entity.canUpdate())
@@ -321,11 +331,11 @@
 +            dest.add(entity);
 +        }
 +    }
-+    
++
 +    /**
 +     * Determine if the given block is considered solid on the
 +     * specified side.  Used by placement logic.
-+     * 
++     *
 +     * @param x Block X Position
 +     * @param y Block Y Position
 +     * @param z Block Z Position
