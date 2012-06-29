@@ -85,6 +85,8 @@ public class FMLCommonHandler
 
     private PriorityQueue<TickQueueElement> tickHandlers = new PriorityQueue<TickQueueElement>();
 
+    private List<IScheduledTickHandler> scheduledTicks = new ArrayList<IScheduledTickHandler>();
+
     private Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
     /**
      * We register our delegate here
@@ -97,16 +99,17 @@ public class FMLCommonHandler
         public TickQueueElement(IScheduledTickHandler ticker)
         {
             this.ticker = ticker;
+            update();
         }
         @Override
         public int compareTo(TickQueueElement o)
         {
-            return (int)(o.next - next);
+            return (int)(next - o.next);
         }
 
         public void update()
         {
-            next = tickCounter + ticker.nextTickSpacing();
+            next = tickCounter + Math.max(ticker.nextTickSpacing(),1);
         }
 
         private long next;
@@ -114,7 +117,7 @@ public class FMLCommonHandler
 
         public boolean scheduledNow()
         {
-            return tickCounter == next;
+            return tickCounter >= next;
         }
     }
 
@@ -126,16 +129,33 @@ public class FMLCommonHandler
         getFMLLogger().info("Completed early MinecraftForge initialization");
     }
 
-    public void tickStart(EnumSet<TickType> ticks, Object ... data)
+    public void rescheduleTicks()
     {
-        sidedDelegate.profileStart("modTickStart$"+ticks);
-        for (int i = 0; i < tickHandlers.size(); i++)
+        sidedDelegate.profileStart("modTickScheduling");
+        TickQueueElement.tickCounter++;
+        scheduledTicks.clear();
+        while (true)
         {
-            if (!tickHandlers.peek().scheduledNow())
+            if (tickHandlers.size()==0 || !tickHandlers.peek().scheduledNow())
             {
                 break;
             }
-            IScheduledTickHandler ticker = tickHandlers.peek().ticker;
+            TickQueueElement tickQueueElement  = tickHandlers.poll();
+            tickQueueElement.update();
+            tickHandlers.offer(tickQueueElement);
+            scheduledTicks.add(tickQueueElement.ticker);
+        }
+        sidedDelegate.profileEnd();
+    }
+    public void tickStart(EnumSet<TickType> ticks, Object ... data)
+    {
+        if (scheduledTicks.size()==0)
+        {
+            return;
+        }
+        sidedDelegate.profileStart("modTickStart$"+ticks);
+        for (IScheduledTickHandler ticker : scheduledTicks)
+        {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
@@ -150,15 +170,13 @@ public class FMLCommonHandler
 
     public void tickEnd(EnumSet<TickType> ticks, Object ... data)
     {
-        sidedDelegate.profileStart("modTickEnd$"+ticks);
-        for (int i = 0; i < tickHandlers.size(); i++)
+        if (scheduledTicks.size()==0)
         {
-            if (!tickHandlers.peek().scheduledNow())
-            {
-                break;
-            }
-            TickQueueElement tickQueueElement  = tickHandlers.poll();
-            IScheduledTickHandler ticker = tickQueueElement.ticker;
+            return;
+        }
+        sidedDelegate.profileStart("modTickEnd$"+ticks);
+        for (IScheduledTickHandler ticker : scheduledTicks)
+        {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
@@ -167,8 +185,6 @@ public class FMLCommonHandler
                 ticker.tickEnd(ticksToRun, data);
                 sidedDelegate.profileEnd();
             }
-            tickQueueElement.update();
-            tickHandlers.offer(tickQueueElement);
         }
         sidedDelegate.profileEnd();
     }

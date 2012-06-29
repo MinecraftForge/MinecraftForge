@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -1,8 +1,12 @@
+ package net.minecraft.src;
+ 
++import java.util.EnumSet;
+ import java.util.Iterator;
+ import java.util.List;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.TickType;
++
+ public abstract class EntityPlayer extends EntityLiving
+ {
+     public InventoryPlayer field_778_b = new InventoryPlayer(this);
+@@ -122,6 +126,7 @@
+ 
+     public void func_370_e_()
+     {
++        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.PLAYER), this, this.field_615_ag);
+         if (this.field_34907_d != null)
+         {
+             ItemStack var1 = this.field_778_b.func_494_a();
+@@ -253,6 +258,7 @@
+         {
+             this.field_35217_av.func_35768_a(this);
+         }
++        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.PLAYER), this, this.field_615_ag);
+     }
+ 
+     protected void func_35201_a(ItemStack p_35201_1_, int p_35201_2_)
