@@ -40,7 +40,7 @@ def main():
       f.write("%s=%s\n" %("fmlbuild.minor.number",minor))
       f.write("%s=%s\n" %("fmlbuild.revision.number",rev))
       f.write("%s=%s\n" %("fmlbuild.githash",githash))
-      f.write("%s=%s\n" %("fmlbuild.mcversion","1.2.5"))
+      f.write("%s=%s\n" %("fmlbuild.mcversion","12w24a"))
     
 if __name__ == '__main__':
     main()

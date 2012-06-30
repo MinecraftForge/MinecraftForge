@@ -10,10 +10,10 @@
 +import cpw.mods.fml.common.FMLCommonHandler;
 +import cpw.mods.fml.common.TickType;
 +
- public abstract class EntityPlayer extends EntityLiving
+ public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
      public InventoryPlayer field_778_b = new InventoryPlayer(this);
-@@ -122,6 +126,7 @@
+@@ -123,6 +127,7 @@
  
      public void func_370_e_()
      {
@@ -21,7 +21,7 @@
          if (this.field_34907_d != null)
          {
              ItemStack var1 = this.field_778_b.func_494_a();
-@@ -253,6 +258,7 @@
+@@ -246,6 +251,7 @@
          {
              this.field_35217_av.func_35768_a(this);
          }

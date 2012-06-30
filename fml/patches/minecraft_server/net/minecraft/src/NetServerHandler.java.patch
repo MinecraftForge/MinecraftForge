@@ -1,29 +1,17 @@
 --- ../src-base/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft_server/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,8 @@
- import java.util.ArrayList;
+@@ -7,6 +7,8 @@
+ import java.util.Iterator;
  import java.util.Random;
  import java.util.logging.Logger;
 +
 +import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.server.MinecraftServer;
  
- public class NetServerHandler extends NetHandler implements ICommandListener
-@@ -558,7 +560,10 @@
-                 }
+ public class NetServerHandler extends NetHandler
+@@ -1011,4 +1013,9 @@
              }
- 
--            if (var2.startsWith("/"))
-+            if (FMLServerHandler.instance().handleChatPacket(p_23_1_,field_16_e)) {
-+              // We handled it
-+            }
-+            else if (var2.startsWith("/"))
-             {
-                 this.func_4010_d(var2);
-             }
-@@ -898,4 +903,9 @@
-     {
-         this.field_16_e.field_35214_K.field_35658_b = p_50003_1_.field_50005_b && this.field_16_e.field_35214_K.field_35659_c;
+         }
      }
 +
 +    @Override

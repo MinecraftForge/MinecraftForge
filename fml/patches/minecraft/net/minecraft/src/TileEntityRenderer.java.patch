@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/TileEntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TileEntityRenderer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -124,4 +124,9 @@
+@@ -123,4 +123,9 @@
      {
          return this.field_1541_n;
      }

@@ -10,7 +10,7 @@
  public class WorldType
  {
      public static final WorldType[] field_48637_a = new WorldType[16];
-@@ -11,17 +15,26 @@
+@@ -12,17 +16,26 @@
      private boolean field_48633_g;
      private boolean field_48638_h;
  
@@ -39,7 +39,7 @@
      }
  
      public String func_48628_a()
-@@ -78,4 +91,69 @@
+@@ -84,4 +97,69 @@
  
          return null;
      }
