@@ -9,8 +9,8 @@
 +
  public class StringTranslate
  {
-     private static StringTranslate field_20165_a = new StringTranslate();
-@@ -76,6 +79,7 @@
+     private static StringTranslate field_20165_a = new StringTranslate("en_US");
+@@ -77,6 +80,7 @@
                  }
              }
          }
@@ -18,7 +18,7 @@
      }
  
      public void func_44023_a(String p_44023_1_)
-@@ -164,4 +168,8 @@
+@@ -165,4 +169,8 @@
      {
          return "ar_SA".equals(p_46109_0_) || "he_IL".equals(p_46109_0_);
      }

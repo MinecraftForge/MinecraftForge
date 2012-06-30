@@ -1,25 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
-@@ -9,6 +9,7 @@
- import java.awt.Graphics;
- import java.io.File;
- import java.text.DecimalFormat;
-+import java.util.EnumSet;
- import java.util.List;
- import net.minecraft.src.AchievementList;
- import net.minecraft.src.AnvilSaveConverter;
-@@ -117,6 +118,10 @@
+@@ -120,6 +120,9 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.TickType;
 +
- public abstract class Minecraft implements Runnable
+ public abstract class Minecraft implements IPlayerUsage, Runnable
  {
      public static byte[] field_28006_b = new byte[10485760];
-@@ -288,6 +293,7 @@
+@@ -301,6 +304,7 @@
          this.field_6315_n = new RenderEngine(this.field_6298_C, this.field_6304_y);
          this.func_6257_q();
          this.field_6314_o = new FontRenderer(this.field_6304_y, "/font/default.png", this.field_6315_n, false);
@@ -27,7 +18,7 @@
          this.field_40007_r = new FontRenderer(this.field_6304_y, "/font/alternate.png", this.field_6315_n, false);
  
          if (this.field_6304_y.field_44018_Q != null)
-@@ -330,6 +336,9 @@
+@@ -332,6 +336,9 @@
          GL11.glMatrixMode(GL11.GL_PROJECTION);
          GL11.glLoadIdentity();
          GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -35,37 +26,23 @@
 +        this.field_9231_Y.setup();
 +        this.field_9232_X.setup();
          this.func_6250_c("Startup");
-         this.field_6286_O = new OpenGlCapsChecker();
          this.field_6301_A.func_340_a(this.field_6304_y);
-@@ -744,9 +753,11 @@
-                     this.field_6327_b.func_6467_a(this.field_9237_P.field_1378_c);
-                 }
+         this.field_6315_n.func_1066_a(this.field_9231_Y);
+@@ -1337,11 +1344,13 @@
  
-+                FMLClientHandler.instance().onRenderTickStart(this.field_9237_P.field_1378_c);
-                 Profiler.func_40661_c("gameRenderer");
-                 this.field_9243_r.func_4136_b(this.field_9237_P.field_1378_c);
-                 Profiler.func_40662_b();
-+                FMLClientHandler.instance().onRenderTickEnd(this.field_9237_P.field_1378_c);
-             }
- 
-             GL11.glFlush();
-@@ -1330,6 +1341,7 @@
- 
-     public void func_6246_i()
+     public void func_6246_i() throws IOException
      {
 +        FMLCommonHandler.instance().rescheduleTicks();
          if (this.field_35001_ab > 0)
          {
              --this.field_35001_ab;
-@@ -1340,6 +1352,7 @@
-             this.func_28001_B();
          }
  
 +        FMLClientHandler.instance().onPreWorldTick();
          Profiler.func_40663_a("stats");
          this.field_25001_G.func_27178_d();
          Profiler.func_40661_c("gui");
-@@ -1730,6 +1743,7 @@
+@@ -1710,6 +1719,7 @@
          }
  
          Profiler.func_40662_b();
@@ -73,23 +50,22 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -1985,6 +1999,7 @@
+@@ -1854,6 +1864,7 @@
  
          System.gc();
          this.field_6287_N = 0L;
 +        FMLClientHandler.instance().onWorldLoadTick();
      }
  
-     private void func_22002_b(String p_22002_1_, String p_22002_2_)
-@@ -2250,7 +2265,11 @@
-         {
-             var2 = p_main_0_[1];
-         }
-+        FMLClientHandler.instance().preGameLoad(var1, var2);
+     public void func_6268_a(String p_6268_1_, File p_6268_2_)
+@@ -1944,6 +1955,10 @@
+ 
+     public static void main(String[] p_main_0_)
+     {
++        FMLClientHandler.instance().preGameLoad(p_main_0_);
 +    }
- 
-+    public static void fmlReentry(String var1, String var2)
++    public static void fmlReentry(String[] p_main_0_)
 +    {
-         func_6269_a(var1, var2);
-     }
- 
+         HashMap var1 = new HashMap();
+         boolean var2 = false;
+         boolean var3 = true;

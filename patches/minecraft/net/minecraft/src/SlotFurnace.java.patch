@@ -8,8 +8,8 @@
  public class SlotFurnace extends Slot
  {
      private EntityPlayer field_27011_d;
-@@ -43,6 +45,8 @@
-         p_48434_1_.func_48507_a(this.field_27011_d.field_615_ag, this.field_27011_d, this.field_48437_f);
+@@ -56,6 +58,8 @@
+ 
          this.field_48437_f = 0;
  
 +        FMLClientHandler.instance().onItemSmelted(field_27011_d, p_48434_1_);

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/EntityList.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/EntityList.java	0000-00-00 00:00:00.000000000 -0000
-@@ -166,4 +166,17 @@
+@@ -174,4 +174,17 @@
          func_46152_a(EntityVillager.class, "Villager", 120, 5651507, 12422002);
          func_1080_a(EntityEnderCrystal.class, "EnderCrystal", 200);
      }

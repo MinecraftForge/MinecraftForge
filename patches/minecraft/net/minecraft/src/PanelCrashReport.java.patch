@@ -1,29 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/src/PanelCrashReport.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/PanelCrashReport.java	0000-00-00 00:00:00.000000000 -0000
-@@ -9,13 +9,20 @@
- import java.io.StringWriter;
- import java.text.SimpleDateFormat;
- import java.util.Date;
-+import java.util.logging.Level;
-+
- import org.lwjgl.Sys;
+@@ -13,6 +13,8 @@
+ import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  
-+import cpw.mods.fml.common.FMLCommonHandler;
 +import cpw.mods.fml.common.Loader;
 +
  public class PanelCrashReport extends Panel
  {
-     public PanelCrashReport(UnexpectedThrowable p_i634_1_)
-     {
-+        FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, "A critical error has occurred.", p_i634_1_.field_6514_b);
-+        FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, Loader.instance().getCrashInformation());
-         this.setBackground(new Color(3028036));
-         this.setLayout(new BorderLayout());
-         StringWriter var2 = new StringWriter();
-@@ -43,7 +50,7 @@
+     public PanelCrashReport(CrashReport p_i1401_1_)
+@@ -39,7 +41,7 @@
  
-         var5 = var5 + "\n";
+         var5 = var5 + "\n\n";
          var5 = var5 + var3;
 -        String var6 = "";
 +        String var6 = Loader.instance().getCrashInformation();

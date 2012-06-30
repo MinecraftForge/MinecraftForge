@@ -27,8 +27,8 @@
 +
  public class RenderEngine
  {
-     public static boolean field_1609_a = false;
-@@ -24,7 +35,7 @@
+     private HashMap field_6528_b = new HashMap();
+@@ -23,13 +34,14 @@
      private IntHashMap field_1607_c = new IntHashMap();
      private IntBuffer field_1606_d = GLAllocation.func_1125_c(1);
      private ByteBuffer field_1605_e = GLAllocation.func_1127_b(16777216);
@@ -37,26 +37,25 @@
      private Map field_1603_g = new HashMap();
      private GameSettings field_1602_h;
      public boolean field_4281_i = false;
-@@ -32,6 +43,7 @@
+     public boolean field_4280_j = false;
      private TexturePackList field_6527_k;
      private BufferedImage field_25189_l = new BufferedImage(64, 64, 2);
-     private int field_48512_n = 16;
 +    public static Logger log = FMLCommonHandler.instance().getFMLLogger();
  
      public RenderEngine(TexturePackList p_i754_1_, GameSettings p_i754_2_)
      {
-@@ -95,8 +107,9 @@
-                 this.field_28151_c.put(p_28149_1_, var3);
-                 return var3;
+@@ -94,8 +106,9 @@
+                 this.field_28151_c.put(p_28149_1_, var7);
+                 return var7;
              }
--            catch (IOException var5)
-+            catch (Exception var5)
+-            catch (IOException var6)
++            catch (Exception var6)
              {
-+                log.log(Level.INFO,String.format("An error occured reading texture file %s (getTexture)", p_28149_1_),var5);
-                 var5.printStackTrace();
-                 int[] var4 = this.func_28148_b(this.field_25189_l);
-                 this.field_28151_c.put(p_28149_1_, var4);
-@@ -251,6 +264,7 @@
++                log.log(Level.INFO,String.format("An error occured reading texture file %s (getTexture)", p_28149_1_),var6);
+                 var6.printStackTrace();
+                 int[] var5 = this.func_28148_b(this.field_25189_l);
+                 this.field_28151_c.put(p_28149_1_, var5);
+@@ -242,6 +255,7 @@
  
          int var3 = p_1068_1_.getWidth();
          int var4 = p_1068_1_.getHeight();
@@ -64,7 +63,7 @@
          int[] var5 = new int[var3 * var4];
          byte[] var6 = new byte[var3 * var4 * 4];
          p_1068_1_.getRGB(0, 0, var3, var4, var5, 0, var3);
-@@ -448,6 +462,7 @@
+@@ -397,6 +411,7 @@
  
      public void func_1066_a(TextureFX p_1066_1_)
      {
@@ -72,9 +71,9 @@
          this.field_1604_f.add(p_1066_1_);
          p_1066_1_.func_783_a();
      }
-@@ -460,10 +475,26 @@
+@@ -410,10 +425,26 @@
          {
-             TextureFX var3 = (TextureFX)this.field_1604_f.get(var2);
+             TextureFX var3 = (TextureFX)var2.next();
              var3.field_1131_c = this.field_1602_h.field_1578_g;
 -            var3.func_783_a();
 -            this.field_1605_e.clear();
@@ -89,7 +88,7 @@
 +            int tWidth  = dim.width / 16;
 +            int tHeight = dim.height / 16;
 +            int tLen = tWidth * tHeight * 4;
-+            
++
 +            if (var3.field_1127_a.length == tLen)
 +            {
 +                this.field_1605_e.clear();
@@ -103,7 +102,7 @@
  
              if (var3.field_1126_b != var1)
              {
-@@ -473,9 +504,11 @@
+@@ -423,9 +454,11 @@
  
              for (int var4 = 0; var4 < var3.field_1129_e; ++var4)
              {
@@ -116,7 +115,7 @@
                  }
              }
          }
-@@ -577,8 +610,9 @@
+@@ -490,8 +523,9 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }
@@ -127,7 +126,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -614,11 +648,13 @@
+@@ -527,11 +561,13 @@
                  this.field_4280_j = false;
                  this.field_4281_i = false;
              }

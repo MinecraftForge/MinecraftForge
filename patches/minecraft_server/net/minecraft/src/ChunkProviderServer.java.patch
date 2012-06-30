@@ -9,7 +9,7 @@
  public class ChunkProviderServer implements IChunkProvider
  {
      private Set field_725_a = new HashSet();
-@@ -174,6 +176,7 @@
+@@ -173,6 +175,7 @@
              if (this.field_730_c != null)
              {
                  this.field_730_c.func_4055_a(p_4055_1_, p_4055_2_, p_4055_3_);

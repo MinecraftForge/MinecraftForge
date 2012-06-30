@@ -8,18 +8,3 @@
  public class TileEntityFurnace extends TileEntity implements IInventory
  {
      private ItemStack[] field_489_e = new ItemStack[3];
-@@ -236,7 +238,13 @@
-         else
-         {
-             int var1 = p_194_1_.func_569_a().field_234_aS;
--            return var1 < 256 && Block.field_542_n[var1].field_553_bn == Material.field_524_c ? 300 : (var1 == Item.field_209_B.field_234_aS ? 100 : (var1 == Item.field_168_k.field_234_aS ? 1600 : (var1 == Item.field_201_aw.field_234_aS ? 20000 : (var1 == Block.field_6047_y.field_573_bc ? 100 : (var1 == Item.field_40239_bm.field_234_aS ? 2400 : 0)))));
-+            if (var1 < 256 && Block.field_542_n[var1].field_553_bn == Material.field_524_c) return 300;
-+            if (var1 == Item.field_209_B.field_234_aS) return 100;
-+            if (var1 == Item.field_168_k.field_234_aS) return 1600;
-+            if (var1 == Item.field_201_aw.field_234_aS) return 20000;
-+            if (var1 == Block.field_6047_y.field_573_bc) return 100;
-+            if (var1 == Item.field_40239_bm.field_234_aS) return 2400;
-+            return FMLCommonHandler.instance().fuelLookup(var1, p_194_1_.func_21125_h());
-         }
-     }
- 

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/TexturePackList.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/TexturePackList.java	0000-00-00 00:00:00.000000000 -0000
-@@ -7,6 +7,8 @@
+@@ -8,6 +8,8 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -9,11 +9,12 @@
  import net.minecraft.client.Minecraft;
  
  public class TexturePackList
-@@ -140,6 +142,7 @@
-         if (this.field_6534_a == null)
-         {
-             this.field_6534_a = this.field_6539_c;
-+            FMLClientHandler.instance().onEarlyTexturePackLoad(this.field_6539_c);
-         }
+@@ -18,7 +20,7 @@
+     private final File field_57507_d;
+     private List field_6533_b = new ArrayList();
+     private Map field_55280_f = new HashMap();
+-    private TexturePackBase field_6534_a;
++    public TexturePackBase field_6534_a;
+     private boolean field_57509_h;
  
-         this.field_6533_b.removeAll(var1);
+     public TexturePackList(File p_i1506_1_, Minecraft p_i1506_2_)

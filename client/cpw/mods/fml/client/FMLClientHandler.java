@@ -238,11 +238,11 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onPreWorldTick()
     {
-        if (client.field_6324_e != null) {
-            // For the client world ticks and game ticks are the same
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
-        }
+//        if (client.field_6324_e != null) {
+//            // For the client world ticks and game ticks are the same
+//            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
+//            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
+//        }
     }
 
     /**
@@ -250,11 +250,11 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onPostWorldTick()
     {
-        if (client.field_6324_e != null) {
-            // For the client world ticks and game ticks are the same
-            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
-            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
-        }
+//        if (client.field_6324_e != null) {
+//            // For the client world ticks and game ticks are the same
+//            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
+//            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
+//        }
         for (IKeyHandler entry : keyHandlers)
         {
             entry.onEndTick();
@@ -263,14 +263,14 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void onWorldLoadTick()
     {
-        if (client.field_6324_e != null) {
+//        if (client.field_6324_e != null) {
             if (firstTick)
             {
                 loadTextures(fallbackTexturePack);
                 firstTick = false;
             }
             FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD,TickType.GUILOAD));
-        }
+//        }
     }
 
     public void onRenderTickStart(float partialTickTime)
@@ -531,14 +531,14 @@ public class FMLClientHandler implements IFMLSidedHandler
                     continue;
                 }
 
-                if ("REGISTER".equals(packet.field_44012_a))
-                {
-                    FMLCommonHandler.instance().activateChannel(client.field_6322_g,channel);
-                }
-                else
-                {
-                    FMLCommonHandler.instance().deactivateChannel(client.field_6322_g,channel);
-                }
+//                if ("REGISTER".equals(packet.field_44012_a))
+//                {
+//                    FMLCommonHandler.instance().activateChannel(client.field_6322_g,channel);
+//                }
+//                else
+//                {
+//                    FMLCommonHandler.instance().deactivateChannel(client.field_6322_g,channel);
+//                }
             }
         }
         catch (UnsupportedEncodingException e)
@@ -921,10 +921,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      *
      */
-    public void preGameLoad(String user, String sessionToken)
+    public void preGameLoad(String[] args)
     {
         // Currently this does nothing, but it's possible I could relaunch Minecraft in a new classloader if I wished
-        Minecraft.fmlReentry(user, sessionToken);
+        Minecraft.fmlReentry(args);
     }
 
     public void onTexturePackChange(RenderEngine engine, TexturePackBase texturepack, List<TextureFX> effects)

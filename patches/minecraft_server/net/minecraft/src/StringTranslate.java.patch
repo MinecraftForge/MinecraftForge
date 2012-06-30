@@ -8,8 +8,8 @@
 +
  public class StringTranslate
  {
-     private static StringTranslate field_25082_a = new StringTranslate();
-@@ -71,6 +73,7 @@
+     private static StringTranslate field_25082_a = new StringTranslate("en_US");
+@@ -77,6 +79,7 @@
                  }
              }
          }
@@ -17,7 +17,7 @@
      }
  
      public void func_44010_a(String p_44010_1_)
-@@ -139,4 +142,13 @@
+@@ -145,4 +148,13 @@
          String var3 = this.field_25081_b.getProperty(p_25078_1_, p_25078_1_);
          return String.format(var3, p_25078_2_);
      }
