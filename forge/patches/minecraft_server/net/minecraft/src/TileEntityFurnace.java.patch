@@ -27,7 +27,7 @@
          }
      }
  
-@@ -263,13 +270,13 @@
+@@ -263,15 +270,25 @@
      {
          if (this.canSmelt())
          {
@@ -41,9 +41,22 @@
 -            else if (this.furnaceItemStacks[2].itemID == var1.itemID)
 +            else if (this.furnaceItemStacks[2].isItemEqual(var1))
              {
-                 ++this.furnaceItemStacks[2].stackSize;
+-                ++this.furnaceItemStacks[2].stackSize;
++                //==========================================================
++                //Adding extra importance here, so this really small bug 
++                //fix stops slipping through the cracks.
++                //
++                //Makes it so that items that result in multiple items are 
++                //smelted correctly each time.
++                //
++                //
++                //
++                this.furnaceItemStacks[2].stackSize += var1.stackSize;
++                //==========================================================
              }
-@@ -296,12 +303,17 @@
+ 
+             --this.furnaceItemStacks[0].stackSize;
+@@ -296,12 +313,17 @@
          else
          {
              int var1 = par1ItemStack.getItem().shiftedIndex;
@@ -62,7 +75,7 @@
              return FMLCommonHandler.instance().fuelLookup(var1, par1ItemStack.getItemDamage());
          }
      }
-@@ -325,4 +337,18 @@
+@@ -325,4 +347,18 @@
      public void openChest() {}
  
      public void closeChest() {}
