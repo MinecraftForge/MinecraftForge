@@ -27,10 +27,11 @@ def cleanDirs(path):
         
 def main():
     print("Creating patches")
-    mcp = sys.argv[1]    
+    mcp = sys.argv[1]
     base = os.path.normpath(os.path.join(mcp, 'src-base'))
     work = os.path.normpath(os.path.join(mcp, 'src-work'))
     timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
+    mcpath = re.compile(mcp)
     
     for path, _, filelist in os.walk(work, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.java'):
@@ -46,6 +47,7 @@ def main():
             if len(patch) > 0:
                 print patch_file
                 patch = timestamp.sub("0000-00-00 00:00:00.000000000 -0000\n", patch)
+                patch = mcpath.sub('..',patch)
                 patch = patch.replace('\r\n', '\n')
                 
                 if not os.path.exists(patch_dir):
