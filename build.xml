@@ -220,6 +220,10 @@
     </condition>
     <fail if="do.not.continue">You have decided not to continue. This script will stop now.</fail>
     <echo>Preparing the MCP environment at ${mcp.home}</echo>
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/download_fernflower.py" />
+      <arg value="${mcp.home}"/>
+    </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
       <arg value="-f" />
@@ -244,13 +248,20 @@
     <copy todir="${mcp.home}/src-base">
       <fileset dir="${mcp.home}/src"/>
     </copy>
-    <echo>Creating clean patch references at ${mcp.home}/src-work</echo>
+    <antcall target="patch"/>
+    <echo>Creating clean patched references at ${mcp.home}/src-work</echo>
     <copy todir="${mcp.home}/src-work">
       <fileset dir="${mcp.home}/src"/>
     </copy>
-    <antcall target="patch"/>
     <antcall target="writeversion"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
 
+  <target name="updatepatches" depends="buildenvsetup">
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/update_patches.py" />
+      <arg value="${mcp.home}"/>
+      <arg value="${basedir}/patches"/>
+    </exec>
+  </target>
 </project>
