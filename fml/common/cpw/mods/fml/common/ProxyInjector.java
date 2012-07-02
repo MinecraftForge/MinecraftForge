@@ -34,24 +34,24 @@ public class ProxyInjector
         this.bukkitName = bukkitName;
         this.target = target;
     }
-    
+
     public boolean isValidFor(Side type)
     {
         if (type == Side.CLIENT)
         {
             return !this.clientName.isEmpty();
-        } 
+        }
         else if (type == Side.SERVER)
         {
             return !this.serverName.isEmpty();
         }
         else if (type == Side.BUKKIT)
         {
-            return this.bukkitName.isEmpty();
+            return !this.bukkitName.isEmpty();
         }
         return false;
     }
-    
+
     public void inject(ModContainer mod, Side side)
     {
         String targetType = side == Side.CLIENT ? clientName : serverName;
