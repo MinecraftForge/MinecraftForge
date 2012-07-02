@@ -26,6 +26,7 @@
   <target name="writeversion" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}" failonerror="true">
       <arg value="${basedir}/getversion.py" />
+      <arg value="${mcp.home}"/>
     </exec>
     <propertyfile file="fmlversion.properties">
       <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
