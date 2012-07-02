@@ -26,7 +26,7 @@
   <target name="writeversion" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}" failonerror="true">
       <arg value="${basedir}/getversion.py" />
-      <arg value="${mcp.home}"/>
+      <arg value="${mcp.home}" />
     </exec>
     <propertyfile file="fmlversion.properties">
       <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
@@ -68,7 +68,6 @@
     <antcall target="writeversion" />
     <property file="fmlversion.properties" />
     <property name="build.number" value="${fmlbuild.major.number}.${fmlbuild.minor.number}.${fmlbuild.revision.number}" />
-    <property name="version.minecraft" value="${fmlbuild.mcversion}" />
     <property name="version.major" value="${fmlbuild.major.number}" />
     <property name="version.minor" value="${fmlbuild.minor.number}" />
     <property name="version.rev" value="${fmlbuild.revision.number}" />
@@ -212,6 +211,46 @@
       <arg value="${mcp.home}" />
     </exec>
 
+  </target>
+
+  <target name="setupenvironment" depends="buildenvsetup">
+    <input message="This will clean the mcp environment at ${mcp.home} and backup any src-work folder there (src-base will be erased). Continue?" validargs="y,n" addproperty="do.continue" />
+    <condition property="do.not.continue">
+      <equals arg1="n" arg2="${do.continue}" />
+    </condition>
+    <fail if="do.not.continue">You have decided not to continue. This script will stop now.</fail>
+    <echo>Preparing the MCP environment at ${mcp.home}</echo>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/cleanup.py" />
+      <arg value="-f" />
+    </exec>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/decompile.py" />
+      <arg value="-d" />
+      <arg value="-n" />
+      <arg value="-r" />
+    </exec>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/updatemd5.py" />
+      <arg value="-f" />
+    </exec>
+    <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
+    <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
+      <fileset dir="${mcp.home}/src-work"/>
+    </move>
+    <echo>Deleting old patch references at ${mcp.home}/src-base</echo>
+    <delete dir="${mcp.home}/src-base" failonerror="false"/>
+    <echo>Creating new patch references at ${mcp.home}/src-base</echo>
+    <copy todir="${mcp.home}/src-base">
+      <fileset dir="${mcp.home}/src"/>
+    </copy>
+    <echo>Creating clean patch references at ${mcp.home}/src-work</echo>
+    <copy todir="${mcp.home}/src-work">
+      <fileset dir="${mcp.home}/src"/>
+    </copy>
+    <antcall target="patch"/>
+    <antcall target="writeversion"/>
+    <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
 
 </project>
