@@ -92,7 +92,8 @@ public class Loader
     private static String minor;
     private static String rev;
     private static String build;
-    private static String mcversion;
+    private static String mccversion;
+    private static String mcsversion;
 
     /**
      * The {@link State} of the loader
@@ -163,18 +164,19 @@ public class Loader
         if (stream != null) {
             try {
                 properties.load(stream);
-                major     = properties.getProperty("fmlbuild.major.number","none");
-                minor     = properties.getProperty("fmlbuild.minor.number","none");
-                rev       = properties.getProperty("fmlbuild.revision.number","none");
-                build     = properties.getProperty("fmlbuild.build.number","none");
-                mcversion = properties.getProperty("fmlbuild.mcversion","none");
+                major      = properties.getProperty("fmlbuild.major.number","none");
+                minor      = properties.getProperty("fmlbuild.minor.number","none");
+                rev        = properties.getProperty("fmlbuild.revision.number","none");
+                build      = properties.getProperty("fmlbuild.build.number","none");
+                mccversion = properties.getProperty("fmlbuild.mcclientversion","none");
+                mcsversion = properties.getProperty("fmlbuild.mcserverversion","none");
             } catch (IOException ex) {
                 Loader.log.log(Level.SEVERE,"Could not get FML version information - corrupted installation detected!", ex);
                 throw new LoaderException(ex);
             }
         }
 
-        log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", major, minor, rev, build, mcversion));
+        log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft c:%s, s:%s loading", major, minor, rev, build, mccversion, mcsversion));
         modClassLoader = new ModClassLoader();
     }
 
@@ -646,7 +648,7 @@ public class Loader
     public String getCrashInformation()
     {
         StringBuffer ret = new StringBuffer();
-        for (String brand : FMLCommonHandler.instance().getBrandingStrings(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s", major, minor, rev, build, mcversion))) {
+        for (String brand : FMLCommonHandler.instance().getBrandingStrings(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s", major, minor, rev, build, mccversion))) {
             ret.append(brand).append("\n");
         }
         for (ModContainer mod : mods)
