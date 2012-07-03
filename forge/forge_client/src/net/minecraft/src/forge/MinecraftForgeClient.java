@@ -23,7 +23,7 @@ public class MinecraftForgeClient
      */
     public static void addHalfStepOrStairLightingRendering(Block block)
     {
-        ForgeHooksClient.blocksLightingToRender.add(block);
+        ForgeHooksClient.blocksToLightProperly.add(block);
     }
     
     /**
