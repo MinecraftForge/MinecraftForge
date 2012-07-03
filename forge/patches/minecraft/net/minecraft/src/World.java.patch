@@ -114,6 +114,11 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
+
+@@ -966,9 +976,2 @@
+ 
+         if (var5 == Block.stairSingle.blockID || var5 == Block.tilledField.blockID || var5 == Block.stairCompactCobblestone.blockID || var5 == Block.stairCompactPlanks.blockID || var5 == ForgeHooksClient.blocksLightingToRender.blockID)
+
 @@ -2098,18 +2125,18 @@
                      {
                          this.loadedTileEntityList.add(var8);
@@ -156,7 +161,8 @@
 +            }
          }
      }
- 
+
+
 @@ -2150,7 +2177,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
