@@ -71,7 +71,7 @@
  
      /**
 
-@@ -966,9 +976,2 @@
+@@ -973,3 +975,3 @@
  
          if (var5 == Block.stairSingle.blockID || var5 == Block.tilledField.blockID || var5 == Block.stairCompactCobblestone.blockID || var5 == Block.stairCompactPlanks.blockID || var5 == ForgeHooksClient.blocksLightingToRender.blockID)
          {
