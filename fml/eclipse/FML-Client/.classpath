@@ -20,5 +20,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="jars/bin/minecraft.jar"/>
+	<classpathentry kind="lib" path="/home/cpw/projects/FML/mcsnapshot/lib/argo-2.25.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

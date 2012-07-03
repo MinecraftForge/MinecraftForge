@@ -1,16 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
-@@ -120,6 +120,9 @@
+@@ -120,6 +120,11 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.relauncher.ArgsWrapper;
++import cpw.mods.fml.relauncher.FMLEmbeddingRelauncher;
 +
  public abstract class Minecraft implements IPlayerUsage, Runnable
  {
      public static byte[] field_28006_b = new byte[10485760];
-@@ -301,6 +304,7 @@
+@@ -301,6 +306,7 @@
          this.field_6315_n = new RenderEngine(this.field_6298_C, this.field_6304_y);
          this.func_6257_q();
          this.field_6314_o = new FontRenderer(this.field_6304_y, "/font/default.png", this.field_6315_n, false);
@@ -18,7 +20,7 @@
          this.field_40007_r = new FontRenderer(this.field_6304_y, "/font/alternate.png", this.field_6315_n, false);
  
          if (this.field_6304_y.field_44018_Q != null)
-@@ -332,6 +336,9 @@
+@@ -332,6 +338,9 @@
          GL11.glMatrixMode(GL11.GL_PROJECTION);
          GL11.glLoadIdentity();
          GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -28,9 +30,9 @@
          this.func_6250_c("Startup");
          this.field_6301_A.func_340_a(this.field_6304_y);
          this.field_6315_n.func_1066_a(this.field_9231_Y);
-@@ -1337,11 +1344,13 @@
+@@ -1318,11 +1327,13 @@
  
-     public void func_6246_i() throws IOException
+     public void func_6246_i()
      {
 +        FMLCommonHandler.instance().rescheduleTicks();
          if (this.field_35001_ab > 0)
@@ -42,7 +44,7 @@
          Profiler.func_40663_a("stats");
          this.field_25001_G.func_27178_d();
          Profiler.func_40661_c("gui");
-@@ -1710,6 +1719,7 @@
+@@ -1691,6 +1702,7 @@
          }
  
          Profiler.func_40662_b();
@@ -50,7 +52,7 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -1854,6 +1864,7 @@
+@@ -1849,6 +1861,7 @@
  
          System.gc();
          this.field_6287_N = 0L;
@@ -58,14 +60,15 @@
      }
  
      public void func_6268_a(String p_6268_1_, File p_6268_2_)
-@@ -1944,6 +1955,10 @@
+@@ -1940,6 +1953,11 @@
  
      public static void main(String[] p_main_0_)
      {
-+        FMLClientHandler.instance().preGameLoad(p_main_0_);
++        FMLEmbeddingRelauncher.relaunch(new ArgsWrapper(p_main_0_));
 +    }
-+    public static void fmlReentry(String[] p_main_0_)
++    public static void fmlReentry(ArgsWrapper wrapper)
 +    {
++        String[] p_main_0_ = wrapper.args;
          HashMap var1 = new HashMap();
          boolean var2 = false;
          boolean var3 = true;

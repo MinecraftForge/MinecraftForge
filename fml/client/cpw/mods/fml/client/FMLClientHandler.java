@@ -794,11 +794,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception
     {
-        JsonNode root=new JdomParser().func_27366_a(new InputStreamReader(input));
-        List<JsonNode> lst=root.func_27217_b();
+        JsonNode root=new JdomParser().parse(new InputStreamReader(input));
+        List<JsonNode> lst=root.getArrayNode();
         JsonNode modinfo = null;
         for (JsonNode tmodinfo : lst) {
-            if (mod.getName().equals(tmodinfo.func_27213_a("modid"))) {
+            if (mod.getName().equals(tmodinfo.getStringValue("modid"))) {
                 modinfo = tmodinfo;
                 break;
             }
@@ -809,23 +809,23 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         ModMetadata meta=new ModMetadata(mod);
         try {
-            meta.name=modinfo.func_27213_a("name");
-            meta.description=modinfo.func_27213_a("description").replace("\r", "");
-            meta.version=modinfo.func_27213_a("version");
-            meta.credits=modinfo.func_27213_a("credits");
-            List authors=modinfo.func_27217_b("authors");
+            meta.name=modinfo.getStringValue("name");
+            meta.description=modinfo.getStringValue("description").replace("\r", "");
+            meta.version=modinfo.getStringValue("version");
+            meta.credits=modinfo.getStringValue("credits");
+            List<JsonNode> authors=modinfo.getArrayNode("authors");
             StringBuilder sb=new StringBuilder();
             for (int i=0; i<authors.size(); i++) {
-                meta.authorList.add(((JsonNode)authors.get(i)).func_27216_b());
+                meta.authorList.add(((JsonNode)authors.get(i)).getText());
             }
-            meta.logoFile=modinfo.func_27213_a("logoFile");
-            meta.url=modinfo.func_27213_a("url");
-            meta.updateUrl=modinfo.func_27213_a("updateUrl");
-            meta.parent=modinfo.func_27213_a("parent");
-            List screenshots=modinfo.func_27217_b("screenshots");
+            meta.logoFile=modinfo.getStringValue("logoFile");
+            meta.url=modinfo.getStringValue("url");
+            meta.updateUrl=modinfo.getStringValue("updateUrl");
+            meta.parent=modinfo.getStringValue("parent");
+            List<JsonNode> screenshots=modinfo.getArrayNode("screenshots");
             meta.screenshots=new String[screenshots.size()];
             for (int i=0; i<screenshots.size(); i++) {
-                meta.screenshots[i]=((JsonNode)screenshots.get(i)).func_27216_b();
+                meta.screenshots[i]=((JsonNode)screenshots.get(i)).getText();
             }
         } catch (Exception e) {
             FMLCommonHandler.instance().getFMLLogger().log(Level.FINE, String.format("An error occured reading the info file for %s",mod.getName()), e);
@@ -916,15 +916,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void profileEnd() {
         Profiler.func_40662_b();
-    }
-
-    /**
-     *
-     */
-    public void preGameLoad(String[] args)
-    {
-        // Currently this does nothing, but it's possible I could relaunch Minecraft in a new classloader if I wished
-        Minecraft.fmlReentry(args);
     }
 
     public void onTexturePackChange(RenderEngine engine, TexturePackBase texturepack, List<TextureFX> effects)

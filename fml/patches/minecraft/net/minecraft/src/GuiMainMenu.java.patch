@@ -39,7 +39,7 @@
 +        }
          if (p_572_1_.field_938_f == 11)
          {
-             this.field_945_b.func_56442_a("Demo_World", DemoWorldServer.field_56874_a);
+             this.field_945_b.func_58039_a("Demo_World", "Demo_World", DemoWorldServer.field_56874_a);
 @@ -399,7 +409,11 @@
              var9 = var9 + " Demo";
          }

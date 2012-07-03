@@ -9,7 +9,7 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler
-@@ -1011,4 +1013,9 @@
+@@ -1014,4 +1016,9 @@
              }
          }
      }

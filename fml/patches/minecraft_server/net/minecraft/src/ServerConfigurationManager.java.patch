@@ -9,7 +9,7 @@
  import net.minecraft.server.MinecraftServer;
  
  public abstract class ServerConfigurationManager
-@@ -359,6 +361,8 @@
+@@ -355,6 +357,8 @@
          p_28168_1_.field_425_ad.func_35694_a(var5);
          this.func_28170_a(p_28168_1_, var5);
          this.func_30008_g(p_28168_1_);

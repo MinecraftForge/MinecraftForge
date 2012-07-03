@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/NetClientHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -22,6 +22,8 @@
+@@ -20,6 +20,8 @@
  import net.minecraft.client.Minecraft;
  import org.lwjgl.input.Keyboard;
  
@@ -9,7 +9,7 @@
  public class NetClientHandler extends NetHandler
  {
      private boolean field_55324_f = false;
-@@ -1157,4 +1159,13 @@
+@@ -1165,4 +1167,13 @@
      {
          return this.field_1213_d;
      }
