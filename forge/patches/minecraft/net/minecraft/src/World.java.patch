@@ -70,6 +70,11 @@
      }
  
      /**
+
+@@ -966,9 +976,2 @@
+ 
+         if (var5 == Block.stairSingle.blockID || var5 == Block.tilledField.blockID || var5 == Block.stairCompactCobblestone.blockID || var5 == Block.stairCompactPlanks.blockID || var5 == ForgeHooksClient.blocksLightingToRender.blockID)
+         {
 @@ -1253,7 +1268,9 @@
                  int var12 = this.getBlockMetadata(var8, var9, var10);
                  Block var13 = Block.blocksList[var11];
@@ -115,9 +120,6 @@
              this.entityRemoval.clear();
          }
 
-@@ -966,9 +976,2 @@
- 
-         if (var5 == Block.stairSingle.blockID || var5 == Block.tilledField.blockID || var5 == Block.stairCompactCobblestone.blockID || var5 == Block.stairCompactPlanks.blockID || var5 == ForgeHooksClient.blocksLightingToRender.blockID)
 @@ -2098,18 +2125,18 @@
                      {
                          this.loadedTileEntityList.add(var8);
