@@ -7,7 +7,7 @@
                    
      cpw                                                                
      ====================================================================== -->
-<project name="FML" default="build">
+<project name="FML" default="jenkinsbuild">
   <description>The Forge Mod Loader</description>
   <macrodef name="side">
     <attribute name="prop" />
@@ -64,7 +64,7 @@
     </condition>
   </target>
 
-  <target name="init" depends="buildenvsetup">
+  <target name="makeversion" depends="buildenvsetup">
     <antcall target="writeversion" />
     <property file="fmlversion.properties" />
     <property name="build.number" value="${fmlbuild.major.number}.${fmlbuild.minor.number}.${fmlbuild.revision.number}" />
@@ -74,7 +74,7 @@
     <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
   </target>
 
-  <target name="clean">
+  <target name="clean" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
       <arg value="-f" />
@@ -86,7 +86,7 @@
     </exec>
   </target>
 
-  <target name="buildandreobfmcp" depends="init">
+  <target name="buildandreobfmcp" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
@@ -110,13 +110,13 @@
     </exec>
   </target>
 
-  <target name="merge-client" depends="init,clean">
+  <target name="merge-client" depends="buildenvsetup">
     <antcall target="merge-source">
       <param name="side" value="client" />
     </antcall>
   </target>
 
-  <target name="merge-server" depends="init,clean">
+  <target name="merge-server" depends="buildenvsetup">
     <antcall target="merge-source">
       <param name="side" value="server" />
     </antcall>
@@ -132,13 +132,13 @@
     </copy>
   </target>
 
-  <target name="build-client" depends="init,merge-client,buildandreobfmcp">
+  <target name="build-client" depends="buildenvsetup,merge-client,buildandreobfmcp,makeversion">
     <antcall target="extract-built-jar">
       <param name="side" value="client" />
     </antcall>
   </target>
 
-  <target name="build-server" depends="init,clean,merge-server,buildandreobfmcp">
+  <target name="build-server" depends="buildenvsetup,merge-server,buildandreobfmcp,makeversion">
     <antcall target="extract-built-jar">
       <param name="side" value="server" />
     </antcall>
@@ -171,7 +171,7 @@
     </zip>
   </target>
 
-  <target name="build-source-pack">
+  <target name="build-source-pack" depends="makeversion">
     <property name="jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${jarname}.zip">
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt" prefix="fml" />
@@ -201,9 +201,11 @@
     </zip>
   </target>
 
-  <target name="build" depends="init,clean,merge-server,merge-client,patch,build-server,build-client,build-source-pack" />
+  <target name="build" depends="buildenvsetup,merge-server,merge-client,build-server,build-client,build-source-pack" />
 
-  <target name="patch" depends="init">
+  <target name="jenkinsbuild" depends="buildenvsetup,patch,build"/>
+  
+  <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/applypatches.py" />
       <arg value="${patch.src.dir}" />
@@ -257,6 +259,21 @@
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
 
+  <target name="repatch" depends="buildenvsetup">
+    <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
+    <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
+      <fileset dir="${mcp.home}/src-work"/>
+    </move>
+    <delete dir="${mcp.home}/src"/>
+    <copy todir="${mcp.home}/src">
+      <fileset dir="${mcp.home}/src-base"/>
+    </copy>
+    <antcall target="patch"/>
+    <copy todir="${mcp.home}/src-work">
+      <fileset dir="${mcp.home}/src"/>
+    </copy>
+  </target>
+  
   <target name="updatepatches" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/update_patches.py" />
