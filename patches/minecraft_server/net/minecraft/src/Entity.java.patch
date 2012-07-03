@@ -1,6 +1,6 @@
 --- ../src-base/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft_server/net/minecraft/src/Entity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1525,4 +1525,8 @@
+@@ -1539,4 +1539,8 @@
      {
          return String.format("%s[\'%s\'/%d, l=\'%s\', x=%.2f, y=%.2f, z=%.2f]", new Object[] {this.getClass().getSimpleName(), this.func_35150_Y(), Integer.valueOf(this.field_331_c), this.field_9093_l == null ? "~NULL~" : this.field_9093_l.func_22081_n().func_55310_h(), Double.valueOf(this.field_322_l), Double.valueOf(this.field_321_m), Double.valueOf(this.field_320_n)});
      }

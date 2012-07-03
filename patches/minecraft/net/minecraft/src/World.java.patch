@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/World.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3320,7 +3320,7 @@
+@@ -3322,7 +3322,7 @@
  
      public double func_46068_G()
      {

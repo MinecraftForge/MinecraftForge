@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/src/StatFileWriter.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/StatFileWriter.java	0000-00-00 00:00:00.000000000 -0000
+@@ -124,17 +124,17 @@
+         {
+             String var2 = "local";
+             StringBuilder var3 = new StringBuilder();
+-            JsonRootNode var4 = (new JdomParser()).func_27367_a(p_27177_0_);
+-            List var5 = var4.func_27217_b(new Object[] {"stats-change"});
++            JsonRootNode var4 = (new JdomParser()).parse(p_27177_0_);
++            List var5 = var4.getArrayNode(new Object[] {"stats-change"});
+             Iterator var6 = var5.iterator();
+ 
+             while (var6.hasNext())
+             {
+                 JsonNode var7 = (JsonNode)var6.next();
+-                Map var8 = var7.func_27214_c();
++                Map var8 = var7.getFields();
+                 Entry var9 = (Entry)var8.entrySet().iterator().next();
+-                int var10 = Integer.parseInt(((JsonStringNode)var9.getKey()).func_27216_b());
+-                int var11 = Integer.parseInt(((JsonNode)var9.getValue()).func_27216_b());
++                int var10 = Integer.parseInt(((JsonStringNode)var9.getKey()).getText());
++                int var11 = Integer.parseInt(((JsonNode)var9.getValue()).getText());
+                 StatBase var12 = StatList.func_27361_a(var10);
+ 
+                 if (var12 == null)
+@@ -152,7 +152,7 @@
+             MD5String var14 = new MD5String(var2);
+             String var15 = var14.func_27369_a(var3.toString());
+ 
+-            if (!var15.equals(var4.func_27213_a(new Object[] {"checksum"})))
++            if (!var15.equals(var4.getNode(new Object[] {"checksum"})))
+             {
+                 System.out.println("CHECKSUM MISMATCH");
+                 return null;

@@ -126,6 +126,7 @@
     <side prop="merge-to" src="mcp.srcdir" side="${side}" />
     <side prop="side-from" src="src.dir" side="${side}" />
 
+    <delete dir="${merge-to}/argo"/>
     <copy todir="${merge-to}" overwrite="true" verbose="true">
       <fileset dir="${side-from}" includes="**/*.java" />
       <fileset dir="${common.src.dir}" includes="**/*.java" />
