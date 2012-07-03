@@ -40,7 +40,7 @@ public class ForgeHooksClient
     private static boolean textureIDChecked = false;
     public static boolean enable4096 = false; //If the server has told us that 4096 is enabled.
 
-    public static LinkedList<> blocksToLightProperly = new LinkedList<>();
+    public static LinkedList blocksToLightProperly = new LinkedList<>();
 
     public static boolean onBlockHighlight(RenderGlobal render, EntityPlayer player, MovingObjectPosition target, int i, ItemStack itemstack, float partialTicks)
     {
