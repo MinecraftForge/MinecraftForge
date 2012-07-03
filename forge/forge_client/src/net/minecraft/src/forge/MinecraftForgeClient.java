@@ -18,7 +18,7 @@ import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
 public class MinecraftForgeClient
 {
     /**
-     * Adds Half-Steps or Stairs to have properly rendered lighting.
+     * Allows custom Half-Steps/Half-Slabs or Stairs to have properly rendered lighting.
      * @param block Block to render properly.
      */
     public static void addHalfStepOrStairLightingRendering(Block block)
