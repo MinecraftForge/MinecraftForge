@@ -18,6 +18,15 @@ import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
 public class MinecraftForgeClient
 {
     /**
+     * Adds Half-Steps or Stairs to have properly rendered lighting.
+     * @param block Block to render properly.
+     */
+    public static void addHalfStepOrStairLightingRendering(Block block)
+    {
+        ForgeHooksClient.blocksLightingToRender.add(block);
+    }
+    
+    /**
      * Registers a new block highlight handler.
      */
     public static void registerHighlightHandler(IHighlightHandler handler)
