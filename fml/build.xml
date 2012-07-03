@@ -55,6 +55,8 @@
     <property name="mcp.srcdir" location="${mcp.home}/src" />
     <property name="client.mcp.srcdir" location="${mcp.srcdir}/minecraft" />
     <property name="server.mcp.srcdir" location="${mcp.srcdir}/minecraft_server" />
+    <property name="clean.mcp.srcdir" location="${mcp.home}/src-base" />
+    <property name="patch.mcp.srcdir" location="${mcp.home}/src-work" />
     <property name="common.src.dir" location="${basedir}/common" />
     <property name="client.src.dir" location="${basedir}/client" />
     <property name="server.src.dir" location="${basedir}/server" />
@@ -84,6 +86,7 @@
       <arg value="-d" />
       <arg value="-n" />
     </exec>
+    <antcall target="cleanargo"/>
   </target>
 
   <target name="buildandreobfmcp" depends="buildenvsetup">
@@ -95,7 +98,7 @@
   	        <not>
   	        	<and>
   	        		<available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
-                    <available file="${mcp.home}/bin/minecraft_server/net/minecraft/server/MinecraftServer.class"/>
+                <available file="${mcp.home}/bin/minecraft_server/net/minecraft/server/MinecraftServer.class"/>
   	        	</and>
   	        </not>
   		</condition>
@@ -126,7 +129,6 @@
     <side prop="merge-to" src="mcp.srcdir" side="${side}" />
     <side prop="side-from" src="src.dir" side="${side}" />
 
-    <delete dir="${merge-to}/argo"/>
     <copy todir="${merge-to}" overwrite="true" verbose="true">
       <fileset dir="${side-from}" includes="**/*.java" />
       <fileset dir="${common.src.dir}" includes="**/*.java" />
@@ -241,20 +243,21 @@
       <arg value="${mcp.home}/runtime/updatemd5.py" />
       <arg value="-f" />
     </exec>
-    <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
+    <antcall target="cleanargo"/>
+    <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
-      <fileset dir="${mcp.home}/src-work"/>
+      <fileset dir="${patch.mcp.srcdir}"/>
     </move>
-    <echo>Deleting old patch references at ${mcp.home}/src-base</echo>
-    <delete dir="${mcp.home}/src-base" failonerror="false"/>
-    <echo>Creating new patch references at ${mcp.home}/src-base</echo>
-    <copy todir="${mcp.home}/src-base">
-      <fileset dir="${mcp.home}/src"/>
+    <echo>Deleting old patch references at ${clean.mcp.srcdir}</echo>
+    <delete dir="${clean.mcp.srcdir}" failonerror="false"/>
+    <echo>Creating new patch references at ${clean.mcp.srcdir}</echo>
+    <copy todir="${clean.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
     </copy>
     <antcall target="patch"/>
-    <echo>Creating clean patched references at ${mcp.home}/src-work</echo>
-    <copy todir="${mcp.home}/src-work">
-      <fileset dir="${mcp.home}/src"/>
+    <echo>Creating clean patched references at ${patch.mcp.srcdir}</echo>
+    <copy todir="${patch.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
     </copy>
     <antcall target="writeversion"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
@@ -265,21 +268,25 @@
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
       <fileset dir="${mcp.home}/src-work"/>
     </move>
-    <delete dir="${mcp.home}/src"/>
-    <copy todir="${mcp.home}/src">
+    <delete dir="${mcp.srcdir}"/>
+    <copy todir="${mcp.srcdir}">
       <fileset dir="${mcp.home}/src-base"/>
     </copy>
     <antcall target="patch"/>
     <copy todir="${mcp.home}/src-work">
-      <fileset dir="${mcp.home}/src"/>
+      <fileset dir="${mcp.srcdir}"/>
     </copy>
   </target>
   
+  <target name="cleanargo" depends="buildenvsetup">
+    <delete dir="${client.mcp.srcdir}/argo"/>
+  </target>
+
   <target name="updatepatches" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/update_patches.py" />
       <arg value="${mcp.home}"/>
-      <arg value="${basedir}/patches"/>
+      <arg value="${patch.src.dir}"/>
     </exec>
   </target>
 </project>
