@@ -162,7 +162,6 @@
 +            }
          }
      }
-
 @@ -2150,7 +2177,7 @@
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
