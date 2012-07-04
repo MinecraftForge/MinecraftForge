@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,8 @@
- import java.util.Iterator;
- import java.util.List;
+@@ -7,6 +7,8 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.TickType;
  
 +import net.minecraft.src.forge.*;
 +
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -210,6 +212,7 @@
+@@ -215,6 +217,7 @@
              }
              else
              {
@@ -17,7 +17,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -618,7 +621,16 @@
+@@ -624,7 +627,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -35,7 +35,7 @@
      }
  
      /**
-@@ -684,14 +696,22 @@
+@@ -690,14 +702,22 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -60,7 +60,7 @@
          {
              var3 = var2 + (float)(var4 * var4 + 1);
          }
-@@ -978,12 +998,22 @@
+@@ -984,12 +1004,22 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -84,7 +84,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1014,6 +1044,10 @@
+@@ -1020,6 +1050,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -95,7 +95,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -1044,7 +1078,9 @@
+@@ -1050,7 +1084,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -105,7 +105,7 @@
      }
  
      /**
-@@ -1073,6 +1109,15 @@
+@@ -1079,6 +1115,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -121,7 +121,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1215,6 +1260,12 @@
+@@ -1221,6 +1266,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -134,7 +134,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1254,6 +1305,11 @@
+@@ -1260,6 +1311,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -146,7 +146,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1323,11 +1379,12 @@
+@@ -1329,11 +1385,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -162,7 +162,7 @@
  
              if (var5 == null)
              {
-@@ -1364,7 +1421,9 @@
+@@ -1370,7 +1427,9 @@
       */
      private boolean isInBed()
      {
@@ -173,7 +173,7 @@
      }
  
      /**
-@@ -1379,13 +1438,15 @@
+@@ -1385,13 +1444,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -191,7 +191,7 @@
              return var3;
          }
      }
-@@ -1397,8 +1458,11 @@
+@@ -1403,8 +1464,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -205,7 +205,7 @@
  
              switch (var2)
              {
-@@ -1688,6 +1752,7 @@
+@@ -1694,6 +1758,7 @@
                      return 101;
                  }
              }
@@ -213,7 +213,7 @@
          }
  
          return var3;
-@@ -1860,4 +1925,30 @@
+@@ -1866,4 +1931,30 @@
      }
  
      public void func_50009_aI() {}
