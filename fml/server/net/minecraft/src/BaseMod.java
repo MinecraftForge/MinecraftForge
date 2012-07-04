@@ -29,7 +29,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 {
     // CALLBACK MECHANISMS
     public void keyBindingEvent(Object keybinding){}
-    
+
     /**
      * @param minecraftInstance
      * @return
@@ -42,6 +42,10 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         } else {
             return true;
         }
+    }
+    public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
+    {
+        return false;
     }
 
     @Override
@@ -72,7 +76,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     public final void onServerLogin(Object handler) {
         // NOOP
     }
-    
+
     public final void onServerLogout() {
         // NOOP
     }
@@ -135,7 +139,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
-     * 
+     *
      * @param id
      * @param metadata
      * @return
@@ -152,7 +156,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Override if you wish to perform some action other than just dispensing the item from the dispenser
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -169,7 +173,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Override if you wish to generate Nether (Hell biome) blocks
-     * 
+     *
      * @param world
      * @param random
      * @param chunkX
@@ -181,7 +185,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Override if you wish to generate Overworld (not hell or the end) blocks
-     * 
+     *
      * @param world
      * @param random
      * @param chunkX
@@ -193,7 +197,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Return the name of your mod. Defaults to the class name
-     * 
+     *
      * @return
      */
     public String getName()
@@ -203,7 +207,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Get your mod priorities
-     * 
+     *
      * @return
      */
     public String getPriorities()
@@ -213,7 +217,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Return the version of your mod
-     * 
+     *
      * @return
      */
     public abstract String getVersion();
@@ -237,7 +241,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Handle item pickup
-     * 
+     *
      * @param player
      * @param item
      */
@@ -247,7 +251,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Ticked every game tick if you have subscribed to tick events through {@link ModLoader#setInGameHook(BaseMod, boolean, boolean)}
-     * 
+     *
      * @param minecraftServer the server
      * @return true to continue receiving ticks
      */
@@ -264,23 +268,23 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     /**
      * Only implemented on the client side
      * {@link #onChatMessageReceived(EntityPlayer, Packet3Chat)}
-     * 
+     *
      * @param text
      */
     public void receiveChatPacket(String text)
     {
-        
+
     }
 
     /**
      * Only called on the client side
      * {@link #onPacket250Received(EntityPlayer, Packet250CustomPayload)}
-     * 
+     *
      * @param packet
      */
     public void receiveCustomPacket(Packet250CustomPayload packet)
     {
-        
+
     }
 
     public void registerAnimation(Object game)
@@ -301,7 +305,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Called when someone crafts an item from a crafting table
-     * 
+     *
      * @param player
      * @param item
      * @param matrix
@@ -341,7 +345,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Called when a chat message is received. Return true to stop further processing
-     * 
+     *
      * @param source
      * @param chat
      * @return true if you want to consume the message so it is not available for further processing
@@ -362,7 +366,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Called when a new client logs in.
-     * 
+     *
      * @param player
      */
     public void onClientLogin(EntityPlayer player)
@@ -371,7 +375,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
 
     /**
      * Called when a client logs out of the server.
-     * 
+     *
      * @param player
      */
     public void onClientLogout(EntityPlayer player)
@@ -380,9 +384,9 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     }
 
     /**
-     * 
+     *
      * Called when a client changes dimensions on the server.
-     * 
+     *
      * @param player
      */
     public void onClientDimensionChanged(EntityPlayer player)
@@ -399,7 +403,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     }
 
     /**
-     * 
+     *
      */
     public void onRegisterAnimations()
     {

@@ -27,4 +27,5 @@ public interface IFMLSidedHandler
     List<String> getAdditionalBrandingInformation();
     Side getSide();
     ProxyInjector findSidedProxyOn(BaseMod mod);
+    void haltGame(String message, Throwable exception);
 }

@@ -26,9 +26,9 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.TickType;
 
 /**
- * 
+ *
  * Marker interface for BaseMod
- * 
+ *
  * @author cpw
  *
  */
@@ -36,12 +36,12 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
 {
 
     /**
-     * 
+     *
      */
     void modsLoaded();
 
     /**
-     * 
+     *
      */
     void load();
 
@@ -54,6 +54,7 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
      */
     boolean doTickInGame(TickType tick, boolean b, Object minecraftInstance, Object... data);
 
+    boolean doTickInGUI(TickType tick, boolean b, Object minecraftInstance, Object... data);
     /**
      * @return
      */
@@ -77,7 +78,7 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
     void onRenderHarvest(Map renderers);
 
     /**
-     * 
+     *
      */
     void onRegisterAnimations();
 

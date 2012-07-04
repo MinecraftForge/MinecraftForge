@@ -64,7 +64,8 @@ public class ModLoaderModContainer implements ModContainer
     private SourceType sourceType;
     private ModMetadata metadata;
     private ProxyInjector sidedProxy;
-    private BaseModTicker tickHandler;
+    private BaseModTicker gameTickHandler;
+    private BaseModTicker guiTickHandler;
 
     public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
     {
@@ -81,7 +82,8 @@ public class ModLoaderModContainer implements ModContainer
     ModLoaderModContainer(BaseMod instance) {
         FMLCommonHandler.instance().addAuxilliaryModContainer(this);
         this.mod=instance;
-        this.tickHandler = new BaseModTicker(instance);
+        this.gameTickHandler = new BaseModTicker(instance, false);
+        this.guiTickHandler = new BaseModTicker(instance, true);
     }
 
     @Override
@@ -102,11 +104,14 @@ public class ModLoaderModContainer implements ModContainer
         try
         {
             EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
-            this.tickHandler = new BaseModTicker(ticks);
+            this.gameTickHandler = new BaseModTicker(ticks, false);
+            this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
             configureMod();
             mod = modClazz.newInstance();
-            this.tickHandler.setMod(mod);
-            FMLCommonHandler.instance().registerTickHandler(this.tickHandler);
+            this.gameTickHandler.setMod(mod);
+            this.guiTickHandler.setMod(mod);
+            FMLCommonHandler.instance().registerTickHandler(this.gameTickHandler);
+            FMLCommonHandler.instance().registerTickHandler(this.guiTickHandler);
             FMLCommonHandler.instance().registerWorldGenerator(this.mod);
         }
         catch (Exception e)
@@ -707,8 +712,15 @@ public class ModLoaderModContainer implements ModContainer
     /**
      * @return
      */
-    public BaseModTicker getTickHandler()
+    public BaseModTicker getGameTickHandler()
     {
-        return this.tickHandler;
+        return this.gameTickHandler;
+    }
+    /**
+     * @return
+     */
+    public BaseModTicker getGUITickHandler()
+    {
+        return this.guiTickHandler;
     }
 }

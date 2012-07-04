@@ -59,6 +59,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.KeyBinding;
 import net.minecraft.src.MLProp;
+import net.minecraft.src.MinecraftImpl;
 import net.minecraft.src.ModTextureStatic;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetworkManager;
@@ -76,6 +77,7 @@ import net.minecraft.src.SidedProxy;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.TexturePackBase;
+import net.minecraft.src.UnexpectedThrowable;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
@@ -85,6 +87,7 @@ import cpw.mods.fml.common.FMLModLoaderContainer;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
@@ -190,9 +193,22 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             FMLCommonHandler.instance().getFMLLogger().info(String.format("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion()));
         }
-        Loader.instance().loadMods();
+        try
+        {
+            Loader.instance().loadMods();
+        }
+        catch (LoaderException le)
+        {
+            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+            return;
+        }
     }
 
+    @Override
+    public void haltGame(String message, Throwable t)
+    {
+        client.func_28003_b(new UnexpectedThrowable(message, t));
+    }
     /**
      * Called a bit later on during initialization to finish loading mods
      * Also initializes key bindings
@@ -200,7 +216,15 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onLoadComplete()
     {
-        Loader.instance().initializeMods();
+        try
+        {
+            Loader.instance().initializeMods();
+        }
+        catch (LoaderException le)
+        {
+            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+            return;
+        }
         for (ModContainer mod : Loader.getModList()) {
             mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
             for (Render r : RenderManager.field_1233_a.getRendererList().values()) {
