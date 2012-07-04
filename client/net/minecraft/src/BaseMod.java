@@ -53,7 +53,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
     {
         Minecraft mc = (Minecraft) minecraftInstance;
-        if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME )) {
+        if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME  ) || tick ==  TickType.GUILOAD) {
             return onTickInGUI((Float) data[0], mc, mc.field_6313_p);
         }
         return true;
