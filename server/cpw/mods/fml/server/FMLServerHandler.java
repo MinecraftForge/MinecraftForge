@@ -62,22 +62,22 @@ import cpw.mods.fml.common.registry.FMLRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
- * 
+ *
  * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from
  * {@link MinecraftServer}
- * 
+ *
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code
- * 
+ *
  * The actual mod loading is handled at arms length by {@link Loader}
- * 
+ *
  * It is expected that a similar class will exist for each target environment:
  * Bukkit and Client side.
- * 
+ *
  * It should not be directly modified.
- * 
+ *
  * @author cpw
- * 
+ *
  */
 public class FMLServerHandler implements IFMLSidedHandler
 {
@@ -99,7 +99,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
-     * 
+     *
      * @param minecraftServer
      */
     public void onPreLoad(MinecraftServer minecraftServer)
@@ -147,11 +147,17 @@ public class FMLServerHandler implements IFMLSidedHandler
         Loader.instance().initializeMods();
     }
 
+    @Override
+    public void haltGame(String message, Throwable exception)
+    {
+        throw new RuntimeException(message, exception);
+    }
+
     public void onPreServerTick()
     {
         FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME));
     }
-    
+
     public void onPostServerTick()
     {
         FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME));
@@ -178,7 +184,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
     /**
      * Get the server instance
-     * 
+     *
      * @return
      */
     public MinecraftServer getServer()
@@ -196,10 +202,10 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called from ChunkProviderServer when a chunk needs to be populated
-     * 
+     *
      * To avoid polluting the worldgen seed, we generate a new random from the
      * world seed and generate a seed from that
-     * 
+     *
      * @param chunkProvider
      * @param chunkX
      * @param chunkZ
@@ -213,7 +219,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called from the furnace to lookup fuel values
-     * 
+     *
      * @param itemId
      * @param itemDamage
      * @return
@@ -251,7 +257,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called to notify that an item was picked up from the world
-     * 
+     *
      * @param entityItem
      * @param entityPlayer
      */
@@ -268,7 +274,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Raise an exception
-     * 
+     *
      * @param exception
      * @param message
      * @param stopGame
@@ -282,7 +288,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     /**
      * Attempt to dispense the item as an entity other than just as a the item
      * itself
-     * 
+     *
      * @param world
      * @param x
      * @param y
@@ -315,7 +321,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Build a list of default overworld biomes
-     * 
+     *
      * @return
      */
     public BiomeGenBase[] getDefaultOverworldBiomes()
@@ -343,7 +349,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is crafted
-     * 
+     *
      * @param player
      * @param craftedItem
      * @param craftingGrid
@@ -361,7 +367,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called when an item is smelted
-     * 
+     *
      * @param player
      * @param smeltedItem
      */
@@ -378,7 +384,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called when a chat packet is received
-     * 
+     *
      * @param chat
      * @param player
      * @return true if you want the packet to stop processing and not echo to
@@ -399,7 +405,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Called when a packet 250 packet is received from the player
-     * 
+     *
      * @param packet
      * @param player
      */
@@ -421,7 +427,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Handle register requests for packet 250 channels
-     * 
+     *
      * @param packet
      */
     private void handleClientRegistration(Packet250CustomPayload packet, EntityPlayer player)
@@ -458,7 +464,7 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Handle a login
-     * 
+     *
      * @param loginPacket
      * @param networkManager
      */
@@ -592,7 +598,7 @@ public class FMLServerHandler implements IFMLSidedHandler
         objectName+=".name";
         return objectName;
     }
-    
+
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.IFMLSidedHandler#readMetadataFrom(java.io.InputStream, cpw.mods.fml.common.ModContainer)
      */

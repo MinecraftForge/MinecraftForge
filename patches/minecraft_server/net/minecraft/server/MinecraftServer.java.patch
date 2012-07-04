@@ -73,3 +73,12 @@
      }
  
      public void func_6010_a(String p_6010_1_, ICommandListener p_6010_2_)
+@@ -715,7 +729,7 @@
+ 
+     public String func_52003_getServerModName()
+     {
+-        return "vanilla";
++        return "fml";
+     }
+ 
+     public static boolean func_6015_a(MinecraftServer p_6015_0_)

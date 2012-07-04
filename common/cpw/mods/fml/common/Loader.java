@@ -234,7 +234,15 @@ public class Loader
             if (mod.wantsPreInit())
             {
                 log.finer(String.format("Pre-initializing %s", mod.getSource()));
-                mod.preInit();
+                try
+                {
+                    mod.preInit();
+                }
+                catch (Throwable t)
+                {
+                    log.log(Level.SEVERE, String.format("The mod from file %s has failed to load. This is likely a mod installation error.", mod.getSource().getName()), t);
+                    throw new LoaderException(t);
+                }
                 namedMods.put(mod.getName(), mod);
             }
             mod.nextState();
