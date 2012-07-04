@@ -60,7 +60,7 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
-        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDLOAD)))
+        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDLOAD)) || ticks.contains(TickType.RENDER))
         {
             EnumSet cTypes=EnumSet.copyOf(types);
             if ( ( end && types.contains(TickType.GAME)) || types.contains(TickType.WORLDLOAD))
@@ -74,7 +74,7 @@ public class BaseModTicker implements ITickHandler
             {
                 clockTickTrigger = false;
                 cTypes.remove(TickType.RENDER);
-                if (ticks.contains(TickType.GAME)) cTypes.add(TickType.GAME);
+                cTypes.add(TickType.GAME);
             }
 
             sendTick(cTypes, end, tickData);
@@ -97,11 +97,11 @@ public class BaseModTicker implements ITickHandler
             boolean keepTicking=true;
             if (sendGuiTicks)
             {
-                mod.doTickInGUI(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+                keepTicking = mod.doTickInGUI(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
             }
             else
             {
-                mod.doTickInGame(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+                keepTicking = mod.doTickInGame(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
             }
             if (!keepTicking) {
                 ticks.remove(type);
