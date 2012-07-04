@@ -30,25 +30,25 @@ public class BaseModTicker implements ITickHandler
     private BaseMod mod;
     private EnumSet<TickType> ticks;
     private boolean clockTickTrigger;
-    
-    
+
+
     BaseModTicker(BaseMod mod)
     {
         this.mod = mod;
         this.ticks = EnumSet.of(TickType.WORLDLOAD);
     }
-    
+
     BaseModTicker(EnumSet<TickType> ticks)
     {
         this.ticks = ticks;
     }
-    
+
     @Override
     public void tickStart(EnumSet<TickType> types, Object... tickData)
     {
         tickBaseMod(types, false, tickData);
     }
-    
+
     @Override
     public void tickEnd(EnumSet<TickType> types, Object... tickData)
     {
@@ -60,14 +60,14 @@ public class BaseModTicker implements ITickHandler
         if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDGUI)))
         {
             EnumSet cTypes=EnumSet.copyOf(types);
-            if (end && ( types.contains(TickType.GAME) || types.contains(TickType.WORLDLOAD) || types.contains(TickType.WORLDGUI)))
+            if ( ( end && ( types.contains(TickType.GAME) || types.contains(TickType.WORLDGUI))) || types.contains(TickType.WORLDLOAD) )
             {
                 clockTickTrigger =  true;
                 cTypes.remove(TickType.GAME);
                 cTypes.remove(TickType.WORLDLOAD);
                 cTypes.remove(TickType.WORLDGUI);
             }
-            
+
             if (end && clockTickTrigger && types.contains(TickType.RENDER))
             {
                 clockTickTrigger = false;
@@ -75,7 +75,7 @@ public class BaseModTicker implements ITickHandler
                 if (ticks.contains(TickType.GAME)) cTypes.add(TickType.GAME);
                 if (ticks.contains(TickType.WORLDGUI)) cTypes.add(TickType.WORLDGUI);
             }
-            
+
             sendTick(cTypes, end, tickData);
         }
         else
@@ -83,7 +83,7 @@ public class BaseModTicker implements ITickHandler
             sendTick(types, end, tickData);
         }
     }
-        
+
     private void sendTick(EnumSet<TickType> types, boolean end, Object... tickData)
     {
         for (TickType type : types)
