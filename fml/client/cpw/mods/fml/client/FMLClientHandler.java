@@ -163,6 +163,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private OptifineModContainer optifineContainer;
 
+    private boolean guiLoaded;
+
     public void onPreLoad(Minecraft minecraft)
     {
         client = minecraft;
@@ -293,7 +295,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                 loadTextures(fallbackTexturePack);
                 firstTick = false;
             }
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD,TickType.GUILOAD));
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
         }
     }
 
@@ -304,6 +306,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void onRenderTickEnd(float partialTickTime)
     {
+        if (!guiLoaded)
+        {
+            FMLCommonHandler.instance().rescheduleTicks();
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GUILOAD), partialTickTime, client.field_6313_p);
+            guiLoaded = true;
+        }
         FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_6313_p);
     }
     /**

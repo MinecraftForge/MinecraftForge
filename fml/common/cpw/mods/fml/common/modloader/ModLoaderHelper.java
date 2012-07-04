@@ -43,8 +43,10 @@ public class ModLoaderHelper
         // If we're enabled but we want clock ticks, or we're server side we get game ticks
         if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
             ticks.add(TickType.GAME);
+            ticks.add(TickType.WORLDLOAD);
         } else {
             ticks.remove(TickType.GAME);
+            ticks.remove(TickType.WORLDLOAD);
         }
     }
 
@@ -55,14 +57,19 @@ public class ModLoaderHelper
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock) {
             ticks.add(TickType.RENDER);
+            ticks.add(TickType.GUILOAD);
         } else {
             ticks.remove(TickType.RENDER);
         }
         // If we're enabled but we want clock ticks, or we're server side we get world ticks
         if (enable && useClock) {
             ticks.add(TickType.GAME);
+            ticks.add(TickType.GUILOAD);
+            ticks.add(TickType.WORLDLOAD);
         } else {
             ticks.remove(TickType.GAME);
+            ticks.remove(TickType.GUILOAD);
+            ticks.remove(TickType.WORLDLOAD);
         }
     }
 
