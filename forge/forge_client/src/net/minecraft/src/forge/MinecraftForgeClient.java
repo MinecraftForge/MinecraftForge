@@ -19,11 +19,19 @@ public class MinecraftForgeClient
 {
     /**
      * Allows custom Half-Steps/Half-Slabs or Stairs to have properly rendered lighting.
-     * @param block Block to render properly.
+     * @param block Block ID.
      */
-    public static void addHalfStepOrStairLightingRendering(Block block)
+    public static void addCustomHalfStepOrStairLightingRendering(int blockID)
     {
-        ForgeHooksClient.blocksToLightProperly.add(block);
+        try
+        {
+    		ForgeHooksClient.blocksToLightProperly.add(blockID);
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    		return;
+    	}
     }
     
     /**
