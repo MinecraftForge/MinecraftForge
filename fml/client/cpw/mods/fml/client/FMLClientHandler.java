@@ -88,13 +88,13 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
+import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
 import cpw.mods.fml.common.registry.FMLRegistry;
-import cpw.mods.fml.common.ReflectionHelper;
 
 
 /**
@@ -160,6 +160,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private OptifineModContainer optifineContainer;
 
+    private boolean guiLoaded;
+
     public void onPreLoad(Minecraft minecraft)
     {
         client = minecraft;
@@ -190,9 +192,22 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             FMLCommonHandler.instance().getFMLLogger().info(String.format("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion()));
         }
+        try
+        {
         Loader.instance().loadMods();
     }
+        catch (LoaderException le)
+        {
+            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+            return;
+        }
+    }
 
+    @Override
+    public void haltGame(String message, Throwable t)
+    {
+        client.func_28003_b(new UnexpectedThrowable(message, t));
+    }
     /**
      * Called a bit later on during initialization to finish loading mods
      * Also initializes key bindings
@@ -200,7 +215,15 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onLoadComplete()
     {
+        try
+        {
         Loader.instance().initializeMods();
+        }
+        catch (LoaderException le)
+        {
+            haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
+            return;
+        }
         for (ModContainer mod : Loader.getModList()) {
             mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
             for (Render r : RenderManager.field_1233_a.getRendererList().values()) {
@@ -280,6 +303,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void onRenderTickEnd(float partialTickTime)
     {
+        if (!guiLoaded)
+        {
+            FMLCommonHandler.instance().rescheduleTicks();
+            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GUILOAD), partialTickTime, client.field_6313_p);
+            guiLoaded = true;
+        }
         FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_6313_p);
     }
     /**
@@ -916,6 +945,15 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void profileEnd() {
         Profiler.func_40662_b();
+    }
+
+    /**
+     *
+     */
+    public void preGameLoad(String user, String sessionToken)
+    {
+        // Currently this does nothing, but it's possible I could relaunch Minecraft in a new classloader if I wished
+        Minecraft.fmlReentry(user, sessionToken);
     }
 
     public void onTexturePackChange(RenderEngine engine, TexturePackBase texturepack, List<TextureFX> effects)

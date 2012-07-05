@@ -32,7 +32,7 @@ public class ModLoaderHelper
     public static void updateStandardTicks(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
-        BaseModTicker ticker = mlmc.getTickHandler();
+        BaseModTicker ticker = mlmc.getGameTickHandler();
         EnumSet<TickType> ticks = ticker.ticks();
         // If we're enabled we get render ticks
         if (enable && !useClock) {
@@ -43,26 +43,33 @@ public class ModLoaderHelper
         // If we're enabled but we want clock ticks, or we're server side we get game ticks
         if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
             ticks.add(TickType.GAME);
+            ticks.add(TickType.WORLDLOAD);
         } else {
             ticks.remove(TickType.GAME);
+            ticks.remove(TickType.WORLDLOAD);
         }
     }
 
     public static void updateGUITicks(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
-        EnumSet<TickType> ticks = mlmc.getTickHandler().ticks();
+        EnumSet<TickType> ticks = mlmc.getGUITickHandler().ticks();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock) {
-            ticks.add(TickType.GUI);
+            ticks.add(TickType.RENDER);
+            ticks.add(TickType.GUILOAD);
         } else {
-            ticks.remove(TickType.GUI);
+            ticks.remove(TickType.RENDER);
         }
         // If we're enabled but we want clock ticks, or we're server side we get world ticks
-        if (enable && (useClock || FMLCommonHandler.instance().getSide().isServer())) {
-            ticks.add(TickType.WORLDGUI);
+        if (enable && useClock) {
+            ticks.add(TickType.GAME);
+            ticks.add(TickType.GUILOAD);
+            ticks.add(TickType.WORLDLOAD);
         } else {
-            ticks.remove(TickType.WORLDGUI);
+            ticks.remove(TickType.GAME);
+            ticks.remove(TickType.GUILOAD);
+            ticks.remove(TickType.WORLDLOAD);
         }
     }
 
