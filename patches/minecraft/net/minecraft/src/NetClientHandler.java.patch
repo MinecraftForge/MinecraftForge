@@ -9,7 +9,23 @@
  public class NetClientHandler extends NetHandler
  {
      private boolean field_55324_f = false;
-@@ -1165,4 +1167,13 @@
+@@ -132,6 +134,7 @@
+         this.field_35785_d = p_4115_1_.field_35251_h;
+         this.field_1212_e.field_56453_c.func_57521_a(p_4115_1_.field_56535_d);
+         this.func_847_a(new Packet204ClientInfo(this.field_1212_e.field_6304_y.field_44018_Q, this.field_1212_e.field_6304_y.field_1580_e, this.field_1212_e.field_6304_y.field_55382_n, this.field_1212_e.field_6304_y.field_55383_o, this.field_1212_e.field_6304_y.field_1561_w));
++        FMLClientHandler.instance().handleServerLogin(p_4115_1_, this, field_1213_d);
+     }
+ 
+     public void func_832_a(Packet21PickupSpawn p_832_1_)
+@@ -593,6 +596,7 @@
+ 
+     public void func_4113_a(Packet3Chat p_4113_1_)
+     {
++        FMLClientHandler.instance().handleChatPacket(p_4113_1_);
+         this.field_1212_e.field_6308_u.func_55092_b().func_55106_a(p_4113_1_.field_517_a);
+     }
+ 
+@@ -1165,4 +1169,13 @@
      {
          return this.field_1213_d;
      }

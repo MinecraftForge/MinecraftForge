@@ -89,7 +89,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     }
 
     @Override
-    public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
+    public final boolean dispense(double x, double y, double z, int xVelocity, int zVelocity, Object... data)
     {
         return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
     }

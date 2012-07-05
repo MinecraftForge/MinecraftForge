@@ -18,3 +18,11 @@
      private boolean field_57509_h;
  
      public TexturePackList(File p_i1506_1_, Minecraft p_i1506_2_)
+@@ -131,6 +133,7 @@
+                 var1.add(var5);
+             }
+         }
++        FMLClientHandler.instance().onEarlyTexturePackLoad(this.field_6534_a);
+ 
+         this.field_6533_b.removeAll(var1);
+         var2 = this.field_6533_b.iterator();
