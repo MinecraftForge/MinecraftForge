@@ -26,10 +26,10 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.registry.FMLRegistry;
+import cpw.mods.fml.common.ReflectionHelper;
 
 public class ModLoader
 {
@@ -733,7 +733,7 @@ public class ModLoader
      */
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value)
     {
-        ReflectionHelper.setPrivateValue(instanceclass, instance, fieldindex, value);
+        ReflectionHelper.setPrivateValue(instanceclass, instance, value, fieldindex);
     }
 
     /**
@@ -747,7 +747,7 @@ public class ModLoader
      */
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, String field, E value)
     {
-        ReflectionHelper.setPrivateValue(instanceclass, instance, field, value);
+        ReflectionHelper.setPrivateValue(instanceclass, instance, value, field);
     }
 
     /**

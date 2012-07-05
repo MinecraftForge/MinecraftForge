@@ -28,4 +28,11 @@ public class RelaunchClassLoader extends URLClassLoader
             return super.loadClass(name);
         }
     }
+
+    @Override
+    protected void addURL(URL url)
+    {
+        super.addURL(url);
+        System.out.println(Arrays.toString(getURLs()));
+    }
 }
