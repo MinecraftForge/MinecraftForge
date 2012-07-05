@@ -266,14 +266,17 @@
   <target name="repatch" depends="buildenvsetup">
     <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
-      <fileset dir="${mcp.home}/src-work"/>
+      <fileset dir="${patch.mcp.srcdir}"/>
     </move>
     <delete dir="${mcp.srcdir}"/>
     <copy todir="${mcp.srcdir}">
-      <fileset dir="${mcp.home}/src-base"/>
+      <fileset dir="${clean.mcp.srcdir}"/>
     </copy>
+    
+    <antcall target="cleanargo"/>
+    
     <antcall target="patch"/>
-    <copy todir="${mcp.home}/src-work">
+    <copy todir="${patch.mcp.srcdir}">
       <fileset dir="${mcp.srcdir}"/>
     </copy>
   </target>

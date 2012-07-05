@@ -14,9 +14,15 @@ package cpw.mods.fml.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.logging.Level;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.ReflectionHelper.UnableToAccessFieldException;
+import cpw.mods.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
 /**
  * Some reflection helper code.
- * 
+ *
  * @author cpw
  *
  */
@@ -29,73 +35,79 @@ public class ReflectionHelper
     {
         try
         {
-            Field f = classToAccess.getDeclaredFields()[fieldIndex];
-            f.setAccessible(true);
-            return (T) f.get(instance);
+            return cpw.mods.fml.relauncher.ReflectionHelper.getPrivateValue(classToAccess, instance, fieldIndex);
         }
-        catch (Exception e)
+        catch (UnableToAccessFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem getting field %d from %s", fieldIndex, classToAccess.getName()));
-            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
-            throw new RuntimeException(e);
+            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, String.format("There was a problem getting field index %d from %s", fieldIndex, classToAccess.getName()), e);
+            throw e;
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, E> T getPrivateValue(Class <? super E > classToAccess, E instance, String fieldName)
+    public static <T, E> T getPrivateValue(Class <? super E > classToAccess, E instance, String... fieldNames)
     {
         try
         {
-            Field f = classToAccess.getDeclaredField(fieldName);
-            f.setAccessible(true);
-            return (T) f.get(instance);
+            return cpw.mods.fml.relauncher.ReflectionHelper.getPrivateValue(classToAccess, instance, fieldNames);
         }
-        catch (Exception e)
+        catch (UnableToFindFieldException e)
         {
-            if ((fieldName.length() > 3 && !obfuscation) || (fieldName.length() <= 3 && obfuscation)) {
-                FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem getting field %s from %s", fieldName, classToAccess.getName()));
-                FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
-            }
-            throw new RuntimeException(e);
+            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, String.format("Unable to locate any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            throw e;
+        }
+        catch (UnableToAccessFieldException e)
+        {
+            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, String.format("Unable to access any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            throw e;
         }
     }
 
+    @Deprecated
     public static <T, E> void setPrivateValue(Class <? super T > classToAccess, T instance, int fieldIndex, E value)
     {
-        try
-        {
-            Field f = classToAccess.getDeclaredFields()[fieldIndex];
-            f.setAccessible(true);
-            f.set(instance, value);
-        }
-        catch (Exception e)
-        {
-            FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem setting field %d from %s", fieldIndex, classToAccess.getName()));
-            FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
-            throw new RuntimeException(e);
-        }
+        setPrivateValue(classToAccess, instance, value, fieldIndex);
     }
 
-    public static <T, E> void setPrivateValue(Class <? super T > classToAccess, T instance, String fieldName, E value)
+    public static <T, E> void setPrivateValue(Class <? super T > classToAccess, T instance, E value, int fieldIndex)
     {
         try
         {
-            Field f = classToAccess.getDeclaredField(fieldName);
-            f.setAccessible(true);
-            f.set(instance, value);
+            cpw.mods.fml.relauncher.ReflectionHelper.setPrivateValue(classToAccess, instance, value, fieldIndex);
         }
-        catch (Exception e)
+        catch (UnableToAccessFieldException e)
         {
-            if ((fieldName.length() > 3 && !obfuscation) || (fieldName.length() <= 3 && obfuscation)) {
-                FMLCommonHandler.instance().getFMLLogger().severe(String.format("There was a problem setting field %s from %s", fieldName, classToAccess.getName()));
-                FMLCommonHandler.instance().getFMLLogger().throwing("ReflectionHelper", "getPrivateValue", e);
-            }
-            throw new RuntimeException(e);
+            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, String.format("There was a problem setting field index %d on type %s", fieldIndex, classToAccess.getName()));
+            throw e;
+        }
+    }
+
+    @Deprecated
+    public static <T, E> void setPrivateValue(Class <? super T > classToAccess, T instance, String fieldName, E value)
+    {
+        setPrivateValue(classToAccess, instance, value, fieldName);
+    }
+
+    public static <T, E> void setPrivateValue(Class <? super T > classToAccess, T instance, E value, String... fieldNames)
+    {
+        try
+        {
+            cpw.mods.fml.relauncher.ReflectionHelper.setPrivateValue(classToAccess, instance, value, fieldNames);
+        }
+        catch (UnableToFindFieldException e)
+        {
+            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, String.format("Unable to locate any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            throw e;
+        }
+        catch (UnableToAccessFieldException e)
+        {
+            FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE, String.format("Unable to set any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            throw e;
         }
     }
 
     /**
-     * 
+     *
      */
     public static void detectObfuscation(Class<?> clazz)
     {
