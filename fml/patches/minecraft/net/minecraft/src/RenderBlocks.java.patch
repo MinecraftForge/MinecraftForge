@@ -16,7 +16,7 @@
 +    public boolean field_1774_c = false;
 +    public boolean field_1773_d = false;
      public static boolean field_27406_a = true;
-+    public static boolean cfgGrassFix = true; 
++    public static boolean cfgGrassFix = true;
      public boolean field_31088_b = true;
 -    private int field_31087_g = 0;
 -    private int field_31086_h = 0;
@@ -187,7 +187,84 @@
  
      public RenderBlocks(IBlockAccess p_i647_1_)
      {
-@@ -169,7 +172,7 @@
+@@ -126,10 +129,74 @@
+     {
+         int var5 = p_1234_1_.func_210_f();
+         p_1234_1_.func_238_a(this.field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_);
+-        return var5 == 0 ? this.func_1228_k(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 4 ? this.func_1222_j(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 13 ? this.func_1233_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 1 ? this.func_1226_h(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 19 ? this.func_1232_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 23 ? this.func_40726_m(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 6 ? this.func_35930_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 2 ? this.func_1241_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 3 ? this.func_1235_d(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 5 ? this.func_1242_e(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 8 ? this.func_1221_g(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 7 ? this.func_1218_o(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 9 ? this.func_1216_f((BlockRail)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 10 ? this.func_1214_n(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 27 ? this.func_41088_a((BlockDragonEgg)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 11 ? this.func_35925_a((BlockFence)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 12 ? this.func_1229_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 29 ? this.func_57334_f(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 30 ? this.func_57336_g(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 14 ? this.func_22331_p(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 15 ? this.func_22332_q(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 16 ? this.func_31074_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, false) : (var5 == 17 ? this.func_31080_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, true) : (var5 == 18 ? this.func_35922_a((BlockPane)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 20 ? this.func_35929_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 21 ? this.func_35923_a((BlockFenceGate)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 24 ? this.func_40728_a((BlockCauldron)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 25 ? this.func_40730_a((BlockBrewingStand)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 26 ? this.func_40729_s(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : (var5 == 28 ? this.func_57333_a((BlockCocoa)p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_) : false)))))))))))))))))))))))))))));
++        switch (var5)
++        {
++        case 0:
++            return this.func_1228_k(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 4:
++            return this.func_1222_j(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 13:
++            return this.func_1233_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 1:
++            return this.func_1226_h(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 19:
++            return this.func_1232_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 23:
++            return this.func_40726_m(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 6:
++            return this.func_35930_l(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 2:
++            return this.func_1241_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 3:
++            return this.func_1235_d(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 5:
++            return this.func_1242_e(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 8:
++            return this.func_1221_g(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 7:
++            return this.func_1218_o(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 9:
++            return this.func_1216_f((BlockRail) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 10:
++            return this.func_1214_n(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 27:
++            return this.func_41088_a((BlockDragonEgg) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 11:
++            return this.func_35925_a((BlockFence) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 12:
++            return this.func_1229_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 29:
++            return this.func_57334_f(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 30:
++            return this.func_57336_g(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 14:
++            return this.func_22331_p(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 15:
++            return this.func_22332_q(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 16:
++            return this.func_31074_b(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, false);
++        case 17:
++            return this.func_31080_c(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_, true);
++        case 18:
++            return this.func_35922_a((BlockPane) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 20:
++            return this.func_35929_i(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 21:
++            return this.func_35923_a((BlockFenceGate) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 24:
++            return this.func_40728_a((BlockCauldron) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 25:
++            return this.func_40730_a((BlockBrewingStand) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 26:
++            return this.func_40729_s(p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        case 28:
++            return this.func_57333_a((BlockCocoa) p_1234_1_, p_1234_2_, p_1234_3_, p_1234_4_);
++        default:
++            return FMLClientHandler.instance().renderWorldBlock(this, field_1772_a, p_1234_2_, p_1234_3_, p_1234_4_, p_1234_1_, var5);
++        }
+     }
+ 
+-    private boolean func_40729_s(Block p_40729_1_, int p_40729_2_, int p_40729_3_, int p_40729_4_)
++    public boolean func_40729_s(Block p_40729_1_, int p_40729_2_, int p_40729_3_, int p_40729_4_)
+     {
+         int var5 = this.field_1772_a.func_602_e(p_40729_2_, p_40729_3_, p_40729_4_);
+         int var6 = var5 & 3;
+@@ -169,7 +236,7 @@
          }
      }
  
@@ -196,7 +273,7 @@
      {
          Tessellator var5 = Tessellator.field_1512_a;
          int var6 = this.field_1772_a.func_602_e(p_22331_2_, p_22331_3_, p_22331_4_);
-@@ -310,7 +313,7 @@
+@@ -310,7 +377,7 @@
          return true;
      }
  
@@ -205,7 +282,7 @@
      {
          p_40730_1_.func_213_a(0.4375F, 0.0F, 0.4375F, 0.5625F, 0.875F, 0.5625F);
          this.func_1228_k(p_40730_1_, p_40730_2_, p_40730_3_, p_40730_4_);
-@@ -384,7 +387,7 @@
+@@ -384,7 +451,7 @@
          return true;
      }
  
@@ -214,7 +291,7 @@
      {
          this.func_1228_k(p_40728_1_, p_40728_2_, p_40728_3_, p_40728_4_);
          Tessellator var5 = Tessellator.field_1512_a;
-@@ -467,7 +470,7 @@
+@@ -467,7 +534,7 @@
          return true;
      }
  
@@ -223,7 +300,7 @@
      {
          int var5 = this.field_1772_a.func_602_e(p_22332_2_, p_22332_3_, p_22332_4_);
          int var6 = var5 & 3;
-@@ -557,7 +560,7 @@
+@@ -557,7 +624,7 @@
          this.field_1773_d = false;
      }
  
@@ -232,7 +309,7 @@
      {
          int var6 = this.field_1772_a.func_602_e(p_31074_2_, p_31074_3_, p_31074_4_);
          boolean var7 = p_31074_5_ || (var6 & 8) != 0;
-@@ -660,7 +663,7 @@
+@@ -660,7 +727,7 @@
          return true;
      }
  
@@ -241,7 +318,7 @@
      {
          int var16 = 108;
  
-@@ -683,7 +686,7 @@
+@@ -683,7 +750,7 @@
          var19.func_983_a(p_31076_3_, p_31076_7_, p_31076_11_, var24, var26);
      }
  
@@ -250,7 +327,7 @@
      {
          int var16 = 108;
  
-@@ -706,7 +709,7 @@
+@@ -706,7 +773,7 @@
          var19.func_983_a(p_31081_3_, p_31081_7_, p_31081_11_, var24, var26);
      }
  
@@ -259,7 +336,7 @@
      {
          int var16 = 108;
  
-@@ -736,7 +739,7 @@
+@@ -736,7 +803,7 @@
          this.field_1773_d = false;
      }
  
@@ -268,7 +345,7 @@
      {
          int var6 = this.field_1772_a.func_602_e(p_31080_2_, p_31080_3_, p_31080_4_);
          int var7 = BlockPistonExtension.func_31050_c(var6);
-@@ -3244,7 +3247,7 @@
+@@ -3244,7 +3311,7 @@
          }
      }
  
@@ -277,7 +354,7 @@
      {
          int var5 = 0;
          float var6 = 0.0F;
-@@ -3776,7 +3779,7 @@
+@@ -3776,7 +3843,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 2);
              this.func_1220_c(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
  
@@ -286,7 +363,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -3899,7 +3902,7 @@
+@@ -3899,7 +3966,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 3);
              this.func_1225_d(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 3));
  
@@ -295,7 +372,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -4022,7 +4025,7 @@
+@@ -4022,7 +4089,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 4);
              this.func_1231_e(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
  
@@ -304,7 +381,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -4145,7 +4148,7 @@
+@@ -4145,7 +4212,7 @@
              var27 = p_22330_1_.func_211_a(this.field_1772_a, p_22330_2_, p_22330_3_, p_22330_4_, 5);
              this.func_1236_f(p_22330_1_, (double)p_22330_2_, (double)p_22330_3_, (double)p_22330_4_, var27);
  
@@ -313,7 +390,7 @@
              {
                  this.field_22351_H *= p_22330_5_;
                  this.field_22350_I *= p_22330_5_;
-@@ -4169,7 +4172,7 @@
+@@ -4169,7 +4236,7 @@
          return var8;
      }
  
@@ -322,7 +399,7 @@
      {
          if (p_35924_1_ == 0)
          {
-@@ -4251,7 +4254,7 @@
+@@ -4251,7 +4318,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 2);
              this.func_1220_c(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -331,7 +408,7 @@
              {
                  var8.func_987_a(var18 * p_4152_5_, var21 * p_4152_6_, var24 * p_4152_7_);
                  this.func_1220_c(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -4267,7 +4270,7 @@
+@@ -4267,7 +4334,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 3);
              this.func_1225_d(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -340,7 +417,7 @@
              {
                  var8.func_987_a(var18 * p_4152_5_, var21 * p_4152_6_, var24 * p_4152_7_);
                  this.func_1225_d(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -4283,7 +4286,7 @@
+@@ -4283,7 +4350,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 4);
              this.func_1231_e(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -349,7 +426,7 @@
              {
                  var8.func_987_a(var19 * p_4152_5_, var22 * p_4152_6_, var25 * p_4152_7_);
                  this.func_1231_e(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -4299,7 +4302,7 @@
+@@ -4299,7 +4366,7 @@
              var28 = p_4152_1_.func_211_a(this.field_1772_a, p_4152_2_, p_4152_3_, p_4152_4_, 5);
              this.func_1236_f(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, var28);
  
@@ -358,7 +435,7 @@
              {
                  var8.func_987_a(var19 * p_4152_5_, var22 * p_4152_6_, var25 * p_4152_7_);
                  this.func_1236_f(p_4152_1_, (double)p_4152_2_, (double)p_4152_3_, (double)p_4152_4_, 38);
-@@ -5963,6 +5966,10 @@
+@@ -5963,6 +6030,10 @@
  
                  p_1227_1_.func_213_a(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
              }
@@ -369,3 +446,33 @@
          }
          else
          {
+@@ -6020,6 +6091,28 @@
+ 
+     public static boolean func_1219_a(int p_1219_0_)
+     {
+-        return p_1219_0_ == 0 ? true : (p_1219_0_ == 13 ? true : (p_1219_0_ == 10 ? true : (p_1219_0_ == 11 ? true : (p_1219_0_ == 27 ? true : (p_1219_0_ == 22 ? true : (p_1219_0_ == 21 ? true : (p_1219_0_ == 16 ? true : p_1219_0_ == 26)))))));
++        switch (p_1219_0_)
++        {
++        case 0:
++            return true;
++        case 13:
++            return true;
++        case 10:
++            return true;
++        case 11:
++            return true;
++        case 27:
++            return true;
++        case 22:
++            return true;
++        case 21:
++            return true;
++        case 16:
++            return true;
++        case 26:
++            return true;
++        default:
++            return FMLClientHandler.instance().renderItemAsFull3DBlock(p_1219_0_);
++        }
+     }
+ }

@@ -9,3 +9,14 @@
  public class BlockDispenser extends BlockContainer
  {
      private Random field_28035_a = new Random();
+@@ -276,6 +278,10 @@
+         float var15 = 1.1F;
+         byte var16 = 6;
+ 
++        if (FMLClientHandler.instance().tryDispensingEntity(p_56784_1_, p_56784_9_, p_56784_11_, p_56784_13_, p_56784_7_, p_56784_8_, p_56784_2_))
++        {
++            ;
++        }
+         if (p_56784_2_.field_1617_c == Item.field_226_j.field_291_aS)
+         {
+             EntityArrow var28 = new EntityArrow(p_56784_1_, p_56784_9_, p_56784_11_, p_56784_13_);

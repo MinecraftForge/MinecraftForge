@@ -9,3 +9,21 @@
  public class TileEntityFurnace extends TileEntity implements IInventory
  {
      private ItemStack[] field_833_a = new ItemStack[3];
+@@ -268,8 +271,15 @@
+                     return 300;
+                 }
+             }
+-
+-            return var2 instanceof ItemTool && ((ItemTool)var2).func_56820_c().equals("WOOD") ? 200 : (var2 instanceof ItemSword && ((ItemSword)var2).func_56828_d().equals("WOOD") ? 200 : (var2 instanceof ItemHoe && ((ItemHoe)var2).func_56829_d().equals("WOOD") ? 200 : (var1 == Item.field_266_B.field_291_aS ? 100 : (var1 == Item.field_225_k.field_291_aS ? 1600 : (var1 == Item.field_258_aw.field_291_aS ? 20000 : (var1 == Block.field_333_z.field_376_bc ? 100 : (var1 == Item.field_40417_bo.field_291_aS ? 2400 : 0)))))));
++            if (var2 instanceof ItemTool && ((ItemTool) var2).func_56820_c().equals("WOOD")) return 200;
++            if (var2 instanceof ItemSword && ((ItemSword) var2).func_56828_d().equals("WOOD")) return 200;
++            if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_56829_d().equals("WOOD")) return 200;
++            if (var1 == Item.field_266_B.field_291_aS) return 100;
++            if (var1 == Item.field_225_k.field_291_aS) return 1600;
++            if (var1 == Item.field_258_aw.field_291_aS) return 20000;
++            if (var1 == Block.field_333_z.field_376_bc) return 100;
++            if (var1 == Item.field_40417_bo.field_291_aS) return 2400;
++            return FMLCommonHandler.instance().fuelLookup(var1, p_488_0_.func_21179_h());
+         }
+     }
+ 

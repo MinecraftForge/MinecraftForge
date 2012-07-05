@@ -393,16 +393,16 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param x
      * @param y
      * @param z
-     * @param xVelocity
-     * @param zVelocity
+     * @param p_56784_7_
+     * @param p_56784_8_
      * @param item
      * @return
      */
-    public boolean tryDispensingEntity(World world, double x, double y, double z, byte xVelocity, byte zVelocity, ItemStack item)
+    public boolean tryDispensingEntity(World world, double x, double y, double z, int p_56784_7_, int p_56784_8_, ItemStack item)
     {
         for (ModContainer mod : Loader.getModList())
         {
-            if (mod.wantsToDispense() && mod.getDispenseHandler().dispense(x, y, z, xVelocity, zVelocity, world, item))
+            if (mod.wantsToDispense() && mod.getDispenseHandler().dispense(x, y, z, p_56784_7_, p_56784_8_, world, item))
             {
                 return true;
             }

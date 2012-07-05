@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/src/GuiCreateWorld.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/GuiCreateWorld.java	0000-00-00 00:00:00.000000000 -0000
+@@ -197,9 +197,11 @@
+                     }
+                 }
+ 
++                WorldType.field_48637_a[this.field_46030_z].onGUICreateWorldPress();
+                 EnumGameType var9 = EnumGameType.func_57535_a(this.field_35364_f);
+                 WorldSettings var6 = new WorldSettings(var2, var9, this.field_35365_g, this.field_40232_h, WorldType.field_48637_a[this.field_46030_z]);
+ 
++
+                 if (this.field_55144_j && !this.field_40232_h)
+                 {
+                     var6.func_55250_a();

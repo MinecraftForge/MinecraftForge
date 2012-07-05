@@ -30,7 +30,19 @@
          this.func_6250_c("Startup");
          this.field_6301_A.func_340_a(this.field_6304_y);
          this.field_6315_n.func_1066_a(this.field_9231_Y);
-@@ -1318,11 +1327,13 @@
+@@ -729,9 +738,11 @@
+ 
+             if (!this.field_6307_v)
+             {
++                FMLClientHandler.instance().onRenderTickStart(this.field_9237_P.field_1378_c);
+                 Profiler.func_40661_c("gameRenderer");
+                 this.field_9243_r.func_4136_b(this.field_9237_P.field_1378_c);
+                 Profiler.func_40662_b();
++                FMLClientHandler.instance().onRenderTickEnd(this.field_9237_P.field_1378_c);
+             }
+ 
+             GL11.glFlush();
+@@ -1318,11 +1329,13 @@
  
      public void func_6246_i()
      {
@@ -44,7 +56,7 @@
          Profiler.func_40663_a("stats");
          this.field_25001_G.func_27178_d();
          Profiler.func_40661_c("gui");
-@@ -1691,6 +1702,7 @@
+@@ -1691,6 +1704,7 @@
          }
  
          Profiler.func_40662_b();
@@ -52,7 +64,7 @@
          this.field_6287_N = System.currentTimeMillis();
      }
  
-@@ -1849,6 +1861,7 @@
+@@ -1849,6 +1863,7 @@
  
          System.gc();
          this.field_6287_N = 0L;
@@ -60,7 +72,7 @@
      }
  
      public void func_6268_a(String p_6268_1_, File p_6268_2_)
-@@ -1940,6 +1953,11 @@
+@@ -1940,6 +1955,11 @@
  
      public static void main(String[] p_main_0_)
      {
