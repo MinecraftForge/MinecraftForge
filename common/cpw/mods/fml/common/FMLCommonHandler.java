@@ -481,7 +481,10 @@ public class FMLCommonHandler
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
         FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
-        throw new RuntimeException(exception);
+        if (stopGame)
+        {
+            getSidedDelegate().haltGame(message,exception);
+        }
     }
 
 

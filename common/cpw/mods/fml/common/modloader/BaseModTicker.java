@@ -30,25 +30,28 @@ public class BaseModTicker implements ITickHandler
     private BaseMod mod;
     private EnumSet<TickType> ticks;
     private boolean clockTickTrigger;
-    
-    
-    BaseModTicker(BaseMod mod)
+    private boolean sendGuiTicks;
+
+
+    BaseModTicker(BaseMod mod, boolean guiTicker)
     {
         this.mod = mod;
         this.ticks = EnumSet.of(TickType.WORLDLOAD);
+        this.sendGuiTicks = guiTicker;
     }
-    
-    BaseModTicker(EnumSet<TickType> ticks)
+
+    BaseModTicker(EnumSet<TickType> ticks, boolean guiTicker)
     {
         this.ticks = ticks;
+        this.sendGuiTicks = guiTicker;
     }
-    
+
     @Override
     public void tickStart(EnumSet<TickType> types, Object... tickData)
     {
         tickBaseMod(types, false, tickData);
     }
-    
+
     @Override
     public void tickEnd(EnumSet<TickType> types, Object... tickData)
     {
@@ -57,25 +60,23 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
-        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDGUI)))
+        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDLOAD)) || ticks.contains(TickType.RENDER))
         {
             EnumSet cTypes=EnumSet.copyOf(types);
-            if (end && ( types.contains(TickType.GAME) || types.contains(TickType.WORLDLOAD) || types.contains(TickType.WORLDGUI)))
+            if ( ( end && types.contains(TickType.GAME)) || types.contains(TickType.WORLDLOAD))
             {
                 clockTickTrigger =  true;
                 cTypes.remove(TickType.GAME);
                 cTypes.remove(TickType.WORLDLOAD);
-                cTypes.remove(TickType.WORLDGUI);
             }
-            
+
             if (end && clockTickTrigger && types.contains(TickType.RENDER))
             {
                 clockTickTrigger = false;
                 cTypes.remove(TickType.RENDER);
-                if (ticks.contains(TickType.GAME)) cTypes.add(TickType.GAME);
-                if (ticks.contains(TickType.WORLDGUI)) cTypes.add(TickType.WORLDGUI);
+                cTypes.add(TickType.GAME);
             }
-            
+
             sendTick(cTypes, end, tickData);
         }
         else
@@ -83,7 +84,7 @@ public class BaseModTicker implements ITickHandler
             sendTick(types, end, tickData);
         }
     }
-        
+
     private void sendTick(EnumSet<TickType> types, boolean end, Object... tickData)
     {
         for (TickType type : types)
@@ -92,7 +93,16 @@ public class BaseModTicker implements ITickHandler
             {
                 continue;
             }
-            boolean keepTicking=mod.doTickInGame(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+
+            boolean keepTicking=true;
+            if (sendGuiTicks)
+            {
+                keepTicking = mod.doTickInGUI(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+            }
+            else
+            {
+                keepTicking = mod.doTickInGame(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+            }
             if (!keepTicking) {
                 ticks.remove(type);
                 ticks.removeAll(type.partnerTicks());
@@ -119,5 +129,4 @@ public class BaseModTicker implements ITickHandler
     {
         this.mod = mod;
     }
-
 }
