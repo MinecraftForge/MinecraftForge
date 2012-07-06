@@ -70,7 +70,6 @@
      }
  
      /**
-
 @@ -1253,7 +1268,9 @@
                  int var12 = this.getBlockMetadata(var8, var9, var10);
                  Block var13 = Block.blocksList[var11];
