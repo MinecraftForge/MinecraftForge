@@ -9,7 +9,6 @@ public class RelaunchClassLoader extends URLClassLoader
     public RelaunchClassLoader(URL[] sources)
     {
         super(sources);
-        System.out.println(Arrays.toString(sources));
     }
 
     @Override
@@ -17,7 +16,7 @@ public class RelaunchClassLoader extends URLClassLoader
     {
         if (name.startsWith("cpw.mods.fml.relauncher"))
         {
-            return super.loadClass(name);
+            return getClass().getClassLoader().loadClass(name);
         }
         try
         {
@@ -25,7 +24,7 @@ public class RelaunchClassLoader extends URLClassLoader
         }
         catch (ClassNotFoundException cnfe)
         {
-            return super.loadClass(name);
+            return getClass().getClassLoader().loadClass(name);
         }
     }
 
@@ -33,6 +32,5 @@ public class RelaunchClassLoader extends URLClassLoader
     protected void addURL(URL url)
     {
         super.addURL(url);
-        System.out.println(Arrays.toString(getURLs()));
     }
 }
