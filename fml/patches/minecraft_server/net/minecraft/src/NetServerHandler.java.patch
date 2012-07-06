@@ -9,13 +9,15 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler
-@@ -1014,4 +1016,9 @@
+@@ -1014,4 +1016,11 @@
              }
          }
      }
-+
++//TODO
++    /*
 +    @Override
 +    public void func_44001_a(Packet250CustomPayload p_44001_1_) {
 +      FMLServerHandler.instance().handlePacket250(p_44001_1_, field_16_e);
 +    }
++    */
  }
