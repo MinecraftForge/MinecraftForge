@@ -29,8 +29,10 @@ public class MinecraftForgeClient
     	}
     	catch (Exception e)
     	{
-    		e.printStackTrace();
-    		return;
+    		if (MinecraftForgeClient.class.getPackage().getName().equals("net.minecraft.src.forge"))
+            {
+                e.printStackTrace();
+            }
     	}
     }
     
@@ -181,6 +183,10 @@ public class MinecraftForgeClient
         }
         hasInit = true;
         ForgeHooks.setPacketHandler(new PacketHandlerClient());
+        ForgeHooksClient.blocksToLightProperly.add(Block.stairCompactCobblestone.blockID);
+        ForgeHooksClient.blocksToLightProperly.add(Block.stairCompactPlanks.blockID);
+        ForgeHooksClient.blocksToLightProperly.add(Block.stairSingle.blockID);
+        ForgeHooksClient.blocksToLightProperly.add(Block.tilledField.blockID);
     }
 
     static
