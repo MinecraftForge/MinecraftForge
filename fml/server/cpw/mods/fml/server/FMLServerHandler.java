@@ -298,7 +298,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param item
      * @return
      */
-    public boolean tryDispensingEntity(World world, double x, double y, double z, byte xVelocity, byte zVelocity, ItemStack item)
+    public boolean tryDispensingEntity(World world, double x, double y, double z, int xVelocity, int zVelocity, ItemStack item)
     {
         for (ModContainer mod : Loader.getModList())
         {
@@ -468,7 +468,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param loginPacket
      * @param networkManager
      */
-    public void handleLogin(Packet1Login loginPacket, NetworkManager networkManager)
+    public void handleLogin(NetworkManager networkManager)
     {
         Packet250CustomPayload packet = new Packet250CustomPayload();
         packet.field_44005_a = "REGISTER";

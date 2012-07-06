@@ -1,22 +1,15 @@
 --- ../src-base/minecraft_server/net/minecraft/server/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft_server/net/minecraft/server/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -11,6 +11,8 @@
+@@ -11,6 +11,9 @@
  import java.util.List;
  import java.util.logging.Level;
  import java.util.logging.Logger;
 +
 +import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
  import net.minecraft.src.CallableMCS5;
-@@ -53,6 +55,7 @@
- 
- public abstract class MinecraftServer implements ICommandSender, IPlayerUsage, Runnable
- {
-+    fish;
-     public static Logger field_6038_a = Logger.getLogger("Minecraft");
-     private static MinecraftServer field_55095_w = null;
-     private final ISaveFormat field_56220_l;
 @@ -350,6 +353,8 @@
              {
                  long var1 = System.currentTimeMillis();
@@ -26,3 +19,33 @@
                  for (long var50 = 0L; this.field_6025_n; this.field_56215_O = true)
                  {
                      long var5 = System.currentTimeMillis();
+@@ -440,9 +445,11 @@
+ 
+     protected void func_56174_n()
+     {
++        FMLCommonHandler.instance().rescheduleTicks();
+         long var1 = System.nanoTime();
+         AxisAlignedBB.func_58089_a().func_58066_a();
+         Vec3.func_58052_a().func_58075_a();
++        FMLServerHandler.instance().onPreServerTick();
+         ++this.field_9014_h;
+         this.func_56160_o();
+ 
+@@ -472,6 +479,7 @@
+         {
+             this.field_56221_m.func_56622_b();
+         }
++        FMLServerHandler.instance().onPostServerTick();
+     }
+ 
+     public void func_56160_o()
+@@ -489,7 +497,9 @@
+                     this.field_6033_f.func_28169_a(new Packet4UpdateTime(var4.func_22080_k()), var4.field_4272_q.field_6165_g);
+                 }
+ 
++                FMLServerHandler.instance().onPreWorldTick(var4);
+                 var4.func_22077_g();
++                FMLServerHandler.instance().onPostWorldTick(var4);
+ 
+                 while (true)
+                 {

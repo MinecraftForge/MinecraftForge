@@ -9,7 +9,19 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler
-@@ -1014,4 +1016,11 @@
+@@ -602,7 +604,10 @@
+                     }
+                 }
+ 
+-                if (var2.startsWith("/"))
++                if (FMLServerHandler.instance().handleChatPacket(p_23_1_,field_16_e)) {
++                    // We handled it
++                }
++                    else if (var2.startsWith("/"))
+                 {
+                     this.func_4010_d(var2);
+                 }
+@@ -1014,4 +1019,11 @@
              }
          }
      }
