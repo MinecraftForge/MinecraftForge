@@ -9,7 +9,15 @@
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
  import net.minecraft.src.CallableMCS5;
-@@ -350,6 +352,8 @@
+@@ -53,6 +55,7 @@
+ 
+ public abstract class MinecraftServer implements ICommandSender, IPlayerUsage, Runnable
+ {
++    fish;
+     public static Logger field_6038_a = Logger.getLogger("Minecraft");
+     private static MinecraftServer field_55095_w = null;
+     private final ISaveFormat field_56220_l;
+@@ -350,6 +353,8 @@
              {
                  long var1 = System.currentTimeMillis();
  
