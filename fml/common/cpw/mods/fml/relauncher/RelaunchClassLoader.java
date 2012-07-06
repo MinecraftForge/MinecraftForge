@@ -2,13 +2,18 @@ package cpw.mods.fml.relauncher;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RelaunchClassLoader extends URLClassLoader
 {
+    private List<URL> sources;
+
     public RelaunchClassLoader(URL[] sources)
     {
         super(sources);
+        this.sources = new ArrayList<URL>(Arrays.asList(sources));
     }
 
     @Override
@@ -29,8 +34,14 @@ public class RelaunchClassLoader extends URLClassLoader
     }
 
     @Override
-    protected void addURL(URL url)
+    public void addURL(URL url)
     {
         super.addURL(url);
+        sources.add(url);
+    }
+
+    public List<URL> getSources()
+    {
+        return sources;
     }
 }
