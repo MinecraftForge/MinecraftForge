@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerCreative.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/PlayerControllerCreative.java	0000-00-00 00:00:00.000000000 -0000
-@@ -52,6 +52,11 @@
+@@ -1,6 +1,7 @@
+ package net.minecraft.src;
+ 
+ import net.minecraft.client.Minecraft;
++import net.minecraft.src.forge.ForgeHooks;
+ 
+ public class PlayerControllerCreative extends PlayerController
+ {
+@@ -52,6 +53,11 @@
       */
      public static void clickBlockCreative(Minecraft par0Minecraft, PlayerController par1PlayerController, int par2, int par3, int par4, int par5)
      {
@@ -12,17 +20,35 @@
          if (!par0Minecraft.theWorld.func_48457_a(par0Minecraft.thePlayer, par2, par3, par4, par5))
          {
              par1PlayerController.onPlayerDestroyBlock(par2, par3, par4, par5);
-@@ -63,6 +68,13 @@
+@@ -63,13 +69,26 @@
       */
      public boolean onPlayerRightClick(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7)
      {
+-        int var8 = par2World.getBlockId(par4, par5, par6);
+-
+-        if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
 +        if (par3ItemStack != null && 
 +            par3ItemStack.getItem() != null && 
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7))
-+        {
+         {
+-            return true;
 +                return true;
-+        }
+         }
+-        else if (par3ItemStack == null)
 +        
-         int var8 = par2World.getBlockId(par4, par5, par6);
- 
-         if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
++        int var8 = par2World.getBlockId(par4, par5, par6);
++		if (var8 > 0) {
++			Block var9 = Block.blocksList[var8];
++			if (ForgeHooks.activateBlock(var9, par2World, par4, par5, par6, par7, par1EntityPlayer)) {
++				return true;
++			}
++			if (var9.blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
++			{
++				return true;
++			}
++		}
++        
++        if (par3ItemStack == null)
+         {
+             return false;
+         }
