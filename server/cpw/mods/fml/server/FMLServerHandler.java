@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -55,7 +54,6 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
 import cpw.mods.fml.common.registry.FMLRegistry;
@@ -153,35 +151,6 @@ public class FMLServerHandler implements IFMLSidedHandler
         throw new RuntimeException(message, exception);
     }
 
-    public void onPreServerTick()
-    {
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME));
-    }
-
-    public void onPostServerTick()
-    {
-        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME));
-    }
-    /**
-     * Every tick just before world and other ticks occur
-     */
-    public void onPreWorldTick(World world)
-    {
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), world);
-    }
-
-    /**
-     * Every tick just after world and other ticks occur
-     */
-    public void onPostWorldTick(World world)
-    {
-        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), world);
-    }
-
-    public void onWorldLoadTick()
-    {
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
-    }
     /**
      * Get the server instance
      *
@@ -468,7 +437,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param loginPacket
      * @param networkManager
      */
-    public void handleLogin(NetworkManager networkManager)
+    public void handleClientLogin(NetworkManager networkManager)
     {
         Packet250CustomPayload packet = new Packet250CustomPayload();
         packet.field_44005_a = "REGISTER";

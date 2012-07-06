@@ -658,8 +658,34 @@ public class FMLCommonHandler
         worldGenerators.add(generator);
     }
 
+    public void onPostServerTick()
+    {
+        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME));
+    }
+
+    /**
+     * Every tick just after world and other ticks occur
+     */
+    public void onPostWorldTick(Object world)
+    {
+        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), world);
+    }
+
+    public void onPreServerTick()
+    {
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME));
+    }
+
+    /**
+     * Every tick just before world and other ticks occur
+     */
+    public void onPreWorldTick(Object world)
+    {
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), world);
+    }
+
     public void onWorldLoadTick()
     {
-        tickStart(EnumSet.of(TickType.WORLDLOAD));
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
     }
 }

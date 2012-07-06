@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/src/DedicatedServer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/DedicatedServer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -33,6 +33,8 @@
+         var1.start();
+         ConsoleLogManager.func_57436_a();
+         field_56394_a.info("Starting minecraft server version 12w26a");
++        // TODO
++//        FMLServerHandler.instance().onPreLoad(this);
+ 
+         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
+         {
+@@ -98,6 +100,8 @@
+             field_56394_a.warning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+         }
+ 
++        // TODO
++//        FMLServerHandler.instance().onLoadComplete();
+         this.func_56309_a(new DedicatedPlayerList(this));
+         long var4 = System.nanoTime();
+ 

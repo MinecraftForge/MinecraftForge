@@ -587,6 +587,20 @@ public class FMLClientHandler implements IFMLSidedHandler
     /**
      * @param player
      */
+    public void announceLogin(EntityPlayer player)
+    {
+        for (ModContainer mod : Loader.getModList())
+        {
+            if (mod.wantsPlayerTracking())
+            {
+                mod.getPlayerTracker().onPlayerLogin(player);
+            }
+        }
+    }
+
+    /**
+     * @param player
+     */
     public void announceLogout(EntityPlayer player)
     {
         for (ModContainer mod : Loader.getModList())
@@ -1167,5 +1181,23 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void removeBiomeFromDefaultWorldGenerator(BiomeGenBase biome)
     {
         WorldType.field_48635_b.removeBiome(biome);
+    }
+
+    /**
+     * Handle a login
+     *
+     * @param loginPacket
+     * @param networkManager
+     */
+    public void handleClientLogin(NetworkManager networkManager)
+    {
+        Packet250CustomPayload packet = new Packet250CustomPayload();
+        packet.field_44012_a = "REGISTER";
+        packet.field_44011_c = FMLCommonHandler.instance().getPacketRegistry();
+        packet.field_44010_b = packet.field_44011_c.length;
+        if (packet.field_44010_b > 0)
+        {
+            networkManager.func_972_a(packet);
+        }
     }
 }
