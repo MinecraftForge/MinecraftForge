@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/src/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -12,6 +12,8 @@
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
++
+ public abstract class MinecraftServer implements ICommandSender, IPlayerUsage, Runnable
+ {
+     public static Logger field_56394_a = Logger.getLogger("Minecraft");
+@@ -317,6 +319,8 @@
+             {
+                 long var1 = System.currentTimeMillis();
+ 
++                FMLCommonHandler.instance().onWorldLoadTick();
++
+                 for (long var50 = 0L; this.field_56406_t; this.field_56383_O = true)
+                 {
+                     long var5 = System.currentTimeMillis();

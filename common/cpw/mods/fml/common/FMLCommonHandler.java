@@ -657,4 +657,9 @@ public class FMLCommonHandler
     {
         worldGenerators.add(generator);
     }
+
+    public void onWorldLoadTick()
+    {
+        tickStart(EnumSet.of(TickType.WORLDLOAD));
+    }
 }

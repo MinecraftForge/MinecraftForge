@@ -1,0 +1,20 @@
+--- ../src-base/minecraft_server/net/minecraft/server/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft_server/net/minecraft/server/MinecraftServer.java	0000-00-00 00:00:00.000000000 -0000
+@@ -11,6 +11,8 @@
+ import java.util.List;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++
++import cpw.mods.fml.common.FMLCommonHandler;
+ import net.minecraft.src.AnvilSaveConverter;
+ import net.minecraft.src.AxisAlignedBB;
+ import net.minecraft.src.CallableMCS5;
+@@ -350,6 +352,8 @@
+             {
+                 long var1 = System.currentTimeMillis();
+ 
++                FMLCommonHandler.instance().onWorldLoadTick();
++
+                 for (long var50 = 0L; this.field_6025_n; this.field_56215_O = true)
+                 {
+                     long var5 = System.currentTimeMillis();
