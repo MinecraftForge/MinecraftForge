@@ -19,6 +19,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -78,6 +80,15 @@ public class RelaunchLibraryManager
 
         }
 
+        try
+        {
+            Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
+        }
+        catch (Exception e)
+        {
+            // Load in the Loader, make sure he's ready to roll
+            throw new RuntimeException(e);
+        }
     }
 
     private static String generateChecksum(File file)

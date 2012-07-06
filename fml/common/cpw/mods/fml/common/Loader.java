@@ -177,7 +177,7 @@ public class Loader
         }
 
         log.info(String.format("Forge Mod Loader version %s.%s.%s.%s for Minecraft c:%s, s:%s loading", major, minor, rev, build, mccversion, mcsversion));
-        modClassLoader = new ModClassLoader();
+        modClassLoader = new ModClassLoader(getClass().getClassLoader());
     }
 
     /**
