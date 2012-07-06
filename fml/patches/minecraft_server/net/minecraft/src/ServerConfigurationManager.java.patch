@@ -13,7 +13,7 @@
          }
  
          p_56432_2_.func_20057_k();
-+        FMLServerHandler.instance().handleLogin(p_56432_1_);
++        FMLServerHandler.instance().handleClientLogin(p_56432_1_);
 +        FMLServerHandler.instance().announceLogin(p_56432_2_);
      }
  

@@ -18,3 +18,33 @@
                  for (long var50 = 0L; this.field_56406_t; this.field_56383_O = true)
                  {
                      long var5 = System.currentTimeMillis();
+@@ -407,9 +411,11 @@
+ 
+     protected void func_56322_n()
+     {
++        FMLCommonHandler.instance().rescheduleTicks();
+         long var1 = System.nanoTime();
+         AxisAlignedBB.func_58144_a().func_58151_a();
+         Vec3.func_58128_a().func_58135_a();
++        FMLCommonHandler.instance().onPreServerTick();
+         ++this.field_56404_v;
+         this.func_56292_o();
+ 
+@@ -439,6 +445,7 @@
+         {
+             this.field_56398_m.func_57207_b();
+         }
++        FMLCommonHandler.instance().onPostServerTick();
+     }
+ 
+     protected void func_56292_o()
+@@ -456,7 +463,9 @@
+                     this.field_56407_s.func_57105_a(new Packet4UpdateTime(var4.func_22139_r()), var4.field_4209_q.field_4218_e);
+                 }
+ 
++                FMLCommonHandler.instance().onPreWorldTick(var4);
+                 var4.func_649_g();
++                FMLCommonHandler.instance().onPostWorldTick(var4);
+ 
+                 while (true)
+                 {

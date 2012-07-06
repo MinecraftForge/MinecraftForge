@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/src/ServerConfigurationManager.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/ServerConfigurationManager.java	0000-00-00 00:00:00.000000000 -0000
+@@ -10,6 +10,8 @@
+ import java.util.Set;
+ import java.util.logging.Logger;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++
+ public abstract class ServerConfigurationManager
+ {
+     private static final SimpleDateFormat field_57132_e = new SimpleDateFormat("yyyy-MM-dd \'at\' HH:mm:ss z");
+@@ -70,6 +72,8 @@
+         }
+ 
+         p_57113_2_.func_56256_h();
++        FMLClientHandler.instance().handleClientLogin(p_57113_1_);
++        FMLClientHandler.instance().announceLogin(p_57113_2_);
+     }
+ 
+     public void func_57096_a(WorldServer[] p_57096_1_)
+@@ -143,6 +147,7 @@
+ 
+     public void func_57093_e(EntityPlayerMP p_57093_1_)
+     {
++        FMLClientHandler.instance().announceLogout(p_57093_1_);
+         this.func_57118_b(p_57093_1_);
+         WorldServer var2 = p_57093_1_.func_56260_H();
+         var2.func_607_d(p_57093_1_);
+@@ -354,6 +359,8 @@
+         p_57125_1_.field_56267_c.func_57360_a(var5);
+         this.func_57120_b(p_57125_1_, var5);
+         this.func_57124_f(p_57125_1_);
++
++        FMLClientHandler.instance().announceDimensionChange(p_57125_1_);
+     }
+ 
+     public void func_57104_b()
