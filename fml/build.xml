@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ====================================================================== 
-     30 Mar 2012 13:35:40                                                        
+<!-- ======================================================================
+     30 Mar 2012 13:35:40
 
-     FML    
+     FML
      The Forge Mod Loader
-                   
-     cpw                                                                
+
+     cpw
      ====================================================================== -->
 <project name="FML" default="jenkinsbuild">
   <description>The Forge Mod Loader</description>
@@ -86,7 +86,6 @@
       <arg value="-d" />
       <arg value="-n" />
     </exec>
-    <antcall target="cleanargo"/>
   </target>
 
   <target name="buildandreobfmcp" depends="buildenvsetup">
@@ -207,7 +206,7 @@
   <target name="build" depends="buildenvsetup,merge-server,merge-client,build-server,build-client,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,patch,build"/>
-  
+
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/applypatches.py" />
@@ -243,7 +242,6 @@
       <arg value="${mcp.home}/runtime/updatemd5.py" />
       <arg value="-f" />
     </exec>
-    <antcall target="cleanargo"/>
     <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
       <fileset dir="${patch.mcp.srcdir}"/>
@@ -254,6 +252,7 @@
     <copy todir="${clean.mcp.srcdir}">
       <fileset dir="${mcp.srcdir}"/>
     </copy>
+    <antcall target="cleanargo"/>
     <antcall target="patch"/>
     <echo>Creating clean patched references at ${patch.mcp.srcdir}</echo>
     <copy todir="${patch.mcp.srcdir}">
@@ -263,7 +262,7 @@
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
 
-  <target name="repatch" depends="buildenvsetup">
+  <target name="repatch" depends="buildenvsetup,checkpatches">
     <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
       <fileset dir="${patch.mcp.srcdir}"/>
@@ -272,17 +271,31 @@
     <copy todir="${mcp.srcdir}">
       <fileset dir="${clean.mcp.srcdir}"/>
     </copy>
-    
+
     <antcall target="cleanargo"/>
-    
+
     <antcall target="patch"/>
     <copy todir="${patch.mcp.srcdir}">
       <fileset dir="${mcp.srcdir}"/>
     </copy>
   </target>
-  
+
   <target name="cleanargo" depends="buildenvsetup">
     <delete dir="${client.mcp.srcdir}/argo"/>
+  </target>
+
+  <target name="checkpatches" depends="buildenvsetup">
+    <uptodate property="checkUptodate.uptodate">
+      <srcfiles dir="${patch.mcp.srcdir}" includes="**/*.java">
+      	<present targetdir="${patch.src.dir}">
+      		<globmapper from="*.java" to="*.java.patch"/>
+      	</present>
+      </srcfiles>
+      <globmapper from="*.java" to="${patch.src.dir}/*.java.patch"/>
+    </uptodate>
+  	<fail unless="checkUptodate.uptodate">
+  		A patch is out of date. Update your patches!
+  	</fail>
   </target>
 
   <target name="updatepatches" depends="buildenvsetup">

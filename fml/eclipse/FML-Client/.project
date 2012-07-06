@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>build.xml</name>
+			<type>1</type>
+			<locationURI>MCP_LOC/FML/build.xml</locationURI>
+		</link>
+		<link>
 			<name>client</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/FML/client</locationURI>
