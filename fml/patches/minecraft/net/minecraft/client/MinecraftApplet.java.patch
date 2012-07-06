@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/client/MinecraftApplet.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/client/MinecraftApplet.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,8 @@
+ import java.awt.BorderLayout;
+ import java.awt.Canvas;
+ import java.io.File;
++
++import cpw.mods.fml.relauncher.FMLEmbeddingRelauncher;
+ import net.minecraft.src.CanvasMinecraftApplet;
+ import net.minecraft.src.MinecraftAppletImpl;
+ import net.minecraft.src.Session;
+@@ -16,6 +18,11 @@
+ 
+     public void init()
+     {
++        FMLEmbeddingRelauncher.appletEntry(this);
++    }
++
++    public void fmlInitReentry()
++    {
+         this.field_6235_a = new CanvasMinecraftApplet(this);
+         boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
+         this.field_6234_b = new MinecraftAppletImpl(this, this.field_6235_a, this, this.getWidth(), this.getHeight(), var1);
+@@ -72,6 +79,11 @@
+ 
+     public void start()
+     {
++        FMLEmbeddingRelauncher.appletStart(this);
++    }
++
++    public void fmlStartReentry()
++    {
+         if (this.field_6234_b != null)
+         {
+             this.field_6234_b.field_6316_m = false;
