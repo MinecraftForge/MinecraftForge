@@ -1,18 +1,27 @@
 --- ../src-base/minecraft/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/NetServerHandler.java	0000-00-00 00:00:00.000000000 -0000
-@@ -601,7 +601,10 @@
+@@ -8,6 +8,8 @@
+ import java.util.Random;
+ import java.util.logging.Logger;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
++
+ public class NetServerHandler extends NetHandler
+ {
+     public static Logger field_56728_a = Logger.getLogger("Minecraft");
+@@ -601,7 +603,10 @@
                      }
                  }
  
 -                if (var2.startsWith("/"))
-+                if (FMLServerHandler.instance().handleChatPacket(p_23_1_,field_16_e)) {
++                if (FMLClientHandler.instance().handleChatPacket(p_4113_1_,field_56725_e)) {
 +                    // We handled it
 +                }
 +                    else                if (var2.startsWith("/"))
                  {
                      this.func_56721_b(var2);
                  }
-@@ -1013,4 +1016,11 @@
+@@ -1013,4 +1018,11 @@
              }
          }
      }
