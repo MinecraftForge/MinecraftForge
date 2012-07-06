@@ -9,11 +9,28 @@
  import net.minecraft.server.MinecraftServer;
  
  public abstract class ServerConfigurationManager
-@@ -355,6 +357,8 @@
+@@ -71,6 +73,8 @@
+         }
+ 
+         p_56432_2_.func_20057_k();
++        FMLServerHandler.instance().handleLogin(p_56432_1_);
++        FMLServerHandler.instance().announceLogin(p_56432_2_);
+     }
+ 
+     public void func_618_a(WorldServer[] p_618_1_)
+@@ -144,6 +148,7 @@
+ 
+     public void func_616_c(EntityPlayerMP p_616_1_)
+     {
++        FMLServerHandler.instance().announceLogout(p_616_1_);
+         this.func_56430_b(p_616_1_);
+         WorldServer var2 = p_616_1_.func_55080_H();
+         var2.func_22085_d(p_616_1_);
+@@ -355,6 +360,8 @@
          p_28168_1_.field_425_ad.func_35694_a(var5);
          this.func_28170_a(p_28168_1_, var5);
          this.func_30008_g(p_28168_1_);
-+        
++
 +        FMLServerHandler.instance().announceDimensionChange(p_28168_1_);
      }
  
