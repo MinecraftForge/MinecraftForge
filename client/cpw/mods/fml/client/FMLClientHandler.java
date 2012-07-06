@@ -503,6 +503,27 @@ public class FMLClientHandler implements IFMLSidedHandler
         return false;
     }
 
+    /**
+     * Called when a chat packet is received
+     *
+     * @param chat
+     * @param player
+     * @return true if you want the packet to stop processing and not echo to
+     *         the rest of the world
+     */
+    public boolean handleChatPacket(Packet3Chat chat, EntityPlayer player)
+    {
+        for (ModContainer mod : Loader.getModList())
+        {
+            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat, player))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void handleServerLogin(Packet1Login loginPacket, NetClientHandler handler, NetworkManager networkManager)
     {
         this.networkClient=handler;
