@@ -748,7 +748,7 @@
 +     */
 +    protected double getDrag()
 +    {
-+        return riddenByEntity != null ? 1D : 0.96D;
++        return riddenByEntity != null ? 0.99699997901916504D : 0.95999997854232788D;
 +    }   
 +    
 +    /**
@@ -765,16 +765,16 @@
 +                pushX /= d27;
 +                pushZ /= d27;
 +                double d29 = 0.04;
-+                motionX *= 0.8D;
++                motionX *= 0.80000001192092896D;
 +                motionY *= 0.0D;
-+                motionZ *= 0.8D;
++                motionZ *= 0.80000001192092896D;
 +                motionX += pushX * d29;
 +                motionZ += pushZ * d29;
 +            } else
 +            {
-+                motionX *= 0.9D;
-+                motionY *= 0.0D;
-+                motionZ *= 0.9D;
++                motionX *= 0.89999997615814209D;
++                motionY *= 0.89999997615814209D;
++                motionZ *= 0.89999997615814209D;
 +            }
 +        }
 +        motionX *= getDrag();
