@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayerSP.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayerSP.java	0000-00-00 00:00:00.000000000 -0000
+@@ -450,8 +450,10 @@
+             this.naturalArmorRating = var2;
+             this.setEntityHealth(this.getHealth());
+             this.heartsLife = this.heartsHalvesLife;
+-            this.damageEntity(DamageSource.generic, var2);
+-            this.hurtTime = this.maxHurtTime = 10;
++            if (this.damageEntity(DamageSource.generic, var2))
++            {
++                this.hurtTime = this.maxHurtTime = 10;
++            }
+         }
+     }
+ 

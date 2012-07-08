@@ -72,14 +72,20 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -915,12 +945,22 @@
+@@ -912,18 +942,34 @@
+     /**
+      * Deals damage to the entity. If its a EntityPlayer then will take damage from the armor first and then health
+      * second with the reduced value. Args: damageAmount
++     *
++     * @return whether the damage should be indicated
       */
-     protected void damageEntity(DamageSource par1DamageSource, int par2)
+-    protected void damageEntity(DamageSource par1DamageSource, int par2)
++    protected boolean damageEntity(DamageSource par1DamageSource, int par2)
      {
 +        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
 +        if (par2 == 0)
 +        {
-+            return;
++            return true;
 +        }
 +
          if (!par1DamageSource.isUnblockable() && this.isBlocking())
@@ -88,15 +94,22 @@
          }
  
 -        par2 = this.applyArmorCalculations(par1DamageSource, par2);
-+        par2 = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
++        ArmorProperties.CalculationResult calculationResult = ArmorProperties.ApplyArmor(this, inventory.armorInventory, par1DamageSource, par2);
++        par2 = calculationResult.LeftOverDamage;
++        
 +        if (par2 <= 0)
 +        {
-+            return;
++            return calculationResult.IndicateDamageIfZero;
 +        }
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -951,6 +991,10 @@
++        
++        return true;
+     }
+ 
+     /**
+@@ -951,6 +997,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -107,7 +120,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -981,7 +1025,9 @@
+@@ -981,7 +1031,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -117,7 +130,7 @@
      }
  
      /**
-@@ -1010,6 +1056,16 @@
+@@ -1010,6 +1062,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -134,7 +147,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1148,6 +1204,12 @@
+@@ -1148,6 +1210,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -147,7 +160,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1187,6 +1249,11 @@
+@@ -1187,6 +1255,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -159,7 +172,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1256,11 +1323,12 @@
+@@ -1256,11 +1329,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -175,7 +188,7 @@
  
              if (var5 == null)
              {
-@@ -1297,7 +1365,9 @@
+@@ -1297,7 +1371,9 @@
       */
      private boolean isInBed()
      {
@@ -186,7 +199,7 @@
      }
  
      /**
-@@ -1312,13 +1382,15 @@
+@@ -1312,13 +1388,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -204,7 +217,7 @@
              return var3;
          }
      }
-@@ -1725,4 +1797,45 @@
+@@ -1725,4 +1803,45 @@
      }
  
      public void func_50022_L() {}

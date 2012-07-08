@@ -58,20 +58,48 @@
          if (this.worldObj.isRemote)
          {
              return false;
-@@ -977,6 +991,12 @@
+@@ -836,8 +850,9 @@
+                         return false;
+                     }
+ 
+-                    this.damageEntity(par1DamageSource, par2 - this.naturalArmorRating);
++                    boolean indicateDamage = this.damageEntity(par1DamageSource, par2 - this.naturalArmorRating);
+                     this.naturalArmorRating = par2;
++                    if (!indicateDamage) return false;
+                     var3 = false;
+                 }
+                 else
+@@ -845,7 +860,7 @@
+                     this.naturalArmorRating = par2;
+                     this.prevHealth = this.health;
+                     this.heartsLife = this.heartsHalvesLife;
+-                    this.damageEntity(par1DamageSource, par2);
++                    if (!this.damageEntity(par1DamageSource, par2)) return false;
+                     this.hurtTime = this.maxHurtTime = 10;
+                 }
+ 
+@@ -975,11 +990,19 @@
+      * Deals damage to the entity. If its a EntityPlayer then will take damage from the armor first and then health
+      * second with the reduced value. Args: damageAmount
       */
-     protected void damageEntity(DamageSource par1DamageSource, int par2)
+-    protected void damageEntity(DamageSource par1DamageSource, int par2)
++    protected boolean damageEntity(DamageSource par1DamageSource, int par2)
      {
 +        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
 +        if (par2 == 0)
 +        {
-+            return;
++            return true;
 +        }
 +
          par2 = this.applyArmorCalculations(par1DamageSource, par2);
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.health -= par2;
-@@ -1040,6 +1060,11 @@
++        
++        return true;
+     }
+ 
+     /**
+@@ -1040,6 +1063,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -83,7 +111,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1063,13 +1088,17 @@
+@@ -1063,13 +1091,17 @@
                  var3 = EnchantmentHelper.getLootingModifier(((EntityPlayer)var2).inventory);
              }
  
@@ -102,7 +130,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1077,6 +1106,13 @@
+@@ -1077,6 +1109,13 @@
                      }
                  }
              }
@@ -116,7 +144,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1120,6 +1156,11 @@
+@@ -1120,6 +1159,11 @@
       */
      protected void fall(float par1)
      {
@@ -128,7 +156,7 @@
          super.fall(par1);
          int var2 = (int)Math.ceil((double)(par1 - 3.0F));
  
-@@ -1307,7 +1348,7 @@
+@@ -1307,7 +1351,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -137,7 +165,7 @@
      }
  
      /**
-@@ -1578,6 +1619,8 @@
+@@ -1578,6 +1622,8 @@
          }
  
          this.isAirBorne = true;
