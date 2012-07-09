@@ -51,6 +51,12 @@ public class PacketHandlerClient extends PacketHandlerBase
                     pkt.readData(data);
                     onOpenGui((PacketOpenGUI)pkt);
                     break;
+
+                case ForgePacket.TRACK:
+                    pkt = new PacketEntityTrack();
+                    pkt.readData(data);
+                    onEntityTrackPacket((PacketEntityTrack)pkt, ModLoader.getMinecraftInstance().theWorld);
+                    break;
             }
         }
         catch (IOException e)
@@ -58,6 +64,31 @@ public class PacketHandlerClient extends PacketHandlerBase
             ModLoader.getLogger().log(Level.SEVERE, "Exception in PacketHandlerClient.onPacketData", e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Process the Entity Track packet. This corrects the serverPos[XYZ] to match
+     *  with the server, so any following relative updates are valid.
+     * @param packet The Track Packet
+     * @param world The world the entity is in
+     */
+    public void onEntityTrackPacket(PacketEntityTrack packet, World world)
+    {
+        if (DEBUG)
+        {
+            System.out.println("S->C: " + packet.toString(true));
+        }
+
+        Minecraft mc = ModLoader.getMinecraftInstance();
+        Entity entity = ((WorldClient)world).getEntityByID(packet.entityId);
+        if (entity == null)
+        {
+            return;
+        }
+
+        entity.serverPosX = packet.serverPosX;
+        entity.serverPosY = packet.serverPosY;
+        entity.serverPosZ = packet.serverPosZ;
     }
 
     /**
