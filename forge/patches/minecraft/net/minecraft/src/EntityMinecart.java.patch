@@ -512,11 +512,10 @@
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -899,11 +765,19 @@
+@@ -899,11 +765,18 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
-+        
 +        ForgeHooks.onMinecartEntityCollision(this, par1Entity);
 +        if (getCollisionHandler() != null)
 +        {
@@ -533,7 +532,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -949,7 +823,7 @@
+@@ -949,7 +822,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -542,7 +541,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -957,7 +831,7 @@
+@@ -957,7 +830,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -551,7 +550,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -992,7 +866,7 @@
+@@ -992,7 +865,7 @@
       */
      public int getSizeInventory()
      {
@@ -560,7 +559,7 @@
      }
  
      /**
-@@ -1095,7 +969,12 @@
+@@ -1095,7 +968,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -574,7 +573,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1107,14 +986,14 @@
+@@ -1107,14 +985,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -591,7 +590,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1173,7 +1052,7 @@
+@@ -1173,7 +1051,7 @@
      /**
       * Is this minecart powered (Fuel > 0)
       */
@@ -600,7 +599,7 @@
      {
          return (this.dataWatcher.getWatchableObjectByte(16) & 1) != 0;
      }
-@@ -1226,4 +1105,373 @@
+@@ -1226,4 +1104,373 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }
@@ -748,7 +747,7 @@
 +     */
 +    protected double getDrag()
 +    {
-+        return riddenByEntity != null ? 1D : 0.96D;
++        return riddenByEntity != null ? 0.99D : 0.96D;
 +    }   
 +    
 +    /**
