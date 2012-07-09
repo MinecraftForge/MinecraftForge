@@ -9,7 +9,22 @@
  public class EntityTrackerEntry
  {
      /** The entity that this EntityTrackerEntry tracks. */
-@@ -286,6 +288,11 @@
+@@ -226,6 +228,14 @@
+                     this.trackedPlayers.add(par1EntityPlayerMP);
+                     par1EntityPlayerMP.playerNetServerHandler.sendPacket(this.getSpawnPacket());
+ 
++                    int posX = MathHelper.floor_double(this.trackedEntity.posX * 32.0D);
++                    int posY = MathHelper.floor_double(this.trackedEntity.posY * 32.0D);
++                    int posZ = MathHelper.floor_double(this.trackedEntity.posZ * 32.0D);
++                    if (posX != this.encodedPosX || posY != this.encodedPosY || posZ != this.encodedPosZ)
++                    {
++                        par1EntityPlayerMP.playerNetServerHandler.sendPacket(ForgeHooks.getEntityTrackPacket(this.trackedEntity.entityId, this.encodedPosX, this.encodedPosY, this.encodedPosZ));
++                    }
++
+                     if (this.shouldSendMotionUpdates)
+                     {
+                         par1EntityPlayerMP.playerNetServerHandler.sendPacket(new Packet28EntityVelocity(this.trackedEntity.entityId, this.trackedEntity.motionX, this.trackedEntity.motionY, this.trackedEntity.motionZ));
+@@ -286,6 +296,11 @@
          {
              System.out.println("Fetching addPacket for removed entity");
          }

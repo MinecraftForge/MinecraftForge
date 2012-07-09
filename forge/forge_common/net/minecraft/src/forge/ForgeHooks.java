@@ -29,6 +29,7 @@ import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
 import net.minecraft.src.mod_MinecraftForge;
 import net.minecraft.src.forge.packets.PacketEntitySpawn;
+import net.minecraft.src.forge.packets.PacketEntityTrack;
 import net.minecraft.src.forge.packets.PacketHandlerBase;
 
 import java.io.ByteArrayOutputStream;
@@ -708,6 +709,12 @@ public class ForgeHooks
         }
 
         PacketEntitySpawn pkt = new PacketEntitySpawn(entity, info.Mod, info.ID);
+        return pkt.getPacket();
+    }
+    
+    public static Packet getEntityTrackPacket(int entityId, int serverPosX, int serverPosY, int serverPosZ)
+    {
+        PacketEntityTrack pkt = new PacketEntityTrack(entityId, serverPosX, serverPosY, serverPosZ);
         return pkt.getPacket();
     }
 
