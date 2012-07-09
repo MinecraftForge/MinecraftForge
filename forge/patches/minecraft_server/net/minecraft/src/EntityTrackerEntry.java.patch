@@ -1,15 +1,16 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityTrackerEntry.java	0000-00-00 00:00:00.000000000 -0000
-@@ -5,6 +5,8 @@
+@@ -5,6 +5,9 @@
  import java.util.List;
  import java.util.Set;
  
 +import net.minecraft.src.forge.ForgeHooks;
++import net.minecraft.src.forge.packets.PacketEntityTrack;
 +
  public class EntityTrackerEntry
  {
      /** The entity that this EntityTrackerEntry tracks. */
-@@ -226,6 +228,14 @@
+@@ -226,6 +229,15 @@
                      this.trackedPlayers.add(par1EntityPlayerMP);
                      par1EntityPlayerMP.playerNetServerHandler.sendPacket(this.getSpawnPacket());
  
@@ -18,13 +19,14 @@
 +                    int posZ = MathHelper.floor_double(this.trackedEntity.posZ * 32.0D);
 +                    if (posX != this.encodedPosX || posY != this.encodedPosY || posZ != this.encodedPosZ)
 +                    {
-+                        par1EntityPlayerMP.playerNetServerHandler.sendPacket(ForgeHooks.getEntityTrackPacket(this.trackedEntity.entityId, this.encodedPosX, this.encodedPosY, this.encodedPosZ));
++                        PacketEntityTrack pkt = new PacketEntityTrack(this.trackedEntity.entityId, this.encodedPosX, this.encodedPosY, this.encodedPosZ);
++                        par1EntityPlayerMP.playerNetServerHandler.sendPacket(pkt.getPacket());
 +                    }
 +
                      if (this.shouldSendMotionUpdates)
                      {
                          par1EntityPlayerMP.playerNetServerHandler.sendPacket(new Packet28EntityVelocity(this.trackedEntity.entityId, this.trackedEntity.motionX, this.trackedEntity.motionY, this.trackedEntity.motionZ));
-@@ -286,6 +296,11 @@
+@@ -286,6 +298,11 @@
          {
              System.out.println("Fetching addPacket for removed entity");
          }
