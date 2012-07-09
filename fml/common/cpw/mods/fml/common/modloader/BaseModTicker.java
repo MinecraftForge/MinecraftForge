@@ -60,7 +60,7 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
-        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDLOAD)) || ticks.contains(TickType.RENDER))
+        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDLOAD)))
         {
             EnumSet cTypes=EnumSet.copyOf(types);
             if ( ( end && types.contains(TickType.GAME)) || types.contains(TickType.WORLDLOAD))
