@@ -81,6 +81,10 @@ public class PacketHandlerClient extends PacketHandlerBase
 
         Minecraft mc = ModLoader.getMinecraftInstance();
         Entity entity = ((WorldClient)world).getEntityByID(packet.entityId);
+        if (entity == null)
+        {
+            return;
+        }
 
         entity.serverPosX = packet.serverPosX;
         entity.serverPosY = packet.serverPosY;
