@@ -16,18 +16,37 @@ import net.minecraft.src.ItemStack;
 
 public class ArmorProperties implements Comparable<ArmorProperties>
 {
+    public static class CalculationResult
+    {
+        public int LeftOverDamage;
+        public boolean IndicateDamageIfZero;
+        
+        public CalculationResult(int leftOverDamage, boolean indicateDamageIfZero)
+        {
+            LeftOverDamage = leftOverDamage;
+            IndicateDamageIfZero = indicateDamageIfZero;
+        }
+    }
+    
     public int    Priority    = 0;
     public int    AbsorbMax   = Integer.MAX_VALUE;
     public double AbsorbRatio = 0;
     public int    Slot        = 0;
+    public boolean IndicateDamageIfZero = true;
     private static final boolean DEBUG = false; //Only enable this if you wish to be spamed with debugging information.
                                                 //Left it in because I figured it'd be useful for modders developing custom armor.
 
     public ArmorProperties(int priority, double ratio, int max)
     {
+        this(priority, ratio, max, true);
+    }
+    
+    public ArmorProperties(int priority, double ratio, int max, boolean indicateDamageIfZero)
+    {
         Priority    = priority;
         AbsorbRatio = ratio;
         AbsorbMax   = max;
+        IndicateDamageIfZero = indicateDamageIfZero;
     }
 
     /**
@@ -37,9 +56,9 @@ public class ArmorProperties implements Comparable<ArmorProperties>
      * @param inventory An array of armor items
      * @param source The damage source type
      * @param damage The total damage being done
-     * @return The left over damage that has not been absorbed by the armor
+     * @return The calculation result, containing the left over damage that has not been absorbed by the armor and whether the damage should be indicated if it's zero
      */
-    public static int ApplyArmor(EntityLiving entity, ItemStack[] inventory, DamageSource source, double damage)
+    public static CalculationResult ApplyArmor(EntityLiving entity, ItemStack[] inventory, DamageSource source, double damage)
     {
         if (DEBUG)
         {
@@ -47,6 +66,7 @@ public class ArmorProperties implements Comparable<ArmorProperties>
         }
         damage *= 25;
         ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
+        boolean indicateDamageIfZero = true;
         for (int x = 0; x < inventory.length; x++)
         {
             ItemStack stack = inventory[x];
@@ -59,6 +79,7 @@ public class ArmorProperties implements Comparable<ArmorProperties>
             {
                 ISpecialArmor armor = (ISpecialArmor)stack.getItem();
                 prop = armor.getProperties(entity, stack, source, damage / 25D, x).copy();
+                if (!prop.IndicateDamageIfZero) indicateDamageIfZero = false;
             }
             else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
             {
@@ -122,7 +143,7 @@ public class ArmorProperties implements Comparable<ArmorProperties>
             System.out.println("Return: " + (int)(damage / 25D) + " " + damage);
         }
         entity.carryoverDamage = (int)damage % 25;
-        return (int)(damage / 25D);
+        return new CalculationResult((int)(damage / 25D), indicateDamageIfZero);
     }
 
     /**

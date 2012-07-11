@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityClientPlayerMP.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/minecraft/net/minecraft/src/EntityClientPlayerMP.java	0000-00-00 00:00:00.000000000 -0000
+@@ -217,10 +217,14 @@
+     /**
+      * Deals damage to the entity. If its a EntityPlayer then will take damage from the armor first and then health
+      * second with the reduced value. Args: damageAmount
++     *
++     * @return whether the damage should be indicated
+      */
+-    protected void damageEntity(DamageSource par1DamageSource, int par2)
++    protected boolean damageEntity(DamageSource par1DamageSource, int par2)
+     {
+         this.setEntityHealth(this.getHealth() - par2);
++        
++        return true;
+     }
+ 
+     /**
