@@ -13,6 +13,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.World;
 import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
@@ -74,7 +75,7 @@ public class MinecraftForgeClient
         }
         catch (Exception e) 
         {
-            if (MinecraftForgeClient.class.getPackage().getName().equals("net.minecraft.src.forge"))
+            if (World.class.getName().contains("World"))
             {
                 e.printStackTrace();
             }
