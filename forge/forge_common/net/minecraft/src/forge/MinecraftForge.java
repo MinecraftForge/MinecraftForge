@@ -49,6 +49,23 @@ public class MinecraftForge
     }
 
     /**
+     * Registers a new block activation handler.
+     * 
+     * @param block the Block whose activation will be handled by the provided handler
+     * @param handler the Handler to be registered
+     * 
+     * @see ForgeHooks#activateBlock(net.minecraft.src.Block, net.minecraft.src.World, int, int, int, int, net.minecraft.src.EntityPlayer) Hook which uses these handlers
+     */
+    public static void registerBlockActivationHandler(Block block, IBlockActivationHandler handler) {
+        LinkedList<IBlockActivationHandler> handlers = ForgeHooks.blockActivationHandlers.get(block);
+        if (handlers == null) {
+            handlers = new LinkedList<IBlockActivationHandler>();
+            ForgeHooks.blockActivationHandlers.put(block, handlers);
+        }
+        handlers.add(handler);
+    }
+
+    /**
      * Registers a new bonemeal handler.
      * @param handler The Handler to be registered
      */

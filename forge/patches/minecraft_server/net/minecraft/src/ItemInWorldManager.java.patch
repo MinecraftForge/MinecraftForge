@@ -77,19 +77,36 @@
                  }
              }
  
-@@ -248,6 +258,11 @@
+@@ -248,13 +258,24 @@
       */
      public boolean activeBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7)
      {
+-        int var8 = par2World.getBlockId(par4, par5, par6);
+-
+-        if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
 +        if (par3ItemStack != null && par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7))
-+        {
-+            return true;
-+        }
+         {
+             return true;
+         }
+-        else if (par3ItemStack == null)
 +        
-         int var8 = par2World.getBlockId(par4, par5, par6);
- 
-         if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
-@@ -269,7 +284,15 @@
++        int var8 = par2World.getBlockId(par4, par5, par6);
++        if (var8 > 0)
++        {
++        	Block var9 = Block.blocksList[var8];
++			if (ForgeHooks.activateBlock(var9, par2World, par4, par5, par6, par7, par1EntityPlayer)) {
++				return true;
++			}
++			if (var9.blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
++			{
++				return true;
++			}
++        }
++        if (par3ItemStack == null)
+         {
+             return false;
+         }
+@@ -269,7 +290,15 @@
          }
          else
          {
@@ -106,7 +123,7 @@
          }
      }
  
-@@ -280,4 +303,13 @@
+@@ -280,4 +309,13 @@
      {
          this.thisWorld = par1WorldServer;
      }
