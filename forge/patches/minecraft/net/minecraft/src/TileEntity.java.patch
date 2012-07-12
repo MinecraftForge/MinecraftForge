@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/src/TileEntity.java	0000-00-00 00:00:00.000000000 -0000
-@@ -223,4 +223,29 @@
+@@ -223,4 +223,37 @@
      public static void addNewTileEntityMapping(Class<? extends TileEntity> tileEntityClass, String id) {
          addMapping(tileEntityClass, id);
      }
@@ -29,4 +29,12 @@
 +     * Called when the chunk this TileEntity is on is Unloaded.
 +     */
 +    public void onChunkUnload(){}
++    
++    /**
++     * @return The minimum distance between the player and the TileEntity at which the TileEntitySpecialRenderer will be called
++     */
++	public double getRenderDistance()
++	{
++		return 64;
++	}
  }
