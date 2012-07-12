@@ -54,7 +54,7 @@ public class MinecraftForge
      * @param block the Block whose activation will be handled by the provided handler
      * @param handler the Handler to be registered
      * 
-     * @see ForgeHooks#activateBlock(net.minecraft.src.Block, net.minecraft.src.World, int, int, int, int, net.minecraft.src.EntityPlayer) Hook which uses these handlers
+     * @see ForgeHooks#onBlockActivated(net.minecraft.src.Block, net.minecraft.src.World, int, int, int, int, net.minecraft.src.EntityPlayer) Hook which uses these handlers
      */
     public static void registerBlockActivationHandler(Block block, IBlockActivationHandler handler) {
         LinkedList<IBlockActivationHandler> handlers = ForgeHooks.blockActivationHandlers.get(block);

@@ -60,7 +60,7 @@
 -        return var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer) ? true : (par3ItemStack == null ? false : par3ItemStack.useItem(par1EntityPlayer, par2World, par4, par5, par6, par7));
 +        if (var8 > 0) {
 +            Block var9 = Block.blocksList[var8];
-+            if (ForgeHooks.activateBlock(var9, par2World, par4, par5, par6, par7, par1EntityPlayer)) {
++            if (ForgeHooks.onBlockActivated(var9, par2World, par4, par5, par6, par7, par1EntityPlayer)) {
 +                return true;
 +            }
 +            if (var9.blockActivated(par2World, par4, par5, par6, par1EntityPlayer))

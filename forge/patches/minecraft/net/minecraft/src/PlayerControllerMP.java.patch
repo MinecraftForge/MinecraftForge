@@ -38,22 +38,38 @@
  
                  if (this.stepSoundTickCounter % 4.0F == 0.0F && var6 != null)
                  {
-@@ -263,6 +269,14 @@
+@@ -263,13 +269,26 @@
      {
          this.syncCurrentPlayItem();
          this.netClientHandler.addToSendQueue(new Packet15Place(par4, par5, par6, par7, par1EntityPlayer.inventory.getCurrentItem()));
-+
+-        int var8 = par2World.getBlockId(par4, par5, par6);
+ 
+-        if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
 +        if (par3ItemStack != null && 
 +            par3ItemStack.getItem() != null && 
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7))
-+        {
+         {
+-            return true;
 +                return true;
-+        }
+         }
+-        else if (par3ItemStack == null)
 +        
-         int var8 = par2World.getBlockId(par4, par5, par6);
- 
-         if (var8 > 0 && Block.blocksList[var8].blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
-@@ -284,7 +298,15 @@
++        int var8 = par2World.getBlockId(par4, par5, par6);
++        if (var8 > 0) {
++            Block var9 = Block.blocksList[var8];
++            if (ForgeHooks.onBlockActivated(var9, par2World, par4, par5, par6, par7, par1EntityPlayer)) {
++                return true;
++            }
++            if (var9.blockActivated(par2World, par4, par5, par6, par1EntityPlayer))
++            {
++                return true;
++            }
++		}
++        if (par3ItemStack == null)
+         {
+             return false;
+         }
+@@ -284,7 +303,15 @@
          }
          else
          {

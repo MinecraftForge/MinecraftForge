@@ -30,8 +30,10 @@ public interface IBlockActivationHandler {
      *        West = 3, North = 4, South = 5, or -1 if it went the full length
      *        of the ray trace without striking a side.
      * @param player the Player who activated the Block
-     * @return true if this handler activated the Block, false otherwise
+     * @return true if this handler terminates further block activations; false
+     *         to continue invoking other handlers or, if no handlers remain,
+     *         the Block's default activation behavior
      */
-    public boolean activateBlock(Block block, World world, int blockX, int blockY, int blockZ, int sideHit, EntityPlayer player);
+    public boolean onBlockActivated(Block block, World world, int blockX, int blockY, int blockZ, int sideHit, EntityPlayer player);
     
 }

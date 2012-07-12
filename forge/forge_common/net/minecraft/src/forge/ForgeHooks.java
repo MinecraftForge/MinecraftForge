@@ -113,19 +113,20 @@ public class ForgeHooks
      *        West = 3, North = 4, South = 5, or -1 if it went the full length
      *        of the ray trace without striking a side.
      * @param player the Player who activated the Block
-     * @return true if a handler activated the Block, false otherwise.  If false,
-     *         behavior should fall through and invoke the behavior defined in the
-     *         {@link Block#blockActivated(net.minecraft.src.World, int, int, int, net.minecraft.src.EntityPlayer) Block} itself
+     * @return true as soon as any handler returns true; false otherwise.  If
+     *         false, behavior should fall through and invoke the behavior
+     *         defined in the {@link Block#blockActivated(net.minecraft.src.World, int, int, int, net.minecraft.src.EntityPlayer) Block}
+     *         itself.
      * 
      * @see IBlockActivationHandler Create a custom handler
      * @see MinecraftForge#registerBlockActivationHandler(net.minecraft.src.Block, net.minecraft.src.forge.IBlockActivationHandler) Register a custom handler
      * @see Block#blockActivated(net.minecraft.src.World, int, int, int, net.minecraft.src.EntityPlayer) Default behavior
      */
-    public static boolean activateBlock(Block block, World world, int blockX, int blockY, int blockZ, int sideHit, EntityPlayer player) {
+    public static boolean onBlockActivated(Block block, World world, int blockX, int blockY, int blockZ, int sideHit, EntityPlayer player) {
         LinkedList<IBlockActivationHandler> handlers = blockActivationHandlers.get(block);
         if (handlers != null) {
             for (IBlockActivationHandler handler : handlers) {
-                if (handler != null && handler.activateBlock(block, world, blockX, blockY, blockZ, sideHit, player)) {
+                if (handler != null && handler.onBlockActivated(block, world, blockX, blockY, blockZ, sideHit, player)) {
                     return true;
                 }
             }
