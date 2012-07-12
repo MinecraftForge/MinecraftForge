@@ -109,9 +109,9 @@ public class ForgeHooks
      * @param blockX the X coordinate of the Block being activated
      * @param blockY the Y coordinate of the Block being activated
      * @param blockZ the Z coordinate of the Block being activated
-     * @param sideHit which side was hit. If its -1 then it went the full length of
-     *        the ray trace. Bottom = 0, Top = 1, East = 2, West = 3, North = 4,
-     *        South = 5.
+     * @param sideHit which side was hit. Bottom = 0, Top = 1, East = 2,
+     *        West = 3, North = 4, South = 5, or -1 if it went the full length
+     *        of the ray trace without striking a side.
      * @param player the Player who activated the Block
      * @return true if a handler activated the Block, false otherwise.  If false,
      *         behavior should fall through and invoke the behavior defined in the
