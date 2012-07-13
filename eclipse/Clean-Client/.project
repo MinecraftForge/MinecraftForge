@@ -21,6 +21,11 @@
 			<locationURI>MCP_LOC/jars</locationURI>
 		</link>
 		<link>
+			<name>lib</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/lib</locationURI>
+		</link>
+		<link>
 			<name>src</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/src-base/minecraft</locationURI>
