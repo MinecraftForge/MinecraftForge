@@ -239,6 +239,10 @@
       <arg value="-r" />
     </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${basedir}/cleanup_source.py" />
+      <arg value="${mcp.srcdir}" />
+    </exec>
+    <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/updatemd5.py" />
       <arg value="-f" />
     </exec>
