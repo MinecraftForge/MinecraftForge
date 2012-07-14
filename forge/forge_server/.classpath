@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="forge_common"/>
 	<classpathentry kind="src" path="minecraft_server"/>
-	<classpathentry kind="src" path="buildcraft_server"/>
-	<classpathentry kind="src" path="buildcraft_commo"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="../../jars/bin/jinput.jar"/>
 	<classpathentry kind="lib" path="../../jars/bin/lwjgl.jar"/>

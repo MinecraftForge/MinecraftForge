@@ -16,16 +16,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>buildcraft_commo</name>
-			<type>2</type>
-			<location>C:/Users/Alex/mcp2/forgedev-BC/common</location>
-		</link>
-		<link>
-			<name>buildcraft_server</name>
-			<type>2</type>
-			<location>C:/Users/Alex/mcp2/forgedev-BC/buildcraft_server/src</location>
-		</link>
-		<link>
 			<name>forge_common</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/forge_common</locationURI>
