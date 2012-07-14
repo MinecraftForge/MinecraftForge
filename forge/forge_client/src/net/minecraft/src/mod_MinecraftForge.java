@@ -4,6 +4,7 @@ import net.minecraft.src.forge.ForgeHooks;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.forge.NetworkMod;
+import net.minecraft.src.forge.idrequest.IDRequestRegistry;
 
 /**
  * This class is just here to make the Forge version show up nicely in the ModLoader logs/Crash Screen
@@ -32,5 +33,11 @@ public class mod_MinecraftForge extends NetworkMod
     {
         MinecraftForge.getDungeonLootTries(); //Random thing to make things Initialize
         MinecraftForgeClient.init();
+    }
+    
+    @Override
+    public void modsLoaded()
+    {
+    	IDRequestRegistry.disableRequesting();
     }
 }

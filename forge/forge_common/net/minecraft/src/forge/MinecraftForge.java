@@ -20,6 +20,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet132TileEntityData;
 import net.minecraft.src.World;
+import net.minecraft.src.forge.idrequest.IDRequestRegistry;
 import net.minecraft.src.forge.oredict.OreDictionary;
 
 import java.lang.reflect.InvocationTargetException;
@@ -1271,5 +1272,7 @@ public class MinecraftForge
         registerMinecart(EntityMinecart.class, 0, new ItemStack(Item.minecartEmpty));
         registerMinecart(EntityMinecart.class, 1, new ItemStack(Item.minecartCrate));
         registerMinecart(EntityMinecart.class, 2, new ItemStack(Item.minecartPowered));
+        
+        IDRequestRegistry.onForgeLoad();
     }
 }

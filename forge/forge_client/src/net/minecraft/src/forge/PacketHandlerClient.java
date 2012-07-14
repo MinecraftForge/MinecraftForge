@@ -12,6 +12,7 @@ import java.util.logging.Level;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
+import net.minecraft.src.forge.idrequest.IDRequestRegistry;
 import net.minecraft.src.forge.packets.*;
 
 public class PacketHandlerClient extends PacketHandlerBase
@@ -51,6 +52,12 @@ public class PacketHandlerClient extends PacketHandlerBase
                     pkt.readData(data);
                     onOpenGui((PacketOpenGUI)pkt);
                     break;
+                   
+                case ForgePacket.CONFIG:
+                	pkt = new PacketConfig();
+                	pkt.readData(data);
+                	onConfigReceived((PacketConfig)pkt);
+                	break;
             }
         }
         catch (IOException e)
@@ -236,6 +243,17 @@ public class PacketHandlerClient extends PacketHandlerBase
             player.openGui(mod, pkt.GuiID, player.worldObj, pkt.X, pkt.Y, pkt.Z);
             player.craftingInventory.windowId = pkt.WindowID;
         }
+    }
+    
+    /**
+     * Called when a config packet is received.
+     * 
+     * @param pkt The packet
+     */
+    private void onConfigReceived(PacketConfig pkt)
+    {
+    	if(pkt.name.equals("forge-ids"))
+    		IDRequestRegistry.registerIDs(pkt.config, true);
     }
 
     @Override

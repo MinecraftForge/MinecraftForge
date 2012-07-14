@@ -18,6 +18,7 @@ public abstract class ForgePacket
     public static final int MODLIST     = 2;
     public static final int MOD_MISSING = 3;
     public static final int OPEN_GUI    = 5;
+    public static final int CONFIG      = 6;
 
     public Packet getPacket()
     {
