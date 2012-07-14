@@ -53,18 +53,6 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public boolean wantsPreInit()
-    {
-        return modDescriptor.wantsPreInit();
-    }
-
-    @Override
-    public boolean wantsPostInit()
-    {
-        return modDescriptor.wantsPostInit();
-    }
-
-    @Override
     public void preInit()
     {
     }
@@ -94,17 +82,17 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public ModState getModState()
+    public LoaderState.ModState getModState()
     {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
     public void nextState()
     {
         // TODO Auto-generated method stub
-        
+
     }
     @Override
     public String getSortingRules()
@@ -132,19 +120,12 @@ public class FMLModContainer implements ModContainer
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
     public int lookupFuelValue(int itemId, int itemDamage)
     {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    @Override
-    public boolean wantsPickupNotification()
-    {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     @Override
@@ -155,16 +136,6 @@ public class FMLModContainer implements ModContainer
     }
 
     /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsToDispense()
-     */
-    @Override
-    public boolean wantsToDispense()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#getDispenseHandler()
      */
     @Override
@@ -172,16 +143,6 @@ public class FMLModContainer implements ModContainer
     {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsCraftingNotification()
-     */
-    @Override
-    public boolean wantsCraftingNotification()
-    {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     /* (non-Javadoc)
@@ -234,16 +195,6 @@ public class FMLModContainer implements ModContainer
     }
 
     /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsNetworkPackets()
-     */
-    @Override
-    public boolean wantsNetworkPackets()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#getNetworkHandler()
      */
     @Override
@@ -264,16 +215,6 @@ public class FMLModContainer implements ModContainer
     }
 
     /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsConsoleCommands()
-     */
-    @Override
-    public boolean wantsConsoleCommands()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#getConsoleHandler()
      */
     @Override
@@ -281,16 +222,6 @@ public class FMLModContainer implements ModContainer
     {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsPlayerTracking()
-     */
-    @Override
-    public boolean wantsPlayerTracking()
-    {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     /* (non-Javadoc)
@@ -327,7 +258,7 @@ public class FMLModContainer implements ModContainer
     public void setSourceType(SourceType type)
     {
         // TODO Auto-generated method stub
-        
+
     }
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#getMetadata()
@@ -352,7 +283,7 @@ public class FMLModContainer implements ModContainer
     public void gatherRenderers(Map renderers)
     {
         // TODO Auto-generated method stub
-        
+
     }
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#requestAnimations()
@@ -361,7 +292,7 @@ public class FMLModContainer implements ModContainer
     public void requestAnimations()
     {
         // TODO Auto-generated method stub
-        
+
     }
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.ModContainer#getVersion()
@@ -387,6 +318,6 @@ public class FMLModContainer implements ModContainer
     @Override
     public void keyBindEvent(Object keyBinding)
     {
-        // TODO Auto-generated method stub        
+        // TODO Auto-generated method stub
     }
 }

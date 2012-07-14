@@ -43,8 +43,9 @@ import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
+import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.ModContainer.ModState;
 import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
@@ -60,7 +61,7 @@ public class ModLoaderModContainer implements ModContainer
     private ArrayList<String> preDependencies;
     private ArrayList<String> postDependencies;
     private ArrayList<IKeyHandler> keyHandlers;
-    private ModState state;
+    private LoaderState.ModState state;
     private SourceType sourceType;
     private ModMetadata metadata;
     private ProxyInjector sidedProxy;
@@ -121,7 +122,7 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public ModState getModState()
+    public LoaderState.ModState getModState()
     {
         return state;
     }
@@ -130,11 +131,11 @@ public class ModLoaderModContainer implements ModContainer
     public void nextState()
     {
         if (state==null) {
-            state=ModState.UNLOADED;
+            state=LoaderState.ModState.UNLOADED;
             return;
         }
-        if (state.ordinal()+1<ModState.values().length) {
-            state=ModState.values()[state.ordinal()+1];
+        if (state.ordinal()+1<LoaderState.ModState.values().length) {
+            state=LoaderState.ModState.values()[state.ordinal()+1];
         }
     }
     /**
