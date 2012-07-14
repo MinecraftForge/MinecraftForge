@@ -38,6 +38,6 @@ public class mod_MinecraftForge extends NetworkMod
     @Override
     public void modsLoaded()
     {
-    	IDRequestRegistry.disableRequesting();
+        IDRequestRegistry.disableRequesting();
     }
 }

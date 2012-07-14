@@ -54,10 +54,10 @@ public class PacketHandlerClient extends PacketHandlerBase
                     break;
                    
                 case ForgePacket.CONFIG:
-                	pkt = new PacketConfig();
-                	pkt.readData(data);
-                	onConfigReceived((PacketConfig)pkt);
-                	break;
+                    pkt = new PacketConfig();
+                    pkt.readData(data);
+                    onConfigReceived((PacketConfig)pkt);
+                    break;
             }
         }
         catch (IOException e)
@@ -122,7 +122,7 @@ public class PacketHandlerClient extends PacketHandlerBase
             
             if (entity instanceof EntityLiving)
             {
-            	((EntityLiving)entity).rotationYawHead = yawHead;
+                ((EntityLiving)entity).rotationYawHead = yawHead;
             }
             
             if (packet.metadata != null)
@@ -252,8 +252,8 @@ public class PacketHandlerClient extends PacketHandlerBase
      */
     private void onConfigReceived(PacketConfig pkt)
     {
-    	if(pkt.name.equals("forge-ids"))
-    		IDRequestRegistry.registerIDs(pkt.config, true);
+        if(pkt.name.equals("forge-ids"))
+            IDRequestRegistry.registerIDs(pkt.config, true);
     }
 
     @Override

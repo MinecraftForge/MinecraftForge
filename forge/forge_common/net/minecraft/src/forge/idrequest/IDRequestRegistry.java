@@ -47,20 +47,20 @@ import java.util.TreeMap;
  * 
  */
 public class IDRequestRegistry {
-	
-	public static class DuplicateRequestException extends RuntimeException
-	{
-		public DuplicateRequestException(RequestedIDKey key)
-		{
-			super("Duplicate request for ID: " + key);
-		}
-	}
+    
+    public static class DuplicateRequestException extends RuntimeException
+    {
+        public DuplicateRequestException(RequestedIDKey key)
+        {
+            super("Duplicate request for ID: " + key);
+        }
+    }
 
-	/**
-	 * 
-	 * A type of ID that can be requested through this API.
-	 *
-	 */
+    /**
+     * 
+     * A type of ID that can be requested through this API.
+     *
+     */
     public static enum Type
     {
         BLOCK(Configuration.CATEGORY_BLOCK, 0, 4095),
@@ -68,9 +68,9 @@ public class IDRequestRegistry {
         
         private Type(String configCategory, int min, int max)
         {
-        	this.configCategory = configCategory;
-        	this.min = min;
-        	this.max = max;
+            this.configCategory = configCategory;
+            this.min = min;
+            this.max = max;
         }
         
         public final String configCategory;
@@ -97,7 +97,7 @@ public class IDRequestRegistry {
             
             String modClassName = mod.getClass().getSimpleName();
             if(modClassName.startsWith("mod_"))
-            	modClassName = modClassName.substring(4);
+                modClassName = modClassName.substring(4);
             
             configName = modClassName.replace('_', '.') + "." + name;
         }
@@ -107,7 +107,7 @@ public class IDRequestRegistry {
          */
         public String getConfigName()
         {
-        	return configName;
+            return configName;
         }
         
         @Override
@@ -140,41 +140,41 @@ public class IDRequestRegistry {
          * If the ID is set in the config, returns it.
          * If not, returns Integer.MIN_VALUE
          */
-		public int getFromConfig(Configuration config)
-		{
-			Map<String, Property> category = config.categories.get(type.configCategory);
-			if(category == null)
-				return Integer.MIN_VALUE;
-			
-			Property property = category.get(getConfigName());
-			if(property == null)
-				return Integer.MIN_VALUE;
-			
-			int id;
-			
-			try
-			{
-				id = Integer.parseInt(property.value);
-			}
-			catch(NumberFormatException ex)
-			{
-				return Integer.MIN_VALUE;
-			}
-			
-			if(id < type.min || id > type.max)
-				return Integer.MIN_VALUE;
-			
-			return id;
-		}
+        public int getFromConfig(Configuration config)
+        {
+            Map<String, Property> category = config.categories.get(type.configCategory);
+            if(category == null)
+                return Integer.MIN_VALUE;
+            
+            Property property = category.get(getConfigName());
+            if(property == null)
+                return Integer.MIN_VALUE;
+            
+            int id;
+            
+            try
+            {
+                id = Integer.parseInt(property.value);
+            }
+            catch(NumberFormatException ex)
+            {
+                return Integer.MIN_VALUE;
+            }
+            
+            if(id < type.min || id > type.max)
+                return Integer.MIN_VALUE;
+            
+            return id;
+        }
 
-		@Override
-		public int compareTo(RequestedIDKey arg0) {
-			if(type != arg0.type)
-				return type.ordinal() - arg0.type.ordinal();
-			if(!mod.toString().equals(arg0.mod.toString()))
-				return mod.toString().compareTo(arg0.mod.toString());
-			return name.compareTo(arg0.name);
-		}
+        @Override
+        public int compareTo(RequestedIDKey arg0) {
+            if(type != arg0.type)
+                return type.ordinal() - arg0.type.ordinal();
+            if(!mod.toString().equals(arg0.mod.toString()))
+                return mod.toString().compareTo(arg0.mod.toString());
+            return name.compareTo(arg0.name);
+        }
     }
     
     private static class RequestedIDData
@@ -200,7 +200,7 @@ public class IDRequestRegistry {
             case ITEM: case BLOCK:
                 return (currentID < Block.blocksList.length && Block.blocksList[currentID] != null) || Item.itemsList[currentID] != null;
             default:
-            	throw new UnsupportedOperationException("TODO: Implement me for "+key.type.name()+" IDs!");
+                throw new UnsupportedOperationException("TODO: Implement me for "+key.type.name()+" IDs!");
             }
         }
         
@@ -232,7 +232,7 @@ public class IDRequestRegistry {
                 {
                     String message = "";
                     if(key.type == Type.ITEM)
-                    	message = " If you are the mod author, did you remember to subtract 256?";
+                        message = " If you are the mod author, did you remember to subtract 256?";
                     throw new RuntimeException(key+" didn't register properly. Contact the mod author for a fix." + message);
                 }
             }
@@ -247,7 +247,7 @@ public class IDRequestRegistry {
      * Disables new requests from mods.
      */
     public static void disableRequesting() {
-    	cannotRequest = true;
+        cannotRequest = true;
     }
     
     static Configuration idConfig = null;
@@ -255,7 +255,7 @@ public class IDRequestRegistry {
     
     public static void requestID(BaseMod mod, String name, Type type, IIDCallback callback)
     {
-    	if(cannotRequest)
+        if(cannotRequest)
         {
             throw new IllegalStateException("Too late to request IDs now! Use BaseMod.load()");
         }
@@ -269,7 +269,7 @@ public class IDRequestRegistry {
         }
         if(type == null)
         {
-        	throw new NullPointerException("type");
+            throw new NullPointerException("type");
         }
         if(callback == null)
         {
@@ -280,7 +280,7 @@ public class IDRequestRegistry {
         
         if(requestedIDList.containsKey(key))
         {
-        	throw new DuplicateRequestException(key);
+            throw new DuplicateRequestException(key);
         }
         
         requestedIDList.put(key, new RequestedIDData(key, callback));
@@ -330,8 +330,8 @@ public class IDRequestRegistry {
             
             if(id != Integer.MIN_VALUE && !isIDOccupied(thing.key.type, id))
             {
-            	thing.setID(id);
-            	iter.remove();
+                thing.setID(id);
+                iter.remove();
             }
         }
         
@@ -363,33 +363,33 @@ public class IDRequestRegistry {
         //if(!isSlave)
         {
             // Now assign an ID to everything that doesn't have one
-	        iter = pending.iterator();
-	        while(iter.hasNext())
-	        {
-	            RequestedIDData thing = iter.next();
-	            
-	            int newID = allocateNewID(thing.key.type, avoidIDs);
-	            thing.setID(newID);
-	            
-	            Property property = new Property();
-	            property.name = thing.key.getConfigName();
-	            property.value = String.valueOf(newID);
-	            
-	            Map<String, Property> category = idConfig.categories.get(thing.key.type.configCategory);
-	            if(category == null)
-	            {
-	            	category = new TreeMap<String, Property>();
-	            	idConfig.categories.put(thing.key.type.configCategory, category);
-	            }
-	            
-	            category.put(property.name, property);
-	        }
-	        
-	        pending.clear();
+            iter = pending.iterator();
+            while(iter.hasNext())
+            {
+                RequestedIDData thing = iter.next();
+                
+                int newID = allocateNewID(thing.key.type, avoidIDs);
+                thing.setID(newID);
+                
+                Property property = new Property();
+                property.name = thing.key.getConfigName();
+                property.value = String.valueOf(newID);
+                
+                Map<String, Property> category = idConfig.categories.get(thing.key.type.configCategory);
+                if(category == null)
+                {
+                    category = new TreeMap<String, Property>();
+                    idConfig.categories.put(thing.key.type.configCategory, category);
+                }
+                
+                category.put(property.name, property);
+            }
+            
+            pending.clear();
         }
         
         if(!isSlave)
-        	idConfig.save();
+            idConfig.save();
         
         // Now do recipes. First reset the recipe list by calling each reset callback.
         for(Runnable r : recipeResetCallbacks)
@@ -405,43 +405,43 @@ public class IDRequestRegistry {
     
     private static boolean isIDOccupied(Type type, int id)
     {
-    	switch(type)
-    	{
-    	case BLOCK: case ITEM:
-    		if(Item.itemsList[id] != null)
-    			return true;
-    		if(id < Block.blocksList.length && Block.blocksList[id] != null)
-    			return true;
-    		return false;
-    	
-    	default:
-    		throw new RuntimeException("isIDOccupied not implemented for "+type.name()+" IDs! This is a forge bug.");
-    	}
+        switch(type)
+        {
+        case BLOCK: case ITEM:
+            if(Item.itemsList[id] != null)
+                return true;
+            if(id < Block.blocksList.length && Block.blocksList[id] != null)
+                return true;
+            return false;
+        
+        default:
+            throw new RuntimeException("isIDOccupied not implemented for "+type.name()+" IDs! This is a forge bug.");
+        }
     }
 
     private static int allocateNewID(Type type, Set<Integer> avoidIDs)
     {
-    	// First look for IDs not in avoidIDs
-    	for(int testID = type.max; testID >= type.min; testID--)
-    		if(!avoidIDs.contains(testID) && !isIDOccupied(type, testID))
-    			return testID;
-    	
-    	// Otherwise, look for any ID
-    	for(int testID = type.max; testID >= type.min; testID--)
-    		if(!isIDOccupied(type, testID))
-    			return testID;
-    	
-    	outOfIDs(type);
-    	return -1;
-	}
+        // First look for IDs not in avoidIDs
+        for(int testID = type.max; testID >= type.min; testID--)
+            if(!avoidIDs.contains(testID) && !isIDOccupied(type, testID))
+                return testID;
+        
+        // Otherwise, look for any ID
+        for(int testID = type.max; testID >= type.min; testID--)
+            if(!isIDOccupied(type, testID))
+                return testID;
+        
+        outOfIDs(type);
+        return -1;
+    }
     
     private static void outOfIDs(Type type)
     {
-    	// TODO: replace with better error message (on the client,
-    	// probably something like GuiConflictWarning with a clear
-    	// error message)
-    	// Although this should be unlikely now that we have 4096 block IDs.
-    	throw new RuntimeException("Out of "+type.name()+" IDs!");
+        // TODO: replace with better error message (on the client,
+        // probably something like GuiConflictWarning with a clear
+        // error message)
+        // Although this should be unlikely now that we have 4096 block IDs.
+        throw new RuntimeException("Out of "+type.name()+" IDs!");
     }
 
     /**
@@ -490,8 +490,8 @@ public class IDRequestRegistry {
      * Currently adds the recipe reset callbacks for smelting
      * and crafting recipes.
      */
-	public static void onForgeLoad() {
-		// Crafting recipes
+    public static void onForgeLoad() {
+        // Crafting recipes
         addRecipeResetCallback(new Runnable()
         {
             List<IRecipe> nonCallbackRecipes = null;
@@ -527,78 +527,78 @@ public class IDRequestRegistry {
         });
         
         MinecraftForge.registerSaveHandler(new ISaveEventHandler() {
-        	
-        	private File currentWorld = null;
-			
-			@Override
-			public void onWorldSave(World world) {
-			}
-			
-			@Override
-			public void onWorldLoad(World world) {
-				File dummyMapFile = world.getSaveHandler().getMapFileFromName("");
-				if(dummyMapFile == null)
-				{
-					System.out.println("Client world");
-					return; // client world
-				}
-				
-				File worldFolder = dummyMapFile.getParentFile().getParentFile();
-				
-				System.out.println("world "+worldFolder+", current "+currentWorld);
-				
-				if(currentWorld == null || !currentWorld.equals(worldFolder))
-				{
-					currentWorld = worldFolder;
-					
-					File idConfigFile = new File(dummyMapFile, "../../forge-ids.txt");
-					
-					currentConfig = new Configuration(idConfigFile);
-					currentConfig.load();
-					registerIDs(currentConfig, false);
-				}
-			}
-			
-			@Override
-			public void onChunkUnload(World world, Chunk chunk) {
-			}
-			
-			@Override
-			public void onChunkSaveData(World world, Chunk chunk, NBTTagCompound data) {
-			}
-			
-			@Override
-			public void onChunkLoadData(World world, Chunk chunk, NBTTagCompound data) {
-			}
-			
-			@Override
-			public void onChunkLoad(World world, Chunk chunk) {
-			}
-		});
+            
+            private File currentWorld = null;
+            
+            @Override
+            public void onWorldSave(World world) {
+            }
+            
+            @Override
+            public void onWorldLoad(World world) {
+                File dummyMapFile = world.getSaveHandler().getMapFileFromName("");
+                if(dummyMapFile == null)
+                {
+                    System.out.println("Client world");
+                    return; // client world
+                }
+                
+                File worldFolder = dummyMapFile.getParentFile().getParentFile();
+                
+                System.out.println("world "+worldFolder+", current "+currentWorld);
+                
+                if(currentWorld == null || !currentWorld.equals(worldFolder))
+                {
+                    currentWorld = worldFolder;
+                    
+                    File idConfigFile = new File(dummyMapFile, "../../forge-ids.txt");
+                    
+                    currentConfig = new Configuration(idConfigFile);
+                    currentConfig.load();
+                    registerIDs(currentConfig, false);
+                }
+            }
+            
+            @Override
+            public void onChunkUnload(World world, Chunk chunk) {
+            }
+            
+            @Override
+            public void onChunkSaveData(World world, Chunk chunk, NBTTagCompound data) {
+            }
+            
+            @Override
+            public void onChunkLoadData(World world, Chunk chunk, NBTTagCompound data) {
+            }
+            
+            @Override
+            public void onChunkLoad(World world, Chunk chunk) {
+            }
+        });
         
         
         if(!MinecraftForge.isClient())
         {
-        	// Server needs to send IDs to anyone who joins
-        	MinecraftForge.registerConnectionHandler(new IConnectionHandler()
-        	{
-				@Override
-				public void onConnect(NetworkManager network) {
-				}
+            // Server needs to send IDs to anyone who joins
+            MinecraftForge.registerConnectionHandler(new IConnectionHandler()
+            {
+                @Override
+                public void onConnect(NetworkManager network) {
+                }
 
-				@Override
-				public void onLogin(NetworkManager network, Packet1Login login) {
-					PacketConfig packet = new PacketConfig();
-					packet.name = "forge-ids";
-					packet.config = currentConfig;
-					network.addToSendQueue(packet.getPacket());
-				}
+                @Override
+                public void onLogin(NetworkManager network, Packet1Login login) {
+                    PacketConfig packet = new PacketConfig();
+                    packet.name = "forge-ids";
+                    packet.config = currentConfig;
+                    network.addToSendQueue(packet.getPacket());
+                }
 
-				@Override
-				public void onDisconnect(NetworkManager network, String message, Object[] args) {
-				}
-        	});
+                @Override
+                public void onDisconnect(NetworkManager network, String message, Object[] args) {
+                }
+            });
         }
 
-	}
+    }
 }

@@ -15,8 +15,8 @@ public class PacketConfig extends ForgePacket {
     
     public PacketConfig()
     {
-    	config = null;
-    	name = null;
+        config = null;
+        name = null;
     }
     
     public PacketConfig(String name, Configuration config)
