@@ -539,13 +539,11 @@ public class IDRequestRegistry {
                 File dummyMapFile = world.getSaveHandler().getMapFileFromName("");
                 if(dummyMapFile == null)
                 {
-                    System.out.println("Client world");
-                    return; // client world
+                    // client world
+                    return;
                 }
                 
                 File worldFolder = dummyMapFile.getParentFile().getParentFile();
-                
-                System.out.println("world "+worldFolder+", current "+currentWorld);
                 
                 if(currentWorld == null || !currentWorld.equals(worldFolder))
                 {
