@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
-@@ -1956,86 +1956,54 @@
+@@ -1960,86 +1960,54 @@
       */
      public void usePortal(int par1)
      {
@@ -32,24 +32,24 @@
          var3 *= var7;
          var5 *= var7;
 -        World var9;
-+        World var9 = new World(theWorld, pNew);
- 
+-
 -        if (this.thePlayer.dimension == -1)
-+        if (this.thePlayer.isEntityAlive())
-         {
+-        {
 -            this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
 -
 -            if (this.thePlayer.isEntityAlive())
 -            {
 -                this.theWorld.updateEntityWithOptionalForce(this.thePlayer, false);
 -            }
--
++        World var9 = new World(theWorld, pNew);
+ 
 -            var9 = null;
 -            var9 = new World(this.theWorld, WorldProvider.getProviderForDimension(this.thePlayer.dimension));
 -            this.changeWorld(var9, "Entering the Nether", this.thePlayer);
 -        }
 -        else if (this.thePlayer.dimension == 0)
--        {
++        if (this.thePlayer.isEntityAlive())
+         {
 -            if (this.thePlayer.isEntityAlive())
 -            {
 -                this.thePlayer.setLocationAndAngles(var3, this.thePlayer.posY, var5, this.thePlayer.rotationYaw, this.thePlayer.rotationPitch);
@@ -111,7 +111,7 @@
          }
      }
  
-@@ -2320,6 +2288,11 @@
+@@ -2324,6 +2292,11 @@
          {
              this.usePortal(0);
          }
@@ -123,7 +123,7 @@
  
          ChunkCoordinates var4 = null;
          ChunkCoordinates var5 = null;
-@@ -2587,6 +2560,7 @@
+@@ -2591,6 +2564,7 @@
          var0.addData("java_version", System.getProperty("java.version"));
          var0.addData("opengl_version", GL11.glGetString(GL11.GL_VERSION));
          var0.addData("opengl_vendor", GL11.glGetString(GL11.GL_VENDOR));

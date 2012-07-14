@@ -1,8 +1,8 @@
 --- ../src_base/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/minecraft_server/net/minecraft/src/EntityPlayer.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,6 +3,14 @@
- import java.util.Iterator;
- import java.util.List;
+@@ -7,6 +7,14 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.TickType;
  
 +import net.minecraft.src.forge.ArmorProperties;
 +import net.minecraft.src.forge.ForgeHooks;
@@ -15,7 +15,7 @@
  public abstract class EntityPlayer extends EntityLiving
  {
      /** Inventory of the player */
-@@ -177,6 +185,7 @@
+@@ -182,6 +190,7 @@
              }
              else
              {
@@ -23,7 +23,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -366,6 +375,10 @@
+@@ -372,6 +381,10 @@
       */
      protected void closeScreen()
      {
@@ -34,7 +34,7 @@
          this.craftingInventory = this.inventorySlots;
      }
  
-@@ -549,7 +562,16 @@
+@@ -555,7 +568,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -52,7 +52,7 @@
      }
  
      /**
-@@ -615,10 +637,18 @@
+@@ -621,10 +643,18 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -72,7 +72,7 @@
          float var3 = var2;
          int var4 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
  
-@@ -909,12 +939,22 @@
+@@ -915,12 +945,22 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -96,7 +96,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -945,6 +985,10 @@
+@@ -951,6 +991,10 @@
       */
      public void useCurrentItemOnEntity(Entity par1Entity)
      {
@@ -107,7 +107,7 @@
          if (!par1Entity.interact(this))
          {
              ItemStack var2 = this.getCurrentEquippedItem();
-@@ -975,7 +1019,9 @@
+@@ -981,7 +1025,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -117,7 +117,7 @@
      }
  
      /**
-@@ -1004,6 +1050,16 @@
+@@ -1010,6 +1056,16 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -134,7 +134,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1142,6 +1198,12 @@
+@@ -1148,6 +1204,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -147,7 +147,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1181,6 +1243,11 @@
+@@ -1187,6 +1249,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -159,7 +159,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1250,11 +1317,12 @@
+@@ -1256,11 +1323,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -175,7 +175,7 @@
  
              if (var5 == null)
              {
-@@ -1291,7 +1359,9 @@
+@@ -1297,7 +1365,9 @@
       */
      private boolean isInBed()
      {
@@ -186,7 +186,7 @@
      }
  
      /**
-@@ -1306,13 +1376,15 @@
+@@ -1312,13 +1382,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -204,7 +204,7 @@
              return var3;
          }
      }
-@@ -1719,4 +1791,45 @@
+@@ -1725,4 +1797,45 @@
      }
  
      public void func_50022_L() {}
