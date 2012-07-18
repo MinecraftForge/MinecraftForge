@@ -15,6 +15,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
+import net.minecraft.src.forge.idrequest.IDRequestRegistry;
 
 public class MinecraftForgeClient
 {
@@ -165,6 +166,22 @@ public class MinecraftForgeClient
         }
         hasInit = true;
         ForgeHooks.setPacketHandler(new PacketHandlerClient());
+        
+        // reset callback for custom item renderers
+        IDRequestRegistry.addRecipeResetCallback(new Runnable()
+        {
+        	private IItemRenderer[] nonCallbackRenderers = null;
+        	public void run()
+        	{
+        		if(nonCallbackRenderers == null)
+        		{
+        			nonCallbackRenderers = new IItemRenderer[Item.itemsList.length];
+        			System.arraycopy(customItemRenderers, 0, nonCallbackRenderers, 0, Item.itemsList.length);
+        		}
+        		else
+        			System.arraycopy(nonCallbackRenderers, 0, customItemRenderers, 0, Item.itemsList.length);
+        	}
+        });
     }
 
     static

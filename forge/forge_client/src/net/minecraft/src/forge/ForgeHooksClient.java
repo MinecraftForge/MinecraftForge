@@ -325,7 +325,7 @@ public class ForgeHooksClient
         
         if (customRenderer == null)
         {
-        	return false;
+            return false;
         }
 
         if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))
@@ -364,7 +364,7 @@ public class ForgeHooksClient
         }
         else
         {
-        	engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
+            engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -376,10 +376,10 @@ public class ForgeHooksClient
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
         if (customRenderer == null)
         {
-        	return false;
+            return false;
         }
 
-    	engine.bindTexture(engine.getTexture(Item.itemsList[item.itemID].getTextureFile()));
+        engine.bindTexture(engine.getTexture(Item.itemsList[item.itemID].getTextureFile()));
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();

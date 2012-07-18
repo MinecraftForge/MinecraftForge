@@ -5,6 +5,7 @@ import java.util.Set;
 import net.minecraft.src.forge.ForgeHooks;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.NetworkMod;
+import net.minecraft.src.forge.idrequest.IDRequestRegistry;
 
 /**
  * This class is just here to make the Forge version show up nicely in the ModLoader logs/Crash Screen
@@ -50,5 +51,11 @@ public class mod_MinecraftForge extends NetworkMod
         //Add 131 & 132 to C->S list
         ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(131);
         ((Set)ModLoader.getPrivateValue(Packet.class, null, 3)).add(132);
+    }
+    
+    @Override
+    public void modsLoaded()
+    {
+        IDRequestRegistry.disableRequesting();
     }
 }

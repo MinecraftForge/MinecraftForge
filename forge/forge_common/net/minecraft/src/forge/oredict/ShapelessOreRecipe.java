@@ -38,7 +38,7 @@ public class ShapelessOreRecipe implements IRecipe
             }
             else if (in instanceof String)
             {
-                input.add(OreDictionary.getOres((String)in));
+                input.add(OreDictionary.getOres((String)in, true));
             }
             else
             {
