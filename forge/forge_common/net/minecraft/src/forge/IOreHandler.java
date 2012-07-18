@@ -16,6 +16,9 @@ import net.minecraft.src.ItemStack;
  * itemDropUranium
  * woodRubber
  * itemRubber
+ * 
+ * Will not be called for ores with dynamic IDs, except in
+ * ore-dict compatibility mode.
  */
 
 public interface IOreHandler

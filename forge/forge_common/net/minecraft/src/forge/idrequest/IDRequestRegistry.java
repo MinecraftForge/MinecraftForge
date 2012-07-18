@@ -16,6 +16,7 @@ import net.minecraft.src.forge.IConnectionHandler;
 import net.minecraft.src.forge.ISaveEventHandler;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.Property;
+import net.minecraft.src.forge.oredict.OreDictionary;
 import net.minecraft.src.forge.packets.PacketConfig;
 
 import java.io.File;
@@ -35,15 +36,20 @@ import java.util.TreeMap;
  * IDResolver.requestID - this cannot be done any later.
  * 
  * When a world is loaded or a server is connected to, registerIDsFromConfig is called
- * with the world-specific ID configuration file. It first registers all IDs specified
- * in the config, then auto-assigns IDs not specified in the config.
+ * with the world-specific ID configuration file. It first calls recipe reset callbacks,
+ * then registers all IDs specified in the config, then auto-assigns IDs not specified
+ * in the config, then calls recipe callbacks.
  * 
- * When loading a server's IDs, IDs not specified in the config will not be
- * registered.
+ * When loading a server's IDs, IDs not specified in the config will still be
+ * autoassigned to prevent problems.
  * 
- * Note: It is deliberate that different IDs can be requested using the same name and
+ * Note: Different IDs can be requested using the same name and
  * mod but different types, as some things require multiple IDs, eg separate block
  * and item IDs.
+ * 
+ * Ores registered during registerIDsFromConfig (in an IIDCallback or a recipe callback)
+ * will be considered to have changeable IDs, and will not be passed to IOreHandlers
+ * unless in compatibility mode. They will be usable in ore recipes.
  * 
  */
 public class IDRequestRegistry {
@@ -310,6 +316,9 @@ public class IDRequestRegistry {
         Set<RequestedIDData> pending = new HashSet<RequestedIDData>(requestedIDList.values());
         Iterator<RequestedIDData> iter;
         
+        OreDictionary.setDynamicRegistration(true);
+        OreDictionary.clearDynamicOres();
+        
         // unregister everything
         iter = pending.iterator();
         while(iter.hasNext())
@@ -401,6 +410,8 @@ public class IDRequestRegistry {
         {
             r.run();
         }
+        
+        OreDictionary.setDynamicRegistration(false);
     }
     
     private static boolean isIDOccupied(Type type, int id)

@@ -92,7 +92,7 @@ public class ShapedOreRecipe implements IRecipe
             }
             else if (in instanceof String)
             {
-                itemMap.put(chr, OreDictionary.getOres((String)in));
+                itemMap.put(chr, OreDictionary.getOres((String)in, true));
             }
             else
             {

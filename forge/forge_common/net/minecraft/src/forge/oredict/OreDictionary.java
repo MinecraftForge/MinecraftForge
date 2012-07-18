@@ -14,11 +14,29 @@ import net.minecraft.src.forge.IOreHandler;
 
 public class OreDictionary
 {
+    private static class OreType
+    {
+        public ArrayList<ItemStack> staticIDOres = new ArrayList<ItemStack>();
+        public ArrayList<ItemStack> allOres = new ArrayList<ItemStack>();
+        
+    }
+    
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
-    private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
+    private static HashMap<Integer, OreType> oreStacks = new HashMap<Integer, OreType>();
     private static ArrayList<IOreHandler> oreHandlers = new ArrayList<IOreHandler>();
     
+    private static OreType getOreType(Integer id)
+    {
+        OreType val = oreStacks.get(id);
+        if (val == null)
+        {
+            val = new OreType();
+            oreStacks.put(id, val);
+        }
+        return val;
+    }
+
     /**
      * Gets the integer ID for the specified ore name. 
      * If the name does not have a ID it assigns it a new one.
@@ -33,7 +51,7 @@ public class OreDictionary
         {
             val = maxID++;
             oreIDs.put(name, val);
-            oreStacks.put(val, new ArrayList<ItemStack>());
+            oreStacks.put(val, new OreType());
         }
         return val;
     }
@@ -61,30 +79,33 @@ public class OreDictionary
      * Creates the list as empty if it did not exist.
      *  
      * @param id The ore ID, see getOreID
+     * @param includeDynamicID Whether to return items with changeable IDs
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static ArrayList<ItemStack> getOres(String name)
+    public static ArrayList<ItemStack> getOres(String name, boolean includeDynamicID)
     {
-        return getOres(getOreID(name));
+        return getOres(getOreID(name), includeDynamicID);
     }
+    
+    @Deprecated
+    public static ArrayList<ItemStack> getOres(String name) {return getOres(name, false);}
     
     /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
      *  
      * @param id The ore ID, see getOreID
+     * @param includeDynamic Whether to return items with changeable IDs
      * @return An arrayList containing ItemStacks registered for this ore
      */
-    public static ArrayList<ItemStack> getOres(Integer id)
+    public static ArrayList<ItemStack> getOres(Integer id, boolean includeDynamic)
     {
-        ArrayList<ItemStack> val = oreStacks.get(id);
-        if (val == null)
-        {
-            val = new ArrayList<ItemStack>();
-            oreStacks.put(id, val);
-        }
-        return val;
+        OreType val = getOreType(id);
+        return includeDynamic ? val.allOres : val.staticIDOres;
     }
+    
+    @Deprecated
+    public static ArrayList<ItemStack> getOres(Integer id) {return getOres(id, false);}
     
     /** 
      * Register a new ore handler.  
@@ -93,6 +114,7 @@ public class OreDictionary
      * 
      * @param handler The Ore Handler
      */
+    @Deprecated
     public static void registerOreHandler(IOreHandler handler)
     {
         oreHandlers.add(handler);
@@ -101,7 +123,7 @@ public class OreDictionary
         
         for(Map.Entry<String, Integer> entry : tmp.entrySet())
         {
-            for(ItemStack stack : getOres(entry.getValue()))
+            for(ItemStack stack : getOres(entry.getValue(), false))
             {
                 handler.registerOre(entry.getKey(), stack);
             }
@@ -126,13 +148,44 @@ public class OreDictionary
      */
     private static void registerOre(String name, int id, ItemStack ore)
     {
-        ArrayList<ItemStack> ores = getOres(id);
         ore = ore.copy();
-        ores.add(ore);
         
-        for (IOreHandler handler : oreHandlers)
+        OreType type = getOreType(id);
+        if(!dynamicRegistration)
         {
-            handler.registerOre(name, ore);
+            type.staticIDOres.add(ore);
+            
+            for(IOreHandler handler : oreHandlers)
+            {
+                handler.registerOre(name, ore);
+            }
+        }
+        type.allOres.add(ore);
+    }
+    
+    /**
+     * Forge internal function - do not call this from a mod.
+     * 
+     * Sets whether registered ores should be considered to have changeable IDs.
+     */
+    public static void setDynamicRegistration(boolean value)
+    {
+        dynamicRegistration = value;
+    }
+    
+    private static boolean dynamicRegistration = false;
+    
+    /**
+     * Forge internal function - do not call this from a mod.
+     * 
+     * Unregisters all ores with changeable IDs.
+     */
+    public static void clearDynamicOres()
+    {
+        for(Map.Entry<Integer, OreType> entry : oreStacks.entrySet())
+        {
+            OreType type = entry.getValue();
+            type.allOres = (ArrayList<ItemStack>)type.staticIDOres.clone();
         }
     }
 }
