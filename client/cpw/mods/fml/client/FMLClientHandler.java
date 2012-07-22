@@ -281,10 +281,6 @@ public class FMLClientHandler implements IFMLSidedHandler
             FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
             FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
         }
-        for (IKeyHandler entry : keyHandlers)
-        {
-            entry.onEndTick();
-        }
     }
 
     public void onWorldLoadTick()
@@ -716,7 +712,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void registerKeyHandler(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
-        mlmc.addKeyHandler(new KeyBindingHandler(keyHandler, allowRepeat, mlmc));
+        mlmc.addKeyHandler(new ModLoaderKeyBindingHandler(keyHandler, allowRepeat, mlmc));
     }
 
     /**

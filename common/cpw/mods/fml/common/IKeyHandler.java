@@ -18,7 +18,7 @@ package cpw.mods.fml.common;
  * @author cpw
  *
  */
-public interface IKeyHandler
+public interface IKeyHandler extends ITickHandler
 {
 
     Object getKeyBinding();
@@ -27,7 +27,4 @@ public interface IKeyHandler
      * @return
      */
     ModContainer getOwningContainer();
-    
-    void onEndTick();
-
 }

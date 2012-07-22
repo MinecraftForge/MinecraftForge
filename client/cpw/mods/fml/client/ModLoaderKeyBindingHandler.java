@@ -14,36 +14,42 @@
 
 package cpw.mods.fml.client;
 
+import java.util.EnumSet;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.src.KeyBinding;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
  * @author cpw
  *
  */
-public class KeyBindingHandler implements IKeyHandler
+public class ModLoaderKeyBindingHandler implements IKeyHandler
 {
 
     private boolean shouldRepeat;
     private KeyBinding keyBinding;
     private ModContainer modContainer;
     private boolean lastState = false;
+    private boolean armed;
 
     /**
      * @param keyHandler
      * @param allowRepeat
-     * @param modContainer 
+     * @param modContainer
      */
-    public KeyBindingHandler(KeyBinding keyHandler, boolean allowRepeat, ModContainer modContainer)
+    public ModLoaderKeyBindingHandler(KeyBinding keyHandler, boolean allowRepeat, ModContainer modContainer)
     {
         this.keyBinding=keyHandler;
         this.shouldRepeat=allowRepeat;
         this.modContainer=modContainer;
+        FMLCommonHandler.instance().registerTickHandler(this);
     }
 
     @Override
@@ -60,8 +66,7 @@ public class KeyBindingHandler implements IKeyHandler
         return modContainer;
     }
 
-    @Override
-    public void onEndTick()
+    public void onRenderEndTick()
     {
         int keyCode = keyBinding.field_1370_b;
         boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
@@ -70,5 +75,37 @@ public class KeyBindingHandler implements IKeyHandler
             modContainer.keyBindEvent(keyBinding);
         }
         lastState = state;
+    }
+
+    @Override
+    public void tickStart(EnumSet<TickType> type, Object... tickData)
+    {
+        // NO-OP for ML
+    }
+
+    @Override
+    public void tickEnd(EnumSet<TickType> type, Object... tickData)
+    {
+        if (type.contains(TickType.GUILOAD)|| type.contains(TickType.GAME))
+        {
+            armed = true;
+        }
+        if (type.contains(TickType.RENDER) && armed)
+        {
+            onRenderEndTick();
+            armed = false;
+        }
+    }
+
+    @Override
+    public EnumSet<TickType> ticks()
+    {
+        return EnumSet.of(TickType.GAME, TickType.RENDER, TickType.GUILOAD);
+    }
+
+    @Override
+    public String getLabel()
+    {
+        return getOwningContainer()+" KB "+keyBinding.field_1371_a;
     }
 }
