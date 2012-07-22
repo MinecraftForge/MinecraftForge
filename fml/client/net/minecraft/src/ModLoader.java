@@ -29,7 +29,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.registry.FMLRegistry;
-import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class ModLoader
 {
@@ -375,7 +375,7 @@ public class ModLoader
 
     /**
      * Get a value from a field using reflection
-     * {@link ReflectionHelper#getPrivateValue(Class, Object, int)}
+     * {@link ObfuscationReflectionHelper#getPrivateValue(Class, Object, int)}
      *
      * @param instanceclass
      * @param instance
@@ -384,12 +384,12 @@ public class ModLoader
      */
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex)
     {
-        return ReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
+        return ObfuscationReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
     }
 
     /**
      * Get a value from a field using reflection
-     * {@link ReflectionHelper#getPrivateValue(Class, Object, String)}
+     * {@link ObfuscationReflectionHelper#getPrivateValue(Class, Object, String)}
      *
      * @param instanceclass
      * @param instance
@@ -398,7 +398,7 @@ public class ModLoader
      */
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, String field)
     {
-        return ReflectionHelper.getPrivateValue(instanceclass, instance, field);
+        return ObfuscationReflectionHelper.getPrivateValue(instanceclass, instance, field);
     }
 
     /**
@@ -724,7 +724,7 @@ public class ModLoader
 
     /**
      * Set a private field to a value using reflection
-     * {@link ReflectionHelper#setPrivateValue(Class, Object, int, Object)}
+     * {@link ObfuscationReflectionHelper#setPrivateValue(Class, Object, int, Object)}
      *
      * @param instanceclass
      * @param instance
@@ -733,12 +733,12 @@ public class ModLoader
      */
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value)
     {
-        ReflectionHelper.setPrivateValue(instanceclass, instance, value, fieldindex);
+        ObfuscationReflectionHelper.setPrivateValue(instanceclass, instance, value, fieldindex);
     }
 
     /**
      * Set a private field to a value using reflection
-     * {@link ReflectionHelper#setPrivateValue(Class, Object, String, Object)}
+     * {@link ObfuscationReflectionHelper#setPrivateValue(Class, Object, String, Object)}
      *
      * @param instanceclass
      * @param instance
@@ -747,7 +747,7 @@ public class ModLoader
      */
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, String field, E value)
     {
-        ReflectionHelper.setPrivateValue(instanceclass, instance, value, field);
+        ObfuscationReflectionHelper.setPrivateValue(instanceclass, instance, value, field);
     }
 
     /**

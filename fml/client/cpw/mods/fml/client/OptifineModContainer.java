@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -35,7 +36,7 @@ import cpw.mods.fml.common.ModMetadata;
  * @author cpw
  *
  */
-public class OptifineModContainer extends FMLModContainer
+public class OptifineModContainer extends DummyModContainer
 {
     private String optifineVersion;
     private ModMetadata metadata;
@@ -44,7 +45,7 @@ public class OptifineModContainer extends FMLModContainer
      */
     public OptifineModContainer(Class<?> optifineConfig)
     {
-        super("Optifine");
+        super();
         try
         {
             optifineVersion = (String) optifineConfig.getField("VERSION").get(null);

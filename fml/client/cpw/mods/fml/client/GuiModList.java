@@ -22,7 +22,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.FMLModContainer;
-import cpw.mods.fml.common.FMLModLoaderContainer;
+import cpw.mods.fml.common.FMLDummyContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.client.Minecraft;

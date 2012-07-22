@@ -17,95 +17,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
+
 public class FMLModContainer implements ModContainer
 {
     private Mod modDescriptor;
     private Object modInstance;
     private File source;
     private ModMetadata modMetadata;
+    private String className;
+    private String modId;
+    private Map<String, Object> descriptor;
+    private boolean enabled;
+    private List<String> requirements;
+    private List<String> dependencies;
+    private List<String> dependants;
+    private boolean overridesMetadata;
+    private EventBus eventBus;
+    private LoadController controller;
 
-    public FMLModContainer(String dummy)
+    public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
-        this(new File(dummy));
-    }
-    public FMLModContainer(File source)
-    {
-        this.source = source;
-    }
-
-    public FMLModContainer(Class<?> clazz)
-    {
-        if (clazz == null)
-        {
-            return;
-        }
-
-        modDescriptor = clazz.getAnnotation(Mod.class);
-
-        try
-        {
-            modInstance = clazz.newInstance();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+        this.className = className;
+        this.source = modSource;
+        this.descriptor = modDescriptor;
     }
 
     @Override
-    public void preInit()
+    public String getModId()
     {
-    }
-
-    @Override
-    public void init()
-    {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void postInit()
-    {
-        // TODO Auto-generated method stub
-    }
-
-    public static ModContainer buildFor(Class<?> clazz)
-    {
-        return new FMLModContainer(clazz);
+        return (String) descriptor.get("modid");
     }
 
     @Override
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return modMetadata.name;
     }
 
     @Override
-    public LoaderState.ModState getModState()
+    public String getVersion()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void nextState()
-    {
-        // TODO Auto-generated method stub
-
-    }
-    @Override
-    public String getSortingRules()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean matches(Object mod)
-    {
-        // TODO Auto-generated method stub
-        return false;
+        return modMetadata.version;
     }
 
     @Override
@@ -115,209 +75,111 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public Object getMod()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int lookupFuelValue(int itemId, int itemDamage)
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public IPickupNotifier getPickupNotifier()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getDispenseHandler()
-     */
-    @Override
-    public IDispenseHandler getDispenseHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getCraftingHandler()
-     */
-    @Override
-    public ICraftingHandler getCraftingHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getDependencies()
-     */
-    @Override
-    public List<String> getDependencies()
-    {
-        // TODO Auto-generated method stub
-        return new ArrayList<String>(0);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getPreDepends()
-     */
-    @Override
-    public List<String> getPreDepends()
-    {
-        // TODO Auto-generated method stub
-        return new ArrayList<String>(0);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getPostDepends()
-     */
-    @Override
-    public List<String> getPostDepends()
-    {
-        // TODO Auto-generated method stub
-        return new ArrayList<String>(0);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return getSource().getName();
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getNetworkHandler()
-     */
-    @Override
-    public INetworkHandler getNetworkHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#ownsNetworkChannel(java.lang.String)
-     */
-    @Override
-    public boolean ownsNetworkChannel(String channel)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getConsoleHandler()
-     */
-    @Override
-    public IConsoleHandler getConsoleHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getPlayerTracker()
-     */
-    @Override
-    public IPlayerTracker getPlayerTracker()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getKeys()
-     */
-    @Override
-    public List<IKeyHandler> getKeys()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getSourceType()
-     */
-    @Override
-    public SourceType getSourceType()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#setSourceType(cpw.mods.fml.common.ModContainer.SourceType)
-     */
-    @Override
-    public void setSourceType(SourceType type)
-    {
-        // TODO Auto-generated method stub
-
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getMetadata()
-     */
-    @Override
     public ModMetadata getMetadata()
     {
         return modMetadata;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#setMetadata(cpw.mods.fml.common.ModMetadata)
-     */
-    @Override
-    public void setMetadata(ModMetadata meta)
-    {
-        this.modMetadata=meta;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#gatherRenderers(java.util.Map)
-     */
-    @Override
-    public void gatherRenderers(Map renderers)
-    {
-        // TODO Auto-generated method stub
 
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#requestAnimations()
-     */
     @Override
-    public void requestAnimations()
+    public void bindMetadata(MetadataCollection mc)
     {
-        // TODO Auto-generated method stub
+        modMetadata = mc.getMetadataForId(getModId());
+        
+        if (descriptor.containsKey("usesMetadata"))
+        {
+            overridesMetadata = !((Boolean)descriptor.get("usesMetadata")).booleanValue(); 
+        }
+        
+        if (overridesMetadata || !modMetadata.useDependencyInformation)
+        {
+            List<String> requirements = Lists.newArrayList();
+            List<String> dependencies = Lists.newArrayList();
+            List<String> dependants = Lists.newArrayList();
+            Loader.instance().computeDependencies((String) descriptor.get("dependencies"), requirements, dependencies, dependants);
+            modMetadata.requiredMods = requirements;
+            modMetadata.dependencies = dependencies;
+            modMetadata.dependants = dependants;
+        }
+    }
 
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getVersion()
-     */
     @Override
-    public String getVersion()
+    public void setEnabledState(boolean enabled)
     {
-        // TODO Auto-generated method stub
-        return null;
+        this.enabled = enabled;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#findSidedProxy()
-     */
+
+    @Override
+    public List<String> getRequirements()
+    {
+        return modMetadata.requiredMods;
+    }
+
+    @Override
+    public List<String> getDependencies()
+    {
+        return modMetadata.dependencies;
+    }
+
+    @Override
+    public List<String> getDependants()
+    {
+        return modMetadata.dependants;
+    }
+
+    @Override
+    public String getSortingRules()
+    {
+        return modMetadata.printableSortingRules();
+    }
+
+    @Override
+    public boolean matches(Object mod)
+    {
+        return mod == modInstance;
+    }
+
+    @Override
+    public Object getMod()
+    {
+        return modInstance;
+    }
+
     @Override
     public ProxyInjector findSidedProxy()
     {
         // TODO Auto-generated method stub
         return null;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#keyBindEvernt(java.lang.Object)
-     */
+
     @Override
-    public void keyBindEvent(Object keyBinding)
+    public boolean registerBus(EventBus bus, LoadController controller)
     {
-        // TODO Auto-generated method stub
+        if (this.enabled)
+        {
+            this.eventBus = bus;
+            this.controller = controller;
+            eventBus.register(this);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    @Subscribe
+    void constructMod(FMLConstructionEvent event)
+    {
+        try 
+        {
+            ModClassLoader modClassLoader = event.getModClassLoader();
+            modClassLoader.addFile(source);
+            modInstance = Class.forName(className, true, modClassLoader).newInstance();
+        }
+        catch (Exception e)
+        {
+            controller.errorOccurred(this, e);
+            Throwables.propagateIfPossible(e);
+        }
     }
 }

@@ -29,7 +29,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.logging.Level;
+
+import com.google.common.base.Throwables;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IConsoleHandler;
@@ -41,12 +45,17 @@ import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.MetadataCollection;
+import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.ModContainer.SourceType;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.TickType;
@@ -55,25 +64,28 @@ public class ModLoaderModContainer implements ModContainer
 {
     private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
     private Class <? extends BaseMod > modClazz;
-    private BaseMod mod;
+    public BaseMod mod;
     private File modSource;
-    private ArrayList<String> dependencies;
-    private ArrayList<String> preDependencies;
-    private ArrayList<String> postDependencies;
+    public ArrayList<String> requirements;
+    public ArrayList<String> dependencies;
+    public ArrayList<String> dependants;
     private ArrayList<IKeyHandler> keyHandlers;
-    private LoaderState.ModState state;
-    private SourceType sourceType;
+    private ContainerType sourceType;
     private ModMetadata metadata;
     private ProxyInjector sidedProxy;
     private BaseModTicker gameTickHandler;
     private BaseModTicker guiTickHandler;
+    private String modClazzName;
+    private String modId;
+    private EventBus bus;
+    private LoadController controller;
+    private boolean enabled;
 
-    public ModLoaderModContainer(Class <? extends BaseMod > modClazz, File modSource)
+    public ModLoaderModContainer(String className, File modSource)
     {
-        this.modClazz = modClazz;
+        this.modClazzName = className;
         this.modSource = modSource;
-        // We are unloaded
-        nextState();
+        this.modId = className.contains(".") ? className.substring(className.lastIndexOf('.')) : className;
     }
 
     /**
@@ -87,20 +99,25 @@ public class ModLoaderModContainer implements ModContainer
         this.guiTickHandler = new BaseModTicker(instance, true);
     }
 
-    @Override
-    public boolean wantsPreInit()
+    
+    @Subscribe
+    public void constructMod(FMLConstructionEvent event)
     {
-        return true;
+        try 
+        {
+            ModClassLoader modClassLoader = event.getModClassLoader();
+            modClassLoader.addFile(modSource);
+            mod = (BaseMod)Class.forName(modClazzName, true, modClassLoader).newInstance();
+        }
+        catch (Exception e)
+        {
+            controller.errorOccurred(this, e);
+            Throwables.propagateIfPossible(e);
+        }
     }
-
-    @Override
-    public boolean wantsPostInit()
-    {
-        return true;
-    }
-
-    @Override
-    public void preInit()
+    
+    @Subscribe
+    public void preInit(FMLPreInitializationEvent event)
     {
         try
         {
@@ -118,24 +135,6 @@ public class ModLoaderModContainer implements ModContainer
         catch (Exception e)
         {
             throw new LoaderException(e);
-        }
-    }
-
-    @Override
-    public LoaderState.ModState getModState()
-    {
-        return state;
-    }
-
-    @Override
-    public void nextState()
-    {
-        if (state==null) {
-            state=LoaderState.ModState.UNLOADED;
-            return;
-        }
-        if (state.ordinal()+1<LoaderState.ModState.values().length) {
-            state=LoaderState.ModState.values()[state.ordinal()+1];
         }
     }
     /**
@@ -351,17 +350,6 @@ public class ModLoaderModContainer implements ModContainer
             throw new IllegalArgumentException("MLProp declared on non-standard type");
         }
     }
-    @Override
-    public void init()
-    {
-        mod.load();
-    }
-
-    @Override
-    public void postInit()
-    {
-        mod.modsLoaded();
-    }
 
     @Override
     public String getName()
@@ -423,175 +411,27 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public int lookupFuelValue(int itemId, int itemDamage)
+    public List<String> getRequirements()
     {
-        return mod.addFuel(itemId, itemDamage);
+        return requirements;
     }
 
     @Override
-    public boolean wantsPickupNotification()
+    public List<String> getDependants()
     {
-        return true;
-    }
-
-    @Override
-    public IPickupNotifier getPickupNotifier()
-    {
-        return mod;
-    }
-
-    @Override
-    public boolean wantsToDispense()
-    {
-        return true;
-    }
-
-    @Override
-    public IDispenseHandler getDispenseHandler()
-    {
-        return mod;
-    }
-
-    @Override
-    public boolean wantsCraftingNotification()
-    {
-        return true;
-    }
-
-    @Override
-    public ICraftingHandler getCraftingHandler()
-    {
-        return mod;
-    }
-
-    private void computeDependencies()
-    {
-        dependencies = new ArrayList<String>();
-        preDependencies = new ArrayList<String>();
-        postDependencies = new ArrayList<String>();
-
-        if (mod.getPriorities() == null || mod.getPriorities().length() == 0)
-        {
-            return;
-        }
-
-        boolean parseFailure=false;
-        StringTokenizer st = new StringTokenizer(mod.getPriorities(), ";");
-
-        for (; st.hasMoreTokens();)
-        {
-            String dep = st.nextToken();
-            String[] depparts = dep.split(":");
-
-            if (depparts.length < 2)
-            {
-                parseFailure=true;
-                continue;
-            }
-            else if ("required-before".equals(depparts[0]) || "required-after".equals(depparts[0]))
-            {
-                if (!depparts[1].trim().equals("*")) {
-                    dependencies.add(depparts[1]);
-                } else {
-                    parseFailure=true;
-                    continue;
-                }
-            }
-
-            if ("required-before".equals(depparts[0]) || "before".equals(depparts[0]))
-            {
-            	postDependencies.add(depparts[1]);
-            } else if ("required-after".equals(depparts[0]) || "after".equals(depparts[0]))
-            {
-                preDependencies.add(depparts[1]);
-            } else {
-                parseFailure=true;
-            }
-        }
-
-        if (parseFailure) {
-            FMLCommonHandler.instance().getFMLLogger().warning(String.format("The mod %s has an incorrect dependency string {%s}", mod.getName(), mod.getPriorities()));
-        }
+        return dependants;
     }
 
     @Override
     public List<String> getDependencies()
     {
-        if (dependencies == null)
-        {
-            computeDependencies();
-        }
-
         return dependencies;
-    }
-
-    @Override
-    public List<String> getPostDepends()
-    {
-        if (dependencies == null)
-        {
-            computeDependencies();
-        }
-
-        return postDependencies;
-    }
-
-    @Override
-    public List<String> getPreDepends()
-    {
-        if (dependencies == null)
-        {
-            computeDependencies();
-        }
-        return preDependencies;
     }
 
 
     public String toString()
     {
         return modClazz.getSimpleName();
-    }
-
-    @Override
-    public boolean wantsNetworkPackets()
-    {
-        return true;
-    }
-
-    @Override
-    public INetworkHandler getNetworkHandler()
-    {
-        return mod;
-    }
-
-    @Override
-    public boolean ownsNetworkChannel(String channel)
-    {
-        return FMLCommonHandler.instance().getChannelListFor(this).contains(channel);
-    }
-
-    @Override
-    public boolean wantsConsoleCommands()
-    {
-        return true;
-    }
-
-    @Override
-    public IConsoleHandler getConsoleHandler()
-    {
-        return mod;
-    }
-
-    @Override
-    public boolean wantsPlayerTracking()
-    {
-        return true;
-    }
-
-    @Override
-    public IPlayerTracker getPlayerTracker()
-    {
-        return mod;
     }
 
     /**
@@ -618,63 +458,11 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public List<IKeyHandler> getKeys()
-    {
-        if (keyHandlers==null) {
-            return Collections.emptyList();
-        }
-        return keyHandlers;
-    }
-
-    @Override
-    public void setSourceType(SourceType type) {
-        this.sourceType=type;
-    }
-    @Override
-    public SourceType getSourceType()
-    {
-        return sourceType;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getMetadata()
-     */
-    @Override
     public ModMetadata getMetadata()
     {
         return metadata;
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#setMetadata(cpw.mods.fml.common.ModMetadata)
-     */
-    @Override
-    public void setMetadata(ModMetadata meta)
-    {
-        this.metadata=meta;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#gatherRenderers(java.util.Map)
-     */
-    @Override
-    public void gatherRenderers(Map renderers)
-    {
-        mod.onRenderHarvest(renderers);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#requestAnimations()
-     */
-    @Override
-    public void requestAnimations()
-    {
-        mod.onRegisterAnimations();
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getVersion()
-     */
     @Override
     public String getVersion()
     {
@@ -685,9 +473,6 @@ public class ModLoaderModContainer implements ModContainer
         return mod.getVersion();
     }
 
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#findSidedProxy()
-     */
     @Override
     public ProxyInjector findSidedProxy()
     {
@@ -699,15 +484,6 @@ public class ModLoaderModContainer implements ModContainer
             }
         }
         return sidedProxy == NULLPROXY ? null : sidedProxy;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#keyBindEvernt(java.lang.Object)
-     */
-    @Override
-    public void keyBindEvent(Object keybinding)
-    {
-        mod.keyBindingEvent(keybinding);
     }
 
     /**
@@ -723,5 +499,40 @@ public class ModLoaderModContainer implements ModContainer
     public BaseModTicker getGUITickHandler()
     {
         return this.guiTickHandler;
+    }
+
+    @Override
+    public String getModId()
+    {
+        return modId;
+    }
+
+    @Override
+    public void bindMetadata(MetadataCollection mc)
+    {
+        this.metadata = mc.getMetadataForId(modId);
+    }
+
+    @Override
+    public void setEnabledState(boolean enabled)
+    {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean registerBus(EventBus bus, LoadController controller)
+    {
+        if (this.enabled)
+        {
+            controller.log(Level.FINE, "Enabling mod %s", getModId());
+            this.bus = bus;
+            this.controller = controller;
+            bus.register(this);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

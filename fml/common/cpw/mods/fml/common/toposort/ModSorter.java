@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
@@ -28,10 +29,10 @@ public class ModSorter
 {
     private DirectedGraph<ModContainer> modGraph;
 
-    private ModContainer beforeAll = new FMLModContainer("DummyBeforeAll");
-    private ModContainer afterAll = new FMLModContainer("DummyAfterAll");
-    private ModContainer before = new FMLModContainer("DummyBefore");
-    private ModContainer after = new FMLModContainer("DummyAfter");
+    private ModContainer beforeAll = new DummyModContainer();
+    private ModContainer afterAll = new DummyModContainer();
+    private ModContainer before = new DummyModContainer();
+    private ModContainer after = new DummyModContainer();
 
     public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
     {
@@ -59,7 +60,7 @@ public class ModSorter
             boolean preDepAdded = false;
             boolean postDepAdded = false;
 
-            for (String dep : mod.getPreDepends())
+            for (String dep : mod.getDependencies())
             {
                 preDepAdded = true;
 
@@ -79,7 +80,7 @@ public class ModSorter
                 }
             }
 
-            for (String dep : mod.getPostDepends())
+            for (String dep : mod.getDependants())
             {
                 postDepAdded = true;
 

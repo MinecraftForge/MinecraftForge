@@ -79,7 +79,11 @@ public class RelaunchLibraryManager
             }
 
         }
-
+        // Register our class loading transformer now we have everything we need
+        actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.ASMTransformer");
+        // Register the forge class loading transformer now we have everything we need
+        actualClassLoader.registerTransformer("net.minecraftforge.asm.ASMTransformer");
+        
         try
         {
             Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);

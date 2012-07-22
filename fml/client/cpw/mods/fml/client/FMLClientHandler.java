@@ -82,7 +82,7 @@ import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLModLoaderContainer;
+import cpw.mods.fml.common.FMLDummyContainer;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
@@ -90,7 +90,7 @@ import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
-import cpw.mods.fml.common.ReflectionHelper;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
@@ -167,7 +167,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void onPreLoad(Minecraft minecraft)
     {
         client = minecraft;
-        ReflectionHelper.detectObfuscation(World.class);
+        ObfuscationReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().beginLoading(this);
         FMLRegistry.registerRegistry(new ClientRegistry());
         try
@@ -1159,7 +1159,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void addSpecialModEntries(ArrayList<ModContainer> mods)
     {
-        mods.add(new FMLModLoaderContainer());
+        mods.add(new FMLDummyContainer());
         if (optifineContainer!=null) {
             mods.add(optifineContainer);
         }

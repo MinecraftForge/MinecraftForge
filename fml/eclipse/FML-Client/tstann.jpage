@@ -1,3 +1,8 @@
 java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mcsnapshot/FML/eclipse/FML-MockMod/bin/cpw/mods/mockmod/MockMod.class"));
 
-cpw.mods.fml.common.ModDiscoverer.AnnotationFinder ann = new cpw.mods.fml.common.ModDiscoverer.AnnotationFinder(fis);
+System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
+
+java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mcsnapshot/FML/eclipse/simpletestmod/bin/net/minecraft/src/mod_testMod.class"));
+
+System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
+
