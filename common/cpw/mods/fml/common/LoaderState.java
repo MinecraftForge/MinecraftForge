@@ -1,5 +1,8 @@
 package cpw.mods.fml.common;
 
+import com.google.common.base.Throwables;
+
+import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -14,7 +17,7 @@ public enum LoaderState
 {
     NOINIT("Uninitialized",null),
     LOADING("Loading",null),
-    CONSTRUCTING("Constructing mods",null),
+    CONSTRUCTING("Constructing mods",FMLConstructionEvent.class),
     PREINITIALIZATION("Pre-initializing mods", FMLPreInitializationEvent.class),
     INITIALIZATION("Initializing mods", FMLInitializationEvent.class),
     POSTINITIALIZATION("Post-initializing mods", FMLPostInitializationEvent.class),
@@ -39,6 +42,22 @@ public enum LoaderState
         return values()[ordinal() < values().length ? ordinal()+1 : ordinal()];
     }
 
+    public boolean hasEvent()
+    {
+        return eventClass != null;
+    }
+    
+    public FMLStateEvent getEvent(Object... eventData)
+    {
+        try
+        {
+            return eventClass.getConstructor(Object[].class).newInstance(eventData);
+        }
+        catch (Exception e)
+        {
+            throw Throwables.propagate(e);
+        }
+    }
     public enum ModState
     {
         UNLOADED("Unloaded"),
@@ -47,7 +66,10 @@ public enum LoaderState
         PREINITIALIZED("Pre-initialized"),
         INITIALIZED("Initialized"),
         POSTINITIALIZED("Post-initialized"),
-        AVAILABLE("Available");
+        AVAILABLE("Available"),
+        DISABLED("Disabled"),
+        ERRORED("Errored");
+        
         private String label;
 
         private ModState(String label)

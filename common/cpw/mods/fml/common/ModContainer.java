@@ -15,9 +15,8 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
-import cpw.mods.fml.common.ModContainer.SourceType;
+import com.google.common.eventbus.EventBus;
 
 /**
  * The container that wraps around mods in the system.
@@ -27,183 +26,121 @@ import cpw.mods.fml.common.ModContainer.SourceType;
  * a mechanism by which we can wrap actual mod code so that the loader and other
  * facilities can treat mods at arms length.
  * </p>
- *
+ * 
  * @author cpw
- *
+ * 
  */
 
 public interface ModContainer
 {
-    public enum SourceType
-    {
-        JAR, CLASSPATH, DIR;
-    }
-
     /**
-     * Called when pre-initialization occurs.
-     */
-    void preInit();
-
-    /**
-     * Called when main initialization occurs.
-     */
-    void init();
-
-    /**
-     * Called when post-initialization occurs.
-     */
-    void postInit();
-
-    /**
-     * The name of the mod
-     *
+     * The globally unique modid for this mod
+     * 
      * @return
      */
+    String getModId();
+
+    /**
+     * A human readable name
+     * 
+     * @return
+     */
+
     String getName();
 
     /**
-     * The state of the mod
-     *
+     * A human readable version identifier
+     * 
      * @return
      */
-    LoaderState.ModState getModState();
+    String getVersion();
 
     /**
-     * Move to the next mod state
+     * The location on the file system which this mod came from
+     * 
+     * @return
      */
-    void nextState();
+    File getSource();
 
     /**
-     * Does this mod match the supplied mod?
-     *
+     * The metadata for this mod
+     * 
+     * @return
+     */
+    ModMetadata getMetadata();
+
+    /**
+     * Attach this mod to it's metadata from the supplied metadata collection
+     * 
+     * @param mc
+     */
+    void bindMetadata(MetadataCollection mc);
+
+    /**
+     * Set the enabled/disabled state of this mod
+     * 
+     * @param enabled
+     */
+    void setEnabledState(boolean enabled);
+
+    /**
+     * A list of the modids that this mod requires loaded prior to loading
+     * 
+     * @return
+     */
+    List<String> getRequirements();
+
+    /**
+     * A list of modids that should be loaded prior to this one. The special
+     * value <strong>*</strong> indicates to load <em>before</em> any other mod.
+     * 
+     * @return
+     */
+    List<String> getDependencies();
+
+    /**
+     * A list of modids that should be loaded <em>after</em> this one. The
+     * special value <strong>*</strong> indicates to load <em>after</em> any
+     * other mod.
+     * 
+     * @return
+     */
+    List<String> getDependants();
+
+    /**
+     * A representative string encapsulating the sorting preferences for this
+     * mod
+     * 
+     * @return
+     */
+    String getSortingRules();
+
+    /**
+     * Register the event bus for the mod and the controller for error handling
+     * Returns if this bus was successfully registered - disabled mods and other 
+     * mods that don't need real events should return false and avoid further
+     * processing
+     * 
+     * @param bus
+     * @param controller
+     * @return 
+     */
+    boolean registerBus(EventBus bus, LoadController controller);
+
+    /**
+     * Does this mod match the supplied mod
+     * 
      * @param mod
      * @return
      */
     boolean matches(Object mod);
 
     /**
-     * The source of this mod: the file on the file system
-     *
-     * @return
-     */
-    File getSource();
-
-    /**
-     * Returns the sorting rules as a string for printing
-     *
-     * @return
-     */
-    String getSortingRules();
-
-    /**
-     * The actual mod object itself
-     *
+     * Get the actual mod object
+     * 
      * @return
      */
     Object getMod();
 
-    /**
-     * Lookup the fuel value for the supplied item/damage with this mod.
-     *
-     * @param itemId
-     * @param itemDamage
-     * @return
-     */
-    int lookupFuelValue(int itemId, int itemDamage);
-
-    /**
-     * The pickup notifier for this mod.
-     *
-     * @return
-     */
-    IPickupNotifier getPickupNotifier();
-
-    /**
-     * The dispensing handler.
-     *
-     * @return
-     */
-    IDispenseHandler getDispenseHandler();
-
-    /**
-     * The crafting and smelting handler for this mod.
-     *
-     * @return
-     */
-    ICraftingHandler getCraftingHandler();
-
-    /**
-     * The strong dependencies of this mod. If the named mods in this list are
-     * not present, the game will abort.
-     *
-     * @return
-     */
-    List<String> getDependencies();
-
-    /**
-     * Get a list of mods to load before this one. The special value "*"
-     * indicates to load <i>after</i> all other mods (except other "*" mods).
-     *
-     * @return
-     */
-    List<String> getPreDepends();
-
-    /**
-     * Get a list of mods to load after this one. The special value "*"
-     * indicates to load <i>before</i> all other mods (except other "*" mods).
-     *
-     * @return
-     */
-    List<String> getPostDepends();
-
-    /**
-     * The network handler for this mod.
-     *
-     * @return
-     */
-    INetworkHandler getNetworkHandler();
-
-    /**
-     * Does this mod own this channel?
-     *
-     * @param channel
-     * @return
-     */
-    boolean ownsNetworkChannel(String channel);
-
-    IConsoleHandler getConsoleHandler();
-
-    IPlayerTracker getPlayerTracker();
-
-    List<IKeyHandler> getKeys();
-
-    SourceType getSourceType();
-
-    void setSourceType(SourceType type);
-
-    ModMetadata getMetadata();
-
-    void setMetadata(ModMetadata meta);
-
-    /**
-     *
-     */
-    void gatherRenderers(Map renderers);
-
-    /**
-     *
-     */
-    void requestAnimations();
-
-    /**
-     * @return
-     */
-    String getVersion();
-
-    /**
-     * @return
-     */
     ProxyInjector findSidedProxy();
-
-    void keyBindEvent(Object keyBinding);
 }

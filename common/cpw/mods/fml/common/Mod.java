@@ -44,10 +44,10 @@ public @interface Mod
      */
     String version() default "";
     /**
-     * A simple dependency string for this mod
+     * A simple dependency string for this mod (see modloader's "priorities" string specification)
      * @return
      */
-    String dependsOn() default "";
+    String dependencies() default "";
     /**
      * Whether to use the mcmod.info metadata by default for this mod.
      * If true, settings in the mcmod.info file will override settings in these annotations.

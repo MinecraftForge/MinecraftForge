@@ -38,7 +38,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import cpw.mods.fml.common.ModContainer.SourceType;
+import cpw.mods.fml.common.discovery.ContainerType;
+
 
 /**
  * The main class for non-obfuscated hook handling code
@@ -548,66 +549,6 @@ public class FMLCommonHandler
         brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()!=1?"s":""));
         Collections.reverse(brandings);
         return brandings.toArray(new String[brandings.size()]);
-    }
-
-    /**
-     * @param mod
-     */
-    public void loadMetadataFor(ModContainer mod)
-    {
-        if (mod.getSourceType()==SourceType.JAR) {
-            ZipFile jar = null;
-            try
-            {
-                jar = new ZipFile(mod.getSource());
-                ZipEntry infoFile=jar.getEntry("mcmod.info");
-                if (infoFile!=null) {
-                    InputStream input=jar.getInputStream(infoFile);
-                    ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
-                    mod.setMetadata(data);
-                } else {
-                    getFMLLogger().fine(String.format("Failed to find mcmod.info file in %s for %s", mod.getSource().getName(), mod.getName()));
-                }
-            }
-            catch (Exception e)
-            {
-                // Something wrong but we don't care
-                getFMLLogger().fine(String.format("Failed to find mcmod.info file in %s for %s", mod.getSource().getName(), mod.getName()));
-                getFMLLogger().throwing("FMLCommonHandler", "loadMetadataFor", e);
-            }
-            finally
-            {
-                if (jar!=null)
-                {
-                    try
-                    {
-                        jar.close();
-                    }
-                    catch (IOException e)
-                    {
-                        // GO AWAY
-                    }
-                }
-            }
-        } else {
-            try
-            {
-                InputStream input=Loader.instance().getModClassLoader().getResourceAsStream(mod.getName()+".info");
-                if (input==null) {
-                    input=Loader.instance().getModClassLoader().getResourceAsStream("net/minecraft/src/"+mod.getName()+".info");
-                }
-                if (input!=null) {
-                    ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
-                    mod.setMetadata(data);
-                }
-            }
-            catch (Exception e)
-            {
-                // Something wrong but we don't care
-                getFMLLogger().fine(String.format("Failed to find %s.info file in %s for %s", mod.getName(), mod.getSource().getName(), mod.getName()));
-                getFMLLogger().throwing("FMLCommonHandler", "loadMetadataFor", e);
-            }
-        }
     }
 
     /**
