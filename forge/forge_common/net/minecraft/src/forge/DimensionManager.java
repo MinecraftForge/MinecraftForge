@@ -1,6 +1,7 @@
 package net.minecraft.src.forge;
 
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.logging.Level;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -12,6 +13,7 @@ public class DimensionManager
     private static Hashtable<Integer, WorldProvider> providers = new Hashtable<Integer, WorldProvider>();
     private static Hashtable<Integer, Boolean> spawnSettings = new Hashtable<Integer, Boolean>();
     private static Hashtable<Integer, World> worlds = new Hashtable<Integer, World>();
+    private static LinkedList<Integer> deRegisteredDimensions = new LinkedList<Integer>();
     private static boolean hasInit = false;
 
     public static boolean registerDimension(int id, WorldProvider provider, boolean keepLoaded)
@@ -33,7 +35,7 @@ public class DimensionManager
         }
         registerDimension( 0, new WorldProviderSurface(), true);
         registerDimension(-1, new WorldProviderHell(),    true);
-        registerDimension( 1, new WorldProviderEnd(),     false);
+        registerDimension( 1, new WorldProviderEnd(),     true);
     }
 
     public static WorldProvider getProvider(int id)
@@ -63,7 +65,7 @@ public class DimensionManager
 
     public static boolean shouldLoadSpawn(int id)
     {
-        return spawnSettings.contains(id) && spawnSettings.get(id);
+        return spawnSettings.containsKey(id) && spawnSettings.get(id);
     }
 
     static
@@ -81,5 +83,25 @@ public class DimensionManager
 			FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE,String.format("An error occured trying to create an instance of WorldProvider %d (%s)",i,getProvider(i).getClass().getSimpleName()),e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static void deRegisterDimension(int id)
+	{
+		deRegisteredDimensions.add(id);
+	}
+	
+	/**
+	 * To be called by the server at the appropriate time, do not call from mod code.
+	 */
+	public static void deRegisterDimensions(Hashtable<Integer, long[]> worldTickTimes)
+	{
+		for(int id : deRegisteredDimensions)
+		{
+			providers.remove(id);
+			spawnSettings.remove(id);
+			worlds.remove(id);
+			worldTickTimes.remove(id);
+		}
+		deRegisteredDimensions.clear();
 	}
 }
