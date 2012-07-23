@@ -567,7 +567,7 @@ public class ModLoader
 
     public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
-        FMLClientHandler.instance().registerKeyHandler(mod, keyHandler, allowRepeat);
+        FMLClientHandler.instance().registerModLoaderKeyHandler(mod, keyHandler, allowRepeat);
     }
 
     /**

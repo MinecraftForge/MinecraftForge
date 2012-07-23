@@ -16,84 +16,77 @@ package cpw.mods.fml.client;
 
 import java.util.EnumSet;
 
+import net.minecraft.src.KeyBinding;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import net.minecraft.src.KeyBinding;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.IKeyHandler;
-import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+import cpw.mods.fml.common.registry.TickRegistry;
 
 /**
  * @author cpw
  *
  */
-public class ModLoaderKeyBindingHandler implements IKeyHandler
+public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
 {
-
-    private boolean shouldRepeat;
-    private KeyBinding keyBinding;
-    private ModContainer modContainer;
-    private boolean lastState = false;
-    private boolean armed;
+    private ModLoaderModContainer modContainer;
+    private boolean downArmed;
+    private boolean upArmed;
 
     /**
      * @param keyHandler
      * @param allowRepeat
      * @param modContainer
      */
-    public ModLoaderKeyBindingHandler(KeyBinding keyHandler, boolean allowRepeat, ModContainer modContainer)
+    public ModLoaderKeyBindingHandler(KeyBinding keyBinding, boolean allowRepeat, ModLoaderModContainer modContainer)
     {
-        this.keyBinding=keyHandler;
-        this.shouldRepeat=allowRepeat;
+        super(keyBinding, allowRepeat);
         this.modContainer=modContainer;
-        FMLCommonHandler.instance().registerTickHandler(this);
-    }
-
-    @Override
-    public Object getKeyBinding()
-    {
-        return this.keyBinding;
-    }
-
-    /**
-     * @return the modContainer
-     */
-    public ModContainer getOwningContainer()
-    {
-        return modContainer;
     }
 
     public void onRenderEndTick()
     {
-        int keyCode = keyBinding.field_1370_b;
-        boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
-        if (state && (!lastState || (lastState && shouldRepeat)))
+        ((net.minecraft.src.BaseMod)modContainer.getMod()).keyboardEvent(keyBinding);
+    }
+    
+    @Override
+    public void keyDown(EnumSet<TickType> type, boolean end, boolean repeats)
+    {
+        if (!end)
         {
-            modContainer.keyBindEvent(keyBinding);
+            return;
         }
-        lastState = state;
-    }
-
-    @Override
-    public void tickStart(EnumSet<TickType> type, Object... tickData)
-    {
-        // NO-OP for ML
-    }
-
-    @Override
-    public void tickEnd(EnumSet<TickType> type, Object... tickData)
-    {
+        upArmed = false;
         if (type.contains(TickType.GUILOAD)|| type.contains(TickType.GAME))
         {
-            armed = true;
+            downArmed = true;
         }
-        if (type.contains(TickType.RENDER) && armed)
+        if (type.contains(TickType.RENDER) && downArmed)
         {
             onRenderEndTick();
-            armed = false;
+            downArmed = false;
+        }
+    }
+
+    @Override
+    public void keyUp(EnumSet<TickType> type, boolean end)
+    {
+        if (!end)
+        {
+            return;
+        }
+        downArmed = false;
+        if (type.contains(TickType.GUILOAD)|| type.contains(TickType.GAME))
+        {
+            upArmed = true;
+        }
+        if (type.contains(TickType.RENDER) && upArmed)
+        {
+            onRenderEndTick();
+            upArmed = false;
         }
     }
 
@@ -106,6 +99,6 @@ public class ModLoaderKeyBindingHandler implements IKeyHandler
     @Override
     public String getLabel()
     {
-        return getOwningContainer()+" KB "+keyBinding.field_1371_a;
+        return modContainer.getModId() +" KB "+keyBinding.field_1371_a;
     }
 }

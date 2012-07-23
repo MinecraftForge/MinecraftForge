@@ -6,6 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IScheduledTickHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.registry.TickRegistry;
 import net.minecraft.client.Minecraft;
 
 public class mod_testMod extends BaseMod {
@@ -17,7 +18,8 @@ public class mod_testMod extends BaseMod {
 
     @Override
     public void load() {
-        ModLoader.setInGameHook(this, true, false);
+//        if (1==1) throw new RuntimeException();
+//        ModLoader.setInGameHook(this, true, false);
 //        ModLoader.setInGUIHook(this, true, false);
 //        FMLCommonHandler.instance().registerTickHandler(this);
         TickTester t1 = new TickTester();
@@ -26,9 +28,9 @@ public class mod_testMod extends BaseMod {
         t2.interval=2;
         TickTester t3 = new TickTester();
         t3.interval=3;
-        FMLCommonHandler.instance().registerScheduledTickHandler(t1);
-        FMLCommonHandler.instance().registerScheduledTickHandler(t2);
-        FMLCommonHandler.instance().registerScheduledTickHandler(t3);
+        TickRegistry.registerScheduledTickHandler(t1);
+        TickRegistry.registerScheduledTickHandler(t2);
+        TickRegistry.registerScheduledTickHandler(t3);
     }
 
     @Override
@@ -94,6 +96,6 @@ public class mod_testMod extends BaseMod {
     @Override
     public String getPriorities()
     {
-        return "TESTString";
+        return "after:MockMod";
     }
 }

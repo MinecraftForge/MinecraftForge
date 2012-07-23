@@ -18,6 +18,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.minecraft.src.ItemBlock;
+
 /**
  * The new mod style in FML 1.3
  *
@@ -56,6 +58,46 @@ public @interface Mod
     boolean useMetadata() default false;
 
     /**
+     * Mark the designated method as being called at the "pre-initialization" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface PreInit {}
+    /**
+     * Mark the designated method as being called at the "initialization" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface Init {}
+    /**
+     * Mark the designated method as being called at the "post-initialization" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface PostInit {}
+    /**
+     * Populate the annotated field with the mod instance.
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Instance {}
+    /**
+     * Populate the annotated field with the mod's metadata.
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Metadata {}
+    /**
      * Populate the annotated field with an instance of the Block as specified
      * @author cpw
      *
@@ -69,15 +111,10 @@ public @interface Mod
          */
         String name();
         /**
-         * The class (extending Block) that should be created.
-         * @return
-         */
-        String typeClass();
-        /**
          * The associated ItemBlock subtype for the item (can be null for an ItemBlock)
          * @return
          */
-        String itemTypeClass() default "";
+        Class<?> itemTypeClass() default ItemBlock.class;
     }
     /**
      * Populate the annotated field with an Item
@@ -98,12 +135,4 @@ public @interface Mod
          */
         String typeClass();
     }
-    /**
-     * Populate the annotated field with the mod instance.
-     * @author cpw
-     *
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    public @interface Instance {}
 }

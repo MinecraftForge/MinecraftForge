@@ -32,15 +32,17 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
-import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
@@ -54,7 +56,11 @@ import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.registry.WorldRegistry;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
@@ -63,13 +69,11 @@ import cpw.mods.fml.common.TickType;
 public class ModLoaderModContainer implements ModContainer
 {
     private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
-    private Class <? extends BaseMod > modClazz;
     public BaseMod mod;
     private File modSource;
-    public ArrayList<String> requirements;
-    public ArrayList<String> dependencies;
-    public ArrayList<String> dependants;
-    private ArrayList<IKeyHandler> keyHandlers;
+    public ArrayList<String> requirements = Lists.newArrayList();
+    public ArrayList<String> dependencies = Lists.newArrayList();
+    public ArrayList<String> dependants = Lists.newArrayList();
     private ContainerType sourceType;
     private ModMetadata metadata;
     private ProxyInjector sidedProxy;
@@ -79,13 +83,15 @@ public class ModLoaderModContainer implements ModContainer
     private String modId;
     private EventBus bus;
     private LoadController controller;
-    private boolean enabled;
+    private boolean enabled = true;
+    private String sortingProperties;
 
-    public ModLoaderModContainer(String className, File modSource)
+    public ModLoaderModContainer(String className, File modSource, String sortingProperties)
     {
         this.modClazzName = className;
         this.modSource = modSource;
-        this.modId = className.contains(".") ? className.substring(className.lastIndexOf('.')) : className;
+        this.modId = className.contains(".") ? className.substring(className.lastIndexOf('.')+1) : className;
+        this.sortingProperties = sortingProperties;
     }
 
     /**
@@ -98,54 +104,15 @@ public class ModLoaderModContainer implements ModContainer
         this.gameTickHandler = new BaseModTicker(instance, false);
         this.guiTickHandler = new BaseModTicker(instance, true);
     }
-
     
-    @Subscribe
-    public void constructMod(FMLConstructionEvent event)
-    {
-        try 
-        {
-            ModClassLoader modClassLoader = event.getModClassLoader();
-            modClassLoader.addFile(modSource);
-            mod = (BaseMod)Class.forName(modClazzName, true, modClassLoader).newInstance();
-        }
-        catch (Exception e)
-        {
-            controller.errorOccurred(this, e);
-            Throwables.propagateIfPossible(e);
-        }
-    }
-    
-    @Subscribe
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        try
-        {
-            EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
-            this.gameTickHandler = new BaseModTicker(ticks, false);
-            this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
-            configureMod();
-            mod = modClazz.newInstance();
-            this.gameTickHandler.setMod(mod);
-            this.guiTickHandler.setMod(mod);
-            FMLCommonHandler.instance().registerTickHandler(this.gameTickHandler);
-            FMLCommonHandler.instance().registerTickHandler(this.guiTickHandler);
-            FMLCommonHandler.instance().registerWorldGenerator(this.mod);
-        }
-        catch (Exception e)
-        {
-            throw new LoaderException(e);
-        }
-    }
     /**
      *
      */
-    private void configureMod()
+    private void configureMod(Class<? extends BaseMod> modClazz)
     {
         IFMLSidedHandler sideHandler = FMLCommonHandler.instance().getSidedDelegate();
         File configDir = Loader.instance().getConfigDir();
-        String modConfigName = modClazz.getSimpleName();
-        File modConfig = new File(configDir, String.format("%s.cfg", modConfigName));
+        File modConfig = new File(configDir, String.format("%s.cfg", modClazzName));
         Properties props = new Properties();
 
         boolean existingConfigFound = false;
@@ -155,15 +122,14 @@ public class ModLoaderModContainer implements ModContainer
         {
             try
             {
-                Loader.log.fine(String.format("Reading existing configuration file for %s : %s", modConfigName, modConfig.getName()));
+                FMLLog.log.fine("Reading existing configuration file for %s : %s", modClazzName, modConfig.getName());
                 FileReader configReader = new FileReader(modConfig);
                 props.load(configReader);
                 configReader.close();
             }
             catch (Exception e)
             {
-                Loader.log.severe(String.format("Error occured reading mod configuration file %s", modConfig.getName()));
-                Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
+                FMLLog.log.log(Level.SEVERE, e, "Error occured reading mod configuration file %s", modConfig.getName());
                 throw new LoaderException(e);
             }
             existingConfigFound = true;
@@ -194,19 +160,18 @@ public class ModLoaderModContainer implements ModContainer
                 {
                     defaultValue = f.get(null);
                     propertyValue = props.getProperty(propertyName, extractValue(defaultValue));
-                    Object currentValue = parseValue(propertyValue, property, f.getType(), propertyName, modConfigName);
-                    Loader.log.finest(String.format("Configuration for %s.%s found values default: %s, configured: %s, interpreted: %s", modConfigName, propertyName, defaultValue, propertyValue, currentValue));
+                    Object currentValue = parseValue(propertyValue, property, f.getType(), propertyName, modClazzName);
+                    FMLLog.log.finest("Configuration for %s.%s found values default: %s, configured: %s, interpreted: %s", modClazzName, propertyName, defaultValue, propertyValue, currentValue);
 
                     if (currentValue != null && !currentValue.equals(defaultValue))
                     {
-                        Loader.log.finest(String.format("Configuration for %s.%s value set to: %s", modConfigName, propertyName, currentValue));
+                        FMLLog.log.finest("Configuration for %s.%s value set to: %s", modClazzName, propertyName, currentValue);
                         f.set(null, currentValue);
                     }
                 }
                 catch (Exception e)
                 {
-                    Loader.log.severe(String.format("Invalid configuration found for %s in %s", propertyName, modConfig.getName()));
-                    Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
+                    FMLLog.log.log(Level.SEVERE, e, "Invalid configuration found for %s in %s", propertyName, modConfig.getName());
                     throw new LoaderException(e);
                 }
                 finally
@@ -243,22 +208,22 @@ public class ModLoaderModContainer implements ModContainer
         {
             if (!mlPropFound && !existingConfigFound)
             {
-                Loader.log.fine(String.format("No MLProp configuration for %s found or required. No file written", modConfigName));
+                FMLLog.log.fine("No MLProp configuration for %s found or required. No file written", modClazzName);
                 return;
             }
 
             if (!mlPropFound && existingConfigFound)
             {
                 File mlPropBackup = new File(modConfig.getParent(),modConfig.getName()+".bak");
-                Loader.log.fine(String.format("MLProp configuration file for %s found but not required. Attempting to rename file to %s", modConfigName, mlPropBackup.getName()));
+                FMLLog.log.fine("MLProp configuration file for %s found but not required. Attempting to rename file to %s", modClazzName, mlPropBackup.getName());
                 boolean renamed = modConfig.renameTo(mlPropBackup);
                 if (renamed)
                 {
-                    Loader.log.fine(String.format("Unused MLProp configuration file for %s renamed successfully to %s", modConfigName, mlPropBackup.getName()));
+                    FMLLog.log.fine("Unused MLProp configuration file for %s renamed successfully to %s", modClazzName, mlPropBackup.getName());
                 }
                 else
                 {
-                    Loader.log.fine(String.format("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", modConfigName, mlPropBackup.getName()));
+                    FMLLog.log.fine("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", modClazzName, mlPropBackup.getName());
                 }
 
                 return;
@@ -268,12 +233,11 @@ public class ModLoaderModContainer implements ModContainer
                 FileWriter configWriter = new FileWriter(modConfig);
                 props.store(configWriter, comments.toString());
                 configWriter.close();
-                Loader.log.fine(String.format("Configuration for %s written to %s", modConfigName, modConfig.getName()));
+                FMLLog.log.fine("Configuration for %s written to %s", modClazzName, modConfig.getName());
             }
             catch (IOException e)
             {
-                Loader.log.warning(String.format("Error trying to write the config file %s", modConfig.getName()));
-                Loader.log.throwing("ModLoaderModContainer", "configureMod", e);
+                FMLLog.log.log(Level.SEVERE, e, "Error trying to write the config file %s", modConfig.getName());
                 throw new LoaderException(e);
             }
         }
@@ -324,7 +288,7 @@ public class ModLoaderModContainer implements ModContainer
 
             if (n.doubleValue() < property.min() || n.doubleValue() > property.max())
             {
-                Loader.log.warning(String.format("Configuration for %s.%s found value %s outside acceptable range %s,%s", modConfigName,propertyName, n, property.min(), property.max()));
+                FMLLog.log.warning("Configuration for %s.%s found value %s outside acceptable range %s,%s", modConfigName,propertyName, n, property.min(), property.max());
                 return null;
             }
             else
@@ -354,7 +318,7 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public String getName()
     {
-        return mod != null ? mod.getName() : modClazz.getSimpleName();
+        return mod != null ? mod.getName() : modId;
     }
 
     @Deprecated
@@ -366,16 +330,13 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public String getSortingRules()
     {
-        if (mod!=null) {
-            return mod.getPriorities();
-        } else {
-            return "";
-        }
+        return sortingProperties;
     }
+    
     @Override
     public boolean matches(Object mod)
     {
-        return modClazz.isInstance(mod);
+        return this.mod == mod;
     }
 
     /**
@@ -431,30 +392,7 @@ public class ModLoaderModContainer implements ModContainer
 
     public String toString()
     {
-        return modClazz.getSimpleName();
-    }
-
-    /**
-     * @param keyHandler
-     * @param allowRepeat
-     */
-    public void addKeyHandler(IKeyHandler handler)
-    {
-        if (keyHandlers==null) {
-            keyHandlers=new ArrayList<IKeyHandler>();
-        }
-
-        Iterator<IKeyHandler> itr = keyHandlers.iterator();
-        while(itr.hasNext())
-        {
-            IKeyHandler old = itr.next();
-            if (old.getKeyBinding() == handler.getKeyBinding())
-            {
-                itr.remove();
-            }
-        }
-
-        keyHandlers.add(handler);
+        return modId;
     }
 
     @Override
@@ -510,7 +448,9 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public void bindMetadata(MetadataCollection mc)
     {
-        this.metadata = mc.getMetadataForId(modId);
+        Map<String, Object> dummyMetadata = ImmutableMap.<String,Object>builder().put("name", modId).put("version", "").build();
+        this.metadata = mc.getMetadataForId(modId, dummyMetadata);
+        Loader.instance().computeDependencies(sortingProperties, getRequirements(), getDependencies(), getDependants());
     }
 
     @Override
@@ -524,7 +464,7 @@ public class ModLoaderModContainer implements ModContainer
     {
         if (this.enabled)
         {
-            controller.log(Level.FINE, "Enabling mod %s", getModId());
+            FMLLog.fine("Enabling mod %s", getModId());
             this.bus = bus;
             this.controller = controller;
             bus.register(this);
@@ -533,6 +473,76 @@ public class ModLoaderModContainer implements ModContainer
         else
         {
             return false;
+        }
+    }
+
+    // Lifecycle mod events
+    
+    @Subscribe
+    public void constructMod(FMLConstructionEvent event)
+    {
+        try 
+        {
+            ModClassLoader modClassLoader = event.getModClassLoader();
+            modClassLoader.addFile(modSource);
+            Class<? extends BaseMod> modClazz = (Class<? extends BaseMod>) Class.forName(modClazzName, true, modClassLoader);
+            configureMod(modClazz);
+            mod = (BaseMod)modClazz.newInstance();
+        }
+        catch (Exception e)
+        {
+            controller.errorOccurred(this, e);
+            Throwables.propagateIfPossible(e);
+        }
+    }
+
+    @Subscribe
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        try
+        {
+            EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
+            this.gameTickHandler = new BaseModTicker(ticks, false);
+            this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
+            this.gameTickHandler.setMod(mod);
+            this.guiTickHandler.setMod(mod);
+            TickRegistry.registerTickHandler(this.gameTickHandler);
+            TickRegistry.registerTickHandler(this.guiTickHandler);
+            WorldRegistry.registerWorldGenerator(this.mod);
+        }
+        catch (Exception e)
+        {
+            controller.errorOccurred(this, e);
+            Throwables.propagateIfPossible(e);
+        }
+    }
+    
+    
+    @Subscribe
+    public void init(FMLInitializationEvent event)
+    {
+        try
+        {
+            mod.load();
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
+        }
+    }
+    
+    @Subscribe
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        try
+        {
+            mod.modsLoaded();
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
         }
     }
 }
