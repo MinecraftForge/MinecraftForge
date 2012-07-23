@@ -13,18 +13,29 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.Mod.Block;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class FMLModContainer implements ModContainer
 {
@@ -35,13 +46,14 @@ public class FMLModContainer implements ModContainer
     private String className;
     private String modId;
     private Map<String, Object> descriptor;
-    private boolean enabled;
+    private boolean enabled = true;
     private List<String> requirements;
     private List<String> dependencies;
     private List<String> dependants;
     private boolean overridesMetadata;
     private EventBus eventBus;
     private LoadController controller;
+    private Multimap<Class<? extends Annotation>, Object> annotations;
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
@@ -83,7 +95,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public void bindMetadata(MetadataCollection mc)
     {
-        modMetadata = mc.getMetadataForId(getModId());
+        modMetadata = mc.getMetadataForId(getModId(), descriptor);
         
         if (descriptor.containsKey("usesMetadata"))
         {
@@ -156,6 +168,7 @@ public class FMLModContainer implements ModContainer
     {
         if (this.enabled)
         {
+            FMLLog.fine("Enabling mod %s", getModId());
             this.eventBus = bus;
             this.controller = controller;
             eventBus.register(this);
@@ -167,19 +180,128 @@ public class FMLModContainer implements ModContainer
         }
     }
     
+    private Multimap<Class<? extends Annotation>, Object> gatherAnnotations(Class<?> clazz) throws Exception
+    {
+        Multimap<Class<? extends Annotation>,Object> anns = ArrayListMultimap.create();
+        
+        for (Field f : clazz.getDeclaredFields())
+        {
+            for (Annotation a : f.getAnnotations())
+            {
+                f.setAccessible(true);
+                anns.put(a.annotationType(), f);
+            }
+        }
+        
+        for (Method m : clazz.getDeclaredMethods())
+        {
+            for (Annotation a : m.getAnnotations())
+            {
+                if (m.getParameterTypes().length==0)
+                {
+                    m.setAccessible(true);
+                    anns.put(a.annotationType(), m);
+                }
+                else
+                {
+                    FMLLog.severe("The mod type %s appears to have an invalid method annotation %s. This annotation can only apply to zero argument methods", getModId(), a.annotationType().getSimpleName());
+                }
+            }
+        }
+        return anns;
+    }
+
+    private void processFieldAnnotations() throws Exception
+    {
+        // Instance annotation
+        for (Object o : annotations.get(Instance.class))
+        {
+            Field f = (Field) o;
+            f.set(modInstance, modInstance);
+        }
+        
+        for (Object o : annotations.get(Metadata.class))
+        {
+            Field f = (Field) o;
+            f.set(modInstance, modMetadata);
+        }
+        
+        for (Object o : annotations.get(Block.class))
+        {
+            Field f = (Field) o;
+        }
+    }
+
     @Subscribe
-    void constructMod(FMLConstructionEvent event)
+    public void constructMod(FMLConstructionEvent event)
     {
         try 
         {
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
-            modInstance = Class.forName(className, true, modClassLoader).newInstance();
+            Class<?> clazz = Class.forName(className, true, modClassLoader);
+            annotations = gatherAnnotations(clazz);
+            modInstance = clazz.newInstance();
+            processFieldAnnotations();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             controller.errorOccurred(this, e);
             Throwables.propagateIfPossible(e);
+        }
+    }
+    
+    @Subscribe
+    public void preInitMod(FMLPreInitializationEvent event)
+    {
+        try
+        {
+            for (Object o : annotations.get(Mod.PreInit.class))
+            {
+                Method m = (Method) o;
+                m.invoke(modInstance);
+            }
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
+        }
+    }
+    
+    @Subscribe
+    public void initMod(FMLInitializationEvent event)
+    {
+        try
+        {
+            for (Object o : annotations.get(Mod.Init.class))
+            {
+                Method m = (Method) o;
+                m.invoke(modInstance);
+            }
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
+        }
+    }
+    
+    @Subscribe
+    public void postInitMod(FMLPostInitializationEvent event)
+    {
+        try
+        {
+            for (Object o : annotations.get(Mod.PostInit.class))
+            {
+                Method m = (Method) o;
+                m.invoke(modInstance);
+            }
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
         }
     }
 }

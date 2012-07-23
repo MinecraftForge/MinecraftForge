@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,16 +25,16 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
 
 public class ModDiscoverer
 {
-    private Logger log = Loader.log;
-
     private static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
 
     private List<ModCandidate> candidates = Lists.newArrayList();
@@ -43,7 +44,7 @@ public class ModDiscoverer
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
         {
-            log.fine(String.format("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath()));
+            FMLLog.log.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());
             candidates.add(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR));
         }
         else
@@ -52,12 +53,19 @@ public class ModDiscoverer
             {
                 if (minecraftSources[i].isFile())
                 {
-                    log.fine(String.format("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath()));
-                    candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, true));
+                    if (modClassLoader.getDefaultLibraries().contains(minecraftSources[i].getName()))
+                    {
+                        FMLLog.log.fine("Skipping known library file %s", minecraftSources[i].getAbsolutePath());
+                    } 
+                    else
+                    {
+                        FMLLog.log.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
+                        candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, true));
+                    }
                 }
                 else if (minecraftSources[i].isDirectory())
                 {
-                    log.fine(String.format("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath()));
+                    FMLLog.log.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
                     candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, true));
                 }
             }
@@ -75,7 +83,7 @@ public class ModDiscoverer
         {
             if (modFile.isDirectory())
             {
-                log.fine(String.format("Found a candidate mod directory %s", modFile.getName()));
+                FMLLog.log.fine("Found a candidate mod directory %s", modFile.getName());
                 candidates.add(new ModCandidate(modFile, modFile, ContainerType.DIR));
             }
             else
@@ -84,12 +92,12 @@ public class ModDiscoverer
 
                 if (matcher.matches())
                 {
-                    log.fine(String.format("Found a candidate zip or jar file %s", matcher.group(0)));
+                    FMLLog.log.fine("Found a candidate zip or jar file %s", matcher.group(0));
                     candidates.add(new ModCandidate(modFile, modFile, ContainerType.JAR));
                 }
                 else
                 {
-                    log.fine(String.format("Ignoring unknown file %s in mods directory", modFile.getName()));
+                    FMLLog.log.fine("Ignoring unknown file %s in mods directory", modFile.getName());
                 }
             }
         }
@@ -101,8 +109,19 @@ public class ModDiscoverer
         
         for (ModCandidate candidate : candidates)
         {
-            List<ModContainer> mods = candidate.explore();
-            modList.addAll(mods);
+            try
+            {
+                List<ModContainer> mods = candidate.explore();
+                modList.addAll(mods);
+            }
+            catch (LoaderException le)
+            {
+                FMLLog.log(Level.WARNING, le, "Identified a problem with the mod candidate %s, ignoring this source", candidate.getModContainer());
+            }
+            catch (Throwable t)
+            {
+                Throwables.propagate(t);
+            }
         }
         
         return modList;

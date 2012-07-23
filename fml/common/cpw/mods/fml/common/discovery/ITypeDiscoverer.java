@@ -8,7 +8,6 @@ import cpw.mods.fml.common.ModContainer;
 public interface ITypeDiscoverer
 {
     public static Pattern classFile = Pattern.compile("([^\\s$]+).class$");
-    public static Pattern modClass = Pattern.compile("(.+/|)(mod\\_[^\\s$]+).class$");
 
     public List<ModContainer> discover(ModCandidate candidate);
 }

@@ -43,6 +43,8 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
@@ -81,12 +83,16 @@ import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
+import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLDummyContainer;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
-import cpw.mods.fml.common.IKeyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
+import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
@@ -147,7 +153,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     private HashMap<String, ArrayList<OverrideInfo>> overrideInfo = new HashMap<String, ArrayList<OverrideInfo>>();
     private HashMap<Integer, BlockRenderInfo> blockModelIds = new HashMap<Integer, BlockRenderInfo>();
     private HashMap<KeyBinding, ModContainer> keyBindings = new HashMap<KeyBinding, ModContainer>();
-    private List<IKeyHandler> keyHandlers = new ArrayList<IKeyHandler>();
     private HashSet<OverrideInfo> animationSet = new HashSet<OverrideInfo>();
 
     private List<TextureFX> addedTextureFX = new ArrayList<TextureFX>();
@@ -160,9 +165,11 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param minecraftServer
      */
 
-    private OptifineModContainer optifineContainer;
+    private DummyModContainer optifineContainer;
 
     private boolean guiLoaded;
+
+    private boolean serverIsRunning;
 
     public void onPreLoad(Minecraft minecraft)
     {
@@ -173,26 +180,15 @@ public class FMLClientHandler implements IFMLSidedHandler
         try
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
-            optifineContainer = new OptifineModContainer(optifineConfig);
+            String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
+            Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
+            ModMetadata optifineMetadata = MetadataCollection.from(getClass().getResourceAsStream("optifinemod.info")).getMetadataForId("optifine", dummyOptifineMeta);
+            optifineContainer = new DummyModContainer(optifineMetadata);
+            FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion());
         }
         catch (Exception e)
         {
-            // OPTIFINE not found
             optifineContainer = null;
-        }
-        if (optifineContainer != null)
-        {
-            ModMetadata optifineMetadata;
-            try
-            {
-                optifineMetadata = readMetadataFrom(Loader.instance().getModClassLoader().getResourceAsStream("optifinemod.info"), optifineContainer);
-                optifineContainer.setMetadata(optifineMetadata);
-            }
-            catch (Exception e)
-            {
-                //not available
-            }
-            FMLCommonHandler.instance().getFMLLogger().info(String.format("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion()));
         }
         try
         {
@@ -226,48 +222,27 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
-        for (ModContainer mod : Loader.getModList()) {
-            mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
-            for (Render r : RenderManager.field_1233_a.getRendererList().values()) {
-                r.func_4009_a(RenderManager.field_1233_a);
-            }
-        }
-        // Load the key bindings into the settings table
-
-        GameSettings gs = client.field_6304_y;
-        KeyBinding[] modKeyBindings = harvestKeyBindings();
-        KeyBinding[] allKeys = new KeyBinding[gs.field_1564_t.length + modKeyBindings.length];
-        System.arraycopy(gs.field_1564_t, 0, allKeys, 0, gs.field_1564_t.length);
-        System.arraycopy(modKeyBindings, 0, allKeys, gs.field_1564_t.length, modKeyBindings.length);
-        gs.field_1564_t = allKeys;
-        gs.func_6519_a();
-
+        // TODO
+//        for (ModContainer mod : Loader.getModList()) {
+//            mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
+//            for (Render r : RenderManager.field_1233_a.getRendererList().values()) {
+//                r.func_4009_a(RenderManager.field_1233_a);
+//            }
+//        }
         // Mark this as a "first tick"
-
+        KeyBindingRegistry.uploadKeyBindingsToGame(client.field_6304_y);
+        
         firstTick = true;
     }
 
-    public KeyBinding[] harvestKeyBindings() {
-        List<IKeyHandler> allKeys=FMLCommonHandler.instance().gatherKeyBindings();
-        KeyBinding[] keys=new KeyBinding[allKeys.size()];
-        int i=0;
-        for (IKeyHandler key : allKeys) {
-            keys[i++]=(KeyBinding)key.getKeyBinding();
-            keyBindings.put((KeyBinding) key.getKeyBinding(), key.getOwningContainer());
-        }
-        keyHandlers = allKeys;
-        return keys;
-    }
     /**
      * Every tick just before world and other ticks occur
      */
     public void onPreWorldTick()
     {
-        if (client.field_6324_e != null) {
-            // For the client world ticks and game ticks are the same
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
-        }
+        // TODO
+//        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), client., client.field_6313_p, client.field_6324_e);
+//        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
     }
 
     /**
@@ -275,23 +250,19 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onPostWorldTick()
     {
-//        if (client.field_6324_e != null) {
-//            // For the client world ticks and game ticks are the same
-//            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
-//            FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
-//        }
+        // TODO
+//        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), client.field_6324_e, client.field_6313_p, client.field_6324_e);
+//        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME,TickType.WORLDGUI), 0.0f, client.field_6313_p, client.field_6324_e);
     }
 
     public void onWorldLoadTick()
     {
-//        if (client.field_6324_e != null) {
-            if (firstTick)
-            {
-                loadTextures(fallbackTexturePack);
-                firstTick = false;
-            }
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD,TickType.GUILOAD));
-//        }
+        if (firstTick)
+        {
+            loadTextures(fallbackTexturePack);
+            firstTick = false;
+        }
+        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD,TickType.GUILOAD));
     }
 
     public void onRenderTickStart(float partialTickTime)
@@ -346,25 +317,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
-     * Is the offered class and instance of BaseMod and therefore a ModLoader
-     * mod?
-     */
-    public boolean isModLoaderMod(Class<?> clazz)
-    {
-        return BaseMod.class.isAssignableFrom(clazz);
-    }
-
-    /**
-     * Load the supplied mod class into a mod container
-     */
-    public ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile)
-    {
-        @SuppressWarnings("unchecked")
-        Class<? extends BaseMod> bmClazz = (Class<? extends BaseMod>) clazz;
-        return new ModLoaderModContainer(bmClazz, canonicalFile);
-    }
-
-    /**
      * Called to notify that an item was picked up from the world
      *
      * @param entityItem
@@ -372,13 +324,14 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void notifyItemPickup(EntityItem entityItem, EntityPlayer entityPlayer)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsPickupNotification())
-            {
-                mod.getPickupNotifier().notifyPickup(entityItem, entityPlayer);
-            }
-        }
+        // TODO
+//        for (ModContainer mod : Loader.getModList())
+//        {
+//            if (mod.wantsPickupNotification())
+//            {
+//                mod.getPickupNotifier().notifyPickup(entityItem, entityPlayer);
+//            }
+//        }
     }
 
     /**
@@ -396,14 +349,15 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public boolean tryDispensingEntity(World world, double x, double y, double z, int p_56784_7_, int p_56784_8_, ItemStack item)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsToDispense() && mod.getDispenseHandler().dispense(x, y, z, p_56784_7_, p_56784_8_, world, item))
-            {
-                return true;
-            }
-        }
-
+        // TODO
+//        for (ModContainer mod : Loader.getModList())
+//        {
+//            if (mod.wantsToDispense() && mod.getDispenseHandler().dispense(x, y, z, p_56784_7_, p_56784_8_, world, item))
+//            {
+//                return true;
+//            }
+//        }
+//
         return false;
     }
 
@@ -452,13 +406,14 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onItemCrafted(EntityPlayer player, ItemStack craftedItem, IInventory craftingGrid)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsCraftingNotification())
-            {
-                mod.getCraftingHandler().onCrafting(player, craftedItem, craftingGrid);
-            }
-        }
+        // TODO
+//        for (ModContainer mod : Loader.getModList())
+//        {
+//            if (mod.wantsCraftingNotification())
+//            {
+//                mod.getCraftingHandler().onCrafting(player, craftedItem, craftingGrid);
+//            }
+//        }
     }
 
     /**
@@ -469,13 +424,14 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void onItemSmelted(EntityPlayer player, ItemStack smeltedItem)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsCraftingNotification())
-            {
-                mod.getCraftingHandler().onSmelting(player, smeltedItem);
-            }
-        }
+        // TODO
+//        for (ModContainer mod : Loader.getModList())
+//        {
+//            if (mod.wantsCraftingNotification())
+//            {
+//                mod.getCraftingHandler().onSmelting(player, smeltedItem);
+//            }
+//        }
     }
 
     /**
@@ -488,14 +444,15 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public boolean handleChatPacket(Packet3Chat chat)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat))
-            {
-                return true;
-            }
-        }
-
+        // TODO
+//        for (ModContainer mod : Loader.getModList())
+//        {
+//            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat))
+//            {
+//                return true;
+//            }
+//        }
+//
         return false;
     }
 
@@ -509,14 +466,15 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public boolean handleChatPacket(Packet3Chat chat, EntityPlayer player)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat, player))
-            {
-                return true;
-            }
-        }
-
+        // TODO
+//        for (ModContainer mod : Loader.getModList())
+//        {
+//            if (mod.wantsNetworkPackets() && mod.getNetworkHandler().onChat(chat, player))
+//            {
+//                return true;
+//            }
+//        }
+//
         return false;
     }
 
@@ -531,9 +489,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             networkManager.func_972_a(packet);
         }
-        for (ModContainer mod : Loader.getModList()) {
-            mod.getNetworkHandler().onServerLogin(handler);
-        }
+        
+        // TODO
+//        for (ModContainer mod : Loader.getModList()) {
+//            mod.getNetworkHandler().onServerLogin(handler);
+//        }
     }
 
     /**
@@ -549,13 +509,14 @@ public class FMLClientHandler implements IFMLSidedHandler
             handleServerRegistration(packet);
             return;
         }
-
-        ModContainer mod = FMLCommonHandler.instance().getModForChannel(packet.field_44012_a);
-
-        if (mod != null)
-        {
-            mod.getNetworkHandler().onPacket250Packet(packet);
-        }
+        // TODO
+        
+//        ModContainer mod = FMLCommonHandler.instance().getModForChannel(packet.field_44012_a);
+//
+//        if (mod != null)
+//        {
+//            mod.getNetworkHandler().onPacket250Packet(packet);
+//        }
     }
 
     /**
@@ -606,13 +567,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void announceLogin(EntityPlayer player)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsPlayerTracking())
-            {
-                mod.getPlayerTracker().onPlayerLogin(player);
-            }
-        }
+        // TODO
     }
 
     /**
@@ -620,13 +575,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void announceLogout(EntityPlayer player)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsPlayerTracking())
-            {
-                mod.getPlayerTracker().onPlayerLogout(player);
-            }
-        }
+        // TODO
     }
 
     /**
@@ -634,13 +583,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void announceDimensionChange(EntityPlayer player)
     {
-        for (ModContainer mod : Loader.getModList())
-        {
-            if (mod.wantsPlayerTracking())
-            {
-                mod.getPlayerTracker().onPlayerChangedDimension(player);
-            }
-        }
+        // TODO
     }
 
     /**
@@ -692,7 +635,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         info.override = overridingTexturePath;
         info.texture = textureToOverride;
         list.add(info);
-        FMLCommonHandler.instance().getFMLLogger().log(Level.FINE, String.format("Overriding %s @ %d with %s. %d slots remaining",textureToOverride, location, overridingTexturePath, SpriteHelper.freeSlotCount(textureToOverride)));
+        FMLLog.fine("Overriding %s @ %d with %s. %d slots remaining",textureToOverride, location, overridingTexturePath, SpriteHelper.freeSlotCount(textureToOverride));
     }
     /**
      * @param mod
@@ -743,10 +686,10 @@ public class FMLClientHandler implements IFMLSidedHandler
      * @param keyHandler
      * @param allowRepeat
      */
-    public void registerKeyHandler(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
+    public void registerModLoaderKeyHandler(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
-        mlmc.addKeyHandler(new ModLoaderKeyBindingHandler(keyHandler, allowRepeat, mlmc));
+        KeyBindingRegistry.registerKeyBinding(new ModLoaderKeyBindingHandler(keyHandler, allowRepeat, mlmc));
     }
 
     /**
@@ -830,9 +773,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     private void registerAnimatedTexturesFor(ModContainer mod)
     {
-        this.animationCallbackMod=mod;
-        mod.requestAnimations();
-        this.animationCallbackMod=null;
     }
 
     public String getObjectName(Object instance) {
@@ -848,56 +788,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         objectName+=".name";
         return objectName;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#readMetadataFrom(java.io.InputStream, cpw.mods.fml.common.ModContainer)
-     */
-    @Override
-    public ModMetadata readMetadataFrom(InputStream input, ModContainer mod) throws Exception
-    {
-        JsonNode root=new JdomParser().parse(new InputStreamReader(input));
-        List<JsonNode> lst=root.getArrayNode();
-        JsonNode modinfo = null;
-        for (JsonNode tmodinfo : lst) {
-            if (mod.getName().equals(tmodinfo.getStringValue("modid"))) {
-                modinfo = tmodinfo;
-                break;
-            }
-        }
-        if (modinfo == null) {
-            FMLCommonHandler.instance().getFMLLogger().fine(String.format("Unable to process JSON modinfo file for %s", mod.getName()));
-            return null;
-        }
-        ModMetadata meta=new ModMetadata(mod);
-        try {
-            meta.name=modinfo.getStringValue("name");
-            meta.description=modinfo.getStringValue("description").replace("\r", "");
-            meta.version=modinfo.getStringValue("version");
-            meta.credits=modinfo.getStringValue("credits");
-            List<JsonNode> authors=modinfo.getArrayNode("authors");
-            StringBuilder sb=new StringBuilder();
-            for (int i=0; i<authors.size(); i++) {
-                meta.authorList.add(((JsonNode)authors.get(i)).getText());
-            }
-            meta.logoFile=modinfo.getStringValue("logoFile");
-            meta.url=modinfo.getStringValue("url");
-            meta.updateUrl=modinfo.getStringValue("updateUrl");
-            meta.parent=modinfo.getStringValue("parent");
-            List<JsonNode> screenshots=modinfo.getArrayNode("screenshots");
-            meta.screenshots=new String[screenshots.size()];
-            for (int i=0; i<screenshots.size(); i++) {
-                meta.screenshots[i]=((JsonNode)screenshots.get(i)).getText();
-            }
-        } catch (Exception e) {
-            FMLCommonHandler.instance().getFMLLogger().log(Level.FINE, String.format("An error occured reading the info file for %s",mod.getName()), e);
-            if (Item.class.getPackage() != null) //Print the error if we are in MCP so mod devs see it
-            {
-                System.out.println(String.format("An error occured reading the info file for %s",mod.getName()));
-                e.printStackTrace();
-            }
-        }
-        return meta;
     }
 
     public void pruneOldTextureFX(TexturePackBase var1, List<TextureFX> effects)
@@ -1044,7 +934,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public boolean onUpdateTextureEffect(TextureFX effect)
     {
-        Logger log = FMLCommonHandler.instance().getFMLLogger();
         ITextureFX ifx = (effect instanceof ITextureFX ? ((ITextureFX)effect) : null);
 
         if (ifx != null && ifx.getErrored())
@@ -1064,7 +953,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (Exception e)
         {
-            log.warning(String.format("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name));
+            FMLLog.log.warning("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name);
             if (ifx != null)
             {
                 ifx.setErrored(true);
@@ -1080,7 +969,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
             if (effect.field_1127_a.length != target)
             {
-                log.warning(String.format("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target));
+                FMLLog.log.warning("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target);
                 ifx.setErrored(true);
                 return false;
             }

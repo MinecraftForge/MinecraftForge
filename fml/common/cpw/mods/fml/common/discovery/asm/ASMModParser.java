@@ -110,4 +110,9 @@ public class ASMModParser
     {
         this.baseModProperties = foundProperties;
     }
+
+    public String getBaseModProperties()
+    {
+        return this.baseModProperties;
+    }
 }

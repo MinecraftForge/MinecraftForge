@@ -9,7 +9,7 @@ import java.util.zip.ZipFile;
 
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainerFactory;
@@ -17,12 +17,11 @@ import cpw.mods.fml.common.discovery.asm.ASMModParser;
 
 public class JarDiscoverer implements ITypeDiscoverer
 {
-    private static Logger log = Loader.log;
     @Override
     public List<ModContainer> discover(ModCandidate candidate)
     {
         List<ModContainer> foundMods = Lists.newArrayList();
-        log.fine(String.format("Examining file %s for potential mods", candidate.getModContainer().getName()));
+        FMLLog.log.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
         ZipFile jar = null;
         try
         {
@@ -32,7 +31,7 @@ public class JarDiscoverer implements ITypeDiscoverer
             MetadataCollection mc = null;
             if (modInfo != null)
             {
-                log.finer(String.format("Located mcmod.info file in file %s", candidate.getModContainer().getName()));
+                FMLLog.log.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(jar.getInputStream(modInfo));
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
@@ -46,24 +45,14 @@ public class JarDiscoverer implements ITypeDiscoverer
                     if (container!=null)
                     {
                         foundMods.add(container);
-                        if (mc!=null)
-                        {
-                            container.bindMetadata(mc);
-                        }
+                        container.bindMetadata(mc);
                     }
-                }
-
-                match = modClass.matcher(ze.getName());
-
-                if (match.matches())
-                {
-                    log.warning(String.format("Candidate mod %s found in mod file %s but is missing mod information", ze.getName().replace("/","."), candidate.getModContainer().getName()));
                 }
             }
         }
         catch (Exception e)
         {
-            log.warning(String.format("Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName()));
+            FMLLog.log.warning("Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
         }
         finally
         {

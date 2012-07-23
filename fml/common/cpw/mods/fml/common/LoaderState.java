@@ -51,7 +51,7 @@ public enum LoaderState
     {
         try
         {
-            return eventClass.getConstructor(Object[].class).newInstance(eventData);
+            return eventClass.getConstructor(Object[].class).newInstance((Object)eventData);
         }
         catch (Exception e)
         {

@@ -47,6 +47,8 @@ public class FMLEmbeddingRelauncher
         // Now we re-inject the home into the "new" minecraft under our control
         Class<? super Object> client = ReflectionHelper.getClass(clientLoader, "net.minecraft.client.Minecraft");
         ReflectionHelper.setPrivateValue(client, null, minecraftHome, "field_6275_Z", "ap", "minecraftDir");
+        Class<? super Object> log = ReflectionHelper.getClass(clientLoader, "cpw.mods.fml.common.FMLLog");
+        ReflectionHelper.setPrivateValue(log, null, minecraftHome, "minecraftHome");
 
         try
         {
@@ -54,6 +56,7 @@ public class FMLEmbeddingRelauncher
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             // Hmmm
         }
     }

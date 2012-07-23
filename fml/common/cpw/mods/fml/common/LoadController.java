@@ -1,21 +1,18 @@
 package cpw.mods.fml.common;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.LoaderState.ModState;
-import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 
 public class LoadController
@@ -24,9 +21,8 @@ public class LoadController
     private EventBus masterChannel;
     private ImmutableMap<String,EventBus> eventChannels;
     private LoaderState state;
-    private Multimap<String, ModState> modStates = HashMultimap.create();
-    private Multimap<ModContainer, Throwable> errors = HashMultimap.create();
-    private Logger log;
+    private Multimap<String, ModState> modStates = ArrayListMultimap.create();
+    private Multimap<String, Throwable> errors = ArrayListMultimap.create();
     private Map<String, ModContainer> modList;
     
     public LoadController(Loader loader)
@@ -35,7 +31,6 @@ public class LoadController
         this.modList = loader.getIndexedModList();
         this.masterChannel = new EventBus("FMLMainChannel");
         this.masterChannel.register(this);
-        this.log = Loader.log;
         
         Builder<String, EventBus> eventBus = ImmutableMap.builder();
         
@@ -45,11 +40,13 @@ public class LoadController
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)
             {
+                FMLLog.fine("Activating mod %s", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 eventBus.put(mod.getModId(), bus);
             }
             else
             {
+                FMLLog.warning("Mod %s has been disabled through configuration", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
@@ -60,7 +57,7 @@ public class LoadController
         state = LoaderState.CONSTRUCTING;
     }
 
-    public void runNextPhase(Object... eventData)
+    public void distributeStateMessage(Object... eventData)
     {
         if (state.hasEvent())
         {
@@ -68,18 +65,33 @@ public class LoadController
         }
     }
     
-    public void transition()
+    public void transition(LoaderState desiredState)
     {
+        LoaderState oldState = state;
         state = state.transition(!errors.isEmpty());
+        if (state != desiredState)
+        {
+            FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
+            StringBuilder sb = new StringBuilder();
+            printModStates(sb);
+            FMLLog.severe(sb.toString());
+            FMLLog.severe("The following problems were captured during this phase");
+            for (Entry<String, Throwable> error : errors.entries())
+            {
+                FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
+            }
+            
+            throw new LoaderException();
+        }
     }
     
     @Subscribe
-    void propogateStateMessage(FMLStateEvent stateEvent)
+    public void propogateStateMessage(FMLStateEvent stateEvent)
     {
         for (Map.Entry<String,EventBus> entry : eventChannels.entrySet())
         {
             entry.getValue().post(stateEvent);
-            if (errors.isEmpty())
+            if (!errors.containsKey(entry.getKey()))
             {
                 modStates.put(entry.getKey(), stateEvent.getModState());
             }
@@ -92,17 +104,7 @@ public class LoadController
 
     public void errorOccurred(ModContainer modContainer, Throwable exception)
     {
-        errors.put(modContainer, exception);
-    }
-
-    public void log(Level level, String message, Object... rest)
-    {
-        log.log(level, String.format(message,rest));
-    }
-
-    public void log(Level level, Throwable error, String message, Object... rest)
-    {
-        log.log(level, String.format(message,rest), error);
+        errors.put(modContainer.getModId(), exception);
     }
 
     public void printModStates(StringBuilder ret)

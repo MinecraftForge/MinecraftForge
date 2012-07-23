@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +39,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.registry.WorldRegistry;
 
 
 /**
@@ -84,68 +86,20 @@ public class FMLCommonHandler
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
 
-    private PriorityQueue<TickQueueElement> tickHandlers = new PriorityQueue<TickQueueElement>();
-
     private List<IScheduledTickHandler> scheduledTicks = new ArrayList<IScheduledTickHandler>();
-
-    private Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
-    /**
-     * We register our delegate here
-     * @param handler
-     */
-
-    private static class TickQueueElement implements Comparable<TickQueueElement>
-    {
-        static long tickCounter = 0;
-        public TickQueueElement(IScheduledTickHandler ticker)
-        {
-            this.ticker = ticker;
-            update();
-        }
-        @Override
-        public int compareTo(TickQueueElement o)
-        {
-            return (int)(next - o.next);
-        }
-
-        public void update()
-        {
-            next = tickCounter + Math.max(ticker.nextTickSpacing(),1);
-        }
-
-        private long next;
-        private IScheduledTickHandler ticker;
-
-        public boolean scheduledNow()
-        {
-            return tickCounter >= next;
-        }
-    }
 
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
-        getFMLLogger().info("Attempting early MinecraftForge initialization");
+        FMLLog.info("Attempting early MinecraftForge initialization");
         callForgeMethod("initialize");
-        getFMLLogger().info("Completed early MinecraftForge initialization");
+        FMLLog.info("Completed early MinecraftForge initialization");
     }
 
     public void rescheduleTicks()
     {
         sidedDelegate.profileStart("modTickScheduling");
-        TickQueueElement.tickCounter++;
-        scheduledTicks.clear();
-        while (true)
-        {
-            if (tickHandlers.size()==0 || !tickHandlers.peek().scheduledNow())
-            {
-                break;
-            }
-            TickQueueElement tickQueueElement  = tickHandlers.poll();
-            tickQueueElement.update();
-            tickHandlers.offer(tickQueueElement);
-            scheduledTicks.add(tickQueueElement.ticker);
-        }
+        TickRegistry.updateTickQueue(scheduledTicks);
         sidedDelegate.profileEnd();
     }
     public void tickStart(EnumSet<TickType> ticks, Object ... data)
@@ -190,18 +144,6 @@ public class FMLCommonHandler
         sidedDelegate.profileEnd();
     }
 
-    public List<IKeyHandler> gatherKeyBindings() {
-        List<IKeyHandler> allKeys=new ArrayList<IKeyHandler>();
-        for (ModContainer mod : Loader.getModList())
-        {
-            allKeys.addAll(mod.getKeys());
-        }
-        for (ModContainer mod : auxilliaryContainers)
-        {
-            allKeys.addAll(mod.getKeys());
-        }
-        return allKeys;
-    }
     /**
      * @return the instance
      */
@@ -322,8 +264,7 @@ public class FMLCommonHandler
         }
         catch (UnsupportedEncodingException e)
         {
-            Loader.log.warning("Error building registration list");
-            Loader.log.throwing("FMLHooks", "getPacketRegistry", e);
+            FMLLog.log.log(Level.WARNING, e, "Error building registration list");
             return new byte[0];
         }
     }
@@ -345,7 +286,7 @@ public class FMLCommonHandler
      */
     public Logger getFMLLogger()
     {
-        return Loader.log;
+        return FMLLog.log.getLogger();
     }
 
     /**
@@ -360,27 +301,6 @@ public class FMLCommonHandler
             "or installing some other mod that edits Minecraft.class on top of FML such as ModLoader, do not do this. Reinstall FML properly and try again.");
         }
         return sidedDelegate.getMinecraftLogger();
-    }
-
-    /**
-     * Is this a modloader mod?
-     * @param clazz
-     * @return
-     */
-    public boolean isModLoaderMod(Class<?> clazz)
-    {
-        return sidedDelegate.isModLoaderMod(clazz);
-    }
-
-    /**
-     * Load the modloader mod
-     * @param clazz
-     * @param canonicalPath
-     * @return
-     */
-    public ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile)
-    {
-        return sidedDelegate.loadBaseModMod(clazz, canonicalFile);
     }
 
     public File getMinecraftRootDirectory() {
@@ -457,12 +377,6 @@ public class FMLCommonHandler
     public int fuelLookup(int itemId, int itemDamage)
     {
         int fv = 0;
-
-        for (ModContainer mod : Loader.getModList())
-        {
-            fv = Math.max(fv, mod.lookupFuelValue(itemId, itemDamage));
-        }
-
         return fv;
     }
 
@@ -573,35 +487,12 @@ public class FMLCommonHandler
 
     public void handleWorldGeneration(int chunkX, int chunkZ, long worldSeed, Object... data)
     {
-        Random fmlRandom = new Random(worldSeed);
-        long xSeed = fmlRandom.nextLong() >> 2 + 1L;
-        long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ worldSeed);
-
-        for (IWorldGenerator generator : worldGenerators)
-        {
-            generator.generate(fmlRandom, chunkX, chunkZ, data);
-        }
-    }
-
-    public void registerTickHandler(ITickHandler handler)
-    {
-        registerScheduledTickHandler(new SingleIntervalHandler(handler));
-    }
-
-    public void registerScheduledTickHandler(IScheduledTickHandler handler)
-    {
-        tickHandlers.add(new TickQueueElement(handler));
-    }
-
-    public void registerWorldGenerator(IWorldGenerator generator)
-    {
-        worldGenerators.add(generator);
+        WorldRegistry.generateWorld(chunkX, chunkZ, worldSeed, data);
     }
 
     public void onPostServerTick()
     {
-        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.GAME));
+        tickEnd(EnumSet.of(TickType.GAME));
     }
 
     /**
@@ -609,12 +500,12 @@ public class FMLCommonHandler
      */
     public void onPostWorldTick(Object world)
     {
-        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.WORLD), world);
+        tickEnd(EnumSet.of(TickType.WORLD), world);
     }
 
     public void onPreServerTick()
     {
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GAME));
+        tickStart(EnumSet.of(TickType.GAME));
     }
 
     /**
@@ -622,11 +513,11 @@ public class FMLCommonHandler
      */
     public void onPreWorldTick(Object world)
     {
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLD), world);
+        tickStart(EnumSet.of(TickType.WORLD), world);
     }
 
     public void onWorldLoadTick()
     {
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.WORLDLOAD));
+        tickStart(EnumSet.of(TickType.WORLDLOAD));
     }
 }

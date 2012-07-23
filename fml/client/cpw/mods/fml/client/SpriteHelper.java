@@ -16,10 +16,11 @@ package cpw.mods.fml.client;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 
 /**
@@ -99,7 +100,7 @@ public class SpriteHelper
         if (slots == null)
         {
             Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
-            Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+            FMLLog.log.log(Level.SEVERE, ex, "A critical error has been detected with sprite overrides");
             FMLCommonHandler.instance().raiseException(ex,"Invalid request to getUniqueSpriteIndex",true);
         }
 
@@ -108,7 +109,7 @@ public class SpriteHelper
         if (ret == -1)
         {
             Exception ex = new Exception(String.format("No more sprite indicies left for: %s", path));
-            Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+            FMLLog.log.log(Level.SEVERE, ex, "There are no sprite indicies left for %s", path);
             FMLCommonHandler.instance().raiseException(ex,"No more sprite indicies left", true);
         }
         return ret;
