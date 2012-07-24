@@ -4,11 +4,17 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.Mod.Block;
+import cpw.mods.fml.common.ModContainer;
 
-public class WorldRegistry
+public class GameRegistry
 {
-
+    private static Multimap<ModContainer,BlockProxy> blockRegistry = ArrayListMultimap.create();
+    private static Multimap<ModContainer,ItemProxy> itemRegistry = ArrayListMultimap.create();
     private static Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
 
     public static void registerWorldGenerator(IWorldGenerator generator)
@@ -28,6 +34,18 @@ public class WorldRegistry
             generator.generate(fmlRandom, chunkX, chunkZ, data);
         }
 
+    }
+
+    public static Object buildBlock(ModContainer container, Class<?> type, Block annotation) throws Exception
+    {
+        Object o = type.getConstructor(int.class).newInstance(250);
+        registerBlock((BlockProxy)o);
+        return o;
+    }
+
+    public static void registerBlock(BlockProxy block)
+    {
+        
     }
 
 }

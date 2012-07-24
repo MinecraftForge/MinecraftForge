@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 
@@ -40,6 +42,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.functions.ModIdFunction;
@@ -320,7 +323,7 @@ public class Loader
         }
     }
 
-    public static List<ModContainer> getModList()
+    public List<ModContainer> getModList()
     {
         return ImmutableList.copyOf(instance().mods);
     }
@@ -417,7 +420,9 @@ public class Loader
     public String getCrashInformation()
     {
         StringBuilder ret = new StringBuilder();
-        Joiner.on('\n').appendTo(ret, FMLCommonHandler.instance().getBrandingStrings(""));
+        List<String> branding = FMLCommonHandler.instance().getBrandings();
+        
+        Joiner.on(' ').skipNulls().appendTo(ret, branding.subList(1, branding.size()));
         if (modController!=null)
         {
             modController.printModStates(ret);
@@ -513,6 +518,28 @@ public class Loader
         modController.transition(LoaderState.POSTINITIALIZATION);
         modController.distributeStateMessage();
         modController.transition(LoaderState.LOADCOMPLETE);
+        modController.distributeStateMessage();
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size()==1 ? "" : "s");
+    }
+
+    public Callable getCallableCrashInformation()
+    {
+        return new Callable<String>() {
+            @Override
+            public String call() throws Exception
+            {
+                return getCrashInformation();
+            }
+        };
+    }
+
+    public List<ModContainer> getActiveModList()
+    {
+        return modController.getActiveModList();
+    }
+
+    public ModState getModState(ModContainer selectedMod)
+    {
+        return modController.getModState(selectedMod);
     }
 }

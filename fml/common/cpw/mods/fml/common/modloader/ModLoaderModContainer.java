@@ -60,7 +60,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.common.registry.WorldRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
@@ -348,7 +348,7 @@ public class ModLoaderModContainer implements ModContainer
     {
         ArrayList<A> modList = new ArrayList<A>();
 
-        for (ModContainer mc : Loader.getModList())
+        for (ModContainer mc : Loader.instance().getActiveModList())
         {
             if (mc instanceof ModLoaderModContainer && mc.getMod()!=null)
             {
@@ -508,7 +508,7 @@ public class ModLoaderModContainer implements ModContainer
             this.guiTickHandler.setMod(mod);
             TickRegistry.registerTickHandler(this.gameTickHandler);
             TickRegistry.registerTickHandler(this.guiTickHandler);
-            WorldRegistry.registerWorldGenerator(this.mod);
+            GameRegistry.registerWorldGenerator(this.mod);
         }
         catch (Exception e)
         {

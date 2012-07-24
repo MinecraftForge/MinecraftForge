@@ -55,7 +55,7 @@ public class GuiModList extends GuiScreen
         this.mainMenu=mainMenu;
         this.mods=new ArrayList<ModContainer>();
         FMLClientHandler.instance().addSpecialModEntries(mods);
-        for (ModContainer mod : Loader.getModList()) {
+        for (ModContainer mod : Loader.instance().getModList()) {
             if (mod.getMetadata()!=null && mod.getMetadata().parentMod != null) {
                 continue;
             }
@@ -123,6 +123,7 @@ public class GuiModList extends GuiScreen
                 shifty += 12;
                 
                 shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getMetadata().version, selectedMod.getVersion()), offset, shifty);
+                shifty = drawLine(String.format("Mod State: %s", Loader.instance().getModState(selectedMod)), offset, shifty);
                 if (!selectedMod.getMetadata().credits.isEmpty()) {
                    shifty = drawLine(String.format("Credits: %s", selectedMod.getMetadata().credits), offset, shifty);
                 }
@@ -134,8 +135,9 @@ public class GuiModList extends GuiScreen
                 offset = ( this.listWidth + this.field_951_c ) / 2;
                 this.func_548_a(this.field_6451_g, selectedMod.getName(), offset, 35, 0xFFFFFF);
                 this.func_548_a(this.field_6451_g, String.format("Version: %s",selectedMod.getVersion()), offset, 45, 0xFFFFFF);
-                this.func_548_a(this.field_6451_g, "No mod information found", offset, 55, 0xDDDDDD);
-                this.func_548_a(this.field_6451_g, "Ask your mod author to provide a mod .info file", offset, 65, 0xDDDDDD);
+                this.func_548_a(this.field_6451_g, String.format("Mod State: %s",Loader.instance().getModState(selectedMod)), offset, 55, 0xFFFFFF);
+                this.func_548_a(this.field_6451_g, "No mod information found", offset, 65, 0xDDDDDD);
+                this.func_548_a(this.field_6451_g, "Ask your mod author to provide a mod mcmod.info file", offset, 75, 0xDDDDDD);
             }
         }
         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);

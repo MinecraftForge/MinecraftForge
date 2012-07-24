@@ -36,6 +36,8 @@ import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.FMLRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class FMLModContainer implements ModContainer
 {
@@ -229,6 +231,7 @@ public class FMLModContainer implements ModContainer
         for (Object o : annotations.get(Block.class))
         {
             Field f = (Field) o;
+            f.set(modInstance, GameRegistry.buildBlock(this, f.getType(), f.getAnnotation(Block.class)));
         }
     }
 

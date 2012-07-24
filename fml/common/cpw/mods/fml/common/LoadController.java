@@ -1,5 +1,6 @@
 package cpw.mods.fml.common;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -7,7 +8,10 @@ import java.util.logging.Level;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -24,6 +28,8 @@ public class LoadController
     private Multimap<String, ModState> modStates = ArrayListMultimap.create();
     private Multimap<String, Throwable> errors = ArrayListMultimap.create();
     private Map<String, ModContainer> modList;
+    private List<ModContainer> activeModList = Lists.newArrayList();
+    private String activeContainer;
     
     public LoadController(Loader loader)
     {
@@ -34,13 +40,14 @@ public class LoadController
         
         Builder<String, EventBus> eventBus = ImmutableMap.builder();
         
-        for (ModContainer mod : Loader.getModList())
+        for (ModContainer mod : loader.getModList())
         {
             EventBus bus = new EventBus(mod.getModId());
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)
             {
                 FMLLog.fine("Activating mod %s", mod.getModId());
+                activeModList.add(mod);
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 eventBus.put(mod.getModId(), bus);
             }
@@ -59,6 +66,11 @@ public class LoadController
 
     public void distributeStateMessage(Object... eventData)
     {
+        if (state==LoaderState.ERRORED)
+        {
+            throw new LoaderException();
+        }
+        
         if (state.hasEvent())
         {
             masterChannel.post(state.getEvent(eventData));
@@ -81,16 +93,23 @@ public class LoadController
                 FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
             }
             
-            throw new LoaderException();
+            // Throw embedding the first error (usually the only one)
+            throw new LoaderException(errors.values().iterator().next());
         }
     }
     
+    public ModContainer activeContainer()
+    {
+        return activeContainer!=null ? modList.get(activeContainer) : null;
+    }
     @Subscribe
     public void propogateStateMessage(FMLStateEvent stateEvent)
     {
         for (Map.Entry<String,EventBus> entry : eventChannels.entrySet())
         {
+            activeContainer = entry.getKey();
             entry.getValue().post(stateEvent);
+            activeContainer = null;
             if (!errors.containsKey(entry.getKey()))
             {
                 modStates.put(entry.getKey(), stateEvent.getModState());
@@ -115,5 +134,15 @@ public class LoadController
             ret.append("\n\t").append(mod.getName()).append(" (").append(mod.getSource().getName()).append(") ");
             Joiner.on("->"). appendTo(ret, modStates.get(modId));
         }
+    }
+
+    public List<ModContainer> getActiveModList()
+    {
+        return activeModList;
+    }
+
+    public ModState getModState(ModContainer selectedMod)
+    {
+        return Iterables.getLast(modStates.get(selectedMod.getModId()), ModState.AVAILABLE);
     }
 }
