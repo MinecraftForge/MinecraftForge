@@ -60,6 +60,7 @@ public class FMLRegistry
 
     public static void registerBlock(Block block)
     {
+        GameRegistry.registerBlock((BlockProxy)block);
         instance.registerBlock(block);
     }
 

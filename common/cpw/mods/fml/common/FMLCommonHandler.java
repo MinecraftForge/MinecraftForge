@@ -38,9 +38,16 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import net.minecraft.src.CallableMinecraftVersion;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.common.registry.WorldRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 
 /**
@@ -158,7 +165,7 @@ public class FMLCommonHandler
      */
     public ModContainer findContainerFor(Object mod)
     {
-        for (ModContainer mc : Loader.getModList())
+        for (ModContainer mc : Loader.instance().getActiveModList())
         {
             if (mc.matches(mod))
             {
@@ -405,6 +412,7 @@ public class FMLCommonHandler
 
     private Class<?> forge;
     private boolean noForge;
+    private List<String> brandings;
 
     private Class<?> findMinecraftForge()
     {
@@ -442,27 +450,35 @@ public class FMLCommonHandler
      * @param string
      * @return
      */
-    public String[] getBrandingStrings(String mcVersion)
+    public void computeBranding()
     {
-        ArrayList<String> brandings=new ArrayList<String>();
-        brandings.add(mcVersion);
-        brandings.add(Loader.instance().getFMLVersionString());
-        String forgeVersion = (String)callForgeMethod("getVersionString");
-        if (forgeVersion != null)
+        if (brandings == null)
         {
-            brandings.add(forgeVersion);
+            Builder brd = ImmutableList.<String>builder();
+            brd.add("Minecraft "+CallableMinecraftVersion.func_55337_a());
+            brd.add(Loader.instance().getFMLVersionString());
+            brd.add(Strings.nullToEmpty((String)callForgeMethod("getVersionString")));
+            brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
+            try {
+                Properties props=new Properties();
+                props.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
+                brd.add(props.getProperty("fmlbranding"));
+            } catch (Exception ex) {
+                // Ignore - no branding file found
+            }
+            int tModCount = Loader.instance().getModList().size();
+            int aModCount = Loader.instance().getActiveModList().size();
+            brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount!=1 ? "s" :"", aModCount, aModCount!=1 ? "s" :"" ));
+            brandings = brd.build();
         }
-        brandings.addAll(sidedDelegate.getAdditionalBrandingInformation());
-        try {
-            Properties props=new Properties();
-            props.load(FMLCommonHandler.class.getClassLoader().getResourceAsStream("fmlbranding.properties"));
-            brandings.add(props.getProperty("fmlbranding"));
-        } catch (Exception ex) {
-            // Ignore - no branding file found
+    }
+    public List<String> getBrandings()
+    {
+        if (brandings == null)
+        {
+            computeBranding();
         }
-        brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()!=1?"s":""));
-        Collections.reverse(brandings);
-        return brandings.toArray(new String[brandings.size()]);
+        return ImmutableList.copyOf(brandings);
     }
 
     /**
@@ -487,7 +503,7 @@ public class FMLCommonHandler
 
     public void handleWorldGeneration(int chunkX, int chunkZ, long worldSeed, Object... data)
     {
-        WorldRegistry.generateWorld(chunkX, chunkZ, worldSeed, data);
+        GameRegistry.generateWorld(chunkX, chunkZ, worldSeed, data);
     }
 
     public void onPostServerTick()

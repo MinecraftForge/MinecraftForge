@@ -18,6 +18,8 @@ import java.util.List;
 
 import com.google.common.eventbus.EventBus;
 
+import cpw.mods.fml.common.LoaderState.ModState;
+
 /**
  * The container that wraps around mods in the system.
  * <p>

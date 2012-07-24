@@ -43,6 +43,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
@@ -173,6 +174,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     public void onPreLoad(Minecraft minecraft)
     {
+        if (minecraft.func_55063_q())
+        {
+            FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
+            haltGame("FML will not run in demo mode", new RuntimeException());
+            return;
+        }
         client = minecraft;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().beginLoading(this);
@@ -205,6 +212,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void haltGame(String message, Throwable t)
     {
         client.func_55071_b(new CrashReport(message, t));
+        throw Throwables.propagate(t);
     }
     /**
      * Called a bit later on during initialization to finish loading mods
@@ -740,7 +748,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     public void registerTextureOverrides(RenderEngine renderer) {
-        for (ModContainer mod : Loader.getModList()) {
+        for (ModContainer mod : Loader.instance().getActiveModList()) {
             registerAnimatedTexturesFor(mod);
         }
 

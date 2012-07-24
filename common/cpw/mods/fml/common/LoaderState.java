@@ -21,7 +21,7 @@ public enum LoaderState
     PREINITIALIZATION("Pre-initializing mods", FMLPreInitializationEvent.class),
     INITIALIZATION("Initializing mods", FMLInitializationEvent.class),
     POSTINITIALIZATION("Post-initializing mods", FMLPostInitializationEvent.class),
-    LOADCOMPLETE("Mod loading complete", null),
+    LOADCOMPLETE("Mod loading complete", FMLLoadCompleteEvent.class),
     ERRORED("Mod Loading errored",null);
 
     private Class<? extends FMLStateEvent> eventClass;
