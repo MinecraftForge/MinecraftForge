@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/src/CrashReport.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src-work/minecraft/net/minecraft/src/CrashReport.java	0000-00-00 00:00:00.000000000 -0000
+@@ -12,9 +12,12 @@
+ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.concurrent.Callable;
++import java.util.concurrent.Executors;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ 
++import cpw.mods.fml.common.Loader;
++
+ public class CrashReport
+ {
+     private final String field_55376_a;
+@@ -36,6 +39,7 @@
+         this.func_55366_a("Java Version", new CallableJavaInfo(this));
+         this.func_55366_a("Java VM Version", new CallableJavaInfo2(this));
+         this.func_55366_a("Memory", new CallableMemoryInfo(this));
++        this.func_55366_a("FML", Loader.instance().getCallableCrashInformation());
+     }
+ 
+     public void func_55366_a(String p_55366_1_, Callable p_55366_2_)
