@@ -121,7 +121,7 @@
 +     
 +    public void addEffect(EntityFX effect, Object effectObject)
 +    {
-+        if (effectObject == null || !(effect instanceof EntityDiggingFX || effect instanceof EntityBreakingFX))
++        if (effectObject == null || !(effect instanceof EntityDiggingFX || effect instanceof ITextureProvider || effect instanceof EntityBreakingFX))
 +        {
 +            addEffect(effect);
 +            return;
