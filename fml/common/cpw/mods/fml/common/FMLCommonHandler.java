@@ -271,7 +271,7 @@ public class FMLCommonHandler
         }
         catch (UnsupportedEncodingException e)
         {
-            FMLLog.log.log(Level.WARNING, e, "Error building registration list");
+            FMLLog.log(Level.WARNING, e, "Error building registration list");
             return new byte[0];
         }
     }
@@ -293,7 +293,7 @@ public class FMLCommonHandler
      */
     public Logger getFMLLogger()
     {
-        return FMLLog.log.getLogger();
+        return FMLLog.getLogger();
     }
 
     /**

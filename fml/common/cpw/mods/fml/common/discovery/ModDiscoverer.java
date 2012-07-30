@@ -26,12 +26,14 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.relauncher.RelaunchLibraryManager;
 
 public class ModDiscoverer
 {
@@ -41,10 +43,11 @@ public class ModDiscoverer
 
     public void findClasspathMods(ModClassLoader modClassLoader)
     {
+        List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries()).addAll(RelaunchLibraryManager.getLibraries()).build();
         File[] minecraftSources = modClassLoader.getParentSources();
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
         {
-            FMLLog.log.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());
+            FMLLog.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());
             candidates.add(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR));
         }
         else
@@ -53,19 +56,19 @@ public class ModDiscoverer
             {
                 if (minecraftSources[i].isFile())
                 {
-                    if (modClassLoader.getDefaultLibraries().contains(minecraftSources[i].getName()))
+                    if (knownLibraries.contains(minecraftSources[i].getName()))
                     {
-                        FMLLog.log.fine("Skipping known library file %s", minecraftSources[i].getAbsolutePath());
-                    } 
+                        FMLLog.fine("Skipping known library file %s", minecraftSources[i].getAbsolutePath());
+                    }
                     else
                     {
-                        FMLLog.log.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
+                        FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
                         candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, true));
                     }
                 }
                 else if (minecraftSources[i].isDirectory())
                 {
-                    FMLLog.log.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
+                    FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
                     candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, true));
                 }
             }
@@ -83,7 +86,7 @@ public class ModDiscoverer
         {
             if (modFile.isDirectory())
             {
-                FMLLog.log.fine("Found a candidate mod directory %s", modFile.getName());
+                FMLLog.fine("Found a candidate mod directory %s", modFile.getName());
                 candidates.add(new ModCandidate(modFile, modFile, ContainerType.DIR));
             }
             else
@@ -92,12 +95,12 @@ public class ModDiscoverer
 
                 if (matcher.matches())
                 {
-                    FMLLog.log.fine("Found a candidate zip or jar file %s", matcher.group(0));
+                    FMLLog.fine("Found a candidate zip or jar file %s", matcher.group(0));
                     candidates.add(new ModCandidate(modFile, modFile, ContainerType.JAR));
                 }
                 else
                 {
-                    FMLLog.log.fine("Ignoring unknown file %s in mods directory", modFile.getName());
+                    FMLLog.fine("Ignoring unknown file %s in mods directory", modFile.getName());
                 }
             }
         }
@@ -106,7 +109,7 @@ public class ModDiscoverer
     public List<ModContainer> identifyMods()
     {
         List<ModContainer> modList = Lists.newArrayList();
-        
+
         for (ModCandidate candidate : candidates)
         {
             try
@@ -123,7 +126,7 @@ public class ModDiscoverer
                 Throwables.propagate(t);
             }
         }
-        
+
         return modList;
     }
 }

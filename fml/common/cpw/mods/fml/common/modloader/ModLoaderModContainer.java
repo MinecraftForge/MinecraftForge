@@ -104,7 +104,7 @@ public class ModLoaderModContainer implements ModContainer
         this.gameTickHandler = new BaseModTicker(instance, false);
         this.guiTickHandler = new BaseModTicker(instance, true);
     }
-    
+
     /**
      *
      */
@@ -122,14 +122,14 @@ public class ModLoaderModContainer implements ModContainer
         {
             try
             {
-                FMLLog.log.fine("Reading existing configuration file for %s : %s", modClazzName, modConfig.getName());
+                FMLLog.fine("Reading existing configuration file for %s : %s", modClazzName, modConfig.getName());
                 FileReader configReader = new FileReader(modConfig);
                 props.load(configReader);
                 configReader.close();
             }
             catch (Exception e)
             {
-                FMLLog.log.log(Level.SEVERE, e, "Error occured reading mod configuration file %s", modConfig.getName());
+                FMLLog.log(Level.SEVERE, e, "Error occured reading mod configuration file %s", modConfig.getName());
                 throw new LoaderException(e);
             }
             existingConfigFound = true;
@@ -161,17 +161,17 @@ public class ModLoaderModContainer implements ModContainer
                     defaultValue = f.get(null);
                     propertyValue = props.getProperty(propertyName, extractValue(defaultValue));
                     Object currentValue = parseValue(propertyValue, property, f.getType(), propertyName, modClazzName);
-                    FMLLog.log.finest("Configuration for %s.%s found values default: %s, configured: %s, interpreted: %s", modClazzName, propertyName, defaultValue, propertyValue, currentValue);
+                    FMLLog.finest("Configuration for %s.%s found values default: %s, configured: %s, interpreted: %s", modClazzName, propertyName, defaultValue, propertyValue, currentValue);
 
                     if (currentValue != null && !currentValue.equals(defaultValue))
                     {
-                        FMLLog.log.finest("Configuration for %s.%s value set to: %s", modClazzName, propertyName, currentValue);
+                        FMLLog.finest("Configuration for %s.%s value set to: %s", modClazzName, propertyName, currentValue);
                         f.set(null, currentValue);
                     }
                 }
                 catch (Exception e)
                 {
-                    FMLLog.log.log(Level.SEVERE, e, "Invalid configuration found for %s in %s", propertyName, modConfig.getName());
+                    FMLLog.log(Level.SEVERE, e, "Invalid configuration found for %s in %s", propertyName, modConfig.getName());
                     throw new LoaderException(e);
                 }
                 finally
@@ -208,22 +208,22 @@ public class ModLoaderModContainer implements ModContainer
         {
             if (!mlPropFound && !existingConfigFound)
             {
-                FMLLog.log.fine("No MLProp configuration for %s found or required. No file written", modClazzName);
+                FMLLog.fine("No MLProp configuration for %s found or required. No file written", modClazzName);
                 return;
             }
 
             if (!mlPropFound && existingConfigFound)
             {
                 File mlPropBackup = new File(modConfig.getParent(),modConfig.getName()+".bak");
-                FMLLog.log.fine("MLProp configuration file for %s found but not required. Attempting to rename file to %s", modClazzName, mlPropBackup.getName());
+                FMLLog.fine("MLProp configuration file for %s found but not required. Attempting to rename file to %s", modClazzName, mlPropBackup.getName());
                 boolean renamed = modConfig.renameTo(mlPropBackup);
                 if (renamed)
                 {
-                    FMLLog.log.fine("Unused MLProp configuration file for %s renamed successfully to %s", modClazzName, mlPropBackup.getName());
+                    FMLLog.fine("Unused MLProp configuration file for %s renamed successfully to %s", modClazzName, mlPropBackup.getName());
                 }
                 else
                 {
-                    FMLLog.log.fine("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", modClazzName, mlPropBackup.getName());
+                    FMLLog.fine("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", modClazzName, mlPropBackup.getName());
                 }
 
                 return;
@@ -233,11 +233,11 @@ public class ModLoaderModContainer implements ModContainer
                 FileWriter configWriter = new FileWriter(modConfig);
                 props.store(configWriter, comments.toString());
                 configWriter.close();
-                FMLLog.log.fine("Configuration for %s written to %s", modClazzName, modConfig.getName());
+                FMLLog.fine("Configuration for %s written to %s", modClazzName, modConfig.getName());
             }
             catch (IOException e)
             {
-                FMLLog.log.log(Level.SEVERE, e, "Error trying to write the config file %s", modConfig.getName());
+                FMLLog.log(Level.SEVERE, e, "Error trying to write the config file %s", modConfig.getName());
                 throw new LoaderException(e);
             }
         }
@@ -288,7 +288,7 @@ public class ModLoaderModContainer implements ModContainer
 
             if (n.doubleValue() < property.min() || n.doubleValue() > property.max())
             {
-                FMLLog.log.warning("Configuration for %s.%s found value %s outside acceptable range %s,%s", modConfigName,propertyName, n, property.min(), property.max());
+                FMLLog.warning("Configuration for %s.%s found value %s outside acceptable range %s,%s", modConfigName,propertyName, n, property.min(), property.max());
                 return null;
             }
             else
@@ -332,7 +332,7 @@ public class ModLoaderModContainer implements ModContainer
     {
         return sortingProperties;
     }
-    
+
     @Override
     public boolean matches(Object mod)
     {
@@ -477,11 +477,11 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     // Lifecycle mod events
-    
+
     @Subscribe
     public void constructMod(FMLConstructionEvent event)
     {
-        try 
+        try
         {
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(modSource);
@@ -516,8 +516,8 @@ public class ModLoaderModContainer implements ModContainer
             Throwables.propagateIfPossible(e);
         }
     }
-    
-    
+
+
     @Subscribe
     public void init(FMLInitializationEvent event)
     {
@@ -531,7 +531,7 @@ public class ModLoaderModContainer implements ModContainer
             Throwables.propagateIfPossible(t);
         }
     }
-    
+
     @Subscribe
     public void postInit(FMLPostInitializationEvent event)
     {

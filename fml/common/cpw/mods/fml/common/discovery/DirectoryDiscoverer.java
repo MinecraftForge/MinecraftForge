@@ -34,11 +34,11 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
     public List<ModContainer> discover(ModCandidate candidate)
     {
         List<ModContainer> found = Lists.newArrayList();
-        FMLLog.log.fine("Examining directory %s for potential mods", candidate.getModContainer().getName());
+        FMLLog.fine("Examining directory %s for potential mods", candidate.getModContainer().getName());
         exploreFileSystem("", candidate.getModContainer(), found, candidate, null);
         return found;
     }
-    
+
     public void exploreFileSystem(String path, File modDir, List<ModContainer> harvestedMods, ModCandidate candidate, MetadataCollection mc)
     {
         if (path.length() == 0)
@@ -55,7 +55,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 mc = MetadataCollection.from(null);
             }
         }
-        
+
         File[] content = modDir.listFiles(new ClassFilter());
 
         // Always sort our content
@@ -64,12 +64,12 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
         {
             if (file.isDirectory())
             {
-                FMLLog.log.finest("Recursing into package %s", path + file.getName());
+                FMLLog.finest("Recursing into package %s", path + file.getName());
                 exploreFileSystem(path + file.getName() + ".", file, harvestedMods, candidate, mc);
                 continue;
             }
             Matcher match = classFile.matcher(file.getName());
-            
+
             if (match.matches())
             {
                 ASMModParser modParser = null;
@@ -83,7 +83,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 {
                     Throwables.propagate(e);
                 }
-                
+
                 modParser.validate();
                 ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer());
                 if (container!=null)
@@ -92,8 +92,8 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                     container.bindMetadata(mc);
                 }
             }
-            
-            
+
+
         }
     }
 
