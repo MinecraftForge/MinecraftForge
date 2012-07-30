@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -20,7 +21,11 @@ import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,14 +36,14 @@ import cpw.mods.fml.common.discovery.ModCandidate;
 
 public class RelaunchLibraryManager
 {
-    private static String[] plugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
+    private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
     private static final String HEXES = "0123456789abcdef";
     private static List<String> loadedLibraries = new ArrayList<String>();
     public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
     {
         List<IFMLLoadingPlugin> loadPlugins = new ArrayList<IFMLLoadingPlugin>();
         List<ILibrarySet> libraries = new ArrayList<ILibrarySet>();
-        for (String s : plugins)
+        for (String s : rootPlugins)
         {
             try
             {
@@ -59,6 +64,9 @@ public class RelaunchLibraryManager
         {
             throw new RuntimeException("A fatal error has occured - no valid fml load plugin was found - this is a completely corrupt FML installation.");
         }
+
+        // Now that we have the root plugins loaded - lets see what else might be around
+        discoverCoreMods(mcDir, actualClassLoader, loadPlugins, libraries);
 
         List<Throwable> caughtErrors = new ArrayList<Throwable>();
         try
@@ -172,9 +180,12 @@ public class RelaunchLibraryManager
 
         for (IFMLLoadingPlugin plug : loadPlugins)
         {
-            for (String xformClass : plug.getASMTransformerClass())
+            if (plug.getASMTransformerClass()!=null)
             {
-                actualClassLoader.registerTransformer(xformClass);
+                for (String xformClass : plug.getASMTransformerClass())
+                {
+                    actualClassLoader.registerTransformer(xformClass);
+                }
             }
         }
         try
@@ -185,6 +196,102 @@ public class RelaunchLibraryManager
         {
             // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void discoverCoreMods(File mcDir, RelaunchClassLoader classLoader, List<IFMLLoadingPlugin> loadPlugins, List<ILibrarySet> libraries)
+    {
+        File coreMods = setupCoreModDir(mcDir);
+        FilenameFilter ff = new FilenameFilter()
+        {
+            @Override
+            public boolean accept(File dir, String name)
+            {
+                return name.endsWith(".jar");
+            }
+        };
+        File[] coreModList = coreMods.listFiles(ff);
+        Arrays.sort(coreModList);
+
+        for (File coreMod : coreModList)
+        {
+            FMLLog.fine("Found a candidate coremod %s", coreMod.getName());
+            JarFile jar;
+            Attributes mfAttributes;
+            try
+            {
+                jar = new JarFile(coreMod);
+                mfAttributes = jar.getManifest().getMainAttributes();
+            }
+            catch (IOException ioe)
+            {
+                FMLLog.log(Level.SEVERE, ioe, "Unable to read the coremod jar file %s - ignoring", coreMod.getName());
+                continue;
+            }
+
+            String fmlCorePlugin = mfAttributes.getValue("FMLCorePlugin");
+            if (fmlCorePlugin == null)
+            {
+                FMLLog.severe("The coremod %s does not contain a valid jar manifest- it will be ignored", coreMod.getName());
+                continue;
+            }
+
+//            String className = fmlCorePlugin.replace('.', '/').concat(".class");
+//            JarEntry ent = jar.getJarEntry(className);
+//            if (ent ==null)
+//            {
+//                FMLLog.severe("The coremod %s specified %s as it's loading class but it does not include it - it will be ignored", coreMod.getName(), fmlCorePlugin);
+//                continue;
+//            }
+//            try
+//            {
+//                Class<?> coreModClass = Class.forName(fmlCorePlugin, false, classLoader);
+//                FMLLog.severe("The coremods %s specified a class %s that is already present in the classpath - it will be ignored", coreMod.getName(), fmlCorePlugin);
+//                continue;
+//            }
+//            catch (ClassNotFoundException cnfe)
+//            {
+//                // didn't find it, good
+//            }
+            try
+            {
+                classLoader.addURL(coreMod.toURI().toURL());
+            }
+            catch (MalformedURLException e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Unable to convert file into a URL. weird");
+                continue;
+            }
+            try
+            {
+                Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
+                IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
+                loadPlugins.add(plugin);
+                if (plugin.getLibraryRequestClass()!=null)
+                {
+                    for (String libName : plugin.getLibraryRequestClass())
+                    {
+                        libraries.add((ILibrarySet) Class.forName(libName, true, classLoader).newInstance());
+                    }
+                }
+                FMLLog.fine("Loaded coremod %s", coreMod.getName());
+            }
+            catch (ClassNotFoundException cnfe)
+            {
+                FMLLog.log(Level.SEVERE, cnfe, "Coremod %s: Unable to class load the plugin %s", coreMod.getName(), fmlCorePlugin);
+            }
+            catch (ClassCastException cce)
+            {
+                FMLLog.log(Level.SEVERE, cce, "Coremod %s: The plugin %s is not an implementor of IFMLLoadingPlugin", coreMod.getName(), fmlCorePlugin);
+            }
+            catch (InstantiationException ie)
+            {
+                FMLLog.log(Level.SEVERE, ie, "Coremod %s: The plugin class %s was not instantiable", coreMod.getName(), fmlCorePlugin);
+            }
+            catch (IllegalAccessException iae)
+            {
+                FMLLog.log(Level.SEVERE, iae, "Coremod %s: The plugin class %s was not accessible", coreMod.getName(), fmlCorePlugin);
+            }
         }
     }
 
@@ -212,6 +319,32 @@ public class RelaunchLibraryManager
             throw new RuntimeException(String.format("Found a lib file in %s that's not a directory", mcDir.getName()));
         }
         return libDir;
+    }
+
+    /**
+     * @param mcDir
+     * @return
+     */
+    private static File setupCoreModDir(File mcDir)
+    {
+        File coreModDir = new File(mcDir,"coremods");
+        try
+        {
+            coreModDir = coreModDir.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(String.format("Unable to canonicalize the coremod dir at %s", mcDir.getName()),e);
+        }
+        if (!coreModDir.exists())
+        {
+            coreModDir.mkdir();
+        }
+        else if (coreModDir.exists() && !coreModDir.isDirectory())
+        {
+            throw new RuntimeException(String.format("Found a coremod file in %s that's not a directory", mcDir.getName()));
+        }
+        return coreModDir;
     }
 
     private static String generateChecksum(File file)
