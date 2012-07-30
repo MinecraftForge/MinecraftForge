@@ -1,7 +1,7 @@
-package cpw.mods.fml.common;
+package cpw.mods.fml.common.event;
 
+import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.LoaderState.ModState;
-import cpw.mods.fml.common.event.FMLStateEvent;
 
 public class FMLLoadCompleteEvent extends FMLStateEvent
 {

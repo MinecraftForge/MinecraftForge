@@ -345,8 +345,10 @@ public class Loader
         sortModList();
         mods = ImmutableList.copyOf(mods);
         modController = new LoadController(this);
+        // Mod controller state : CONSTRUCTION
         modController.distributeStateMessage(modClassLoader);
         modController.transition(LoaderState.PREINITIALIZATION);
+        // Mod controller state : PREINITIALIZATION
         modController.distributeStateMessage();
         modController.transition(LoaderState.INITIALIZATION);
     }

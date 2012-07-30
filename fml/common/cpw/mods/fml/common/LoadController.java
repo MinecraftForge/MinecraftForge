@@ -30,16 +30,16 @@ public class LoadController
     private Map<String, ModContainer> modList;
     private List<ModContainer> activeModList = Lists.newArrayList();
     private String activeContainer;
-    
+
     public LoadController(Loader loader)
     {
         this.loader = loader;
         this.modList = loader.getIndexedModList();
         this.masterChannel = new EventBus("FMLMainChannel");
         this.masterChannel.register(this);
-        
+
         Builder<String, EventBus> eventBus = ImmutableMap.builder();
-        
+
         for (ModContainer mod : loader.getModList())
         {
             EventBus bus = new EventBus(mod.getModId());
@@ -58,9 +58,9 @@ public class LoadController
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
         }
-        
+
         eventChannels = eventBus.build();
-        
+
         state = LoaderState.CONSTRUCTING;
     }
 
@@ -70,13 +70,13 @@ public class LoadController
         {
             throw new LoaderException();
         }
-        
+
         if (state.hasEvent())
         {
             masterChannel.post(state.getEvent(eventData));
         }
     }
-    
+
     public void transition(LoaderState desiredState)
     {
         LoaderState oldState = state;
@@ -92,12 +92,12 @@ public class LoadController
             {
                 FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
             }
-            
+
             // Throw embedding the first error (usually the only one)
             throw new LoaderException(errors.values().iterator().next());
         }
     }
-    
+
     public ModContainer activeContainer()
     {
         return activeContainer!=null ? modList.get(activeContainer) : null;
@@ -108,6 +108,7 @@ public class LoadController
         for (Map.Entry<String,EventBus> entry : eventChannels.entrySet())
         {
             activeContainer = entry.getKey();
+            stateEvent.applyModContainer(activeContainer());
             entry.getValue().post(stateEvent);
             activeContainer = null;
             if (!errors.containsKey(entry.getKey()))

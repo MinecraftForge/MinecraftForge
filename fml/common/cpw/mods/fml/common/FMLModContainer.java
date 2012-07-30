@@ -17,6 +17,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -98,12 +99,12 @@ public class FMLModContainer implements ModContainer
     public void bindMetadata(MetadataCollection mc)
     {
         modMetadata = mc.getMetadataForId(getModId(), descriptor);
-        
+
         if (descriptor.containsKey("usesMetadata"))
         {
-            overridesMetadata = !((Boolean)descriptor.get("usesMetadata")).booleanValue(); 
+            overridesMetadata = !((Boolean)descriptor.get("usesMetadata")).booleanValue();
         }
-        
+
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
             List<String> requirements = Lists.newArrayList();
@@ -181,11 +182,11 @@ public class FMLModContainer implements ModContainer
             return false;
         }
     }
-    
+
     private Multimap<Class<? extends Annotation>, Object> gatherAnnotations(Class<?> clazz) throws Exception
     {
         Multimap<Class<? extends Annotation>,Object> anns = ArrayListMultimap.create();
-        
+
         for (Field f : clazz.getDeclaredFields())
         {
             for (Annotation a : f.getAnnotations())
@@ -194,19 +195,36 @@ public class FMLModContainer implements ModContainer
                 anns.put(a.annotationType(), f);
             }
         }
-        
+
         for (Method m : clazz.getDeclaredMethods())
         {
             for (Annotation a : m.getAnnotations())
             {
-                if (m.getParameterTypes().length==0)
+                Class<?>[] paramTypes;
+                if (a.annotationType() == Mod.PreInit.class)
+                {
+                    paramTypes = Mod.PreInit.paramTypes;
+                }
+                else if (a.annotationType() == Mod.Init.class)
+                {
+                    paramTypes = Mod.Init.paramTypes;
+                }
+                else if (a.annotationType() == Mod.PostInit.class)
+                {
+                    paramTypes = Mod.PostInit.paramTypes;
+                }
+                else
+                {
+                    continue;
+                }
+                if (Arrays.equals(m.getParameterTypes(), paramTypes))
                 {
                     m.setAccessible(true);
                     anns.put(a.annotationType(), m);
                 }
                 else
                 {
-                    FMLLog.severe("The mod type %s appears to have an invalid method annotation %s. This annotation can only apply to zero argument methods", getModId(), a.annotationType().getSimpleName());
+                    FMLLog.severe("The mod %s appears to have an invalid method annotation %s. This annotation can only apply to methods with argument types %s -it will not be called", getModId(), a.annotationType().getSimpleName(), Arrays.toString(paramTypes));
                 }
             }
         }
@@ -221,13 +239,13 @@ public class FMLModContainer implements ModContainer
             Field f = (Field) o;
             f.set(modInstance, modInstance);
         }
-        
+
         for (Object o : annotations.get(Metadata.class))
         {
             Field f = (Field) o;
             f.set(modInstance, modMetadata);
         }
-        
+
         for (Object o : annotations.get(Block.class))
         {
             Field f = (Field) o;
@@ -238,7 +256,7 @@ public class FMLModContainer implements ModContainer
     @Subscribe
     public void constructMod(FMLConstructionEvent event)
     {
-        try 
+        try
         {
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
@@ -253,7 +271,7 @@ public class FMLModContainer implements ModContainer
             Throwables.propagateIfPossible(e);
         }
     }
-    
+
     @Subscribe
     public void preInitMod(FMLPreInitializationEvent event)
     {
@@ -262,7 +280,7 @@ public class FMLModContainer implements ModContainer
             for (Object o : annotations.get(Mod.PreInit.class))
             {
                 Method m = (Method) o;
-                m.invoke(modInstance);
+                m.invoke(modInstance, event);
             }
         }
         catch (Throwable t)
@@ -271,7 +289,7 @@ public class FMLModContainer implements ModContainer
             Throwables.propagateIfPossible(t);
         }
     }
-    
+
     @Subscribe
     public void initMod(FMLInitializationEvent event)
     {
@@ -280,7 +298,7 @@ public class FMLModContainer implements ModContainer
             for (Object o : annotations.get(Mod.Init.class))
             {
                 Method m = (Method) o;
-                m.invoke(modInstance);
+                m.invoke(modInstance, event);
             }
         }
         catch (Throwable t)
@@ -289,7 +307,7 @@ public class FMLModContainer implements ModContainer
             Throwables.propagateIfPossible(t);
         }
     }
-    
+
     @Subscribe
     public void postInitMod(FMLPostInitializationEvent event)
     {
@@ -298,7 +316,7 @@ public class FMLModContainer implements ModContainer
             for (Object o : annotations.get(Mod.PostInit.class))
             {
                 Method m = (Method) o;
-                m.invoke(modInstance);
+                m.invoke(modInstance, event);
             }
         }
         catch (Throwable t)

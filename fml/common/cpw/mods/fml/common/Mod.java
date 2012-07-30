@@ -18,6 +18,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+
 import net.minecraft.src.ItemBlock;
 
 /**
@@ -64,7 +68,9 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface PreInit {}
+    public @interface PreInit {
+        static Class<?>[] paramTypes = new Class[] { FMLPreInitializationEvent.class };
+    }
     /**
      * Mark the designated method as being called at the "initialization" phase
      * @author cpw
@@ -72,7 +78,9 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Init {}
+    public @interface Init {
+        static Class<?>[] paramTypes = new Class[] { FMLInitializationEvent.class };
+    }
     /**
      * Mark the designated method as being called at the "post-initialization" phase
      * @author cpw
@@ -80,7 +88,9 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface PostInit {}
+    public @interface PostInit {
+        static Class<?>[] paramTypes = new Class[] { FMLPostInitializationEvent.class };
+    }
     /**
      * Populate the annotated field with the mod instance.
      * @author cpw
