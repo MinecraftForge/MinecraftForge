@@ -1,8 +1,8 @@
-package cpw.mods.fml.common;
+package cpw.mods.fml.relauncher;
 
 /**
  * Copied from ConsoleLogFormatter for shared use on the client
- * 
+ *
  */
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -13,6 +13,7 @@ import java.util.logging.LogRecord;
 
 final class FMLLogFormatter extends Formatter
 {
+    static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public String format(LogRecord record)
@@ -50,8 +51,16 @@ final class FMLLogFormatter extends Formatter
             msg.append(" [" + lvl.getLocalizedName() + "] ");
         }
 
+        if (record.getLoggerName() != null)
+        {
+            msg.append("["+record.getLoggerName()+"] ");
+        }
+        else
+        {
+            msg.append("[] ");
+        }
         msg.append(record.getMessage());
-        msg.append(System.getProperty("line.separator"));
+        msg.append(LINE_SEPARATOR);
         Throwable thr = record.getThrown();
 
         if (thr != null)

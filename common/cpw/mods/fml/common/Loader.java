@@ -52,12 +52,12 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
- * 
+ *
  * <p>
  * There are several {@link LoaderState}s to mod loading, triggered in two
  * different stages from the FML handler code's hooks into the minecraft code.
  * </p>
- * 
+ *
  * <ol>
  * <li>LOADING. Scanning the filesystem for mod containers to load (zips, jars,
  * directories), adding them to the {@link #modClassLoader} Scanning, the loaded
@@ -74,12 +74,12 @@ import cpw.mods.fml.common.toposort.TopologicalSort;
  * but it attempts to continue loading before abandoning and giving a fatal
  * error.</li>
  * </ol>
- * 
+ *
  * Phase 1 code triggers the LOADING and PREINIT states. Phase 2 code triggers
  * the INIT and POSTINIT states.
- * 
+ *
  * @author cpw
- * 
+ *
  */
 public class Loader
 {
@@ -153,7 +153,7 @@ public class Loader
             }
             catch (IOException ex)
             {
-                FMLLog.log.log(Level.SEVERE, "Could not get FML version information - corrupted installation detected!", ex);
+                FMLLog.log(Level.SEVERE, "Could not get FML version information - corrupted installation detected!", ex);
                 throw new LoaderException(ex);
             }
         }
@@ -164,9 +164,9 @@ public class Loader
         build = properties.getProperty("fmlbuild.build.number", "missing");
         mccversion = properties.getProperty("fmlbuild.mcclientversion", "missing");
         mcsversion = properties.getProperty("fmlbuild.mcserverversion", "missing");
-        
-        FMLLog.log.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", major, minor, rev, build, mccversion, mcsversion);
-        
+
+        FMLLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", major, minor, rev, build, mccversion, mcsversion);
+
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
     }
 
@@ -177,47 +177,47 @@ public class Loader
      */
     private void sortModList()
     {
-        FMLLog.log.fine("Verifying mod requirements are satisfied");
+        FMLLog.fine("Verifying mod requirements are satisfied");
         try
         {
             for (ModContainer mod : mods)
             {
                 if (!namedMods.keySet().containsAll(mod.getRequirements()))
                 {
-                    FMLLog.log.log(Level.SEVERE, "The mod %s (%s) requires mods %s to be available, one or more are not", mod.getModId(), mod.getName(), mod.getRequirements());
+                    FMLLog.log(Level.SEVERE, "The mod %s (%s) requires mods %s to be available, one or more are not", mod.getModId(), mod.getName(), mod.getRequirements());
                     throw new LoaderException();
                 }
             }
 
-            FMLLog.log.fine("All mod requirements are satisfied");
-            
+            FMLLog.fine("All mod requirements are satisfied");
+
             ModSorter sorter = new ModSorter(mods, namedMods);
 
             try
             {
-                FMLLog.log.fine("Sorting mods into an ordered list");
+                FMLLog.fine("Sorting mods into an ordered list");
                 mods = sorter.sort();
-                FMLLog.log.fine("Mod sorting completed successfully");
+                FMLLog.fine("Mod sorting completed successfully");
             }
             catch (ModSortingException sortException)
             {
-                FMLLog.log.severe("A dependency cycle was detected in the input mod set so an ordering cannot be determined");
-                FMLLog.log.severe("The visited mod list is %s", sortException.getExceptionData().getVisitedNodes());
-                FMLLog.log.severe("The first mod in the cycle is %s", sortException.getExceptionData().getFirstBadNode());
-                FMLLog.log.log(Level.SEVERE, sortException, "The full error");
+                FMLLog.severe("A dependency cycle was detected in the input mod set so an ordering cannot be determined");
+                FMLLog.severe("The visited mod list is %s", sortException.getExceptionData().getVisitedNodes());
+                FMLLog.severe("The first mod in the cycle is %s", sortException.getExceptionData().getFirstBadNode());
+                FMLLog.log(Level.SEVERE, sortException, "The full error");
                 throw new LoaderException(sortException);
             }
         }
         finally
         {
-            FMLLog.log.fine("Mod sorting data:");
+            FMLLog.fine("Mod sorting data:");
             for (ModContainer mod : mods)
             {
-                FMLLog.log.fine("\t%s(%s): %s (%s)", mod.getModId(), mod.getName(), mod.getSource().getName(), mod.getSortingRules());
+                FMLLog.fine("\t%s(%s): %s (%s)", mod.getModId(), mod.getName(), mod.getSource().getName(), mod.getSortingRules());
             }
             if (mods.size()==0)
-            {   
-                FMLLog.log.fine("No mods found to sort");
+            {
+                FMLLog.fine("No mods found to sort");
             }
         }
 
@@ -225,38 +225,38 @@ public class Loader
 
     /**
      * The primary loading code
-     * 
+     *
      * This is visited during first initialization by Minecraft to scan and load
      * the mods from all sources 1. The minecraft jar itself (for loading of in
      * jar mods- I would like to remove this if possible but forge depends on it
      * at present) 2. The mods directory with expanded subdirs, searching for
      * mods named mod_*.class 3. The mods directory for zip and jar files,
      * searching for mod classes named mod_*.class again
-     * 
+     *
      * The found resources are first loaded into the {@link #modClassLoader}
      * (always) then scanned for class resources matching the specification
      * above.
-     * 
+     *
      * If they provide the {@link Mod} annotation, they will be loaded as
      * "FML mods", which currently is effectively a NO-OP. If they are
      * determined to be {@link BaseMod} subclasses they are loaded as such.
-     * 
+     *
      * Finally, if they are successfully loaded as classes, they are then added
      * to the available mod list.
      */
     private void identifyMods()
     {
         ModDiscoverer discoverer = new ModDiscoverer();
-        FMLLog.log.fine("Attempting to load mods contained in the minecraft jar file and associated classes");
+        FMLLog.fine("Attempting to load mods contained in the minecraft jar file and associated classes");
         discoverer.findClasspathMods(modClassLoader);
-        FMLLog.log.fine("Minecraft jar mods loaded successfully");
+        FMLLog.fine("Minecraft jar mods loaded successfully");
 
-        FMLLog.log.info("Searching %s for mods", canonicalModsDir.getAbsolutePath());
+        FMLLog.info("Searching %s for mods", canonicalModsDir.getAbsolutePath());
         discoverer.findModDirMods(canonicalModsDir);
 
         mods = discoverer.identifyMods();
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
-        FMLLog.log.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
+        FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
     }
 
     /**
@@ -280,7 +280,7 @@ public class Loader
         }
         catch (IOException ioe)
         {
-            FMLLog.log.log(Level.SEVERE,
+            FMLLog.log(Level.SEVERE,
                     String.format("Failed to resolve loader directories: mods : %s ; config %s", canonicalModsDir.getAbsolutePath(),
                             configDir.getAbsolutePath()), ioe);
             throw new LoaderException(ioe);
@@ -288,37 +288,37 @@ public class Loader
 
         if (!canonicalModsDir.exists())
         {
-            FMLLog.log.info("No mod directory found, creating one: %s", canonicalModsPath);
+            FMLLog.info("No mod directory found, creating one: %s", canonicalModsPath);
             boolean dirMade = canonicalModsDir.mkdir();
             if (!dirMade)
             {
-                FMLLog.log.severe("Unable to create the mod directory %s", canonicalModsPath);
+                FMLLog.severe("Unable to create the mod directory %s", canonicalModsPath);
                 throw new LoaderException();
             }
-            FMLLog.log.info("Mod directory created successfully");
+            FMLLog.info("Mod directory created successfully");
         }
 
         if (!canonicalConfigDir.exists())
         {
-            FMLLog.log.fine("No config directory found, creating one: %s", canonicalConfigPath);
+            FMLLog.fine("No config directory found, creating one: %s", canonicalConfigPath);
             boolean dirMade = canonicalConfigDir.mkdir();
             if (!dirMade)
             {
-                FMLLog.log.severe("Unable to create the config directory %s", canonicalConfigPath);
+                FMLLog.severe("Unable to create the config directory %s", canonicalConfigPath);
                 throw new LoaderException();
             }
-            FMLLog.log.info("Config directory created successfully");
+            FMLLog.info("Config directory created successfully");
         }
 
         if (!canonicalModsDir.isDirectory())
         {
-            FMLLog.log.severe("Attempting to load mods from %s, which is not a directory", canonicalModsPath);
+            FMLLog.severe("Attempting to load mods from %s, which is not a directory", canonicalModsPath);
             throw new LoaderException();
         }
 
         if (!configDir.isDirectory())
         {
-            FMLLog.log.severe("Attempting to load configuration from %s, which is not a directory", canonicalConfigPath);
+            FMLLog.severe("Attempting to load configuration from %s, which is not a directory", canonicalConfigPath);
             throw new LoaderException();
         }
     }
@@ -354,31 +354,31 @@ public class Loader
     private void disableRequestedMods()
     {
         String disabledModList = System.getProperty("fml.disabledMods", "");
-        FMLLog.log.fine("Received a system property request \'%s\'",disabledModList);
+        FMLLog.fine("Received a system property request \'%s\'",disabledModList);
         Map<String, String> sysPropertyStateList = Splitter.on(CharMatcher.anyOf(";:"))
                 .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
                 .split(disabledModList);
-        FMLLog.log.fine("System property request managing the state of %d mods", sysPropertyStateList.size());
+        FMLLog.fine("System property request managing the state of %d mods", sysPropertyStateList.size());
         Map<String, String> modStates = Maps.newHashMap();
-        
+
         File disabledModFile = new File(canonicalConfigDir, "fmlModState.properties");
         Properties disabledModListProperties = new Properties();
         if (disabledModFile.exists() && disabledModFile.isFile())
         {
-            FMLLog.log.fine("Found a mod state file %s", disabledModFile.getName());
+            FMLLog.fine("Found a mod state file %s", disabledModFile.getName());
             try
             {
                 disabledModListProperties.load(new FileReader(disabledModFile));
-                FMLLog.log.fine("Loaded states for %d mods from file", disabledModListProperties.size());
+                FMLLog.fine("Loaded states for %d mods from file", disabledModListProperties.size());
             }
             catch (Exception e)
             {
-                FMLLog.log.log(Level.INFO, e, "An error occurred reading the fmlModState.properties file");
+                FMLLog.log(Level.INFO, e, "An error occurred reading the fmlModState.properties file");
             }
         }
         modStates.putAll(Maps.fromProperties(disabledModListProperties));
         modStates.putAll(sysPropertyStateList);
-        FMLLog.log.fine("After merging, found state information for %d mods", modStates.size());
+        FMLLog.fine("After merging, found state information for %d mods", modStates.size());
 
         Map<String, Boolean> isEnabled = Maps.transformValues(modStates, new Function<String, Boolean>()
         {
@@ -387,12 +387,12 @@ public class Loader
                 return !Boolean.parseBoolean(input);
             }
         });
-        
+
         for (Map.Entry<String, Boolean> entry : isEnabled.entrySet())
         {
             if (namedMods.containsKey(entry.getKey()))
             {
-                FMLLog.log.info("Setting mod %s to enabled state %b", entry.getKey(), entry.getValue());
+                FMLLog.info("Setting mod %s to enabled state %b", entry.getKey(), entry.getValue());
                 namedMods.get(entry.getKey()).setEnabledState(entry.getValue());
             }
         }
@@ -400,7 +400,7 @@ public class Loader
 
     /**
      * Query if we know of a mod named modname
-     * 
+     *
      * @param modname
      * @return
      */
@@ -421,7 +421,7 @@ public class Loader
     {
         StringBuilder ret = new StringBuilder();
         List<String> branding = FMLCommonHandler.instance().getBrandings();
-        
+
         Joiner.on(' ').skipNulls().appendTo(ret, branding.subList(1, branding.size()));
         if (modController!=null)
         {
@@ -452,9 +452,9 @@ public class Loader
         {
             return;
         }
-    
+
         boolean parseFailure=false;
-        
+
         for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
         {
             List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
@@ -467,7 +467,7 @@ public class Loader
             String target = depparts.get(1);
             boolean targetIsAll = target.equals("*");
             // If we don't have two parts to each substring, this is an invalid dependency string
-            
+
             // If this is a required element, add it to the required list
             if ("required-before".equals(instruction) || "required-after".equals(instruction))
             {
@@ -482,7 +482,7 @@ public class Loader
                     continue;
                 }
             }
-    
+
             // before elements are things we are loaded before (so they are our dependants)
             if ("required-before".equals(instruction) || "before".equals(instruction))
             {
@@ -498,7 +498,7 @@ public class Loader
                 parseFailure=true;
             }
         }
-    
+
         if (parseFailure)
         {
             FMLLog.log(Level.WARNING, "Unable to parse dependency string %s", dependencyString);

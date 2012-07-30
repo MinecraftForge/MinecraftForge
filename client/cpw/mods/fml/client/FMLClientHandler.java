@@ -239,7 +239,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 //        }
         // Mark this as a "first tick"
         KeyBindingRegistry.uploadKeyBindingsToGame(client.field_6304_y);
-        
+
         firstTick = true;
     }
 
@@ -497,7 +497,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             networkManager.func_972_a(packet);
         }
-        
+
         // TODO
 //        for (ModContainer mod : Loader.getModList()) {
 //            mod.getNetworkHandler().onServerLogin(handler);
@@ -518,7 +518,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
         // TODO
-        
+
 //        ModContainer mod = FMLCommonHandler.instance().getModForChannel(packet.field_44012_a);
 //
 //        if (mod != null)
@@ -961,7 +961,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         catch (Exception e)
         {
-            FMLLog.log.warning("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name);
+            FMLLog.warning("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name);
             if (ifx != null)
             {
                 ifx.setErrored(true);
@@ -977,7 +977,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
             if (effect.field_1127_a.length != target)
             {
-                FMLLog.log.warning("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target);
+                FMLLog.warning("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_1127_a.length, target);
                 ifx.setErrored(true);
                 return false;
             }

@@ -21,7 +21,7 @@ public class JarDiscoverer implements ITypeDiscoverer
     public List<ModContainer> discover(ModCandidate candidate)
     {
         List<ModContainer> foundMods = Lists.newArrayList();
-        FMLLog.log.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
+        FMLLog.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
         ZipFile jar = null;
         try
         {
@@ -31,7 +31,7 @@ public class JarDiscoverer implements ITypeDiscoverer
             MetadataCollection mc = null;
             if (modInfo != null)
             {
-                FMLLog.log.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
+                FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(jar.getInputStream(modInfo));
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
@@ -52,7 +52,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         catch (Exception e)
         {
-            FMLLog.log.warning("Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
+            FMLLog.warning("Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
         }
         finally
         {

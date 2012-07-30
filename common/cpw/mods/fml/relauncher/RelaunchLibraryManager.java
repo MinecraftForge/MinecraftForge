@@ -19,17 +19,165 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import cpw.mods.fml.common.discovery.ModCandidate;
+
 public class RelaunchLibraryManager
 {
-    private static String[] libraries = { "argo-2.25.jar","guava-12.0.jar","asm-all-4.0.jar" };
-    private static String[] checksums = { "bb672829fde76cb163004752b86b0484bd0a7f4b", "5bc66dd95b79db1e437eb08adba124a3e4088dc0", "98308890597acb64047f7e896638e0d98753ae82" };
+    private static String[] plugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
     private static final String HEXES = "0123456789abcdef";
+    private static List<String> loadedLibraries = new ArrayList<String>();
     public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
+    {
+        List<IFMLLoadingPlugin> loadPlugins = new ArrayList<IFMLLoadingPlugin>();
+        List<ILibrarySet> libraries = new ArrayList<ILibrarySet>();
+        for (String s : plugins)
+        {
+            try
+            {
+                IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) Class.forName(s, true, actualClassLoader).newInstance();
+                loadPlugins.add(plugin);
+                for (String libName : plugin.getLibraryRequestClass())
+                {
+                    libraries.add((ILibrarySet) Class.forName(libName, true, actualClassLoader).newInstance());
+                }
+            }
+            catch (Exception e)
+            {
+                // HMMM
+            }
+        }
+
+        if (loadPlugins.isEmpty())
+        {
+            throw new RuntimeException("A fatal error has occured - no valid fml load plugin was found - this is a completely corrupt FML installation.");
+        }
+
+        List<Throwable> caughtErrors = new ArrayList<Throwable>();
+        try
+        {
+            File libDir;
+            try
+            {
+                libDir = setupLibDir(mcDir);
+            }
+            catch (Exception e)
+            {
+                caughtErrors.add(e);
+                return;
+            }
+
+            for (ILibrarySet lib : libraries)
+            {
+                for (int i=0; i<lib.getLibraries().length; i++)
+                {
+                    boolean download = false;
+                    String libName = lib.getLibraries()[i];
+                    String checksum = lib.getHashes()[i];
+                    File libFile = new File(libDir, libName);
+                    if (!libFile.exists())
+                    {
+                        try
+                        {
+                            downloadFile(libFile, lib.getRootURL());
+                            download = true;
+                        }
+                        catch (Throwable e)
+                        {
+                            caughtErrors.add(e);
+                            continue;
+                        }
+                    }
+
+                    if (libFile.exists() && !libFile.isFile())
+                    {
+                        caughtErrors.add(new RuntimeException(String.format("Found a file %s that is not a normal file - you should clear this out of the way", libName)));
+                        continue;
+                    }
+
+                    String fileChecksum = generateChecksum(libFile);
+                    if (!checksum.equals(fileChecksum))
+                    {
+                        caughtErrors.add(new RuntimeException(String.format("The file %s has an invalid checksum %s (expecting %s) - delete it and try again.", libName, fileChecksum, checksum)));
+                        continue;
+                    }
+
+                    if (!download)
+                    {
+                        System.out.printf("Found library file %s present and correct in lib dir\n", libName);
+                    }
+                    else
+                    {
+                        System.out.printf("Library file %s was downloaded and verified successfully", libName);
+                    }
+
+                    try
+                    {
+                        actualClassLoader.addURL(libFile.toURI().toURL());
+                        loadedLibraries.add(libName);
+                    }
+                    catch (MalformedURLException e)
+                    {
+                        caughtErrors.add(new RuntimeException(String.format("Should never happen - %s is broken - probably a somehow corrupted download. Delete it and try again.", libFile.getName()), e));
+                    }
+                }
+            }
+        }
+        finally
+        {
+            if (!caughtErrors.isEmpty())
+            {
+                FMLLog.severe("There were errors during initial FML setup. " +
+                		"Some files failed to download or were otherwise corrupted. " +
+                		"You will need to manually obtain the following files from " +
+                		"these download links and ensure your lib directory is clean. ");
+                for (ILibrarySet set : libraries)
+                {
+                    for (String file : set.getLibraries())
+                    {
+                        FMLLog.severe("*** Download "+set.getRootURL(), file);
+                    }
+                }
+                FMLLog.severe("<===========>");
+                FMLLog.severe("The following is the errors that caused the setup to fail. " +
+                		"They may help you diagnose and resolve the issue");
+                for (Throwable t : caughtErrors)
+                {
+                    FMLLog.log(Level.SEVERE, t, "Fatal error");
+                }
+                throw new RuntimeException("A fatal error occured and FML cannot continue");
+            }
+        }
+
+        for (IFMLLoadingPlugin plug : loadPlugins)
+        {
+            for (String xformClass : plug.getASMTransformerClass())
+            {
+                actualClassLoader.registerTransformer(xformClass);
+            }
+        }
+        try
+        {
+            Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
+        }
+        catch (Exception e)
+        {
+            // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @param mcDir
+     * @return
+     */
+    private static File setupLibDir(File mcDir)
     {
         File libDir = new File(mcDir,"lib");
         try
@@ -48,51 +196,7 @@ public class RelaunchLibraryManager
         {
             throw new RuntimeException(String.format("Found a lib file in %s that's not a directory", mcDir.getName()));
         }
-
-        for (int i=0; i<libraries.length; i++)
-        {
-            String libName = libraries[i];
-            String checksum = checksums[i];
-            File libFile = new File(libDir, libName);
-            if (!libFile.exists())
-            {
-                downloadFile(libFile);
-            }
-
-            if (libFile.exists() && !libFile.isFile())
-            {
-                throw new RuntimeException(String.format("Found a file %s that is not a normal file", libName));
-            }
-
-            String fileChecksum = generateChecksum(libFile);
-            if (!checksum.equals(fileChecksum))
-            {
-                throw new RuntimeException(String.format("The file %s has an invalid checksum %s (expecting %s)", libName, fileChecksum, checksum));
-            }
-            try
-            {
-                actualClassLoader.addURL(libFile.toURI().toURL());
-            }
-            catch (MalformedURLException e)
-            {
-                e.printStackTrace();
-            }
-
-        }
-        // Register our class loading transformer now we have everything we need
-        actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.ASMTransformer");
-        // Register the forge class loading transformer now we have everything we need
-        actualClassLoader.registerTransformer("net.minecraftforge.asm.ASMTransformer");
-        
-        try
-        {
-            Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
-        }
-        catch (Exception e)
-        {
-            // Load in the Loader, make sure he's ready to roll
-            throw new RuntimeException(e);
-        }
+        return libDir;
     }
 
     private static String generateChecksum(File file)
@@ -119,20 +223,12 @@ public class RelaunchLibraryManager
             return null;
         }
     }
-    private static void downloadFile(File libFile)
+    private static void downloadFile(File libFile, String rootUrl)
     {
-        //                try
-//                {
-//                    JOptionPane.showMessageDialog(null, String.format("Downloading required FML library %s from github.com",libName));
-//                }
-//                catch (HeadlessException he)
-//                {
-//                    // Ignore
-//                }
         try
         {
-            URL libDownload = new URL(String.format("http://cloud.github.com/downloads/cpw/FML/%s",libFile.getName()));
-            System.out.printf("Downloading %s..", libDownload.toString());
+            URL libDownload = new URL(String.format(rootUrl,libFile.getName()));
+            FMLLog.info("Downloading %s", libDownload.toString());
             InputStream urlConn = libDownload.openStream();
             ReadableByteChannel urlChannel = Channels.newChannel(urlConn);
             FileOutputStream libFileStream = new FileOutputStream(libFile);
@@ -142,11 +238,19 @@ public class RelaunchLibraryManager
             libFileStream.close();
             urlChannel.close();
             urlConn.close();
-            System.out.println("download successful");
+            FMLLog.info("Download complete");
         }
         catch (Exception e)
         {
-
+            FMLLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
+            		"have an environment without internet access. You will need to download " +
+            		"the file manually\n", libFile.getName());
+            throw new RuntimeException("A download error occured", e);
         }
+    }
+
+    public static List<String> getLibraries()
+    {
+        return loadedLibraries;
     }
 }

@@ -37,7 +37,7 @@ import cpw.mods.fml.relauncher.RelaunchClassLoader;
  */
 public class ModClassLoader extends URLClassLoader
 {
-    private static final List<String> STANDARD_LIBRARIES = ImmutableList.of("jinput.jar", "lwjgl.jar", "lwjgl_util.jar", "argo-2.25.jar", "asm-all-4.0.jar", "guava-12.0.jar");
+    private static final List<String> STANDARD_LIBRARIES = ImmutableList.of("jinput.jar", "lwjgl.jar", "lwjgl_util.jar");
     private RelaunchClassLoader mainClassLoader;
 
     public ModClassLoader(ClassLoader parent) {
@@ -70,7 +70,7 @@ public class ModClassLoader extends URLClassLoader
         }
         catch (URISyntaxException e)
         {
-            FMLLog.log.log(Level.SEVERE, "Unable to process our input to locate the minecraft code", e);
+            FMLLog.log(Level.SEVERE, "Unable to process our input to locate the minecraft code", e);
             throw new LoaderException(e);
         }
     }
