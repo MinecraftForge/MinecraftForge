@@ -14,9 +14,13 @@ import java.util.Map;
 
 public class RelaunchClassLoader extends URLClassLoader
 {
-    private static String[] excludedPackages = { 
+    private static String[] excludedPackages = {
         "java.", "sun.", "javax.",
-        "cpw.mods.fml.relauncher", "net.minecraftforge.classloading",
+        "cpw.mods.fml.relauncher.", "net.minecraftforge.classloading."
+    };
+
+    private static String[] transformerExclusions =
+    {
         "org.objectweb.asm.", "com.google.common."
     };
     private List<URL> sources;
@@ -24,7 +28,7 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private List<IClassTransformer> transformers;
     private Map<String, Class> cachedClasses;
-    
+
     public RelaunchClassLoader(URL[] sources)
     {
         super(sources, null);
@@ -57,11 +61,22 @@ public class RelaunchClassLoader extends URLClassLoader
                 return parent.loadClass(name);
             }
         }
-        
+
         if (cachedClasses.containsKey(name))
         {
             return cachedClasses.get(name);
         }
+
+        for (String st : transformerExclusions)
+        {
+            if (name.startsWith(st))
+            {
+                Class<?> cl = super.findClass(name);
+                cachedClasses.put(name, cl);
+                return cl;
+            }
+        }
+
         try
         {
             byte[] basicClass = readFully(findResource(name.replace('.', '/').concat(".class")).openStream());
@@ -96,8 +111,8 @@ public class RelaunchClassLoader extends URLClassLoader
     {
         return sources;
     }
-    
-    
+
+
     private byte[] readFully(InputStream stream)
     {
         try
@@ -108,7 +123,7 @@ public class RelaunchClassLoader extends URLClassLoader
             {
                 bos.write(r);
             }
-            
+
             return bos.toByteArray();
         }
         catch (Throwable t)
