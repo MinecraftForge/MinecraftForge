@@ -9,16 +9,17 @@ import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class DummyModContainer implements ModContainer
 {
     private ModMetadata md;
-    
+
     public DummyModContainer(ModMetadata md)
     {
         this.md = md;
     }
-    
+
     public DummyModContainer()
     {
     }
@@ -35,19 +36,19 @@ public class DummyModContainer implements ModContainer
     }
 
     @Override
-    public List<String> getDependants()
+    public List<ArtifactVersion> getDependants()
     {
         return Collections.emptyList();
     }
 
     @Override
-    public List<String> getDependencies()
+    public List<ArtifactVersion> getDependencies()
     {
         return Collections.emptyList();
     }
 
     @Override
-    public List<String> getRequirements()
+    public List<ArtifactVersion> getRequirements()
     {
         return Collections.emptyList();
     }
@@ -108,6 +109,12 @@ public class DummyModContainer implements ModContainer
     public boolean registerBus(EventBus bus, LoadController controller)
     {
         return false;
+    }
+
+    @Override
+    public ArtifactVersion getProcessedVersion()
+    {
+        return null;
     }
 
 }

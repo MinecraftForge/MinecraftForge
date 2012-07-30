@@ -39,6 +39,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 
 public class FMLModContainer implements ModContainer
 {
@@ -47,16 +49,16 @@ public class FMLModContainer implements ModContainer
     private File source;
     private ModMetadata modMetadata;
     private String className;
-    private String modId;
     private Map<String, Object> descriptor;
     private boolean enabled = true;
-    private List<String> requirements;
-    private List<String> dependencies;
-    private List<String> dependants;
+    private List<ArtifactVersion> requirements;
+    private List<ArtifactVersion> dependencies;
+    private List<ArtifactVersion> dependants;
     private boolean overridesMetadata;
     private EventBus eventBus;
     private LoadController controller;
     private Multimap<Class<? extends Annotation>, Object> annotations;
+    private DefaultArtifactVersion processedVersion;
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
@@ -107,9 +109,9 @@ public class FMLModContainer implements ModContainer
 
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
-            List<String> requirements = Lists.newArrayList();
-            List<String> dependencies = Lists.newArrayList();
-            List<String> dependants = Lists.newArrayList();
+            List<ArtifactVersion> requirements = Lists.newArrayList();
+            List<ArtifactVersion> dependencies = Lists.newArrayList();
+            List<ArtifactVersion> dependants = Lists.newArrayList();
             Loader.instance().computeDependencies((String) descriptor.get("dependencies"), requirements, dependencies, dependants);
             modMetadata.requiredMods = requirements;
             modMetadata.dependencies = dependencies;
@@ -124,19 +126,19 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public List<String> getRequirements()
+    public List<ArtifactVersion> getRequirements()
     {
         return modMetadata.requiredMods;
     }
 
     @Override
-    public List<String> getDependencies()
+    public List<ArtifactVersion> getDependencies()
     {
         return modMetadata.dependencies;
     }
 
     @Override
-    public List<String> getDependants()
+    public List<ArtifactVersion> getDependants()
     {
         return modMetadata.dependants;
     }
@@ -324,5 +326,15 @@ public class FMLModContainer implements ModContainer
             controller.errorOccurred(this, t);
             Throwables.propagateIfPossible(t);
         }
+    }
+
+    @Override
+    public ArtifactVersion getProcessedVersion()
+    {
+        if (processedVersion == null)
+        {
+            processedVersion = new DefaultArtifactVersion(getModId(), getVersion());
+        }
+        return processedVersion;
     }
 }

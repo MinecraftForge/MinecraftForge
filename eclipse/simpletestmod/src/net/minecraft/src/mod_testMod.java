@@ -92,10 +92,10 @@ public class mod_testMod extends BaseMod {
             return interval;
         }
     }
-    
+
     @Override
     public String getPriorities()
     {
-        return "after:MockMod";
+        return "after:MockMod@[1.1,1.2),[1.3,)";
     }
 }

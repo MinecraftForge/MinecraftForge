@@ -61,6 +61,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
@@ -71,9 +73,9 @@ public class ModLoaderModContainer implements ModContainer
     private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
     public BaseMod mod;
     private File modSource;
-    public ArrayList<String> requirements = Lists.newArrayList();
-    public ArrayList<String> dependencies = Lists.newArrayList();
-    public ArrayList<String> dependants = Lists.newArrayList();
+    public List<ArtifactVersion> requirements = Lists.newArrayList();
+    public ArrayList<ArtifactVersion> dependencies = Lists.newArrayList();
+    public ArrayList<ArtifactVersion> dependants = Lists.newArrayList();
     private ContainerType sourceType;
     private ModMetadata metadata;
     private ProxyInjector sidedProxy;
@@ -85,6 +87,7 @@ public class ModLoaderModContainer implements ModContainer
     private LoadController controller;
     private boolean enabled = true;
     private String sortingProperties;
+    private ArtifactVersion processedVersion;
 
     public ModLoaderModContainer(String className, File modSource, String sortingProperties)
     {
@@ -372,19 +375,19 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public List<String> getRequirements()
+    public List<ArtifactVersion> getRequirements()
     {
         return requirements;
     }
 
     @Override
-    public List<String> getDependants()
+    public List<ArtifactVersion> getDependants()
     {
         return dependants;
     }
 
     @Override
-    public List<String> getDependencies()
+    public List<ArtifactVersion> getDependencies()
     {
         return dependencies;
     }
@@ -544,5 +547,15 @@ public class ModLoaderModContainer implements ModContainer
             controller.errorOccurred(this, t);
             Throwables.propagateIfPossible(t);
         }
+    }
+
+    @Override
+    public ArtifactVersion getProcessedVersion()
+    {
+        if (processedVersion == null)
+        {
+            processedVersion = new DefaultArtifactVersion(modId, getVersion());
+        }
+        return processedVersion;
     }
 }
