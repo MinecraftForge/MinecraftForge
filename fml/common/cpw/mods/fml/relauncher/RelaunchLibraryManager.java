@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitorInputStream;
 
 import cpw.mods.fml.common.discovery.ModCandidate;
 
@@ -102,15 +103,23 @@ public class RelaunchLibraryManager
                     }
 
                     String fileChecksum = generateChecksum(libFile);
-                    if (!checksum.equals(fileChecksum))
+                    // bad checksum and I did not download this file
+                    if (!checksum.equals(fileChecksum) && !download)
                     {
-                        caughtErrors.add(new RuntimeException(String.format("The file %s has an invalid checksum %s (expecting %s) - delete it and try again.", libName, fileChecksum, checksum)));
+                        caughtErrors.add(new RuntimeException(String.format("The file %s was found in your lib directory and has an invalid checksum %s (expecting %s) - it is unlikely to be the correct download, please move it out of the way and try again.", libName, fileChecksum, checksum)));
+                        continue;
+                    }
+                    // bad checksum but file was downloaded this session
+                    else if (!checksum.equals(fileChecksum))
+                    {
+                        caughtErrors.add(new RuntimeException(String.format("The downloaded file %s has an invalid checksum %s (expecting %s). The download did not succeed correctly and the file has been deleted. Please try launching again.", libName, fileChecksum, checksum)));
+                        libFile.delete();
                         continue;
                     }
 
                     if (!download)
                     {
-                        System.out.printf("Found library file %s present and correct in lib dir\n", libName);
+                        System.out.printf("Found library file %s present and correct in lib dir", libName);
                     }
                     else
                     {
@@ -149,7 +158,13 @@ public class RelaunchLibraryManager
                 		"They may help you diagnose and resolve the issue");
                 for (Throwable t : caughtErrors)
                 {
-                    FMLLog.log(Level.SEVERE, t, "Fatal error");
+                    FMLLog.severe(t.getMessage());
+                }
+                FMLLog.severe("<<< ==== >>>");
+                FMLLog.severe("The following is diagnostic information for developers to review.");
+                for (Throwable t : caughtErrors)
+                {
+                    FMLLog.log(Level.SEVERE, t, "Error details");
                 }
                 throw new RuntimeException("A fatal error occured and FML cannot continue");
             }
@@ -228,16 +243,18 @@ public class RelaunchLibraryManager
         try
         {
             URL libDownload = new URL(String.format(rootUrl,libFile.getName()));
-            FMLLog.info("Downloading %s", libDownload.toString());
-            InputStream urlConn = libDownload.openStream();
-            ReadableByteChannel urlChannel = Channels.newChannel(urlConn);
+            String infoString = String.format("Downloading file %s", libDownload.toString());
+            FMLLog.info(infoString);
+            InputStream urlStream = libDownload.openStream();
+            urlStream = FMLEmbeddingRelauncher.instance().wrapStream(urlStream, infoString);
+            ReadableByteChannel urlChannel = Channels.newChannel(urlStream);
             FileOutputStream libFileStream = new FileOutputStream(libFile);
             FileChannel libFileChannel = libFileStream.getChannel();
             libFileChannel.transferFrom(urlChannel, 0, 1<<24);
             libFileChannel.close();
             libFileStream.close();
             urlChannel.close();
-            urlConn.close();
+            urlStream.close();
             FMLLog.info("Download complete");
         }
         catch (Exception e)
@@ -245,6 +262,7 @@ public class RelaunchLibraryManager
             FMLLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
             		"have an environment without internet access. You will need to download " +
             		"the file manually\n", libFile.getName());
+            libFile.delete();
             throw new RuntimeException("A download error occured", e);
         }
     }
