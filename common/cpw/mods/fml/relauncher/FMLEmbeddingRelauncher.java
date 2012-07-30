@@ -2,12 +2,21 @@ package cpw.mods.fml.relauncher;
 
 import java.applet.Applet;
 import java.applet.AppletStub;
+import java.awt.Dialog.ModalityType;
+import java.awt.HeadlessException;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitorInputStream;
 
 import net.minecraft.src.WorldSettings;
 
@@ -18,18 +27,21 @@ public class FMLEmbeddingRelauncher
     private Object newApplet;
     private Class<? super Object> appletClass;
 
+    private JDialog popupWindow;
+
     public static void relaunch(ArgsWrapper wrap)
     {
         instance().relaunchClient(wrap);
     }
 
-    private static FMLEmbeddingRelauncher instance()
+    static FMLEmbeddingRelauncher instance()
     {
         if (INSTANCE == null)
         {
             INSTANCE = new FMLEmbeddingRelauncher();
         }
         return INSTANCE;
+
     }
 
     private FMLEmbeddingRelauncher()
@@ -37,15 +49,38 @@ public class FMLEmbeddingRelauncher
         URLClassLoader ucl = (URLClassLoader)getClass().getClassLoader();
 
         clientLoader = new RelaunchClassLoader(ucl.getURLs());
+
+        try
+        {
+            popupWindow = new JDialog(null, "FML Initial Setup", ModalityType.MODELESS);
+            JOptionPane optPane = new JOptionPane("<html><font size=\"+1\">FML Setup</font><br/><br/>FML is performing some configuration, please wait</html>", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[0]);
+            popupWindow.add(optPane);
+            popupWindow.pack();
+            popupWindow.setLocationRelativeTo(null);
+            popupWindow.setVisible(true);
+        }
+        catch (Exception e)
+        {
+            popupWindow = null;
+        }
     }
 
     private void relaunchClient(ArgsWrapper wrap)
     {
-        File minecraftHome = setupHome();
-
         // Now we re-inject the home into the "new" minecraft under our control
-        Class<? super Object> client = ReflectionHelper.getClass(clientLoader, "net.minecraft.client.Minecraft");
-        ReflectionHelper.setPrivateValue(client, null, minecraftHome, "field_6275_Z", "ap", "minecraftDir");
+        Class<? super Object> client;
+        try
+        {
+            File minecraftHome = setupHome();
+
+            client = ReflectionHelper.getClass(clientLoader, "net.minecraft.client.Minecraft");
+            ReflectionHelper.setPrivateValue(client, null, minecraftHome, "field_6275_Z", "ap", "minecraftDir");
+        }
+        finally
+        {
+            popupWindow.setVisible(false);
+            popupWindow.dispose();
+        }
 
         try
         {
@@ -75,7 +110,28 @@ public class FMLEmbeddingRelauncher
         FMLLog.minecraftHome = minecraftHome;
         FMLLog.info("FML relaunch active");
 
-        RelaunchLibraryManager.handleLaunch(minecraftHome, clientLoader);
+        try
+        {
+            RelaunchLibraryManager.handleLaunch(minecraftHome, clientLoader);
+        }
+        catch (Throwable t)
+        {
+            try
+            {
+                String logFile = new File(minecraftHome,"ForgeModLoader-0.log").getCanonicalPath();
+                JOptionPane.showMessageDialog(popupWindow,
+                        String.format("<html><div align=\"center\"><font size=\"+1\">There was a fatal error starting up minecraft and FML</font></div><br/>" +
+                        		"Minecraft cannot launch in it's current configuration<br/>" +
+                        		"Please consult the file <i><a href=\"file:///%s\">%s</a></i> for further information</html>", logFile, logFile
+                        		), "Fatal FML error", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception ex)
+            {
+                // ah well, we tried
+            }
+            throw new RuntimeException(t);
+        }
+
         return minecraftHome;
     }
 
@@ -147,5 +203,17 @@ public class FMLEmbeddingRelauncher
             }
         }
         return;
+    }
+
+    public InputStream wrapStream(InputStream inputStream, String infoString)
+    {
+        if (popupWindow!=null)
+        {
+            return new ProgressMonitorInputStream(popupWindow, infoString, inputStream);
+        }
+        else
+        {
+            return inputStream;
+        }
     }
 }
