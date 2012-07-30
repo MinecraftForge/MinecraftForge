@@ -24,8 +24,8 @@ public class ModContainerFactory
             FMLLog.fine("Identified a BaseMod type mod %s", className);
             return new ModLoaderModContainer(className, modSource, modParser.getBaseModProperties());
         }
-        
-        for (ModAnnotation ann : modParser.getAnnotations()) 
+
+        for (ModAnnotation ann : modParser.getAnnotations())
         {
             if (ann.getASMType().equals(Type.getType(Mod.class)))
             {
@@ -33,7 +33,7 @@ public class ModContainerFactory
                 return new FMLModContainer(className, modSource, ann.getValues());
             }
         }
-        
+
         return null;
     }
 }

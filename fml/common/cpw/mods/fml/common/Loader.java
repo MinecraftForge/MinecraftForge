@@ -49,6 +49,8 @@ import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.TopologicalSort;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionParser;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
@@ -180,12 +182,25 @@ public class Loader
         FMLLog.fine("Verifying mod requirements are satisfied");
         try
         {
+            Map<String, ArtifactVersion> modVersions = Maps.newHashMap();
             for (ModContainer mod : mods)
             {
-                if (!namedMods.keySet().containsAll(mod.getRequirements()))
+                modVersions.put(mod.getModId(), mod.getProcessedVersion());
+            }
+
+            for (ModContainer mod : mods)
+            {
+                ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
+                for (ArtifactVersion v : allDeps)
                 {
-                    FMLLog.log(Level.SEVERE, "The mod %s (%s) requires mods %s to be available, one or more are not", mod.getModId(), mod.getName(), mod.getRequirements());
-                    throw new LoaderException();
+                    if (modVersions.containsKey(v.getLabel()))
+                    {
+                        if (!v.containsVersion(modVersions.get(v.getLabel())))
+                        {
+                            FMLLog.log(Level.SEVERE, "The mod %s (%s) requires mods %s to be available, one or more are not", mod.getModId(), mod.getName(), allDeps);
+                            throw new LoaderException();
+                        }
+                    }
                 }
             }
 
@@ -340,11 +355,11 @@ public class Loader
         mods = new ArrayList<ModContainer>();
         namedMods = new HashMap<String, ModContainer>();
         state = LoaderState.LOADING;
+        modController = new LoadController(this);
         identifyMods();
         disableRequestedMods();
         sortModList();
         mods = ImmutableList.copyOf(mods);
-        modController = new LoadController(this);
         // Mod controller state : CONSTRUCTION
         modController.distributeStateMessage(modClassLoader);
         modController.transition(LoaderState.PREINITIALIZATION);
@@ -448,7 +463,7 @@ public class Loader
         return modClassLoader;
     }
 
-    public void computeDependencies(String dependencyString, List<String> requirements, List<String> dependencies, List<String> dependants)
+    public void computeDependencies(String dependencyString, List<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
     {
         if (dependencyString == null || dependencyString.length() == 0)
         {
@@ -460,6 +475,7 @@ public class Loader
         for (String dep : DEPENDENCYSPLITTER.split(dependencyString))
         {
             List<String> depparts = Lists.newArrayList(DEPENDENCYPARTSPLITTER.split(dep));
+            // Need two parts to the string
             if (depparts.size() != 2)
             {
                 parseFailure=true;
@@ -467,8 +483,14 @@ public class Loader
             }
             String instruction = depparts.get(0);
             String target = depparts.get(1);
-            boolean targetIsAll = target.equals("*");
-            // If we don't have two parts to each substring, this is an invalid dependency string
+            boolean targetIsAll = target.startsWith("*");
+
+            // Cannot have an "all" relationship with anything except pure *
+            if (targetIsAll && target.length()>1)
+            {
+                parseFailure = true;
+                continue;
+            }
 
             // If this is a required element, add it to the required list
             if ("required-before".equals(instruction) || "required-after".equals(instruction))
@@ -476,7 +498,7 @@ public class Loader
                 // You can't require everything
                 if (!targetIsAll)
                 {
-                    requirements.add(target);
+                    requirements.add(VersionParser.parseVersionReference(target));
                 }
                 else
                 {
@@ -485,15 +507,21 @@ public class Loader
                 }
             }
 
+            // You cannot have a versioned dependency on everything
+            if (targetIsAll && target.indexOf('@')>-1)
+            {
+                parseFailure = true;
+                continue;
+            }
             // before elements are things we are loaded before (so they are our dependants)
             if ("required-before".equals(instruction) || "before".equals(instruction))
             {
-            	dependants.add(target);
+            	dependants.add(VersionParser.parseVersionReference(target));
             }
             // after elements are things that load before we do (so they are out dependencies)
             else if ("required-after".equals(instruction) || "after".equals(instruction))
             {
-                dependencies.add(target);
+                dependencies.add(VersionParser.parseVersionReference(target));
             }
             else
             {

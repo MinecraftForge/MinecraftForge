@@ -20,6 +20,7 @@ import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 /**
  * @author cpw
@@ -60,11 +61,11 @@ public class ModSorter
             boolean preDepAdded = false;
             boolean postDepAdded = false;
 
-            for (String dep : mod.getDependencies())
+            for (ArtifactVersion dep : mod.getDependencies())
             {
                 preDepAdded = true;
 
-                if (dep.equals("*"))
+                if (dep.getLabel().equals("*"))
                 {
                     // We are "after" everything
                     modGraph.addEdge(mod, afterAll);
@@ -74,17 +75,17 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(before, mod);
-                    if (nameLookup.containsKey(dep)) {
-                        modGraph.addEdge(nameLookup.get(dep), mod);
+                    if (nameLookup.containsKey(dep.getLabel())) {
+                        modGraph.addEdge(nameLookup.get(dep.getLabel()), mod);
                     }
                 }
             }
 
-            for (String dep : mod.getDependants())
+            for (ArtifactVersion dep : mod.getDependants())
             {
                 postDepAdded = true;
 
-                if (dep.equals("*"))
+                if (dep.getLabel().equals("*"))
                 {
                     // We are "before" everything
                     modGraph.addEdge(beforeAll, mod);
@@ -94,8 +95,8 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(mod, after);
-                    if (nameLookup.containsKey(dep)) {
-                        modGraph.addEdge(mod, nameLookup.get(dep));
+                    if (nameLookup.containsKey(dep.getLabel())) {
+                        modGraph.addEdge(mod, nameLookup.get(dep.getLabel()));
                     }
                 }
             }
