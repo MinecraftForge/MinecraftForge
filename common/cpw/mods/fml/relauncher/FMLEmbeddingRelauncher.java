@@ -78,8 +78,11 @@ public class FMLEmbeddingRelauncher
         }
         finally
         {
-            popupWindow.setVisible(false);
-            popupWindow.dispose();
+            if (popupWindow!=null)
+            {
+                popupWindow.setVisible(false);
+                popupWindow.dispose();
+            }
         }
 
         try
@@ -181,6 +184,14 @@ public class FMLEmbeddingRelauncher
         catch (Exception e)
         {
             throw new RuntimeException(e);
+        }
+        finally
+        {
+            if (popupWindow!=null)
+            {
+                popupWindow.setVisible(false);
+                popupWindow.dispose();
+            }
         }
     }
 
