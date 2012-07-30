@@ -119,11 +119,11 @@ public class RelaunchLibraryManager
 
                     if (!download)
                     {
-                        System.out.printf("Found library file %s present and correct in lib dir", libName);
+                        System.out.printf("Found library file %s present and correct in lib dir\n", libName);
                     }
                     else
                     {
-                        System.out.printf("Library file %s was downloaded and verified successfully", libName);
+                        System.out.printf("Library file %s was downloaded and verified successfully\n", libName);
                     }
 
                     try
