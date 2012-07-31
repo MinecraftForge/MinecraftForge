@@ -1,5 +1,6 @@
 package net.minecraft.src.forge;
 
+import paulscode.sound.SoundSystem;
 import net.minecraft.src.Entity;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
@@ -106,4 +107,48 @@ public interface ISoundHandler
      * @return The sound to play, null to cancel the event.
      */
     String onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch);
+
+    /**
+     * Raised when the SoundManager tries to play a 'Streaming' file,
+     * in vanilla it is only the Jukebox that uses this function.
+     * 
+     * @param soundSystem The SoundSystem instance
+     * @param sourceName The name of the sound source
+     */
+    void playStreamingSource(SoundSystem soundSystem, String sourceName);
+
+    /***
+     * Raised when the SoundManager tries to play a normal sound,
+     * dogs barking, footsteps, etc. THe majority of all sounds during normal game play.
+     * 
+     * @param soundSystem The SoundSystem instance
+     * @param sourceName The name of the sound source
+     */
+    void playSoundSource(SoundSystem soundSystem, String sourceName);
+
+    /**
+     * Raised when the SoundManager tries to play a effect sound,
+     * currently the only known sounds are 'random.click' when a GUI button is clicked,
+     * or 'portal.trigger' and 'portal.travel' when the player is near/inside a portal.
+     * 
+     * @param soundSystem The SoundSystem instance
+     * @param sourceName The name of the sound source
+     */
+    void playSoundEffectSource(SoundSystem soundSystem, String sourceName);
+
+    /**
+     * Raised on every iteration of the main game loop in order to update the
+     * listeners position and facing. This is called regardless of whether or not
+     * the listener has actually moved.
+     * 
+     * @param soundManager The SoundManager instance
+     * @param elapsed The amount of time (in ticks) since the last timer update.
+     * @param posX The projected x coord of the listener
+     * @param posY The projected y coord of the listener
+     * @param posZ The projected z coord of the listener
+     * @param lookX The projected x angle (in radians) of the listener
+     * @param lookY The projected y angle (in radians) of the listener
+     * @param lookZ The projected z angle (in radians) of the listener
+     */
+    void onSetListener(SoundManager soundManager, float elapsed, float posX, float posY, float posZ, float lookX, float lookY, float lookZ);
 }
