@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.IMinecraftRegistry;
 
@@ -51,7 +52,7 @@ public class ClientRegistry implements IMinecraftRegistry
         {
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
-            int blockItemId = block.field_376_bc - 256;
+            int blockItemId = block.field_71990_ca - 256;
             itemclass.getConstructor(int.class).newInstance(blockItemId);
         }
         catch (Exception e)
