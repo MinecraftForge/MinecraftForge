@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -191,6 +192,8 @@ public class RelaunchLibraryManager
         try
         {
             Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
+            Method m = loaderClazz.getMethod("injectData", Object[].class);
+            m.invoke(null, (Object)FMLVersionData.data());
         }
         catch (Exception e)
         {

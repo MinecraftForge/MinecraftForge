@@ -5,20 +5,21 @@ import java.applet.AppletStub;
 import java.awt.Dialog.ModalityType;
 import java.awt.HeadlessException;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitorInputStream;
-
-import net.minecraft.src.WorldSettings;
 
 public class FMLEmbeddingRelauncher
 {
@@ -74,7 +75,7 @@ public class FMLEmbeddingRelauncher
             File minecraftHome = setupHome();
 
             client = ReflectionHelper.getClass(clientLoader, "net.minecraft.client.Minecraft");
-            ReflectionHelper.setPrivateValue(client, null, minecraftHome, "field_6275_Z", "ap", "minecraftDir");
+            ReflectionHelper.setPrivateValue(client, null, minecraftHome, "field_71463_am", "am", "minecraftDir");
         }
         finally
         {
@@ -100,7 +101,7 @@ public class FMLEmbeddingRelauncher
     {
         Class<? super Object> mcMaster = ReflectionHelper.getClass(getClass().getClassLoader(), "net.minecraft.client.Minecraft");
         // We force minecraft to setup it's homedir very early on so we can inject stuff into it
-        Method setupHome = ReflectionHelper.findMethod(mcMaster, null, new String[] { "func_6240_b", "getMinecraftDir", "b"} );
+        Method setupHome = ReflectionHelper.findMethod(mcMaster, null, new String[] { "func_71380_b", "getMinecraftDir", "b"} );
         try
         {
             setupHome.invoke(null);
@@ -109,9 +110,9 @@ public class FMLEmbeddingRelauncher
         {
             // Hmmm
         }
-        File minecraftHome = ReflectionHelper.getPrivateValue(mcMaster, null, "field_6275_Z", "ap", "minecraftDir");
-        FMLLog.minecraftHome = minecraftHome;
-        FMLLog.info("FML relaunch active");
+        File minecraftHome = ReflectionHelper.getPrivateValue(mcMaster, null, "field_71463_am", "am", "minecraftDir");
+        FMLVersionData.build(minecraftHome, clientLoader);
+        FMLLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", FMLVersionData.major, FMLVersionData.minor, FMLVersionData.rev, FMLVersionData.build, FMLVersionData.mccversion, FMLVersionData.mcsversion);
 
         try
         {

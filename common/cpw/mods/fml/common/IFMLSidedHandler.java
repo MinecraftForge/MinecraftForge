@@ -13,16 +13,26 @@ import cpw.mods.fml.common.modloader.ModProperty;
 public interface IFMLSidedHandler
 {
     Logger getMinecraftLogger();
-    File getMinecraftRootDirectory();
+
     Object getMinecraftInstance();
+
     String getCurrentLanguage();
+
     Properties getCurrentLanguageTable();
+
     String getObjectName(Object minecraftObject);
+
     void profileStart(String profileLabel);
+
     void profileEnd();
+
     ModProperty getModLoaderPropertyFor(Field f);
+
     List<String> getAdditionalBrandingInformation();
+
     Side getSide();
+
     ProxyInjector findSidedProxyOn(BaseMod mod);
+
     void haltGame(String message, Throwable exception);
 }

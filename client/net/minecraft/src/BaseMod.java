@@ -54,7 +54,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     {
         Minecraft mc = (Minecraft) minecraftInstance;
         if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME  ) || tick ==  TickType.GUILOAD) {
-            return onTickInGUI((Float) data[0], mc, mc.field_6313_p);
+            return onTickInGUI((Float) data[0], mc, mc.field_71462_r);
         }
         return true;
     }
@@ -97,7 +97,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     @Override
     public final boolean onChat(Object... data)
     {
-        receiveChatPacket(((Packet3Chat)data[0]).field_517_a);
+        receiveChatPacket(((Packet3Chat)data[0]).field_73476_b);
         return true;
     }
 
@@ -140,7 +140,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     {
         EntityItem item = (EntityItem) pickupData[0];
         EntityPlayer player = (EntityPlayer) pickupData[1];
-        onItemPickup(player, item.field_801_a);
+        onItemPickup(player, item.field_70294_a);
     }
 
     @Override

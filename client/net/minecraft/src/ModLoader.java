@@ -22,8 +22,10 @@ import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
 
+import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.SpriteHelper;
+import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
@@ -72,7 +74,7 @@ public class ModLoader
 
     public static void addAnimation(TextureFX anim)
     {
-        FMLClientHandler.instance().addAnimation(anim);
+        TextureFXManager.instance().addAnimation(anim);
     }
 
     /**
@@ -165,7 +167,7 @@ public class ModLoader
      */
     public static void addOverride(String path, String overlayPath, int index)
     {
-        FMLClientHandler.instance().addNewTextureOverride(path, overlayPath, index);
+        TextureFXManager.instance().addNewTextureOverride(path, overlayPath, index);
     }
 
     /**
@@ -288,7 +290,7 @@ public class ModLoader
      */
     public static void genericContainerRemoval(World world, int x, int y, int z)
     {
-        TileEntity te = world.func_603_b(x, y, z);
+/*        TileEntity te = world.func_603_b(x, y, z);
 
         if (!(te instanceof IInventory))
         {
@@ -334,7 +336,7 @@ public class ModLoader
                 world.func_674_a(entityitem);
             }
         }
-    }
+*/    }
 
     /**
      * Get a list of all BaseMod loaded into the system
@@ -407,7 +409,7 @@ public class ModLoader
      */
     public static int getUniqueBlockModelID(BaseMod mod, boolean inventoryRenderer)
     {
-        return FMLClientHandler.instance().obtainBlockModelIdFor(mod, inventoryRenderer);
+        return BlockRenderManager.instance().obtainBlockModelIdFor(mod, inventoryRenderer);
     }
 
     /**
@@ -441,7 +443,7 @@ public class ModLoader
 
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
-        return FMLClientHandler.instance().getClient().field_6313_p!=null && FMLClientHandler.instance().getClient().field_6313_p.equals(gui);
+        return FMLClientHandler.instance().getClient().field_71462_r != null && FMLClientHandler.instance().getClient().field_71462_r.equals(gui);
     }
 
     /**
@@ -466,7 +468,7 @@ public class ModLoader
 
     public static BufferedImage loadImage(RenderEngine renderEngine, String path) throws Exception
     {
-        return FMLClientHandler.instance().loadImageFromTexturePack(renderEngine, path);
+        return TextureFXManager.instance().loadImageFromTexturePack(renderEngine, path);
     }
 
     /**
@@ -659,19 +661,19 @@ public class ModLoader
     @Deprecated
     public static boolean renderBlockIsItemFull3D(int modelID)
     {
-        return FMLClientHandler.instance().renderItemAsFull3DBlock(modelID);
+        return BlockRenderManager.instance().renderItemAsFull3DBlock(modelID);
     }
 
     @Deprecated
     public static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        FMLClientHandler.instance().renderInventoryBlock(renderer, block, metadata, modelID);
+        BlockRenderManager.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
     @Deprecated
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
-        return FMLClientHandler.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
+        return BlockRenderManager.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 
     /**

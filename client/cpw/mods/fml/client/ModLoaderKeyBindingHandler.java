@@ -51,7 +51,7 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
     {
         ((net.minecraft.src.BaseMod)modContainer.getMod()).keyboardEvent(keyBinding);
     }
-    
+
     @Override
     public void keyDown(EnumSet<TickType> type, boolean end, boolean repeats)
     {
@@ -99,6 +99,6 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
     @Override
     public String getLabel()
     {
-        return modContainer.getModId() +" KB "+keyBinding.field_1371_a;
+        return modContainer.getModId() +" KB "+keyBinding.field_74512_d;
     }
 }
