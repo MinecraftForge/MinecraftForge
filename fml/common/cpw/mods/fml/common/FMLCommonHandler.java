@@ -38,8 +38,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import net.minecraft.src.CallableMinecraftVersion;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -310,10 +308,6 @@ public class FMLCommonHandler
         return sidedDelegate.getMinecraftLogger();
     }
 
-    public File getMinecraftRootDirectory() {
-        return sidedDelegate.getMinecraftRootDirectory();
-    }
-
     /**
      * @return
      */
@@ -455,9 +449,8 @@ public class FMLCommonHandler
         if (brandings == null)
         {
             Builder brd = ImmutableList.<String>builder();
-            brd.add("Minecraft "+CallableMinecraftVersion.func_55337_a());
+            brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getFMLVersionString());
-            brd.add(Strings.nullToEmpty((String)callForgeMethod("getVersionString")));
             brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
             try {
                 Properties props=new Properties();

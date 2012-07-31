@@ -21,9 +21,9 @@ import cpw.mods.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
 
 /**
  * Some reflection helper code.
- * 
+ *
  * @author cpw
- * 
+ *
  */
 public class ObfuscationReflectionHelper
 {
@@ -38,8 +38,7 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToAccessFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger()
-                    .log(Level.SEVERE, String.format("There was a problem getting field index %d from %s", fieldIndex, classToAccess.getName()), e);
+            FMLLog.log(Level.SEVERE, e, "There was a problem getting field index %d from %s", fieldIndex, classToAccess.getName());
             throw e;
         }
     }
@@ -53,14 +52,12 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToFindFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger()
-                    .log(Level.SEVERE, String.format("Unable to locate any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            FMLLog.log(Level.SEVERE,e,"Unable to locate any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName());
             throw e;
         }
         catch (UnableToAccessFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger()
-                    .log(Level.SEVERE, String.format("Unable to access any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            FMLLog.log(Level.SEVERE, e, "Unable to access any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName());
             throw e;
         }
     }
@@ -79,8 +76,7 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToAccessFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger()
-                    .log(Level.SEVERE, String.format("There was a problem setting field index %d on type %s", fieldIndex, classToAccess.getName()));
+            FMLLog.log(Level.SEVERE, e, "There was a problem setting field index %d on type %s", fieldIndex, classToAccess.getName());
             throw e;
         }
     }
@@ -99,14 +95,12 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToFindFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger()
-                    .log(Level.SEVERE, String.format("Unable to locate any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            FMLLog.log(Level.SEVERE, e, "Unable to locate any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName());
             throw e;
         }
         catch (UnableToAccessFieldException e)
         {
-            FMLCommonHandler.instance().getFMLLogger()
-                    .log(Level.SEVERE, String.format("Unable to set any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName()), e);
+            FMLLog.log(Level.SEVERE, e, "Unable to set any field %s on type %s", Arrays.toString(fieldNames), classToAccess.getName());
             throw e;
         }
     }

@@ -17,25 +17,25 @@ public class ClientRegistry implements IMinecraftRegistry
     @Override
     public void addRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_1120_a().func_1121_a(output, params);
+        CraftingManager.func_77594_a().func_77595_a(output, params);
     }
 
     @Override
     public void addShapelessRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_1120_a().func_21187_b(output, params);
+        CraftingManager.func_77594_a().func_77596_b(output, params);
     }
 
     @Override
     public void addRecipe(IRecipe recipe)
     {
-        CraftingManager.func_1120_a().func_25193_b().add(recipe);
+        CraftingManager.func_77594_a().func_77592_b().add(recipe);
     }
 
     @Override
-    public void addSmelting(int input, ItemStack output)
+    public void addSmelting(int input, ItemStack output, float xp)
     {
-        FurnaceRecipes.func_21200_a().func_21199_a(input, output);
+        FurnaceRecipes.func_77602_a().func_77600_a(input, output, xp);
     }
 
     @Override

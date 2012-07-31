@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/src/GuiMainMenu.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src-work/minecraft/net/minecraft/src/GuiMainMenu.java	0000-00-00 00:00:00.000000000 -0000
-@@ -8,10 +8,18 @@
+@@ -8,11 +8,18 @@
  import java.util.ArrayList;
  import java.util.Calendar;
  import java.util.Date;
 +import java.util.List;
  import java.util.Random;
+ import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.util.glu.GLU;
  
@@ -14,56 +15,45 @@
 +
 +import cpw.mods.fml.client.GuiModList;
 +import cpw.mods.fml.common.FMLCommonHandler;
-+import cpw.mods.fml.common.Loader;
 +
  public class GuiMainMenu extends GuiScreen
  {
-     private static final Random field_6463_h = new Random();
-@@ -117,7 +125,9 @@
-             this.func_55154_a(var4, 24, var2);
+     private static final Random field_73976_a = new Random();
+@@ -118,7 +125,8 @@
+             this.func_73969_a(var4, 24, var2);
          }
  
--        this.field_949_e.add(new GuiButton(3, this.field_951_c / 2 - 100, var4 + 48, var2.func_20163_a("menu.mods")));
-+//        this.field_949_e.add(new GuiButton(3, this.field_951_c / 2 - 100, var4 + 48, var2.func_20163_a("menu.mods")));
-+        this.field_949_e.add(new GuiButton(3, this.field_951_c / 2 - 100, var4 + 48, 98, 20, var2.func_20163_a("menu.mods")));
-+        this.field_949_e.add(new GuiButton(6, this.field_951_c / 2 + 2, var4 + 48, 98, 20, "Mods"));
+-        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, var2.func_74805_b("menu.mods")));
++        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, 98, 20, var2.func_74805_b("menu.mods")));
++        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 + 2, var4 + 48, 98, 20, "Mods"));
  
-         if (this.field_945_b.field_6317_l)
+         if (this.field_73882_e.field_71448_m)
          {
-@@ -149,6 +159,7 @@
-         {
-             this.field_55155_d.field_937_g = false;
-         }
-+
-     }
- 
-     protected void func_572_a(GuiButton p_572_1_)
-@@ -183,6 +194,10 @@
-             this.field_945_b.func_6244_d();
+@@ -184,6 +192,11 @@
+             this.field_73882_e.func_71400_g();
          }
  
-+        if (p_572_1_.field_938_f == 6)
++        if (p_73875_1_.field_73741_f == 6)
 +        {
-+            this.field_945_b.func_6272_a(new GuiModList(this));
++            this.field_73882_e.func_71373_a(new GuiModList(this));
 +        }
-         if (p_572_1_.field_938_f == 11)
++
+         if (p_73875_1_.field_73741_f == 11)
          {
-             this.field_945_b.func_58039_a("Demo_World", "Demo_World", DemoWorldServer.field_56874_a);
-@@ -398,8 +413,15 @@
-         {
+             this.field_73882_e.func_71371_a("Demo_World", "Demo_World", DemoWorldServer.field_73071_a);
+@@ -400,7 +413,14 @@
              var9 = var9 + " Demo";
          }
--
--        this.func_547_b(this.field_6451_g, var9, 2, this.field_950_d - 10, 16777215);
+ 
+-        this.func_73731_b(this.field_73886_k, var9, 2, this.field_73881_g - 10, 16777215);
 +        List<String> brandings=Lists.reverse(FMLCommonHandler.instance().getBrandings());
 +        for (int i=0; i<brandings.size(); i++) {
 +            String brd = brandings.get(i);
 +            if (!Strings.isNullOrEmpty(brd))
 +            {
-+                this.func_547_b(this.field_6451_g, brd, 2, this.field_950_d - ( 10 + i * (this.field_6451_g.field_41063_b +1)), 16777215);
++                this.func_73731_b(this.field_73886_k, brd, 2, this.field_73881_g - ( 10 + i * (this.field_73886_k.field_78288_b + 1)), 16777215);
 +            }
 +        }
-+//        this.func_547_b(this.field_6451_g, var9, 2, this.field_950_d - 10, 16777215);
          String var10 = "Copyright Mojang AB. Do not distribute!";
-         this.func_547_b(this.field_6451_g, var10, this.field_951_c - this.field_6451_g.func_871_a(var10) - 2, this.field_950_d - 10, 16777215);
-         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);
+         this.func_73731_b(this.field_73886_k, var10, this.field_73880_f - this.field_73886_k.func_78256_a(var10) - 2, this.field_73881_g - 10, 16777215);
+         super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);

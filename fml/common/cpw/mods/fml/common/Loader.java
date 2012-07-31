@@ -132,6 +132,8 @@ public class Loader
     private File canonicalModsDir;
     private LoadController modController;
 
+    private static File minecraftDir;
+
     public static Loader instance()
     {
         if (instance == null)
@@ -142,33 +144,19 @@ public class Loader
         return instance;
     }
 
+    public static void injectData(Object... data)
+    {
+        major = (String) data[0];
+        minor = (String) data[1];
+        rev = (String) data[2];
+        build = (String) data[3];
+        mccversion = (String) data[4];
+        mcsversion = (String) data[5];
+        minecraftDir = (File) data[6];
+    }
+
     private Loader()
     {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("fmlversion.properties");
-        Properties properties = new Properties();
-
-        if (stream != null)
-        {
-            try
-            {
-                properties.load(stream);
-            }
-            catch (IOException ex)
-            {
-                FMLLog.log(Level.SEVERE, "Could not get FML version information - corrupted installation detected!", ex);
-                throw new LoaderException(ex);
-            }
-        }
-
-        major = properties.getProperty("fmlbuild.major.number", "missing");
-        minor = properties.getProperty("fmlbuild.minor.number", "missing");
-        rev = properties.getProperty("fmlbuild.revision.number", "missing");
-        build = properties.getProperty("fmlbuild.build.number", "missing");
-        mccversion = properties.getProperty("fmlbuild.mcclientversion", "missing");
-        mcsversion = properties.getProperty("fmlbuild.mcserverversion", "missing");
-
-        FMLLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", major, minor, rev, build, mccversion, mcsversion);
-
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
     }
 
@@ -279,7 +267,6 @@ public class Loader
      */
     private void initializeLoader()
     {
-        File minecraftDir = FMLCommonHandler.instance().getMinecraftRootDirectory();
         File modsDir = new File(minecraftDir, "mods");
         File configDir = new File(minecraftDir, "config");
         String canonicalModsPath;
@@ -295,9 +282,8 @@ public class Loader
         }
         catch (IOException ioe)
         {
-            FMLLog.log(Level.SEVERE,
-                    String.format("Failed to resolve loader directories: mods : %s ; config %s", canonicalModsDir.getAbsolutePath(),
-                            configDir.getAbsolutePath()), ioe);
+            FMLLog.log(Level.SEVERE, ioe, "Failed to resolve loader directories: mods : %s ; config %s", canonicalModsDir.getAbsolutePath(),
+                            configDir.getAbsolutePath());
             throw new LoaderException(ioe);
         }
 
@@ -571,5 +557,10 @@ public class Loader
     public ModState getModState(ModContainer selectedMod)
     {
         return modController.getModState(selectedMod);
+    }
+
+    public String getMCVersionString()
+    {
+        return "Minecraft " + mccversion;
     }
 }

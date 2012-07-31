@@ -23,33 +23,33 @@ public class KeyBindingRegistry
         protected KeyBinding keyBinding;
         protected boolean keyDown;
         protected boolean repeating;
-        
+
         public KeyHandler(KeyBinding keyBinding, boolean repeating)
         {
             this.keyBinding = keyBinding;
             this.repeating = repeating;
         }
-        
+
         public KeyBinding getKeyBinding()
         {
             return this.keyBinding;
         }
-        
+
         @Override
         public final void tickStart(EnumSet<TickType> type, Object... tickData)
         {
             keyTick(type, false);
         }
-        
+
         @Override
         public final void tickEnd(EnumSet<TickType> type, Object... tickData)
         {
             keyTick(type, true);
         }
-        
+
         private void keyTick(EnumSet<TickType> type, boolean tickEnd)
         {
-            int keyCode = keyBinding.field_1370_b;
+            int keyCode = keyBinding.field_74512_d;
             boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
             if (state != keyDown || (state && repeating))
             {
@@ -64,17 +64,17 @@ public class KeyBindingRegistry
                 keyDown = state;
             }
         }
-        
+
         public abstract void keyDown(EnumSet<TickType> types, boolean tickEnd, boolean isRepeat);
         public abstract void keyUp(EnumSet<TickType> types, boolean tickEnd);
     }
-    
+
     private static List<KeyHandler> keyHandlers = Lists.newArrayList();
 
     public static void registerKeyBinding(KeyHandler handler) {
         keyHandlers.add(handler);
     }
-    
+
     public static void uploadKeyBindingsToGame(GameSettings settings)
     {
         ArrayList<KeyBinding> harvestedBindings = Lists.newArrayList();
@@ -83,10 +83,10 @@ public class KeyBindingRegistry
             harvestedBindings.add(key.keyBinding);
         }
         KeyBinding[] modKeyBindings = harvestedBindings.toArray(new KeyBinding[harvestedBindings.size()]);
-        KeyBinding[] allKeys = new KeyBinding[settings.field_1564_t.length + modKeyBindings.length];
-        System.arraycopy(settings.field_1564_t, 0, allKeys, 0, settings.field_1564_t.length);
-        System.arraycopy(modKeyBindings, 0, allKeys, settings.field_1564_t.length, modKeyBindings.length);
-        settings.field_1564_t = allKeys;
-        settings.func_6519_a();
+        KeyBinding[] allKeys = new KeyBinding[settings.field_74324_K.length + modKeyBindings.length];
+        System.arraycopy(settings.field_74324_K, 0, allKeys, 0, settings.field_74324_K.length);
+        System.arraycopy(modKeyBindings, 0, allKeys, settings.field_74324_K.length, modKeyBindings.length);
+        settings.field_74324_K = allKeys;
+        settings.func_74300_a();
     }
 }

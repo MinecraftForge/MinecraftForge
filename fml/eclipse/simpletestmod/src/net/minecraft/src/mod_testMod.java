@@ -96,6 +96,6 @@ public class mod_testMod extends BaseMod {
     @Override
     public String getPriorities()
     {
-        return "after:MockMod@[1.1,1.2),[1.3,)";
+        return "after:MockMod";
     }
 }
