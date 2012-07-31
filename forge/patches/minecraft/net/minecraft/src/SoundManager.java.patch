@@ -56,7 +56,15 @@
                      sndSystem.backgroundMusic("BgMusic", var1.soundUrl, var1.soundName, false);
                      sndSystem.setVolume("BgMusic", this.options.musicVolume);
                      sndSystem.play("BgMusic");
-@@ -214,6 +225,7 @@
+@@ -196,6 +207,7 @@
+                 float var17 = 0.0F;
+                 sndSystem.setListenerPosition((float)var4, (float)var6, (float)var8);
+                 sndSystem.setListenerOrientation(var12, var13, var14, var15, var16, var17);
++                ForgeHooksClient.onSetListener(this, par2, (float)var4, (float)var6, (float)var8, var12, var13, var14);
+             }
+         }
+     }
+@@ -214,6 +226,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry var8 = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -64,7 +72,15 @@
  
                  if (var8 != null && par5 > 0.0F)
                  {
-@@ -239,6 +251,7 @@
+@@ -225,6 +238,7 @@
+                     float var9 = 16.0F;
+                     sndSystem.newStreamingSource(true, var7, var8.soundUrl, var8.soundName, false, par2, par3, par4, 2, var9 * 4.0F);
+                     sndSystem.setVolume(var7, 0.5F * this.options.soundVolume);
++                    ForgeHooksClient.playStreamingSource(sndSystem, var7);
+                     sndSystem.play(var7);
+                 }
+             }
+@@ -239,6 +253,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var7 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -72,7 +88,15 @@
  
              if (var7 != null && par5 > 0.0F)
              {
-@@ -274,6 +287,7 @@
+@@ -260,6 +275,7 @@
+                 }
+ 
+                 sndSystem.setVolume(var8, par5 * this.options.soundVolume);
++                ForgeHooksClient.playSoundSource(sndSystem, var8);
+                 sndSystem.play(var8);
+             }
+         }
+@@ -274,6 +290,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var4 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -80,7 +104,12 @@
  
              if (var4 != null)
              {
-@@ -293,4 +307,25 @@
+@@ -289,8 +306,30 @@
+                 par2 *= 0.25F;
+                 sndSystem.setPitch(var5, par3);
+                 sndSystem.setVolume(var5, par2 * this.options.soundVolume);
++                ForgeHooksClient.playSoundEffectSource(sndSystem, var5);
+                 sndSystem.play(var5);
              }
          }
      }
