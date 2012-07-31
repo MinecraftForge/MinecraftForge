@@ -53,9 +53,9 @@ public class FMLRegistry
         instance.addRecipe(recipe);
     }
 
-    public static void addSmelting(int input, ItemStack output)
+    public static void addSmelting(int input, ItemStack output, float xp)
     {
-        instance.addSmelting(input, output);
+        instance.addSmelting(input, output, xp);
     }
 
     public static void registerBlock(Block block)
