@@ -40,3 +40,14 @@
          }
      }
  
+@@ -280,6 +288,10 @@
+      */
+     private static boolean isValidSupportBlock(int par0)
+     {
++        if (disableValidation)
++        {
++            return true;
++        }
+         if (par0 <= 0)
+         {
+             return false;
