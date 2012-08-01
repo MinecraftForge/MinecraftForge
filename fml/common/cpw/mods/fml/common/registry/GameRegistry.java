@@ -4,6 +4,11 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import net.minecraft.src.CraftingManager;
+import net.minecraft.src.FurnaceRecipes;
+import net.minecraft.src.IRecipe;
+import net.minecraft.src.ItemStack;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -46,6 +51,26 @@ public class GameRegistry
     public static void registerBlock(BlockProxy block)
     {
         
+    }
+
+    public static void addRecipe(ItemStack output, Object... params)
+    {
+        CraftingManager.func_77594_a().addRecipe(output, params);
+    }
+
+    public static void addShapelessRecipe(ItemStack output, Object... params)
+    {
+        FMLRegistry.instance.addShapelessRecipe(output, params);
+    }
+
+    public static void addRecipe(IRecipe recipe)
+    {
+        FMLRegistry.instance.addRecipe(recipe);
+    }
+
+    public static void addSmelting(int input, ItemStack output, float xp)
+    {
+        FurnaceRecipes.func_77602_a().func_77600_a(input, output, xp);
     }
 
 }

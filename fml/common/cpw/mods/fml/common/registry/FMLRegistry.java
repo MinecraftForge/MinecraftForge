@@ -19,15 +19,13 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.IRecipe;
 import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 
 
 public class FMLRegistry
 {
-    private static IMinecraftRegistry instance;
+    static IMinecraftRegistry instance;
 
     public static void registerRegistry(IMinecraftRegistry registry)
     {
@@ -38,26 +36,6 @@ public class FMLRegistry
 
         instance = registry;
     }
-    public static void addRecipe(ItemStack output, Object... params)
-    {
-        instance.addRecipe(output, params);
-    }
-
-    public static void addShapelessRecipe(ItemStack output, Object... params)
-    {
-        instance.addShapelessRecipe(output, params);
-    }
-
-    public static void addRecipe(IRecipe recipe)
-    {
-        instance.addRecipe(recipe);
-    }
-
-    public static void addSmelting(int input, ItemStack output, float xp)
-    {
-        instance.addSmelting(input, output, xp);
-    }
-
     public static void registerBlock(Block block)
     {
         GameRegistry.registerBlock((BlockProxy)block);
