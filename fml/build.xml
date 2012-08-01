@@ -226,28 +226,27 @@
     </condition>
     <fail if="do.not.continue">You have decided not to continue. This script will stop now.</fail>
     <echo>Preparing the MCP environment at ${mcp.home}</echo>
-    <exec executable="${python.exe}" dir="${basedir}">
+    <!--<exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/download_fernflower.py" />
       <arg value="${mcp.home}"/>
-    </exec>
+    </exec>-->
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
       <arg value="-f" />
     </exec>
-    <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/decompile.py" />
-      <arg value="-d" />
-      <arg value="-n" />
-      <arg value="-r" />
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/decompile.py" />
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}" />
     </exec>
-    <exec executable="${python.exe}" dir="${mcp.home}">
+    <!--<exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${basedir}/cleanup_source.py" />
       <arg value="${mcp.srcdir}" />
-    </exec>
-    <exec executable="${python.exe}" dir="${mcp.home}">
+    </exec>-->
+    <!--<exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/updatemd5.py" />
       <arg value="-f" />
-    </exec>
+    </exec>-->
     <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
       <fileset dir="${patch.mcp.srcdir}"/>
