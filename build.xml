@@ -212,7 +212,7 @@
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/applypatches.py" />
-      <arg value="${patch.src.dir}" />
+      <arg value="${basedir}" />
       <arg value="${mcp.srcdir}" />
       <arg value="${mcp.home}" />
     </exec>

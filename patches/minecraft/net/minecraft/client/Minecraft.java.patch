@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src-work/minecraft/net/minecraft/client/Minecraft.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src-base/minecraft/net/minecraft/client/Minecraft.java
++++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
 @@ -126,6 +126,10 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
