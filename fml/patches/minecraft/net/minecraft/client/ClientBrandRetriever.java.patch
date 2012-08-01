@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/client/ClientBrandRetriever.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src-work/minecraft/net/minecraft/client/ClientBrandRetriever.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src-base/minecraft/net/minecraft/client/ClientBrandRetriever.java
++++ ../src-work/minecraft/net/minecraft/client/ClientBrandRetriever.java
 @@ -4,6 +4,6 @@
  {
      public static String getClientModName()

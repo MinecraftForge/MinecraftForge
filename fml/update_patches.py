@@ -5,6 +5,8 @@ import fnmatch
 import re
 import subprocess, shlex
 
+import difflib, time
+
 def cmdsplit(args):
     if os.sep == '\\':
         args = args.replace('\\', '\\\\')
@@ -27,27 +29,25 @@ def cleanDirs(path):
         
 def main():
     print("Creating patches")
-    mcp = sys.argv[1]
+    mcp = os.path.normpath(sys.argv[1])
+    patchd = os.path.normpath(sys.argv[2])
     base = os.path.normpath(os.path.join(mcp, 'src-base'))
     work = os.path.normpath(os.path.join(mcp, 'src-work'))
-    timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
-    mcpath = re.compile(mcp)
     
     for path, _, filelist in os.walk(work, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.java'):
             file_base = os.path.normpath(os.path.join(base, path[len(work)+1:], cur_file)).replace(os.path.sep, '/')
             file_work = os.path.normpath(os.path.join(work, path[len(work)+1:], cur_file)).replace(os.path.sep, '/')
-            patch = ''
-            cmd = 'diff -u %s %s -r --strip-trailing-cr --new-file' % (file_base, file_work)
-            process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
-            patch, _ = process.communicate()
-            patch_dir = os.path.join(sys.argv[2], path[len(work)+1:])
+            
+            fromlines = open(file_base, 'U').readlines()
+            tolines = open(file_work, 'U').readlines()
+            
+            patch = ''.join(difflib.unified_diff(fromlines, tolines, '../' + file_base[len(mcp)+1:], '../' + file_work[len(mcp)+1:], '', '', n=3))
+            patch_dir = os.path.join(patchd, path[len(work)+1:])
             patch_file = os.path.join(patch_dir, cur_file + '.patch')
             
             if len(patch) > 0:
-                print patch_file
-                patch = timestamp.sub("0000-00-00 00:00:00.000000000 -0000\n", patch)
-                patch = mcpath.sub('..',patch)
+                print patch_file[len(patchd)+1:]
                 patch = patch.replace('\r\n', '\n')
                 
                 if not os.path.exists(patch_dir):
@@ -60,7 +60,7 @@ def main():
                     os.remove(patch_file)
                     
 
-    cleanDirs('patches')
+    cleanDirs(patchd)
     
 if __name__ == '__main__':
     main()

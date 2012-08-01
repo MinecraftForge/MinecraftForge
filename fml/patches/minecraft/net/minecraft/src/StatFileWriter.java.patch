@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/src/StatFileWriter.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src-work/minecraft/net/minecraft/src/StatFileWriter.java	0000-00-00 00:00:00.000000000 -0000
+--- ../src-base/minecraft/net/minecraft/src/StatFileWriter.java
++++ ../src-work/minecraft/net/minecraft/src/StatFileWriter.java
 @@ -124,17 +124,17 @@
          {
              String var2 = "local";

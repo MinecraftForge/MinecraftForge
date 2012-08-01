@@ -4,6 +4,14 @@ import shutil, glob, fnmatch
 import subprocess, logging, re
 from hashlib import md5  # pylint: disable-msg=E0611
 
+#class flushout(object):
+#    def __init__(self, f):
+#        self.f = f
+#    def write(self, x):
+#        self.f.write(x)
+#        self.f.flush()
+#sys.stdout = flushout(sys.stdout)
+
 def download_deps(mcp_path):
     bin_path = os.path.normpath(os.path.join(mcp_path, 'runtime', 'bin'))
     ff_path = os.path.normpath(os.path.join(bin_path, 'fernflower.jar'))
@@ -196,6 +204,9 @@ def merge_client_server(mcp_dir):
     server = os.path.join(mcp_dir, 'src', 'minecraft_server')
     shared = os.path.join(mcp_dir, 'src', 'common')
     
+    if not os.path.isdir(shared):
+        os.makedirs(shared)
+    
     if not os.path.isdir(client) or not os.path.isdir(server):
         return
         
@@ -227,35 +238,40 @@ def merge_client_server(mcp_dir):
                 
             shutil.move(f_client, f_shared)
             os.remove(f_server)
-    
-def apply_fml_patches(fml_dir, mcp_dir):
+
+def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     sys.path.append(mcp_dir)
     from runtime.updatemd5 import updatemd5
     
-    has_client = os.path.isdir(os.path.join(mcp_dir, 'src', 'minecraft'))
-    has_server = os.path.isdir(os.path.join(mcp_dir, 'src', 'minecraft_server'))
+    has_client = os.path.isdir(os.path.join(src_dir, 'minecraft'))
+    has_server = os.path.isdir(os.path.join(src_dir, 'minecraft_server'))
     
     #patch files
     print 'Applying Forge ModLoader patches'
+    sys.stdout.flush()
     if has_client:
         if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft')):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
-        if os.path.isdir(os.path.join(fml_dir, 'src', 'minecraft')):
+        if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
+            apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft/')
+        if copy_files and os.path.isdir(os.path.join(fml_dir, 'src', 'minecraft')):
             copytree(os.path.join(fml_dir, 'src', 'minecraft'), os.path.join(src_dir, 'minecraft'))
         #delete argo
-        shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
+        if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
+            shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
         
     if has_server:
         if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft_server')):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft_server'), src_dir)
-        if os.path.isdir(os.path.join(fml_dir, 'src', 'minecraft_server')):
+        if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
+            apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft_server/')
+        if copy_files and os.path.isdir(os.path.join(fml_dir, 'src', 'minecraft_server')):
             copytree(os.path.join(fml_dir, 'src', 'minecraft_server'), os.path.join(src_dir, 'minecraft_server'))
             
-    #updatemd5 -f
-    os.chdir(mcp_dir)
-    updatemd5(None, True)
-    reset_logger()
-    os.chdir(fml_dir)
+    if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
+        apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir)
+    if copy_files and os.path.isdir(os.path.join(fml_dir, 'src', 'common')):
+        copytree(os.path.join(fml_dir, 'src', 'common'), os.path.join(src_dir, 'common'))
             
 def finish_setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
@@ -276,9 +292,8 @@ def finish_setup_fml(fml_dir, mcp_dir):
     print 'Fixing MCP Workspace'
     merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
 
-def apply_patches(mcp_dir, patch_dir, target_dir):
+def apply_patches(mcp_dir, patch_dir, target_dir, find=None, rep=None):
     sys.path.append(mcp_dir)
-    from runtime.pylibs.normlines import normaliselines
     from runtime.commands import cmdsplit
     
     temp = os.path.abspath('temp.patch')
@@ -293,14 +308,46 @@ def apply_patches(mcp_dir, patch_dir, target_dir):
     for path, _, filelist in os.walk(patch_dir, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.patch'):
             patch_file = os.path.normpath(os.path.join(patch_dir, path[len(patch_dir)+1:], cur_file))
-            if display:
-                print 'patching file %s' % os.path.join(path[len(patch_dir)+1:], cur_file)
-            normaliselines(patch_file, temp)            
-            process = subprocess.Popen(cmd, cwd=target_dir, bufsize=-1)
-            process.communicate()
+            target_file = os.path.join(target_dir, fix_patch(patch_file, temp, find, rep))
+            if os.path.isfile(target_file):
+                if display:
+                    print 'patching file %s' % os.path.normpath(target_file)
+                process = subprocess.Popen(cmd, cwd=target_dir, bufsize=-1)
+                process.communicate()
 
     if os.path.isfile(temp):
         os.remove(temp)
+
+def fix_patch(in_file, out_file, find=None, rep=None):
+    in_file = os.path.normpath(in_file)
+    if out_file is None:
+        tmp_filename = in_file + '.tmp'
+    else:
+        out_file = os.path.normpath(out_file)
+        tmp_file = out_file
+        dir_name = os.path.dirname(out_file)
+        if dir_name:
+            if not os.path.exists(dir_name):
+                os.makedirs(dir_name)
+    file = 'not found'
+    with open(in_file, 'rb') as inpatch:
+        with open(tmp_file, 'wb') as outpatch:
+            for line in inpatch:
+                line = line.rstrip('\r\n')
+                if line[:3] in ['+++', '---', 'Onl', 'dif']:
+                    if not find == None and not replace == None:
+                        line = line.replace('\\', '/').replace(find, rep).replace('/', os.sep)
+                    else:
+                        line = line.replace('\\', '/').replace('/', os.sep)
+                    outpatch.write(line + os.linesep)
+                else:
+                    outpatch.write(line + os.linesep)
+                if line[:3] == '---':
+                    file = line[line.find(os.sep, line.find(os.sep)+1)+1:]
+                    
+    if out_file is None:
+        shutil.move(tmp_file, in_file)
+    return file
         
 #Taken from: http://stackoverflow.com/questions/7545299/distutil-shutil-copytree
 def _mkdir(newdir):
