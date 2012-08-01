@@ -1,5 +1,6 @@
 package net.minecraft.src.forge.adaptors;
 
+import paulscode.sound.SoundSystem;
 import net.minecraft.src.Entity;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
@@ -46,4 +47,16 @@ public class SoundHandlerAdaptor implements ISoundHandler
     {
         return soundName;
     }
+
+    @Override
+    public void playStreamingSource(SoundSystem soundSystem, String sourceName, float x, float y, float z){}
+
+    @Override
+    public void playSoundSource(SoundSystem soundSystem, String sourceName, float x, float y, float z){}
+
+    @Override
+    public void playSoundEffectSource(SoundSystem soundSystem, String sourceName){}
+
+    @Override
+    public void onSetListener(SoundManager soundManager, float elapsed, float posX, float posY, float posZ, float lookX, float lookY, float lookZ){}
 }

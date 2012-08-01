@@ -31,6 +31,8 @@ import net.minecraft.src.forge.packets.ForgePacket;
 
 import org.lwjgl.opengl.GL12;
 
+import paulscode.sound.SoundSystem;
+
 import static net.minecraft.src.forge.IItemRenderer.ItemRenderType.*;
 import static net.minecraft.src.forge.IItemRenderer.ItemRendererHelper.*;
 
@@ -538,7 +540,39 @@ public class ForgeHooksClient
         }
         return soundName;
     }
-    
+
+    public static void playStreamingSource(SoundSystem soundSystem, String sourceName, float x, float y, float z)
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            handler.playStreamingSource(soundSystem, sourceName, x, y, z);
+        }
+    }
+
+    public static void playSoundSource(SoundSystem soundSystem, String sourceName, float x, float y, float z)
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            handler.playSoundSource(soundSystem, sourceName, x, y, z);
+        }
+    }
+
+    public static void playSoundEffectSource(SoundSystem soundSystem, String sourceName)
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            handler.playSoundEffectSource(soundSystem, sourceName);
+        }
+    }
+
+    public static void onSetListener(SoundManager soundManager, float elapsed, float posX, float posY, float posZ, float lookX, float lookY, float lookZ)
+    {
+        for (ISoundHandler handler : soundHandlers)
+        {
+            handler.onSetListener(soundManager, elapsed, posX, posY, posZ, lookX, lookY, lookZ);
+        }
+    }
+
     public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)
     {
         ForgeHooks.onLogin(netManager, login);
