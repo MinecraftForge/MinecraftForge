@@ -3,6 +3,7 @@ package cpw.mods.fml.common.asm.transformers;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -55,12 +56,25 @@ public class AccessTransformer implements IClassTransformer
         public int oldAccess = 0;
         public int newAccess = 0;
         public int targetAccess = 0;
+        public boolean changeFinal = false;
+        public boolean markFinal = false;
 
         private void setTargetAccess(String name)
         {
-            if (name.equalsIgnoreCase("public")) targetAccess = ACC_PUBLIC;
-            else if (name.equalsIgnoreCase("private")) targetAccess = ACC_PRIVATE;
-            else if (name.equalsIgnoreCase("protected")) targetAccess = ACC_PROTECTED;
+            if (name.startsWith("public")) targetAccess = ACC_PUBLIC;
+            else if (name.startsWith("private")) targetAccess = ACC_PRIVATE;
+            else if (name.startsWith("protected")) targetAccess = ACC_PROTECTED;
+            
+            if (name.endsWith("-f"))
+            {
+                changeFinal = true;
+                markFinal = false;
+            }
+            else if (name.endsWith("+f"))
+            {
+                changeFinal = true;
+                markFinal = true;
+            }
         }
     }
 
@@ -68,7 +82,7 @@ public class AccessTransformer implements IClassTransformer
 
     public AccessTransformer() throws IOException
     {
-        this("/rules.csv");
+        this("fml_at.cfg");
     }
     protected AccessTransformer(String rulesFile) throws IOException
     {
@@ -111,12 +125,17 @@ public class AccessTransformer implements IClassTransformer
                 Modifier m = new Modifier();
                 m.setTargetAccess(parts.get(0));
                 List<String> descriptor = Lists.newArrayList(Splitter.on(".").trimResults().split(parts.get(1)));
-                List<String> method = Lists.newArrayList(Splitter.on(CharMatcher.anyOf("()")).omitEmptyStrings().trimResults().split(descriptor.get(1)));
-                if (method.size()==3) //cpw, cleanthis up plz
+                String nameReference = descriptor.get(1);
+                int parenIdx = nameReference.indexOf('(');
+                if (parenIdx>0)
                 {
-                    m.desc = String.format("(%s)%s", method.get(1), method.get(2));
+                    m.desc = nameReference.substring(parenIdx);
+                    m.name = nameReference.substring(0,parenIdx-1);
                 }
-                m.name = method.get(0);
+                else
+                {
+                    m.name = nameReference;
+                }
                 modifiers.put(descriptor.get(0), m);
                 return true;
             }
@@ -195,6 +214,19 @@ public class AccessTransformer implements IClassTransformer
             break;
         default:
             throw new RuntimeException("The fuck?");
+        }
+        
+        // Clear the "final" marker on fields only if specified in control field
+        if (target.changeFinal && target.desc == "")
+        {
+            if (target.markFinal)
+            {
+                ret |= ACC_FINAL;
+            }
+            else
+            {
+                ret &= ~ACC_FINAL;
+            }
         }
         target.newAccess = ret;
         return ret;
