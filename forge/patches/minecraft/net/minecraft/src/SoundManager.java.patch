@@ -76,7 +76,7 @@
                      float var9 = 16.0F;
                      sndSystem.newStreamingSource(true, var7, var8.soundUrl, var8.soundName, false, par2, par3, par4, 2, var9 * 4.0F);
                      sndSystem.setVolume(var7, 0.5F * this.options.soundVolume);
-+                    ForgeHooksClient.playStreamingSource(sndSystem, var7);
++                    ForgeHooksClient.playStreamingSource(sndSystem, var7, par2, par3, par4);
                      sndSystem.play(var7);
                  }
              }
@@ -92,7 +92,7 @@
                  }
  
                  sndSystem.setVolume(var8, par5 * this.options.soundVolume);
-+                ForgeHooksClient.playSoundSource(sndSystem, var8);
++                ForgeHooksClient.playSoundSource(sndSystem, var8, par2, par3, par4);
                  sndSystem.play(var8);
              }
          }

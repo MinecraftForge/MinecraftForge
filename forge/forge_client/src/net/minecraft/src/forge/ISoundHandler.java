@@ -109,25 +109,31 @@ public interface ISoundHandler
     String onPlaySoundAtEntity(Entity entity, String soundName, float volume, float pitch);
 
     /**
-     * Raised when the SoundManager tries to play a 'Streaming' file,
+     * Raised when the SoundSystem is about to play a 'Streaming' file,
      * in vanilla it is only the Jukebox that uses this function.
      * 
      * @param soundSystem The SoundSystem instance
      * @param sourceName The name of the sound source
+     * @param x The X position where the sound will be played
+     * @param y The Y position where the sound will be played
+     * @param z The Z position where the sound will be played
      */
-    void playStreamingSource(SoundSystem soundSystem, String sourceName);
+    void playStreamingSource(SoundSystem soundSystem, String sourceName, float x, float y, float z);
 
     /***
-     * Raised when the SoundManager tries to play a normal sound,
+     * Raised when the SoundSystem is about to play a normal sound,
      * dogs barking, footsteps, etc. THe majority of all sounds during normal game play.
      * 
      * @param soundSystem The SoundSystem instance
      * @param sourceName The name of the sound source
+     * @param x The X position where the sound will be played
+     * @param y The Y position where the sound will be played
+     * @param z The Z position where the sound will be played
      */
-    void playSoundSource(SoundSystem soundSystem, String sourceName);
+    void playSoundSource(SoundSystem soundSystem, String sourceName, float x, float y, float z);
 
     /**
-     * Raised when the SoundManager tries to play a effect sound,
+     * Raised when the SoundSystem is about to play an effect sound,
      * currently the only known sounds are 'random.click' when a GUI button is clicked,
      * or 'portal.trigger' and 'portal.travel' when the player is near/inside a portal.
      * 

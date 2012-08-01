@@ -49,10 +49,10 @@ public class SoundHandlerAdaptor implements ISoundHandler
     }
 
     @Override
-    public void playStreamingSource(SoundSystem soundSystem, String sourceName){}
+    public void playStreamingSource(SoundSystem soundSystem, String sourceName, float x, float y, float z){}
 
     @Override
-    public void playSoundSource(SoundSystem soundSystem, String sourceName){}
+    public void playSoundSource(SoundSystem soundSystem, String sourceName, float x, float y, float z){}
 
     @Override
     public void playSoundEffectSource(SoundSystem soundSystem, String sourceName){}

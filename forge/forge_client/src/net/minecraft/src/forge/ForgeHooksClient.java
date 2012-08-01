@@ -541,38 +541,38 @@ public class ForgeHooksClient
         return soundName;
     }
 
-    public static void playStreamingSource(SoundSystem soundSystem, String sourceName) 
+    public static void playStreamingSource(SoundSystem soundSystem, String sourceName, float x, float y, float z)
     {
         for (ISoundHandler handler : soundHandlers)
         {
-           handler.playStreamingSource(soundSystem, sourceName);
+            handler.playStreamingSource(soundSystem, sourceName, x, y, z);
         }
     }
 
-    public static void playSoundSource(SoundSystem soundSystem, String sourceName) 
+    public static void playSoundSource(SoundSystem soundSystem, String sourceName, float x, float y, float z)
     {
         for (ISoundHandler handler : soundHandlers)
         {
-           handler.playSoundSource(soundSystem, sourceName);
+            handler.playSoundSource(soundSystem, sourceName, x, y, z);
         }
     }
 
-    public static void playSoundEffectSource(SoundSystem soundSystem, String sourceName) 
+    public static void playSoundEffectSource(SoundSystem soundSystem, String sourceName)
     {
         for (ISoundHandler handler : soundHandlers)
         {
-           handler.playSoundEffectSource(soundSystem, sourceName);
+            handler.playSoundEffectSource(soundSystem, sourceName);
         }
     }
 
-    public static void onSetListener(SoundManager soundManager, float elapsed, float posX, float posY, float posZ, float lookX, float lookY, float lookZ) 
+    public static void onSetListener(SoundManager soundManager, float elapsed, float posX, float posY, float posZ, float lookX, float lookY, float lookZ)
     {
         for (ISoundHandler handler : soundHandlers)
         {
-           handler.onSetListener(soundManager, elapsed, posX, posY, posZ, lookX, lookY, lookZ);
+            handler.onSetListener(soundManager, elapsed, posX, posY, posZ, lookX, lookY, lookZ);
         }
     }
-    
+
     public static void onLogin(Packet1Login login, NetClientHandler net, NetworkManager netManager)
     {
         ForgeHooks.onLogin(netManager, login);
