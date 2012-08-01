@@ -31,6 +31,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.registry.FMLRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class ModLoader
@@ -178,7 +179,7 @@ public class ModLoader
      */
     public static void addRecipe(ItemStack output, Object... params)
     {
-        FMLRegistry.addRecipe(output, params);
+        GameRegistry.addRecipe(output, params);
     }
 
     /**
@@ -189,7 +190,7 @@ public class ModLoader
      */
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
-        FMLRegistry.addShapelessRecipe(output, params);
+        GameRegistry.addShapelessRecipe(output, params);
     }
 
     /**
