@@ -2,6 +2,7 @@ import os, os.path, sys
 import urllib, zipfile
 import shutil, glob, fnmatch
 import subprocess, logging, re
+from hashlib import md5  # pylint: disable-msg=E0611
 
 def download_deps(mcp_path):
     bin_path = os.path.normpath(os.path.join(mcp_path, 'runtime', 'bin'))
@@ -20,38 +21,50 @@ def download_deps(mcp_path):
             print "Downloading Fernflower failed download manually from http://goo.gl/PnJHp"
             ret = False
     
-    for lib in ["argo-2.25.jar", "guava-12.0.jar", "asm-all-4.0.jar"]:
-        target = os.path.normpath(os.path.join(mcp_path, 'lib', lib))
+    for lib in ['argo-2.25.jar', 'guava-12.0.jar', 'asm-all-4.0.jar']:
+        libF = os.path.join(mcp_path, 'lib')
+        if not os.path.isdir(libF):
+            os.makedirs(libF)
+            
+        target = os.path.normpath(os.path.join(libF, lib))
+        
         if not os.path.isfile(target):
             try:
                 urllib.urlretrieve('http://cloud.github.com/downloads/cpw/FML/' + lib, target)
                 print 'Downloaded %s successfully' % lib
             except:
-                print 'Download %s failed, download manually from http://cloud.github.com/downloads/cpw/FML/%s and place in MCP/libs' % (lib, lib)
+                print 'Download %s failed, download manually from http://cloud.github.com/downloads/cpw/FML/%s and place in MCP/lib' % (lib, lib)
                 ret = False
     
     return ret
         
 def pre_decompile(mcp_dir, fml_dir):
-    bin_dir = os.path.join(mcp_dir, 'jars', 'bin')
-    back_jar = os.path.join(bin_dir, 'minecraft.jar.backup')
-    src_jar = os.path.join(bin_dir, 'minecraft.jar')
+    file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar')
+    file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar')
+    
+def file_backup(base, file):
+    back_jar = os.path.join(base, file + '.backup')
+    src_jar = os.path.join(base, file)
+    
+    if not os.path.isfile(src_jar):
+        return
     
     if os.path.isfile(back_jar):
         if os.path.isfile(src_jar):
             os.remove(src_jar)
-        shutil.move(back_jar, src_jar)
+        shutil.copy(back_jar, src_jar)
+    else:
+        shutil.copy(src_jar, back_jar)
         
 def post_decompile(mcp_dir, fml_dir):
-    print 'Stripping META-INF from minecraft.jar'
     bin_dir = os.path.join(mcp_dir, 'jars', 'bin')
     back_jar = os.path.join(bin_dir, 'minecraft.jar.backup')
     src_jar = os.path.join(bin_dir, 'minecraft.jar')
     
-    if os.path.isfile(back_jar):
-        os.remove(back_jar)
-    
-    shutil.move(src_jar, back_jar)
+    if not os.path.isfile(src_jar):
+        return
+        
+    print 'Stripping META-INF from minecraft.jar'
     
     zip_in = zipfile.ZipFile(back_jar, mode='a')
     zip_out = zipfile.ZipFile(src_jar, 'w', zipfile.ZIP_DEFLATED)
@@ -102,8 +115,9 @@ def cleanup_source(path):
 def setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
     from runtime.decompile import decompile
-    from runtime.updatemd5 import updatemd5
     from runtime.cleanup import cleanup
+    from runtime.commands import Commands, CLIENT, SERVER
+    from runtime.mcp import decompile_side
     
     src_dir = os.path.join(mcp_dir, 'src')
         
@@ -122,10 +136,40 @@ def setup_fml(fml_dir, mcp_dir):
     if not download_deps(mcp_dir):
         sys.exit(1)
     
+    def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
+        jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
+        #print "==================================SHUNT %s============================" % side
+        #print "Java: %s" % self.cmdjava
+        #print "Javac: %s" % self.cmdjavac
+        #print "Jar: %s" % jars[side]
+        
+        binDir = os.path.join(fml_dir, 'bin')
+        if not os.path.isdir(binDir):
+            os.makedirs(binDir)
+            
+        #Compile AccessTransformer
+        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath};." -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
+            classpath=os.path.join(mcp_dir, 'lib', '*'), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
+            target=os.path.join(fml_dir, 'transformers', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
+        self.runcmd(forkcmd)
+        
+        #Run AccessTransformer
+        forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
+            classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
+            
+        forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
+        if os.path.isfile(forge_cfg):
+            forkcmd += ' "%s"' % forge_cfg
+        
+        self.runcmd(forkcmd)
+        
+        applyrg_real(self, side, reobf)
+    
     try:
         pre_decompile(mcp_dir, fml_dir)
         
         os.chdir(mcp_dir)
+        Commands.applyrg = applyrg_shunt
         #decompile -d -n -r
         #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g
         decompile(None, False, False, True, True, False, True, False, False, False, False)
@@ -144,6 +188,49 @@ def setup_fml(fml_dir, mcp_dir):
         
     #cleanup_source
     cleanup_source(src_dir)
+    
+    merge_client_server(mcp_dir)
+    
+def merge_client_server(mcp_dir):
+    client = os.path.join(mcp_dir, 'src', 'minecraft')
+    server = os.path.join(mcp_dir, 'src', 'minecraft_server')
+    shared = os.path.join(mcp_dir, 'src', 'common')
+    
+    if not os.path.isdir(client) or not os.path.isdir(server):
+        return
+        
+    if not os.path.isdir(shared):
+        os.makedirs(shared)
+        
+    for path, _, filelist in os.walk(client, followlinks=True):
+        for cur_file in filelist:
+            f_client = os.path.normpath(os.path.join(client, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
+            f_server = os.path.normpath(os.path.join(server, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
+            f_shared = os.path.normpath(os.path.join(shared, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
+            
+            if not os.path.isfile(f_client) or not os.path.isfile(f_server):
+                continue
+                
+            md5_c = ""
+            md5_s = ""
+            with open(f_client, 'rb') as fh:
+                md5_c = md5(fh.read()).hexdigest()
+            with open(f_server, 'rb') as fh:
+                md5_s = md5(fh.read()).hexdigest()
+                
+            if md5_c != md5_s:
+                continue
+                
+            new_dir = os.path.join(shared, path[len(client)+1:])
+            if not os.path.isdir(new_dir):
+                os.makedirs(new_dir)
+                
+            shutil.move(f_client, f_shared)
+            os.remove(f_server)
+    
+def apply_fml_patches(fml_dir, mcp_dir):
+    sys.path.append(mcp_dir)
+    from runtime.updatemd5 import updatemd5
     
     has_client = os.path.isdir(os.path.join(mcp_dir, 'src', 'minecraft'))
     has_server = os.path.isdir(os.path.join(mcp_dir, 'src', 'minecraft_server'))
@@ -169,10 +256,6 @@ def setup_fml(fml_dir, mcp_dir):
     updatemd5(None, True)
     reset_logger()
     os.chdir(fml_dir)
-    
-    #update workspace
-    print 'Fixing MCP Workspace'
-    merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
             
 def finish_setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
@@ -188,6 +271,10 @@ def finish_setup_fml(fml_dir, mcp_dir):
     updatemd5(None, True)
     reset_logger()
     os.chdir(fml_dir)
+    
+    #update workspace
+    print 'Fixing MCP Workspace'
+    merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
 
 def apply_patches(mcp_dir, patch_dir, target_dir):
     sys.path.append(mcp_dir)
