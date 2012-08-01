@@ -25,6 +25,11 @@
 			<type>2</type>
 			<locationURI>MCP_LOC/src-base/minecraft_server</locationURI>
 		</link>
+		<link>
+			<name>src-common</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/src-base/common</locationURI>
+		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
