@@ -46,6 +46,11 @@
 			<locationURI>MCP_LOC/src-work/minecraft</locationURI>
 		</link>
 		<link>
+			<name>src-common</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/src-work/common</locationURI>
+		</link>
+		<link>
 			<name>common/fmlversion.properties</name>
 			<type>1</type>
 			<locationURI>MCP_LOC/FML/fmlversion.properties</locationURI>
