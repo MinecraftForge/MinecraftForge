@@ -146,19 +146,20 @@ def setup_fml(fml_dir, mcp_dir):
     
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
         jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
-        #print "==================================SHUNT %s============================" % side
-        #print "Java: %s" % self.cmdjava
-        #print "Javac: %s" % self.cmdjavac
-        #print "Jar: %s" % jars[side]
+        print "==================================SHUNT %s============================" % side
+        print "Java: %s" % self.cmdjava
+        print "Javac: %s" % self.cmdjavac
+        print "Jar: %s" % jars[side]
         
         binDir = os.path.join(fml_dir, 'bin')
         if not os.path.isdir(binDir):
             os.makedirs(binDir)
             
         #Compile AccessTransformer
-        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath};." -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
+        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
             classpath=os.path.join(mcp_dir, 'lib', '*'), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
             target=os.path.join(fml_dir, 'transformers', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
+        print forkcmd
         self.runcmd(forkcmd)
         
         #Run AccessTransformer
