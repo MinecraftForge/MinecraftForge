@@ -77,7 +77,16 @@ public class AccessTransformer implements IClassTransformer
 
     private void readMapFile(String rulesFile) throws IOException
     {
-        URL rulesResource = Resources.getResource(rulesFile);
+        File file = new File(rulesFile);
+        URL rulesResource;
+        if (file.exists())
+        {
+            rulesResource = file.toURI().toURL();
+        }
+        else
+        {
+            rulesResource = Resources.getResource(rulesFile);
+        }
         Resources.readLines(rulesResource, Charsets.UTF_8, new LineProcessor<Void>()
         {
             @Override
@@ -103,9 +112,9 @@ public class AccessTransformer implements IClassTransformer
                 m.setTargetAccess(parts.get(0));
                 List<String> descriptor = Lists.newArrayList(Splitter.on(".").trimResults().split(parts.get(1)));
                 List<String> method = Lists.newArrayList(Splitter.on(CharMatcher.anyOf("()")).omitEmptyStrings().trimResults().split(descriptor.get(1)));
-                if (method.size()==2)
+                if (method.size()==3) //cpw, cleanthis up plz
                 {
-                    m.desc = method.get(1);
+                    m.desc = String.format("(%s)%s", method.get(1), method.get(2));
                 }
                 m.name = method.get(0);
                 modifiers.put(descriptor.get(0), m);
@@ -228,7 +237,7 @@ public class AccessTransformer implements IClassTransformer
             System.out.println("Could not find target jar: " + orig);
             return;
         }
-
+/*
         if (temp.exists())
         {
             if (orig.exists() && !orig.renameTo(new File(args[0] + (new SimpleDateFormat(".yyyy.MM.dd.HHmmss")).format(new Date()))))
@@ -242,7 +251,7 @@ public class AccessTransformer implements IClassTransformer
                 return;
             }
         }
-
+*/
         if (!orig.renameTo(temp))
         {
             System.out.println("Could not rename file: " + orig + " -> " + temp);
@@ -256,6 +265,11 @@ public class AccessTransformer implements IClassTransformer
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+        
+        if (!temp.delete())
+        {
+            System.out.println("Could not delete temp file: " + temp);
         }
     }
 
