@@ -13,6 +13,7 @@ if __name__ == '__main__':
         
         sys.path.append(os.path.join(fml_dir, 'install'))
         
-        from fml import setup_fml
+        from fml import setup_fml, setup_mcp
         
+        setup_mcp(fml_dir, mcp_dir)
         setup_fml(fml_dir, mcp_dir)

@@ -3,7 +3,7 @@ import os
 import commands
 import fnmatch
 import re
-import subprocess, shlex
+import subprocess, shlex, shutil
 
 import difflib, time
 
@@ -30,7 +30,8 @@ def cleanDirs(path):
 def main():
     print("Creating patches")
     mcp = os.path.normpath(sys.argv[1])
-    patchd = os.path.normpath(sys.argv[2])
+    fml_dir = os.path.normpath(sys.argv[2])
+    patchd = os.path.normpath(os.path.join(fml_dir, 'patches'))
     base = os.path.normpath(os.path.join(mcp, 'src-base'))
     work = os.path.normpath(os.path.join(mcp, 'src-work'))
     
@@ -61,6 +62,25 @@ def main():
                     
 
     cleanDirs(patchd)
+    
+    backup = os.path.join(fml_dir, 'commands.py.bck')
+    runtime = os.path.join(mcp, 'runtime', 'commands.py')
+    patch_file = os.path.join(fml_dir, 'commands.patch')
+    
+    if not os.path.exists(backup):
+        shutil.copy(runtime, backup)
+    
+    patch = ''.join(difflib.unified_diff(open(backup, 'U').readlines(), open(runtime, 'U').readlines(), 'commands.py', 'commands.py', '', '', n=3))
+    if len(patch) > 0:
+        print 'Creating commands.py patch'
+        patch = patch.replace('\r\n', '\n')
+        
+        with open(patch_file, 'wb') as fh:
+            fh.write(patch)
+    else:
+        if os.path.isfile(patch_file):
+            print("Deleting empty commands.py patch")
+            os.remove(patch_file)
     
 if __name__ == '__main__':
     main()

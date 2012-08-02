@@ -307,7 +307,7 @@
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/update_patches.py" />
       <arg value="${mcp.home}"/>
-      <arg value="${patch.src.dir}"/>
+      <arg value="${basedir}"/>
     </exec>
   </target>
 

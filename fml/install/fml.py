@@ -1,7 +1,7 @@
 import os, os.path, sys
 import urllib, zipfile
 import shutil, glob, fnmatch
-import subprocess, logging, re
+import subprocess, logging, re, shlex
 from hashlib import md5  # pylint: disable-msg=E0611
 
 #class flushout(object):
@@ -157,7 +157,7 @@ def setup_fml(fml_dir, mcp_dir):
             
         #Compile AccessTransformer
         forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
-            classpath=os.path.join(mcp_dir, 'lib', '*'), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
+            classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
             target=os.path.join(fml_dir, 'transformers', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
         print forkcmd
         self.runcmd(forkcmd)
@@ -429,3 +429,42 @@ def merge_tree(root_src_dir, root_dst_dir):
             if os.path.exists(dst_file):
                 os.remove(dst_file)
             shutil.copy(src_file, dst_dir)
+            
+def setup_mcp(fml_dir, mcp_dir):
+    backup = os.path.join(fml_dir, 'commands.py.bck')
+    runtime = os.path.join(mcp_dir, 'runtime', 'commands.py')
+    patch = os.path.join(fml_dir, 'commands.patch')
+    
+    print 'Setting up MCP'
+    if os.path.isfile(backup):
+        print '> Restoring commands.py backup'
+        if os.path.exists(runtime):
+            os.remove(runtime)
+        shutil.copy(backup, runtime)
+    else:
+        print '> Backing up commands.py'
+        shutil.copy(runtime, backup)
+    
+    if not os.path.isfile(patch):
+        return
+        
+    temp = os.path.abspath('temp.patch')
+    cmd = 'patch -i "%s" ' % temp
+    
+    windows = os.name == 'nt'
+    if windows:
+        applydiff = os.path.abspath(os.path.join(mcp_dir, 'runtime', 'bin', 'applydiff.exe'))
+        cmd = '"%s" -uf -i "%s"' % (applydiff, temp)
+        
+    if os.sep == '\\':
+        cmd = cmd.replace('\\', '\\\\')
+    cmd = shlex.split(cmd)
+    
+    if windows:
+        print 'Patching file %s' % os.path.normpath(runtime)
+    fix_patch(patch, temp)
+    process = subprocess.Popen(cmd, cwd=os.path.join(mcp_dir, 'runtime'), bufsize=-1)
+    process.communicate()
+
+    if os.path.isfile(temp):
+        os.remove(temp)
