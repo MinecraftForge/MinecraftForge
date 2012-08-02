@@ -31,6 +31,11 @@
 			<locationURI>MCP_LOC/jars</locationURI>
 		</link>
 		<link>
+			<name>lib</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/lib</locationURI>
+		</link>
+		<link>
 			<name>server</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/FML/server</locationURI>
@@ -39,6 +44,11 @@
 			<name>src</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/src-work/minecraft_server</locationURI>
+		</link>
+		<link>
+			<name>src-common</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/src-work/common</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>

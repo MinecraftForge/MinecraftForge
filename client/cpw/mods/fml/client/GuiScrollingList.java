@@ -117,15 +117,15 @@ public abstract class GuiScrollingList
 
     public void actionPerformed(GuiButton button)
     {
-        if (button.field_937_g)
+        if (button.field_73742_g)
         {
-            if (button.field_938_f == this.scrollUpActionId)
+            if (button.field_73741_f == this.scrollUpActionId)
             {
                 this.scrollDistance -= (float)(this.slotHeight * 2 / 3);
                 this.initialMouseClickY = -2.0F;
                 this.applyScrollLimits();
             }
-            else if (button.field_938_f == this.scrollDownActionId)
+            else if (button.field_73741_f == this.scrollDownActionId)
             {
                 this.scrollDistance += (float)(this.slotHeight * 2 / 3);
                 this.initialMouseClickY = -2.0F;
@@ -249,17 +249,17 @@ public abstract class GuiScrollingList
         this.applyScrollLimits();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
-        Tessellator var18 = Tessellator.field_1512_a;
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.client.field_6315_n.func_1070_a("/gui/background.png"));
+        Tessellator var18 = Tessellator.field_78398_a;
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.client.field_71446_o.func_78341_b("/gui/background.png"));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var17 = 32.0F;
-        var18.func_977_b();
-        var18.func_990_b(2105376);
-        var18.func_983_a((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
-        var18.func_983_a((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
-        var18.func_983_a((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
-        var18.func_983_a((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
-        var18.func_982_a();
+        var18.func_78382_b();
+        var18.func_78378_d(2105376);
+        var18.func_78374_a((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
+        var18.func_78374_a((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / var17), (double)((float)(this.bottom + (int)this.scrollDistance) / var17));
+        var18.func_78374_a((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
+        var18.func_78374_a((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.scrollDistance) / var17));
+        var18.func_78381_a();
 //        boxRight = this.listWidth / 2 - 92 - 16;
         var10 = this.top + 4 - (int)this.scrollDistance;
 
@@ -283,18 +283,18 @@ public abstract class GuiScrollingList
                     int var15 = boxRight;
                     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
                     GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    var18.func_977_b();
-                    var18.func_990_b(8421504);
-                    var18.func_983_a((double)var14, (double)(var19 + var13 + 2), 0.0D, 0.0D, 1.0D);
-                    var18.func_983_a((double)var15, (double)(var19 + var13 + 2), 0.0D, 1.0D, 1.0D);
-                    var18.func_983_a((double)var15, (double)(var19 - 2), 0.0D, 1.0D, 0.0D);
-                    var18.func_983_a((double)var14, (double)(var19 - 2), 0.0D, 0.0D, 0.0D);
-                    var18.func_990_b(0);
-                    var18.func_983_a((double)(var14 + 1), (double)(var19 + var13 + 1), 0.0D, 0.0D, 1.0D);
-                    var18.func_983_a((double)(var15 - 1), (double)(var19 + var13 + 1), 0.0D, 1.0D, 1.0D);
-                    var18.func_983_a((double)(var15 - 1), (double)(var19 - 1), 0.0D, 1.0D, 0.0D);
-                    var18.func_983_a((double)(var14 + 1), (double)(var19 - 1), 0.0D, 0.0D, 0.0D);
-                    var18.func_982_a();
+                    var18.func_78382_b();
+                    var18.func_78378_d(8421504);
+                    var18.func_78374_a((double)var14, (double)(var19 + var13 + 2), 0.0D, 0.0D, 1.0D);
+                    var18.func_78374_a((double)var15, (double)(var19 + var13 + 2), 0.0D, 1.0D, 1.0D);
+                    var18.func_78374_a((double)var15, (double)(var19 - 2), 0.0D, 1.0D, 0.0D);
+                    var18.func_78374_a((double)var14, (double)(var19 - 2), 0.0D, 0.0D, 0.0D);
+                    var18.func_78378_d(0);
+                    var18.func_78374_a((double)(var14 + 1), (double)(var19 + var13 + 1), 0.0D, 0.0D, 1.0D);
+                    var18.func_78374_a((double)(var15 - 1), (double)(var19 + var13 + 1), 0.0D, 1.0D, 1.0D);
+                    var18.func_78374_a((double)(var15 - 1), (double)(var19 - 1), 0.0D, 1.0D, 0.0D);
+                    var18.func_78374_a((double)(var14 + 1), (double)(var19 - 1), 0.0D, 0.0D, 0.0D);
+                    var18.func_78381_a();
                     GL11.glEnable(GL11.GL_TEXTURE_2D);
                 }
 
@@ -311,22 +311,22 @@ public abstract class GuiScrollingList
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glShadeModel(GL11.GL_SMOOTH);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        var18.func_977_b();
-        var18.func_6513_a(0, 0);
-        var18.func_983_a((double)this.left, (double)(this.top + var20), 0.0D, 0.0D, 1.0D);
-        var18.func_983_a((double)this.right, (double)(this.top + var20), 0.0D, 1.0D, 1.0D);
-        var18.func_6513_a(0, 255);
-        var18.func_983_a((double)this.right, (double)this.top, 0.0D, 1.0D, 0.0D);
-        var18.func_983_a((double)this.left, (double)this.top, 0.0D, 0.0D, 0.0D);
-        var18.func_982_a();
-        var18.func_977_b();
-        var18.func_6513_a(0, 255);
-        var18.func_983_a((double)this.left, (double)this.bottom, 0.0D, 0.0D, 1.0D);
-        var18.func_983_a((double)this.right, (double)this.bottom, 0.0D, 1.0D, 1.0D);
-        var18.func_6513_a(0, 0);
-        var18.func_983_a((double)this.right, (double)(this.bottom - var20), 0.0D, 1.0D, 0.0D);
-        var18.func_983_a((double)this.left, (double)(this.bottom - var20), 0.0D, 0.0D, 0.0D);
-        var18.func_982_a();
+        var18.func_78382_b();
+        var18.func_78384_a(0, 0);
+        var18.func_78374_a((double)this.left, (double)(this.top + var20), 0.0D, 0.0D, 1.0D);
+        var18.func_78374_a((double)this.right, (double)(this.top + var20), 0.0D, 1.0D, 1.0D);
+        var18.func_78384_a(0, 255);
+        var18.func_78374_a((double)this.right, (double)this.top, 0.0D, 1.0D, 0.0D);
+        var18.func_78374_a((double)this.left, (double)this.top, 0.0D, 0.0D, 0.0D);
+        var18.func_78381_a();
+        var18.func_78382_b();
+        var18.func_78384_a(0, 255);
+        var18.func_78374_a((double)this.left, (double)this.bottom, 0.0D, 0.0D, 1.0D);
+        var18.func_78374_a((double)this.right, (double)this.bottom, 0.0D, 1.0D, 1.0D);
+        var18.func_78384_a(0, 0);
+        var18.func_78374_a((double)this.right, (double)(this.bottom - var20), 0.0D, 1.0D, 0.0D);
+        var18.func_78374_a((double)this.left, (double)(this.bottom - var20), 0.0D, 0.0D, 0.0D);
+        var18.func_78381_a();
         var19 = this.getContentHeight() - (this.bottom - this.top - 4);
 
         if (var19 > 0)
@@ -350,27 +350,27 @@ public abstract class GuiScrollingList
                 var14 = this.top;
             }
 
-            var18.func_977_b();
-            var18.func_6513_a(0, 255);
-            var18.func_983_a((double)scrollBarXStart, (double)this.bottom, 0.0D, 0.0D, 1.0D);
-            var18.func_983_a((double)scrollBarXEnd, (double)this.bottom, 0.0D, 1.0D, 1.0D);
-            var18.func_983_a((double)scrollBarXEnd, (double)this.top, 0.0D, 1.0D, 0.0D);
-            var18.func_983_a((double)scrollBarXStart, (double)this.top, 0.0D, 0.0D, 0.0D);
-            var18.func_982_a();
-            var18.func_977_b();
-            var18.func_6513_a(8421504, 255);
-            var18.func_983_a((double)scrollBarXStart, (double)(var14 + var13), 0.0D, 0.0D, 1.0D);
-            var18.func_983_a((double)scrollBarXEnd, (double)(var14 + var13), 0.0D, 1.0D, 1.0D);
-            var18.func_983_a((double)scrollBarXEnd, (double)var14, 0.0D, 1.0D, 0.0D);
-            var18.func_983_a((double)scrollBarXStart, (double)var14, 0.0D, 0.0D, 0.0D);
-            var18.func_982_a();
-            var18.func_977_b();
-            var18.func_6513_a(12632256, 255);
-            var18.func_983_a((double)scrollBarXStart, (double)(var14 + var13 - 1), 0.0D, 0.0D, 1.0D);
-            var18.func_983_a((double)(scrollBarXEnd - 1), (double)(var14 + var13 - 1), 0.0D, 1.0D, 1.0D);
-            var18.func_983_a((double)(scrollBarXEnd - 1), (double)var14, 0.0D, 1.0D, 0.0D);
-            var18.func_983_a((double)scrollBarXStart, (double)var14, 0.0D, 0.0D, 0.0D);
-            var18.func_982_a();
+            var18.func_78382_b();
+            var18.func_78384_a(0, 255);
+            var18.func_78374_a((double)scrollBarXStart, (double)this.bottom, 0.0D, 0.0D, 1.0D);
+            var18.func_78374_a((double)scrollBarXEnd, (double)this.bottom, 0.0D, 1.0D, 1.0D);
+            var18.func_78374_a((double)scrollBarXEnd, (double)this.top, 0.0D, 1.0D, 0.0D);
+            var18.func_78374_a((double)scrollBarXStart, (double)this.top, 0.0D, 0.0D, 0.0D);
+            var18.func_78381_a();
+            var18.func_78382_b();
+            var18.func_78384_a(8421504, 255);
+            var18.func_78374_a((double)scrollBarXStart, (double)(var14 + var13), 0.0D, 0.0D, 1.0D);
+            var18.func_78374_a((double)scrollBarXEnd, (double)(var14 + var13), 0.0D, 1.0D, 1.0D);
+            var18.func_78374_a((double)scrollBarXEnd, (double)var14, 0.0D, 1.0D, 0.0D);
+            var18.func_78374_a((double)scrollBarXStart, (double)var14, 0.0D, 0.0D, 0.0D);
+            var18.func_78381_a();
+            var18.func_78382_b();
+            var18.func_78384_a(12632256, 255);
+            var18.func_78374_a((double)scrollBarXStart, (double)(var14 + var13 - 1), 0.0D, 0.0D, 1.0D);
+            var18.func_78374_a((double)(scrollBarXEnd - 1), (double)(var14 + var13 - 1), 0.0D, 1.0D, 1.0D);
+            var18.func_78374_a((double)(scrollBarXEnd - 1), (double)var14, 0.0D, 1.0D, 0.0D);
+            var18.func_78374_a((double)scrollBarXStart, (double)var14, 0.0D, 0.0D, 0.0D);
+            var18.func_78381_a();
         }
 
         this.func_27257_b(mouseX, mouseY);
@@ -382,17 +382,17 @@ public abstract class GuiScrollingList
 
     private void overlayBackground(int p_22239_1_, int p_22239_2_, int p_22239_3_, int p_22239_4_)
     {
-        Tessellator var5 = Tessellator.field_1512_a;
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.client.field_6315_n.func_1070_a("/gui/background.png"));
+        Tessellator var5 = Tessellator.field_78398_a;
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.client.field_71446_o.func_78341_b("/gui/background.png"));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float var6 = 32.0F;
-        var5.func_977_b();
-        var5.func_6513_a(4210752, p_22239_4_);
-        var5.func_983_a(0.0D, (double)p_22239_2_, 0.0D, 0.0D, (double)((float)p_22239_2_ / var6));
-        var5.func_983_a((double)this.listWidth + 30, (double)p_22239_2_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_2_ / var6));
-        var5.func_6513_a(4210752, p_22239_3_);
-        var5.func_983_a((double)this.listWidth + 30, (double)p_22239_1_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_1_ / var6));
-        var5.func_983_a(0.0D, (double)p_22239_1_, 0.0D, 0.0D, (double)((float)p_22239_1_ / var6));
-        var5.func_982_a();
+        var5.func_78382_b();
+        var5.func_78384_a(4210752, p_22239_4_);
+        var5.func_78374_a(0.0D, (double)p_22239_2_, 0.0D, 0.0D, (double)((float)p_22239_2_ / var6));
+        var5.func_78374_a((double)this.listWidth + 30, (double)p_22239_2_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_2_ / var6));
+        var5.func_78384_a(4210752, p_22239_3_);
+        var5.func_78374_a((double)this.listWidth + 30, (double)p_22239_1_, 0.0D, (double)((float)(this.listWidth + 30) / var6), (double)((float)p_22239_1_ / var6));
+        var5.func_78374_a(0.0D, (double)p_22239_1_, 0.0D, 0.0D, (double)((float)p_22239_1_ / var6));
+        var5.func_78381_a();
     }
 }

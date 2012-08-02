@@ -19,13 +19,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
- * 
+ *
  * A static hook library for optifine and other basemod editing code to access FML functions
- * 
+ *
  * @author cpw
  *
  */
@@ -35,54 +37,54 @@ public class FMLRenderAccessLibrary
     {
         return FMLCommonHandler.instance().getFMLLogger();
     }
-    
+
     public static void log(Level level, String message)
     {
         getLogger().log(level, message);
     }
-    
+
     public static void log(Level level, String message, Throwable throwable)
     {
         getLogger().log(level, message, throwable);
     }
-    
+
     public static void setTextureDimensions(int textureId, int width, int height, List<TextureFX> textureFXList)
     {
-        FMLClientHandler.instance().setTextureDimensions(textureId, width, height, textureFXList);
+        TextureFXManager.instance().setTextureDimensions(textureId, width, height, textureFXList);
     }
-    
+
     public static void preRegisterEffect(TextureFX textureFX)
     {
-        FMLClientHandler.instance().onPreRegisterEffect(textureFX);
+        TextureFXManager.instance().onPreRegisterEffect(textureFX);
     }
-    
+
     public static boolean onUpdateTextureEffect(TextureFX textureFX)
     {
-        return FMLClientHandler.instance().onUpdateTextureEffect(textureFX);
+        return TextureFXManager.instance().onUpdateTextureEffect(textureFX);
     }
-    
+
     public static Dimension getTextureDimensions(TextureFX textureFX)
     {
-        return FMLClientHandler.instance().getTextureDimensions(textureFX);
+        return TextureFXManager.instance().getTextureDimensions(textureFX);
     }
-    
+
     public static void onTexturePackChange(RenderEngine engine, TexturePackBase texturePack, List<TextureFX> textureFXList)
     {
-        FMLClientHandler.instance().onTexturePackChange(engine, texturePack, textureFXList);
+        TextureFXManager.instance().onTexturePackChange(engine, texturePack, textureFXList);
     }
-    
+
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelId)
     {
-        return FMLClientHandler.instance().renderWorldBlock(renderer, world, x, y, z, block, modelId);
+        return BlockRenderManager.instance().renderWorldBlock(renderer, world, x, y, z, block, modelId);
     }
-    
+
     public static void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        FMLClientHandler.instance().renderInventoryBlock(renderer, block, metadata, modelID);
+        BlockRenderManager.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
-    
+
     public static boolean renderItemAsFull3DBlock(int modelId)
     {
-        return FMLClientHandler.instance().renderItemAsFull3DBlock(modelId);
+        return BlockRenderManager.instance().renderItemAsFull3DBlock(modelId);
     }
 }

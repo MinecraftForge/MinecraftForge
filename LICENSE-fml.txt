@@ -3,6 +3,12 @@ under the GNU LGPL v2.1 or later.
 
 Homepage: https://github.com/cpw/FML
 
+This software includes portions from the Apache Maven project at
+http://maven.apache.org/ specifically the ComparableVersion.java code. It is
+included based on guidelines at
+http://www.softwarefreedom.org/resources/2007/gpl-non-gpl-collaboration.html
+with notices intact. The only change is a non-functional change of package name.
+
 ========
 
                   GNU LESSER GENERAL PUBLIC LICENSE

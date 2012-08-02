@@ -1,46 +1,58 @@
---- ../src-base/minecraft/net/minecraft/src/GuiMainMenu.java	0000-00-00 00:00:00.000000000 -0000
-+++ ../src-work/minecraft/net/minecraft/src/GuiMainMenu.java	0000-00-00 00:00:00.000000000 -0000
-@@ -11,6 +11,9 @@
+--- ../src-base/minecraft/net/minecraft/src/GuiMainMenu.java
++++ ../src-work/minecraft/net/minecraft/src/GuiMainMenu.java
+@@ -8,10 +8,17 @@
+ import java.util.ArrayList;
+ import java.util.Calendar;
+ import java.util.Date;
++import java.util.List;
+ import java.util.Random;
+ import net.minecraft.client.Minecraft;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.util.glu.GLU;
- 
++
++import com.google.common.base.Strings;
++import com.google.common.collect.Lists;
++
 +import cpw.mods.fml.client.GuiModList;
 +import cpw.mods.fml.common.FMLCommonHandler;
-+
+ 
  public class GuiMainMenu extends GuiScreen
  {
-     private static final Random field_6463_h = new Random();
-@@ -91,7 +94,8 @@
-         int var4 = this.field_950_d / 4 + 48;
-         this.field_949_e.add(new GuiButton(1, this.field_951_c / 2 - 100, var4, var2.func_20163_a("menu.singleplayer")));
-         this.field_949_e.add(this.field_25096_l = new GuiButton(2, this.field_951_c / 2 - 100, var4 + 24, var2.func_20163_a("menu.multiplayer")));
--        this.field_949_e.add(new GuiButton(3, this.field_951_c / 2 - 100, var4 + 48, var2.func_20163_a("menu.mods")));
-+        this.field_949_e.add(new GuiButton(3, this.field_951_c / 2 - 100, var4 + 48, 98, 20, var2.func_20163_a("menu.mods")));
-+        this.field_949_e.add(new GuiButton(6, this.field_951_c / 2 + 2, var4 + 48, 98, 20, "Mods"));
- 
-         if (this.field_945_b.field_6317_l)
-         {
-@@ -142,6 +146,11 @@
-         {
-             this.field_945_b.func_6244_d();
+@@ -118,7 +125,8 @@
+             this.func_73969_a(var4, 24, var2);
          }
-+        
-+        if (p_572_1_.field_938_f == 6)
-+        {
-+            this.field_945_b.func_6272_a(new GuiModList(this));
-+        }
-     }
  
-     private void func_35355_b(int p_35355_1_, int p_35355_2_, float p_35355_3_)
-@@ -324,7 +333,10 @@
-         GL11.glScalef(var8, var8, var8);
-         this.func_548_a(this.field_6451_g, this.field_6462_l, 0, -8, 16776960);
-         GL11.glPopMatrix();
--        this.func_547_b(this.field_6451_g, "Minecraft 1.2.5", 2, this.field_950_d - 10, 16777215);
-+        String[] brandings=FMLCommonHandler.instance().getBrandingStrings("Minecraft 1.2.5");
-+        for (int i=0; i<brandings.length; i++) {
-+            this.func_547_b(this.field_6451_g, brandings[i], 2, this.field_950_d - ( 10 + i * (this.field_6451_g.field_41063_b +1)), 16777215);
+-        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, var2.func_74805_b("menu.mods")));
++        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, 98, 20, var2.func_74805_b("menu.mods")));
++        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 + 2, var4 + 48, 98, 20, "Mods"));
+ 
+         if (this.field_73882_e.field_71448_m)
+         {
+@@ -182,6 +190,11 @@
+         if (p_73875_1_.field_73741_f == 4)
+         {
+             this.field_73882_e.func_71400_g();
 +        }
-         String var9 = "Copyright Mojang AB. Do not distribute!";
-         this.func_547_b(this.field_6451_g, var9, this.field_951_c - this.field_6451_g.func_871_a(var9) - 2, this.field_950_d - 10, 16777215);
-         super.func_571_a(p_571_1_, p_571_2_, p_571_3_);
++
++        if (p_73875_1_.field_73741_f == 6)
++        {
++            this.field_73882_e.func_71373_a(new GuiModList(this));
+         }
+ 
+         if (p_73875_1_.field_73741_f == 11)
+@@ -400,7 +413,14 @@
+             var9 = var9 + " Demo";
+         }
+ 
+-        this.func_73731_b(this.field_73886_k, var9, 2, this.field_73881_g - 10, 16777215);
++        List<String> brandings=Lists.reverse(FMLCommonHandler.instance().getBrandings());
++        for (int i=0; i<brandings.size(); i++) {
++            String brd = brandings.get(i);
++            if (!Strings.isNullOrEmpty(brd))
++            {
++                this.func_73731_b(this.field_73886_k, brd, 2, this.field_73881_g - ( 10 + i * (this.field_73886_k.field_78288_b + 1)), 16777215);
++            }
++        }
+         String var10 = "Copyright Mojang AB. Do not distribute!";
+         this.func_73731_b(this.field_73886_k, var10, this.field_73880_f - this.field_73886_k.func_78256_a(var10) - 2, this.field_73881_g - 10, 16777215);
+         super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);

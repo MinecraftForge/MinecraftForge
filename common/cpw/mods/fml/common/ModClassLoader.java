@@ -19,61 +19,64 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
+import java.util.logging.Level;
+
+import com.google.common.collect.ImmutableList;
+
+import cpw.mods.fml.common.discovery.ModCandidate;
+import cpw.mods.fml.relauncher.FMLRelauncher;
+import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 /**
  * A simple delegating class loader used to load mods into the system
- * 
- * 
+ *
+ *
  * @author cpw
  *
  */
 public class ModClassLoader extends URLClassLoader
 {
-
-    public ModClassLoader()
-    {
-        super(new URL[0], ModClassLoader.class.getClassLoader());
-    }
+    private static final List<String> STANDARD_LIBRARIES = ImmutableList.of("jinput.jar", "lwjgl.jar", "lwjgl_util.jar");
+    private RelaunchClassLoader mainClassLoader;
 
     public ModClassLoader(ClassLoader parent) {
         super(new URL[0], null);
+        this.mainClassLoader = (RelaunchClassLoader)parent;
     }
+
     public void addFile(File modFile) throws MalformedURLException
     {
-        ClassLoader cl=getParent();
-        if (cl instanceof URLClassLoader) {
-            URLClassLoader ucl=(URLClassLoader) cl;
             URL url = modFile.toURI().toURL();
-            try {
-                Method addUrl=URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                addUrl.setAccessible(true);
-                addUrl.invoke(ucl, url);
-            } catch (Exception e) {
-                Loader.log.severe("A fatal error occured attempting to load a file into the classloader");
-                throw new LoaderException(e);
+        mainClassLoader.addURL(url);
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException
+    {
+        return mainClassLoader.loadClass(name);
+    }
+
+    public File[] getParentSources() {
+        List<URL> urls=mainClassLoader.getSources();
+        File[] sources=new File[urls.size()];
+        try
+        {
+            for (int i = 0; i<urls.size(); i++)
+            {
+                sources[i]=new File(urls.get(i).toURI());
             }
+            return sources;
+        }
+        catch (URISyntaxException e)
+        {
+            FMLLog.log(Level.SEVERE, "Unable to process our input to locate the minecraft code", e);
+            throw new LoaderException(e);
         }
     }
-    
-    public File[] getParentSources() {
-        ClassLoader cl=getParent();
-        if (cl instanceof URLClassLoader) {
-            URLClassLoader ucl=(URLClassLoader) cl;
-            URL[] pUrl=ucl.getURLs();
-            File[] sources=new File[pUrl.length];
-            try
-            {
-                for (int i=0; i<pUrl.length; i++) {
-                    sources[i]=new File(pUrl[i].toURI());
-                }
-                return sources;
-            }
-            catch (URISyntaxException e)
-            {
-                Loader.log.throwing("ModClassLoader", "getParentSources", e);
-            }
-        }
-        Loader.log.severe("Unable to process our input to locate the minecraft code");
-        throw new LoaderException();
+
+    public List<String> getDefaultLibraries()
+    {
+        return STANDARD_LIBRARIES;
     }
 }

@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/client/MinecraftApplet.java
++++ ../src-work/minecraft/net/minecraft/client/MinecraftApplet.java
+@@ -3,6 +3,8 @@
+ import java.applet.Applet;
+ import java.awt.BorderLayout;
+ import java.awt.Canvas;
++
++import cpw.mods.fml.relauncher.FMLRelauncher;
+ import net.minecraft.src.CanvasMinecraftApplet;
+ import net.minecraft.src.MinecraftAppletImpl;
+ import net.minecraft.src.Session;
+@@ -14,6 +16,11 @@
+     private Thread field_71482_c = null;
+ 
+     public void init()
++    {
++        FMLRelauncher.appletEntry(this);
++    }
++
++    public void fmlInitReentry()
+     {
+         this.field_71483_a = new CanvasMinecraftApplet(this);
+         boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
+@@ -60,6 +67,11 @@
+ 
+     public void start()
+     {
++        FMLRelauncher.appletStart(this);
++    }
++
++    public void fmlStartReentry()
++    {
+         if (this.field_71481_b != null)
+         {
+             this.field_71481_b.field_71445_n = false;

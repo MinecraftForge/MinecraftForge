@@ -1,0 +1,403 @@
+package cpw.mods.fml.common.asm.transformers;
+
+import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_FINAL;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.io.LineProcessor;
+import com.google.common.io.Resources;
+
+import cpw.mods.fml.relauncher.IClassTransformer;
+
+public class AccessTransformer implements IClassTransformer
+{
+    private class Modifier
+    {
+        public String name = "";
+        public String desc = "";
+        public int oldAccess = 0;
+        public int newAccess = 0;
+        public int targetAccess = 0;
+        public boolean changeFinal = false;
+        public boolean markFinal = false;
+
+        private void setTargetAccess(String name)
+        {
+            if (name.startsWith("public")) targetAccess = ACC_PUBLIC;
+            else if (name.startsWith("private")) targetAccess = ACC_PRIVATE;
+            else if (name.startsWith("protected")) targetAccess = ACC_PROTECTED;
+            
+            if (name.endsWith("-f"))
+            {
+                changeFinal = true;
+                markFinal = false;
+            }
+            else if (name.endsWith("+f"))
+            {
+                changeFinal = true;
+                markFinal = true;
+            }
+        }
+    }
+
+    private Multimap<String, Modifier> modifiers = ArrayListMultimap.create();
+
+    public AccessTransformer() throws IOException
+    {
+        this("fml_at.cfg");
+    }
+    protected AccessTransformer(String rulesFile) throws IOException
+    {
+        readMapFile(rulesFile);
+    }
+
+    private void readMapFile(String rulesFile) throws IOException
+    {
+        File file = new File(rulesFile);
+        URL rulesResource;
+        if (file.exists())
+        {
+            rulesResource = file.toURI().toURL();
+        }
+        else
+        {
+            rulesResource = Resources.getResource(rulesFile);
+        }
+        Resources.readLines(rulesResource, Charsets.UTF_8, new LineProcessor<Void>()
+        {
+            @Override
+            public Void getResult()
+            {
+                return null;
+            }
+
+            @Override
+            public boolean processLine(String input) throws IOException
+            {
+                String line = Iterables.getFirst(Splitter.on('#').limit(2).split(input), "").trim();
+                if (line.length()==0)
+                {
+                    return true;
+                }
+                List<String> parts = Lists.newArrayList(Splitter.on(" ").trimResults().split(line));
+                if (parts.size()>2 || parts.get(1).indexOf('.') == -1)
+                {
+                    throw new RuntimeException("Invalid config file line "+ input);
+                }
+                Modifier m = new Modifier();
+                m.setTargetAccess(parts.get(0));
+                List<String> descriptor = Lists.newArrayList(Splitter.on(".").trimResults().split(parts.get(1)));
+                String nameReference = descriptor.get(1);
+                int parenIdx = nameReference.indexOf('(');
+                if (parenIdx>0)
+                {
+                    m.desc = nameReference.substring(parenIdx);
+                    m.name = nameReference.substring(0,parenIdx);
+                }
+                else
+                {
+                    m.name = nameReference;
+                }
+                modifiers.put(descriptor.get(0), m);
+                return true;
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public byte[] transform(String name, byte[] bytes)
+    {
+        if (!modifiers.containsKey(name)) { return bytes; }
+
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(bytes);
+        classReader.accept(classNode, 0);
+
+        Collection<Modifier> mods = modifiers.get(name);
+        for (Modifier m : mods)
+        {
+            if (m.desc.isEmpty())
+            {
+                for (FieldNode n : (List<FieldNode>) classNode.fields)
+                {
+                    if (n.name.equals(m.name))
+                    {
+                        n.access = getFixedAccess(n.access, m);
+                        System.out.println(String.format("Field: %s.%s %s -> %s", name, m.name, Integer.toBinaryString(m.oldAccess),
+                                Integer.toBinaryString(m.newAccess)));
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (MethodNode n : (List<MethodNode>) classNode.methods)
+                {
+                    if (n.name.equals(m.name) && n.desc.equals(m.desc))
+                    {
+                        n.access = getFixedAccess(n.access, m);
+                        System.out.println(String.format("Method: %s.%s%s %s -> %s", name, m.name, m.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                        break;
+                    }
+                }
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
+
+    private String toBinary(int num)
+    {
+        return String.format("%16s", Integer.toBinaryString(num)).replace(' ', '0');
+    }
+
+    private int getFixedAccess(int access, Modifier target)
+    {
+        target.oldAccess = access;
+        int t = target.targetAccess;
+        int ret = (access & ~7);
+
+        switch (access & 7)
+        {
+        case ACC_PRIVATE:
+            ret |= t;
+            break;
+        case 0: // default
+            ret |= (t != ACC_PRIVATE ? t : 0 /* default */);
+            break;
+        case ACC_PROTECTED:
+            ret |= (t != ACC_PRIVATE && t != 0 /* default */? t : ACC_PROTECTED);
+            break;
+        case ACC_PUBLIC:
+            ret |= (t != ACC_PRIVATE && t != 0 /* default */&& t != ACC_PROTECTED ? t : ACC_PUBLIC);
+            break;
+        default:
+            throw new RuntimeException("The fuck?");
+        }
+        
+        // Clear the "final" marker on fields only if specified in control field
+        if (target.changeFinal && target.desc == "")
+        {
+            if (target.markFinal)
+            {
+                ret |= ACC_FINAL;
+            }
+            else
+            {
+                ret &= ~ACC_FINAL;
+            }
+        }
+        target.newAccess = ret;
+        return ret;
+    }
+
+    public static void main(String[] args)
+    {
+        if (args.length < 2)
+        {
+            System.out.println("Usage: AccessTransformer <JarPath> <MapFile> [MapFile2]... ");
+            return;
+        }
+
+        boolean hasTransformer = false;
+        AccessTransformer[] trans = new AccessTransformer[args.length - 1];
+        for (int x = 1; x < args.length; x++)
+        {
+            try
+            {
+                trans[x - 1] = new AccessTransformer(args[x]);
+                hasTransformer = true;
+            }
+            catch (IOException e)
+            {
+                System.out.println("Could not read Transformer Map: " + args[x]);
+                e.printStackTrace();
+            }
+        }
+
+        if (!hasTransformer)
+        {
+            System.out.println("Culd not find a valid transformer to perform");
+            return;
+        }
+
+        File orig = new File(args[0]);
+        File temp = new File(args[0] + ".ATBack");
+        if (!orig.exists() && !temp.exists())
+        {
+            System.out.println("Could not find target jar: " + orig);
+            return;
+        }
+/*
+        if (temp.exists())
+        {
+            if (orig.exists() && !orig.renameTo(new File(args[0] + (new SimpleDateFormat(".yyyy.MM.dd.HHmmss")).format(new Date()))))
+            {
+                System.out.println("Could not backup existing file: " + orig);
+                return;
+            }
+            if (!temp.renameTo(orig))
+            {
+                System.out.println("Could not restore backup from previous run: " + temp);
+                return;
+            }
+        }
+*/
+        if (!orig.renameTo(temp))
+        {
+            System.out.println("Could not rename file: " + orig + " -> " + temp);
+            return;
+        }
+
+        try
+        {
+            processJar(temp, orig, trans);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        
+        if (!temp.delete())
+        {
+            System.out.println("Could not delete temp file: " + temp);
+        }
+    }
+
+    private static void processJar(File inFile, File outFile, AccessTransformer[] transformers) throws IOException
+    {
+        ZipInputStream inJar = null;
+        ZipOutputStream outJar = null;
+
+        try
+        {
+            try
+            {
+                inJar = new ZipInputStream(new BufferedInputStream(new FileInputStream(inFile)));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new FileNotFoundException("Could not open input file: " + e.getMessage());
+            }
+
+            try
+            {
+                outJar = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)));
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new FileNotFoundException("Could not open output file: " + e.getMessage());
+            }
+
+            ZipEntry entry;
+            while ((entry = inJar.getNextEntry()) != null)
+            {
+                if (entry.isDirectory())
+                {
+                    outJar.putNextEntry(entry);
+                    continue;
+                }
+
+                byte[] data = new byte[4096];
+                ByteArrayOutputStream entryBuffer = new ByteArrayOutputStream();
+
+                int len;
+                do
+                {
+                    len = inJar.read(data);
+                    if (len > 0)
+                    {
+                        entryBuffer.write(data, 0, len);
+                    }
+                }
+                while (len != -1);
+
+                byte[] entryData = entryBuffer.toByteArray();
+
+                String entryName = entry.getName();
+
+                if (entryName.endsWith(".class") && !entryName.startsWith("."))
+                {
+                    ClassNode cls = new ClassNode();
+                    ClassReader rdr = new ClassReader(entryData);
+                    rdr.accept(cls, 0);
+                    String name = cls.name.replace('/', '.').replace('\\', '.');
+
+                    for (AccessTransformer trans : transformers)
+                    {
+                        entryData = trans.transform(name, entryData);
+                    }
+                }
+
+                ZipEntry newEntry = new ZipEntry(entryName);
+                outJar.putNextEntry(newEntry);
+                outJar.write(entryData);
+            }
+        }
+        finally
+        {
+            if (outJar != null)
+            {
+                try
+                {
+                    outJar.close();
+                }
+                catch (IOException e)
+                {
+                }
+            }
+
+            if (inJar != null)
+            {
+                try
+                {
+                    inJar.close();
+                }
+                catch (IOException e)
+                {
+                }
+            }
+        }
+    }
+}

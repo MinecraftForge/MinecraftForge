@@ -61,7 +61,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     }
 
     @Override
-    public final boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data)
+    public final boolean dispense(double x, double y, double z, int xVelocity, int zVelocity, Object... data)
     {
         return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
     }
@@ -134,7 +134,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     @Override
     public final boolean handleCommand(String command, Object... data)
     {
-        return onServerCommand(command, (String)data[0], (ICommandListener)data[1]);
+        return onServerCommand(command, (String)data[0], (ICommandManager)data[1]);
     }
     // BASEMOD API
     /**
@@ -359,7 +359,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
      * @param command
      * @return true if you want to consume the message so it is not available for further processing
      */
-    public boolean onServerCommand(String command, String sender, ICommandListener listener)
+    public boolean onServerCommand(String command, String sender, ICommandManager listener)
     {
         return false;
     }

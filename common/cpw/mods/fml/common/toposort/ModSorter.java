@@ -16,9 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 /**
  * @author cpw
@@ -28,10 +30,10 @@ public class ModSorter
 {
     private DirectedGraph<ModContainer> modGraph;
 
-    private ModContainer beforeAll = new FMLModContainer("DummyBeforeAll");
-    private ModContainer afterAll = new FMLModContainer("DummyAfterAll");
-    private ModContainer before = new FMLModContainer("DummyBefore");
-    private ModContainer after = new FMLModContainer("DummyAfter");
+    private ModContainer beforeAll = new DummyModContainer();
+    private ModContainer afterAll = new DummyModContainer();
+    private ModContainer before = new DummyModContainer();
+    private ModContainer after = new DummyModContainer();
 
     public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
     {
@@ -59,11 +61,11 @@ public class ModSorter
             boolean preDepAdded = false;
             boolean postDepAdded = false;
 
-            for (String dep : mod.getPreDepends())
+            for (ArtifactVersion dep : mod.getDependencies())
             {
                 preDepAdded = true;
 
-                if (dep.equals("*"))
+                if (dep.getLabel().equals("*"))
                 {
                     // We are "after" everything
                     modGraph.addEdge(mod, afterAll);
@@ -73,17 +75,17 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(before, mod);
-                    if (nameLookup.containsKey(dep)) {
-                        modGraph.addEdge(nameLookup.get(dep), mod);
+                    if (nameLookup.containsKey(dep.getLabel())) {
+                        modGraph.addEdge(nameLookup.get(dep.getLabel()), mod);
                     }
                 }
             }
 
-            for (String dep : mod.getPostDepends())
+            for (ArtifactVersion dep : mod.getDependants())
             {
                 postDepAdded = true;
 
-                if (dep.equals("*"))
+                if (dep.getLabel().equals("*"))
                 {
                     // We are "before" everything
                     modGraph.addEdge(beforeAll, mod);
@@ -93,8 +95,8 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(mod, after);
-                    if (nameLookup.containsKey(dep)) {
-                        modGraph.addEdge(mod, nameLookup.get(dep));
+                    if (nameLookup.containsKey(dep.getLabel())) {
+                        modGraph.addEdge(mod, nameLookup.get(dep.getLabel()));
                     }
                 }
             }

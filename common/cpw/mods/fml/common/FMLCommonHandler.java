@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +38,17 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-import cpw.mods.fml.common.ModContainer.SourceType;
+import net.minecraft.server.MinecraftServer;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.Lists;
+
+import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+
 
 /**
  * The main class for non-obfuscated hook handling code
@@ -83,68 +93,20 @@ public class FMLCommonHandler
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
 
-    private PriorityQueue<TickQueueElement> tickHandlers = new PriorityQueue<TickQueueElement>();
-
     private List<IScheduledTickHandler> scheduledTicks = new ArrayList<IScheduledTickHandler>();
-
-    private Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
-    /**
-     * We register our delegate here
-     * @param handler
-     */
-
-    private static class TickQueueElement implements Comparable<TickQueueElement>
-    {
-        static long tickCounter = 0;
-        public TickQueueElement(IScheduledTickHandler ticker)
-        {
-            this.ticker = ticker;
-            update();
-        }
-        @Override
-        public int compareTo(TickQueueElement o)
-        {
-            return (int)(next - o.next);
-        }
-
-        public void update()
-        {
-            next = tickCounter + Math.max(ticker.nextTickSpacing(),1);
-        }
-
-        private long next;
-        private IScheduledTickHandler ticker;
-
-        public boolean scheduledNow()
-        {
-            return tickCounter >= next;
-        }
-    }
 
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
-        getFMLLogger().info("Attempting early MinecraftForge initialization");
+        FMLLog.info("Attempting early MinecraftForge initialization");
         callForgeMethod("initialize");
-        getFMLLogger().info("Completed early MinecraftForge initialization");
+        FMLLog.info("Completed early MinecraftForge initialization");
     }
 
     public void rescheduleTicks()
     {
         sidedDelegate.profileStart("modTickScheduling");
-        TickQueueElement.tickCounter++;
-        scheduledTicks.clear();
-        while (true)
-        {
-            if (tickHandlers.size()==0 || !tickHandlers.peek().scheduledNow())
-            {
-                break;
-            }
-            TickQueueElement tickQueueElement  = tickHandlers.poll();
-            tickQueueElement.update();
-            tickHandlers.offer(tickQueueElement);
-            scheduledTicks.add(tickQueueElement.ticker);
-        }
+        TickRegistry.updateTickQueue(scheduledTicks);
         sidedDelegate.profileEnd();
     }
     public void tickStart(EnumSet<TickType> ticks, Object ... data)
@@ -189,18 +151,6 @@ public class FMLCommonHandler
         sidedDelegate.profileEnd();
     }
 
-    public List<IKeyHandler> gatherKeyBindings() {
-        List<IKeyHandler> allKeys=new ArrayList<IKeyHandler>();
-        for (ModContainer mod : Loader.getModList())
-        {
-            allKeys.addAll(mod.getKeys());
-        }
-        for (ModContainer mod : auxilliaryContainers)
-        {
-            allKeys.addAll(mod.getKeys());
-        }
-        return allKeys;
-    }
     /**
      * @return the instance
      */
@@ -215,7 +165,7 @@ public class FMLCommonHandler
      */
     public ModContainer findContainerFor(Object mod)
     {
-        for (ModContainer mc : Loader.getModList())
+        for (ModContainer mc : Loader.instance().getActiveModList())
         {
             if (mc.matches(mod))
             {
@@ -321,8 +271,7 @@ public class FMLCommonHandler
         }
         catch (UnsupportedEncodingException e)
         {
-            Loader.log.warning("Error building registration list");
-            Loader.log.throwing("FMLHooks", "getPacketRegistry", e);
+            FMLLog.log(Level.WARNING, e, "Error building registration list");
             return new byte[0];
         }
     }
@@ -344,7 +293,7 @@ public class FMLCommonHandler
      */
     public Logger getFMLLogger()
     {
-        return Loader.log;
+        return FMLLog.getLogger();
     }
 
     /**
@@ -359,31 +308,6 @@ public class FMLCommonHandler
             "or installing some other mod that edits Minecraft.class on top of FML such as ModLoader, do not do this. Reinstall FML properly and try again.");
         }
         return sidedDelegate.getMinecraftLogger();
-    }
-
-    /**
-     * Is this a modloader mod?
-     * @param clazz
-     * @return
-     */
-    public boolean isModLoaderMod(Class<?> clazz)
-    {
-        return sidedDelegate.isModLoaderMod(clazz);
-    }
-
-    /**
-     * Load the modloader mod
-     * @param clazz
-     * @param canonicalPath
-     * @return
-     */
-    public ModContainer loadBaseModMod(Class<?> clazz, File canonicalFile)
-    {
-        return sidedDelegate.loadBaseModMod(clazz, canonicalFile);
-    }
-
-    public File getMinecraftRootDirectory() {
-        return sidedDelegate.getMinecraftRootDirectory();
     }
 
     /**
@@ -456,12 +380,6 @@ public class FMLCommonHandler
     public int fuelLookup(int itemId, int itemDamage)
     {
         int fv = 0;
-
-        for (ModContainer mod : Loader.getModList())
-        {
-            fv = Math.max(fv, mod.lookupFuelValue(itemId, itemDamage));
-        }
-
         return fv;
     }
 
@@ -490,6 +408,7 @@ public class FMLCommonHandler
 
     private Class<?> forge;
     private boolean noForge;
+    private List<String> brandings;
 
     private Class<?> findMinecraftForge()
     {
@@ -527,87 +446,34 @@ public class FMLCommonHandler
      * @param string
      * @return
      */
-    public String[] getBrandingStrings(String mcVersion)
+    public void computeBranding()
     {
-        ArrayList<String> brandings=new ArrayList<String>();
-        brandings.add(mcVersion);
-        brandings.add(Loader.instance().getFMLVersionString());
-        String forgeVersion = (String)callForgeMethod("getVersionString");
-        if (forgeVersion != null)
+        if (brandings == null)
         {
-            brandings.add(forgeVersion);
+            Builder brd = ImmutableList.<String>builder();
+            brd.add(Loader.instance().getMCVersionString());
+            brd.add(Loader.instance().getFMLVersionString());
+            brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
+            try {
+                Properties props=new Properties();
+                props.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
+                brd.add(props.getProperty("fmlbranding"));
+            } catch (Exception ex) {
+                // Ignore - no branding file found
+            }
+            int tModCount = Loader.instance().getModList().size();
+            int aModCount = Loader.instance().getActiveModList().size();
+            brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount!=1 ? "s" :"", aModCount, aModCount!=1 ? "s" :"" ));
+            brandings = brd.build();
         }
-        brandings.addAll(sidedDelegate.getAdditionalBrandingInformation());
-        try {
-            Properties props=new Properties();
-            props.load(FMLCommonHandler.class.getClassLoader().getResourceAsStream("fmlbranding.properties"));
-            brandings.add(props.getProperty("fmlbranding"));
-        } catch (Exception ex) {
-            // Ignore - no branding file found
-        }
-        brandings.add(String.format("%d mod%s loaded",Loader.getModList().size(), Loader.getModList().size()!=1?"s":""));
-        Collections.reverse(brandings);
-        return brandings.toArray(new String[brandings.size()]);
     }
-
-    /**
-     * @param mod
-     */
-    public void loadMetadataFor(ModContainer mod)
+    public List<String> getBrandings()
     {
-        if (mod.getSourceType()==SourceType.JAR) {
-            ZipFile jar = null;
-            try
-            {
-                jar = new ZipFile(mod.getSource());
-                ZipEntry infoFile=jar.getEntry("mcmod.info");
-                if (infoFile!=null) {
-                    InputStream input=jar.getInputStream(infoFile);
-                    ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
-                    mod.setMetadata(data);
-                } else {
-                    getFMLLogger().fine(String.format("Failed to find mcmod.info file in %s for %s", mod.getSource().getName(), mod.getName()));
-                }
-            }
-            catch (Exception e)
-            {
-                // Something wrong but we don't care
-                getFMLLogger().fine(String.format("Failed to find mcmod.info file in %s for %s", mod.getSource().getName(), mod.getName()));
-                getFMLLogger().throwing("FMLCommonHandler", "loadMetadataFor", e);
-            }
-            finally
-            {
-                if (jar!=null)
-                {
-                    try
-                    {
-                        jar.close();
-                    }
-                    catch (IOException e)
-                    {
-                        // GO AWAY
-                    }
-                }
-            }
-        } else {
-            try
-            {
-                InputStream input=Loader.instance().getModClassLoader().getResourceAsStream(mod.getName()+".info");
-                if (input==null) {
-                    input=Loader.instance().getModClassLoader().getResourceAsStream("net/minecraft/src/"+mod.getName()+".info");
-                }
-                if (input!=null) {
-                    ModMetadata data=sidedDelegate.readMetadataFrom(input, mod);
-                    mod.setMetadata(data);
-                }
-            }
-            catch (Exception e)
-            {
-                // Something wrong but we don't care
-                getFMLLogger().fine(String.format("Failed to find %s.info file in %s for %s", mod.getName(), mod.getSource().getName(), mod.getName()));
-                getFMLLogger().throwing("FMLCommonHandler", "loadMetadataFor", e);
-            }
+        if (brandings == null)
+        {
+            computeBranding();
         }
+        return ImmutableList.copyOf(brandings);
     }
 
     /**
@@ -632,29 +498,52 @@ public class FMLCommonHandler
 
     public void handleWorldGeneration(int chunkX, int chunkZ, long worldSeed, Object... data)
     {
-        Random fmlRandom = new Random(worldSeed);
-        long xSeed = fmlRandom.nextLong() >> 2 + 1L;
-        long zSeed = fmlRandom.nextLong() >> 2 + 1L;
-        fmlRandom.setSeed((xSeed * chunkX + zSeed * chunkZ) ^ worldSeed);
-
-        for (IWorldGenerator generator : worldGenerators)
-        {
-            generator.generate(fmlRandom, chunkX, chunkZ, data);
-        }
+        GameRegistry.generateWorld(chunkX, chunkZ, worldSeed, data);
     }
 
-    public void registerTickHandler(ITickHandler handler)
+    public void onPostServerTick()
     {
-        registerScheduledTickHandler(new SingleIntervalHandler(handler));
+        tickEnd(EnumSet.of(TickType.GAME));
     }
 
-    public void registerScheduledTickHandler(IScheduledTickHandler handler)
+    /**
+     * Every tick just after world and other ticks occur
+     */
+    public void onPostWorldTick(Object world)
     {
-        tickHandlers.add(new TickQueueElement(handler));
+        tickEnd(EnumSet.of(TickType.WORLD), world);
     }
 
-    public void registerWorldGenerator(IWorldGenerator generator)
+    public void onPreServerTick()
     {
-        worldGenerators.add(generator);
+        tickStart(EnumSet.of(TickType.GAME));
+    }
+
+    /**
+     * Every tick just before world and other ticks occur
+     */
+    public void onPreWorldTick(Object world)
+    {
+        tickStart(EnumSet.of(TickType.WORLD), world);
+    }
+
+    public void onWorldLoadTick()
+    {
+        tickStart(EnumSet.of(TickType.WORLDLOAD));
+    }
+    
+    public void handleServerStarting(MinecraftServer server)
+    {
+        Loader.instance().serverStarting(server);
+    }
+    
+    public void handleServerStarted()
+    {
+        Loader.instance().serverStarted();
+    }
+    
+    public void handleServerStopping()
+    {
+        Loader.instance().serverStopping();
     }
 }

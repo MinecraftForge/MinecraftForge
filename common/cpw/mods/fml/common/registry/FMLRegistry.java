@@ -13,20 +13,19 @@
  */
 package cpw.mods.fml.common.registry;
 
+
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.IRecipe;
 import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 
 
 public class FMLRegistry
 {
-    private static IMinecraftRegistry instance;
+    static IMinecraftRegistry instance;
 
     public static void registerRegistry(IMinecraftRegistry registry)
     {
@@ -36,45 +35,6 @@ public class FMLRegistry
         }
 
         instance = registry;
-    }
-    public static void addRecipe(ItemStack output, Object... params)
-    {
-        instance.addRecipe(output, params);
-    }
-
-    public static void addShapelessRecipe(ItemStack output, Object... params)
-    {
-        instance.addShapelessRecipe(output, params);
-    }
-
-    public static void addRecipe(IRecipe recipe)
-    {
-        instance.addRecipe(recipe);
-    }
-
-    public static void addSmelting(int input, ItemStack output)
-    {
-        instance.addSmelting(input, output);
-    }
-
-    public static void registerBlock(Block block)
-    {
-        instance.registerBlock(block);
-    }
-
-    public static void registerBlock(Block block, Class <? extends ItemBlock > itemclass)
-    {
-        instance.registerBlock(block, itemclass);
-    }
-
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
-    {
-        instance.registerEntityID(entityClass, entityName, id);
-    }
-
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
-    {
-        instance.registerEntityID(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
     }
 
     public static void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)

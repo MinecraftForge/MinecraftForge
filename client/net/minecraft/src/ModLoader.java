@@ -22,14 +22,18 @@ import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
 
+import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.SpriteHelper;
+import cpw.mods.fml.client.TextureFXManager;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.registry.FMLRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class ModLoader
 {
@@ -72,7 +76,7 @@ public class ModLoader
 
     public static void addAnimation(TextureFX anim)
     {
-        FMLClientHandler.instance().addAnimation(anim);
+        TextureFXManager.instance().addAnimation(anim);
     }
 
     /**
@@ -165,7 +169,7 @@ public class ModLoader
      */
     public static void addOverride(String path, String overlayPath, int index)
     {
-        FMLClientHandler.instance().addNewTextureOverride(path, overlayPath, index);
+        TextureFXManager.instance().addNewTextureOverride(path, overlayPath, index);
     }
 
     /**
@@ -176,7 +180,7 @@ public class ModLoader
      */
     public static void addRecipe(ItemStack output, Object... params)
     {
-        FMLRegistry.addRecipe(output, params);
+        GameRegistry.addRecipe(output, params);
     }
 
     /**
@@ -187,7 +191,7 @@ public class ModLoader
      */
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
-        FMLRegistry.addShapelessRecipe(output, params);
+        GameRegistry.addShapelessRecipe(output, params);
     }
 
     /**
@@ -288,7 +292,7 @@ public class ModLoader
      */
     public static void genericContainerRemoval(World world, int x, int y, int z)
     {
-        TileEntity te = world.func_603_b(x, y, z);
+/*        TileEntity te = world.func_603_b(x, y, z);
 
         if (!(te instanceof IInventory))
         {
@@ -334,7 +338,7 @@ public class ModLoader
                 world.func_674_a(entityitem);
             }
         }
-    }
+*/    }
 
     /**
      * Get a list of all BaseMod loaded into the system
@@ -375,7 +379,7 @@ public class ModLoader
 
     /**
      * Get a value from a field using reflection
-     * {@link ReflectionHelper#getPrivateValue(Class, Object, int)}
+     * {@link ObfuscationReflectionHelper#getPrivateValue(Class, Object, int)}
      *
      * @param instanceclass
      * @param instance
@@ -384,12 +388,12 @@ public class ModLoader
      */
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex)
     {
-        return ReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
+        return ObfuscationReflectionHelper.getPrivateValue(instanceclass, instance, fieldindex);
     }
 
     /**
      * Get a value from a field using reflection
-     * {@link ReflectionHelper#getPrivateValue(Class, Object, String)}
+     * {@link ObfuscationReflectionHelper#getPrivateValue(Class, Object, String)}
      *
      * @param instanceclass
      * @param instance
@@ -398,7 +402,7 @@ public class ModLoader
      */
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, String field)
     {
-        return ReflectionHelper.getPrivateValue(instanceclass, instance, field);
+        return ObfuscationReflectionHelper.getPrivateValue(instanceclass, instance, field);
     }
 
     /**
@@ -407,7 +411,7 @@ public class ModLoader
      */
     public static int getUniqueBlockModelID(BaseMod mod, boolean inventoryRenderer)
     {
-        return FMLClientHandler.instance().obtainBlockModelIdFor(mod, inventoryRenderer);
+        return BlockRenderManager.instance().obtainBlockModelIdFor(mod, inventoryRenderer);
     }
 
     /**
@@ -441,7 +445,7 @@ public class ModLoader
 
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
-        return FMLClientHandler.instance().getClient().field_6313_p!=null && FMLClientHandler.instance().getClient().field_6313_p.equals(gui);
+        return FMLClientHandler.instance().getClient().field_71462_r != null && FMLClientHandler.instance().getClient().field_71462_r.equals(gui);
     }
 
     /**
@@ -466,7 +470,7 @@ public class ModLoader
 
     public static BufferedImage loadImage(RenderEngine renderEngine, String path) throws Exception
     {
-        return FMLClientHandler.instance().loadImageFromTexturePack(renderEngine, path);
+        return TextureFXManager.instance().loadImageFromTexturePack(renderEngine, path);
     }
 
     /**
@@ -567,7 +571,7 @@ public class ModLoader
 
     public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
-        FMLClientHandler.instance().registerKeyHandler(mod, keyHandler, allowRepeat);
+        FMLClientHandler.instance().registerModLoaderKeyHandler(mod, keyHandler, allowRepeat);
     }
 
     /**
@@ -659,19 +663,19 @@ public class ModLoader
     @Deprecated
     public static boolean renderBlockIsItemFull3D(int modelID)
     {
-        return FMLClientHandler.instance().renderItemAsFull3DBlock(modelID);
+        return BlockRenderManager.instance().renderItemAsFull3DBlock(modelID);
     }
 
     @Deprecated
     public static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        FMLClientHandler.instance().renderInventoryBlock(renderer, block, metadata, modelID);
+        BlockRenderManager.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
     @Deprecated
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
-        return FMLClientHandler.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
+        return BlockRenderManager.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 
     /**
@@ -724,7 +728,7 @@ public class ModLoader
 
     /**
      * Set a private field to a value using reflection
-     * {@link ReflectionHelper#setPrivateValue(Class, Object, int, Object)}
+     * {@link ObfuscationReflectionHelper#setPrivateValue(Class, Object, int, Object)}
      *
      * @param instanceclass
      * @param instance
@@ -733,12 +737,12 @@ public class ModLoader
      */
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, int fieldindex, E value)
     {
-        ReflectionHelper.setPrivateValue(instanceclass, instance, fieldindex, value);
+        ObfuscationReflectionHelper.setPrivateValue(instanceclass, instance, value, fieldindex);
     }
 
     /**
      * Set a private field to a value using reflection
-     * {@link ReflectionHelper#setPrivateValue(Class, Object, String, Object)}
+     * {@link ObfuscationReflectionHelper#setPrivateValue(Class, Object, String, Object)}
      *
      * @param instanceclass
      * @param instance
@@ -747,7 +751,7 @@ public class ModLoader
      */
     public static <T, E> void setPrivateValue(Class<? super T> instanceclass, T instance, String field, E value)
     {
-        ReflectionHelper.setPrivateValue(instanceclass, instance, field, value);
+        ObfuscationReflectionHelper.setPrivateValue(instanceclass, instance, value, field);
     }
 
     /**

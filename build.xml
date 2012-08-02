@@ -29,7 +29,7 @@
       <arg value="${mcp.home}" />
     </exec>
     <propertyfile file="fmlversion.properties">
-      <entry key="fmlbuild.build.number" type="int" value="${version.build}" />
+      <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
     </propertyfile>
   </target>
 
@@ -55,6 +55,10 @@
     <property name="mcp.srcdir" location="${mcp.home}/src" />
     <property name="client.mcp.srcdir" location="${mcp.srcdir}/minecraft" />
     <property name="server.mcp.srcdir" location="${mcp.srcdir}/minecraft_server" />
+    <property name="clean.mcp.srcdir" location="${mcp.home}/src-base" />
+    <property name="patch.mcp.srcdir" location="${mcp.home}/src-work" />
+    <property name="tmp.mcp.srcdir" location="${mcp.home}/src-tmp" />
+    <property name="renamed.mcp.srcdir" location="${mcp.home}/src-renamed" />
     <property name="common.src.dir" location="${basedir}/common" />
     <property name="client.src.dir" location="${basedir}/client" />
     <property name="server.src.dir" location="${basedir}/server" />
@@ -90,23 +94,23 @@
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
-    <fail message="Compilation failed">
-      <condition>
-        <not>
-          <and>
-            <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class" />
-            <available file="${mcp.home}/bin/minecraft_server/net/minecraft/server/MinecraftServer.class" />
-          </and>
-        </not>
-      </condition>
-    </fail>
+  	<fail message="Compilation failed">
+  		<condition>
+  	        <not>
+  	        	<and>
+  	        		<available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
+                <available file="${mcp.home}/bin/minecraft_server/net/minecraft/server/MinecraftServer.class"/>
+  	        	</and>
+  	        </not>
+  		</condition>
+  	</fail>
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/reobfuscate.py" />
     </exec>
     <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${basedir}/generatechangedfilelist.py" />
-      <arg value="${mcp.home}" />
-      <arg value="${basedir}/difflist.txt" />
+      <arg value="${basedir}/generatechangedfilelist.py"/>
+      <arg value="${mcp.home}"/>
+      <arg value="${basedir}/difflist.txt"/>
     </exec>
   </target>
 
@@ -150,9 +154,9 @@
     <mkdir dir="${basedir}/target" />
     <zip destfile="${basedir}/target/${jarname}.zip">
       <fileset dir="${output}" includes="**/*.class" />
-      <zipfileset dir="${basedir}" includes="fmlversion.properties" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
-      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt" />
+      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />
@@ -204,11 +208,11 @@
   <target name="build" depends="buildenvsetup,merge-server,merge-client,build-server,build-client,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,patch,build"/>
-  
+
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/applypatches.py" />
-      <arg value="${patch.src.dir}" />
+      <arg value="${basedir}" />
       <arg value="${mcp.srcdir}" />
       <arg value="${mcp.home}" />
     </exec>
@@ -222,63 +226,104 @@
     </condition>
     <fail if="do.not.continue">You have decided not to continue. This script will stop now.</fail>
     <echo>Preparing the MCP environment at ${mcp.home}</echo>
-    <exec executable="${python.exe}" dir="${basedir}">
+    <!--<exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/download_fernflower.py" />
       <arg value="${mcp.home}"/>
-    </exec>
+    </exec>-->
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
       <arg value="-f" />
     </exec>
-    <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/decompile.py" />
-      <arg value="-d" />
-      <arg value="-n" />
-      <arg value="-r" />
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/decompile.py" />
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}" />
     </exec>
-    <exec executable="${python.exe}" dir="${mcp.home}">
+    <!--<exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${basedir}/cleanup_source.py" />
+      <arg value="${mcp.srcdir}" />
+    </exec>-->
+    <!--<exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/updatemd5.py" />
       <arg value="-f" />
-    </exec>
-    <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
+    </exec>-->
+    <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
-      <fileset dir="${mcp.home}/src-work"/>
+      <fileset dir="${patch.mcp.srcdir}"/>
     </move>
-    <echo>Deleting old patch references at ${mcp.home}/src-base</echo>
-    <delete dir="${mcp.home}/src-base" failonerror="false"/>
-    <echo>Creating new patch references at ${mcp.home}/src-base</echo>
-    <copy todir="${mcp.home}/src-base">
-      <fileset dir="${mcp.home}/src"/>
+    <echo>Deleting old patch references at ${clean.mcp.srcdir}</echo>
+    <delete dir="${clean.mcp.srcdir}" failonerror="false"/>
+    <echo>Creating new patch references at ${clean.mcp.srcdir}</echo>
+    <copy todir="${clean.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
     </copy>
+    <antcall target="cleanargo"/>
     <antcall target="patch"/>
-    <echo>Creating clean patched references at ${mcp.home}/src-work</echo>
-    <copy todir="${mcp.home}/src-work">
-      <fileset dir="${mcp.home}/src"/>
+    <echo>Creating clean patched references at ${patch.mcp.srcdir}</echo>
+    <copy todir="${patch.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
     </copy>
     <antcall target="writeversion"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
 
-  <target name="repatch" depends="buildenvsetup">
+  <target name="repatch" depends="buildenvsetup,checkpatches">
     <echo>Moving old patched sources at ${mcp.home}/src-work out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
-      <fileset dir="${mcp.home}/src-work"/>
+      <fileset dir="${patch.mcp.srcdir}"/>
     </move>
-    <delete dir="${mcp.home}/src"/>
-    <copy todir="${mcp.home}/src">
-      <fileset dir="${mcp.home}/src-base"/>
+    <delete dir="${mcp.srcdir}"/>
+    <copy todir="${mcp.srcdir}">
+      <fileset dir="${clean.mcp.srcdir}"/>
     </copy>
+
+    <antcall target="cleanargo"/>
+
     <antcall target="patch"/>
-    <copy todir="${mcp.home}/src-work">
-      <fileset dir="${mcp.home}/src"/>
+    <copy todir="${patch.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
     </copy>
   </target>
-  
+
+  <target name="cleanargo" depends="buildenvsetup">
+    <delete dir="${client.mcp.srcdir}/argo"/>
+  </target>
+
+  <target name="checkpatches" depends="buildenvsetup">
+    <uptodate property="checkUptodate.uptodate">
+      <srcfiles dir="${patch.mcp.srcdir}" includes="**/*.java">
+      	<present targetdir="${patch.src.dir}">
+      		<globmapper from="*.java" to="*.java.patch"/>
+      	</present>
+      </srcfiles>
+      <globmapper from="*.java" to="${patch.src.dir}/*.java.patch"/>
+    </uptodate>
+  	<fail unless="checkUptodate.uptodate">
+  		A patch is out of date. Update your patches!
+  	</fail>
+  </target>
+
   <target name="updatepatches" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/update_patches.py" />
       <arg value="${mcp.home}"/>
-      <arg value="${basedir}/patches"/>
+      <arg value="${basedir}"/>
     </exec>
+  </target>
+
+  <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-server,buildandreobfmcp">
+    <copy todir="${tmp.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
+    </copy>
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/updatenames.py" />
+      <arg value="-f" />
+    </exec>
+    <copy todir="${renamed.mcp.srcdir}">
+      <fileset dir="${mcp.srcdir}"/>
+    </copy>
+    <move todir="${mcp.srcdir}">
+      <fileset dir="${tmp.mcp.srcdir}"/>
+    </move>
   </target>
 </project>
