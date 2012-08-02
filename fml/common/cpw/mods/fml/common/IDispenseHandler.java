@@ -15,6 +15,6 @@ package cpw.mods.fml.common;
 
 public interface IDispenseHandler
 {
-    boolean dispense(double x, double y, double z, byte xVelocity, byte zVelocity, Object... data);
+    boolean dispense(double x, double y, double z, int xVelocity, int zVelocity, Object... data);
 
 }

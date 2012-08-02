@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>build.xml</name>
+			<type>1</type>
+			<locationURI>MCP_LOC/FML/build.xml</locationURI>
+		</link>
+		<link>
 			<name>client</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/FML/client</locationURI>
@@ -31,9 +36,29 @@
 			<locationURI>MCP_LOC/jars</locationURI>
 		</link>
 		<link>
+			<name>lib</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/lib</locationURI>
+		</link>
+		<link>
+			<name>libref</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/libref</locationURI>
+		</link>
+		<link>
 			<name>src</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/src-work/minecraft</locationURI>
+		</link>
+		<link>
+			<name>src-common</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/src-work/common</locationURI>
+		</link>
+		<link>
+			<name>transformers</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/FML/transformers</locationURI>
 		</link>
 		<link>
 			<name>common/fmlversion.properties</name>

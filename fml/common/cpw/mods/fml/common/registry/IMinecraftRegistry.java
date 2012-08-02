@@ -35,7 +35,7 @@ public interface IMinecraftRegistry
 
     public abstract void registerBlock(Block block);
 
-    public abstract void addSmelting(int input, ItemStack output);
+    public abstract void addSmelting(int input, ItemStack output, float xp);
 
     public abstract void addShapelessRecipe(ItemStack output, Object... params);
 

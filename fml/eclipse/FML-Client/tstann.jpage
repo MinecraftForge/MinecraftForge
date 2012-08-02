@@ -1,0 +1,11 @@
+java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mcsnapshot/FML/eclipse/FML-MockMod/bin/cpw/mods/mockmod/MockMod.class"));
+
+System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
+
+java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mcsnapshot/FML/eclipse/simpletestmod/bin/net/minecraft/src/mod_testMod.class"));
+
+System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
+
+
+
+org.objectweb.asm.Type.getDescriptor(net.minecraft.src.CraftingManager.class.getDeclaredMethods()[1])

@@ -17,6 +17,7 @@ package cpw.mods.fml.client;
 import java.util.ArrayList;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import net.minecraft.client.Minecraft;
@@ -36,7 +37,7 @@ public class GuiSlotModList extends GuiScrollingList
 
     public GuiSlotModList(GuiModList parent, ArrayList<ModContainer> mods, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.field_950_d, 32, parent.field_950_d - 65 + 4, 10, 35);
+        super(parent.getMinecraftInstance(), listWidth, parent.field_73881_g, 32, parent.field_73881_g - 65 + 4, 10, 35);
         this.parent=parent;
         this.mods=mods;
     }
@@ -62,7 +63,7 @@ public class GuiSlotModList extends GuiScrollingList
     @Override
     protected void drawBackground()
     {
-        this.parent.func_578_i();
+        this.parent.func_73873_v_();
     }
 
     @Override
@@ -70,14 +71,23 @@ public class GuiSlotModList extends GuiScrollingList
     {
         return (this.getSize()) * 35 + 1;
     }
-    
+
     @Override
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
         ModContainer mc=mods.get(listIndex);
-        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getName(), listWidth - 11), this.left + 3 , var3 + 2, 0xFFFFFF);
-        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getVersion(), listWidth - 11), this.left + 3 , var3 + 12, 0xCCCCCC);
-        this.parent.getFontRenderer().func_873_b(this.parent.getFontRenderer().func_50107_a(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 9), this.left + 3 , var3 + 22, 0xCCCCCC);
+        if (Loader.instance().getModState(mc)==ModState.DISABLED)
+        {
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getName(), listWidth - 11), this.left + 3 , var3 + 2, 0xFF2222);
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getVersion(), listWidth - 11), this.left + 3 , var3 + 12, 0xFF2222);
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a("DISABLED", listWidth - 11), this.left + 3 , var3 + 22, 0xFF2222);
+        }
+        else
+        {
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getName(), listWidth - 11), this.left + 3 , var3 + 2, 0xFFFFFF);
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getVersion(), listWidth - 11), this.left + 3 , var3 + 12, 0xCCCCCC);
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 9), this.left + 3 , var3 + 22, 0xCCCCCC);
+        }
     }
 
 }

@@ -39,7 +39,7 @@ public class TopologicalSort
     {
         private final Map<T, SortedSet<T>> graph = new HashMap<T, SortedSet<T>>();
         private List<T> orderedNodes = new ArrayList<T>();
-        
+
         public boolean addNode(T node)
         {
             // Ignore nodes already added
@@ -176,7 +176,7 @@ public class TopologicalSort
             }
 
             System.out.printf("%s: %s\n%s\n%s\n", node, sortedResult, visitedNodes, expandedNodes);
-            throw new IllegalArgumentException("There was a cycle detected in the input graph, sorting is not possible");
+            throw new ModSortingException("There was a cycle detected in the input graph, sorting is not possible", node, visitedNodes);
         }
 
         // Visit this node

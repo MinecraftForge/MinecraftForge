@@ -13,9 +13,34 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.Mod.Block;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.Metadata;
+import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.FMLRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 
 public class FMLModContainer implements ModContainer
 {
@@ -23,101 +48,41 @@ public class FMLModContainer implements ModContainer
     private Object modInstance;
     private File source;
     private ModMetadata modMetadata;
+    private String className;
+    private Map<String, Object> descriptor;
+    private boolean enabled = true;
+    private List<ArtifactVersion> requirements;
+    private List<ArtifactVersion> dependencies;
+    private List<ArtifactVersion> dependants;
+    private boolean overridesMetadata;
+    private EventBus eventBus;
+    private LoadController controller;
+    private Multimap<Class<? extends Annotation>, Object> annotations;
+    private DefaultArtifactVersion processedVersion;
 
-    public FMLModContainer(String dummy)
+    public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
-        this(new File(dummy));
-    }
-    public FMLModContainer(File source)
-    {
-        this.source = source;
-    }
-
-    public FMLModContainer(Class<?> clazz)
-    {
-        if (clazz == null)
-        {
-            return;
-        }
-
-        modDescriptor = clazz.getAnnotation(Mod.class);
-
-        try
-        {
-            modInstance = clazz.newInstance();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+        this.className = className;
+        this.source = modSource;
+        this.descriptor = modDescriptor;
     }
 
     @Override
-    public boolean wantsPreInit()
+    public String getModId()
     {
-        return modDescriptor.wantsPreInit();
-    }
-
-    @Override
-    public boolean wantsPostInit()
-    {
-        return modDescriptor.wantsPostInit();
-    }
-
-    @Override
-    public void preInit()
-    {
-    }
-
-    @Override
-    public void init()
-    {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void postInit()
-    {
-        // TODO Auto-generated method stub
-    }
-
-    public static ModContainer buildFor(Class<?> clazz)
-    {
-        return new FMLModContainer(clazz);
+        return (String) descriptor.get("modid");
     }
 
     @Override
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return modMetadata.name;
     }
 
     @Override
-    public ModState getModState()
+    public String getVersion()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public void nextState()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    @Override
-    public String getSortingRules()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean matches(Object mod)
-    {
-        // TODO Auto-generated method stub
-        return false;
+        return modMetadata.version;
     }
 
     @Override
@@ -127,266 +92,249 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public Object getMod()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public int lookupFuelValue(int itemId, int itemDamage)
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public boolean wantsPickupNotification()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public IPickupNotifier getPickupNotifier()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsToDispense()
-     */
-    @Override
-    public boolean wantsToDispense()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getDispenseHandler()
-     */
-    @Override
-    public IDispenseHandler getDispenseHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsCraftingNotification()
-     */
-    @Override
-    public boolean wantsCraftingNotification()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getCraftingHandler()
-     */
-    @Override
-    public ICraftingHandler getCraftingHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getDependencies()
-     */
-    @Override
-    public List<String> getDependencies()
-    {
-        // TODO Auto-generated method stub
-        return new ArrayList<String>(0);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getPreDepends()
-     */
-    @Override
-    public List<String> getPreDepends()
-    {
-        // TODO Auto-generated method stub
-        return new ArrayList<String>(0);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getPostDepends()
-     */
-    @Override
-    public List<String> getPostDepends()
-    {
-        // TODO Auto-generated method stub
-        return new ArrayList<String>(0);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString()
-    {
-        return getSource().getName();
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsNetworkPackets()
-     */
-    @Override
-    public boolean wantsNetworkPackets()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getNetworkHandler()
-     */
-    @Override
-    public INetworkHandler getNetworkHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#ownsNetworkChannel(java.lang.String)
-     */
-    @Override
-    public boolean ownsNetworkChannel(String channel)
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsConsoleCommands()
-     */
-    @Override
-    public boolean wantsConsoleCommands()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getConsoleHandler()
-     */
-    @Override
-    public IConsoleHandler getConsoleHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#wantsPlayerTracking()
-     */
-    @Override
-    public boolean wantsPlayerTracking()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getPlayerTracker()
-     */
-    @Override
-    public IPlayerTracker getPlayerTracker()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getKeys()
-     */
-    @Override
-    public List<IKeyHandler> getKeys()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getSourceType()
-     */
-    @Override
-    public SourceType getSourceType()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#setSourceType(cpw.mods.fml.common.ModContainer.SourceType)
-     */
-    @Override
-    public void setSourceType(SourceType type)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getMetadata()
-     */
-    @Override
     public ModMetadata getMetadata()
     {
         return modMetadata;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#setMetadata(cpw.mods.fml.common.ModMetadata)
-     */
+
     @Override
-    public void setMetadata(ModMetadata meta)
+    public void bindMetadata(MetadataCollection mc)
     {
-        this.modMetadata=meta;
+        modMetadata = mc.getMetadataForId(getModId(), descriptor);
+
+        if (descriptor.containsKey("usesMetadata"))
+        {
+            overridesMetadata = !((Boolean)descriptor.get("usesMetadata")).booleanValue();
+        }
+
+        if (overridesMetadata || !modMetadata.useDependencyInformation)
+        {
+            List<ArtifactVersion> requirements = Lists.newArrayList();
+            List<ArtifactVersion> dependencies = Lists.newArrayList();
+            List<ArtifactVersion> dependants = Lists.newArrayList();
+            Loader.instance().computeDependencies((String) descriptor.get("dependencies"), requirements, dependencies, dependants);
+            modMetadata.requiredMods = requirements;
+            modMetadata.dependencies = dependencies;
+            modMetadata.dependants = dependants;
+        }
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#gatherRenderers(java.util.Map)
-     */
+
     @Override
-    public void gatherRenderers(Map renderers)
+    public void setEnabledState(boolean enabled)
     {
-        // TODO Auto-generated method stub
-        
+        this.enabled = enabled;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#requestAnimations()
-     */
+
     @Override
-    public void requestAnimations()
+    public List<ArtifactVersion> getRequirements()
     {
-        // TODO Auto-generated method stub
-        
+        return modMetadata.requiredMods;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#getVersion()
-     */
+
     @Override
-    public String getVersion()
+    public List<ArtifactVersion> getDependencies()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return modMetadata.dependencies;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#findSidedProxy()
-     */
+
+    @Override
+    public List<ArtifactVersion> getDependants()
+    {
+        return modMetadata.dependants;
+    }
+
+    @Override
+    public String getSortingRules()
+    {
+        return modMetadata.printableSortingRules();
+    }
+
+    @Override
+    public boolean matches(Object mod)
+    {
+        return mod == modInstance;
+    }
+
+    @Override
+    public Object getMod()
+    {
+        return modInstance;
+    }
+
     @Override
     public ProxyInjector findSidedProxy()
     {
         // TODO Auto-generated method stub
         return null;
     }
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.ModContainer#keyBindEvernt(java.lang.Object)
-     */
+
     @Override
-    public void keyBindEvent(Object keyBinding)
+    public boolean registerBus(EventBus bus, LoadController controller)
     {
-        // TODO Auto-generated method stub        
+        if (this.enabled)
+        {
+            FMLLog.fine("Enabling mod %s", getModId());
+            this.eventBus = bus;
+            this.controller = controller;
+            eventBus.register(this);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private Multimap<Class<? extends Annotation>, Object> gatherAnnotations(Class<?> clazz) throws Exception
+    {
+        Multimap<Class<? extends Annotation>,Object> anns = ArrayListMultimap.create();
+
+        for (Field f : clazz.getDeclaredFields())
+        {
+            for (Annotation a : f.getAnnotations())
+            {
+                f.setAccessible(true);
+                anns.put(a.annotationType(), f);
+            }
+        }
+
+        for (Method m : clazz.getDeclaredMethods())
+        {
+            for (Annotation a : m.getAnnotations())
+            {
+                Class<?>[] paramTypes;
+                if (a.annotationType() == Mod.PreInit.class)
+                {
+                    paramTypes = Mod.PreInit.paramTypes;
+                }
+                else if (a.annotationType() == Mod.Init.class)
+                {
+                    paramTypes = Mod.Init.paramTypes;
+                }
+                else if (a.annotationType() == Mod.PostInit.class)
+                {
+                    paramTypes = Mod.PostInit.paramTypes;
+                }
+                else
+                {
+                    continue;
+                }
+                if (Arrays.equals(m.getParameterTypes(), paramTypes))
+                {
+                    m.setAccessible(true);
+                    anns.put(a.annotationType(), m);
+                }
+                else
+                {
+                    FMLLog.severe("The mod %s appears to have an invalid method annotation %s. This annotation can only apply to methods with argument types %s -it will not be called", getModId(), a.annotationType().getSimpleName(), Arrays.toString(paramTypes));
+                }
+            }
+        }
+        return anns;
+    }
+
+    private void processFieldAnnotations() throws Exception
+    {
+        // Instance annotation
+        for (Object o : annotations.get(Instance.class))
+        {
+            Field f = (Field) o;
+            f.set(modInstance, modInstance);
+        }
+
+        for (Object o : annotations.get(Metadata.class))
+        {
+            Field f = (Field) o;
+            f.set(modInstance, modMetadata);
+        }
+
+        for (Object o : annotations.get(Block.class))
+        {
+            Field f = (Field) o;
+            f.set(modInstance, GameRegistry.buildBlock(this, f.getType(), f.getAnnotation(Block.class)));
+        }
+    }
+
+    @Subscribe
+    public void constructMod(FMLConstructionEvent event)
+    {
+        try
+        {
+            ModClassLoader modClassLoader = event.getModClassLoader();
+            modClassLoader.addFile(source);
+            Class<?> clazz = Class.forName(className, true, modClassLoader);
+            annotations = gatherAnnotations(clazz);
+            modInstance = clazz.newInstance();
+            processFieldAnnotations();
+        }
+        catch (Throwable e)
+        {
+            controller.errorOccurred(this, e);
+            Throwables.propagateIfPossible(e);
+        }
+    }
+
+    @Subscribe
+    public void preInitMod(FMLPreInitializationEvent event)
+    {
+        try
+        {
+            for (Object o : annotations.get(Mod.PreInit.class))
+            {
+                Method m = (Method) o;
+                m.invoke(modInstance, event);
+            }
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
+        }
+    }
+
+    @Subscribe
+    public void initMod(FMLInitializationEvent event)
+    {
+        try
+        {
+            for (Object o : annotations.get(Mod.Init.class))
+            {
+                Method m = (Method) o;
+                m.invoke(modInstance, event);
+            }
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
+        }
+    }
+
+    @Subscribe
+    public void postInitMod(FMLPostInitializationEvent event)
+    {
+        try
+        {
+            for (Object o : annotations.get(Mod.PostInit.class))
+            {
+                Method m = (Method) o;
+                m.invoke(modInstance, event);
+            }
+        }
+        catch (Throwable t)
+        {
+            controller.errorOccurred(this, t);
+            Throwables.propagateIfPossible(t);
+        }
+    }
+
+    @Override
+    public ArtifactVersion getProcessedVersion()
+    {
+        if (processedVersion == null)
+        {
+            processedVersion = new DefaultArtifactVersion(getModId(), getVersion());
+        }
+        return processedVersion;
     }
 }

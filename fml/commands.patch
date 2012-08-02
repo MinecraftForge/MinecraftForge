@@ -1,0 +1,93 @@
+--- commands.py
++++ commands.py
+@@ -22,6 +22,7 @@
+ import errno
+ import shlex
+ import platform
++import pprint
+ from hashlib import md5  # pylint: disable-msg=E0611
+ from contextlib import closing
+ from textwrap import TextWrapper
+@@ -502,6 +503,7 @@
+         self.binclienttmp = os.path.normpath(config.get('OUTPUT', 'BinClientTemp'))
+         self.binservertmp = os.path.normpath(config.get('OUTPUT', 'BinServerTemp'))
+         self.srcclient = os.path.normpath(config.get('OUTPUT', 'SrcClient'))
++        self.srcshared = os.path.normpath(os.path.join(self.dirsrc, 'common'))
+         self.srcserver = os.path.normpath(config.get('OUTPUT', 'SrcServer'))
+         self.testclient = config.get('OUTPUT', 'TestClient')
+         self.testserver = config.get('OUTPUT', 'TestServer')
+@@ -1039,6 +1041,7 @@
+             all_files = True
+             append_pattern = False
+         pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
++        pkglist = pkglist + filterdirs(self.srcshared, '*.java', append_pattern=True) #FML, Add Common folder
+         dirs = ' '.join(pkglist)
+         classpath = os.pathsep.join(cplk[side])
+         forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
+@@ -1238,6 +1241,11 @@
+ 
+         # HINT: We pathwalk the sources
+         for path, _, filelist in os.walk(pathsrclk[side], followlinks=True):
++            for cur_file in fnmatch.filter(filelist, '*.java'):
++                updatefile(os.path.normpath(os.path.join(path, cur_file)))
++                
++        # FML, copy of the above, for the common folder
++        for path, _, filelist in os.walk(self.srcshared, followlinks=True):
+             for cur_file in fnmatch.filter(filelist, '*.java'):
+                 updatefile(os.path.normpath(os.path.join(path, cur_file)))
+         return True
+@@ -1320,12 +1328,14 @@
+         pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
+ 
+         strip_comments(pathsrclk[side])
++        strip_comments(self.srcshared)
+ 
+     def process_cleanup(self, side):
+         """Do lots of random cleanups including stripping comments, trailing whitespace and extra blank lines"""
+         pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
+ 
+         src_cleanup(pathsrclk[side], fix_imports=True, fix_unicode=True, fix_charval=True, fix_pi=True, fix_round=False)
++        src_cleanup(self.srcshared, fix_imports=True, fix_unicode=True, fix_charval=True, fix_pi=True, fix_round=False)
+ 
+     def process_javadoc(self, side):
+         """Add CSV descriptions to methods and fields as javadoc"""
+@@ -1334,6 +1344,21 @@
+         if not self.has_doc_csv:
+             self.logger.warning('!! javadoc disabled due to no csvs !!')
+             return False
++            
++        #FML Recall this function on the common folder
++        #Potential bug: If this is called without a subsiquent rename call, will cause double comments
++        if pathsrclk[side] != self.srcshared:
++            if side == CLIENT:
++                tmp = self.srcclient
++                self.srcclient = self.srcshared
++                process_javadoc(self, side)
++                self.srcclient = tmp
++            else:
++                tmp = self.srcserver
++                self.srcserver = self.srcshared
++                process_javadoc(self, side)
++                self.srcserver = tmp
++                
+ 
+         #HINT: We read the relevant CSVs
+         methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
+@@ -1420,6 +1445,7 @@
+ 
+         # HINT: We create the list of source directories based on the list of packages
+         pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
++        pkglist = pkglist + filterdirs(self.srcshared, '*.java', append_pattern=True) #FML, Add Common folder
+         dirs = ' '.join(pkglist)
+         forkcmd = self.cmdastyle.format(classes=dirs, conffile=self.astyleconf)
+         self.runcmd(forkcmd)
+@@ -1592,6 +1618,9 @@
+                 sys.exit(1)
+ 
+         for entry in newfiles:
++            if 'commands.py' in entry[0]: #FML, Disable updating of Commands.py
++                print 'Update to runtime/commands.py found, but disbled due to using fml'
++                continue
+             if entry[3] == 'U':
+                 self.logger.info('Retrieving file from server : %s', entry[0])
+                 cur_file = os.path.normpath(entry[0])

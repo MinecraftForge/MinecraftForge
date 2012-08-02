@@ -16,10 +16,11 @@ package cpw.mods.fml.client;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
 
 /**
@@ -31,7 +32,7 @@ public class SpriteHelper
     private static HashMap<String, BitSet> spriteInfo = new HashMap<String, BitSet>();
 
     private static void initMCSpriteMaps() {
-        BitSet slots = 
+        BitSet slots =
                 SpriteHelper.toBitSet(
                 "0000000000000000" +
                 "0000000000000000" +
@@ -50,7 +51,7 @@ public class SpriteHelper
                 "0000000111111000" +
                 "0000000000000000");
         spriteInfo.put("/terrain.png", slots);
-        
+
         slots = SpriteHelper.toBitSet(
                 "0000000000000000" +
                 "0000000000000000" +
@@ -73,8 +74,8 @@ public class SpriteHelper
     /**
      * Register a sprite map for ModTextureStatic, to allow for other mods to override
      * your sprite page.
-     * 
-     * 
+     *
+     *
      */
     public static void registerSpriteMapForFile(String file, String spriteMap) {
         if (spriteInfo.size() == 0) {
@@ -86,20 +87,20 @@ public class SpriteHelper
         }
         spriteInfo.put(file, toBitSet(spriteMap));
     }
-    
+
     public static int getUniqueSpriteIndex(String path)
     {
         if (!spriteInfo.containsKey("/terrain.png"))
         {
             initMCSpriteMaps();
         }
-        
+
         BitSet slots = spriteInfo.get(path);
-        
+
         if (slots == null)
         {
             Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
-            Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+            FMLLog.log(Level.SEVERE, ex, "A critical error has been detected with sprite overrides");
             FMLCommonHandler.instance().raiseException(ex,"Invalid request to getUniqueSpriteIndex",true);
         }
 
@@ -108,7 +109,7 @@ public class SpriteHelper
         if (ret == -1)
         {
             Exception ex = new Exception(String.format("No more sprite indicies left for: %s", path));
-            Loader.log.throwing("ModLoader", "getUniqueSpriteIndex", ex);
+            FMLLog.log(Level.SEVERE, ex, "There are no sprite indicies left for %s", path);
             FMLCommonHandler.instance().raiseException(ex,"No more sprite indicies left", true);
         }
         return ret;

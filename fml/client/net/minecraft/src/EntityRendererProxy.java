@@ -20,17 +20,17 @@ public class EntityRendererProxy extends EntityRenderer
 {
 
     private Minecraft game;
-    
+
     public EntityRendererProxy(Minecraft minecraft)
     {
         super(minecraft);
         game = minecraft;
     }
-    
+
     @Override
-    public void func_4136_b(float tick)
+    public void func_78480_b(float tick)
     {
-        super.func_4136_b(tick);
+        super.func_78480_b(tick);
         //This is where ModLoader does all of it's ticking
     }
 }
