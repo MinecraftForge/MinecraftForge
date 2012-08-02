@@ -90,7 +90,7 @@
     </exec>
   </target>
 
-  <target name="buildandreobfmcp" depends="buildenvsetup,fmldecompile">
+  <target name="buildandreobfmcp" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
@@ -136,13 +136,13 @@
     </copy>
   </target>
 
-  <target name="build-client" depends="buildenvsetup,merge-client,buildandreobfmcp,makeversion">
+  <target name="build-client" depends="buildenvsetup,fmldecompile,merge-client,buildandreobfmcp,makeversion">
     <antcall target="extract-built-jar">
       <param name="side" value="client" />
     </antcall>
   </target>
 
-  <target name="build-server" depends="buildenvsetup,merge-server,buildandreobfmcp,makeversion">
+  <target name="build-server" depends="buildenvsetup,fmldecompile,merge-server,buildandreobfmcp,makeversion">
     <antcall target="extract-built-jar">
       <param name="side" value="server" />
     </antcall>
@@ -207,7 +207,7 @@
 
   <target name="build" depends="buildenvsetup,merge-server,merge-client,build-server,build-client,build-source-pack" />
 
-  <target name="jenkinsbuild" depends="buildenvsetup,patch,build"/>
+  <target name="jenkinsbuild" depends="buildenvsetup,fmldecompile,patch,build"/>
 
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
