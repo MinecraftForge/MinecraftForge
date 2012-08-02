@@ -3,14 +3,16 @@ package cpw.mods.fml.common.event;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.LoaderState.ModState;
 
-public class FMLServerStarted extends FMLStateEvent
+public class FMLServerStartingEvent extends FMLStateEvent
 {
 
-    public FMLServerStarted(Object... data)
+    private Object server;
+    
+    public FMLServerStartingEvent(Object... data)
     {
         super(data);
+        this.server = data[0];
     }
-    
     @Override
     public ModState getModState()
     {
