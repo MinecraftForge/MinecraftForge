@@ -21,6 +21,9 @@ import java.lang.annotation.Target;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 
 import net.minecraft.src.ItemBlock;
 
@@ -90,6 +93,36 @@ public @interface Mod
     @Target(ElementType.METHOD)
     public @interface PostInit {
         static Class<?>[] paramTypes = new Class[] { FMLPostInitializationEvent.class };
+    }
+    /**
+     * Mark the designated method as being called at the "server-starting" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface ServerStarting {
+        static Class<?>[] paramTypes = new Class[] { FMLServerStartingEvent.class };
+    }
+    /**
+     * Mark the designated method as being called at the "post-initialization" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface ServerStarted {
+        static Class<?>[] paramTypes = new Class[] { FMLServerStartedEvent.class };
+    }
+    /**
+     * Mark the designated method as being called at the "post-initialization" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface ServerStopping {
+        static Class<?>[] paramTypes = new Class[] { FMLServerStoppingEvent.class };
     }
     /**
      * Populate the annotated field with the mod instance.

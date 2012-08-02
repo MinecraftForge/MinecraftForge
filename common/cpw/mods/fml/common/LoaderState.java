@@ -7,9 +7,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStarted;
-import cpw.mods.fml.common.event.FMLServerStarting;
-import cpw.mods.fml.common.event.FMLServerStopping;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 
 /**
@@ -26,9 +26,9 @@ public enum LoaderState
     INITIALIZATION("Initializing mods", FMLInitializationEvent.class),
     POSTINITIALIZATION("Post-initializing mods", FMLPostInitializationEvent.class),
     AVAILABLE("Mod loading complete", FMLLoadCompleteEvent.class),
-    SERVER_STARTING("Server starting", FMLServerStarting.class),
-    SERVER_STARTED("Server started", FMLServerStarted.class),
-    SERVER_STOPPING("Server stopping", FMLServerStopping.class),
+    SERVER_STARTING("Server starting", FMLServerStartingEvent.class),
+    SERVER_STARTED("Server started", FMLServerStartedEvent.class),
+    SERVER_STOPPING("Server stopping", FMLServerStoppingEvent.class),
     ERRORED("Mod Loading errored",null);
 
 

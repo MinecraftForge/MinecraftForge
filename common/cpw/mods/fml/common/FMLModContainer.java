@@ -23,6 +23,12 @@ import java.util.Map;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.ImmutableBiMap.Builder;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
@@ -37,6 +43,10 @@ import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -60,6 +70,17 @@ public class FMLModContainer implements ModContainer
     private Multimap<Class<? extends Annotation>, Object> annotations;
     private DefaultArtifactVersion processedVersion;
 
+    private static final BiMap<Class<? extends FMLStateEvent>, Class<? extends Annotation>> modAnnotationTypes = ImmutableBiMap.<Class<? extends FMLStateEvent>, Class<? extends Annotation>>builder()
+        .put(FMLPreInitializationEvent.class, Mod.PreInit.class)
+        .put(FMLInitializationEvent.class, Mod.Init.class)
+        .put(FMLPostInitializationEvent.class, Mod.PostInit.class)
+        .put(FMLServerStartingEvent.class, Mod.ServerStarting.class)
+        .put(FMLServerStartedEvent.class, Mod.ServerStarted.class)
+        .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
+        .build();
+    private static final BiMap<Class<? extends Annotation>, Class<? extends FMLStateEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
+    
+    
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
         this.className = className;
@@ -202,23 +223,8 @@ public class FMLModContainer implements ModContainer
         {
             for (Annotation a : m.getAnnotations())
             {
-                Class<?>[] paramTypes;
-                if (a.annotationType() == Mod.PreInit.class)
-                {
-                    paramTypes = Mod.PreInit.paramTypes;
-                }
-                else if (a.annotationType() == Mod.Init.class)
-                {
-                    paramTypes = Mod.Init.paramTypes;
-                }
-                else if (a.annotationType() == Mod.PostInit.class)
-                {
-                    paramTypes = Mod.PostInit.paramTypes;
-                }
-                else
-                {
-                    continue;
-                }
+                Class<?>[] paramTypes = new Class[] { modTypeAnnotations.get(a.annotationType()) };
+                
                 if (Arrays.equals(m.getParameterTypes(), paramTypes))
                 {
                     m.setAccessible(true);
@@ -247,12 +253,12 @@ public class FMLModContainer implements ModContainer
             Field f = (Field) o;
             f.set(modInstance, modMetadata);
         }
-
-        for (Object o : annotations.get(Block.class))
-        {
-            Field f = (Field) o;
-            f.set(modInstance, GameRegistry.buildBlock(this, f.getType(), f.getAnnotation(Block.class)));
-        }
+//TODO
+//        for (Object o : annotations.get(Block.class))
+//        {
+//            Field f = (Field) o;
+//            f.set(modInstance, GameRegistry.buildBlock(this, f.getType(), f.getAnnotation(Block.class)));
+//        }
     }
 
     @Subscribe
@@ -275,47 +281,16 @@ public class FMLModContainer implements ModContainer
     }
 
     @Subscribe
-    public void preInitMod(FMLPreInitializationEvent event)
+    public void handleModStateEvent(FMLStateEvent event)
     {
+        Class<? extends Annotation> annotation = modAnnotationTypes.get(event.getClass());
+        if (annotation == null)
+        {
+            return;
+        }
         try
         {
-            for (Object o : annotations.get(Mod.PreInit.class))
-            {
-                Method m = (Method) o;
-                m.invoke(modInstance, event);
-            }
-        }
-        catch (Throwable t)
-        {
-            controller.errorOccurred(this, t);
-            Throwables.propagateIfPossible(t);
-        }
-    }
-
-    @Subscribe
-    public void initMod(FMLInitializationEvent event)
-    {
-        try
-        {
-            for (Object o : annotations.get(Mod.Init.class))
-            {
-                Method m = (Method) o;
-                m.invoke(modInstance, event);
-            }
-        }
-        catch (Throwable t)
-        {
-            controller.errorOccurred(this, t);
-            Throwables.propagateIfPossible(t);
-        }
-    }
-
-    @Subscribe
-    public void postInitMod(FMLPostInitializationEvent event)
-    {
-        try
-        {
-            for (Object o : annotations.get(Mod.PostInit.class))
+            for (Object o : annotations.get(annotation))
             {
                 Method m = (Method) o;
                 m.invoke(modInstance, event);
