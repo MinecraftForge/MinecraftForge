@@ -1,7 +1,10 @@
 package cpw.mods.fml.common.registry;
 
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.collect.BiMap;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Entity;
@@ -13,17 +16,47 @@ import net.minecraft.src.SpawnListEntry;
 public class EntityRegistry
 {
 
+    private static final EntityRegistry INSTANCE = new EntityRegistry();
+
+    private BitSet availableIndicies;
+    
+    public static EntityRegistry instance()
+    {
+        return INSTANCE;
+    }
+    
+    private EntityRegistry()
+    {
+        availableIndicies = new BitSet(256);
+        availableIndicies.set(0,255);
+        for (Object id : EntityList.field_75623_d.keySet())
+        {
+            availableIndicies.clear((Integer)id);
+        }
+    }
+    
     public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
+        instance().validateAndClaimId(id);
         EntityList.func_75618_a(entityClass, entityName, id);
     }
 
-    public void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
+    private void validateAndClaimId(int id)
     {
+        if (!availableIndicies.get(id))
+        {
+            throw new RuntimeException(String.format("Unable to claim entity id %d", id));
+        }
+        availableIndicies.clear(id);
+    }
+
+    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
+    {
+        instance().validateAndClaimId(id);
         EntityList.func_75614_a(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
     }
 
-    public void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         for (BiomeGenBase biome : biomes)
         {
@@ -46,7 +79,7 @@ public class EntityRegistry
         }
     }
 
-    public void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
     
@@ -56,7 +89,7 @@ public class EntityRegistry
         }
     }
 
-    public void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
+    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, BiomeGenBase... biomes)
     {
         for (BiomeGenBase biome : biomes)
         {
@@ -74,7 +107,7 @@ public class EntityRegistry
         }
     }
 
-    public void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
+    public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
     
@@ -82,6 +115,16 @@ public class EntityRegistry
         {
             removeSpawn((Class <? extends EntityLiving >) entityClazz, spawnList, biomes);
         }
+    }
+
+    public static int findGlobalUniqueEntityId()
+    {
+        int res = instance().availableIndicies.nextSetBit(0);
+        if (res < 0)
+        {
+            throw new RuntimeException("No more entity indicies left");
+        }
+        return res;
     }
 
 }

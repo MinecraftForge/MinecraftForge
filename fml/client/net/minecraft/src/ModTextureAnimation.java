@@ -52,11 +52,11 @@ public class ModTextureAnimation extends FMLTextureFX
     public ModTextureAnimation(int icon, int size, String target, BufferedImage image, int tickCount)
     {
         super(icon);
-        RenderEngine re = FMLClientHandler.instance().getClient().field_6315_n;
+        RenderEngine re = FMLClientHandler.instance().getClient().field_71446_o;
         
         targetTex = target;
-        field_1129_e = size;
-        field_1128_f = re.func_1070_a(target);
+        field_76849_e = size;
+        field_76847_f = re.func_78341_b(target);
         
         tickRate = tickCount;
         ticks = tickCount;
@@ -121,7 +121,7 @@ public class ModTextureAnimation extends FMLTextureFX
                 index = 0;
             }
 
-            field_1127_a = images[index];
+            field_76852_a = images[index];
             ticks = 0;
         }
     }
