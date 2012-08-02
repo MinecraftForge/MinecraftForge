@@ -284,18 +284,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         return client;
     }
     /**
-     * @param armor
-     * @return
-     */
-    public int addNewArmourRendererPrefix(String armor)
-    {
-        String[] prefixes = ObfuscationReflectionHelper.getPrivateValue(RenderPlayer.class, null, "field_77110_j", "j", "armorFilenamePrefix");
-        String[] newPrefixes = Arrays.copyOf(prefixes, prefixes.length+1);
-        newPrefixes[prefixes.length] = armor;
-        ObfuscationReflectionHelper.setPrivateValue(RenderPlayer.class, null, newPrefixes, "field_77110_j", "j", "armorFilenamePrefix" );
-        return prefixes.length;
-    }
-    /**
      * @param player
      * @param gui
      */
@@ -306,16 +294,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
-    /**
-     * @param mod
-     * @param keyHandler
-     * @param allowRepeat
-     */
-    public void registerModLoaderKeyHandler(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
-    {
-        ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
-        KeyBindingRegistry.registerKeyBinding(new ModLoaderKeyBindingHandler(keyHandler, allowRepeat, mlmc));
-    }
     @Override
     public void profileStart(String profileLabel) {
         client.field_71424_I.func_76320_a(profileLabel);

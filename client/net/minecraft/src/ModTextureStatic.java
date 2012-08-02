@@ -48,12 +48,12 @@ public class ModTextureStatic extends FMLTextureFX
     public ModTextureStatic(int icon, int size, String target, BufferedImage image)
     {
         super(icon);
-        RenderEngine re = FMLClientHandler.instance().getClient().field_6315_n;
+        RenderEngine re = FMLClientHandler.instance().getClient().field_71446_o;
         
         targetTex = target;
         storedSize = size;
-        field_1129_e = size;
-        field_1128_f = re.func_1070_a(target);
+        field_76849_e = size;
+        field_76847_f = re.func_78341_b(target);
         overrideData = image;
     }
     
@@ -83,14 +83,14 @@ public class ModTextureStatic extends FMLTextureFX
     
     public void func_783_a()
     {
-        if (oldanaglyph != field_1131_c)
+        if (oldanaglyph != field_76851_c)
         {
             update();
         }
         // This makes it so we only apply the texture to the target texture when we need to, 
         //due to the fact that update is called when the Effect is first registered, we actually 
         //need to wait for the next one. 
-        field_1129_e = (needApply == 0 ? 0 : storedSize);
+        field_76849_e = (needApply == 0 ? 0 : storedSize);
         if (needApply > 0)
         {
             needApply--;
@@ -99,7 +99,7 @@ public class ModTextureStatic extends FMLTextureFX
 
     public void func_782_a(RenderEngine p_782_1_)
     {
-        GL11.glBindTexture(GL_TEXTURE_2D, p_782_1_.func_1070_a(targetTex));
+        GL11.glBindTexture(GL_TEXTURE_2D, p_782_1_.func_78341_b(targetTex));
     }
     
     public void update()
@@ -113,18 +113,18 @@ public class ModTextureStatic extends FMLTextureFX
             int g = pixels[idx] >> 8 & 255;
             int b = pixels[idx] >> 0 & 255;
 
-            if (field_1131_c)
+            if (field_76851_c)
             {
                 r = g = b = (r + g + b) / 3;
             }
 
-            field_1127_a[i + 0] = (byte)r;
-            field_1127_a[i + 1] = (byte)g;
-            field_1127_a[i + 2] = (byte)b;
-            field_1127_a[i + 3] = (byte)a;
+            field_76852_a[i + 0] = (byte)r;
+            field_76852_a[i + 1] = (byte)g;
+            field_76852_a[i + 2] = (byte)b;
+            field_76852_a[i + 3] = (byte)a;
         }
 
-        oldanaglyph = field_1131_c;
+        oldanaglyph = field_76851_c;
     }
     
     //Implementation of http://scale2x.sourceforge.net/algorithm.html
@@ -174,6 +174,6 @@ public class ModTextureStatic extends FMLTextureFX
     @Override
     public String toString() 
     {
-        return String.format("ModTextureStatic %s @ %d", targetTex, field_1126_b);
+        return String.format("ModTextureStatic %s @ %d", targetTex, field_76850_b);
     }
 }

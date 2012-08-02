@@ -546,4 +546,10 @@ public class FMLCommonHandler
     {
         Loader.instance().serverStopping();
     }
+
+    public MinecraftServer getMinecraftServerInstance()
+    {
+        //TODO
+        return null;
+    }
 }

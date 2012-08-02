@@ -21,16 +21,22 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 
 import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.ModLoaderKeyBindingHandler;
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -49,7 +55,7 @@ public class ModLoader
      */
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
-        String achName=achievement.func_44020_i();
+        String achName=achievement.func_75970_i();
         addLocalization(achName, name);
         addLocalization(achName+".desc", description);
     }
@@ -87,7 +93,7 @@ public class ModLoader
      */
     public static int addArmor(String armor)
     {
-        return FMLClientHandler.instance().addNewArmourRendererPrefix(armor);
+        return RenderingRegistry.addNewArmourRendererPrefix(armor);
     }
 
     /**
@@ -97,7 +103,7 @@ public class ModLoader
      */
     public static void addBiome(BiomeGenBase biome)
     {
-        FMLClientHandler.instance().addBiomeToDefaultWorldGenerator(biome);
+        GameRegistry.addBiome(biome);
     }
 
     /**
@@ -202,7 +208,7 @@ public class ModLoader
      */
     public static void addSmelting(int input, ItemStack output)
     {
-        FMLRegistry.addSmelting(input, output);
+        GameRegistry.addSmelting(input, output, 1.0f);
     }
 
     /**
@@ -216,7 +222,7 @@ public class ModLoader
      */
     public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        FMLRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
+        EntityRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, WorldType.base12Biomes);
     }
 
     /**
@@ -231,7 +237,7 @@ public class ModLoader
      */
     public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        FMLRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
+        EntityRegistry.addSpawn(entityClass, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
@@ -245,7 +251,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList)
     {
-        FMLRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
+        EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, WorldType.base12Biomes);
     }
 
     /**
@@ -260,7 +266,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        FMLRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
+        EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
@@ -358,7 +364,7 @@ public class ModLoader
      */
     public static Logger getLogger()
     {
-        return FMLCommonHandler.instance().getFMLLogger();
+        return FMLLog.getLogger();
     }
 
     public static Minecraft getMinecraftInstance()
@@ -372,9 +378,9 @@ public class ModLoader
      *
      * @return
      */
-    public static Object getMinecraftServerInstance()
+    public static MinecraftServer getMinecraftServerInstance()
     {
-        return getMinecraftInstance();
+        return FMLCommonHandler.instance().getMinecraftServerInstance();
     }
 
     /**
@@ -422,7 +428,7 @@ public class ModLoader
      */
     public static int getUniqueEntityId()
     {
-        return FMLCommonHandler.instance().nextUniqueEntityListId();
+        return EntityRegistry.findGlobalUniqueEntityId();
     }
 
     public static int getUniqueSpriteIndex(String path)
@@ -529,7 +535,7 @@ public class ModLoader
      */
     public static void registerBlock(Block block)
     {
-        FMLRegistry.registerBlock(block);
+        GameRegistry.registerBlock(block);
     }
 
     /**
@@ -540,7 +546,7 @@ public class ModLoader
      */
     public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass)
     {
-        FMLRegistry.registerBlock(block, itemclass);
+        GameRegistry.registerBlock(block, itemclass);
     }
 
     /**
@@ -552,7 +558,7 @@ public class ModLoader
      */
     public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id)
     {
-        FMLRegistry.registerEntityID(entityClass, entityName, id);
+        EntityRegistry.registerEntityID(entityClass, entityName, id);
     }
 
     /**
@@ -566,12 +572,13 @@ public class ModLoader
      */
     public static void registerEntityID(Class<? extends Entity> entityClass, String entityName, int id, int background, int foreground)
     {
-        FMLRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
+        EntityRegistry.registerEntityID(entityClass, entityName, id, background, foreground);
     }
 
     public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
-        FMLClientHandler.instance().registerModLoaderKeyHandler(mod, keyHandler, allowRepeat);
+        ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
+        KeyBindingRegistry.registerKeyBinding(new ModLoaderKeyBindingHandler(keyHandler, allowRepeat, mlmc));
     }
 
     /**
@@ -596,12 +603,12 @@ public class ModLoader
      */
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
     {
-        FMLRegistry.registerTileEntity(tileEntityClass, id);
+        GameRegistry.registerTileEntity(tileEntityClass, id);
     }
 
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id, TileEntitySpecialRenderer renderer)
     {
-        ClientRegistry.instance().registerTileEntity(tileEntityClass, id, renderer);
+        ClientRegistry.registerTileEntity(tileEntityClass, id, renderer);
     }
 
     /**
@@ -611,7 +618,7 @@ public class ModLoader
      */
     public static void removeBiome(BiomeGenBase biome)
     {
-        FMLRegistry.removeBiome(biome);
+        GameRegistry.removeBiome(biome);
     }
 
     /**
@@ -622,7 +629,7 @@ public class ModLoader
      */
     public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList)
     {
-        FMLRegistry.removeSpawn(entityClass, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
+        EntityRegistry.removeSpawn(entityClass, spawnList, WorldType.base12Biomes);
     }
 
     /**
@@ -634,7 +641,7 @@ public class ModLoader
      */
     public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        FMLRegistry.removeSpawn(entityClass, spawnList, biomes);
+        EntityRegistry.removeSpawn(entityClass, spawnList, biomes);
     }
 
     /**
@@ -645,7 +652,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList)
     {
-        FMLRegistry.removeSpawn(entityName, spawnList, FMLClientHandler.instance().getDefaultOverworldBiomes());
+        EntityRegistry.removeSpawn(entityName, spawnList, WorldType.base12Biomes);
     }
 
     /**
@@ -688,7 +695,8 @@ public class ModLoader
     }
 
     public static void sendPacket(Packet packet) {
-        FMLClientHandler.instance().sendPacket(packet);
+        // TODO
+//        FMLClientHandler.instance().sendPacket(packet);
     }
     /**
      * Send a chat message to the server
