@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import com.google.common.collect.ImmutableList;
 
 import cpw.mods.fml.common.discovery.ModCandidate;
-import cpw.mods.fml.relauncher.FMLEmbeddingRelauncher;
+import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 /**

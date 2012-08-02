@@ -382,7 +382,7 @@ public class RelaunchLibraryManager
             String infoString = String.format("Downloading file %s", libDownload.toString());
             FMLLog.info(infoString);
             InputStream urlStream = libDownload.openStream();
-            urlStream = FMLEmbeddingRelauncher.instance().wrapStream(urlStream, infoString);
+            urlStream = FMLRelauncher.instance().wrapStream(urlStream, infoString);
             ReadableByteChannel urlChannel = Channels.newChannel(urlStream);
             FileOutputStream libFileStream = new FileOutputStream(libFile);
             FileChannel libFileChannel = libFileStream.getChannel();

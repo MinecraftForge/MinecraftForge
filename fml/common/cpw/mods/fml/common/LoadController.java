@@ -61,16 +61,11 @@ public class LoadController
 
         eventChannels = eventBus.build();
 
-        state = LoaderState.CONSTRUCTING;
+        state = LoaderState.NOINIT;
     }
 
-    public void distributeStateMessage(Object... eventData)
+    public void distributeStateMessage(LoaderState state, Object... eventData)
     {
-        if (state==LoaderState.ERRORED)
-        {
-            throw new LoaderException();
-        }
-
         if (state.hasEvent())
         {
             masterChannel.post(state.getEvent(eventData));

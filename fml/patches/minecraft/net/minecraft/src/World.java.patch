@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/src/World.java
++++ ../src-work/minecraft/net/minecraft/src/World.java
+@@ -3350,7 +3350,7 @@
+ 
+     public double func_72919_O()
+     {
+-        return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;
++        return this.field_72986_A.func_76067_t().getHorizon(this);
+     }
+ 
+     public CrashReport func_72914_a(CrashReport p_72914_1_)

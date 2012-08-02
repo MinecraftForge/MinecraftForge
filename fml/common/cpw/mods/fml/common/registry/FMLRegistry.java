@@ -36,26 +36,6 @@ public class FMLRegistry
 
         instance = registry;
     }
-    public static void registerBlock(Block block)
-    {
-        GameRegistry.registerBlock((BlockProxy)block);
-        instance.registerBlock(block);
-    }
-
-    public static void registerBlock(Block block, Class <? extends ItemBlock > itemclass)
-    {
-        instance.registerBlock(block, itemclass);
-    }
-
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
-    {
-        instance.registerEntityID(entityClass, entityName, id);
-    }
-
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
-    {
-        instance.registerEntityID(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
-    }
 
     public static void registerTileEntity(Class <? extends TileEntity > tileEntityClass, String id)
     {

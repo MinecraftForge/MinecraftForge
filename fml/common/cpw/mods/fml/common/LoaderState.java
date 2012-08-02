@@ -7,6 +7,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStarted;
+import cpw.mods.fml.common.event.FMLServerStarting;
+import cpw.mods.fml.common.event.FMLServerStopping;
 import cpw.mods.fml.common.event.FMLStateEvent;
 
 /**
@@ -22,8 +25,12 @@ public enum LoaderState
     PREINITIALIZATION("Pre-initializing mods", FMLPreInitializationEvent.class),
     INITIALIZATION("Initializing mods", FMLInitializationEvent.class),
     POSTINITIALIZATION("Post-initializing mods", FMLPostInitializationEvent.class),
-    LOADCOMPLETE("Mod loading complete", FMLLoadCompleteEvent.class),
+    AVAILABLE("Mod loading complete", FMLLoadCompleteEvent.class),
+    SERVER_STARTING("Server starting", FMLServerStarting.class),
+    SERVER_STARTED("Server started", FMLServerStarted.class),
+    SERVER_STOPPING("Server stopping", FMLServerStopping.class),
     ERRORED("Mod Loading errored",null);
+
 
     private Class<? extends FMLStateEvent> eventClass;
     private String name;
@@ -39,6 +46,11 @@ public enum LoaderState
         if (errored)
         {
             return ERRORED;
+        }
+        // stopping -> available
+        if (this == SERVER_STOPPING)
+        {
+            return AVAILABLE;
         }
         return values()[ordinal() < values().length ? ordinal()+1 : ordinal()];
     }
@@ -58,6 +70,11 @@ public enum LoaderState
         {
             throw Throwables.propagate(e);
         }
+    }
+    public LoaderState requiredState()
+    {
+        if (this == NOINIT) return NOINIT;
+        return LoaderState.values()[this.ordinal()-1];
     }
     public enum ModState
     {

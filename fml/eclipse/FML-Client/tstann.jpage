@@ -6,3 +6,6 @@ java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/hom
 
 System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
 
+
+
+org.objectweb.asm.Type.getDescriptor(net.minecraft.src.CraftingManager.class.getDeclaredMethods()[1])

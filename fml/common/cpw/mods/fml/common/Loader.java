@@ -31,6 +31,8 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 
+import net.minecraft.server.MinecraftServer;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -101,10 +103,6 @@ public class Loader
     private static String mccversion;
     private static String mcsversion;
 
-    /**
-     * The {@link LoaderState} of the loader
-     */
-    private LoaderState state;
     /**
      * The class loader we load the mods into.
      */
@@ -337,20 +335,18 @@ public class Loader
     public void loadMods()
     {
         initializeLoader();
-        state = LoaderState.NOINIT;
-        mods = new ArrayList<ModContainer>();
-        namedMods = new HashMap<String, ModContainer>();
-        state = LoaderState.LOADING;
+        mods = Lists.newArrayList();
+        namedMods = Maps.newHashMap();
         modController = new LoadController(this);
+        modController.transition(LoaderState.LOADING);
         identifyMods();
         disableRequestedMods();
         sortModList();
         mods = ImmutableList.copyOf(mods);
-        // Mod controller state : CONSTRUCTION
-        modController.distributeStateMessage(modClassLoader);
+        modController.transition(LoaderState.CONSTRUCTING);
+        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader);
         modController.transition(LoaderState.PREINITIALIZATION);
-        // Mod controller state : PREINITIALIZATION
-        modController.distributeStateMessage();
+        modController.distributeStateMessage(LoaderState.PREINITIALIZATION);
         modController.transition(LoaderState.INITIALIZATION);
     }
 
@@ -530,11 +526,11 @@ public class Loader
     public void initializeMods()
     {
         // Mod controller should be in the initialization state here
-        modController.distributeStateMessage();
+        modController.distributeStateMessage(LoaderState.INITIALIZATION);
         modController.transition(LoaderState.POSTINITIALIZATION);
-        modController.distributeStateMessage();
-        modController.transition(LoaderState.LOADCOMPLETE);
-        modController.distributeStateMessage();
+        modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
+        modController.transition(LoaderState.AVAILABLE);
+        modController.distributeStateMessage(LoaderState.AVAILABLE);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size()==1 ? "" : "s");
     }
 
@@ -562,5 +558,25 @@ public class Loader
     public String getMCVersionString()
     {
         return "Minecraft " + mccversion;
+    }
+
+    public void serverStarting(Object server)
+    {
+        modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
+        modController.transition(LoaderState.SERVER_STARTING);
+    }
+    
+    public void serverStarted()
+    {
+        modController.distributeStateMessage(LoaderState.SERVER_STARTED);
+        modController.transition(LoaderState.SERVER_STARTED);
+    }
+    
+    public void serverStopping()
+    {
+        modController.distributeStateMessage(LoaderState.SERVER_STOPPING);
+        modController.transition(LoaderState.SERVER_STOPPING);
+        modController.transition(LoaderState.AVAILABLE);
+        
     }
 }
