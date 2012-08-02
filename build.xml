@@ -90,7 +90,7 @@
     </exec>
   </target>
 
-  <target name="buildandreobfmcp" depends="buildenvsetup">
+  <target name="buildandreobfmcp" depends="buildenvsetup,fmldecompile">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
@@ -230,23 +230,7 @@
       <arg value="${basedir}/download_fernflower.py" />
       <arg value="${mcp.home}"/>
     </exec>-->
-    <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/cleanup.py" />
-      <arg value="-f" />
-    </exec>
-    <exec executable="${python.exe}" dir="${basedir}">
-      <arg value="${basedir}/decompile.py" />
-      <arg value="${mcp.home}" />
-      <arg value="${basedir}" />
-    </exec>
-    <!--<exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${basedir}/cleanup_source.py" />
-      <arg value="${mcp.srcdir}" />
-    </exec>-->
-    <!--<exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/updatemd5.py" />
-      <arg value="-f" />
-    </exec>-->
+  	<antcall target="fmldecompile"/>
     <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
       <fileset dir="${patch.mcp.srcdir}"/>
@@ -265,6 +249,26 @@
     </copy>
     <antcall target="writeversion"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
+  </target>
+	
+  <target name="fmldecompile" depends="buildenvsetup">
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/cleanup.py" />
+      <arg value="-f" />
+    </exec>
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/decompile.py" />
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}" />
+    </exec>
+    <!--<exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${basedir}/cleanup_source.py" />
+      <arg value="${mcp.srcdir}" />
+    </exec>-->
+    <!--<exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/updatemd5.py" />
+      <arg value="-f" />
+    </exec>-->
   </target>
 
   <target name="repatch" depends="buildenvsetup,checkpatches">
