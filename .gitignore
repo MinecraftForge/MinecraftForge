@@ -1,2 +1,4 @@
-/*
-!/forge
+/fml/
+/logs/
+/*.pyc
+/forge-*/
