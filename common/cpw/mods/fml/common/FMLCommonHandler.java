@@ -38,6 +38,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import net.minecraft.server.MinecraftServer;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -528,5 +530,20 @@ public class FMLCommonHandler
     public void onWorldLoadTick()
     {
         tickStart(EnumSet.of(TickType.WORLDLOAD));
+    }
+    
+    public void handleServerStarting(MinecraftServer server)
+    {
+        Loader.instance().serverStarting(server);
+    }
+    
+    public void handleServerStarted()
+    {
+        Loader.instance().serverStarted();
+    }
+    
+    public void handleServerStopping()
+    {
+        Loader.instance().serverStopping();
     }
 }

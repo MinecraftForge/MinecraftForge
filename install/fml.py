@@ -336,7 +336,7 @@ def fix_patch(in_file, out_file, find=None, rep=None):
             for line in inpatch:
                 line = line.rstrip('\r\n')
                 if line[:3] in ['+++', '---', 'Onl', 'dif']:
-                    if not find == None and not replace == None:
+                    if not find == None and not rep == None:
                         line = line.replace('\\', '/').replace(find, rep).replace('/', os.sep)
                     else:
                         line = line.replace('\\', '/').replace('/', os.sep)

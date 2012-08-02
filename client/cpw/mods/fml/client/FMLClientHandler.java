@@ -50,7 +50,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
-import net.minecraft.src.ClientRegistry;
 import net.minecraft.src.CrashReport;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
@@ -84,6 +83,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -168,7 +168,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         client = minecraft;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().beginLoading(this);
-        FMLRegistry.registerRegistry(new ClientRegistry());
         try
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
@@ -204,7 +203,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Also initializes key bindings
      *
      */
-    public void onLoadComplete()
+    public void finishMinecraftLoading()
     {
         try
         {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="common"/>
-	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-common"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="transformers"/>
 	<classpathentry kind="src" path="client"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
@@ -23,7 +23,7 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="jars/bin/minecraft.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/argo-2.25.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/asm-all-4.0.jar" sourcepath="lib/asm-4.0"/>
-	<classpathentry exported="true" kind="lib" path="lib/guava-12.0.jar" sourcepath="lib/guava-12.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm-all-4.0.jar" sourcepath="libref/asm-4.0"/>
+	<classpathentry exported="true" kind="lib" path="lib/guava-12.0.jar" sourcepath="libref/guava-12.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

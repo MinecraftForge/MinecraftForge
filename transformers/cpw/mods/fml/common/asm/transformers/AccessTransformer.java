@@ -130,7 +130,7 @@ public class AccessTransformer implements IClassTransformer
                 if (parenIdx>0)
                 {
                     m.desc = nameReference.substring(parenIdx);
-                    m.name = nameReference.substring(0,parenIdx-1);
+                    m.name = nameReference.substring(0,parenIdx);
                 }
                 else
                 {

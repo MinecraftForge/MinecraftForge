@@ -1,0 +1,11 @@
+--- ../src-base/common/net/minecraft/src/EntitySlime.java
++++ ../src-work/common/net/minecraft/src/EntitySlime.java
+@@ -223,7 +223,7 @@
+     public boolean func_70601_bi()
+     {
+         Chunk var1 = this.field_70170_p.func_72938_d(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.field_70161_v));
+-        return this.field_70170_p.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1 ? false : ((this.func_70809_q() == 1 || this.field_70170_p.field_73013_u > 0) && this.field_70146_Z.nextInt(10) == 0 && var1.func_76617_a(987234911L).nextInt(10) == 0 && this.field_70163_u < 40.0D ? super.func_70601_bi() : false);
++        return this.field_70170_p.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p) ? false : ((this.func_70809_q() == 1 || this.field_70170_p.field_73013_u > 0) && this.field_70146_Z.nextInt(10) == 0 && var1.func_76617_a(987234911L).nextInt(10) == 0 && this.field_70163_u < 40.0D ? super.func_70601_bi() : false);
+     }
+ 
+     protected float func_70599_aP()
