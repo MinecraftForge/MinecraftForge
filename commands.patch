@@ -20,7 +20,7 @@
              all_files = True
              append_pattern = False
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
-+        pkglist = pkglist + filterdirs(self.srcshared, '*.java', append_pattern=True) #FML, Add Common folder
++        pkglist = pkglist + filterdirs(self.srcshared, '*.java', append_pattern=append_pattern, all_files=all_files) #FML, Add Common folder
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],

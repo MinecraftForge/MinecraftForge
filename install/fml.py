@@ -29,7 +29,7 @@ def download_deps(mcp_path):
             print "Downloading Fernflower failed download manually from http://goo.gl/PnJHp"
             ret = False
     
-    for lib in ['argo-2.25.jar', 'guava-12.0.jar', 'asm-all-4.0.jar']:
+    for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'asm-all-4.0.jar']:
         libF = os.path.join(mcp_path, 'lib')
         if not os.path.isdir(libF):
             os.makedirs(libF)
@@ -146,10 +146,10 @@ def setup_fml(fml_dir, mcp_dir):
     
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
         jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
-        print "==================================SHUNT %s============================" % side
-        print "Java: %s" % self.cmdjava
-        print "Javac: %s" % self.cmdjavac
-        print "Jar: %s" % jars[side]
+        #print "==================================SHUNT %s============================" % side
+        #print "Java: %s" % self.cmdjava
+        #print "Javac: %s" % self.cmdjavac
+        #print "Jar: %s" % jars[side]
         
         binDir = os.path.join(fml_dir, 'bin')
         if not os.path.isdir(binDir):
