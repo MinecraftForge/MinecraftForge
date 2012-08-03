@@ -41,11 +41,6 @@
 			<locationURI>MCP_LOC/lib</locationURI>
 		</link>
 		<link>
-			<name>libref</name>
-			<type>2</type>
-			<locationURI>MCP_LOC/libref</locationURI>
-		</link>
-		<link>
 			<name>src</name>
 			<type>2</type>
 			<locationURI>MCP_LOC/src-work/minecraft</locationURI>

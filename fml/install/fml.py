@@ -29,7 +29,7 @@ def download_deps(mcp_path):
             print "Downloading Fernflower failed download manually from http://goo.gl/PnJHp"
             ret = False
     
-    for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'asm-all-4.0.jar']:
+    for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'guava-12.0.1-sources.jar', 'asm-all-4.0.jar', 'asm-4.0-source.zip']:
         libF = os.path.join(mcp_path, 'lib')
         if not os.path.isdir(libF):
             os.makedirs(libF)
