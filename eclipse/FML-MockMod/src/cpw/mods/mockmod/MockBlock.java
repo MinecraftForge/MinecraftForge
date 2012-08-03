@@ -7,6 +7,6 @@ public class MockBlock extends Block
 {
     public MockBlock(int id)
     {
-        super(id,Material.field_1316_v);
+        super(id,Material.field_76259_v);
     }
 }
