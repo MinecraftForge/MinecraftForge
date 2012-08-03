@@ -159,7 +159,7 @@ def setup_fml(fml_dir, mcp_dir):
         forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
             classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
             target=os.path.join(fml_dir, 'transformers', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
-        print forkcmd
+        #print forkcmd
         self.runcmd(forkcmd)
         
         #Run AccessTransformer
