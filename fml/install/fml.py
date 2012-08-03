@@ -295,10 +295,6 @@ def finish_setup_fml(fml_dir, mcp_dir):
     updatemd5(None, True)
     reset_logger()
     os.chdir(fml_dir)
-    
-    #update workspace
-    print 'Fixing MCP Workspace'
-    merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
 
 def apply_patches(mcp_dir, patch_dir, target_dir, find=None, rep=None):
     sys.path.append(mcp_dir)
@@ -475,3 +471,7 @@ def setup_mcp(fml_dir, mcp_dir):
 
     if os.path.isfile(temp):
         os.remove(temp)
+    
+    #update workspace
+    print 'Fixing MCP Workspace'
+    merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
