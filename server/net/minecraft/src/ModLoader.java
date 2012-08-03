@@ -19,12 +19,14 @@ import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
-import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.server.FMLServerHandler;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ModLoader
 {
@@ -37,7 +39,7 @@ public class ModLoader
      */
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
-        String achName=achievement.func_75970_i();
+        String achName=achievement.field_75978_a;
         addLocalization(achName, name);
         addLocalization(achName+".desc", description);
     }
@@ -243,7 +245,7 @@ public class ModLoader
      */
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        FMLRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
+        EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
     /**
@@ -638,7 +640,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        FMLRegistry.removeSpawn(entityName, spawnList, biomes);
+        EntityRegistry.removeSpawn(entityName, spawnList, biomes);
     }
 
     @Deprecated

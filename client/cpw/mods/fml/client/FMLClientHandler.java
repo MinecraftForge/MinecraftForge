@@ -103,7 +103,6 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
-import cpw.mods.fml.common.registry.FMLRegistry;
 
 
 /**

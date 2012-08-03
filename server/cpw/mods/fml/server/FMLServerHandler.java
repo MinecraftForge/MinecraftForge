@@ -41,7 +41,6 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.Profiler;
-import net.minecraft.src.ServerRegistry;
 import net.minecraft.src.SidedProxy;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
@@ -56,7 +55,6 @@ import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
-import cpw.mods.fml.common.registry.FMLRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -100,7 +98,6 @@ public class FMLServerHandler implements IFMLSidedHandler
         server = minecraftServer;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
         FMLCommonHandler.instance().beginLoading(this);
-        FMLRegistry.registerRegistry(new ServerRegistry());
         Loader.instance().loadMods();
     }
 
