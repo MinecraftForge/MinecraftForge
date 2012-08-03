@@ -109,7 +109,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     {
         EntityItem item = (EntityItem) pickupData[0];
         EntityPlayer player = (EntityPlayer) pickupData[1];
-        onItemPickup(player, item.field_429_a);
+        onItemPickup(player, item.field_70294_a);
     }
 
     @Override

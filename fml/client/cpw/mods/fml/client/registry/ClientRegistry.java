@@ -9,9 +9,7 @@ import net.minecraft.src.TileEntitySpecialRenderer;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.IMinecraftRegistry;
 
 public class ClientRegistry
 {

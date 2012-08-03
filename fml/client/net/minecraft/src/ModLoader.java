@@ -37,7 +37,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.FMLRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
@@ -664,7 +663,7 @@ public class ModLoader
      */
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
-        FMLRegistry.removeSpawn(entityName, spawnList, biomes);
+        EntityRegistry.removeSpawn(entityName, spawnList, biomes);
     }
 
     @Deprecated
