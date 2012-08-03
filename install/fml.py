@@ -125,7 +125,7 @@ def setup_fml(fml_dir, mcp_dir):
     from runtime.decompile import decompile
     from runtime.cleanup import cleanup
     from runtime.commands import Commands, CLIENT, SERVER
-    from runtime.mcp import decompile_side
+    from runtime.mcp import decompile_side, updatemd5_side
     
     src_dir = os.path.join(mcp_dir, 'src')
         
@@ -199,6 +199,13 @@ def setup_fml(fml_dir, mcp_dir):
     cleanup_source(src_dir)
     
     merge_client_server(mcp_dir)
+    
+    os.chdir(mcp_dir)
+    commands = Commands(verify=True)
+    updatemd5_side(commands, CLIENT)
+    updatemd5_side(commands, SERVER)
+    reset_logger()
+    os.chdir(fml_dir)
     
 def merge_client_server(mcp_dir):
     client = os.path.join(mcp_dir, 'src', 'minecraft')
