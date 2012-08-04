@@ -262,8 +262,8 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
         if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft/')
-        if copy_files and os.path.isdir(os.path.join(fml_dir, 'src', 'minecraft')):
-            copytree(os.path.join(fml_dir, 'src', 'minecraft'), os.path.join(src_dir, 'minecraft'))
+        if copy_files and os.path.isdir(os.path.join(fml_dir, 'client')):
+            copytree(os.path.join(fml_dir, 'client'), os.path.join(src_dir, 'minecraft'))
         #delete argo
         if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
             shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
@@ -273,13 +273,13 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft_server'), src_dir)
         if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft_server/')
-        if copy_files and os.path.isdir(os.path.join(fml_dir, 'src', 'minecraft_server')):
-            copytree(os.path.join(fml_dir, 'src', 'minecraft_server'), os.path.join(src_dir, 'minecraft_server'))
+        if copy_files and os.path.isdir(os.path.join(fml_dir, 'server')):
+            copytree(os.path.join(fml_dir, 'server'), os.path.join(src_dir, 'minecraft_server'))
             
     if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
         apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir)
-    if copy_files and os.path.isdir(os.path.join(fml_dir, 'src', 'common')):
-        copytree(os.path.join(fml_dir, 'src', 'common'), os.path.join(src_dir, 'common'))
+    if copy_files and os.path.isdir(os.path.join(fml_dir, 'common')):
+        copytree(os.path.join(fml_dir, 'common'), os.path.join(src_dir, 'common'))
             
 def finish_setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
