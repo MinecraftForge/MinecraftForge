@@ -110,19 +110,19 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
 def get_conf_copy(mcp_dir, forge_dir):
     #Lets grab the files we dont work on
     for file in ['astyle.cfg', 'version.cfg', 'patches/minecraft_ff.patch', 'patches/minecraft_server_ff.patch']:
-        dest_file = os.path.normpath(os.path.join(forge_dir, 'conf', file))
+        dst_file = os.path.normpath(os.path.join(forge_dir, 'conf', file))
         src_file = os.path.normpath(os.path.join(mcp_dir, 'conf', file))
         if os.path.exists(dst_file):
             os.remove(dst_file)
-        shutil.copy(src_file, dst_dir)
+        shutil.copy(src_file, dst_file)
         print 'Grabbing: ' + src_file
 
     gen_merged_srg(mcp_dir, forge_dir)
     gen_merged_exc(mcp_dir, forge_dir)
-    gen_merged_fields(os.path.join(mcp_dir, 'conf', 'client.srg'), os.path.join(mcp_dir, 'conf', 'fields.csv'))
+    #gen_merged_fields(os.path.join(mcp_dir, 'conf', 'client.srg'), os.path.join(mcp_dir, 'conf', 'fields.csv'))
         
         
-def gen_merged_rg(mcp_dir, forge_dir):
+def gen_merged_srg(mcp_dir, forge_dir):
     print 'Generating merged Retroguard data'
     srg_client = os.path.join(mcp_dir, 'conf', 'client.srg')
     srg_server = os.path.join(mcp_dir, 'conf', 'server.srg')

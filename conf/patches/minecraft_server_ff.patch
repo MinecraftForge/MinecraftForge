@@ -1,0 +1,70 @@
+diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Wed Aug 01 18:15:36 2012
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Wed Aug 01 18:26:32 2012
+@@ -11,6 +11,10 @@
+ 
+ public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
+ 
++   public ComponentStrongholdRightTurn(int p_i3843_1_, Random p_i3843_2_, StructureBoundingBox p_i3843_3_, int p_i3843_4_) {
++      super(p_i3843_1_, p_i3843_2_, p_i3843_3_, p_i3843_4_);
++   }
++
+    public void func_74861_a(StructureComponent p_74861_1_, List p_74861_2_, Random p_74861_3_) {
+       if(this.field_74885_f != 2 && this.field_74885_f != 3) {
+          this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
+diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Wed Aug 01 18:15:36 2012
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Wed Aug 01 18:31:22 2012
+@@ -184,7 +184,7 @@
+ 
+    }
+ 
+-   protected CrashReport func_71230_b(CrashReport p_71230_1_) {
++   public CrashReport func_71230_b(CrashReport p_71230_1_) {
+       p_71230_1_.func_71500_a("Type", new CallableType(this));
+       return super.func_71230_b(p_71230_1_);
+    }
+@@ -193,7 +193,7 @@
+       System.exit(0);
+    }
+ 
+-   protected void func_71190_q() {
++   public void func_71190_q() {
+       super.func_71190_q();
+       this.func_71333_ah();
+    }
+diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
+--- minecraft_server\net\minecraft\src\ItemMap.java	Wed Aug 01 18:15:37 2012
++++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Wed Aug 01 18:27:23 2012
+@@ -24,7 +24,6 @@
+    }
+ 
+    public MapData func_77873_a(ItemStack p_77873_1_, World p_77873_2_) {
+-      "map_" + p_77873_1_.func_77960_j();
+       MapData var4 = (MapData)p_77873_2_.func_72943_a(MapData.class, "map_" + p_77873_1_.func_77960_j());
+       if(var4 == null) {
+          p_77873_1_.func_77964_b(p_77873_2_.func_72841_b("map"));
+diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Wed Aug 01 18:15:38 2012
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Wed Aug 01 18:28:41 2012
+@@ -11,6 +11,7 @@
+       this.field_74504_a = p_i3285_1_;
+    }
+ 
++   @SuppressWarnings("deprecation")
+    public void run() {
+       try {
+          Thread.sleep(5000L);
+diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Wed Aug 01 18:15:38 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Wed Aug 01 18:28:56 2012
+@@ -20,7 +20,9 @@
+    }
+ 
+    public void run() {
++      while(true) {
+       this.func_75736_b();
++      }
+    }
+ 
+    private void func_75736_b() {
