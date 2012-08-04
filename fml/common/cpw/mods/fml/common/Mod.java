@@ -71,9 +71,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface PreInit {
-        static Class<?>[] paramTypes = new Class[] { FMLPreInitializationEvent.class };
-    }
+    public @interface PreInit {}
     /**
      * Mark the designated method as being called at the "initialization" phase
      * @author cpw
@@ -81,9 +79,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Init {
-        static Class<?>[] paramTypes = new Class[] { FMLInitializationEvent.class };
-    }
+    public @interface Init {}
     /**
      * Mark the designated method as being called at the "post-initialization" phase
      * @author cpw
@@ -91,9 +87,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface PostInit {
-        static Class<?>[] paramTypes = new Class[] { FMLPostInitializationEvent.class };
-    }
+    public @interface PostInit {}
     /**
      * Mark the designated method as being called at the "server-starting" phase
      * @author cpw
@@ -101,9 +95,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface ServerStarting {
-        static Class<?>[] paramTypes = new Class[] { FMLServerStartingEvent.class };
-    }
+    public @interface ServerStarting {}
     /**
      * Mark the designated method as being called at the "post-initialization" phase
      * @author cpw
@@ -111,9 +103,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface ServerStarted {
-        static Class<?>[] paramTypes = new Class[] { FMLServerStartedEvent.class };
-    }
+    public @interface ServerStarted {}
     /**
      * Mark the designated method as being called at the "post-initialization" phase
      * @author cpw
@@ -121,9 +111,7 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface ServerStopping {
-        static Class<?>[] paramTypes = new Class[] { FMLServerStoppingEvent.class };
-    }
+    public @interface ServerStopping {}
     /**
      * Populate the annotated field with the mod instance.
      * @author cpw
