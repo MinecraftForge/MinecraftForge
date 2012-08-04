@@ -117,9 +117,11 @@ def get_conf_copy(mcp_dir, forge_dir):
         shutil.copy(src_file, dst_file)
         print 'Grabbing: ' + src_file
 
-    gen_merged_srg(mcp_dir, forge_dir)
-    gen_merged_exc(mcp_dir, forge_dir)
-    #gen_merged_fields(os.path.join(mcp_dir, 'conf', 'client.srg'), os.path.join(mcp_dir, 'conf', 'fields.csv'))
+    common_srg = gen_merged_srg(mcp_dir, forge_dir)
+    common_exc = gen_merged_exc(mcp_dir, forge_dir)
+    common_map = gen_shared_searge_names(common_srg, common_exc)
+    #ToDo use common_map to merge the remaining csvs, client taking precidense, setting the common items to side '2' and editing commands.py in FML to have 'if csv_side == side || csv_side == '2''
+    #gen_merged_fields(os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(forge_dir, 'conf', 'fields.csv'))
         
         
 def gen_merged_srg(mcp_dir, forge_dir):
@@ -171,6 +173,8 @@ def gen_merged_srg(mcp_dir, forge_dir):
         for type in ['PK:', 'CL:', 'FD:', 'MD:']:
             for key in sorted(common[type]):
                 f.write('%s %s %s\n' % (type, key, common[type][key]))
+    
+    return common
 
 def gen_merged_exc(mcp_dir, forge_dir):
     print 'Generating merged MCInjector config'
@@ -213,3 +217,35 @@ def gen_merged_exc(mcp_dir, forge_dir):
     with open(os.path.join(forge_dir, 'conf', 'joined.exc'), 'w') as f:
         for key in sorted(common):
             f.write('%s=%s\n' % (key, common[key]))
+            
+    return common
+            
+def gen_shared_searge_names(common_srg, common_exc):
+    field = re.compile(r'field_[0-9]+_[a-zA-Z_]+$')
+    method = re.compile(r'func_[0-9]+_[a-zA-Z_]+')
+    param = re.compile(r'p_[\w]+_\d+_')
+    
+    searge = []
+    
+    for key, value in common_srg['FD:'].items():
+        m = field.search(value)
+        if not m is None:
+            if not m.group(0) in searge:
+                searge.append(m.group(0))
+                
+    for key, value in common_srg['MD:'].items():
+        m = method.search(value)
+        if not m is None and not '#' in value:
+            if not m.group(0) in searge:
+                searge.append(m.group(0))
+                
+    for key, value in common_exc.items():
+        m = param.findall(value)
+        if not m is None:
+            print m
+            for p in m:
+                if not p in searge:
+                    searge.append(p)
+                    
+    return searge
+        
