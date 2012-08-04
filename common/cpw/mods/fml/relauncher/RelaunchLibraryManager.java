@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -23,7 +24,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -40,10 +43,14 @@ public class RelaunchLibraryManager
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
     private static final String HEXES = "0123456789abcdef";
     private static List<String> loadedLibraries = new ArrayList<String>();
+    private static Map<IFMLLoadingPlugin, File> pluginLocations;
+    private static List<IFMLLoadingPlugin> loadPlugins;
+    private static List<ILibrarySet> libraries;
     public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
     {
-        List<IFMLLoadingPlugin> loadPlugins = new ArrayList<IFMLLoadingPlugin>();
-        List<ILibrarySet> libraries = new ArrayList<ILibrarySet>();
+        pluginLocations = new HashMap<IFMLLoadingPlugin, File>();
+        loadPlugins = new ArrayList<IFMLLoadingPlugin>();
+        libraries = new ArrayList<ILibrarySet>();
         for (String s : rootPlugins)
         {
             try
@@ -189,11 +196,42 @@ public class RelaunchLibraryManager
                 }
             }
         }
+
+        Map<String,Object> data = new HashMap<String,Object>();
+        data.put("mcLocation", mcDir);
+        data.put("coremodList", loadPlugins);
+        for (IFMLLoadingPlugin plugin : loadPlugins)
+        {
+            data.put("coremodLocation", pluginLocations.get(plugin));
+            plugin.injectData(data);
+            String setupClass = plugin.getSetupClass();
+            if (setupClass != null)
+            {
+                try
+                {
+                    IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, actualClassLoader).newInstance();
+                    Map<String,Object> callData = new HashMap<String, Object>();
+                    callData.put("classLoader", actualClassLoader);
+                    call.injectData(callData);
+                    call.call();
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            String modContainer = plugin.getModContainerClass();
+            if (modContainer != null)
+            {
+                FMLInjectionData.containers.add(modContainer);
+            }
+        }
         try
         {
             Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
             Method m = loaderClazz.getMethod("injectData", Object[].class);
-            m.invoke(null, (Object)FMLVersionData.data());
+            m.invoke(null, (Object)FMLInjectionData.data());
         }
         catch (Exception e)
         {
@@ -270,6 +308,7 @@ public class RelaunchLibraryManager
                 Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
                 loadPlugins.add(plugin);
+                pluginLocations .put(plugin, coreMod);
                 if (plugin.getLibraryRequestClass()!=null)
                 {
                     for (String libName : plugin.getLibraryRequestClass())

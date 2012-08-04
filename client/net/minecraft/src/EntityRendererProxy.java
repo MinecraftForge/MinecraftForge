@@ -18,7 +18,7 @@ import net.minecraft.client.Minecraft;
 
 public class EntityRendererProxy extends EntityRenderer
 {
-
+    public static final String fmlMarker = "This is an FML marker";
     private Minecraft game;
 
     public EntityRendererProxy(Minecraft minecraft)

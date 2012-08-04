@@ -17,6 +17,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 
 public class LoadController
@@ -34,10 +35,16 @@ public class LoadController
     public LoadController(Loader loader)
     {
         this.loader = loader;
-        this.modList = loader.getIndexedModList();
         this.masterChannel = new EventBus("FMLMainChannel");
         this.masterChannel.register(this);
 
+        state = LoaderState.NOINIT;
+    }
+
+    @Subscribe
+    public void buildModList(FMLLoadEvent event)
+    {
+        this.modList = loader.getIndexedModList();
         Builder<String, EventBus> eventBus = ImmutableMap.builder();
 
         for (ModContainer mod : loader.getModList())
@@ -60,8 +67,6 @@ public class LoadController
         }
 
         eventChannels = eventBus.build();
-
-        state = LoaderState.NOINIT;
     }
 
     public void distributeStateMessage(LoaderState state, Object... eventData)
@@ -140,5 +145,18 @@ public class LoadController
     public ModState getModState(ModContainer selectedMod)
     {
         return Iterables.getLast(modStates.get(selectedMod.getModId()), ModState.AVAILABLE);
+    }
+
+    public void distributeStateMessage(Class<?> customEvent)
+    {
+        try
+        {
+            masterChannel.post(customEvent.newInstance());
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.SEVERE, e, "An unexpected exception");
+            throw new LoaderException(e);
+        }
     }
 }

@@ -47,6 +47,7 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
+import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
@@ -131,6 +132,7 @@ public class Loader
     private LoadController modController;
 
     private static File minecraftDir;
+    private static List<String> injectedContainers;
 
     public static Loader instance()
     {
@@ -151,6 +153,7 @@ public class Loader
         mccversion = (String) data[4];
         mcsversion = (String) data[5];
         minecraftDir = (File) data[6];
+        injectedContainers = (List<String>)data[7];
     }
 
     private Loader()
@@ -214,7 +217,10 @@ public class Loader
             FMLLog.fine("Mod sorting data:");
             for (ModContainer mod : mods)
             {
-                FMLLog.fine("\t%s(%s): %s (%s)", mod.getModId(), mod.getName(), mod.getSource().getName(), mod.getSortingRules());
+                if (!mod.isImmutable())
+                {
+                    FMLLog.fine("\t%s(%s): %s (%s)", mod.getModId(), mod.getName(), mod.getSource().getName(), mod.getSortingRules());
+                }
             }
             if (mods.size()==0)
             {
@@ -247,6 +253,21 @@ public class Loader
      */
     private void identifyMods()
     {
+        FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+        for (String cont : injectedContainers)
+        {
+            ModContainer mc;
+            try
+            {
+                mc = (ModContainer) Class.forName(cont,true,modClassLoader).newInstance();
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "A problem occured instantiating the injected mod container %s", cont);
+                throw new LoaderException(e);
+            }
+            mods.add(new InjectedModContainer(mc));
+        }
         ModDiscoverer discoverer = new ModDiscoverer();
         FMLLog.fine("Attempting to load mods contained in the minecraft jar file and associated classes");
         discoverer.findClasspathMods(modClassLoader);
@@ -255,7 +276,7 @@ public class Loader
         FMLLog.info("Searching %s for mods", canonicalModsDir.getAbsolutePath());
         discoverer.findModDirMods(canonicalModsDir);
 
-        mods = discoverer.identifyMods();
+        mods.addAll(discoverer.identifyMods());
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
     }
@@ -343,6 +364,7 @@ public class Loader
         disableRequestedMods();
         sortModList();
         mods = ImmutableList.copyOf(mods);
+        modController.distributeStateMessage(FMLLoadEvent.class);
         modController.transition(LoaderState.CONSTRUCTING);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader);
         modController.transition(LoaderState.PREINITIALIZATION);
@@ -565,18 +587,18 @@ public class Loader
         modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
         modController.transition(LoaderState.SERVER_STARTING);
     }
-    
+
     public void serverStarted()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STARTED);
         modController.transition(LoaderState.SERVER_STARTED);
     }
-    
+
     public void serverStopping()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPING);
         modController.transition(LoaderState.SERVER_STOPPING);
         modController.transition(LoaderState.AVAILABLE);
-        
+
     }
 }

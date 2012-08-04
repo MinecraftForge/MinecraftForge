@@ -322,7 +322,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void addSpecialModEntries(ArrayList<ModContainer> mods)
     {
-        mods.add(new FMLDummyContainer());
         if (optifineContainer!=null) {
             mods.add(optifineContainer);
         }

@@ -117,4 +117,9 @@ public class DummyModContainer implements ModContainer
         return null;
     }
 
+    @Override
+    public boolean isImmutable()
+    {
+        return false;
+    }
 }

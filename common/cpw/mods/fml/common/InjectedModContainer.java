@@ -1,0 +1,105 @@
+package cpw.mods.fml.common;
+
+import java.io.File;
+import java.util.List;
+
+import com.google.common.eventbus.EventBus;
+
+import cpw.mods.fml.common.versioning.ArtifactVersion;
+
+public class InjectedModContainer implements ModContainer
+{
+
+    private ModContainer wrappedContainer;
+
+    public InjectedModContainer(ModContainer mc)
+    {
+        this.wrappedContainer = mc;
+    }
+
+    public String getModId()
+    {
+        return wrappedContainer.getModId();
+    }
+
+    public String getName()
+    {
+        return wrappedContainer.getName();
+    }
+
+    public String getVersion()
+    {
+        return wrappedContainer.getVersion();
+    }
+
+    public File getSource()
+    {
+        return wrappedContainer.getSource();
+    }
+
+    public ModMetadata getMetadata()
+    {
+        return wrappedContainer.getMetadata();
+    }
+
+    public void bindMetadata(MetadataCollection mc)
+    {
+        wrappedContainer.bindMetadata(mc);
+    }
+
+    public void setEnabledState(boolean enabled)
+    {
+        wrappedContainer.setEnabledState(enabled);
+    }
+
+    public List<ArtifactVersion> getRequirements()
+    {
+        return wrappedContainer.getRequirements();
+    }
+
+    public List<ArtifactVersion> getDependencies()
+    {
+        return wrappedContainer.getDependencies();
+    }
+
+    public List<ArtifactVersion> getDependants()
+    {
+        return wrappedContainer.getDependants();
+    }
+
+    public String getSortingRules()
+    {
+        return wrappedContainer.getSortingRules();
+    }
+
+    public boolean registerBus(EventBus bus, LoadController controller)
+    {
+        return wrappedContainer.registerBus(bus, controller);
+    }
+
+    public boolean matches(Object mod)
+    {
+        return wrappedContainer.matches(mod);
+    }
+
+    public Object getMod()
+    {
+        return wrappedContainer.getMod();
+    }
+
+    public ArtifactVersion getProcessedVersion()
+    {
+        return wrappedContainer.getProcessedVersion();
+    }
+
+    public ProxyInjector findSidedProxy()
+    {
+        return wrappedContainer.findSidedProxy();
+    }
+
+    @Override
+    public boolean isImmutable()
+    {
+        return true;
+    }
+}

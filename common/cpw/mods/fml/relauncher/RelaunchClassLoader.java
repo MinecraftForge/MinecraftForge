@@ -2,6 +2,7 @@ package cpw.mods.fml.relauncher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -79,7 +80,7 @@ public class RelaunchClassLoader extends URLClassLoader
 
         try
         {
-            byte[] basicClass = readFully(findResource(name.replace('.', '/').concat(".class")).openStream());
+            byte[] basicClass = getClassBytes(name);
             byte[] transformedClass = runTransformers(name, basicClass);
             Class<?> cl = defineClass(name, transformedClass, 0, transformedClass.length);
             cachedClasses.put(name, cl);
@@ -88,6 +89,40 @@ public class RelaunchClassLoader extends URLClassLoader
         catch (Throwable e)
         {
             throw new ClassNotFoundException(name, e);
+        }
+    }
+
+    /**
+     * @param name
+     * @return
+     * @throws IOException
+     */
+    public byte[] getClassBytes(String name) throws IOException
+    {
+        InputStream classStream = null;
+        try
+        {
+            URL classResource = findResource(name.replace('.', '/').concat(".class"));
+            if (classResource == null)
+            {
+                return null;
+            }
+            classStream = classResource.openStream();
+            return readFully(classStream);
+        }
+        finally
+        {
+            if (classStream != null)
+            {
+                try
+                {
+                    classStream.close();
+                }
+                catch (IOException e)
+                {
+                    // Swallow the close exception
+                }
+            }
         }
     }
 

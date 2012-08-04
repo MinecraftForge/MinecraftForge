@@ -3,10 +3,12 @@ package cpw.mods.fml.relauncher;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
-public class FMLVersionData
+public class FMLInjectionData
 {
     static File minecraftHome;
     static String major;
@@ -15,6 +17,7 @@ public class FMLVersionData
     static String build;
     static String mccversion;
     static String mcsversion;
+    public static List<String> containers = new ArrayList<String>();
 
     static void build(File mcHome, RelaunchClassLoader classLoader)
     {
@@ -46,6 +49,6 @@ public class FMLVersionData
 
     public static Object[] data()
     {
-        return new Object[] { major, minor, rev, build, mccversion, mcsversion, minecraftHome };
+        return new Object[] { major, minor, rev, build, mccversion, mcsversion, minecraftHome, containers };
     }
 }
