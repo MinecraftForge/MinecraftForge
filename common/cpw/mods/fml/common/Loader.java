@@ -374,7 +374,7 @@ public class Loader
 
     private void disableRequestedMods()
     {
-        String disabledModList = System.getProperty("fml.disabledMods", "");
+        String disabledModList = System.getProperty("fml.modStates", "");
         FMLLog.fine("Received a system property request \'%s\'",disabledModList);
         Map<String, String> sysPropertyStateList = Splitter.on(CharMatcher.anyOf(";:"))
                 .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
