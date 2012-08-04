@@ -432,7 +432,7 @@ def merge_tree(root_src_dir, root_dst_dir):
             shutil.copy(src_file, dst_dir)
             
 def setup_mcp(fml_dir, mcp_dir):
-    backup = os.path.join(fml_dir, 'commands.py.bck')
+    backup = os.path.join(mcp_dir, 'runtime', 'commands.py.bck')
     runtime = os.path.join(mcp_dir, 'runtime', 'commands.py')
     patch = os.path.join(fml_dir, 'commands.patch')
     
