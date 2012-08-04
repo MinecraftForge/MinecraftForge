@@ -248,9 +248,6 @@ def merge_client_server(mcp_dir):
             os.remove(f_server)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
-    sys.path.append(mcp_dir)
-    from runtime.updatemd5 import updatemd5
-    
     has_client = os.path.isdir(os.path.join(src_dir, 'minecraft'))
     has_server = os.path.isdir(os.path.join(src_dir, 'minecraft_server'))
     
