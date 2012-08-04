@@ -109,7 +109,7 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
 
 def get_conf_copy(mcp_dir, forge_dir):
     #Lets grab the files we dont work on
-    for file in ['astyle.cfg', 'version.cfg', 'patches/minecraft_ff.patch', 'patches/minecraft_server_ff.patch']:
+    for file in ['astyle.cfg', 'version.cfg', 'patches/minecraft_ff.patch', 'patches/minecraft_server_ff.patch', 'newids.csv']:
         dst_file = os.path.normpath(os.path.join(forge_dir, 'conf', file))
         src_file = os.path.normpath(os.path.join(mcp_dir, 'conf', file))
         if os.path.exists(dst_file):
