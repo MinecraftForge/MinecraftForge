@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
@@ -35,6 +37,8 @@ public class ModSorter
     private ModContainer before = new DummyModContainer();
     private ModContainer after = new DummyModContainer();
 
+    private List<ModContainer> immutableMods;
+
     public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
     {
         buildGraph(modList, nameLookup);
@@ -43,6 +47,7 @@ public class ModSorter
     private void buildGraph(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
     {
         modGraph = new DirectedGraph<ModContainer>();
+        immutableMods = Lists.newArrayList();
         modGraph.addNode(beforeAll);
         modGraph.addNode(before);
         modGraph.addNode(afterAll);
@@ -53,11 +58,20 @@ public class ModSorter
 
         for (ModContainer mod : modList)
         {
-            modGraph.addNode(mod);
+            if (!mod.isImmutable())
+            {
+                modGraph.addNode(mod);
+            }
+            else
+            {
+                immutableMods.add(mod);
+            }
         }
 
         for (ModContainer mod : modList)
         {
+            if (mod.isImmutable())
+                continue;
             boolean preDepAdded = false;
             boolean postDepAdded = false;
 
@@ -117,6 +131,7 @@ public class ModSorter
     {
         List<ModContainer> sortedList = TopologicalSort.topologicalSort(modGraph);
         sortedList.removeAll(Arrays.asList(new ModContainer[] {beforeAll, before, after, afterAll}));
-        return sortedList;
+        immutableMods.addAll(sortedList);
+        return immutableMods;
     }
 }

@@ -42,6 +42,7 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class ModLoader
 {
+    public static final String fmlMarker = "This is an FML marker";
     // TODO dirty workaround for millinaire
     @Deprecated
     public static final Map<String,Map<String,String>> localizedStrings=Collections.emptyMap();

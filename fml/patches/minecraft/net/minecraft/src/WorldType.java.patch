@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/src/WorldType.java
-@@ -1,4 +1,14 @@
+@@ -1,7 +1,20 @@
  package net.minecraft.src;
 +
 +import java.util.Arrays;
@@ -15,19 +15,23 @@
  
  public class WorldType
  {
-@@ -12,6 +22,11 @@
-     private boolean field_77140_h;
-     private boolean field_77141_i;
- 
-+    protected BiomeGenBase[] biomesForWorldType;
-+    
 +    public static final BiomeGenBase[] base11Biomes = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
 +    public static final BiomeGenBase[] base12Biomes = ObjectArrays.concat(base11Biomes, BiomeGenBase.field_76782_w);
 +
+     public static final WorldType[] field_77139_a = new WorldType[16];
+     public static final WorldType field_77137_b = (new WorldType(0, "default", 1)).func_77129_f();
+     public static final WorldType field_77138_c = new WorldType(1, "flat");
+@@ -11,6 +24,9 @@
+     private final int field_77134_g;
+     private boolean field_77140_h;
+     private boolean field_77141_i;
++
++    protected BiomeGenBase[] biomesForWorldType;
++
+ 
      private WorldType(int p_i3737_1_, String p_i3737_2_)
      {
-         this(p_i3737_1_, p_i3737_2_, 0);
-@@ -23,6 +38,14 @@
+@@ -23,6 +39,14 @@
          this.field_77134_g = p_i3738_3_;
          this.field_77140_h = true;
          field_77139_a[p_i3738_1_] = this;
@@ -42,11 +46,11 @@
      }
  
      public String func_77127_a()
-@@ -84,4 +107,63 @@
+@@ -84,4 +108,63 @@
  
          return null;
      }
-+    
++
 +    public WorldChunkManager getChunkManager(World world)
 +    {
 +        return this == field_77138_c ? new WorldChunkManagerHell(BiomeGenBase.field_76772_c, 0.5F, 0.5F) : new WorldChunkManager(world);
@@ -96,7 +100,7 @@
 +        newBiomesForWorld.remove(biome);
 +        biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
 +    }
-+    
++
 +    public boolean handleSlimeSpawnReduction(Random random, World world)
 +    {
 +        return this == field_77138_c ? random.nextInt(4) != 1 : false;

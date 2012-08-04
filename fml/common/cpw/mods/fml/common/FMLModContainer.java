@@ -78,8 +78,8 @@ public class FMLModContainer implements ModContainer
         .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
         .build();
     private static final BiMap<Class<? extends Annotation>, Class<? extends FMLStateEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
-    
-    
+
+
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
     {
         this.className = className;
@@ -223,7 +223,7 @@ public class FMLModContainer implements ModContainer
             for (Annotation a : m.getAnnotations())
             {
                 Class<?>[] paramTypes = new Class[] { modTypeAnnotations.get(a.annotationType()) };
-                
+
                 if (Arrays.equals(m.getParameterTypes(), paramTypes))
                 {
                     m.setAccessible(true);
@@ -310,5 +310,10 @@ public class FMLModContainer implements ModContainer
             processedVersion = new DefaultArtifactVersion(getModId(), getVersion());
         }
         return processedVersion;
+    }
+    @Override
+    public boolean isImmutable()
+    {
+        return false;
     }
 }

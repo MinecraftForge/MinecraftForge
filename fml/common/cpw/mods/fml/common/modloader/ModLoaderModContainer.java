@@ -558,4 +558,10 @@ public class ModLoaderModContainer implements ModContainer
         }
         return processedVersion;
     }
+
+    @Override
+    public boolean isImmutable()
+    {
+        return false;
+    }
 }

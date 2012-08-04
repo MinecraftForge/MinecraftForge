@@ -28,7 +28,7 @@ public class FMLRelauncher
     private Object newApplet;
     private Class<? super Object> appletClass;
 
-    private JDialog popupWindow;
+    JDialog popupWindow;
 
     public static void handleClientRelaunch(ArgsWrapper wrap)
     {
@@ -39,7 +39,7 @@ public class FMLRelauncher
     {
         instance().relaunchServer(wrap);
     }
-    
+
     static FMLRelauncher instance()
     {
         if (INSTANCE == null)
@@ -128,8 +128,8 @@ public class FMLRelauncher
 
     private void setupHome(File minecraftHome)
     {
-        FMLVersionData.build(minecraftHome, classLoader);
-        FMLLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", FMLVersionData.major, FMLVersionData.minor, FMLVersionData.rev, FMLVersionData.build, FMLVersionData.mccversion, FMLVersionData.mcsversion);
+        FMLInjectionData.build(minecraftHome, classLoader);
+        FMLLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", FMLInjectionData.major, FMLInjectionData.minor, FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion, FMLInjectionData.mcsversion);
 
         try
         {

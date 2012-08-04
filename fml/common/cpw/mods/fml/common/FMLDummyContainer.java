@@ -16,6 +16,8 @@ package cpw.mods.fml.common;
 
 import java.util.Arrays;
 
+import com.google.common.eventbus.EventBus;
+
 /**
  * @author cpw
  *
@@ -40,5 +42,11 @@ public class FMLDummyContainer extends DummyModContainer
         meta.updateUrl="https://github.com/cpw/FML/wiki";
         meta.screenshots=new String[0];
         meta.logoFile="";
+    }
+
+    @Override
+    public boolean registerBus(EventBus bus, LoadController controller)
+    {
+        return true;
     }
 }
