@@ -23,7 +23,7 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="jars/bin/minecraft.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/argo-2.25.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/asm-all-4.0.jar" sourcepath="lib/asm-4.0-source.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm-all-4.0.jar" sourcepath="lib/asm-all-4.0-source.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/guava-12.0.1.jar" sourcepath="lib/guava-12.0.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -29,7 +29,7 @@ def download_deps(mcp_path):
             print "Downloading Fernflower failed download manually from http://goo.gl/PnJHp"
             ret = False
     
-    for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'guava-12.0.1-sources.jar', 'asm-all-4.0.jar', 'asm-4.0-source.zip']:
+    for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'guava-12.0.1-sources.jar', 'asm-all-4.0.jar', 'asm-all-4.0-source.jar']:
         libF = os.path.join(mcp_path, 'lib')
         if not os.path.isdir(libF):
             os.makedirs(libF)
@@ -158,7 +158,7 @@ def setup_fml(fml_dir, mcp_dir):
         #Compile AccessTransformer
         forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
             classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
-            target=os.path.join(fml_dir, 'transformers', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
+            target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
         #print forkcmd
         self.runcmd(forkcmd)
         
