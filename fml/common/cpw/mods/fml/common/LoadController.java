@@ -109,7 +109,9 @@ public class LoadController
         {
             activeContainer = entry.getKey();
             stateEvent.applyModContainer(activeContainer());
+            FMLLog.finer("Posting state event %s to mod %s", stateEvent, entry.getKey());
             entry.getValue().post(stateEvent);
+            FMLLog.finer("State event %s delivered to mod %s", stateEvent, entry.getKey());
             activeContainer = null;
             if (!errors.containsKey(entry.getKey()))
             {
