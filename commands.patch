@@ -18,6 +18,30 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
+@@ -1195,20 +1199,20 @@
+         with open(self.csvmethods, 'rb') as fh:
+             methodsreader = csv.DictReader(fh)
+             for row in methodsreader:
+-                if int(row['side']) == side:
++                if int(row['side']) == side or int(row['side']) == 2:
+                     if row['name'] != row['searge']:
+                         names['methods'][row['searge']] = row['name']
+         with open(self.csvfields, 'rb') as fh:
+             fieldsreader = csv.DictReader(fh)
+             for row in fieldsreader:
+-                if int(row['side']) == side:
++                if int(row['side']) == side or int(row['side']) == 2:
+                     if row['name'] != row['searge']:
+                         names['fields'][row['searge']] = row['name']
+         if self.has_param_csv:
+             with open(self.csvparams, 'rb') as fh:
+                 paramsreader = csv.DictReader(fh)
+                 for row in paramsreader:
+-                    if int(row['side']) == side:
++                    if int(row['side']) == side or int(row['side']) == 2:
+                         names['params'][row['param']] = row['name']
+ 
+         regexps = {
 @@ -1238,6 +1242,11 @@
  
          # HINT: We pathwalk the sources
@@ -56,17 +80,33 @@
 +            if side == CLIENT:
 +                tmp = self.srcclient
 +                self.srcclient = self.srcshared
-+                process_javadoc(self, side)
++                self.process_javadoc(side)
 +                self.srcclient = tmp
 +            else:
 +                tmp = self.srcserver
 +                self.srcserver = self.srcshared
-+                process_javadoc(self, side)
++                self.process_javadoc(side)
 +                self.srcserver = tmp
 +                
  
          #HINT: We read the relevant CSVs
          methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
+@@ -1342,13 +1368,13 @@
+         methods = {}
+         for row in methodsreader:
+             #HINT: Only include methods that have a non-empty description
+-            if int(row['side']) == side and row['desc']:
++            if (int(row['side']) == side or int(row['side']) == 2) and row['desc']:
+                 methods[row['searge']] = row['desc'].replace('*/', '* /')
+ 
+         fields = {}
+         for row in fieldsreader:
+             #HINT: Only include fields that have a non-empty description
+-            if int(row['side']) == side and row['desc']:
++            if (int(row['side']) == side or int(row['side']) == 2) and row['desc']:
+                 fields[row['searge']] = row['desc'].replace('*/', '* /')
+ 
+         regexps = {
 @@ -1420,6 +1446,7 @@
  
          # HINT: We create the list of source directories based on the list of packages
