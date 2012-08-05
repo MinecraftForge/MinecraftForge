@@ -1,0 +1,12 @@
+--- ../src_base/minecraft_server/net/minecraft/src/World.java
++++ ../src_work/minecraft_server/net/minecraft/src/World.java
+@@ -248,7 +248,8 @@
+     public boolean blockHasTileEntity(int par1, int par2, int par3)
+     {
+         int var4 = this.getBlockId(par1, par2, par3);
+-        return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity();
++        int meta = this.getBlockMetadata(par1, par2, par3);
++        return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity(meta);
+     }
+ 
+     /**

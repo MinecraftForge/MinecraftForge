@@ -1,0 +1,12 @@
+--- ../src_base/common/net/minecraft/src/MovingObjectPosition.java
++++ ../src_work/common/net/minecraft/src/MovingObjectPosition.java
+@@ -25,6 +25,9 @@
+ 
+     /** The hit entity */
+     public Entity entityHit;
++    
++    /** Used to determine what sub-segment is hit */
++    public int subHit = -1;
+ 
+     public MovingObjectPosition(int par1, int par2, int par3, int par4, Vec3 par5Vec3)
+     {

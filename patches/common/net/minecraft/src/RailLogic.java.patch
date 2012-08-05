@@ -1,0 +1,70 @@
+--- ../src_base/common/net/minecraft/src/RailLogic.java
++++ ../src_work/common/net/minecraft/src/RailLogic.java
+@@ -19,6 +19,7 @@
+     private List connectedTracks;
+ 
+     final BlockRail rail;
++    private final boolean canMakeSlopes;
+ 
+     public RailLogic(BlockRail par1BlockRail, World par2World, int par3, int par4, int par5)
+     {
+@@ -29,18 +30,11 @@
+         this.trackY = par4;
+         this.trackZ = par5;
+         int var6 = par2World.getBlockId(par3, par4, par5);
+-        int var7 = par2World.getBlockMetadata(par3, par4, par5);
+-
+-        if (BlockRail.isPoweredBlockRail((BlockRail)Block.blocksList[var6]))
+-        {
+-            this.isPoweredRail = true;
+-            var7 &= -9;
+-        }
+-        else
+-        {
+-            this.isPoweredRail = false;
+-        }
+-
++
++        BlockRail target = (BlockRail)Block.blocksList[var6];
++        int var7 = target.getBasicRailMetadata(par2World, null, par3, par4, par5);
++        isPoweredRail = !target.isFlexibleRail(par2World, par3, par4, par5);
++        canMakeSlopes = target.canMakeSlopes(par2World, par3, par4, par5);
+         this.setConnections(var7);
+     }
+ 
+@@ -267,7 +261,7 @@
+             }
+         }
+ 
+-        if (var6 == 0)
++        if (var6 == 0 && canMakeSlopes)
+         {
+             if (BlockRail.isRailBlockAt(this.worldObj, this.trackX, this.trackY + 1, this.trackZ - 1))
+             {
+@@ -280,7 +274,7 @@
+             }
+         }
+ 
+-        if (var6 == 1)
++        if (var6 == 1 && canMakeSlopes)
+         {
+             if (BlockRail.isRailBlockAt(this.worldObj, this.trackX + 1, this.trackY + 1, this.trackZ))
+             {
+@@ -431,7 +425,7 @@
+             }
+         }
+ 
+-        if (var7 == 0)
++        if (var7 == 0 && canMakeSlopes)
+         {
+             if (BlockRail.isRailBlockAt(this.worldObj, this.trackX, this.trackY + 1, this.trackZ - 1))
+             {
+@@ -444,7 +438,7 @@
+             }
+         }
+ 
+-        if (var7 == 1)
++        if (var7 == 1 && canMakeSlopes)
+         {
+             if (BlockRail.isRailBlockAt(this.worldObj, this.trackX + 1, this.trackY + 1, this.trackZ))
+             {

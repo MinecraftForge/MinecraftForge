@@ -1,0 +1,35 @@
+--- ../src_base/common/net/minecraft/src/ItemBucket.java
++++ ../src_work/common/net/minecraft/src/ItemBucket.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
++
++import net.minecraftforge.event.entity.FillBucketEvent;
+ 
+ public class ItemBucket extends Item
+ {
+@@ -31,6 +33,17 @@
+         }
+         else
+         {
++            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, var12);
++            if (event.isCanceled())
++            {
++                return par1ItemStack;
++            }
++            
++            if (event.isHandeled())
++            {
++                return event.getResult();
++            }
++            
+             if (var12.typeOfHit == EnumMovingObjectType.TILE)
+             {
+                 int var13 = var12.blockX;
+@@ -41,6 +54,7 @@
+                 {
+                     return par1ItemStack;
+                 }
++                
+ 
+                 if (this.isFull == 0)
+                 {

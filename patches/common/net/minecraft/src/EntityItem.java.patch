@@ -1,0 +1,36 @@
+--- ../src_base/common/net/minecraft/src/EntityItem.java
++++ ../src_work/common/net/minecraft/src/EntityItem.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.src;
+ 
+ import java.util.Iterator;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.EntityItemPickupEvent;
+ 
+ public class EntityItem extends Entity
+ {
+@@ -238,6 +241,23 @@
+         {
+             int var2 = this.item.stackSize;
+ 
++            EntityItemPickupEvent event = new EntityItemPickupEvent(this, par1EntityPlayer);
++            MinecraftForge.eventBus.post(event);
++            
++            if (delayBeforeCanPickup == 0 && (!event.isCanceled() || item.stackSize <= 0))
++            {
++                //FML Notify pickup
++                worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
++                par1EntityPlayer.onItemPickup(this, var2);
++
++                if (item.stackSize <= 0)
++                {
++                    setDead();
++                }
++            }
++            
++            var2 = item.stackSize;
++
+             if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(this.item))
+             {
+                 if (this.item.itemID == Block.wood.blockID)

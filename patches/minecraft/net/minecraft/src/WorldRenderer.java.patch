@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java
++++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
+@@ -187,7 +187,7 @@
+ 
+                                     if (var23 != null)
+                                     {
+-                                        if (var11 == 0 && var23.hasTileEntity())
++                                        if (var11 == 0 && var23.hasTileEntity(var9.getBlockMetadata(var17, var15, var16)))
+                                         {
+                                             TileEntity var20 = var9.getBlockTileEntity(var17, var15, var16);
+ 
