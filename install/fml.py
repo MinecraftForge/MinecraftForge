@@ -385,7 +385,7 @@ def copytree(src, dst, verbose=0, symlinks=False):
     """
     
     if verbose == -1:
-        verbose = len(os.path.abspath(dst)) - 1
+        verbose = len(os.path.abspath(dst)) + 1
     names = os.listdir(src)
     # os.makedirs(dst)
     _mkdir(dst) # XXX
@@ -402,7 +402,7 @@ def copytree(src, dst, verbose=0, symlinks=False):
             else:
                 shutil.copy2(srcname, dstname)
                 if verbose > 0:
-                    print os.path.abspath(srcname)[verbose:]
+                    print os.path.abspath(dstname)[verbose:]
             # XXX What about devices, sockets etc.?
         except (IOError, os.error), why:
             errors.append((srcname, dstname, str(why)))
