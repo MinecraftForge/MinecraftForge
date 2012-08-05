@@ -22,7 +22,7 @@ def load_version(build=0):
             'revision' : -1,
             'build'    : -1
            }
-    hook_file = os.path.join(forge_dir, 'forge_common/net/minecraft/src/forge/ForgeHooks.java'.replace('/', os.sep))
+    hook_file = os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep))
     with open(hook_file, 'r') as fh:
         buf = fh.read() 
         
@@ -75,7 +75,6 @@ def zip_create(path, key, zip_name):
     else:
         zip.write(path, key)
     zip.close()
-    
 
 def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
     sys.path.append(fml_dir)
@@ -125,7 +124,6 @@ def get_conf_copy(mcp_dir, forge_dir):
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(forge_dir, 'conf', 'fields.csv'))
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'methods.csv'), os.path.join(forge_dir, 'conf', 'methods.csv'))
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'params.csv'), os.path.join(forge_dir, 'conf', 'params.csv'), main_key='param')
-        
         
 def gen_merged_srg(mcp_dir, forge_dir):
     print 'Generating merged Retroguard data'
@@ -275,8 +273,6 @@ def gen_merged_csv(common_map, in_file, out_file, main_key='searge'):
     for key in ['client', 'server', 'common']:
         for row in sorted(sides[key], key=lambda row: row[main_key]):
             writer.writerow(row)
-            
-    #pprint.pprint(sides)
     
 def setup_forge_mcp(mcp_dir, forge_dir, dont_gen_conf=True):
     mcp_conf = os.path.join(mcp_dir, 'conf')
@@ -296,3 +292,42 @@ def setup_forge_mcp(mcp_dir, forge_dir, dont_gen_conf=True):
     print 'Copying Forge conf'
     shutil.copytree(forge_conf, mcp_conf)
     
+def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
+    version = load_version(build_num)
+    print '=================================== Build %d.%d.%d.%d Start =================================' % (version['major'], version['minor'], version['revision'], version['build'])
+    
+    src_dir = os.path.join(mcp_dir, 'src')
+    if os.path.isdir(src_dir):
+        shutil.rmtree(src_dir)
+    
+    sys.path.append(fml_dir)
+    from fml import copytree
+        
+    print 'src_work -> src'
+    copytree(os.path.join(mcp_dir, 'src_work'), src_dir)
+    print '\nCopying Client Code'
+    copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'), -1)
+    print '\nCopying Server Code'
+    copytree(os.path.join(forge_dir, 'server'), os.path.join(src_dir, 'minecraft_server'), -1)
+    print '\nCopying Common Code'
+    copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'common'), -1)
+    print
+    inject_version(os.path.join(src_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
+    
+    error_level = 0
+    try:
+        sys.path.append(mcp_dir)
+        from runtime.recompile import recompile
+        
+        os.chdir(mcp_dir)
+        reset_logger()
+        recompile(None)
+        reset_logger()
+        os.chdir(forge_dir)
+        
+    except SystemExit, e:
+        print 'Recompile Exception: %d ' % e.code
+        error_level = e.code
+        
+    print '=================================== Build Finished %d =================================' % error_level
+    return error_level
