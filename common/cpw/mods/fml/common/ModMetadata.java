@@ -116,7 +116,7 @@ public class ModMetadata
         useDependencyInformation = Boolean.parseBoolean(Strings.nullToEmpty((String)processedFields.get(aStringBuilder("useDependencyInformation"))));
     }
 
-    ModMetadata()
+    public ModMetadata()
     {
     }
 
