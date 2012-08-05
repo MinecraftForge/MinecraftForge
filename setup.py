@@ -7,10 +7,12 @@ forge_dir = os.path.dirname(os.path.abspath(__file__))
 mcp_dir = os.path.abspath('..')
 src_dir = os.path.join(mcp_dir, 'src')
 
-from forge import apply_forge_patches
+from forge import setup_forge_mcp, apply_forge_patches
 
 def main():
     print '=================================== Setup Start ================================='
+    dont_gen_conf = '-no_gen_conf' in sys.argv
+    setup_forge_mcp(mcp_dir, forge_dir, dont_gen_conf)
     setup_fml()
     
     base_dir = os.path.join(mcp_dir, 'src_base')
@@ -27,6 +29,18 @@ def main():
     
     print 'Applying forge patches'
     apply_forge_patches(os.path.join(forge_dir, 'fml'), mcp_dir, forge_dir, work_dir, False)
+    
+    #Restore mcp/conf.bak, therefore restoring normal MCP updating ability
+    if not dont_gen_conf:
+        mcp_conf = os.path.join(mcp_dir, 'conf')
+        mcp_conf_bak = os.path.join(mcp_dir, 'conf.bak')
+        
+        if os.path.isdir(mcp_conf):
+            print 'Removing new conf folder'
+            shutil.rmtree(mcp_conf)
+        
+        print 'Restoreing original MCP Conf'
+        os.rename(mcp_conf_bak, mcp_conf)
     
     print '=================================== Setup Finished ================================='
     

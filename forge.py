@@ -2,6 +2,7 @@ import os, os.path, sys
 import urllib, zipfile
 import shutil, glob, fnmatch
 import subprocess, logging, re
+import csv, shutil
 import pprint
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
@@ -121,7 +122,9 @@ def get_conf_copy(mcp_dir, forge_dir):
     common_exc = gen_merged_exc(mcp_dir, forge_dir)
     common_map = gen_shared_searge_names(common_srg, common_exc)
     #ToDo use common_map to merge the remaining csvs, client taking precidense, setting the common items to side '2' and editing commands.py in FML to have 'if csv_side == side || csv_side == '2''
-    #gen_merged_fields(os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(forge_dir, 'conf', 'fields.csv'))
+    gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(forge_dir, 'conf', 'fields.csv'))
+    gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'methods.csv'), os.path.join(forge_dir, 'conf', 'methods.csv'))
+    gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'params.csv'), os.path.join(forge_dir, 'conf', 'params.csv'), main_key='param')
         
         
 def gen_merged_srg(mcp_dir, forge_dir):
@@ -159,14 +162,14 @@ def gen_merged_srg(mcp_dir, forge_dir):
                     client[type].pop(key)
                     server[type].pop(key)
                     common[type][key] = value
-                    
+
     for type in common:
         for key, value in client[type].items():
-            common[type][key] = value + ' #C'
+            common[type][key] = value #+ ' #C'
             
     for type in common:
         for key, value in server[type].items():
-            common[type][key] = value + ' #S'
+            common[type][key] = value #+ ' #S'
             
     #Print joined retroguard files
     with open(os.path.join(forge_dir, 'conf', 'joined.srg'), 'w') as f:
@@ -211,12 +214,12 @@ def gen_merged_exc(mcp_dir, forge_dir):
             if value != '|':
                 common[key] = value
     
-    common = dict(common.items() + server.items())
+    joined = dict(common.items() + server.items())
     
     #Print joined mcinjector files
     with open(os.path.join(forge_dir, 'conf', 'joined.exc'), 'w') as f:
-        for key in sorted(common):
-            f.write('%s=%s\n' % (key, common[key]))
+        for key in sorted(joined):
+            f.write('%s=%s\n' % (key, joined[key]))
             
     return common
             
@@ -224,6 +227,8 @@ def gen_shared_searge_names(common_srg, common_exc):
     field = re.compile(r'field_[0-9]+_[a-zA-Z_]+$')
     method = re.compile(r'func_[0-9]+_[a-zA-Z_]+')
     param = re.compile(r'p_[\w]+_\d+_')
+    
+    print 'Gathering list of common searge names'
     
     searge = []
     
@@ -242,10 +247,52 @@ def gen_shared_searge_names(common_srg, common_exc):
     for key, value in common_exc.items():
         m = param.findall(value)
         if not m is None:
-            print m
             for p in m:
                 if not p in searge:
                     searge.append(p)
                     
     return searge
         
+def gen_merged_csv(common_map, in_file, out_file, main_key='searge'):
+    reader = csv.DictReader(open(in_file, 'r'))
+    print 'Generating merged csv for %s' % os.path.basename(in_file)
+    sides = {'client': [], 'server': [], 'common': []}
+    added = []
+    for row in reader:
+        side = int(row['side'])
+        if row[main_key] in common_map:
+            if not row[main_key] in added:
+                row['side'] = '2'
+                sides['common'].append(row)
+                added.append(row[main_key])
+        elif side == 0:
+            sides['client'].append(row)
+        else:
+            sides['server'].append(row)
+            
+    writer = csv.DictWriter(open(out_file, 'wb'), fieldnames=reader.fieldnames)
+    writer.writeheader()
+    for key in ['client', 'server', 'common']:
+        for row in sorted(sides[key], key=lambda row: row[main_key]):
+            writer.writerow(row)
+            
+    #pprint.pprint(sides)
+    
+def setup_forge_mcp(mcp_dir, forge_dir, dont_gen_conf=True):
+    mcp_conf = os.path.join(mcp_dir, 'conf')
+    mcp_conf_bak = os.path.join(mcp_dir, 'conf.bak')
+    forge_conf = os.path.join(forge_dir, 'conf')
+    
+    if os.path.isdir(mcp_conf_bak):
+        print 'Removing old conf backup folder'
+        shutil.rmtree(mcp_conf_bak)
+    
+    if not dont_gen_conf:
+        get_conf_copy(mcp_dir, forge_dir)
+    
+    print 'Backing up MCP Conf'
+    os.rename(mcp_conf, mcp_conf_bak)
+    
+    print 'Copying Forge conf'
+    shutil.copytree(forge_conf, mcp_conf)
+    
