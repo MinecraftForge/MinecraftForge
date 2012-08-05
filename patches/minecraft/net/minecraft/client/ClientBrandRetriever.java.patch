@@ -1,0 +1,10 @@
+--- ../src_base/minecraft/net/minecraft/client/ClientBrandRetriever.java
++++ ../src_work/minecraft/net/minecraft/client/ClientBrandRetriever.java
+@@ -4,6 +4,6 @@
+ {
+     public static String getClientModName()
+     {
+-        return "fml";
++        return "forge,fml";
+     }
+ }

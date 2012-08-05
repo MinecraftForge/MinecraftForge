@@ -1,8 +1,9 @@
 import os
-import commands
+import sys
 import fnmatch
-import re
-import subprocess, shlex, shutil
+import shlex
+import difflib
+import time
 
 def cmdsplit(args):
     if os.sep == '\\':
@@ -25,25 +26,27 @@ def cleanDirs(path):
         os.rmdir(path)
         
 def main():
-    print 'Creating patches'
-    base = os.path.normpath(os.path.join('..', 'src_base'))
-    work = os.path.normpath(os.path.join('..', 'src_work'))
-    timestamp = re.compile(r'[0-9-]* [0-9:\.]* [+-][0-9]*\r?\n')
+    print("Creating patches")
+    mcp = os.path.normpath(sys.argv[1])
+    forge_dir = os.path.normpath(sys.argv[2])
+    patchd = os.path.normpath(os.path.join(forge_dir, 'patches'))
+    base = os.path.normpath(os.path.join(mcp, 'src_base'))
+    work = os.path.normpath(os.path.join(mcp, 'src_work'))
     
     for path, _, filelist in os.walk(work, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.java'):
-            file_base = os.path.normpath(os.path.join(base, path[12:], cur_file)).replace(os.path.sep, '/')
-            file_work = os.path.normpath(os.path.join(work, path[12:], cur_file)).replace(os.path.sep, '/')
-            patch = ''
-            cmd = 'diff -u %s %s -r --strip-trailing-cr --new-file' % (file_base, file_work)
-            process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
-            patch, _ = process.communicate()
-            patch_dir = os.path.join('patches', path[12:])
+            file_base = os.path.normpath(os.path.join(base, path[len(work)+1:], cur_file)).replace(os.path.sep, '/')
+            file_work = os.path.normpath(os.path.join(work, path[len(work)+1:], cur_file)).replace(os.path.sep, '/')
+            
+            fromlines = open(file_base, 'U').readlines()
+            tolines = open(file_work, 'U').readlines()
+            
+            patch = ''.join(difflib.unified_diff(fromlines, tolines, '../' + file_base[len(mcp)+1:], '../' + file_work[len(mcp)+1:], '', '', n=3))
+            patch_dir = os.path.join(patchd, path[len(work)+1:])
             patch_file = os.path.join(patch_dir, cur_file + '.patch')
             
             if len(patch) > 0:
-                print patch_file
-                patch = timestamp.sub("0000-00-00 00:00:00.000000000 -0000\n", patch)
+                print patch_file[len(patchd)+1:]
                 patch = patch.replace('\r\n', '\n')
                 
                 if not os.path.exists(patch_dir):
@@ -52,21 +55,11 @@ def main():
                     fh.write(patch)
             else:
                 if os.path.isfile(patch_file):
-                    print 'Deleting empty patch: ' + patch_file
+                    print("Deleting empty patch: %s"%(patch_file))
                     os.remove(patch_file)
-    
-    for path, _, filelist in os.walk('patches', followlinks=True):
-        for cur_file in fnmatch.filter(filelist, '*.patch'):
-            src_file = os.path.normpath(os.path.join(work, path[8:], cur_file[:-6]))
-            if not os.path.isfile(src_file):
-                print 'Deleting empty patch: %s' % os.path.join(path, cur_file)
-                os.remove(os.path.join(path, cur_file))
-        
-    cleanDirs('patches')
-    print 'Grabing copy of Conf'
-    if os.path.exists('conf'):
-        shutil.rmtree('conf')
-    shutil.copytree('../conf', './conf/')
+                    
+
+    cleanDirs(patchd)
     
 if __name__ == '__main__':
     main()
