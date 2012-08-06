@@ -18,8 +18,12 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.src.BaseMod;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.IPacketHandler;
 
 /**
  * @author cpw
@@ -103,5 +107,10 @@ public class ModLoaderHelper
     {
         ModLoaderModContainer mlmc=findOrBuildModContainer(mod);
         return mlmc;
+    }
+
+    public static IPacketHandler buildPacketHandlerFor(BaseMod mod)
+    {
+        return null;
     }
 }

@@ -1,11 +1,24 @@
 package cpw.mods.fml.common.network;
 
 import static cpw.mods.fml.common.network.FMLPacket.Type.*;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
 
 public class ModIdentifiersPacket extends FMLPacket
 {
+
+    private Map<String, Integer> modIds = Maps.newHashMap();
 
     public ModIdentifiersPacket()
     {
@@ -15,21 +28,41 @@ public class ModIdentifiersPacket extends FMLPacket
     @Override
     public byte[] generatePacket(Object... data)
     {
-        // TODO Auto-generated method stub
-        return null;
+        ByteArrayDataOutput dat = ByteStreams.newDataOutput();
+        Collection<NetworkModHandler >networkMods = FMLNetworkHandler.instance().getNetworkIdMap().values();
+
+        dat.writeInt(networkMods.size());
+        for (NetworkModHandler handler : networkMods)
+        {
+            dat.writeUTF(handler.getContainer().getModId());
+            dat.writeInt(handler.getNetworkId());
+        }
+
+        // TODO send the other id maps as well
+        return dat.toByteArray();
     }
 
     @Override
     public FMLPacket consumePacket(byte[] data)
     {
-        // TODO Auto-generated method stub
-        return null;
+        ByteArrayDataInput dat = ByteStreams.newDataInput(data);
+        int listSize = dat.readInt();
+        for (int i = 0; i < listSize; i++)
+        {
+            String modId = dat.readUTF();
+            int networkId = dat.readInt();
+            modIds.put(modId, networkId);
+        }
+        return this;
     }
 
     @Override
     public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler)
     {
-        // TODO Auto-generated method stub
-
+        for (Entry<String,Integer> idEntry : modIds.entrySet())
+        {
+            handler.bindNetworkId(idEntry.getKey(), idEntry.getValue());
+        }
+        // TODO other id maps
     }
 }

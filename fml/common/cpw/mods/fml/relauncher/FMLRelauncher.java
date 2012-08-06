@@ -24,6 +24,7 @@ import javax.swing.ProgressMonitorInputStream;
 public class FMLRelauncher
 {
     private static FMLRelauncher INSTANCE;
+    public static String logFileNamePattern;
     private RelaunchClassLoader classLoader;
     private Object newApplet;
     private Class<? super Object> appletClass;
@@ -32,11 +33,13 @@ public class FMLRelauncher
 
     public static void handleClientRelaunch(ArgsWrapper wrap)
     {
+        logFileNamePattern = "ForgeModLoader-client-%g.log";
         instance().relaunchClient(wrap);
     }
 
     public static void handleServerRelaunch(ArgsWrapper wrap)
     {
+        logFileNamePattern = "ForgeModLoader-server-%g.log";
         instance().relaunchServer(wrap);
     }
 
@@ -129,7 +132,7 @@ public class FMLRelauncher
     private void setupHome(File minecraftHome)
     {
         FMLInjectionData.build(minecraftHome, classLoader);
-        FMLLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", FMLInjectionData.major, FMLInjectionData.minor, FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion, FMLInjectionData.mcsversion);
+        FMLRelaunchLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", FMLInjectionData.major, FMLInjectionData.minor, FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion, FMLInjectionData.mcsversion);
 
         try
         {
@@ -216,7 +219,7 @@ public class FMLRelauncher
             }
             else
             {
-                FMLLog.severe("Found unknown applet parent %s, unable to inject!\n", launcherClass);
+                FMLRelaunchLog.severe("Found unknown applet parent %s, unable to inject!\n", launcherClass);
                 throw new RuntimeException();
             }
         }

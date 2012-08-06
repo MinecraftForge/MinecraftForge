@@ -37,7 +37,7 @@ public class RelaunchClassLoader extends URLClassLoader
         this.parent = getClass().getClassLoader();
         this.cachedClasses = new HashMap<String,Class>(1000);
         this.transformers = new ArrayList<IClassTransformer>(2);
-        ReflectionHelper.setPrivateValue(ClassLoader.class, null, this, "scl");
+//        ReflectionHelper.setPrivateValue(ClassLoader.class, null, this, "scl");
         Thread.currentThread().setContextClassLoader(this);
     }
 

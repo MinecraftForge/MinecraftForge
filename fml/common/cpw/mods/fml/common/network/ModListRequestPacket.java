@@ -4,6 +4,7 @@ import static cpw.mods.fml.common.network.FMLPacket.Type.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.src.NetHandler;
@@ -33,7 +34,7 @@ public class ModListRequestPacket extends FMLPacket
     public byte[] generatePacket(Object... data)
     {
         ByteArrayDataOutput dat = ByteStreams.newDataOutput();
-        List<ModContainer> activeMods = FMLNetworkHandler.instance().getNetworkModList();
+        Set<ModContainer> activeMods = FMLNetworkHandler.instance().getNetworkModList();
         dat.writeInt(activeMods.size());
         for (ModContainer mc : activeMods)
         {

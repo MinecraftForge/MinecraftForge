@@ -50,6 +50,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
@@ -275,6 +276,7 @@ public class FMLModContainer implements ModContainer
             ASMDataTable asmHarvestedAnnotations = event.getASMHarvestedData();
             asmHarvestedAnnotations.getAnnotationsFor(this);
             annotations = gatherAnnotations(clazz);
+            isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = clazz.newInstance();
             processFieldAnnotations();
         }

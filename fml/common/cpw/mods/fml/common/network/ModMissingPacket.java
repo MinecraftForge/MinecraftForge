@@ -1,5 +1,6 @@
 package cpw.mods.fml.common.network;
 
+import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
 
 public class ModMissingPacket extends FMLPacket
@@ -25,7 +26,7 @@ public class ModMissingPacket extends FMLPacket
     }
 
     @Override
-    public void execute(NetworkManager network, FMLNetworkHandler handler)
+    public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler)
     {
         // TODO Auto-generated method stub
 

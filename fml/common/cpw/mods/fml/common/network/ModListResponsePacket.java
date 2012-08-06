@@ -100,18 +100,21 @@ public class ModListResponsePacket extends FMLPacket
             }
         }
 
+        Packet250CustomPayload pkt = new Packet250CustomPayload();
+        pkt.field_73630_a = "FML";
         if (missingClientMods.size()>0 || versionIncorrectMods.size() > 0)
         {
-            Packet250CustomPayload pkt = new Packet250CustomPayload();
-            pkt.field_73630_a = "FML";
             pkt.field_73629_c = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
-            pkt.field_73628_b = pkt.field_73629_c.length;
-            network.func_74429_a(pkt);
-            NetLoginHandler.func_72531_a((NetLoginHandler) netHandler, false);
-            return;
+        }
+        else
+        {
+            pkt.field_73629_c = FMLPacket.makePacket(MOD_IDENTIFIERS);
         }
 
-        handler.generateModIdentifierData();
+        pkt.field_73628_b = pkt.field_73629_c.length;
+        network.func_74429_a(pkt);
+        // reset the continuation flag - we have completed extra negotiation and the login should complete now
+        NetLoginHandler.func_72531_a((NetLoginHandler) netHandler, true);
     }
 
 }

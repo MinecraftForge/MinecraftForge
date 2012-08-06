@@ -68,7 +68,6 @@ public class LoadController
         }
 
         eventChannels = eventBus.build();
-        FMLNetworkHandler.instance().freezeModList(activeModList);
     }
 
     public void distributeStateMessage(LoaderState state, Object... eventData)
