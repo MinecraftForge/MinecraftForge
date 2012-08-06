@@ -1,4 +1,4 @@
-package net.minecraft.src.forge.oredict;
+package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,14 +10,14 @@ import java.util.Map.Entry;
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.forge.IOreHandler;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event;
 
 public class OreDictionary
 {
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
-    private static ArrayList<IOreHandler> oreHandlers = new ArrayList<IOreHandler>();
     
     /**
      * Gets the integer ID for the specified ore name. 
@@ -69,6 +69,16 @@ public class OreDictionary
     }
     
     /**
+     * Retrieves a list of all unique ore names that are already registered.
+     * 
+     * @return All unique ore names that are currently registered.
+     */
+    public static String[] getOreNames()
+    {
+        return oreIDs.keySet().toArray(new String[0]);
+    }
+    
+    /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
      *  
@@ -84,28 +94,6 @@ public class OreDictionary
             oreStacks.put(id, val);
         }
         return val;
-    }
-    
-    /** 
-     * Register a new ore handler.  
-     * This will automatically call the handler with all current ores during 
-     * registration, and every time a new ore is added later.
-     * 
-     * @param handler The Ore Handler
-     */
-    public static void registerOreHandler(IOreHandler handler)
-    {
-        oreHandlers.add(handler);
-        
-        HashMap<String, Integer> tmp = (HashMap<String, Integer>)oreIDs.clone();
-        
-        for(Map.Entry<String, Integer> entry : tmp.entrySet())
-        {
-            for(ItemStack stack : getOres(entry.getValue()))
-            {
-                handler.registerOre(entry.getKey(), stack);
-            }
-        }
     }
     
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
@@ -129,10 +117,18 @@ public class OreDictionary
         ArrayList<ItemStack> ores = getOres(id);
         ore = ore.copy();
         ores.add(ore);
+        MinecraftForge.eventBus.post(new OreRegisterEvent(name, ore));
+    }
+    
+    public static class OreRegisterEvent extends Event
+    {
+        public final String Name;
+        public final ItemStack Ore;
         
-        for (IOreHandler handler : oreHandlers)
+        public OreRegisterEvent(String name, ItemStack ore)
         {
-            handler.registerOre(name, ore);
+            this.Name = name;
+            this.Ore = ore;
         }
     }
 }

@@ -1,4 +1,4 @@
-package net.minecraft.src.forge.oredict;
+package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.Iterator;
