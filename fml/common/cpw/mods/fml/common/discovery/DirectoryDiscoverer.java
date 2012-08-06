@@ -30,12 +30,19 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
         }
     }
 
+    private ASMDataTable table;
+
     @Override
-    public List<ModContainer> discover(ModCandidate candidate)
+    public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table)
     {
+        this.table = table;
         List<ModContainer> found = Lists.newArrayList();
         FMLLog.fine("Examining directory %s for potential mods", candidate.getModContainer().getName());
         exploreFileSystem("", candidate.getModContainer(), found, candidate, null);
+        for (ModContainer mc : found)
+        {
+            table.addContainer(mc);
+        }
         return found;
     }
 
@@ -85,6 +92,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 }
 
                 modParser.validate();
+                modParser.sendToTable(table, candidate);
                 ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer());
                 if (container!=null)
                 {

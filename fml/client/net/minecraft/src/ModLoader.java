@@ -36,6 +36,8 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -446,7 +448,7 @@ public class ModLoader
      */
     public static boolean isChannelActive(EntityPlayer player, String channel)
     {
-        return FMLCommonHandler.instance().isChannelActive(channel, player);
+        return NetworkRegistry.instance().isChannelActive(channel, (Player)player);
     }
 
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
@@ -592,7 +594,7 @@ public class ModLoader
      */
     public static void registerPacketChannel(BaseMod mod, String channel)
     {
-        FMLCommonHandler.instance().registerChannel(FMLCommonHandler.instance().findContainerFor(mod), channel);
+        NetworkRegistry.instance().registerChannel(FMLCommonHandler.instance().findContainerFor(mod), channel);
     }
 
     /**

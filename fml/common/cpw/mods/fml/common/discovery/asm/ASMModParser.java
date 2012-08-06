@@ -14,6 +14,9 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.LoaderException;
+import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.discovery.ModCandidate;
+import cpw.mods.fml.common.discovery.ModDiscoverer;
 
 public class ASMModParser
 {
@@ -23,18 +26,18 @@ public class ASMModParser
     private Type asmSuperType;
     private LinkedList<ModAnnotation> annotations = Lists.newLinkedList();
     private String baseModProperties;
-    
+
     static enum AnnotationType
     {
         CLASS, FIELD, METHOD;
     }
-    
+
     public ASMModParser(InputStream stream) throws IOException
     {
         ClassReader reader = new ClassReader(stream);
         reader.accept(new ModClassVisitor(this), 0);
     }
-    
+
     public void beginNewTypeName(String typeQName, int classVersion, String superClassQName)
     {
         this.asmType = Type.getObjectType(typeQName);
@@ -58,7 +61,7 @@ public class ASMModParser
         ModAnnotation ann = new ModAnnotation(AnnotationType.FIELD, Type.getType(annotationName), fieldName);
         annotations.addFirst(ann);
     }
-    
+
     @Override
     public String toString()
     {
@@ -91,12 +94,12 @@ public class ASMModParser
     {
         return annotations;
     }
-    
+
     public void validate()
     {
 //        if (classVersion > 50.0)
 //        {
-//            
+//
 //            throw new LoaderException(new RuntimeException("Mod compiled for Java 7 detected"));
 //        }
     }
@@ -114,5 +117,13 @@ public class ASMModParser
     public String getBaseModProperties()
     {
         return this.baseModProperties;
+    }
+
+    public void sendToTable(ASMDataTable table, ModCandidate candidate)
+    {
+        for (ModAnnotation ma : annotations)
+        {
+            table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
+        }
     }
 }

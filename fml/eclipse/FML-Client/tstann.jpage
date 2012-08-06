@@ -9,3 +9,8 @@ System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
 
 
 org.objectweb.asm.Type.getDescriptor(net.minecraft.src.CraftingManager.class.getDeclaredMethods()[1])
+
+
+com.google.common.collect.Tables.newCustomTable(new HashMap<String,Map<String,List<String>>(), new com.google.common.base.Supplier() {
+
+});

@@ -31,6 +31,7 @@ import com.google.common.collect.ImmutableBiMap.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -38,6 +39,8 @@ import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.Mod.Block;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.Metadata;
+import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -68,6 +71,7 @@ public class FMLModContainer implements ModContainer
     private LoadController controller;
     private Multimap<Class<? extends Annotation>, Object> annotations;
     private DefaultArtifactVersion processedVersion;
+    private boolean isNetworkMod;
 
     private static final BiMap<Class<? extends FMLStateEvent>, Class<? extends Annotation>> modAnnotationTypes = ImmutableBiMap.<Class<? extends FMLStateEvent>, Class<? extends Annotation>>builder()
         .put(FMLPreInitializationEvent.class, Mod.PreInit.class)
@@ -268,6 +272,8 @@ public class FMLModContainer implements ModContainer
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
             Class<?> clazz = Class.forName(className, true, modClassLoader);
+            ASMDataTable asmHarvestedAnnotations = event.getASMHarvestedData();
+            asmHarvestedAnnotations.getAnnotationsFor(this);
             annotations = gatherAnnotations(clazz);
             modInstance = clazz.newInstance();
             processFieldAnnotations();
@@ -315,5 +321,11 @@ public class FMLModContainer implements ModContainer
     public boolean isImmutable()
     {
         return false;
+    }
+
+    @Override
+    public boolean isNetworkMod()
+    {
+        return isNetworkMod;
     }
 }
