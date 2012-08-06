@@ -16,20 +16,16 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
-import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,27 +65,12 @@ public class FMLCommonHandler
      * The singleton
      */
     private static final FMLCommonHandler INSTANCE = new FMLCommonHandler();
-    private static final Pattern metadataFile = Pattern.compile("$/modinfo.json$");;
-    /**
-     * A map of mods to their network channels
-     */
-    private Map<ModContainer, Set<String>> channelList = new HashMap<ModContainer, Set<String>>();
-    /**
-     * A map of channels to mods
-     */
-    private Map<String, ModContainer> modChannels = new HashMap<String, ModContainer>();
-    /**
-     * A map of active channels per player
-     */
-    private Map<Object, Set<String>> activeChannels = new HashMap<Object, Set<String>>();
     /**
      * The delegate for side specific data and functions
      */
     private IFMLSidedHandler sidedDelegate;
 
     private int uniqueEntityListId = 220;
-
-    private List<ModContainer> auxilliaryContainers = new ArrayList<ModContainer>();
 
     private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
 
@@ -174,119 +155,6 @@ public class FMLCommonHandler
         }
         return null;
     }
-    /**
-     * Lookup the mod for a channel
-     * @param channel
-     * @return
-     */
-    public ModContainer getModForChannel(String channel)
-    {
-        return modChannels.get(channel);
-    }
-    /**
-     * Get the channel list for a mod
-     * @param modLoaderModContainer
-     * @return
-     */
-    public Set<String> getChannelListFor(ModContainer container)
-    {
-        return channelList.get(container);
-    }
-
-    /**
-     * register a channel to a mod
-     * @param container
-     * @param channelName
-     */
-    public void registerChannel(ModContainer container, String channelName)
-    {
-        if (modChannels.containsKey(channelName))
-        {
-            // NOOP
-        }
-
-        Set<String> list = channelList.get(container);
-
-        if (list == null)
-        {
-            list = new HashSet<String>();
-            channelList.put(container, list);
-        }
-
-        list.add(channelName);
-        modChannels.put(channelName, container);
-    }
-
-    /**
-     * Activate the channel for the player
-     * @param player
-     */
-    public void activateChannel(Object player, String channel)
-    {
-        Set<String> active = activeChannels.get(player);
-
-        if (active == null)
-        {
-            active = new HashSet<String>();
-            activeChannels.put(player, active);
-        }
-
-        active.add(channel);
-    }
-
-    /**
-     * Deactivate the channel for the player
-     * @param player
-     * @param channel
-     */
-    public void deactivateChannel(Object player, String channel)
-    {
-        Set<String> active = activeChannels.get(player);
-
-        if (active == null)
-        {
-            active = new HashSet<String>();
-            activeChannels.put(player, active);
-        }
-
-        active.remove(channel);
-    }
-
-    /**
-     * Get the packet 250 channel registration string
-     * @return
-     */
-    public byte[] getPacketRegistry()
-    {
-        StringBuffer sb = new StringBuffer();
-
-        for (String chan : modChannels.keySet())
-        {
-            sb.append(chan).append("\0");
-        }
-
-        try
-        {
-            return sb.toString().getBytes("UTF8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            FMLLog.log(Level.WARNING, e, "Error building registration list");
-            return new byte[0];
-        }
-    }
-
-    /**
-     * Is the specified channel active for the player?
-     * @param channel
-     * @param player
-     * @return
-     */
-    public boolean isChannelActive(String channel, Object player)
-    {
-        return activeChannels.get(player).contains(channel);
-    }
-
     /**
      * Get the forge mod loader logging instance (goes to the forgemodloader log file)
      * @return
@@ -409,6 +277,7 @@ public class FMLCommonHandler
     private Class<?> forge;
     private boolean noForge;
     private List<String> brandings;
+    private List<ModContainer> auxilliaryContainers = new ArrayList<ModContainer>();
 
     private Class<?> findMinecraftForge()
     {
@@ -531,17 +400,17 @@ public class FMLCommonHandler
     {
         tickStart(EnumSet.of(TickType.WORLDLOAD));
     }
-    
+
     public void handleServerStarting(MinecraftServer server)
     {
         Loader.instance().serverStarting(server);
     }
-    
+
     public void handleServerStarted()
     {
         Loader.instance().serverStarted();
     }
-    
+
     public void handleServerStopping()
     {
         Loader.instance().serverStopping();

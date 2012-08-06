@@ -59,6 +59,8 @@ import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
+import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -88,6 +90,7 @@ public class ModLoaderModContainer implements ModContainer
     private boolean enabled = true;
     private String sortingProperties;
     private ArtifactVersion processedVersion;
+    private boolean isNetworkMod;
 
     public ModLoaderModContainer(String className, File modSource, String sortingProperties)
     {
@@ -490,6 +493,7 @@ public class ModLoaderModContainer implements ModContainer
             modClassLoader.addFile(modSource);
             Class<? extends BaseMod> modClazz = (Class<? extends BaseMod>) Class.forName(modClazzName, true, modClassLoader);
             configureMod(modClazz);
+            isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
             mod = (BaseMod)modClazz.newInstance();
         }
         catch (Exception e)
@@ -563,5 +567,11 @@ public class ModLoaderModContainer implements ModContainer
     public boolean isImmutable()
     {
         return false;
+    }
+
+    @Override
+    public boolean isNetworkMod()
+    {
+        return this.isNetworkMod;
     }
 }

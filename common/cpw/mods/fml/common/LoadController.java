@@ -19,6 +19,7 @@ import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
+import cpw.mods.fml.common.network.FMLNetworkHandler;
 
 public class LoadController
 {
@@ -67,6 +68,7 @@ public class LoadController
         }
 
         eventChannels = eventBus.build();
+        FMLNetworkHandler.instance().freezeModList(activeModList);
     }
 
     public void distributeStateMessage(LoaderState state, Object... eventData)

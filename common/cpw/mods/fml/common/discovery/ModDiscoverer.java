@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,9 +27,18 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Tables;
+import com.google.common.collect.ImmutableTable.Builder;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderException;
@@ -40,6 +51,8 @@ public class ModDiscoverer
     private static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
 
     private List<ModCandidate> candidates = Lists.newArrayList();
+
+    private ASMDataTable dataTable = new ASMDataTable();
 
     public void findClasspathMods(ModClassLoader modClassLoader)
     {
@@ -114,7 +127,7 @@ public class ModDiscoverer
         {
             try
             {
-                List<ModContainer> mods = candidate.explore();
+                List<ModContainer> mods = candidate.explore(dataTable);
                 modList.addAll(mods);
             }
             catch (LoaderException le)
@@ -129,4 +142,10 @@ public class ModDiscoverer
 
         return modList;
     }
+
+    public ASMDataTable getASMTable()
+    {
+        return dataTable;
+    }
+
 }

@@ -122,4 +122,10 @@ public class DummyModContainer implements ModContainer
     {
         return false;
     }
+
+    @Override
+    public boolean isNetworkMod()
+    {
+        return false;
+    }
 }

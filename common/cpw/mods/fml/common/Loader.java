@@ -251,7 +251,7 @@ public class Loader
      * Finally, if they are successfully loaded as classes, they are then added
      * to the available mod list.
      */
-    private void identifyMods()
+    private ModDiscoverer identifyMods()
     {
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
         for (String cont : injectedContainers)
@@ -279,6 +279,7 @@ public class Loader
         mods.addAll(discoverer.identifyMods());
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
+        return discoverer;
     }
 
     /**
@@ -360,15 +361,15 @@ public class Loader
         namedMods = Maps.newHashMap();
         modController = new LoadController(this);
         modController.transition(LoaderState.LOADING);
-        identifyMods();
+        ModDiscoverer disc = identifyMods();
         disableRequestedMods();
         sortModList();
         mods = ImmutableList.copyOf(mods);
         modController.distributeStateMessage(FMLLoadEvent.class);
         modController.transition(LoaderState.CONSTRUCTING);
-        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader);
+        modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         modController.transition(LoaderState.PREINITIALIZATION);
-        modController.distributeStateMessage(LoaderState.PREINITIALIZATION);
+        modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable());
         modController.transition(LoaderState.INITIALIZATION);
     }
 

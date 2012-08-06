@@ -18,7 +18,7 @@ import cpw.mods.fml.common.discovery.asm.ASMModParser;
 public class JarDiscoverer implements ITypeDiscoverer
 {
     @Override
-    public List<ModContainer> discover(ModCandidate candidate)
+    public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table)
     {
         List<ModContainer> foundMods = Lists.newArrayList();
         FMLLog.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
@@ -41,9 +41,11 @@ public class JarDiscoverer implements ITypeDiscoverer
                 {
                     ASMModParser modParser = new ASMModParser(jar.getInputStream(ze));
                     modParser.validate();
+                    modParser.sendToTable(table, candidate);
                     ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer());
                     if (container!=null)
                     {
+                        table.addContainer(container);
                         foundMods.add(container);
                         container.bindMetadata(mc);
                     }

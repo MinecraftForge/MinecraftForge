@@ -98,6 +98,11 @@ public class InjectedModContainer implements ModContainer
     }
 
     @Override
+    public boolean isNetworkMod()
+    {
+        return wrappedContainer.isNetworkMod();
+    }
+    @Override
     public boolean isImmutable()
     {
         return true;

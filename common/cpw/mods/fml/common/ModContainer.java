@@ -150,4 +150,6 @@ public interface ModContainer
     ProxyInjector findSidedProxy();
 
     boolean isImmutable();
+
+    boolean isNetworkMod();
 }

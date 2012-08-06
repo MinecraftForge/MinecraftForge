@@ -39,8 +39,8 @@ public class ModCandidate
     {
         return sourceType;
     }
-    public List<ModContainer> explore()
+    public List<ModContainer> explore(ASMDataTable table)
     {
-        return sourceType.findMods(this);
+        return sourceType.findMods(this, table);
     }
 }
