@@ -39,6 +39,16 @@ public class ForgeHooks
         }
         world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata);
     }
+
+    public static ItemStack getGrassSeed(World world)
+    {
+        SeedEntry entry = (SeedEntry)WeightedRandom.getRandomItem(world.rand, seedList);
+        if (entry == null || entry.seed == null)
+        {
+            return null;
+        }
+        return entry.seed.copy();
+    }
     
     static
     {
