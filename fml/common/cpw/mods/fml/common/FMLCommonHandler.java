@@ -284,14 +284,9 @@ public class FMLCommonHandler
         if (forge==null && !noForge)
         {
             try {
-                forge = Class.forName("forge.MinecraftForge");
+                forge = Class.forName("net.minecraftforge.common.MinecraftForge");
             } catch (Exception ex) {
-                try {
-                    forge = Class.forName("net.minecraft.src.forge.MinecraftForge");
-                } catch (Exception ex2) {
-                    // Ignore- forge isn't loaded
-                    noForge = true;
-                }
+                noForge = true;
             }
         }
         return forge;

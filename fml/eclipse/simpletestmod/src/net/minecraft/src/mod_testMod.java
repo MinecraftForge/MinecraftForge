@@ -6,10 +6,21 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IScheduledTickHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.TickRegistry;
 import net.minecraft.client.Minecraft;
 
+@NetworkMod(channels={"mod_TestMod"},clientSideRequired=true,packetHandler=mod_testMod.PacketHandler.class)
 public class mod_testMod extends BaseMod {
+    public static class PacketHandler implements IPacketHandler
+    {
+        @Override
+        public void onPacketData(NetworkManager manager, Packet250CustomPayload packet)
+        {
+        }
+    }
+
     private long ts;
     @Override
     public String getVersion() {

@@ -594,7 +594,7 @@ public class ModLoader
      */
     public static void registerPacketChannel(BaseMod mod, String channel)
     {
-        NetworkRegistry.instance().registerChannel(FMLCommonHandler.instance().findContainerFor(mod), channel);
+        NetworkRegistry.instance().registerChannel(ModLoaderHelper.buildPacketHandlerFor(mod), channel);
     }
 
     /**
