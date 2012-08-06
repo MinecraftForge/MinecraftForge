@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.NetServerHandler;
+import net.minecraft.src.NetworkManager;
+
 import org.objectweb.asm.Type;
 
 import com.google.common.base.Strings;
@@ -43,7 +47,7 @@ public class NetworkModHandler
         this.localId = assignedIds++;
         this.networkId = this.localId;
 
-        Set<ASMData> versionCheckHandlers = table.getAnnotationsFor(container).get(Type.getDescriptor(NetworkMod.VersionCheckHandler.class));
+        Set<ASMData> versionCheckHandlers = table.getAnnotationsFor(container).get(NetworkMod.VersionCheckHandler.class.getName());
         String versionCheckHandlerMethod = null;
         for (ASMData vch : versionCheckHandlers)
         {
@@ -83,6 +87,45 @@ public class NetworkModHandler
                     FMLLog.log(Level.WARNING, e, "Invalid bounded range %s specified for network mod id %s", versionBounds, container.getModId());
                 }
             }
+        }
+
+        if (!mod.packetHandler().getName().equals(NetworkMod.NULL.class.getName()))
+        {
+            IPacketHandler instance;
+            try
+            {
+                instance = mod.packetHandler().newInstance();
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Unable to create packet handler instance %s", mod.packetHandler().getName());
+                throw new FMLNetworkException(e);
+            }
+
+            for (String channel : mod.channels())
+            {
+                NetworkRegistry.instance().registerChannel(instance, channel);
+            }
+        }
+        else if (mod.channels().length > 0)
+        {
+            FMLLog.warning("The mod id %s attempted to register channels without specifying a valid packet handler", container.getModId());
+        }
+
+        if (!mod.connectionHandler().getName().equals(NetworkMod.NULL.class.getName()))
+        {
+            IConnectionHandler instance;
+            try
+            {
+                instance = mod.connectionHandler().newInstance();
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Unable to create connection handler instance %s", mod.connectionHandler().getName());
+                throw new FMLNetworkException(e);
+            }
+
+            NetworkRegistry.instance().registerConnectionHandler(instance);
         }
     }
 
@@ -142,5 +185,10 @@ public class NetworkModHandler
     public boolean isNetworkMod()
     {
         return mod != null;
+    }
+
+    public void setNetworkId(int value)
+    {
+        this.networkId = value;
     }
 }

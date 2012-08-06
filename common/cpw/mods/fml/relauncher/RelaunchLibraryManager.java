@@ -158,7 +158,7 @@ public class RelaunchLibraryManager
         {
             if (!caughtErrors.isEmpty())
             {
-                FMLLog.severe("There were errors during initial FML setup. " +
+                FMLRelaunchLog.severe("There were errors during initial FML setup. " +
                 		"Some files failed to download or were otherwise corrupted. " +
                 		"You will need to manually obtain the following files from " +
                 		"these download links and ensure your lib directory is clean. ");
@@ -166,21 +166,21 @@ public class RelaunchLibraryManager
                 {
                     for (String file : set.getLibraries())
                     {
-                        FMLLog.severe("*** Download "+set.getRootURL(), file);
+                        FMLRelaunchLog.severe("*** Download "+set.getRootURL(), file);
                     }
                 }
-                FMLLog.severe("<===========>");
-                FMLLog.severe("The following is the errors that caused the setup to fail. " +
+                FMLRelaunchLog.severe("<===========>");
+                FMLRelaunchLog.severe("The following is the errors that caused the setup to fail. " +
                 		"They may help you diagnose and resolve the issue");
                 for (Throwable t : caughtErrors)
                 {
-                    FMLLog.severe(t.getMessage());
+                    FMLRelaunchLog.severe(t.getMessage());
                 }
-                FMLLog.severe("<<< ==== >>>");
-                FMLLog.severe("The following is diagnostic information for developers to review.");
+                FMLRelaunchLog.severe("<<< ==== >>>");
+                FMLRelaunchLog.severe("The following is diagnostic information for developers to review.");
                 for (Throwable t : caughtErrors)
                 {
-                    FMLLog.log(Level.SEVERE, t, "Error details");
+                    FMLRelaunchLog.log(Level.SEVERE, t, "Error details");
                 }
                 throw new RuntimeException("A fatal error occured and FML cannot continue");
             }
@@ -256,7 +256,7 @@ public class RelaunchLibraryManager
 
         for (File coreMod : coreModList)
         {
-            FMLLog.fine("Found a candidate coremod %s", coreMod.getName());
+            FMLRelaunchLog.fine("Found a candidate coremod %s", coreMod.getName());
             JarFile jar;
             Attributes mfAttributes;
             try
@@ -266,14 +266,14 @@ public class RelaunchLibraryManager
             }
             catch (IOException ioe)
             {
-                FMLLog.log(Level.SEVERE, ioe, "Unable to read the coremod jar file %s - ignoring", coreMod.getName());
+                FMLRelaunchLog.log(Level.SEVERE, ioe, "Unable to read the coremod jar file %s - ignoring", coreMod.getName());
                 continue;
             }
 
             String fmlCorePlugin = mfAttributes.getValue("FMLCorePlugin");
             if (fmlCorePlugin == null)
             {
-                FMLLog.severe("The coremod %s does not contain a valid jar manifest- it will be ignored", coreMod.getName());
+                FMLRelaunchLog.severe("The coremod %s does not contain a valid jar manifest- it will be ignored", coreMod.getName());
                 continue;
             }
 
@@ -300,7 +300,7 @@ public class RelaunchLibraryManager
             }
             catch (MalformedURLException e)
             {
-                FMLLog.log(Level.SEVERE, e, "Unable to convert file into a URL. weird");
+                FMLRelaunchLog.log(Level.SEVERE, e, "Unable to convert file into a URL. weird");
                 continue;
             }
             try
@@ -316,23 +316,23 @@ public class RelaunchLibraryManager
                         libraries.add((ILibrarySet) Class.forName(libName, true, classLoader).newInstance());
                     }
                 }
-                FMLLog.fine("Loaded coremod %s", coreMod.getName());
+                FMLRelaunchLog.fine("Loaded coremod %s", coreMod.getName());
             }
             catch (ClassNotFoundException cnfe)
             {
-                FMLLog.log(Level.SEVERE, cnfe, "Coremod %s: Unable to class load the plugin %s", coreMod.getName(), fmlCorePlugin);
+                FMLRelaunchLog.log(Level.SEVERE, cnfe, "Coremod %s: Unable to class load the plugin %s", coreMod.getName(), fmlCorePlugin);
             }
             catch (ClassCastException cce)
             {
-                FMLLog.log(Level.SEVERE, cce, "Coremod %s: The plugin %s is not an implementor of IFMLLoadingPlugin", coreMod.getName(), fmlCorePlugin);
+                FMLRelaunchLog.log(Level.SEVERE, cce, "Coremod %s: The plugin %s is not an implementor of IFMLLoadingPlugin", coreMod.getName(), fmlCorePlugin);
             }
             catch (InstantiationException ie)
             {
-                FMLLog.log(Level.SEVERE, ie, "Coremod %s: The plugin class %s was not instantiable", coreMod.getName(), fmlCorePlugin);
+                FMLRelaunchLog.log(Level.SEVERE, ie, "Coremod %s: The plugin class %s was not instantiable", coreMod.getName(), fmlCorePlugin);
             }
             catch (IllegalAccessException iae)
             {
-                FMLLog.log(Level.SEVERE, iae, "Coremod %s: The plugin class %s was not accessible", coreMod.getName(), fmlCorePlugin);
+                FMLRelaunchLog.log(Level.SEVERE, iae, "Coremod %s: The plugin class %s was not accessible", coreMod.getName(), fmlCorePlugin);
             }
         }
     }
@@ -419,7 +419,7 @@ public class RelaunchLibraryManager
         {
             URL libDownload = new URL(String.format(rootUrl,libFile.getName()));
             String infoString = String.format("Downloading file %s", libDownload.toString());
-            FMLLog.info(infoString);
+            FMLRelaunchLog.info(infoString);
             InputStream urlStream = libDownload.openStream();
             urlStream = FMLRelauncher.instance().wrapStream(urlStream, infoString);
             ReadableByteChannel urlChannel = Channels.newChannel(urlStream);
@@ -430,11 +430,11 @@ public class RelaunchLibraryManager
             libFileStream.close();
             urlChannel.close();
             urlStream.close();
-            FMLLog.info("Download complete");
+            FMLRelaunchLog.info("Download complete");
         }
         catch (Exception e)
         {
-            FMLLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
+            FMLRelaunchLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
             		"have an environment without internet access. You will need to download " +
             		"the file manually\n", libFile.getName());
             libFile.delete();

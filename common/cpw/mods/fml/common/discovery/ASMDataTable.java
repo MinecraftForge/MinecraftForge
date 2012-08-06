@@ -1,6 +1,7 @@
 package cpw.mods.fml.common.discovery;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,7 +70,7 @@ public class ASMDataTable
             return container.getSource().equals(data.candidate.getModContainer());
         }
     }
-    private SetMultimap<String, ASMData> globalAnnotationData;
+    private SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
     private Map<ModContainer, SetMultimap<String,ASMData>> containerAnnotationData;
 
     private List<ModContainer> containers = Lists.newArrayList();

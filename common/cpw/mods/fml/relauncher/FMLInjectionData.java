@@ -33,7 +33,7 @@ public class FMLInjectionData
             }
             catch (IOException ex)
             {
-                FMLLog.log(Level.SEVERE, ex, "Could not get FML version information - corrupted installation detected!");
+                FMLRelaunchLog.log(Level.SEVERE, ex, "Could not get FML version information - corrupted installation detected!");
             }
         }
 

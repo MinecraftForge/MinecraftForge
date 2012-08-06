@@ -9,7 +9,23 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetLoginHandler extends NetHandler
-@@ -129,8 +131,11 @@
+@@ -39,7 +41,7 @@
+             this.func_72529_d();
+         }
+ 
+-        if (this.field_72535_g++ == 600)
++        if (this.field_72535_g++ == 6000)
+         {
+             this.func_72527_a("Took too long to log in");
+         }
+@@ -125,12 +127,17 @@
+         }
+     }
+ 
+-    public void func_72455_a(Packet1Login p_72455_1_) {}
++    public void func_72455_a(Packet1Login p_72455_1_) {
++        FMLNetworkHandler.handleLoginPacketOnServer(this, p_72455_1_);
++    }
  
      public void func_72529_d()
      {
@@ -23,7 +39,7 @@
          if (var1 != null)
          {
              this.func_72527_a(var1);
-@@ -221,4 +226,15 @@
+@@ -221,4 +228,20 @@
      {
          return p_72531_0_.field_72544_i = p_72531_1_;
      }
@@ -38,4 +54,9 @@
 +    {
 +        // NOOP for login
 +    }
++
++    public EntityPlayer getPlayer()
++    {
++        return null;
++    };
  }

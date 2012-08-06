@@ -22,7 +22,7 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
-+
++        FMLNetworkHandler.handlePacket250Packet(p_72501_1_, field_72555_g, this);
 +    }
 +
 +    public void handleVanilla250Packet(Packet250CustomPayload p_72501_1_)
@@ -30,3 +30,14 @@
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
              String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
+@@ -1208,4 +1217,10 @@
+     {
+         return this.field_72555_g;
+     }
++
++    @Override
++    public EntityPlayer getPlayer()
++    {
++        return field_72563_h.field_71439_g;
++    }
+ }

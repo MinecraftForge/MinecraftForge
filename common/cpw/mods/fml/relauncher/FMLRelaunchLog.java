@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import cpw.mods.fml.relauncher.FMLLogFormatter;
 
-public class FMLLog
+public class FMLRelaunchLog
 {
 
     private static class LoggingOutStream extends ByteArrayOutputStream
@@ -55,13 +55,13 @@ public class FMLLog
      * Our special logger for logging issues to. We copy various assets from the
      * Minecraft logger to acheive a similar appearance.
      */
-    public static FMLLog log = new FMLLog();
+    public static FMLRelaunchLog log = new FMLRelaunchLog();
 
     static File minecraftHome;
     private static boolean configured;
     private Logger myLog;
 
-    private FMLLog()
+    private FMLRelaunchLog()
     {
     }
     /**
@@ -90,7 +90,7 @@ public class FMLLog
         log.myLog.setLevel(Level.ALL);
         try
         {
-            File logPath = new File(minecraftHome, "ForgeModLoader-%g.log");
+            File logPath = new File(minecraftHome, FMLRelauncher.logFileNamePattern);
             FileHandler fileHandler = new FileHandler(logPath.getPath(), 0, 3);
             fileHandler.setFormatter(formatter);
             fileHandler.setLevel(Level.ALL);

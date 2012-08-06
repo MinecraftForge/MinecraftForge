@@ -7,4 +7,8 @@ public class FMLNetworkException extends RuntimeException
     {
         super(e);
     }
+
+    public FMLNetworkException()
+    {
+    }
 }

@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 public class FMLLog
 {
-    private static cpw.mods.fml.relauncher.FMLLog coreLog = cpw.mods.fml.relauncher.FMLLog.log;
+    private static cpw.mods.fml.relauncher.FMLRelaunchLog coreLog = cpw.mods.fml.relauncher.FMLRelaunchLog.log;
 
     public static void log(Level level, String format, Object... data)
     {

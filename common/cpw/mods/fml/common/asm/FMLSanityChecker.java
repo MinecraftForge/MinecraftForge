@@ -1,4 +1,4 @@
-package cpw.mods.fml.relauncher;
+package cpw.mods.fml.common.asm;
 
 import java.util.Map;
 
@@ -8,6 +8,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
+
+import cpw.mods.fml.relauncher.FMLRelauncher;
+import cpw.mods.fml.relauncher.IFMLCallHook;
+import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
@@ -22,7 +26,7 @@ public class FMLSanityChecker implements IFMLCallHook
         @Override
         public FieldVisitor visitField(int arg0, String arg1, String arg2, String arg3, Object arg4)
         {
-            if (arg1 == "fmlMarker")
+            if ("fmlMarker".equals(arg1))
             {
                 foundMarker = true;
             }
@@ -46,7 +50,7 @@ public class FMLSanityChecker implements IFMLCallHook
         cr.accept(mlTester, ClassReader.SKIP_CODE);
         if (!mlTester.foundMarker)
         {
-            JOptionPane.showMessageDialog(FMLRelauncher.instance().popupWindow, "<html>CRITICAL ERROR<br/>" +
+            JOptionPane.showMessageDialog(null, "<html>CRITICAL ERROR<br/>" +
             		"ModLoader was detected in this environment<br/>" +
                         "ForgeModLoader cannot be installed alongside ModLoader<br/>" +
                         "All mods should work without ModLoader being installed<br/>" +

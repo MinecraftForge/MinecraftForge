@@ -13,7 +13,7 @@ public class FMLCorePlugin implements IFMLLoadingPlugin
     @Override
     public String[] getASMTransformerClass()
     {
-        return new String[] {"cpw.mods.fml.common.asm.ASMTransformer"};
+        return new String[] {"cpw.mods.fml.common.asm.ASMTransformer", "cpw.mods.fml.common.asm.MarkerTransformer"};
     }
 
     @Override
@@ -25,7 +25,7 @@ public class FMLCorePlugin implements IFMLLoadingPlugin
     @Override
     public String getSetupClass()
     {
-        return "cpw.mods.fml.relauncher.FMLSanityChecker";
+        return "cpw.mods.fml.common.asm.FMLSanityChecker";
     }
 
     @Override

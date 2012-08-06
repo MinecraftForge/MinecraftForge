@@ -33,6 +33,26 @@ public @interface NetworkMod
      * @return
      */
     String versionBounds() default "";
+
+    /**
+     * A packet handler implementation for channels registered through this annotation
+     *
+     * @return
+     */
+    Class<? extends IPacketHandler> packetHandler() default NULL.class;
+
+    /**
+     * A connection handler implementation for this network mod
+     *
+     * @return
+     */
+    Class<? extends IConnectionHandler> connectionHandler() default NULL.class;
+    /**
+     * Special dummy class for handling stupid annotation default values
+     * @author cpw
+     *
+     */
+    static interface NULL extends IPacketHandler, IConnectionHandler {};
     /**
      * A marker for a method that will be offered the client's version string
      * if more sophisticated version rejection handling is required:

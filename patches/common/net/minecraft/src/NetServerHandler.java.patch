@@ -21,3 +21,14 @@
          DataInputStream var2;
          ItemStack var3;
          ItemStack var4;
+@@ -1028,4 +1035,10 @@
+             }
+         }
+     }
++
++    @Override
++    public EntityPlayer getPlayer()
++    {
++        return field_72574_e;
++    }
+ }
