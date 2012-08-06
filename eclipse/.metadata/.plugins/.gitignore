@@ -10,3 +10,10 @@
 /org.eclipse.team.cvs.core/
 /org.eclipse.ui.workbench/
 /org.eclipse.wb.discovery.core/
+/org.eclipse.recommenders.rcp/
+/org.eclipse.recommenders.completion.rcp.overrides/
+/org.eclipse.recommenders.completion.rcp.calls/
+/org.eclipse.mylyn.context.core/
+/org.eclipse.search/
+/org.eclipse.jdt.debug.ui/
+/org.eclipse.ui.editors/

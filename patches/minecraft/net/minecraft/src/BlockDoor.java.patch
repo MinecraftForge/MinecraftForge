@@ -1,0 +1,38 @@
+--- ../src_base/minecraft/net/minecraft/src/BlockDoor.java
++++ ../src_work/minecraft/net/minecraft/src/BlockDoor.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.src;
+ 
+ import java.util.Random;
++
++import static net.minecraftforge.common.Orientation.*;
+ 
+ public class BlockDoor extends Block
+ {
+@@ -257,7 +259,7 @@
+     {
+         if (this.blockMaterial == Material.iron)
+         {
+-            return true;
++            return false; //Allow items to interact with the door
+         }
+         else
+         {
+@@ -327,7 +329,7 @@
+                 var7 = true;
+             }
+ 
+-            if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
++            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP))
+             {
+                 par1World.setBlockWithNotify(par2, par3, par4, 0);
+                 var7 = true;
+@@ -392,7 +394,7 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        return par3 >= 255 ? false : par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && super.canPlaceBlockAt(par1World, par2, par3, par4) && super.canPlaceBlockAt(par1World, par2, par3 + 1, par4);
++        return par3 >= 255 ? false : par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && super.canPlaceBlockAt(par1World, par2, par3, par4) && super.canPlaceBlockAt(par1World, par2, par3 + 1, par4);
+     }
+ 
+     /**

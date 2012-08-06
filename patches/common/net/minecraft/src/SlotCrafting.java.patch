@@ -1,0 +1,10 @@
+--- ../src_base/common/net/minecraft/src/SlotCrafting.java
++++ ../src_work/common/net/minecraft/src/SlotCrafting.java
+@@ -107,6 +107,7 @@
+      */
+     public void onPickupFromSlot(ItemStack par1ItemStack)
+     {
++        ForgeHooks.onTakenFromCrafting(thePlayer, par1ItemStack, craftMatrix);
+         this.onCrafting(par1ItemStack);
+ 
+         for (int var2 = 0; var2 < this.craftMatrix.getSizeInventory(); ++var2)

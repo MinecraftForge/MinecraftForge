@@ -1,0 +1,735 @@
+--- ../src_base/minecraft/net/minecraft/src/Block.java
++++ ../src_work/minecraft/net/minecraft/src/Block.java
+@@ -1,7 +1,13 @@
+ package net.minecraft.src;
+ 
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.common.Orientation;
++import static net.minecraftforge.common.Orientation.*;
+ 
+ public class Block
+ {
+@@ -277,6 +283,7 @@
+             lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
+             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
+         }
++        isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
+     }
+ 
+     /**
+@@ -415,9 +422,10 @@
+         return this.needsRandomTick;
+     }
+ 
++    @Deprecated //Forge: New Metadata sensitive version.
+     public boolean hasTileEntity()
+     {
+-        return this.isBlockContainer;
++        return hasTileEntity(0);
+     }
+ 
+     /**
+@@ -438,7 +446,7 @@
+      */
+     public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        return par1IBlockAccess.getBrightness(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
++        return par1IBlockAccess.getBrightness(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
+     }
+ 
+     /**
+@@ -446,7 +454,7 @@
+      */
+     public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
++        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
+     }
+ 
+     /**
+@@ -607,8 +615,7 @@
+      */
+     public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
+     {
+-        float var6 = this.getBlockHardness(par2World, par3, par4, par5);
+-        return var6 < 0.0F ? 0.0F : (!par1EntityPlayer.canHarvestBlock(this) ? 1.0F / var6 / 100.0F : par1EntityPlayer.getCurrentPlayerStrVsBlock(this) / var6 / 30.0F);
++        return ForgeHooks.blockStrength(this, par1EntityPlayer, par2World, par3, par4, par5);
+     }
+ 
+     /**
+@@ -626,18 +633,13 @@
+     {
+         if (!par1World.isRemote)
+         {
+-            int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
+-
+-            for (int var9 = 0; var9 < var8; ++var9)
++            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
++            
++            for (ItemStack item : items)
+             {
+                 if (par1World.rand.nextFloat() <= par6)
+                 {
+-                    int var10 = this.idDropped(par5, par1World.rand, par7);
+-
+-                    if (var10 > 0)
+-                    {
+-                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var10, 1, this.damageDropped(par5)));
+-                    }
++                    this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
+                 }
+             }
+         }
+@@ -964,7 +966,7 @@
+         par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+         par2EntityPlayer.addExhaustion(0.025F);
+ 
+-        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
++        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+         {
+             ItemStack var8 = this.createStackedBlock(par6);
+ 
+@@ -1218,4 +1220,638 @@
+         canBlockGrass[0] = true;
+         StatList.initBreakableStats();
+     }
++    
++    /* =================================================== FORGE START =====================================*/
++    protected static int blockFireSpreadSpeed[] = new int[blocksList.length];
++    protected static int blockFlammability[] = new int[blocksList.length];
++    protected String currentTexture = "/terrain.png";
++    public boolean isDefaultTexture = true;
++    
++    /**
++     * Get a light value for this block, normal ranges are between 0 and 15
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return The light value
++     */
++    public int getLightValue(IBlockAccess world, int x, int y, int z) 
++    {
++        return lightValue[blockID];
++    }
++
++    /**
++     * Checks if a player or entity can use this block to 'climb' like a ladder.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block should act like a ladder
++     */
++    public boolean isLadder(World world, int x, int y, int z) 
++    {
++        return false;
++    }
++    
++    /**
++     * Return true if the block is a normal, solid cube.  This
++     * determines indirect power state, entity ejection from blocks, and a few
++     * others.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block is a full cube
++     */
++    public boolean isBlockNormalCube(World world, int x, int y, int z) 
++    {
++        return blockMaterial.isOpaque() && renderAsNormalBlock();
++    }
++
++    /**
++     * Checks if the block is a solid face on the given side, used by placement logic.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @param size The side to check
++     * @return True if the block is solid on the specified side.
++     */
++    public boolean isBlockSolidOnSide(World world, int x, int y, int z, Orientation side) 
++    {
++        int meta = world.getBlockMetadata(x, y, z);
++        if (this instanceof BlockStep)
++        {
++            return (((meta & 8) == 8 && (side == UP)) || isOpaqueCube());
++        }
++        else if (this instanceof BlockFarmland)
++        {
++            return (side != DOWN && side != UP);
++        }
++        else if (this instanceof BlockStairs)
++        {
++            boolean flipped = ((meta & 4) != 0);
++            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped);
++        }
++        return isBlockNormalCube(world, x, y, z);
++    }
++
++    /**
++     * Determines if a new block can be replace the space occupied by this one,
++     * Used in the player's placement code to make the block act like water, and lava.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block is replaceable by another block
++     */
++    public boolean isBlockReplaceable(World world, int x, int y, int z) 
++    {
++        return false;
++    }
++
++    /**
++     * Determines if this block should set fire and deal fire damage
++     * to entities coming into contact with it.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block should deal damage
++     */
++    public boolean isBlockBurning(World world, int x, int y, int z) 
++    {
++        return false;
++    }
++    
++    /**
++     * Determines this block should be treated as an air block
++     * by the rest of the code. This method is primarily
++     * useful for creating pure logic-blocks that will be invisible 
++     * to the player and otherwise interact as air would.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block considered air
++     */
++    public boolean isAirBlock(World world, int x, int y, int z) 
++    {
++        return false;
++    }
++
++    /**
++     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
++     * 
++     * @param player The player damaging the block, may be null
++     * @param meta The block's current metadata
++     * @return True to spawn the drops
++     */
++    public boolean canHarvestBlock(EntityPlayer player, int meta) 
++    {
++        return ForgeHooks.canHarvestBlock(this, player, meta);
++    }
++
++    /**
++     * Called when a player removes a block.  This is responsible for
++     * actually destroying the block, and the block is intact at time of call.
++     * This is called regardless of whether the player can harvest the block or
++     * not.  
++     * 
++     * Return true if the block is actually destroyed.
++     *
++     * Note: When used in multiplayer, this is called on both client and
++     * server sides!
++     * 
++     * @param world The current world
++     * @param player The player damaging the block, may be null
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block is actually destroyed.
++     */
++    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) 
++    {
++        return world.setBlockWithNotify(x, y, z, 0);
++    }
++
++    /**
++     * Called when a new CreativeContainer is opened, populate the list 
++     * with all of the items for this block you want a player in creative mode
++     * to have access to.
++     * 
++     * @param itemList The list of items to display on the creative inventory.
++     */
++    public void addCreativeItems(ArrayList itemList)
++    {           
++    }
++        
++    /**
++     * Chance that fire will spread and consume this block.
++     * 300 being a 100% chance, 0, being a 0% chance.
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
++     */
++    public int getFlammability(IBlockAccess world, int x, int y, int z, int metadata, Orientation face)
++    {
++        return blockFlammability[blockID];
++    }
++    
++    /**
++     * Called when fire is updating, checks if a block face can catch fire.
++     * 
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return True if the face can be on fire, false otherwise.
++     */
++    public boolean isFlammable(IBlockAccess world, int x, int y, int z, int metadata, Orientation face)
++    {
++        return getFlammability(world, x, y, z, metadata, face) > 0;
++    }
++    
++    /**
++     * Called when fire is updating on a neighbor block.
++     * The higher the number returned, the faster fire will spread around this block.
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param face The face that the fire is coming from
++     * @return A number that is used to determine the speed of fire growth around the block
++     */
++    public int getFireSpreadSpeed(World world, int x, int y, int z, int metadata, Orientation face)
++    {
++        return blockFireSpreadSpeed[blockID];
++    }
++    
++    /**
++     * Currently only called by fire when it is on top of this block.
++     * Returning true will prevent the fire from naturally dying during updating.
++     * Also prevents firing from dying from rain.
++     * 
++     * @param world The current world
++     * @param x The blocks X position
++     * @param y The blocks Y position
++     * @param z The blocks Z position
++     * @param metadata The blocks current metadata
++     * @param side The face that the fire is coming from
++     * @return 
++     */
++    public boolean isFireSource(World world, int x, int y, int z, int metadata, Orientation side)
++    {
++        if (blockID == Block.netherrack.blockID && side == UP)
++        {
++                return true;
++        }
++        if ((world.provider instanceof WorldProviderEnd) && blockID == Block.bedrock.blockID && side == UP)
++        {
++                return true;
++        }
++        return false;
++    }
++
++    /**
++     * Called by BlockFire to setup the burn values of vanilla blocks.
++     * @param id The block id
++     * @param encouragement How much the block encourages fire to spread
++     * @param flammability how easy a block is to catch fire
++     */
++    public static void setBurnProperties(int id, int encouragement, int flammability)
++    {
++        blockFireSpreadSpeed[id] = encouragement;
++        blockFlammability[id] = flammability;
++    }
++
++    /**
++     * Called throughout the code as a replacement for block instanceof BlockContainer
++     * Moving this to the Block base class allows for mods that wish to extend vinella 
++     * blocks, and also want to have a tile entity on that block, may.
++     * 
++     * Return true from this function to specify this block has a tile entity.
++     * 
++     * @param metadata Metadata of the current block
++     * @return True if block has a tile entity, false otherwise
++     */
++    public boolean hasTileEntity(int metadata)
++    {
++        return isBlockContainer;
++    }
++    
++    /**
++     * Called throughout the code as a replacement for BlockContainer.getBlockEntity
++     * Return the same thing you would from that function.
++     * This will fall back to BlockContainer.getBlockEntity if this block is a BlockContainer.
++     * 
++     * @param metadata The Metadata of the current block
++     * @return A instance of a class extending TileEntity
++     */
++    public TileEntity createTileEntity(World world, int metadata)
++    {
++        if (this instanceof BlockContainer)
++        {
++            return ((BlockContainer)this).createNewTileEntity(world, metadata);
++        }
++        return null;
++    }    
++    
++    /**
++     * Metadata and fortune sensitive version, this replaces the old (int meta, Random rand)
++     * version in 1.1. 
++     * 
++     * @param meta Blocks Metadata
++     * @param fortune Current item fortune level
++     * @param random Random number generator
++     * @return The number of items to drop
++     */
++    public int quantityDropped(int meta, int fortune, Random random)
++    {
++        return quantityDroppedWithBonus(fortune, random);
++    }
++    
++    /**
++     * This returns a complete list of items dropped from this block.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param Y Y Position
++     * @param Z Z Position
++     * @param metadata Current metadata
++     * @param fortune Breakers fortune level
++     * @return A ArrayList containing all items this block drops
++     */
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        
++        int count = quantityDropped(metadata, fortune, world.rand);
++        for(int i = 0; i < count; i++)
++        {
++                int id = idDropped(metadata, world.rand, 0);
++                if (id > 0)
++                {
++                        ret.add(new ItemStack(id, 1, damageDropped(metadata)));
++                }
++        }
++        return ret;
++    }
++    
++    /**
++     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
++     * 
++     * @param world The world
++     * @param player The player doing the harvesting
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param metadata The metadata
++     * @return True if the block can be directly harvested using silk touch
++     */
++    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata)
++    {
++        if (this instanceof BlockGlass)
++        {
++                return true;
++        }
++        return renderAsNormalBlock() && !hasTileEntity(metadata);
++    }
++    
++    /**
++     * Determines if a specified mob type can spawn on this block, returning false will 
++     * prevent any mob from spawning on the block.
++     * 
++     * @param type The Mob Category Type
++     * @param world The current world
++     * @param x The X Position
++     * @param y The Y Position
++     * @param z The Z Position
++     * @return True to allow a mob of the specified category to spawn, false to prevent it.
++     */
++    public boolean canCreatureSpawn(EnumCreatureType type, World world, int x, int y, int z) 
++    {
++        int meta = world.getBlockMetadata(x, y, z);
++        if (this instanceof BlockStep)
++        {
++            if (MinecraftForge.SPAWNER_ALLOW_ON_INVERTED)
++            {
++                return (((meta & 8) == 8) || isOpaqueCube());   
++            }
++            else
++            {
++                return isNormalCube(this.blockID);
++            }
++        }
++        else if (this instanceof BlockStairs)
++        {
++            if (MinecraftForge.SPAWNER_ALLOW_ON_INVERTED)
++            {
++                return ((meta & 4) != 0);
++            }
++            else
++            {
++                return isNormalCube(this.blockID);
++            }
++        }
++        return isBlockSolidOnSide(world, x, y, z, UP);
++    }
++    
++    /**
++     * Determines if this block is classified as a Bed, Allowing 
++     * players to sleep in it, though the block has to specifically 
++     * perform the sleeping functionality in it's activated event.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param player The player or camera entity, null in some cases.
++     * @return True to treat this as a bed
++     */
++    public boolean isBed(World world, int x, int y, int z, EntityLiving player)
++    {
++        return blockID == Block.bed.blockID;
++    }
++    
++    /**
++     * Returns the position that the player is moved to upon 
++     * waking up, or respawning at the bed.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param player The player or camera entity, null in some cases.
++     * @return The spawn position
++     */
++    public ChunkCoordinates getBedSpawnPosition(World world, int x, int y, int z, EntityPlayer player)
++    {
++        return BlockBed.getNearestEmptyChunkCoordinates(world, x, y, z, 0);
++    }
++
++    /**
++     * Called when a user either starts or stops sleeping in the bed.
++     *  
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param player The player or camera entity, null in some cases.
++     * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
++     */
++    public void setBedOccupied(World world, int x, int y, int z, EntityPlayer player, boolean occupied)
++    {
++        BlockBed.setBedOccupied(world,  x, y, z, occupied);        
++    }
++
++    /**
++     * Returns the direction of the block. Same values that 
++     * are returned by BlockDirectional
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return Bed direction
++     */
++    public int getBedDirection(IBlockAccess world, int x, int y, int z) 
++    {
++        return BlockBed.getDirection(world.getBlockMetadata(x,  y, z));
++    }
++    
++    /**
++     * Determines if the current block is the foot half of the bed.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True if the current block is the foot side of a bed.
++     */
++    public boolean isBedFoot(IBlockAccess world, int x, int y, int z)
++    {
++        return BlockBed.isBlockHeadOfBed(world.getBlockMetadata(x,  y, z));
++    }
++    
++    /**
++     * Called when a leaf should start its decay process.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     */
++    public void beginLeavesDecay(World world, int x, int y, int z){}
++    
++    /**
++     * Determines if this block can prevent leaves connected to it from decaying.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return true if the presence this block can prevent leaves from decaying.
++     */
++    public boolean canSustainLeaves(World world, int x, int y, int z)
++    {
++        return false;
++    }
++    
++    /**
++     * Determines if this block is considered a leaf block, used to apply the leaf decay and generation system.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return true if this block is considered leaves.
++     */
++    public boolean isLeaves(World world, int x, int y, int z)
++    {
++        return false;
++    }
++    
++    /**
++     * Used during tree growth to determine if newly generated leaves can replace this block.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return true if this block can be replaced by growing leaves.
++     */
++    public boolean canBeReplacedByLeaves(World world, int x, int y, int z)
++    {
++        return !Block.opaqueCubeLookup[this.blockID];
++    }
++    
++    /**
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return  true if the block is wood (logs)
++     */
++    public boolean isWood(World world, int x, int y, int z)
++    {
++         return false;
++    }
++    
++    /**
++     * Determines if the current block is replaceable by Ore veins during world generation.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True to allow this block to be replaced by a ore
++     */
++    public boolean isGenMineableReplaceable(World world, int x, int y, int z)
++    {
++        return blockID == stone.blockID;
++    }
++
++    /**
++     * Grabs the current texture file used for this block
++     */
++    public String getTextureFile()
++    {
++        return currentTexture;
++    }
++
++    /**
++     * Sets the current texture file for this block, used when rendering.
++     * Default is "/terrain.png"
++     * 
++     * @param texture The texture file
++     */
++    public void setTextureFile(String texture)
++    {
++        currentTexture = texture;
++        isDefaultTexture = false;
++    }
++    
++
++    /**
++     * Location sensitive version of getExplosionRestance
++     * 
++     * @param par1Entity
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param explosionX
++     * @param explosionY
++     * @param explosionZ
++     * @return
++     */
++    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
++    {
++        return getExplosionResistance(par1Entity);
++    }
++
++    /**
++     * Determine if this block can make a redstone connection on the side provided,
++     * Useful to control which sides are inputs and outputs for redstone wires.
++     * 
++     * Side:
++     *  -1: UP
++     *   0: NORTH
++     *   1: EAST
++     *   2: SOUTH
++     *   3: WEST
++     *
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param side The side that is trying to make the connection
++     * @return True to make the connection
++     */
++    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
++    {
++        return Block.blocksList[blockID].canProvidePower() && side != -1;
++    }
++    
++    /**
++     * Determines if a torch can be placed on the top surface of this block.
++     * Useful for creating your own block that torches can be on, such as fences.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return True to allow the torch to be placed
++     */
++    public boolean canPlaceTorchOnTop(World world, int x, int y, int z)
++    {
++        if (world.doesBlockHaveSolidTopSurface(x, y, z))
++        {
++            return true;
++        }
++        else
++        {
++            int id = world.getBlockId(x, y, z);
++            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID;
++        }
++    }
+ }

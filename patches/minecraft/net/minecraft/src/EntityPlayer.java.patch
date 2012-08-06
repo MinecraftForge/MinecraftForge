@@ -1,0 +1,36 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java
++++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Iterator;
+ import java.util.List;
++
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public abstract class EntityPlayer extends EntityLiving implements ICommandSender
+ {
+@@ -673,13 +675,21 @@
+ 
+     /**
+      * Returns how strong the player is against the specified block at this moment
+-     */
++     * Deprecated in favor of the moresensitive version
++     */
++    @Deprecated
+     public float getCurrentPlayerStrVsBlock(Block par1Block)
+     {
+-        float var2 = this.inventory.getStrVsBlock(par1Block);
++        return getCurrentPlayerStrVsBlock(par1Block, 0);
++    }
++
++    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
++    {
++        ItemStack stack = inventory.getCurrentItem();
++        float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
+         int var3 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
+ 
+-        if (var3 > 0 && this.inventory.canHarvestBlock(par1Block))
++        if (var3 > 0 && ForgeHooks.canHarvestBlock(par1Block, this, meta))
+         {
+             var2 += (float)(var3 * var3 + 1);
+         }

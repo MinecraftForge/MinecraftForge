@@ -40,33 +40,6 @@ import java.util.logging.Level;
 
 public class ForgeHooks
 {
-
-    public static void plantGrassPlant(World world, int x, int y, int z)
-    {
-        int index = world.rand.nextInt(plantGrassWeight);
-        ProbableItem item = getRandomItem(plantGrassList, index);
-        if (item == null || Block.blocksList[item.ItemID] == null)
-        {
-            return;
-        }
-        if (mod_MinecraftForge.DISABLE_DARK_ROOMS && !Block.blocksList[item.ItemID].canBlockStay(world, x, y, z))
-        {
-            return;
-        }
-        world.setBlockAndMetadataWithNotify(x, y, z, item.ItemID, item.Metadata);
-    }
-
-    public static ItemStack getGrassSeed(World world)
-    {
-        int index = world.rand.nextInt(seedGrassWeight);
-        ProbableItem item = getRandomItem(seedGrassList, index);
-        if (item == null)
-        {
-            return null;
-        }
-        return new ItemStack(item.ItemID, item.Quantity, item.Metadata);
-    }
-
     // Tool Path
     // ------------------------------------------------------------
     public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)

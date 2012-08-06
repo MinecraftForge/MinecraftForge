@@ -121,7 +121,7 @@
                          if (var14 == null)
                          {
 -                            var14 = ((BlockContainer)Block.blocksList[par4]).createNewTileEntity(this.worldObj);
-+                            var14 = Block.blocksList[par4].getTileEntity(this.worldObj, par5);
++                            var14 = Block.blocksList[par4].createTileEntity(this.worldObj, par5);
                              this.worldObj.setBlockTileEntity(var12, par2, var13, var14);
                          }
  
@@ -215,7 +215,7 @@
              if (var5 == null)
              {
 -                var5 = ((BlockContainer)Block.blocksList[var6]).createNewTileEntity(this.worldObj);
-+                var5 = Block.blocksList[var6].createNewTileEntity(this.worldObj, meta);
++                var5 = Block.blocksList[var6].createTileEntity(this.worldObj, meta);
                  this.worldObj.setBlockTileEntity(this.xPosition * 16 + par1, par2, this.zPosition * 16 + par3, var5);
              }
  
