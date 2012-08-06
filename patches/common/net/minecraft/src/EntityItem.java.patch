@@ -15,7 +15,7 @@
              int var2 = this.item.stackSize;
  
 +            EntityItemPickupEvent event = new EntityItemPickupEvent(this, par1EntityPlayer);
-+            MinecraftForge.eventBus.post(event);
++            MinecraftForge.EVENT_BUS.post(event);
 +            
 +            if (delayBeforeCanPickup == 0 && (!event.isCanceled() || item.stackSize <= 0))
 +            {

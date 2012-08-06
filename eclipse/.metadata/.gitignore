@@ -1,3 +1,4 @@
 /.mylyn/
 .lock
 version.ini
+/*.log

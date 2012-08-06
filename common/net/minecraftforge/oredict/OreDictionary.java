@@ -117,7 +117,7 @@ public class OreDictionary
         ArrayList<ItemStack> ores = getOres(id);
         ore = ore.copy();
         ores.add(ore);
-        MinecraftForge.eventBus.post(new OreRegisterEvent(name, ore));
+        MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
     }
     
     public static class OreRegisterEvent extends Event

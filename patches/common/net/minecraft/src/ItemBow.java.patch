@@ -16,7 +16,7 @@
 +        int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
 +        
 +        ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, var6);
-+        MinecraftForge.eventBus.post(event);
++        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.isCanceled())
 +        {
 +            return;
@@ -36,7 +36,7 @@
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
 +        ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
-+        MinecraftForge.eventBus.post(event);
++        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.isCanceled())
 +        {
 +            return event.getResultStack();
