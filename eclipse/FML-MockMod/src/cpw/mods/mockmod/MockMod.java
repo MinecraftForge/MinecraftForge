@@ -1,6 +1,8 @@
 package cpw.mods.mockmod;
 
 import net.minecraft.src.ItemBlock;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Block;
 import cpw.mods.fml.common.Mod.Init;
@@ -9,11 +11,21 @@ import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.ModMetadata;
 
 @Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="before:mod_testMod", useMetadata=true)
+@NetworkMod(channels={"MockMod"},clientSideRequired=true,packetHandler=MockMod.PacketHandler.class)
 public class MockMod
 {
+    public static class PacketHandler implements IPacketHandler
+    {
+        @Override
+        public void onPacketData(NetworkManager manager, Packet250CustomPayload packet)
+        {
+        }
+    }
     public class TestItem extends ItemBlock
     {
 
