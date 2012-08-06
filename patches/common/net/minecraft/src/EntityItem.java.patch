@@ -6,7 +6,7 @@
  import java.util.Iterator;
 +
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.EntityItemPickupEvent;
++import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
  
  public class EntityItem extends Entity
  {
@@ -14,7 +14,7 @@
          {
              int var2 = this.item.stackSize;
  
-+            EntityItemPickupEvent event = new EntityItemPickupEvent(this, par1EntityPlayer);
++            EntityItemPickupEvent event = new EntityItemPickupEvent(par1EntityPlayer, this);
 +            MinecraftForge.EVENT_BUS.post(event);
 +            
 +            if (delayBeforeCanPickup == 0 && (!event.isCanceled() || item.stackSize <= 0))

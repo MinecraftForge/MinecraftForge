@@ -1,12 +1,12 @@
-package net.minecraftforge.event.entity;
+package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 
 public class ArrowLooseEvent extends PlayerEvent
 {
-    private final ItemStack bow;
-    private int charge;
+    public final ItemStack bow;
+    public int charge;
     
     public ArrowLooseEvent(EntityPlayer player, ItemStack bow, int charge)
     {
@@ -19,20 +19,5 @@ public class ArrowLooseEvent extends PlayerEvent
     public boolean isCancelable()
     {
         return true;
-    }
-
-    public ItemStack getBow()
-    {
-        return bow;
-    }
-    
-    public int getCharge()
-    {
-        return charge;
-    }
-    
-    public void setCharge(int charge)
-    {
-        this.charge = charge;
     }
 }

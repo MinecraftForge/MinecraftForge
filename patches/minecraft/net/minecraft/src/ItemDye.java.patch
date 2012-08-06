@@ -7,7 +7,7 @@
 +
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.BonemealEvent;
++import net.minecraftforge.event.entity.player.BonemealEvent;
  
  public class ItemDye extends Item
  {

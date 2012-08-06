@@ -3,7 +3,7 @@
  * License v1.0.
  */
 
-package net.minecraft.src.forge;
+package net.minecraftforge.client;
 
 import org.lwjgl.opengl.Display;
 
@@ -14,18 +14,10 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.World;
-import net.minecraft.src.forge.IItemRenderer.ItemRenderType;
+import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public class MinecraftForgeClient
 {
-    /**
-     * Registers a new block highlight handler.
-     */
-    public static void registerHighlightHandler(IHighlightHandler handler)
-    {
-        ForgeHooksClient.highlightHandlers.add(handler);
-    }
-
     /** Register a new render context handler.  A render context is a block
      * of rendering performed with similar OpenGL modes, for example,
      * texture name.
@@ -39,76 +31,9 @@ public class MinecraftForgeClient
     {
         ForgeHooksClient.registerRenderContextHandler(texture, subid, handler);
     }
-    
-    /**
-     * Registers a Texture Load Handler
-     * @param handler The handler
-     */
-    public static void registerTextureLoadHandler(ITextureLoadHandler handler)
-    {
-        ForgeHooksClient.textureLoadHandlers.add(handler);
-    }
-    
-    /**
-     * Registers a Render Last Handler
-     * @param handler The handler
-     */
-    public static void registerRenderLastHandler(IRenderWorldLastHandler handler)
-    {
-        ForgeHooksClient.renderWorldLastHandlers.add(handler);
-    }
-    
-    /**
-     * Registers a Sound Handler
-     * @param handler The handler
-     */
-    public static void registerSoundHandler(ISoundHandler handler)
-    {
-        ForgeHooksClient.soundHandlers.add(handler);
-        checkMinecraftVersion("Minecraft Minecraft 1.2.5", "Interface check in registerSoundHandler, remove it Mods should be updated");
-        try
-        {
-            if (handler.getClass().getDeclaredMethod("onPlaySoundAtEntity", Entity.class, String.class, float.class, float.class) != null)
-            {
-                ForgeHooksClient.soundHandlers2.add(handler);
-            }
-        }
-        catch (Exception e) 
-        {
-            if (World.class.getName().contains("World"))
-            {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    /** Bind a texture.  This is used to bind a texture file when
-     * performing your own rendering, rather than using ITextureProvider.
-     *
-     * This variation is reserved for future expansion.
-     */
-    public static void bindTexture(String texture, int subid)
-    {
-        ForgeHooksClient.bindTexture(texture, subid);
-    }
-
-    /** Bind a texture.  This is used to bind a texture file when
-     * performing your own rendering, rather than using ITextureProvider.
-     */
-    public static void bindTexture(String texture)
-    {
-        ForgeHooksClient.bindTexture(texture, 0);
-    }
-
-    /** Unbind a texture.  This binds the default texture, when you are
-     * finished performing custom rendering.
-     */
-    public static void unbindTexture()
-    {
-        ForgeHooksClient.unbindTexture();
-    }
-
-    /** Preload a texture.  Textures must be preloaded before the first
+    /** 
+     * Preload a texture.  Textures must be preloaded before the first
      * use, or they will cause visual anomalies.
      */
     public static void preloadTexture(String texture)
@@ -118,14 +43,15 @@ public class MinecraftForgeClient
 
     /** Render a block.  Render a block which may have a custom texture.
      */
-    public static void renderBlock(RenderBlocks render, Block block, int X, int Y, int Z)
+    public static void renderBlock(RenderBlocks render, Block block, int x, int y, int z)
     {
         ForgeHooksClient.beforeBlockRender(block, render);
-        render.renderBlockByRenderType(block, X, Y, Z);
+        render.renderBlockByRenderType(block, x, y, z);
         ForgeHooksClient.afterBlockRender(block, render);
     }
 
-    /** Get the current render pass.
+    /** 
+     * Get the current render pass.
      */
     public static int getRenderPass()
     {
@@ -134,7 +60,8 @@ public class MinecraftForgeClient
     
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
-    /** Register a custom renderer for a specific item. This can be used to
+    /** 
+     * Register a custom renderer for a specific item. This can be used to
      * render the item in-world as an EntityItem, when the item is equipped, or
      * when the item is in an inventory slot.
      * @param itemID The item ID (shifted index) to handle rendering.

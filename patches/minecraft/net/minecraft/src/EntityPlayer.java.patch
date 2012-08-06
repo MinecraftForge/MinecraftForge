@@ -34,11 +34,13 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -1056,6 +1066,7 @@
+@@ -1055,7 +1065,9 @@
+      */
      public void destroyCurrentEquippedItem()
      {
++        ItemStack oldItem = getCurrentEquippedItem();
          this.inventory.setInventorySlotContents(this.inventory.currentItem, (ItemStack)null);
-+        ForgeHooks.onDestroyCurrentItem(par1EntityPlayer, var5);
++        ForgeHooks.onDestroyCurrentItem(this, oldItem);
      }
  
      /**

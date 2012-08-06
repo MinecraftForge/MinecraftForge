@@ -3,7 +3,7 @@
 @@ -1,4 +1,6 @@
  package net.minecraft.src;
 +
-+import net.minecraftforge.event.entity.FillBucketEvent;
++import net.minecraftforge.event.entity.player.FillBucketEvent;
  
  public class ItemBucket extends Item
  {
@@ -19,7 +19,7 @@
 +            
 +            if (event.isHandeled())
 +            {
-+                return event.getResult();
++                return event.result;
 +            }
 +            
              if (var12.typeOfHit == EnumMovingObjectType.TILE)

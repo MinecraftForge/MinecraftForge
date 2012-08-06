@@ -1,6 +1,26 @@
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java
 +++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
-@@ -112,7 +112,7 @@
+@@ -1,6 +1,7 @@
+ package net.minecraft.src;
+ 
+ import net.minecraft.client.Minecraft;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class PlayerControllerMP
+ {
+@@ -95,6 +96,11 @@
+      */
+     public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
+     {
++        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
++        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, mc.thePlayer))
++        {
++            return false;
++        }
+         if (this.currentGameType.isAdventure())
+         {
+             return false;
+@@ -112,7 +118,7 @@
              {
                  var5.playAuxSFX(2001, par1, par2, par3, var6.blockID + (var5.getBlockMetadata(par1, par2, par3) << 12));
                  int var7 = var5.getBlockMetadata(par1, par2, par3);
@@ -9,3 +29,33 @@
  
                  if (var8)
                  {
+@@ -290,6 +296,12 @@
+     public boolean onPlayerRightClick(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, Vec3 par8Vec3)
+     {
+         this.syncCurrentPlayItem();
++        if (par3ItemStack != null && 
++            par3ItemStack.getItem() != null && 
++            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7))
++        {
++                return true;
++        }
+         float var9 = (float)par8Vec3.xCoord - (float)par4;
+         float var10 = (float)par8Vec3.yCoord - (float)par5;
+         float var11 = (float)par8Vec3.zCoord - (float)par6;
+@@ -333,6 +345,16 @@
+         else
+         {
+             return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11);
++
++            if (!par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
++            {
++                return false;
++            }
++            if (par3ItemStack.stackSize <= 0)
++            {
++                ForgeHooks.onDestroyCurrentItem(par1EntityPlayer, par3ItemStack);
++            }
++            return true;
+         }
+     }
+ 

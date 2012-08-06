@@ -3,6 +3,7 @@ package net.minecraftforge.event.entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class UseHoeEvent extends PlayerEvent
 {

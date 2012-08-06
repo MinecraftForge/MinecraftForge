@@ -1,4 +1,4 @@
-package net.minecraftforge.event.entity;
+package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
@@ -7,11 +7,11 @@ import net.minecraft.src.World;
 
 public class FillBucketEvent extends PlayerEvent
 {
-    private final ItemStack current;
-    private final World world;
-    private final MovingObjectPosition target;
+    public final ItemStack current;
+    public final World world;
+    public final MovingObjectPosition target;
     
-    private ItemStack result;
+    public ItemStack result;
     private boolean handeled = false;
     
     public FillBucketEvent(EntityPlayer player, ItemStack current, World world, MovingObjectPosition target)
@@ -28,21 +28,6 @@ public class FillBucketEvent extends PlayerEvent
         return true;
     }
     
-    public ItemStack getCurrentItem()
-    {
-        return current;
-    }
-    
-    public World getWorld()
-    {
-        return world;
-    }
-    
-    public MovingObjectPosition getTarget()
-    {
-        return target;
-    }
-    
     public boolean isHandeled()
     {
         return handeled;
@@ -52,15 +37,4 @@ public class FillBucketEvent extends PlayerEvent
     {
         handeled = true;
     }
-    
-    public ItemStack getResult()
-    {
-        return result;
-    }
-    
-    public void setResult(ItemStack result)
-    {
-        this.result = result;
-    }
-
 }

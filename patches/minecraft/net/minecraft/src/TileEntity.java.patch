@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/src/TileEntity.java
-@@ -243,4 +243,29 @@
+@@ -243,4 +243,33 @@
          addMapping(TileEntityEnchantmentTable.class, "EnchantTable");
          addMapping(TileEntityEndPortal.class, "Airportal");
      }
@@ -23,10 +23,14 @@
 +     * @param net The NetworkManager the packet originated from 
 +     * @param pkt The data packet
 +     */
-+    public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt){}
++    public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt)
++    {
++    }
 +    
 +    /**
 +     * Called when the chunk this TileEntity is on is Unloaded.
 +     */
-+    public void onChunkUnload(){}
++    public void onChunkUnload()
++    {
++    }
  }

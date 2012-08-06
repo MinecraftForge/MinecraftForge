@@ -46,6 +46,19 @@ public class ForgeHooksClient
     public static TreeSet<TesKey> renderTextures = new TreeSet<TesKey>();
     public static Tessellator defaultTessellator = null;
     public static boolean inWorld = false;
+    public static HashMap<TesKey, IRenderContextHandler> renderHandlers = new HashMap<TesKey, IRenderContextHandler>();
+    public static IRenderContextHandler unbindContext = null;
+    
+    protected static void registerRenderContextHandler(String texture, int subID, IRenderContextHandler handler)
+    {
+        Integer texID = textures.get(texture);
+        if (texID == null)
+        {
+            texID = ModLoader.getMinecraftInstance().renderEngine.getTexture(texture);
+            textures.put(texture, texID);
+        }
+        renderHandlers.put(new TesKey(texID, subID), handler);
+    }
 
     public static void bindTexture(String texture, int subID)
     {
@@ -57,11 +70,11 @@ public class ForgeHooksClient
         }
         if (!inWorld)
         {
-            /*if (unbindContext != null)
+            if (unbindContext != null)
             {
                 unbindContext.afterRenderContext();
                 unbindContext = null;
-            }*/
+            }
             if (Tessellator.instance.isDrawing)
             {
                 int mode = Tessellator.instance.drawMode;
@@ -69,11 +82,11 @@ public class ForgeHooksClient
                 Tessellator.instance.startDrawing(mode);
             }
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
-            /*unbindContext = renderHandlers.get(new TesKey(texID, subID));
+            unbindContext = renderHandlers.get(new TesKey(texID, subID));
             if (unbindContext != null)
             {
                 unbindContext.beforeRenderContext();
-            }*/
+            }
             return;
         }
         bindTessellator(texID, subID);
@@ -91,11 +104,11 @@ public class ForgeHooksClient
             {
                 int mode = Tessellator.instance.drawMode;
                 Tessellator.instance.draw();
-                /*if (unbindContext != null)
+                if (unbindContext != null)
                 {
                     unbindContext.afterRenderContext();
                     unbindContext = null;
-                }*/
+                }
                 Tessellator.instance.startDrawing(mode);
             }
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, ModLoader.getMinecraftInstance().renderEngine.getTexture("/terrain.png"));
@@ -142,20 +155,20 @@ public class ForgeHooksClient
         inWorld = false;
         for (TesKey info : renderTextures)
         {
-            //IRenderContextHandler handler = renderHandlers.get(info);
+            IRenderContextHandler handler = renderHandlers.get(info);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, info.texture);
             Tessellator tess = tessellators.get(info);
-            //if (handler == null)
-            //{
+            if (handler == null)
+            {
                 tess.draw();
-            /*}
+            }
             else
             {
                 Tessellator.instance = tess;
                 handler.beforeRenderContext();
                 tess.draw();
                 handler.afterRenderContext();
-            }*/
+            }
         }
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, ModLoader.getMinecraftInstance().renderEngine.getTexture("/terrain.png"));
         Tessellator.renderingWorldRenderer = false;

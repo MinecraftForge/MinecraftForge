@@ -1,4 +1,4 @@
-package net.minecraftforge.event.entity;
+package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;

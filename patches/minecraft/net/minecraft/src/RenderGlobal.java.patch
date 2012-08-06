@@ -1,0 +1,47 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java
++++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
+@@ -1787,6 +1787,7 @@
+             double var17 = this.mc.renderViewEntity.posY - par4;
+             double var19 = this.mc.renderViewEntity.posZ - par6;
+             EntityFX var21 = null;
++            Object effectObject = null;
+ 
+             if (par1Str.equals("hugeexplosion"))
+             {
+@@ -1906,6 +1907,7 @@
+                     else if (par1Str.equals("snowballpoof"))
+                     {
+                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
++                        effectObject = Item.snowball;
+                     }
+                     else if (par1Str.equals("dripWater"))
+                     {
+@@ -1922,6 +1924,7 @@
+                     else if (par1Str.equals("slime"))
+                     {
+                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
++                        effectObject = Item.slimeBall;
+                     }
+                     else if (par1Str.equals("heart"))
+                     {
+@@ -1935,17 +1938,19 @@
+                         {
+                             var24 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
+                             var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var24]);
++                            effectObject = Item.itemsList[var24];
+                         }
+                         else if (par1Str.startsWith("tilecrack_"))
+                         {
+                             var24 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
+                             var21 = new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var24], 0, 0);
++                            effectObject = Block.blocksList[var24];
+                         }
+                     }
+ 
+                     if (var21 != null)
+                     {
+-                        this.mc.effectRenderer.addEffect((EntityFX)var21);
++                        this.mc.effectRenderer.addEffect((EntityFX)var21, effectObject);
+                     }
+ 
+                     return (EntityFX)var21;

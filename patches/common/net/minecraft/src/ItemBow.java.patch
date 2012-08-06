@@ -4,8 +4,8 @@
  package net.minecraft.src;
 +
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.ArrowLooseEvent;
-+import net.minecraftforge.event.entity.ArrowNockEvent;
++import net.minecraftforge.event.entity.player.ArrowLooseEvent;
++import net.minecraftforge.event.entity.player.ArrowNockEvent;
  
  public class ItemBow extends Item
  {
@@ -21,7 +21,7 @@
 +        {
 +            return;
 +        }
-+        var6 = event.getCharge();
++        var6 = event.charge;
 +        
          boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
@@ -39,7 +39,7 @@
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.isCanceled())
 +        {
-+            return event.getResultStack();
++            return event.result;
 +        }
 +        
          if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))

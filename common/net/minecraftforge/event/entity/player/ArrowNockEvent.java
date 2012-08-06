@@ -1,11 +1,11 @@
-package net.minecraftforge.event.entity;
+package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 
 public class ArrowNockEvent extends PlayerEvent
 {
-    private ItemStack result;
+    public ItemStack result;
     
     public ArrowNockEvent(EntityPlayer player, ItemStack result)
     {
@@ -17,15 +17,5 @@ public class ArrowNockEvent extends PlayerEvent
     public boolean isCancelable()
     {
         return true;
-    }
-
-    public ItemStack getResultStack()
-    {
-        return result;
-    }
-    
-    public void setResultStack(ItemStack result)
-    {
-        this.result = result;
     }
 }

@@ -1,6 +1,13 @@
 --- ../src_base/common/net/minecraft/src/SlotCrafting.java
 +++ ../src_work/common/net/minecraft/src/SlotCrafting.java
-@@ -107,6 +107,7 @@
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
++
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class SlotCrafting extends Slot
+ {
+@@ -107,6 +109,7 @@
       */
      public void onPickupFromSlot(ItemStack par1ItemStack)
      {
@@ -8,7 +15,7 @@
          this.onCrafting(par1ItemStack);
  
          for (int var2 = 0; var2 < this.craftMatrix.getSizeInventory(); ++var2)
-@@ -119,7 +120,7 @@
+@@ -119,7 +122,7 @@
  
                  if (var3.getItem().hasContainerItem())
                  {

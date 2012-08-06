@@ -174,16 +174,6 @@ public class ForgeHooks
         }
 
     }
-    
-    static
-    {
-        grassList.add(new GrassEntry(Block.plantYellow, 0, 20));
-        grassList.add(new GrassEntry(Block.plantRed,    0, 10));
-        seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
-        initTools();
-        System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
-        ModLoader.getLogger().info(String.format("MinecraftForge v%s Initialized", ForgeVersion.getVersion()));
-    }
 
     public static String getTexture(String _default, Object obj)
     {
@@ -199,5 +189,33 @@ public class ForgeHooks
         {
             return _default;
         }
+    }
+    
+    public static int getTotalArmorValue(EntityPlayer player)
+    {
+        int ret = 0;
+        for (int x = 0; x < player.inventory.armorInventory.length; x++)
+        {
+            ItemStack stack = player.inventory.armorInventory[x];
+            if (stack != null && stack.getItem() instanceof ISpecialArmor)
+            {
+                ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
+            }
+            else if (stack != null && stack.getItem() instanceof ItemArmor)
+            {
+                ret += ((ItemArmor)stack.getItem()).damageReduceAmount;
+            }
+        }
+        return ret;
+    }
+    
+    static
+    {
+        grassList.add(new GrassEntry(Block.plantYellow, 0, 20));
+        grassList.add(new GrassEntry(Block.plantRed,    0, 10));
+        seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
+        initTools();
+        System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
+        ModLoader.getLogger().info(String.format("MinecraftForge v%s Initialized", ForgeVersion.getVersion()));
     }
 }

@@ -1,4 +1,4 @@
-package net.minecraft.src.forge;
+package net.minecraftforge.client;
 
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
