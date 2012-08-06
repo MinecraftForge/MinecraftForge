@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/src/Item.java
++++ ../src_work/minecraft/net/minecraft/src/Item.java
+@@ -625,4 +625,16 @@
+     {
+         StatList.initStats();
+     }
++
++    /**
++     * ItemStack sensitive version of getContainerItem.
++     * Returns a full ItemStack instance of the result.
++     * 
++     * @param itemStack The current ItemStack
++     * @return The resulting ItemStack
++     */
++    public ItemStack getContainerItemStack(ItemStack itemStack)
++    {
++        return new ItemStack(getContainerItem());
++    }
+ }

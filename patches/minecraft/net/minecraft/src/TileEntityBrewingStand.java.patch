@@ -1,0 +1,40 @@
+--- ../src_base/minecraft/net/minecraft/src/TileEntityBrewingStand.java
++++ ../src_work/minecraft/net/minecraft/src/TileEntityBrewingStand.java
+@@ -2,7 +2,10 @@
+ 
+ import java.util.List;
+ 
+-public class TileEntityBrewingStand extends TileEntity implements IInventory
++import net.minecraftforge.common.ISidedInventory;
++import net.minecraftforge.common.Orientation;
++
++public class TileEntityBrewingStand extends TileEntity implements IInventory, ISidedInventory
+ {
+     /** The itemstacks currently placed in the slots of the brewing stand */
+     private ItemStack[] brewingItemStacks = new ItemStack[4];
+@@ -156,7 +159,7 @@
+ 
+             if (Item.itemsList[var1.itemID].hasContainerItem())
+             {
+-                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[var1.itemID].getContainerItem());
++                this.brewingItemStacks[3] = Item.itemsList[var1.itemID].getContainerItemStack(brewingItemStacks[3]);
+             }
+             else
+             {
+@@ -322,4 +325,16 @@
+ 
+         return var1;
+     }
++
++    @Override
++    public int getStartInventorySide(Orientation side)
++    {
++        return (side == Orientation.UP ? 3 : 0);
++    }
++
++    @Override
++    public int getSizeInventorySide(Orientation side)
++    {
++        return (side == Orientation.UP ? 1 : 3);
++    }
+ }

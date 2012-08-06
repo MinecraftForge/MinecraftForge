@@ -3,7 +3,7 @@
  * License v1.0.
  */
 
-package net.minecraft.src.forge;
+package net.minecraftforge.common;
 
 import net.minecraft.src.IInventory;
 
@@ -16,19 +16,13 @@ public interface ISidedInventory extends IInventory
     /**
      * Get the start of the side inventory.
      * @param side The global side to get the start of range.
-     *      0: -Y (bottom side)
-     *      1: +Y (top side)
-     *      2: -Z
-     *      3: +Z
-     *      4: -X
-     *      5: +x
      */
-    int getStartInventorySide(int side);
+    int getStartInventorySide(Orientation side);
 
     /**
      * Get the size of the side inventory.
      * @param side The global side.
      */
-    int getSizeInventorySide(int side);
+    int getSizeInventorySide(Orientation side);
 }
 

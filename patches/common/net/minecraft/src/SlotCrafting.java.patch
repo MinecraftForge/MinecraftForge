@@ -8,3 +8,12 @@
          this.onCrafting(par1ItemStack);
  
          for (int var2 = 0; var2 < this.craftMatrix.getSizeInventory(); ++var2)
+@@ -119,7 +120,7 @@
+ 
+                 if (var3.getItem().hasContainerItem())
+                 {
+-                    ItemStack var4 = new ItemStack(var3.getItem().getContainerItem());
++                    ItemStack var4 = var3.getItem().getContainerItemStack(var3);
+ 
+                     if (!var3.getItem().doesContainerItemLeaveCraftingGrid(var3) || !this.thePlayer.inventory.addItemStackToInventory(var4))
+                     {
