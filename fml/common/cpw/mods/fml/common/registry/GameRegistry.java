@@ -1,13 +1,16 @@
 package cpw.mods.fml.common.registry;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.CraftingManager;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.FurnaceRecipes;
+import net.minecraft.src.IInventory;
 import net.minecraft.src.IRecipe;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
@@ -15,9 +18,13 @@ import net.minecraft.src.TileEntity;
 import net.minecraft.src.WorldType;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ICraftingHandler;
+import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.Mod.Block;
@@ -27,7 +34,9 @@ public class GameRegistry
 {
     private static Multimap<ModContainer, BlockProxy> blockRegistry = ArrayListMultimap.create();
     private static Multimap<ModContainer, ItemProxy> itemRegistry = ArrayListMultimap.create();
-    private static Set<IWorldGenerator> worldGenerators = new HashSet<IWorldGenerator>();
+    private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
+    private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
+    private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
 
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
@@ -110,9 +119,45 @@ public class GameRegistry
     {
         WorldType.field_77137_b.addNewBiome(biome);
     }
-    
+
     public static void removeBiome(BiomeGenBase biome)
     {
         WorldType.field_77137_b.removeBiome(biome);
     }
+
+    public static void registerFuelHandler(IFuelHandler handler)
+    {
+        fuelHandlers.add(handler);
+    }
+    public static int getFuelValue(ItemStack itemStack)
+    {
+        int fuelValue = 0;
+        for (IFuelHandler handler : fuelHandlers)
+        {
+            fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
+        }
+        return fuelValue;
+    }
+
+    public static void registerCraftingHandler(ICraftingHandler handler)
+    {
+        craftingHandlers.add(handler);
+    }
+
+    public static void onItemCrafted(EntityPlayer player, ItemStack item, IInventory craftMatrix)
+    {
+        for (ICraftingHandler handler : craftingHandlers)
+        {
+            handler.onCrafting(player, item, craftMatrix);
+        }
+    }
+
+    public static void onItemSmelted(EntityPlayer player, ItemStack item)
+    {
+        for (ICraftingHandler handler : craftingHandlers)
+        {
+            handler.onSmelting(player, item);
+        }
+    }
+
 }

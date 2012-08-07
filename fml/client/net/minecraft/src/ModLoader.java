@@ -40,6 +40,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class ModLoader
@@ -128,7 +129,7 @@ public class ModLoader
      */
     public static void addLocalization(String key, String lang, String value)
     {
-        FMLCommonHandler.instance().addStringLocalization(key, lang, value);
+        LanguageRegistry.instance().addStringLocalization(key, lang, value);
     }
 
     /**
@@ -151,7 +152,7 @@ public class ModLoader
      */
     public static void addName(Object instance, String lang, String name)
     {
-        FMLCommonHandler.instance().addNameForObject(instance, lang, name);
+        LanguageRegistry.instance().addNameForObject(instance, lang, name);
     }
 
     /**

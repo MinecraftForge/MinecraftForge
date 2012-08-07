@@ -24,118 +24,30 @@ import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.server.FMLServerHandler;
 
-public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
+public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModProxy
 {
     // CALLBACK MECHANISMS
-    public void keyBindingEvent(Object keybinding){}
-
     /**
      * @param minecraftInstance
      * @return
      */
     @Override
-    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
+    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object... data)
     {
         if (tick==TickType.GAME && tickEnd) {
-            return onTickInGame((MinecraftServer)minecraftInstance);
+            return onTickInGame(FMLServerHandler.instance().getServer());
         } else {
             return true;
         }
     }
-    public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
+    public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object... data)
     {
         return false;
     }
 
-    @Override
-    public final void onCrafting(Object... craftingParameters)
-    {
-        takenFromCrafting((EntityPlayer)craftingParameters[0], (ItemStack)craftingParameters[1], (IInventory)craftingParameters[2]);
-    }
 
-    @Override
-    public final void onSmelting(Object... smeltingParameters)
-    {
-        takenFromFurnace((EntityPlayer)smeltingParameters[0], (ItemStack)smeltingParameters[1]);
-    }
-
-    @Override
-    public final boolean dispense(double x, double y, double z, int xVelocity, int zVelocity, Object... data)
-    {
-        return dispenseEntity((World)data[0], x, y, z, xVelocity, zVelocity, (ItemStack)data[1]);
-    }
-
-    @Override
-    public final boolean onChat(Object... data)
-    {
-        return onChatMessageReceived((EntityPlayer)data[1], (Packet3Chat)data[0]);
-    }
-
-    @Override
-    public final void onServerLogin(Object handler) {
-        // NOOP
-    }
-
-    public final void onServerLogout() {
-        // NOOP
-    }
-    @Override
-    public final void onPlayerLogin(Object player)
-    {
-        onClientLogin((EntityPlayer) player);
-    }
-
-    @Override
-    public final void onPlayerLogout(Object player)
-    {
-        onClientLogout((EntityPlayer)player);
-    }
-
-    @Override
-    public final void onPlayerChangedDimension(Object player)
-    {
-        onClientDimensionChanged((EntityPlayer)player);
-    }
-
-    @Override
-    public final void onPacket250Packet(Object... data)
-    {
-        onPacket250Received((EntityPlayer)data[1], (Packet250CustomPayload)data[0]);
-    }
-
-    @Override
-    public final void notifyPickup(Object... pickupData)
-    {
-        EntityItem item = (EntityItem) pickupData[0];
-        EntityPlayer player = (EntityPlayer) pickupData[1];
-        onItemPickup(player, item.field_70294_a);
-    }
-
-    @Override
-    public final void generate(Random random, int chunkX, int chunkZ, Object... additionalData)
-    {
-        World w = (World) additionalData[0];
-        IChunkProvider cp = (IChunkProvider) additionalData[1];
-
-        if (cp instanceof ChunkProviderGenerate)
-        {
-            generateSurface(w, random, chunkX << 4, chunkZ << 4);
-        }
-        else if (cp instanceof ChunkProviderHell)
-        {
-            generateNether(w, random, chunkX << 4, chunkZ << 4);
-        }
-    }
-
-    /**
-     * NO-OP on client side
-     */
-    @Override
-    public final boolean handleCommand(String command, Object... data)
-    {
-        return onServerCommand(command, (String)data[0], (ICommandManager)data[1]);
-    }
     // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item

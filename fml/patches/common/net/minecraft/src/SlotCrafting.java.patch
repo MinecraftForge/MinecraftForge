@@ -1,0 +1,17 @@
+--- ../src-base/common/net/minecraft/src/SlotCrafting.java
++++ ../src-work/common/net/minecraft/src/SlotCrafting.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
++
++import cpw.mods.fml.common.registry.GameRegistry;
+ 
+ public class SlotCrafting extends Slot
+ {
+@@ -83,6 +85,7 @@
+ 
+     public void func_75213_b(ItemStack p_75213_1_)
+     {
++        GameRegistry.onItemCrafted(field_75238_b, p_75213_1_, field_75239_a);
+         this.func_75208_c(p_75213_1_);
+ 
+         for (int var2 = 0; var2 < this.field_75239_a.func_70302_i_(); ++var2)

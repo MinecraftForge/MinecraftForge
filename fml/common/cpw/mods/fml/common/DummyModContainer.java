@@ -30,12 +30,6 @@ public class DummyModContainer implements ModContainer
     }
 
     @Override
-    public ProxyInjector findSidedProxy()
-    {
-        return null;
-    }
-
-    @Override
     public List<ArtifactVersion> getDependants()
     {
         return Collections.emptyList();

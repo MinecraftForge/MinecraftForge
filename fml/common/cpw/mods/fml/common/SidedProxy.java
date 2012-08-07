@@ -12,7 +12,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-package net.minecraft.src;
+package cpw.mods.fml.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -32,15 +32,15 @@ public @interface SidedProxy
      * @return
      */
     String clientSide() default "";
-    
+
     /**
      * The name of the server side class to load and populate
      * @return
      */
     String serverSide() default "";
-    
+
     /**
-     * The name of the a special bukkit plugin class to load and populate
+     * The name of a special bukkit plugin class to load and populate
      */
     String bukkitSide() default "";
 }

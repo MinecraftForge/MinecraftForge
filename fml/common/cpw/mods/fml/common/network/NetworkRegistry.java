@@ -41,7 +41,7 @@ public class NetworkRegistry
     /**
      * A map of the packet handlers for packets
      */
-    private Map<String, IPacketHandler> packetHandlers = Maps.newHashMap();
+    private Multimap<String, IPacketHandler> packetHandlers = ArrayListMultimap.create();
     /**
      * A linked set of registered connection handlers
      */
@@ -151,8 +151,10 @@ public class NetworkRegistry
     {
         if (activeChannels.containsEntry(player, packet.field_73630_a))
         {
-            IPacketHandler handler = packetHandlers.get(packet.field_73630_a);
-            handler.onPacketData(network, packet);
+            for (IPacketHandler handler : packetHandlers.get(packet.field_73630_a))
+            {
+                handler.onPacketData(network, packet, player);
+            }
         }
     }
 

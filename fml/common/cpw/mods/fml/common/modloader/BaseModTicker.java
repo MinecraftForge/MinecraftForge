@@ -27,13 +27,13 @@ import cpw.mods.fml.common.TickType;
 public class BaseModTicker implements ITickHandler
 {
 
-    private BaseMod mod;
+    private BaseModProxy mod;
     private EnumSet<TickType> ticks;
     private boolean clockTickTrigger;
     private boolean sendGuiTicks;
 
 
-    BaseModTicker(BaseMod mod, boolean guiTicker)
+    BaseModTicker(BaseModProxy mod, boolean guiTicker)
     {
         this.mod = mod;
         this.ticks = EnumSet.of(TickType.WORLDLOAD);
@@ -97,11 +97,11 @@ public class BaseModTicker implements ITickHandler
             boolean keepTicking=true;
             if (sendGuiTicks)
             {
-                keepTicking = mod.doTickInGUI(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+                keepTicking = mod.doTickInGUI(type, end, tickData);
             }
             else
             {
-                keepTicking = mod.doTickInGame(type, end, FMLCommonHandler.instance().getMinecraftInstance(), tickData);
+                keepTicking = mod.doTickInGame(type, end, tickData);
             }
             if (!keepTicking) {
                 ticks.remove(type);
@@ -125,7 +125,7 @@ public class BaseModTicker implements ITickHandler
     /**
      * @param mod2
      */
-    public void setMod(BaseMod mod)
+    public void setMod(BaseModProxy mod)
     {
         this.mod = mod;
     }

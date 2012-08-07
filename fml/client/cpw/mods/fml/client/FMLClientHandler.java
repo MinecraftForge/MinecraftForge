@@ -75,7 +75,6 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
-import net.minecraft.src.SidedProxy;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.TexturePackBase;
@@ -99,6 +98,7 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
@@ -275,14 +275,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
-     * Return the minecraft instance
-     */
-    @Override
-    public Object getMinecraftInstance()
-    {
-        return client;
-    }
-    /**
      * @param player
      * @param gui
      */
@@ -301,20 +293,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void profileEnd() {
         client.field_71424_I.func_76319_b();
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#getModLoaderPropertyFor(java.lang.reflect.Field)
-     */
-    @Override
-    public ModProperty getModLoaderPropertyFor(Field f)
-    {
-        if (f.isAnnotationPresent(MLProp.class))
-        {
-            MLProp prop = f.getAnnotation(MLProp.class);
-            return new ModProperty(prop.info(), prop.min(), prop.max(), prop.name());
-        }
-        return null;
     }
 
     /**
@@ -342,38 +320,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     public Side getSide()
     {
         return Side.CLIENT;
-    }
-
-    @Override
-    public ProxyInjector findSidedProxyOn(cpw.mods.fml.common.modloader.BaseMod mod)
-    {
-        for (Field f : mod.getClass().getDeclaredFields())
-        {
-            if (f.isAnnotationPresent(SidedProxy.class))
-            {
-                SidedProxy sp = f.getAnnotation(SidedProxy.class);
-                return new ProxyInjector(sp.clientSide(), sp.serverSide(), sp.bukkitSide(), f);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public String getCurrentLanguage()
-    {
-        return null;
-    }
-
-    @Override
-    public Properties getCurrentLanguageTable()
-    {
-        return null;
-    }
-
-    @Override
-    public String getObjectName(Object minecraftObject)
-    {
-        return null;
     }
 
     public boolean hasOptifine()

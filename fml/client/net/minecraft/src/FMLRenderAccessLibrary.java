@@ -23,6 +23,7 @@ import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 
 /**
  *
@@ -35,17 +36,17 @@ public class FMLRenderAccessLibrary
 {
     public static Logger getLogger()
     {
-        return FMLCommonHandler.instance().getFMLLogger();
+        return FMLLog.getLogger();
     }
 
     public static void log(Level level, String message)
     {
-        getLogger().log(level, message);
+        FMLLog.log(level, message);
     }
 
     public static void log(Level level, String message, Throwable throwable)
     {
-        getLogger().log(level, message, throwable);
+        FMLLog.log(level, throwable, message);
     }
 
     public static void setTextureDimensions(int textureId, int width, int height, List<TextureFX> textureFXList)

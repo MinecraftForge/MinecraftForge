@@ -187,13 +187,6 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public ProxyInjector findSidedProxy()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
         if (this.enabled)

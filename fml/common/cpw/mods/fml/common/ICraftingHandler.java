@@ -13,28 +13,31 @@
  */
 package cpw.mods.fml.common;
 
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
+
 /**
  * Return a crafting handler for the mod container to call
- * 
+ *
  * @author cpw
  *
  */
 public interface ICraftingHandler
 {
-
     /**
      * The object array contains these three arguments
-     * 
+     *
      * @param player
      * @param craftedItem
      * @param craftingGrid
      */
-    void onCrafting(Object... craftingParameters);
+    void onCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix);
 
     /**
      * The object array contains these two arguments
      * @param player
      * @param smeltedItem
      */
-    void onSmelting(Object... smeltingParameters);
+    void onSmelting(EntityPlayer player, ItemStack item);
 }

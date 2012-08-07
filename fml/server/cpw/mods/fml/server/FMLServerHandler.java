@@ -41,7 +41,6 @@ import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.Profiler;
-import net.minecraft.src.SidedProxy;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
@@ -133,13 +132,6 @@ public class FMLServerHandler implements IFMLSidedHandler
         return INSTANCE;
     }
 
-    @Override
-    public Object getMinecraftInstance()
-    {
-        return server;
-    }
-
-
     /* (non-Javadoc)
      * @see cpw.mods.fml.common.IFMLSidedHandler#profileStart(java.lang.String)
      */
@@ -174,57 +166,5 @@ public class FMLServerHandler implements IFMLSidedHandler
     public Side getSide()
     {
         return Side.SERVER;
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#findSidedProxyOn(cpw.mods.fml.common.modloader.BaseMod)
-     */
-    @Override
-    public ProxyInjector findSidedProxyOn(cpw.mods.fml.common.modloader.BaseMod mod)
-    {
-        for (Field f : mod.getClass().getDeclaredFields())
-        {
-            if (f.isAnnotationPresent(SidedProxy.class))
-            {
-                SidedProxy sp = f.getAnnotation(SidedProxy.class);
-                return new ProxyInjector(sp.clientSide(), sp.serverSide(), sp.bukkitSide(), f);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Logger getMinecraftLogger()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getCurrentLanguage()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Properties getCurrentLanguageTable()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getObjectName(Object minecraftObject)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ModProperty getModLoaderPropertyFor(Field f)
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

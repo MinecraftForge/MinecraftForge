@@ -147,8 +147,6 @@ public interface ModContainer
 
     ArtifactVersion getProcessedVersion();
 
-    ProxyInjector findSidedProxy();
-
     boolean isImmutable();
 
     boolean isNetworkMod();

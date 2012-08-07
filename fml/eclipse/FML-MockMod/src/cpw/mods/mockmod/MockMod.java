@@ -13,6 +13,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.ModMetadata;
 
 @Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="before:mod_testMod", useMetadata=true)
@@ -22,7 +23,7 @@ public class MockMod
     public static class PacketHandler implements IPacketHandler
     {
         @Override
-        public void onPacketData(NetworkManager manager, Packet250CustomPayload packet)
+        public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player)
         {
         }
     }

@@ -92,11 +92,6 @@ public class InjectedModContainer implements ModContainer
         return wrappedContainer.getProcessedVersion();
     }
 
-    public ProxyInjector findSidedProxy()
-    {
-        return wrappedContainer.findSidedProxy();
-    }
-
     @Override
     public boolean isNetworkMod()
     {
