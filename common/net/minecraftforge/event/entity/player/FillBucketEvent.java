@@ -4,7 +4,9 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.World;
+import net.minecraftforge.event.Cancelable;
 
+@Cancelable
 public class FillBucketEvent extends PlayerEvent
 {
     public final ItemStack current;
@@ -20,12 +22,6 @@ public class FillBucketEvent extends PlayerEvent
         this.current = current;
         this.world = world;
         this.target = target;
-    }
-
-    @Override
-    public boolean isCancelable()
-    {
-        return true;
     }
     
     public boolean isHandeled()

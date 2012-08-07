@@ -30,7 +30,8 @@
 +        else if (par2ItemStack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
-             this.renderBlocksInstance.renderBlockAsItem(var4, par2ItemStack.getItemDamage(), 1.0F);
+-            this.renderBlocksInstance.renderBlockAsItem(var4, par2ItemStack.getItemDamage(), 1.0F);
++            this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
          }
          else
          {

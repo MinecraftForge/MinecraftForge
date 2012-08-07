@@ -94,7 +94,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1218,4 +1220,638 @@
+@@ -1218,4 +1220,650 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -731,5 +731,17 @@
 +            int id = world.getBlockId(x, y, z);
 +            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID;
 +        }
++    }
++    
++
++    /**
++     * Determines if this block should render in this pass.
++     * 
++     * @param pass The pass in question
++     * @return True to render
++     */
++    public boolean canRenderInPass(int pass)
++    {
++        return pass == getRenderBlockPass();
 +    }
  }

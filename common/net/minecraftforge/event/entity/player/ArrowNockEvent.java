@@ -2,7 +2,9 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
+import net.minecraftforge.event.Cancelable;
 
+@Cancelable
 public class ArrowNockEvent extends PlayerEvent
 {
     public ItemStack result;
@@ -11,11 +13,5 @@ public class ArrowNockEvent extends PlayerEvent
     {
         super(player);
         this.result = result;
-    }
-    
-    @Override
-    public boolean isCancelable()
-    {
-        return true;
     }
 }

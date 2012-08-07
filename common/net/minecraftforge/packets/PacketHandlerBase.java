@@ -2,7 +2,6 @@ package net.minecraftforge.packets;
 
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
-import net.minecraft.src.forge.IPacketHandler;
 
 /**
  * A helper class used to make a shared interface for sending packets,

@@ -2,7 +2,9 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
+import net.minecraftforge.event.Cancelable;
 
+@Cancelable
 public class ArrowLooseEvent extends PlayerEvent
 {
     public final ItemStack bow;
@@ -13,11 +15,5 @@ public class ArrowLooseEvent extends PlayerEvent
         super(player);
         this.bow = bow;
         this.charge = charge;
-    }
-    
-    @Override
-    public boolean isCancelable()
-    {
-        return true;
     }
 }

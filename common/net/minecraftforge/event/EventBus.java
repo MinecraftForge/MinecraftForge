@@ -92,12 +92,13 @@ public class EventBus
         }
     }
     
-    public void post(Event event)
+    public boolean post(Event event)
     {
         IEventListener[] listeners = event.getListenerList().getListeners(busID);
         for (IEventListener listener : listeners)
         {
             listener.invoke(event);
         }
+        return (event.isCancelable() ? event.isCanceled() : false);
     }
 }

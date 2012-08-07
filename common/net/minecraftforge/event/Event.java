@@ -7,11 +7,23 @@ package net.minecraftforge.event;
 public class Event
 {
     private boolean isCanceled = false;
+    private final boolean isCancelable;
     private static ListenerList listeners = new ListenerList();
     
     public Event()
     {
         setup();
+        Class cls = this.getClass();
+        boolean found = false;
+        while (cls != Event.class)
+        {
+            if (cls.isAnnotationPresent(Cancelable.class))
+            {
+                found = true;
+                break;
+            }
+        }
+        isCancelable = found;
     }
     
     /**
@@ -20,7 +32,7 @@ public class Event
      */
     public boolean isCancelable()
     {
-        return false;
+        return isCancelable;
     }
     
     /**

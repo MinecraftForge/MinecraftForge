@@ -2,7 +2,9 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;
+import net.minecraftforge.event.Cancelable;
 
+@Cancelable
 public class BonemealEvent extends PlayerEvent
 {
     public final World world;
@@ -20,12 +22,6 @@ public class BonemealEvent extends PlayerEvent
         this.X = x;
         this.Y = y;
         this.Z = z;
-    }
-    
-    @Override
-    public boolean isCancelable()
-    {
-        return true;
     }
     
     public void setHandeled()

@@ -1,16 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityLiving.java
 +++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java
-@@ -5,6 +5,9 @@
+@@ -5,6 +5,11 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.*;
++import static net.minecraftforge.event.entity.living.LivingEvent.*;
  
  public abstract class EntityLiving extends Entity
  {
-@@ -310,6 +313,7 @@
+@@ -310,6 +315,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -18,7 +20,7 @@
      }
  
      public boolean isExplosiveMob(Class par1Class)
-@@ -366,6 +370,7 @@
+@@ -366,6 +372,7 @@
      {
          this.entityLivingToAttack = par1EntityLiving;
          this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
@@ -26,11 +28,11 @@
      }
  
      protected void entityInit()
-@@ -648,6 +653,11 @@
+@@ -648,6 +655,11 @@
       */
      public void onUpdate()
      {
-+        if (ForgeHooks.onEntityLivingUpdate(this))
++        if (MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(this)))
 +        {
 +            return;
 +        }
@@ -38,11 +40,11 @@
          super.onUpdate();
  
          if (this.arrowHitTempCounter > 0)
-@@ -815,6 +825,11 @@
+@@ -815,6 +827,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
-+        if (ForgeHooks.onEntityLivingAttacked(this, par1DamageSource, par2))
++        if (MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(this, par1DamageSource, par2)))
 +        {
 +            return false;
 +        }
@@ -50,24 +52,25 @@
          if (this.worldObj.isRemote)
          {
              return false;
-@@ -997,6 +1012,12 @@
+@@ -997,6 +1014,13 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
-+        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
-+        if (par2 == 0)
++        LivingHurtEvent event = new LivingHurtEvent(this, par1DamageSource, par2);
++        if (MinecraftForge.EVENT_BUS.post(event) || event.ammount== 0)
 +        {
 +            return;
 +        }
++        par2 = event.ammount;
 +
          par2 = this.applyArmorCalculations(par1DamageSource, par2);
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.health -= par2;
-@@ -1060,6 +1081,11 @@
+@@ -1060,6 +1084,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
-+        if (ForgeHooks.onEntityLivingDeath(this, par1DamageSource))
++        if (MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(this, par1DamageSource)))
 +        {
 +            return;
 +        }
@@ -75,7 +78,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1083,13 +1109,17 @@
+@@ -1083,13 +1112,17 @@
                  var3 = EnchantmentHelper.getLootingModifier(((EntityPlayer)var2).inventory);
              }
  
@@ -94,33 +97,38 @@
  
                      if (var4 < 5)
                      {
-@@ -1097,6 +1127,13 @@
+@@ -1097,6 +1130,16 @@
                      }
                  }
              }
 +
 +            captureDrops = false;
-+            ForgeHooks.onEntityLivingDrops(this, par1DamageSource, capturedDrops, var3, recentlyHit > 0, var4);
-+            for (EntityItem item : capturedDrops)
++            
++            if (!MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(this, par1DamageSource, capturedDrops, var3, recentlyHit > 0, var4)))
 +            {
-+                worldObj.spawnEntityInWorld(item);
++                for (EntityItem item : capturedDrops)
++                {
++                    worldObj.spawnEntityInWorld(item);
++                }
 +            }
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1140,6 +1177,11 @@
+@@ -1140,6 +1183,13 @@
       */
      protected void fall(float par1)
      {
-+        if (ForgeHooks.onEntityLivingFall(this, par1))
++        LivingFallEvent event = new LivingFallEvent(this, par1);
++        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
 +            return;
 +        }
++        par1 = event.distance;
 +
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1327,7 +1369,7 @@
+@@ -1327,7 +1377,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -129,11 +137,11 @@
      }
  
      /**
-@@ -1590,6 +1632,7 @@
+@@ -1590,6 +1640,7 @@
          }
  
          this.isAirBorne = true;
-+        ForgeHooks.onEntityLivingJump(this);
++        MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(this));
      }
  
      /**

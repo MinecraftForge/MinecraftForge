@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/minecraft/net/minecraft/src/EntityPlayer.java
-@@ -2,6 +2,11 @@
+@@ -2,6 +2,15 @@
  
  import java.util.Iterator;
  import java.util.List;
@@ -9,10 +9,14 @@
 +import net.minecraftforge.common.IGuiHandler;
 +import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingHurtEvent;
++import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
++import net.minecraftforge.packets.PacketOpenGUI;
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -207,6 +212,7 @@
+@@ -207,6 +216,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -20,7 +24,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -607,7 +613,16 @@
+@@ -607,7 +617,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -38,7 +42,7 @@
      }
  
      /**
-@@ -673,13 +688,21 @@
+@@ -673,13 +692,21 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -63,15 +67,16 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -972,12 +995,22 @@
+@@ -972,12 +999,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
-+        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
-+        if (par2 == 0)
++        LivingHurtEvent event = new LivingHurtEvent(this, par1DamageSource, par2);
++        if (MinecraftForge.EVENT_BUS.post(event) || event.ammount == 0)
 +        {
 +            return;
 +        }
++        par2 = event.ammount;
 +
          if (!par1DamageSource.isUnblockable() && this.isBlocking())
          {
@@ -87,7 +92,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1012,6 +1045,10 @@
+@@ -1012,6 +1050,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -98,17 +103,17 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1055,7 +1092,9 @@
+@@ -1055,7 +1097,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
-+        ItemStack oldItem = getCurrentEquippedItem();
++        ItemStack orig = getCurrentEquippedItem();
          this.inventory.setInventorySlotContents(this.inventory.currentItem, (ItemStack)null);
-+        ForgeHooks.onDestroyCurrentItem(this, oldItem);
++        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(this, orig));
      }
  
      /**
-@@ -1084,6 +1123,15 @@
+@@ -1084,6 +1128,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -124,19 +129,20 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1226,6 +1274,11 @@
+@@ -1226,6 +1279,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
-+        EnumStatus customSleep = ForgeHooks.sleepInBedAt(this, par1, par2, par3);
-+        if (customSleep != null)
++        PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(this, par1, par2, par3);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.result != null)
 +        {
-+            return customSleep;
++            return event.result;
 +        }
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1265,6 +1318,11 @@
+@@ -1265,6 +1324,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -148,7 +154,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1334,11 +1392,12 @@
+@@ -1334,11 +1398,12 @@
          this.resetHeight();
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
@@ -166,7 +172,7 @@
  
              if (var5 == null)
              {
-@@ -1375,7 +1434,9 @@
+@@ -1375,7 +1440,9 @@
       */
      private boolean isInBed()
      {
@@ -177,7 +183,7 @@
      }
  
      /**
-@@ -1389,14 +1450,15 @@
+@@ -1389,14 +1456,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ - 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
@@ -196,7 +202,7 @@
              return var3;
          }
      }
-@@ -1408,8 +1470,11 @@
+@@ -1408,8 +1476,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -210,7 +216,7 @@
  
              switch (var2)
              {
-@@ -1699,6 +1764,7 @@
+@@ -1699,6 +1770,7 @@
                      return 101;
                  }
              }
@@ -218,7 +224,7 @@
          }
  
          return var3;
-@@ -1919,4 +1985,50 @@
+@@ -1919,4 +1991,50 @@
      {
          return this.theInventoryEnderChest;
      }

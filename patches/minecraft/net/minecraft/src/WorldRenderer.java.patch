@@ -49,7 +49,7 @@
                                              var12 = true;
                                          }
 -                                        else if (var24 == var11)
-+                                        if (!ForgeHooksClient.canRenderInPass(var23, var11))
++                                        if (!var23.canRenderInPass(var11))
                                          {
 -                                            var13 |= var10.renderBlockByRenderType(var23, var17, var15, var16);
 +                                            continue;

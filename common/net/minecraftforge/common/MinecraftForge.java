@@ -192,7 +192,5 @@ public class MinecraftForge
            temp[x] = EntityEnderman.carriableBlocks[x];
        }
        EntityEnderman.carriableBlocks = temp;
-       
-       
    }
 }

@@ -15,6 +15,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
+import net.minecraftforge.common.MinecraftForge;
 
 public class MinecraftForgeClient
 {
@@ -81,37 +82,5 @@ public class MinecraftForgeClient
             return customItemRenderers[item.itemID];
         }
         return null;
-    }
-
-    private static boolean hasInit = false;
-    public static void init()
-    {
-        if (hasInit)
-        {
-            return;
-        }
-        hasInit = true;
-        ForgeHooks.setPacketHandler(new PacketHandlerClient());
-    }
-
-    static
-    {
-        init();
-    }
-    
-    /***
-     * This is a function that is used to enforce deprecation of code.
-     * It checks the current Display's title against the passed in argument.
-     * If they do not match (such is the case in different versionf of MC) it exits the process with a error
-     * 
-     * @param version The version to find, usually "Minecraft Minecraft 1.2.3"
-     * @param message The error message to display in the crash log
-     */
-    public static void checkMinecraftVersion(String version, String message)
-    {
-        if (!Display.getTitle().equals(version))
-        {
-            MinecraftForge.killMinecraft("Minecraft Forge", message.replaceAll("%version%", Display.getTitle()));
-        }
     }
 }

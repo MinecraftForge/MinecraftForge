@@ -218,4 +218,10 @@ public class ForgeHooks
         System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
         ModLoader.getLogger().info(String.format("MinecraftForge v%s Initialized", ForgeVersion.getVersion()));
     }
+
+    public static boolean onEntityInteract(EntityPlayer entityPlayer, Entity par1Entity, boolean b)
+    {
+        
+        return false;
+    }
 }
