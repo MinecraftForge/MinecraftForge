@@ -1,0 +1,96 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java
++++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
+@@ -6,6 +6,8 @@
+ import java.util.List;
+ import java.util.Random;
+ import net.minecraft.client.Minecraft;
++import net.minecraftforge.client.ForgeHooksClient;
++
+ import org.lwjgl.input.Mouse;
+ import org.lwjgl.opengl.Display;
+ import org.lwjgl.opengl.GL11;
+@@ -289,8 +291,15 @@
+      */
+     private void updateFovModifierHand()
+     {
+-        EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
+-        this.fovMultiplierTemp = var1.getFOVMultiplier();
++        if (mc.renderViewEntity instanceof EntityPlayerSP)
++        {
++            EntityPlayerSP var1 = (EntityPlayerSP)this.mc.renderViewEntity;
++            this.fovMultiplierTemp = var1.getFOVMultiplier();
++        }
++        else
++        {
++            this.fovMultiplierTemp = mc.thePlayer.getFOVMultiplier();
++        }
+         this.fovModifierHandPrev = this.fovModifierHand;
+         this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
+     }
+@@ -306,7 +315,7 @@
+         }
+         else
+         {
+-            EntityPlayer var3 = (EntityPlayer)this.mc.renderViewEntity;
++            EntityLiving var3 = (EntityLiving)this.mc.renderViewEntity;
+             float var4 = 70.0F;
+ 
+             if (par2)
+@@ -394,11 +403,14 @@
+             if (!this.mc.gameSettings.debugCamEnable)
+             {
+                 int var10 = this.mc.theWorld.getBlockId(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+-
+-                if (var10 == Block.bed.blockID)
+-                {
+-                    int var11 = this.mc.theWorld.getBlockMetadata(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
+-                    int var12 = var11 & 3;
++                int x = MathHelper.floor_double(var2.posX);
++                int y = MathHelper.floor_double(var2.posY);
++                int z = MathHelper.floor_double(var2.posZ);
++                Block block = Block.blocksList[mc.theWorld.getBlockId(x, y, z)];
++                
++                if (block != null && block.isBed(mc.theWorld, x, y, z, var2))
++                {
++                    int var12 = block.getBedDirection(mc.theWorld, x, y, z);
+                     GL11.glRotatef((float)(var12 * 90), 0.0F, 1.0F, 0.0F);
+                 }
+ 
+@@ -1034,8 +1046,11 @@
+                     var17 = (EntityPlayer)var4;
+                     GL11.glDisable(GL11.GL_ALPHA_TEST);
+                     this.mc.mcProfiler.endStartSection("outline");
+-                    var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+-                    var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
++                    if (!ForgeHooksClient.onBlockHighlight(var5, var17, mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1))
++                    {
++                        var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
++                        var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
++                    }
+                     GL11.glEnable(GL11.GL_ALPHA_TEST);
+                 }
+             }
+@@ -1099,8 +1114,11 @@
+                 var17 = (EntityPlayer)var4;
+                 GL11.glDisable(GL11.GL_ALPHA_TEST);
+                 this.mc.mcProfiler.endStartSection("outline");
+-                var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
+-                var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
++                if (!ForgeHooksClient.onBlockHighlight(var5, var17, mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1))
++                {
++                    var5.drawBlockBreaking(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
++                    var5.drawSelectionBox(var17, this.mc.objectMouseOver, 0, var17.inventory.getCurrentItem(), par1);
++                }
+                 GL11.glEnable(GL11.GL_ALPHA_TEST);
+             }
+ 
+@@ -1124,6 +1142,9 @@
+                 this.setupFog(1, par1);
+                 GL11.glPopMatrix();
+             }
++
++            this.mc.mcProfiler.endStartSection("fhooks");
++            ForgeHooksClient.onRenderWorldLast(var5, par1);
+ 
+             this.mc.mcProfiler.endStartSection("hand");
+ 

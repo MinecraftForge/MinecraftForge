@@ -1,0 +1,139 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityLiving.java
++++ ../src_work/minecraft/net/minecraft/src/EntityLiving.java
+@@ -5,6 +5,9 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
+ 
+ public abstract class EntityLiving extends Entity
+ {
+@@ -310,6 +313,7 @@
+     public void setAttackTarget(EntityLiving par1EntityLiving)
+     {
+         this.attackTarget = par1EntityLiving;
++        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(this, par1EntityLiving));
+     }
+ 
+     public boolean isExplosiveMob(Class par1Class)
+@@ -366,6 +370,7 @@
+     {
+         this.entityLivingToAttack = par1EntityLiving;
+         this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
++        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(this, par1EntityLiving));
+     }
+ 
+     protected void entityInit()
+@@ -648,6 +653,11 @@
+      */
+     public void onUpdate()
+     {
++        if (ForgeHooks.onEntityLivingUpdate(this))
++        {
++            return;
++        }
++
+         super.onUpdate();
+ 
+         if (this.arrowHitTempCounter > 0)
+@@ -815,6 +825,11 @@
+      */
+     public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
+     {
++        if (ForgeHooks.onEntityLivingAttacked(this, par1DamageSource, par2))
++        {
++            return false;
++        }
++
+         if (this.worldObj.isRemote)
+         {
+             return false;
+@@ -997,6 +1012,12 @@
+      */
+     protected void damageEntity(DamageSource par1DamageSource, int par2)
+     {
++        par2 = ForgeHooks.onEntityLivingHurt(this, par1DamageSource, par2);
++        if (par2 == 0)
++        {
++            return;
++        }
++
+         par2 = this.applyArmorCalculations(par1DamageSource, par2);
+         par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
+         this.health -= par2;
+@@ -1060,6 +1081,11 @@
+      */
+     public void onDeath(DamageSource par1DamageSource)
+     {
++        if (ForgeHooks.onEntityLivingDeath(this, par1DamageSource))
++        {
++            return;
++        }
++
+         Entity var2 = par1DamageSource.getEntity();
+ 
+         if (this.scoreValue >= 0 && var2 != null)
+@@ -1083,13 +1109,17 @@
+                 var3 = EnchantmentHelper.getLootingModifier(((EntityPlayer)var2).inventory);
+             }
+ 
++            captureDrops = true;
++            capturedDrops.clear();
++            int var4 = 0;
++
+             if (!this.isChild())
+             {
+                 this.dropFewItems(this.recentlyHit > 0, var3);
+ 
+                 if (this.recentlyHit > 0)
+                 {
+-                    int var4 = this.rand.nextInt(200) - var3;
++                    var4 = this.rand.nextInt(200) - var3;
+ 
+                     if (var4 < 5)
+                     {
+@@ -1097,6 +1127,13 @@
+                     }
+                 }
+             }
++
++            captureDrops = false;
++            ForgeHooks.onEntityLivingDrops(this, par1DamageSource, capturedDrops, var3, recentlyHit > 0, var4);
++            for (EntityItem item : capturedDrops)
++            {
++                worldObj.spawnEntityInWorld(item);
++            }
+         }
+ 
+         this.worldObj.setEntityState(this, (byte)3);
+@@ -1140,6 +1177,11 @@
+      */
+     protected void fall(float par1)
+     {
++        if (ForgeHooks.onEntityLivingFall(this, par1))
++        {
++            return;
++        }
++
+         super.fall(par1);
+         int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
+ 
+@@ -1327,7 +1369,7 @@
+         int var2 = MathHelper.floor_double(this.boundingBox.minY);
+         int var3 = MathHelper.floor_double(this.posZ);
+         int var4 = this.worldObj.getBlockId(var1, var2, var3);
+-        return var4 == Block.ladder.blockID || var4 == Block.vine.blockID;
++        return Block.blocksList[var4] != null && Block.blocksList[var4].isLadder(worldObj, var1, var2, var3);
+     }
+ 
+     /**
+@@ -1590,6 +1632,7 @@
+         }
+ 
+         this.isAirBorne = true;
++        ForgeHooks.onEntityLivingJump(this);
+     }
+ 
+     /**

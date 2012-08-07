@@ -1,15 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/NetClientHandler.java
 +++ ../src_work/minecraft/net/minecraft/src/NetClientHandler.java
-@@ -18,6 +18,8 @@
+@@ -18,6 +18,9 @@
  import java.util.Random;
  import javax.crypto.SecretKey;
  import net.minecraft.client.Minecraft;
++import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.ForgeHooks;
 +
  import org.lwjgl.input.Keyboard;
  
- public class NetClientHandler extends NetHandler
-@@ -56,6 +58,8 @@
+ import cpw.mods.fml.common.LoaderException;
+@@ -59,6 +62,8 @@
          this.mc = par1Minecraft;
          Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
          this.netManager = new TcpConnection(var4, "Client", this);
@@ -18,3 +19,64 @@
      }
  
      public NetClientHandler(Minecraft par1Minecraft, IntegratedServer par2IntegratedServer) throws IOException
+@@ -159,6 +164,7 @@
+         this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
+         this.mc.playerController.setGameType(par1Packet1Login.gameType);
+         this.addToSendQueue(new Packet204ClientInfo(this.mc.gameSettings.language, this.mc.gameSettings.renderDistance, this.mc.gameSettings.chatVisibility, this.mc.gameSettings.chatColours, this.mc.gameSettings.difficulty));
++        ForgeHooksClient.onLogin(par1Packet1Login, this, netManager);
+     }
+ 
+     public void handlePickupSpawn(Packet21PickupSpawn par1Packet21PickupSpawn)
+@@ -586,7 +592,7 @@
+ 
+     public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
+     {
+-        this.netManager.networkShutdown("disconnect.kicked", new Object[0]);
++        this.netManager.networkShutdown("disconnect.kicked", par1Packet255KickDisconnect.reason);
+         this.field_72554_f = true;
+         this.mc.loadWorld((WorldClient)null);
+         this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
+@@ -650,7 +656,11 @@
+ 
+     public void handleChat(Packet3Chat par1Packet3Chat)
+     {
+-        this.mc.ingameGUI.func_73827_b().func_73765_a(par1Packet3Chat.message);
++        par1Packet3Chat.message = ForgeHooks.onClientChatRecv(par1Packet3Chat.message);
++        if (par1Packet3Chat.message != null)
++        {
++            this.mc.ingameGUI.func_73827_b().func_73765_a(par1Packet3Chat.message);
++        }
+     }
+ 
+     public void handleAnimation(Packet18Animation par1Packet18Animation)
+@@ -1005,6 +1015,19 @@
+             {
+                 ((TileEntityMobSpawner)var2).readFromNBT(par1Packet132TileEntityData.customParam1);
+             }
++            else if (var2 != null)
++            {
++                var2.onDataPacket(netManager,  par1Packet132TileEntityData);
++            }
++            else 
++            {
++                /*Packet132TileEntityData pkt = par1Packet132TileEntityData;
++                ModLoader.getLogger().log(Level.WARNING, String.format(
++                        "Received a TileEntityData packet for a location that did not have a TileEntity: (%d, %d, %d) %d: %d, %d, %d", 
++                        pkt.xPosition, pkt.yPosition, pkt.zPosition,
++                        pkt.actionType, 
++                        pkt.customParam1, pkt.customParam2, pkt.customParam3));*/
++            }
+         }
+     }
+ 
+@@ -1141,6 +1164,10 @@
+         if (par1Packet131MapData.itemID == Item.map.shiftedIndex)
+         {
+             ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).updateMPMapData(par1Packet131MapData.itemData);
++        }
++        else if (ForgeHooks.onItemDataPacket(netManager, par1Packet131MapData))
++        {
++            ;
+         }
+         else
+         {

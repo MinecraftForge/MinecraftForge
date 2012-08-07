@@ -6,9 +6,11 @@ import java.util.TreeSet;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.Tessellator;
+import net.minecraftforge.common.IArmorTextureProvider;
 
 public class ForgeHooksClient
 {
@@ -189,5 +191,14 @@ public class ForgeHooksClient
         {
             unbindTexture();
         }
+    }
+    
+    public static String getArmorTexture(ItemStack armor, String _default)
+    {
+        if (armor.getItem() instanceof IArmorTextureProvider)
+        {
+            return ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
+        }
+        return _default;
     }
 }
