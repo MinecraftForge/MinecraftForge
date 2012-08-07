@@ -26,22 +26,13 @@ import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.TickType;
 
-public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
+public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModProxy
 {
     // CALLBACK MECHANISMS
 
-    public void keyBindingEvent(Object keybinding)
+    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object... data)
     {
-        this.keyboardEvent((KeyBinding)keybinding);
-    }
-
-    /**
-     * @param minecraftInstance
-     * @return
-     */
-    public final boolean doTickInGame(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
-    {
-        Minecraft mc = (Minecraft) minecraftInstance;
+        Minecraft mc = FMLClientHandler.instance().getClient();
         boolean hasWorld = true;
         // World and render ticks
         if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME ) && hasWorld) {
@@ -50,9 +41,9 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         return true;
     }
 
-    public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object minecraftInstance, Object... data)
+    public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object... data)
     {
-        Minecraft mc = (Minecraft) minecraftInstance;
+        Minecraft mc = FMLClientHandler.instance().getClient();
         if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME  ) || tick ==  TickType.GUILOAD) {
             return onTickInGUI((Float) data[0], mc, mc.field_71462_r);
         }
@@ -60,17 +51,22 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
     }
 
     /**
+     * @param minecraftInstance
+     * @return
+     *//*
+
+    *//**
      * @param renderers
-     */
+     *//*
     public final void onRenderHarvest(Map renderers)
     {
         addRenderer((Map<Class<? extends Entity>,Render>)renderers);
 
     }
 
-    /**
+    *//**
      *
-     */
+     *//*
     public final void onRegisterAnimations()
     {
         registerAnimation(FMLClientHandler.instance().getClient());
@@ -159,15 +155,16 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseMod
         }
     }
 
-    /**
+    *//**
      * NO-OP on client side
-     */
+     *//*
     @Override
     public final boolean handleCommand(String command, Object... data)
     {
         return false;
     }
-    // BASEMOD API
+
+*/    // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
      *

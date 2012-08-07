@@ -72,8 +72,6 @@ public class FMLCommonHandler
 
     private int uniqueEntityListId = 220;
 
-    private Map<String,Properties> modLanguageData=new HashMap<String,Properties>();
-
     private List<IScheduledTickHandler> scheduledTicks = new ArrayList<IScheduledTickHandler>();
 
     public void beginLoading(IFMLSidedHandler handler)
@@ -165,28 +163,6 @@ public class FMLCommonHandler
     }
 
     /**
-     * Get the minecraft logger (goes to the server log file)
-     * @return
-     */
-    public Logger getMinecraftLogger()
-    {
-        if (sidedDelegate == null)
-        {
-            throw new RuntimeException("sidedDelegate null when attempting to getMinecraftLogger, this is generally caused by you not installing FML properly, " +
-            "or installing some other mod that edits Minecraft.class on top of FML such as ModLoader, do not do this. Reinstall FML properly and try again.");
-        }
-        return sidedDelegate.getMinecraftLogger();
-    }
-
-    /**
-     * @return
-     */
-    public Object getMinecraftInstance()
-    {
-        return sidedDelegate.getMinecraftInstance();
-    }
-
-    /**
      * @return
      */
     public int nextUniqueEntityListId()
@@ -199,34 +175,10 @@ public class FMLCommonHandler
      * @param lang
      * @param value
      */
-    public void addStringLocalization(String key, String lang, String value)
-    {
-        Properties langPack=modLanguageData.get(lang);
-        if (langPack==null) {
-            langPack=new Properties();
-            modLanguageData.put(lang, langPack);
-        }
-        langPack.put(key,value);
-
-        handleLanguageLoad(sidedDelegate.getCurrentLanguageTable(), lang);
-    }
-
     /**
      * @param languagePack
      * @param lang
      */
-    public void handleLanguageLoad(Properties languagePack, String lang)
-    {
-        Properties usPack=modLanguageData.get("en_US");
-        if (usPack!=null) {
-            languagePack.putAll(usPack);
-        }
-        Properties langPack=modLanguageData.get(lang);
-        if (langPack==null) {
-            return;
-        }
-        languagePack.putAll(langPack);
-    }
 
     public Side getSide()
     {
@@ -237,25 +189,6 @@ public class FMLCommonHandler
     {
         auxilliaryContainers.add(ticker);
     }
-
-    /**
-     * Called from the furnace to lookup fuel values
-     *
-     * @param itemId
-     * @param itemDamage
-     * @return
-     */
-    public int fuelLookup(int itemId, int itemDamage)
-    {
-        int fv = 0;
-        return fv;
-    }
-
-    public void addNameForObject(Object minecraftObject, String lang, String name) {
-        String label=sidedDelegate.getObjectName(minecraftObject);
-        addStringLocalization(label, lang, name);
-    }
-
 
     /**
      * Raise an exception
@@ -346,18 +279,6 @@ public class FMLCommonHandler
     public IFMLSidedHandler getSidedDelegate()
     {
         return sidedDelegate;
-    }
-
-    /**
-     * @param mod
-     */
-    public void injectSidedProxyDelegate(ModContainer mod)
-    {
-        ProxyInjector injector = mod.findSidedProxy();
-        if (injector != null)
-        {
-            injector.inject(mod, sidedDelegate.getSide());
-        }
     }
 
     public void handleWorldGeneration(int chunkX, int chunkZ, long worldSeed, Object... data)

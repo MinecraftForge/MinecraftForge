@@ -246,7 +246,7 @@ public class Loader
      *
      * If they provide the {@link Mod} annotation, they will be loaded as
      * "FML mods", which currently is effectively a NO-OP. If they are
-     * determined to be {@link BaseMod} subclasses they are loaded as such.
+     * determined to be {@link BaseModProxy} subclasses they are loaded as such.
      *
      * Finally, if they are successfully loaded as classes, they are then added
      * to the available mod list.

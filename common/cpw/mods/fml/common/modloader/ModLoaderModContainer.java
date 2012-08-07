@@ -31,9 +31,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import net.minecraft.src.MLProp;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -54,6 +57,8 @@ import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.MetadataCollection;
+import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -73,7 +78,7 @@ import cpw.mods.fml.common.TickType;
 public class ModLoaderModContainer implements ModContainer
 {
     private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
-    public BaseMod mod;
+    public BaseModProxy mod;
     private File modSource;
     public List<ArtifactVersion> requirements = Lists.newArrayList();
     public ArrayList<ArtifactVersion> dependencies = Lists.newArrayList();
@@ -104,8 +109,7 @@ public class ModLoaderModContainer implements ModContainer
      * We only instantiate this for "not mod mods"
      * @param instance
      */
-    ModLoaderModContainer(BaseMod instance) {
-        FMLCommonHandler.instance().addAuxilliaryModContainer(this);
+    ModLoaderModContainer(BaseModProxy instance) {
         this.mod=instance;
         this.gameTickHandler = new BaseModTicker(instance, false);
         this.guiTickHandler = new BaseModTicker(instance, true);
@@ -114,9 +118,8 @@ public class ModLoaderModContainer implements ModContainer
     /**
      *
      */
-    private void configureMod(Class<? extends BaseMod> modClazz)
+    private void configureMod(Class<? extends BaseModProxy> modClazz, ASMDataTable asmData)
     {
-        IFMLSidedHandler sideHandler = FMLCommonHandler.instance().getSidedDelegate();
         File configDir = Loader.instance().getConfigDir();
         File modConfig = new File(configDir, String.format("%s.cfg", modClazzName));
         Properties props = new Properties();
@@ -144,20 +147,32 @@ public class ModLoaderModContainer implements ModContainer
         StringBuffer comments = new StringBuffer();
         comments.append("MLProperties: name (type:default) min:max -- information\n");
 
+
+        List<ModProperty> mlPropFields = Lists.newArrayList();
         try
         {
-            for (Field f : modClazz.getDeclaredFields())
+            for (ASMData dat : Sets.union(asmData.getAnnotationsFor(this).get("net.minecraft.src.MLProp"), asmData.getAnnotationsFor(this).get("MLProp")))
             {
-                if (!Modifier.isStatic(f.getModifiers()))
+                if (dat.getClassName().equals(modClazzName))
                 {
+                    try
+                    {
+                        mlPropFields.add(new ModProperty(modClazz.getDeclaredField(dat.getObjectName()), dat.getAnnotationInfo()));
+                    }
+                    catch (Exception e)
+                    {
+                        FMLLog.log(Level.WARNING, e, "An error occured trying to access field %s in mod %s", dat.getObjectName(), getModId());
+                    }
+                }
+            }
+            for (ModProperty property : mlPropFields)
+            {
+                if (!Modifier.isStatic(property.field().getModifiers()))
+                {
+                    FMLLog.info("The MLProp field %s in mod %s appears not to be static", property.field().getName(), getModId());
                     continue;
                 }
-
-                ModProperty property = sideHandler.getModLoaderPropertyFor(f);
-                if (property == null)
-                {
-                    continue;
-                }
+                Field f = property.field();
                 String propertyName = property.name().length() > 0 ? property.name() : f.getName();
                 String propertyValue = null;
                 Object defaultValue = null;
@@ -328,7 +343,7 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Deprecated
-    public static ModContainer findContainerFor(BaseMod mod)
+    public static ModContainer findContainerFor(BaseModProxy mod)
     {
         return FMLCommonHandler.instance().findContainerFor(mod);
     }
@@ -350,7 +365,7 @@ public class ModLoaderModContainer implements ModContainer
      * @param <A>
      * @return
      */
-    public static <A extends BaseMod> List<A> findAll(Class<A> clazz)
+    public static <A extends BaseModProxy> List<A> findAll(Class<A> clazz)
     {
         ArrayList<A> modList = new ArrayList<A>();
 
@@ -417,19 +432,6 @@ public class ModLoaderModContainer implements ModContainer
         return mod.getVersion();
     }
 
-    @Override
-    public ProxyInjector findSidedProxy()
-    {
-        if (sidedProxy==null) {
-            sidedProxy = FMLCommonHandler.instance().getSidedDelegate().findSidedProxyOn(mod);
-            if (sidedProxy == null)
-            {
-                sidedProxy = NULLPROXY;
-            }
-        }
-        return sidedProxy == NULLPROXY ? null : sidedProxy;
-    }
-
     /**
      * @return
      */
@@ -491,10 +493,10 @@ public class ModLoaderModContainer implements ModContainer
         {
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(modSource);
-            Class<? extends BaseMod> modClazz = (Class<? extends BaseMod>) Class.forName(modClazzName, true, modClassLoader);
-            configureMod(modClazz);
+            Class<? extends BaseModProxy> modClazz = (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, modClassLoader);
+            configureMod(modClazz, event.getASMHarvestedData());
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
-            mod = (BaseMod)modClazz.newInstance();
+            mod = (BaseModProxy)modClazz.newInstance();
         }
         catch (Exception e)
         {
@@ -515,7 +517,9 @@ public class ModLoaderModContainer implements ModContainer
             this.guiTickHandler.setMod(mod);
             TickRegistry.registerTickHandler(this.gameTickHandler);
             TickRegistry.registerTickHandler(this.guiTickHandler);
-            GameRegistry.registerWorldGenerator(this.mod);
+            GameRegistry.registerWorldGenerator(ModLoaderHelper.buildWorldGenHelper(mod));
+            GameRegistry.registerFuelHandler(ModLoaderHelper.buildFuelHelper(mod));
+            GameRegistry.registerCraftingHandler(ModLoaderHelper.buildCraftingHelper(mod));
         }
         catch (Exception e)
         {

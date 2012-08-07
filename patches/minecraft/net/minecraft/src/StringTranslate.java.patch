@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/src/StringTranslate.java
++++ ../src-work/minecraft/net/minecraft/src/StringTranslate.java
+@@ -7,6 +7,8 @@
+ import java.util.IllegalFormatException;
+ import java.util.Properties;
+ import java.util.TreeMap;
++
++import cpw.mods.fml.common.registry.LanguageRegistry;
+ 
+ public class StringTranslate
+ {
+@@ -134,6 +136,7 @@
+             this.field_74813_d = p_74810_1_;
+             this.field_74815_b = var2;
+         }
++        LanguageRegistry.instance().loadLanguageTable(this.field_74815_b, this.field_74813_d);
+     }
+ 
+     public String func_74811_c()

@@ -17,10 +17,14 @@ package cpw.mods.fml.common.modloader;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.src.BaseMod;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ICraftingHandler;
+import cpw.mods.fml.common.IFuelHandler;
+import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.IPacketHandler;
@@ -111,6 +115,21 @@ public class ModLoaderHelper
 
     public static IPacketHandler buildPacketHandlerFor(BaseMod mod)
     {
-        return null;
+        return new ModLoaderPacketHandler(mod);
+    }
+
+    public static IWorldGenerator buildWorldGenHelper(BaseModProxy mod)
+    {
+        return new ModLoaderWorldGenerator(mod);
+    }
+
+    public static IFuelHandler buildFuelHelper(BaseModProxy mod)
+    {
+        return new ModLoaderFuelHelper(mod);
+    }
+
+    public static ICraftingHandler buildCraftingHelper(BaseModProxy mod)
+    {
+        return new ModLoaderCraftingHelper(mod);
     }
 }

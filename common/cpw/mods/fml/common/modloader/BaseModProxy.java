@@ -15,6 +15,12 @@
 package cpw.mods.fml.common.modloader;
 
 import java.util.Map;
+import java.util.Random;
+
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IInventory;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.World;
 
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -32,9 +38,8 @@ import cpw.mods.fml.common.TickType;
  * @author cpw
  *
  */
-public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHandler, ICraftingHandler, INetworkHandler, IConsoleHandler, IPlayerTracker
+public interface BaseModProxy
 {
-
     /**
      *
      */
@@ -46,16 +51,6 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
     void load();
 
     /**
-     * @param tick
-     * @param b
-     * @param minecraftInstance
-     * @param data
-     * @return
-     */
-    boolean doTickInGame(TickType tick, boolean b, Object minecraftInstance, Object... data);
-
-    boolean doTickInGUI(TickType tick, boolean b, Object minecraftInstance, Object... data);
-    /**
      * @return
      */
     String getName();
@@ -66,26 +61,15 @@ public interface BaseMod extends IWorldGenerator, IPickupNotifier, IDispenseHand
     String getPriorities();
 
     /**
-     * @param itemId
-     * @param itemDamage
-     * @return
-     */
-    int addFuel(int itemId, int itemDamage);
-
-    /**
-     * @param renderers
-     */
-    void onRenderHarvest(Map renderers);
-
-    /**
-     *
-     */
-    void onRegisterAnimations();
-
-    /**
      * @return
      */
     String getVersion();
 
-    void keyBindingEvent(Object keybinding);
+    boolean doTickInGUI(TickType type, boolean end, Object... tickData);
+    boolean doTickInGame(TickType type, boolean end, Object... tickData);
+    void generateSurface(World w, Random random, int i, int j);
+    void generateNether(World w, Random random, int i, int j);
+    int addFuel(int itemId, int damage);
+    void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix);
+    void takenFromFurnace(EntityPlayer player, ItemStack item);
 }

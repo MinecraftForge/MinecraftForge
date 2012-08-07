@@ -8,6 +8,7 @@ import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.TickRegistry;
 import net.minecraft.client.Minecraft;
 
@@ -16,7 +17,7 @@ public class mod_testMod extends BaseMod {
     public static class PacketHandler implements IPacketHandler
     {
         @Override
-        public void onPacketData(NetworkManager manager, Packet250CustomPayload packet)
+        public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player)
         {
         }
     }
