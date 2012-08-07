@@ -1,4 +1,4 @@
-package net.minecraft.src.forge;
+package net.minecraftforge.common;
 
 import net.minecraft.src.Entity;
 

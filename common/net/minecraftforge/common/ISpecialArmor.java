@@ -157,10 +157,10 @@ public interface ISpecialArmor
                         }
                         if (stack.stackSize <= 0)
                         {
-                            if (entity instanceof EntityPlayer)
+                            /*if (entity instanceof EntityPlayer)
                             {
                                 stack.onItemDestroyedByUse((EntityPlayer)entity);
-                            }
+                            }*/
                             inventory[prop.Slot] = null;
                         }
                     }

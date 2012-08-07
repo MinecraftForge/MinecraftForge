@@ -53,7 +53,7 @@
 -                for (var15 = 0; var15 <= 1; ++var15)
 +                this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
 +
-+                for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage(); ++var15)
++                for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
                  {
 +                    this.random.setSeed(187L); //Fixes Vanilla bug where layers would not render aligns properly.
                      var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);

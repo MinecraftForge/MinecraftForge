@@ -1,4 +1,4 @@
-package net.minecraft.src.forge.packets;
+package net.minecraftforge.packets;
 
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;

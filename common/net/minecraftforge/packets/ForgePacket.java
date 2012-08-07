@@ -1,4 +1,4 @@
-package net.minecraft.src.forge.packets;
+package net.minecraftforge.packets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -8,17 +8,14 @@ import java.util.List;
 
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.forge.ForgeHooks;
 
 public abstract class ForgePacket
 {
     //Forge Packet ID Constants.
     public static final int FORGE_ID = 0x040E9B47; //"Forge".hashCode();
     public static final int SPAWN       = 1;
-    public static final int MODLIST     = 2;
-    public static final int MOD_MISSING = 3;
-    public static final int OPEN_GUI    = 5;
-    public static final int TRACK       = 6;
+    public static final int OPEN_GUI    = 2;
+    public static final int TRACK       = 3;
 
     public Packet getPacket()
     {

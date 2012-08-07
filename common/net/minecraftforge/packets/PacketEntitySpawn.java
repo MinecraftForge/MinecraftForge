@@ -1,4 +1,4 @@
-package net.minecraft.src.forge.packets;
+package net.minecraftforge.packets;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,10 +8,9 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.DataWatcher;
 import net.minecraft.src.MathHelper;
-import net.minecraft.src.forge.ISpawnHandler;
-import net.minecraft.src.forge.IThrowableEntity;
-import net.minecraft.src.forge.MinecraftForge;
-import net.minecraft.src.forge.NetworkMod;
+import net.minecraftforge.common.ISpawnHandler;
+import net.minecraftforge.common.IThrowableEntity;
+import net.minecraftforge.common.MinecraftForge;
 
 public class PacketEntitySpawn extends ForgePacket
 {

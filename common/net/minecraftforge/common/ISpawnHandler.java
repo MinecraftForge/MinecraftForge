@@ -1,4 +1,4 @@
-package net.minecraft.src.forge;
+package net.minecraftforge.common;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
