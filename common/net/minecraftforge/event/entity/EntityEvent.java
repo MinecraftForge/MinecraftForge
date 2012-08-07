@@ -5,15 +5,19 @@ import net.minecraftforge.event.Event;
 
 public class EntityEvent extends Event
 {
-    private final Entity entity;
+    public final Entity entity;
     
     public EntityEvent(Entity entity)
     {
         this.entity = entity;
     }
     
-    public Entity getEntity()
+    public static class CanUpdate extends EntityEvent
     {
-        return entity;
+        public boolean canUpdate = false;
+        public CanUpdate(Entity entity)
+        {
+            super(entity);
+        }
     }
 }

@@ -1,8 +1,10 @@
 package net.minecraftforge.client.event.sound;
 
+import net.minecraft.src.Entity;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.SoundPoolEntry;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;
 
 public class SoundEvent extends Event
@@ -114,9 +116,27 @@ public class SoundEvent extends Event
             this.z = z;
         }
     }
+
     public static class PlaySoundEffectEvent extends SoundResultEvent
     {
         public PlaySoundEffectEvent(SoundManager manager, SoundPoolEntry source, String name, float volume, float pitch)
         { super(manager, source, name, volume, pitch); }
+    }
+
+    @Cancelable
+    public static class PlaySoundAtEntityEvent extends SoundEvent
+    {
+        public final Entity entity; 
+        public String name;
+        public final float volume;
+        public final float pitch;
+        
+        public PlaySoundAtEntityEvent(Entity entity, String name, float volume, float pitch)
+        {
+            this.entity = entity;
+            this.name = name;
+            this.volume = volume;
+            this.pitch = pitch;
+        }
     }
 }

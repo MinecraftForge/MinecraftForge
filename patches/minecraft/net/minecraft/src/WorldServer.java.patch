@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldServer.java
++++ ../src_work/minecraft/net/minecraft/src/WorldServer.java
+@@ -8,6 +8,8 @@
+ import java.util.Set;
+ import java.util.TreeSet;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
+ 
+ public class WorldServer extends World
+ {
+@@ -685,6 +687,7 @@
+             }
+ 
+             this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(this));
+         }
+     }
+ 
