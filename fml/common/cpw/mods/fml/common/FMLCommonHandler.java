@@ -337,4 +337,9 @@ public class FMLCommonHandler
         //TODO
         return null;
     }
+
+    public void showGuiScreen(Object clientGuiElement)
+    {
+        sidedDelegate.showGuiScreen(clientGuiElement);
+    }
 }

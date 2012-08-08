@@ -167,4 +167,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         return Side.SERVER;
     }
+
+    @Override
+    public void showGuiScreen(Object clientGuiElement)
+    {
+        
+    }
 }

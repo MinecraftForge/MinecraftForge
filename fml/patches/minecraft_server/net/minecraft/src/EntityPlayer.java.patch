@@ -1,0 +1,21 @@
+--- ../src-base/minecraft_server/net/minecraft/src/EntityPlayer.java
++++ ../src-work/minecraft_server/net/minecraft/src/EntityPlayer.java
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Iterator;
+ import java.util.List;
++
++import cpw.mods.fml.common.network.FMLNetworkHandler;
+ 
+ public abstract class EntityPlayer extends EntityLiving implements ICommandSender
+ {
+@@ -1480,4 +1482,9 @@
+     {
+         return this.field_71078_a;
+     }
++
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
++    {
++        FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++    }
+ }

@@ -10,7 +10,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
-import net.minecraft.src.IntegratedServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
@@ -19,6 +18,7 @@ import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.ServerConfigurationManager;
+import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 
 import com.google.common.collect.Maps;
@@ -258,7 +258,7 @@ public class FMLNetworkHandler
         NetworkRegistry.instance().connectionOpened(netClientHandler, server, port, networkManager);
     }
 
-    public static void onClientConnectionToIntegratedServer(NetHandler netClientHandler, IntegratedServer server, NetworkManager networkManager)
+    public static void onClientConnectionToIntegratedServer(NetHandler netClientHandler, MinecraftServer server, NetworkManager networkManager)
     {
         NetworkRegistry.instance().connectionOpened(netClientHandler, server, networkManager);
     }
@@ -271,5 +271,17 @@ public class FMLNetworkHandler
     
     public static void sendPacket(Player player, Packet packet)
     {
+    }
+
+    public static void openGui(EntityPlayer player, Object mod, int modGuiId, World world, int x, int y, int z)
+    {
+        if (player instanceof EntityPlayerMP)
+        {
+            NetworkRegistry.instance().openRemoteGui(instance().findNetworkModHandler(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
+        }
+        else
+        {
+            NetworkRegistry.instance().openLocalGui(instance().findNetworkModHandler(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
+        }
     }
 }

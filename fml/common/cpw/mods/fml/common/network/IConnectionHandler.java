@@ -1,8 +1,8 @@
 package cpw.mods.fml.common.network;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.IntegratedServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
@@ -52,7 +52,7 @@ public interface IConnectionHandler
      * @param netClientHandler
      * @param server
      */
-    void connectionOpened(NetHandler netClientHandler, IntegratedServer server, NetworkManager manager);
+    void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager);
 
     /**
      * Fired when a connection closes

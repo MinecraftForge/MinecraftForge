@@ -325,4 +325,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return optifineContainer!=null;
     }
+
+    @Override
+    public void showGuiScreen(Object clientGuiElement)
+    {
+        GuiScreen gui = (GuiScreen) clientGuiElement;
+        client.func_71373_a(gui);
+    }
 }

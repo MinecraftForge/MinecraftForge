@@ -35,7 +35,11 @@ public abstract class FMLPacket
         /**
          * Or, if there is missing stuff, the server tells the client what's missing and drops the connection.
          */
-        MOD_MISSING(ModMissingPacket.class);
+        MOD_MISSING(ModMissingPacket.class),
+        /**
+         * Open a GUI on the client from the server
+         */
+        GUIOPEN(OpenGuiPacket.class);
 
         private Class<? extends FMLPacket> packetType;
 
