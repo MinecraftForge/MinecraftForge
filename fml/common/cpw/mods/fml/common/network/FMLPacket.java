@@ -82,7 +82,7 @@ public abstract class FMLPacket
 
     public abstract FMLPacket consumePacket(byte[] data);
 
-    public abstract void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler);
+    public abstract void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName);
     {
         // TODO Auto-generated method stub
 

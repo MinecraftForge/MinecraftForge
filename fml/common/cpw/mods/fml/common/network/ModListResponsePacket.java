@@ -12,6 +12,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
@@ -74,7 +75,7 @@ public class ModListResponsePacket extends FMLPacket
     }
 
     @Override
-    public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler)
+    public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName)
     {
         Map<String, ModContainer> indexedModList = Maps.newHashMap(Loader.instance().getIndexedModList());
         List<String> missingClientMods = Lists.newArrayList();
@@ -105,10 +106,12 @@ public class ModListResponsePacket extends FMLPacket
         if (missingClientMods.size()>0 || versionIncorrectMods.size() > 0)
         {
             pkt.field_73629_c = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
+            FMLLog.fine("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
         }
         else
         {
-            pkt.field_73629_c = FMLPacket.makePacket(MOD_IDENTIFIERS);
+            pkt.field_73629_c = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
+            FMLLog.fine("User %s connecting with mods %s", userName, modVersions.keySet());
         }
 
         pkt.field_73628_b = pkt.field_73629_c.length;

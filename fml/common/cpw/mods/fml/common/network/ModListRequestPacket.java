@@ -64,7 +64,7 @@ public class ModListRequestPacket extends FMLPacket
      * @see cpw.mods.fml.common.network.FMLPacket#execute()
      */
     @Override
-    public void execute(NetworkManager mgr, FMLNetworkHandler handler, NetHandler netHandler)
+    public void execute(NetworkManager mgr, FMLNetworkHandler handler, NetHandler netHandler, String userName)
     {
         List<String> missingMods = Lists.newArrayList();
         Map<String,String> modVersions = Maps.newHashMap();
