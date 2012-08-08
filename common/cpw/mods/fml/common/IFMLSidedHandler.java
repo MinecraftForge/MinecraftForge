@@ -20,4 +20,6 @@ public interface IFMLSidedHandler
     Side getSide();
 
     void haltGame(String message, Throwable exception);
+
+    void showGuiScreen(Object clientGuiElement);
 }

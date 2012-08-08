@@ -8,15 +8,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.IntegratedServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.TcpConnection;
+import net.minecraft.src.World;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -31,8 +34,10 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.network.FMLPacket.Type;
 
 public class NetworkRegistry
 {
@@ -50,6 +55,8 @@ public class NetworkRegistry
      * A linked set of registered connection handlers
      */
     private Set<IConnectionHandler> connectionHandlers = Sets.newLinkedHashSet();
+    private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
+    private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
 
     public static NetworkRegistry instance()
     {
@@ -139,7 +146,7 @@ public class NetworkRegistry
         }
     }
 
-    void connectionOpened(NetHandler netClientHandler, IntegratedServer server, NetworkManager networkManager)
+    void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager networkManager)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
@@ -225,5 +232,32 @@ public class NetworkRegistry
         String request = new String(packet.field_73629_c, Charsets.UTF_8);
         List<String> channels = Lists.newArrayList(Splitter.on('\0').split(request));
         return channels;
+    }
+    public void openRemoteGui(NetworkModHandler networkModHandler, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
+    {
+        IGuiHandler handler = serverGuiHandlers.get(networkModHandler.getContainer());
+        if (handler != null)
+        {
+            Container container = (Container)handler.getServerGuiElement(modGuiId, player, world, x, y, z);
+            if (container != null)
+            {
+                player.func_71117_bO();
+                player.func_71128_l();
+                int windowId = player.field_71139_cq;
+                Packet250CustomPayload pkt = new Packet250CustomPayload();
+                pkt.field_73630_a = "FML";
+                pkt.field_73629_c = FMLPacket.makePacket(Type.GUIOPEN, windowId, networkModHandler.getNetworkId(), modGuiId, x, y, z);
+                pkt.field_73628_b = pkt.field_73629_c.length;
+                player.field_71135_a.func_72567_b(pkt);
+                player.field_71070_bA = container; 
+                player.field_71070_bA.field_75152_c = windowId;
+                player.field_71070_bA.func_75132_a(player);
+            }
+        }
+    }
+    public void openLocalGui(NetworkModHandler networkModHandler, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
+    {
+        IGuiHandler handler = clientGuiHandlers.get(networkModHandler.getContainer());
+        FMLCommonHandler.instance().showGuiScreen(handler.getClientGuiElement(modGuiId, player, world, x, y, z));
     }
 }

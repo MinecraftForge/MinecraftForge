@@ -1,6 +1,6 @@
 package cpw.mods.fml.common.modloader;
 
-import net.minecraft.src.IntegratedServer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetworkManager;
@@ -31,13 +31,6 @@ public class ModLoaderConnectionHandler implements IConnectionHandler
     }
 
     @Override
-    public void connectionOpened(NetHandler netClientHandler, IntegratedServer server, NetworkManager manager)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void connectionClosed(NetworkManager manager)
     {
         // TODO Auto-generated method stub
@@ -46,6 +39,13 @@ public class ModLoaderConnectionHandler implements IConnectionHandler
 
     @Override
     public void clientLoggedIn(NetworkManager manager, Packet1Login login)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager)
     {
         // TODO Auto-generated method stub
         
