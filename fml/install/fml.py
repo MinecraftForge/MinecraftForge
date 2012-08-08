@@ -2,6 +2,7 @@ import os, os.path, sys
 import urllib, zipfile
 import shutil, glob, fnmatch
 import subprocess, logging, re, shlex
+import csv
 from hashlib import md5  # pylint: disable-msg=E0611
 
 #class flushout(object):
@@ -162,6 +163,23 @@ def setup_fml(fml_dir, mcp_dir):
         #print forkcmd
         self.runcmd(forkcmd)
         
+        #Compile MCPMerger
+        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
+            classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
+            target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'MCPMerger.java'))
+        #print forkcmd
+        self.runcmd(forkcmd)
+        
+        #Run MCPMerger
+        forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
+            classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
+            
+        forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
+        if os.path.isfile(forge_cfg):
+            forkcmd += ' "%s"' % forge_cfg
+        
+        self.runcmd(forkcmd)
+        
         #Run AccessTransformer
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
             classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
@@ -246,6 +264,9 @@ def merge_client_server(mcp_dir):
                 
             shutil.move(f_client, f_shared)
             os.remove(f_server)
+            
+    cleanDirs(server)
+    cleanDirs(client)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     has_client = os.path.isdir(os.path.join(src_dir, 'minecraft'))
@@ -416,6 +437,21 @@ def copytree(src, dst, verbose=0, symlinks=False):
         # can't copy file access times on Windows
         pass
         
+def cleanDirs(path):
+    if not os.path.isdir(path):
+        return
+ 
+    files = os.listdir(path)
+    if len(files):
+        for f in files:
+            fullpath = os.path.join(path, f)
+            if os.path.isdir(fullpath):
+                cleanDirs(fullpath)
+ 
+    files = os.listdir(path)
+    if len(files) == 0:
+        os.rmdir(path)
+        
 def merge_tree(root_src_dir, root_dst_dir):
     for src_dir, dirs, files in os.walk(root_src_dir):
         dst_dir = src_dir.replace(root_src_dir, root_dst_dir)
@@ -428,7 +464,7 @@ def merge_tree(root_src_dir, root_dst_dir):
                 os.remove(dst_file)
             shutil.copy(src_file, dst_dir)
             
-def setup_mcp(fml_dir, mcp_dir):
+def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     backup = os.path.join(mcp_dir, 'runtime', 'commands.py.bck')
     runtime = os.path.join(mcp_dir, 'runtime', 'commands.py')
     patch = os.path.join(fml_dir, 'commands.patch')
@@ -467,6 +503,217 @@ def setup_mcp(fml_dir, mcp_dir):
     if os.path.isfile(temp):
         os.remove(temp)
     
+    mcp_conf = os.path.join(mcp_dir, 'conf')
+    mcp_conf_bak = os.path.join(mcp_dir, 'conf.bak')
+    fml_conf = os.path.join(fml_dir, 'conf')
+    
+    if not dont_gen_conf:
+        if os.path.isdir(mcp_conf_bak):
+            print 'Reverting old conf backup folder'
+            shutil.rmtree(mcp_conf)
+            os.rename(mcp_conf_bak, mcp_conf)
+
+        get_conf_copy(mcp_dir, fml_dir)
+
+        print 'Backing up MCP Conf'
+        os.rename(mcp_conf, mcp_conf_bak)
+    else:
+        shutil.rmtree(mcp_conf)
+    
+    print 'Copying FML conf'
+    shutil.copytree(fml_conf, mcp_conf)
+    
     #update workspace
     print 'Fixing MCP Workspace'
     merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
+    
+    
+def get_conf_copy(mcp_dir, fml_dir):
+    #Lets grab the files we dont work on
+    for file in ['astyle.cfg', 'version.cfg', 'patches/minecraft_ff.patch', 'patches/minecraft_server_ff.patch', 'newids.csv']:
+        dst_file = os.path.normpath(os.path.join(fml_dir, 'conf', file))
+        src_file = os.path.normpath(os.path.join(mcp_dir, 'conf', file))
+        if not os.path.isdir(os.path.dirname(dst_file)):
+            os.makedirs(os.path.dirname(dst_file))
+        if os.path.exists(dst_file):
+            os.remove(dst_file)
+        shutil.copy(src_file, dst_file)
+        print 'Grabbing: ' + src_file
+        
+    ff_server = os.path.normpath(os.path.join(fml_dir, 'conf', 'patches', 'minecraft_server_ff.patch'))
+    data = []
+    with open(ff_server) as f: data = f.readlines();
+    data = data + [
+        'diff -r -U 3 minecraft_server\\net\\minecraft\\src\\ItemMap.java minecraft_server_patched\\net\\minecraft\\src\\ItemMap.java',
+        '--- minecraft_server\\net\\minecraft\\src\\ItemMap.java	Wed Aug 01 18:15:37 2012',
+        '+++ minecraft_server_patched\\net\\minecraft\\src\\ItemMap.java	Wed Aug 01 18:27:23 2012',
+        '@@ -24,7 +24,6 @@',
+        '    }',
+        ' ',
+        '    public static MapData func_77874_a(short p_77874_0_, World p_77874_1_) {',
+        '-      "map_" + p_77874_0_;',
+        '       MapData var3 = (MapData)p_77874_1_.func_72943_a(MapData.class, "map_" + p_77874_0_);',
+        '       if(var3 == null) {',
+        '          int var4 = p_77874_1_.func_72841_b("map");'
+    ]
+    os.remove(ff_server)
+    with open(ff_server, 'w') as f:
+        for line in data:
+            f.write(line.rstrip('\r\n') + '\n')
+
+    common_srg = gen_merged_srg(mcp_dir, fml_dir)
+    common_exc = gen_merged_exc(mcp_dir, fml_dir)
+    common_map = gen_shared_searge_names(common_srg, common_exc)
+    #ToDo use common_map to merge the remaining csvs, client taking precidense, setting the common items to side '2' and editing commands.py in FML to have 'if csv_side == side || csv_side == '2''
+    gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(fml_dir, 'conf', 'fields.csv'))
+    gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'methods.csv'), os.path.join(fml_dir, 'conf', 'methods.csv'))
+    gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'params.csv'), os.path.join(fml_dir, 'conf', 'params.csv'), main_key='param')
+        
+def gen_merged_srg(mcp_dir, fml_dir):
+    print 'Generating merged Retroguard data'
+    srg_client = os.path.join(mcp_dir, 'conf', 'client.srg')
+    srg_server = os.path.join(mcp_dir, 'conf', 'server.srg')
+    
+    if not os.path.isfile(srg_client) or not os.path.isfile(srg_server):
+        print 'Could not find client and server srg files in "%s"' % mcp_dir
+        return False
+        
+    client = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
+    with open(srg_client, 'r') as fh:
+        for line in fh:
+            pts = line.rstrip('\r\n').split(' ')
+            if pts[0] == 'MD:':
+                client[pts[0]][pts[1] + ' ' + pts[2]] = pts[3] + ' ' + pts[4]
+            else:
+                client[pts[0]][pts[1]] = pts[2]
+    
+    server = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
+    with open(srg_server, 'r') as fh:
+        for line in fh:
+            pts = line.rstrip('\r\n').split(' ')
+            if pts[0] == 'MD:':
+                server[pts[0]][pts[1] + ' ' + pts[2]] = pts[3] + ' ' + pts[4]
+            else:
+                server[pts[0]][pts[1]] = pts[2]
+    
+    common = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
+    for type in common:
+        for key, value in client[type].items():
+            if key in server[type]:
+                if value == server[type][key]:
+                    client[type].pop(key)
+                    server[type].pop(key)
+                    common[type][key] = value
+
+    for type in common:
+        for key, value in client[type].items():
+            common[type][key] = value #+ ' #C'
+            
+    for type in common:
+        for key, value in server[type].items():
+            common[type][key] = value #+ ' #S'
+            
+    #Print joined retroguard files
+    with open(os.path.join(fml_dir, 'conf', 'joined.srg'), 'w') as f:
+        for type in ['PK:', 'CL:', 'FD:', 'MD:']:
+            for key in sorted(common[type]):
+                f.write('%s %s %s\n' % (type, key, common[type][key]))
+    
+    return common
+
+def gen_merged_exc(mcp_dir, fml_dir):
+    print 'Generating merged MCInjector config'
+    exc_client = os.path.join(mcp_dir, 'conf', 'client.exc')
+    exc_server = os.path.join(mcp_dir, 'conf', 'server.exc')
+    
+    client = {}
+    with open(exc_client, 'r') as fh:
+        for line in fh:
+            if not line.startswith('#'):
+                pts = line.rstrip('\r\n').split('=')
+                client[pts[0]] = pts[1]
+            
+    server = {}
+    with open(exc_server, 'r') as fh:
+        for line in fh:
+            if not line.startswith('#'):
+                pts = line.rstrip('\r\n').split('=')
+                server[pts[0]] = pts[1]
+    
+    common = {}
+    for key, value in client.items():
+        if key in server:
+            if value != server[key]:
+                print 'Error: Exec for shared function does not match client and server:'
+                print 'Function: ' + key
+                print 'Client: ' + value
+                print 'Server: ' + server[value]
+            if value != '|':
+                common[key] = value
+            client.pop(key)
+            server.pop(key)
+        else:
+            if value != '|':
+                common[key] = value
+    
+    joined = dict(common.items() + server.items())
+    
+    #Print joined mcinjector files
+    with open(os.path.join(fml_dir, 'conf', 'joined.exc'), 'w') as f:
+        for key in sorted(joined):
+            f.write('%s=%s\n' % (key, joined[key]))
+            
+    return common
+
+def gen_shared_searge_names(common_srg, common_exc):
+    field = re.compile(r'field_[0-9]+_[a-zA-Z_]+$')
+    method = re.compile(r'func_[0-9]+_[a-zA-Z_]+')
+    param = re.compile(r'p_[\w]+_\d+_')
+    
+    print 'Gathering list of common searge names'
+    
+    searge = []
+    
+    for key, value in common_srg['FD:'].items():
+        m = field.search(value)
+        if not m is None:
+            if not m.group(0) in searge:
+                searge.append(m.group(0))
+                
+    for key, value in common_srg['MD:'].items():
+        m = method.search(value)
+        if not m is None and not '#' in value:
+            if not m.group(0) in searge:
+                searge.append(m.group(0))
+                
+    for key, value in common_exc.items():
+        m = param.findall(value)
+        if not m is None:
+            for p in m:
+                if not p in searge:
+                    searge.append(p)
+                    
+    return searge
+
+def gen_merged_csv(common_map, in_file, out_file, main_key='searge'):
+    reader = csv.DictReader(open(in_file, 'r'))
+    print 'Generating merged csv for %s' % os.path.basename(in_file)
+    sides = {'client': [], 'server': [], 'common': []}
+    added = []
+    for row in reader:
+        side = int(row['side'])
+        if row[main_key] in common_map:
+            if not row[main_key] in added:
+                row['side'] = '2'
+                sides['common'].append(row)
+                added.append(row[main_key])
+        elif side == 0:
+            sides['client'].append(row)
+        else:
+            sides['server'].append(row)
+            
+    writer = csv.DictWriter(open(out_file, 'wb'), fieldnames=reader.fieldnames)
+    writer.writeheader()
+    for key in ['client', 'server', 'common']:
+        for row in sorted(sides[key], key=lambda row: row[main_key]):
+            writer.writerow(row)

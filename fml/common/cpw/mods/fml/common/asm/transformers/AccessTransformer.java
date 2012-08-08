@@ -269,21 +269,7 @@ public class AccessTransformer implements IClassTransformer
             System.out.println("Could not find target jar: " + orig);
             return;
         }
-/*
-        if (temp.exists())
-        {
-            if (orig.exists() && !orig.renameTo(new File(args[0] + (new SimpleDateFormat(".yyyy.MM.dd.HHmmss")).format(new Date()))))
-            {
-                System.out.println("Could not backup existing file: " + orig);
-                return;
-            }
-            if (!temp.renameTo(orig))
-            {
-                System.out.println("Could not restore backup from previous run: " + temp);
-                return;
-            }
-        }
-*/
+
         if (!orig.renameTo(temp))
         {
             System.out.println("Could not rename file: " + orig + " -> " + temp);
