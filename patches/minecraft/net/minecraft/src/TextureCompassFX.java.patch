@@ -1,0 +1,80 @@
+--- ../src-base/minecraft/net/minecraft/src/TextureCompassFX.java
++++ ../src-work/minecraft/net/minecraft/src/TextureCompassFX.java
+@@ -3,9 +3,10 @@
+ import java.awt.image.BufferedImage;
+ import java.io.IOException;
+ import javax.imageio.ImageIO;
++import cpw.mods.fml.client.FMLTextureFX;
+ import net.minecraft.client.Minecraft;
+ 
+-public class TextureCompassFX extends TextureFX
++public class TextureCompassFX extends FMLTextureFX
+ {
+     private Minecraft field_76865_g;
+     private int[] field_76867_h = new int[256];
+@@ -17,13 +18,19 @@
+         super(Item.field_77750_aQ.func_77617_a(0));
+         this.field_76865_g = p_i3212_1_;
+         this.field_76847_f = 1;
+-
++        setup();
++	}
++    @Override
++    public void setup()
++    {
++        super.setup();
++        field_76867_h = new int[tileSizeSquare];
+         try
+         {
+-            BufferedImage var2 = ImageIO.read(Minecraft.class.getResource("/gui/items.png"));
+-            int var3 = this.field_76850_b % 16 * 16;
+-            int var4 = this.field_76850_b / 16 * 16;
+-            var2.getRGB(var3, var4, 16, 16, this.field_76867_h, 0, 16);
++            BufferedImage var2 = ImageIO.read(field_76865_g.field_71418_C.func_77292_e().func_77532_a("/gui/items.png"));
++            int var3 = this.field_76850_b % 16 * tileSizeBase;
++            int var4 = this.field_76850_b / 16 * tileSizeBase;
++            var2.getRGB(var3, var4, tileSizeBase, tileSizeBase, this.field_76867_h, 0, tileSizeBase);
+         }
+         catch (IOException var5)
+         {
+@@ -33,7 +40,7 @@
+ 
+     public void func_76846_a()
+     {
+-        for (int var1 = 0; var1 < 256; ++var1)
++        for (int var1 = 0; var1 < tileSizeSquare; ++var1)
+         {
+             int var2 = this.field_76867_h[var1] >> 24 & 255;
+             int var3 = this.field_76867_h[var1] >> 16 & 255;
+@@ -110,11 +117,11 @@
+         int var19;
+         int var18;
+ 
+-        for (var9 = -4; var9 <= 4; ++var9)
++        for (var9 = -(tileSizeBase >> 2); var9 <= (tileSizeBase >> 2); ++var9)
+         {
+-            var10 = (int)(8.5D + var26 * (double)var9 * 0.3D);
+-            var11 = (int)(7.5D - var24 * (double)var9 * 0.3D * 0.5D);
+-            var12 = var11 * 16 + var10;
++            var10 = (int)((tileSizeBase >> 1) + 0.5D + var26 * (double)var9 * 0.3D);
++            var11 = (int)((tileSizeBase >> 1) - 0.5D - var24 * (double)var9 * 0.3D * 0.5D);
++            var12 = var11 * tileSizeBase + var10;
+             var13 = 100;
+             var14 = 100;
+             var15 = 100;
+@@ -136,11 +143,11 @@
+             this.field_76852_a[var12 * 4 + 3] = (byte)var16;
+         }
+ 
+-        for (var9 = -8; var9 <= 16; ++var9)
++        for (var9 = -(tileSizeBase>>2); var9 <= tileSizeBase; ++var9)
+         {
+-            var10 = (int)(8.5D + var24 * (double)var9 * 0.3D);
+-            var11 = (int)(7.5D + var26 * (double)var9 * 0.3D * 0.5D);
+-            var12 = var11 * 16 + var10;
++            var10 = (int)((tileSizeBase >> 1) + 0.5D + var24 * (double)var9 * 0.3D);
++            var11 = (int)((tileSizeBase >> 1) - 0.5D + var26 * (double)var9 * 0.3D * 0.5D);
++            var12 = var11 * tileSizeBase + var10;
+             var13 = var9 >= 0 ? 255 : 100;
+             var14 = var9 >= 0 ? 20 : 100;
+             var15 = var9 >= 0 ? 20 : 100;

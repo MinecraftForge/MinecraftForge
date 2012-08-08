@@ -164,6 +164,7 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         client = minecraft;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
+        TextureFXManager.instance().setClient(client);
         FMLCommonHandler.instance().beginLoading(this);
         try
         {
