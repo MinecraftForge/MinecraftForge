@@ -12,7 +12,10 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import cpw.mods.fml.common.FMLLog;
+
 import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetworkManager;
 
 public class ModIdentifiersPacket extends FMLPacket
@@ -57,7 +60,7 @@ public class ModIdentifiersPacket extends FMLPacket
     }
 
     @Override
-    public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler)
+    public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName)
     {
         for (Entry<String,Integer> idEntry : modIds.entrySet())
         {

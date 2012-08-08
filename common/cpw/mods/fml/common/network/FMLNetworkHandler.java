@@ -18,6 +18,8 @@ import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -71,10 +73,19 @@ public class FMLNetworkHandler
     private void handleFMLPacket(Packet250CustomPayload packet, NetworkManager network, NetHandler netHandler)
     {
         FMLPacket pkt = FMLPacket.readPacket(packet.field_73629_c);
-        pkt.execute(network, this, netHandler);
+        String userName = null;
+        if (netHandler instanceof NetLoginHandler)
+        {
+            userName = ((NetLoginHandler)netHandler).field_72543_h;
+        }
+        else
+        {
+            userName = netHandler.getPlayer().func_70005_c_();
+        }
+        pkt.execute(network, this, netHandler, userName);
     }
 
-    public static void onClientConnectToServer(NetLoginHandler netLoginHandler, MinecraftServer server, SocketAddress address, String userName)
+    public static void onConnectionReceivedFromClient(NetLoginHandler netLoginHandler, MinecraftServer server, SocketAddress address, String userName)
     {
         instance().handleClientConnection(netLoginHandler, server, address, userName);
     }
@@ -90,10 +101,19 @@ public class FMLNetworkHandler
                 netLoginHandler.completeConnection("You don't have FML installed, or your installation is too old");
                 return;
             }
+            
         }
         // Are we ready to negotiate with the client?
         if (loginStates.get(netLoginHandler) == 1)
         {
+            // mods can try and kick undesireables here
+            String modKick = NetworkRegistry.instance().connectionReceived(netLoginHandler, netLoginHandler.field_72538_b);
+            if (modKick != null)
+            {
+                netLoginHandler.completeConnection(modKick);
+                loginStates.remove(netLoginHandler);
+                return;
+            }
             // The vanilla side wanted to kick
             if (!handleVanillaLoginKick(netLoginHandler, server, address, userName))
             {
@@ -190,10 +210,20 @@ public class FMLNetworkHandler
         return handler.isNetworkMod();
     }
 
-
-    public NetworkModHandler findNetworkModHandler(ModContainer mc)
+    public NetworkModHandler findNetworkModHandler(Object mc)
     {
-        return networkModHandlers.get(mc);
+        if (mc instanceof ModContainer)
+        {
+            return networkModHandlers.get(mc);
+        }
+        else if (mc instanceof Integer)
+        {
+            return networkIdLookup.get(mc);
+        }
+        else
+        {
+            return networkModHandlers.get(FMLCommonHandler.instance().findContainerFor(mc));
+        }
     }
 
     public Set<ModContainer> getNetworkModList()
@@ -202,11 +232,6 @@ public class FMLNetworkHandler
     }
 
     public static void handlePlayerLogin(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
-    {
-        instance().playerLoggedIn(player, netHandler, manager);
-    }
-
-    private void playerLoggedIn(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
     {
         NetworkRegistry.instance().playerLoggedIn(player, netHandler, manager);
     }

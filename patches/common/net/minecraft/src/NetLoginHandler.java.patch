@@ -31,7 +31,7 @@
      {
 -        String var1 = this.field_72534_f.func_71203_ab().func_72399_a(this.field_72538_b.func_74430_c(), this.field_72543_h);
 -
-+        FMLNetworkHandler.onClientConnectToServer(this, this.field_72534_f, this.field_72538_b.func_74430_c(), this.field_72543_h);
++        FMLNetworkHandler.onConnectionReceivedFromClient(this, this.field_72534_f, this.field_72538_b.func_74430_c(), this.field_72543_h);
 +    }
 +
 +    public void completeConnection(String var1)

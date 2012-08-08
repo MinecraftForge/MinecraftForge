@@ -35,17 +35,20 @@ public class NetworkModHandler
 
     private VersionRange acceptableRange;
 
-    public NetworkModHandler(ModContainer container, Class<?> networkModClass, ASMDataTable table)
+    public NetworkModHandler(ModContainer container, NetworkMod modAnnotation)
     {
         this.container = container;
-        this.mod = networkModClass.getAnnotation(NetworkMod.class);
+        this.mod = modAnnotation;
+        this.localId = assignedIds++;
+        this.networkId = this.localId;
+    }
+    public NetworkModHandler(ModContainer container, Class<?> networkModClass, ASMDataTable table)
+    {
+        this(container, networkModClass.getAnnotation(NetworkMod.class));
         if (this.mod == null)
         {
             return;
         }
-
-        this.localId = assignedIds++;
-        this.networkId = this.localId;
 
         Set<ASMData> versionCheckHandlers = table.getAnnotationsFor(container).get(NetworkMod.VersionCheckHandler.class.getName());
         String versionCheckHandlerMethod = null;

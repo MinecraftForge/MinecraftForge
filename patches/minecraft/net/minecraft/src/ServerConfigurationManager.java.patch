@@ -1,19 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/src/ServerConfigurationManager.java
 +++ ../src-work/minecraft/net/minecraft/src/ServerConfigurationManager.java
-@@ -9,6 +9,8 @@
+@@ -9,6 +9,9 @@
  import java.util.List;
  import java.util.Set;
  import java.util.logging.Logger;
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
++import cpw.mods.fml.common.network.NetworkRegistry;
  import net.minecraft.server.MinecraftServer;
  
  public abstract class ServerConfigurationManager
-@@ -54,6 +56,7 @@
-         ChunkCoordinates var5 = var4.func_72861_E();
-         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, var4);
-         NetServerHandler var6 = new NetServerHandler(this.field_72400_f, p_72355_1_, p_72355_2_);
+@@ -78,6 +81,7 @@
+         }
+ 
+         p_72355_2_.func_71116_b();
 +        FMLNetworkHandler.handlePlayerLogin(p_72355_2_, var6, p_72355_1_);
-         var6.func_72567_b(new Packet1Login(p_72355_2_.field_70157_k, var4.func_72912_H().func_76067_t(), p_72355_2_.field_71134_c.func_73081_b(), var4.func_72912_H().func_76093_s(), var4.field_73011_w.field_76574_g, var4.field_73013_u, var4.func_72800_K(), this.func_72352_l()));
-         var6.func_72567_b(new Packet6SpawnPosition(var5.field_71574_a, var5.field_71572_b, var5.field_71573_c));
-         var6.func_72567_b(new Packet202PlayerAbilities(p_72355_2_.field_71075_bZ));
+     }
+ 
+     public void func_72364_a(WorldServer[] p_72364_1_)

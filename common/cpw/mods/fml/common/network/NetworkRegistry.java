@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
@@ -18,6 +19,7 @@ import net.minecraft.src.Packet250CustomPayload;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -76,14 +78,7 @@ public class NetworkRegistry
      */
     public void registerChannel(IPacketHandler handler, String channelName)
     {
-        if ("FML".equals(channelName) || (channelName != null && channelName.startsWith("MC|")))
-        {
-            FMLLog.severe("Illegal attempt to register a special channel %s", channelName);
-            throw new FMLNetworkException();
-        }
-
         packetHandlers.put(channelName, handler);
-//        invertedChannelList = Multimaps.invertFrom(channelList, ArrayListMultimap.<String, ModContainer>create());
     }
     /**
      * Activate the channel for the player
@@ -119,6 +114,19 @@ public class NetworkRegistry
             handler.playerLoggedIn((Player)player, netHandler, manager);
         }
         generateChannelRegistration(player, netHandler, manager);
+    }
+
+    String connectionReceived(NetLoginHandler netHandler, NetworkManager manager)
+    {
+        for (IConnectionHandler handler : connectionHandlers)
+        {
+            String kick = handler.connectionReceived(netHandler, manager);
+            if (!Strings.isNullOrEmpty(kick))
+            {
+                return kick;
+            }
+        }
+        return null;
     }
 
     void generateChannelRegistration(EntityPlayer player, NetHandler netHandler, NetworkManager manager)
