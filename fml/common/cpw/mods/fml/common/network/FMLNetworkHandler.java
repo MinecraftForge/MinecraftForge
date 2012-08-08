@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
 import net.minecraft.src.IntegratedServer;
@@ -14,6 +15,7 @@ import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.ServerConfigurationManager;
@@ -196,13 +198,17 @@ public class FMLNetworkHandler
         return pkt;
     }
 
+    public void registerNetworkMod(NetworkModHandler handler)
+    {
+        networkModHandlers.put(handler.getContainer(), handler);
+        networkIdLookup.put(handler.getNetworkId(), handler);
+    }
     public boolean registerNetworkMod(ModContainer container, Class<?> networkModClass, ASMDataTable asmData)
     {
         NetworkModHandler handler = new NetworkModHandler(container, networkModClass, asmData);
         if (handler.isNetworkMod())
         {
-            networkModHandlers.put(container, handler);
-            networkIdLookup.put(handler.getNetworkId(), handler);
+            registerNetworkMod(handler);
         }
 
         return handler.isNetworkMod();
@@ -260,5 +266,10 @@ public class FMLNetworkHandler
     public static void onConnectionClosed(NetworkManager manager)
     {
         NetworkRegistry.instance().connectionClosed(manager);
+    }
+    
+    
+    public static void sendPacket(Player player, Packet packet)
+    {
     }
 }

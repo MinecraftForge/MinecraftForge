@@ -53,7 +53,12 @@ public class TextureFXManager
     private List<TextureFX> addedTextureFX = new ArrayList<TextureFX>();
 
     private Minecraft client;
-
+    
+    void setClient(Minecraft client)
+    {
+        this.client = client;
+    }
+    
     public boolean onUpdateTextureEffect(TextureFX effect)
     {
         ITextureFX ifx = (effect instanceof ITextureFX ? ((ITextureFX)effect) : null);

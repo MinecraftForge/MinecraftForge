@@ -1,17 +1,16 @@
 package cpw.mods.fml.relauncher;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class RelaunchClassLoader extends URLClassLoader
 {
@@ -49,7 +48,7 @@ public class RelaunchClassLoader extends URLClassLoader
         }
         catch (Exception e)
         {
-            // error registering transformer
+            FMLRelaunchLog.log(Level.SEVERE, e, "A critical problem occured registering the ASM transformer class %s", transformerClassName);
         }
     }
     @Override

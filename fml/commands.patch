@@ -1,6 +1,6 @@
 --- commands.py
 +++ commands.py
-@@ -584,6 +584,9 @@
+@@ -582,6 +582,9 @@
          self.has_astyle_cfg = False
          if os.path.isfile(self.astyleconf):
              self.has_astyle_cfg = True
@@ -10,7 +10,15 @@
  
      def creatergcfg(self, reobf=False, keep_lvt=False, keep_generics=False, rg_update=False):
          """Create the files necessary for RetroGuard"""
-@@ -1198,20 +1201,20 @@
+@@ -1039,6 +1042,7 @@
+             all_files = True
+             append_pattern = False
+         pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
++        pkglist = pkglist + filterdirs(self.srcshared, '*.java', append_pattern=append_pattern, all_files=all_files) #FML, Add Common folder
+         dirs = ' '.join(pkglist)
+         classpath = os.pathsep.join(cplk[side])
+         forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
+@@ -1195,20 +1199,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -34,7 +42,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1309,6 +1312,11 @@
+@@ -1238,6 +1242,11 @@
  
          # HINT: We pathwalk the sources
          for path, _, filelist in os.walk(pathsrclk[side], followlinks=True):
@@ -46,9 +54,24 @@
              for cur_file in fnmatch.filter(filelist, '*.java'):
                  updatefile(os.path.normpath(os.path.join(path, cur_file)))
          return True
-@@ -1442,6 +1450,21 @@
-         if not self.has_astyle_cfg:
-             self.logger.warning('!! reformatting disabled due to no config !!')
+@@ -1320,12 +1329,14 @@
+         pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
+ 
+         strip_comments(pathsrclk[side])
++        strip_comments(self.srcshared)
+ 
+     def process_cleanup(self, side):
+         """Do lots of random cleanups including stripping comments, trailing whitespace and extra blank lines"""
+         pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
+ 
+         src_cleanup(pathsrclk[side], fix_imports=True, fix_unicode=True, fix_charval=True, fix_pi=True, fix_round=False)
++        src_cleanup(self.srcshared, fix_imports=True, fix_unicode=True, fix_charval=True, fix_pi=True, fix_round=False)
+ 
+     def process_javadoc(self, side):
+         """Add CSV descriptions to methods and fields as javadoc"""
+@@ -1334,6 +1345,21 @@
+         if not self.has_doc_csv:
+             self.logger.warning('!! javadoc disabled due to no csvs !!')
              return False
 +            
 +        #FML Recall this function on the common folder
@@ -66,15 +89,39 @@
 +                self.srcserver = tmp
 +                
  
+         #HINT: We read the relevant CSVs
+         methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
+@@ -1342,13 +1368,13 @@
+         methods = {}
+         for row in methodsreader:
+             #HINT: Only include methods that have a non-empty description
+-            if int(row['side']) == side and row['desc']:
++            if (int(row['side']) == side or int(row['side']) == 2) and row['desc']:
+                 methods[row['searge']] = row['desc'].replace('*/', '* /')
+ 
+         fields = {}
+         for row in fieldsreader:
+             #HINT: Only include fields that have a non-empty description
+-            if int(row['side']) == side and row['desc']:
++            if (int(row['side']) == side or int(row['side']) == 2) and row['desc']:
+                 fields[row['searge']] = row['desc'].replace('*/', '* /')
+ 
+         regexps = {
+@@ -1420,6 +1446,7 @@
+ 
          # HINT: We create the list of source directories based on the list of packages
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
-@@ -1591,6 +1614,9 @@
-             return
++        pkglist = pkglist + filterdirs(self.srcshared, '*.java', append_pattern=True) #FML, Add Common folder
+         dirs = ' '.join(pkglist)
+         forkcmd = self.cmdastyle.format(classes=dirs, conffile=self.astyleconf)
+         self.runcmd(forkcmd)
+@@ -1592,6 +1619,9 @@
+                 sys.exit(1)
  
          for entry in newfiles:
 +            if 'commands.py' in entry[0]: #FML, Disable updating of Commands.py
 +                print 'Update to runtime/commands.py found, but disbled due to using fml'
 +                continue
              if entry[3] == 'U':
-                 self.logger.info('New version found for : %s', entry[0])
-             elif entry[3] == 'D':
+                 self.logger.info('Retrieving file from server : %s', entry[0])
+                 cur_file = os.path.normpath(entry[0])
