@@ -139,8 +139,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private TexturePackBase fallbackTexturePack;
 
-    private NetClientHandler networkClient;
-
     private boolean firstTick;
     /**
      * Called to start the whole game off from

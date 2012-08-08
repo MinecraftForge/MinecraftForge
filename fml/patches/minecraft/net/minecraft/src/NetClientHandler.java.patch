@@ -10,7 +10,23 @@
  public class NetClientHandler extends NetHandler
  {
      private boolean field_72554_f = false;
-@@ -116,6 +119,7 @@
+@@ -39,6 +42,7 @@
+         this.field_72563_h = p_i3103_1_;
+         Socket var4 = new Socket(InetAddress.getByName(p_i3103_2_), p_i3103_3_);
+         this.field_72555_g = new TcpConnection(var4, "Client", this);
++        FMLNetworkHandler.onClientConnectionToRemoteServer(this, p_i3103_2_, p_i3103_3_, this.field_72555_g);
+     }
+ 
+     public NetClientHandler(Minecraft p_i3104_1_, IntegratedServer p_i3104_2_) throws IOException
+@@ -46,6 +50,7 @@
+         this.field_72563_h = p_i3104_1_;
+         this.field_72555_g = new MemoryConnection(this);
+         p_i3104_2_.func_71343_a().func_71754_a((MemoryConnection)this.field_72555_g, p_i3104_1_.field_71449_j.field_74286_b);
++        FMLNetworkHandler.onClientConnectionToIntegratedServer(this, p_i3104_2_, this.field_72555_g);
+     }
+ 
+     public void func_72547_c()
+@@ -116,6 +121,7 @@
  
      public void func_72513_a(Packet252SharedKey p_72513_1_)
      {
@@ -18,7 +34,15 @@
          this.func_72552_c(new Packet205ClientCommand(0));
      }
  
-@@ -1164,6 +1168,11 @@
+@@ -131,6 +137,7 @@
+         this.field_72563_h.field_71439_g.field_70157_k = p_72455_1_.field_73561_a;
+         this.field_72556_d = p_72455_1_.field_73562_h;
+         this.field_72563_h.field_71442_b.func_78746_a(p_72455_1_.field_73557_d);
++        FMLNetworkHandler.onConnectionEstablishedToServer(field_72555_g, p_72455_1_);
+         this.func_72552_c(new Packet204ClientInfo(this.field_72563_h.field_71474_y.field_74363_ab, this.field_72563_h.field_71474_y.field_74339_e, this.field_72563_h.field_71474_y.field_74343_n, this.field_72563_h.field_71474_y.field_74344_o, this.field_72563_h.field_71474_y.field_74318_M));
+     }
+ 
+@@ -1164,6 +1171,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -30,7 +54,7 @@
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
              String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
-@@ -1208,4 +1217,10 @@
+@@ -1208,4 +1220,10 @@
      {
          return this.field_72555_g;
      }
