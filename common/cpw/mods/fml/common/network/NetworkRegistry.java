@@ -10,10 +10,12 @@ import java.util.logging.Level;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.IntegratedServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 
 import com.google.common.base.Charsets;
@@ -129,6 +131,38 @@ public class NetworkRegistry
         return null;
     }
 
+    void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager networkManager)
+    {
+        for (IConnectionHandler handler : connectionHandlers)
+        {
+            handler.connectionOpened(netClientHandler, server, port, networkManager);
+        }
+    }
+
+    void connectionOpened(NetHandler netClientHandler, IntegratedServer server, NetworkManager networkManager)
+    {
+        for (IConnectionHandler handler : connectionHandlers)
+        {
+            handler.connectionOpened(netClientHandler, server, networkManager);
+        }
+    }
+
+    public void clientLoggedIn(NetworkManager manager, Packet1Login login)
+    {
+        for (IConnectionHandler handler : connectionHandlers)
+        {
+            handler.clientLoggedIn(manager, login);
+        }
+    }
+
+    void connectionClosed(NetworkManager manager)
+    {
+        for (IConnectionHandler handler : connectionHandlers)
+        {
+            handler.connectionClosed(manager);
+        }
+    }
+    
     void generateChannelRegistration(EntityPlayer player, NetHandler netHandler, NetworkManager manager)
     {
         Packet250CustomPayload pkt = new Packet250CustomPayload();

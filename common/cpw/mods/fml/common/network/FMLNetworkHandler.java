@@ -1,44 +1,32 @@
 package cpw.mods.fml.common.network;
 
-import static cpw.mods.fml.common.network.FMLPacket.Type.*;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_REQUEST;
 
 import java.net.SocketAddress;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.google.common.hash.Hashing;
-import com.google.common.io.ByteStreams;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.discovery.ASMDataTable;
-import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
+import net.minecraft.src.IntegratedServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
-import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.ServerConfigurationManager;
-import net.minecraft.src.TcpConnection;
 import net.minecraft.src.WorldType;
+
+import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class FMLNetworkHandler
 {
@@ -70,13 +58,18 @@ public class FMLNetworkHandler
         }
     }
 
+    public static void onConnectionEstablishedToServer(NetworkManager manager, Packet1Login login)
+    {
+        NetworkRegistry.instance().clientLoggedIn(manager, login);
+    }
+
     private void handleFMLPacket(Packet250CustomPayload packet, NetworkManager network, NetHandler netHandler)
     {
         FMLPacket pkt = FMLPacket.readPacket(packet.field_73629_c);
         String userName = null;
         if (netHandler instanceof NetLoginHandler)
         {
-            userName = ((NetLoginHandler)netHandler).field_72543_h;
+            userName = ((NetLoginHandler) netHandler).field_72543_h;
         }
         else
         {
@@ -101,7 +94,7 @@ public class FMLNetworkHandler
                 netLoginHandler.completeConnection("You don't have FML installed, or your installation is too old");
                 return;
             }
-            
+
         }
         // Are we ready to negotiate with the client?
         if (loginStates.get(netLoginHandler) == 1)
@@ -127,13 +120,15 @@ public class FMLNetworkHandler
             netLoginHandler.field_72538_b.func_74429_a(getModListRequestPacket());
             loginStates.put(netLoginHandler, 2);
         }
-        // We must be good to go - the ModIdentifiers packet was sent and the continuation signal was indicated
+        // We must be good to go - the ModIdentifiers packet was sent and the
+        // continuation signal was indicated
         else if (loginStates.get(netLoginHandler) == 2)
         {
             netLoginHandler.completeConnection(null);
             loginStates.remove(netLoginHandler);
         }
-        // We have to abort this connection - there was a negotiation problem (most likely missing mods)
+        // We have to abort this connection - there was a negotiation problem
+        // (most likely missing mods)
         else
         {
             netLoginHandler.completeConnection("There was a problem during FML negotiation");
@@ -154,7 +149,7 @@ public class FMLNetworkHandler
         ServerConfigurationManager playerList = server.func_71203_ab();
         String kickReason = playerList.func_72399_a(address, userName);
 
-        if (kickReason!=null)
+        if (kickReason != null)
         {
             netLoginHandler.completeConnection(kickReason);
         }
@@ -166,13 +161,15 @@ public class FMLNetworkHandler
         if (login.field_73561_a == FML_HASH && login.field_73558_e == PROTOCOL_VERSION)
         {
             FMLRelaunchLog.finest("Received valid FML login packet from %s", handler.field_72538_b.func_74430_c());
-            instance().loginStates.put(handler,1);
+            instance().loginStates.put(handler, 1);
         }
         else
         {
-            FMLRelaunchLog.fine("Received invalid FML login packet %d, %d from %s", login.field_73561_a, login.field_73558_e, handler.field_72538_b.func_74430_c());
+            FMLRelaunchLog.fine("Received invalid FML login packet %d, %d from %s", login.field_73561_a, login.field_73558_e,
+                    handler.field_72538_b.func_74430_c());
         }
     }
+
     public static FMLNetworkHandler instance()
     {
         return INSTANCE;
@@ -189,6 +186,7 @@ public class FMLNetworkHandler
         fake.field_73559_b = WorldType.field_77139_a[0];
         return fake;
     }
+
     public Packet250CustomPayload getModListRequestPacket()
     {
         Packet250CustomPayload pkt = new Packet250CustomPayload();
@@ -246,6 +244,21 @@ public class FMLNetworkHandler
         Map<String, ModContainer> mods = Loader.instance().getIndexedModList();
         NetworkModHandler handler = findNetworkModHandler(mods.get(key));
         handler.setNetworkId(value);
-        networkIdLookup.put(value,handler);
+        networkIdLookup.put(value, handler);
+    }
+
+    public static void onClientConnectionToRemoteServer(NetHandler netClientHandler, String server, int port, NetworkManager networkManager)
+    {
+        NetworkRegistry.instance().connectionOpened(netClientHandler, server, port, networkManager);
+    }
+
+    public static void onClientConnectionToIntegratedServer(NetHandler netClientHandler, IntegratedServer server, NetworkManager networkManager)
+    {
+        NetworkRegistry.instance().connectionOpened(netClientHandler, server, networkManager);
+    }
+    
+    public static void onConnectionClosed(NetworkManager manager)
+    {
+        NetworkRegistry.instance().connectionClosed(manager);
     }
 }
