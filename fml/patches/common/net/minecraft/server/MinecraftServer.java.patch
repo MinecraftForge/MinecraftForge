@@ -1,23 +1,19 @@
---- ../src-base/minecraft_server/net/minecraft/server/MinecraftServer.java
-+++ ../src-work/minecraft_server/net/minecraft/server/MinecraftServer.java
-@@ -11,6 +11,11 @@
+--- ../src-base/common/net/minecraft/server/MinecraftServer.java
++++ ../src-work/common/net/minecraft/server/MinecraftServer.java
+@@ -13,6 +13,9 @@
  import java.util.List;
  import java.util.logging.Level;
  import java.util.logging.Logger;
-+
 +import cpw.mods.fml.common.FMLCommonHandler;
 +import cpw.mods.fml.relauncher.ArgsWrapper;
 +import cpw.mods.fml.relauncher.FMLRelauncher;
-+import cpw.mods.fml.server.FMLServerHandler;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
  import net.minecraft.src.CallableIsServerModded;
-@@ -351,8 +356,12 @@
+@@ -362,8 +365,10 @@
      {
          try
          {
-+            FMLServerHandler.instance().beginServerLoading(this);
-+            FMLServerHandler.instance().finishServerLoading();
 +            FMLCommonHandler.instance().handleServerStarting(this);
              if (this.func_71197_b())
              {
@@ -25,7 +21,7 @@
                  long var1 = System.currentTimeMillis();
  
                  for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
-@@ -392,6 +401,7 @@
+@@ -403,6 +408,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -33,12 +29,13 @@
              }
              else
              {
-@@ -580,6 +590,11 @@
- 
+@@ -593,6 +599,12 @@
+     @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {
 +        FMLRelauncher.handleServerRelaunch(new ArgsWrapper(p_main_0_));
 +    }
++    @SideOnly(Side.SERVER)
 +    public static void fmlReentry(ArgsWrapper wrap)
 +    {
 +        String[] p_main_0_ = wrap.args;

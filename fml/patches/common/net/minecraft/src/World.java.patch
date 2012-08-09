@@ -1,7 +1,7 @@
---- ../src-base/minecraft/net/minecraft/src/World.java
-+++ ../src-work/minecraft/net/minecraft/src/World.java
-@@ -3350,7 +3350,7 @@
- 
+--- ../src-base/common/net/minecraft/src/World.java
++++ ../src-work/common/net/minecraft/src/World.java
+@@ -3375,7 +3375,7 @@
+     @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
 -        return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;

@@ -1,36 +1,36 @@
---- ../src-base/minecraft_server/net/minecraft/src/WorldType.java
-+++ ../src-work/minecraft_server/net/minecraft/src/WorldType.java
-@@ -1,7 +1,19 @@
+--- ../src-base/common/net/minecraft/src/WorldType.java
++++ ../src-work/common/net/minecraft/src/WorldType.java
+@@ -1,10 +1,20 @@
  package net.minecraft.src;
 +
 +import java.util.Arrays;
-+import java.util.List;
 +import java.util.Random;
 +import java.util.Set;
 +
-+import com.google.common.base.Objects;
-+import com.google.common.collect.Lists;
 +import com.google.common.collect.ObjectArrays;
 +import com.google.common.collect.Sets;
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
  
  public class WorldType
  {
 +    public static final BiomeGenBase[] base11Biomes = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
 +    public static final BiomeGenBase[] base12Biomes = ObjectArrays.concat(base11Biomes, BiomeGenBase.field_76782_w);
++
      public static final WorldType[] field_77139_a = new WorldType[16];
      public static final WorldType field_77137_b = (new WorldType(0, "default", 1)).func_77129_f();
      public static final WorldType field_77138_c = new WorldType(1, "flat");
-@@ -11,6 +23,9 @@
+@@ -14,6 +24,8 @@
      private final int field_77134_g;
      private boolean field_77140_h;
      private boolean field_77141_i;
 +
 +    protected BiomeGenBase[] biomesForWorldType;
-+
  
      private WorldType(int p_i3737_1_, String p_i3737_2_)
      {
-@@ -23,6 +38,14 @@
+@@ -26,6 +38,14 @@
          this.field_77134_g = p_i3738_3_;
          this.field_77140_h = true;
          field_77139_a[p_i3738_1_] = this;
@@ -45,11 +45,11 @@
      }
  
      public String func_77127_a()
-@@ -74,4 +97,63 @@
+@@ -89,4 +109,63 @@
  
          return null;
      }
-+
++    
 +    public WorldChunkManager getChunkManager(World world)
 +    {
 +        return this == field_77138_c ? new WorldChunkManagerHell(BiomeGenBase.field_76772_c, 0.5F, 0.5F) : new WorldChunkManager(world);

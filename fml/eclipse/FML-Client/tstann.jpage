@@ -1,6 +1,24 @@
-java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mcsnapshot/FML/eclipse/FML-MockMod/bin/cpw/mods/mockmod/MockMod.class"));
+java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mc131/FML/eclipse/FML-MockMod/bin/cpw/mods/mockmod/MockMod.class"));
 
-System.out.println(new cpw.mods.fml.common.asm.ASMModParser(fis));
+System.out.println(new cpw.mods.fml.common.discovery.asm.ASMModParser(fis));
+com.sun.jdi.VMDisconnectedException: Got IOException from Virtual Machine
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:179)
+	at org.eclipse.jdi.internal.connect.PacketReceiveManager.getReply(PacketReceiveManager.java:197)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:191)
+	at org.eclipse.jdi.internal.MirrorImpl.requestVM(MirrorImpl.java:226)
+	at org.eclipse.jdi.internal.ObjectReferenceImpl.invokeMethod(ObjectReferenceImpl.java:428)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.invokeMethod(JDIThread.java:958)
+	at org.eclipse.jdt.internal.debug.core.model.JDIObjectValue.sendMessage(JDIObjectValue.java:95)
+	at org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine.run(LocalEvaluationEngine.java:226)
+	at org.eclipse.jdt.internal.debug.core.model.JDIThread.runEvaluation(JDIThread.java:764)
+	at org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine.acceptClassFiles(LocalEvaluationEngine.java:212)
+	at org.eclipse.jdt.internal.core.eval.RequestorWrapper.acceptClassFiles(RequestorWrapper.java:48)
+	at org.eclipse.jdt.internal.eval.EvaluationContext.evaluate(EvaluationContext.java:296)
+	at org.eclipse.jdt.internal.eval.EvaluationContext.evaluate(EvaluationContext.java:315)
+	at org.eclipse.jdt.internal.core.eval.EvaluationContextWrapper.evaluateCodeSnippet(EvaluationContextWrapper.java:244)
+	at org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine$1.run(LocalEvaluationEngine.java:444)
+	at java.lang.Thread.run(Thread.java:679)
+
 
 java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File("/home/cpw/projects/FML/mcsnapshot/FML/eclipse/simpletestmod/bin/net/minecraft/src/mod_testMod.class"));
 
