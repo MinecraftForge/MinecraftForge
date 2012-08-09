@@ -1,4 +1,4 @@
-package net.minecraft.src.forge;
+package net.minecraftforge.common;
 
 import java.util.Hashtable;
 import java.util.logging.Level;

@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/Block.java
 +++ ../src_work/common/net/minecraft/src/Block.java
-@@ -2,8 +2,15 @@
+@@ -2,11 +2,23 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
@@ -8,15 +8,23 @@
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
-+
+ 
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.Orientation;
 +import static net.minecraftforge.common.Orientation.*;
- 
++
  public class Block
  {
-@@ -279,6 +286,7 @@
++    protected static int[] blockFireSpreadSpeed = new int[4096];
++    protected static int[] blockFlammability = new int[4096];
++    protected String currentTexture = "/terrain.png";
++    public boolean isDefaultTexture = true;
++    
+     /**
+      * used as foreach item, if item.tab = current tab, display it on the screen
+      */
+@@ -279,6 +291,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -24,7 +32,7 @@
      }
  
      /**
-@@ -417,9 +425,10 @@
+@@ -417,9 +430,10 @@
          return this.needsRandomTick;
      }
  
@@ -36,7 +44,7 @@
      }
  
      /**
-@@ -442,7 +451,7 @@
+@@ -442,7 +456,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -45,7 +53,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -452,7 +461,7 @@
+@@ -452,7 +466,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -54,7 +62,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -621,8 +630,7 @@
+@@ -621,8 +635,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -64,7 +72,7 @@
      }
  
      /**
-@@ -640,18 +648,13 @@
+@@ -640,18 +653,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -87,7 +95,7 @@
                  }
              }
          }
-@@ -985,7 +988,7 @@
+@@ -985,7 +993,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -96,17 +104,12 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1252,650 @@
+@@ -1249,4 +1257,645 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
 +        
-+    /* =================================================== FORGE START =====================================*/
-+    protected static int blockFireSpreadSpeed[] = new int[blocksList.length];
-+    protected static int blockFlammability[] = new int[blocksList.length];
-+    protected String currentTexture = "/terrain.png";
-+    public boolean isDefaultTexture = true;
-+    
++    /* =================================================== FORGE START =====================================*/    
 +    /**
 +     * Get a light value for this block, normal ranges are between 0 and 15
 +     * 

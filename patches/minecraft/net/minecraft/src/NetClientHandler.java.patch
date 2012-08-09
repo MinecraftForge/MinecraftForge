@@ -54,14 +54,3 @@
          }
      }
  
-@@ -1144,6 +1166,10 @@
-         if (par1Packet131MapData.itemID == Item.map.shiftedIndex)
-         {
-             ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).updateMPMapData(par1Packet131MapData.itemData);
-+        }
-+        else if (ForgeHooks.onItemDataPacket(netManager, par1Packet131MapData))
-+        {
-+            ;
-         }
-         else
-         {

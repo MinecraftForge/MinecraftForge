@@ -13,7 +13,7 @@
 -                            {
 -                                par1World.setBlockMetadata(par2 + var9, par3 + var10, par4 + var11, var13 | 8);
 -                            }
-+                            Block.blocksList[var10].beginLeavesDecay(par1World, par2 + var9, par3 + var10, par4 + var11);
++                            Block.blocksList[var12].beginLeavesDecay(par1World, par2 + var9, par3 + var10, par4 + var11);
                          }
                      }
                  }

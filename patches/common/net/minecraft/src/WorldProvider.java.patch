@@ -1,6 +1,13 @@
 --- ../src_base/common/net/minecraft/src/WorldProvider.java
 +++ ../src_work/common/net/minecraft/src/WorldProvider.java
-@@ -185,7 +185,7 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.common.DimensionManager;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+@@ -185,7 +186,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -9,7 +16,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -249,4 +249,73 @@
+@@ -249,4 +250,73 @@
      {
          return false;
      }

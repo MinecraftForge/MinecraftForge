@@ -22,6 +22,7 @@ public class Event
                 found = true;
                 break;
             }
+            cls = cls.getSuperclass();
         }
         isCancelable = found;
     }

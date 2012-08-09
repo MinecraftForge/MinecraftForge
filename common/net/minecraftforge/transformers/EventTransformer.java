@@ -21,33 +21,40 @@ public class EventTransformer implements IClassTransformer
     
     @Override
     public byte[] transform(String name, byte[] bytes)
-    {        
+    {
+        if (name.equals("net.minecraftforge.event.Event") || name.startsWith("net.minecraft.src.") || name.indexOf('.') == -1)
+        {
+            return bytes;
+        }
         ClassReader cr = new ClassReader(bytes);
         ClassNode classNode = new ClassNode();
         cr.accept(classNode, 0);
-        
+
         try
         {
-            buildEvents(classNode);
+            if (buildEvents(classNode))
+            {
+                ClassWriter cw = new ClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES);
+                classNode.accept(cw);
+                return cw.toByteArray();
+            }
+            return bytes;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        
-        ClassWriter cw = new ClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES);
-        classNode.accept(cw);
-        
-        return cw.toByteArray();
+
+        return bytes;
     }
     
     @SuppressWarnings("unchecked")
-    private void buildEvents(ClassNode classNode) throws Exception
+    private boolean buildEvents(ClassNode classNode) throws Exception
     {
-        Class<?> parent = Class.forName(classNode.superName.replace('/', '.'));
+        Class<?> parent = this.getClass().getClassLoader().loadClass(classNode.superName.replace('/', '.'));
         if (!Event.class.isAssignableFrom(parent))
         {
-                return;
+            return false;
         }
         
         boolean hasSetup = false;
@@ -79,7 +86,7 @@ public class EventTransformer implements IClassTransformer
                 }
                 else
                 {
-                        return;
+                        return false;
                 }
         }
         
@@ -127,6 +134,7 @@ public class EventTransformer implements IClassTransformer
         method.instructions.add(new FieldInsnNode(GETSTATIC, classNode.name, "LISTENER_LIST", tList.getDescriptor()));
         method.instructions.add(new InsnNode(ARETURN));
         classNode.methods.add(method);
+        return true;
     }
 
 }
