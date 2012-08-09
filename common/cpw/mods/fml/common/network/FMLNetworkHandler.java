@@ -302,4 +302,14 @@ public class FMLNetworkHandler
         pkt.field_73628_b = pkt.field_73629_c.length;
         return pkt;
     }
+
+    public static void makeEntitySpawnAdjustment(int entityId, EntityPlayerMP player, int serverX, int serverY, int serverZ)
+    {
+        Packet250CustomPayload pkt = new Packet250CustomPayload();
+        pkt.field_73630_a = "FML";
+        pkt.field_73629_c = FMLPacket.makePacket(Type.ENTITYSPAWNADJUSTMENT, entityId, serverX, serverY, serverZ);
+        pkt.field_73628_b = pkt.field_73629_c.length;
+        
+        player.field_71135_a.func_72567_b(pkt);
+    }
 }

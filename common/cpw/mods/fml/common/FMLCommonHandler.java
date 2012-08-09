@@ -44,6 +44,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -349,5 +350,10 @@ public class FMLCommonHandler
     public Entity spawnEntityIntoClientWorld(Class<? extends Entity> cls, EntitySpawnPacket entitySpawnPacket)
     {
         return sidedDelegate.spawnEntityIntoClientWorld(cls, entitySpawnPacket);
+    }
+
+    public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
+    {
+        sidedDelegate.adjustEntityLocationOnClient(entitySpawnAdjustmentPacket);
     }
 }

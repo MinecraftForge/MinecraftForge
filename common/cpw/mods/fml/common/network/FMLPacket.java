@@ -43,7 +43,11 @@ public abstract class FMLPacket
         /**
          * Spawn an entity on the client from the server
          */
-        ENTITYSPAWN(EntitySpawnPacket.class);
+        ENTITYSPAWN(EntitySpawnPacket.class),
+        /**
+         * Fixes entity location data after spawning
+         */
+        ENTITYSPAWNADJUSTMENT(EntitySpawnAdjustmentPacket.class);
         
 
         private Class<? extends FMLPacket> packetType;

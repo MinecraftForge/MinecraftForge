@@ -93,7 +93,7 @@ public class EntityRegistry
         }
         catch (IllegalArgumentException e)
         {
-            FMLLog.log(Level.WARNING, e, "The mod %s tried to register the entity (name,class) (%s,%s) one or bothe of which are already registered", mc.getModId(), entityName, entityClass.getName());
+            FMLLog.log(Level.WARNING, e, "The mod %s tried to register the entity (name,class) (%s,%s) one or both of which are already registered", mc.getModId(), entityName, entityClass.getName());
             return;
         }
         entityRegistrations.put(mc, er);
