@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
@@ -28,6 +29,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.network.FMLPacket.Type;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class FMLNetworkHandler
@@ -283,5 +287,19 @@ public class FMLNetworkHandler
         {
             NetworkRegistry.instance().openLocalGui(instance().findNetworkModHandler(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
         }
+    }
+
+    public static Packet getEntitySpawningPacket(Entity entity)
+    {
+        EntityRegistration er = EntityRegistry.instance().lookupModSpawn(entity.getClass(), false);
+        if (er == null)
+        {
+            return null;
+        }
+        Packet250CustomPayload pkt = new Packet250CustomPayload();
+        pkt.field_73630_a = "FML";
+        pkt.field_73629_c = FMLPacket.makePacket(Type.ENTITYSPAWN, er, entity);
+        pkt.field_73628_b = pkt.field_73629_c.length;
+        return pkt;
     }
 }

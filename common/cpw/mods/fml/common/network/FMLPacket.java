@@ -39,7 +39,12 @@ public abstract class FMLPacket
         /**
          * Open a GUI on the client from the server
          */
-        GUIOPEN(OpenGuiPacket.class);
+        GUIOPEN(OpenGuiPacket.class),
+        /**
+         * Spawn an entity on the client from the server
+         */
+        ENTITYSPAWN(EntitySpawnPacket.class);
+        
 
         private Class<? extends FMLPacket> packetType;
 

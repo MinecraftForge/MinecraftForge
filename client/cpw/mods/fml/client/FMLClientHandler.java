@@ -51,7 +51,9 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
 import net.minecraft.src.CrashReport;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GameSettings;
 import net.minecraft.src.GuiScreen;
@@ -79,6 +81,7 @@ import net.minecraft.src.StringTranslate;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.TexturePackBase;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
@@ -103,6 +106,9 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import cpw.mods.fml.common.registry.IThrowableEntity;
 
 
 /**
@@ -331,5 +337,66 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         GuiScreen gui = (GuiScreen) clientGuiElement;
         client.func_71373_a(gui);
+    }
+
+    @Override
+    public Entity spawnEntityIntoClientWorld(Class<? extends Entity> cls, EntitySpawnPacket packet)
+    {
+        WorldClient wc = client.field_71441_e;
+    
+        try
+        {
+            Entity entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
+            if (entity instanceof IThrowableEntity)
+            {
+                Entity thrower = client.field_71439_g.field_70157_k == packet.throwerId ? client.field_71439_g : wc.func_73024_a(packet.throwerId);
+                ((IThrowableEntity)entity).setThrower(thrower);
+            }
+
+            entity.field_70118_ct = packet.rawX;
+            entity.field_70117_cu = packet.rawY;
+            entity.field_70116_cv = packet.rawZ;
+
+            Entity parts[] = entity.func_70021_al();
+            if (parts != null)
+            {
+                int i = packet.entityId - entity.field_70157_k;
+                for (int j = 0; j < parts.length; j++)
+                {
+                    parts[j].field_70157_k += i;
+                }
+            }
+
+            entity.field_70157_k = packet.entityId;
+            entity.func_70056_a(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch, 1);
+            
+            if (entity instanceof EntityLiving)
+            {
+                ((EntityLiving)entity).field_70759_as = packet.scaledHeadYaw;
+            }
+            
+            if (packet.metadata != null)
+            {
+                entity.func_70096_w().func_75687_a((List)packet.metadata);
+            }
+
+            if (packet.throwerId > 0)
+            {
+                entity.func_70016_h(packet.speedScaledX, packet.speedScaledY, packet.speedScaledZ);
+            }
+
+            if (entity instanceof IEntityAdditionalSpawnData)
+            {
+                ((IEntityAdditionalSpawnData)entity).readSpawnData(packet.dataStream);
+            }
+
+            wc.func_73027_a(packet.entityId, entity);
+            return entity;
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.SEVERE, e, "A severe problem occurred during the spawning of an entity");
+            throw Throwables.propagate(e);
+        }
     }
 }

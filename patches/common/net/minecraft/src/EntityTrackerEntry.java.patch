@@ -1,0 +1,25 @@
+--- ../src-base/common/net/minecraft/src/EntityTrackerEntry.java
++++ ../src-work/common/net/minecraft/src/EntityTrackerEntry.java
+@@ -4,6 +4,8 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
++import cpw.mods.fml.common.network.FMLNetworkHandler;
+ 
+ public class EntityTrackerEntry
+ {
+@@ -306,6 +308,13 @@
+             System.out.println("Fetching addPacket for removed entity");
+         }
+ 
++        Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.field_73132_a);
++        
++        if (pkt != null)
++        {
++            return pkt;
++        }
++        
+         if (this.field_73132_a instanceof EntityItem)
+         {
+             EntityItem var8 = (EntityItem)this.field_73132_a;

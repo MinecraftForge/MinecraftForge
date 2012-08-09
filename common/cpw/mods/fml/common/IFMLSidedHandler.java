@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import net.minecraft.src.Entity;
+import net.minecraft.src.World;
+
 import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.network.EntitySpawnPacket;
 
 public interface IFMLSidedHandler
 {
@@ -22,4 +26,6 @@ public interface IFMLSidedHandler
     void haltGame(String message, Throwable exception);
 
     void showGuiScreen(Object clientGuiElement);
+
+    Entity spawnEntityIntoClientWorld(Class<? extends Entity> entityClass, EntitySpawnPacket packet);
 }

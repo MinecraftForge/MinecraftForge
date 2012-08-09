@@ -35,6 +35,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.Entity;
+import net.minecraft.src.World;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -42,6 +44,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.discovery.ContainerType;
+import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -341,5 +344,10 @@ public class FMLCommonHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         sidedDelegate.showGuiScreen(clientGuiElement);
+    }
+
+    public Entity spawnEntityIntoClientWorld(Class<? extends Entity> cls, EntitySpawnPacket entitySpawnPacket)
+    {
+        return sidedDelegate.spawnEntityIntoClientWorld(cls, entitySpawnPacket);
     }
 }
