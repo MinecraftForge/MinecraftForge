@@ -323,6 +323,8 @@ field_70717_bb,attackingPlayer,2,The most recent player that has attacked this e
 field_70718_bc,recentlyHit,2,"Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity should drop items on death."
 field_70719_bd,arrowHitTempCounter,2,"Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity should drop items on death."
 field_70720_be,arrowHitTimer,2,
+field_70721_aZ,legYaw,2,
+field_70722_aY,prevLegYaw,2,
 field_70723_bA,senses,2,
 field_70724_aR,attackTime,2,
 field_70725_aQ,deathTime,2,"The amount of time remaining this entity should act 'dead', i.e. have a corpse in the world."
@@ -481,7 +483,7 @@ field_71129_f,chunksToLoad,2,
 field_71130_g,destroyedItemsNetCache,2,entities added to this list will  be packet29'd to the player
 field_71131_d,managedPosX,2,player X position as seen by PlayerManager
 field_71132_e,managedPosZ,2,player Z position as seen by PlayerManager
-field_71133_b,minecraftInstance,2,
+field_71133_b,mcServer,2,Reference to the MinecraftServer object.
 field_71134_c,theItemInWorldManager,2,The ItemInWorldManager belonging to this player
 field_71135_a,serverForThisPlayer,2,set by the NetServerHandler or the ServerConfigurationManager
 field_71136_j,playerHasConqueredTheEnd,2,set to true when the player is leaving the End after success.
@@ -529,7 +531,7 @@ field_71281_E,lastSentPacketID,2,
 field_71282_F,lastSentPacketSize,2,
 field_71283_G,lastRecievedID,2,
 field_71284_A,pvpEnabled,2,Indicates whether PvP is active on the server or not.
-field_71285_B,allowFlight,2,Determines if flight is Allowed or not.
+field_71285_B,allowFlight,2,Determines if flight is allowed or not.
 field_71286_C,motd,2,The server MOTD string.
 field_71287_L,worldName,2,
 field_71288_M,isDemo,2,
@@ -549,7 +551,7 @@ field_71301_g,sentPacketSizeArray,2,
 field_71302_d,currentTask,2,The task the server is currently working on(and will output on outputPercentRemaining).
 field_71303_e,percentDone,2,The percentage of the current task finished so far.
 field_71304_b,theProfiler,2,
-field_71305_c,dimensionServerList,2,
+field_71305_c,theWorldServer,2,The server world instances.
 field_71306_a,logger,2,The logging system.
 field_71307_n,usageSnooper,2,The PlayerUsageSnooper instance.
 field_71308_o,anvilFile,2,
@@ -930,11 +932,11 @@ field_72348_e,maximumSizeSinceLastTruncation,2,
 field_72349_b,minimumSize,2,
 field_72350_c,vec3Cache,2,items at and above nextFreeSpace are assumed to be available
 field_72351_a,truncateArrayResetThreshold,2,
-field_72400_f,minecraftServerInstance,2,
+field_72400_f,mcServer,2,Reference to the MinecraftServer object.
 field_72401_g,bannedPlayers,2,
 field_72402_d,viewDistance,2,
 field_72403_e,dateFormat,2,
-field_72404_b,playerList,2,
+field_72404_b,playerEntityList,2,A list of player entities that exist on this server.
 field_72405_c,maxPlayers,2,The maximum number of players that can be connected at a time.
 field_72406_a,myLogger,2,
 field_72407_n,commandsAllowedForAll,2,True if all players are allowed to use commands (cheats).
@@ -944,7 +946,7 @@ field_72410_m,gameType,2,
 field_72411_j,whiteListIPs,2,
 field_72412_k,playerNBTManagerObj,2,Reference to the PlayerNBTManager object.
 field_72413_h,bannedIPs,2,
-field_72414_i,whiteListNames,2,the list of names on the whiteList
+field_72414_i,ops,2,A set containing the OPs.
 field_72416_e,tagsForLastWrittenPlayer,2,
 field_72422_f,whiteList,2,
 field_72423_e,opsList,2,
@@ -953,7 +955,7 @@ field_72447_d,myVec3LocalPool,2,
 field_72448_b,yCoord,2,Y coordinate of Vec3D
 field_72449_c,zCoord,2,Z coordinate of Vec3D
 field_72450_a,xCoord,2,X coordinate of Vec3D
-field_72534_f,minecraftInstance,2,
+field_72534_f,mcServer,2,Reference to the MinecraftServer object.
 field_72535_g,connectionTimer,2,
 field_72537_e,rand,2,The Random object used to generate serverId hex strings.
 field_72538_b,myTCPConnection,2,
@@ -1132,7 +1134,7 @@ field_73033_b,clientChunkProvider,2,The ChunkProviderClient instance
 field_73034_c,entityHashSet,2,The hash set of entities handled by this client. Uses the entity's ID as the hash set's key.
 field_73035_a,sendQueue,2,The packets that need to be sent to the server.
 field_73036_L,entitySpawnQueue,2,Contains all entities for this client that were not spawned due to a non-present chunk. The game will attempt to spawn up to 10 pending entities with each subsequent tick until the spawn queue is empty.
-field_73037_M,minecraftInstance,2,
+field_73037_M,mc,2,
 field_73038_N,previousActiveChunkSet,2,
 field_73058_d,canNotSave,2,"set by CommandServerSave{all,Off,On}"
 field_73059_b,theChunkProviderServer,2,
@@ -1595,6 +1597,7 @@ field_73826_p,selectionEnd,2,"other selection position, maybe the same as the cu
 field_73837_f,updateCounter,2,
 field_73838_g,recordPlaying,2,The string specifying which record music is playing
 field_73839_d,mc,2,
+field_73840_e,persistantChatGUI,2,ChatGUI instance that retains all previous chat data
 field_73841_b,itemRenderer,2,
 field_73842_c,rand,2,
 field_73843_a,prevVignetteBrightness,2,Previous frame vignette brightness (slowly changes by 1% each frame)
@@ -1899,6 +1902,9 @@ field_74522_a,colorBuffer,2,Float buffer used to set OpenGL material colors
 field_74532_a,mc,2,A reference to the Minecraft object.
 field_74536_a,mc,2,Minecraft instance
 field_74537_a,logo,2,BufferedImage object containing the Majong logo.
+field_74541_b,lineString,2,
+field_74542_c,chatLineID,2,"int value to refer to existing Chat Lines, can be 0 which means unreferrable"
+field_74543_a,updateCounterCreated,2,GUI Update Counter value this Line was created at
 field_74568_d,lastCharacterWasCarriageReturn,2,
 field_74569_b,characterCount,2,
 field_74570_c,lineCount,2,
@@ -2098,7 +2104,7 @@ field_75222_d,slotNumber,2,the id of the slot(also the index in the inventory ar
 field_75223_e,xDisplayPosition,2,display position of the inventory slot on the screen x axis
 field_75224_c,inventory,2,The inventory we want to extract a slot from.
 field_75225_a,slotIndex,2,The index of the slot in the inventory.
-field_75226_a,container,2,The brewing stand this slot belongs to.
+field_75226_a,brewingStand,2,The brewing stand this slot belongs to.
 field_75227_a,container,2,The brewing stand this slot belongs to.
 field_75229_a,thePlayer,2,The player that is using the GUI where this slot resides.
 field_75235_b,parent,2,"The parent class of this clot, ContainerPlayer, SlotArmor is a Anon inner class."
@@ -2902,7 +2908,7 @@ field_76865_g,mc,2,A reference to the Minecraft object.
 field_76867_h,compassIconImageData,2,Holds the image of the compass from items.png in rgb format.
 field_76882_k,tickCounter,2,
 field_76886_f,lastAccessTime,2,"The last time this BiomeCacheBlock was accessed, in milliseconds."
-field_76887_g,biomeCache,2,The BiomeCache objevt that contains this BiomeCacheBlock
+field_76887_g,theBiomeCache,2,The BiomeCache object that contains this BiomeCacheBlock
 field_76888_d,xPosition,2,The x coordinate of the BiomeCacheBlock.
 field_76889_e,zPosition,2,The z coordinate of the BiomeCacheBlock.
 field_76890_b,rainfallValues,2,An array of chunk rainfall values saved by this cache.
@@ -3124,7 +3130,7 @@ field_77486_a,syncher,2,
 field_77491_c,timeLastSeen,2,Last time this LanServer was seen.
 field_77494_b,entityLiving,2,Used as parameter to calculate the (magic) extra damage based on enchantments of current equipped player item.
 field_77495_a,livingModifier,2,Used to calculate the (magic) extra damage based on enchantments of current equipped player item.
-field_77496_b,damageSource,2,Used as parameter to calculate the damage modifier (extra armor) on enchantments that the player have on equipped armors.
+field_77496_b,source,2,Used as parameter to calculate the damage modifier (extra armor) on enchantments that the player have on equipped armors.
 field_77497_a,damageModifier,2,Used to calculate the damage modifier (extra armor) on enchantments that the player have on equipped armors.
 field_77520_b,enchantmentModifierDamage,2,Used to calculate the extra armor of enchantments on armors equipped on player.
 field_77521_c,enchantmentModifierLiving,2,Used to calculate the (magic) extra damage done by enchantments on current equipped item of player.
@@ -3148,6 +3154,7 @@ field_77591_a,recipeItems,2,
 field_77597_b,recipes,2,A list of all the recipes added
 field_77598_a,instance,2,The static instance of this class
 field_77604_b,smeltingList,2,The list of smelting results.
+field_77605_c,experienceList,2,
 field_77606_a,smeltingBase,2,
 field_77610_b,recipeItems,2,
 field_77611_a,recipePatterns,2,
@@ -3790,7 +3797,10 @@ field_78724_e,renderEngine,2,
 field_78725_b,renderPosX,2,
 field_78726_c,renderPosY,2,
 field_78727_a,instance,2,The static instance of RenderManager.
+field_78728_n,viewerPosZ,2,
 field_78729_o,entityRenderMap,2,A map of entity classes and the associated renderer.
+field_78730_l,viewerPosX,2,
+field_78731_m,viewerPosY,2,
 field_78732_j,playerViewX,2,
 field_78733_k,options,2,Reference to the GameSettings object.
 field_78734_h,livingPlayer,2,Rendermanager's variable for the player
@@ -3839,9 +3849,11 @@ field_78830_c,nameinLowerCase,2,Player name in lowercase.
 field_78831_a,name,2,The string value of the object
 field_78833_a,worldClientMPL1,2,Initialises the WorldClient for CallableMPL1.
 field_78835_a,worldClientMPL2,2,Initialises the WorldClient for CallableMPL2.
+field_78843_d,serverMOTD,2,
 field_78845_b,serverIP,2,
 field_78847_a,serverName,2,
 field_78848_h,acceptsTextures,2,
+field_78858_b,servers,2,List of ServerData instances.
 field_78859_a,mc,2,The Minecraft instance.
 field_78865_b,serverPort,2,
 field_78866_a,ipAddress,2,
