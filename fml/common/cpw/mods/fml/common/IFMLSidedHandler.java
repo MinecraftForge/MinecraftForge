@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.World;
 
@@ -31,4 +33,8 @@ public interface IFMLSidedHandler
     Entity spawnEntityIntoClientWorld(Class<? extends Entity> entityClass, EntitySpawnPacket packet);
 
     void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket);
+
+    void beginServerLoading(MinecraftServer server);
+    
+    void finishServerLoading();
 }
