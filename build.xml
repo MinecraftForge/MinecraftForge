@@ -64,6 +64,7 @@
     <property name="client.src.dir" location="${basedir}/client" />
     <property name="server.src.dir" location="${basedir}/server" />
     <property name="patch.src.dir" location="${basedir}/patches" />
+    <property name="fml.conf.dir" location="${basedir}/conf" />
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
       <isset property="env.BUILD_NUMBER" />
     </condition>
@@ -224,13 +225,14 @@
   <target name="build-source-pack" depends="makeversion">
     <property name="srcpack.jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${srcpack.jarname}.zip">
-      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch" prefix="fml" />
+      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/client" />
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/server" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml/common" />
       <zipfileset dir="${common.src.dir}" includes="*.cfg" prefix="fml/common" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
+      <zipfileset dir="${fml.conf.dir}" prefix="fml/conf" />
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />
