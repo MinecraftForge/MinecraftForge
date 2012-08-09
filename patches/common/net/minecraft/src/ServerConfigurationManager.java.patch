@@ -1,6 +1,6 @@
---- ../src-base/minecraft/net/minecraft/src/ServerConfigurationManager.java
-+++ ../src-work/minecraft/net/minecraft/src/ServerConfigurationManager.java
-@@ -9,6 +9,9 @@
+--- ../src-base/common/net/minecraft/src/ServerConfigurationManager.java
++++ ../src-work/common/net/minecraft/src/ServerConfigurationManager.java
+@@ -11,6 +11,9 @@
  import java.util.List;
  import java.util.Set;
  import java.util.logging.Logger;
@@ -10,7 +10,7 @@
  import net.minecraft.server.MinecraftServer;
  
  public abstract class ServerConfigurationManager
-@@ -78,6 +81,7 @@
+@@ -80,6 +83,7 @@
          }
  
          p_72355_2_.func_71116_b();
