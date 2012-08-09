@@ -47,6 +47,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
@@ -408,5 +409,17 @@ public class FMLClientHandler implements IFMLSidedHandler
         ent.field_70118_ct = packet.serverX;
         ent.field_70117_cu = packet.serverY;
         ent.field_70116_cv = packet.serverZ;
+    }
+
+    @Override
+    public void beginServerLoading(MinecraftServer server)
+    {
+        // NOOP
+    }
+
+    @Override
+    public void finishServerLoading()
+    {
+        // NOOP
     }
 }

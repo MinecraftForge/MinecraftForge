@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,10 +36,12 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.World;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
@@ -355,5 +358,25 @@ public class FMLCommonHandler
     public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
     {
         sidedDelegate.adjustEntityLocationOnClient(entitySpawnAdjustmentPacket);
+    }
+
+    public void onServerStart(DedicatedServer dedicatedServer)
+    {
+        try
+        {
+            // Done this way so that the client doesn't depend on server side handler
+            Class<?> cls = Class.forName("cpw.mods.fml.server.FMLServerHandler", true, getClass().getClassLoader());
+        }
+        catch (ClassNotFoundException e)
+        {
+            FMLLog.log(Level.SEVERE, e, "Unable to load the FML server handler");
+            throw Throwables.propagate(e);
+        }
+        sidedDelegate.beginServerLoading(dedicatedServer);
+    }
+    
+    public void onServerStarted()
+    {
+        sidedDelegate.finishServerLoading();
     }
 }

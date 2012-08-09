@@ -89,6 +89,10 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     private MinecraftServer server;
 
+    private FMLServerHandler()
+    {
+        FMLCommonHandler.instance().beginLoading(this);
+    }
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
