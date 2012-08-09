@@ -3,8 +3,18 @@ package cpw.mods.fml.common.registry;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.ModContainer;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Entity;
@@ -16,10 +26,43 @@ import net.minecraft.src.SpawnListEntry;
 public class EntityRegistry
 {
 
+    public class EntityRegistration
+    {
+        private Class<? extends Entity> entityClass;
+        private ModContainer container;
+        private String entityName;
+        private int modId;
+        public EntityRegistration(ModContainer mc, Class<? extends Entity> entityClass, String entityName, int id)
+        {
+            this.container = mc;
+            this.entityClass = entityClass;
+            this.entityName = entityName;
+            this.modId = id;
+        }
+        public Class<? extends Entity> getEntityClass()
+        {
+            return entityClass;
+        }
+        public ModContainer getContainer()
+        {
+            return container;
+        }
+        public String getEntityName()
+        {
+            return entityName;
+        }
+        public int getModEntityId()
+        {
+            return modId;
+        }
+    }
+
     private static final EntityRegistry INSTANCE = new EntityRegistry();
 
     private BitSet availableIndicies;
-    
+    private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
+    private BiMap<String,ModContainer> entityNames = HashBiMap.create();
+    private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
     public static EntityRegistry instance()
     {
         return INSTANCE;
@@ -35,7 +78,28 @@ public class EntityRegistry
         }
     }
     
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id)
+    public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod)
+    {
+        instance().doModEntityRegistration(entityClass, entityName, id, mod);
+    }
+    private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod)
+    {
+        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        EntityRegistration er = new EntityRegistration(mc, entityClass, entityName, id);
+        try
+        {
+            entityClassRegistrations.put(entityClass, er);
+            entityNames.put(entityName, mc);
+        }
+        catch (IllegalArgumentException e)
+        {
+            FMLLog.log(Level.WARNING, e, "The mod %s tried to register the entity (name,class) (%s,%s) one or bothe of which are already registered", mc.getModId(), entityName, entityClass.getName());
+            return;
+        }
+        entityRegistrations.put(mc, er);
+    }
+
+    public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
         instance().validateAndClaimId(id);
         EntityList.func_75618_a(entityClass, entityName, id);
@@ -50,7 +114,7 @@ public class EntityRegistry
         availableIndicies.clear(id);
     }
 
-    public static void registerEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
+    public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
     {
         instance().validateAndClaimId(id);
         EntityList.func_75614_a(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);
@@ -125,6 +189,37 @@ public class EntityRegistry
             throw new RuntimeException("No more entity indicies left");
         }
         return res;
+    }
+
+    public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking)
+    {
+        Class<?> localClazz = clazz;
+    
+        do
+        {
+            EntityRegistration er = entityClassRegistrations.get(localClazz);
+            if (er != null)
+            {
+                return er;
+            }
+            localClazz = localClazz.getSuperclass();
+            keepLooking = (!Object.class.equals(localClazz));
+        }
+        while (keepLooking);
+        
+        return null;
+    }
+
+    public EntityRegistration lookupModSpawn(ModContainer mc, int modEntityId)
+    {
+        for (EntityRegistration er : entityRegistrations.get(mc))
+        {
+            if (er.getModEntityId() == modEntityId)
+            {
+                return er;
+            }
+        }
+        return null;
     }
 
 }

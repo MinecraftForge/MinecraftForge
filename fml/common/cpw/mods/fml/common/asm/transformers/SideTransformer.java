@@ -13,11 +13,12 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class SideTransformer implements IClassTransformer
 {
-    private static String SIDE = "CLIENT"; //TODO: Pick correct side
+    private static String SIDE = FMLRelauncher.side();
     @SuppressWarnings("unchecked")
     @Override
     public byte[] transform(String name, byte[] bytes)

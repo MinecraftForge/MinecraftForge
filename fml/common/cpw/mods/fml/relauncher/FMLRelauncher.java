@@ -25,6 +25,7 @@ public class FMLRelauncher
 {
     private static FMLRelauncher INSTANCE;
     public static String logFileNamePattern;
+    private static String side;
     private RelaunchClassLoader classLoader;
     private Object newApplet;
     private Class<? super Object> appletClass;
@@ -34,12 +35,14 @@ public class FMLRelauncher
     public static void handleClientRelaunch(ArgsWrapper wrap)
     {
         logFileNamePattern = "ForgeModLoader-client-%g.log";
+        side = "CLIENT";
         instance().relaunchClient(wrap);
     }
 
     public static void handleServerRelaunch(ArgsWrapper wrap)
     {
         logFileNamePattern = "ForgeModLoader-server-%g.log";
+        side = "SERVER";
         instance().relaunchServer(wrap);
     }
 
@@ -182,6 +185,8 @@ public class FMLRelauncher
 
     public static void appletEntry(Applet minecraftApplet)
     {
+        side = "CLIENT";
+        logFileNamePattern = "ForgeModLoader-client-%g.log";
         instance().relaunchApplet(minecraftApplet);
     }
 
@@ -268,5 +273,10 @@ public class FMLRelauncher
         {
             return inputStream;
         }
+    }
+
+    public static String side()
+    {
+        return side;
     }
 }
