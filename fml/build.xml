@@ -171,7 +171,7 @@
       <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
-      <zipfileset dir="${common.src.dir}" includes="fml_at.cfg" />
+      <zipfileset dir="${common.src.dir}" includes="*.cfg" />
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />
@@ -190,15 +190,46 @@
     </zip>
   </target>
 
+  <target name="build-universal">
+    <property name="universal.jarname" value="${modname}-universal-${version}" />
+    <mkdir dir="${basedir}/target" />
+    <jar destfile="${basedir}/target/${universal.jarname}.zip">
+      <manifest>
+        <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
+      </manifest>
+      <fileset dir="${server.mcp.obfoutput}" includes="**/*.class" />
+      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" />
+      <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
+      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
+      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
+      <zipfileset dir="${common.src.dir}" includes="*.cfg" />
+      <mappedresources>
+        <concat>
+          <fileset dir="${basedir}/install" includes="README.txt" />
+          <filterchain>
+            <replacetokens>
+              <token key="MAJOR" value="${version.major}" />
+              <token key="MINOR" value="${version.minor}" />
+              <token key="REV" value="${version.rev}" />
+              <token key="BUILD" value="${version.build}" />
+              <token key="MCVERSION" value="${version.minecraft}" />
+            </replacetokens>
+          </filterchain>
+        </concat>
+        <mergemapper to="README-fml.txt" />
+      </mappedresources>
+    </jar>
+  </target>
+
   <target name="build-source-pack" depends="makeversion">
-    <property name="jarname" value="${modname}-src-${version}" />
-    <zip destfile="${basedir}/target/${jarname}.zip">
+    <property name="srcpack.jarname" value="${modname}-src-${version}" />
+    <zip destfile="${basedir}/target/${srcpack.jarname}.zip">
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/client" />
       <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/server" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml/common" />
-      <zipfileset dir="${common.src.dir}" includes="fml_at.cfg" prefix="fml/common" />
+      <zipfileset dir="${common.src.dir}" includes="*.cfg" prefix="fml/common" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
       <mappedresources>
         <concat>
@@ -219,7 +250,7 @@
     </zip>
   </target>
 
-  <target name="build" depends="buildenvsetup,merge-server,merge-client,merge-common,build-server,build-client,build-source-pack" />
+  <target name="build" depends="buildenvsetup,merge-server,merge-client,merge-common,build-server,build-client,build-universal,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,fmldecompile,patch,build"/>
 
