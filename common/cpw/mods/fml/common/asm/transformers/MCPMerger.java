@@ -255,10 +255,10 @@ public class MCPMerger
     
     private static AnnotationNode getSideAnn(boolean isClientOnly)
     {
-        AnnotationNode ann = new AnnotationNode("L" + Type.getInternalName(SideOnly.class) + ";");
+        AnnotationNode ann = new AnnotationNode(Type.getDescriptor(SideOnly.class));
         ann.values = new ArrayList<Object>();
-        ann.values.add("side");
-        ann.values.add(new String[]{ "L" + Type.getInternalName(Side.class) + ";", (isClientOnly ? "CLIENT" : "SERVER")});
+        ann.values.add("value");
+        ann.values.add(new String[]{ Type.getDescriptor(Side.class), (isClientOnly ? "CLIENT" : "SERVER")});
         return ann;
     }
 

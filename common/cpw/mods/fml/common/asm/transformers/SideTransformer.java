@@ -1,0 +1,87 @@
+package cpw.mods.fml.common.asm.transformers;
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.IClassTransformer;
+
+public class SideTransformer implements IClassTransformer
+{
+    private static String SIDE = "CLIENT"; //TODO: Pick correct side
+    @SuppressWarnings("unchecked")
+    @Override
+    public byte[] transform(String name, byte[] bytes)
+    {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(bytes);
+        classReader.accept(classNode, 0);
+
+        Iterator<FieldNode> fields = classNode.fields.iterator();
+        while(fields.hasNext())
+        {
+            FieldNode field = fields.next();
+            if (remove((List<AnnotationNode>)field.visibleAnnotations, SIDE))
+            {
+                System.out.println("Removing Field: " + field.name);
+                fields.remove();
+            }
+        }
+        Iterator<MethodNode> methods = classNode.methods.iterator();
+        while(methods.hasNext())
+        {
+            MethodNode method = methods.next();
+            if (remove((List<AnnotationNode>)method.visibleAnnotations, SIDE))
+            {
+                System.out.println("Removing Method: " + method.name + " " + method.desc); 
+                methods.remove();
+            }
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
+    
+    private boolean remove(List<AnnotationNode> anns, String side)
+    {
+        if (anns == null)
+        {
+            return false;
+        }
+        for (AnnotationNode ann : anns)
+        {
+            if (ann.desc.equals(Type.getDescriptor(SideOnly.class)))
+            {
+                if (ann.values != null)
+                {
+                    for (int x = 0; x < ann.values.size() - 1; x += 2)
+                    {
+                        Object key = ann.values.get(x);
+                        Object value = ann.values.get(x+1);
+                        if (key instanceof String && key.equals("value"))
+                        {
+                            if (value instanceof String[] )
+                            {
+                                if (!((String[])value)[1].equals(side))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}

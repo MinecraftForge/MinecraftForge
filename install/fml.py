@@ -223,6 +223,12 @@ def setup_fml(fml_dir, mcp_dir):
     updatemd5_side(commands, CLIENT)
     updatemd5_side(commands, SERVER)
     reset_logger()
+    
+    #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
+    cpw_dir = os.path.join(mcp_dir, 'src', 'common', 'cpw')
+    if os.path.isdir(cpw_dir):
+        shutil.rmtree(cpw_dir)
+        
     os.chdir(fml_dir)
     
 def merge_client_server(mcp_dir):
