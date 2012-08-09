@@ -173,11 +173,6 @@ def setup_fml(fml_dir, mcp_dir):
         #Run MCPMerger
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
             classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
-            
-        forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
-        if os.path.isfile(forge_cfg):
-            forkcmd += ' "%s"' % forge_cfg
-        
         self.runcmd(forkcmd)
         
         #Run AccessTransformer
