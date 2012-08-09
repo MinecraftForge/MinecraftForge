@@ -10,5 +10,5 @@ import cpw.mods.fml.common.Side;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface SideOnly
 {
-    public Side side();
+    public Side value();
 }
