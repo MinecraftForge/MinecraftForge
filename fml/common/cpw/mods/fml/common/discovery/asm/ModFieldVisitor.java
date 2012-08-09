@@ -16,6 +16,7 @@ public class ModFieldVisitor extends FieldVisitor
         this.fieldName = name;
         this.discoverer = discoverer;
     }
+    
     @Override
     public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible)
     {
