@@ -29,7 +29,7 @@ public class ASMModParser
 
     static enum AnnotationType
     {
-        CLASS, FIELD, METHOD;
+        CLASS, FIELD, METHOD, SUBTYPE;
     }
 
     public ASMModParser(InputStream stream) throws IOException
@@ -53,7 +53,7 @@ public class ASMModParser
 
     public void addAnnotationProperty(String key, Object value)
     {
-        annotations.getFirst().values.put(key, value);
+        annotations.getFirst().addProperty(key, value);
     }
 
     public void startFieldAnnotation(String fieldName, String annotationName)
@@ -125,5 +125,35 @@ public class ASMModParser
         {
             table.addASMData(candidate, ma.asmType.getClassName(), this.asmType.getClassName(), ma.member, ma.values);
         }
+    }
+
+    public void addAnnotationArray(String name)
+    {
+        annotations.getFirst().addArray(name);
+    }
+
+    public void addAnnotationEnumProperty(String name, String desc, String value)
+    {
+        annotations.getFirst().addEnumProperty(name, desc, value);
+        
+    }
+
+    public void endArray()
+    {
+        annotations.getFirst().endArray();
+        
+    }
+
+    public void addSubAnnotation(String name, String desc)
+    {
+        ModAnnotation ma = annotations.getFirst();
+        annotations.addFirst(ma.addChildAnnotation(name, desc));
+    }
+
+    public void endSubAnnotation()
+    {
+        // take the child and stick it at the end
+        ModAnnotation child = annotations.removeFirst();
+        annotations.addLast(child);
     }
 }

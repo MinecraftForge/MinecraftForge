@@ -1,6 +1,15 @@
 --- commands.py
 +++ commands.py
-@@ -582,6 +582,9 @@
+@@ -58,6 +58,8 @@
+ 
+ 
+ def reallyrmtree(path):
++    if os.path.isfile(os.path.join(path, 'asm-all-4.0.jar')): #Check if asm exists, indicating the libs folder, if so, don't delete it
++        return
+     if not sys.platform.startswith('win'):
+         if os.path.exists(path):
+             shutil.rmtree(path)
+@@ -582,6 +584,9 @@
          self.has_astyle_cfg = False
          if os.path.isfile(self.astyleconf):
              self.has_astyle_cfg = True
@@ -10,7 +19,17 @@
  
      def creatergcfg(self, reobf=False, keep_lvt=False, keep_generics=False, rg_update=False):
          """Create the files necessary for RetroGuard"""
-@@ -1039,6 +1042,7 @@
+@@ -779,7 +784,8 @@
+         testlk = {CLIENT: self.testclient, SERVER: self.testserver}
+ 
+         if not os.path.exists(os.path.join(srclk[side], os.path.normpath(testlk[side] + '.java'))):
+-            return False
++            if not os.path.exists(os.path.join(self.srcshared, os.path.normpath(testlk[side] + '.java'))):
++                return False
+         return True
+ 
+     def checkbins(self, side):
+@@ -1039,6 +1045,7 @@
              all_files = True
              append_pattern = False
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
@@ -18,7 +37,7 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
-@@ -1195,20 +1199,20 @@
+@@ -1195,20 +1202,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -42,7 +61,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1238,6 +1242,11 @@
+@@ -1238,6 +1245,11 @@
  
          # HINT: We pathwalk the sources
          for path, _, filelist in os.walk(pathsrclk[side], followlinks=True):
@@ -54,7 +73,7 @@
              for cur_file in fnmatch.filter(filelist, '*.java'):
                  updatefile(os.path.normpath(os.path.join(path, cur_file)))
          return True
-@@ -1320,12 +1329,14 @@
+@@ -1320,12 +1332,14 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
  
          strip_comments(pathsrclk[side])
@@ -69,7 +88,7 @@
  
      def process_javadoc(self, side):
          """Add CSV descriptions to methods and fields as javadoc"""
-@@ -1334,6 +1345,21 @@
+@@ -1334,6 +1348,21 @@
          if not self.has_doc_csv:
              self.logger.warning('!! javadoc disabled due to no csvs !!')
              return False
@@ -91,7 +110,7 @@
  
          #HINT: We read the relevant CSVs
          methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
-@@ -1342,13 +1368,13 @@
+@@ -1342,13 +1371,13 @@
          methods = {}
          for row in methodsreader:
              #HINT: Only include methods that have a non-empty description
@@ -107,7 +126,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1420,6 +1446,7 @@
+@@ -1420,6 +1449,7 @@
  
          # HINT: We create the list of source directories based on the list of packages
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
@@ -115,7 +134,7 @@
          dirs = ' '.join(pkglist)
          forkcmd = self.cmdastyle.format(classes=dirs, conffile=self.astyleconf)
          self.runcmd(forkcmd)
-@@ -1592,6 +1619,9 @@
+@@ -1592,6 +1622,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
