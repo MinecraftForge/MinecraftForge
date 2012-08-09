@@ -1,0 +1,25 @@
+--- ../src_base/common/net/minecraft/src/ItemTool.java
++++ ../src_work/common/net/minecraft/src/ItemTool.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.common.ForgeHooks;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+@@ -99,4 +100,15 @@
+     {
+         return this.toolMaterial.toString();
+     }
++
++    /** FORGE: Overridden to allow custom tool effectiveness */
++    @Override
++    public float getStrVsBlock(ItemStack stack, Block block, int meta) 
++    {
++        if (ForgeHooks.isToolEffective(stack, block, meta))
++        {
++            return efficiencyOnProperMaterial;
++        }
++        return getStrVsBlock(stack, block);
++    }
+ }

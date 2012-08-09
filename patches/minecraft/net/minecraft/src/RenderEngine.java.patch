@@ -1,16 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderEngine.java
 +++ ../src_work/minecraft/net/minecraft/src/RenderEngine.java
-@@ -14,6 +14,9 @@
- import java.util.List;
- import java.util.Map;
+@@ -18,6 +18,9 @@
+ import java.util.logging.Logger;
+ 
  import javax.imageio.ImageIO;
 +
 +import net.minecraftforge.client.ForgeHooksClient;
 +
  import org.lwjgl.opengl.GL11;
  
- public class RenderEngine
-@@ -155,6 +158,7 @@
+ import cpw.mods.fml.client.TextureFXManager;
+@@ -164,6 +167,7 @@
  
              try
              {
@@ -18,7 +18,7 @@
                  this.singleIntBuffer.clear();
                  GLAllocation.generateTextureNames(this.singleIntBuffer);
                  int var3 = this.singleIntBuffer.get(0);
-@@ -198,6 +202,7 @@
+@@ -207,6 +211,7 @@
                  }
  
                  this.textureMap.put(par1Str, Integer.valueOf(var3));

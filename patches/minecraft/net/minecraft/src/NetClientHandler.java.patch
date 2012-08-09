@@ -12,24 +12,7 @@
  import org.lwjgl.input.Keyboard;
  
  import cpw.mods.fml.common.LoaderException;
-@@ -59,6 +64,8 @@
-         this.mc = par1Minecraft;
-         Socket var4 = new Socket(InetAddress.getByName(par2Str), par3);
-         this.netManager = new TcpConnection(var4, "Client", this);
-+        
-+        ForgeHooks.onConnect(netManager);
-     }
- 
-     public NetClientHandler(Minecraft par1Minecraft, IntegratedServer par2IntegratedServer) throws IOException
-@@ -159,6 +166,7 @@
-         this.currentServerMaxPlayers = par1Packet1Login.maxPlayers;
-         this.mc.playerController.setGameType(par1Packet1Login.gameType);
-         this.addToSendQueue(new Packet204ClientInfo(this.mc.gameSettings.language, this.mc.gameSettings.renderDistance, this.mc.gameSettings.chatVisibility, this.mc.gameSettings.chatColours, this.mc.gameSettings.difficulty));
-+        ForgeHooksClient.onLogin(par1Packet1Login, this, netManager);
-     }
- 
-     public void handlePickupSpawn(Packet21PickupSpawn par1Packet21PickupSpawn)
-@@ -586,7 +594,7 @@
+@@ -589,7 +594,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
@@ -38,7 +21,7 @@
          this.field_72554_f = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -650,7 +658,11 @@
+@@ -653,7 +658,11 @@
  
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
@@ -51,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1005,6 +1017,19 @@
+@@ -1008,6 +1017,19 @@
              {
                  ((TileEntityMobSpawner)var2).readFromNBT(par1Packet132TileEntityData.customParam1);
              }
@@ -71,7 +54,7 @@
          }
      }
  
-@@ -1141,6 +1166,10 @@
+@@ -1144,6 +1166,10 @@
          if (par1Packet131MapData.itemID == Item.map.shiftedIndex)
          {
              ItemMap.getMPMapData(par1Packet131MapData.uniqueID, this.mc.theWorld).updateMPMapData(par1Packet131MapData.itemData);

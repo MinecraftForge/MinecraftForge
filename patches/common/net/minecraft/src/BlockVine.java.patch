@@ -1,0 +1,53 @@
+--- ../src_base/common/net/minecraft/src/BlockVine.java
++++ ../src_work/common/net/minecraft/src/BlockVine.java
+@@ -2,9 +2,13 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ 
+-public class BlockVine extends Block
++import net.minecraftforge.common.IShearable;
++
++public class BlockVine extends Block implements IShearable
+ {
+     public BlockVine(int par1)
+     {
+@@ -431,14 +435,26 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
+     {
+-        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
+-        {
+-            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+-            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.vine, 1, 0));
+-        }
+-        else
+-        {
+-            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
+-        }
++        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
++    }
++    
++    @Override
++    public boolean isShearable(ItemStack item, World world, int x, int y, int z) 
++    {
++        return true;
++    }
++    
++    @Override
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune) 
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        ret.add(new ItemStack(this, 1, 0));
++        return ret;
++    }
++    
++    @Override
++    public boolean isLadder(World world, int x, int y, int z) 
++    {
++        return true;
+     }
+ }

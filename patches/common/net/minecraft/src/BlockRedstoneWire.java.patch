@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/BlockRedstoneWire.java
++++ ../src_work/common/net/minecraft/src/BlockRedstoneWire.java
+@@ -556,7 +556,7 @@
+         }
+         else if (var5 != Block.redstoneRepeaterIdle.blockID && var5 != Block.redstoneRepeaterActive.blockID)
+         {
+-            return Block.blocksList[var5].canProvidePower() && par4 != -1;
++            return (Block.blocksList[var5] != null && Block.blocksList[var5].canConnectRedstone(par0IBlockAccess, par1, par2, par3, par4));
+         }
+         else
+         {

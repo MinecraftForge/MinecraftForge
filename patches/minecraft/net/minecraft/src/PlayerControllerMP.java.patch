@@ -61,3 +61,15 @@
          }
      }
  
+@@ -354,9 +376,10 @@
+         {
+             par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
+ 
+-            if (var5.stackSize == 0)
++            if (var5.stackSize <= 0)
+             {
+                 par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, var5));
+             }
+ 
+             return true;

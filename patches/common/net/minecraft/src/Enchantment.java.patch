@@ -1,0 +1,17 @@
+--- ../src_base/common/net/minecraft/src/Enchantment.java
++++ ../src_work/common/net/minecraft/src/Enchantment.java
+@@ -198,4 +198,14 @@
+         String var2 = StatCollector.translateToLocal(this.getName());
+         return var2 + " " + StatCollector.translateToLocal("enchantment.level." + par1);
+     }
++
++    /**
++    * Called to determine if this enchantment can be applied to a ItemStack
++    * @param item The ItemStack that the enchantment might be put on
++    * @return True if the item is valid, false otherwise
++    */
++    public boolean canEnchantItem(ItemStack item) 
++    {
++        return type.canEnchantItem(item.getItem());
++    }
+ }

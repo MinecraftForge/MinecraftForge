@@ -12,8 +12,7 @@ from forge import setup_forge_mcp, apply_forge_patches
 def main():
     print '=================================== Setup Start ================================='
     dont_gen_conf = '-no_gen_conf' in sys.argv
-    setup_forge_mcp(mcp_dir, forge_dir, dont_gen_conf)
-    setup_fml()
+    setup_fml(dont_gen_conf)
     
     base_dir = os.path.join(mcp_dir, 'src_base')
     work_dir = os.path.join(mcp_dir, 'src_work')
@@ -44,7 +43,7 @@ def main():
     
     print '=================================== Setup Finished ================================='
     
-def setup_fml():        
+def setup_fml(dont_gen_conf):        
     print 'Setting up Forge ModLoader'
     fml = glob.glob(os.path.join(forge_dir, 'fml-src-*.zip'))
     if not len(fml) == 1:
@@ -67,7 +66,7 @@ def setup_fml():
     
     sys.path.append(fml_dir)
     from install import fml_main
-    fml_main(fml_dir, mcp_dir)
+    fml_main(fml_dir, mcp_dir, dont_gen_conf)
 
 if __name__ == '__main__':
     main()

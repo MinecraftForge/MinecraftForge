@@ -1,0 +1,52 @@
+--- ../src_base/common/net/minecraft/src/BlockCrops.java
++++ ../src_work/common/net/minecraft/src/BlockCrops.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ 
+ public class BlockCrops extends BlockFlower
+@@ -138,25 +140,27 @@
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
++    }
++        
++    @Override 
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        if (metadata == 7)
++        {
++            ret.add(new ItemStack(Item.wheat));
++        }
+ 
+-        if (!par1World.isRemote)
++        for (int n = 0; n < 3 + fortune; n++)
+         {
+-            int var8 = 3 + par7;
+ 
+-            for (int var9 = 0; var9 < var8; ++var9)
++            if (world.rand.nextInt(15) <= metadata)
+             {
+-                if (par1World.rand.nextInt(15) <= par5)
+-                {
+-                    float var10 = 0.7F;
+-                    float var11 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
+-                    float var12 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
+-                    float var13 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
+-                    EntityItem var14 = new EntityItem(par1World, (double)((float)par2 + var11), (double)((float)par3 + var12), (double)((float)par4 + var13), new ItemStack(Item.seeds));
+-                    var14.delayBeforeCanPickup = 10;
+-                    par1World.spawnEntityInWorld(var14);
+-                }
++                ret.add(new ItemStack(Item.seeds));
+             }
+         }
++
++        return ret;
+     }
+ 
+     /**

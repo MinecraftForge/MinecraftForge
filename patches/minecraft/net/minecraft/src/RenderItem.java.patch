@@ -22,7 +22,7 @@
 -        if (var14 != null && RenderBlocks.renderItemIn3d(var14.getRenderType()))
 +        if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
 +        {
-+               ;
++           ;
 +        }
 +        else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
          {

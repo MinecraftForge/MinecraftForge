@@ -1,0 +1,62 @@
+--- ../src_base/common/net/minecraft/src/BlockNetherStalk.java
++++ ../src_work/common/net/minecraft/src/BlockNetherStalk.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ 
+ public class BlockNetherStalk extends BlockFlower
+@@ -69,25 +71,7 @@
+      */
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+-        if (!par1World.isRemote)
+-        {
+-            int var8 = 1;
+-
+-            if (par5 >= 3)
+-            {
+-                var8 = 2 + par1World.rand.nextInt(3);
+-
+-                if (par7 > 0)
+-                {
+-                    var8 += par1World.rand.nextInt(par7 + 1);
+-                }
+-            }
+-
+-            for (int var9 = 0; var9 < var8; ++var9)
+-            {
+-                this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.netherStalkSeeds));
+-            }
+-        }
++        super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+     }
+ 
+     /**
+@@ -115,4 +99,23 @@
+     {
+         return Item.netherStalkSeeds.shiftedIndex;
+     }
++
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        int count = 1;
++
++        if (metadata >= 3)
++        {
++            count = 2 + world.rand.nextInt(3) + (fortune > 0 ? world.rand.nextInt(fortune + 1) : 0);
++        }
++
++        for (int i = 0; i < count; i++)
++        {
++            ret.add(new ItemStack(Item.netherStalkSeeds));
++        }
++
++        return ret;
++    }
+ }

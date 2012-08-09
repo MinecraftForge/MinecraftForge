@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/BlockPistonBase.java
++++ ../src_work/common/net/minecraft/src/BlockPistonBase.java
+@@ -368,7 +368,7 @@
+                 return false;
+             }
+ 
+-            return !(Block.blocksList[par0] instanceof BlockContainer);
++            return !par1World.blockHasTileEntity(par2, par3, par4);
+         }
+     }
+ 

@@ -5,17 +5,9 @@
 +
 +import net.minecraftforge.common.ForgeHooks;
  
- public class SlotCrafting extends Slot
- {
-@@ -107,6 +109,7 @@
-      */
-     public void onPickupFromSlot(ItemStack par1ItemStack)
-     {
-+        ForgeHooks.onTakenFromCrafting(thePlayer, par1ItemStack, craftMatrix);
-         this.onCrafting(par1ItemStack);
+ import cpw.mods.fml.common.registry.GameRegistry;
  
-         for (int var2 = 0; var2 < this.craftMatrix.getSizeInventory(); ++var2)
-@@ -119,7 +122,7 @@
+@@ -122,7 +124,7 @@
  
                  if (var3.getItem().hasContainerItem())
                  {
