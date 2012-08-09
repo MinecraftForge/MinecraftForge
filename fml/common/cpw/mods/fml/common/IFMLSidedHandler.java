@@ -11,6 +11,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.World;
 
 import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 
 public interface IFMLSidedHandler
@@ -28,4 +29,6 @@ public interface IFMLSidedHandler
     void showGuiScreen(Object clientGuiElement);
 
     Entity spawnEntityIntoClientWorld(Class<? extends Entity> entityClass, EntitySpawnPacket packet);
+
+    void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket);
 }

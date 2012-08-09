@@ -106,6 +106,7 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
@@ -398,5 +399,14 @@ public class FMLClientHandler implements IFMLSidedHandler
             FMLLog.log(Level.SEVERE, e, "A severe problem occurred during the spawning of an entity");
             throw Throwables.propagate(e);
         }
+    }
+
+    @Override
+    public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket packet)
+    {
+        Entity ent = client.field_71441_e.func_73024_a(packet.entityId);
+        ent.field_70118_ct = packet.serverX;
+        ent.field_70117_cu = packet.serverY;
+        ent.field_70116_cv = packet.serverZ;
     }
 }

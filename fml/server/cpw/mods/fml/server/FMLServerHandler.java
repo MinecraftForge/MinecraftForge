@@ -27,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Block;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
@@ -54,6 +55,8 @@ import cpw.mods.fml.common.ProxyInjector;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
+import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
+import cpw.mods.fml.common.network.EntitySpawnPacket;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -172,5 +175,18 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void showGuiScreen(Object clientGuiElement)
     {
         
+    }
+
+    @Override
+    public Entity spawnEntityIntoClientWorld(Class<? extends Entity> entityClass, EntitySpawnPacket packet)
+    {
+        // NOOP
+        return null;
+    }
+
+    @Override
+    public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
+    {
+        // NOOP
     }
 }
