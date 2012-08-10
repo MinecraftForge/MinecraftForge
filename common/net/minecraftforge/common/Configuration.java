@@ -3,7 +3,7 @@
  * License v1.0.
  */
 
-package net.minecraft.src.forge;
+package net.minecraftforge.common;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -41,6 +42,7 @@ public class Configuration
     public TreeMap<String, Property> blockProperties   = new TreeMap<String, Property>();
     public TreeMap<String, Property> itemProperties    = new TreeMap<String, Property>();
     public TreeMap<String, Property> generalProperties = new TreeMap<String, Property>();
+    public static final String ALLOWED_CHARS = "._-";
 
     /**
      * Create a configuration file for the file given in parameter.
@@ -82,7 +84,7 @@ public class Configuration
         {
             Property property = new Property();
             properties.put(key, property);
-            property.name = key;
+            property.setName(key);
 
             if (Block.blocksList[defaultId] == null && !configBlocks[defaultId])
             {
@@ -125,7 +127,7 @@ public class Configuration
     public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
     {
         Property prop = getOrCreateProperty(key, category, Boolean.toString(defaultValue));
-        if ("true".equals(prop.value.toLowerCase()) || "false".equals(prop.value.toLowerCase()))
+        if ("true".equals(prop.value.toLowerCase(Locale.ENGLISH)) || "false".equals(prop.value.toLowerCase(Locale.ENGLISH)))
         {
             return prop;
         }
@@ -138,13 +140,13 @@ public class Configuration
     
     public Property getOrCreateProperty(String key, String category, String defaultValue)
     {
-        category = category.toLowerCase();
+        category = category.toLowerCase(Locale.ENGLISH);
         Map<String, Property> source = categories.get(category);
-        
+
         if(source == null)
         {
             source = new TreeMap<String, Property>();
-            categories.put(category, source);                                  
+            categories.put(category, source);
         }
 
         if (source.containsKey(key))
@@ -156,7 +158,7 @@ public class Configuration
             Property property = new Property();
 
             source.put(key, property);
-            property.name = key;
+            property.setName(key);
 
             property.value = defaultValue;
             return property;
@@ -204,7 +206,7 @@ public class Configuration
 
                     for (int i = 0; i < line.length() && !skip; ++i)
                     {
-                        if (Character.isLetterOrDigit(line.charAt(i)) || line.charAt(i) == '.')
+                        if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1)
                         {
                             if (nameStart == -1)
                             {
@@ -224,6 +226,7 @@ public class Configuration
                                 case '#':
                                     skip = true;
                                     continue;
+
                                 case '{':
                                     String scopeName = line.substring(nameStart, nameEnd + 1);
 
@@ -231,13 +234,15 @@ public class Configuration
                                     if (currentMap == null)
                                     {
                                         currentMap = new TreeMap<String, Property>();
-                                        categories.put(scopeName, currentMap);    
+                                        categories.put(scopeName, currentMap);
                                     }
 
                                     break;
+
                                 case '}':
                                     currentMap = null;
                                     break;
+
                                 case '=':
                                     String propertyName = line.substring(nameStart, nameEnd + 1);
 
@@ -247,13 +252,14 @@ public class Configuration
                                     }
 
                                     Property prop = new Property();
-                                    prop.name = propertyName;
+                                    prop.setName(propertyName);
                                     prop.value = line.substring(i + 1);
                                     i = line.length();
 
                                     currentMap.put(propertyName, prop);
 
                                     break;
+
                                 default:
                                     throw new RuntimeException("unknown character " + line.charAt(i));
                             }
@@ -300,7 +306,7 @@ public class Configuration
                 buffer.write("# Configuration file\r\n");
                 buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
                 buffer.write("\r\n");
-                
+
                 for(Map.Entry<String, Map<String, Property>> category : categories.entrySet())
                 {
                     buffer.write("####################\r\n");
@@ -331,7 +337,7 @@ public class Configuration
                 buffer.write("   # " + property.comment + "\r\n");
             }
 
-            buffer.write("   " + property.name + "=" + property.value);
+            buffer.write("   " + property.getName() + "=" + property.value);
             buffer.write("\r\n");
         }
     }

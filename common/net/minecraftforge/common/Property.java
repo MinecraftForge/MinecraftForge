@@ -3,11 +3,11 @@
  * License v1.0.
  */
 
-package net.minecraft.src.forge;
+package net.minecraftforge.common;
 
 public class Property
 {
-    public String name;
+    private String name;
     public String value;
     public String comment;
     
@@ -86,5 +86,22 @@ public class Property
     public boolean isBooleanValue()
     {
         return ("true".equals(value.toLowerCase()) || "false".equals(value.toLowerCase()));
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+    
+    public void setName(String name)
+    {
+        for (char c : name.toCharArray())
+        {
+            if (!Character.isLetterOrDigit(c) && Configuration.ALLOWED_CHARS.indexOf(c) == -1)
+            {
+                throw new IllegalArgumentException("Invalid property name: \"" + name + "\"");
+            }
+        }
+        this.name = name;
     }
 }
