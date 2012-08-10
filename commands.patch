@@ -37,6 +37,24 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
+@@ -1060,7 +1067,7 @@
+             raise
+ 
+     def startserver(self):
+-        classpath = [self.binserver] + self.cpathserver
++        classpath = [self.binserver, self.srcshared] + self.cpathserver
+         classpath = [os.path.join('..', p) for p in classpath]
+         classpath = os.pathsep.join(classpath)
+         os.chdir(self.dirjars)
+@@ -1068,7 +1075,7 @@
+         self.runmc(forkcmd)
+ 
+     def startclient(self):
+-        classpath = [self.binclient] + self.cpathclient
++        classpath = [self.binclient, self.srcshared] + self.cpathclient
+         classpath = [os.path.join('..', p) for p in classpath]
+         classpath = os.pathsep.join(classpath)
+         natives = os.path.join('..', self.dirnatives)
 @@ -1195,20 +1202,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
