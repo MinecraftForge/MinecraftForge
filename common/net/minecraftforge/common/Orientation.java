@@ -27,7 +27,7 @@ public enum Orientation
     
     public static Orientation getOrientation(int id)
     {
-        if (Orientation.values().length < id)
+        if (id < Orientation.values().length)
         {
             return Orientation.values()[id];
         }
