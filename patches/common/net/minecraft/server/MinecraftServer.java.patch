@@ -10,18 +10,15 @@
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
  import net.minecraft.src.CallableIsServerModded;
-@@ -362,8 +365,10 @@
-     {
-         try
+@@ -364,6 +367,7 @@
          {
-+            FMLCommonHandler.instance().handleServerStarting(this);
              if (this.func_71197_b())
              {
 +                FMLCommonHandler.instance().handleServerStarted();
                  long var1 = System.currentTimeMillis();
  
                  for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
-@@ -403,6 +408,7 @@
+@@ -403,6 +407,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -29,7 +26,7 @@
              }
              else
              {
-@@ -593,6 +599,12 @@
+@@ -1117,6 +1122,12 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {
