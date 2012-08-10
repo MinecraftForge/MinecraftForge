@@ -164,7 +164,7 @@ def setup_fml(fml_dir, mcp_dir):
         self.runcmd(forkcmd)
         
         #Compile MCPMerger
-        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath {sourcepath} -d {outpath} {target}' % self.cmdjavac).format(
+        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
             classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
             target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'MCPMerger.java'))
         #print forkcmd
