@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
-import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.ModLoaderKeyBindingHandler;
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
+import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
+import cpw.mods.fml.client.modloader.ModLoaderKeyBindingHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -96,7 +96,7 @@ public class ModLoader
      */
     public static int addArmor(String armor)
     {
-        return RenderingRegistry.addNewArmourRendererPrefix(armor);
+        return RenderingRegistry.instance().addNewArmourRendererPrefix(armor);
     }
 
     /**
@@ -420,7 +420,7 @@ public class ModLoader
      */
     public static int getUniqueBlockModelID(BaseMod mod, boolean inventoryRenderer)
     {
-        return BlockRenderManager.instance().obtainBlockModelIdFor(mod, inventoryRenderer);
+        return ModLoaderClientHelper.obtainBlockModelIdFor(mod, inventoryRenderer);
     }
 
     /**
@@ -673,19 +673,19 @@ public class ModLoader
     @Deprecated
     public static boolean renderBlockIsItemFull3D(int modelID)
     {
-        return BlockRenderManager.instance().renderItemAsFull3DBlock(modelID);
+        return RenderingRegistry.instance().renderItemAsFull3DBlock(modelID);
     }
 
     @Deprecated
     public static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        BlockRenderManager.instance().renderInventoryBlock(renderer, block, metadata, modelID);
+        RenderingRegistry.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
     @Deprecated
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
-        return BlockRenderManager.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
+        return RenderingRegistry.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
     }
 
     /**

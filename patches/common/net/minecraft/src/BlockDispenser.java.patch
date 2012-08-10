@@ -1,0 +1,24 @@
+--- ../src-base/common/net/minecraft/src/BlockDispenser.java
++++ ../src-work/common/net/minecraft/src/BlockDispenser.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.GameRegistry;
++
+ import java.util.Random;
+ 
+ public class BlockDispenser extends BlockContainer
+@@ -278,7 +280,11 @@
+     {
+         float var15 = 1.1F;
+         byte var16 = 6;
+-
++        int modDispense = GameRegistry.tryDispense(p_72283_1_, p_72283_9_, p_72283_11_, p_72283_13_, p_72283_7_, p_72283_8_, p_72283_2_);
++        if (modDispense > -1)
++        {
++            return modDispense;
++        }
+         if (p_72283_2_.field_77993_c == Item.field_77704_l.field_77779_bT)
+         {
+             EntityArrow var28 = new EntityArrow(p_72283_1_, p_72283_9_, p_72283_11_, p_72283_13_);

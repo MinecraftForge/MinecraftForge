@@ -77,9 +77,8 @@ public class FMLCommonHandler
      */
     private IFMLSidedHandler sidedDelegate;
 
-    private int uniqueEntityListId = 220;
-
-    private List<IScheduledTickHandler> scheduledTicks = new ArrayList<IScheduledTickHandler>();
+    private List<IScheduledTickHandler> scheduledClientTicks = Lists.newArrayList();
+    private List<IScheduledTickHandler> scheduledServerTicks = Lists.newArrayList();
 
     public void beginLoading(IFMLSidedHandler handler)
     {
@@ -89,14 +88,16 @@ public class FMLCommonHandler
         FMLLog.info("Completed early MinecraftForge initialization");
     }
 
-    public void rescheduleTicks()
+    public void rescheduleTicks(Side side)
     {
         sidedDelegate.profileStart("modTickScheduling");
-        TickRegistry.updateTickQueue(scheduledTicks);
+        TickRegistry.updateTickQueue(side.isClient() ? scheduledClientTicks : scheduledServerTicks, side);
         sidedDelegate.profileEnd();
     }
-    public void tickStart(EnumSet<TickType> ticks, Object ... data)
+    public void tickStart(EnumSet<TickType> ticks, Side side, Object ... data)
     {
+        List<IScheduledTickHandler> scheduledTicks = side.isClient() ? scheduledClientTicks : scheduledServerTicks;
+
         if (scheduledTicks.size()==0)
         {
             return;
@@ -116,8 +117,10 @@ public class FMLCommonHandler
         sidedDelegate.profileEnd();
     }
 
-    public void tickEnd(EnumSet<TickType> ticks, Object ... data)
+    public void tickEnd(EnumSet<TickType> ticks, Side side, Object ... data)
     {
+        List<IScheduledTickHandler> scheduledTicks = side.isClient() ? scheduledClientTicks : scheduledServerTicks;
+
         if (scheduledTicks.size()==0)
         {
             return;
@@ -167,14 +170,6 @@ public class FMLCommonHandler
     public Logger getFMLLogger()
     {
         return FMLLog.getLogger();
-    }
-
-    /**
-     * @return
-     */
-    public int nextUniqueEntityListId()
-    {
-        return uniqueEntityListId++;
     }
 
     /**
@@ -295,7 +290,7 @@ public class FMLCommonHandler
 
     public void onPostServerTick()
     {
-        tickEnd(EnumSet.of(TickType.GAME));
+        tickEnd(EnumSet.of(TickType.SERVER), Side.SERVER);
     }
 
     /**
@@ -303,12 +298,12 @@ public class FMLCommonHandler
      */
     public void onPostWorldTick(Object world)
     {
-        tickEnd(EnumSet.of(TickType.WORLD), world);
+        tickEnd(EnumSet.of(TickType.WORLD), Side.SERVER, world);
     }
 
     public void onPreServerTick()
     {
-        tickStart(EnumSet.of(TickType.GAME));
+        tickStart(EnumSet.of(TickType.SERVER), Side.SERVER);
     }
 
     /**
@@ -316,12 +311,12 @@ public class FMLCommonHandler
      */
     public void onPreWorldTick(Object world)
     {
-        tickStart(EnumSet.of(TickType.WORLD), world);
+        tickStart(EnumSet.of(TickType.WORLD), Side.SERVER, world);
     }
 
-    public void onWorldLoadTick()
+    public void onWorldLoadTick(Object world)
     {
-        tickStart(EnumSet.of(TickType.WORLDLOAD));
+        tickStart(EnumSet.of(TickType.WORLDLOAD), Side.SERVER, world);
     }
 
     public void handleServerStarting(MinecraftServer server)
@@ -374,9 +369,31 @@ public class FMLCommonHandler
         }
         sidedDelegate.beginServerLoading(dedicatedServer);
     }
-    
+
     public void onServerStarted()
     {
         sidedDelegate.finishServerLoading();
+    }
+
+
+    public void onPreClientTick()
+    {
+        tickStart(EnumSet.of(TickType.CLIENT), Side.CLIENT);
+
+    }
+
+    public void onPostClientTick()
+    {
+        tickEnd(EnumSet.of(TickType.CLIENT), Side.CLIENT);
+    }
+
+    public void onRenderTickStart(float timer)
+    {
+        tickStart(EnumSet.of(TickType.RENDER), Side.CLIENT, timer);
+    }
+
+    public void onRenderTickEnd(float timer)
+    {
+        tickEnd(EnumSet.of(TickType.RENDER), Side.CLIENT, timer);
     }
 }

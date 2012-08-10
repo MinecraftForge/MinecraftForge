@@ -12,9 +12,22 @@
  */
 package cpw.mods.fml.common;
 
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.World;
+
 
 public interface IDispenseHandler
 {
-    boolean dispense(double x, double y, double z, int xVelocity, int zVelocity, Object... data);
-
+    /**
+     * Return -1 if you don't want to dispense anything. the other values seem to have specific meanings
+     * to blockdispenser.
+     * @param x
+     * @param y
+     * @param z
+     * @param xVelocity
+     * @param zVelocity
+     * @param data
+     * @return
+     */
+    int dispense(double x, double y, double z, int xVelocity, int zVelocity, World world, ItemStack item);
 }

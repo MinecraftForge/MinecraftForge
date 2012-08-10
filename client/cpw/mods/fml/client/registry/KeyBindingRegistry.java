@@ -13,6 +13,7 @@ import net.minecraft.src.GameSettings;
 import net.minecraft.src.KeyBinding;
 
 import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.registry.TickRegistry;
 
@@ -73,6 +74,7 @@ public class KeyBindingRegistry
 
     public static void registerKeyBinding(KeyHandler handler) {
         keyHandlers.add(handler);
+        TickRegistry.registerTickHandler(handler, Side.CLIENT);
     }
 
     public static void uploadKeyBindingsToGame(GameSettings settings)

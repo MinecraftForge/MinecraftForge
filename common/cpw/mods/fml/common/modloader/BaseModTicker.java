@@ -60,13 +60,13 @@ public class BaseModTicker implements ITickHandler
 
     private void tickBaseMod(EnumSet<TickType> types, boolean end, Object... tickData)
     {
-        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.GAME) || ticks.contains(TickType.WORLDLOAD)))
+        if (FMLCommonHandler.instance().getSide().isClient() && ( ticks.contains(TickType.CLIENT) || ticks.contains(TickType.WORLDLOAD)))
         {
             EnumSet cTypes=EnumSet.copyOf(types);
-            if ( ( end && types.contains(TickType.GAME)) || types.contains(TickType.WORLDLOAD))
+            if ( ( end && types.contains(TickType.CLIENT)) || types.contains(TickType.WORLDLOAD))
             {
                 clockTickTrigger =  true;
-                cTypes.remove(TickType.GAME);
+                cTypes.remove(TickType.CLIENT);
                 cTypes.remove(TickType.WORLDLOAD);
             }
 
@@ -74,7 +74,7 @@ public class BaseModTicker implements ITickHandler
             {
                 clockTickTrigger = false;
                 cTypes.remove(TickType.RENDER);
-                cTypes.add(TickType.GAME);
+                cTypes.add(TickType.CLIENT);
             }
 
             sendTick(cTypes, end, tickData);

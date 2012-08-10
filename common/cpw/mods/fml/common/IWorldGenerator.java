@@ -15,10 +15,13 @@ package cpw.mods.fml.common;
 
 import java.util.Random;
 
+import net.minecraft.src.IChunkProvider;
+import net.minecraft.src.World;
+
 /**
- * This is called back during world generation. The {@link #generate(Random, int, int, Object...)} method passes in some additional data that 
+ * This is called back during world generation. The {@link #generate(Random, int, int, Object...)} method passes in some additional data that
  * can be cast into minecraft objects.
- * 
+ *
  * @author cpw
  *
  */
@@ -26,14 +29,14 @@ public interface IWorldGenerator
 {
     /**
      * Generate some world
-     * 
+     *
      * @param random the chunk specific {@link Random}.
      * @param chunkX the block X coordinate of this chunk.
      * @param chunkZ the block Z coordinate of this chunk.
      * @param world : additionalData[0] The minecraft {@link World} we're generating for.
      * @param generator : additionalData[1] The {@link IChunkProvider} that is generating.
      * @param chunkProvider : additionalData[2] {@link IChunkProvider} that is requesting the world generation.
-     * 
+     *
      */
-    public void generate(Random random, int chunkX, int chunkZ, Object...additionalData);
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider);
 }

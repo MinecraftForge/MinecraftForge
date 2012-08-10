@@ -10,11 +10,13 @@ import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.FurnaceRecipes;
+import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.IRecipe;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
+import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -24,6 +26,7 @@ import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
+import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.LoaderException;
@@ -37,14 +40,16 @@ public class GameRegistry
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
+    private static List<IDispenseHandler> dispenserHandlers = Lists.newArrayList();
 
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
         worldGenerators.add(generator);
     }
 
-    public static void generateWorld(int chunkX, int chunkZ, long worldSeed, Object... data)
+    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
     {
+        long worldSeed = world.func_72905_C();
         Random fmlRandom = new Random(worldSeed);
         long xSeed = fmlRandom.nextLong() >> 2 + 1L;
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
@@ -52,11 +57,28 @@ public class GameRegistry
 
         for (IWorldGenerator generator : worldGenerators)
         {
-            generator.generate(fmlRandom, chunkX, chunkZ, data);
+            generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
-
     }
 
+    public static void registerDispenserHandler(IDispenseHandler handler)
+    {
+        dispenserHandlers.add(handler);
+    }
+
+
+    public static int tryDispense(World world, double x, double y, double z, int xVelocity, int zVelocity, ItemStack item)
+    {
+        for (IDispenseHandler handler : dispenserHandlers)
+        {
+            int dispensed = handler.dispense(x, y, z, xVelocity, zVelocity, world, item);
+            if (dispensed>-1)
+            {
+                return dispensed;
+            }
+        }
+        return -1;
+    }
     public static Object buildBlock(ModContainer container, Class<?> type, Block annotation) throws Exception
     {
         Object o = type.getConstructor(int.class).newInstance(findSpareBlockId());
