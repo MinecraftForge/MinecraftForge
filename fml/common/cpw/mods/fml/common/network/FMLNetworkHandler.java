@@ -72,15 +72,20 @@ public class FMLNetworkHandler
     private void handleFMLPacket(Packet250CustomPayload packet, NetworkManager network, NetHandler netHandler)
     {
         FMLPacket pkt = FMLPacket.readPacket(packet.field_73629_c);
-        String userName = null;
+        String userName = "";
         if (netHandler instanceof NetLoginHandler)
         {
             userName = ((NetLoginHandler) netHandler).field_72543_h;
         }
         else
         {
-            userName = netHandler.getPlayer().func_70005_c_();
+            EntityPlayer pl = netHandler.getPlayer();
+            if (pl != null)
+            {
+                userName = pl.func_70005_c_();
+            }
         }
+
         pkt.execute(network, this, netHandler, userName);
     }
 
@@ -266,13 +271,13 @@ public class FMLNetworkHandler
     {
         NetworkRegistry.instance().connectionOpened(netClientHandler, server, networkManager);
     }
-    
+
     public static void onConnectionClosed(NetworkManager manager)
     {
         NetworkRegistry.instance().connectionClosed(manager);
     }
-    
-    
+
+
     public static void sendPacket(Player player, Packet packet)
     {
     }
@@ -309,7 +314,7 @@ public class FMLNetworkHandler
         pkt.field_73630_a = "FML";
         pkt.field_73629_c = FMLPacket.makePacket(Type.ENTITYSPAWNADJUSTMENT, entityId, serverX, serverY, serverZ);
         pkt.field_73628_b = pkt.field_73629_c.length;
-        
+
         player.field_71135_a.func_72567_b(pkt);
     }
 }

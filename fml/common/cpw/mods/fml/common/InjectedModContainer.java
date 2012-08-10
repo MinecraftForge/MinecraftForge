@@ -9,11 +9,12 @@ import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class InjectedModContainer implements ModContainer
 {
-
+    private File source;
     private ModContainer wrappedContainer;
 
-    public InjectedModContainer(ModContainer mc)
+    public InjectedModContainer(ModContainer mc, File source)
     {
+        this.source = source;
         this.wrappedContainer = mc;
     }
 
@@ -34,7 +35,7 @@ public class InjectedModContainer implements ModContainer
 
     public File getSource()
     {
-        return wrappedContainer.getSource();
+        return source;
     }
 
     public ModMetadata getMetadata()

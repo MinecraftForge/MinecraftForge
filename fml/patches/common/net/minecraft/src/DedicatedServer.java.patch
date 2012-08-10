@@ -23,3 +23,12 @@
          this.func_71210_a(new DedicatedPlayerList(this));
          long var4 = System.nanoTime();
  
+@@ -160,7 +163,7 @@
+             this.field_71339_n = new RConThreadMain(this);
+             this.field_71339_n.func_72602_a();
+         }
+-
++        FMLCommonHandler.instance().handleServerStarting(this);
+         return true;
+     }
+ 

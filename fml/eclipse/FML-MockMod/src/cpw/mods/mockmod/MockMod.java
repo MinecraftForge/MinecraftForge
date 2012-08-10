@@ -39,7 +39,6 @@ public class MockMod
 
     }
 
-    @SideOnly(Side.CLIENT)
     @Instance
     public static MockMod myInstance;
 
