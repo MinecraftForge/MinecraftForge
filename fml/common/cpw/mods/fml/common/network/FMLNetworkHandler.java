@@ -286,11 +286,11 @@ public class FMLNetworkHandler
     {
         if (player instanceof EntityPlayerMP)
         {
-            NetworkRegistry.instance().openRemoteGui(instance().findNetworkModHandler(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
+            NetworkRegistry.instance().openRemoteGui(FMLCommonHandler.instance().findContainerFor(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
         }
         else
         {
-            NetworkRegistry.instance().openLocalGui(instance().findNetworkModHandler(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
+            NetworkRegistry.instance().openLocalGui(FMLCommonHandler.instance().findContainerFor(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
         }
     }
 
