@@ -68,6 +68,7 @@ def main():
     zip_add('fml/common/fmlversion.properties')
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
+    zip_add('common/forge_at.cfg')
     zip_end()
     
     zip_start('minecraftforge-server-%s.zip' % version_str)
@@ -80,6 +81,7 @@ def main():
     zip_add('fml/common/fml_at.cfg')
     zip_add('fml/common/fml_marker.cfg')
     zip_add('fml/common/fmlversion.properties')
+    zip_add('common/forge_at.cfg')
     zip_end()
     
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
