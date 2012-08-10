@@ -119,7 +119,13 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface Instance {}
+    public @interface Instance {
+        /**
+         * The mod object to inject into this field
+         * @return
+         */
+        String value() default "";
+    }
     /**
      * Populate the annotated field with the mod's metadata.
      * @author cpw
@@ -127,7 +133,13 @@ public @interface Mod
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface Metadata {}
+    public @interface Metadata {
+        /**
+         * The mod id specifying the metadata to load here
+         * @return
+         */
+        String value() default "";
+    }
     /**
      * Populate the annotated field with an instance of the Block as specified
      * @author cpw
