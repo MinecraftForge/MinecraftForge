@@ -104,7 +104,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1257,645 @@
+@@ -1249,4 +1257,669 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -748,5 +748,29 @@
 +    public boolean canRenderInPass(int pass)
 +    {
 +        return pass == getRenderBlockPass();
++    }
++
++    /**
++     * Called when a user uses the creative pick block button on this block
++     * 
++     * @param target The full target the player is looking at
++     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
++     */
++    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
++    {
++        int id = idPicked(world, x, y, z);
++        
++        if (id == 0)
++        {
++            return null;
++        }
++
++        Item item = Item.itemsList[id];
++        if (item == null)
++        {
++            return null;
++        }
++
++        return new ItemStack(id, 1, getDamageValue(world, x, y, z));
 +    }
  }

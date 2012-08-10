@@ -67,11 +67,12 @@
      }
  
      /**
-@@ -2107,4 +2128,27 @@
+@@ -2107,4 +2128,59 @@
      {
          return String.format("%s[\'%s\'/%d, l=\'%s\', x=%.2f, y=%.2f, z=%.2f]", new Object[] {this.getClass().getSimpleName(), this.getEntityName(), Integer.valueOf(this.entityId), this.worldObj == null ? "~NULL~" : this.worldObj.getWorldInfo().getWorldName(), Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)});
      }
 +
++    /* ================================== Forge Start =====================================*/
 +    /**
 +     * Returns a NBTTagCompound that can be used to store custom data for this entity.
 +     * It will be written, and read from disc, so it persists over world saves.
@@ -93,5 +94,36 @@
 +    public boolean shouldRiderSit()
 +    {
 +        return true;
++    }
++
++    /**
++     * Called when a user uses the creative pick block button on this entity.
++     * 
++     * @param target The full target the player is looking at
++     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
++     */
++    public ItemStack getPickedResult(MovingObjectPosition target)
++    {
++        if (this instanceof EntityPainting)
++        {
++            return new ItemStack(Item.painting);
++        }
++        else if (this instanceof EntityMinecart)
++        {
++            return ((EntityMinecart)this).getCartItem();
++        }
++        else if (this instanceof EntityBoat)
++        {
++            return new ItemStack(Item.boat);
++        }
++        else
++        {
++            int id = EntityList.getEntityID(this);
++            if (id > 0 || EntityList.entityEggs.containsKey(id))
++            {
++                return new ItemStack(Item.monsterPlacer, 1, id);
++            }
++        }
++        return null;
 +    }
  }

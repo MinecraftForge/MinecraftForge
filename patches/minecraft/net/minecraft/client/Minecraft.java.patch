@@ -1,0 +1,95 @@
+--- ../src_base/minecraft/net/minecraft/client/Minecraft.java
++++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
+@@ -17,6 +17,7 @@
+ import javax.swing.JPanel;
+ 
+ import net.minecraft.src.*;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ import org.lwjgl.LWJGLException;
+ import org.lwjgl.Sys;
+@@ -2102,80 +2103,12 @@
+         if (this.objectMouseOver != null)
+         {
+             boolean var1 = this.thePlayer.capabilities.isCreativeMode;
+-            int var3 = 0;
+-            boolean var4 = false;
+-            int var2;
+             int var5;
+ 
+-            if (this.objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+-            {
+-                var5 = this.objectMouseOver.blockX;
+-                int var6 = this.objectMouseOver.blockY;
+-                int var7 = this.objectMouseOver.blockZ;
+-                Block var8 = Block.blocksList[this.theWorld.getBlockId(var5, var6, var7)];
+-
+-                if (var8 == null)
+-                {
+-                    return;
+-                }
+-
+-                var2 = var8.idPicked(this.theWorld, var5, var6, var7);
+-
+-                if (var2 == 0)
+-                {
+-                    return;
+-                }
+-
+-                var4 = Item.itemsList[var2].getHasSubtypes();
+-                int var9 = var2 >= 256 ? var8.blockID : var2;
+-                var3 = Block.blocksList[var9].getDamageValue(this.theWorld, var5, var6, var7);
+-            }
+-            else
+-            {
+-                if (this.objectMouseOver.typeOfHit != EnumMovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !var1)
+-                {
+-                    return;
+-                }
+-
+-                if (this.objectMouseOver.entityHit instanceof EntityPainting)
+-                {
+-                    var2 = Item.painting.shiftedIndex;
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
+-                {
+-                    EntityMinecart var10 = (EntityMinecart)this.objectMouseOver.entityHit;
+-
+-                    if (var10.minecartType == 2)
+-                    {
+-                        var2 = Item.minecartPowered.shiftedIndex;
+-                    }
+-                    else if (var10.minecartType == 1)
+-                    {
+-                        var2 = Item.minecartCrate.shiftedIndex;
+-                    }
+-                    else
+-                    {
+-                        var2 = Item.minecartEmpty.shiftedIndex;
+-                    }
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
+-                {
+-                    var2 = Item.boat.shiftedIndex;
+-                }
+-                else
+-                {
+-                    var2 = Item.monsterPlacer.shiftedIndex;
+-                    var3 = EntityList.getEntityID(this.objectMouseOver.entityHit);
+-                    var4 = true;
+-
+-                    if (var3 <= 0 || !EntityList.entityEggs.containsKey(Integer.valueOf(var3)))
+-                    {
+-                        return;
+-                    }
+-                }
+-            }
+-
+-            this.thePlayer.inventory.setCurrentItem(var2, var3, var4, var1);
++            if (!ForgeHooks.onPickBlock(this.objectMouseOver, this.thePlayer, this.theWorld))
++            {
++                return;
++            }
+ 
+             if (var1)
+             {

@@ -221,7 +221,68 @@ public class ForgeHooks
 
     public static boolean onEntityInteract(EntityPlayer entityPlayer, Entity par1Entity, boolean b)
     {
-        
         return false;
+    }
+
+    /**
+     * Called when a player uses 'pick block', calls new Entity and Block hooks.
+     */
+    public static boolean onPickBlock(MovingObjectPosition target, EntityPlayer player, World world)
+    {
+        ItemStack result = null;
+        boolean isCreative = player.capabilities.isCreativeMode;
+
+        if (target.typeOfHit == EnumMovingObjectType.TILE)
+        {
+            int x = target.blockX;
+            int y = target.blockY;
+            int z = target.blockZ;
+            Block var8 = Block.blocksList[world.getBlockId(x, y, z)];
+
+            if (var8 == null)
+            {
+                return false;
+            }
+
+            result = var8.getPickBlock(target, world, x, y, z);
+        }
+        else
+        {
+            if (target.typeOfHit != EnumMovingObjectType.ENTITY || target.entityHit == null || !isCreative)
+            {
+                return false;
+            }
+
+            result = target.entityHit.getPickedResult(target);
+        }
+
+        if (result == null)
+        {
+            return false;
+        }
+
+        for (int x = 0; x < 9; x++)
+        {
+            ItemStack stack = player.inventory.getStackInSlot(x);
+            if (stack != null && stack.isItemEqual(result))
+            {
+                player.inventory.currentItem = x;
+                return true;
+            }
+        }
+
+        if (!isCreative)
+        {
+            return false;
+        }
+
+        int slot = player.inventory.getFirstEmptyStack();
+        if (slot < 0 || slot >= 9)
+        {
+            return false;
+        }
+
+        player.inventory.setInventorySlotContents(slot, result);
+        return true;
     }
 }
