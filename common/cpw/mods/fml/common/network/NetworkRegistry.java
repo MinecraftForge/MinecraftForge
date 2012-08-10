@@ -154,7 +154,7 @@ public class NetworkRegistry
         }
     }
 
-    public void clientLoggedIn(NetworkManager manager, Packet1Login login)
+    void clientLoggedIn(NetworkManager manager, Packet1Login login)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
@@ -169,7 +169,7 @@ public class NetworkRegistry
             handler.connectionClosed(manager);
         }
     }
-    
+
     void generateChannelRegistration(EntityPlayer player, NetHandler netHandler, NetworkManager manager)
     {
         Packet250CustomPayload pkt = new Packet250CustomPayload();
@@ -233,10 +233,26 @@ public class NetworkRegistry
         List<String> channels = Lists.newArrayList(Splitter.on('\0').split(request));
         return channels;
     }
-    public void openRemoteGui(NetworkModHandler networkModHandler, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
+
+    public void registerGuiHandler(Object mod, IGuiHandler handler)
     {
-        IGuiHandler handler = serverGuiHandlers.get(networkModHandler.getContainer());
-        if (handler != null)
+        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mc);
+        if (nmh == null)
+        {
+            FMLLog.log(Level.FINE, "The mod %s needs to be a @NetworkMod to register a Networked Gui Handler", mc.getModId());
+        }
+        else
+        {
+            serverGuiHandlers.put(mc, handler);
+        }
+        clientGuiHandlers.put(mc, handler);
+    }
+    void openRemoteGui(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
+    {
+        IGuiHandler handler = serverGuiHandlers.get(mc);
+        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mc);
+        if (handler != null && nmh != null)
         {
             Container container = (Container)handler.getServerGuiElement(modGuiId, player, world, x, y, z);
             if (container != null)
@@ -246,18 +262,18 @@ public class NetworkRegistry
                 int windowId = player.field_71139_cq;
                 Packet250CustomPayload pkt = new Packet250CustomPayload();
                 pkt.field_73630_a = "FML";
-                pkt.field_73629_c = FMLPacket.makePacket(Type.GUIOPEN, windowId, networkModHandler.getNetworkId(), modGuiId, x, y, z);
+                pkt.field_73629_c = FMLPacket.makePacket(Type.GUIOPEN, windowId, nmh.getNetworkId(), modGuiId, x, y, z);
                 pkt.field_73628_b = pkt.field_73629_c.length;
                 player.field_71135_a.func_72567_b(pkt);
-                player.field_71070_bA = container; 
+                player.field_71070_bA = container;
                 player.field_71070_bA.field_75152_c = windowId;
                 player.field_71070_bA.func_75132_a(player);
             }
         }
     }
-    public void openLocalGui(NetworkModHandler networkModHandler, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
+    void openLocalGui(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
     {
-        IGuiHandler handler = clientGuiHandlers.get(networkModHandler.getContainer());
+        IGuiHandler handler = clientGuiHandlers.get(mc);
         FMLCommonHandler.instance().showGuiScreen(handler.getClientGuiElement(modGuiId, player, world, x, y, z));
     }
 }
