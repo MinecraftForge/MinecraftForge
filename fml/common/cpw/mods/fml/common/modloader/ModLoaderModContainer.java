@@ -55,6 +55,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModClassLoader;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -515,8 +516,8 @@ public class ModLoaderModContainer implements ModContainer
             this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
             this.gameTickHandler.setMod(mod);
             this.guiTickHandler.setMod(mod);
-            TickRegistry.registerTickHandler(this.gameTickHandler);
-            TickRegistry.registerTickHandler(this.guiTickHandler);
+            TickRegistry.registerTickHandler(this.gameTickHandler, Side.CLIENT);
+            TickRegistry.registerTickHandler(this.guiTickHandler, Side.CLIENT);
             GameRegistry.registerWorldGenerator(ModLoaderHelper.buildWorldGenHelper(mod));
             GameRegistry.registerFuelHandler(ModLoaderHelper.buildFuelHelper(mod));
             GameRegistry.registerCraftingHandler(ModLoaderHelper.buildCraftingHelper(mod));

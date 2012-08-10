@@ -36,7 +36,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     @Override
     public final boolean doTickInGame(TickType tick, boolean tickEnd, Object... data)
     {
-        if (tick==TickType.GAME && tickEnd) {
+        if (tick==TickType.SERVER && tickEnd) {
             return onTickInGame(FMLServerHandler.instance().getServer());
         } else {
             return true;

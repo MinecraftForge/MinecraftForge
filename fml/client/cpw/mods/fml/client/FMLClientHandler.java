@@ -88,6 +88,7 @@ import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLDummyContainer;
@@ -144,8 +145,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     private Minecraft client;
 
-
-    private TexturePackBase fallbackTexturePack;
 
     private boolean firstTick;
     /**
@@ -220,6 +219,8 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
+        RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
+
         // TODO
 //        for (ModContainer mod : Loader.getModList()) {
 //            mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
@@ -231,28 +232,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
         // Mark this as a "first tick"
         firstTick = true;
-    }
-
-    public void onRenderTickStart(float partialTickTime)
-    {
-        if (firstTick)
-        {
-            // TODO
-//            loadTextures(fallbackTexturePack);
-            firstTick = false;
-        }
-        FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_71462_r);
-    }
-
-    public void onRenderTickEnd(float partialTickTime)
-    {
-        if (!guiLoaded)
-        {
-            FMLCommonHandler.instance().rescheduleTicks();
-            FMLCommonHandler.instance().tickStart(EnumSet.of(TickType.GUILOAD), partialTickTime, client.field_71462_r);
-            guiLoaded = true;
-        }
-        FMLCommonHandler.instance().tickEnd(EnumSet.of(TickType.RENDER,TickType.GUI), partialTickTime, client.field_71462_r);
     }
     /**
      * Get the server instance
@@ -345,7 +324,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     public Entity spawnEntityIntoClientWorld(Class<? extends Entity> cls, EntitySpawnPacket packet)
     {
         WorldClient wc = client.field_71441_e;
-    
+
         try
         {
             Entity entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
@@ -371,12 +350,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
             entity.field_70157_k = packet.entityId;
             entity.func_70056_a(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch, 1);
-            
+
             if (entity instanceof EntityLiving)
             {
                 ((EntityLiving)entity).field_70759_as = packet.scaledHeadYaw;
             }
-            
+
             if (packet.metadata != null)
             {
                 entity.func_70096_w().func_75687_a((List)packet.metadata);

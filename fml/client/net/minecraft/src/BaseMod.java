@@ -35,7 +35,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
         Minecraft mc = FMLClientHandler.instance().getClient();
         boolean hasWorld = true;
         // World and render ticks
-        if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME ) && hasWorld) {
+        if (tickEnd && ( tick==TickType.RENDER || tick==TickType.CLIENT ) && hasWorld) {
             return onTickInGame((Float) data[0], mc);
         }
         return true;
@@ -44,7 +44,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     public final boolean doTickInGUI(TickType tick, boolean tickEnd, Object... data)
     {
         Minecraft mc = FMLClientHandler.instance().getClient();
-        if (tickEnd && ( tick==TickType.RENDER || tick==TickType.GAME  ) || tick ==  TickType.GUILOAD) {
+        if (tickEnd && ( tick==TickType.RENDER || tick==TickType.CLIENT)) {
             return onTickInGUI((Float) data[0], mc, mc.field_71462_r);
         }
         return true;

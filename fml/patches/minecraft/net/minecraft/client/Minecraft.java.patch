@@ -112,18 +112,20 @@
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
  import org.lwjgl.input.Keyboard;
-@@ -125,6 +29,10 @@
+@@ -125,6 +29,12 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
 +
 +import cpw.mods.fml.client.FMLClientHandler;
++import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.Side;
 +import cpw.mods.fml.relauncher.ArgsWrapper;
 +import cpw.mods.fml.relauncher.FMLRelauncher;
  
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -305,7 +213,7 @@
+@@ -305,7 +215,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
@@ -132,16 +134,50 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab);
-@@ -350,6 +258,8 @@
+@@ -350,6 +260,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
 +        FMLClientHandler.instance().finishMinecraftLoading();
-+        
++
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -1883,6 +1793,12 @@
+@@ -738,9 +650,11 @@
+ 
+             if (!this.field_71454_w)
+             {
++                FMLCommonHandler.instance().onRenderTickStart(this.field_71428_T.field_74281_c);
+                 this.field_71424_I.func_76318_c("gameRenderer");
+                 this.field_71460_t.func_78480_b(this.field_71428_T.field_74281_c);
+                 this.field_71424_I.func_76319_b();
++                FMLCommonHandler.instance().onRenderTickEnd(this.field_71428_T.field_74281_c);
+             }
+ 
+             GL11.glFlush();
+@@ -1261,11 +1175,13 @@
+ 
+     public void func_71407_l()
+     {
++        FMLCommonHandler.instance().rescheduleTicks(Side.CLIENT);
+         if (this.field_71467_ac > 0)
+         {
+             --this.field_71467_ac;
+         }
+ 
++        FMLCommonHandler.instance().onPreClientTick();
+         this.field_71424_I.func_76320_a("stats");
+         this.field_71413_E.func_77449_e();
+         this.field_71424_I.func_76318_c("gui");
+@@ -1633,6 +1549,7 @@
+             this.field_71453_ak.func_74428_b();
+         }
+ 
++        FMLCommonHandler.instance().onPostClientTick();
+         this.field_71424_I.func_76319_b();
+         this.field_71423_H = func_71386_F();
+     }
+@@ -1883,6 +1800,12 @@
  
      public static void main(String[] p_main_0_)
      {

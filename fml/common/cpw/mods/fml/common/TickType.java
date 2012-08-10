@@ -34,31 +34,25 @@ public enum TickType {
      * client side
      * Fired during the render processing phase if a GUI is open
      * arg 0 : float "partial render time"
-     * arg 1 : the open gui
+     * arg 1 : the open gui or null if no gui is open
      */
     GUI,
     /**
      * client side
-     * Fired during the world evaluation loop if a gui is open
-     * arg 0 : The open gui
+     * Fired during the client evaluation loop
+     * arg 0 : The open gui or null if no gui is open
      */
-    WORLDGUI,
+    CLIENTGUI,
     /**
-     * client side
+     * server side
      * Fired once as the world loads from disk
      */
     WORLDLOAD,
     /**
-     * client side
-     * Fired once as the world loads from disk
-     * arg 0 : the open gui
+     * client side only
+     * Fired once per client tick loop.
      */
-    GUILOAD,
-    /**
-     * client and server side
-     * Fired once per "global tick loop"
-     */
-    GAME,
+    CLIENT,
     /**
      * client and server side.
      * Fired whenever the players update loop runs.
@@ -67,11 +61,11 @@ public enum TickType {
      */
     PLAYER,
     /**
-     * This is a special internal tick type that is
-     * not sent to mods. It resets the scheduler for
-     * the next tick pass.
+     * server side only.
+     * This is the server game tick.
+     * Fired once per tick loop on the server.
      */
-    RESETMARKER;
+    SERVER;
 
     /**
      * Partner ticks that are also cancelled by returning false from onTickInGame
@@ -80,11 +74,10 @@ public enum TickType {
      */
     public EnumSet<TickType> partnerTicks()
     {
-        if (this==GAME) return EnumSet.of(RENDER);
-        if (this==RENDER) return EnumSet.of(GAME);
-        if (this==GUI) return EnumSet.of(WORLDGUI, GUILOAD);
-        if (this==WORLDGUI) return EnumSet.of(GUI, GUILOAD);
-        if (this==GUILOAD) return EnumSet.of(GUI, WORLDGUI);
+        if (this==CLIENT) return EnumSet.of(RENDER);
+        if (this==RENDER) return EnumSet.of(CLIENT);
+        if (this==GUI) return EnumSet.of(CLIENTGUI);
+        if (this==CLIENTGUI) return EnumSet.of(GUI);
         return EnumSet.noneOf(TickType.class);
     }
 }

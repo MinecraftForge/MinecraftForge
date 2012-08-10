@@ -12,12 +12,13 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-package cpw.mods.fml.client;
+package cpw.mods.fml.client.modloader;
 
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
@@ -25,28 +26,30 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
  * @author cpw
  *
  */
-public class BlockRenderInfo
+public class ModLoaderBlockRendererHandler implements ISimpleBlockRenderingHandler
 {
     private int renderId;
     private boolean render3dInInventory;
-    private ModContainer modContainer;
+    private BaseMod mod;
 
     /**
-     * @param modContainer 
-     * 
+     * @param mod
+     *
      */
-    public BlockRenderInfo(int renderId, boolean render3dInInventory, ModContainer modContainer)
+    public ModLoaderBlockRendererHandler(int renderId, boolean render3dInInventory, BaseMod mod)
     {
         this.renderId=renderId;
         this.render3dInInventory=render3dInInventory;
-        this.modContainer=modContainer;
+        this.mod=mod;
     }
-    
+
+    @Override
     public int getRenderId()
     {
         return renderId;
     }
 
+    @Override
     public boolean shouldRender3DInInventory()
     {
         return render3dInInventory;
@@ -61,9 +64,10 @@ public class BlockRenderInfo
      * @param modelId
      * @param renderer
      */
+    @Override
     public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer)
     {
-        return ((BaseMod)modContainer.getMod()).renderWorldBlock(renderer, world, x, y, z, block, modelId);
+        return mod.renderWorldBlock(renderer, world, x, y, z, block, modelId);
     }
 
     /**
@@ -72,9 +76,10 @@ public class BlockRenderInfo
      * @param modelID
      * @param renderer
      */
+    @Override
     public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer)
     {
-        ((BaseMod)modContainer.getMod()).renderInvBlock(renderer, block, metadata, modelID);
+        mod.renderInvBlock(renderer, block, metadata, modelID);
     }
 
 }

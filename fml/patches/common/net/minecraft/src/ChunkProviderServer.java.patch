@@ -1,0 +1,19 @@
+--- ../src-base/common/net/minecraft/src/ChunkProviderServer.java
++++ ../src-work/common/net/minecraft/src/ChunkProviderServer.java
+@@ -6,6 +6,8 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
++import cpw.mods.fml.common.registry.GameRegistry;
+ 
+ public class ChunkProviderServer implements IChunkProvider
+ {
+@@ -177,6 +179,7 @@
+             if (this.field_73246_d != null)
+             {
+                 this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);
++                GameRegistry.generateWorld(p_73153_2_, p_73153_3_, field_73251_h, field_73246_d, p_73153_1_);
+                 var4.func_76630_e();
+             }
+         }

@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import cpw.mods.fml.client.BlockRenderManager;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.TextureFXManager;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
@@ -76,16 +76,16 @@ public class FMLRenderAccessLibrary
 
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelId)
     {
-        return BlockRenderManager.instance().renderWorldBlock(renderer, world, x, y, z, block, modelId);
+        return RenderingRegistry.instance().renderWorldBlock(renderer, world, x, y, z, block, modelId);
     }
 
     public static void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
-        BlockRenderManager.instance().renderInventoryBlock(renderer, block, metadata, modelID);
+        RenderingRegistry.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
     public static boolean renderItemAsFull3DBlock(int modelId)
     {
-        return BlockRenderManager.instance().renderItemAsFull3DBlock(modelId);
+        return RenderingRegistry.instance().renderItemAsFull3DBlock(modelId);
     }
 }

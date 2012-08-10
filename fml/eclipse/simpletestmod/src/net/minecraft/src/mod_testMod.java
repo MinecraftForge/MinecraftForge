@@ -86,7 +86,7 @@ public class mod_testMod extends BaseMod {
         @Override
         public EnumSet<TickType> ticks()
         {
-            return EnumSet.of(TickType.GAME);
+            return EnumSet.of(TickType.CLIENT);
         }
 
         /* (non-Javadoc)

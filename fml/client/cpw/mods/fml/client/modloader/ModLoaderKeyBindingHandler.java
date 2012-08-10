@@ -12,7 +12,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-package cpw.mods.fml.client;
+package cpw.mods.fml.client.modloader;
 
 import java.util.EnumSet;
 
@@ -60,7 +60,7 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
             return;
         }
         upArmed = false;
-        if (type.contains(TickType.GUILOAD)|| type.contains(TickType.GAME))
+        if (type.contains(TickType.CLIENT))
         {
             downArmed = true;
         }
@@ -79,7 +79,7 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
             return;
         }
         downArmed = false;
-        if (type.contains(TickType.GUILOAD)|| type.contains(TickType.GAME))
+        if (type.contains(TickType.CLIENT))
         {
             upArmed = true;
         }
@@ -93,7 +93,7 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
     @Override
     public EnumSet<TickType> ticks()
     {
-        return EnumSet.of(TickType.GAME, TickType.RENDER, TickType.GUILOAD);
+        return EnumSet.of(TickType.CLIENT, TickType.RENDER);
     }
 
     @Override
