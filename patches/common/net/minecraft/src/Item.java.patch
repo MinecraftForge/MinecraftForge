@@ -22,7 +22,6 @@
      {
          StatList.initStats();
      }
--}
 +
 +    /* =========================================================== FORGE START ===============================================================*/
 +    public boolean isDefaultTexture = true;
@@ -204,4 +203,4 @@
 +    {
 +        return new ItemStack(getContainerItem());
 +    }
-+}
+ }

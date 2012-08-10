@@ -9,8 +9,7 @@ src_dir = os.path.join(mcp_dir, 'src')
 sys.path.append(mcp_dir)
 from runtime.reobfuscate import reobfuscate
 
-from forge import reset_logger, load_version, zip_folder, zip_create, inject_version
-from build import build
+from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
 
 reobf_dir = os.path.join(mcp_dir, 'reobf')
 client_dir = os.path.join(reobf_dir, 'minecraft')
@@ -29,7 +28,8 @@ def main():
         except:
             pass
     ret = 0
-    ret = build(build_num)
+    fml_dir = os.path.join(forge_dir, 'fml')
+    build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num)
     if ret != 0:
         sys.exit(ret)
     
@@ -55,42 +55,40 @@ def main():
         
     os.makedirs(out_folder)
     
-    update_info('forge_common/mod_MinecraftForge.info', version_str)
-    
     zip_start('minecraftforge-client-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
-    zip_add('forge_common/mod_MinecraftForge.info', 'mod_MinecraftForge.info')
     zip_add('forge_client/src/forge_logo.png')
     zip_add('install/MinecraftForge-Credits.txt')
     zip_add('install/MinecraftForge-License.txt')
     zip_add('fml/CREDITS-fml.txt')
     zip_add('fml/LICENSE-fml.txt')
     zip_add('fml/README-fml.txt')
-    zip_add('fml/src/minecraft/fmlversion.properties')
+    zip_add('fml/common/fml_at.cfg')
+    zip_add('fml/common/fml_marker.cfg')
+    zip_add('fml/common/fmlversion.properties')
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_end()
     
     zip_start('minecraftforge-server-%s.zip' % version_str)
     zip_folder(server_dir, '', zip)
-    zip_add('forge_common/mod_MinecraftForge.info', 'mod_MinecraftForge.info')
     zip_add('install/MinecraftForge-Credits.txt')
     zip_add('install/MinecraftForge-License.txt')
     zip_add('fml/CREDITS-fml.txt')
     zip_add('fml/LICENSE-fml.txt')
     zip_add('fml/README-fml.txt')
-    zip_add('fml/src/minecraft_server/fmlversion.properties')
+    zip_add('fml/common/fml_at.cfg')
+    zip_add('fml/common/fml_marker.cfg')
+    zip_add('fml/common/fmlversion.properties')
     zip_end()
     
-    inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), build_num)
+    inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
-    zip_add('forge_client/src', 'src/minecraft')
-    zip_add('forge_server/src', 'src/minecraft_server')
-    zip_add('forge_common',     'src/minecraft')
-    zip_add('forge_common',     'src/minecraft_server')
-    zip_add('patches',          'patches')
-    zip_add('fml',              'fml')
-    zip_add('conf',             'conf')
+    zip_add('client',  'client')
+    zip_add('common',  'common')
+    zip_add('server',  'server')
+    zip_add('patches', 'patches')
+    zip_add('fml',     'fml')
     zip_add('install/install.cmd')
     zip_add('install/install.sh')
     zip_add('install/README-MinecraftForge.txt')
@@ -101,9 +99,7 @@ def main():
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_end()
-    inject_version(os.path.join(forge_dir, 'forge_common', 'net', 'minecraft', 'src', 'forge', 'ForgeHooks.java'), 0)
-    
-    shutil.move(os.path.join(forge_dir, 'file.backup'), os.path.join(forge_dir, 'forge_common/mod_MinecraftForge.info'.replace('/', os.sep)))
+    inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), 0)
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
