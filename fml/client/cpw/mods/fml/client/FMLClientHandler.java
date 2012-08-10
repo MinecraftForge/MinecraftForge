@@ -86,6 +86,7 @@ import net.minecraft.src.WorldClient;
 import net.minecraft.src.WorldType;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
+import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -173,6 +174,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         ObfuscationReflectionHelper.detectObfuscation(World.class);
         TextureFXManager.instance().setClient(client);
         FMLCommonHandler.instance().beginLoading(this);
+        new ModLoaderClientHelper(client);
         try
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
@@ -221,13 +223,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
 
-        // TODO
-//        for (ModContainer mod : Loader.getModList()) {
-//            mod.gatherRenderers(RenderManager.field_1233_a.getRendererList());
-//            for (Render r : RenderManager.field_1233_a.getRendererList().values()) {
-//                r.func_4009_a(RenderManager.field_1233_a);
-//            }
-//        }
         KeyBindingRegistry.uploadKeyBindingsToGame(client.field_71474_y);
 
         // Mark this as a "first tick"

@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IScheduledTickHandler;
 import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -40,9 +41,9 @@ public class mod_testMod extends BaseMod {
         t2.interval=2;
         TickTester t3 = new TickTester();
         t3.interval=3;
-        TickRegistry.registerScheduledTickHandler(t1);
-        TickRegistry.registerScheduledTickHandler(t2);
-        TickRegistry.registerScheduledTickHandler(t3);
+        TickRegistry.registerScheduledTickHandler(t1, Side.CLIENT);
+        TickRegistry.registerScheduledTickHandler(t2, Side.SERVER);
+        TickRegistry.registerScheduledTickHandler(t3, Side.CLIENT);
     }
 
     @Override

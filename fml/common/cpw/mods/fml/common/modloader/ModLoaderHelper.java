@@ -28,6 +28,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 
 /**
  * @author cpw
@@ -37,6 +38,7 @@ public class ModLoaderHelper
 {
     private static Map<BaseMod, ModLoaderModContainer> notModCallbacks=new HashMap<BaseMod, ModLoaderModContainer>();
 
+    public static IModLoaderSidedHelper sidedHelper;
     public static void updateStandardTicks(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
@@ -128,5 +130,13 @@ public class ModLoaderHelper
     public static ICraftingHandler buildCraftingHelper(BaseModProxy mod)
     {
         return new ModLoaderCraftingHelper(mod);
+    }
+
+    public static void finishModLoading(ModLoaderModContainer mc)
+    {
+        if (sidedHelper != null)
+        {
+            sidedHelper.finishModLoading(mc);
+        }
     }
 }
