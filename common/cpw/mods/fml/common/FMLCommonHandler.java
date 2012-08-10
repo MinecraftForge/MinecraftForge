@@ -38,6 +38,7 @@ import java.util.zip.ZipInputStream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.World;
 
 import com.google.common.base.Strings;
@@ -187,11 +188,6 @@ public class FMLCommonHandler
         return sidedDelegate.getSide();
     }
 
-    public void addAuxilliaryModContainer(ModContainer ticker)
-    {
-        auxilliaryContainers.add(ticker);
-    }
-
     /**
      * Raise an exception
      *
@@ -212,8 +208,6 @@ public class FMLCommonHandler
     private Class<?> forge;
     private boolean noForge;
     private List<String> brandings;
-    private List<ModContainer> auxilliaryContainers = new ArrayList<ModContainer>();
-
     private Class<?> findMinecraftForge()
     {
         if (forge==null && !noForge)
@@ -309,9 +303,13 @@ public class FMLCommonHandler
         tickStart(EnumSet.of(TickType.WORLD), Side.SERVER, world);
     }
 
-    public void onWorldLoadTick(Object world)
+    public void onWorldLoadTick(World[] worlds)
     {
-        tickStart(EnumSet.of(TickType.WORLDLOAD), Side.SERVER, world);
+        rescheduleTicks(Side.SERVER);
+        for (World w : worlds)
+        {
+            tickStart(EnumSet.of(TickType.WORLDLOAD), Side.SERVER, w);
+        }
     }
 
     public void handleServerStarting(MinecraftServer server)
@@ -390,5 +388,15 @@ public class FMLCommonHandler
     public void onRenderTickEnd(float timer)
     {
         tickEnd(EnumSet.of(TickType.RENDER), Side.CLIENT, timer);
+    }
+
+    public void onPlayerPreTick(EntityPlayer player)
+    {
+        tickStart(EnumSet.of(TickType.PLAYER), Side.SERVER, player);
+    }
+
+    public void onPlayerPostTick(EntityPlayer player)
+    {
+        tickEnd(EnumSet.of(TickType.PLAYER), Side.SERVER, player);
     }
 }

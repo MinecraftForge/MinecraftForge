@@ -10,15 +10,18 @@
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
  import net.minecraft.src.CallableIsServerModded;
-@@ -364,6 +367,7 @@
+@@ -364,7 +367,10 @@
          {
              if (this.func_71197_b())
              {
 +                FMLCommonHandler.instance().handleServerStarted();
                  long var1 = System.currentTimeMillis();
++
++                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
  
                  for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
-@@ -403,6 +407,7 @@
+                 {
+@@ -403,6 +409,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -26,7 +29,37 @@
              }
              else
              {
-@@ -1117,6 +1122,12 @@
+@@ -466,9 +473,11 @@
+ 
+     public void func_71217_p()
+     {
++        FMLCommonHandler.instance().rescheduleTicks(Side.SERVER);
+         long var1 = System.nanoTime();
+         AxisAlignedBB.func_72332_a().func_72298_a();
+         Vec3.func_72437_a().func_72343_a();
++        FMLCommonHandler.instance().onPreServerTick();
+         ++this.field_71315_w;
+ 
+         if (this.field_71295_T)
+@@ -514,6 +523,7 @@
+ 
+         this.field_71304_b.func_76319_b();
+         this.field_71304_b.func_76319_b();
++        FMLCommonHandler.instance().onPostServerTick();
+     }
+ 
+     public void func_71190_q()
+@@ -537,7 +547,9 @@
+                 }
+ 
+                 this.field_71304_b.func_76320_a("tick");
++                FMLCommonHandler.instance().onPreWorldTick(var4);
+                 var4.func_72835_b();
++                FMLCommonHandler.instance().onPostWorldTick(var4);
+                 this.field_71304_b.func_76318_c("lights");
+ 
+                 while (true)
+@@ -1117,6 +1129,12 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {

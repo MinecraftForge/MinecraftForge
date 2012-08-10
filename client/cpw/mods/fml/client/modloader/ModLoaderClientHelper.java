@@ -10,10 +10,11 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Entity;
 import net.minecraft.src.Render;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.modloader.IModLoaderSidedHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
-public class ModLoaderClientHelper
+public class ModLoaderClientHelper implements IModLoaderSidedHelper
 {
 
     /**
@@ -44,5 +45,19 @@ public class ModLoaderClientHelper
         }
 
         mod.registerAnimation(game);
+    }
+
+    public ModLoaderClientHelper(Minecraft client)
+    {
+        this.client = client;
+        ModLoaderHelper.sidedHelper = this;
+    }
+
+    private Minecraft client;
+
+    @Override
+    public void finishModLoading(ModLoaderModContainer mc)
+    {
+        handleFinishLoadingFor(mc, client);
     }
 }
