@@ -283,11 +283,6 @@ public class FMLCommonHandler
         return sidedDelegate;
     }
 
-    public void handleWorldGeneration(int chunkX, int chunkZ, long worldSeed, Object... data)
-    {
-        GameRegistry.generateWorld(chunkX, chunkZ, worldSeed, data);
-    }
-
     public void onPostServerTick()
     {
         tickEnd(EnumSet.of(TickType.SERVER), Side.SERVER);

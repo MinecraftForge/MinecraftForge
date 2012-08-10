@@ -19,19 +19,15 @@ public class ModLoaderWorldGenerator implements IWorldGenerator
     }
 
     @Override
-    public void generate(Random random, int chunkX, int chunkZ, Object... additionalData)
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
     {
-        World w = (World) additionalData[0];
-        IChunkProvider cp = (IChunkProvider) additionalData[1];
-
-        if (cp instanceof ChunkProviderGenerate)
+        if (chunkGenerator instanceof ChunkProviderGenerate)
         {
-            mod.generateSurface(w, random, chunkX << 4, chunkZ << 4);
+            mod.generateSurface(world, random, chunkX << 4, chunkZ << 4);
         }
-        else if (cp instanceof ChunkProviderHell)
+        else if (chunkGenerator instanceof ChunkProviderHell)
         {
-            mod.generateNether(w, random, chunkX << 4, chunkZ << 4);
+            mod.generateNether(world, random, chunkX << 4, chunkZ << 4);
         }
     }
-
 }
