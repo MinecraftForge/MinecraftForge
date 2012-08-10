@@ -370,7 +370,7 @@ public class Loader
         modController.transition(LoaderState.CONSTRUCTING);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         modController.transition(LoaderState.PREINITIALIZATION);
-        modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable());
+        modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION);
     }
 

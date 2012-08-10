@@ -267,10 +267,12 @@ public class FMLModContainer implements ModContainer
             modClassLoader.addFile(source);
             Class<?> clazz = Class.forName(className, true, modClassLoader);
             ASMDataTable asmHarvestedAnnotations = event.getASMHarvestedData();
+            // TODO
             asmHarvestedAnnotations.getAnnotationsFor(this);
             annotations = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = clazz.newInstance();
+            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
             processFieldAnnotations();
         }
         catch (Throwable e)

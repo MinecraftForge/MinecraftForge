@@ -78,7 +78,6 @@ import cpw.mods.fml.common.TickType;
 
 public class ModLoaderModContainer implements ModContainer
 {
-    private static final ProxyInjector NULLPROXY = new ProxyInjector("","","",null);
     public BaseModProxy mod;
     private File modSource;
     public List<ArtifactVersion> requirements = Lists.newArrayList();
@@ -498,6 +497,7 @@ public class ModLoaderModContainer implements ModContainer
             configureMod(modClazz, event.getASMHarvestedData());
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
             mod = (BaseModProxy)modClazz.newInstance();
+            ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
         }
         catch (Exception e)
         {

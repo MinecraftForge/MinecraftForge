@@ -15,6 +15,14 @@
 package cpw.mods.fml.common;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Set;
+import java.util.logging.Level;
+
+import org.objectweb.asm.Type;
+
+import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 
 /**
  * @author cpw
@@ -22,55 +30,45 @@ import java.lang.reflect.Field;
  */
 public class ProxyInjector
 {
-    private String clientName;
-    private String serverName;
-    private String bukkitName;
-    private Field target;
-
-    public ProxyInjector(String clientName, String serverName, String bukkitName, Field target)
+    public static void inject(ModContainer mod, ASMDataTable data, Side side)
     {
-        this.clientName = clientName;
-        this.serverName = serverName;
-        this.bukkitName = bukkitName;
-        this.target = target;
-    }
+        FMLLog.fine("Attempting to inject @SidedProxy classes into %s", mod.getModId());
+        Set<ASMData> targets = data.getAnnotationsFor(mod).get(Type.getDescriptor(SidedProxy.class));
+        ClassLoader mcl = Loader.instance().getModClassLoader();
 
-    public boolean isValidFor(Side type)
-    {
-        if (type == Side.CLIENT)
+        for (ASMData targ : targets)
         {
-            return !this.clientName.isEmpty();
-        }
-        else if (type == Side.SERVER)
-        {
-            return !this.serverName.isEmpty();
-        }
-        else if (type == Side.BUKKIT)
-        {
-            return !this.bukkitName.isEmpty();
-        }
-        return false;
-    }
-
-    public void inject(ModContainer mod, Side side)
-    {
-        String targetType = side == Side.CLIENT ? clientName : serverName;
-        try
-        {
-            Object proxy=Class.forName(targetType, false, Loader.instance().getModClassLoader()).newInstance();
-            if (target.getType().isAssignableFrom(proxy.getClass()))
+            try
             {
-                target.set(mod.getMod(), proxy);
-            } else {
-                FMLCommonHandler.instance().getFMLLogger().severe(String.format("Attempted to load a proxy type %s into %s, but the types don't match", targetType, target.getName()));
-                throw new LoaderException();
+                Class<?> proxyTarget = Class.forName(targ.getClassName(), true, mcl);
+                Field target = proxyTarget.getDeclaredField(targ.getObjectName());
+                if (target == null)
+                {
+                    // Impossible?
+                    FMLLog.severe("Attempted to load a proxy type into %s.%s but the field was not found", targ.getClassName(), targ.getObjectName());
+                    throw new LoaderException();
+                }
+
+                String targetType = side.isClient() ? target.getAnnotation(SidedProxy.class).clientSide() : target.getAnnotation(SidedProxy.class).serverSide();
+                Object proxy=Class.forName(targetType, true, mcl).newInstance();
+
+                if ((target.getModifiers() & Modifier.STATIC) != 0 )
+                {
+                    FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the field is not static", targetType, targ.getClassName(), targ.getObjectName());
+                    throw new LoaderException();
+                }
+                if (!target.getType().isAssignableFrom(proxy.getClass()))
+                {
+                    FMLLog.severe("Attempted to load a proxy type %s into %s.%s, but the types don't match", targetType, targ.getClassName(), targ.getObjectName());
+                    throw new LoaderException();
+                }
+                target.set(null, proxy);
             }
-        }
-        catch (Exception e)
-        {
-            FMLCommonHandler.instance().getFMLLogger().severe(String.format("An error occured trying to load a proxy type %s into %s", targetType, target.getName()));
-            FMLCommonHandler.instance().getFMLLogger().throwing("ProxyInjector", "inject", e);
-            throw new LoaderException(e);
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "An error occured trying to load a proxy into %s.%s", targ.getAnnotationInfo(), targ.getClassName(), targ.getObjectName());
+                throw new LoaderException(e);
+            }
         }
     }
 }
