@@ -28,7 +28,7 @@ def main():
     
     print '=============================== Minecraft Forge Setup Start ====================================='
     print 'Applying forge patches'
-    apply_forge_patches(os.path.join(forge_dir, 'fml'), mcp_dir, forge_dir, src_dir, False)
+    apply_forge_patches(os.path.join(forge_dir, 'fml'), mcp_dir, forge_dir, src_dir, True)
     os.chdir(mcp_dir)
     updatenames(None, True)
     reset_logger()
