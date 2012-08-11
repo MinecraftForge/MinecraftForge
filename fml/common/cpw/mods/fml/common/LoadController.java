@@ -115,6 +115,10 @@ public class LoadController
     @Subscribe
     public void propogateStateMessage(FMLStateEvent stateEvent)
     {
+        if (stateEvent instanceof FMLPreInitializationEvent)
+        {
+            buildModObjectList();
+        }
         for (Map.Entry<String,EventBus> entry : eventChannels.entrySet())
         {
             activeContainer = entry.getKey();
@@ -132,10 +136,6 @@ public class LoadController
                 modStates.put(entry.getKey(), ModState.ERRORED);
             }
         }
-        if (stateEvent instanceof FMLConstructionEvent)
-        {
-            buildModObjectList();
-        }
     }
 
     public void buildModObjectList()
@@ -143,7 +143,10 @@ public class LoadController
         ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.<ModContainer, Object>builder();
         for (ModContainer mc : activeModList)
         {
-            builder.put(mc, mc.getMod());
+            if (!mc.isImmutable())
+            {
+                builder.put(mc, mc.getMod());
+            }
         }
         modObjectList = builder.build();
     }
