@@ -67,15 +67,12 @@ public class FMLRelauncher
     {
         try
         {
-            popupWindow = new JDialog(null, "FML Initial Setup", ModalityType.MODELESS);
-            JOptionPane optPane = new JOptionPane("<html><font size=\"+1\">FML Setup</font><br/><br/>FML is performing some configuration, please wait</html>", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[0]);
-            popupWindow.add(optPane);
-            popupWindow.pack();
-            popupWindow.setLocationRelativeTo(null);
-            popupWindow.setVisible(true);
+            RelaunchLibraryManager.downloadMonitor = new Downloader();
+            popupWindow = RelaunchLibraryManager.downloadMonitor.makeDialog();
         }
         catch (Exception e)
         {
+            Downloader.makeHeadless();
             popupWindow = null;
         }
     }
@@ -147,7 +144,7 @@ public class FMLRelauncher
             {
                 try
                 {
-                    String logFile = new File(minecraftHome,"ForgeModLoader-0.log").getCanonicalPath();
+                    String logFile = new File(minecraftHome,"ForgeModLoader-client-0.log").getCanonicalPath();
                     JOptionPane.showMessageDialog(popupWindow,
                             String.format("<html><div align=\"center\"><font size=\"+1\">There was a fatal error starting up minecraft and FML</font></div><br/>" +
                             		"Minecraft cannot launch in it's current configuration<br/>" +
@@ -265,18 +262,6 @@ public class FMLRelauncher
             }
         }
         return;
-    }
-
-    public InputStream wrapStream(InputStream inputStream, String infoString)
-    {
-        if (popupWindow!=null)
-        {
-            return new ProgressMonitorInputStream(popupWindow, infoString, inputStream);
-        }
-        else
-        {
-            return inputStream;
-        }
     }
 
     public static String side()
