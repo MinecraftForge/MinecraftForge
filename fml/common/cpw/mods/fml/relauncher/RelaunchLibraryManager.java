@@ -236,6 +236,8 @@ public class RelaunchLibraryManager
         catch (Exception e)
         {
             // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
+            System.out.println("RelaunchLibraryManager.handleLaunch");
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

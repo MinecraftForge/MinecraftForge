@@ -203,6 +203,8 @@ public class FMLRelauncher
             }
             catch (Exception e)
             {
+                System.out.println("FMLRelauncher.relaunchApplet");
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
@@ -257,6 +259,8 @@ public class FMLRelauncher
             }
             catch (Exception e)
             {
+                System.out.println("FMLRelauncher.startApplet");
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }
