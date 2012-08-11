@@ -79,6 +79,11 @@ public class RelaunchClassLoader extends URLClassLoader
 
         try
         {
+            String pkgname = name.substring(0, name.lastIndexOf('.'));
+            if (Package.getPackage(pkgname)==null)
+            {
+                definePackage(pkgname, null, null, null, null, null, null, null);
+            }
             byte[] basicClass = getClassBytes(name);
             byte[] transformedClass = runTransformers(name, basicClass);
             Class<?> cl = defineClass(name, transformedClass, 0, transformedClass.length);
