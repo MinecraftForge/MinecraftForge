@@ -254,7 +254,7 @@
 
   <target name="build" depends="buildenvsetup,merge-server,merge-client,merge-common,build-server,build-client,build-universal,build-source-pack" />
 
-  <target name="jenkinsbuild" depends="buildenvsetup,fmldecompile,patch,build"/>
+  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
 
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
@@ -308,14 +308,19 @@
       <arg value="${mcp.home}" />
       <arg value="${basedir}" />
     </exec>
-    <!--<exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${basedir}/cleanup_source.py" />
-      <arg value="${mcp.srcdir}" />
-    </exec>-->
-    <!--<exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/updatemd5.py" />
+  </target>
+  
+  <target name="jenkinsfmldecompile" depends="buildenvsetup">
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/cleanup.py" />
       <arg value="-f" />
-    </exec>-->
+    </exec>
+    <exec executable="${python.exe}" dir="${basedir}">
+      <arg value="${basedir}/decompile.py" />
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}" />
+      <arg value="-no_gen_conf" />
+    </exec>
   </target>
 
   <target name="repatch" depends="buildenvsetup,checkpatches">
