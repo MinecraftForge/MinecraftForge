@@ -21,7 +21,7 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private static String[] transformerExclusions =
     {
-        "org.objectweb.asm.", "com.google.common."
+        "org.objectweb.asm.", "com.google.common.", "cpw.mods.fml."
     };
     private List<URL> sources;
     private ClassLoader parent;
