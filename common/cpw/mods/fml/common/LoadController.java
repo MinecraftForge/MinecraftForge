@@ -46,6 +46,8 @@ public class LoadController
         this.masterChannel.register(this);
 
         state = LoaderState.NOINIT;
+
+
     }
 
     @Subscribe
@@ -130,18 +132,22 @@ public class LoadController
                 modStates.put(entry.getKey(), ModState.ERRORED);
             }
         }
+        if (stateEvent instanceof FMLConstructionEvent)
+        {
+            buildModObjectList();
+        }
     }
 
-    @Subscribe
-    public void buildModObjectList(FMLConstructionEvent pre)
+    public void buildModObjectList()
     {
-        com.google.common.collect.ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.<ModContainer, Object>builder();
+        ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.<ModContainer, Object>builder();
         for (ModContainer mc : activeModList)
         {
             builder.put(mc, mc.getMod());
         }
         modObjectList = builder.build();
     }
+
     public void errorOccurred(ModContainer modContainer, Throwable exception)
     {
         errors.put(modContainer.getModId(), exception);
