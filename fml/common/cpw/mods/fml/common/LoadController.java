@@ -7,6 +7,9 @@ import java.util.logging.Level;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -17,7 +20,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLLoadEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 
@@ -32,6 +37,7 @@ public class LoadController
     private Map<String, ModContainer> modList;
     private List<ModContainer> activeModList = Lists.newArrayList();
     private String activeContainer;
+    private BiMap<ModContainer, Object> modObjectList;
 
     public LoadController(Loader loader)
     {
@@ -103,6 +109,7 @@ public class LoadController
     {
         return activeContainer!=null ? modList.get(activeContainer) : null;
     }
+
     @Subscribe
     public void propogateStateMessage(FMLStateEvent stateEvent)
     {
@@ -125,6 +132,16 @@ public class LoadController
         }
     }
 
+    @Subscribe
+    public void buildModObjectList(FMLConstructionEvent pre)
+    {
+        com.google.common.collect.ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.<ModContainer, Object>builder();
+        for (ModContainer mc : activeModList)
+        {
+            builder.put(mc, mc.getMod());
+        }
+        modObjectList = builder.build();
+    }
     public void errorOccurred(ModContainer modContainer, Throwable exception)
     {
         errors.put(modContainer.getModId(), exception);
@@ -161,5 +178,10 @@ public class LoadController
             FMLLog.log(Level.SEVERE, e, "An unexpected exception");
             throw new LoaderException(e);
         }
+    }
+
+    public BiMap<ModContainer, Object> getModObjectList()
+    {
+        return ImmutableBiMap.copyOf(modObjectList);
     }
 }

@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -284,13 +285,27 @@ public class FMLNetworkHandler
 
     public static void openGui(EntityPlayer player, Object mod, int modGuiId, World world, int x, int y, int z)
     {
+        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        if (mc == null)
+        {
+            NetworkModHandler nmh = instance().findNetworkModHandler(mod);
+            if (nmh != null)
+            {
+                mc = nmh.getContainer();
+            }
+            else
+            {
+                FMLLog.warning("A mod tried to open a gui on the server without being a NetworkMod");
+                return;
+            }
+        }
         if (player instanceof EntityPlayerMP)
         {
-            NetworkRegistry.instance().openRemoteGui(FMLCommonHandler.instance().findContainerFor(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
+            NetworkRegistry.instance().openRemoteGui(mc, (EntityPlayerMP) player, modGuiId, world, x, y, z);
         }
         else
         {
-            NetworkRegistry.instance().openLocalGui(FMLCommonHandler.instance().findContainerFor(mod), (EntityPlayerMP) player, modGuiId, world, x, y, z);
+            NetworkRegistry.instance().openLocalGui(mc, player, modGuiId, world, x, y, z);
         }
     }
 
