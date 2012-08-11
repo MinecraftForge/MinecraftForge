@@ -156,7 +156,7 @@
                  trgclasses.append(key)
                  self.logger.info('> Unchanged class found: %s', key)
          classes = {}
-+        for key in [ 'cpw/mods/fml/common/asm/SideOnly.class', 'cpw/mods/fml/common/Side.class' ]:
++        for key in [ 'cpw/mods/fml/common/asm/SideOnly', 'cpw/mods/fml/common/Side' ]:
 +          self.logger.info('> Forcing FML class: %s', key)
 +          trgclasses.append(key)
          srg_data = parse_srg(srglk[side])
