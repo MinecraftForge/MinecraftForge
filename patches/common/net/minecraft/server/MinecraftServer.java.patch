@@ -94,12 +94,30 @@
          this.setDifficultyForAllDimensions(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
+@@ -611,13 +586,13 @@
+     {
+         this.theProfiler.startSection("levels");
+ 
+-        for (int var1 = 0; var1 < this.theWorldServer.length; ++var1)
++        for (Integer id : DimensionManager.getIDs())
+         {
+             long var2 = System.nanoTime();
+ 
+-            if (var1 == 0 || this.getAllowNether())
+-            {
+-                WorldServer var4 = this.theWorldServer[var1];
++            if (id == 0 || this.getAllowNether())
++            {
++                WorldServer var4 = DimensionManager.getWorld(id);
+                 this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
+ 
+                 if (this.tickCounter % 20 == 0)
 @@ -653,7 +628,7 @@
                  }
              }
  
 -            this.timeOfLastDimenstionTick[var1][this.tickCounter % 100] = System.nanoTime() - var2;
-+            worldTickTimes.get(var1)[this.tickCounter % 100] = System.nanoTime() - var2;
++            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - var2;
          }
  
          this.theProfiler.endStartSection("connection");
