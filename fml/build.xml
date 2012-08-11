@@ -198,8 +198,8 @@
       <manifest>
         <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
       </manifest>
-      <fileset dir="${server.mcp.obfoutput}" includes="**/*.class" />
       <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" />
+      <fileset dir="${server.mcp.obfoutput}" includes="**/*.class" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
