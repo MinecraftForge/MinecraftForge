@@ -114,7 +114,7 @@
       <arg value="${basedir}/difflist.txt"/>
     </exec>
   </target>
-  
+
   <target name="recompile" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
@@ -148,7 +148,7 @@
       <fileset dir="${common.src.dir}" includes="**/*.java" />
     </copy>
   </target>
-  
+
   <target name="merge-source" depends="buildenvsetup,merge-client,merge-server,merge-common" />
 
   <target name="build-client" depends="buildenvsetup,merge-client,merge-common,buildandreobfmcp,makeversion">
@@ -194,7 +194,7 @@
   <target name="build-universal">
     <property name="universal.jarname" value="${modname}-universal-${version}" />
     <mkdir dir="${basedir}/target" />
-    <jar destfile="${basedir}/target/${universal.jarname}.zip">
+    <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
       </manifest>
@@ -297,7 +297,7 @@
     <antcall target="writeversion"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
-	
+
   <target name="fmldecompile" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
@@ -309,7 +309,7 @@
       <arg value="${basedir}" />
     </exec>
   </target>
-  
+
   <target name="jenkinsfmldecompile" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
@@ -340,7 +340,7 @@
       <fileset dir="${mcp.srcdir}"/>
     </copy>
   </target>
-  
+
   <target name="repatchclean" depends="buildenvsetup">
     <delete dir="${mcp.srcdir}"/>
     <copy todir="${mcp.srcdir}">
