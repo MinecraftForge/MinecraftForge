@@ -35,6 +35,8 @@ public interface IFMLSidedHandler
     void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket);
 
     void beginServerLoading(MinecraftServer server);
-    
+
     void finishServerLoading();
+
+    MinecraftServer getServer();
 }

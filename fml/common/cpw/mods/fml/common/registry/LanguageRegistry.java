@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
 import net.minecraft.src.StringTranslate;
 
 public class LanguageRegistry
@@ -32,7 +35,18 @@ public class LanguageRegistry
 
     public void addNameForObject(Object objectToName, String lang, String name)
     {
-
+        String objectName;
+        if (objectToName instanceof Item) {
+            objectName=((Item)objectToName).func_77658_a();
+        } else if (objectToName instanceof Block) {
+            objectName=((Block)objectToName).func_71917_a();
+        } else if (objectToName instanceof ItemStack) {
+            objectName=((ItemStack)objectToName).func_77973_b().func_77667_c((ItemStack)objectToName);
+        } else {
+            throw new IllegalArgumentException(String.format("Illegal object for naming %s",objectToName));
+        }
+        objectName+=".name";
+        addStringLocalization(lang, lang, name);
     }
 
     public void loadLanguageTable(Properties languagePack, String lang)

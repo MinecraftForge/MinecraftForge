@@ -88,7 +88,7 @@ public class GameRegistry
 
     private static int findSpareBlockId()
     {
-        return 250;
+        return BlockTracker.nextBlockId();
     }
 
     public static void registerBlock(net.minecraft.src.Block block)
@@ -110,6 +110,7 @@ public class GameRegistry
             FMLLog.log(Level.SEVERE, e, "Caught an exception during block registration");
             throw new LoaderException(e);
         }
+        BlockTracker.reserveBlockId(block.field_71990_ca);
     }
 
     public static void addRecipe(ItemStack output, Object... params)

@@ -67,6 +67,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -521,6 +522,7 @@ public class ModLoaderModContainer implements ModContainer
             GameRegistry.registerWorldGenerator(ModLoaderHelper.buildWorldGenHelper(mod));
             GameRegistry.registerFuelHandler(ModLoaderHelper.buildFuelHelper(mod));
             GameRegistry.registerCraftingHandler(ModLoaderHelper.buildCraftingHelper(mod));
+            NetworkRegistry.instance().registerConnectionHandler(ModLoaderHelper.buildConnectionHelper(mod));
         }
         catch (Exception e)
         {

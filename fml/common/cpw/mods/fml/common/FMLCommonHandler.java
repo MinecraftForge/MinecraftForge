@@ -322,8 +322,7 @@ public class FMLCommonHandler
 
     public MinecraftServer getMinecraftServerInstance()
     {
-        //TODO
-        return null;
+        return sidedDelegate.getServer();
     }
 
     public void showGuiScreen(Object clientGuiElement)

@@ -396,4 +396,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         // NOOP
     }
+
+    @Override
+    public MinecraftServer getServer()
+    {
+        return client.func_71401_C();
+    }
 }

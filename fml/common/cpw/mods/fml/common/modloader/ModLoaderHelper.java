@@ -27,6 +27,7 @@ import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 
@@ -97,11 +98,6 @@ public class ModLoaderHelper
         return mlmc;
     }
 
-    public static ModLoaderModContainer registerRenderHelper(BaseMod mod) {
-        ModLoaderModContainer mlmc=findOrBuildModContainer(mod);
-        return mlmc;
-    }
-
     /**
      * @param mod
      * @return
@@ -138,5 +134,10 @@ public class ModLoaderHelper
         {
             sidedHelper.finishModLoading(mc);
         }
+    }
+
+    public static IConnectionHandler buildConnectionHelper(BaseModProxy mod)
+    {
+        return new ModLoaderConnectionHandler(mod);
     }
 }

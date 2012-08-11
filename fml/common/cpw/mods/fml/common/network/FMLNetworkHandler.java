@@ -65,9 +65,9 @@ public class FMLNetworkHandler
         }
     }
 
-    public static void onConnectionEstablishedToServer(NetworkManager manager, Packet1Login login)
+    public static void onConnectionEstablishedToServer(NetHandler clientHandler, NetworkManager manager, Packet1Login login)
     {
-        NetworkRegistry.instance().clientLoggedIn(manager, login);
+        NetworkRegistry.instance().clientLoggedIn(clientHandler, manager, login);
     }
 
     private void handleFMLPacket(Packet250CustomPayload packet, NetworkManager network, NetHandler netHandler)

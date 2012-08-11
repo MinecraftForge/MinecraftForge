@@ -1,6 +1,7 @@
 package cpw.mods.fml.common.modloader;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetworkManager;
@@ -10,11 +11,17 @@ import cpw.mods.fml.common.network.Player;
 
 public class ModLoaderConnectionHandler implements IConnectionHandler
 {
+    private BaseModProxy mod;
+
+    public ModLoaderConnectionHandler(BaseModProxy mod)
+    {
+        this.mod = mod;
+    }
 
     @Override
     public void playerLoggedIn(Player player, NetHandler netHandler, NetworkManager manager)
     {
-
+        mod.onClientLogin((EntityPlayer)player);
     }
 
     @Override
@@ -26,29 +33,26 @@ public class ModLoaderConnectionHandler implements IConnectionHandler
     @Override
     public void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager manager)
     {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 
     @Override
     public void connectionClosed(NetworkManager manager)
     {
-        // TODO Auto-generated method stub
-        
+        mod.serverDisconnect();
+        mod.onClientLogout(manager);
     }
 
     @Override
-    public void clientLoggedIn(NetworkManager manager, Packet1Login login)
+    public void clientLoggedIn(NetHandler nh, NetworkManager manager, Packet1Login login)
     {
-        // TODO Auto-generated method stub
-        
+        mod.serverConnect(nh);
     }
 
     @Override
     public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager)
     {
-        // TODO Auto-generated method stub
-        
+        // noop
     }
 
 }
