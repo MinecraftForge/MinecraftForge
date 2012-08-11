@@ -1,9 +1,4 @@
 searge,name,side,desc
-func_74611_a,getStringValue,0,Gets a String by navigating the hierarchy below this node.
-func_74612_b,getArrayNode,0,"Gets a List of JsonNodes, representing a JSON array, by navigating the hierarchy below this node."
-func_74614_d,getFields,0,return the fields associated with this node
-func_74615_c,getText,0,
-func_74789_a,parse,0,Parse the specified JSON String
 func_70000_a,addServerStatsToSnooper,2,
 func_70001_b,addServerTypeToSnooper,2,
 func_70002_Q,isSnooperEnabled,2,Returns whether snooping is enabled or not.
@@ -1894,7 +1889,11 @@ func_74603_a,withElement,2,Adds the given element to the array that will be buil
 func_74604_a,build,2,
 func_74608_a,withFieldBuilder,2,
 func_74610_b,getElements,2,
+func_74611_a,getStringValue,2,Gets a String by navigating the hierarchy below this node.
+func_74612_b,getArrayNode,2,"Gets a List of JsonNodes, representing a JSON array, by navigating the hierarchy below this node."
 func_74613_a,wrapExceptionsFor,2,
+func_74614_d,getFields,2,return the fields associated with this node
+func_74615_c,getText,2,
 func_74616_a,getType,2,
 func_74618_a,asList,2,
 func_74628_a,shortForm,2,
@@ -1991,6 +1990,7 @@ func_74785_a,format,2,
 func_74786_a,formatJsonNode,2,
 func_74787_a,format,2,
 func_74788_a,parse,2,Parse the character stream from the specified Reader into a JsonRootNode object.
+func_74789_a,parse,2,Parse the specified JSON String
 func_74792_a,decompress,2,
 func_74793_a,safeWrite,2,
 func_74794_a,read,2,Reads from a CompressedStream.
