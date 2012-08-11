@@ -218,11 +218,6 @@ def setup_fml(fml_dir, mcp_dir):
     updatemd5_side(commands, CLIENT)
     updatemd5_side(commands, SERVER)
     reset_logger()
-    
-    #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
-    cpw_dir = os.path.join(mcp_dir, 'src', 'common', 'cpw')
-    if os.path.isdir(cpw_dir):
-        shutil.rmtree(cpw_dir)
         
     os.chdir(fml_dir)
     
@@ -273,6 +268,11 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     has_client = os.path.isdir(os.path.join(src_dir, 'minecraft'))
     has_server = os.path.isdir(os.path.join(src_dir, 'minecraft_server'))
     
+    #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
+    cpw_dir = os.path.join(src_dir, 'common', 'cpw')
+    if os.path.isdir(cpw_dir):
+        shutil.rmtree(cpw_dir)
+        
     #patch files
     print 'Applying Forge ModLoader patches'
     sys.stdout.flush()
@@ -527,8 +527,17 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     #update workspace
     print 'Fixing MCP Workspace'
     merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
-    
-    
+
+def normaliselines(in_filename):
+    in_filename = os.path.normpath(in_filename)
+    tmp_filename = in_filename + '.tmp'
+
+    with open(in_filename, 'rb') as in_file:
+        with open(tmp_filename, 'wb') as out_file:
+            out_file.write(in_file.read().replace('\r\n', '\n'))
+
+    shutil.move(tmp_filename, in_filename)
+
 def get_conf_copy(mcp_dir, fml_dir):
     #Lets grab the files we dont work on
     for file in ['astyle.cfg', 'version.cfg', 'patches/minecraft_ff.patch', 'patches/minecraft_server_ff.patch', 'newids.csv']:
@@ -539,6 +548,7 @@ def get_conf_copy(mcp_dir, fml_dir):
         if os.path.exists(dst_file):
             os.remove(dst_file)
         shutil.copy(src_file, dst_file)
+        normaliselines(dst_file)
         print 'Grabbing: ' + src_file
         
     ff_server = os.path.normpath(os.path.join(fml_dir, 'conf', 'patches', 'minecraft_server_ff.patch'))
@@ -558,7 +568,7 @@ def get_conf_copy(mcp_dir, fml_dir):
         '          int var4 = p_77874_1_.func_72841_b("map");'
     ]
     os.remove(ff_server)
-    with open(ff_server, 'w') as f:
+    with open(ff_server, 'wb') as f:
         for line in data:
             f.write(line.rstrip('\r\n') + '\n')
 
@@ -615,7 +625,7 @@ def gen_merged_srg(mcp_dir, fml_dir):
             common[type][key] = value #+ ' #S'
             
     #Print joined retroguard files
-    with open(os.path.join(fml_dir, 'conf', 'joined.srg'), 'w') as f:
+    with open(os.path.join(fml_dir, 'conf', 'joined.srg'), 'wb') as f:
         for type in ['PK:', 'CL:', 'FD:', 'MD:']:
             for key in sorted(common[type]):
                 f.write('%s %s %s\n' % (type, key, common[type][key]))
@@ -660,7 +670,7 @@ def gen_merged_exc(mcp_dir, fml_dir):
     joined = dict(common.items() + server.items())
     
     #Print joined mcinjector files
-    with open(os.path.join(fml_dir, 'conf', 'joined.exc'), 'w') as f:
+    with open(os.path.join(fml_dir, 'conf', 'joined.exc'), 'wb') as f:
         for key in sorted(joined):
             f.write('%s=%s\n' % (key, joined[key]))
             
@@ -699,22 +709,14 @@ def gen_shared_searge_names(common_srg, common_exc):
 def gen_merged_csv(common_map, in_file, out_file, main_key='searge'):
     reader = csv.DictReader(open(in_file, 'r'))
     print 'Generating merged csv for %s' % os.path.basename(in_file)
-    sides = {'client': [], 'server': [], 'common': []}
+    common = []
     added = []
     for row in reader:
-        side = int(row['side'])
-        if row[main_key] in common_map:
-            if not row[main_key] in added:
-                row['side'] = '2'
-                sides['common'].append(row)
-                added.append(row[main_key])
-        elif side == 0:
-            sides['client'].append(row)
-        else:
-            sides['server'].append(row)
-            
-    writer = csv.DictWriter(open(out_file, 'wb'), fieldnames=reader.fieldnames)
+        if not row[main_key] in added:
+            row['side'] = '2'
+            common.append(row)
+            added.append(row[main_key])
+    writer = csv.DictWriter(open(out_file, 'wb'), fieldnames=reader.fieldnames, lineterminator='\n')
     writer.writeheader()
-    for key in ['client', 'server', 'common']:
-        for row in sorted(sides[key], key=lambda row: row[main_key]):
-            writer.writerow(row)
+    for row in sorted(common, key=lambda row: row[main_key]):
+        writer.writerow(row)
