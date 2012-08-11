@@ -266,16 +266,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
     }
 
-    @Override
-    public void profileStart(String profileLabel) {
-        client.field_71424_I.func_76320_a(profileLabel);
-    }
-
-    @Override
-    public void profileEnd() {
-        client.field_71424_I.func_76319_b();
-    }
-
     /**
      * @param mods
      */

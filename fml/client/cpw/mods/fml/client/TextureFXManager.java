@@ -53,12 +53,12 @@ public class TextureFXManager
     private List<TextureFX> addedTextureFX = new ArrayList<TextureFX>();
 
     private Minecraft client;
-    
+
     void setClient(Minecraft client)
     {
         this.client = client;
     }
-    
+
     public boolean onUpdateTextureEffect(TextureFX effect)
     {
         ITextureFX ifx = (effect instanceof ITextureFX ? ((ITextureFX)effect) : null);
@@ -69,8 +69,7 @@ public class TextureFXManager
         }
 
         String name = effect.getClass().getSimpleName();
-        FMLClientHandler.instance().profileStart(name);
-
+        client.field_71424_I.func_76320_a(name);
         try
         {
             if (!FMLClientHandler.instance().hasOptifine())
@@ -85,10 +84,10 @@ public class TextureFXManager
             {
                 ifx.setErrored(true);
             }
-            FMLClientHandler.instance().profileEnd();
+            client.field_71424_I.func_76319_b();
             return false;
         }
-        FMLClientHandler.instance().profileEnd();
+        client.field_71424_I.func_76319_b();
 
         if (ifx != null)
         {

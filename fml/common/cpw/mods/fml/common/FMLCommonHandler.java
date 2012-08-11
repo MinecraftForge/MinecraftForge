@@ -91,9 +91,7 @@ public class FMLCommonHandler
 
     public void rescheduleTicks(Side side)
     {
-        sidedDelegate.profileStart("modTickScheduling");
         TickRegistry.updateTickQueue(side.isClient() ? scheduledClientTicks : scheduledServerTicks, side);
-        sidedDelegate.profileEnd();
     }
     public void tickStart(EnumSet<TickType> ticks, Side side, Object ... data)
     {
@@ -103,19 +101,15 @@ public class FMLCommonHandler
         {
             return;
         }
-        sidedDelegate.profileStart("modTickStart$"+ticks);
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
             {
-                sidedDelegate.profileStart(ticker.getLabel());
                 ticker.tickStart(ticksToRun, data);
-                sidedDelegate.profileEnd();
             }
         }
-        sidedDelegate.profileEnd();
     }
 
     public void tickEnd(EnumSet<TickType> ticks, Side side, Object ... data)
@@ -126,19 +120,15 @@ public class FMLCommonHandler
         {
             return;
         }
-        sidedDelegate.profileStart("modTickEnd$"+ticks);
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
             {
-                sidedDelegate.profileStart(ticker.getLabel());
                 ticker.tickEnd(ticksToRun, data);
-                sidedDelegate.profileEnd();
             }
         }
-        sidedDelegate.profileEnd();
     }
 
     /**
