@@ -140,24 +140,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#profileStart(java.lang.String)
-     */
-    @Override
-    public void profileStart(String profileLabel)
-    {
-        server.field_71304_b.func_76320_a(profileLabel);
-    }
-
-    /* (non-Javadoc)
-     * @see cpw.mods.fml.common.IFMLSidedHandler#profileEnd()
-     */
-    @Override
-    public void profileEnd()
-    {
-        server.field_71304_b.func_76317_a();
-    }
-
-    /* (non-Javadoc)
      * @see cpw.mods.fml.common.IFMLSidedHandler#getAdditionalBrandingInformation()
      */
     @Override
@@ -178,7 +160,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public void showGuiScreen(Object clientGuiElement)
     {
-        
+
     }
 
     @Override

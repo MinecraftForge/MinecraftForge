@@ -18,10 +18,6 @@ import cpw.mods.fml.common.network.EntitySpawnPacket;
 
 public interface IFMLSidedHandler
 {
-    void profileStart(String profileLabel);
-
-    void profileEnd();
-
     List<String> getAdditionalBrandingInformation();
 
     Side getSide();
