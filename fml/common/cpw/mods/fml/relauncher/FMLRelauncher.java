@@ -63,12 +63,15 @@ public class FMLRelauncher
         classLoader = new RelaunchClassLoader(ucl.getURLs());
 
     }
-    private void showWindow()
+    private void showWindow(boolean showIt)
     {
         try
         {
             RelaunchLibraryManager.downloadMonitor = new Downloader();
-            popupWindow = RelaunchLibraryManager.downloadMonitor.makeDialog();
+            if (showIt)
+            {
+                popupWindow = RelaunchLibraryManager.downloadMonitor.makeDialog();
+            }
         }
         catch (Exception e)
         {
@@ -79,7 +82,7 @@ public class FMLRelauncher
 
     private void relaunchClient(ArgsWrapper wrap)
     {
-        showWindow();
+        showWindow(true);
         // Now we re-inject the home into the "new" minecraft under our control
         Class<? super Object> client;
         try
@@ -112,12 +115,13 @@ public class FMLRelauncher
 
     private void relaunchServer(ArgsWrapper wrap)
     {
+        showWindow(false);
         // Now we re-inject the home into the "new" minecraft under our control
         Class<? super Object> server;
-            File minecraftHome = new File(".");
-            setupHome(minecraftHome);
+        File minecraftHome = new File(".");
+        setupHome(minecraftHome);
 
-            server = ReflectionHelper.getClass(classLoader, "net.minecraft.server.MinecraftServer");
+        server = ReflectionHelper.getClass(classLoader, "net.minecraft.server.MinecraftServer");
         try
         {
             ReflectionHelper.findMethod(server, null, new String[] { "fmlReentry" }, ArgsWrapper.class).invoke(null, wrap);
@@ -125,7 +129,6 @@ public class FMLRelauncher
         catch (Exception e)
         {
             e.printStackTrace();
-            // Hmmm
         }
     }
 
