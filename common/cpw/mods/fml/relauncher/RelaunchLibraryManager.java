@@ -41,7 +41,6 @@ import cpw.mods.fml.common.discovery.ModCandidate;
 public class RelaunchLibraryManager
 {
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
-    private static final String HEXES = "0123456789abcdef";
     private static List<String> loadedLibraries = new ArrayList<String>();
     private static Map<IFMLLoadingPlugin, File> pluginLocations;
     private static List<IFMLLoadingPlugin> loadPlugins;
@@ -73,6 +72,7 @@ public class RelaunchLibraryManager
             throw new RuntimeException("A fatal error has occured - no valid fml load plugin was found - this is a completely corrupt FML installation.");
         }
 
+        downloadMonitor.updateProgressString("All core mods are successfully located");
         // Now that we have the root plugins loaded - lets see what else might be around
         discoverCoreMods(mcDir, actualClassLoader, loadPlugins, libraries);
 
@@ -102,7 +102,7 @@ public class RelaunchLibraryManager
                     {
                         try
                         {
-                            downloadFile(libFile, lib.getRootURL());
+                            downloadFile(libFile, lib.getRootURL(), checksum);
                             download = true;
                         }
                         catch (Throwable e)
@@ -118,28 +118,37 @@ public class RelaunchLibraryManager
                         continue;
                     }
 
-                    String fileChecksum = generateChecksum(libFile);
-                    // bad checksum and I did not download this file
-                    if (!checksum.equals(fileChecksum) && !download)
+                    if (!download)
                     {
-                        caughtErrors.add(new RuntimeException(String.format("The file %s was found in your lib directory and has an invalid checksum %s (expecting %s) - it is unlikely to be the correct download, please move it out of the way and try again.", libName, fileChecksum, checksum)));
-                        continue;
-                    }
-                    // bad checksum but file was downloaded this session
-                    else if (!checksum.equals(fileChecksum))
-                    {
-                        caughtErrors.add(new RuntimeException(String.format("The downloaded file %s has an invalid checksum %s (expecting %s). The download did not succeed correctly and the file has been deleted. Please try launching again.", libName, fileChecksum, checksum)));
-                        libFile.delete();
-                        continue;
+                        try
+                        {
+                            FileInputStream fis = new FileInputStream(libFile);
+                            FileChannel chan = fis.getChannel();
+                            MappedByteBuffer mappedFile = chan.map(MapMode.READ_ONLY, 0, libFile.length());
+                            String fileChecksum = generateChecksum(mappedFile);
+                            fis.close();
+                            // bad checksum and I did not download this file
+                            if (!checksum.equals(fileChecksum))
+                            {
+                                caughtErrors.add(new RuntimeException(String.format("The file %s was found in your lib directory and has an invalid checksum %s (expecting %s) - it is unlikely to be the correct download, please move it out of the way and try again.", libName, fileChecksum, checksum)));
+                                continue;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            FMLRelaunchLog.log(Level.SEVERE, e, "The library file %s could not be validated", libFile.getName());
+                            caughtErrors.add(new RuntimeException(String.format("The library file %s could not be validated", libFile.getName()),e));
+                            continue;
+                        }
                     }
 
                     if (!download)
                     {
-                        System.out.printf("Found library file %s present and correct in lib dir\n", libName);
+                        downloadMonitor.updateProgressString("Found library file %s present and correct in lib dir\n", libName);
                     }
                     else
                     {
-                        System.out.printf("Library file %s was downloaded and verified successfully\n", libName);
+                        downloadMonitor.updateProgressString("Library file %s was downloaded and verified successfully\n", libName);
                     }
 
                     try
@@ -174,7 +183,10 @@ public class RelaunchLibraryManager
                 		"They may help you diagnose and resolve the issue");
                 for (Throwable t : caughtErrors)
                 {
-                    FMLRelaunchLog.severe(t.getMessage());
+                    if (t.getMessage()!=null)
+                    {
+                        FMLRelaunchLog.severe(t.getMessage());
+                    }
                 }
                 FMLRelaunchLog.severe("<<< ==== >>>");
                 FMLRelaunchLog.severe("The following is diagnostic information for developers to review.");
@@ -197,11 +209,13 @@ public class RelaunchLibraryManager
             }
         }
 
+        downloadMonitor.updateProgressString("Running coremod plugins");
         Map<String,Object> data = new HashMap<String,Object>();
         data.put("mcLocation", mcDir);
         data.put("coremodList", loadPlugins);
         for (IFMLLoadingPlugin plugin : loadPlugins)
         {
+            downloadMonitor.updateProgressString("Running coremod plugin %s", plugin.getClass().getSimpleName());
             data.put("coremodLocation", pluginLocations.get(plugin));
             plugin.injectData(data);
             String setupClass = plugin.getSetupClass();
@@ -220,6 +234,7 @@ public class RelaunchLibraryManager
                     throw new RuntimeException(e);
                 }
             }
+            downloadMonitor.updateProgressString("Coremod plugin %s run successfully", plugin.getClass().getSimpleName());
 
             String modContainer = plugin.getModContainerClass();
             if (modContainer != null)
@@ -229,9 +244,12 @@ public class RelaunchLibraryManager
         }
         try
         {
+            downloadMonitor.updateProgressString("Validating minecraft");
             Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
             Method m = loaderClazz.getMethod("injectData", Object[].class);
             m.invoke(null, (Object)FMLInjectionData.data());
+            downloadMonitor.updateProgressString("Minecraft validated, launching...");
+            downloadBuffer = null;
         }
         catch (Exception e)
         {
@@ -244,6 +262,7 @@ public class RelaunchLibraryManager
 
     private static void discoverCoreMods(File mcDir, RelaunchClassLoader classLoader, List<IFMLLoadingPlugin> loadPlugins, List<ILibrarySet> libraries)
     {
+        downloadMonitor.updateProgressString("Discovering coremods");
         File coreMods = setupCoreModDir(mcDir);
         FilenameFilter ff = new FilenameFilter()
         {
@@ -258,7 +277,7 @@ public class RelaunchLibraryManager
 
         for (File coreMod : coreModList)
         {
-            FMLRelaunchLog.fine("Found a candidate coremod %s", coreMod.getName());
+            downloadMonitor.updateProgressString("Found a candidate coremod %s", coreMod.getName());
             JarFile jar;
             Attributes mfAttributes;
             try
@@ -307,6 +326,7 @@ public class RelaunchLibraryManager
             }
             try
             {
+                downloadMonitor.updateProgressString("Loading coremod %s", coreMod.getName());
                 Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
                 loadPlugins.add(plugin);
@@ -318,7 +338,7 @@ public class RelaunchLibraryManager
                         libraries.add((ILibrarySet) Class.forName(libName, true, classLoader).newInstance());
                     }
                 }
-                FMLRelaunchLog.fine("Loaded coremod %s", coreMod.getName());
+                downloadMonitor.updateProgressString("Loaded coremod %s", coreMod.getName());
             }
             catch (ClassNotFoundException cnfe)
             {
@@ -391,17 +411,100 @@ public class RelaunchLibraryManager
         return coreModDir;
     }
 
-    private static String generateChecksum(File file)
+    private static void downloadFile(File libFile, String rootUrl, String hash)
     {
         try
         {
-            FileInputStream fis = new FileInputStream(file);
-            FileChannel chan = fis.getChannel();
+            URL libDownload = new URL(String.format(rootUrl,libFile.getName()));
+            String infoString = String.format("Downloading file %s", libDownload.toString());
+            downloadMonitor.updateProgressString(infoString);
+            FMLRelaunchLog.info(infoString);
+            URLConnection connection = libDownload.openConnection();
+            int sizeGuess = connection.getContentLength();
+            performDownload(connection.getInputStream(), sizeGuess, hash, libFile);
+            downloadMonitor.updateProgressString("Download complete");
+            FMLRelaunchLog.info("Download complete");
+        }
+        catch (Exception e)
+        {
+            if (e instanceof RuntimeException) throw (RuntimeException)e;
+            FMLRelaunchLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
+            		"have an environment without internet access. You will need to download " +
+            		"the file manually\n", libFile.getName());
+            libFile.delete();
+            throw new RuntimeException("A download error occured", e);
+        }
+    }
+
+    public static List<String> getLibraries()
+    {
+        return loadedLibraries;
+    }
+
+    private static final String HEXES = "0123456789abcdef";
+    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 22);
+    static Downloader downloadMonitor;
+
+    private static void performDownload(InputStream is, int sizeGuess, String validationHash, File target)
+    {
+        if (sizeGuess > downloadBuffer.capacity())
+        {
+            throw new RuntimeException(String.format("The file %s is too large to be downloaded by FML - the coremod is invalid", target.getName()));
+        }
+        downloadBuffer.clear();
+
+        int bytesRead, fullLength = 0;
+
+        downloadMonitor.resetProgress(sizeGuess);
+        try
+        {
+            byte[] smallBuffer = new byte[1024];
+            while ((bytesRead = is.read(smallBuffer)) >= 0) {
+                downloadBuffer.put(smallBuffer, 0, bytesRead);
+                fullLength += bytesRead;
+                downloadMonitor.updateProgress(fullLength);
+            }
+            is.close();
+            downloadBuffer.limit(fullLength);
+            downloadBuffer.position(0);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+        try
+        {
+            String cksum = generateChecksum(downloadBuffer);
+            if (cksum.equals(validationHash))
+            {
+                downloadBuffer.position(0);
+                FileOutputStream fos = new FileOutputStream(target);
+                fos.getChannel().write(downloadBuffer);
+                fos.close();
+            }
+            else
+            {
+                throw new RuntimeException(String.format("The downloaded file %s has an invalid checksum %s (expecting %s). The download did not succeed correctly and the file has been deleted. Please try launching again.", target.getName(), cksum, validationHash));
+            }
+        }
+        catch (Exception e)
+        {
+            if (e instanceof RuntimeException) throw (RuntimeException)e;
+            throw new RuntimeException(e);
+        }
+
+
+
+    }
+
+    private static String generateChecksum(ByteBuffer buffer)
+    {
+        try
+        {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            MappedByteBuffer mappedFile = chan.map(MapMode.READ_ONLY, 0, file.length());
-            digest.update(mappedFile);
-            chan.close();
-            fis.close();
+            digest.update(buffer);
             byte[] chksum = digest.digest();
             final StringBuilder hex = new StringBuilder( 2 * chksum.length );
             for ( final byte b : chksum ) {
@@ -414,38 +517,5 @@ public class RelaunchLibraryManager
         {
             return null;
         }
-    }
-    private static void downloadFile(File libFile, String rootUrl)
-    {
-        try
-        {
-            URL libDownload = new URL(String.format(rootUrl,libFile.getName()));
-            String infoString = String.format("Downloading file %s", libDownload.toString());
-            FMLRelaunchLog.info(infoString);
-            InputStream urlStream = libDownload.openStream();
-            urlStream = FMLRelauncher.instance().wrapStream(urlStream, infoString);
-            ReadableByteChannel urlChannel = Channels.newChannel(urlStream);
-            FileOutputStream libFileStream = new FileOutputStream(libFile);
-            FileChannel libFileChannel = libFileStream.getChannel();
-            libFileChannel.transferFrom(urlChannel, 0, 1<<24);
-            libFileChannel.close();
-            libFileStream.close();
-            urlChannel.close();
-            urlStream.close();
-            FMLRelaunchLog.info("Download complete");
-        }
-        catch (Exception e)
-        {
-            FMLRelaunchLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
-            		"have an environment without internet access. You will need to download " +
-            		"the file manually\n", libFile.getName());
-            libFile.delete();
-            throw new RuntimeException("A download error occured", e);
-        }
-    }
-
-    public static List<String> getLibraries()
-    {
-        return loadedLibraries;
     }
 }
