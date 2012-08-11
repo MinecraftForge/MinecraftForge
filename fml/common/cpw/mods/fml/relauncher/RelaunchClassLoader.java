@@ -80,7 +80,7 @@ public class RelaunchClassLoader extends URLClassLoader
         try
         {
             String pkgname = name.substring(0, name.lastIndexOf('.'));
-            if (Package.getPackage(pkgname)==null)
+            if (getPackage(pkgname)==null)
             {
                 definePackage(pkgname, null, null, null, null, null, null, null);
             }
