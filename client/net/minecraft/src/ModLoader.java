@@ -585,9 +585,7 @@ public class ModLoader
     }
 
     /**
-     * Register the mod for packets on this channel. This only registers the
-     * channel with Forge Mod Loader, not with clients connecting- use
-     * BaseMod.onClientLogin to tell them about your custom channel
+     * Register the mod for packets on this channel.
      * {@link FMLCommonHandler#registerChannel(cpw.mods.fml.common.ModContainer, String)}
      *
      * @param mod

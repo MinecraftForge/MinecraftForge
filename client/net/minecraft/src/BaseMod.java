@@ -300,6 +300,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      *
      * @param text
      */
+    @Override
     public void receiveChatPacket(String text)
     {
         // TODO
@@ -311,6 +312,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      *
      * @param packet
      */
+    @Override
     public void receiveCustomPacket(Packet250CustomPayload packet)
     {
         // TODO
@@ -332,10 +334,12 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     }
 
-    public void serverConnect(NetClientHandler handler) {
+    @Override
+    public void serverConnect(NetHandler handler) {
 
     }
 
+    @Override
     public void serverDisconnect() {
 
     }
@@ -375,6 +379,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @param source
      * @param payload
      */
+    @Override
     public void onPacket250Received(EntityPlayer source, Packet250CustomPayload payload)
     {
     }
@@ -405,6 +410,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      *
      * @param player
      */
+    @Override
     public void onClientLogin(EntityPlayer player)
     {
     }
@@ -414,7 +420,8 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      *
      * @param player
      */
-    public void onClientLogout(EntityPlayer player)
+    @Override
+    public void onClientLogout(NetworkManager mgr)
     {
 
     }

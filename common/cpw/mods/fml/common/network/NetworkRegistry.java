@@ -154,11 +154,11 @@ public class NetworkRegistry
         }
     }
 
-    void clientLoggedIn(NetworkManager manager, Packet1Login login)
+    void clientLoggedIn(NetHandler clientHandler, NetworkManager manager, Packet1Login login)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
-            handler.clientLoggedIn(manager, login);
+            handler.clientLoggedIn(clientHandler, manager, login);
         }
     }
 

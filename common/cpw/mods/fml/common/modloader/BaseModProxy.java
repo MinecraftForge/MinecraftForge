@@ -14,21 +14,15 @@
 
 package cpw.mods.fml.common.modloader;
 
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
-
-import cpw.mods.fml.common.IConsoleHandler;
-import cpw.mods.fml.common.ICraftingHandler;
-import cpw.mods.fml.common.IDispenseHandler;
-import cpw.mods.fml.common.INetworkHandler;
-import cpw.mods.fml.common.IPickupNotifier;
-import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.TickType;
 
 /**
@@ -72,4 +66,18 @@ public interface BaseModProxy
     int addFuel(int itemId, int damage);
     void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix);
     void takenFromFurnace(EntityPlayer player, ItemStack item);
+
+    public abstract void onClientLogout(NetworkManager manager);
+
+    public abstract void onClientLogin(EntityPlayer player);
+
+    public abstract void onPacket250Received(EntityPlayer source, Packet250CustomPayload payload);
+
+    public abstract void serverDisconnect();
+
+    public abstract void serverConnect(NetHandler handler);
+
+    public abstract void receiveCustomPacket(Packet250CustomPayload packet);
+
+    public abstract void receiveChatPacket(String text);
 }
