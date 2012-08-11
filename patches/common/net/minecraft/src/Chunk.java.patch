@@ -299,7 +299,7 @@
  
          if (var4 < 0)
          {
-@@ -1225,6 +1282,15 @@
+@@ -1227,6 +1284,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -315,7 +315,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1321,12 +1387,26 @@
+@@ -1323,12 +1389,26 @@
          }
  
          this.generateHeightMap();

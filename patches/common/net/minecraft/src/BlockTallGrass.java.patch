@@ -17,7 +17,7 @@
  {
      protected BlockTallGrass(int par1, int par2)
      {
-@@ -57,7 +62,7 @@
+@@ -27,7 +32,7 @@
       */
      public int idDropped(int par1, Random par2Random, int par3)
      {
@@ -26,7 +26,7 @@
      }
  
      /**
-@@ -74,15 +79,7 @@
+@@ -44,15 +49,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {

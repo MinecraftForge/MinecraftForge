@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayer.java
-@@ -6,6 +6,13 @@
+@@ -7,6 +7,14 @@
  
  import java.util.Iterator;
  import java.util.List;
@@ -9,12 +9,13 @@
 +import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
++import net.minecraftforge.event.entity.player.AttackEntityEvent;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -220,6 +227,7 @@
+@@ -222,6 +230,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -22,7 +23,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -624,7 +632,16 @@
+@@ -627,7 +636,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -40,7 +41,7 @@
      }
  
      /**
-@@ -690,13 +707,21 @@
+@@ -693,13 +711,21 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -65,7 +66,7 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -989,12 +1014,23 @@
+@@ -992,12 +1018,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -90,7 +91,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1029,6 +1065,10 @@
+@@ -1032,6 +1069,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -101,7 +102,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1072,7 +1112,9 @@
+@@ -1075,7 +1116,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -111,11 +112,11 @@
      }
  
      /**
-@@ -1101,6 +1143,15 @@
+@@ -1104,6 +1147,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
-+        if (!ForgeHooks.onEntityInteract(this, par1Entity, true))
++        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(this, par1Entity)))
 +        {
 +            return;
 +        }
@@ -127,7 +128,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1244,6 +1295,12 @@
+@@ -1247,6 +1299,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -140,7 +141,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1283,6 +1340,11 @@
+@@ -1286,6 +1344,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -152,7 +153,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1353,10 +1415,12 @@
+@@ -1356,10 +1419,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -169,7 +170,7 @@
  
              if (var5 == null)
              {
-@@ -1393,7 +1457,9 @@
+@@ -1396,7 +1461,9 @@
       */
      private boolean isInBed()
      {
@@ -180,7 +181,7 @@
      }
  
      /**
-@@ -1408,13 +1474,15 @@
+@@ -1411,13 +1478,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -198,7 +199,7 @@
              return var3;
          }
      }
-@@ -1428,8 +1496,11 @@
+@@ -1431,8 +1500,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -212,7 +213,7 @@
  
              switch (var2)
              {
-@@ -1722,6 +1793,7 @@
+@@ -1725,6 +1797,7 @@
                      return 101;
                  }
              }

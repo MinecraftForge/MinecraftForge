@@ -1,15 +1,61 @@
 --- ../src_base/common/net/minecraft/src/WorldServer.java
 +++ ../src_work/common/net/minecraft/src/WorldServer.java
-@@ -10,6 +10,8 @@
+@@ -10,6 +10,9 @@
  import java.util.Set;
  import java.util.TreeSet;
  import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.WorldEvent;
  
  public class WorldServer extends World
  {
-@@ -689,6 +691,7 @@
+@@ -70,6 +73,7 @@
+         {
+             this.pendingTickListEntries = new TreeSet();
+         }
++        DimensionManager.setWorld(par4, this);
+     }
+ 
+     /**
+@@ -538,15 +542,27 @@
+     public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
+     {
+         ArrayList var7 = new ArrayList();
+-        Iterator var8 = this.loadedTileEntityList.iterator();
+-
+-        while (var8.hasNext())
+-        {
+-            TileEntity var9 = (TileEntity)var8.next();
+-
+-            if (var9.xCoord >= par1 && var9.yCoord >= par2 && var9.zCoord >= par3 && var9.xCoord < par4 && var9.yCoord < par5 && var9.zCoord < par6)
+-            {
+-                var7.add(var9);
++
++        for(int x = (par1 >> 4); x <= (par4 >> 4); x++)
++        {
++            for(int z = (par3 >> 4); z <= (par6 >> 4); z++)
++            {
++                Chunk chunk = getChunkFromChunkCoords(x, z);
++                if (chunk != null)
++                {
++                    for(Object obj : chunk.chunkTileEntityMap.values())
++                    {
++                        TileEntity entity = (TileEntity)obj;
++                        if (!entity.isInvalid())
++                        {
++                            if (entity.xCoord >= par1 && entity.yCoord >= par2 && entity.zCoord >= par3 && 
++                                entity.xCoord <= par4 && entity.yCoord <= par5 && entity.zCoord <= par6)
++                            {
++                                var7.add(entity);
++                            }
++                        }
++                    }
++                }
+             }
+         }
+ 
+@@ -689,6 +705,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);

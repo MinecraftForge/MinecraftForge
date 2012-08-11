@@ -1,0 +1,203 @@
+--- ../src_base/common/net/minecraft/server/MinecraftServer.java
++++ ../src_work/common/net/minecraft/server/MinecraftServer.java
+@@ -9,6 +9,7 @@
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+ import java.util.Date;
++import java.util.Hashtable;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.logging.Level;
+@@ -58,6 +59,7 @@
+ import net.minecraft.src.WorldServerMulti;
+ import net.minecraft.src.WorldSettings;
+ import net.minecraft.src.WorldType;
++import net.minecraftforge.common.DimensionManager;
+ 
+ public abstract class MinecraftServer implements Runnable, IPlayerUsage, ICommandSender
+ {
+@@ -81,6 +83,9 @@
+     private String hostname;
+     private int serverPort = -1;
+     public WorldServer[] dimensionServerList;
++    public List<WorldServer> worlds = new ArrayList<WorldServer>();
++    public Hashtable<Integer, long[]> worldTickTimes = new Hashtable<Integer, long[]>();
++    public int spawnProtectionSize = 16;
+ 
+     /** The ServerConfigurationManager instance. */
+     private ServerConfigurationManager serverConfigManager;
+@@ -127,7 +132,7 @@
+     public final long[] tickTimeArray = new long[100];
+ 
+     /** stats are [dimension][tick%100] system.nanoTime is stored. */
+-    public long[][] timeOfLastDimenstionTick;
++    //public long[][] timeOfLastDimenstionTick;
+     private KeyPair serverKeyPair;
+ 
+     /** Username of the server owner (for integrated servers) */
+@@ -194,8 +199,8 @@
+     {
+         this.convertMapIfNeeded(par1Str);
+         this.setUserMessage("menu.loadingLevel");
+-        this.dimensionServerList = new WorldServer[3];
+-        this.timeOfLastDimenstionTick = new long[this.dimensionServerList.length][100];
++        //this.dimensionServerList = new WorldServer[3];
++        //this.timeOfLastDimenstionTick = new long[this.dimensionServerList.length][100];
+         ISaveHandler var6 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
+         WorldInfo var8 = var6.loadWorldInfo();
+         WorldSettings var7;
+@@ -214,46 +219,20 @@
+             var7.enableBonusChest();
+         }
+ 
+-        for (int var9 = 0; var9 < this.dimensionServerList.length; ++var9)
+-        {
+-            byte var10 = 0;
+-
+-            if (var9 == 1)
+-            {
+-                var10 = -1;
+-            }
+-
+-            if (var9 == 2)
+-            {
+-                var10 = 1;
+-            }
+-
+-            if (var9 == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.dimensionServerList[var9] = new DemoWorldServer(this, var6, par2Str, var10, this.theProfiler);
+-                }
+-                else
+-                {
+-                    this.dimensionServerList[var9] = new WorldServer(this, var6, par2Str, var10, var7, this.theProfiler);
+-                }
+-            }
+-            else
+-            {
+-                this.dimensionServerList[var9] = new WorldServerMulti(this, var6, par2Str, var10, var7, this.dimensionServerList[0], this.theProfiler);
+-            }
+-
+-            this.dimensionServerList[var9].addWorldAccess(new WorldManager(this, this.dimensionServerList[var9]));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var6, par2Str, 0, theProfiler) : new WorldServer(this, var6, par2Str, 0, var7, theProfiler));
++        for (int dim : DimensionManager.getIDs())
++        {
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, var7, overWorld, theProfiler));
++
++            world.addWorldAccess(new WorldManager(this, world));
+ 
+             if (!this.isSinglePlayer())
+             {
+-                this.dimensionServerList[var9].getWorldInfo().setGameType(this.getGameType());
+-            }
+-
+-            this.serverConfigManager.setPlayerManager(this.dimensionServerList);
+-        }
+-
++                world.getWorldInfo().setGameType(this.getGameType());
++            }
++        }
++
++        this.serverConfigManager.setPlayerManager(new WorldServer[]{ overWorld });
+         this.setDifficultyForAllDimensions(this.getDifficulty());
+         this.initialWorldChunkLoad();
+     }
+@@ -264,10 +243,10 @@
+         long var2 = System.currentTimeMillis();
+         this.setUserMessage("menu.generatingTerrain");
+ 
+-        for (int var4 = 0; var4 < 1; ++var4)
+-        {
+-            logger.info("Preparing start region for level " + var4);
+-            WorldServer var5 = this.dimensionServerList[var4];
++        for (Integer id : DimensionManager.getIDs())
++        {
++            logger.info("Preparing start region for level " + id);
++            WorldServer var5 = (WorldServer)DimensionManager.getWorld(id);
+             ChunkCoordinates var6 = var5.getSpawnPoint();
+ 
+             for (int var7 = -var1; var7 <= var1 && this.isServerRunning(); var7 += 16)
+@@ -342,7 +321,7 @@
+     {
+         if (!this.worldIsBeingDeleted)
+         {
+-            WorldServer[] var2 = this.dimensionServerList;
++            WorldServer[] var2 = DimensionManager.getWorlds();
+             int var3 = var2.length;
+ 
+             for (int var4 = 0; var4 < var3; ++var4)
+@@ -392,7 +371,7 @@
+ 
+             logger.info("Saving worlds");
+             this.saveAllDimensions(false);
+-            WorldServer[] var1 = this.dimensionServerList;
++            WorldServer[] var1 = DimensionManager.getWorlds();
+             int var2 = var1.length;
+ 
+             for (int var3 = 0; var3 < var2; ++var3)
+@@ -440,7 +419,7 @@
+                 FMLCommonHandler.instance().handleServerStarted();
+                 long var1 = System.currentTimeMillis();
+ 
+-                FMLCommonHandler.instance().onWorldLoadTick(dimensionServerList);
++                FMLCommonHandler.instance().onWorldLoadTick(DimensionManager.getWorlds());
+ 
+                 for (long var50 = 0L; this.serverShouldContinueRunning; this.serverIsRunning = true)
+                 {
+@@ -463,7 +442,7 @@
+                     var50 += var7;
+                     var1 = var5;
+ 
+-                    if (this.dimensionServerList[0].areAllPlayersAsleep())
++                    if (DimensionManager.getWorld(0).areAllPlayersAsleep())
+                     {
+                         this.tick();
+                         var50 = 0L;
+@@ -609,13 +588,13 @@
+     {
+         this.theProfiler.startSection("levels");
+ 
+-        for (int var1 = 0; var1 < this.dimensionServerList.length; ++var1)
++        for (Integer id : DimensionManager.getIDs())
+         {
+             long var2 = System.nanoTime();
+ 
+-            if (var1 == 0 || this.getAllowNether())
+-            {
+-                WorldServer var4 = this.dimensionServerList[var1];
++            if (id == 0 || this.getAllowNether())
++            {
++                WorldServer var4 = DimensionManager.getWorld(id);
+                 this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
+ 
+                 if (this.tickCounter % 20 == 0)
+@@ -651,7 +630,7 @@
+                 }
+             }
+ 
+-            this.timeOfLastDimenstionTick[var1][this.tickCounter % 100] = System.nanoTime() - var2;
++            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - var2;
+         }
+ 
+         this.theProfiler.endStartSection("connection");
+@@ -700,7 +679,8 @@
+ 
+     public WorldServer worldServerForDimension(int par1)
+     {
+-        return par1 == -1 ? this.dimensionServerList[1] : (par1 == 1 ? this.dimensionServerList[2] : this.dimensionServerList[0]);
++        WorldServer ret = DimensionManager.getWorld(par1);
++        return (ret != null ? ret : DimensionManager.getWorld(0));
+     }
+ 
+     @SideOnly(Side.SERVER)
+@@ -789,7 +769,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return "forge,fml";
+     }
+ 
+     /**

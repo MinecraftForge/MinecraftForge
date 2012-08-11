@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/ItemMap.java
 +++ ../src_work/common/net/minecraft/src/ItemMap.java
-@@ -87,7 +87,7 @@
+@@ -88,7 +88,7 @@
                              byte var23 = 0;
                              byte var24 = 0;
                              byte var25 = 0;
@@ -9,7 +9,7 @@
                              Chunk var27 = par1World.getChunkFromBlockCoords(var21, var22);
  
                              if (!var27.isEmpty())
-@@ -186,7 +186,7 @@
+@@ -187,7 +187,7 @@
                                  var33 = 0;
                                  var34 = 0;
  

@@ -1,0 +1,67 @@
+--- ../src_base/minecraft/net/minecraft/src/IntegratedServer.java
++++ ../src_work/minecraft/net/minecraft/src/IntegratedServer.java
+@@ -6,6 +6,7 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.common.DimensionManager;
+ 
+ public class IntegratedServer extends MinecraftServer
+ {
+@@ -43,44 +44,22 @@
+     protected void loadAllDimensions(String par1Str, String par2Str, long par3, WorldType par5WorldType)
+     {
+         this.convertMapIfNeeded(par1Str);
+-        this.dimensionServerList = new WorldServer[3];
+-        this.timeOfLastDimenstionTick = new long[this.dimensionServerList.length][100];
+         ISaveHandler var6 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
+ 
+-        for (int var7 = 0; var7 < this.dimensionServerList.length; ++var7)
+-        {
+-            byte var8 = 0;
+-
+-            if (var7 == 1)
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var6, par2Str, 0, theProfiler) : new WorldServer(this, var6, par2Str, 0, field_71350_m, theProfiler));
++        for (int dim : DimensionManager.getIDs())
++        {
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, field_71350_m, overWorld, theProfiler));
++
++            world.addWorldAccess(new WorldManager(this, world));
++
++            if (!this.isSinglePlayer())
+             {
+-                var8 = -1;
++                world.getWorldInfo().setGameType(this.getGameType());
+             }
+-
+-            if (var7 == 2)
+-            {
+-                var8 = 1;
+-            }
+-
+-            if (var7 == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.dimensionServerList[var7] = new DemoWorldServer(this, var6, par2Str, var8, this.theProfiler);
+-                }
+-                else
+-                {
+-                    this.dimensionServerList[var7] = new WorldServer(this, var6, par2Str, var8, this.field_71350_m, this.theProfiler);
+-                }
+-            }
+-            else
+-            {
+-                this.dimensionServerList[var7] = new WorldServerMulti(this, var6, par2Str, var8, this.field_71350_m, this.dimensionServerList[0], this.theProfiler);
+-            }
+-
+-            this.dimensionServerList[var7].addWorldAccess(new WorldManager(this, this.dimensionServerList[var7]));
+-            this.getConfigurationManager().setPlayerManager(this.dimensionServerList);
+-        }
+-
++        }
++
++        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
+         this.setDifficultyForAllDimensions(this.getDifficulty());
+         this.initialWorldChunkLoad();
+     }
