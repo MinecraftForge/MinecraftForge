@@ -5,7 +5,7 @@ import os
 
 
 if __name__ == '__main__':
-    if not len(sys.argv) == 3:
+    if not len(sys.argv) >= 3:
         print 'Invalid arguments, must supply mcp folder and fml folder: decompile.py <MCPFolder> <FMLFolder>'
     else:
         mcp_dir = os.path.abspath(sys.argv[1])
