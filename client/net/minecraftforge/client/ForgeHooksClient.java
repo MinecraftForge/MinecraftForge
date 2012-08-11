@@ -232,7 +232,7 @@ public class ForgeHooksClient
                     Minecraft mc = ModLoader.getMinecraftInstance();
                     if (mc.ingameGUI != null)
                     {
-                        mc.ingameGUI.func_73827_b().func_73765_a(msg);
+                        mc.ingameGUI.getChatGUI().printChatMessage(msg);
                     }
                 }
             }

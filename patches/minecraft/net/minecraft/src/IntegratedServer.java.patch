@@ -8,15 +8,15 @@
  
  public class IntegratedServer extends MinecraftServer
  {
-@@ -43,44 +44,22 @@
+@@ -43,44 +44,20 @@
      protected void loadAllDimensions(String par1Str, String par2Str, long par3, WorldType par5WorldType)
      {
          this.convertMapIfNeeded(par1Str);
--        this.dimensionServerList = new WorldServer[3];
--        this.timeOfLastDimenstionTick = new long[this.dimensionServerList.length][100];
+-        this.theWorldServer = new WorldServer[3];
+-        this.timeOfLastDimenstionTick = new long[this.theWorldServer.length][100];
          ISaveHandler var6 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
  
--        for (int var7 = 0; var7 < this.dimensionServerList.length; ++var7)
+-        for (int var7 = 0; var7 < this.theWorldServer.length; ++var7)
 -        {
 -            byte var8 = 0;
 -
@@ -25,9 +25,7 @@
 +        for (int dim : DimensionManager.getIDs())
 +        {
 +            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, field_71350_m, overWorld, theProfiler));
-+
 +            world.addWorldAccess(new WorldManager(this, world));
-+
 +            if (!this.isSinglePlayer())
              {
 -                var8 = -1;
@@ -43,20 +41,20 @@
 -            {
 -                if (this.isDemo())
 -                {
--                    this.dimensionServerList[var7] = new DemoWorldServer(this, var6, par2Str, var8, this.theProfiler);
+-                    this.theWorldServer[var7] = new DemoWorldServer(this, var6, par2Str, var8, this.theProfiler);
 -                }
 -                else
 -                {
--                    this.dimensionServerList[var7] = new WorldServer(this, var6, par2Str, var8, this.field_71350_m, this.theProfiler);
+-                    this.theWorldServer[var7] = new WorldServer(this, var6, par2Str, var8, this.field_71350_m, this.theProfiler);
 -                }
 -            }
 -            else
 -            {
--                this.dimensionServerList[var7] = new WorldServerMulti(this, var6, par2Str, var8, this.field_71350_m, this.dimensionServerList[0], this.theProfiler);
+-                this.theWorldServer[var7] = new WorldServerMulti(this, var6, par2Str, var8, this.field_71350_m, this.theWorldServer[0], this.theProfiler);
 -            }
 -
--            this.dimensionServerList[var7].addWorldAccess(new WorldManager(this, this.dimensionServerList[var7]));
--            this.getConfigurationManager().setPlayerManager(this.dimensionServerList);
+-            this.theWorldServer[var7].addWorldAccess(new WorldManager(this, this.theWorldServer[var7]));
+-            this.getConfigurationManager().setPlayerManager(this.theWorldServer);
 -        }
 -
 +        }

@@ -11,7 +11,7 @@ from forge import setup_forge_mcp, apply_forge_patches
 
 def main():
     print '=================================== Setup Start ================================='
-    dont_gen_conf = '-no_gen_conf' in sys.argv
+    dont_gen_conf = True #'-no_gen_conf' in sys.argv
     setup_fml(dont_gen_conf)
     
     base_dir = os.path.join(mcp_dir, 'src_base')

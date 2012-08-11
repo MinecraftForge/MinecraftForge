@@ -25,11 +25,11 @@
  
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
--        this.mc.ingameGUI.func_73827_b().func_73765_a(par1Packet3Chat.message);
+-        this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
 +        ClientChatReceivedEvent event = new ClientChatReceivedEvent(par1Packet3Chat.message);
 +        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
 +        {
-+            this.mc.ingameGUI.func_73827_b().func_73765_a(event.message);
++            this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
 +        }
      }
  

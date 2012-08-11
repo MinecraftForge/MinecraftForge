@@ -10,7 +10,7 @@
 @@ -10,6 +11,7 @@
      /** The list of smelting results. */
      private Map smeltingList = new HashMap();
-     private Map field_77605_c = new HashMap();
+     private Map experienceList = new HashMap();
 +    private Map metaSmeltingList = new HashMap();
  
      /**
@@ -27,7 +27,7 @@
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
 @@ -65,4 +69,34 @@
      {
-         return this.field_77605_c.containsKey(Integer.valueOf(par1)) ? ((Float)this.field_77605_c.get(Integer.valueOf(par1))).floatValue() : 0.0F;
+         return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
      }
 +
 +    /**
