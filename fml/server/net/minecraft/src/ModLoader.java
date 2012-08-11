@@ -33,6 +33,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class ModLoader
 {
+    public static final String fmlMarker = "This is an FML marker";
     /**
      * Not used on the server.
      *
