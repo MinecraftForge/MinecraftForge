@@ -39,6 +39,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Splitter.MapSplitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -602,5 +603,15 @@ public class Loader
         modController.transition(LoaderState.SERVER_STOPPING);
         modController.transition(LoaderState.AVAILABLE);
 
+    }
+
+    public BiMap<ModContainer, Object> getModObjectList()
+    {
+        return modController.getModObjectList();
+    }
+
+    public BiMap<Object, ModContainer> getReversedModObjectList()
+    {
+        return getModObjectList().inverse();
     }
 }
