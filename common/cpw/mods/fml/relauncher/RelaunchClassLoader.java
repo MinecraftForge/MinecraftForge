@@ -79,10 +79,14 @@ public class RelaunchClassLoader extends URLClassLoader
 
         try
         {
-            String pkgname = name.substring(0, name.lastIndexOf('.'));
-            if (getPackage(pkgname)==null)
+            int lastDot = name.lastIndexOf('.');
+            if (lastDot > -1)
             {
-                definePackage(pkgname, null, null, null, null, null, null, null);
+                String pkgname = name.substring(0, lastDot);
+                if (getPackage(pkgname)==null)
+                {
+                    definePackage(pkgname, null, null, null, null, null, null, null);
+                }
             }
             byte[] basicClass = getClassBytes(name);
             byte[] transformedClass = runTransformers(name, basicClass);
