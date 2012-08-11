@@ -38,7 +38,7 @@
          this.field_72563_h.field_71439_g.field_70157_k = p_72455_1_.field_73561_a;
          this.field_72556_d = p_72455_1_.field_73562_h;
          this.field_72563_h.field_71442_b.func_78746_a(p_72455_1_.field_73557_d);
-+        FMLNetworkHandler.onConnectionEstablishedToServer(field_72555_g, p_72455_1_);
++        FMLNetworkHandler.onConnectionEstablishedToServer(this, field_72555_g, p_72455_1_);
          this.func_72552_c(new Packet204ClientInfo(this.field_72563_h.field_71474_y.field_74363_ab, this.field_72563_h.field_71474_y.field_74339_e, this.field_72563_h.field_71474_y.field_74343_n, this.field_72563_h.field_71474_y.field_74344_o, this.field_72563_h.field_71474_y.field_74318_M));
      }
  
