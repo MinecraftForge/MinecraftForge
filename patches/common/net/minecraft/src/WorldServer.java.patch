@@ -55,6 +55,15 @@
              }
          }
  
+@@ -566,7 +582,7 @@
+             var6 = var5;
+         }
+ 
+-        return var6 > 16 || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
++        return var6 > mcServer.spawnProtectionSize || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
+     }
+ 
+     protected void initialize(WorldSettings par1WorldSettings)
 @@ -689,6 +705,7 @@
              }
  

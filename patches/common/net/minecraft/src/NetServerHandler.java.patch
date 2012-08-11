@@ -1,0 +1,34 @@
+--- ../src_base/common/net/minecraft/src/NetServerHandler.java
++++ ../src_work/common/net/minecraft/src/NetServerHandler.java
+@@ -383,7 +383,10 @@
+                 double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
+                 double var14 = var8 * var8 + var10 * var10 + var12 * var12;
+ 
+-                if (var14 > 36.0D)
++                double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
++                dist *= dist;
++
++                if (var14 > dist)
+                 {
+                     return;
+                 }
+@@ -405,7 +408,7 @@
+ 
+             if (par1Packet14BlockDig.status == 0)
+             {
+-                if (var20 <= 16 && !var3)
++                if (var20 <= mcServer.spawnProtectionSize && !var3)
+                 {
+                     this.playerEntity.serverForThisPlayer.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
+                 }
+@@ -485,7 +488,9 @@
+                 var12 = var11;
+             }
+ 
+-            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > 16 || var9))
++            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
++            dist *= dist;
++            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > mcServer.spawnProtectionSize || var9))
+             {
+                 this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
+             }

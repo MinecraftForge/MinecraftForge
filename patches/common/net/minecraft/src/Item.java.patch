@@ -18,7 +18,18 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -650,4 +653,185 @@
+@@ -589,6 +592,10 @@
+         float var18 = var15 * var16;
+         float var20 = var14 * var16;
+         double var21 = 5.0D;
++        if (par2EntityPlayer instanceof EntityPlayerMP)
++        {
++            var21 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
++        }
+         Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
+         return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+     }
+@@ -650,4 +657,185 @@
      {
          StatList.initStats();
      }

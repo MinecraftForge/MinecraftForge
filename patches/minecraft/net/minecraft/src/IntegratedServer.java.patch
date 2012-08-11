@@ -63,3 +63,11 @@
          this.setDifficultyForAllDimensions(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
+@@ -101,6 +78,7 @@
+         this.loadAllDimensions(this.getFolderName(), this.getWorldName(), this.field_71350_m.getSeed(), this.field_71350_m.getTerrainType());
+         this.setMOTD(this.getServerOwner() + " - " + this.theWorldServer[0].getWorldInfo().getWorldName());
+         FMLCommonHandler.instance().handleServerStarting(this);
++        spawnProtectionSize = 0;
+         return true;
+     }
+ 

@@ -61,17 +61,19 @@ public class ForgeHooks
         {
             return true;
         }
+
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null)
         {
             return player.canHarvestBlock(block);
         }
 
-        List info = (List)toolClasses.get(stack);
+        List info = (List)toolClasses.get(stack.getItem());
         if (info == null)
         {
             return player.canHarvestBlock(block);
         }
+
         Object[] tmp = info.toArray();
         String toolClass = (String)tmp[0];
         int harvestLevel = (Integer)tmp[1];
@@ -81,6 +83,7 @@ public class ForgeHooks
         {
             return player.canHarvestBlock(block);
         }
+
         if (blockHarvestLevel > harvestLevel)
         {
             return false;
@@ -103,7 +106,7 @@ public class ForgeHooks
         }
         else
         {
-            return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
         }
     }
 
@@ -143,21 +146,6 @@ public class ForgeHooks
         MinecraftForge.setToolClass(Item.shovelGold,    "shovel", 0);
         MinecraftForge.setToolClass(Item.shovelDiamond, "shovel", 3);
 
-        MinecraftForge.setBlockHarvestLevel(Block.obsidian,     "pickaxe", 3);
-        MinecraftForge.setBlockHarvestLevel(Block.oreDiamond,   "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.blockDiamond, "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreGold,      "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.blockGold,    "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreIron,      "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.blockSteel,   "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.oreLapis,     "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.blockLapis,   "pickaxe", 1);
-        MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,  "pickaxe", 2);
-        MinecraftForge.setBlockHarvestLevel(Block.oreRedstoneGlowing, "pickaxe", 2);
-        MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
-        MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
-        MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
-
         for (Block block : ItemPickaxe.blocksEffectiveAgainst)
         {
             MinecraftForge.setBlockHarvestLevel(block, "pickaxe", 0);
@@ -173,6 +161,21 @@ public class ForgeHooks
             MinecraftForge.setBlockHarvestLevel(block, "axe", 0);
         }
 
+        MinecraftForge.setBlockHarvestLevel(Block.obsidian,     "pickaxe", 3);
+        MinecraftForge.setBlockHarvestLevel(Block.oreEmerald,   "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Block.oreDiamond,   "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Block.blockDiamond, "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Block.oreGold,      "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Block.blockGold,    "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Block.oreIron,      "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Block.blockSteel,   "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Block.oreLapis,     "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Block.blockLapis,   "pickaxe", 1);
+        MinecraftForge.setBlockHarvestLevel(Block.oreRedstone,  "pickaxe", 2);
+        MinecraftForge.setBlockHarvestLevel(Block.oreRedstoneGlowing, "pickaxe", 2);
+        MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
+        MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
+        MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
     }
 
     public static String getTexture(String _default, Object obj)
@@ -217,11 +220,6 @@ public class ForgeHooks
         initTools();
         System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
         ModLoader.getLogger().info(String.format("MinecraftForge v%s Initialized", ForgeVersion.getVersion()));
-    }
-
-    public static boolean onEntityInteract(EntityPlayer entityPlayer, Entity par1Entity, boolean b)
-    {
-        return false;
     }
 
     /**
