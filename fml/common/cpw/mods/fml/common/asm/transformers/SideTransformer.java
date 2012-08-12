@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.IClassTransformer;
 public class SideTransformer implements IClassTransformer
 {
     private static String SIDE = FMLRelauncher.side();
+    private static final boolean DEBUG = false;
     @SuppressWarnings("unchecked")
     @Override
     public byte[] transform(String name, byte[] bytes)
@@ -33,7 +34,10 @@ public class SideTransformer implements IClassTransformer
             FieldNode field = fields.next();
             if (remove((List<AnnotationNode>)field.visibleAnnotations, SIDE))
             {
-                System.out.println("Removing Field: " + field.name);
+                if (DEBUG)
+                {
+                    System.out.println(String.format("Removing Field: %s.%s", classNode.name, field.name));
+                }
                 fields.remove();
             }
         }
@@ -43,7 +47,10 @@ public class SideTransformer implements IClassTransformer
             MethodNode method = methods.next();
             if (remove((List<AnnotationNode>)method.visibleAnnotations, SIDE))
             {
-                System.out.println("Removing Method: " + method.name + " " + method.desc); 
+                if (DEBUG)
+                {
+                    System.out.println(String.format("Removing Method: %s.%s%s", classNode.name, method.name, method.desc));
+                }
                 methods.remove();
             }
         }

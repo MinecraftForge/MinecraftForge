@@ -49,6 +49,7 @@ import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class AccessTransformer implements IClassTransformer
 {
+    private static final boolean DEBUG = false;
     private class Modifier
     {
         public String name = "";
@@ -162,8 +163,10 @@ public class AccessTransformer implements IClassTransformer
                     if (n.name.equals(m.name))
                     {
                         n.access = getFixedAccess(n.access, m);
-                        System.out.println(String.format("Field: %s.%s %s -> %s", name, m.name, Integer.toBinaryString(m.oldAccess),
-                                Integer.toBinaryString(m.newAccess)));
+                        if (DEBUG)
+                        {
+                            System.out.println(String.format("Field: %s.%s %s -> %s", name, m.name, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                        }
                         break;
                     }
                 }
@@ -175,7 +178,10 @@ public class AccessTransformer implements IClassTransformer
                     if (n.name.equals(m.name) && n.desc.equals(m.desc))
                     {
                         n.access = getFixedAccess(n.access, m);
-                        System.out.println(String.format("Method: %s.%s%s %s -> %s", name, m.name, m.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                        if (DEBUG)
+                        {
+                            System.out.println(String.format("Method: %s.%s%s %s -> %s", name, m.name, m.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                        }
                         break;
                     }
                 }
@@ -237,7 +243,7 @@ public class AccessTransformer implements IClassTransformer
         if (args.length < 2)
         {
             System.out.println("Usage: AccessTransformer <JarPath> <MapFile> [MapFile2]... ");
-            return;
+            System.exit(1);
         }
 
         boolean hasTransformer = false;
@@ -259,7 +265,7 @@ public class AccessTransformer implements IClassTransformer
         if (!hasTransformer)
         {
             System.out.println("Culd not find a valid transformer to perform");
-            return;
+            System.exit(1);
         }
 
         File orig = new File(args[0]);
@@ -267,13 +273,13 @@ public class AccessTransformer implements IClassTransformer
         if (!orig.exists() && !temp.exists())
         {
             System.out.println("Could not find target jar: " + orig);
-            return;
+            System.exit(1);
         }
 
         if (!orig.renameTo(temp))
         {
             System.out.println("Could not rename file: " + orig + " -> " + temp);
-            return;
+            System.exit(1);
         }
 
         try
@@ -283,6 +289,7 @@ public class AccessTransformer implements IClassTransformer
         catch (IOException e)
         {
             e.printStackTrace();
+            System.exit(1);
         }
         
         if (!temp.delete())

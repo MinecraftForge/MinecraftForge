@@ -25,13 +25,14 @@ public class MCPMerger
     private static Hashtable<String, ClassInfo> servers = new Hashtable<String, ClassInfo>();
     private static HashSet<String> copyToServer = new HashSet<String>();
     private static HashSet<String> copyToClient = new HashSet<String>();
+    private static final boolean DEBUG = false;
 
     public static void main(String[] args)
     {
         if (args.length != 3)
         {
             System.out.println("Usage: AccessTransformer <MapFile> <minecraft.jar> <minecraft_server.jar>");
-            return;
+            System.exit(1);
         }
 
         File map_file = new File(args[0]);
@@ -54,31 +55,31 @@ public class MCPMerger
         if (!client_jar.exists())
         {
             System.out.println("Could not find minecraft.jar: " + client_jar);
-            return;
+            System.exit(1);
         }
 
         if (!server_jar.exists())
         {
             System.out.println("Could not find minecraft_server.jar: " + server_jar);
-            return;
+            System.exit(1);
         }
 
         if (!client_jar.renameTo(client_jar_tmp))
         {
             System.out.println("Could not rename file: " + client_jar + " -> " + client_jar_tmp);
-            return;
+            System.exit(1);
         }
 
         if (!server_jar.renameTo(server_jar_tmp))
         {
             System.out.println("Could not rename file: " + server_jar + " -> " + server_jar_tmp);
-            return;
+            System.exit(1);
         }
 
         if (!readMapFile(map_file))
         {
             System.out.println("Could not read map file: " + map_file);
-            return;
+            System.exit(1);
         }
 
         try
@@ -88,6 +89,7 @@ public class MCPMerger
         catch (IOException e)
         {
             e.printStackTrace();
+            System.exit(1);
         }
 
         if (!client_jar_tmp.delete())
@@ -172,7 +174,10 @@ public class MCPMerger
                     }
                     else
                     {
-                        System.out.println("Copy class c->s : " + name);
+                        if (DEBUG)
+                        {
+                            System.out.println("Copy class c->s : " + name);
+                        }
                         copyClass(cInJar, cEntry, cOutJar, sOutJar, true);
                     }
                     continue;
@@ -200,7 +205,10 @@ public class MCPMerger
                 }
                 else
                 {
-                    System.out.println("Copy class s->c : " + entry.getKey());
+                    if (DEBUG)
+                    {
+                        System.out.println("Copy class s->c : " + entry.getKey());
+                    }
                     copyClass(sInJar, entry.getValue(), cOutJar, sOutJar, false);
                 }
             }
@@ -444,7 +452,10 @@ public class MCPMerger
                 mw.server = this.server | mw.server;
                 this.client = this.client | mw.client;
                 this.server = this.server | mw.server;
-                System.out.printf(" eq: %s %s\n", this, mw);
+                if (DEBUG)
+                {
+                    System.out.printf(" eq: %s %s\n", this, mw);
+                }
             }
             return eq;
         }
@@ -486,13 +497,19 @@ public class MCPMerger
                 serverName = sM.name;
                 if (!serverName.equals(lastName) && cPos != cLen)
                 {
-                    System.out.printf("Server -skip : %s %s %d (%s %d) %d [%s]\n", sClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                    if (DEBUG)
+                    {
+                        System.out.printf("Server -skip : %s %s %d (%s %d) %d [%s]\n", sClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                    }
                     break;
                 }
                 MethodWrapper mw = new MethodWrapper(sM);
                 mw.server = true;
                 allMethods.add(mw);
-                System.out.printf("Server *add* : %s %s %d (%s %d) %d [%s]\n", sClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                if (DEBUG)
+                {
+                    System.out.printf("Server *add* : %s %s %d (%s %d) %d [%s]\n", sClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                }
                 sPos++;
             }
             while (sPos < sLen);
@@ -507,13 +524,19 @@ public class MCPMerger
                 clientName = cM.name;
                 if (!clientName.equals(lastName) && sPos != sLen)
                 {
-                    System.out.printf("Client -skip : %s %s %d (%s %d) %d [%s]\n", cClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                    if (DEBUG)
+                    {
+                        System.out.printf("Client -skip : %s %s %d (%s %d) %d [%s]\n", cClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                    }
                     break;
                 }
                 MethodWrapper mw = new MethodWrapper(cM);
                 mw.client = true;
                 allMethods.add(mw);
-                System.out.printf("Client *add* : %s %s %d (%s %d) %d [%s]\n", cClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                if (DEBUG)
+                {
+                    System.out.printf("Client *add* : %s %s %d (%s %d) %d [%s]\n", cClass.name, clientName, cLen - cPos, serverName, sLen - sPos, allMethods.size(), lastName);
+                }
                 cPos++;
             }
             while (cPos < cLen);
