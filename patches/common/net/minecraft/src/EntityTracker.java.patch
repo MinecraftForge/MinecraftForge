@@ -1,0 +1,22 @@
+--- ../src-base/common/net/minecraft/src/EntityTracker.java
++++ ../src-work/common/net/minecraft/src/EntityTracker.java
+@@ -4,6 +4,8 @@
+ import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.Set;
++
++import cpw.mods.fml.common.registry.EntityRegistry;
+ 
+ public class EntityTracker
+ {
+@@ -20,6 +22,10 @@
+ 
+     public void func_72786_a(Entity p_72786_1_)
+     {
++        if (EntityRegistry.instance().tryTrackingEntity(this, p_72786_1_))
++        {
++            return;
++        }
+         if (p_72786_1_ instanceof EntityPlayerMP)
+         {
+             this.func_72791_a(p_72786_1_, 512, 2);
