@@ -1,11 +1,14 @@
 package net.minecraftforge.common;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 import net.minecraft.src.*;
 import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.event.EventBus;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.EntityEvent;
 
 public class MinecraftForge
 {
@@ -170,14 +173,17 @@ public class MinecraftForge
        Block filler = null;
        try 
        {
-           filler = Block.class.getConstructor(int.class, Material.class).newInstance(256, Material.air);
-       }catch (Exception e){}
-       
-       if (filler == null)
-       {
-           throw new RuntimeException("Could not create Forge filler block");
+           Constructor ctr = Block.class.getDeclaredConstructor(int.class, Material.class);
+           ctr.setAccessible(true);
+           filler = (Block)ctr.newInstance(256, Material.air);
        }
-       
+       catch (Exception e)
+       {
+           RuntimeException rte = new RuntimeException("Could not create Forge filler block", e);
+           rte.printStackTrace();
+           System.exit(1);
+       }
+
        for (int x = 256; x < 4096; x++)
        {
            if (Item.itemsList[x - 256] != null)

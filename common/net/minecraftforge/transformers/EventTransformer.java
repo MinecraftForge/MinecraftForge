@@ -59,6 +59,7 @@ public class EventTransformer implements IClassTransformer
         
         boolean hasSetup = false;
         boolean hasGetListenerList = false;
+        boolean hasDefaultCtr = false;
         
         Type tList = Type.getType(ListenerList.class);
         
@@ -68,13 +69,18 @@ public class EventTransformer implements IClassTransformer
                     method.desc.equals(Type.getMethodDescriptor(VOID_TYPE)) && 
                     (method.access & ACC_PROTECTED) == ACC_PROTECTED)
                 {
-                        hasSetup = true;
+                    hasSetup = true;
                 }
                 if (method.name.equals("getListenerList") && 
-                        method.desc.equals(Type.getMethodDescriptor(tList)) && 
-                        (method.access & ACC_PUBLIC) == ACC_PUBLIC)
+                    method.desc.equals(Type.getMethodDescriptor(tList)) && 
+                    (method.access & ACC_PUBLIC) == ACC_PUBLIC)
                 {
-                        hasGetListenerList = true;
+                    hasGetListenerList = true;
+                }
+                if (method.name.equals("<init>") &&
+                    method.desc.equals(Type.getMethodDescriptor(VOID_TYPE)))
+                {
+                    hasDefaultCtr = true;
                 }
         }
         
@@ -94,7 +100,22 @@ public class EventTransformer implements IClassTransformer
         
         //Add private static ListenerList LISTENER_LIST
         classNode.fields.add(new FieldNode(ACC_PRIVATE | ACC_STATIC, "LISTENER_LIST", tList.getDescriptor(), null, null));
-        
+
+        /*Add:
+         *      public <init>()
+         *      {
+         *              super();
+         *      }
+         */
+        MethodNode method = new MethodNode(ASM4, ACC_PUBLIC, "<init>", getMethodDescriptor(VOID_TYPE), null, null);
+        method.instructions.add(new VarInsnNode(ALOAD, 0));
+        method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "<init>", getMethodDescriptor(VOID_TYPE)));
+        method.instructions.add(new InsnNode(RETURN));
+        if (!hasDefaultCtr)
+        {
+            classNode.methods.add(method);
+        }
+
         /*Add:
          *      protected void setup()
          *      {
@@ -106,7 +127,7 @@ public class EventTransformer implements IClassTransformer
          *              LISTENER_LIST = new ListenerList(super.getListenerList());
          *      }
          */
-        MethodNode method = new MethodNode(ASM4, ACC_PROTECTED, "setup", getMethodDescriptor(VOID_TYPE), null, null);
+        method = new MethodNode(ASM4, ACC_PROTECTED, "setup", getMethodDescriptor(VOID_TYPE), null, null);
         method.instructions.add(new VarInsnNode(ALOAD, 0));
         method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "setup", getMethodDescriptor(VOID_TYPE)));
         method.instructions.add(new FieldInsnNode(GETSTATIC, classNode.name, "LISTENER_LIST", tList.getDescriptor()));

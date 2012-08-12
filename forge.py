@@ -89,16 +89,12 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
     if has_client:
         if os.path.isdir(os.path.join(forge_dir, 'patches', 'minecraft')):
             apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'minecraft'), src_dir)
-        if os.path.isdir(os.path.join(forge_dir, 'patches', 'common')):
-            apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft/')
         if copy_files and os.path.isdir(os.path.join(forge_dir, 'client')):
             copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'))
         
     if has_server:
         if os.path.isdir(os.path.join(forge_dir, 'patches', 'minecraft_server')):
             apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'minecraft_server'), src_dir)
-        if os.path.isdir(os.path.join(forge_dir, 'patches', 'common')):
-            apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft_server/')
         if copy_files and os.path.isdir(os.path.join(forge_dir, 'server')):
             copytree(os.path.join(forge_dir, 'server'), os.path.join(src_dir, 'minecraft_server'))
             
