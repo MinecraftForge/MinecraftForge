@@ -163,17 +163,18 @@ def setup_fml(fml_dir, mcp_dir):
         #print forkcmd
         self.runcmd(forkcmd)
         
-        #Compile MCPMerger
-        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
-            classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
-            target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'MCPMerger.java'))
-        #print forkcmd
-        self.runcmd(forkcmd)
-        
-        #Run MCPMerger
-        forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
-            classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
-        self.runcmd(forkcmd)
+        if (side == CLIENT):
+            #Compile MCPMerger
+            forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
+                classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
+                target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'MCPMerger.java'))
+            #print forkcmd
+            self.runcmd(forkcmd)
+            
+            #Run MCPMerger
+            forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
+                classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
+            self.runcmd(forkcmd)
         
         #Run AccessTransformer
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
@@ -187,11 +188,21 @@ def setup_fml(fml_dir, mcp_dir):
         
         applyrg_real(self, side, reobf)
     
+    #Check the original jars not the transformed jars
+    def checkjars_shunt(self, side, checkjars_real = Commands.checkjars):
+        self.jarclient = self.jarclient + '.backup'
+        self.jarserver = self.jarserver + '.backup'
+        ret = checkjars_real(self, side)
+        self.jarclient = self.jarclient[:-7]
+        self.jarserver = self.jarserver[:-7]
+        return ret
+    
     try:
         pre_decompile(mcp_dir, fml_dir)
         
         os.chdir(mcp_dir)
         Commands.applyrg = applyrg_shunt
+        Commands.checkjars = checkjars_shunt
         #decompile -d -n -r
         #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g
         decompile(None, False, False, True, True, False, True, False, False, False, False)
@@ -270,6 +281,7 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     
     #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
     cpw_dir = os.path.join(src_dir, 'common', 'cpw')
+    print 'Deleting common/cpw: ' + cpw_dir
     if os.path.isdir(cpw_dir):
         shutil.rmtree(cpw_dir)
         
@@ -279,8 +291,6 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     if has_client:
         if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft')):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
-        if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
-            apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft/')
         if copy_files and os.path.isdir(os.path.join(fml_dir, 'client')):
             copytree(os.path.join(fml_dir, 'client'), os.path.join(src_dir, 'minecraft'))
         #delete argo
@@ -290,8 +300,6 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     if has_server:
         if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft_server')):
             apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft_server'), src_dir)
-        if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
-            apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir, '/common/', '/minecraft_server/')
         if copy_files and os.path.isdir(os.path.join(fml_dir, 'server')):
             copytree(os.path.join(fml_dir, 'server'), os.path.join(src_dir, 'minecraft_server'))
             
@@ -330,11 +338,10 @@ def apply_patches(mcp_dir, patch_dir, target_dir, find=None, rep=None):
         for cur_file in fnmatch.filter(filelist, '*.patch'):
             patch_file = os.path.normpath(os.path.join(patch_dir, path[len(patch_dir)+1:], cur_file))
             target_file = os.path.join(target_dir, fix_patch(patch_file, temp, find, rep))
-            if os.path.isfile(target_file):
-                if display:
-                    print 'patching file %s' % os.path.normpath(target_file)
-                process = subprocess.Popen(cmd, cwd=target_dir, bufsize=-1)
-                process.communicate()
+            if display:
+                print 'patching file %s' % os.path.normpath(target_file)
+            process = subprocess.Popen(cmd, cwd=target_dir, bufsize=-1)
+            process.communicate()
 
     if os.path.isfile(temp):
         os.remove(temp)
@@ -481,6 +488,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         shutil.copy(runtime, backup)
     
     if not os.path.isfile(patch):
+        raise Exception('Commands.py patch not found %s' % patch)
         return
         
     temp = os.path.abspath('temp.patch')
@@ -503,6 +511,10 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
 
     if os.path.isfile(temp):
         os.remove(temp)
+    
+    sys.path.append(mcp_dir)
+    from runtime.commands import commands_sanity_check
+    commands_sanity_check()
     
     mcp_conf = os.path.join(mcp_dir, 'conf')
     mcp_conf_bak = os.path.join(mcp_dir, 'conf.bak')

@@ -172,3 +172,10 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
+@@ -1654,3 +1690,6 @@
+                 except IOError:
+                     self.logger.error('* File %s copy failed', in_class)
+ 
++def commands_sanity_check():
++    print 'Commands patch applied successfully'
++    

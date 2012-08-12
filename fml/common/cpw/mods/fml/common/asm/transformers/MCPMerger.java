@@ -547,7 +547,10 @@ public class MCPMerger
 
         for (MethodWrapper mw : allMethods)
         {
-            System.out.println(mw);
+            if (DEBUG)
+            {
+                System.out.println(mw);
+            }
             cMethods.add(mw.node);
             sMethods.add(mw.node);
             if (mw.server && mw.client)
