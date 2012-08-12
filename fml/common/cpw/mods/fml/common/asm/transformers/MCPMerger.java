@@ -159,6 +159,8 @@ public class MCPMerger
             }
             Hashtable<String, ZipEntry> cClasses = getClassEntries(cInJar, cOutJar);
             Hashtable<String, ZipEntry> sClasses = getClassEntries(sInJar, sOutJar);
+            HashSet<String> cAdded = new HashSet<String>();
+            HashSet<String> sAdded = new HashSet<String>();
 
             for (Entry<String, ZipEntry> entry : cClasses.entrySet())
             {
@@ -171,6 +173,7 @@ public class MCPMerger
                     if (!copyToServer.contains(name))
                     {
                         copyEntry(cInJar, cEntry, cOutJar);
+                        cAdded.add(name);
                     }
                     else
                     {
@@ -179,6 +182,8 @@ public class MCPMerger
                             System.out.println("Copy class c->s : " + name);
                         }
                         copyClass(cInJar, cEntry, cOutJar, sOutJar, true);
+                        cAdded.add(name);
+                        sAdded.add(name);
                     }
                     continue;
                 }
@@ -196,6 +201,8 @@ public class MCPMerger
                 cOutJar.write(data);
                 sOutJar.putNextEntry(newEntry);
                 sOutJar.write(data);
+                cAdded.add(name);
+                sAdded.add(name);
             }
             for (Entry<String, ZipEntry> entry : sClasses.entrySet())
             {
@@ -215,12 +222,19 @@ public class MCPMerger
 
             for (String name : new String[]{SideOnly.class.getName(), Side.class.getName()})
             {
+                String eName = name.replace(".", "/");
                 byte[] data = getClassBytes(name);
                 ZipEntry newEntry = new ZipEntry(name.replace(".", "/").concat(".class"));
-                cOutJar.putNextEntry(newEntry);
-                cOutJar.write(data);
-                sOutJar.putNextEntry(newEntry);
-                sOutJar.write(data);
+                if (!cAdded.contains(eName))
+                {
+                    cOutJar.putNextEntry(newEntry);
+                    cOutJar.write(data);
+                }
+                if (!sAdded.contains(eName))
+                {
+                    sOutJar.putNextEntry(newEntry);
+                    sOutJar.write(data);
+                }
             }
 
         }
