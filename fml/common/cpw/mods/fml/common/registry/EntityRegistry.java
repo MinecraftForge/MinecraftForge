@@ -20,6 +20,7 @@ import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityList;
 import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityTracker;
 import net.minecraft.src.EnumCreatureType;
 import net.minecraft.src.SpawnListEntry;
 
@@ -32,12 +33,18 @@ public class EntityRegistry
         private ModContainer container;
         private String entityName;
         private int modId;
-        public EntityRegistration(ModContainer mc, Class<? extends Entity> entityClass, String entityName, int id)
+        private int trackingRange;
+        private int updateFrequency;
+        private boolean sendsVelocityUpdates;
+        public EntityRegistration(ModContainer mc, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
         {
             this.container = mc;
             this.entityClass = entityClass;
             this.entityName = entityName;
             this.modId = id;
+            this.trackingRange = trackingRange;
+            this.updateFrequency = updateFrequency;
+            this.sendsVelocityUpdates = sendsVelocityUpdates;
         }
         public Class<? extends Entity> getEntityClass()
         {
@@ -55,6 +62,22 @@ public class EntityRegistry
         {
             return modId;
         }
+        public int getModId()
+        {
+            return modId;
+        }
+        public int getTrackingRange()
+        {
+            return trackingRange;
+        }
+        public int getUpdateFrequency()
+        {
+            return updateFrequency;
+        }
+        public boolean sendsVelocityUpdates()
+        {
+            return sendsVelocityUpdates;
+        }
     }
 
     private static final EntityRegistry INSTANCE = new EntityRegistry();
@@ -67,7 +90,7 @@ public class EntityRegistry
     {
         return INSTANCE;
     }
-    
+
     private EntityRegistry()
     {
         availableIndicies = new BitSet(256);
@@ -77,15 +100,26 @@ public class EntityRegistry
             availableIndicies.clear((Integer)id);
         }
     }
-    
-    public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod)
+
+    /**
+     * Register the mod entity type with FML
+
+     * @param entityClass The entity class
+     * @param entityName A unique name for the entity
+     * @param id A mod specific ID for the entity
+     * @param mod The mod
+     * @param trackingRange The range at which MC will send tracking updates
+     * @param updateFrequency The frequency of tracking updates
+     * @param sendsVelocityUpdates Whether to send velocity information packets as well
+     */
+    public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
-        instance().doModEntityRegistration(entityClass, entityName, id, mod);
+        instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
     }
-    private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod)
+    private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
-        EntityRegistration er = new EntityRegistration(mc, entityClass, entityName, id);
+        EntityRegistration er = new EntityRegistration(mc, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
         try
         {
             entityClassRegistrations.put(entityClass, er);
@@ -126,7 +160,7 @@ public class EntityRegistry
         {
             @SuppressWarnings("unchecked")
             List<SpawnListEntry> spawns = biome.func_76747_a(typeOfCreature);
-    
+
             for (SpawnListEntry entry : spawns)
             {
                 //Adjusting an existing spawn entry
@@ -138,7 +172,7 @@ public class EntityRegistry
                     break;
                 }
             }
-    
+
             spawns.add(new SpawnListEntry(entityClass, weightedProb, min, max));
         }
     }
@@ -146,7 +180,7 @@ public class EntityRegistry
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
-    
+
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
             addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, spawnList, biomes);
@@ -159,7 +193,7 @@ public class EntityRegistry
         {
             @SuppressWarnings("unchecked")
             Iterator<SpawnListEntry> spawns = biome.func_76747_a(typeOfCreature).iterator();
-    
+
             while (spawns.hasNext())
             {
                 SpawnListEntry entry = spawns.next();
@@ -174,7 +208,7 @@ public class EntityRegistry
     public static void removeSpawn(String entityName, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         Class <? extends Entity > entityClazz = (Class<? extends Entity>) EntityList.field_75625_b.get(entityName);
-    
+
         if (EntityLiving.class.isAssignableFrom(entityClazz))
         {
             removeSpawn((Class <? extends EntityLiving >) entityClazz, spawnList, biomes);
@@ -194,7 +228,7 @@ public class EntityRegistry
     public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking)
     {
         Class<?> localClazz = clazz;
-    
+
         do
         {
             EntityRegistration er = entityClassRegistrations.get(localClazz);
@@ -206,7 +240,7 @@ public class EntityRegistry
             keepLooking = (!Object.class.equals(localClazz));
         }
         while (keepLooking);
-        
+
         return null;
     }
 
@@ -220,6 +254,18 @@ public class EntityRegistry
             }
         }
         return null;
+    }
+
+    public boolean tryTrackingEntity(EntityTracker entityTracker, Entity entity)
+    {
+
+        EntityRegistration er = lookupModSpawn(entity.getClass(), true);
+        if (er != null)
+        {
+            entityTracker.func_72785_a(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
+            return true;
+        }
+        return false;
     }
 
 }
