@@ -1,6 +1,7 @@
 package cpw.mods.fml.common.network;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -68,7 +70,7 @@ public class NetworkRegistry
      */
     byte[] getPacketRegistry()
     {
-        return Joiner.on('\0').join(packetHandlers.keySet()).getBytes(Charsets.UTF_8);
+        return Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML"),packetHandlers.keySet())).getBytes(Charsets.UTF_8);
     }
     /**
      * Is the specified channel active for the player?
