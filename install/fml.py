@@ -157,6 +157,7 @@ def setup_fml(fml_dir, mcp_dir):
             os.makedirs(binDir)
             
         #Compile AccessTransformer
+        print 'Compiling AccessTransformer'
         forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
             classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
             target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
@@ -164,6 +165,7 @@ def setup_fml(fml_dir, mcp_dir):
         self.runcmd(forkcmd)
         
         if (side == CLIENT):
+            print 'Compiling MCPMerger'
             #Compile MCPMerger
             forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
                 classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
@@ -171,11 +173,13 @@ def setup_fml(fml_dir, mcp_dir):
             #print forkcmd
             self.runcmd(forkcmd)
             
+            print 'Running MCPMerder for %s' % side
             #Run MCPMerger
             forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
                 classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
             self.runcmd(forkcmd)
         
+        print 'Running AccessTransformer'
         #Run AccessTransformer
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
             classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
@@ -192,9 +196,11 @@ def setup_fml(fml_dir, mcp_dir):
     def checkjars_shunt(self, side, checkjars_real = Commands.checkjars):
         self.jarclient = self.jarclient + '.backup'
         self.jarserver = self.jarserver + '.backup'
+        print 'Jar Check %s %s %s' % (side, self.jarclient, self.jarserver)
         ret = checkjars_real(self, side)
         self.jarclient = self.jarclient[:-7]
         self.jarserver = self.jarserver[:-7]
+        #print 'Jar Check out %s %s %s' % (side, self.jarclient, self.jarserver)
         return ret
     
     try:
@@ -538,7 +544,8 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     #update workspace
     print 'Fixing MCP Workspace'
-    merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
+    if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
+        merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
 
 def normaliselines(in_filename):
     in_filename = os.path.normpath(in_filename)
