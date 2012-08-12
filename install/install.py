@@ -8,12 +8,7 @@ mcp_dir = os.path.abspath('..')
 src_dir = os.path.join(mcp_dir, 'src')
 fml_dir = os.path.join(forge_dir, 'fml')
 
-sys.path.append(mcp_dir)
 sys.path.append(fml_dir)
-from runtime.updatenames import updatenames
-from runtime.updatemd5 import updatemd5
-from runtime.updatemcp import updatemcp
-
 from forge import apply_forge_patches
 from fml import setup_fml, finish_setup_fml, apply_fml_patches, setup_mcp, reset_logger
 
@@ -25,6 +20,10 @@ def main():
     apply_fml_patches(fml_dir, mcp_dir, os.path.join(mcp_dir, 'src'))
     finish_setup_fml(fml_dir, mcp_dir)
     print '================  Forge ModLoader Setup End  ==================='
+
+    sys.path.append(mcp_dir)    
+    from runtime.updatenames import updatenames
+    from runtime.updatemd5 import updatemd5
     
     print '=============================== Minecraft Forge Setup Start ====================================='
     print 'Applying forge patches'

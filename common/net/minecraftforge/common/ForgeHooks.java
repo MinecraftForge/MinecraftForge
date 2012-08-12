@@ -193,7 +193,7 @@ public class ForgeHooks
             return _default;
         }
     }
-    
+
     public static int getTotalArmorValue(EntityPlayer player)
     {
         int ret = 0;
