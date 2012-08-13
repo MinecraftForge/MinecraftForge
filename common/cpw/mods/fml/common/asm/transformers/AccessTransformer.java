@@ -49,7 +49,7 @@ import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class AccessTransformer implements IClassTransformer
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private class Modifier
     {
         public String name = "";
