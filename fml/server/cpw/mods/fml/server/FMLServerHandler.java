@@ -38,6 +38,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.MLProp;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
@@ -173,5 +174,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)
     {
         // NOOP
+    }
+    @Override
+    public void sendPacket(Packet packet)
+    {
+        throw new RuntimeException("You cannot send a bare packet without a target on the server!");
     }
 }
