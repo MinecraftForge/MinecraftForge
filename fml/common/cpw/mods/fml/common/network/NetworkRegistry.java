@@ -135,11 +135,11 @@ public class NetworkRegistry
 
     void playerLoggedIn(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
     {
+        generateChannelRegistration(player, netHandler, manager);
         for (IConnectionHandler handler : connectionHandlers)
         {
             handler.playerLoggedIn((Player)player, netHandler, manager);
         }
-        generateChannelRegistration(player, netHandler, manager);
     }
 
     String connectionReceived(NetLoginHandler netHandler, NetworkManager manager)
@@ -173,6 +173,7 @@ public class NetworkRegistry
 
     void clientLoggedIn(NetHandler clientHandler, NetworkManager manager, Packet1Login login)
     {
+        generateChannelRegistration(clientHandler.getPlayer(), clientHandler, manager);
         for (IConnectionHandler handler : connectionHandlers)
         {
             handler.clientLoggedIn(clientHandler, manager, login);
