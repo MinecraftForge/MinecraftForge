@@ -24,9 +24,9 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
      */
     public static int obtainBlockModelIdFor(BaseMod mod, boolean inventoryRenderer)
     {
-        int renderId=RenderingRegistry.instance().getNextAvailableRenderId();
+        int renderId=RenderingRegistry.getNextAvailableRenderId();
         ModLoaderBlockRendererHandler bri=new ModLoaderBlockRendererHandler(renderId, inventoryRenderer, mod);
-        RenderingRegistry.instance().registerBlockHandler(bri);
+        RenderingRegistry.registerBlockHandler(bri);
         return renderId;
     }
 
@@ -41,7 +41,7 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
 
         for (Entry<Class<? extends Entity>, Render> e : renderers.entrySet())
         {
-            RenderingRegistry.instance().registerEntityRenderingHandler(e.getKey(), e.getValue());
+            RenderingRegistry.registerEntityRenderingHandler(e.getKey(), e.getValue());
         }
 
         mod.registerAnimation(game);

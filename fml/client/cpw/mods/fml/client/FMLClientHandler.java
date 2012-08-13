@@ -146,8 +146,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     private Minecraft client;
 
-
-    private boolean firstTick;
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
@@ -210,6 +208,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      * Also initializes key bindings
      *
      */
+    @SuppressWarnings("deprecation")
     public void finishMinecraftLoading()
     {
         try
@@ -223,10 +222,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
 
-        KeyBindingRegistry.uploadKeyBindingsToGame(client.field_71474_y);
+        KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
+    }
 
-        // Mark this as a "first tick"
-        firstTick = true;
+    public void reloadTextureFX()
+    {
+        TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
     }
     /**
      * Get the server instance

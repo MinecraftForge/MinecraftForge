@@ -37,6 +37,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -96,7 +97,7 @@ public class ModLoader
      */
     public static int addArmor(String armor)
     {
-        return RenderingRegistry.instance().addNewArmourRendererPrefix(armor);
+        return RenderingRegistry.addNewArmourRendererPrefix(armor);
     }
 
     /**
@@ -164,9 +165,7 @@ public class ModLoader
      */
     public static int addOverride(String fileToOverride, String fileToAdd)
     {
-        int idx = SpriteHelper.getUniqueSpriteIndex(fileToOverride);
-        addOverride(fileToOverride, fileToAdd, idx);
-        return idx;
+        return RenderingRegistry.addTextureOverride(fileToOverride, fileToAdd);
     }
 
     /**
@@ -178,7 +177,7 @@ public class ModLoader
      */
     public static void addOverride(String path, String overlayPath, int index)
     {
-        TextureFXManager.instance().addNewTextureOverride(path, overlayPath, index);
+        RenderingRegistry.addTextureOverride(path, overlayPath, index);
     }
 
     /**
@@ -695,9 +694,13 @@ public class ModLoader
     {
     }
 
+    /**
+     * Send a packet from client to server
+     *
+     * @param packet
+     */
     public static void sendPacket(Packet packet) {
-        // TODO
-//        FMLClientHandler.instance().sendPacket(packet);
+        PacketDispatcher.sendPacketToServer(packet);
     }
     /**
      * Send a chat message to the server

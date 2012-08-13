@@ -74,16 +74,19 @@ public class FMLRenderAccessLibrary
         TextureFXManager.instance().onTexturePackChange(engine, texturePack, textureFXList);
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelId)
     {
         return RenderingRegistry.instance().renderWorldBlock(renderer, world, x, y, z, block, modelId);
     }
 
+    @SuppressWarnings("deprecation")
     public static void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
         RenderingRegistry.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean renderItemAsFull3DBlock(int modelId)
     {
         return RenderingRegistry.instance().renderItemAsFull3DBlock(modelId);
