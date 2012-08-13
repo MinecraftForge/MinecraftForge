@@ -248,13 +248,15 @@ public class RelaunchLibraryManager
             Class<?> loaderClazz = Class.forName("cpw.mods.fml.common.Loader", true, actualClassLoader);
             Method m = loaderClazz.getMethod("injectData", Object[].class);
             m.invoke(null, (Object)FMLInjectionData.data());
+            m = loaderClazz.getMethod("instance");
+            m.invoke(null);
             downloadMonitor.updateProgressString("Minecraft validated, launching...");
             downloadBuffer = null;
         }
         catch (Exception e)
         {
             // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
-            System.out.println("RelaunchLibraryManager.handleLaunch");
+            System.out.println("A CRITICAL PROBLEM OCCURED INITIALIZING MINECRAFT - LIKELY YOU HAVE AN INCORRECT VERSION FOR THIS FML");
             e.printStackTrace();
             throw new RuntimeException(e);
         }
