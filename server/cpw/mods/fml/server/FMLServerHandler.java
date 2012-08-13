@@ -103,7 +103,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         server = minecraftServer;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
-        FMLCommonHandler.instance().beginLoading(this);
         Loader.instance().loadMods();
     }
 
