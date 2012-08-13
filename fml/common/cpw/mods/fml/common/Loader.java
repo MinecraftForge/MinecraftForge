@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.CallableMinecraftVersion;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
@@ -160,6 +161,12 @@ public class Loader
     private Loader()
     {
         modClassLoader = new ModClassLoader(getClass().getClassLoader());
+        String actualMCVersion = new CallableMinecraftVersion(null).func_71493_a();
+        if (!mccversion.equals(actualMCVersion))
+        {
+            FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, actualMCVersion);
+            throw new LoaderException();
+        }
     }
 
     /**
