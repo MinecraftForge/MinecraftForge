@@ -24,6 +24,11 @@ import cpw.mods.fml.common.versioning.VersionRange;
 
 public class NetworkModHandler
 {
+    private static Object connectionHandlerDefaultValue;
+    private static Object packetHandlerDefaultValue;
+    private static Object clientHandlerDefaultValue;
+    private static Object serverHandlerDefaultValue;
+
     private static int assignedIds = 1;
 
     private int localId;
@@ -92,30 +97,17 @@ public class NetworkModHandler
             }
         }
 
-        if (!mod.packetHandler().getName().equals(NetworkMod.NULL.class.getName()))
+        tryCreatingPacketHandler(container, mod.packetHandler(), mod.channels());
+        if (mod.clientPacketHandlerSpec() != getClientHandlerSpecDefaultValue())
         {
-            IPacketHandler instance;
-            try
-            {
-                instance = mod.packetHandler().newInstance();
-            }
-            catch (Exception e)
-            {
-                FMLLog.log(Level.SEVERE, e, "Unable to create packet handler instance %s", mod.packetHandler().getName());
-                throw new FMLNetworkException(e);
-            }
-
-            for (String channel : mod.channels())
-            {
-                NetworkRegistry.instance().registerChannel(instance, channel);
-            }
+            tryCreatingPacketHandler(container, mod.clientPacketHandlerSpec().packetHandler(), mod.clientPacketHandlerSpec().channels());
         }
-        else if (mod.channels().length > 0)
+        if (mod.serverPacketHandlerSpec() != getServerHandlerSpecDefaultValue())
         {
-            FMLLog.warning("The mod id %s attempted to register channels without specifying a valid packet handler", container.getModId());
+            tryCreatingPacketHandler(container, mod.serverPacketHandlerSpec().packetHandler(), mod.serverPacketHandlerSpec().channels());
         }
 
-        if (!mod.connectionHandler().getName().equals(NetworkMod.NULL.class.getName()))
+        if (mod.connectionHandler() != getConnectionHandlerDefaultValue())
         {
             IConnectionHandler instance;
             try
@@ -131,7 +123,112 @@ public class NetworkModHandler
             NetworkRegistry.instance().registerConnectionHandler(instance);
         }
     }
+    /**
+     * @param container
+     */
+    private void tryCreatingPacketHandler(ModContainer container, Class<? extends IPacketHandler> clazz, String[] channels)
+    {
 
+        if (clazz!=getPacketHandlerDefaultValue())
+        {
+            if (channels.length==0)
+            {
+                FMLLog.log(Level.WARNING, "The mod id %s attempted to register a packet handler without specifying channels for it", container.getModId());
+            }
+            else
+            {
+                IPacketHandler instance;
+                try
+                {
+                    instance = clazz.newInstance();
+                }
+                catch (Exception e)
+                {
+                    FMLLog.log(Level.SEVERE, e, "Unable to create a packet handler instance %s for mod %s", clazz.getName(), container.getModId());
+                    throw new FMLNetworkException(e);
+                }
+
+                for (String channel : channels)
+                {
+                    NetworkRegistry.instance().registerChannel(instance, channel);
+                }
+            }
+        }
+        else if (channels.length > 0)
+        {
+            FMLLog.warning("The mod id %s attempted to register channels without specifying a packet handler", container.getModId());
+        }
+    }
+    /**
+     * @return
+     */
+    private Object getConnectionHandlerDefaultValue()
+    {
+        try {
+            if (connectionHandlerDefaultValue == null)
+            {
+                connectionHandlerDefaultValue = NetworkMod.class.getMethod("connectionHandler").getDefaultValue();
+            }
+            return connectionHandlerDefaultValue;
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException("Derp?", e);
+        }
+    }
+
+    /**
+     * @return
+     */
+    private Object getPacketHandlerDefaultValue()
+    {
+        try {
+            if (packetHandlerDefaultValue == null)
+            {
+                packetHandlerDefaultValue = NetworkMod.class.getMethod("packetHandler").getDefaultValue();
+            }
+            return packetHandlerDefaultValue;
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException("Derp?", e);
+        }
+    }
+
+    /**
+     * @return
+     */
+    private Object getClientHandlerSpecDefaultValue()
+    {
+        try {
+            if (clientHandlerDefaultValue == null)
+            {
+                clientHandlerDefaultValue = NetworkMod.class.getMethod("clientPacketHandler").getDefaultValue();
+            }
+            return clientHandlerDefaultValue;
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException("Derp?", e);
+        }
+    }
+    /**
+     * @return
+     */
+    private Object getServerHandlerSpecDefaultValue()
+    {
+        try {
+            if (serverHandlerDefaultValue == null)
+            {
+                serverHandlerDefaultValue = NetworkMod.class.getMethod("serverPacketHandler").getDefaultValue();
+            }
+            return serverHandlerDefaultValue;
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException("Derp?", e);
+        }
+    }
     public boolean requiresClientSide()
     {
         return mod.clientSideRequired();

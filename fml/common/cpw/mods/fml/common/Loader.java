@@ -621,4 +621,14 @@ public class Loader
     {
         return getModObjectList().inverse();
     }
+
+    public ModContainer activeModContainer()
+    {
+        return modController.activeContainer();
+    }
+
+    public boolean isInState(LoaderState state)
+    {
+        return modController.isInState(state);
+    }
 }
