@@ -46,7 +46,7 @@ public class LanguageRegistry
             throw new IllegalArgumentException(String.format("Illegal object for naming %s",objectToName));
         }
         objectName+=".name";
-        addStringLocalization(lang, lang, name);
+        addStringLocalization(objectName, lang, name);
     }
 
     public void loadLanguageTable(Properties languagePack, String lang)
