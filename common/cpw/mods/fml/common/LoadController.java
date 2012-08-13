@@ -193,4 +193,9 @@ public class LoadController
     {
         return ImmutableBiMap.copyOf(modObjectList);
     }
+
+    public boolean isInState(LoaderState state)
+    {
+        return this.state == state;
+    }
 }

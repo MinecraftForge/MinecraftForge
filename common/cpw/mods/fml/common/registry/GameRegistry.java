@@ -24,12 +24,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
+import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.Mod.Block;
 import cpw.mods.fml.common.ModContainer;
 
@@ -42,11 +45,26 @@ public class GameRegistry
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IDispenseHandler> dispenserHandlers = Lists.newArrayList();
 
+    /**
+     * Register a world generator - something that inserts new block types into the world
+     *
+     * @param generator
+     */
     public static void registerWorldGenerator(IWorldGenerator generator)
     {
         worldGenerators.add(generator);
     }
 
+    /**
+     * Callback hook for world gen - if your mod wishes to add extra mod related generation to the world
+     * call this
+     *
+     * @param chunkX
+     * @param chunkZ
+     * @param world
+     * @param chunkGenerator
+     * @param chunkProvider
+     */
     public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
     {
         long worldSeed = world.func_72905_C();
@@ -61,12 +79,30 @@ public class GameRegistry
         }
     }
 
+    /**
+     * Register a handler for dispensers
+     *
+     * @param handler
+     */
     public static void registerDispenserHandler(IDispenseHandler handler)
     {
         dispenserHandlers.add(handler);
     }
 
 
+    /**
+     * Callback hook for dispenser activities - if you add a block and want mods to be able
+     * to extend their dispenser related activities to it call this
+     *
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @param xVelocity
+     * @param zVelocity
+     * @param item
+     * @return
+     */
     public static int tryDispense(World world, double x, double y, double z, int xVelocity, int zVelocity, ItemStack item)
     {
         for (IDispenseHandler handler : dispenserHandlers)
@@ -79,6 +115,14 @@ public class GameRegistry
         }
         return -1;
     }
+    /**
+     * Internal method for creating an @Block instance
+     * @param container
+     * @param type
+     * @param annotation
+     * @return
+     * @throws Exception
+     */
     public static Object buildBlock(ModContainer container, Class<?> type, Block annotation) throws Exception
     {
         Object o = type.getConstructor(int.class).newInstance(findSpareBlockId());
@@ -86,18 +130,40 @@ public class GameRegistry
         return o;
     }
 
+    /**
+     * Private and not yet working properly
+     *
+     * @return
+     */
     private static int findSpareBlockId()
     {
         return BlockTracker.nextBlockId();
     }
 
+    /**
+     * Register a block with the world
+     *
+     */
     public static void registerBlock(net.minecraft.src.Block block)
     {
         registerBlock(block, ItemBlock.class);
     }
 
+    /**
+     * Register a block with the world, with the specified item class
+     *
+     * @param block
+     * @param itemclass
+     */
     public static void registerBlock(net.minecraft.src.Block block, Class<? extends ItemBlock> itemclass)
     {
+        if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
+        {
+            FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
+        } else if (!Loader.instance().isInState(LoaderState.PREINITIALIZATION))
+        {
+            FMLLog.warning("The mod %s is attempting to register a block after the statistics have loaded. This will reset the statistics for the game", Loader.instance().activeModContainer().getModId());
+        }
         try
         {
             assert block != null : "registerBlock: block cannot be null";
@@ -110,7 +176,7 @@ public class GameRegistry
             FMLLog.log(Level.SEVERE, e, "Caught an exception during block registration");
             throw new LoaderException(e);
         }
-        BlockTracker.reserveBlockId(block.field_71990_ca);
+        blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
     }
 
     public static void addRecipe(ItemStack output, Object... params)

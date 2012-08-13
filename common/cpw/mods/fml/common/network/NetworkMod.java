@@ -24,7 +24,9 @@ public @interface NetworkMod
      */
     boolean serverSideRequired() default false;
     /**
-     * A list of Packet250 network channels to register for this mod
+     * A list of Packet250 network channels to register for this mod - these channels
+     * will be universal and will require a universal packethandler to handle them
+     *
      * @return
      */
     String[] channels() default {};
@@ -36,6 +38,8 @@ public @interface NetworkMod
 
     /**
      * A packet handler implementation for channels registered through this annotation
+     * - this packet handler will be universal and handle both client and server
+     * requests.
      *
      * @return
      */
@@ -48,11 +52,25 @@ public @interface NetworkMod
      */
     Class<? extends IConnectionHandler> connectionHandler() default NULL.class;
     /**
+     * A packet handler and channels to register for the client side
+     *
+     * @return
+     */
+    SidedPacketHandler clientPacketHandlerSpec() default @SidedPacketHandler(channels = {}, packetHandler = NULL.class );
+
+    /**
+     * A packet handler and channels to register for the server side
+     * @return
+     */
+    SidedPacketHandler serverPacketHandlerSpec() default @SidedPacketHandler(channels = {}, packetHandler = NULL.class );
+
+    /**
      * Special dummy class for handling stupid annotation default values
      * @author cpw
      *
      */
     static interface NULL extends IPacketHandler, IConnectionHandler {};
+
     /**
      * A marker for a method that will be offered the client's version string
      * if more sophisticated version rejection handling is required:
@@ -64,4 +82,14 @@ public @interface NetworkMod
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface VersionCheckHandler { }
+
+    /**
+     * Bundles together a packet handler and it's associated channels for the sided packet handlers
+     * @author cpw
+     *
+     */
+    public @interface SidedPacketHandler {
+        String[] channels();
+        Class<? extends IPacketHandler> packetHandler();
+    }
 }

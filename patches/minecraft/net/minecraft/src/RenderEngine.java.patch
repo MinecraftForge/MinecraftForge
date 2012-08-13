@@ -25,7 +25,7 @@
  {
 @@ -30,6 +37,7 @@
      public boolean field_78361_b = false;
-     private TexturePackList field_78366_k;
+     public TexturePackList field_78366_k;
      private BufferedImage field_78364_l = new BufferedImage(64, 64, 2);
 +    public static Logger log = FMLLog.getLogger();
  
