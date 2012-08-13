@@ -39,6 +39,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.FMLPacket.Type;
 
 public class NetworkRegistry
@@ -52,7 +53,9 @@ public class NetworkRegistry
     /**
      * A map of the packet handlers for packets
      */
-    private Multimap<String, IPacketHandler> packetHandlers = ArrayListMultimap.create();
+    private Multimap<String, IPacketHandler> universalPacketHandlers = ArrayListMultimap.create();
+    private Multimap<String, IPacketHandler> clientPacketHandlers = ArrayListMultimap.create();
+    private Multimap<String, IPacketHandler> serverPacketHandlers = ArrayListMultimap.create();
     /**
      * A linked set of registered connection handlers
      */
@@ -68,9 +71,9 @@ public class NetworkRegistry
      * Get the packet 250 channel registration string
      * @return
      */
-    byte[] getPacketRegistry()
+    byte[] getPacketRegistry(Side side)
     {
-        return Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML"),packetHandlers.keySet())).getBytes(Charsets.UTF_8);
+        return Joiner.on('\0').join(Iterables.concat(Arrays.asList("FML"),universalPacketHandlers.keySet(), side.isClient() ? clientPacketHandlers.keySet() : serverPacketHandlers.keySet())).getBytes(Charsets.UTF_8);
     }
     /**
      * Is the specified channel active for the player?
@@ -89,7 +92,19 @@ public class NetworkRegistry
      */
     public void registerChannel(IPacketHandler handler, String channelName)
     {
-        packetHandlers.put(channelName, handler);
+        universalPacketHandlers.put(channelName, handler);
+    }
+
+    public void registerChannel(IPacketHandler handler, String channelName, Side side)
+    {
+        if (side.isClient())
+        {
+            clientPacketHandlers.put(channelName, handler);
+        }
+        else
+        {
+            serverPacketHandlers.put(channelName, handler);
+        }
     }
     /**
      * Activate the channel for the player
@@ -176,7 +191,7 @@ public class NetworkRegistry
     {
         Packet250CustomPayload pkt = new Packet250CustomPayload();
         pkt.field_73630_a = "REGISTER";
-        pkt.field_73629_c = getPacketRegistry();
+        pkt.field_73629_c = getPacketRegistry(player instanceof EntityPlayerMP ? Side.SERVER : Side.CLIENT);
         pkt.field_73628_b = pkt.field_73629_c.length;
         manager.func_74429_a(pkt);
     }
@@ -202,7 +217,7 @@ public class NetworkRegistry
     {
         if (activeChannels.containsEntry(player, packet.field_73630_a))
         {
-            for (IPacketHandler handler : packetHandlers.get(packet.field_73630_a))
+            for (IPacketHandler handler : Iterables.concat(universalPacketHandlers.get(packet.field_73630_a), player instanceof EntityPlayerMP ? serverPacketHandlers.get(packet.field_73630_a) : clientPacketHandlers.get(packet.field_73630_a)))
             {
                 handler.onPacketData(network, packet, player);
             }
