@@ -241,10 +241,6 @@ public class TextureFXManager
 
 
     public void registerTextureOverrides(RenderEngine renderer) {
-        for (ModContainer mod : Loader.instance().getActiveModList()) {
-            registerAnimatedTexturesFor(mod);
-        }
-
         for (OverrideInfo animationOverride : animationSet) {
             renderer.func_78355_a(animationOverride.textureFX);
             addedTextureFX.add(animationOverride.textureFX);
@@ -272,7 +268,7 @@ public class TextureFXManager
     /**
      * @param mod
      */
-    private void registerAnimatedTexturesFor(ModContainer mod)
+    protected void registerAnimatedTexturesFor(ModContainer mod)
     {
     }
 

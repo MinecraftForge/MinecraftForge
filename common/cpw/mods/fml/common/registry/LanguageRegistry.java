@@ -20,6 +20,10 @@ public class LanguageRegistry
         return INSTANCE;
     }
 
+    public void addStringLocalization(String key, String value)
+    {
+        addStringLocalization(key, "en_US", value);
+    }
     public void addStringLocalization(String key, String lang, String value)
     {
         Properties langPack=modLanguageData.get(lang);
