@@ -49,7 +49,7 @@ import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class AccessTransformer implements IClassTransformer
 {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private class Modifier
     {
         public String name = "";
@@ -59,13 +59,14 @@ public class AccessTransformer implements IClassTransformer
         public int targetAccess = 0;
         public boolean changeFinal = false;
         public boolean markFinal = false;
+        protected boolean modifyClassVisibility;
 
         private void setTargetAccess(String name)
         {
             if (name.startsWith("public")) targetAccess = ACC_PUBLIC;
             else if (name.startsWith("private")) targetAccess = ACC_PRIVATE;
             else if (name.startsWith("protected")) targetAccess = ACC_PROTECTED;
-            
+
             if (name.endsWith("-f"))
             {
                 changeFinal = true;
@@ -119,23 +120,30 @@ public class AccessTransformer implements IClassTransformer
                     return true;
                 }
                 List<String> parts = Lists.newArrayList(Splitter.on(" ").trimResults().split(line));
-                if (parts.size()>2 || parts.get(1).indexOf('.') == -1)
+                if (parts.size()>2)
                 {
                     throw new RuntimeException("Invalid config file line "+ input);
                 }
                 Modifier m = new Modifier();
                 m.setTargetAccess(parts.get(0));
                 List<String> descriptor = Lists.newArrayList(Splitter.on(".").trimResults().split(parts.get(1)));
-                String nameReference = descriptor.get(1);
-                int parenIdx = nameReference.indexOf('(');
-                if (parenIdx>0)
+                if (descriptor.size() == 1)
                 {
-                    m.desc = nameReference.substring(parenIdx);
-                    m.name = nameReference.substring(0,parenIdx);
+                    m.modifyClassVisibility = true;
                 }
                 else
                 {
-                    m.name = nameReference;
+                    String nameReference = descriptor.get(1);
+                    int parenIdx = nameReference.indexOf('(');
+                    if (parenIdx>0)
+                    {
+                        m.desc = nameReference.substring(parenIdx);
+                        m.name = nameReference.substring(0,parenIdx);
+                    }
+                    else
+                    {
+                        m.name = nameReference;
+                    }
                 }
                 modifiers.put(descriptor.get(0), m);
                 return true;
@@ -156,6 +164,15 @@ public class AccessTransformer implements IClassTransformer
         Collection<Modifier> mods = modifiers.get(name);
         for (Modifier m : mods)
         {
+            if (m.modifyClassVisibility)
+            {
+                classNode.access = getFixedAccess(classNode.access, m);
+                if (DEBUG)
+                {
+                    System.out.println(String.format("Class: %s %s -> %s", name, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                }
+                continue;
+            }
             if (m.desc.isEmpty())
             {
                 for (FieldNode n : (List<FieldNode>) classNode.fields)
@@ -221,7 +238,7 @@ public class AccessTransformer implements IClassTransformer
         default:
             throw new RuntimeException("The fuck?");
         }
-        
+
         // Clear the "final" marker on fields only if specified in control field
         if (target.changeFinal && target.desc == "")
         {
@@ -291,7 +308,7 @@ public class AccessTransformer implements IClassTransformer
             e.printStackTrace();
             System.exit(1);
         }
-        
+
         if (!temp.delete())
         {
             System.out.println("Could not delete temp file: " + temp);
