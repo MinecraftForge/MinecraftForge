@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
+import net.minecraft.src.Packet;
 import net.minecraft.src.World;
 
 import cpw.mods.fml.common.modloader.ModProperty;
@@ -35,4 +36,6 @@ public interface IFMLSidedHandler
     void finishServerLoading();
 
     MinecraftServer getServer();
+
+    void sendPacket(Packet packet);
 }

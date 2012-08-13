@@ -392,4 +392,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         return client.func_71401_C();
     }
+
+    @Override
+    public void sendPacket(Packet packet)
+    {
+        client.field_71439_g.field_71174_a.func_72546_b(packet);
+    }
 }
