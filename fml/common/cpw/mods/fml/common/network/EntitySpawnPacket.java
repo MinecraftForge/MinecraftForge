@@ -76,7 +76,7 @@ public class EntitySpawnPacket extends FMLPacket
         // yaw, pitch
         dat.writeByte((byte) (ent.field_70177_z * 256.0F / 360.0F));
         dat.writeByte((byte) (ent.field_70125_A * 256.0F / 360.0F));
-        
+
         // head yaw
         if (ent instanceof EntityLiving)
         {
@@ -96,9 +96,9 @@ public class EntitySpawnPacket extends FMLPacket
         {
             // unpossible
         }
-        
+
         dat.write(bos.toByteArray());
-        
+
         if (ent instanceof IThrowableEntity)
         {
             Entity owner = ((IThrowableEntity)ent).getThrower();
@@ -117,11 +117,15 @@ public class EntitySpawnPacket extends FMLPacket
             dat.writeInt((int)(mY * 8000D));
             dat.writeInt((int)(mZ * 8000D));
         }
+        else
+        {
+            dat.writeInt(0);
+        }
         if (ent instanceof IEntityAdditionalSpawnData)
         {
             ((IEntityAdditionalSpawnData)ent).writeSpawnData(dat);
         }
-        
+
 
         return dat.toByteArray();
     }
@@ -152,7 +156,7 @@ public class EntitySpawnPacket extends FMLPacket
         {
             // Nope
         }
-        dat.skipBytes(data.length - bis.available());
+        dat.skipBytes(data.length - bis.available() - 27);
         throwerId = dat.readInt();
         if (throwerId != 0)
         {
@@ -160,7 +164,7 @@ public class EntitySpawnPacket extends FMLPacket
             speedScaledY = dat.readInt() / 8000D;
             speedScaledZ = dat.readInt() / 8000D;
         }
-        
+
         this.dataStream = dat;
         return this;
     }
@@ -170,7 +174,7 @@ public class EntitySpawnPacket extends FMLPacket
     {
         NetworkModHandler nmh = handler.findNetworkModHandler(networkId);
         ModContainer mc = nmh.getContainer();
-        
+
         EntityRegistration registration = EntityRegistry.instance().lookupModSpawn(mc, modEntityId);
         Class<? extends Entity> cls =  registration.getEntityClass();
         if (cls == null)
@@ -179,7 +183,7 @@ public class EntitySpawnPacket extends FMLPacket
             return;
         }
 
-        
+
         Entity entity = FMLCommonHandler.instance().spawnEntityIntoClientWorld(cls, this);
     }
 
