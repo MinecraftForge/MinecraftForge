@@ -5,14 +5,6 @@ import subprocess, logging, re, shlex
 import csv
 from hashlib import md5  # pylint: disable-msg=E0611
 
-#class flushout(object):
-#    def __init__(self, f):
-#        self.f = f
-#    def write(self, x):
-#        self.f.write(x)
-#        self.f.flush()
-#sys.stdout = flushout(sys.stdout)
-
 def download_deps(mcp_path):
     bin_path = os.path.normpath(os.path.join(mcp_path, 'runtime', 'bin'))
     ff_path = os.path.normpath(os.path.join(bin_path, 'fernflower.jar'))
@@ -51,11 +43,50 @@ def pre_decompile(mcp_dir, fml_dir):
     file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar')
     file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar')
     
+    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar.backup')
+    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar.backup')
+    
+    if not os.path.isfile(client_jar):
+        print 'Could not find Client jar, decompile requires both client and server.'
+        sys.exit(1)
+    
+    if not os.path.isfile(server_jar):
+        print 'Could not find Server jar, decompile requires both client and server.'
+        #sys.exit(1)
+        
+    md5_c = ""
+    md5_s = ""
+    with open(client_jar, 'rb') as fh:
+        md5_c = md5(fh.read()).hexdigest()
+    with open(server_jar, 'rb') as fh:
+        md5_s = md5(fh.read()).hexdigest()
+        
+    clean_c = "266ccbc9798afd2eadf3d6c01b4c562a"
+    clean_s = "f44a3cfe6ec35b1ac3f2b635e73d96fe"
+    
+    if not md5_c == clean_c:
+        print 'Warning, Modified Client jar detected'
+        print 'Continuing with decompile may produce unpredictable results'
+        print 'If you continue, do not come to the FML or Forge team with decompile issues.'
+        answer = raw_input('If you really want to continue, enter "Yes" ')
+        if answer.lower() not in ['yes', 'y']:
+            print 'You have not entered "Yes", aborting the decompile process'
+            sys.exit(1)
+            
+    if not md5_s == clean_s:
+        print 'Warning, Modified Server jar detected'
+        print 'Continuing with decompile may produce unpredictable results'
+        print 'If you continue, do not come to the FML or Forge team with decompile issues.'
+        answer = raw_input('If you really want to continue, enter "Yes" ')
+        if answer.lower() not in ['yes', 'y']:
+            print 'You have not entered "Yes", aborting the decompile process'
+            sys.exit(1)
+    
 def file_backup(base, file):
     back_jar = os.path.join(base, file + '.backup')
     src_jar = os.path.join(base, file)
     
-    if not os.path.isfile(src_jar):
+    if not os.path.isfile(src_jar) and not os.path.isfile(back_jar):
         return
     
     if os.path.isfile(back_jar):
@@ -132,7 +163,6 @@ def setup_fml(fml_dir, mcp_dir):
         
     if os.path.isdir(src_dir):
         os.chdir(mcp_dir)
-        #cleanup -f
         cleanup(None, False)
         reset_logger()
         os.chdir(fml_dir)
@@ -147,56 +177,59 @@ def setup_fml(fml_dir, mcp_dir):
     
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
         jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
-        #print "==================================SHUNT %s============================" % side
-        #print "Java: %s" % self.cmdjava
-        #print "Javac: %s" % self.cmdjavac
-        #print "Jar: %s" % jars[side]
         
         binDir = os.path.join(fml_dir, 'bin')
         if not os.path.isdir(binDir):
             os.makedirs(binDir)
             
-        #Compile AccessTransformer
-        print 'Compiling AccessTransformer'
-        forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
-            classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
-            target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
-        #print forkcmd
-        self.runcmd(forkcmd)
         
-        if (side == CLIENT):
-            print 'Compiling MCPMerger'
-            #Compile MCPMerger
+        if (side == CLIENT):        
+            #Compile AccessTransformer
+            self.logger.info('> Compiling AccessTransformer')
+            forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
+                classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
+                target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
+                
+            if not runcmd(self, forkcmd, echo=False):
+                sys.exit(1)
+                
+            self.logger.info('> Compiling MCPMerger')
             forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
                 classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
                 target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'MCPMerger.java'))
-            #print forkcmd
-            self.runcmd(forkcmd)
+                
+            if not runcmd(self, forkcmd, echo=False):
+                sys.exit(1)
             
-            print 'Running MCPMerder for %s' % side
+            self.logger.info('> Running MCPMerger')
             #Run MCPMerger
             forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
                 classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
-            self.runcmd(forkcmd)
+                
+            if not runcmd(self, forkcmd):
+                sys.exit(1)
         
-        print 'Running AccessTransformer'
+        self.logger.info('> Running AccessTransformer')
         #Run AccessTransformer
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
             classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
             
         forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
         if os.path.isfile(forge_cfg):
+            self.logger.info('   Forge config detected')
             forkcmd += ' "%s"' % forge_cfg
         
-        self.runcmd(forkcmd)
+        if not runcmd(self, forkcmd):
+            sys.exit(1)
         
+        self.logger.info('> Really Applying Retroguard')
         applyrg_real(self, side, reobf)
     
     #Check the original jars not the transformed jars
     def checkjars_shunt(self, side, checkjars_real = Commands.checkjars):
         self.jarclient = self.jarclient + '.backup'
         self.jarserver = self.jarserver + '.backup'
-        print 'Jar Check %s %s %s' % (side, self.jarclient, self.jarserver)
+        #print 'Jar Check %s %s %s' % (side, self.jarclient, self.jarserver)
         ret = checkjars_real(self, side)
         self.jarclient = self.jarclient[:-7]
         self.jarserver = self.jarserver[:-7]
@@ -238,6 +271,27 @@ def setup_fml(fml_dir, mcp_dir):
         
     os.chdir(fml_dir)
     
+def cmdsplit(args):
+    if os.sep == '\\':
+        args = args.replace('\\', '\\\\')
+    return shlex.split(args)
+    
+def runcmd(commands, command, echo=True):
+    forklist = cmdsplit(command)
+    process = subprocess.Popen(forklist, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
+    output, _ = process.communicate()    
+    
+    if echo:
+        for line in output.splitlines():
+            self.logger.info(line)
+
+    if process.returncode:
+        if not echo:        
+            for line in output.splitlines():
+                self.logger.info(line)
+        return False
+    return True
+
 def merge_client_server(mcp_dir):
     client = os.path.join(mcp_dir, 'src', 'minecraft')
     server = os.path.join(mcp_dir, 'src', 'minecraft_server')
@@ -518,9 +572,15 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     if os.path.isfile(temp):
         os.remove(temp)
     
-    sys.path.append(mcp_dir)
-    from runtime.commands import commands_sanity_check
-    commands_sanity_check()
+    try:
+        sys.path.append(mcp_dir)
+        from runtime.commands import commands_sanity_check
+        commands_sanity_check()
+    except ImportError as ex:
+        print 'Could not verify commands.py patch integrity, this typically means that you are not in a clean MCP environment.'
+        print 'Download a clean version of MCP 7.0a and try again'
+        print ex
+        sys.exit(1)
     
     mcp_conf = os.path.join(mcp_dir, 'conf')
     mcp_conf_bak = os.path.join(mcp_dir, 'conf.bak')

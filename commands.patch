@@ -29,7 +29,17 @@
          return True
  
      def checkbins(self, side):
-@@ -1039,6 +1045,7 @@
+@@ -1027,6 +1033,9 @@
+         pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
+         pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
+ 
++        if side == SERVER: #Disable server because FML recombines it into client
++            return
++        
+         if not os.path.exists(pathbinlk[side]):
+             os.makedirs(pathbinlk[side])
+ 
+@@ -1039,6 +1048,7 @@
              all_files = True
              append_pattern = False
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
@@ -37,7 +47,7 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
-@@ -1060,7 +1067,7 @@
+@@ -1060,7 +1070,7 @@
              raise
  
      def startserver(self):
@@ -46,7 +56,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1068,7 +1075,7 @@
+@@ -1068,7 +1078,7 @@
          self.runmc(forkcmd)
  
      def startclient(self):
@@ -55,7 +65,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          natives = os.path.join('..', self.dirnatives)
-@@ -1195,20 +1202,20 @@
+@@ -1195,20 +1205,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -79,7 +89,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1238,6 +1245,11 @@
+@@ -1238,6 +1248,11 @@
  
          # HINT: We pathwalk the sources
          for path, _, filelist in os.walk(pathsrclk[side], followlinks=True):
@@ -91,7 +101,7 @@
              for cur_file in fnmatch.filter(filelist, '*.java'):
                  updatefile(os.path.normpath(os.path.join(path, cur_file)))
          return True
-@@ -1320,12 +1332,14 @@
+@@ -1320,12 +1335,14 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
  
          strip_comments(pathsrclk[side])
@@ -106,7 +116,7 @@
  
      def process_javadoc(self, side):
          """Add CSV descriptions to methods and fields as javadoc"""
-@@ -1334,6 +1348,21 @@
+@@ -1334,6 +1351,21 @@
          if not self.has_doc_csv:
              self.logger.warning('!! javadoc disabled due to no csvs !!')
              return False
@@ -128,7 +138,7 @@
  
          #HINT: We read the relevant CSVs
          methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
-@@ -1342,13 +1371,13 @@
+@@ -1342,13 +1374,13 @@
          methods = {}
          for row in methodsreader:
              #HINT: Only include methods that have a non-empty description
@@ -144,7 +154,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1420,6 +1449,7 @@
+@@ -1420,6 +1452,7 @@
  
          # HINT: We create the list of source directories based on the list of packages
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
@@ -152,7 +162,7 @@
          dirs = ' '.join(pkglist)
          forkcmd = self.cmdastyle.format(classes=dirs, conffile=self.astyleconf)
          self.runcmd(forkcmd)
-@@ -1526,6 +1556,9 @@
+@@ -1526,6 +1559,9 @@
                  trgclasses.append(key)
                  self.logger.info('> Unchanged class found: %s', key)
          classes = {}
@@ -162,7 +172,7 @@
          srg_data = parse_srg(srglk[side])
          for row in srg_data['CL']:
              classes[row['deobf_name']] = row['obf_name']
-@@ -1592,6 +1625,9 @@
+@@ -1592,6 +1628,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -172,7 +182,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1654,3 +1690,6 @@
+@@ -1654,3 +1693,6 @@
                  except IOError:
                      self.logger.error('* File %s copy failed', in_class)
  
