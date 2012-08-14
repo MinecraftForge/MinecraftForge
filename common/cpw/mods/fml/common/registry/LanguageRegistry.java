@@ -58,6 +58,11 @@ public class LanguageRegistry
         objectName+=".name";
         addStringLocalization(objectName, lang, name);
     }
+    
+    public static void addName(Object objectToName, String name)
+    {
+        instance().addNameForObject(objectToName, "en_US", name);
+    }
 
     public void loadLanguageTable(Properties languagePack, String lang)
     {
