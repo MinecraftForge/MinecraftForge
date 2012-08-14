@@ -157,7 +157,6 @@ def setup_fml(fml_dir, mcp_dir):
     from runtime.decompile import decompile
     from runtime.cleanup import cleanup
     from runtime.commands import Commands, CLIENT, SERVER
-    from runtime.mcp import decompile_side, updatemd5_side
     
     src_dir = os.path.join(mcp_dir, 'src')
         
@@ -265,12 +264,22 @@ def setup_fml(fml_dir, mcp_dir):
     
     os.chdir(mcp_dir)
     commands = Commands(verify=True)
-    updatemd5_side(commands, CLIENT)
-    updatemd5_side(commands, SERVER)
+    updatemd5_side(mcp_dir, commands, CLIENT)
+    updatemd5_side(mcp_dir, commands, SERVER)
     reset_logger()
         
     os.chdir(fml_dir)
     
+def updatemd5_side(mcp_dir, commands, side):
+    sys.path.append(mcp_dir)
+    from runtime.mcp import recompile_side, updatemd5_side
+    from runtime.commands import SIDE_NAME
+    
+    recomp = recompile_side(commands, side)
+    if recomp:
+        commands.logger.info('> Generating %s md5s', SIDE_NAME[side])
+        commands.gathermd5s(side, skip_fml=True)
+
 def cmdsplit(args):
     if os.sep == '\\':
         args = args.replace('\\', '\\\\')
