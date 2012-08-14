@@ -1,118 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -13,107 +13,11 @@
+@@ -13,7 +13,9 @@
  import java.text.DecimalFormat;
  import java.util.HashMap;
  import java.util.List;
 +
  import javax.swing.JPanel;
--import net.minecraft.src.AchievementList;
--import net.minecraft.src.AnvilSaveConverter;
--import net.minecraft.src.AxisAlignedBB;
--import net.minecraft.src.Block;
--import net.minecraft.src.CallableClientProfiler;
--import net.minecraft.src.CallableGLInfo;
--import net.minecraft.src.CallableLWJGLVersion;
--import net.minecraft.src.CallableModded;
--import net.minecraft.src.CallableTexturePack;
--import net.minecraft.src.CallableType2;
--import net.minecraft.src.ColorizerFoliage;
--import net.minecraft.src.ColorizerGrass;
--import net.minecraft.src.ColorizerWater;
--import net.minecraft.src.CrashReport;
--import net.minecraft.src.EffectRenderer;
--import net.minecraft.src.EntityBoat;
--import net.minecraft.src.EntityClientPlayerMP;
--import net.minecraft.src.EntityList;
--import net.minecraft.src.EntityLiving;
--import net.minecraft.src.EntityMinecart;
--import net.minecraft.src.EntityPainting;
--import net.minecraft.src.EntityRenderer;
--import net.minecraft.src.EnumMovingObjectType;
--import net.minecraft.src.EnumOS;
--import net.minecraft.src.EnumOSHelper;
--import net.minecraft.src.EnumOptions;
--import net.minecraft.src.FontRenderer;
--import net.minecraft.src.GLAllocation;
--import net.minecraft.src.GameSettings;
--import net.minecraft.src.GameWindowListener;
--import net.minecraft.src.GuiAchievement;
--import net.minecraft.src.GuiChat;
--import net.minecraft.src.GuiConnecting;
--import net.minecraft.src.GuiErrorScreen;
--import net.minecraft.src.GuiGameOver;
--import net.minecraft.src.GuiIngame;
--import net.minecraft.src.GuiIngameMenu;
--import net.minecraft.src.GuiInventory;
--import net.minecraft.src.GuiMainMenu;
--import net.minecraft.src.GuiMemoryErrorScreen;
--import net.minecraft.src.GuiScreen;
--import net.minecraft.src.GuiSleepMP;
--import net.minecraft.src.IPlayerUsage;
--import net.minecraft.src.ISaveFormat;
--import net.minecraft.src.ISaveHandler;
--import net.minecraft.src.IntegratedServer;
--import net.minecraft.src.Item;
--import net.minecraft.src.ItemRenderer;
--import net.minecraft.src.ItemStack;
--import net.minecraft.src.KeyBinding;
--import net.minecraft.src.LoadingScreenRenderer;
--import net.minecraft.src.MathHelper;
--import net.minecraft.src.MemoryConnection;
--import net.minecraft.src.MinecraftError;
--import net.minecraft.src.MinecraftFakeLauncher;
--import net.minecraft.src.MouseHelper;
--import net.minecraft.src.MovementInputFromOptions;
--import net.minecraft.src.MovingObjectPosition;
--import net.minecraft.src.NetClientHandler;
--import net.minecraft.src.NetworkManager;
--import net.minecraft.src.OpenGlHelper;
--import net.minecraft.src.Packet3Chat;
--import net.minecraft.src.PlayerControllerMP;
--import net.minecraft.src.PlayerUsageSnooper;
--import net.minecraft.src.Profiler;
--import net.minecraft.src.ProfilerResult;
--import net.minecraft.src.RenderBlocks;
--import net.minecraft.src.RenderEngine;
--import net.minecraft.src.RenderGlobal;
--import net.minecraft.src.RenderManager;
--import net.minecraft.src.ReportedException;
--import net.minecraft.src.ScaledResolution;
--import net.minecraft.src.ScreenShotHelper;
--import net.minecraft.src.ServerData;
--import net.minecraft.src.Session;
--import net.minecraft.src.SoundManager;
--import net.minecraft.src.StatCollector;
--import net.minecraft.src.StatFileWriter;
--import net.minecraft.src.StatList;
--import net.minecraft.src.StatStringFormatKeyInv;
--import net.minecraft.src.StringTranslate;
--import net.minecraft.src.Tessellator;
--import net.minecraft.src.TextureCompassFX;
--import net.minecraft.src.TextureFlamesFX;
--import net.minecraft.src.TextureLavaFX;
--import net.minecraft.src.TextureLavaFlowFX;
--import net.minecraft.src.TexturePackList;
--import net.minecraft.src.TexturePortalFX;
--import net.minecraft.src.TextureWatchFX;
--import net.minecraft.src.TextureWaterFX;
--import net.minecraft.src.TextureWaterFlowFX;
--import net.minecraft.src.ThreadClientSleep;
--import net.minecraft.src.ThreadDownloadResources;
--import net.minecraft.src.ThreadShutdown;
--import net.minecraft.src.Timer;
--import net.minecraft.src.Vec3;
--import net.minecraft.src.WorldClient;
--import net.minecraft.src.WorldInfo;
--import net.minecraft.src.WorldRenderer;
--import net.minecraft.src.WorldSettings;
 +
-+import net.minecraft.src.*;
+ import net.minecraft.src.AchievementList;
+ import net.minecraft.src.AnvilSaveConverter;
+ import net.minecraft.src.AxisAlignedBB;
+@@ -114,6 +116,7 @@
+ import net.minecraft.src.WorldInfo;
+ import net.minecraft.src.WorldRenderer;
+ import net.minecraft.src.WorldSettings;
 +
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
  import org.lwjgl.input.Keyboard;
-@@ -125,6 +29,12 @@
+@@ -125,6 +128,12 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
@@ -125,7 +31,7 @@
  
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -305,7 +215,7 @@
+@@ -305,7 +314,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
@@ -134,7 +40,7 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab);
-@@ -350,6 +260,8 @@
+@@ -350,6 +359,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -143,7 +49,15 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -738,9 +650,11 @@
+@@ -378,6 +389,7 @@
+         {
+             this.func_71352_k();
+         }
++        FMLClientHandler.instance().reloadTextureFX();
+     }
+ 
+     private void func_71357_I() throws LWJGLException
+@@ -738,9 +750,11 @@
  
              if (!this.field_71454_w)
              {
@@ -155,7 +69,7 @@
              }
  
              GL11.glFlush();
-@@ -1261,11 +1175,13 @@
+@@ -1261,11 +1275,13 @@
  
      public void func_71407_l()
      {
@@ -169,7 +83,7 @@
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
          this.field_71424_I.func_76318_c("gui");
-@@ -1633,6 +1549,7 @@
+@@ -1633,6 +1649,7 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -177,7 +91,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1883,6 +1800,12 @@
+@@ -1883,6 +1900,12 @@
  
      public static void main(String[] p_main_0_)
      {

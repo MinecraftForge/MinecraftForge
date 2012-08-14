@@ -33,7 +33,13 @@ public class LanguageRegistry
         }
         langPack.put(key,value);
 
-        loadLanguageTable(StringTranslate.func_74808_a().field_74815_b, lang);
+    }
+    public static void reloadLanguageTable()
+    {
+        // reload language table by forcing lang to null and reloading the properties file
+        String lang = StringTranslate.func_74808_a().func_74811_c();
+        StringTranslate.func_74808_a().field_74813_d = null;
+        StringTranslate.func_74808_a().func_74810_a(lang);
     }
 
 

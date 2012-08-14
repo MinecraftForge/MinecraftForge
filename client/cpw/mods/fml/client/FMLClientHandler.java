@@ -113,6 +113,7 @@ import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
 /**
@@ -220,6 +221,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
             return;
         }
+        LanguageRegistry.reloadLanguageTable();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
 
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
