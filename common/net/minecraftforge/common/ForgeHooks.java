@@ -281,6 +281,7 @@ public class ForgeHooks
         }
 
         player.inventory.setInventorySlotContents(slot, result);
+        player.inventory.currentItem = slot;
         return true;
     }
 }
