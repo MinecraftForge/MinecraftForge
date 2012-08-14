@@ -58,6 +58,7 @@ import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.modloader.ModProperty;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -113,6 +114,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void finishServerLoading()
     {
         Loader.instance().initializeMods();
+        LanguageRegistry.reloadLanguageTable();
     }
 
     @Override
