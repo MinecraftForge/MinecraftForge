@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -141,6 +142,10 @@ public class FMLModContainer implements ModContainer
             modMetadata.requiredMods = requirements;
             modMetadata.dependencies = dependencies;
             modMetadata.dependants = dependants;
+        }
+        if (Strings.isNullOrEmpty(modMetadata.name))
+        {
+            modMetadata.name = getModId();
         }
     }
 

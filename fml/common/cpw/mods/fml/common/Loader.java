@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -43,8 +44,13 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset.Entry;
+import com.google.common.collect.Multisets;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ContainerType;
@@ -286,9 +292,44 @@ public class Loader
         discoverer.findModDirMods(canonicalModsDir);
 
         mods.addAll(discoverer.identifyMods());
+        identifyDuplicates(mods);
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
         return discoverer;
+    }
+
+    private class ModIdComparator implements Comparator<ModContainer>
+    {
+        @Override
+        public int compare(ModContainer o1, ModContainer o2)
+        {
+            return o1.getModId().compareTo(o2.getModId());
+        }
+
+    }
+
+    private void identifyDuplicates(List<ModContainer> mods)
+    {
+        boolean foundDupe = false;
+        TreeMultimap<ModContainer, File> dupsearch = TreeMultimap.create(new ModIdComparator(), Ordering.arbitrary());
+        for (ModContainer mc : mods)
+        {
+            if (mc.getSource() != null)
+            {
+                dupsearch.put(mc, mc.getSource());
+            }
+        }
+
+        ImmutableMultiset<ModContainer> duplist = Multisets.copyHighestCountFirst(dupsearch.keys());
+        for (Entry<ModContainer> e : duplist.entrySet())
+        {
+            if (e.getCount() > 1)
+            {
+                FMLLog.severe("Found a duplicate mod %s at %s", e.getElement().getModId(), dupsearch.get(e.getElement()));
+                foundDupe = true;
+            }
+        }
+        if (foundDupe) { throw new LoaderException(); }
     }
 
     /**

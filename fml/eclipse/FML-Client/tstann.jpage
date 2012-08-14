@@ -32,3 +32,13 @@ org.objectweb.asm.Type.getDescriptor(net.minecraft.src.CraftingManager.class.get
 com.google.common.collect.Tables.newCustomTable(new HashMap<String,Map<String,List<String>>(), new com.google.common.base.Supplier() {
 
 });
+
+
+
+
+
+
+byte[] bytes = new byte[] {0, 0, 0, 1, 0, 0, 0, -107, 0, 0, 22, 83, 0, 0, 25, -48, 0, 0, 8, 70, 0, 0, 32, 80, 0, 0, 0, 0, 0, 33, 1, 44, 74, 0, 0, 0, 0, 75, 0, 0, 0, 0, 76, 0, 0, 0, 0, 77, 0, 0, 0, 0, 78, 0, 0, 0, 0, 79, 0, 0, 0, 0, 81, 0, 0, 0, 0, 80, 0, 0, 0, 0, 83, 0, 0, 0, 0, 82, 0, 0, 0, 0, 85, 0, 0, 0, 0, 84, 0, 0, 0, 0, 23, 0, 22, 0, 25, 0, 24, 0, -102, 0, 0, 127, 0, 0, 0, 0};
+new cpw.mods.fml.common.network.EntitySpawnPacket().consumePacket(bytes)
+
+108 - 27 - 4 
