@@ -21,7 +21,7 @@
 +    protected boolean canThisPlantGrowOnThisBlockID(int i, int j)
 +    {
 +    	CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(i, 1, j));
-+        if(!MinecraftForge.EVENT_BUS.post(event))
++        if(MinecraftForge.EVENT_BUS.post(event))
 +        {
 +        	return false;
 +        }else if(event.canBePlaced()){

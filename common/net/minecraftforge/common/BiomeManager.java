@@ -1,11 +1,9 @@
 package net.minecraftforge.common;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.MapGenStronghold;
-import net.minecraft.src.MapGenVillage;
-import net.minecraft.src.WorldChunkManager;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
@@ -18,6 +16,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class BiomeManager {
 
 	private static LinkedList<BiomeGenBase> registeredBiomes = new LinkedList<BiomeGenBase>();
+	private static ArrayList<BiomeGenBase> spawnBiomes = new ArrayList<BiomeGenBase>();
+	private static ArrayList<BiomeGenBase> strongholdBiomes = new ArrayList<BiomeGenBase>();
+	private static ArrayList<BiomeGenBase> villageBiomes = new ArrayList<BiomeGenBase>();
 	
 	/**
 	 * Equivalent to Modloader.addBiome
@@ -54,14 +55,14 @@ public class BiomeManager {
 		{
 			if(b)
 			{
-				if(!MapGenVillage.villageSpawnBiomes.contains(biome))
+				if(!villageBiomes.contains(biome))
 				{
-					MapGenVillage.villageSpawnBiomes.add(biome);
+					villageBiomes.add(biome);
 				}
 			}else{
-				if(MapGenVillage.villageSpawnBiomes.contains(biome))
+				if(villageBiomes.contains(biome))
 				{
-					MapGenVillage.villageSpawnBiomes.remove(biome);
+					villageBiomes.remove(biome);
 				}
 			}
 		}
@@ -79,9 +80,15 @@ public class BiomeManager {
 		{
 			if(b)
 			{
-				MapGenStronghold.addBiome(biome);
+				if(!strongholdBiomes.contains(biome))
+				{
+					strongholdBiomes.add(biome);
+				}
 			}else{
-				MapGenStronghold.removeBiome(biome);
+				if(strongholdBiomes.contains(biome))
+				{
+					strongholdBiomes.remove(biome);
+				}
 			}
 		}
 	}
@@ -98,11 +105,32 @@ public class BiomeManager {
 		{
 			if(b)
 			{
-				WorldChunkManager.addBiome(biome);
+				if(!spawnBiomes.contains(biome))
+				{
+					spawnBiomes.add(biome);
+				}
 			}else{
-				WorldChunkManager.removeBiome(biome);
+				if(spawnBiomes.contains(biome))
+				{
+					spawnBiomes.remove(biome);
+				}
 			}
 		}
+	}
+	
+	public static ArrayList<BiomeGenBase> getVillageBiomes()
+	{
+		return villageBiomes;
+	}
+	
+	public static ArrayList<BiomeGenBase> getStrongholdBiomes()
+	{
+		return strongholdBiomes;
+	}
+	
+	public static ArrayList<BiomeGenBase> getSpawnBiomes()
+	{
+		return spawnBiomes;
 	}
 	
 }

@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/WorldChunkManager.java	0000-00-00 00:00:00.000000000 -0000
 +++ ../src_work/common/net/minecraft/src/WorldChunkManager.java	0000-00-00 00:00:00.000000000 -0000
-@@ -3,8 +3,12 @@
+@@ -3,8 +3,14 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.util.ArrayList;
@@ -9,41 +9,23 @@
  import java.util.Random;
 +import java.util.Set;
 +
++import net.minecraftforge.common.BiomeManager;
++
 +import com.google.common.collect.Sets;
  
  public class WorldChunkManager
  {
-@@ -18,9 +22,12 @@
+@@ -30,6 +36,7 @@
+         this.biomesToSpawnIn.add(BiomeGenBase.forestHills);
+         this.biomesToSpawnIn.add(BiomeGenBase.jungle);
+         this.biomesToSpawnIn.add(BiomeGenBase.jungleHills);
++        biomesToSpawnIn.addAll(BiomeManager.getSpawnBiomes());
+     }
  
-     /** A list of biomes that the player can spawn in. */
-     private List biomesToSpawnIn;
-+    
-+    private static WorldChunkManager INSTANCE;
- 
-     protected WorldChunkManager()
-     {
-+    	INSTANCE = this;
-         this.biomeCache = new BiomeCache(this);
-         this.biomesToSpawnIn = new ArrayList();
-         this.biomesToSpawnIn.add(BiomeGenBase.forest);
-@@ -257,4 +264,20 @@
+     public WorldChunkManager(long par1, WorldType par3WorldType)
+@@ -257,4 +264,5 @@
      {
          this.biomeCache.cleanupCache();
      }
 +    
-+    public static void addBiome(BiomeGenBase biome)
-+    {
-+    	List biomes = new ArrayList();
-+        biomes.addAll(INSTANCE.biomesToSpawnIn);
-+        biomes.add(biome);
-+        INSTANCE.biomesToSpawnIn = biomes;
-+    }
-+    
-+    public static void removeBiome(BiomeGenBase biome)
-+    {
-+    	List biomes = new ArrayList();
-+        biomes.addAll(INSTANCE.biomesToSpawnIn);
-+        biomes.remove(biome);
-+       	INSTANCE.biomesToSpawnIn = biomes;
-+    }
  }
