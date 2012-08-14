@@ -39,6 +39,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.World;
 
 import com.google.common.base.Strings;
@@ -374,11 +375,13 @@ public class FMLCommonHandler
 
     public void onPlayerPreTick(EntityPlayer player)
     {
-        tickStart(EnumSet.of(TickType.PLAYER), Side.SERVER, player);
+        Side side = player instanceof EntityPlayerMP ? Side.SERVER : Side.CLIENT;
+        tickStart(EnumSet.of(TickType.PLAYER), side, player);
     }
 
     public void onPlayerPostTick(EntityPlayer player)
     {
-        tickEnd(EnumSet.of(TickType.PLAYER), Side.SERVER, player);
+        Side side = player instanceof EntityPlayerMP ? Side.SERVER : Side.CLIENT;
+        tickEnd(EnumSet.of(TickType.PLAYER), side, player);
     }
 }
