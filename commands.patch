@@ -154,7 +154,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1420,6 +1452,7 @@
+@@ -1420,12 +1452,13 @@
  
          # HINT: We create the list of source directories based on the list of packages
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
@@ -162,16 +162,23 @@
          dirs = ' '.join(pkglist)
          forkcmd = self.cmdastyle.format(classes=dirs, conffile=self.astyleconf)
          self.runcmd(forkcmd)
-@@ -1526,6 +1559,9 @@
-                 trgclasses.append(key)
-                 self.logger.info('> Unchanged class found: %s', key)
-         classes = {}
-+        for key in [ 'cpw/mods/fml/common/asm/SideOnly', 'cpw/mods/fml/common/Side' ]:
-+          self.logger.info('> Forcing FML class: %s', key)
-+          trgclasses.append(key)
-         srg_data = parse_srg(srglk[side])
-         for row in srg_data['CL']:
-             classes[row['deobf_name']] = row['obf_name']
+         return True
+ 
+-    def gathermd5s(self, side, reobf=False):
++    def gathermd5s(self, side, reobf=False, skip_fml=False):
+         if not reobf:
+             md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
+         else:
+@@ -1440,6 +1473,9 @@
+                     class_path = ''
+                 else:
+                     class_path += '/'
++                if skip_fml:
++                    if class_path.startswith('cpw/'):
++                        continue
+                 for class_file in fnmatch.filter(filelist, '*.class'):
+                     class_name = class_path + os.path.splitext(class_file)[0]
+                     bin_file = os.path.normpath(os.path.join(path, class_file))
 @@ -1592,6 +1628,9 @@
                  sys.exit(1)
  
