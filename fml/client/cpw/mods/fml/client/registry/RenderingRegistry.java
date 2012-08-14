@@ -19,6 +19,10 @@ import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.modloader.ModLoaderBlockRendererHandler;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
+/**
+ * @author cpw
+ *
+ */
 public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
@@ -63,6 +67,18 @@ public class RenderingRegistry
         instance().blockRenderers.put(handler.getRenderId(), handler);
     }
 
+    /**
+     * Register the simple block rendering handler
+     * This version will not call getRenderId on the passed in handler, instead using the supplied ID, so you
+     * can easily re-use the same rendering handler for multiple IDs
+     *
+     * @param renderId
+     * @param handler
+     */
+    public static void registerBlockHandler(int renderId, ISimpleBlockRenderingHandler handler)
+    {
+        instance().blockRenderers.put(renderId, handler);
+    }
     /**
      * Get the next available renderId from the block render ID list
      *
