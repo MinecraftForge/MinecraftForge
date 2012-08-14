@@ -2,3 +2,4 @@
 .lock
 version.ini
 /*.log
+/SarosLogs/
