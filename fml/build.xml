@@ -51,18 +51,15 @@
     </condition>
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
     <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
-    <property name="server.mcp.obfoutput" location="${mcp.obfoutput}/minecraft_server" />
     <property name="mcp.srcdir" location="${mcp.home}/src" />
     <property name="common.mcp.srcdir" location="${mcp.srcdir}/common" />
     <property name="client.mcp.srcdir" location="${mcp.srcdir}/minecraft" />
-    <property name="server.mcp.srcdir" location="${mcp.srcdir}/minecraft_server" />
     <property name="clean.mcp.srcdir" location="${mcp.home}/src-base" />
     <property name="patch.mcp.srcdir" location="${mcp.home}/src-work" />
     <property name="tmp.mcp.srcdir" location="${mcp.home}/src-tmp" />
     <property name="renamed.mcp.srcdir" location="${mcp.home}/src-renamed" />
     <property name="common.src.dir" location="${basedir}/common" />
     <property name="client.src.dir" location="${basedir}/client" />
-    <property name="server.src.dir" location="${basedir}/server" />
     <property name="patch.src.dir" location="${basedir}/patches" />
     <property name="fml.conf.dir" location="${basedir}/conf" />
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
@@ -122,10 +119,7 @@
   	<fail message="Compilation failed">
   		<condition>
   	        <not>
-  	        	<and>
-  	        	  <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
-                  <available file="${mcp.home}/bin/minecraft_server/net/minecraft/server/MinecraftServer.class"/>
-  	        	</and>
+        	  <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
   	        </not>
   		</condition>
   	</fail>
@@ -137,29 +131,17 @@
     </copy>
   </target>
 
-  <target name="merge-server" depends="buildenvsetup">
-    <copy todir="${server.mcp.srcdir}" overwrite="true" verbose="true">
-      <fileset dir="${server.src.dir}" includes="**/*.java" />
-    </copy>
-  </target>
-
   <target name="merge-common">
     <copy todir="${common.mcp.srcdir}" overwrite="true" verbose="true">
       <fileset dir="${common.src.dir}" includes="**/*.java" />
     </copy>
   </target>
 
-  <target name="merge-source" depends="buildenvsetup,merge-client,merge-server,merge-common" />
+  <target name="merge-source" depends="buildenvsetup,merge-client,merge-common" />
 
   <target name="build-client" depends="buildenvsetup,merge-client,merge-common,buildandreobfmcp,makeversion">
     <antcall target="extract-built-jar">
       <param name="side" value="client" />
-    </antcall>
-  </target>
-
-  <target name="build-server" depends="buildenvsetup,merge-server,merge-common,buildandreobfmcp,makeversion">
-    <antcall target="extract-built-jar">
-      <param name="side" value="server" />
     </antcall>
   </target>
 
@@ -199,7 +181,6 @@
         <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
       </manifest>
       <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" />
-      <fileset dir="${server.mcp.obfoutput}" includes="**/*.class" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
       <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
@@ -228,7 +209,6 @@
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/client" />
-      <zipfileset dir="${server.src.dir}" includes="**/*.java" prefix="fml/server" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml/common" />
       <zipfileset dir="${common.src.dir}" includes="*.cfg" prefix="fml/common" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
@@ -252,7 +232,7 @@
     </zip>
   </target>
 
-  <target name="build" depends="buildenvsetup,merge-server,merge-client,merge-common,build-server,build-client,build-universal,build-source-pack" />
+  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-client,build-universal,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
 
@@ -378,7 +358,7 @@
     </exec>
   </target>
 
-  <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-server,buildandreobfmcp">
+  <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,buildandreobfmcp">
     <copy todir="${tmp.mcp.srcdir}">
       <fileset dir="${mcp.srcdir}"/>
     </copy>
