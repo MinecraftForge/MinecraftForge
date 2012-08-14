@@ -97,8 +97,6 @@
   		<condition>
   	        <not>
   	        	<and>
-  	        	  <available file="${mcp.home}/temp/server.md5"/>
-                  <available file="${mcp.home}/temp/server_reobf.md5"/>
   	        	  <available file="${mcp.home}/temp/client.md5"/>
                   <available file="${mcp.home}/temp/client_reobf.md5"/>
   	        	</and>
