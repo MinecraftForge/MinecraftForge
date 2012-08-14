@@ -160,9 +160,6 @@ public class GameRegistry
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
         {
             FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
-        } else if (!Loader.instance().isInState(LoaderState.PREINITIALIZATION))
-        {
-            FMLLog.warning("The mod %s is attempting to register a block after the statistics have loaded. This will reset the statistics for the game", Loader.instance().activeModContainer().getModId());
         }
         try
         {
