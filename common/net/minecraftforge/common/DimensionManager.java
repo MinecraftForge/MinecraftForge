@@ -64,6 +64,11 @@ public class DimensionManager
         return dimensions.get(dim);
     }
 
+    public static WorldProvider getProvider(int dim)
+    {
+        return getWorld(dim).provider;
+    }
+
     public static Integer[] getIDs()
     {
         return dimensions.keySet().toArray(new Integer[0]);
