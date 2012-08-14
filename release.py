@@ -13,7 +13,6 @@ from forge import reset_logger, load_version, zip_folder, zip_create, inject_ver
 
 reobf_dir = os.path.join(mcp_dir, 'reobf')
 client_dir = os.path.join(reobf_dir, 'minecraft')
-server_dir = os.path.join(reobf_dir, 'minecraft_server')
 zip = None
 zip_name = None
 zip_base = None
@@ -55,9 +54,9 @@ def main():
         
     os.makedirs(out_folder)
     
-    zip_start('minecraftforge-client-%s.zip' % version_str)
+    zip_start('minecraftforge-universal-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
-    zip_add('forge_client/src/forge_logo.png')
+    zip_add('client/forge_logo.png')
     zip_add('install/MinecraftForge-Credits.txt')
     zip_add('install/MinecraftForge-License.txt')
     zip_add('fml/CREDITS-fml.txt')
@@ -68,19 +67,6 @@ def main():
     zip_add('fml/common/fmlversion.properties')
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
-    zip_add('common/forge_at.cfg')
-    zip_end()
-    
-    zip_start('minecraftforge-server-%s.zip' % version_str)
-    zip_folder(server_dir, '', zip)
-    zip_add('install/MinecraftForge-Credits.txt')
-    zip_add('install/MinecraftForge-License.txt')
-    zip_add('fml/CREDITS-fml.txt')
-    zip_add('fml/LICENSE-fml.txt')
-    zip_add('fml/README-fml.txt')
-    zip_add('fml/common/fml_at.cfg')
-    zip_add('fml/common/fml_marker.cfg')
-    zip_add('fml/common/fmlversion.properties')
     zip_add('common/forge_at.cfg')
     zip_end()
     
@@ -179,10 +165,8 @@ def extract_fml_obfed():
         lines = fh.readlines()
         
     client = zipfile.ZipFile(os.path.join(mcp_dir, 'temp', 'client_reobf.jar'))
-    server = zipfile.ZipFile(os.path.join(mcp_dir, 'temp', 'server_reobf.jar'))
     
     print 'Extracting Reobfed Forge ModLoader classes'
-    lines.append("minecraft/net/minecraft/client/MinecraftApplet.class") #Needed because users dont install Forge properly -.-
     
     for line in lines:
         line = line.replace('\n', '').replace('\r', '').replace('/', os.sep)
@@ -191,11 +175,8 @@ def extract_fml_obfed():
             side = line.split(os.sep)[0]
             if side == 'minecraft':
                 client.extract(line[10:].replace(os.sep, '/'), client_dir)
-            else:
-                server.extract(line[17:].replace(os.sep, '/'), server_dir)
         
     client.close()
-    server.close()
     
 if __name__ == '__main__':
     main()
