@@ -32,8 +32,8 @@ public class LanguageRegistry
             modLanguageData.put(lang, langPack);
         }
         langPack.put(key,value);
-
     }
+
     public static void reloadLanguageTable()
     {
         // reload language table by forcing lang to null and reloading the properties file

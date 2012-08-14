@@ -192,6 +192,7 @@ public class FMLRelauncher
 
     private void relaunchApplet(Applet minecraftApplet)
     {
+        showWindow(true);
         appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
         if (minecraftApplet.getClass().getClassLoader() == classLoader)
         {
