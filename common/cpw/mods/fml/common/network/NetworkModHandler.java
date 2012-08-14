@@ -203,7 +203,7 @@ public class NetworkModHandler
         try {
             if (clientHandlerDefaultValue == null)
             {
-                clientHandlerDefaultValue = NetworkMod.class.getMethod("clientPacketHandler").getDefaultValue();
+                clientHandlerDefaultValue = NetworkMod.class.getMethod("clientPacketHandlerSpec").getDefaultValue();
             }
             return clientHandlerDefaultValue;
         }
@@ -220,7 +220,7 @@ public class NetworkModHandler
         try {
             if (serverHandlerDefaultValue == null)
             {
-                serverHandlerDefaultValue = NetworkMod.class.getMethod("serverPacketHandler").getDefaultValue();
+                serverHandlerDefaultValue = NetworkMod.class.getMethod("serverPacketHandlerSpec").getDefaultValue();
             }
             return serverHandlerDefaultValue;
         }
