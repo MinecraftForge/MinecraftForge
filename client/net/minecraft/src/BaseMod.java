@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.IConsoleHandler;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -24,7 +25,10 @@ import cpw.mods.fml.common.INetworkHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.Side;
+import static cpw.mods.fml.common.Side.*;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.asm.SideOnly;
 
 public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModProxy
 {
@@ -177,6 +181,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
         return 0;
     }
 
+    @SideOnly(CLIENT)
     public void addRenderer(Map<Class<? extends Entity>, Render> renderers)
     {
 
@@ -250,6 +255,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      */
     public abstract String getVersion();
 
+    @SideOnly(CLIENT)
     public void keyboardEvent(KeyBinding event)
     {
 
@@ -284,11 +290,18 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @param minecraftInstance the client
      * @return true to continue receiving ticks
      */
+    @SideOnly(CLIENT)
     public boolean onTickInGame(float time, Minecraft minecraftInstance)
     {
         return false;
     }
 
+    public boolean onTickInGame(MinecraftServer minecraftServer)
+    {
+        return false;
+    }
+
+    @SideOnly(CLIENT)
     public boolean onTickInGUI(float tick, Minecraft game, GuiScreen gui)
     {
         return false;
@@ -318,16 +331,19 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
         // TODO
     }
 
+    @SideOnly(CLIENT)
     public void registerAnimation(Minecraft game)
     {
 
     }
 
+    @SideOnly(CLIENT)
     public void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
 
     }
 
+    @SideOnly(CLIENT)
     public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
         return false;
@@ -400,7 +416,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @param command
      * @return true if you want to consume the message so it is not available for further processing
      */
-    public boolean onServerCommand(String command, String sender, Object listener)
+    public boolean onServerCommand(String command, String sender, ICommandManager listener)
     {
         return false;
     }

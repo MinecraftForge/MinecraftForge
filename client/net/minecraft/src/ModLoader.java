@@ -34,6 +34,9 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Side;
+import static cpw.mods.fml.common.Side.*;
+import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -80,21 +83,23 @@ public class ModLoader
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static void addAllRenderers(Map<Class<? extends Entity>, Render> renderers)
     {
     }
 
+    @SideOnly(CLIENT)
     public static void addAnimation(TextureFX anim)
     {
         TextureFXManager.instance().addAnimation(anim);
     }
 
     /**
-     * This method is unimplemented in server versions to date.
      *
      * @param armor
      * @return
      */
+    @SideOnly(CLIENT)
     public static int addArmor(String armor)
     {
         return RenderingRegistry.addNewArmourRendererPrefix(armor);
@@ -163,6 +168,7 @@ public class ModLoader
      * @param fileToAdd
      * @return
      */
+    @SideOnly(CLIENT)
     public static int addOverride(String fileToOverride, String fileToAdd)
     {
         return RenderingRegistry.addTextureOverride(fileToOverride, fileToAdd);
@@ -175,6 +181,7 @@ public class ModLoader
      * @param overlayPath
      * @param index
      */
+    @SideOnly(CLIENT)
     public static void addOverride(String path, String overlayPath, int index)
     {
         RenderingRegistry.addTextureOverride(path, overlayPath, index);
@@ -273,7 +280,6 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLClientHandler#tryDispensingEntity(World, double, double, double, byte, byte, ItemStack)}
      *
      * @param world
      * @param x
@@ -369,14 +375,13 @@ public class ModLoader
         return FMLLog.getLogger();
     }
 
+    @SideOnly(CLIENT)
     public static Minecraft getMinecraftInstance()
     {
         return FMLClientHandler.instance().getClient();
     }
 
     /**
-     * This is not the server
-     * {@link FMLClientHandler#getServer()}
      *
      * @return
      */
@@ -417,6 +422,7 @@ public class ModLoader
      * Stubbed method on the server to return a unique model id
      *
      */
+    @SideOnly(CLIENT)
     public static int getUniqueBlockModelID(BaseMod mod, boolean inventoryRenderer)
     {
         return ModLoaderClientHelper.obtainBlockModelIdFor(mod, inventoryRenderer);
@@ -433,6 +439,7 @@ public class ModLoader
         return EntityRegistry.findGlobalUniqueEntityId();
     }
 
+    @SideOnly(CLIENT)
     public static int getUniqueSpriteIndex(String path)
     {
         return SpriteHelper.getUniqueSpriteIndex(path);
@@ -451,6 +458,7 @@ public class ModLoader
         return NetworkRegistry.instance().isChannelActive(channel, (Player)player);
     }
 
+    @SideOnly(CLIENT)
     public static boolean isGUIOpen(Class<? extends GuiScreen> gui)
     {
         return FMLClientHandler.instance().getClient().field_71462_r != null && FMLClientHandler.instance().getClient().field_71462_r.equals(gui);
@@ -476,6 +484,7 @@ public class ModLoader
     {
     }
 
+    @SideOnly(CLIENT)
     public static BufferedImage loadImage(RenderEngine renderEngine, String path) throws Exception
     {
         return TextureFXManager.instance().loadImageFromTexturePack(renderEngine, path);
@@ -494,10 +503,12 @@ public class ModLoader
      * Call in from elsewhere. Unimplemented here.
      */
     @Deprecated
+    @SideOnly(CLIENT)
     public static void onTick(float tick, Minecraft game)
     {
     }
 
+    @SideOnly(CLIENT)
     public static void openGUI(EntityPlayer player, GuiScreen gui)
     {
         FMLClientHandler.instance().displayGuiScreen(player, gui);
@@ -520,12 +531,14 @@ public class ModLoader
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static KeyBinding[] registerAllKeys(KeyBinding[] keys)
     {
         return keys;
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static void registerAllTextureOverrides(RenderEngine cache)
     {
     }
@@ -577,6 +590,7 @@ public class ModLoader
         EntityRegistry.registerGlobalEntityID(entityClass, entityName, id, background, foreground);
     }
 
+    @SideOnly(CLIENT)
     public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
@@ -606,6 +620,7 @@ public class ModLoader
         GameRegistry.registerTileEntity(tileEntityClass, id);
     }
 
+    @SideOnly(CLIENT)
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id, TileEntitySpecialRenderer renderer)
     {
         ClientRegistry.registerTileEntity(tileEntityClass, id, renderer);
@@ -668,18 +683,21 @@ public class ModLoader
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static boolean renderBlockIsItemFull3D(int modelID)
     {
         return RenderingRegistry.instance().renderItemAsFull3DBlock(modelID);
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static void renderInvBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
         RenderingRegistry.instance().renderInventoryBlock(renderer, block, metadata, modelID);
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID)
     {
         return RenderingRegistry.instance().renderWorldBlock(renderer, world, x, y, z, block, modelID);
@@ -715,6 +733,7 @@ public class ModLoader
     }
 
     @Deprecated
+    @SideOnly(CLIENT)
     public static void serverLogin(NetClientHandler handler, Packet1Login loginPacket)
     {
         //TODO
@@ -768,7 +787,6 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLClientHandler#onItemCrafted(EntityPlayer, ItemStack, IInventory)}
      *
      * @param player
      * @param item
@@ -781,7 +799,6 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLClientHandler#onItemSmelted(EntityPlayer, ItemStack)}
      *
      * @param player
      * @param item
@@ -793,7 +810,6 @@ public class ModLoader
 
     /**
      * Throw the offered exception. Likely will stop the game.
-     * {@link FMLClientHandler#raiseException(Throwable, String, boolean)}
      *
      * @param message
      * @param e
