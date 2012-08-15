@@ -59,7 +59,7 @@
                  this.field_71304_b.func_76318_c("lights");
  
                  while (true)
-@@ -1117,6 +1129,12 @@
+@@ -1118,6 +1130,12 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {

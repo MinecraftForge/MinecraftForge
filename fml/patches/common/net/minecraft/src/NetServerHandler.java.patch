@@ -9,7 +9,7 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler
-@@ -956,6 +958,11 @@
+@@ -957,6 +959,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -21,7 +21,7 @@
          DataInputStream var2;
          ItemStack var3;
          ItemStack var4;
-@@ -1028,4 +1035,10 @@
+@@ -1029,4 +1036,10 @@
              }
          }
      }
