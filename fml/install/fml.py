@@ -345,9 +345,6 @@ def merge_client_server(mcp_dir):
     cleanDirs(client)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
-    has_client = os.path.isdir(os.path.join(src_dir, 'minecraft'))
-    has_server = os.path.isdir(os.path.join(src_dir, 'minecraft_server'))
-    
     #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
     cpw_dir = os.path.join(src_dir, 'common', 'cpw')
     print 'Deleting common/cpw: ' + cpw_dir
@@ -357,20 +354,15 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     #patch files
     print 'Applying Forge ModLoader patches'
     sys.stdout.flush()
-    if has_client:
-        if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft')):
-            apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
-        if copy_files and os.path.isdir(os.path.join(fml_dir, 'client')):
-            copytree(os.path.join(fml_dir, 'client'), os.path.join(src_dir, 'minecraft'))
-        #delete argo
-        if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
-            shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
-        
-    if has_server:
-        if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft_server')):
-            apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft_server'), src_dir)
-        if copy_files and os.path.isdir(os.path.join(fml_dir, 'server')):
-            copytree(os.path.join(fml_dir, 'server'), os.path.join(src_dir, 'minecraft_server'))
+
+    if os.path.isdir(os.path.join(fml_dir, 'patches', 'minecraft')):
+        apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
+    if copy_files and os.path.isdir(os.path.join(fml_dir, 'client')):
+        copytree(os.path.join(fml_dir, 'client'), os.path.join(src_dir, 'minecraft'))
+
+    #delete argo
+    if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
+        shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
             
     if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
         apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir)
@@ -396,19 +388,15 @@ def apply_patches(mcp_dir, patch_dir, target_dir, find=None, rep=None):
     
     temp = os.path.abspath('temp.patch')
     cmd = cmdsplit('patch -p2 -i "%s" ' % temp)
-    display = True
     
     if os.name == 'nt':
         applydiff = os.path.abspath(os.path.join(mcp_dir, 'runtime', 'bin', 'applydiff.exe'))
         cmd = cmdsplit('"%s" -uf -p2 -i "%s"' % (applydiff, temp))
-        display = False
     
     for path, _, filelist in os.walk(patch_dir, followlinks=True):
         for cur_file in fnmatch.filter(filelist, '*.patch'):
             patch_file = os.path.normpath(os.path.join(patch_dir, path[len(patch_dir)+1:], cur_file))
             target_file = os.path.join(target_dir, fix_patch(patch_file, temp, find, rep))
-            if display:
-                print 'patching file %s' % os.path.normpath(target_file)
             process = subprocess.Popen(cmd, cwd=target_dir, bufsize=-1)
             process.communicate()
 
