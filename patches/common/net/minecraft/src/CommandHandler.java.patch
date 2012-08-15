@@ -1,0 +1,32 @@
+--- ../src_base/common/net/minecraft/src/CommandHandler.java
++++ ../src_work/common/net/minecraft/src/CommandHandler.java
+@@ -8,6 +8,9 @@
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.Map.Entry;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.CommandEvent;
+ 
+ public class CommandHandler implements ICommandManager
+ {
+@@ -38,7 +41,18 @@
+ 
+             if (var5.canCommandSenderUseCommand(par1ICommandSender))
+             {
+-                var5.processCommand(par1ICommandSender, var3);
++                CommandEvent event = new CommandEvent(var5, par1ICommandSender, var3);
++                if (!MinecraftForge.EVENT_BUS.post(event))
++                {
++                    var5.processCommand(par1ICommandSender, event.parameters);
++                }
++                else
++                {
++                    if (event.exception != null)
++                    {
++                        throw event.exception;
++                    }
++                }
+             }
+             else
+             {
