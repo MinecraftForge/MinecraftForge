@@ -40,7 +40,7 @@ public enum ForgeDirection
     
     public static ForgeDirection getOrientation(int id)
     {
-        if (id > 0 && id < ForgeDirection.values().length)
+        if (id >= 0 && id < ForgeDirection.values().length)
         {
             return ForgeDirection.values()[id];
         }
