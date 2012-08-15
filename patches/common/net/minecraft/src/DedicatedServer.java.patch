@@ -7,15 +7,16 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.io.File;
-@@ -36,6 +37,7 @@
-         var1.start();
-         ConsoleLogManager.func_73699_a();
-         field_71306_a.info("Starting minecraft server version 1.3.1");
-+        FMLCommonHandler.instance().onServerStart(this);
+@@ -42,6 +43,8 @@
+             field_71306_a.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
  
-         if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
-         {
-@@ -101,6 +103,7 @@
++        FMLCommonHandler.instance().onServerStart(this);
++
+         field_71306_a.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
+ 
+@@ -101,6 +104,7 @@
              field_71306_a.warning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
          }
  
@@ -23,7 +24,7 @@
          this.func_71210_a(new DedicatedPlayerList(this));
          long var4 = System.nanoTime();
  
-@@ -160,7 +163,7 @@
+@@ -160,7 +164,7 @@
              this.field_71339_n = new RConThreadMain(this);
              this.field_71339_n.func_72602_a();
          }

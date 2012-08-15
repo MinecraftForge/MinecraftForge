@@ -28,7 +28,7 @@
 +
 +    protected BiomeGenBase[] biomesForWorldType;
  
-     private WorldType(int p_i3737_1_, String p_i3737_2_)
+     public WorldType(int p_i3737_1_, String p_i3737_2_)
      {
 @@ -26,6 +38,14 @@
          this.field_77134_g = p_i3738_3_;
