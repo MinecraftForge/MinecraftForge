@@ -43,17 +43,17 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
      */
     public ModLoaderKeyBindingHandler(KeyBinding keyBinding, boolean allowRepeat, ModLoaderModContainer modContainer)
     {
-        super(keyBinding, allowRepeat);
+        super(new KeyBinding[] { keyBinding }, new boolean[] { allowRepeat });
         this.modContainer=modContainer;
     }
 
     public void onRenderEndTick()
     {
-        ((net.minecraft.src.BaseMod)modContainer.getMod()).keyboardEvent(keyBinding);
+        ((net.minecraft.src.BaseMod)modContainer.getMod()).keyboardEvent(keyBindings[0]);
     }
 
     @Override
-    public void keyDown(EnumSet<TickType> type, boolean end, boolean repeats)
+    public void keyDown(EnumSet<TickType> type, KeyBinding kb, boolean end, boolean repeats)
     {
         if (!end)
         {
@@ -72,7 +72,7 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
     }
 
     @Override
-    public void keyUp(EnumSet<TickType> type, boolean end)
+    public void keyUp(EnumSet<TickType> type, KeyBinding kb, boolean end)
     {
         if (!end)
         {
@@ -99,6 +99,6 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
     @Override
     public String getLabel()
     {
-        return modContainer.getModId() +" KB "+keyBinding.field_74512_d;
+        return modContainer.getModId() +" KB "+keyBindings[0].field_74512_d;
     }
 }
