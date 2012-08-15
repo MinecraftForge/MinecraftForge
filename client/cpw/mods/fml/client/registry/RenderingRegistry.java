@@ -13,7 +13,9 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Render;
 import net.minecraft.src.RenderBlocks;
+import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.modloader.ModLoaderBlockRendererHandler;
@@ -187,6 +189,7 @@ public class RenderingRegistry
         for (EntityRendererInfo info : entityRenderers)
         {
             rendererMap.put(info.target, info.renderer);
+            info.renderer.func_76976_a(RenderManager.field_78727_a);
         }
     }
 }
