@@ -40,19 +40,25 @@ public class KeyBindingRegistry
      */
     public static abstract class KeyHandler implements ITickHandler
     {
-        protected KeyBinding keyBinding;
-        protected boolean keyDown;
-        protected boolean repeating;
+        protected KeyBinding[] keyBindings;
+        protected boolean[] keyDown;
+        protected boolean[] repeatings;
 
-        public KeyHandler(KeyBinding keyBinding, boolean repeating)
+        /**
+         * Pass an array of keybindings and a repeat flag for each one
+         *
+         * @param keyBindings
+         * @param repeatings
+         */
+        public KeyHandler(KeyBinding[] keyBindings, boolean[] repeatings)
         {
-            this.keyBinding = keyBinding;
-            this.repeating = repeating;
+            this.keyBindings = keyBindings;
+            this.repeatings = repeatings;
         }
 
-        public KeyBinding getKeyBinding()
+        public KeyBinding[] getKeyBindings()
         {
-            return this.keyBinding;
+            return this.keyBindings;
         }
 
         /**
@@ -75,19 +81,24 @@ public class KeyBindingRegistry
 
         private void keyTick(EnumSet<TickType> type, boolean tickEnd)
         {
-            int keyCode = keyBinding.field_74512_d;
-            boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
-            if (state != keyDown || (state && repeating))
+            for (int i = 0; i < keyBindings.length; i++)
             {
-                if (state)
+                KeyBinding keyBinding = keyBindings[i];
+                int keyCode = keyBinding.field_74512_d;
+                boolean state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
+                if (state != keyDown[i] || (state && repeatings[i]))
                 {
-                    keyDown(type, tickEnd, state!=keyDown);
+                    if (state)
+                    {
+                        keyDown(type, keyBinding, tickEnd, state!=keyDown[i]);
+                    }
+                    else
+                    {
+                        keyUp(type, keyBinding, tickEnd);
+                    }
+                    keyDown[i] = state;
                 }
-                else
-                {
-                    keyUp(type, tickEnd);
-                }
-                keyDown = state;
+
             }
         }
 
@@ -101,7 +112,7 @@ public class KeyBindingRegistry
          * @param tickEnd was it an end or start tick which fired the key
          * @param isRepeat is it a repeat key event
          */
-        public abstract void keyDown(EnumSet<TickType> types, boolean tickEnd, boolean isRepeat);
+        public abstract void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat);
         /**
          * Fired once when the key changes state from down to up
          *
@@ -110,7 +121,7 @@ public class KeyBindingRegistry
          * @param types the type(s) of tick that fired when this key was first down
          * @param tickEnd was it an end or start tick which fired the key
          */
-        public abstract void keyUp(EnumSet<TickType> types, boolean tickEnd);
+        public abstract void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd);
 
 
         /**
@@ -138,7 +149,10 @@ public class KeyBindingRegistry
         ArrayList<KeyBinding> harvestedBindings = Lists.newArrayList();
         for (KeyHandler key : keyHandlers)
         {
-            harvestedBindings.add(key.keyBinding);
+            for (KeyBinding kb : key.keyBindings)
+            {
+                harvestedBindings.add(kb);
+            }
         }
         KeyBinding[] modKeyBindings = harvestedBindings.toArray(new KeyBinding[harvestedBindings.size()]);
         KeyBinding[] allKeys = new KeyBinding[settings.field_74324_K.length + modKeyBindings.length];
