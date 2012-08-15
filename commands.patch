@@ -29,17 +29,18 @@
          return True
  
      def checkbins(self, side):
-@@ -1027,6 +1033,9 @@
+@@ -1027,6 +1033,10 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
          pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
  
 +        if side == SERVER: #Disable server because FML recombines it into client
++            self.logger.info('Server side recompiling skipped, this is normal')
 +            return
 +        
          if not os.path.exists(pathbinlk[side]):
              os.makedirs(pathbinlk[side])
  
-@@ -1039,6 +1048,7 @@
+@@ -1039,6 +1049,7 @@
              all_files = True
              append_pattern = False
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
@@ -47,7 +48,7 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
-@@ -1060,7 +1070,7 @@
+@@ -1060,7 +1071,7 @@
              raise
  
      def startserver(self):
@@ -56,7 +57,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1068,7 +1078,7 @@
+@@ -1068,7 +1079,7 @@
          self.runmc(forkcmd)
  
      def startclient(self):
@@ -65,7 +66,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          natives = os.path.join('..', self.dirnatives)
-@@ -1195,20 +1205,20 @@
+@@ -1195,20 +1206,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -89,7 +90,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1238,6 +1248,11 @@
+@@ -1238,6 +1249,11 @@
  
          # HINT: We pathwalk the sources
          for path, _, filelist in os.walk(pathsrclk[side], followlinks=True):
@@ -101,7 +102,7 @@
              for cur_file in fnmatch.filter(filelist, '*.java'):
                  updatefile(os.path.normpath(os.path.join(path, cur_file)))
          return True
-@@ -1320,12 +1335,14 @@
+@@ -1320,12 +1336,14 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
  
          strip_comments(pathsrclk[side])
@@ -116,7 +117,7 @@
  
      def process_javadoc(self, side):
          """Add CSV descriptions to methods and fields as javadoc"""
-@@ -1334,6 +1351,21 @@
+@@ -1334,6 +1352,21 @@
          if not self.has_doc_csv:
              self.logger.warning('!! javadoc disabled due to no csvs !!')
              return False
@@ -138,7 +139,7 @@
  
          #HINT: We read the relevant CSVs
          methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
-@@ -1342,13 +1374,13 @@
+@@ -1342,13 +1375,13 @@
          methods = {}
          for row in methodsreader:
              #HINT: Only include methods that have a non-empty description
@@ -154,7 +155,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1420,12 +1452,13 @@
+@@ -1420,12 +1453,13 @@
  
          # HINT: We create the list of source directories based on the list of packages
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
@@ -169,7 +170,7 @@
          if not reobf:
              md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
          else:
-@@ -1440,6 +1473,9 @@
+@@ -1440,6 +1474,9 @@
                      class_path = ''
                  else:
                      class_path += '/'
@@ -179,7 +180,7 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1592,6 +1628,9 @@
+@@ -1592,6 +1629,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -189,7 +190,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1654,3 +1693,6 @@
+@@ -1654,3 +1694,6 @@
                  except IOError:
                      self.logger.error('* File %s copy failed', in_class)
  
