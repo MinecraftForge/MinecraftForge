@@ -52,8 +52,10 @@ public class KeyBindingRegistry
          */
         public KeyHandler(KeyBinding[] keyBindings, boolean[] repeatings)
         {
+            assert keyBindings.length == repeatings.length : "You need to pass two arrays of identical length";
             this.keyBindings = keyBindings;
             this.repeatings = repeatings;
+            this.keyDown = new boolean[keyBindings.length];
         }
 
         public KeyBinding[] getKeyBindings()

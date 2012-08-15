@@ -126,7 +126,6 @@ public class EntitySpawnPacket extends FMLPacket
             ((IEntityAdditionalSpawnData)ent).writeSpawnData(dat);
         }
 
-
         return dat.toByteArray();
     }
 
