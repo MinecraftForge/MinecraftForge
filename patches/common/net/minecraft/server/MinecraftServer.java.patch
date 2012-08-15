@@ -112,7 +112,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
  
                  if (this.tickCounter % 20 == 0)
-@@ -653,7 +628,7 @@
+@@ -648,7 +623,7 @@
                  }
              }
  
@@ -121,7 +121,7 @@
          }
  
          this.theProfiler.endStartSection("connection");
-@@ -702,7 +677,8 @@
+@@ -697,7 +672,8 @@
  
      public WorldServer worldServerForDimension(int par1)
      {
@@ -131,7 +131,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -791,7 +767,7 @@
+@@ -786,7 +762,7 @@
  
      public String getServerModName()
      {

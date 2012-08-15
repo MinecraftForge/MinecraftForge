@@ -10,7 +10,7 @@
  
  public class WorldServer extends World
  {
-@@ -70,6 +73,7 @@
+@@ -71,6 +74,7 @@
          {
              this.pendingTickListEntries = new TreeSet();
          }
@@ -18,7 +18,7 @@
      }
  
      /**
-@@ -538,15 +542,27 @@
+@@ -559,15 +563,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -55,7 +55,7 @@
              }
          }
  
-@@ -566,7 +582,7 @@
+@@ -587,7 +603,7 @@
              var6 = var5;
          }
  
@@ -64,7 +64,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -689,6 +705,7 @@
+@@ -710,6 +726,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);

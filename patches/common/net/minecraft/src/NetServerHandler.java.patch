@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/NetServerHandler.java
 +++ ../src_work/common/net/minecraft/src/NetServerHandler.java
-@@ -383,7 +383,10 @@
+@@ -388,7 +388,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
  
@@ -12,7 +12,7 @@
                  {
                      return;
                  }
-@@ -405,7 +408,7 @@
+@@ -410,7 +413,7 @@
  
              if (par1Packet14BlockDig.status == 0)
              {
@@ -21,7 +21,7 @@
                  {
                      this.playerEntity.serverForThisPlayer.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
-@@ -485,7 +488,9 @@
+@@ -490,7 +493,9 @@
                  var12 = var11;
              }
  

@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/DedicatedServer.java
 +++ ../src_work/common/net/minecraft/src/DedicatedServer.java
-@@ -66,6 +66,7 @@
+@@ -67,6 +67,7 @@
          this.setAllowFlight(this.settings.getOrSetBoolProperty("allow-flight", false));
          this.setTexturePack(this.settings.getOrSetProperty("texture-pack", ""));
          this.setMOTD(this.settings.getOrSetProperty("motd", "A Minecraft Server"));
