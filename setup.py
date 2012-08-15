@@ -7,12 +7,11 @@ forge_dir = os.path.dirname(os.path.abspath(__file__))
 mcp_dir = os.path.abspath('..')
 src_dir = os.path.join(mcp_dir, 'src')
 
-from forge import setup_forge_mcp, apply_forge_patches
+from forge import apply_forge_patches
 
 def main():
     print '=================================== Setup Start ================================='
-    dont_gen_conf = True #'-no_gen_conf' in sys.argv
-    setup_fml(dont_gen_conf)
+    setup_fml()
     
     base_dir = os.path.join(mcp_dir, 'src_base')
     work_dir = os.path.join(mcp_dir, 'src_work')
@@ -29,21 +28,9 @@ def main():
     print 'Applying forge patches'
     apply_forge_patches(os.path.join(forge_dir, 'fml'), mcp_dir, forge_dir, work_dir, False)
     
-    #Restore mcp/conf.bak, therefore restoring normal MCP updating ability
-    if not dont_gen_conf:
-        mcp_conf = os.path.join(mcp_dir, 'conf')
-        mcp_conf_bak = os.path.join(mcp_dir, 'conf.bak')
-        
-        if os.path.isdir(mcp_conf):
-            print 'Removing new conf folder'
-            shutil.rmtree(mcp_conf)
-        
-        print 'Restoreing original MCP Conf'
-        os.rename(mcp_conf_bak, mcp_conf)
-    
     print '=================================== Setup Finished ================================='
     
-def setup_fml(dont_gen_conf):        
+def setup_fml():        
     print 'Setting up Forge ModLoader'
     fml = glob.glob(os.path.join(forge_dir, 'fml-src-*.zip'))
     if not len(fml) == 1:
@@ -66,7 +53,7 @@ def setup_fml(dont_gen_conf):
     
     sys.path.append(fml_dir)
     from install import fml_main
-    fml_main(fml_dir, mcp_dir, dont_gen_conf)
+    fml_main(fml_dir, mcp_dir, True)
 
 if __name__ == '__main__':
     main()

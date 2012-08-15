@@ -74,7 +74,6 @@ def main():
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
     zip_add('client',  'client')
     zip_add('common',  'common')
-    zip_add('server',  'server')
     zip_add('patches', 'patches')
     zip_add('fml',     'fml')
     zip_add('install/install.cmd')
@@ -92,7 +91,6 @@ def main():
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
     
-    
 def zip_add(file, key=None):
     if key == None:
         key = os.path.basename(file)
@@ -107,23 +105,6 @@ def zip_add(file, key=None):
         if os.path.isfile(file):
             print key
             zip.write(file, key)
-            
-def zip_add_perm(file, perm, key=None):
-    if key == None:
-        key = os.path.basename(file)
-    else:
-        key = key.replace('/', os.sep)
-    if not zip_base is None:
-        key = os.path.join(zip_base, key)
-    file = os.path.join(forge_dir, file.replace('/', os.sep))
-    if os.path.isfile(file):
-        print key   
-        #zip.write(file, key)
-        
-        with open(file, 'r') as fh: data = fh.read()
-        info = zipfile.ZipInfo(key)
-        info.external_attr = 0777 << 16L
-        zip.writestr(info, data)
     
 def zip_start(name, base=None):
     global zip, zip_name, zip_base
@@ -170,8 +151,8 @@ def extract_fml_obfed():
     
     for line in lines:
         line = line.replace('\n', '').replace('\r', '').replace('/', os.sep)
-        print line
         if not os.path.isfile(os.path.join(reobf_dir, line)):
+            print line
             side = line.split(os.sep)[0]
             if side == 'minecraft':
                 client.extract(line[10:].replace(os.sep, '/'), client_dir)
