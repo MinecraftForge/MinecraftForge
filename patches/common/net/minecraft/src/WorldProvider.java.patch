@@ -16,10 +16,25 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -249,4 +250,73 @@
-     {
-         return false;
+@@ -251,4 +252,79 @@
      }
+ 
+     public abstract String func_80004_l();
+-}
++
++    /*======================================= Forge Start =========================================*/
++    private int dimensionID = 0;
++
++    /**
++     * Sets the providers current dimension ID, used in default getSaveFolder()
++     * Added to allow default providers to be registered for multiple dimensions.
++     * 
++     * @param dim Dimension ID
++     */
++    public void setDimension(int dim)
++    {
++        this.dimensionID = dim;
++    }
 +
 +    /**
 +     * Returns the sub-folder of the world folder that this WorldProvider saves to.
@@ -28,15 +43,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        if (this instanceof WorldProviderEnd)
-+        {
-+            return "DIM1";
-+        }
-+        else if (this instanceof WorldProviderHell)
-+        {
-+            return "DIM-1";
-+        }
-+        return null;
++        return (dimensionID == 0 ? null : "DIM" + dimensionID);
 +    }
 +
 +    /**
@@ -89,4 +96,4 @@
 +        }
 +        return 1.0;
 +    }
- }
++}

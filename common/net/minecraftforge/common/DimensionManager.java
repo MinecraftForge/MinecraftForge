@@ -1,5 +1,6 @@
 package net.minecraftforge.common;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -78,13 +79,11 @@ public class DimensionManager
     {
         worlds.put(id, world);
 
-        WorldServer[] tmp = new WorldServer[worlds.size() > 3 ? worlds.size() : 3];
-        for (int x = -1; x <= 1; x++)
-        {
-            tmp[(x == 0 ? 0 : x == -1 ? 1 : 2)] = worlds.get(x);
-        }
+        ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
+        tmp.add(worlds.get( 0));
+        tmp.add(worlds.get(-1));
+        tmp.add(worlds.get( 1));
 
-        int x = 3;
         for (Entry<Integer, WorldServer> entry : worlds.entrySet())
         {
             int dim = entry.getKey();
@@ -92,10 +91,10 @@ public class DimensionManager
             {
                 continue;
             }
-            tmp[x++] = entry.getValue();
+            tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().theWorldServer = tmp;
+        MinecraftServer.getServer().theWorldServer = tmp.toArray(new WorldServer[0]);
         MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
     }
 
@@ -126,7 +125,9 @@ public class DimensionManager
         {
             if (dimensions.containsKey(dim))
             {
-                return providers.get(getProviderType(dim)).newInstance();
+                WorldProvider provider = providers.get(getProviderType(dim)).newInstance();
+                provider.setDimension(dim);
+                return provider;
             }
             else
             {
