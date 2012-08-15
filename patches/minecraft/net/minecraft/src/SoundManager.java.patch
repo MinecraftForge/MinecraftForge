@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/SoundManager.java
 +++ ../src_work/minecraft/net/minecraft/src/SoundManager.java
-@@ -2,6 +2,22 @@
+@@ -2,6 +2,21 @@
  
  import java.io.File;
  import java.util.Random;
@@ -16,14 +16,13 @@
 +import net.minecraftforge.client.event.sound.SoundEvent;
 +import net.minecraftforge.client.event.sound.PlayBackgroundMusicEvent;
 +import net.minecraftforge.client.event.sound.SoundLoadEvent;
-+import net.minecraftforge.client.event.sound.SoundSetListenerEvent;
 +import net.minecraftforge.client.event.sound.SoundSetupEvent;
 +import net.minecraftforge.common.MinecraftForge;
 +import static net.minecraftforge.client.event.sound.SoundEvent.*;
  import paulscode.sound.SoundSystem;
  import paulscode.sound.SoundSystemConfig;
  import paulscode.sound.codecs.CodecJOrbis;
-@@ -37,9 +53,11 @@
+@@ -37,9 +52,11 @@
      private Random rand = new Random();
      private int ticksBeforeMusic;
  
@@ -36,7 +35,7 @@
      }
  
      /**
-@@ -54,6 +72,8 @@
+@@ -54,6 +71,8 @@
          {
              this.tryToSetLibraryAndCodecs();
          }
@@ -45,7 +44,7 @@
      }
  
      /**
-@@ -73,6 +93,8 @@
+@@ -73,6 +92,8 @@
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
              SoundSystemConfig.setCodec("mus", CodecMus.class);
              SoundSystemConfig.setCodec("wav", CodecWav.class);
@@ -54,7 +53,7 @@
              sndSystem = new SoundSystem();
              this.options.soundVolume = var1;
              this.options.musicVolume = var2;
-@@ -161,10 +183,12 @@
+@@ -161,10 +182,12 @@
                  }
  
                  SoundPoolEntry var1 = this.soundPoolMusic.getRandomSound();
@@ -68,15 +67,7 @@
                      sndSystem.backgroundMusic("BgMusic", var1.soundUrl, var1.soundName, false);
                      sndSystem.setVolume("BgMusic", this.options.musicVolume);
                      sndSystem.play("BgMusic");
-@@ -196,6 +220,7 @@
-                 float var17 = 0.0F;
-                 sndSystem.setListenerPosition((float)var4, (float)var6, (float)var8);
-                 sndSystem.setListenerOrientation(var12, var13, var14, var15, var16, var17);
-+                MinecraftForge.EVENT_BUS.post(new SoundSetListenerEvent(this, par2, (float)var4, (float)var6, (float)var8, var12, var13, var14));
-             }
-         }
-     }
-@@ -214,6 +239,7 @@
+@@ -214,6 +237,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry var8 = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -84,7 +75,7 @@
  
                  if (var8 != null && par5 > 0.0F)
                  {
-@@ -225,6 +251,7 @@
+@@ -225,6 +249,7 @@
                      float var9 = 16.0F;
                      sndSystem.newStreamingSource(true, var7, var8.soundUrl, var8.soundName, false, par2, par3, par4, 2, var9 * 4.0F);
                      sndSystem.setVolume(var7, 0.5F * this.options.soundVolume);
@@ -92,7 +83,7 @@
                      sndSystem.play(var7);
                  }
              }
-@@ -239,6 +266,7 @@
+@@ -239,6 +264,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var7 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -100,7 +91,7 @@
  
              if (var7 != null && par5 > 0.0F)
              {
-@@ -260,6 +288,7 @@
+@@ -260,6 +286,7 @@
                  }
  
                  sndSystem.setVolume(var8, par5 * this.options.soundVolume);
@@ -108,7 +99,7 @@
                  sndSystem.play(var8);
              }
          }
-@@ -274,6 +303,7 @@
+@@ -274,6 +301,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var4 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -116,7 +107,7 @@
  
              if (var4 != null)
              {
-@@ -289,6 +319,7 @@
+@@ -289,6 +317,7 @@
                  par2 *= 0.25F;
                  sndSystem.setPitch(var5, par3);
                  sndSystem.setVolume(var5, par2 * this.options.soundVolume);
