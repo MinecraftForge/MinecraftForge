@@ -53,7 +53,6 @@ public class FMLNetworkHandler
         if (target.startsWith("MC|"))
         {
             handler.handleVanilla250Packet(packet);
-            return;
         }
         if (target.equals("FML"))
         {

@@ -117,7 +117,7 @@ public class FMLRelauncher
     private Class<? super Object> setupNewClientHome(File minecraftHome)
     {
         Class<? super Object> client = ReflectionHelper.getClass(classLoader, "net.minecraft.client.Minecraft");
-        ReflectionHelper.setPrivateValue(client, null, minecraftHome, "minecraftDir", "am", "minecraftDir");
+        ReflectionHelper.setPrivateValue(client, null, minecraftHome, "field_71463_am", "am", "minecraftDir");
         return client;
     }
 

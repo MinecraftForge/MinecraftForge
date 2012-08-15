@@ -81,9 +81,10 @@ public abstract class GuiScrollingList
     protected void func_27257_b(int p_27257_1_, int p_27257_2_) {}
 
     public int func_27256_c(int p_27256_1_, int p_27256_2_)
+
     {
-        int var3 = this.listWidth / 2 - 110;
-        int var4 = this.listWidth / 2 + 110;
+        int var3 = this.left + 1;
+        int var4 = this.left + this.listWidth - 7;
         int var5 = p_27256_2_ - this.top - this.field_27261_r + (int)this.scrollDistance - 4;
         int var6 = var5 / this.slotHeight;
         return p_27256_1_ >= var3 && p_27256_1_ <= var4 && var6 >= 0 && var5 >= 0 && var6 < this.getSize() ? var6 : -1;
