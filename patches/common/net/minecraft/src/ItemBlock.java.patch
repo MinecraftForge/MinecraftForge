@@ -6,7 +6,7 @@
          }
 -        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID)
 +        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID
-+                && (Block.blocksList[var11] != null && !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))
++                && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))
          {
              if (par7 == 0)
              {
