@@ -177,14 +177,18 @@ public class AccessTransformer implements IClassTransformer
             {
                 for (FieldNode n : (List<FieldNode>) classNode.fields)
                 {
-                    if (n.name.equals(m.name))
+                    if (n.name.equals(m.name) || m.name.equals("*"))
                     {
                         n.access = getFixedAccess(n.access, m);
                         if (DEBUG)
                         {
-                            System.out.println(String.format("Field: %s.%s %s -> %s", name, m.name, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                            System.out.println(String.format("Field: %s.%s %s -> %s", name, n.name, toBinary(m.oldAccess), toBinary(m.newAccess)));
                         }
-                        break;
+
+                        if (!m.name.equals("*"))
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -192,14 +196,18 @@ public class AccessTransformer implements IClassTransformer
             {
                 for (MethodNode n : (List<MethodNode>) classNode.methods)
                 {
-                    if (n.name.equals(m.name) && n.desc.equals(m.desc))
+                    if ((n.name.equals(m.name) && n.desc.equals(m.desc)) || m.name.equals("*"))
                     {
                         n.access = getFixedAccess(n.access, m);
                         if (DEBUG)
                         {
-                            System.out.println(String.format("Method: %s.%s%s %s -> %s", name, m.name, m.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
+                            System.out.println(String.format("Method: %s.%s%s %s -> %s", name, n.name, n.desc, toBinary(m.oldAccess), toBinary(m.newAccess)));
                         }
-                        break;
+
+                        if (!m.name.equals("*"))
+                        {
+                            break;
+                        }
                     }
                 }
             }

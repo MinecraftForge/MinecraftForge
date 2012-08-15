@@ -292,12 +292,12 @@ def runcmd(commands, command, echo=True):
     
     if echo:
         for line in output.splitlines():
-            self.logger.info(line)
+            commands.logger.info(line)
 
     if process.returncode:
         if not echo:        
             for line in output.splitlines():
-                self.logger.info(line)
+                commands.logger.info(line)
         return False
     return True
 
@@ -614,7 +614,10 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     #update workspace
     print 'Fixing MCP Workspace'
     if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
-        merge_tree(os.path.join(fml_dir, 'eclipse'), os.path.join(mcp_dir, 'eclipse'))
+        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
+        if os.path.isdir(mcp_eclipse):
+            shutil.rmtree(mcp_eclipse)
+        shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
 
 def normaliselines(in_filename):
     in_filename = os.path.normpath(in_filename)
