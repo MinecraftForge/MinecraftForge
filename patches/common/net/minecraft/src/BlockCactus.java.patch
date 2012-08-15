@@ -18,16 +18,18 @@
          if (par1World.getBlockMaterial(par2 - 1, par3, par4).isSolid())
          {
              return false;
-@@ -139,6 +143,12 @@
-         else if (par1World.getBlockMaterial(par2, par3, par4 + 1).isSolid())
+@@ -140,6 +144,14 @@
          {
              return false;
-+        }else if(MinecraftForge.EVENT_BUS.post(event))
+         }
++        else if(MinecraftForge.EVENT_BUS.post(event))
 +        {
 +        	return false;
-+        }else if(event.canBePlaced())
++        }
++        else if(event.canBePlaced())
 +        {
 +        	return true;
-         }
++        }
          else
          {
+             int var5 = par1World.getBlockId(par2, par3 - 1, par4);

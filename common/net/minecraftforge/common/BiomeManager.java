@@ -45,15 +45,15 @@ public class BiomeManager {
 	
 	/**
 	 * Adds the possibility to generate villages in your custom biomes
-	 * @param biome	Your biome
-	 * @param b		True if you want to add it to the list, false if you want to remove it
+	 * @param biome		Your biome
+	 * @param canSpawn	True if you want to add it to the list, false if you want to remove it
 	 */
 	
-	public static void setVillageCanSpawnInBiome(BiomeGenBase biome, boolean b)
+	public static void setVillageCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
 	{
 		if(registeredBiomes.contains(biome))
 		{
-			if(b)
+			if(canSpawn)
 			{
 				if(!villageBiomes.contains(biome))
 				{
@@ -70,15 +70,15 @@ public class BiomeManager {
 	
 	/**
 	 * Adds the possibility to generate strongholds in your custom biomes
-	 * @param biome	Your biome
-	 * @param b		True if you want to add it to the list, false if you want to remove it
+	 * @param biome		Your biome
+	 * @param canSpawn	True if you want to add it to the list, false if you want to remove it
 	 */
 	
-	public static void setStrongholdCanSpawnInBiome(BiomeGenBase biome, boolean b)
+	public static void setStrongholdCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
 	{
 		if(registeredBiomes.contains(biome))
 		{
-			if(b)
+			if(canSpawn)
 			{
 				if(!strongholdBiomes.contains(biome))
 				{
@@ -95,15 +95,15 @@ public class BiomeManager {
 	
 	/**
 	 * Adds the possibility to spawn players in your custom biomes
-	 * @param biome	Your biome
-	 * @param b		True if you want to add it to the list, false if you want to remove it
+	 * @param biome		Your biome
+	 * @param canSpawn	True if you want to add it to the list, false if you want to remove it
 	 */
 	
-	public static void setPlayerCanSpawnInBiome(BiomeGenBase biome, boolean b)
+	public static void setPlayerCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
 	{
 		if(registeredBiomes.contains(biome))
 		{
-			if(b)
+			if(canSpawn)
 			{
 				if(!spawnBiomes.contains(biome))
 				{

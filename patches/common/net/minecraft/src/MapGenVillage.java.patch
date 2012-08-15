@@ -26,9 +26,9 @@
 +    
      public MapGenVillage(int par1)
      {
-+    	villageSpawnBiomes = new ArrayList<BiomeGenBase>();
++    	this.villageSpawnBiomes = new ArrayList<BiomeGenBase>();
 +    	Collections.addAll(villageSpawnBiomes, new BiomeGenBase[] {BiomeGenBase.plains, BiomeGenBase.desert});
-+    	villageSpawnBiomes.addAll(BiomeManager.getVillageBiomes());
++    	this.villageSpawnBiomes.addAll(BiomeManager.getVillageBiomes());
          this.terrainType = par1;
      }
  

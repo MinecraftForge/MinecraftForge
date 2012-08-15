@@ -6,9 +6,11 @@ import java.io.FileOutputStream;
 import java.util.LinkedList;
 
 import net.minecraft.src.CompressedStreamTools;
+import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.MathHelper;
 import net.minecraft.src.NBTTagCompound;
 /**
- * This is just a helper that helps modders save data per world and per player
+ * This is just a helper that helps modders save data per world or per player
  * @author battlefield
  *
  */
@@ -16,13 +18,23 @@ public class NBTHelper {
 	
 	private static LinkedList<INBT> handlers = new LinkedList<INBT>();
 
+	/**
+	 * With this method you register your custom NBT handler
+	 * @param handler 	your NBT handler
+	 */
 	public static void registerNbtHandler(INBT handler)
 	{
 		if(!handlers.contains(handler))
 		{
+			if(MathHelper.stringNullOrLengthZero(handler.nbtName()))
+			{
+				throw new RuntimeException("NBT handler " + handler.getClass().getSimpleName() + "needs a name!");
+			}
 			handlers.add(handler);
 		}
 	}
+	
+	//Below are the methods that perform saving and loading NBT saves. They are callled directly from SaveHandler
 	
 	public static void saveNBT(File file)
     {
@@ -46,7 +58,7 @@ public class NBTHelper {
                     }
 
                     NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-                    handler.writeToNBT(nbttagcompound);
+                    handler.writeToNBT(nbttagcompound, null);
                     CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file1));
                 }
             }
@@ -77,7 +89,7 @@ public class NBTHelper {
                     }
 
                     NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-                    handler.readFromNBT(nbttagcompound);
+                    handler.readFromNBT(nbttagcompound, null);
                 }
             }
         }
@@ -87,10 +99,10 @@ public class NBTHelper {
         }
     }
 
-    public static void savePlayerNBT(File file, String s)
+    public static void savePlayerNBT(File file, EntityPlayer player)
     {
         File file2;
-        file2 = new File(file, "MinecraftForge/" + s);
+        file2 = new File(file, "MinecraftForge/" + player.username);
         file2.mkdirs();
 
         try
@@ -110,7 +122,7 @@ public class NBTHelper {
                     }
 
                     NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-                    handler.writeToNBT(nbttagcompound);
+                    handler.writeToNBT(nbttagcompound, player);
                     CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file1));
                 }
             }
@@ -121,10 +133,10 @@ public class NBTHelper {
         }
     }
 
-    public static void loadPlayerNBT(File file, String s)
+    public static void loadPlayerNBT(File file, EntityPlayer player)
     {
         File file2;
-        file2 = new File(file, "MinecraftForge/" + s);
+        file2 = new File(file, "MinecraftForge/" + player.username);
         file2.mkdirs();
 
         try
@@ -142,7 +154,7 @@ public class NBTHelper {
                     }
 
                     NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-                    handler.readFromNBT(nbttagcompound);
+                    handler.readFromNBT(nbttagcompound, player);
                 }
             }
         }

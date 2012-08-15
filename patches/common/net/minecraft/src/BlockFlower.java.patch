@@ -10,7 +10,7 @@
  public class BlockFlower extends Block
  {
      protected BlockFlower(int par1, int par2, Material par3Material)
-@@ -24,9 +27,22 @@
+@@ -24,9 +27,26 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -18,23 +18,27 @@
 +        return super.canPlaceBlockAt(par1World, par2, par3, par4) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4), par1World.getBlockMetadata(par2, par3 - 1, par4));
      }
  
-+    protected boolean canThisPlantGrowOnThisBlockID(int i, int j)
++    protected boolean canThisPlantGrowOnThisBlockID(int par1, int par2)
 +    {
-+    	CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(i, 1, j));
++    	CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(par1, 1, par2));
 +        if(MinecraftForge.EVENT_BUS.post(event))
 +        {
 +        	return false;
-+        }else if(event.canBePlaced()){
++        }
++        else if(event.canBePlaced())
++        {
 +        	return true;
-+        }else{
-+        	return canThisPlantGrowOnThisBlockID(i);
++        }
++        else
++        {
++        	return this.canThisPlantGrowOnThisBlockID(par1);
 +        }
 +    }
 +    
      /**
       * Gets passed in the blockID of the block below and supposed to return true if its allowed to grow on the type of
       * blockID passed in. Args: blockID
-@@ -68,7 +84,7 @@
+@@ -68,7 +88,7 @@
       */
      public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {

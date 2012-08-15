@@ -13,7 +13,7 @@
       */
      public WorldInfo loadWorldInfo()
      {
-+    	NBTHelper.loadNBT(saveDirectory);
++    	NBTHelper.loadNBT(this.saveDirectory);
          File var1 = new File(this.saveDirectory, "level.dat");
          NBTTagCompound var2;
          NBTTagCompound var3;
@@ -21,7 +21,7 @@
       */
      public void saveWorldInfo(WorldInfo par1WorldInfo)
      {
-+    	NBTHelper.saveNBT(saveDirectory);
++    	NBTHelper.saveNBT(this.saveDirectory);
          NBTTagCompound var2 = par1WorldInfo.getNBTTagCompound();
          NBTTagCompound var3 = new NBTTagCompound();
          var3.setTag("Data", var2);
@@ -29,7 +29,7 @@
       */
      public void writePlayerData(EntityPlayer par1EntityPlayer)
      {
-+    	NBTHelper.savePlayerNBT(saveDirectory, par1EntityPlayer.username);
++    	NBTHelper.savePlayerNBT(this.saveDirectory, par1EntityPlayer);
          try
          {
              NBTTagCompound var2 = new NBTTagCompound();
@@ -37,7 +37,7 @@
       */
      public void readPlayerData(EntityPlayer par1EntityPlayer)
      {
-+    	NBTHelper.loadPlayerNBT(saveDirectory, par1EntityPlayer.username);
++    	NBTHelper.loadPlayerNBT(this.saveDirectory, par1EntityPlayer);
          NBTTagCompound var2 = this.getPlayerData(par1EntityPlayer.username);
  
          if (var2 != null)

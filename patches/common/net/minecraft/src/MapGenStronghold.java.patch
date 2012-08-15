@@ -25,8 +25,8 @@
      {
 -        this.allowedBiomeGenBases = new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.taiga, BiomeGenBase.icePlains, BiomeGenBase.iceMountains, BiomeGenBase.desertHills, BiomeGenBase.forestHills, BiomeGenBase.extremeHillsEdge, BiomeGenBase.jungle, BiomeGenBase.jungleHills};
 +        this.allowedBiomeGenBases = new ArrayList<BiomeGenBase>();
-+        Collections.addAll(allowedBiomeGenBases, new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.taiga, BiomeGenBase.icePlains, BiomeGenBase.iceMountains, BiomeGenBase.desertHills, BiomeGenBase.forestHills, BiomeGenBase.extremeHillsEdge, BiomeGenBase.jungle, BiomeGenBase.jungleHills});
-+        allowedBiomeGenBases.addAll(BiomeManager.getStrongholdBiomes());
++        Collections.addAll(this.allowedBiomeGenBases, new BiomeGenBase[] {BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.taiga, BiomeGenBase.icePlains, BiomeGenBase.iceMountains, BiomeGenBase.desertHills, BiomeGenBase.forestHills, BiomeGenBase.extremeHillsEdge, BiomeGenBase.jungle, BiomeGenBase.jungleHills});
++        this.allowedBiomeGenBases.addAll(BiomeManager.getStrongholdBiomes());
          this.structureCoords = new ChunkCoordIntPair[3];
      }
  
@@ -38,7 +38,7 @@
 -                Collections.addAll(var11, this.allowedBiomeGenBases);
 -                ChunkPosition var12 = this.worldObj.getWorldChunkManager().findBiomePosition((var9 << 4) + 8, (var10 << 4) + 8, 112, var11, var3);
 +                
-+                ChunkPosition var12 = this.worldObj.getWorldChunkManager().findBiomePosition((var9 << 4) + 8, (var10 << 4) + 8, 112, allowedBiomeGenBases, var3);
++                ChunkPosition var12 = this.worldObj.getWorldChunkManager().findBiomePosition((var9 << 4) + 8, (var10 << 4) + 8, 112, this.allowedBiomeGenBases, var3);
  
                  if (var12 != null)
                  {
