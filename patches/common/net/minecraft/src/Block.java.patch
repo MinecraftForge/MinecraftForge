@@ -773,8 +773,8 @@
 +
 +        return new ItemStack(id, 1, getDamageValue(world, x, y, z));
 +    }
-  
-     public boolean canConnectToFence(int meta) {
-         return false;
-     }
++  
++    public boolean canConnectToFence(int meta) {
++        return false;
++    }
  }
