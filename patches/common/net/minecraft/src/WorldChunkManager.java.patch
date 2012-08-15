@@ -23,9 +23,3 @@
      }
  
      public WorldChunkManager(long par1, WorldType par3WorldType)
-@@ -257,4 +264,5 @@
-     {
-         this.biomeCache.cleanupCache();
-     }
-+    
- }

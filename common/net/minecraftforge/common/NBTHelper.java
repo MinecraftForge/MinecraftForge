@@ -14,29 +14,30 @@ import net.minecraft.src.NBTTagCompound;
  * @author battlefield
  *
  */
-public class NBTHelper {
-	
-	private static LinkedList<INBT> handlers = new LinkedList<INBT>();
+public class NBTHelper
+{
+    private static LinkedList<INBT> handlers = new LinkedList<INBT>();
 
-	/**
-	 * With this method you register your custom NBT handler
-	 * @param handler 	your NBT handler
-	 */
-	public static void registerNbtHandler(INBT handler)
-	{
-		if(!handlers.contains(handler))
-		{
-			if(MathHelper.stringNullOrLengthZero(handler.nbtName()))
-			{
-				throw new RuntimeException("NBT handler " + handler.getClass().getSimpleName() + "needs a name!");
-			}
-			handlers.add(handler);
-		}
-	}
-	
-	//Below are the methods that perform saving and loading NBT saves. They are callled directly from SaveHandler
-	
-	public static void saveNBT(File file)
+    /**
+     * With this method you register your custom NBT handler
+     * @param handler 	your NBT handler
+     */
+    public static void registerNbtHandler(INBT handler)
+    {
+        if (!handlers.contains(handler))
+        {
+            if (MathHelper.stringNullOrLengthZero(handler.nbtName()))
+            {
+                throw new RuntimeException("NBT handler " + handler.getClass().getSimpleName() + "needs a name!");
+            }
+
+            handlers.add(handler);
+        }
+    }
+
+    //Below are the methods that perform saving and loading NBT saves. They are callled directly from SaveHandler
+
+    public static void saveNBT(File file)
     {
         File file2 = new File(file, "MinecraftForge");
         file2.mkdirs();
@@ -163,5 +164,4 @@ public class NBTHelper {
             e.printStackTrace();
         }
     }
-	
 }

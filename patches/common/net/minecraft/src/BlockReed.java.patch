@@ -10,26 +10,27 @@
  public class BlockReed extends Block
  {
      protected BlockReed(int par1, int par2)
-@@ -51,8 +54,20 @@
+@@ -51,8 +54,21 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
 -        int var5 = par1World.getBlockId(par2, par3 - 1, par4);
 -        return var5 == this.blockID ? true : (var5 != Block.grass.blockID && var5 != Block.dirt.blockID && var5 != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
-+    	CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(par1World.getBlockId(par2, par3 - 1, par4), 1, par1World.getBlockMetadata(par2, par3 - 1, par4)));
-+    	if(MinecraftForge.EVENT_BUS.post(event))
-+    	{
-+    		return false;
-+    	}
-+    	else if(event.canBePlaced())
-+    	{
-+    		return true;
-+    	}
-+    	else
-+    	{
-+    		int var5 = par1World.getBlockId(par2, par3 - 1, par4);
-+        	return var5 == this.blockID ? true : (var5 != Block.grass.blockID && var5 != Block.dirt.blockID && var5 != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
-+    	}
++        CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(par1World.getBlockId(par2, par3 - 1, par4), 1, par1World.getBlockMetadata(par2, par3 - 1, par4)));
++
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return false;
++        }
++        else if (event.canBePlaced())
++        {
++            return true;
++        }
++        else
++        {
++            int var5 = par1World.getBlockId(par2, par3 - 1, par4);
++            return var5 == this.blockID ? true : (var5 != Block.grass.blockID && var5 != Block.dirt.blockID && var5 != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
++        }
      }
  
      /**

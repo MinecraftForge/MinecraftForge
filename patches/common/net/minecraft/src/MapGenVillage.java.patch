@@ -22,19 +22,12 @@
  
      /** World terrain type, 0 for normal, 1 for flat map */
      private final int terrainType;
--
-+    
+ 
      public MapGenVillage(int par1)
      {
-+    	this.villageSpawnBiomes = new ArrayList<BiomeGenBase>();
-+    	Collections.addAll(villageSpawnBiomes, new BiomeGenBase[] {BiomeGenBase.plains, BiomeGenBase.desert});
-+    	this.villageSpawnBiomes.addAll(BiomeManager.getVillageBiomes());
++        this.villageSpawnBiomes = new ArrayList<BiomeGenBase>();
++        Collections.addAll(villageSpawnBiomes, new BiomeGenBase[] {BiomeGenBase.plains, BiomeGenBase.desert});
++        this.villageSpawnBiomes.addAll(BiomeManager.getVillageBiomes());
          this.terrainType = par1;
      }
  
-@@ -59,4 +69,5 @@
-     {
-         return new StructureVillageStart(this.worldObj, this.rand, par1, par2, this.terrainType);
-     }
-+    
- }

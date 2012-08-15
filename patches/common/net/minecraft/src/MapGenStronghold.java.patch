@@ -30,21 +30,14 @@
          this.structureCoords = new ChunkCoordIntPair[3];
      }
  
-@@ -34,9 +40,8 @@
+@@ -34,9 +40,7 @@
                  double var7 = (1.25D + var3.nextDouble()) * 32.0D;
                  int var9 = (int)Math.round(Math.cos(var4) * var7);
                  int var10 = (int)Math.round(Math.sin(var4) * var7);
 -                ArrayList var11 = new ArrayList();
 -                Collections.addAll(var11, this.allowedBiomeGenBases);
 -                ChunkPosition var12 = this.worldObj.getWorldChunkManager().findBiomePosition((var9 << 4) + 8, (var10 << 4) + 8, 112, var11, var3);
-+                
 +                ChunkPosition var12 = this.worldObj.getWorldChunkManager().findBiomePosition((var9 << 4) + 8, (var10 << 4) + 8, 112, this.allowedBiomeGenBases, var3);
  
                  if (var12 != null)
                  {
-@@ -102,4 +107,5 @@
- 
-         return var3;
-     }
-+    
- }
