@@ -1,6 +1,6 @@
 package net.minecraftforge.common;
 
-public enum Orientation
+public enum ForgeDirection
 {
     /** -Y */
     DOWN(0, -1, 0), 
@@ -30,7 +30,7 @@ public enum Orientation
     public final int offsetZ;
     public final int flag;
     
-    private Orientation(int x, int y, int z)
+    private ForgeDirection(int x, int y, int z)
     {
         offsetX = x;
         offsetY = y;
@@ -38,18 +38,18 @@ public enum Orientation
         flag = 1 << ordinal();
     }
     
-    public static Orientation getOrientation(int id)
+    public static ForgeDirection getOrientation(int id)
     {
-        if (id < Orientation.values().length)
+        if (id < ForgeDirection.values().length)
         {
-            return Orientation.values()[id];
+            return ForgeDirection.values()[id];
         }
         return UNKNOWN;
     }
 
     public static final int[] opposite = new int[] { 1, 0,  3, 2,  5, 4, 6};
 
-    public Orientation getOpposite()
+    public ForgeDirection getOpposite()
     {
         return getOrientation(opposite[ordinal()]);
     }

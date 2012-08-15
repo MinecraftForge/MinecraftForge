@@ -17,12 +17,12 @@ public interface ISidedInventory extends IInventory
      * Get the start of the side inventory.
      * @param side The global side to get the start of range.
      */
-    int getStartInventorySide(Orientation side);
+    int getStartInventorySide(ForgeDirection side);
 
     /**
      * Get the size of the side inventory.
      * @param side The global side.
      */
-    int getSizeInventorySide(Orientation side);
+    int getSizeInventorySide(ForgeDirection side);
 }
 
