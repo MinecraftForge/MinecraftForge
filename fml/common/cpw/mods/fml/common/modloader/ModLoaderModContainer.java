@@ -33,6 +33,7 @@ import java.util.logging.Level;
 
 import net.minecraft.src.MLProp;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -103,7 +104,7 @@ public class ModLoaderModContainer implements ModContainer
         this.modClazzName = className;
         this.modSource = modSource;
         this.modId = className.contains(".") ? className.substring(className.lastIndexOf('.')+1) : className;
-        this.sortingProperties = sortingProperties;
+        this.sortingProperties = Strings.isNullOrEmpty(sortingProperties) ? "" : sortingProperties;
     }
 
     /**
@@ -494,6 +495,9 @@ public class ModLoaderModContainer implements ModContainer
         {
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(modSource);
+            EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
+            this.gameTickHandler = new BaseModTicker(ticks, false);
+            this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
             Class<? extends BaseModProxy> modClazz = (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, modClassLoader);
             configureMod(modClazz, event.getASMHarvestedData());
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
@@ -512,9 +516,6 @@ public class ModLoaderModContainer implements ModContainer
     {
         try
         {
-            EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
-            this.gameTickHandler = new BaseModTicker(ticks, false);
-            this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
             this.gameTickHandler.setMod(mod);
             this.guiTickHandler.setMod(mod);
             TickRegistry.registerTickHandler(this.gameTickHandler, Side.CLIENT);

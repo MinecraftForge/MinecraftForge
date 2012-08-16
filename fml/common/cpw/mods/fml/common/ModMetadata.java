@@ -156,6 +156,6 @@ public class ModMetadata
 
     public String printableSortingRules()
     {
-        return null;
+        return "";
     }
 }
