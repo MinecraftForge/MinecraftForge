@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -165,6 +166,10 @@ public class RelaunchLibraryManager
         }
         finally
         {
+            if (downloadMonitor.stopIt)
+            {
+                return;
+            }
             if (!caughtErrors.isEmpty())
             {
                 FMLRelaunchLog.severe("There were errors during initial FML setup. " +
@@ -257,7 +262,6 @@ public class RelaunchLibraryManager
         {
             // Load in the Loader, make sure he's ready to roll - this will initialize most of the rest of minecraft here
             System.out.println("A CRITICAL PROBLEM OCCURED INITIALIZING MINECRAFT - LIKELY YOU HAVE AN INCORRECT VERSION FOR THIS FML");
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -422,6 +426,7 @@ public class RelaunchLibraryManager
             downloadMonitor.updateProgressString(infoString);
             FMLRelaunchLog.info(infoString);
             URLConnection connection = libDownload.openConnection();
+            connection.setRequestProperty("User-Agent", "FML Relaunch Downloader");
             int sizeGuess = connection.getContentLength();
             performDownload(connection.getInputStream(), sizeGuess, hash, libFile);
             downloadMonitor.updateProgressString("Download complete");
@@ -429,8 +434,13 @@ public class RelaunchLibraryManager
         }
         catch (Exception e)
         {
+            if (downloadMonitor.stopIt)
+            {
+                FMLRelaunchLog.warning("You have stopped downloads in progress");
+                return;
+            }
             if (e instanceof RuntimeException) throw (RuntimeException)e;
-            FMLRelaunchLog.severe("There was a problem downloading the file %s automatically. Perhaps you" +
+            FMLRelaunchLog.severe("There was a problem downloading the file %s automatically. Perhaps you " +
             		"have an environment without internet access. You will need to download " +
             		"the file manually\n", libFile.getName());
             libFile.delete();
@@ -460,19 +470,31 @@ public class RelaunchLibraryManager
         downloadMonitor.resetProgress(sizeGuess);
         try
         {
+            downloadMonitor.pokeThread = Thread.currentThread();
             byte[] smallBuffer = new byte[1024];
             while ((bytesRead = is.read(smallBuffer)) >= 0) {
                 downloadBuffer.put(smallBuffer, 0, bytesRead);
                 fullLength += bytesRead;
+                if (downloadMonitor.stopIt)
+                {
+                    break;
+                }
                 downloadMonitor.updateProgress(fullLength);
             }
             is.close();
+            downloadMonitor.pokeThread = null;
             downloadBuffer.limit(fullLength);
             downloadBuffer.position(0);
         }
+        catch (InterruptedIOException e)
+        {
+            // We were interrupted by the stop button. We're stopping now.. clear interruption flag.
+            Thread.interrupted();
+            return;
+        }
         catch (IOException e)
         {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
 

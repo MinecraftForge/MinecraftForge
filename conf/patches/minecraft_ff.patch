@@ -146,29 +146,6 @@ diff -r -U 3 minecraft\net\minecraft\src\ItemMap.java minecraft_patched\net\mine
        MapData var4 = (MapData)p_77873_2_.func_72943_a(MapData.class, "map_" + p_77873_1_.func_77960_j());
        if(var4 == null) {
           p_77873_1_.func_77964_b(p_77873_2_.func_72841_b("map"));
-diff -r -U 3 minecraft\net\minecraft\src\RConThreadClient.java minecraft_patched\net\minecraft\src\RConThreadClient.java
---- minecraft\net\minecraft\src\RConThreadClient.java	Tue Aug 14 20:15:27 2012
-+++ minecraft_patched\net\minecraft\src\RConThreadClient.java	Tue Aug 14 20:18:48 2012
-@@ -40,13 +40,13 @@
- 
-             BufferedInputStream var1 = new BufferedInputStream(this.field_72659_h.getInputStream());
-             int var2 = var1.read(this.field_72660_i, 0, 1460);
--            if(10 <= var2) {
--               byte var3 = 0;
--               int var4 = RConUtils.func_72665_b(this.field_72660_i, 0, var2);
--               if(var4 != var2 - 4) {
--                  return;
--               }
-+            if(10 > var2) {
-+               return;
-+            }
- 
-+            byte var3 = 0;
-+            int var4 = RConUtils.func_72665_b(this.field_72660_i, 0, var2);
-+            if(var4 == var2 - 4) {
-                int var21 = var3 + 4;
-                int var5 = RConUtils.func_72665_b(this.field_72660_i, var21, var2);
-                var21 += 4;
 diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
 --- minecraft\net\minecraft\src\RenderGlobal.java	Tue Aug 14 20:15:27 2012
 +++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Tue Aug 14 20:18:48 2012

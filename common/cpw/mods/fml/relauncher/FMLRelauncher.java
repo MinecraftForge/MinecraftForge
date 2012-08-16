@@ -103,6 +103,10 @@ public class FMLRelauncher
             }
         }
 
+        if (RelaunchLibraryManager.downloadMonitor.stopIt)
+        {
+            System.exit(1);
+        }
         try
         {
             ReflectionHelper.findMethod(client, null, new String[] { "fmlReentry" }, ArgsWrapper.class).invoke(null, wrap);
@@ -287,6 +291,10 @@ public class FMLRelauncher
             {
                 popupWindow.setVisible(false);
                 popupWindow.dispose();
+            }
+            if (RelaunchLibraryManager.downloadMonitor.stopIt)
+            {
+                System.exit(1);
             }
             try
             {

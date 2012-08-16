@@ -41,6 +41,8 @@ public class Downloader extends JOptionPane
     private JDialog container;
     private JLabel currentActivity;
     private JProgressBar progress;
+    boolean stopIt;
+    Thread pokeThread;
 
     public Downloader()
     {
@@ -116,6 +118,11 @@ public class Downloader extends JOptionPane
         if (shouldClose == JOptionPane.YES_OPTION)
         {
             container.dispose();
+        }
+        stopIt = true;
+        if (pokeThread != null)
+        {
+            pokeThread.interrupt();
         }
     }
 
