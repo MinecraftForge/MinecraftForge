@@ -117,7 +117,7 @@ public class LoadController
     {
         if (stateEvent instanceof FMLPreInitializationEvent)
         {
-            buildModObjectList();
+            modObjectList = buildModObjectList();
         }
         for (Map.Entry<String,EventBus> entry : eventChannels.entrySet())
         {
@@ -138,17 +138,25 @@ public class LoadController
         }
     }
 
-    public void buildModObjectList()
+    public ImmutableBiMap<ModContainer, Object> buildModObjectList()
     {
         ImmutableBiMap.Builder<ModContainer, Object> builder = ImmutableBiMap.<ModContainer, Object>builder();
         for (ModContainer mc : activeModList)
         {
-            if (!mc.isImmutable())
+            if (!mc.isImmutable() && mc.getMod()!=null)
             {
                 builder.put(mc, mc.getMod());
             }
+            if (mc.getMod()==null)
+            {
+                FMLLog.severe("There is a severe problem with %s - it appears not to have constructed correctly", mc.getModId());
+                if (state != LoaderState.CONSTRUCTING)
+                {
+                    this.errorOccurred(mc, new RuntimeException());
+                }
+            }
         }
-        modObjectList = builder.build();
+        return builder.build();
     }
 
     public void errorOccurred(ModContainer modContainer, Throwable exception)
@@ -191,6 +199,11 @@ public class LoadController
 
     public BiMap<ModContainer, Object> getModObjectList()
     {
+        if (modObjectList == null)
+        {
+            FMLLog.severe("Detected an attempt by a mod %s to perform game activity during mod construction. This is a serious programming error.", activeContainer);
+            return buildModObjectList();
+        }
         return ImmutableBiMap.copyOf(modObjectList);
     }
 
