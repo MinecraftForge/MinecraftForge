@@ -20,7 +20,7 @@ public class CoreFMLLibraries implements ILibrarySet
     @Override
     public String getRootURL()
     {
-        return "http://cloud.github.com/downloads/cpw/FML/%s";
+        return "http://files.minecraftforge.net/fmllibs/%s";
     }
 
 }
