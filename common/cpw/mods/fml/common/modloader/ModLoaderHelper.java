@@ -25,6 +25,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.IConnectionHandler;
@@ -42,7 +43,7 @@ public class ModLoaderHelper
     public static IModLoaderSidedHelper sidedHelper;
     public static void updateStandardTicks(BaseMod mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
+        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
         BaseModTicker ticker = mlmc.getGameTickHandler();
         EnumSet<TickType> ticks = ticker.ticks();
         // If we're enabled we get render ticks

@@ -84,6 +84,7 @@ public class FMLModContainer implements ModContainer
         .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
         .build();
     private static final BiMap<Class<? extends Annotation>, Class<? extends FMLStateEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
+    private String annotationDependencies;
 
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
@@ -138,7 +139,8 @@ public class FMLModContainer implements ModContainer
             List<ArtifactVersion> requirements = Lists.newArrayList();
             List<ArtifactVersion> dependencies = Lists.newArrayList();
             List<ArtifactVersion> dependants = Lists.newArrayList();
-            Loader.instance().computeDependencies((String) descriptor.get("dependencies"), requirements, dependencies, dependants);
+            annotationDependencies = (String) descriptor.get("dependencies");
+            Loader.instance().computeDependencies(annotationDependencies, requirements, dependencies, dependants);
             modMetadata.requiredMods = requirements;
             modMetadata.dependencies = dependencies;
             modMetadata.dependants = dependants;
@@ -176,7 +178,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public String getSortingRules()
     {
-        return modMetadata.printableSortingRules();
+        return (overridesMetadata ? annotationDependencies : modMetadata.printableSortingRules());
     }
 
     @Override
