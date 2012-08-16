@@ -147,7 +147,7 @@ public class LoadController
             {
                 builder.put(mc, mc.getMod());
             }
-            if (mc.getMod()==null)
+            if (mc.getMod()==null && !mc.isImmutable())
             {
                 FMLLog.severe("There is a severe problem with %s - it appears not to have constructed correctly", mc.getModId());
                 if (state != LoaderState.CONSTRUCTING)
