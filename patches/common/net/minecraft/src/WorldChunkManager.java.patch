@@ -1,0 +1,25 @@
+--- ../src_base/common/net/minecraft/src/WorldChunkManager.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/common/net/minecraft/src/WorldChunkManager.java	0000-00-00 00:00:00.000000000 -0000
+@@ -3,8 +3,14 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.List;
+ import java.util.Random;
++import java.util.Set;
++
++import net.minecraftforge.common.BiomeManager;
++
++import com.google.common.collect.Sets;
+ 
+ public class WorldChunkManager
+ {
+@@ -30,6 +36,7 @@
+         this.biomesToSpawnIn.add(BiomeGenBase.forestHills);
+         this.biomesToSpawnIn.add(BiomeGenBase.jungle);
+         this.biomesToSpawnIn.add(BiomeGenBase.jungleHills);
++        this.biomesToSpawnIn.addAll(BiomeManager.getSpawnBiomes());
+     }
+ 
+     public WorldChunkManager(long par1, WorldType par3WorldType)

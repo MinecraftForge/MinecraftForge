@@ -1,0 +1,36 @@
+--- ../src_base/common/net/minecraft/src/BlockCactus.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/common/net/minecraft/src/BlockCactus.java	0000-00-00 00:00:00.000000000 -0000
+@@ -4,6 +4,9 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.Random;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.block.CanBlockStayCheckEvent;
++
+ public class BlockCactus extends Block
+ {
+     protected BlockCactus(int par1, int par2)
+@@ -124,6 +127,8 @@
+      */
+     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
+     {
++        CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(par1World.getBlockId(par2, par3 - 1, par4), 1, par1World.getBlockMetadata(par2, par3 - 1, par4)));
++
+         if (par1World.getBlockMaterial(par2 - 1, par3, par4).isSolid())
+         {
+             return false;
+@@ -140,6 +145,14 @@
+         {
+             return false;
+         }
++        else if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return false;
++        }
++        else if (event.canBePlaced())
++        {
++            return true;
++        }
+         else
+         {
+             int var5 = par1World.getBlockId(par2, par3 - 1, par4);

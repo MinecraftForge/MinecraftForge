@@ -1,0 +1,48 @@
+--- ../src_base/common/net/minecraft/src/BlockFlower.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/common/net/minecraft/src/BlockFlower.java	0000-00-00 00:00:00.000000000 -0000
+@@ -2,6 +2,9 @@
+ 
+ import java.util.Random;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.block.CanBlockStayCheckEvent;
++
+ public class BlockFlower extends Block
+ {
+     protected BlockFlower(int par1, int par2, Material par3Material)
+@@ -24,7 +27,25 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        return super.canPlaceBlockAt(par1World, par2, par3, par4) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
++        return super.canPlaceBlockAt(par1World, par2, par3, par4) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4), par1World.getBlockMetadata(par2, par3 - 1, par4));
++    }
++
++    protected boolean canThisPlantGrowOnThisBlockID(int par1, int par2)
++    {
++        CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(par1, 1, par2));
++
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return false;
++        }
++        else if (event.canBePlaced())
++        {
++            return true;
++        }
++        else
++        {
++            return this.canThisPlantGrowOnThisBlockID(par1);
++        }
+     }
+ 
+     /**
+@@ -68,7 +89,7 @@
+      */
+     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
+     {
+-        return (par1World.getFullBlockLightValue(par2, par3, par4) >= 8 || par1World.canBlockSeeTheSky(par2, par3, par4)) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
++        return (par1World.getFullBlockLightValue(par2, par3, par4) >= 8 || par1World.canBlockSeeTheSky(par2, par3, par4)) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4), par1World.getBlockMetadata(par2, par3 - 1, par4));
+     }
+ 
+     /**

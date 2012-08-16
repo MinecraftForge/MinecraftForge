@@ -1,0 +1,29 @@
+--- ../src_base/common/net/minecraft/src/BiomeGenBase.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/common/net/minecraft/src/BiomeGenBase.java	0000-00-00 00:00:00.000000000 -0000
+@@ -153,7 +153,7 @@
+     /**
+      * Sets the temperature and rainfall of this biome.
+      */
+-    private BiomeGenBase setTemperatureRainfall(float par1, float par2)
++    public BiomeGenBase setTemperatureRainfall(float par1, float par2)
+     {
+         if (par1 > 0.1F && par1 < 0.2F)
+         {
+@@ -170,7 +170,7 @@
+     /**
+      * Sets the minimum and maximum height of this biome. Seems to go from -2.0 to 2.0.
+      */
+-    private BiomeGenBase setMinMaxHeight(float par1, float par2)
++    public BiomeGenBase setMinMaxHeight(float par1, float par2)
+     {
+         this.minHeight = par1;
+         this.maxHeight = par2;
+@@ -180,7 +180,7 @@
+     /**
+      * Disable the rain for the biome.
+      */
+-    private BiomeGenBase setDisableRain()
++    public BiomeGenBase setDisableRain()
+     {
+         this.enableRain = false;
+         return this;
