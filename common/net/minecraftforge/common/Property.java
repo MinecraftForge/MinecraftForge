@@ -97,7 +97,7 @@ public class Property
     {
         for (char c : name.toCharArray())
         {
-            if (!Character.isLetterOrDigit(c) && Configuration.ALLOWED_CHARS.indexOf(c) == -1)
+            if (!Character.isLetterOrDigit(c) && Configuration.ALLOWED_CHARS.indexOf(c) == -1 && !Character.isWhitespace(c))
             {
                 throw new IllegalArgumentException("Invalid property name: \"" + name + "\"");
             }
