@@ -199,4 +199,9 @@ public class MinecraftForge
        }
        EntityEnderman.carriableBlocks = temp;
    }
+   
+   public static String getBrandingVersion()
+   {
+       return "Minecraft Forge "+ ForgeVersion.getVersion();
+   }
 }
