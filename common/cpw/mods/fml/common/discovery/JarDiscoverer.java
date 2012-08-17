@@ -2,6 +2,7 @@ package cpw.mods.fml.common.discovery;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -58,7 +59,7 @@ public class JarDiscoverer implements ITypeDiscoverer
         }
         catch (Exception e)
         {
-            FMLLog.warning("Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
+            FMLLog.log(Level.WARNING, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
         }
         finally
         {
