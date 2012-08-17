@@ -1,9 +1,17 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.MapGenVillage;
+import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
@@ -15,7 +23,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BiomeManager
 {
-    private static LinkedList<BiomeGenBase> registeredBiomes = new LinkedList<BiomeGenBase>();
     private static ArrayList<BiomeGenBase> spawnBiomes = new ArrayList<BiomeGenBase>();
     private static ArrayList<BiomeGenBase> strongholdBiomes = new ArrayList<BiomeGenBase>();
     private static ArrayList<BiomeGenBase> villageBiomes = new ArrayList<BiomeGenBase>();
@@ -26,11 +33,7 @@ public class BiomeManager
      */
     public static void addBiome(BiomeGenBase biome)
     {
-        if (!registeredBiomes.contains(biome))
-        {
-            GameRegistry.addBiome(biome);
-            registeredBiomes.add(biome);
-        }
+        ModLoader.addBiome(biome);
     }
 
     /**
@@ -39,8 +42,7 @@ public class BiomeManager
      */
     public static void removeBiome(BiomeGenBase biome)
     {
-        GameRegistry.removeBiome(biome);
-        registeredBiomes.remove(biome);
+        ModLoader.removeBiome(biome);
     }
 
     /**
@@ -51,22 +53,29 @@ public class BiomeManager
 
     public static void setVillageCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
     {
-        if (registeredBiomes.contains(biome))
+        if (canSpawn)
         {
-            if (canSpawn)
+            if (!villageBiomes.contains(biome))
             {
-                if (!villageBiomes.contains(biome))
-                {
-                    villageBiomes.add(biome);
-                }
+                villageBiomes.add(biome);
             }
-            else
+
+            ArrayList list = new ArrayList();
+            list.addAll(MapGenVillage.villageSpawnBiomes);
+            list.add(biome);
+            MapGenVillage.villageSpawnBiomes = list.subList(0, list.size());
+        }
+        else
+        {
+            if (villageBiomes.contains(biome))
             {
-                if (villageBiomes.contains(biome))
-                {
-                    villageBiomes.remove(biome);
-                }
+                villageBiomes.remove(biome);
             }
+
+            ArrayList list = new ArrayList();
+            list.addAll(MapGenVillage.villageSpawnBiomes);
+            list.remove(biome);
+            MapGenVillage.villageSpawnBiomes = list.subList(0, list.size());
         }
     }
 
@@ -78,21 +87,18 @@ public class BiomeManager
 
     public static void setStrongholdCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
     {
-        if (registeredBiomes.contains(biome))
+        if (canSpawn)
         {
-            if (canSpawn)
+            if (!strongholdBiomes.contains(biome))
             {
-                if (!strongholdBiomes.contains(biome))
-                {
-                    strongholdBiomes.add(biome);
-                }
+                strongholdBiomes.add(biome);
             }
-            else
+        }
+        else
+        {
+            if (strongholdBiomes.contains(biome))
             {
-                if (strongholdBiomes.contains(biome))
-                {
-                    strongholdBiomes.remove(biome);
-                }
+                strongholdBiomes.remove(biome);
             }
         }
     }
@@ -105,28 +111,20 @@ public class BiomeManager
 
     public static void setPlayerCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
     {
-        if (registeredBiomes.contains(biome))
+        if (canSpawn)
         {
-            if (canSpawn)
+            if (!spawnBiomes.contains(biome))
             {
-                if (!spawnBiomes.contains(biome))
-                {
-                    spawnBiomes.add(biome);
-                }
-            }
-            else
-            {
-                if (spawnBiomes.contains(biome))
-                {
-                    spawnBiomes.remove(biome);
-                }
+                spawnBiomes.add(biome);
             }
         }
-    }
-
-    public static ArrayList<BiomeGenBase> getVillageBiomes()
-    {
-        return villageBiomes;
+        else
+        {
+            if (spawnBiomes.contains(biome))
+            {
+                spawnBiomes.remove(biome);
+            }
+        }
     }
 
     public static ArrayList<BiomeGenBase> getStrongholdBiomes()

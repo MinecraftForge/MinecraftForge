@@ -14,7 +14,7 @@
       */
      public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {
-+        CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, new ItemStack(par1World.getBlockId(par2, par3 - 1, par4), 1, par1World.getBlockMetadata(par2, par3 - 1, par4)));
++        CanBlockStayCheckEvent event = new CanBlockStayCheckEvent(this, par1World, par2, par3, par4);
 +
          if (par1World.getBlockMaterial(par2 - 1, par3, par4).isSolid())
          {
