@@ -1,17 +1,17 @@
 package cpw.mods.fml.common.event;
 
-import cpw.mods.fml.common.LoaderState;
+import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.common.LoaderState.ModState;
 
 public class FMLServerStartingEvent extends FMLStateEvent
 {
 
-    private Object server;
-    
+    private MinecraftServer server;
+
     public FMLServerStartingEvent(Object... data)
     {
         super(data);
-        this.server = data[0];
+        this.server = (MinecraftServer) data[0];
     }
     @Override
     public ModState getModState()
@@ -19,4 +19,8 @@ public class FMLServerStartingEvent extends FMLStateEvent
         return ModState.AVAILABLE;
     }
 
+    public MinecraftServer getServer()
+    {
+        return server;
+    }
 }
