@@ -33,7 +33,6 @@ import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 public class FMLNetworkHandler
 {
@@ -101,7 +100,7 @@ public class FMLNetworkHandler
             if (handleVanillaLoginKick(netLoginHandler, server, address, userName))
             {
                 // No FML on the client
-                FMLRelaunchLog.fine("Connection from %s rejected - no FML packet received from client", userName);
+                FMLLog.fine("Connection from %s rejected - no FML packet received from client", userName);
                 netLoginHandler.completeConnection("You don't have FML installed, or your installation is too old");
                 return;
             }
@@ -171,12 +170,12 @@ public class FMLNetworkHandler
     {
         if (login.field_73561_a == FML_HASH && login.field_73558_e == PROTOCOL_VERSION)
         {
-            FMLRelaunchLog.finest("Received valid FML login packet from %s", handler.field_72538_b.func_74430_c());
+            FMLLog.finest("Received valid FML login packet from %s", handler.field_72538_b.func_74430_c());
             instance().loginStates.put(handler, 1);
         }
         else
         {
-            FMLRelaunchLog.fine("Received invalid FML login packet %d, %d from %s", login.field_73561_a, login.field_73558_e,
+            FMLLog.fine("Received invalid FML login packet %d, %d from %s", login.field_73561_a, login.field_73558_e,
                     handler.field_72538_b.func_74430_c());
         }
     }
