@@ -14,32 +14,25 @@
 
 package cpw.mods.fml.common;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.zip.ZipInputStream;
+import java.util.logging.Level;
 
 import argo.jdom.JsonNode;
 import argo.jdom.JsonStringNode;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.functions.ModNameFunction;
-import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
-
-import static argo.jdom.JsonNodeBuilders.*;
 
 /**
  * @author cpw
@@ -101,6 +94,11 @@ public class ModMetadata
     {
         Map<JsonStringNode, Object> processedFields = Maps.transformValues(node.getFields(), new JsonStringConverter());
         modId = (String)processedFields.get(aStringBuilder("modid"));
+        if (Strings.isNullOrEmpty(modId))
+        {
+            FMLLog.log(Level.SEVERE, "Found an invalid mod metadata file - missing modid");
+            throw new LoaderException();
+        }
         name = Strings.nullToEmpty((String)processedFields.get(aStringBuilder("name")));
         description = Strings.nullToEmpty((String)processedFields.get(aStringBuilder("description")));
         url = Strings.nullToEmpty((String)processedFields.get(aStringBuilder("url")));

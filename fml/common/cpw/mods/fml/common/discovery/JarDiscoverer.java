@@ -2,7 +2,6 @@ package cpw.mods.fml.common.discovery;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -33,6 +32,11 @@ public class JarDiscoverer implements ITypeDiscoverer
             {
                 FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(jar.getInputStream(modInfo));
+            }
+            else
+            {
+                FMLLog.info("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
+                mc = MetadataCollection.from(null);
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
             {
