@@ -1,13 +1,14 @@
 --- ../src_base/common/net/minecraft/src/WorldProvider.java
 +++ ../src_work/common/net/minecraft/src/WorldProvider.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
  package net.minecraft.src;
  
++import net.minecraftforge.client.SkyProvider;
 +import net.minecraftforge.common.DimensionManager;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -185,7 +186,7 @@
+@@ -187,7 +189,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -16,11 +17,10 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -251,4 +252,79 @@
+@@ -253,4 +255,92 @@
      }
  
      public abstract String func_80007_l();
--}
 +
 +    /*======================================= Forge Start =========================================*/
 +    private int dimensionID = 0;
@@ -96,4 +96,17 @@
 +        }
 +        return 1.0;
 +    }
-+}
++
++    @SideOnly(Side.CLIENT)
++    public SkyProvider getSkyProvider()
++    {
++        return this.skyProvider;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setSkyProvider(SkyProvider skyProvider)
++    {
++        this.skyProvider = skyProvider;
++    }
++
+ }

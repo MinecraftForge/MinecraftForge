@@ -1,0 +1,15 @@
+--- ../src_base/common/net/minecraft/src/WorldProviderHell.java
++++ ../src_work/common/net/minecraft/src/WorldProviderHell.java
+@@ -97,4 +97,12 @@
+     {
+         return "Nether";
+     }
++
++    @Override
++    @SideOnly(Side.CLIENT)
++    public SkyProvider getSkyProvider()
++    {
++        SkyProvider skyProvider = super.getSkyProvider();
++        return skyProvider != null ? skyProvider : SkyProviderEmpty.instance;
++    }
+ }
