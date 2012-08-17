@@ -13,27 +13,11 @@
  */
 package cpw.mods.fml.common;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.DedicatedServer;
@@ -48,11 +32,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.server.FMLServerHandler;
 
 
 /**
@@ -338,16 +321,7 @@ public class FMLCommonHandler
 
     public void onServerStart(DedicatedServer dedicatedServer)
     {
-        try
-        {
-            // Done this way so that the client doesn't depend on server side handler
-            Class<?> cls = Class.forName("cpw.mods.fml.server.FMLServerHandler", true, getClass().getClassLoader());
-        }
-        catch (ClassNotFoundException e)
-        {
-            FMLLog.log(Level.SEVERE, e, "Unable to load the FML server handler");
-            throw Throwables.propagate(e);
-        }
+        FMLServerHandler.instance();
         sidedDelegate.beginServerLoading(dedicatedServer);
     }
 
