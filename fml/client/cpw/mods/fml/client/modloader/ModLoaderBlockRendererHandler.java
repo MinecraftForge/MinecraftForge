@@ -19,8 +19,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 
 /**
  * @author cpw

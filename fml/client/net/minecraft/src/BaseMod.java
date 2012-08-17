@@ -12,21 +12,14 @@
  */
 package net.minecraft.src;
 
+import static cpw.mods.fml.common.Side.CLIENT;
+
 import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.IConsoleHandler;
-import cpw.mods.fml.common.ICraftingHandler;
-import cpw.mods.fml.common.IDispenseHandler;
-import cpw.mods.fml.common.INetworkHandler;
-import cpw.mods.fml.common.IPickupNotifier;
-import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.IWorldGenerator;
-import cpw.mods.fml.common.Side;
-import static cpw.mods.fml.common.Side.*;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;
 

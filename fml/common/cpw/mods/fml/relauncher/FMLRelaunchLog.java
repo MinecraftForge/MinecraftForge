@@ -10,8 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import cpw.mods.fml.relauncher.FMLLogFormatter;
-
 public class FMLRelaunchLog
 {
 

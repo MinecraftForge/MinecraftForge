@@ -1,11 +1,11 @@
 package cpw.mods.fml.common.network;
 
-import static cpw.mods.fml.common.network.FMLPacket.Type.*;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_REQUEST;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_RESPONSE;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
@@ -17,7 +17,6 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 

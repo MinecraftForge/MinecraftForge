@@ -14,6 +14,8 @@
 
 package net.minecraft.src;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -22,8 +24,6 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.FMLTextureFX;
-import cpw.mods.fml.common.FMLCommonHandler;
-import static org.lwjgl.opengl.GL11.*;
 
 public class ModTextureStatic extends FMLTextureFX
 {

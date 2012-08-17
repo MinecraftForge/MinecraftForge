@@ -1,14 +1,8 @@
 package cpw.mods.fml.client.registry;
 
-import java.util.Collections;
-
-import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityRenderer;
 import net.minecraft.src.TileEntitySpecialRenderer;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ClientRegistry

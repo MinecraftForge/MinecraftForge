@@ -18,7 +18,6 @@ import java.util.List;
 
 import com.google.common.eventbus.EventBus;
 
-import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 /**

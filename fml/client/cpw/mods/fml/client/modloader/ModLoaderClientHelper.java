@@ -3,12 +3,13 @@ package cpw.mods.fml.client.modloader;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.collect.Maps;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Entity;
 import net.minecraft.src.Render;
+
+import com.google.common.collect.Maps;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.modloader.IModLoaderSidedHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;

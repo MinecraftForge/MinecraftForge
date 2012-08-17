@@ -1,10 +1,17 @@
 package cpw.mods.fml.common.network;
 
-import static cpw.mods.fml.common.network.FMLPacket.Type.*;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDENTIFIERS;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_RESPONSE;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_MISSING;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetLoginHandler;
+import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet250CustomPayload;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -15,11 +22,6 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
-
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.NetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
 
 public class ModListResponsePacket extends FMLPacket
 {

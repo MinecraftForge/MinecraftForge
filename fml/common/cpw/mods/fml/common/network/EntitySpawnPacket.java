@@ -8,10 +8,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
+import net.minecraft.src.DataWatcher;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.MathHelper;
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetworkManager;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.google.common.primitives.Bytes;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -20,13 +26,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
-import net.minecraft.src.DataWatcher;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
-import net.minecraft.src.World;
 
 public class EntitySpawnPacket extends FMLPacket
 {

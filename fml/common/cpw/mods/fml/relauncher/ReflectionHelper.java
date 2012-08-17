@@ -14,8 +14,6 @@ package cpw.mods.fml.relauncher;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 /**
  * Some reflection helper code.
  *

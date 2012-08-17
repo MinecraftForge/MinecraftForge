@@ -1,12 +1,7 @@
 package cpw.mods.fml.client.registry;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.ObjectArrays;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
@@ -15,11 +10,13 @@ import net.minecraft.src.Render;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
-import cpw.mods.fml.client.FMLClientHandler;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
+
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
-import cpw.mods.fml.client.modloader.ModLoaderBlockRendererHandler;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 /**
  * @author cpw

@@ -17,14 +17,9 @@ package cpw.mods.fml.client.modloader;
 import java.util.EnumSet;
 
 import net.minecraft.src.KeyBinding;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
-import cpw.mods.fml.common.registry.TickRegistry;
 
 /**
  * @author cpw

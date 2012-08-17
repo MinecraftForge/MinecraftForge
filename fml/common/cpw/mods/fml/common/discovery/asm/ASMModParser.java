@@ -3,7 +3,6 @@ package cpw.mods.fml.common.discovery.asm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
-import java.util.List;
 
 import net.minecraft.src.BaseMod;
 
@@ -13,10 +12,8 @@ import org.objectweb.asm.Type;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
-import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ModCandidate;
-import cpw.mods.fml.common.discovery.ModDiscoverer;
 
 public class ASMModParser
 {

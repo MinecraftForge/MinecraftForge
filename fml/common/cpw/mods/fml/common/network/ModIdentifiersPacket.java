@@ -1,22 +1,18 @@
 package cpw.mods.fml.common.network;
 
-import static cpw.mods.fml.common.network.FMLPacket.Type.*;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDENTIFIERS;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetworkManager;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-
-import cpw.mods.fml.common.FMLLog;
-
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.NetworkManager;
 
 public class ModIdentifiersPacket extends FMLPacket
 {

@@ -3,12 +3,9 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.eventbus.EventBus;
 
-import cpw.mods.fml.common.LoaderState.ModState;
-import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 
 public class DummyModContainer implements ModContainer

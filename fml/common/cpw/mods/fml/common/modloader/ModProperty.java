@@ -14,7 +14,6 @@
 
 package cpw.mods.fml.common.modloader;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
 

@@ -2,12 +2,10 @@ package cpw.mods.fml.common.event;
 
 import java.io.File;
 
-import com.google.common.eventbus.EventBus;
-
 import cpw.mods.fml.common.LoaderState.ModState;
-import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.discovery.ASMDataTable;
 
 public class FMLPreInitializationEvent extends FMLStateEvent
 {
