@@ -10,14 +10,17 @@
  
  public class EntityItem extends Entity
  {
-@@ -238,6 +241,23 @@
+@@ -238,6 +241,26 @@
          {
              int var2 = this.item.stackSize;
  
 +            EntityItemPickupEvent event = new EntityItemPickupEvent(par1EntityPlayer, this);
-+            MinecraftForge.EVENT_BUS.post(event);
-+            
-+            if (delayBeforeCanPickup == 0 && (!event.isCanceled() || item.stackSize <= 0))
++            if (MinecraftForge.EVENT_BUS.post(event))
++            {
++                return;
++            }
++
++            if (delayBeforeCanPickup == 0 && (event.isHandled() || item.stackSize <= 0))
 +            {
 +                //FML Notify pickup
 +                worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);

@@ -9,10 +9,21 @@ import net.minecraftforge.event.Cancelable;
 public class EntityItemPickupEvent extends PlayerEvent
 {
     public final EntityItem item;
+    private boolean handled = false;
     
     public EntityItemPickupEvent(EntityPlayer player, EntityItem item)
     {
         super(player);
         this.item = item;
+    }
+    
+    public boolean isHandled()
+    {
+        return handled;
+    }
+
+    public void setHandled()
+    {
+        handled = true;
     }
 }
