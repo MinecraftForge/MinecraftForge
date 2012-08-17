@@ -92,11 +92,6 @@ This code follows the Minecraft Forge installation methodology. It will apply
 some small patches to your MCP extracted source code, giving you and it access 
 to some of the data and functions you need to build a successful mod.
 
-It uses the fernflower decompiler to decompile minecraft, and the patches will
-only work with fernflower decompiled source. It will attempt to download 
-fernflower and fail if it cannot. You can also install fernflower manually
-if you wish.
-
 Note also that the patches are built against "unrenamed" MCP source code- this
 means that you will not be able to read them directly against normal code.
 
@@ -108,6 +103,9 @@ Standalone source installation
 To install this source code for development purposes, extract this zip file 
 into an mcp installation containing vanilla jars only. It should create a new
 folder "fml" inside that installation.
+
+Be sure that you have both vanilla client jars, and the vanilla server jar installed
+as per the MCP install instructions. Both are required for FML to run properly.
 
 Once extracted, run the install.sh or install.bat script provided from the fml
 directory. It should decompile and patch your MCP source code for the client
