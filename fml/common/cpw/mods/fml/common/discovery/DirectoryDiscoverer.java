@@ -3,11 +3,8 @@ package cpw.mods.fml.common.discovery;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import com.google.common.base.Throwables;
@@ -56,10 +53,12 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                 FileInputStream fis = new FileInputStream(metadata);
                 mc = MetadataCollection.from(fis);
                 fis.close();
+                FMLLog.fine("Found an mcmod.info file in directory %s", modDir.getName());
             }
             catch (Exception e)
             {
                 mc = MetadataCollection.from(null);
+                FMLLog.info("No mcmod.info file found in directory %s", modDir.getName());
             }
         }
 
