@@ -412,6 +412,8 @@ public class RelaunchLibraryManager
             downloadMonitor.updateProgressString(infoString);
             FMLRelaunchLog.info(infoString);
             URLConnection connection = libDownload.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             connection.setRequestProperty("User-Agent", "FML Relaunch Downloader");
             int sizeGuess = connection.getContentLength();
             performDownload(connection.getInputStream(), sizeGuess, hash, libFile);
@@ -422,13 +424,13 @@ public class RelaunchLibraryManager
         {
             if (downloadMonitor.stopIt)
             {
-                FMLRelaunchLog.warning("You have stopped downloads in progress");
+                FMLRelaunchLog.warning("You have stopped the downloading operation before it could complete");
                 return;
             }
             if (e instanceof RuntimeException) throw (RuntimeException)e;
             FMLRelaunchLog.severe("There was a problem downloading the file %s automatically. Perhaps you " +
             		"have an environment without internet access. You will need to download " +
-            		"the file manually\n", libFile.getName());
+            		"the file manually or restart and let it try again\n", libFile.getName());
             libFile.delete();
             throw new RuntimeException("A download error occured", e);
         }
