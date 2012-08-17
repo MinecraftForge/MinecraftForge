@@ -1,129 +1,54 @@
---- ../src_base/common/net/minecraft/src/Entity.java
-+++ ../src_work/common/net/minecraft/src/Entity.java
-@@ -2,6 +2,8 @@
- 
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
-+
-+import java.util.ArrayList;
- import java.util.Iterator;
- import java.util.List;
- import java.util.Random;
-@@ -186,6 +188,10 @@
+--- /Volumes/Data/Users/tsingh/Desktop/patches/old/Entity.java	2012-08-18 00:28:36.000000000 +1000
++++ /Volumes/Data/Users/tsingh/Desktop/patches/new/Entity.java	2012-08-18 00:55:29.000000000 +1000
+@@ -188,8 +188,6 @@
      public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
      public EnumEntitySize myEntitySize;
-+    /** Forge: Used to store custom data for each entity. */
-+    private NBTTagCompound customEntityData;
-+    protected boolean captureDrops = false;
-+    protected ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
+-    /** Forge: Used to store custom data for each entity. */
+-    private NBTTagCompound customEntityData;
+     protected boolean captureDrops = false;
+     protected ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
  
-     public Entity(World par1World)
-     {
-@@ -1382,6 +1388,10 @@
+@@ -1388,10 +1386,6 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
-+        if (customEntityData != null)
-+        {
-+            par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
-+        }
+-        if (customEntityData != null)
+-        {
+-            par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
+-        }
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1423,6 +1433,10 @@
+@@ -1433,10 +1427,6 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
-+        if (par1NBTTagCompound.hasKey("ForgeData"))
-+        {
-+            customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
-+        }
+-        if (par1NBTTagCompound.hasKey("ForgeData"))
+-        {
+-            customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
+-        }
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1509,7 +1523,14 @@
-     {
-         EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-         var3.delayBeforeCanPickup = 10;
--        this.worldObj.spawnEntityInWorld(var3);
-+        if (captureDrops)
-+        {
-+            capturedDrops.add(var3);
-+        }
-+        else
-+        {
-+            this.worldObj.spawnEntityInWorld(var3);
-+        }
-         return var3;
-     }
+@@ -2131,20 +2121,6 @@
  
-@@ -1843,7 +1864,7 @@
-      */
-     public boolean isRiding()
-     {
--        return this.ridingEntity != null || this.getFlag(2);
-+        return (this.ridingEntity != null && ridingEntity.shouldRiderSit()) || this.getFlag(2);
-     }
- 
+     /* ================================== Forge Start =====================================*/
      /**
-@@ -2107,4 +2128,59 @@
-     {
-         return String.format("%s[\'%s\'/%d, l=\'%s\', x=%.2f, y=%.2f, z=%.2f]", new Object[] {this.getClass().getSimpleName(), this.getEntityName(), Integer.valueOf(this.entityId), this.worldObj == null ? "~NULL~" : this.worldObj.getWorldInfo().getWorldName(), Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)});
-     }
-+
-+    /* ================================== Forge Start =====================================*/
-+    /**
-+     * Returns a NBTTagCompound that can be used to store custom data for this entity.
-+     * It will be written, and read from disc, so it persists over world saves.
-+     * @return A NBTTagCompound
-+     */
-+    public NBTTagCompound getEntityData()
-+    {
-+        if (customEntityData == null)
-+        {
-+            customEntityData = new NBTTagCompound();
-+        }
-+        return customEntityData;
-+    }
-+
-+    /**
-+     * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
-+     * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
-+     */
-+    public boolean shouldRiderSit()
-+    {
-+        return true;
-+    }
-+
-+    /**
-+     * Called when a user uses the creative pick block button on this entity.
-+     * 
-+     * @param target The full target the player is looking at
-+     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
-+     */
-+    public ItemStack getPickedResult(MovingObjectPosition target)
-+    {
-+        if (this instanceof EntityPainting)
-+        {
-+            return new ItemStack(Item.painting);
-+        }
-+        else if (this instanceof EntityMinecart)
-+        {
-+            return ((EntityMinecart)this).getCartItem();
-+        }
-+        else if (this instanceof EntityBoat)
-+        {
-+            return new ItemStack(Item.boat);
-+        }
-+        else
-+        {
-+            int id = EntityList.getEntityID(this);
-+            if (id > 0 || EntityList.entityEggs.containsKey(id))
-+            {
-+                return new ItemStack(Item.monsterPlacer, 1, id);
-+            }
-+        }
-+        return null;
-+    }
- }
+-     * Returns a NBTTagCompound that can be used to store custom data for this entity.
+-     * It will be written, and read from disc, so it persists over world saves.
+-     * @return A NBTTagCompound
+-     */
+-    public NBTTagCompound getEntityData()
+-    {
+-        if (customEntityData == null)
+-        {
+-            customEntityData = new NBTTagCompound();
+-        }
+-        return customEntityData;
+-    }
+-
+-    /**
+      * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
+      * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
+      */
