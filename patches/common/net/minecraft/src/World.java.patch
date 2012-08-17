@@ -141,11 +141,12 @@
          }
      }
  
-@@ -1968,7 +1995,14 @@
+@@ -1968,8 +1995,14 @@
          int var3 = MathHelper.floor_double(par1Entity.posX);
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
 -
+-        if (!par2 || this.checkChunksExist(var3 - var5, 0, var4 - var5, var3 + var5, 0, var4 + var5))
 +        boolean canUpdate = !par2 || this.checkChunksExist(var3 - var5, 0, var4 - var5, var3 + var5, 0, var4 + var5);
 +        if (!canUpdate)
 +        {
@@ -154,10 +155,10 @@
 +            canUpdate = event.canUpdate;
 +        }
 +        if (canUpdate)
-         if (!par2 || this.checkChunksExist(var3 - var5, 0, var4 - var5, var3 + var5, 0, var4 + var5))
          {
              par1Entity.lastTickPosX = par1Entity.posX;
-@@ -2204,6 +2238,14 @@
+             par1Entity.lastTickPosY = par1Entity.posY;
+@@ -2204,6 +2237,14 @@
                          {
                              return true;
                          }
@@ -172,7 +173,7 @@
                      }
                  }
              }
-@@ -2510,25 +2552,21 @@
+@@ -2510,25 +2551,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -213,7 +214,7 @@
          }
      }
  
-@@ -2537,27 +2575,10 @@
+@@ -2537,27 +2574,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -245,7 +246,7 @@
          }
      }
  
-@@ -2583,7 +2604,8 @@
+@@ -2583,7 +2603,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -255,7 +256,7 @@
      }
  
      /**
-@@ -2591,8 +2613,7 @@
+@@ -2591,8 +2612,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
@@ -265,7 +266,7 @@
      }
  
      /**
-@@ -2608,7 +2629,7 @@
+@@ -2608,7 +2628,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -274,7 +275,7 @@
              }
              else
              {
-@@ -3035,7 +3056,7 @@
+@@ -3035,7 +3055,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -283,7 +284,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3303,10 +3324,10 @@
+@@ -3303,10 +3323,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -298,7 +299,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3327,10 +3348,10 @@
+@@ -3327,10 +3347,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -313,7 +314,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3460,7 +3481,10 @@
+@@ -3460,7 +3480,10 @@
              {
                  var9 = null;
              }
@@ -325,7 +326,7 @@
              return par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -3958,4 +3982,65 @@
+@@ -3958,4 +3981,65 @@
              var7.destroyBlockPartially(par1, par2, par3, par4, par5);
          }
      }
