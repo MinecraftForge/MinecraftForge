@@ -1,25 +1,12 @@
 package cpw.mods.fml.relauncher;
 
 import java.applet.Applet;
-import java.applet.AppletStub;
-import java.awt.Dialog.ModalityType;
-import java.awt.HeadlessException;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.logging.Level;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.ProgressMonitorInputStream;
 
 public class FMLRelauncher
 {
@@ -147,6 +134,7 @@ public class FMLRelauncher
     private void setupHome(File minecraftHome)
     {
         FMLInjectionData.build(minecraftHome, classLoader);
+        FMLRelaunchLog.minecraftHome = minecraftHome;
         FMLRelaunchLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft client:%s, server:%s loading", FMLInjectionData.major, FMLInjectionData.minor,
                 FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion, FMLInjectionData.mcsversion);
 
