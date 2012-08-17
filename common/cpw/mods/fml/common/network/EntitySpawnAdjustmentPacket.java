@@ -1,13 +1,13 @@
 package cpw.mods.fml.common.network;
 
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.NetworkManager;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
 
 public class EntitySpawnAdjustmentPacket extends FMLPacket
 {

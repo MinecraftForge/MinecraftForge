@@ -1,17 +1,13 @@
 package cpw.mods.fml.common.network;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
 
 import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Bytes;
-import com.google.common.primitives.Primitives;
 import com.google.common.primitives.UnsignedBytes;
 
 import cpw.mods.fml.common.FMLLog;

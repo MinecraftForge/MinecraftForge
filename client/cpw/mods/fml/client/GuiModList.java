@@ -16,15 +16,7 @@ package cpw.mods.fml.client;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.FMLModContainer;
-import cpw.mods.fml.common.FMLDummyContainer;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.GuiButton;
@@ -32,6 +24,11 @@ import net.minecraft.src.GuiScreen;
 import net.minecraft.src.GuiSmallButton;
 import net.minecraft.src.StringTranslate;
 import net.minecraft.src.Tessellator;
+
+import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 
 /**
  * @author cpw

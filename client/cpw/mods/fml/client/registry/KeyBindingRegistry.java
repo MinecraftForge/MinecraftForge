@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.src.GameSettings;
+import net.minecraft.src.KeyBinding;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.google.common.collect.Lists;
-
-import net.minecraft.src.GameSettings;
-import net.minecraft.src.KeyBinding;
 
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Side;

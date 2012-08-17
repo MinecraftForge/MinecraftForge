@@ -6,6 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.Entity;
+import net.minecraft.src.EntityList;
+import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityTracker;
+import net.minecraft.src.EnumCreatureType;
+import net.minecraft.src.SpawnListEntry;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -15,14 +23,6 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
-
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityList;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityTracker;
-import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.SpawnListEntry;
 
 public class EntityRegistry
 {

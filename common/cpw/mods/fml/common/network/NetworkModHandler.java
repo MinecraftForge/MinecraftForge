@@ -1,16 +1,8 @@
 package cpw.mods.fml.common.network;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
-
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.NetworkManager;
-
-import org.objectweb.asm.Type;
 
 import com.google.common.base.Strings;
 

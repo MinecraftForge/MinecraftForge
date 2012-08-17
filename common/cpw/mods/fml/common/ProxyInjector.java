@@ -19,8 +19,6 @@ import java.lang.reflect.Modifier;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.objectweb.asm.Type;
-
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 

@@ -19,19 +19,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
-
-import net.minecraft.src.MLProp;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -43,22 +36,16 @@ import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.IConsoleHandler;
-import cpw.mods.fml.common.ICraftingHandler;
-import cpw.mods.fml.common.IDispenseHandler;
-import cpw.mods.fml.common.IFMLSidedHandler;
-import cpw.mods.fml.common.INetworkHandler;
-import cpw.mods.fml.common.IPickupNotifier;
-import cpw.mods.fml.common.IPlayerTracker;
-import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
-import cpw.mods.fml.common.LoaderState;
-import cpw.mods.fml.common.ModClassLoader;
-import cpw.mods.fml.common.Side;
-import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.MetadataCollection;
+import cpw.mods.fml.common.ModClassLoader;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.ProxyInjector;
+import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.discovery.ContainerType;
@@ -67,16 +54,11 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.ModMetadata;
-import cpw.mods.fml.common.ProxyInjector;
-import cpw.mods.fml.common.TickType;
 
 public class ModLoaderModContainer implements ModContainer
 {

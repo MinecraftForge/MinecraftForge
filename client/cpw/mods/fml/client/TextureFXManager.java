@@ -18,22 +18,20 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.src.ModTextureStatic;
+import net.minecraft.src.RenderEngine;
+import net.minecraft.src.TextureFX;
+import net.minecraft.src.TexturePackBase;
+
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.KeyBinding;
-import net.minecraft.src.ModTextureStatic;
-import net.minecraft.src.Profiler;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.TextureFX;
-import net.minecraft.src.TexturePackBase;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 public class TextureFXManager

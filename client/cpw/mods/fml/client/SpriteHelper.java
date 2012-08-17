@@ -18,10 +18,8 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-import net.minecraft.src.ModLoader;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.LoaderException;
 
 /**
  * @author cpw

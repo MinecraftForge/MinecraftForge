@@ -1,10 +1,9 @@
 package cpw.mods.fml.common.network;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.World;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * A simple utility class to send packet 250 packets around the place

@@ -14,7 +14,6 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,8 +23,6 @@ import java.util.logging.Level;
 
 import com.google.common.collect.ImmutableList;
 
-import cpw.mods.fml.common.discovery.ModCandidate;
-import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 /**

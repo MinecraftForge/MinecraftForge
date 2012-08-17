@@ -14,33 +14,21 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.CallableMinecraftVersion;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Splitter.MapSplitter;
-import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -53,10 +41,10 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
-import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.functions.ModIdFunction;
+import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.TopologicalSort;

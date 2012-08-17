@@ -16,15 +16,10 @@ package cpw.mods.fml.client;
 
 import java.util.ArrayList;
 
+import net.minecraft.src.Tessellator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.ModMetadata;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiLanguage;
-import net.minecraft.src.GuiSlot;
-import net.minecraft.src.StringTranslate;
-import net.minecraft.src.Tessellator;
 
 /**
  * @author cpw

@@ -2,8 +2,6 @@ package cpw.mods.fml.common.toposort;
 
 import java.util.Set;
 
-import cpw.mods.fml.common.ModContainer;
-
 public class ModSortingException extends RuntimeException
 {
     public class SortingExceptionData<T>

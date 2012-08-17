@@ -19,7 +19,6 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.DummyModContainer;
-import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
