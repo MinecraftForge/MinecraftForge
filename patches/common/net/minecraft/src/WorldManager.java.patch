@@ -1,0 +1,14 @@
+--- ../src_base/common/net/minecraft/src/WorldManager.java
++++ ../src_work/common/net/minecraft/src/WorldManager.java
+@@ -67,9 +67,9 @@
+     public void markBlockNeedsUpdate2(int par1, int par2, int par3) {}
+ 
+     /**
+-     * Plays the specified record. Arg: recordName, x, y, z
++     * Plays the specified record. Arg: author, recordName, x, y, z
+      */
+-    public void playRecord(String par1Str, int par2, int par3, int par4) {}
++    public void playRecord(String author, String par1Str, int par2, int par3, int par4) {}
+ 
+     /**
+      * Plays a pre-canned sound effect along with potentially auxiliary data-driven one-shot behaviour (particles, etc).

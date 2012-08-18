@@ -1,5 +1,34 @@
 --- ../src_base/common/net/minecraft/src/Item.java
 +++ ../src_work/common/net/minecraft/src/Item.java
+@@ -159,17 +159,17 @@
+     public static Item writableBook = (new ItemWritableBook(130)).setIconCoord(11, 11).setItemName("writingBook").setTabToDisplayOn(CreativeTabs.tabMisc);
+     public static Item writtenBook = (new ItemEditableBook(131)).setIconCoord(12, 11).setItemName("writtenBook");
+     public static Item emerald = (new Item(132)).setIconCoord(10, 11).setItemName("emerald").setTabToDisplayOn(CreativeTabs.tabMaterials);
+-    public static Item record13 = (new ItemRecord(2000, "13")).setIconCoord(0, 15).setItemName("record");
+-    public static Item recordCat = (new ItemRecord(2001, "cat")).setIconCoord(1, 15).setItemName("record");
+-    public static Item recordBlocks = (new ItemRecord(2002, "blocks")).setIconCoord(2, 15).setItemName("record");
+-    public static Item recordChirp = (new ItemRecord(2003, "chirp")).setIconCoord(3, 15).setItemName("record");
+-    public static Item recordFar = (new ItemRecord(2004, "far")).setIconCoord(4, 15).setItemName("record");
+-    public static Item recordMall = (new ItemRecord(2005, "mall")).setIconCoord(5, 15).setItemName("record");
+-    public static Item recordMellohi = (new ItemRecord(2006, "mellohi")).setIconCoord(6, 15).setItemName("record");
+-    public static Item recordStal = (new ItemRecord(2007, "stal")).setIconCoord(7, 15).setItemName("record");
+-    public static Item recordStrad = (new ItemRecord(2008, "strad")).setIconCoord(8, 15).setItemName("record");
+-    public static Item recordWard = (new ItemRecord(2009, "ward")).setIconCoord(9, 15).setItemName("record");
+-    public static Item record11 = (new ItemRecord(2010, "11")).setIconCoord(10, 15).setItemName("record");
++    public static Item record13 = (new ItemRecord(2000, "C418", "13")).setIconCoord(0, 15).setItemName("record");
++    public static Item recordCat = (new ItemRecord(2001, "C418", "cat")).setIconCoord(1, 15).setItemName("record");
++    public static Item recordBlocks = (new ItemRecord(2002, "C418", "blocks")).setIconCoord(2, 15).setItemName("record");
++    public static Item recordChirp = (new ItemRecord(2003, "C418", "chirp")).setIconCoord(3, 15).setItemName("record");
++    public static Item recordFar = (new ItemRecord(2004, "C418", "far")).setIconCoord(4, 15).setItemName("record");
++    public static Item recordMall = (new ItemRecord(2005, "C418", "mall")).setIconCoord(5, 15).setItemName("record");
++    public static Item recordMellohi = (new ItemRecord(2006, "C418", "mellohi")).setIconCoord(6, 15).setItemName("record");
++    public static Item recordStal = (new ItemRecord(2007, "C418", "stal")).setIconCoord(7, 15).setItemName("record");
++    public static Item recordStrad = (new ItemRecord(2008, "C418", "strad")).setIconCoord(8, 15).setItemName("record");
++    public static Item recordWard = (new ItemRecord(2009, "C418", "ward")).setIconCoord(9, 15).setItemName("record");
++    public static Item record11 = (new ItemRecord(2010, "C418", "11")).setIconCoord(10, 15).setItemName("record");
+ 
+     /** Item index + 256 */
+     public final int shiftedIndex;
 @@ -196,13 +196,16 @@
      /** full name of item from language file */
      private String itemName;
