@@ -96,6 +96,11 @@ public class NetworkRegistry
 
     public void registerChannel(IPacketHandler handler, String channelName, Side side)
     {
+        if (side == null)
+        {
+            registerChannel(handler, channelName);
+            return;
+        }
         if (Strings.isNullOrEmpty(channelName) || (channelName!=null && channelName.length()>16))
         {
             FMLLog.severe("Invalid channel name '%s' : %s", channelName, Strings.isNullOrEmpty(channelName) ? "Channel name is empty" : "Channel name is too long (16 chars is maximum)");

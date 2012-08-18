@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
@@ -89,14 +90,14 @@ public class NetworkModHandler
             }
         }
 
-        tryCreatingPacketHandler(container, mod.packetHandler(), mod.channels());
+        tryCreatingPacketHandler(container, mod.packetHandler(), mod.channels(), null);
         if (mod.clientPacketHandlerSpec() != getClientHandlerSpecDefaultValue())
         {
-            tryCreatingPacketHandler(container, mod.clientPacketHandlerSpec().packetHandler(), mod.clientPacketHandlerSpec().channels());
+            tryCreatingPacketHandler(container, mod.clientPacketHandlerSpec().packetHandler(), mod.clientPacketHandlerSpec().channels(), Side.CLIENT);
         }
         if (mod.serverPacketHandlerSpec() != getServerHandlerSpecDefaultValue())
         {
-            tryCreatingPacketHandler(container, mod.serverPacketHandlerSpec().packetHandler(), mod.serverPacketHandlerSpec().channels());
+            tryCreatingPacketHandler(container, mod.serverPacketHandlerSpec().packetHandler(), mod.serverPacketHandlerSpec().channels(), Side.SERVER);
         }
 
         if (mod.connectionHandler() != getConnectionHandlerDefaultValue())
@@ -118,7 +119,7 @@ public class NetworkModHandler
     /**
      * @param container
      */
-    private void tryCreatingPacketHandler(ModContainer container, Class<? extends IPacketHandler> clazz, String[] channels)
+    private void tryCreatingPacketHandler(ModContainer container, Class<? extends IPacketHandler> clazz, String[] channels, Side side)
     {
 
         if (clazz!=getPacketHandlerDefaultValue())
@@ -142,7 +143,7 @@ public class NetworkModHandler
 
                 for (String channel : channels)
                 {
-                    NetworkRegistry.instance().registerChannel(instance, channel);
+                    NetworkRegistry.instance().registerChannel(instance, channel, side);
                 }
             }
         }
