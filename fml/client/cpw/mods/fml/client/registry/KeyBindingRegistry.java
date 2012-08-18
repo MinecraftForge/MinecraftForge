@@ -27,7 +27,10 @@ public class KeyBindingRegistry
      */
     public static void registerKeyBinding(KeyHandler handler) {
         instance().keyHandlers.add(handler);
-        TickRegistry.registerTickHandler(handler, Side.CLIENT);
+        if (!handler.isDummy)
+        {
+            TickRegistry.registerTickHandler(handler, Side.CLIENT);
+        }
     }
 
 
@@ -43,6 +46,7 @@ public class KeyBindingRegistry
         protected KeyBinding[] keyBindings;
         protected boolean[] keyDown;
         protected boolean[] repeatings;
+        private boolean isDummy;
 
         /**
          * Pass an array of keybindings and a repeat flag for each one
@@ -56,6 +60,19 @@ public class KeyBindingRegistry
             this.keyBindings = keyBindings;
             this.repeatings = repeatings;
             this.keyDown = new boolean[keyBindings.length];
+        }
+
+
+        /**
+         * Register the keys into the system. You will do your own keyboard management elsewhere. No events will fire
+         * if you use this method
+         *
+         * @param keyBindings
+         */
+        public KeyHandler(KeyBinding[] keyBindings)
+        {
+            this.keyBindings = keyBindings;
+            this.isDummy = true;
         }
 
         public KeyBinding[] getKeyBindings()
