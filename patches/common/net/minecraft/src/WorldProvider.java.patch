@@ -1,147 +1,32 @@
 --- ../src_base/common/net/minecraft/src/WorldProvider.java
 +++ ../src_work/common/net/minecraft/src/WorldProvider.java
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
  package net.minecraft.src;
  
 +import net.minecraftforge.client.SkyProvider;
++import net.minecraftforge.common.DimensionManager;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -31,6 +32,8 @@
+@@ -30,6 +32,8 @@
+ 
      /** Array for sunrise/sunset colors (RGBA) */
      private float[] colorsSunriseSunset = new float[4];
- 
-+    private SkyProvider skyProvider = null;
 +
++    private SkyProvider skyProvider = null;
+ 
      /**
       * associate an existing world with a World provider, and setup its lightbrightness table
-      */
-@@ -51,7 +54,7 @@
- 
-         for (int var2 = 0; var2 <= 15; ++var2)
-         {
--            float var3 = 1.0F - (float)var2 / 15.0F;
-+            float var3 = 1.0F - (float) var2 / 15.0F;
-             this.lightBrightnessTable[var2] = (1.0F - var3) / (var3 * 3.0F + 1.0F) * (1.0F - var1) + var1;
-         }
-     }
-@@ -86,8 +89,8 @@
-      */
-     public float calculateCelestialAngle(long par1, float par3)
-     {
--        int var4 = (int)(par1 % 24000L);
--        float var5 = ((float)var4 + par3) / 24000.0F - 0.25F;
-+        int var4 = (int) (par1 % 24000L);
-+        float var5 = ((float) var4 + par3) / 24000.0F - 0.25F;
- 
-         if (var5 < 0.0F)
-         {
-@@ -100,7 +103,7 @@
-         }
- 
-         float var6 = var5;
--        var5 = 1.0F - (float)((Math.cos((double)var5 * Math.PI) + 1.0D) / 2.0D);
-+        var5 = 1.0F - (float) ((Math.cos((double) var5 * Math.PI) + 1.0D) / 2.0D);
-         var5 = var6 + (var5 - var6) / 3.0F;
-         return var5;
-     }
-@@ -108,7 +111,7 @@
-     @SideOnly(Side.CLIENT)
-     public int getMoonPhase(long par1, float par3)
-     {
--        return (int)(par1 / 24000L) % 8;
-+        return (int) (par1 / 24000L) % 8;
-     }
- 
-     /**
-@@ -120,20 +123,19 @@
-     }
- 
-     @SideOnly(Side.CLIENT)
--
-     /**
-      * Returns array with sunrise/sunset colors
-      */
-     public float[] calcSunriseSunsetColors(float par1, float par2)
-     {
-         float var3 = 0.4F;
--        float var4 = MathHelper.cos(par1 * (float)Math.PI * 2.0F) - 0.0F;
-+        float var4 = MathHelper.cos(par1 * (float) Math.PI * 2.0F) - 0.0F;
-         float var5 = -0.0F;
- 
-         if (var4 >= var5 - var3 && var4 <= var5 + var3)
-         {
-             float var6 = (var4 - var5) / var3 * 0.5F + 0.5F;
--            float var7 = 1.0F - (1.0F - MathHelper.sin(var6 * (float)Math.PI)) * 0.99F;
-+            float var7 = 1.0F - (1.0F - MathHelper.sin(var6 * (float) Math.PI)) * 0.99F;
-             var7 *= var7;
-             this.colorsSunriseSunset[0] = var6 * 0.3F + 0.7F;
-             this.colorsSunriseSunset[1] = var6 * var6 * 0.7F + 0.2F;
-@@ -148,13 +150,12 @@
-     }
- 
-     @SideOnly(Side.CLIENT)
--
-     /**
-      * Return Vec3D with biome specific fog color
-      */
-     public Vec3 getFogColor(float par1, float par2)
-     {
--        float var3 = MathHelper.cos(par1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
-+        float var3 = MathHelper.cos(par1 * (float) Math.PI * 2.0F) * 2.0F + 0.5F;
- 
-         if (var3 < 0.0F)
-         {
-@@ -172,7 +173,7 @@
-         var4 *= var3 * 0.94F + 0.06F;
-         var5 *= var3 * 0.94F + 0.06F;
-         var6 *= var3 * 0.91F + 0.09F;
--        return Vec3.getVec3Pool().getVecFromPool((double)var4, (double)var5, (double)var6);
-+        return Vec3.getVec3Pool().getVecFromPool((double) var4, (double) var5, (double) var6);
-     }
- 
-     /**
-@@ -185,11 +186,10 @@
+@@ -185,7 +189,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
 -        return (WorldProvider)(par0 == -1 ? new WorldProviderHell() : (par0 == 0 ? new WorldProviderSurface() : (par0 == 1 ? new WorldProviderEnd() : null)));
--    }
--
--    @SideOnly(Side.CLIENT)
--
-+        return (WorldProvider) (par0 == -1 ? new WorldProviderHell() : (par0 == 0 ? new WorldProviderSurface() : (par0 == 1 ? new WorldProviderEnd() : null)));
-+    }
-+
-+    @SideOnly(Side.CLIENT)
-     /**
-      * the y level at which clouds are rendered.
-      */
-@@ -218,7 +218,6 @@
++        return DimensionManager.createProviderFor(par0);
      }
  
      @SideOnly(Side.CLIENT)
--
-     /**
-      * returns true if this dimension is supposed to display void particles and pull in the far plane based on the
-      * user's Y offset.
-@@ -229,7 +228,6 @@
-     }
- 
-     @SideOnly(Side.CLIENT)
--
-     /**
-      * Returns a double value representing the Y value relative to the top of the map at which void fog is at its
-      * maximum. The default factor of 0.03125 relative to 256, for example, means the void fog will be at its maximum at
-@@ -241,7 +239,6 @@
-     }
- 
-     @SideOnly(Side.CLIENT)
--
-     /**
-      * Returns true if the given X,Z coordinate should show environmental fog.
-      */
-@@ -251,4 +248,92 @@
+@@ -251,4 +255,92 @@
      }
  
      public abstract String func_80007_l();
@@ -202,7 +87,7 @@
 +        else if (this instanceof WorldProviderHell)
 +        {
 +            return "Leaving the Nether";
-+        }
++        } 
 +        return null;
 +    }
 +
