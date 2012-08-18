@@ -43,4 +43,9 @@ public class ModCandidate
     {
         return sourceType.findMods(this, table);
     }
+
+    public boolean isClasspath()
+    {
+        return classpath;
+    }
 }

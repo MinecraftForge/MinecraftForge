@@ -47,13 +47,13 @@ public class ModDiscoverer
                     else
                     {
                         FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                        candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, true));
+                        candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, i!=0));
                     }
                 }
                 else if (minecraftSources[i].isDirectory())
                 {
                     FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                    candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, true));
+                    candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, i!=0));
                 }
             }
         }

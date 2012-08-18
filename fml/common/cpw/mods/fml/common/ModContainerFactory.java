@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import org.objectweb.asm.Type;
 
+import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.discovery.asm.ASMModParser;
 import cpw.mods.fml.common.discovery.asm.ModAnnotation;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
@@ -16,7 +17,7 @@ public class ModContainerFactory
     public static ModContainerFactory instance() {
         return INSTANCE;
     }
-    public ModContainer build(ASMModParser modParser, File modSource)
+    public ModContainer build(ASMModParser modParser, File modSource, ModCandidate container)
     {
         String className = modParser.getASMType().getClassName();
         if (modParser.isBaseMod() && modClass.matcher(className).find())
@@ -26,7 +27,7 @@ public class ModContainerFactory
         }
 
         // We warn if it's not a basemod instance -- compatibility requires it to be in net.minecraft.src *sigh*
-        if (className.startsWith("net.minecraft.src."))
+        if (className.startsWith("net.minecraft.src.") && container.isClasspath())
         {
             FMLLog.severe("FML has detected a mod that is using a package name based on 'net.minecraft.src' : %s. This is generally a severe programming error. "
                     + " There should be no mod code in the minecraft namespace. MOVE YOUR MOD! If you're in eclipse, select your source code and 'refactor' it into "

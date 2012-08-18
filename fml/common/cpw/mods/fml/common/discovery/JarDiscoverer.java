@@ -47,7 +47,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                     ASMModParser modParser = new ASMModParser(jar.getInputStream(ze));
                     modParser.validate();
                     modParser.sendToTable(table, candidate);
-                    ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer());
+                    ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer(), candidate);
                     if (container!=null)
                     {
                         table.addContainer(container);
