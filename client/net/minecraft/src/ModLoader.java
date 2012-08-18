@@ -219,6 +219,16 @@ public class ModLoader
     }
 
     /**
+     * Add a new product to be smelted
+     *
+     * @param input
+     * @param output
+     */
+    public static void addSmelting(int input, ItemStack output, float experience)
+    {
+        GameRegistry.addSmelting(input, output, experience);
+    }
+    /**
      * Add a mob to the spawn list
      *
      * @param entityClass
