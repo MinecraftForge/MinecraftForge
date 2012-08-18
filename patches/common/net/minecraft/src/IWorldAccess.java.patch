@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/IWorldAccess.java
++++ ../src_work/common/net/minecraft/src/IWorldAccess.java
+@@ -42,7 +42,7 @@
+     /**
+      * Plays the specified record. Arg: recordName, x, y, z
+      */
+-    void playRecord(String var1, int var2, int var3, int var4);
++    void playRecord(String author, String var1, int var2, int var3, int var4);
+ 
+     /**
+      * Plays a pre-canned sound effect along with potentially auxiliary data-driven one-shot behaviour (particles, etc).

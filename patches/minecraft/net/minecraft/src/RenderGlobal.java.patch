@@ -1,5 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
+@@ -1749,11 +1749,11 @@
+     /**
+      * Plays the specified record. Arg: recordName, x, y, z
+      */
+-    public void playRecord(String par1Str, int par2, int par3, int par4)
++    public void playRecord(String author, String par1Str, int par2, int par3, int par4)
+     {
+         if (par1Str != null)
+         {
+-            this.mc.ingameGUI.setRecordPlayingMessage("C418 - " + par1Str);
++            this.mc.ingameGUI.setRecordPlayingMessage(author + " - " + par1Str);
+         }
+ 
+         this.mc.sndManager.playStreaming(par1Str, (float)par2, (float)par3, (float)par4, 1.0F, 1.0F);
 @@ -1787,6 +1787,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
@@ -45,3 +59,17 @@
                      }
  
                      return (EntityFX)var21;
+@@ -2043,11 +2048,11 @@
+             case 1005:
+                 if (Item.itemsList[par6] instanceof ItemRecord)
+                 {
+-                    this.theWorld.playRecord(((ItemRecord)Item.itemsList[par6]).recordName, par3, par4, par5);
++                    this.theWorld.playRecord(((ItemRecord)Item.itemsList[par6]).author, ((ItemRecord)Item.itemsList[par6]).recordName, par3, par4, par5);
+                 }
+                 else
+                 {
+-                    this.theWorld.playRecord((String)null, par3, par4, par5);
++                    this.theWorld.playRecord((String)null, (String)null, par3, par4, par5);
+                 }
+ 
+                 break;

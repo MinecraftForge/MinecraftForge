@@ -1,0 +1,25 @@
+--- ../src_base/common/net/minecraft/src/ItemRecord.java
++++ ../src_work/common/net/minecraft/src/ItemRecord.java
+@@ -8,10 +8,12 @@
+ {
+     /** The name of the record. */
+     public final String recordName;
++    public final String author;
+ 
+-    protected ItemRecord(int par1, String par2Str)
++    protected ItemRecord(int par1, String parAuthor, String par2Str)
+     {
+         super(par1);
++        this.author = parAuthor;
+         this.recordName = par2Str;
+         this.maxStackSize = 1;
+         this.setTabToDisplayOn(CreativeTabs.tabMisc);
+@@ -46,7 +48,7 @@
+      */
+     public void addInformation(ItemStack par1ItemStack, List par2List)
+     {
+-        par2List.add("C418 - " + this.recordName);
++        par2List.add(this.author + " - " + this.recordName);
+     }
+ 
+     @SideOnly(Side.CLIENT)
