@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import com.google.common.base.Strings;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.Side;
@@ -121,7 +122,10 @@ public class NetworkModHandler
      */
     private void tryCreatingPacketHandler(ModContainer container, Class<? extends IPacketHandler> clazz, String[] channels, Side side)
     {
-
+        if (side!=null && side.isClient() && ! FMLCommonHandler.instance().getSide().isClient())
+        {
+            return;
+        }
         if (clazz!=getPacketHandlerDefaultValue())
         {
             if (channels.length==0)
