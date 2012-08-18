@@ -170,15 +170,10 @@
                      var12 = !var11;
                  }
  
-@@ -329,30 +333,7 @@
-                     var10 &= 7;
+@@ -334,25 +338,7 @@
+                     this.posY = (double)(var2 + 1);
                  }
  
--                if (var10 >= 2 && var10 <= 5)
--                {
--                    this.posY = (double)(var2 + 1);
--                }
--
 -                if (var10 == 2)
 -                {
 -                    this.motionX -= var6;
@@ -202,7 +197,7 @@
  
                  int[][] var13 = field_70500_g[var10];
                  double var14 = (double)(var13[1][0] - var13[0][0]);
-@@ -385,7 +366,7 @@
+@@ -385,7 +371,7 @@
                      }
                  }
  
@@ -211,7 +206,7 @@
                  {
                      var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -433,36 +414,8 @@
+@@ -433,36 +419,8 @@
                  this.posX = var26 + var14 * var24;
                  this.posZ = var28 + var16 * var24;
                  this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -250,7 +245,7 @@
  
                  if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var1 == var13[0][0] && MathHelper.floor_double(this.posZ) - var3 == var13[0][2])
                  {
-@@ -473,42 +426,7 @@
+@@ -473,42 +431,7 @@
                      this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
                  }
  
@@ -294,7 +289,7 @@
  
                  Vec3 var52 = this.func_70489_a(this.posX, this.posY, this.posZ);
  
-@@ -538,30 +456,14 @@
+@@ -538,30 +461,14 @@
  
                  double var41;
  
@@ -333,7 +328,7 @@
                  {
                      var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -599,41 +501,7 @@
+@@ -599,41 +506,7 @@
              }
              else
              {
@@ -376,7 +371,7 @@
              }
  
              this.rotationPitch = 0.0F;
-@@ -659,7 +527,18 @@
+@@ -659,7 +532,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -396,7 +391,7 @@
  
              if (var15 != null && !var15.isEmpty())
              {
-@@ -684,17 +563,8 @@
+@@ -684,17 +568,8 @@
                  this.riddenByEntity = null;
              }
  
@@ -416,7 +411,7 @@
          }
      }
  
-@@ -718,12 +588,7 @@
+@@ -718,12 +593,7 @@
          }
          else
          {
@@ -430,7 +425,7 @@
  
              par3 = (double)var10;
  
-@@ -769,13 +634,8 @@
+@@ -769,13 +639,8 @@
  
          if (BlockRail.isRailBlock(var10))
          {
@@ -445,7 +440,7 @@
  
              if (var11 >= 2 && var11 <= 5)
              {
-@@ -840,13 +700,14 @@
+@@ -840,13 +705,14 @@
      {
          par1NBTTagCompound.setInteger("Type", this.minecartType);
  
@@ -464,7 +459,7 @@
          {
              NBTTagList var2 = new NBTTagList();
  
-@@ -872,13 +733,21 @@
+@@ -872,13 +738,21 @@
      {
          this.minecartType = par1NBTTagCompound.getInteger("Type");
  
@@ -490,7 +485,7 @@
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -907,11 +776,17 @@
+@@ -907,11 +781,17 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -509,7 +504,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -957,7 +832,7 @@
+@@ -957,7 +837,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -518,7 +513,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -965,7 +840,7 @@
+@@ -965,7 +845,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -527,7 +522,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1000,7 +875,7 @@
+@@ -1000,7 +880,7 @@
       */
      public int getSizeInventory()
      {
@@ -536,7 +531,7 @@
      }
  
      /**
-@@ -1103,7 +978,12 @@
+@@ -1103,7 +983,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -550,7 +545,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1115,14 +995,14 @@
+@@ -1115,14 +1000,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -567,7 +562,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1246,4 +1126,375 @@
+@@ -1246,4 +1131,375 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }
