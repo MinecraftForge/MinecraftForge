@@ -80,6 +80,23 @@
          if (par1Entity != null && par2Str != null)
          {
              Iterator var5 = this.worldAccesses.iterator();
+@@ -1243,14 +1266,14 @@
+     /**
+      * Plays a record at the specified coordinates of the specified name. Args: recordName, x, y, z
+      */
+-    public void playRecord(String par1Str, int par2, int par3, int par4)
++    public void playRecord(String author, String par1Str, int par2, int par3, int par4)
+     {
+         Iterator var5 = this.worldAccesses.iterator();
+ 
+         while (var5.hasNext())
+         {
+             IWorldAccess var6 = (IWorldAccess)var5.next();
+-            var6.playRecord(par1Str, par2, par3, par4);
++            var6.playRecord(author, par1Str, par2, par3, par4);
+         }
+     }
+ 
 @@ -1887,7 +1910,7 @@
  
                      if (var8 != null)
