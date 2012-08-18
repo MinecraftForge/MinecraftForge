@@ -92,7 +92,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
 
                 modParser.validate();
                 modParser.sendToTable(table, candidate);
-                ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer());
+                ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer(), candidate);
                 if (container!=null)
                 {
                     harvestedMods.add(container);
