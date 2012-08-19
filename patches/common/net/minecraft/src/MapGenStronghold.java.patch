@@ -1,0 +1,19 @@
+--- ../src_base/common/net/minecraft/src/MapGenStronghold.java	0000-00-00 00:00:00.000000000 -0000
++++ ../src_work/common/net/minecraft/src/MapGenStronghold.java	0000-00-00 00:00:00.000000000 -0000
+@@ -5,6 +5,8 @@
+ import java.util.List;
+ import java.util.Random;
+ 
++import net.minecraftforge.common.BiomeManager;
++
+ public class MapGenStronghold extends MapGenStructure
+ {
+     private BiomeGenBase[] allowedBiomeGenBases;
+@@ -36,6 +38,7 @@
+                 int var10 = (int)Math.round(Math.sin(var4) * var7);
+                 ArrayList var11 = new ArrayList();
+                 Collections.addAll(var11, this.allowedBiomeGenBases);
++                Collections.addAll(var11, BiomeManager.getStrongholdBiomes());
+                 ChunkPosition var12 = this.worldObj.getWorldChunkManager().findBiomePosition((var9 << 4) + 8, (var10 << 4) + 8, 112, var11, var3);
+ 
+                 if (var12 != null)
