@@ -601,8 +601,7 @@ public class ModLoader
     @SideOnly(CLIENT)
     public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
-        ModLoaderModContainer mlmc=ModLoaderHelper.registerKeyHelper(mod);
-        KeyBindingRegistry.registerKeyBinding(new ModLoaderKeyBindingHandler(keyHandler, allowRepeat, mlmc));
+        ModLoaderClientHelper.registerKeyBinding(mod, keyHandler, allowRepeat);
     }
 
     /**
