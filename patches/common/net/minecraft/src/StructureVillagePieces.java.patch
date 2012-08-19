@@ -18,3 +18,14 @@
          Iterator var3 = var2.iterator();
  
          while (var3.hasNext())
+@@ -91,6 +95,10 @@
+         else if (var9 == ComponentVillageHouse3.class)
+         {
+             var10 = ComponentVillageHouse3.func_74921_a(p_75083_0_, p_75083_2_, p_75083_3_, p_75083_4_, p_75083_5_, p_75083_6_, p_75083_7_, p_75083_8_);
++        }
++        else
++        {
++            var10 = VillagerRegistry.getVillageComponent(p_75083_1_, p_75083_0_ , p_75083_2_, p_75083_3_, p_75083_4_, p_75083_5_, p_75083_6_, p_75083_7_, p_75083_8_);
+         }
+ 
+         return (ComponentVillage)var10;

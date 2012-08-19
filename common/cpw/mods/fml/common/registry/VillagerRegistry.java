@@ -12,6 +12,8 @@ import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.common.FMLLog;
 
+import net.minecraft.src.ComponentVillage;
+import net.minecraft.src.ComponentVillageStartPiece;
 import net.minecraft.src.EntityVillager;
 import net.minecraft.src.MapGenVillage;
 import net.minecraft.src.MerchantRecipeList;
@@ -29,7 +31,7 @@ public class VillagerRegistry
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
     private Multimap<Integer, IVillageTradeHandler> tradeHandlers = ArrayListMultimap.create();
-    private List<IVillageCreationHandler> villageCreationHandlers = Lists.newArrayList();
+    private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();
     private Map<Integer, String> newVillagers = Maps.newHashMap();
 
     /**
@@ -48,7 +50,30 @@ public class VillagerRegistry
          * @param i
          * @return
          */
-        List<StructureVillagePieceWeight> getVillagePieces(Random random, int i);
+        StructureVillagePieceWeight getVillagePieceWeight(Random random, int i);
+
+        /**
+         * The class of the root structure component to add to the village
+         * @return
+         */
+        Class<?> getComponentClass();
+
+
+        /**
+         * Build an instance of the village component {@link StructureVillagePieces}
+         * @param villagePiece
+         * @param startPiece
+         * @param pieces
+         * @param random
+         * @param p1
+         * @param p2
+         * @param p3
+         * @param p4
+         * @param p5
+         * @return
+         */
+        Object buildComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, List pieces, Random random, int p1,
+                int p2, int p3, int p4, int p5);
     }
 
     /**
@@ -98,7 +123,7 @@ public class VillagerRegistry
      */
     public void registerVillageCreationHandler(IVillageCreationHandler handler)
     {
-        villageCreationHandlers.add(handler);
+        villageCreationHandlers.put(handler.getComponentClass(), handler);
     }
 
     /**
@@ -147,10 +172,16 @@ public class VillagerRegistry
     public static void addExtraVillageComponents(ArrayList components, Random random, int i)
     {
         List<StructureVillagePieceWeight> parts = components;
-        for (IVillageCreationHandler handler : instance().villageCreationHandlers)
+        for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
         {
-            parts.addAll(handler.getVillagePieces(random, i));
+            parts.add(handler.getVillagePieceWeight(random, i));
         }
+    }
+
+    public static Object getVillageComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, List pieces, Random random,
+            int p1, int p2, int p3, int p4, int p5)
+    {
+        return instance().villageCreationHandlers.get(villagePiece.field_75090_a).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, p4, p5);
     }
 
 }
