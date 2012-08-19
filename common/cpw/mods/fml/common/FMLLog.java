@@ -14,7 +14,7 @@ public class FMLLog
 
     public static void log(Level level, Throwable ex, String format, Object... data)
     {
-        coreLog.log(level, String.format(format, data), ex);
+        coreLog.log(level, ex, String.format(format, data));
     }
 
     public static void severe(String format, Object... data)
