@@ -173,9 +173,7 @@ public class MinecraftForge
        Block filler = null;
        try 
        {
-           Constructor ctr = Block.class.getDeclaredConstructor(int.class, Material.class);
-           ctr.setAccessible(true);
-           filler = (Block)ctr.newInstance(256, Material.air);
+           filler = new Block(256,Material.air);
        }
        catch (Exception e)
        {
@@ -186,7 +184,7 @@ public class MinecraftForge
 
        for (int x = 256; x < 4096; x++)
        {
-           if (Item.itemsList[x - 256] != null)
+           if (Item.itemsList[x] != null)
            {
                Block.blocksList[x] = filler;
            }
