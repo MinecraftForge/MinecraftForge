@@ -31,8 +31,8 @@ public interface IWorldGenerator
      * Generate some world
      *
      * @param random the chunk specific {@link Random}.
-     * @param chunkX the block X coordinate of this chunk.
-     * @param chunkZ the block Z coordinate of this chunk.
+     * @param chunkX the chunk X coordinate of this chunk.
+     * @param chunkZ the chunk Z coordinate of this chunk.
      * @param world : additionalData[0] The minecraft {@link World} we're generating for.
      * @param generator : additionalData[1] The {@link IChunkProvider} that is generating.
      * @param chunkProvider : additionalData[2] {@link IChunkProvider} that is requesting the world generation.
