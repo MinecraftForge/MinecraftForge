@@ -1,0 +1,29 @@
+--- ../src-base/common/net/minecraft/src/EntityVillager.java
++++ ../src-work/common/net/minecraft/src/EntityVillager.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.VillagerRegistry;
++
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Map;
+@@ -175,7 +177,7 @@
+             case 4:
+                 return "/mob/villager/butcher.png";
+             default:
+-                return super.func_70073_O();
++                return VillagerRegistry.getVillagerSkin(this.func_70946_n(), super.func_70073_O());
+         }
+     }
+ 
+@@ -400,6 +402,8 @@
+         }
+ 
+         Collections.shuffle(var2);
++
++        VillagerRegistry.manageVillagerTrades(var2, this, this.func_70946_n(), this.field_70146_Z);
+ 
+         if (this.field_70963_i == null)
+         {
