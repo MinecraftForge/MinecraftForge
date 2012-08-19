@@ -80,4 +80,6 @@ public interface BaseModProxy
     public abstract void receiveCustomPacket(Packet250CustomPayload packet);
 
     public abstract void receiveChatPacket(String text);
+
+    public abstract void onItemPickup(EntityPlayer player, ItemStack item);
 }
