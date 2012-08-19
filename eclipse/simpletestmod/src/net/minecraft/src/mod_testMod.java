@@ -2,11 +2,15 @@ package net.minecraft.src;
 
 import java.util.EnumSet;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IScheduledTickHandler;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.Player;
@@ -35,15 +39,15 @@ public class mod_testMod extends BaseMod {
 //        ModLoader.setInGameHook(this, true, false);
 //        ModLoader.setInGUIHook(this, true, false);
 //        FMLCommonHandler.instance().registerTickHandler(this);
-        TickTester t1 = new TickTester();
-        t1.interval=1;
-        TickTester t2 = new TickTester();
-        t2.interval=2;
-        TickTester t3 = new TickTester();
-        t3.interval=3;
-        TickRegistry.registerScheduledTickHandler(t1, Side.CLIENT);
-        TickRegistry.registerScheduledTickHandler(t2, Side.SERVER);
-        TickRegistry.registerScheduledTickHandler(t3, Side.CLIENT);
+        ModLoader.registerKey(this, new KeyBinding("Fishhead",Keyboard.KEY_O), true);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void keyboardEvent(KeyBinding event)
+    {
+        Mouse.setGrabbed(false);
+        System.out.println(event.field_74515_c);
     }
 
     @Override

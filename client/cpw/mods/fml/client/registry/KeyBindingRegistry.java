@@ -2,7 +2,7 @@ package cpw.mods.fml.client.registry;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
+import java.util.Set;
 
 import net.minecraft.src.GameSettings;
 import net.minecraft.src.KeyBinding;
@@ -11,6 +11,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Side;
@@ -115,7 +116,10 @@ public class KeyBindingRegistry
                     {
                         keyUp(type, keyBinding, tickEnd);
                     }
-                    keyDown[i] = state;
+                    if (tickEnd)
+                    {
+                        keyDown[i] = state;
+                    }
                 }
 
             }
@@ -154,7 +158,7 @@ public class KeyBindingRegistry
 
     private static final KeyBindingRegistry INSTANCE = new KeyBindingRegistry();
 
-    private List<KeyHandler> keyHandlers = Lists.newArrayList();
+    private Set<KeyHandler> keyHandlers = Sets.newLinkedHashSet();
 
     @Deprecated
     public static KeyBindingRegistry instance()
