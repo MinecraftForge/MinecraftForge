@@ -13,8 +13,10 @@ import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.src.EntityVillager;
+import net.minecraft.src.MapGenVillage;
 import net.minecraft.src.MerchantRecipeList;
 import net.minecraft.src.StructureVillagePieceWeight;
+import net.minecraft.src.StructureVillagePieces;
 
 /**
  * Registry for villager trading control
@@ -30,13 +32,41 @@ public class VillagerRegistry
     private List<IVillageCreationHandler> villageCreationHandlers = Lists.newArrayList();
     private Map<Integer, String> newVillagers = Maps.newHashMap();
 
+    /**
+     * Allow access to the {@link StructureVillagePieces} array controlling new village
+     * creation so you can insert your own new village pieces
+     *
+     * @author cpw
+     *
+     */
     public interface IVillageCreationHandler
     {
+        /**
+         * Called when {@link MapGenVillage} is creating a new village
+         *
+         * @param random
+         * @param i
+         * @return
+         */
         List<StructureVillagePieceWeight> getVillagePieces(Random random, int i);
     }
 
+    /**
+     * Allow access to the {@link MerchantRecipeList} for a villager type for manipulation
+     *
+     * @author cpw
+     *
+     */
     public interface IVillageTradeHandler
     {
+        /**
+         * Called to allow changing the content of the {@link MerchantRecipeList} for the villager
+         * supplied during creation
+         *
+         * @param villager
+         * @param recipeList
+         * @param random
+         */
         void manipulateTradesForVillager(EntityVillager villager, MerchantRecipeList recipeList, Random random);
     }
 
@@ -45,6 +75,12 @@ public class VillagerRegistry
         return INSTANCE;
     }
 
+    /**
+     * Register a new skin for a villager type
+     *
+     * @param villagerId
+     * @param villagerSkin
+     */
     public void registerVillagerType(int villagerId, String villagerSkin)
     {
         if (newVillagers.containsKey(villagerId))
@@ -55,7 +91,34 @@ public class VillagerRegistry
         newVillagers.put(villagerId, villagerSkin);
     }
 
+    /**
+     * Register a new village creation handler
+     *
+     * @param handler
+     */
+    public void registerVillageCreationHandler(IVillageCreationHandler handler)
+    {
+        villageCreationHandlers.add(handler);
+    }
 
+    /**
+     * Register a new villager trading handler for the specified villager type
+     *
+     * @param villagerId
+     * @param handler
+     */
+    public void registerVillageTradeHandler(int villagerId, IVillageTradeHandler handler)
+    {
+        tradeHandlers.put(villagerId, handler);
+    }
+
+    /**
+     * Callback to setup new villager types
+     *
+     * @param villagerType
+     * @param defaultSkin
+     * @return
+     */
     public static String getVillagerSkin(int villagerType, String defaultSkin)
     {
         if (instance().newVillagers.containsKey(villagerType))
@@ -65,6 +128,14 @@ public class VillagerRegistry
         return defaultSkin;
     }
 
+    /**
+     * Callback to handle trade setup for villagers
+     *
+     * @param recipeList
+     * @param villager
+     * @param villagerType
+     * @param random
+     */
     public static void manageVillagerTrades(MerchantRecipeList recipeList, EntityVillager villager, int villagerType, Random random)
     {
         for (IVillageTradeHandler handler : instance().tradeHandlers.get(villagerType))
