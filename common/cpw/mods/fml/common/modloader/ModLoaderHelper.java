@@ -22,6 +22,7 @@ import net.minecraft.src.BaseMod;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IFuelHandler;
+import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.TickType;
@@ -136,5 +137,10 @@ public class ModLoaderHelper
     public static IConnectionHandler buildConnectionHelper(BaseModProxy mod)
     {
         return new ModLoaderConnectionHandler(mod);
+    }
+
+    public static IPickupNotifier buildPickupHelper(BaseModProxy mod)
+    {
+        return new ModLoaderPickupNotifier(mod);
     }
 }

@@ -505,6 +505,7 @@ public class ModLoaderModContainer implements ModContainer
             GameRegistry.registerWorldGenerator(ModLoaderHelper.buildWorldGenHelper(mod));
             GameRegistry.registerFuelHandler(ModLoaderHelper.buildFuelHelper(mod));
             GameRegistry.registerCraftingHandler(ModLoaderHelper.buildCraftingHelper(mod));
+            GameRegistry.registerPickupHandler(ModLoaderHelper.buildPickupHelper(mod));
             NetworkRegistry.instance().registerConnectionHandler(ModLoaderHelper.buildConnectionHelper(mod));
         }
         catch (Exception e)

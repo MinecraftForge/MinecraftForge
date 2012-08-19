@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.CraftingManager;
+import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.FurnaceRecipes;
 import net.minecraft.src.IChunkProvider;
@@ -27,6 +28,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IFuelHandler;
+import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -42,6 +44,7 @@ public class GameRegistry
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IDispenseHandler> dispenserHandlers = Lists.newArrayList();
+    private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -244,4 +247,16 @@ public class GameRegistry
         }
     }
 
+    public static void registerPickupHandler(IPickupNotifier handler)
+    {
+        pickupHandlers.add(handler);
+    }
+
+    public static void onPickupNotification(EntityPlayer player, EntityItem item)
+    {
+        for (IPickupNotifier notify : pickupHandlers)
+        {
+            notify.notifyPickup(item, player);
+        }
+    }
 }
