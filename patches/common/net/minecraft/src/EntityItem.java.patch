@@ -10,30 +10,47 @@
  
  public class EntityItem extends Entity
  {
-@@ -238,6 +241,26 @@
+@@ -120,6 +123,11 @@
          {
-             int var2 = this.item.stackSize;
+             this.setDead();
+         }
++
++        if (this.item == null || this.item.stackSize <= 0)
++        {
++            this.setDead();
++        }
+     }
  
+     public boolean func_70289_a(EntityItem par1EntityItem)
+@@ -223,7 +231,7 @@
+         NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
+         this.item = ItemStack.loadItemStackFromNBT(var2);
+ 
+-        if (this.item == null)
++        if (this.item == null || this.item.stackSize <= 0)
+         {
+             this.setDead();
+         }
+@@ -236,9 +244,21 @@
+     {
+         if (!this.worldObj.isRemote)
+         {
++            if (this.delayBeforeCanPickup > 0)
++            {
++                return;
++            }
++
 +            EntityItemPickupEvent event = new EntityItemPickupEvent(par1EntityPlayer, this);
++
 +            if (MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                return;
 +            }
 +
-+            if (delayBeforeCanPickup == 0 && (event.isHandled() || item.stackSize <= 0))
-+            {
-+                //FML Notify pickup
-+                worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-+                par1EntityPlayer.onItemPickup(this, var2);
-+
-+                if (item.stackSize <= 0)
-+                {
-+                    setDead();
-+                }
-+            }
-+            
-+            var2 = item.stackSize;
-+
-             if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(this.item))
+             int var2 = this.item.stackSize;
+ 
+-            if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(this.item))
++            if (this.delayBeforeCanPickup <= 0 && (event.isHandled() || var2 <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(this.item)))
              {
                  if (this.item.itemID == Block.wood.blockID)
+                 {
