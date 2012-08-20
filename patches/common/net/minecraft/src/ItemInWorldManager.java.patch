@@ -23,7 +23,15 @@
  
          if (var4 != null && var6)
          {
-@@ -246,16 +252,22 @@
+@@ -243,19 +249,30 @@
+         }
+         else
+         {
++            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
++            if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
++            {
++                return false;
++            }
              int var4 = this.theWorld.getBlockId(par1, par2, par3);
              int var5 = this.theWorld.getBlockMetadata(par1, par2, par3);
              this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, var4 + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
@@ -48,7 +56,7 @@
  
                  if (var7 != null)
                  {
-@@ -264,9 +276,11 @@
+@@ -264,9 +281,11 @@
                      if (var7.stackSize == 0)
                      {
                          this.thisPlayerMP.destroyCurrentEquippedItem();
@@ -60,7 +68,7 @@
                  if (var6 && var8)
                  {
                      Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -303,6 +317,7 @@
+@@ -303,6 +322,7 @@
              if (var6.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -68,7 +76,7 @@
              }
  
              return true;
-@@ -315,6 +330,12 @@
+@@ -315,6 +335,12 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -81,7 +89,7 @@
          int var11 = par2World.getBlockId(par4, par5, par6);
  
          if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
-@@ -336,7 +357,15 @@
+@@ -336,7 +362,15 @@
          }
          else
          {
@@ -98,7 +106,7 @@
          }
      }
  
-@@ -347,4 +376,13 @@
+@@ -347,4 +381,13 @@
      {
          this.theWorld = par1WorldServer;
      }

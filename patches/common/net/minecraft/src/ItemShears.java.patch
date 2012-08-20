@@ -9,21 +9,22 @@
  
  public class ItemShears extends Item
  {
-@@ -16,9 +20,12 @@
+@@ -12,13 +16,12 @@
+ 
+     public boolean func_77660_a(ItemStack par1ItemStack, World par2World, int par3, int par4, int par5, int par6, EntityLiving par7EntityLiving)
+     {
+-        if (par3 != Block.leaves.blockID && par3 != Block.web.blockID && par3 != Block.tallGrass.blockID && par3 != Block.vine.blockID && par3 != Block.tripWire.blockID)
++        if (par3 != Block.leaves.blockID && par3 != Block.web.blockID && par3 != Block.tallGrass.blockID && par3 != Block.vine.blockID && par3 != Block.tripWire.blockID && !(Block.blocksList[par3] instanceof IShearable))
          {
              return super.func_77660_a(par1ItemStack, par2World, par3, par4, par5, par6, par7EntityLiving);
          }
-+        else if (!(Block.blocksList[par3] instanceof IShearable))
-+        {
-+            return super.func_77660_a(par1ItemStack, par2World, par3, par4, par5, par6, par7EntityLiving);
-+        }
          else
          {
 -            par1ItemStack.damageItem(1, par7EntityLiving);
              return true;
          }
      }
-@@ -39,4 +46,64 @@
+@@ -39,4 +42,64 @@
      {
          return par2Block.blockID != Block.web.blockID && par2Block.blockID != Block.leaves.blockID ? (par2Block.blockID == Block.cloth.blockID ? 5.0F : super.getStrVsBlock(par1ItemStack, par2Block)) : 15.0F;
      }
