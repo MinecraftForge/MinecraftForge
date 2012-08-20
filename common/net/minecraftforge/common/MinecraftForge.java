@@ -166,32 +166,20 @@ public class MinecraftForge
     */
    public static void initialize()
    {
-       //Cause the classes to initialize if they already haven't
-       Block.stone.getTextureFile();
-       Item.appleGold.getTextureFile();
-       
-       Block filler = null;
-       try 
-       {
-           Constructor ctr = Block.class.getDeclaredConstructor(int.class, Material.class);
-           ctr.setAccessible(true);
-           filler = (Block)ctr.newInstance(256, Material.air);
-       }
-       catch (Exception e)
-       {
-           RuntimeException rte = new RuntimeException("Could not create Forge filler block", e);
-           rte.printStackTrace();
-           System.exit(1);
-       }
+       Block filler = new Block(0, Material.air);
+       Block.blocksList[0] = null;
+       Block.opaqueCubeLookup[0] = false;
+       Block.lightOpacity[0] = 0;
+       Block.canBlockGrass[0] = false;
 
        for (int x = 256; x < 4096; x++)
        {
-           if (Item.itemsList[x - 256] != null)
+           if (Item.itemsList[x] != null)
            {
                Block.blocksList[x] = filler;
            }
        }
-       
+
        boolean[] temp = new boolean[4096];
        for (int x = 0; x < EntityEnderman.carriableBlocks.length; x++)
        {
