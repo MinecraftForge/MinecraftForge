@@ -29,7 +29,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -650,4 +657,189 @@
+@@ -650,4 +657,199 @@
      {
          StatList.initStats();
      }
@@ -57,13 +57,23 @@
 +     * @param stack The Item Stack
 +     * @param player The Player that used the item
 +     * @param world The Current World
-+     * @param X Target X Position
-+     * @param Y Target Y Position
-+     * @param Z Target Z Position
++     * @param x Target X Position
++     * @param y Target Y Position
++     * @param z Target Z Position
 +     * @param side The side of the target hit
 +     * @return Return true to prevent any further processing.
 +     */
-+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int X, int Y, int Z, int side) 
++    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) 
++    {
++        return onItemUseFirst(stack, player, world, x, y, z, side);
++    }
++    
++    /**
++     * See onItemUseFirst above, this is deprecated in favor of the more aware version.
++     * Only here for compaibility.
++     */
++    @Deprecated
++    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side) 
 +    {
 +        return false;
 +    }
