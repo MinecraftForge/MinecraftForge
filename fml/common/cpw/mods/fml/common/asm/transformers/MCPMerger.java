@@ -192,7 +192,7 @@ public class MCPMerger
                 {
                     if (!copyToServer.contains(name))
                     {
-                        copyEntry(cInJar, cEntry, cOutJar);
+                        copyClass(cInJar, cEntry, cOutJar, null, true);
                         cAdded.add(name);
                     }
                     else
@@ -228,7 +228,7 @@ public class MCPMerger
             {
                 if (!copyToClient.contains(entry.getKey()))
                 {
-                    copyEntry(sInJar, entry.getValue(), sOutJar);
+                    copyClass(sInJar, entry.getValue(), null, sOutJar, false);
                 }
                 else
                 {
@@ -287,18 +287,28 @@ public class MCPMerger
         ClassNode classNode = new ClassNode();
 
         reader.accept(classNode, 0);
-        if (classNode.visibleAnnotations == null) classNode.visibleAnnotations = new ArrayList<AnnotationNode>();
-        classNode.visibleAnnotations.add(getSideAnn(isClientOnly));
+
+        if (!classNode.name.equals("ayn")) //Special case CodecMus so I dont have to make a new patch, anyone who uses this in production code is.. bad.
+        {
+            if (classNode.visibleAnnotations == null) classNode.visibleAnnotations = new ArrayList<AnnotationNode>();
+            classNode.visibleAnnotations.add(getSideAnn(isClientOnly));
+        }
 
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         classNode.accept(writer);
         byte[] data = writer.toByteArray();
 
         ZipEntry newEntry = new ZipEntry(entry.getName());
-        outJar.putNextEntry(newEntry);
-        outJar.write(data);
-        outJar2.putNextEntry(newEntry);
-        outJar2.write(data);
+        if (outJar != null)
+        {
+            outJar.putNextEntry(newEntry);
+            outJar.write(data);
+        }
+        if (outJar2 != null)
+        {
+            outJar2.putNextEntry(newEntry);
+            outJar2.write(data);
+        }
     }
 
     private static AnnotationNode getSideAnn(boolean isClientOnly)
@@ -324,7 +334,9 @@ public class MCPMerger
             String entryName = entry.getName();
             if (!entryName.endsWith(".class") || entryName.startsWith("."))
             {
-                copyEntry(inFile, entry, outFile);
+                ZipEntry newEntry = new ZipEntry(entry.getName());
+                outFile.putNextEntry(newEntry);
+                outFile.write(readEntry(inFile, entry));
             }
             else
             {
@@ -332,12 +344,6 @@ public class MCPMerger
             }
         }
         return ret;
-    }
-    private static void copyEntry(ZipFile inFile, ZipEntry entry, ZipOutputStream outFile) throws IOException
-    {
-        ZipEntry newEntry = new ZipEntry(entry.getName());
-        outFile.putNextEntry(newEntry);
-        outFile.write(readEntry(inFile, entry));
     }
     private static byte[] readEntry(ZipFile inFile, ZipEntry entry) throws IOException
     {

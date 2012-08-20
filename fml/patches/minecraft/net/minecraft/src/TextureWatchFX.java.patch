@@ -1,8 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureWatchFX.java
 +++ ../src-work/minecraft/net/minecraft/src/TextureWatchFX.java
-@@ -1,11 +1,17 @@
+@@ -1,14 +1,20 @@
  package net.minecraft.src;
  
++import cpw.mods.fml.client.FMLTextureFX;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++
 +import java.awt.Graphics2D;
  import java.awt.image.BufferedImage;
 +import java.awt.image.ImageObserver;
@@ -10,16 +14,15 @@
 +import java.util.logging.Level;
 +
  import javax.imageio.ImageIO;
-+
-+import cpw.mods.fml.client.FMLTextureFX;
  import net.minecraft.client.Minecraft;
  
+ @SideOnly(Side.CLIENT)
 -public class TextureWatchFX extends TextureFX
 +public class TextureWatchFX extends FMLTextureFX
  {
      private Minecraft field_76860_g;
      private int[] field_76863_h = new int[256];
-@@ -18,19 +24,37 @@
+@@ -21,19 +27,37 @@
          super(Item.field_77752_aS.func_77617_a(0));
          this.field_76860_g = p_i3214_1_;
          this.field_76847_f = 1;
@@ -65,7 +68,7 @@
          }
      }
  
-@@ -41,7 +65,7 @@
+@@ -44,7 +68,7 @@
          if (this.field_76860_g.field_71441_e != null && this.field_76860_g.field_71439_g != null)
          {
              float var3 = this.field_76860_g.field_71441_e.func_72826_c(1.0F);
@@ -74,7 +77,7 @@
  
              if (!this.field_76860_g.field_71441_e.field_73011_w.func_76569_d())
              {
-@@ -77,7 +101,7 @@
+@@ -80,7 +104,7 @@
          double var5 = Math.sin(this.field_76861_j);
          double var7 = Math.cos(this.field_76861_j);
  
@@ -83,7 +86,7 @@
          {
              int var10 = this.field_76863_h[var9] >> 24 & 255;
              int var11 = this.field_76863_h[var9] >> 16 & 255;
-@@ -86,12 +110,12 @@
+@@ -89,12 +113,12 @@
  
              if (var11 == var13 && var12 == 0 && var13 > 0)
              {
@@ -101,7 +104,7 @@
                  var10 = this.field_76864_i[var21] >> 24 & 255;
                  var11 = (this.field_76864_i[var21] >> 16 & 255) * var11 / 255;
                  var12 = (this.field_76864_i[var21] >> 8 & 255) * var18 / 255;
-@@ -108,10 +132,10 @@
+@@ -111,10 +135,10 @@
                  var13 = var24;
              }
  

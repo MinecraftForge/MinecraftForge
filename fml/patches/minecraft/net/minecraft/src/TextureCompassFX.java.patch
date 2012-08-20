@@ -1,18 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureCompassFX.java
 +++ ../src-work/minecraft/net/minecraft/src/TextureCompassFX.java
-@@ -3,9 +3,10 @@
- import java.awt.image.BufferedImage;
- import java.io.IOException;
- import javax.imageio.ImageIO;
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
 +import cpw.mods.fml.client.FMLTextureFX;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.awt.image.BufferedImage;
+@@ -8,7 +9,7 @@
  import net.minecraft.client.Minecraft;
  
+ @SideOnly(Side.CLIENT)
 -public class TextureCompassFX extends TextureFX
 +public class TextureCompassFX extends FMLTextureFX
  {
      private Minecraft field_76865_g;
      private int[] field_76867_h = new int[256];
-@@ -17,13 +18,19 @@
+@@ -20,13 +21,19 @@
          super(Item.field_77750_aQ.func_77617_a(0));
          this.field_76865_g = p_i3212_1_;
          this.field_76847_f = 1;
@@ -37,7 +41,7 @@
          }
          catch (IOException var5)
          {
-@@ -33,7 +40,7 @@
+@@ -36,7 +43,7 @@
  
      public void func_76846_a()
      {
@@ -46,7 +50,7 @@
          {
              int var2 = this.field_76867_h[var1] >> 24 & 255;
              int var3 = this.field_76867_h[var1] >> 16 & 255;
-@@ -110,11 +117,11 @@
+@@ -113,11 +120,11 @@
          int var19;
          int var18;
  
@@ -62,7 +66,7 @@
              var13 = 100;
              var14 = 100;
              var15 = 100;
-@@ -136,11 +143,11 @@
+@@ -139,11 +146,11 @@
              this.field_76852_a[var12 * 4 + 3] = (byte)var16;
          }
  

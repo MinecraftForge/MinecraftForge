@@ -1,16 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/src/TextureLavaFlowFX.java
 +++ ../src-work/minecraft/net/minecraft/src/TextureLavaFlowFX.java
-@@ -1,6 +1,8 @@
+@@ -1,10 +1,11 @@
  package net.minecraft.src;
  
--public class TextureLavaFlowFX extends TextureFX
 +import cpw.mods.fml.client.FMLTextureFX;
-+
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public class TextureLavaFlowFX extends TextureFX
 +public class TextureLavaFlowFX extends FMLTextureFX
  {
      protected float[] field_76871_g = new float[256];
      protected float[] field_76874_h = new float[256];
-@@ -12,6 +14,18 @@
+@@ -16,6 +17,18 @@
      {
          super(Block.field_71944_C.field_72059_bZ + 1);
          this.field_76849_e = 2;
@@ -29,7 +32,7 @@
      }
  
      public void func_76846_a()
-@@ -25,9 +39,9 @@
+@@ -29,9 +42,9 @@
          int var8;
          int var9;
  
@@ -41,7 +44,7 @@
              {
                  var3 = 0.0F;
                  int var4 = (int)(MathHelper.func_76126_a((float)var2 * (float)Math.PI * 2.0F / 16.0F) * 1.2F);
-@@ -37,25 +51,25 @@
+@@ -41,25 +54,25 @@
                  {
                      for (var7 = var2 - 1; var7 <= var2 + 1; ++var7)
                      {
@@ -76,7 +79,7 @@
                  }
              }
          }
-@@ -64,9 +78,9 @@
+@@ -68,9 +81,9 @@
          this.field_76874_h = this.field_76871_g;
          this.field_76871_g = var11;
  

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/RenderBlocks.java
 +++ ../src-work/minecraft/net/minecraft/src/RenderBlocks.java
-@@ -126,7 +126,73 @@
+@@ -129,7 +129,73 @@
      {
          int var5 = p_78612_1_.func_71857_b();
          p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);
@@ -75,7 +75,7 @@
      }
  
      public boolean func_78567_v(Block p_78567_1_, int p_78567_2_, int p_78567_3_, int p_78567_4_)
-@@ -5991,6 +6057,10 @@
+@@ -5994,6 +6060,10 @@
  
                  p_78600_1_.func_71905_a(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
              }
@@ -86,7 +86,7 @@
          }
          else
          {
-@@ -6048,6 +6118,30 @@
+@@ -6051,6 +6121,30 @@
  
      public static boolean func_78597_b(int p_78597_0_)
      {
