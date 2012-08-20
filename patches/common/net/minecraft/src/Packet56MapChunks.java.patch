@@ -6,9 +6,9 @@
  
 -            var8 = 2048 * 5 * var7 + 256;
 +            int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
-+            for (var8 = 0; var8 < 16; ++var8)
++            for (int x = 0; x < 16; x++)
 +            {
-+                msb += this.field_73588_b[var6] >> var8 & 1;
++                msb += (field_73588_b[var6] >> x) & 1;
 +            }
 +
 +            var8 = 2048 * 5 * var7 + (2048 * msb) + 256;
