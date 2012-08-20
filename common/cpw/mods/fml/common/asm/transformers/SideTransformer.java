@@ -27,6 +27,15 @@ public class SideTransformer implements IClassTransformer
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
 
+        if (remove((List<AnnotationNode>)classNode.visibleAnnotations, SIDE))
+        {
+            if (DEBUG)
+            {
+                System.out.println(String.format("Attempted to load class %s for invalid side %s", classNode.name, SIDE));
+            }
+            return null;
+        }
+
         Iterator<FieldNode> fields = classNode.fields.iterator();
         while(fields.hasNext())
         {

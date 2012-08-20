@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/src/GuiMainMenu.java
 +++ ../src-work/minecraft/net/minecraft/src/GuiMainMenu.java
-@@ -8,10 +8,17 @@
+@@ -10,10 +10,17 @@
  import java.util.ArrayList;
  import java.util.Calendar;
  import java.util.Date;
@@ -16,9 +16,9 @@
 +import cpw.mods.fml.client.GuiModList;
 +import cpw.mods.fml.common.FMLCommonHandler;
  
+ @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
- {
-@@ -118,7 +125,8 @@
+@@ -121,7 +128,8 @@
              this.func_73969_a(var4, 24, var2);
          }
  
@@ -28,7 +28,7 @@
  
          if (this.field_73882_e.field_71448_m)
          {
-@@ -182,6 +190,11 @@
+@@ -185,6 +193,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -40,7 +40,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -400,7 +413,14 @@
+@@ -403,7 +416,14 @@
              var9 = var9 + " Demo";
          }
  
