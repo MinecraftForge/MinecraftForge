@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/src/SoundManager.java
 +++ ../src_work/minecraft/net/minecraft/src/SoundManager.java
-@@ -2,6 +2,21 @@
- 
+@@ -4,6 +4,21 @@
+ import cpw.mods.fml.common.asm.SideOnly;
  import java.io.File;
  import java.util.Random;
 +
@@ -22,7 +22,7 @@
  import paulscode.sound.SoundSystem;
  import paulscode.sound.SoundSystemConfig;
  import paulscode.sound.codecs.CodecJOrbis;
-@@ -37,9 +52,11 @@
+@@ -40,9 +55,11 @@
      private Random rand = new Random();
      private int ticksBeforeMusic;
  
@@ -35,7 +35,7 @@
      }
  
      /**
-@@ -54,6 +71,8 @@
+@@ -57,6 +74,8 @@
          {
              this.tryToSetLibraryAndCodecs();
          }
@@ -44,7 +44,7 @@
      }
  
      /**
-@@ -73,6 +92,8 @@
+@@ -76,6 +95,8 @@
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
              SoundSystemConfig.setCodec("mus", CodecMus.class);
              SoundSystemConfig.setCodec("wav", CodecWav.class);
@@ -53,7 +53,7 @@
              sndSystem = new SoundSystem();
              this.options.soundVolume = var1;
              this.options.musicVolume = var2;
-@@ -161,10 +182,12 @@
+@@ -164,10 +185,12 @@
                  }
  
                  SoundPoolEntry var1 = this.soundPoolMusic.getRandomSound();
@@ -67,7 +67,7 @@
                      sndSystem.backgroundMusic("BgMusic", var1.soundUrl, var1.soundName, false);
                      sndSystem.setVolume("BgMusic", this.options.musicVolume);
                      sndSystem.play("BgMusic");
-@@ -214,6 +237,7 @@
+@@ -217,6 +240,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry var8 = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -75,7 +75,7 @@
  
                  if (var8 != null && par5 > 0.0F)
                  {
-@@ -225,6 +249,7 @@
+@@ -228,6 +252,7 @@
                      float var9 = 16.0F;
                      sndSystem.newStreamingSource(true, var7, var8.soundUrl, var8.soundName, false, par2, par3, par4, 2, var9 * 4.0F);
                      sndSystem.setVolume(var7, 0.5F * this.options.soundVolume);
@@ -83,7 +83,7 @@
                      sndSystem.play(var7);
                  }
              }
-@@ -239,6 +264,7 @@
+@@ -242,6 +267,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var7 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -91,7 +91,7 @@
  
              if (var7 != null && par5 > 0.0F)
              {
-@@ -260,6 +286,7 @@
+@@ -263,6 +289,7 @@
                  }
  
                  sndSystem.setVolume(var8, par5 * this.options.soundVolume);
@@ -99,7 +99,7 @@
                  sndSystem.play(var8);
              }
          }
-@@ -274,6 +301,7 @@
+@@ -277,6 +304,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var4 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -107,7 +107,7 @@
  
              if (var4 != null)
              {
-@@ -289,6 +317,7 @@
+@@ -292,6 +320,7 @@
                  par2 *= 0.25F;
                  sndSystem.setPitch(var5, par3);
                  sndSystem.setVolume(var5, par2 * this.options.soundVolume);

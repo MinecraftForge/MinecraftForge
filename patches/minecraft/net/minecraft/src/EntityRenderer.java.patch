@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
-@@ -6,6 +6,11 @@
+@@ -8,6 +8,11 @@
  import java.util.List;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
@@ -12,7 +12,7 @@
  import org.lwjgl.input.Mouse;
  import org.lwjgl.opengl.Display;
  import org.lwjgl.opengl.GL11;
-@@ -289,8 +294,15 @@
+@@ -292,8 +297,15 @@
       */
      private void updateFovModifierHand()
      {
@@ -30,7 +30,7 @@
          this.fovModifierHandPrev = this.fovModifierHand;
          this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
      }
-@@ -306,7 +318,7 @@
+@@ -309,7 +321,7 @@
          }
          else
          {
@@ -39,7 +39,7 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -394,11 +406,14 @@
+@@ -397,11 +409,14 @@
              if (!this.mc.gameSettings.debugCamEnable)
              {
                  int var10 = this.mc.theWorld.getBlockId(MathHelper.floor_double(var2.posX), MathHelper.floor_double(var2.posY), MathHelper.floor_double(var2.posZ));
@@ -59,7 +59,7 @@
                      GL11.glRotatef((float)(var12 * 90), 0.0F, 1.0F, 0.0F);
                  }
  
-@@ -1034,8 +1049,11 @@
+@@ -1037,8 +1052,11 @@
                      var17 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -73,7 +73,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1099,8 +1117,11 @@
+@@ -1102,8 +1120,11 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -87,7 +87,7 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
-@@ -1124,6 +1145,9 @@
+@@ -1127,6 +1148,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();
              }

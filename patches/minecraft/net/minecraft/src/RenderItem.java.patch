@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderItem.java
 +++ ../src_work/minecraft/net/minecraft/src/RenderItem.java
-@@ -2,6 +2,8 @@
- 
+@@ -4,6 +4,8 @@
+ import cpw.mods.fml.common.asm.SideOnly;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
 +import net.minecraftforge.client.ForgeHooksClient;
@@ -9,7 +9,7 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -51,18 +53,21 @@
+@@ -54,18 +56,21 @@
  
          GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -35,7 +35,7 @@
  
              if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
              {
-@@ -84,7 +89,7 @@
+@@ -87,7 +92,7 @@
                  }
  
                  var24 = 1.0F;
@@ -44,7 +44,7 @@
                  GL11.glPopMatrix();
              }
          }
-@@ -96,10 +101,11 @@
+@@ -99,10 +104,11 @@
              if (var10.getItem().requiresMultipleRenderPasses())
              {
                  GL11.glScalef(0.5F, 0.5F, 0.5F);
@@ -59,7 +59,7 @@
                      var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);
                      var17 = 1.0F;
  
-@@ -120,14 +126,7 @@
+@@ -123,14 +129,7 @@
                  GL11.glScalef(0.5F, 0.5F, 0.5F);
                  var15 = var10.getIconIndex();
  
@@ -75,7 +75,7 @@
  
                  if (this.field_77024_a)
                  {
-@@ -189,9 +188,9 @@
+@@ -192,9 +191,9 @@
          float var12;
          float var16;
  
@@ -88,7 +88,7 @@
              Block var15 = Block.blocksList[par3];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -223,9 +222,9 @@
+@@ -226,9 +225,9 @@
              if (Item.itemsList[par3].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -101,7 +101,7 @@
                  {
                      var9 = Item.itemsList[par3].getIconFromDamageForRenderPass(par4, var8);
                      int var10 = Item.itemsList[par3].getColorFromDamage(par4, var8);
-@@ -247,14 +246,7 @@
+@@ -250,14 +249,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
@@ -117,7 +117,7 @@
  
                  var8 = Item.itemsList[par3].getColorFromDamage(par4, 0);
                  float var14 = (float)(var8 >> 16 & 255) / 255.0F;
-@@ -281,7 +273,10 @@
+@@ -284,7 +276,10 @@
      {
          if (par3ItemStack != null)
          {

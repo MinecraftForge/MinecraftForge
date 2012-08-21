@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/ThreadDownloadResources.java
 +++ ../src_work/minecraft/net/minecraft/src/ThreadDownloadResources.java
-@@ -6,6 +6,8 @@
+@@ -8,6 +8,8 @@
  import java.io.FileOutputStream;
  import java.io.IOException;
  import java.net.URL;
@@ -9,7 +9,7 @@
  import javax.xml.parsers.DocumentBuilder;
  import javax.xml.parsers.DocumentBuilderFactory;
  import net.minecraft.client.Minecraft;
-@@ -45,7 +47,11 @@
+@@ -48,7 +50,11 @@
              URL var1 = new URL("http://s3.amazonaws.com/MinecraftResources/");
              DocumentBuilderFactory var2 = DocumentBuilderFactory.newInstance();
              DocumentBuilder var3 = var2.newDocumentBuilder();
@@ -22,7 +22,7 @@
              NodeList var5 = var4.getElementsByTagName("Contents");
  
              for (int var6 = 0; var6 < 2; ++var6)
-@@ -169,7 +175,11 @@
+@@ -172,7 +178,11 @@
      private void downloadResource(URL par1URL, File par2File, long par3) throws IOException
      {
          byte[] var5 = new byte[4096];

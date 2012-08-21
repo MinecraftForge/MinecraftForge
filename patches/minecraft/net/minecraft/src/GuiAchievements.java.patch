@@ -1,19 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiAchievements.java
 +++ ../src_work/minecraft/net/minecraft/src/GuiAchievements.java
-@@ -1,7 +1,12 @@
- package net.minecraft.src;
+@@ -2,8 +2,13 @@
  
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++
 +import java.util.LinkedList;
 +import java.util.List;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
 +import net.minecraftforge.common.AchievementPage;
-+import net.minecraftforge.common.MinecraftForge;
 +
  import org.lwjgl.input.Mouse;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
-@@ -41,6 +46,10 @@
+@@ -44,6 +49,10 @@
      /** Whether the Mouse Button is down or not */
      private int isMouseButtonDown = 0;
      private StatFileWriter statFileWriter;
@@ -24,7 +25,7 @@
  
      public GuiAchievements(StatFileWriter par1StatFileWriter)
      {
-@@ -49,6 +58,14 @@
+@@ -52,6 +61,14 @@
          short var3 = 141;
          this.field_74117_m = this.guiMapX = this.field_74124_q = (double)(AchievementList.openInventory.displayColumn * 24 - var2 / 2 - 12);
          this.field_74115_n = this.guiMapY = this.field_74123_r = (double)(AchievementList.openInventory.displayRow * 24 - var3 / 2);
@@ -39,7 +40,7 @@
      }
  
      /**
-@@ -58,6 +75,7 @@
+@@ -61,6 +78,7 @@
      {
          this.controlList.clear();
          this.controlList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
@@ -47,7 +48,7 @@
      }
  
      /**
-@@ -69,6 +87,16 @@
+@@ -72,6 +90,16 @@
          {
              this.mc.displayGuiScreen((GuiScreen)null);
              this.mc.setIngameFocus();
@@ -64,7 +65,7 @@
          }
  
          super.actionPerformed(par1GuiButton);
-@@ -293,11 +321,12 @@
+@@ -296,11 +324,12 @@
          int var27;
          int var30;
  
@@ -82,7 +83,7 @@
              {
                  var24 = var33.displayColumn * 24 - var4 + 11 + var10;
                  var25 = var33.displayRow * 24 - var5 + 11 + var11;
-@@ -331,9 +360,9 @@
+@@ -334,9 +363,9 @@
          int var42;
          int var41;
  

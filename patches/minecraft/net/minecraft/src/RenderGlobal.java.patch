@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/src/RenderGlobal.java
-@@ -9,7 +9,10 @@
+@@ -11,7 +11,10 @@
  import java.util.List;
  import java.util.Map;
  import java.util.Random;
@@ -11,7 +11,7 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
-@@ -867,6 +870,12 @@
+@@ -870,6 +873,12 @@
       */
      public void renderSky(float par1)
      {
@@ -24,7 +24,7 @@
          if (this.mc.theWorld.provider.worldType == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1787,6 +1796,7 @@
+@@ -1790,6 +1799,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -32,7 +32,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -1906,6 +1916,7 @@
+@@ -1909,6 +1919,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -40,7 +40,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -1922,6 +1933,7 @@
+@@ -1925,6 +1936,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -48,7 +48,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -1935,17 +1947,19 @@
+@@ -1938,17 +1950,19 @@
                          {
                              var24 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                              var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var24]);

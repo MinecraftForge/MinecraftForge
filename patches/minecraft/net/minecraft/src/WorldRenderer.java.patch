@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/WorldRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/WorldRenderer.java
-@@ -3,6 +3,9 @@
+@@ -5,6 +5,9 @@
  import java.util.ArrayList;
  import java.util.HashSet;
  import java.util.List;
@@ -9,8 +9,8 @@
 +
  import org.lwjgl.opengl.GL11;
  
- public class WorldRenderer
-@@ -10,7 +13,7 @@
+ @SideOnly(Side.CLIENT)
+@@ -13,7 +16,7 @@
      /** Reference to the World object. */
      public World worldObj;
      private int glRenderList = -1;
@@ -19,7 +19,7 @@
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
-@@ -179,15 +182,16 @@
+@@ -182,15 +185,16 @@
                                          GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
                                          GL11.glScalef(var19, var19, var19);
                                          GL11.glTranslatef(8.0F, 8.0F, 8.0F);
@@ -39,7 +39,7 @@
                                          {
                                              TileEntity var20 = var9.getBlockTileEntity(var17, var15, var16);
  
-@@ -199,14 +203,17 @@
+@@ -202,14 +206,17 @@
  
                                          int var24 = var23.getRenderBlockPass();
  
@@ -60,7 +60,7 @@
                                      }
                                  }
                              }
-@@ -215,10 +222,11 @@
+@@ -218,10 +225,11 @@
  
                      if (var14)
                      {

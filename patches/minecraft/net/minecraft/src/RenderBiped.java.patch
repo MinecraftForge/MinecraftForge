@@ -1,17 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderBiped.java
 +++ ../src_work/minecraft/net/minecraft/src/RenderBiped.java
-@@ -1,6 +1,10 @@
- package net.minecraft.src;
- 
+@@ -3,6 +3,10 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
  import org.lwjgl.opengl.GL11;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
 +import net.minecraftforge.client.IItemRenderer;
 +import net.minecraftforge.client.MinecraftForgeClient;
  
+ @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
- {
-@@ -32,7 +36,10 @@
+@@ -35,7 +39,10 @@
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
              float var4;
  
@@ -23,7 +23,7 @@
              {
                  var4 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -72,7 +79,10 @@
+@@ -75,7 +82,10 @@
  
              if (var3.getItem().requiresMultipleRenderPasses())
              {

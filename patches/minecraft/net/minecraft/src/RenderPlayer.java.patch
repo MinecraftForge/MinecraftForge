@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/src/RenderPlayer.java
 +++ ../src_work/minecraft/net/minecraft/src/RenderPlayer.java
-@@ -1,6 +1,12 @@
- package net.minecraft.src;
- 
+@@ -3,6 +3,12 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
  import net.minecraft.client.Minecraft;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
@@ -12,8 +12,8 @@
 +
  import org.lwjgl.opengl.GL11;
  
- public class RenderPlayer extends RenderLiving
-@@ -32,7 +38,7 @@
+ @SideOnly(Side.CLIENT)
+@@ -35,7 +41,7 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
@@ -22,7 +22,7 @@
                  ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  var7.bipedHead.showModel = par2 == 0;
                  var7.bipedHeadwear.showModel = par2 == 0;
-@@ -156,12 +162,14 @@
+@@ -159,12 +165,14 @@
          super.renderEquippedItems(par1EntityPlayer, par2);
          ItemStack var3 = par1EntityPlayer.inventory.armorItemInSlot(3);
  
@@ -40,7 +40,7 @@
              {
                  float var4 = 0.625F;
                  GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -263,7 +271,10 @@
+@@ -266,7 +274,10 @@
                  var20 = var21.getItemUseAction();
              }
  
@@ -52,7 +52,7 @@
              {
                  var6 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -316,7 +327,7 @@
+@@ -319,7 +330,7 @@
  
              if (var21.getItem().requiresMultipleRenderPasses())
              {

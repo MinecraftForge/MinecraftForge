@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/TileEntityRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/TileEntityRenderer.java
-@@ -123,7 +123,9 @@
+@@ -126,7 +126,9 @@
       */
      public void renderTileEntity(TileEntity par1TileEntity, float par2)
      {

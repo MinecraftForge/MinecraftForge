@@ -1,16 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/PlayerControllerMP.java
 +++ ../src_work/minecraft/net/minecraft/src/PlayerControllerMP.java
-@@ -1,6 +1,9 @@
- package net.minecraft.src;
- 
+@@ -3,6 +3,9 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
  import net.minecraft.client.Minecraft;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
  
+ @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
- {
-@@ -95,6 +98,11 @@
+@@ -98,6 +101,11 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -22,7 +22,7 @@
          if (this.currentGameType.isAdventure())
          {
              return false;
-@@ -112,7 +120,7 @@
+@@ -115,7 +123,7 @@
              {
                  var5.playAuxSFX(2001, par1, par2, par3, var6.blockID + (var5.getBlockMetadata(par1, par2, par3) << 12));
                  int var7 = var5.getBlockMetadata(par1, par2, par3);
@@ -31,7 +31,7 @@
  
                  if (var8)
                  {
-@@ -295,6 +303,12 @@
+@@ -298,6 +306,12 @@
          float var11 = (float)par8Vec3.zCoord - (float)par6;
          boolean var12 = false;
          int var13 = par2World.getBlockId(par4, par5, par6);
@@ -44,7 +44,7 @@
  
          if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
          {
-@@ -332,7 +346,15 @@
+@@ -335,7 +349,15 @@
          }
          else
          {
@@ -61,7 +61,7 @@
          }
      }
  
-@@ -354,9 +376,10 @@
+@@ -357,9 +379,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
  

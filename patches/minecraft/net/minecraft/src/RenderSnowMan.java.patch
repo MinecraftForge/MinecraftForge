@@ -8,9 +8,9 @@
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 +import net.minecraftforge.client.MinecraftForgeClient;
  
- import org.lwjgl.opengl.GL11;
- 
-@@ -19,12 +24,15 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+@@ -22,12 +27,15 @@
          super.renderEquippedItems(par1EntitySnowman, par2);
          ItemStack var3 = new ItemStack(Block.pumpkin, 1);
  

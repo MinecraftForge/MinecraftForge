@@ -5,9 +5,9 @@
 +
 +import net.minecraftforge.client.GuiControlsScrollPanel;
  
- public class GuiControls extends GuiScreen
- {
-@@ -16,6 +18,8 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+@@ -20,6 +22,8 @@
      /** The ID of the  button that has been pressed. */
      private int buttonId = -1;
  
@@ -16,7 +16,7 @@
      public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
          this.parentScreen = par1GuiScreen;
-@@ -32,15 +36,12 @@
+@@ -36,15 +40,12 @@
       */
      public void initGui()
      {
@@ -35,7 +35,7 @@
          this.screenTitle = var1.translateKey("controls.title");
      }
  
-@@ -49,19 +50,9 @@
+@@ -53,19 +54,9 @@
       */
      protected void actionPerformed(GuiButton par1GuiButton)
      {
@@ -55,7 +55,7 @@
          }
      }
  
-@@ -70,17 +61,7 @@
+@@ -74,17 +65,7 @@
       */
      protected void mouseClicked(int par1, int par2, int par3)
      {
@@ -74,7 +74,7 @@
      }
  
      /**
-@@ -88,14 +69,7 @@
+@@ -92,14 +73,7 @@
       */
      protected void keyTyped(char par1, int par2)
      {
@@ -90,7 +90,7 @@
          {
              super.keyTyped(par1, par2);
          }
-@@ -107,47 +81,8 @@
+@@ -111,47 +85,8 @@
      public void drawScreen(int par1, int par2, float par3)
      {
          this.drawDefaultBackground();

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/Tessellator.java
 +++ ../src_work/minecraft/net/minecraft/src/Tessellator.java
-@@ -5,12 +5,20 @@
+@@ -7,6 +7,8 @@
  import java.nio.FloatBuffer;
  import java.nio.IntBuffer;
  import java.nio.ShortBuffer;
@@ -9,7 +9,8 @@
  import org.lwjgl.opengl.ARBVertexBufferObject;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GLContext;
- 
+@@ -14,6 +16,12 @@
+ @SideOnly(Side.CLIENT)
  public class Tessellator
  {
 +    private static int nativeBufferSize = 0x200000;
@@ -21,7 +22,7 @@
      /**
       * Boolean used to check whether quads should be drawn as four triangles. Initialized to true and never changed.
       */
-@@ -22,16 +30,16 @@
+@@ -25,16 +33,16 @@
      private static boolean tryVBO = false;
  
      /** The byte buffer used for GL allocation. */
@@ -42,7 +43,7 @@
  
      /** Raw integer array. */
      private int[] rawBuffer;
-@@ -107,10 +115,10 @@
+@@ -110,10 +118,10 @@
      public boolean isDrawing = false;
  
      /** Whether we are currently using VBO or not. */
@@ -55,7 +56,7 @@
  
      /**
       * The index of the last VBO used. This is used in round-robin fashion, sequentially, through the vboCount vertex
-@@ -119,25 +127,28 @@
+@@ -122,25 +130,28 @@
      private int vboIndex = 0;
  
      /** Number of vertex buffer objects allocated for use. */
@@ -97,7 +98,7 @@
          }
      }
  
-@@ -154,12 +165,23 @@
+@@ -157,12 +168,23 @@
          {
              this.isDrawing = false;
  
@@ -125,7 +126,7 @@
  
                  if (this.useVBO)
                  {
-@@ -245,11 +267,11 @@
+@@ -248,11 +270,11 @@
  
                  if (this.drawMode == 7 && convertQuadsToTriangles)
                  {
@@ -139,7 +140,7 @@
                  }
  
                  GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-@@ -275,6 +297,12 @@
+@@ -278,6 +300,12 @@
                  {
                      GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
                  }
@@ -152,7 +153,7 @@
              }
  
              int var1 = this.rawBufferIndex * 4;
-@@ -439,6 +467,19 @@
+@@ -442,6 +470,19 @@
       */
      public void addVertex(double par1, double par3, double par5)
      {
@@ -172,7 +173,7 @@
          ++this.addedVertices;
  
          if (this.drawMode == 7 && convertQuadsToTriangles && this.addedVertices % 4 == 0)
-@@ -497,12 +538,6 @@
+@@ -500,12 +541,6 @@
          this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
          this.rawBufferIndex += 8;
          ++this.vertexCount;

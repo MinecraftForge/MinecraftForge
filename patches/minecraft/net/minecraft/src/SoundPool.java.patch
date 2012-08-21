@@ -1,14 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/src/SoundPool.java
 +++ ../src_work/minecraft/net/minecraft/src/SoundPool.java
-@@ -2,6 +2,7 @@
- 
+@@ -4,6 +4,7 @@
+ import cpw.mods.fml.common.asm.SideOnly;
  import java.io.File;
  import java.net.MalformedURLException;
 +import java.net.URL;
  import java.util.ArrayList;
  import java.util.HashMap;
  import java.util.List;
-@@ -33,6 +34,26 @@
+@@ -36,6 +37,26 @@
       */
      public SoundPoolEntry addSound(String par1Str, File par2File)
      {
@@ -35,7 +35,7 @@
          try
          {
              String var3 = par1Str;
-@@ -53,13 +74,13 @@
+@@ -56,13 +77,13 @@
                  this.nameToSoundPoolEntriesMapping.put(par1Str, new ArrayList());
              }
  
