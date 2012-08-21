@@ -21,16 +21,13 @@ public class ModLoaderGuiHelper implements IGuiHandler
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        System.out.printf("returning container %s, %d for server side\n", container, id);
         return container;
     }
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
-        Object o = ModLoaderHelper.getClientSideGui(mod, player, ID, x, y, z);
-        System.out.printf("fetching gui %s %d for client side\n", o, id);
-        return o;
+        return ModLoaderHelper.getClientSideGui(mod, player, ID, x, y, z);
     }
 
     public void injectContainer(Container container)
