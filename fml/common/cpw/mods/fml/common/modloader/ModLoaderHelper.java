@@ -127,12 +127,23 @@ public class ModLoaderHelper
     {
         ModLoaderGuiHelper handler = new ModLoaderGuiHelper(mod, id);
         guiHelpers.put(id, handler);
-        NetworkRegistry.instance().registerGuiHandler(Loader.instance().activeModContainer(), handler);
+        NetworkRegistry.instance().registerGuiHandler(mod, handler);
     }
 
     public static void openGui(int id, EntityPlayer player, Container container, int x, int y, int z)
     {
-        guiHelpers.get(id).injectContainer(container);
-        player.openGui(guiHelpers.get(id).getMod(), id, player.field_70170_p, x, y, z);
+        ModLoaderGuiHelper helper = guiHelpers.get(id);
+        helper.injectContainer(container);
+        System.out.printf("Opening GUI %d %s at %d %d %d\n", id, container, x,y,z);
+        player.openGui(helper.getMod(), id, player.field_70170_p, x, y, z);
+    }
+    
+    public static Object getClientSideGui(BaseModProxy mod, EntityPlayer player, int ID, int x, int y, int z)
+    {
+        if (sidedHelper != null)
+        {
+            return sidedHelper.getClientGui(mod, player, ID, x, y, z);
+        }
+        return null;
     }
 }

@@ -85,7 +85,4 @@ public interface BaseModProxy
     public abstract void receiveChatPacket(String text);
 
     public abstract void onItemPickup(EntityPlayer player, ItemStack item);
-
-    @SideOnly(Side.CLIENT)
-    public abstract GuiScreen getContainerGUI(EntityPlayer player, int containerID, int x, int y, int z);
 }

@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityClientPlayerMP;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.KeyBinding;
 import net.minecraft.src.Render;
 
@@ -91,5 +93,12 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
         handler.setModContainer(mlmc);
         handler.addKeyBinding(keyHandler, allowRepeat);
         KeyBindingRegistry.registerKeyBinding(handler);
+    }
+
+
+    @Override
+    public Object getClientGui(BaseModProxy mod, EntityPlayer player, int ID, int x, int y, int z)
+    {
+        return ((net.minecraft.src.BaseMod)mod).getContainerGUI((EntityClientPlayerMP) player, ID, x, y, z);
     }
 }
