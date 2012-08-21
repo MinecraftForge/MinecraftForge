@@ -1,9 +1,11 @@
 package cpw.mods.fml.common.network;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet250CustomPayload;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 
 /**
  * A simple utility class to send packet 250 packets around the place
@@ -33,6 +35,14 @@ public class PacketDispatcher
 
     public static void sendPacketToAllAround(double X, double Y, double Z, double range, int dimensionId, Packet packet)
     {
-        FMLCommonHandler.instance().getMinecraftServerInstance().func_71203_ab().func_72393_a(X, Y, Z, range, dimensionId, packet);
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server != null)
+        {
+            server.func_71203_ab().func_72393_a(X, Y, Z, range, dimensionId, packet);
+        }
+        else
+        {
+            FMLLog.fine("Attempt to send packet to all around without a server instance available");
+        }
     }
 }
