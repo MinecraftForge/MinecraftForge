@@ -22,6 +22,7 @@ import com.google.common.collect.Multimaps;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.common.modloader.IModLoaderSidedHelper;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
@@ -83,7 +84,7 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
     }
 
 
-    public static void registerKeyBinding(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
+    public static void registerKeyBinding(BaseModProxy mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
         ModLoaderKeyBindingHandler handler = Iterables.getOnlyElement(keyBindingContainers.get(mlmc));

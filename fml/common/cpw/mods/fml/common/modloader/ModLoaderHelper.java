@@ -18,7 +18,10 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.src.BaseMod;
+import com.google.common.collect.Maps;
+
+import net.minecraft.src.Container;
+import net.minecraft.src.EntityPlayer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IFuelHandler;
@@ -27,7 +30,9 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.IConnectionHandler;
+import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 /**
  * @author cpw
@@ -35,10 +40,11 @@ import cpw.mods.fml.common.network.IPacketHandler;
  */
 public class ModLoaderHelper
 {
-    private static Map<BaseMod, ModLoaderModContainer> notModCallbacks=new HashMap<BaseMod, ModLoaderModContainer>();
-
     public static IModLoaderSidedHelper sidedHelper;
-    public static void updateStandardTicks(BaseMod mod, boolean enable, boolean useClock)
+    
+    private static Map<Integer, ModLoaderGuiHelper> guiHelpers = Maps.newHashMap();
+    
+    public static void updateStandardTicks(BaseModProxy mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
         BaseModTicker ticker = mlmc.getGameTickHandler();
@@ -59,9 +65,9 @@ public class ModLoaderHelper
         }
     }
 
-    public static void updateGUITicks(BaseMod mod, boolean enable, boolean useClock)
+    public static void updateGUITicks(BaseModProxy mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = findOrBuildModContainer(mod);
+        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
         EnumSet<TickType> ticks = mlmc.getGUITickHandler().ticks();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock) {
@@ -79,34 +85,7 @@ public class ModLoaderHelper
         }
     }
 
-    /**
-     * @param mod
-     * @return
-     */
-    private static ModLoaderModContainer findOrBuildModContainer(BaseMod mod)
-    {
-        ModLoaderModContainer mlmc=(ModLoaderModContainer) FMLCommonHandler.instance().findContainerFor(mod);
-        if (mlmc==null) {
-            mlmc=notModCallbacks.get(mod);
-            if (mlmc==null) {
-                mlmc=new ModLoaderModContainer(mod);
-                notModCallbacks.put(mod, mlmc);
-            }
-        }
-        return mlmc;
-    }
-
-    /**
-     * @param mod
-     * @return
-     */
-    public static ModLoaderModContainer registerKeyHelper(BaseMod mod)
-    {
-        ModLoaderModContainer mlmc=findOrBuildModContainer(mod);
-        return mlmc;
-    }
-
-    public static IPacketHandler buildPacketHandlerFor(BaseMod mod)
+    public static IPacketHandler buildPacketHandlerFor(BaseModProxy mod)
     {
         return new ModLoaderPacketHandler(mod);
     }
@@ -142,5 +121,18 @@ public class ModLoaderHelper
     public static IPickupNotifier buildPickupHelper(BaseModProxy mod)
     {
         return new ModLoaderPickupNotifier(mod);
+    }
+
+    public static void buildGuiHelper(BaseModProxy mod, int id)
+    {
+        ModLoaderGuiHelper handler = new ModLoaderGuiHelper(mod, id);
+        guiHelpers.put(id, handler);
+        NetworkRegistry.instance().registerGuiHandler(Loader.instance().activeModContainer(), handler);
+    }
+
+    public static void openGui(int id, EntityPlayer player, Container container, int x, int y, int z)
+    {
+        guiHelpers.get(id).injectContainer(container);
+        player.openGui(guiHelpers.get(id).getMod(), id, player.field_70170_p, x, y, z);
     }
 }
