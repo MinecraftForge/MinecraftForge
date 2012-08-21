@@ -1,19 +1,108 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiContainer.java
 +++ ../src_work/minecraft/net/minecraft/src/GuiContainer.java
-@@ -1,7 +1,10 @@
+@@ -1,5 +1,4 @@
  package net.minecraft.src;
+-
+ import java.util.Iterator;
+ import java.util.List;
+ import org.lwjgl.input.Keyboard;
+@@ -2,6 +1,11 @@
  
  import java.util.Iterator;
  import java.util.List;
++
 +import net.minecraftforge.client.IItemRenderer;
 +import net.minecraftforge.client.MinecraftForgeClient;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.TOOLTIP;
++
  import org.lwjgl.input.Keyboard;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
-@@ -116,2 +118,9 @@
-    protected void func_74184_a(ItemStack par1ItemStack, int x, int y)
-    {
+@@ -115,7 +119,7 @@
+         RenderHelper.enableStandardItemLighting();
+     }
+ 
+-    protected void func_74184_a(ItemStack par1ItemStack, int par2, int par3)
++    protected void func_74184_a(ItemStack par1ItemStack, int x, int y)
+     {
+         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+         RenderHelper.disableStandardItemLighting();
+@@ -117,78 +121,86 @@
+ 
+     protected void func_74184_a(ItemStack par1ItemStack, int par2, int par3)
+     {
+-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+-        RenderHelper.disableStandardItemLighting();
+-        GL11.glDisable(GL11.GL_LIGHTING);
+-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+-        List var4 = par1ItemStack.getItemNameandInformation();
+-
+-        if (!var4.isEmpty())
+-        {
+-            int var5 = 0;
+-            Iterator var6 = var4.iterator();
+-
+-            while (var6.hasNext())
+-            {
+-                String var7 = (String)var6.next();
+-                int var8 = this.fontRenderer.getStringWidth(var7);
+-
+-                if (var8 > var5)
+-                {
+-                    var5 = var8;
+-                }
+-            }
+-
+-            int var15 = par2 + 12;
+-            int var16 = par3 - 12;
+-            int var9 = 8;
+-
+-            if (var4.size() > 1)
+-            {
+-                var9 += 2 + (var4.size() - 1) * 10;
+-            }
+-
+-            this.zLevel = 300.0F;
+-            itemRenderer.zLevel = 300.0F;
+-            int var10 = -267386864;
+-            this.drawGradientRect(var15 - 3, var16 - 4, var15 + var5 + 3, var16 - 3, var10, var10);
+-            this.drawGradientRect(var15 - 3, var16 + var9 + 3, var15 + var5 + 3, var16 + var9 + 4, var10, var10);
+-            this.drawGradientRect(var15 - 3, var16 - 3, var15 + var5 + 3, var16 + var9 + 3, var10, var10);
+-            this.drawGradientRect(var15 - 4, var16 - 3, var15 - 3, var16 + var9 + 3, var10, var10);
+-            this.drawGradientRect(var15 + var5 + 3, var16 - 3, var15 + var5 + 4, var16 + var9 + 3, var10, var10);
+-            int var11 = 1347420415;
+-            int var12 = (var11 & 16711422) >> 1 | var11 & -16777216;
+-            this.drawGradientRect(var15 - 3, var16 - 3 + 1, var15 - 3 + 1, var16 + var9 + 3 - 1, var11, var12);
+-            this.drawGradientRect(var15 + var5 + 2, var16 - 3 + 1, var15 + var5 + 3, var16 + var9 + 3 - 1, var11, var12);
+-            this.drawGradientRect(var15 - 3, var16 - 3, var15 + var5 + 3, var16 - 3 + 1, var11, var11);
+-            this.drawGradientRect(var15 - 3, var16 + var9 + 2, var15 + var5 + 3, var16 + var9 + 3, var12, var12);
+-
+-            for (int var13 = 0; var13 < var4.size(); ++var13)
+-            {
+-                String var14 = (String)var4.get(var13);
+-
+-                if (var13 == 0)
+-                {
+-                    var14 = "\u00a7" + Integer.toHexString(par1ItemStack.getRarity().rarityColor) + var14;
+-                }
+-                else
+-                {
+-                    var14 = "\u00a77" + var14;
+-                }
+-
+-                this.fontRenderer.drawStringWithShadow(var14, var15, var16, -1);
+-
+-                if (var13 == 0)
+-                {
+-                    var16 += 2;
+-                }
+-
+-                var16 += 10;
+-            }
+-
+-            this.zLevel = 0.0F;
+-            itemRenderer.zLevel = 0.0F;
+-        }
 +    	IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par1ItemStack, TOOLTIP);
 +    	if (customRenderer != null) 
 +    	{
@@ -21,8 +110,79 @@
 +    	}
 +    	else
 +    	{
-@@ -183,1 +190,2 @@	        
-            itemRenderer.zLevel = 0.0F;
-        }
-+    }
- }  
++	        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
++	        RenderHelper.disableStandardItemLighting();
++	        GL11.glDisable(GL11.GL_LIGHTING);
++	        GL11.glDisable(GL11.GL_DEPTH_TEST);
++	        List list = par1ItemStack.getItemNameandInformation();
++	
++	        if (!list.isEmpty())
++	        {
++	            int var5 = 0;
++	            Iterator iterator = list.iterator();
++	
++	            while (iterator.hasNext())
++	            {
++	                String string = (String)iterator.next();
++	                int stringWidth = this.fontRenderer.getStringWidth(string);
++	
++	                if (stringWidth > var5)
++	                {
++	                    var5 = stringWidth;
++	                }
++	            }
++	
++	            int var15 = x + 12;
++	            int var16 = y - 12;
++	            int var9 = 8;
++	
++	            if (list.size() > 1)
++	            {
++	                var9 += 2 + (list.size() - 1) * 10;
++	            }
++	
++	            this.zLevel = 300.0F;
++	            itemRenderer.zLevel = 300.0F;
++	            int var10 = -267386864;
++	            this.drawGradientRect(var15 - 3, var16 - 4, var15 + var5 + 3, var16 - 3, var10, var10);
++	            this.drawGradientRect(var15 - 3, var16 + var9 + 3, var15 + var5 + 3, var16 + var9 + 4, var10, var10);
++	            this.drawGradientRect(var15 - 3, var16 - 3, var15 + var5 + 3, var16 + var9 + 3, var10, var10);
++	            this.drawGradientRect(var15 - 4, var16 - 3, var15 - 3, var16 + var9 + 3, var10, var10);
++	            this.drawGradientRect(var15 + var5 + 3, var16 - 3, var15 + var5 + 4, var16 + var9 + 3, var10, var10);
++	            int var11 = 1347420415;
++	            int var12 = (var11 & 16711422) >> 1 | var11 & -16777216;
++	            this.drawGradientRect(var15 - 3, var16 - 3 + 1, var15 - 3 + 1, var16 + var9 + 3 - 1, var11, var12);
++	            this.drawGradientRect(var15 + var5 + 2, var16 - 3 + 1, var15 + var5 + 3, var16 + var9 + 3 - 1, var11, var12);
++	            this.drawGradientRect(var15 - 3, var16 - 3, var15 + var5 + 3, var16 - 3 + 1, var11, var11);
++	            this.drawGradientRect(var15 - 3, var16 + var9 + 2, var15 + var5 + 3, var16 + var9 + 3, var12, var12);
++	
++	            for (int var13 = 0; var13 < list.size(); ++var13)
++	            {
++	                String var14 = (String)list.get(var13);
++	
++	                if (var13 == 0)
++	                {
++	                    var14 = "\u00a7" + Integer.toHexString(par1ItemStack.getRarity().rarityColor) + var14;
++	                }
++	                else
++	                {
++	                    var14 = "\u00a77" + var14;
++	                }
++	
++	                this.fontRenderer.drawStringWithShadow(var14, var15, var16, -1);
++	
++	                if (var13 == 0)
++	                {
++	                    var16 += 2;
++	                }
++	
++	                var16 += 10;
++	            }
++	
++	            this.zLevel = 0.0F;
++	            itemRenderer.zLevel = 0.0F;
++	        }
++    	}
+     }
+ 
+     protected void func_74190_a(String par1Str, int par2, int par3)
