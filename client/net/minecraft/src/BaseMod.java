@@ -223,7 +223,23 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     public void generateSurface(World world, Random random, int chunkX, int chunkZ)
     {
     }
-
+    
+    /**
+     * Callback to return a gui screen to display
+     * @param player
+     * @param containerID
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    @SideOnly(CLIENT)
+    @Override
+    public GuiScreen getContainerGUI(EntityPlayer player, int containerID, int x, int y, int z)
+    {
+        return null;
+    }
+    
     /**
      * Return the name of your mod. Defaults to the class name
      *
