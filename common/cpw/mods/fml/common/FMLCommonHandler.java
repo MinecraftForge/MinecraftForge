@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.CrashReport;
 import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
@@ -64,12 +65,18 @@ public class FMLCommonHandler
 
     private List<IScheduledTickHandler> scheduledClientTicks = Lists.newArrayList();
     private List<IScheduledTickHandler> scheduledServerTicks = Lists.newArrayList();
+    private Class<?> forge;
+    private boolean noForge;
+    private List<String> brandings;
+    private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
+
 
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
         FMLLog.info("Attempting early MinecraftForge initialization");
         callForgeMethod("initialize");
+        callForgeMethod("registerCrashCallable");
         FMLLog.info("Completed early MinecraftForge initialization");
     }
 
@@ -172,9 +179,6 @@ public class FMLCommonHandler
     }
 
 
-    private Class<?> forge;
-    private boolean noForge;
-    private List<String> brandings;
     private Class<?> findMinecraftForge()
     {
         if (forge==null && !noForge)
@@ -362,5 +366,18 @@ public class FMLCommonHandler
     {
         Side side = player instanceof EntityPlayerMP ? Side.SERVER : Side.CLIENT;
         tickEnd(EnumSet.of(TickType.PLAYER), side, player);
+    }
+
+    public void registerCrashCallable(ICrashCallable callable)
+    {
+        crashCallables.add(callable);
+    }
+    
+    public void enhanceCrashReport(CrashReport crashReport)
+    {
+        for (ICrashCallable call: crashCallables)
+        {
+            crashReport.func_71500_a(call.getLabel(), call);
+        }
     }
 }

@@ -1,0 +1,17 @@
+--- ../src-base/common/net/minecraft/src/CrashReport.java
++++ ../src-work/common/net/minecraft/src/CrashReport.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.File;
+@@ -39,6 +40,7 @@
+         this.func_71500_a("Java VM Version", new CallableJavaInfo2(this));
+         this.func_71500_a("Memory", new CallableMemoryInfo(this));
+         this.func_71500_a("JVM Flags", new CallableJVMFlags(this));
++        FMLCommonHandler.instance().enhanceCrashReport(this);
+     }
+ 
+     public void func_71500_a(String p_71500_1_, Callable p_71500_2_)
