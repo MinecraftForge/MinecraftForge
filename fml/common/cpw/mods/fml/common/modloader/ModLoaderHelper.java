@@ -134,7 +134,6 @@ public class ModLoaderHelper
     {
         ModLoaderGuiHelper helper = guiHelpers.get(id);
         helper.injectContainer(container);
-        System.out.printf("Opening GUI %d %s at %d %d %d\n", id, container, x,y,z);
         player.openGui(helper.getMod(), id, player.field_70170_p, x, y, z);
     }
     

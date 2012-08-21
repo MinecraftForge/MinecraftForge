@@ -105,7 +105,7 @@ public class ModLoaderModContainer implements ModContainer
     private void configureMod(Class<? extends BaseModProxy> modClazz, ASMDataTable asmData)
     {
         File configDir = Loader.instance().getConfigDir();
-        File modConfig = new File(configDir, String.format("%s.cfg", modClazzName));
+        File modConfig = new File(configDir, String.format("%s.cfg", getModId()));
         Properties props = new Properties();
 
         boolean existingConfigFound = false;
@@ -115,7 +115,7 @@ public class ModLoaderModContainer implements ModContainer
         {
             try
             {
-                FMLLog.fine("Reading existing configuration file for %s : %s", modClazzName, modConfig.getName());
+                FMLLog.fine("Reading existing configuration file for %s : %s", getModId(), modConfig.getName());
                 FileReader configReader = new FileReader(modConfig);
                 props.load(configReader);
                 configReader.close();
@@ -142,7 +142,7 @@ public class ModLoaderModContainer implements ModContainer
                     try
                     {
                         mlPropFields.add(new ModProperty(modClazz.getDeclaredField(dat.getObjectName()), dat.getAnnotationInfo()));
-                        FMLLog.finest("Found an MLProp field %s in %s", dat.getObjectName(), modClazzName);
+                        FMLLog.finest("Found an MLProp field %s in %s", dat.getObjectName(), getModId());
                     }
                     catch (Exception e)
                     {
@@ -157,8 +157,9 @@ public class ModLoaderModContainer implements ModContainer
                     FMLLog.info("The MLProp field %s in mod %s appears not to be static", property.field().getName(), getModId());
                     continue;
                 }
+                FMLLog.finest("Considering MLProp field %s", property.field().getName());
                 Field f = property.field();
-                String propertyName = property.name().length() > 0 ? property.name() : f.getName();
+                String propertyName = !Strings.nullToEmpty(property.name()).isEmpty() ? property.name() : f.getName();
                 String propertyValue = null;
                 Object defaultValue = null;
 
@@ -166,7 +167,7 @@ public class ModLoaderModContainer implements ModContainer
                 {
                     defaultValue = f.get(null);
                     propertyValue = props.getProperty(propertyName, extractValue(defaultValue));
-                    Object currentValue = parseValue(propertyValue, property, f.getType(), propertyName, modClazzName);
+                    Object currentValue = parseValue(propertyValue, property, f.getType(), propertyName);
                     FMLLog.finest("Configuration for %s.%s found values default: %s, configured: %s, interpreted: %s", modClazzName, propertyName, defaultValue, propertyValue, currentValue);
 
                     if (currentValue != null && !currentValue.equals(defaultValue))
@@ -196,7 +197,7 @@ public class ModLoaderModContainer implements ModContainer
 
                     comments.append(")");
 
-                    if (property.info().length() > 0)
+                    if (!Strings.nullToEmpty(property.info()).isEmpty())
                     {
                         comments.append(" -- ").append(property.info());
                     }
@@ -214,22 +215,22 @@ public class ModLoaderModContainer implements ModContainer
         {
             if (!mlPropFound && !existingConfigFound)
             {
-                FMLLog.fine("No MLProp configuration for %s found or required. No file written", modClazzName);
+                FMLLog.fine("No MLProp configuration for %s found or required. No file written", getModId());
                 return;
             }
 
             if (!mlPropFound && existingConfigFound)
             {
                 File mlPropBackup = new File(modConfig.getParent(),modConfig.getName()+".bak");
-                FMLLog.fine("MLProp configuration file for %s found but not required. Attempting to rename file to %s", modClazzName, mlPropBackup.getName());
+                FMLLog.fine("MLProp configuration file for %s found but not required. Attempting to rename file to %s", getModId(), mlPropBackup.getName());
                 boolean renamed = modConfig.renameTo(mlPropBackup);
                 if (renamed)
                 {
-                    FMLLog.fine("Unused MLProp configuration file for %s renamed successfully to %s", modClazzName, mlPropBackup.getName());
+                    FMLLog.fine("Unused MLProp configuration file for %s renamed successfully to %s", getModId(), mlPropBackup.getName());
                 }
                 else
                 {
-                    FMLLog.fine("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", modClazzName, mlPropBackup.getName());
+                    FMLLog.fine("Unused MLProp configuration file for %s renamed UNSUCCESSFULLY to %s", getModId(), mlPropBackup.getName());
                 }
 
                 return;
@@ -239,7 +240,7 @@ public class ModLoaderModContainer implements ModContainer
                 FileWriter configWriter = new FileWriter(modConfig);
                 props.store(configWriter, comments.toString());
                 configWriter.close();
-                FMLLog.fine("Configuration for %s written to %s", modClazzName, modConfig.getName());
+                FMLLog.fine("Configuration for %s written to %s", getModId(), modConfig.getName());
             }
             catch (IOException e)
             {
@@ -249,7 +250,7 @@ public class ModLoaderModContainer implements ModContainer
         }
     }
 
-    private Object parseValue(String val, ModProperty property, Class<?> type, String propertyName, String modConfigName)
+    private Object parseValue(String val, ModProperty property, Class<?> type, String propertyName)
     {
         if (type.isAssignableFrom(String.class))
         {
@@ -292,9 +293,10 @@ public class ModLoaderModContainer implements ModContainer
                 throw new IllegalArgumentException(String.format("MLProp declared on %s of type %s, an unsupported type",propertyName, type.getName()));
             }
 
-            if (n.doubleValue() < property.min() || n.doubleValue() > property.max())
+            double dVal = n.doubleValue();
+            if ((property.min()!=Double.MIN_VALUE && dVal < property.min()) || (property.max()!=Double.MAX_VALUE && dVal > property.max()))
             {
-                FMLLog.warning("Configuration for %s.%s found value %s outside acceptable range %s,%s", modConfigName,propertyName, n, property.min(), property.max());
+                FMLLog.warning("Configuration for %s.%s found value %s outside acceptable range %s,%s", modClazzName,propertyName, n, property.min(), property.max());
                 return null;
             }
             else

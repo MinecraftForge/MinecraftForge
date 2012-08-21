@@ -19,6 +19,9 @@ import net.minecraft.client.Minecraft;
 
 @NetworkMod(channels={"mod_TestMod"},clientSideRequired=true,packetHandler=mod_testMod.PacketHandler.class)
 public class mod_testMod extends BaseMod {
+    
+    @MLProp
+    public static int test = 0;
     public static class PacketHandler implements IPacketHandler
     {
         @Override
