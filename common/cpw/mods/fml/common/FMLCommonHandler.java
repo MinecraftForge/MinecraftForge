@@ -25,6 +25,8 @@ import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.ServerListenThread;
+import net.minecraft.src.ThreadServerApplication;
 import net.minecraft.src.World;
 
 import com.google.common.base.Strings;
@@ -162,6 +164,23 @@ public class FMLCommonHandler
         return sidedDelegate.getSide();
     }
 
+    /**
+     * Return the effective side for the context in the game. This is dependent
+     * on thread analysis to try and determine whether the code is running in the 
+     * server or not. Use at your own risk
+     * 
+     * @return
+     */
+    public Side getEffectiveSide()
+    {
+        Thread thr = Thread.currentThread();
+        if ((thr instanceof ThreadServerApplication) || (thr instanceof ServerListenThread))
+        {
+            return Side.SERVER;
+        }
+        
+        return Side.CLIENT;
+    }
     /**
      * Raise an exception
      *
