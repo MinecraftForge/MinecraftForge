@@ -595,13 +595,19 @@ public class Loader
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size()==1 ? "" : "s");
     }
 
-    public Callable getCallableCrashInformation()
+    public ICrashCallable getCallableCrashInformation()
     {
-        return new Callable<String>() {
+        return new ICrashCallable() {
             @Override
             public String call() throws Exception
             {
                 return getCrashInformation();
+            }
+
+            @Override
+            public String getLabel()
+            {
+                return "FML";
             }
         };
     }
