@@ -1,6 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiContainer.java
 +++ ../src_work/minecraft/net/minecraft/src/GuiContainer.java
-
+ package net.minecraft.src;
+ 
 -import java.util.Iterator;
 -import java.util.List;
 +import java.util.*;
@@ -13,8 +14,8 @@
 +import org.lwjgl.opengl.GL11;
 +import org.lwjgl.opengl.GL12;
 
-public abstract class GuiContainer extends GuiScreen
-{
+ public abstract class GuiContainer extends GuiScreen
+ {
     /** Stacks renderer. Icons, stack size, health, etc... */
     protected static RenderItem itemRenderer = new RenderItem();
 
