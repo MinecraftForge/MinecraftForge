@@ -12,6 +12,8 @@
  */
 package cpw.mods.fml.common;
 
+import java.util.Random;
+
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
@@ -21,13 +23,19 @@ public interface IDispenseHandler
     /**
      * Return -1 if you don't want to dispense anything. the other values seem to have specific meanings
      * to blockdispenser.
+     * 
      * @param x
      * @param y
      * @param z
      * @param xVelocity
      * @param zVelocity
-     * @param data
+     * @param world
+     * @param item
+     * @param random
+     * @param entX
+     * @param entY
+     * @param entZ
      * @return
      */
-    int dispense(double x, double y, double z, int xVelocity, int zVelocity, World world, ItemStack item);
+    int dispense(double x, double y, double z, int xVelocity, int zVelocity, World world, ItemStack item, Random random, double entX, double entY, double entZ);
 }
