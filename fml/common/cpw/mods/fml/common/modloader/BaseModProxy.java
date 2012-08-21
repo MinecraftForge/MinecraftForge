@@ -85,4 +85,7 @@ public interface BaseModProxy
     public abstract void receiveChatPacket(String text);
 
     public abstract void onItemPickup(EntityPlayer player, ItemStack item);
+
+    public abstract int dispenseEntity(World world, ItemStack item, Random rnd, double x, double y, double z, int xVel, int zVel, double entX,
+            double entY, double entZ);
 }

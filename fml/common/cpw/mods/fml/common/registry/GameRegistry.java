@@ -104,11 +104,11 @@ public class GameRegistry
      * @param item
      * @return
      */
-    public static int tryDispense(World world, double x, double y, double z, int xVelocity, int zVelocity, ItemStack item)
+    public static int tryDispense(World world, double x, double y, double z, int xVelocity, int zVelocity, ItemStack item, Random random, double entX, double entY, double entZ)
     {
         for (IDispenseHandler handler : dispenserHandlers)
         {
-            int dispensed = handler.dispense(x, y, z, xVelocity, zVelocity, world, item);
+            int dispensed = handler.dispense(x, y, z, xVelocity, zVelocity, world, item, random, entX, entY, entZ);
             if (dispensed>-1)
             {
                 return dispensed;

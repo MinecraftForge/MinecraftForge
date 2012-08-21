@@ -24,6 +24,7 @@ import net.minecraft.src.Container;
 import net.minecraft.src.EntityPlayer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
+import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
@@ -144,5 +145,10 @@ public class ModLoaderHelper
             return sidedHelper.getClientGui(mod, player, ID, x, y, z);
         }
         return null;
+    }
+
+    public static IDispenseHandler buildDispenseHelper(BaseModProxy mod)
+    {
+        return new ModLoaderDispenseHelper(mod);
     }
 }
