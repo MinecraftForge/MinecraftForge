@@ -56,7 +56,7 @@ public interface IItemRenderer
          * RenderEngine engine - The RenderEngine instance
          * MapData mapData - The map data
          */
-        FIRST_PERSON_MAP
+        FIRST_PERSON_MAP,
 		
 		 /**
          * Called to render an item tooltip when a player has their mouse
