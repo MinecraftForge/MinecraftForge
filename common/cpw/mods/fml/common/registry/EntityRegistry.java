@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 public class EntityRegistry
@@ -124,6 +125,17 @@ public class EntityRegistry
         {
             entityClassRegistrations.put(entityClass, er);
             entityNames.put(entityName, mc);
+            if (!EntityList.field_75626_c.containsKey(entityClass))
+            {
+                String entityModName = String.format("%s.%s", mc.getModId(), entityName);
+                EntityList.field_75626_c.put(entityClass, entityModName);
+                EntityList.field_75625_b.put(entityModName, entityClass);
+                FMLLog.finest("Automatically registered mod %s entity %s as %s", mc.getModId(), entityName, entityModName);
+            }
+            else
+            {
+                FMLLog.fine("Skipping automatic mod %s entity registration for already registered class %s", mc.getModId(), entityClass.getName());
+            }
         }
         catch (IllegalArgumentException e)
         {
@@ -135,6 +147,11 @@ public class EntityRegistry
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id)
     {
+        if (EntityList.field_75626_c.containsKey(entityClass))
+        {
+            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", Loader.instance().activeModContainer().getModId(), entityClass);
+            return;
+        }
         instance().validateAndClaimId(id);
         EntityList.func_75618_a(entityClass, entityName, id);
     }
