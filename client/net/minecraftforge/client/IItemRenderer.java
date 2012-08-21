@@ -56,7 +56,18 @@ public interface IItemRenderer
          * RenderEngine engine - The RenderEngine instance
          * MapData mapData - The map data
          */
-        FIRST_PERSON_MAP
+        FIRST_PERSON_MAP,
+		
+		 /**
+         * Called to render an item tooltip when a player has their mouse
+         * over it in a GUI inventory slot.
+         * 
+         * Data Parameters:
+         * FontRenderer fontRenderer - The FontRenderer instance
+         * int x - the x coordinate
+         * int y - the y coordinate
+         */
+        TOOLTIP
     }
     
     public enum ItemRendererHelper
