@@ -35,7 +35,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.asm.SideOnly;
-import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.common.modloader.ModLoaderHelper;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -573,7 +572,7 @@ public class ModLoader
         GameRegistry.registerBlock(block, itemclass);
     }
 
-    public static void registerContainerID(BaseModProxy mod, int id)
+    public static void registerContainerID(BaseMod mod, int id)
     {
         ModLoaderHelper.buildGuiHelper(mod, id);
     }
@@ -604,7 +603,7 @@ public class ModLoader
     }
 
     @SideOnly(CLIENT)
-    public static void registerKey(BaseModProxy mod, KeyBinding keyHandler, boolean allowRepeat)
+    public static void registerKey(BaseMod mod, KeyBinding keyHandler, boolean allowRepeat)
     {
         ModLoaderClientHelper.registerKeyBinding(mod, keyHandler, allowRepeat);
     }
@@ -616,7 +615,7 @@ public class ModLoader
      * @param mod
      * @param channel
      */
-    public static void registerPacketChannel(BaseModProxy mod, String channel)
+    public static void registerPacketChannel(BaseMod mod, String channel)
     {
         NetworkRegistry.instance().registerChannel(ModLoaderHelper.buildPacketHandlerFor(mod), channel);
     }
@@ -751,7 +750,7 @@ public class ModLoader
         //TODO
     }
 
-    public static void serverOpenWindow(EntityPlayer player, Container container, int ID, int x, int y, int z)
+    public static void serverOpenWindow(EntityPlayerMP player, Container container, int ID, int x, int y, int z)
     {
         ModLoaderHelper.openGui(ID, player, container, x, y, z);
     }
@@ -763,13 +762,13 @@ public class ModLoader
      * @param enable indicates whether you want to recieve them or not
      * @param useClock don't receive render subticks, just world ticks
      */
-    public static void setInGameHook(BaseModProxy mod, boolean enable, boolean useClock)
+    public static void setInGameHook(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderHelper.updateStandardTicks(mod, enable, useClock);
     }
 
 
-    public static void setInGUIHook(BaseModProxy mod, boolean enable, boolean useClock)
+    public static void setInGUIHook(BaseMod mod, boolean enable, boolean useClock)
     {
         ModLoaderHelper.updateGUITicks(mod, enable, useClock);
     }

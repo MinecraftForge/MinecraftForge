@@ -142,6 +142,7 @@ public class ModLoaderModContainer implements ModContainer
                     try
                     {
                         mlPropFields.add(new ModProperty(modClazz.getDeclaredField(dat.getObjectName()), dat.getAnnotationInfo()));
+                        FMLLog.finest("Found an MLProp field %s in %s", dat.getObjectName(), modClazzName);
                     }
                     catch (Exception e)
                     {
@@ -484,6 +485,11 @@ public class ModLoaderModContainer implements ModContainer
             configureMod(modClazz, event.getASMHarvestedData());
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
             mod = (BaseModProxy)modClazz.newInstance();
+            if (!isNetworkMod)
+            {
+                FMLLog.fine("Injecting dummy network mod handler for BaseMod %s", getModId());
+                FMLNetworkHandler.instance().registerNetworkMod(new ModLoaderNetworkHandler(this, mod));
+            }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
         }
         catch (Exception e)

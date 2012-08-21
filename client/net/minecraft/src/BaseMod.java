@@ -234,8 +234,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @return
      */
     @SideOnly(CLIENT)
-    @Override
-    public GuiScreen getContainerGUI(EntityPlayer player, int containerID, int x, int y, int z)
+    public GuiContainer getContainerGUI(EntityClientPlayerMP player, int containerID, int x, int y, int z)
     {
         return null;
     }
