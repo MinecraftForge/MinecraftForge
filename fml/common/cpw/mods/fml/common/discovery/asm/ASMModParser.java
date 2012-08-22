@@ -3,6 +3,7 @@ package cpw.mods.fml.common.discovery.asm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 import net.minecraft.src.BaseMod;
 
@@ -12,6 +13,8 @@ import org.objectweb.asm.Type;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ModCandidate;
 
@@ -31,8 +34,16 @@ public class ASMModParser
 
     public ASMModParser(InputStream stream) throws IOException
     {
-        ClassReader reader = new ClassReader(stream);
-        reader.accept(new ModClassVisitor(this), 0);
+        try
+        {
+            ClassReader reader = new ClassReader(stream);
+            reader.accept(new ModClassVisitor(this), 0);
+        }
+        catch (Exception ex)
+        {
+            FMLLog.log(Level.SEVERE, ex, "Unable to read a class file correctly");
+            throw new LoaderException(ex);
+        }
     }
 
     public void beginNewTypeName(String typeQName, int classVersion, String superClassQName)
@@ -132,13 +143,13 @@ public class ASMModParser
     public void addAnnotationEnumProperty(String name, String desc, String value)
     {
         annotations.getFirst().addEnumProperty(name, desc, value);
-        
+
     }
 
     public void endArray()
     {
         annotations.getFirst().endArray();
-        
+
     }
 
     public void addSubAnnotation(String name, String desc)
