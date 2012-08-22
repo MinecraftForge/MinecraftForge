@@ -1,6 +1,8 @@
 package cpw.mods.fml.common.event;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.CommandHandler;
+import net.minecraft.src.ICommand;
 import cpw.mods.fml.common.LoaderState.ModState;
 
 public class FMLServerStartingEvent extends FMLStateEvent
@@ -22,5 +24,11 @@ public class FMLServerStartingEvent extends FMLStateEvent
     public MinecraftServer getServer()
     {
         return server;
+    }
+
+    public void registerServerCommand(ICommand command)
+    {
+        CommandHandler ch = (CommandHandler) getServer().func_71187_D();
+        ch.func_71560_a(command);
     }
 }
