@@ -29,6 +29,7 @@ import net.minecraft.src.ServerListenThread;
 import net.minecraft.src.ThreadServerApplication;
 import net.minecraft.src.World;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -96,7 +97,7 @@ public class FMLCommonHandler
         }
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
-            EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
+            EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
             {
@@ -115,7 +116,7 @@ public class FMLCommonHandler
         }
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
-            EnumSet<TickType> ticksToRun = EnumSet.copyOf(ticker.ticks());
+            EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
             ticksToRun.removeAll(EnumSet.complementOf(ticks));
             if (!ticksToRun.isEmpty())
             {
@@ -166,9 +167,9 @@ public class FMLCommonHandler
 
     /**
      * Return the effective side for the context in the game. This is dependent
-     * on thread analysis to try and determine whether the code is running in the 
+     * on thread analysis to try and determine whether the code is running in the
      * server or not. Use at your own risk
-     * 
+     *
      * @return
      */
     public Side getEffectiveSide()
@@ -178,7 +179,7 @@ public class FMLCommonHandler
         {
             return Side.SERVER;
         }
-        
+
         return Side.CLIENT;
     }
     /**
@@ -391,7 +392,7 @@ public class FMLCommonHandler
     {
         crashCallables.add(callable);
     }
-    
+
     public void enhanceCrashReport(CrashReport crashReport)
     {
         for (ICrashCallable call: crashCallables)
