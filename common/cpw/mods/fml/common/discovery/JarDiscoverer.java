@@ -10,6 +10,7 @@ import java.util.zip.ZipFile;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainerFactory;
@@ -44,7 +45,16 @@ public class JarDiscoverer implements ITypeDiscoverer
                 Matcher match = classFile.matcher(ze.getName());
                 if (match.matches())
                 {
-                    ASMModParser modParser = new ASMModParser(jar.getInputStream(ze));
+                    ASMModParser modParser;
+                    try
+                    {
+                        modParser = new ASMModParser(jar.getInputStream(ze));
+                    }
+                    catch (LoaderException e)
+                    {
+                        FMLLog.log(Level.SEVERE, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
+                        throw e;
+                    }
                     modParser.validate();
                     modParser.sendToTable(table, candidate);
                     ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer(), candidate);

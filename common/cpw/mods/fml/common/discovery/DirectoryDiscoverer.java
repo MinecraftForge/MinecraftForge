@@ -5,12 +5,14 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.MetadataCollection;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModContainerFactory;
@@ -84,6 +86,11 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
                     FileInputStream fis = new FileInputStream(file);
                     modParser = new ASMModParser(fis);
                     fis.close();
+                }
+                catch (LoaderException e)
+                {
+                    FMLLog.log(Level.SEVERE, e, "There was a problem reading the file %s - probably this is a corrupt file", file.getPath());
+                    throw e;
                 }
                 catch (Exception e)
                 {
