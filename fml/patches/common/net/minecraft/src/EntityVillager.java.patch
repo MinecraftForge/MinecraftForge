@@ -18,12 +18,12 @@
          }
      }
  
-@@ -400,6 +402,8 @@
+@@ -393,6 +395,8 @@
+                 func_70949_b(var2, Item.field_77782_ar.field_77779_bT, this.field_70146_Z, 0.3F);
+                 func_70949_b(var2, Item.field_77734_bj.field_77779_bT, this.field_70146_Z, 0.3F);
          }
- 
-         Collections.shuffle(var2);
 +
 +        VillagerRegistry.manageVillagerTrades(var2, this, this.func_70946_n(), this.field_70146_Z);
  
-         if (this.field_70963_i == null)
+         if (var2.isEmpty())
          {
