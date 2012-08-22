@@ -89,7 +89,7 @@
     </exec>
   </target>
 
-  <target name="buildandreobfmcp" depends="buildenvsetup,recompile">
+  <target name="reobfuscate" depends="buildenvsetup,recompile">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/reobfuscate.py" />
     </exec>
@@ -137,11 +137,7 @@
 
   <target name="merge-source" depends="buildenvsetup,merge-client,merge-common" />
 
-  <target name="build-client" depends="buildenvsetup,merge-client,merge-common,buildandreobfmcp,makeversion">
-    <antcall target="extract-built-jar">
-      <param name="side" value="client" />
-    </antcall>
-  </target>
+  <target name="build-client" depends="buildenvsetup,merge-client,merge-common,reobfuscate,makeversion"/>
 
   <target name="extract-built-jar">
     <side prop="output" src="mcp.obfoutput" side="${side}" />
@@ -171,7 +167,7 @@
     </zip>
   </target>
 
-  <target name="build-universal">
+  <target name="build-universal" depends="build-client">
     <property name="universal.jarname" value="${modname}-universal-${version}" />
     <mkdir dir="${basedir}/target" />
     <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
@@ -352,7 +348,7 @@
     </exec>
   </target>
 
-  <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,buildandreobfmcp">
+  <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,reobfuscate">
     <copy todir="${tmp.mcp.srcdir}">
       <fileset dir="${mcp.srcdir}"/>
     </copy>
