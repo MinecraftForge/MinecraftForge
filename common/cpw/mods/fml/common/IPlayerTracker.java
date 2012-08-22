@@ -23,7 +23,10 @@ import net.minecraft.src.EntityPlayer;
 public interface IPlayerTracker
 {
     void onPlayerLogin(EntityPlayer player);
+
     void onPlayerLogout(EntityPlayer player);
+
     void onPlayerChangedDimension(EntityPlayer player);
-	void onPlayerRespawn(EntityPlayer player);
+
+    void onPlayerRespawn(EntityPlayer player);
 }
