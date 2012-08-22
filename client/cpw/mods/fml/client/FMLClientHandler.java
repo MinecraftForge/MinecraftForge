@@ -278,7 +278,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
 
             entity.field_70157_k = packet.entityId;
-            entity.func_70056_a(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch, 1);
+            entity.func_70012_b(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch);
 
             if (entity instanceof EntityLiving)
             {
