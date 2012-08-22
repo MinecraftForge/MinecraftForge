@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/src/IntegratedServerListenThread.java
++++ ../src-work/minecraft/net/minecraft/src/IntegratedServerListenThread.java
+@@ -4,6 +4,12 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.IOException;
+ import java.net.InetAddress;
++import java.net.NetworkInterface;
++import java.util.Collections;
++
++import com.google.common.collect.Iterators;
++import com.google.common.collect.Lists;
++
+ import net.minecraft.server.MinecraftServer;
+ 
+ @SideOnly(Side.CLIENT)
+@@ -48,7 +54,32 @@
+ 
+             try
+             {
+-                this.field_71757_g = new ServerListenThread(this, InetAddress.getLocalHost(), var1);
++                InetAddress add = null;
++                NetworkInterface notLocal = null;
++                for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces()))
++                {
++                    if (!ni.isLoopback() && ni.isUp())
++                    {
++                        notLocal = ni;
++                        break;
++                    }
++                }
++                if (notLocal != null)
++                {
++                    for (InetAddress inadd : Collections.list(notLocal.getInetAddresses()))
++                    {
++                        if (inadd.getAddress().length == 4)
++                        {
++                            add = inadd;
++                            break;
++                        }
++                    }
++                }
++                if (add == null)
++                {
++                    add = InetAddress.getLocalHost();
++                }
++                this.field_71757_g = new ServerListenThread(this, add, var1);
+                 this.field_71757_g.start();
+             }
+             catch (IOException var3)
