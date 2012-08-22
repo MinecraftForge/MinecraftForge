@@ -32,6 +32,7 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.network.FMLPacket.Type;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 
 public class FMLNetworkHandler
@@ -246,6 +247,7 @@ public class FMLNetworkHandler
     public static void handlePlayerLogin(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
     {
         NetworkRegistry.instance().playerLoggedIn(player, netHandler, manager);
+        GameRegistry.onPlayerLogin(player);
     }
 
     public Map<Integer, NetworkModHandler> getNetworkIdMap()

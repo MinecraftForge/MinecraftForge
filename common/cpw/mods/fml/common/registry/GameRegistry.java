@@ -29,6 +29,7 @@ import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
+import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
@@ -45,6 +46,7 @@ public class GameRegistry
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
     private static List<IDispenseHandler> dispenserHandlers = Lists.newArrayList();
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
+    private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
 
     /**
      * Register a world generator - something that inserts new block types into the world
@@ -259,4 +261,33 @@ public class GameRegistry
             notify.notifyPickup(item, player);
         }
     }
+    
+    public static void registerPlayerTracker(IPlayerTracker tracker)
+	{
+		playerTrackers.add(tracker);
+	}
+	
+	public static void onPlayerLogin(EntityPlayer player)
+	{
+		for(IPlayerTracker tracker : playerTrackers)
+			tracker.onPlayerLogin(player);
+	}
+	
+	public static void onPlayerLogout(EntityPlayer player)
+	{
+		for(IPlayerTracker tracker : playerTrackers)
+			tracker.onPlayerLogout(player);
+	}
+	
+	public static void onPlayerChangedDimension(EntityPlayer player)
+	{
+		for(IPlayerTracker tracker : playerTrackers)
+			tracker.onPlayerChangedDimension(player);
+	}
+	
+	public static void onPlayerRespawn(EntityPlayer player)
+	{
+		for(IPlayerTracker tracker : playerTrackers)
+			tracker.onPlayerRespawn(player);
+	}
 }
