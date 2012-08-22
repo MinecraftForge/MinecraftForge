@@ -22,6 +22,7 @@ import net.minecraft.src.RenderEngine;
 import net.minecraft.src.TextureFX;
 import net.minecraft.src.TexturePackBase;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 
 public class FMLTextureFX extends TextureFX implements ITextureFX
 {
@@ -30,7 +31,7 @@ public class FMLTextureFX extends TextureFX implements ITextureFX
     public int tileSizeMask = 15;
     public int tileSizeSquareMask = 255;
     public boolean errored = false;
-    protected Logger log = FMLCommonHandler.instance().getFMLLogger();
+    protected Logger log = FMLLog.getLogger();
 
     public FMLTextureFX(int icon)
     {
