@@ -33,30 +33,30 @@ public class ModTextureStatic extends FMLTextureFX
     private int storedSize;
     private BufferedImage overrideData = null;
     private int needApply = 2;
-    
-    
+
+
     public ModTextureStatic(int icon, int target, BufferedImage image)
     {
         this(icon, 1, target, image);
     }
 
-    public ModTextureStatic(int icon, int size, int target, BufferedImage image)    
+    public ModTextureStatic(int icon, int size, int target, BufferedImage image)
     {
         this(icon, size, (target == 0 ? "/terrain.png" : "/gui/items.png"), image);
     }
-    
+
     public ModTextureStatic(int icon, int size, String target, BufferedImage image)
     {
         super(icon);
         RenderEngine re = FMLClientHandler.instance().getClient().field_71446_o;
-        
+
         targetTex = target;
         storedSize = size;
         field_76849_e = size;
         field_76847_f = re.func_78341_b(target);
         overrideData = image;
     }
-    
+
     @Override
     public void setup()
     {
@@ -80,16 +80,17 @@ public class ModTextureStatic extends FMLTextureFX
 
         update();
     }
-    
-    public void func_783_a()
+
+    @Override
+    public void func_76846_a()
     {
         if (oldanaglyph != field_76851_c)
         {
             update();
         }
-        // This makes it so we only apply the texture to the target texture when we need to, 
-        //due to the fact that update is called when the Effect is first registered, we actually 
-        //need to wait for the next one. 
+        // This makes it so we only apply the texture to the target texture when we need to,
+        //due to the fact that update is called when the Effect is first registered, we actually
+        //need to wait for the next one.
         field_76849_e = (needApply == 0 ? 0 : storedSize);
         if (needApply > 0)
         {
@@ -97,11 +98,12 @@ public class ModTextureStatic extends FMLTextureFX
         }
     }
 
-    public void func_782_a(RenderEngine p_782_1_)
+    @Override
+    public void func_76845_a(RenderEngine p_76845_1_)
     {
-        GL11.glBindTexture(GL_TEXTURE_2D, p_782_1_.func_78341_b(targetTex));
+        GL11.glBindTexture(GL_TEXTURE_2D, p_76845_1_.func_78341_b(targetTex));
     }
-    
+
     public void update()
     {
         needApply = 2;
@@ -126,7 +128,7 @@ public class ModTextureStatic extends FMLTextureFX
 
         oldanaglyph = field_76851_c;
     }
-    
+
     //Implementation of http://scale2x.sourceforge.net/algorithm.html
     public static BufferedImage scale2x(BufferedImage image)
     {
@@ -170,9 +172,9 @@ public class ModTextureStatic extends FMLTextureFX
         return tmp;
     }
 
-    
+
     @Override
-    public String toString() 
+    public String toString()
     {
         return String.format("ModTextureStatic %s @ %d", targetTex, field_76850_b);
     }
