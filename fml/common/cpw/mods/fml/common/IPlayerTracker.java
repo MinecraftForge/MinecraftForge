@@ -14,13 +14,19 @@
 
 package cpw.mods.fml.common;
 
+import net.minecraft.src.EntityPlayer;
+
 /**
  * @author cpw
  *
  */
 public interface IPlayerTracker
 {
-    void onPlayerLogin(Object player);
-    void onPlayerLogout(Object player);
-    void onPlayerChangedDimension(Object player);
+    void onPlayerLogin(EntityPlayer player);
+
+    void onPlayerLogout(EntityPlayer player);
+
+    void onPlayerChangedDimension(EntityPlayer player);
+
+    void onPlayerRespawn(EntityPlayer player);
 }
