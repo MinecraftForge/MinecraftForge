@@ -217,6 +217,13 @@ def setup_fml(fml_dir, mcp_dir):
         if os.path.isfile(forge_cfg):
             self.logger.info('   Forge config detected')
             forkcmd += ' "%s"' % forge_cfg
+
+        for dirname, dirnames, filenames in os.walk(os.path.join(mcp_dir, 'forge', 'accesstransformers')):
+            for filename in filenames:
+                accesstransformer = os.path.join(dirname, filename)
+                if os.path.isfile(accesstransformer):              
+                    self.logger.info('   Access Transformer "%s" detected' % filename)
+                    forkcmd += ' "%s"' % accesstransformer
         
         if not runcmd(self, forkcmd):
             sys.exit(1)
