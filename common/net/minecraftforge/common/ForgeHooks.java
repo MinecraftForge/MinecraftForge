@@ -277,7 +277,7 @@ public class ForgeHooks
         int slot = player.inventory.getFirstEmptyStack();
         if (slot < 0 || slot >= 9)
         {
-            return false;
+            slot = player.inventory.currentItem;
         }
 
         player.inventory.setInventorySlotContents(slot, result);
