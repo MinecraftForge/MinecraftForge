@@ -16,7 +16,7 @@
  
  public class EntityMinecart extends Entity implements IInventory
  {
-@@ -31,6 +39,23 @@
+@@ -31,6 +39,25 @@
      @SideOnly(Side.CLIENT)
      protected double velocityZ;
  
@@ -25,6 +25,8 @@
 +    public static float defaultMaxSpeedGround = 0.4f;
 +    public static float defaultMaxSpeedAirLateral = 0.4f;
 +    public static float defaultMaxSpeedAirVertical = -1f;
++    public static double defaultDragRidden = 0.996999979019165D;
++    public static double defaultDragEmpty = 0.9599999785423279D;
 +    public static double defaultDragAir = 0.94999998807907104D;
 +    protected boolean canUseRail = true;
 +    protected boolean canBePushed = true;
@@ -710,7 +712,7 @@
 +     */
 +    protected double getDrag()
 +    {
-+        return riddenByEntity != null ? 0.99D : 0.96D;
++        return riddenByEntity != null ? defaultDragRidden : defaultDragEmpty;
 +    }   
 +
 +    /**
