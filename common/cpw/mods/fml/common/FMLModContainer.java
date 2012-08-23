@@ -176,7 +176,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public String getSortingRules()
     {
-        return ((overridesMetadata || !modMetadata.useDependencyInformation) ? annotationDependencies : modMetadata.printableSortingRules());
+        return ((overridesMetadata || !modMetadata.useDependencyInformation) ? Strings.nullToEmpty(annotationDependencies) : modMetadata.printableSortingRules());
     }
 
     @Override
