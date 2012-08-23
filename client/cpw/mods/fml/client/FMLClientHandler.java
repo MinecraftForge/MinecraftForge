@@ -46,6 +46,7 @@ import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderException;
 import cpw.mods.fml.common.MetadataCollection;
+import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -102,6 +103,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private boolean serverIsRunning;
 
+    private MissingModsException modsMissing;
+
     public void beginMinecraftLoading(Minecraft minecraft)
     {
         if (minecraft.func_71355_q())
@@ -133,6 +136,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().loadMods();
         }
+        catch (MissingModsException missing)
+        {
+            modsMissing = missing;
+        }
         catch (LoaderException le)
         {
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
@@ -154,6 +161,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     @SuppressWarnings("deprecation")
     public void finishMinecraftLoading()
     {
+        if (modsMissing != null)
+        {
+            return;
+        }
         try
         {
             Loader.instance().initializeMods();
@@ -169,9 +180,16 @@ public class FMLClientHandler implements IFMLSidedHandler
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
     }
 
-    public void reloadTextureFX()
+    public void onInitializationComplete()
     {
-        TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
+        if (modsMissing != null)
+        {
+            client.func_71373_a(new ModsMissingGuiScreen(modsMissing));
+        }
+        else
+        {
+            TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
+        }
     }
     /**
      * Get the server instance

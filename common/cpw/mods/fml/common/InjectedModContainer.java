@@ -2,6 +2,7 @@ package cpw.mods.fml.common;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 
@@ -53,7 +54,7 @@ public class InjectedModContainer implements ModContainer
         wrappedContainer.setEnabledState(enabled);
     }
 
-    public List<ArtifactVersion> getRequirements()
+    public Set<ArtifactVersion> getRequirements()
     {
         return wrappedContainer.getRequirements();
     }
