@@ -9,7 +9,8 @@ public class ModsMissingGuiScreen extends GuiErrorScreen
 
     private MissingModsException modsMissing;
 
-    public ModsMissingGuiScreen(MissingModsException modsMissing)
+
+    public void setList(MissingModsException modsMissing)
     {
         this.modsMissing = modsMissing;
     }

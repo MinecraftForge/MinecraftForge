@@ -236,7 +236,7 @@ public class Loader
             {
                 if (!mod.isImmutable())
                 {
-                    FMLLog.fine("\t%s(%s): %s (%s)", mod.getModId(), mod.getName(), mod.getSource().getName(), mod.getSortingRules());
+                    FMLLog.fine("\t%s(%s:%s): %s (%s)", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), mod.getSortingRules());
                 }
             }
             if (mods.size()==0)

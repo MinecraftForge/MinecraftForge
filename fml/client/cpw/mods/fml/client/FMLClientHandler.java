@@ -184,7 +184,9 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if (modsMissing != null)
         {
-            client.func_71373_a(new ModsMissingGuiScreen(modsMissing));
+            ModsMissingGuiScreen err = new ModsMissingGuiScreen();
+            err.setList(modsMissing);
+            client.func_71373_a(err);
         }
         else
         {
