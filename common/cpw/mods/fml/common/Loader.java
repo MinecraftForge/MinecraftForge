@@ -443,30 +443,30 @@ public class Loader
 
     private void disableRequestedMods()
     {
-        String disabledModList = System.getProperty("fml.modStates", "");
-        FMLLog.fine("Received a system property request \'%s\'",disabledModList);
+        String forcedModList = System.getProperty("fml.modStates", "");
+        FMLLog.fine("Received a system property request \'%s\'",forcedModList);
         Map<String, String> sysPropertyStateList = Splitter.on(CharMatcher.anyOf(";:"))
                 .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
-                .split(disabledModList);
+                .split(forcedModList);
         FMLLog.fine("System property request managing the state of %d mods", sysPropertyStateList.size());
         Map<String, String> modStates = Maps.newHashMap();
 
-        File disabledModFile = new File(canonicalConfigDir, "fmlModState.properties");
-        Properties disabledModListProperties = new Properties();
-        if (disabledModFile.exists() && disabledModFile.isFile())
+        File forcedModFile = new File(canonicalConfigDir, "fmlModState.properties");
+        Properties forcedModListProperties = new Properties();
+        if (forcedModFile.exists() && forcedModFile.isFile())
         {
-            FMLLog.fine("Found a mod state file %s", disabledModFile.getName());
+            FMLLog.fine("Found a mod state file %s", forcedModFile.getName());
             try
             {
-                disabledModListProperties.load(new FileReader(disabledModFile));
-                FMLLog.fine("Loaded states for %d mods from file", disabledModListProperties.size());
+                forcedModListProperties.load(new FileReader(forcedModFile));
+                FMLLog.fine("Loaded states for %d mods from file", forcedModListProperties.size());
             }
             catch (Exception e)
             {
                 FMLLog.log(Level.INFO, e, "An error occurred reading the fmlModState.properties file");
             }
         }
-        modStates.putAll(Maps.fromProperties(disabledModListProperties));
+        modStates.putAll(Maps.fromProperties(forcedModListProperties));
         modStates.putAll(sysPropertyStateList);
         FMLLog.fine("After merging, found state information for %d mods", modStates.size());
 
@@ -474,7 +474,7 @@ public class Loader
         {
             public Boolean apply(String input)
             {
-                return !Boolean.parseBoolean(input);
+                return Boolean.parseBoolean(input);
             }
         });
 
