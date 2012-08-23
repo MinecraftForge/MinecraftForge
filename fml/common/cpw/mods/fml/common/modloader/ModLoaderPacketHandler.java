@@ -21,11 +21,11 @@ public class ModLoaderPacketHandler implements IPacketHandler
     {
         if (player instanceof EntityPlayerMP)
         {
-            mod.onPacket250Received((EntityPlayer) player, packet);
+            mod.serverCustomPayload(((EntityPlayerMP)player).field_71135_a, packet);
         }
         else
         {
-            mod.receiveCustomPacket(packet);
+            ModLoaderHelper.sidedHelper.sendClientPacket(mod, packet);
         }
     }
 

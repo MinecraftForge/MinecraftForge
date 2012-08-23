@@ -21,13 +21,14 @@
          DataInputStream var2;
          ItemStack var3;
          ItemStack var4;
-@@ -1029,4 +1036,10 @@
+@@ -1029,4 +1036,11 @@
              }
          }
      }
 +
++    // modloader compat -- yuk!
 +    @Override
-+    public EntityPlayer getPlayer()
++    public EntityPlayerMP getPlayer()
 +    {
 +        return field_72574_e;
 +    }

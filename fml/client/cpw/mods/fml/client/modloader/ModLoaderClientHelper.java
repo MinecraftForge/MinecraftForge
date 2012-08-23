@@ -11,6 +11,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.KeyBinding;
+import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Render;
 
 import com.google.common.base.Supplier;
@@ -113,5 +114,12 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
     public Entity spawnEntity(BaseModProxy mod, EntitySpawnPacket input, EntityRegistration er)
     {
         return ((net.minecraft.src.BaseMod)mod).spawnEntity(er.getModEntityId(), client.field_71441_e, input.scaledX, input.scaledY, input.scaledZ);
+    }
+
+
+    @Override
+    public void sendClientPacket(BaseModProxy mod, Packet250CustomPayload packet)
+    {
+        ((net.minecraft.src.BaseMod)mod).clientCustomPayload(client.field_71439_g.field_71174_a, packet);
     }
 }

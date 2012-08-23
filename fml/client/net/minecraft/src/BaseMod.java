@@ -368,6 +368,12 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     }
 
     @Override
+    public void serverCustomPayload(NetServerHandler handler, Packet250CustomPayload packet)
+    {
+
+    }
+
+    @Override
     public void serverDisconnect() {
 
     }
@@ -479,6 +485,11 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     public Entity spawnEntity(int entityId, World world, double scaledX, double scaledY, double scaledZ)
     {
         return null;
+    }
+
+    public void clientCustomPayload(NetClientHandler handler, Packet250CustomPayload packet)
+    {
+
     }
 
 }
