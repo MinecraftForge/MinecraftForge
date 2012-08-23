@@ -294,6 +294,10 @@ public class ModLoader
         EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
     }
 
+    public static void addTrade(int profession, TradeEntry entry)
+    {
+        ModLoaderHelper.registerTrade(profession, entry);
+    }
     /**
      * Send a packet from the client
      * @param packet

@@ -5,20 +5,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-
-import cpw.mods.fml.common.FMLLog;
-
-import net.minecraft.src.ComponentVillage;
 import net.minecraft.src.ComponentVillageStartPiece;
 import net.minecraft.src.EntityVillager;
+import net.minecraft.src.Item;
 import net.minecraft.src.MapGenVillage;
 import net.minecraft.src.MerchantRecipeList;
 import net.minecraft.src.StructureVillagePieceWeight;
 import net.minecraft.src.StructureVillagePieces;
+import net.minecraft.src.Tuple;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
+import cpw.mods.fml.common.FMLLog;
 
 /**
  * Registry for villager trading control
@@ -184,4 +184,22 @@ public class VillagerRegistry
         return instance().villageCreationHandlers.get(villagePiece.field_75090_a).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, p4, p5);
     }
 
+
+    public static void addEmeraldBuyRecipe(EntityVillager villager, MerchantRecipeList list, Random random, Item item, float chance, int min, int max)
+    {
+        if (min > 0 && max > 0)
+        {
+            EntityVillager.field_70958_bB.put(item.field_77779_bT, new Tuple(min, max));
+        }
+        villager.func_70948_a(list, item.func_77612_l(), random, chance);
+    }
+
+    public static void addEmeraldSellRecipe(EntityVillager villager, MerchantRecipeList list, Random random, Item item, float chance, int min, int max)
+    {
+        if (min > 0 && max > 0)
+        {
+            EntityVillager.field_70960_bC.put(item.field_77779_bT, new Tuple(min, max));
+        }
+        villager.func_70949_b(list, item.func_77612_l(), random, chance);
+    }
 }

@@ -19,12 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Container;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
@@ -39,11 +42,14 @@ import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.common.registry.VillagerRegistry.IVillageTradeHandler;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /**
  * @author cpw
  *
  */
+@SuppressWarnings("deprecation")
 public class ModLoaderHelper
 {
     public static IModLoaderSidedHelper sidedHelper;
@@ -158,11 +164,24 @@ public class ModLoaderHelper
     }
 
 
-    @SuppressWarnings("deprecation")
     public static void buildEntityTracker(BaseModProxy mod, Class<? extends Entity> entityClass, int entityTypeId, int updateRange, int updateInterval,
             boolean sendVelocityInfo)
     {
         EntityRegistration er = EntityRegistry.registerModLoaderEntity(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
         er.setCustomSpawning(new ModLoaderEntitySpawnCallback(mod, er));
+    }
+
+    private static ModLoaderVillageTradeHandler[] tradeHelpers = new ModLoaderVillageTradeHandler[6];
+
+    public static void registerTrade(int profession, TradeEntry entry)
+    {
+        assert profession < tradeHelpers.length : "The profession is out of bounds";
+        if (tradeHelpers[profession] == null)
+        {
+            tradeHelpers[profession] = new ModLoaderVillageTradeHandler();
+            VillagerRegistry.instance().registerVillageTradeHandler(profession, tradeHelpers[profession]);
+        }
+
+        tradeHelpers[profession].addTrade(entry);
     }
 }
