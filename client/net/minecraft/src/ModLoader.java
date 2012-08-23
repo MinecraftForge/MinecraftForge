@@ -45,6 +45,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.server.FMLServerHandler;
 
+/**
+ * @author cpw
+ *
+ */
 public class ModLoader
 {
     public static final String fmlMarker = "This is an FML marker";
@@ -288,6 +292,15 @@ public class ModLoader
     public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType spawnList, BiomeGenBase... biomes)
     {
         EntityRegistry.addSpawn(entityName, weightedProb, min, max, spawnList, biomes);
+    }
+
+    /**
+     * Send a packet from the client
+     * @param packet
+     */
+    public static void clientSendPacket(Packet packet)
+    {
+        PacketDispatcher.sendPacketToServer(packet);
     }
 
     /**
