@@ -137,14 +137,18 @@ public class FMLModContainer implements ModContainer
             modMetadata.dependants = dependants;
             FMLLog.finest("Parsed dependency info : %s %s %s", requirements, dependencies, dependants);
         }
+        else
+        {
+            FMLLog.finest("Using mcmod dependency info : %s %s %s", modMetadata.requiredMods, modMetadata.dependencies, modMetadata.dependants);
+        }
         if (Strings.isNullOrEmpty(modMetadata.name))
         {
-            FMLLog.info("Mod %s is missing a required element, name. Substituting %s", getModId(), getModId());
+            FMLLog.info("Mod %s is missing the required element 'name'. Substituting %s", getModId(), getModId());
             modMetadata.name = getModId();
         }
         if (Strings.isNullOrEmpty(modMetadata.version))
         {
-            FMLLog.warning("Mod %s is missing a required element, version. Substituting 1", getModId());
+            FMLLog.warning("Mod %s is missing the required element 'version'. Substituting 1", getModId());
             modMetadata.version = "1";
         }
     }
