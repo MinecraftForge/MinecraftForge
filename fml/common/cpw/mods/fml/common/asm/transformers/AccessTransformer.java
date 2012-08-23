@@ -135,7 +135,7 @@ public class AccessTransformer implements IClassTransformer
                         m.name = nameReference;
                     }
                 }
-                modifiers.put(descriptor.get(0), m);
+                modifiers.put(descriptor.get(0).replace('/', '.'), m);
                 return true;
             }
         });
