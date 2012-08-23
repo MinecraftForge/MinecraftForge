@@ -53,6 +53,7 @@ public class JarDiscoverer implements ITypeDiscoverer
                     catch (LoaderException e)
                     {
                         FMLLog.log(Level.SEVERE, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
+                        jar.close();
                         throw e;
                     }
                     modParser.validate();
