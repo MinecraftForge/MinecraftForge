@@ -42,7 +42,7 @@ public class MetadataCollection
         catch (InvalidSyntaxException e)
         {
             FMLLog.log(Level.SEVERE, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
-            return null;
+            return new MetadataCollection();
         }
         catch (Exception e)
         {
