@@ -19,6 +19,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.DummyModContainer;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.toposort.TopologicalSort.DirectedGraph;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -78,7 +79,8 @@ public class ModSorter
             {
                 preDepAdded = true;
 
-                if (dep.getLabel().equals("*"))
+                String modid = dep.getLabel();
+                if (modid.equals("*"))
                 {
                     // We are "after" everything
                     modGraph.addEdge(mod, afterAll);
@@ -88,8 +90,8 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(before, mod);
-                    if (nameLookup.containsKey(dep.getLabel())) {
-                        modGraph.addEdge(nameLookup.get(dep.getLabel()), mod);
+                    if (Loader.isModLoaded(modid)) {
+                        modGraph.addEdge(nameLookup.get(modid), mod);
                     }
                 }
             }
@@ -98,7 +100,8 @@ public class ModSorter
             {
                 postDepAdded = true;
 
-                if (dep.getLabel().equals("*"))
+                String modid = dep.getLabel();
+                if (modid.equals("*"))
                 {
                     // We are "before" everything
                     modGraph.addEdge(beforeAll, mod);
@@ -108,8 +111,8 @@ public class ModSorter
                 else
                 {
                     modGraph.addEdge(mod, after);
-                    if (nameLookup.containsKey(dep.getLabel())) {
-                        modGraph.addEdge(mod, nameLookup.get(dep.getLabel()));
+                    if (Loader.isModLoaded(modid)) {
+                        modGraph.addEdge(mod, nameLookup.get(modid));
                     }
                 }
             }

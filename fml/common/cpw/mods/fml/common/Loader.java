@@ -496,7 +496,7 @@ public class Loader
      */
     public static boolean isModLoaded(String modname)
     {
-        return instance().namedMods.containsKey(modname);
+        return instance().namedMods.containsKey(modname) && instance().modController.getModState(instance.namedMods.get(modname))!=ModState.DISABLED;
     }
 
     /**
