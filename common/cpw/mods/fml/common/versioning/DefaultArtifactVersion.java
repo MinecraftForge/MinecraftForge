@@ -73,9 +73,14 @@ public class DefaultArtifactVersion implements ArtifactVersion
     @Override
     public String getVersionString()
     {
-        return comparableVersion==null ? "any" : comparableVersion.toString();
+        return comparableVersion == null ? "unknown" : comparableVersion.toString();
     }
 
+    @Override
+    public String getRangeString()
+    {
+        return range == null ? "any" : range.toString();
+    }
     @Override
     public String toString()
     {

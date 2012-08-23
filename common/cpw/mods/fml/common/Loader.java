@@ -35,6 +35,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -185,28 +186,39 @@ public class Loader
 
             for (ModContainer mod : getActiveModList())
             {
-                Set<ArtifactVersion> missingMods = Sets.difference(mod.getRequirements(), modVersions.values());
+                Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new Function<ArtifactVersion, String>()
+                {
+                    public String apply(ArtifactVersion v)
+                    {
+                        return v.getLabel();
+                    }
+                });
+                Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
+                Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
                 if (!missingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mods %s to be available", mod.getModId(), mod.getName(), missingMods);
-                    throw new MissingModsException(missingMods);
+                    for (String modid : missingMods)
+                    {
+                        versionMissingMods.add(names.get(modid));
+                    }
+                    throw new MissingModsException(versionMissingMods);
                 }
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
                 for (ArtifactVersion v : allDeps)
                 {
-                    missingMods = Sets.newHashSet();
                     if (modVersions.containsKey(v.getLabel()))
                     {
                         if (!v.containsVersion(modVersions.get(v.getLabel())))
                         {
-                            missingMods.add(v);
+                            versionMissingMods.add(v);
                         }
                     }
                 }
-                if (!missingMods.isEmpty())
+                if (!versionMissingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), missingMods);
-                    throw new MissingModsException(missingMods);
+                    throw new MissingModsException(versionMissingMods);
                 }
             }
 
@@ -217,7 +229,10 @@ public class Loader
             try
             {
                 FMLLog.fine("Sorting mods into an ordered list");
-                mods = sorter.sort();
+                List<ModContainer> sortedMods = sorter.sort();
+                mods.removeAll(sortedMods);
+                sortedMods.addAll(mods);
+                mods = sortedMods;
                 FMLLog.fine("Mod sorting completed successfully");
             }
             catch (ModSortingException sortException)

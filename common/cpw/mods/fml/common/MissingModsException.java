@@ -15,5 +15,4 @@ public class MissingModsException extends RuntimeException
     {
         this.missingMods = missingMods;
     }
-
 }

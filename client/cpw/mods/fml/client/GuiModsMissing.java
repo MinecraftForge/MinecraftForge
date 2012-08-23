@@ -4,13 +4,12 @@ import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import net.minecraft.src.GuiErrorScreen;
 
-public class ModsMissingGuiScreen extends GuiErrorScreen
+public class GuiModsMissing extends GuiErrorScreen
 {
 
     private MissingModsException modsMissing;
 
-
-    public void setList(MissingModsException modsMissing)
+    public GuiModsMissing(MissingModsException modsMissing)
     {
         this.modsMissing = modsMissing;
     }
@@ -27,7 +26,7 @@ public class ModsMissingGuiScreen extends GuiErrorScreen
         for (ArtifactVersion v : modsMissing.missingMods)
         {
             offset+=10;
-            this.func_73732_a(this.field_73886_k, String.format("%s : %s", v.getLabel(), v.getVersionString()), this.field_73880_f / 2, offset, 0xEEEEEE);
+            this.func_73732_a(this.field_73886_k, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.field_73880_f / 2, offset, 0xEEEEEE);
         }
         offset+=20;
         this.func_73732_a(this.field_73886_k, "The file 'ForgeModLoader-client-0.log' contains more information", this.field_73880_f / 2, offset, 0xFFFFFF);
