@@ -259,8 +259,11 @@ public class FMLNetworkHandler
     {
         Map<String, ModContainer> mods = Loader.instance().getIndexedModList();
         NetworkModHandler handler = findNetworkModHandler(mods.get(key));
-        handler.setNetworkId(value);
-        networkIdLookup.put(value, handler);
+        if (handler != null)
+        {
+            handler.setNetworkId(value);
+            networkIdLookup.put(value, handler);
+        }
     }
 
     public static void onClientConnectionToRemoteServer(NetHandler netClientHandler, String server, int port, NetworkManager networkManager)
