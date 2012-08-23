@@ -11,14 +11,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.MathHelper;
 import net.minecraft.src.ModLoader;
+import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
+import net.minecraft.src.RenderGlobal;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TexturePackBase;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
@@ -215,39 +221,9 @@ public class ForgeHooksClient
         return _default;
     }
 
-    /**
-     * This is added for Optifine's convenience. And to explode if a ModMaker is developing.
-     * @param texture
-     */
-    public static void onTextureLoadPre(String texture)
-    {
-        if (Tessellator.renderingWorldRenderer)
-        {
-            String msg = String.format("Warning: Texture %s not preloaded, will cause render glitches!", texture);
-            System.out.println(msg);
-            if (Tessellator.class.getPackage() != null)
-            {
-                if (Tessellator.class.getPackage().equals("net.minecraft.src"))
-                {
-                    Minecraft mc = ModLoader.getMinecraftInstance();
-                    if (mc.ingameGUI != null)
-                    {
-                        mc.ingameGUI.getChatGUI().printChatMessage(msg);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void onTextureLoad(String texture, TexturePackBase pack)
-    {
-        MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
-    }
-    
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
     {
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
-        
         if (customRenderer == null)
         {
                 return false;
@@ -262,7 +238,7 @@ public class ForgeHooksClient
             GL11.glTranslatef(0.0F, -bobing, 0.0F);
         }
         boolean is3D = customRenderer.shouldUseRenderHelper(ENTITY, item, BLOCK_3D);
-        
+
         if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
             engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
@@ -314,8 +290,7 @@ public class ForgeHooksClient
             GL11.glScalef(1.0F, 1.0F, -1F);
             GL11.glRotatef(210F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45F, 0.0F, 1.0F, 0.0F);
-            
-            
+
             if(inColor)
             {
                 int color = Item.itemsList[item.itemID].getColorFromDamage(item.getItemDamage(), 0);
@@ -324,7 +299,7 @@ public class ForgeHooksClient
                 float b = (float)(color & 0xff) / 255F;
                 GL11.glColor4f(r, g, b, 1.0F);
             }
-            
+
             GL11.glRotatef(-90F, 0.0F, 1.0F, 0.0F);
             renderBlocks.useInventoryTint = inColor;
             customRenderer.renderItem(INVENTORY, item, renderBlocks);
@@ -374,6 +349,62 @@ public class ForgeHooksClient
             customRenderer.renderItem(EQUIPPED, item, renderBlocks, entity);
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             GL11.glPopMatrix();
+        }
+    }
+
+    //Optifine Helper Functions u.u, these are here specifically for Optifine
+    //Note: When using Optfine, these methods are invoked using reflection, which
+    //incurs a major performance penalty.
+    public static void orientBedCamera(Minecraft mc, EntityLiving entity)
+    {
+        int x = MathHelper.floor_double(entity.posX);
+        int y = MathHelper.floor_double(entity.posY);
+        int z = MathHelper.floor_double(entity.posZ);
+        Block block = Block.blocksList[mc.theWorld.getBlockId(x, y, z)];
+
+        if (block != null && block.isBed(mc.theWorld, x, y, z, entity))
+        {
+            int var12 = block.getBedDirection(mc.theWorld, x, y, z);
+            GL11.glRotatef((float)(var12 * 90), 0.0F, 1.0F, 0.0F);
+        }
+    }
+
+    public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, MovingObjectPosition target, int subID, ItemStack currentItem, float partialTicks)
+    {
+        return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, currentItem, partialTicks));
+    }
+
+    public static void dispatchRenderLast(RenderGlobal context, float partialTicks)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
+    }
+
+    public static void onTextureLoad(String texture, TexturePackBase pack)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+
+    /**
+     * This is added for Optifine's convenience. And to explode if a ModMaker is developing.
+     * @param texture
+     */
+    public static void onTextureLoadPre(String texture)
+    {
+        if (Tessellator.renderingWorldRenderer)
+        {
+            String msg = String.format("Warning: Texture %s not preloaded, will cause render glitches!", texture);
+            System.out.println(msg);
+            if (Tessellator.class.getPackage() != null)
+            {
+                if (Tessellator.class.getPackage().equals("net.minecraft.src"))
+                {
+                    Minecraft mc = ModLoader.getMinecraftInstance();
+                    if (mc.ingameGUI != null)
+                    {
+                        mc.ingameGUI.getChatGUI().printChatMessage(msg);
+                    }
+                }
+            }
         }
     }
 }

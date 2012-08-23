@@ -3,6 +3,8 @@ package net.minecraftforge.common;
 import java.util.*;
 
 import net.minecraft.src.*;
+import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingEvent.*;
 
 public class ForgeHooks
 {
@@ -283,5 +285,55 @@ public class ForgeHooks
         player.inventory.setInventorySlotContents(slot, result);
         player.inventory.currentItem = slot;
         return true;
+    }
+
+    //Optifine Helper Functions u.u, these are here specifically for Optifine
+    //Note: When using Optfine, these methods are invoked using reflection, which
+    //incurs a major performance penalty.
+    public static void onLivingSetAttackTarget(EntityLiving entity, EntityLiving target)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
+    }
+
+    public static boolean onLivingUpdate(EntityLiving entity)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
+    }
+
+    public static boolean onLivingAttack(EntityLiving entity, DamageSource src, int amount)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static int onLivingHurt(EntityLiving entity, DamageSource src, int amount)
+    {
+        LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.ammount);
+    }
+
+    public static boolean onLivingDeath(EntityLiving entity, DamageSource src)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
+    }
+
+    public static boolean onLivingDrops(EntityLiving entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit, int specialDropValue)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit, specialDropValue));
+    }
+
+    public static float onLivingFall(EntityLiving entity, float distance)
+    {
+        LivingFallEvent event = new LivingFallEvent(entity, distance);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0.0f : event.distance);
+    }
+
+    public static boolean isLivingOnLadder(Block block, World world, int x, int y, int z)
+    {
+        return block != null && block.isLadder(world, x, y, z);
+    }
+
+    public static void onLivingJump(EntityLiving entity)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
 }
