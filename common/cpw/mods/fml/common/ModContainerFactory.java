@@ -20,10 +20,15 @@ public class ModContainerFactory
     public ModContainer build(ASMModParser modParser, File modSource, ModCandidate container)
     {
         String className = modParser.getASMType().getClassName();
-        if (modParser.isBaseMod() && modClass.matcher(className).find())
+        if (modParser.isBaseMod(container.getRememberedBaseMods()) && modClass.matcher(className).find())
         {
             FMLLog.fine("Identified a BaseMod type mod %s", className);
             return new ModLoaderModContainer(className, modSource, modParser.getBaseModProperties());
+        }
+        else if (modParser.isBaseMod(container.getRememberedBaseMods()))
+        {
+            FMLLog.fine("Found a basemod %s of non-standard naming format", className);
+            container.rememberBaseModType(className);
         }
 
         // We warn if it's not a basemod instance -- compatibility requires it to be in net.minecraft.src *sigh*

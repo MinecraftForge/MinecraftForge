@@ -2,7 +2,9 @@ package cpw.mods.fml.common.discovery.asm;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 
 import net.minecraft.src.BaseMod;
@@ -78,7 +80,7 @@ public class ASMModParser
                 .add("classVersion", classVersion)
                 .add("superName", asmSuperType.getClassName())
                 .add("annotations", annotations)
-                .add("isBaseMod", isBaseMod())
+                .add("isBaseMod", isBaseMod(Collections.<String>emptyList()))
                 .add("baseModProperties", baseModProperties)
                 .toString();
     }
@@ -112,9 +114,9 @@ public class ASMModParser
 //        }
     }
 
-    public boolean isBaseMod()
+    public boolean isBaseMod(List<String> rememberedTypes)
     {
-        return getASMSuperType().equals(Type.getType(BaseMod.class));
+        return getASMSuperType().equals(Type.getType(BaseMod.class)) || rememberedTypes.contains(getASMSuperType().getClassName());
     }
 
     public void setBaseModProperties(String foundProperties)
