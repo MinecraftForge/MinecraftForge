@@ -170,7 +170,6 @@ public class MinecraftForge
        Block.blocksList[0] = null;
        Block.opaqueCubeLookup[0] = false;
        Block.lightOpacity[0] = 0;
-       Block.canBlockGrass[0] = false;
 
        for (int x = 256; x < 4096; x++)
        {
