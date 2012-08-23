@@ -51,6 +51,7 @@ import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
@@ -551,6 +552,12 @@ public class ModLoaderModContainer implements ModContainer
             controller.errorOccurred(this, t);
             Throwables.propagateIfPossible(t);
         }
+    }
+
+    @Subscribe
+    public void loadComplete(FMLLoadCompleteEvent complete)
+    {
+        ModLoaderHelper.finishModLoading(this);
     }
 
     @Override

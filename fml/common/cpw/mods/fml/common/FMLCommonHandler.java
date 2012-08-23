@@ -38,6 +38,7 @@ import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.server.FMLServerHandler;
 
@@ -333,9 +334,9 @@ public class FMLCommonHandler
         sidedDelegate.showGuiScreen(clientGuiElement);
     }
 
-    public Entity spawnEntityIntoClientWorld(Class<? extends Entity> cls, EntitySpawnPacket entitySpawnPacket)
+    public Entity spawnEntityIntoClientWorld(EntityRegistration registration, EntitySpawnPacket entitySpawnPacket)
     {
-        return sidedDelegate.spawnEntityIntoClientWorld(cls, entitySpawnPacket);
+        return sidedDelegate.spawnEntityIntoClientWorld(registration, entitySpawnPacket);
     }
 
     public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket entitySpawnAdjustmentPacket)

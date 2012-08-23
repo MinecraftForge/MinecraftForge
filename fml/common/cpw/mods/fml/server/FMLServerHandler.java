@@ -25,6 +25,7 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 /**
@@ -133,7 +134,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public Entity spawnEntityIntoClientWorld(Class<? extends Entity> entityClass, EntitySpawnPacket packet)
+    public Entity spawnEntityIntoClientWorld(EntityRegistration er, EntitySpawnPacket packet)
     {
         // NOOP
         return null;

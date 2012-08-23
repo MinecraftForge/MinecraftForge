@@ -113,6 +113,10 @@ public class ModLoader
         GameRegistry.addBiome(biome);
     }
 
+    public static void addEntityTracker(BaseMod mod, Class<? extends Entity> entityClass, int entityTypeId, int updateRange, int updateInterval, boolean sendVelocityInfo)
+    {
+        ModLoaderHelper.buildEntityTracker(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
+    }
     /**
      * Add localization for the specified string
      *

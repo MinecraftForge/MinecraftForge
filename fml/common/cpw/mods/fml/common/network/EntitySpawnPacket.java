@@ -182,7 +182,7 @@ public class EntitySpawnPacket extends FMLPacket
         }
 
 
-        Entity entity = FMLCommonHandler.instance().spawnEntityIntoClientWorld(cls, this);
+        Entity entity = FMLCommonHandler.instance().spawnEntityIntoClientWorld(registration, this);
     }
 
 }
