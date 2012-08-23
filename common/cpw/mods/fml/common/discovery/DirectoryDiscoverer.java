@@ -53,13 +53,13 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
             try
             {
                 FileInputStream fis = new FileInputStream(metadata);
-                mc = MetadataCollection.from(fis);
+                mc = MetadataCollection.from(fis,modDir.getName());
                 fis.close();
                 FMLLog.fine("Found an mcmod.info file in directory %s", modDir.getName());
             }
             catch (Exception e)
             {
-                mc = MetadataCollection.from(null);
+                mc = MetadataCollection.from(null,"");
                 FMLLog.info("No mcmod.info file found in directory %s", modDir.getName());
             }
         }

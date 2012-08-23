@@ -33,12 +33,12 @@ public class JarDiscoverer implements ITypeDiscoverer
             if (modInfo != null)
             {
                 FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
-                mc = MetadataCollection.from(jar.getInputStream(modInfo));
+                mc = MetadataCollection.from(jar.getInputStream(modInfo), candidate.getModContainer().getName());
             }
             else
             {
                 FMLLog.info("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
-                mc = MetadataCollection.from(null);
+                mc = MetadataCollection.from(null, "");
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
             {
