@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -27,6 +28,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -125,7 +127,7 @@ public class FMLModContainer implements ModContainer
 
         if (overridesMetadata || !modMetadata.useDependencyInformation)
         {
-            List<ArtifactVersion> requirements = Lists.newArrayList();
+            Set<ArtifactVersion> requirements = Sets.newHashSet();
             List<ArtifactVersion> dependencies = Lists.newArrayList();
             List<ArtifactVersion> dependants = Lists.newArrayList();
             annotationDependencies = (String) descriptor.get("dependencies");
@@ -133,10 +135,17 @@ public class FMLModContainer implements ModContainer
             modMetadata.requiredMods = requirements;
             modMetadata.dependencies = dependencies;
             modMetadata.dependants = dependants;
+            FMLLog.finest("Parsed dependency info : %s %s %s", requirements, dependencies, dependants);
         }
         if (Strings.isNullOrEmpty(modMetadata.name))
         {
+            FMLLog.info("Mod %s is missing a required element, name. Substituting %s", getModId(), getModId());
             modMetadata.name = getModId();
+        }
+        if (Strings.isNullOrEmpty(modMetadata.version))
+        {
+            FMLLog.warning("Mod %s is missing a required element, version. Substituting 1", getModId());
+            modMetadata.version = "1";
         }
     }
 
@@ -147,7 +156,7 @@ public class FMLModContainer implements ModContainer
     }
 
     @Override
-    public List<ArtifactVersion> getRequirements()
+    public Set<ArtifactVersion> getRequirements()
     {
         return modMetadata.requiredMods;
     }
@@ -167,7 +176,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public String getSortingRules()
     {
-        return (overridesMetadata ? annotationDependencies : modMetadata.printableSortingRules());
+        return ((overridesMetadata || !modMetadata.useDependencyInformation) ? annotationDependencies : modMetadata.printableSortingRules());
     }
 
     @Override

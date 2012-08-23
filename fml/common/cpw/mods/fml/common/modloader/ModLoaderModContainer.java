@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 
 import com.google.common.base.Strings;
@@ -65,7 +66,7 @@ public class ModLoaderModContainer implements ModContainer
 {
     public BaseModProxy mod;
     private File modSource;
-    public List<ArtifactVersion> requirements = Lists.newArrayList();
+    public Set<ArtifactVersion> requirements = Sets.newHashSet();
     public ArrayList<ArtifactVersion> dependencies = Lists.newArrayList();
     public ArrayList<ArtifactVersion> dependants = Lists.newArrayList();
     private ContainerType sourceType;
@@ -381,7 +382,7 @@ public class ModLoaderModContainer implements ModContainer
     }
 
     @Override
-    public List<ArtifactVersion> getRequirements()
+    public Set<ArtifactVersion> getRequirements()
     {
         return requirements;
     }

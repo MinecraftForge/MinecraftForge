@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
@@ -30,14 +31,17 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.TreeMultimap;
 
 import cpw.mods.fml.common.LoaderState.ModState;
@@ -173,7 +177,7 @@ public class Loader
         FMLLog.fine("Verifying mod requirements are satisfied");
         try
         {
-            Map<String, ArtifactVersion> modVersions = Maps.newHashMap();
+            BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
             for (ModContainer mod : mods)
             {
                 modVersions.put(mod.getModId(), mod.getProcessedVersion());
@@ -181,17 +185,28 @@ public class Loader
 
             for (ModContainer mod : mods)
             {
+                Set<ArtifactVersion> missingMods = Sets.difference(mod.getRequirements(), modVersions.values());
+                if (!missingMods.isEmpty())
+                {
+                    FMLLog.severe("The mod %s (%s) requires mods %s to be available", mod.getModId(), mod.getName(), missingMods);
+                    throw new MissingModsException(missingMods);
+                }
                 ImmutableList<ArtifactVersion> allDeps = ImmutableList.<ArtifactVersion>builder().addAll(mod.getDependants()).addAll(mod.getDependencies()).build();
                 for (ArtifactVersion v : allDeps)
                 {
+                    missingMods = Sets.newHashSet();
                     if (modVersions.containsKey(v.getLabel()))
                     {
                         if (!v.containsVersion(modVersions.get(v.getLabel())))
                         {
-                            FMLLog.log(Level.SEVERE, "The mod %s (%s) requires mods %s to be available, one or more are not", mod.getModId(), mod.getName(), allDeps);
-                            throw new LoaderException();
+                            missingMods.add(v);
                         }
                     }
+                }
+                if (!missingMods.isEmpty())
+                {
+                    FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), missingMods);
+                    throw new MissingModsException(missingMods);
                 }
             }
 
@@ -506,7 +521,7 @@ public class Loader
         return modClassLoader;
     }
 
-    public void computeDependencies(String dependencyString, List<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
+    public void computeDependencies(String dependencyString, Set<ArtifactVersion> requirements, List<ArtifactVersion> dependencies, List<ArtifactVersion> dependants)
     {
         if (dependencyString == null || dependencyString.length() == 0)
         {

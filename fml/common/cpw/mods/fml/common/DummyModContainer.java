@@ -3,14 +3,17 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 
 public class DummyModContainer implements ModContainer
 {
     private ModMetadata md;
+    private ArtifactVersion processedVersion;
 
     public DummyModContainer(ModMetadata md)
     {
@@ -39,9 +42,9 @@ public class DummyModContainer implements ModContainer
     }
 
     @Override
-    public List<ArtifactVersion> getRequirements()
+    public Set<ArtifactVersion> getRequirements()
     {
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
     @Override
@@ -105,7 +108,11 @@ public class DummyModContainer implements ModContainer
     @Override
     public ArtifactVersion getProcessedVersion()
     {
-        return null;
+        if (processedVersion == null)
+        {
+            processedVersion = new DefaultArtifactVersion(getModId(), getVersion());
+        }
+        return processedVersion;
     }
 
     @Override

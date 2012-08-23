@@ -53,7 +53,7 @@
          {
              this.func_71352_k();
          }
-+        FMLClientHandler.instance().reloadTextureFX();
++        FMLClientHandler.instance().onInitializationComplete();
      }
  
      private void func_71357_I() throws LWJGLException
