@@ -224,7 +224,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     public void generateSurface(World world, Random random, int chunkX, int chunkZ)
     {
     }
-    
+
     /**
      * Callback to return a gui screen to display
      * @param player
@@ -239,7 +239,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     {
         return null;
     }
-    
+
     /**
      * Return the name of your mod. Defaults to the class name
      *
@@ -463,6 +463,22 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     public void onClientDimensionChanged(EntityPlayer player)
     {
 
+    }
+
+    /**
+     *
+     * Spawn the entity of the supplied type, if it is your mod's
+     * @param entityId
+     * @param world
+     * @param scaledX
+     * @param scaledY
+     * @param scaledZ
+     * @return
+     */
+    @SideOnly(CLIENT)
+    public Entity spawnEntity(int entityId, World world, double scaledX, double scaledY, double scaledZ)
+    {
+        return null;
     }
 
 }

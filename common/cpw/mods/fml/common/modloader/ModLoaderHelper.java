@@ -17,10 +17,13 @@ package cpw.mods.fml.common.modloader;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import com.google.common.collect.Maps;
 
+import net.minecraft.src.BaseMod;
 import net.minecraft.src.Container;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -34,6 +37,8 @@ import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 
 /**
  * @author cpw
@@ -42,9 +47,9 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 public class ModLoaderHelper
 {
     public static IModLoaderSidedHelper sidedHelper;
-    
+
     private static Map<Integer, ModLoaderGuiHelper> guiHelpers = Maps.newHashMap();
-    
+
     public static void updateStandardTicks(BaseModProxy mod, boolean enable, boolean useClock)
     {
         ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
@@ -137,7 +142,7 @@ public class ModLoaderHelper
         helper.injectContainer(container);
         player.openGui(helper.getMod(), id, player.field_70170_p, x, y, z);
     }
-    
+
     public static Object getClientSideGui(BaseModProxy mod, EntityPlayer player, int ID, int x, int y, int z)
     {
         if (sidedHelper != null)
@@ -150,5 +155,14 @@ public class ModLoaderHelper
     public static IDispenseHandler buildDispenseHelper(BaseModProxy mod)
     {
         return new ModLoaderDispenseHelper(mod);
+    }
+
+
+    @SuppressWarnings("deprecation")
+    public static void buildEntityTracker(BaseModProxy mod, Class<? extends Entity> entityClass, int entityTypeId, int updateRange, int updateInterval,
+            boolean sendVelocityInfo)
+    {
+        EntityRegistration er = EntityRegistry.registerModLoaderEntity(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
+        er.setCustomSpawning(new ModLoaderEntitySpawnCallback(mod, er));
     }
 }

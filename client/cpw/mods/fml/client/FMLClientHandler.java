@@ -52,6 +52,7 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -250,22 +251,41 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public Entity spawnEntityIntoClientWorld(Class<? extends Entity> cls, EntitySpawnPacket packet)
+    public Entity spawnEntityIntoClientWorld(EntityRegistration er, EntitySpawnPacket packet)
     {
         WorldClient wc = client.field_71441_e;
 
+        Class<? extends Entity> cls = er.getEntityClass();
+
         try
         {
-            Entity entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
+            Entity entity;
+            if (er.hasCustomSpawning())
+            {
+                entity = er.doCustomSpawning(packet);
+            }
+            else
+            {
+                entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
+                entity.field_70157_k = packet.entityId;
+                entity.func_70012_b(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch);
+                if (entity instanceof EntityLiving)
+                {
+                    ((EntityLiving)entity).field_70759_as = packet.scaledHeadYaw;
+                }
+
+            }
+
+            entity.field_70118_ct = packet.rawX;
+            entity.field_70117_cu = packet.rawY;
+            entity.field_70116_cv = packet.rawZ;
+
             if (entity instanceof IThrowableEntity)
             {
                 Entity thrower = client.field_71439_g.field_70157_k == packet.throwerId ? client.field_71439_g : wc.func_73024_a(packet.throwerId);
                 ((IThrowableEntity)entity).setThrower(thrower);
             }
 
-            entity.field_70118_ct = packet.rawX;
-            entity.field_70117_cu = packet.rawY;
-            entity.field_70116_cv = packet.rawZ;
 
             Entity parts[] = entity.func_70021_al();
             if (parts != null)
@@ -277,13 +297,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                 }
             }
 
-            entity.field_70157_k = packet.entityId;
-            entity.func_70012_b(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch);
-
-            if (entity instanceof EntityLiving)
-            {
-                ((EntityLiving)entity).field_70759_as = packet.scaledHeadYaw;
-            }
 
             if (packet.metadata != null)
             {
