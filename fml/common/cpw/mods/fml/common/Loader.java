@@ -178,12 +178,12 @@ public class Loader
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
-            for (ModContainer mod : mods)
+            for (ModContainer mod : getActiveModList())
             {
                 modVersions.put(mod.getModId(), mod.getProcessedVersion());
             }
 
-            for (ModContainer mod : mods)
+            for (ModContainer mod : getActiveModList())
             {
                 Set<ArtifactVersion> missingMods = Sets.difference(mod.getRequirements(), modVersions.values());
                 if (!missingMods.isEmpty())
@@ -212,7 +212,7 @@ public class Loader
 
             FMLLog.fine("All mod requirements are satisfied");
 
-            ModSorter sorter = new ModSorter(mods, namedMods);
+            ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
 
             try
             {
@@ -232,7 +232,7 @@ public class Loader
         finally
         {
             FMLLog.fine("Mod sorting data:");
-            for (ModContainer mod : mods)
+            for (ModContainer mod : getActiveModList())
             {
                 if (!mod.isImmutable())
                 {
@@ -416,9 +416,9 @@ public class Loader
         modController.transition(LoaderState.LOADING);
         ModDiscoverer disc = identifyMods();
         disableRequestedMods();
+        modController.distributeStateMessage(FMLLoadEvent.class);
         sortModList();
         mods = ImmutableList.copyOf(mods);
-        modController.distributeStateMessage(FMLLoadEvent.class);
         modController.transition(LoaderState.CONSTRUCTING);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         modController.transition(LoaderState.PREINITIALIZATION);
