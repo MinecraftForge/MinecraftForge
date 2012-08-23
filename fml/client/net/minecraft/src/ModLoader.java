@@ -771,6 +771,13 @@ public class ModLoader
         //TODO
     }
 
+    public static void serverSendPacket(NetServerHandler handler, Packet packet)
+    {
+        if (handler != null)
+        {
+            PacketDispatcher.sendPacketToPlayer(packet, (Player)handler.getPlayer());
+        }
+    }
     public static void serverOpenWindow(EntityPlayerMP player, Container container, int ID, int x, int y, int z)
     {
         ModLoaderHelper.openGui(ID, player, container, x, y, z);
