@@ -16,7 +16,9 @@ package cpw.mods.fml.common;
 
 import static argo.jdom.JsonNodeBuilders.aStringBuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -111,9 +113,9 @@ public class ModMetadata
         credits = Strings.nullToEmpty((String)processedFields.get(aStringBuilder("credits")));
         parent =  Strings.nullToEmpty((String)processedFields.get(aStringBuilder("parent")));
         authorList = Objects.firstNonNull(((List<String>)processedFields.get(aStringBuilder("authors"))),Objects.firstNonNull(((List<String>)processedFields.get(aStringBuilder("authorList"))), authorList));
-        requiredMods = processReferences(processedFields.get(aStringBuilder("requiredMods")), Set.class);
-        dependencies = processReferences(processedFields.get(aStringBuilder("dependencies")), List.class);
-        dependants = processReferences(processedFields.get(aStringBuilder("dependants")), List.class);
+        requiredMods = processReferences(processedFields.get(aStringBuilder("requiredMods")), HashSet.class);
+        dependencies = processReferences(processedFields.get(aStringBuilder("dependencies")), ArrayList.class);
+        dependants = processReferences(processedFields.get(aStringBuilder("dependants")), ArrayList.class);
         useDependencyInformation = Boolean.parseBoolean(Strings.nullToEmpty((String)processedFields.get(aStringBuilder("useDependencyInformation"))));
     }
 
