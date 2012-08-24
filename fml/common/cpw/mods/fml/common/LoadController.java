@@ -32,7 +32,7 @@ public class LoadController
     private Multimap<String, Throwable> errors = ArrayListMultimap.create();
     private Map<String, ModContainer> modList;
     private List<ModContainer> activeModList = Lists.newArrayList();
-    private String activeContainer;
+    private ModContainer activeContainer;
     private BiMap<ModContainer, Object> modObjectList;
 
     public LoadController(Loader loader)
@@ -105,7 +105,7 @@ public class LoadController
 
     public ModContainer activeContainer()
     {
-        return activeContainer!=null ? modList.get(activeContainer) : null;
+        return activeContainer;
     }
 
     @Subscribe
@@ -115,21 +115,22 @@ public class LoadController
         {
             modObjectList = buildModObjectList();
         }
-        for (Map.Entry<String,EventBus> entry : eventChannels.entrySet())
+        for (ModContainer mc : activeModList)
         {
-            activeContainer = entry.getKey();
+            activeContainer = mc;
+            String modId = mc.getModId();
             stateEvent.applyModContainer(activeContainer());
-            FMLLog.finer("Posting state event %s to mod %s", stateEvent, entry.getKey());
-            entry.getValue().post(stateEvent);
-            FMLLog.finer("State event %s delivered to mod %s", stateEvent, entry.getKey());
+            FMLLog.finer("Posting state event %s to mod %s", stateEvent, modId);
+            eventChannels.get(modId).post(stateEvent);
+            FMLLog.finer("State event %s delivered to mod %s", stateEvent, modId);
             activeContainer = null;
-            if (!errors.containsKey(entry.getKey()))
+            if (!errors.containsKey(modId))
             {
-                modStates.put(entry.getKey(), stateEvent.getModState());
+                modStates.put(modId, stateEvent.getModState());
             }
             else
             {
-                modStates.put(entry.getKey(), ModState.ERRORED);
+                modStates.put(modId, ModState.ERRORED);
             }
         }
     }
@@ -162,11 +163,10 @@ public class LoadController
 
     public void printModStates(StringBuilder ret)
     {
-        for (String modId : modStates.keySet())
+        for (ModContainer mc : loader.getModList())
         {
-            ModContainer mod = modList.get(modId);
-            ret.append("\n\t").append(mod.getName()).append(" (").append(mod.getSource().getName()).append(") ");
-            Joiner.on("->"). appendTo(ret, modStates.get(modId));
+            ret.append("\n\t").append(mc.getModId()).append(" [").append(mc.getName()).append("] (").append(mc.getSource().getName()).append(") ");
+            Joiner.on("->"). appendTo(ret, modStates.get(mc.getModId()));
         }
     }
 
