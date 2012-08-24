@@ -230,6 +230,10 @@ public class Loader
             {
                 FMLLog.fine("Sorting mods into an ordered list");
                 List<ModContainer> sortedMods = sorter.sort();
+                // Reset active list to the sorted list
+                modController.getActiveModList().clear();
+                modController.getActiveModList().addAll(sortedMods);
+                // And inject the sorted list into the overall list
                 mods.removeAll(sortedMods);
                 sortedMods.addAll(mods);
                 mods = sortedMods;
