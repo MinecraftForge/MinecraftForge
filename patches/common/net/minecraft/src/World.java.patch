@@ -275,7 +275,19 @@
              }
              else
              {
-@@ -3035,7 +3055,7 @@
+@@ -2897,8 +2917,9 @@
+             if (par2 >= 0 && par2 < 256 && this.getSavedLightValue(EnumSkyBlock.Block, par1, par2, par3) < 10)
+             {
+                 int var7 = this.getBlockId(par1, par2, par3);
+-
+-                if ((var7 == Block.waterStill.blockID || var7 == Block.waterMoving.blockID) && this.getBlockMetadata(par1, par2, par3) == 0)
++                Block block = Block.blocksList[var7];
++
++                if (block != null && block.blockMaterial == Material.water && this.getBlockMetadata(par1, par2, par3) == 0)
+                 {
+                     if (!par4)
+                     {
+@@ -3035,7 +3056,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -284,7 +296,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3303,10 +3323,10 @@
+@@ -3303,10 +3324,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -299,7 +311,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3327,10 +3347,10 @@
+@@ -3327,10 +3348,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -314,7 +326,12 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3460,7 +3480,10 @@
+@@ -3456,11 +3477,14 @@
+         }
+         else
+         {
+-            if (var9 != null && (var9 == Block.waterMoving || var9 == Block.waterStill || var9 == Block.lavaMoving || var9 == Block.lavaStill || var9 == Block.fire || var9.blockMaterial.isGroundCover()))
++            if (var9 != null && (var9.blockMaterial == Material.water || var9.blockMaterial == Material.lava || var9 == Block.fire || var9.blockMaterial.isGroundCover()))
              {
                  var9 = null;
              }
@@ -326,7 +343,7 @@
              return par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -3958,4 +3981,65 @@
+@@ -3958,4 +3982,65 @@
              var7.destroyBlockPartially(par1, par2, par3, par4, par5);
          }
      }

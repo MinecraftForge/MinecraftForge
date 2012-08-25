@@ -1,0 +1,20 @@
+--- ../src_base/common/net/minecraft/src/PathFinder.java
++++ ../src_work/common/net/minecraft/src/PathFinder.java
+@@ -65,7 +65,7 @@
+         {
+             var10 = (int)par1Entity.boundingBox.minY;
+ 
+-            for (int var11 = this.worldMap.getBlockId(MathHelper.floor_double(par1Entity.posX), var10, MathHelper.floor_double(par1Entity.posZ)); var11 == Block.waterMoving.blockID || var11 == Block.waterStill.blockID; var11 = this.worldMap.getBlockId(MathHelper.floor_double(par1Entity.posX), var10, MathHelper.floor_double(par1Entity.posZ)))
++            for (int var11 = this.worldMap.getBlockId(MathHelper.floor_double(par1Entity.posX), var10, MathHelper.floor_double(par1Entity.posZ)); Block.blocksList[var11].blockMaterial == Material.water; var11 = this.worldMap.getBlockId(MathHelper.floor_double(par1Entity.posX), var10, MathHelper.floor_double(par1Entity.posZ)))
+             {
+                 ++var10;
+             }
+@@ -300,7 +300,7 @@
+                         {
+                             var6 = true;
+                         }
+-                        else if (var10 != Block.waterMoving.blockID && var10 != Block.waterStill.blockID)
++                        else if (Block.blocksList[var10].blockMaterial != Material.water)
+                         {
+                             if (!this.isWoddenDoorAllowed && var10 == Block.doorWood.blockID)
+                             {

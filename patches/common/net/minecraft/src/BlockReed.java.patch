@@ -1,0 +1,57 @@
+--- ../src_base/common/net/minecraft/src/BlockReed.java
++++ ../src_work/common/net/minecraft/src/BlockReed.java
+@@ -2,10 +2,15 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import net.minecraftforge.common.EnumGroundType;
++import net.minecraftforge.common.IPlantable;
++
++import java.util.EnumSet;
+ import java.util.Random;
+ 
+-public class BlockReed extends Block
++public class BlockReed extends Block implements IPlantable
+ {
++    EnumSet<EnumGroundType> ground;
+     protected BlockReed(int par1, int par2)
+     {
+         super(par1, Material.plants);
+@@ -13,6 +18,7 @@
+         float var3 = 0.375F;
+         this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 1.0F, 0.5F + var3);
+         this.setTickRandomly(true);
++        ground = EnumSet.of(EnumGroundType.Dirt, EnumGroundType.Grass, EnumGroundType.Sand);
+     }
+ 
+     /**
+@@ -52,7 +58,13 @@
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+         int var5 = par1World.getBlockId(par2, par3 - 1, par4);
+-        return var5 == this.blockID ? true : (var5 != Block.grass.blockID && var5 != Block.dirt.blockID && var5 != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
++        Block block = Block.blocksList[var5];
++        return var5 == this.blockID || block != null && block.canSustainPlant(par1World, par2, par3 - 1, par4, this) &&
++            (block.isHydrated(par1World, par2, par3 - 1, par4, 0) ||
++            par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ||
++            par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ||
++            par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ||
++            par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water);
+     }
+ 
+     /**
+@@ -135,4 +147,14 @@
+     {
+         return Item.reed.shiftedIndex;
+     }
++
++    @Override
++    public EnumSet<EnumGroundType> getValidGround() {
++        return ground;
++    }
++
++    @Override
++    public void setValidGround(EnumSet<EnumGroundType> types) {
++            ground = types;
++    }
+ }

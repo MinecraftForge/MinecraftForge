@@ -1,0 +1,51 @@
+--- ../src_base/common/net/minecraft/src/BlockCactus.java
++++ ../src_work/common/net/minecraft/src/BlockCactus.java
+@@ -2,15 +2,21 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import net.minecraftforge.common.EnumGroundType;
++import net.minecraftforge.common.IPlantable;
++
++import java.util.EnumSet;
+ import java.util.Random;
+ 
+-public class BlockCactus extends Block
++public class BlockCactus extends Block implements IPlantable
+ {
++    EnumSet<EnumGroundType> ground;
+     protected BlockCactus(int par1, int par2)
+     {
+         super(par1, par2, Material.cactus);
+         this.setTickRandomly(true);
+         this.setCreativeTab(CreativeTabs.tabDeco);
++        ground = EnumSet.of(EnumGroundType.Sand);
+     }
+ 
+     /**
+@@ -142,8 +148,8 @@
+         }
+         else
+         {
+-            int var5 = par1World.getBlockId(par2, par3 - 1, par4);
+-            return var5 == Block.cactus.blockID || var5 == Block.sand.blockID;
++            Block block = blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
++            return block == this || block != null && block.canSustainPlant(par1World, par2, par3 - 1, par4, this);
+         }
+     }
+ 
+@@ -154,4 +160,14 @@
+     {
+         par5Entity.attackEntityFrom(DamageSource.cactus, 1);
+     }
++
++    @Override
++    public EnumSet<EnumGroundType> getValidGround() {
++        return ground;
++    }
++
++    @Override
++    public void setValidGround(EnumSet<EnumGroundType> types) {
++            ground = types;
++    }
+ }
