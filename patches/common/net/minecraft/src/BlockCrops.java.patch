@@ -1,15 +1,37 @@
 --- ../src_base/common/net/minecraft/src/BlockCrops.java
 +++ ../src_work/common/net/minecraft/src/BlockCrops.java
-@@ -2,6 +2,8 @@
+@@ -1,8 +1,12 @@
+ package net.minecraft.src;
  
++import java.util.ArrayList;
++import java.util.EnumSet;
++import java.util.Random;
++
++import net.minecraftforge.common.EnumGroundType;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
-+
-+import java.util.ArrayList;
- import java.util.Random;
+-import java.util.Random;
  
  public class BlockCrops extends BlockFlower
-@@ -138,25 +140,27 @@
+ {
+@@ -14,6 +18,7 @@
+         float var3 = 0.5F;
+         this.setBlockBounds(0.5F - var3, 0.0F, 0.5F - var3, 0.5F + var3, 0.25F, 0.5F + var3);
+         this.setCreativeTab((CreativeTabs)null);
++        ground = EnumSet.of(EnumGroundType.Farmland);
+     }
+ 
+     /**
+@@ -88,7 +93,7 @@
+                 {
+                     var20 = 1.0F;
+ 
+-                    if (par1World.getBlockMetadata(var17, par3 - 1, var18) > 0)
++                    if (blocksList[var19].isHydrated(par1World, var17, par3 - 1, var18, 4))
+                     {
+                         var20 = 3.0F;
+                     }
+@@ -138,25 +143,27 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);

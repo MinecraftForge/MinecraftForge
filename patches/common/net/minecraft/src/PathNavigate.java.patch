@@ -1,0 +1,12 @@
+--- ../src_base/common/net/minecraft/src/PathNavigate.java
++++ ../src_work/common/net/minecraft/src/PathNavigate.java
+@@ -298,7 +298,8 @@
+ 
+             do
+             {
+-                if (var2 != Block.waterMoving.blockID && var2 != Block.waterStill.blockID)
++                Block block = Block.blocksList[var2];
++                if (block != null && block.blockMaterial != Material.water)
+                 {
+                     return var1;
+                 }

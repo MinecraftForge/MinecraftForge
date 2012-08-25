@@ -1,0 +1,51 @@
+--- ../src_base/common/net/minecraft/src/BlockFlower.java
++++ ../src_work/common/net/minecraft/src/BlockFlower.java
+@@ -1,9 +1,14 @@
+ package net.minecraft.src;
+ 
++import java.util.EnumSet;
+ import java.util.Random;
+ 
+-public class BlockFlower extends Block
++import net.minecraftforge.common.EnumGroundType;
++import net.minecraftforge.common.IPlantable;
++
++public class BlockFlower extends Block implements IPlantable
+ {
++    protected EnumSet<EnumGroundType> ground = EnumSet.of(EnumGroundType.Dirt, EnumGroundType.Farmland, EnumGroundType.Grass);
+     protected BlockFlower(int par1, int par2, Material par3Material)
+     {
+         super(par1, par3Material);
+@@ -24,7 +29,7 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        return super.canPlaceBlockAt(par1World, par2, par3, par4) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
++        return super.canPlaceBlockAt(par1World, par2, par3, par4) && canBlockStay(par1World, par2, par3, par4);
+     }
+ 
+     /**
+@@ -68,7 +73,7 @@
+      */
+     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
+     {
+-        return (par1World.getFullBlockLightValue(par2, par3, par4) >= 8 || par1World.canBlockSeeTheSky(par2, par3, par4)) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
++        return (par1World.getFullBlockLightValue(par2, par3, par4) >= 8 || par1World.canBlockSeeTheSky(par2, par3, par4)) && blocksList[par1World.getBlockId(par2, par3 - 1, par4)].canSustainPlant(par1World, par2, par3 - 1, par4, this);
+     }
+ 
+     /**
+@@ -104,4 +109,14 @@
+     {
+         return 1;
+     }
++
++    @Override
++    public EnumSet<EnumGroundType> getValidGround() {
++        return ground;
++    }
++
++    @Override
++    public void setValidGround(EnumSet<EnumGroundType> types) {
++        ground = types;
++    }
+ }

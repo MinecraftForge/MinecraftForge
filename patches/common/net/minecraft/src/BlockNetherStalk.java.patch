@@ -1,15 +1,35 @@
 --- ../src_base/common/net/minecraft/src/BlockNetherStalk.java
 +++ ../src_work/common/net/minecraft/src/BlockNetherStalk.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,10 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
++import net.minecraftforge.common.EnumGroundType;
 +
 +import java.util.ArrayList;
++import java.util.EnumSet;
  import java.util.Random;
  
  public class BlockNetherStalk extends BlockFlower
-@@ -69,25 +71,7 @@
+@@ -13,6 +17,7 @@
+         float var2 = 0.5F;
+         this.setBlockBounds(0.5F - var2, 0.0F, 0.5F - var2, 0.5F + var2, 0.25F, 0.5F + var2);
+         this.setCreativeTab((CreativeTabs)null);
++        this.setValidGround(EnumSet.of(EnumGroundType.SoulSand));
+     }
+ 
+     /**
+@@ -29,7 +34,8 @@
+      */
+     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
+     {
+-        return this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
++        Block block = Block.blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
++        return block != null && block.canSustainPlant(par1World, par2, par3 - 1, par4, this);
+     }
+ 
+     /**
+@@ -69,25 +75,7 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
@@ -36,7 +56,7 @@
      }
  
      /**
-@@ -115,4 +99,23 @@
+@@ -115,4 +103,23 @@
      {
          return Item.netherStalkSeeds.shiftedIndex;
      }
