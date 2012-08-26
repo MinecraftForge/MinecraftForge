@@ -1,5 +1,14 @@
 --- ../src_base/common/net/minecraft/src/NetServerHandler.java
 +++ ../src_work/common/net/minecraft/src/NetServerHandler.java
+@@ -306,7 +306,7 @@
+                 this.playerEntity.setPositionAndRotation(var5, var7, var9, var11, var12);
+                 boolean var32 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double)var27, (double)var27, (double)var27)).isEmpty();
+ 
+-                if (var28 && (var31 || !var32) && !this.playerEntity.isPlayerSleeping())
++                if (var28 && (var31 || !var32) && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.noClip)
+                 {
+                     this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
+                     return;
 @@ -388,7 +388,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
