@@ -446,7 +446,7 @@ public class ModLoaderModContainer implements ModContainer
     @Override
     public void bindMetadata(MetadataCollection mc)
     {
-        Map<String, Object> dummyMetadata = ImmutableMap.<String,Object>builder().put("name", modId).put("version", "").build();
+        Map<String, Object> dummyMetadata = ImmutableMap.<String,Object>builder().put("name", modId).put("version", "1.0").build();
         this.metadata = mc.getMetadataForId(modId, dummyMetadata);
         Loader.instance().computeDependencies(sortingProperties, getRequirements(), getDependencies(), getDependants());
     }
@@ -584,5 +584,11 @@ public class ModLoaderModContainer implements ModContainer
     public boolean isNetworkMod()
     {
         return this.isNetworkMod;
+    }
+
+    @Override
+    public String getDisplayVersion()
+    {
+        return metadata!=null ? metadata.version : getVersion();
     }
 }

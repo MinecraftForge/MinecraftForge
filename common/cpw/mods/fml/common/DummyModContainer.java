@@ -126,4 +126,10 @@ public class DummyModContainer implements ModContainer
     {
         return false;
     }
+
+    @Override
+    public String getDisplayVersion()
+    {
+        return md.version;
+    }
 }

@@ -123,7 +123,7 @@ public class GuiModList extends GuiScreen
                 this.field_73886_k.func_78261_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
                 shifty += 12;
 
-                shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getMetadata().version, selectedMod.getVersion()), offset, shifty);
+                shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);
                 shifty = drawLine(String.format("Mod State: %s", Loader.instance().getModState(selectedMod)), offset, shifty);
                 if (!selectedMod.getMetadata().credits.isEmpty()) {
                    shifty = drawLine(String.format("Credits: %s", selectedMod.getMetadata().credits), offset, shifty);

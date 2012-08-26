@@ -150,4 +150,6 @@ public interface ModContainer
     boolean isImmutable();
 
     boolean isNetworkMod();
+
+    String getDisplayVersion();
 }

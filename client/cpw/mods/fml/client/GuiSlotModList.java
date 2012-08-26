@@ -74,13 +74,13 @@ public class GuiSlotModList extends GuiScrollingList
         if (Loader.instance().getModState(mc)==ModState.DISABLED)
         {
             this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getName(), listWidth - 10), this.left + 3 , var3 + 2, 0xFF2222);
-            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getVersion(), listWidth - 10), this.left + 3 , var3 + 12, 0xFF2222);
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getDisplayVersion(), listWidth - 10), this.left + 3 , var3 + 12, 0xFF2222);
             this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a("DISABLED", listWidth - 10), this.left + 3 , var3 + 22, 0xFF2222);
         }
         else
         {
             this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getName(), listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
-            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getVersion(), listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
+            this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getDisplayVersion(), listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
             this.parent.getFontRenderer().func_78276_b(this.parent.getFontRenderer().func_78269_a(mc.getMetadata() !=null ? mc.getMetadata().getChildModCountString() : "Metadata not found", listWidth - 10), this.left + 3 , var3 + 22, 0xCCCCCC);
         }
     }
