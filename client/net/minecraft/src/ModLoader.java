@@ -121,6 +121,11 @@ public class ModLoader
     {
         ModLoaderHelper.buildEntityTracker(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
     }
+
+    public static void addCommand(ICommand command)
+    {
+        ModLoaderHelper.addCommand(command);
+    }
     /**
      * Add localization for the specified string
      *

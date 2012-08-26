@@ -28,6 +28,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.src.ICommand;
+
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -56,6 +58,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -83,6 +86,7 @@ public class ModLoaderModContainer implements ModContainer
     private String sortingProperties;
     private ArtifactVersion processedVersion;
     private boolean isNetworkMod;
+    private List<ICommand> serverCommands = Lists.newArrayList();
 
     public ModLoaderModContainer(String className, File modSource, String sortingProperties)
     {
@@ -564,6 +568,14 @@ public class ModLoaderModContainer implements ModContainer
         ModLoaderHelper.finishModLoading(this);
     }
 
+    @Subscribe
+    public void serverStarting(FMLServerStartingEvent evt)
+    {
+        for (ICommand cmd : serverCommands)
+        {
+            evt.registerServerCommand(cmd);
+        }
+    }
     @Override
     public ArtifactVersion getProcessedVersion()
     {
@@ -590,5 +602,10 @@ public class ModLoaderModContainer implements ModContainer
     public String getDisplayVersion()
     {
         return metadata!=null ? metadata.version : getVersion();
+    }
+
+    public void addServerCommand(ICommand command)
+    {
+        serverCommands .add(command);
     }
 }
