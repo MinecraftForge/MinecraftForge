@@ -27,6 +27,7 @@ import net.minecraft.src.BaseMod;
 import net.minecraft.src.Container;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.ICommand;
 import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
@@ -183,5 +184,14 @@ public class ModLoaderHelper
         }
 
         tradeHelpers[profession].addTrade(entry);
+    }
+
+    public static void addCommand(ICommand command)
+    {
+        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
+        if (mlmc!=null)
+        {
+            mlmc.addServerCommand(command);
+        }
     }
 }
