@@ -18,7 +18,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.ModMetadata;
 
-@Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="before:mod_testMod", useMetadata=true)
+@Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="after:mod_testMod", useMetadata=true)
 @NetworkMod(channels={"MockMod"},clientSideRequired=true,packetHandler=MockMod.PacketHandler.class)
 public class MockMod
 {
@@ -58,6 +58,6 @@ public class MockMod
     @Init
     public void init(FMLInitializationEvent evt)
     {
-        System.out.printf("Hello from mockmod init : %s %s\n", myInstance, meta);
+        System.out.printf("Hello from mockmod init : %s %s %s\n", myInstance, meta, MockBlock.tstInstance);
     }
 }

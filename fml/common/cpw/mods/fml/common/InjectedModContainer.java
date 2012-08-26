@@ -104,4 +104,10 @@ public class InjectedModContainer implements ModContainer
     {
         return true;
     }
+
+    @Override
+    public String getDisplayVersion()
+    {
+        return wrappedContainer.getDisplayVersion();
+    }
 }

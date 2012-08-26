@@ -16,11 +16,14 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
@@ -28,6 +31,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -35,6 +39,7 @@ import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.discovery.ASMDataTable;
+import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -56,9 +61,7 @@ public class FMLModContainer implements ModContainer
     private String className;
     private Map<String, Object> descriptor;
     private boolean enabled = true;
-    private List<ArtifactVersion> requirements;
-    private List<ArtifactVersion> dependencies;
-    private List<ArtifactVersion> dependants;
+    private String internalVersion;
     private boolean overridesMetadata;
     private EventBus eventBus;
     private LoadController controller;
@@ -100,7 +103,7 @@ public class FMLModContainer implements ModContainer
     @Override
     public String getVersion()
     {
-        return modMetadata.version;
+        return internalVersion;
     }
 
     @Override
@@ -146,10 +149,16 @@ public class FMLModContainer implements ModContainer
             FMLLog.info("Mod %s is missing the required element 'name'. Substituting %s", getModId(), getModId());
             modMetadata.name = getModId();
         }
-        if (Strings.isNullOrEmpty(modMetadata.version))
+        internalVersion = (String) descriptor.get("version");
+        if (Strings.isNullOrEmpty(internalVersion) && !Strings.isNullOrEmpty(modMetadata.version))
         {
-            FMLLog.warning("Mod %s is missing the required element 'version'. Substituting 1", getModId());
-            modMetadata.version = "1";
+            FMLLog.warning("Mod %s is missing the required element 'version'. Falling back to metadata version %s", getModId(), modMetadata.version);
+            modMetadata.version = internalVersion;
+        }
+        if (Strings.isNullOrEmpty(internalVersion))
+        {
+            FMLLog.warning("Mod %s is missing the required element 'version' and no fallback can be found. Substituting '1.0'.", getModId());
+            modMetadata.version = internalVersion = "1.0";
         }
     }
 
@@ -216,15 +225,6 @@ public class FMLModContainer implements ModContainer
     {
         Multimap<Class<? extends Annotation>,Object> anns = ArrayListMultimap.create();
 
-        for (Field f : clazz.getDeclaredFields())
-        {
-            for (Annotation a : f.getAnnotations())
-            {
-                f.setAccessible(true);
-                anns.put(a.annotationType(), f);
-            }
-        }
-
         for (Method m : clazz.getDeclaredMethods())
         {
             for (Annotation a : m.getAnnotations())
@@ -248,26 +248,82 @@ public class FMLModContainer implements ModContainer
         return anns;
     }
 
-    private void processFieldAnnotations() throws Exception
+    private void processFieldAnnotations(ASMDataTable asmDataTable) throws Exception
     {
-        // Instance annotation
-        for (Object o : annotations.get(Instance.class))
-        {
-            Field f = (Field) o;
-            f.set(modInstance, modInstance);
-        }
+        SetMultimap<String, ASMData> annotations = asmDataTable.getAnnotationsFor(this);
 
-        for (Object o : annotations.get(Metadata.class))
+        parseSimpleFieldAnnotation(annotations, Instance.class.getName(), new Function<ModContainer, Object>()
         {
-            Field f = (Field) o;
-            f.set(modInstance, modMetadata);
-        }
+            public Object apply(ModContainer mc)
+            {
+                return mc.getMod();
+            }
+        });
+        parseSimpleFieldAnnotation(annotations, Metadata.class.getName(), new Function<ModContainer, Object>()
+        {
+            public Object apply(ModContainer mc)
+            {
+                return mc.getMetadata();
+            }
+        });
+
 //TODO
 //        for (Object o : annotations.get(Block.class))
 //        {
 //            Field f = (Field) o;
 //            f.set(modInstance, GameRegistry.buildBlock(this, f.getType(), f.getAnnotation(Block.class)));
 //        }
+    }
+
+    private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retreiver) throws IllegalAccessException
+    {
+        System.out.println(annotationClassName);
+        String[] annName = annotationClassName.split("\\.");
+        System.out.println(Arrays.toString(annName));
+        String annotationName = annName[annName.length - 1];
+        for (ASMData targets : annotations.get(annotationClassName))
+        {
+            String targetMod = (String) targets.getAnnotationInfo().get("value");
+            Field f = null;
+            Object injectedMod = null;
+            ModContainer mc = this;
+            boolean isStatic = false;
+            Class<?> clz = modInstance.getClass();
+            if (!Strings.isNullOrEmpty(targetMod))
+            {
+                mc = Loader.instance().getIndexedModList().get(targetMod);
+            }
+            if (mc != null)
+            {
+                try
+                {
+                    clz = Class.forName(targets.getClassName(), true, Loader.instance().getModClassLoader());
+                    f = clz.getDeclaredField(targets.getObjectName());
+                    f.setAccessible(true);
+                    isStatic = Modifier.isStatic(f.getModifiers());
+                    injectedMod = retreiver.apply(mc);
+                }
+                catch (Exception e)
+                {
+                    Throwables.propagateIfPossible(e);
+                    FMLLog.log(Level.WARNING, e, "Attempting to load @%s in class %s for %s and failing", annotationName, targets.getClassName(), mc.getModId());
+                }
+            }
+            if (f != null)
+            {
+                Object target = null;
+                if (!isStatic)
+                {
+                    target = modInstance;
+                    if (!modInstance.getClass().equals(clz))
+                    {
+                        FMLLog.warning("Unable to inject @%s in non-static field %s.%s for %s as it is NOT the primary mod instance", annotationName, targets.getClassName(), targets.getObjectName(), mc.getModId());
+                        continue;
+                    }
+                }
+                f.set(target, injectedMod);
+            }
+        }
     }
 
     @Subscribe
@@ -285,7 +341,7 @@ public class FMLModContainer implements ModContainer
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = clazz.newInstance();
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
-            processFieldAnnotations();
+            processFieldAnnotations(event.getASMHarvestedData());
         }
         catch (Throwable e)
         {
@@ -336,5 +392,11 @@ public class FMLModContainer implements ModContainer
     public boolean isNetworkMod()
     {
         return isNetworkMod;
+    }
+
+    @Override
+    public String getDisplayVersion()
+    {
+        return modMetadata.version;
     }
 }
