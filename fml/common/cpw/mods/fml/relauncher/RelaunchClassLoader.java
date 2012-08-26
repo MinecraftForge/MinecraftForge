@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,5 +175,10 @@ public class RelaunchClassLoader extends URLClassLoader
             /// HMMM
             return new byte[0];
         }
+    }
+
+    public List<IClassTransformer> getTransformers()
+    {
+        return Collections.unmodifiableList(transformers);
     }
 }

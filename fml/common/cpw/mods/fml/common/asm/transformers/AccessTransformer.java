@@ -408,4 +408,11 @@ public class AccessTransformer implements IClassTransformer
             }
         }
     }
+    public void ensurePublicAccessFor(String modClazzName)
+    {
+        Modifier m = new Modifier();
+        m.setTargetAccess("public");
+        m.modifyClassVisibility = true;
+        modifiers.put(modClazzName, m);
+    }
 }
