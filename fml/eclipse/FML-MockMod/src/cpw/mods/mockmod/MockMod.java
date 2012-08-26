@@ -45,8 +45,8 @@ public class MockMod
     @Metadata
     private ModMetadata meta;
 
-    @Block(name="MyBlock", itemTypeClass=TestItem.class)
-    private MockBlock myBlock;
+//    @Block(name="MyBlock", itemTypeClass=TestItem.class)
+//    private MockBlock myBlock;
 
     @PreInit
     public void preinit(FMLPreInitializationEvent evt)

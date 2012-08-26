@@ -6,6 +6,10 @@ import net.minecraft.src.Material;
 
 public class MockBlock extends Block
 {
+    static
+    {
+        Thread.dumpStack();
+    }
     @Instance("mod_testMod")
     public static Object tstInstance;
 

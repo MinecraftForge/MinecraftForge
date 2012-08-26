@@ -291,7 +291,14 @@ public class FMLModContainer implements ModContainer
             Class<?> clz = modInstance.getClass();
             if (!Strings.isNullOrEmpty(targetMod))
             {
-                mc = Loader.instance().getIndexedModList().get(targetMod);
+                if (Loader.isModLoaded(targetMod))
+                {
+                    mc = Loader.instance().getIndexedModList().get(targetMod);
+                }
+                else
+                {
+                    mc = null;
+                }
             }
             if (mc != null)
             {
