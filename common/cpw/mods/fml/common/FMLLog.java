@@ -9,12 +9,12 @@ public class FMLLog
 
     public static void log(Level level, String format, Object... data)
     {
-        coreLog.log(level, String.format(format, data));
+        coreLog.log(level, format, data);
     }
 
     public static void log(Level level, Throwable ex, String format, Object... data)
     {
-        coreLog.log(level, ex, String.format(format, data));
+        coreLog.log(level, ex, format, data);
     }
 
     public static void severe(String format, Object... data)
