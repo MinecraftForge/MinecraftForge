@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -485,10 +486,12 @@ public class ModLoaderModContainer implements ModContainer
             EnumSet<TickType> ticks = EnumSet.noneOf(TickType.class);
             this.gameTickHandler = new BaseModTicker(ticks, false);
             this.guiTickHandler = new BaseModTicker(ticks.clone(), true);
-            Class<? extends BaseModProxy> modClazz = (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, modClassLoader);
+            Class<? extends BaseModProxy> modClazz = (Class<? extends BaseModProxy>) modClassLoader.loadBaseModClass(modClazzName);
             configureMod(modClazz, event.getASMHarvestedData());
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
-            mod = (BaseModProxy)modClazz.newInstance();
+            Constructor<? extends BaseModProxy> ctor = modClazz.getConstructor();
+            ctor.setAccessible(true);
+            mod = modClazz.newInstance();
             if (!isNetworkMod)
             {
                 FMLLog.fine("Injecting dummy network mod handler for BaseMod %s", getModId());

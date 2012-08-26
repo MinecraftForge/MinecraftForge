@@ -23,6 +23,9 @@ import java.util.logging.Level;
 
 import com.google.common.collect.ImmutableList;
 
+import cpw.mods.fml.common.asm.ASMTransformer;
+import cpw.mods.fml.common.asm.transformers.AccessTransformer;
+import cpw.mods.fml.common.modloader.BaseModProxy;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 /**
@@ -75,5 +78,12 @@ public class ModClassLoader extends URLClassLoader
     public List<String> getDefaultLibraries()
     {
         return STANDARD_LIBRARIES;
+    }
+
+    public Class<? extends BaseModProxy> loadBaseModClass(String modClazzName) throws Exception
+    {
+        AccessTransformer transformer = (AccessTransformer)mainClassLoader.getTransformers().get(0);
+        transformer.ensurePublicAccessFor(modClazzName);
+        return (Class<? extends BaseModProxy>) Class.forName(modClazzName, true, this);
     }
 }
