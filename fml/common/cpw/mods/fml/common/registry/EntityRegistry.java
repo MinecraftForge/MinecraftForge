@@ -107,7 +107,7 @@ public class EntityRegistry
     private EntityRegistry()
     {
         availableIndicies = new BitSet(256);
-        availableIndicies.set(0,255);
+        availableIndicies.set(1,255);
         for (Object id : EntityList.field_75623_d.keySet())
         {
             availableIndicies.clear((Integer)id);
@@ -129,6 +129,7 @@ public class EntityRegistry
     {
         instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
     }
+
     private void doModEntityRegistration(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
@@ -164,17 +165,23 @@ public class EntityRegistry
             FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", Loader.instance().activeModContainer().getModId(), entityClass);
             return;
         }
-        instance().validateAndClaimId(id);
+        id = instance().validateAndClaimId(id);
         EntityList.func_75618_a(entityClass, entityName, id);
     }
 
-    private void validateAndClaimId(int id)
+    private int validateAndClaimId(int id)
     {
+        // workaround for broken ML
+        if (id < 0)
+        {
+            id += 3000;
+        }
         if (!availableIndicies.get(id))
         {
-            throw new RuntimeException(String.format("Unable to claim entity id %d", id));
+            FMLLog.severe("The mod %s has attempted to register an entity ID %d which is already reserved. This could cause severe problems", Loader.instance().activeModContainer().getModId(), id);
         }
         availableIndicies.clear(id);
+        return id;
     }
 
     public static void registerGlobalEntityID(Class <? extends Entity > entityClass, String entityName, int id, int backgroundEggColour, int foregroundEggColour)
