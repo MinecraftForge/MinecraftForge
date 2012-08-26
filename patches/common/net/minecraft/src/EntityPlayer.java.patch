@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayer.java
-@@ -7,6 +7,15 @@
+@@ -7,6 +7,17 @@
  
  import java.util.Iterator;
  import java.util.List;
@@ -10,13 +10,15 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
 +import net.minecraftforge.event.entity.player.AttackEntityEvent;
++import net.minecraftforge.event.entity.player.CanHarvestBlockEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
++import net.minecraftforge.event.entity.player.PlayerStrVsBlockEvent;
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -222,6 +231,7 @@
+@@ -222,6 +233,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -24,7 +26,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -627,7 +637,16 @@
+@@ -627,7 +639,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -42,7 +44,7 @@
      }
  
      /**
-@@ -693,13 +712,21 @@
+@@ -693,13 +714,27 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -58,6 +60,12 @@
 +
 +    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
 +    {
++        PlayerStrVsBlockEvent event = new PlayerStrVsBlockEvent(this, par1Block, meta);
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return event.result;
++        }
++
 +        ItemStack stack = inventory.getCurrentItem();
 +        float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
          int var3 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
@@ -67,7 +75,19 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -992,12 +1019,23 @@
+@@ -732,7 +767,10 @@
+      */
+     public boolean canHarvestBlock(Block par1Block)
+     {
+-        return this.inventory.canHarvestBlock(par1Block);
++        CanHarvestBlockEvent event = new CanHarvestBlockEvent(this, par1Block, this.inventory.canHarvestBlock(par1Block));
++        MinecraftForge.EVENT_BUS.post(event);
++
++        return event.result;
+     }
+ 
+     /**
+@@ -992,12 +1030,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -92,7 +112,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1032,6 +1070,10 @@
+@@ -1032,6 +1081,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -103,7 +123,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1075,7 +1117,9 @@
+@@ -1075,7 +1128,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -113,7 +133,7 @@
      }
  
      /**
-@@ -1104,6 +1148,15 @@
+@@ -1104,6 +1159,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -129,7 +149,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1247,6 +1300,12 @@
+@@ -1247,6 +1311,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -142,7 +162,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1286,6 +1345,11 @@
+@@ -1286,6 +1356,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -154,7 +174,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1356,10 +1420,12 @@
+@@ -1356,10 +1431,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -171,7 +191,7 @@
  
              if (var5 == null)
              {
-@@ -1396,7 +1462,9 @@
+@@ -1396,7 +1473,9 @@
       */
      private boolean isInBed()
      {
@@ -182,7 +202,7 @@
      }
  
      /**
-@@ -1411,13 +1479,15 @@
+@@ -1411,13 +1490,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -200,7 +220,7 @@
              return var3;
          }
      }
-@@ -1431,8 +1501,11 @@
+@@ -1431,8 +1512,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -214,7 +234,7 @@
  
              switch (var2)
              {
-@@ -1725,6 +1798,7 @@
+@@ -1725,6 +1809,7 @@
                      return 101;
                  }
              }
