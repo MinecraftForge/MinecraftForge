@@ -5,6 +5,7 @@ import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_RESPONSE;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.src.NetHandler;
@@ -17,6 +18,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
@@ -83,7 +85,18 @@ public class ModListRequestPacket extends FMLPacket
 
         if (indexedModList.size()>0)
         {
-            // TODO : handle client present but server absent mods
+            for (Entry<String, ModContainer> e : indexedModList.entrySet())
+            {
+                if (e.getValue().isNetworkMod())
+                {
+                    NetworkModHandler missingHandler = FMLNetworkHandler.instance().findNetworkModHandler(e.getValue());
+                    if (missingHandler.requiresServerSide())
+                    {
+                        // TODO : what should we do if a mod is marked "serverSideRequired"? Stop the connection?
+                        FMLLog.warning("The mod %s was not found on the server you connected to, but requested that the server side be present", e.getKey());
+                    }
+                }
+            }
         }
 
         Packet250CustomPayload pkt = new Packet250CustomPayload();
