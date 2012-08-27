@@ -154,9 +154,7 @@ public class DungeonHooks
     */
     public static void addDungeonLoot(ItemStack item, int rarity, int minLevel, int maxLevel, int enchantChance)
     {
-
         dungeonLoot.add(new DungeonLoot(rarity, item, minLevel, maxLevel, enchantChance));
-
     }
 
     /**
@@ -301,7 +299,6 @@ public class DungeonHooks
         public ItemStack generateStack(Random rand)
         {
             ItemStack ret = this.itemStack.copy();
-
             ret.stackSize = minCount + (rand.nextInt(maxCount - minCount + 1));
             if (enchantChance > 0)
             {
