@@ -227,12 +227,9 @@ public class NetworkRegistry
     private void handlePacket(Packet250CustomPayload packet, NetworkManager network, Player player)
     {
         String channel = packet.field_73630_a;
-        if (activeChannels.containsEntry(player, channel))
+        for (IPacketHandler handler : Iterables.concat(universalPacketHandlers.get(channel), player instanceof EntityPlayerMP ? serverPacketHandlers.get(channel) : clientPacketHandlers.get(channel)))
         {
-            for (IPacketHandler handler : Iterables.concat(universalPacketHandlers.get(channel), player instanceof EntityPlayerMP ? serverPacketHandlers.get(channel) : clientPacketHandlers.get(channel)))
-            {
-                handler.onPacketData(network, packet, player);
-            }
+            handler.onPacketData(network, packet, player);
         }
     }
 
