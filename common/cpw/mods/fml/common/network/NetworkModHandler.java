@@ -92,9 +92,12 @@ public class NetworkModHandler
         }
 
         tryCreatingPacketHandler(container, mod.packetHandler(), mod.channels(), null);
-        if (mod.clientPacketHandlerSpec() != getClientHandlerSpecDefaultValue())
+        if (FMLCommonHandler.instance().getSide().isClient())
         {
-            tryCreatingPacketHandler(container, mod.clientPacketHandlerSpec().packetHandler(), mod.clientPacketHandlerSpec().channels(), Side.CLIENT);
+            if (mod.clientPacketHandlerSpec() != getClientHandlerSpecDefaultValue())
+            {
+                tryCreatingPacketHandler(container, mod.clientPacketHandlerSpec().packetHandler(), mod.clientPacketHandlerSpec().channels(), Side.CLIENT);
+            }
         }
         if (mod.serverPacketHandlerSpec() != getServerHandlerSpecDefaultValue())
         {
