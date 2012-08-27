@@ -7,6 +7,7 @@ import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_MISSING;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
@@ -108,12 +109,16 @@ public class ModListResponsePacket extends FMLPacket
         if (missingClientMods.size()>0 || versionIncorrectMods.size() > 0)
         {
             pkt.field_73629_c = FMLPacket.makePacket(MOD_MISSING, missingClientMods, versionIncorrectMods);
-            FMLLog.fine("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
+            FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
+            // Mark this as bad
+            FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, 3);
         }
         else
         {
             pkt.field_73629_c = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
-            FMLLog.fine("User %s connecting with mods %s", userName, modVersions.keySet());
+            Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
+            FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
         }
 
         pkt.field_73628_b = pkt.field_73629_c.length;

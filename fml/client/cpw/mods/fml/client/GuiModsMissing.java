@@ -15,6 +15,11 @@ public class GuiModsMissing extends GuiErrorScreen
     }
 
     @Override
+    public void func_73866_w_()
+    {
+        super.func_73866_w_();
+    }
+    @Override
     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
         this.func_73873_v_();

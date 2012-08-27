@@ -25,6 +25,7 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -149,5 +150,10 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void sendPacket(Packet packet)
     {
         throw new RuntimeException("You cannot send a bare packet without a target on the server!");
+    }
+    @Override
+    public void displayMissingMods(ModMissingPacket modMissingPacket)
+    {
+        // NOOP on server
     }
 }

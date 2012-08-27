@@ -53,6 +53,7 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
@@ -372,5 +373,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void sendPacket(Packet packet)
     {
         client.field_71439_g.field_71174_a.func_72552_c(packet);
+    }
+
+    @Override
+    public void displayMissingMods(ModMissingPacket modMissingPacket)
+    {
+        client.func_71373_a(new GuiModsMissingForServer(modMissingPacket));
     }
 }

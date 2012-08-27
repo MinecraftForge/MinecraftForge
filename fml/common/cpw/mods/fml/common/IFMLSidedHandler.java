@@ -7,6 +7,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.Packet;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
+import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 
 public interface IFMLSidedHandler
@@ -30,4 +31,6 @@ public interface IFMLSidedHandler
     MinecraftServer getServer();
 
     void sendPacket(Packet packet);
+
+    void displayMissingMods(ModMissingPacket modMissingPacket);
 }
