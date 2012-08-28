@@ -1,14 +1,17 @@
 --- ../src_base/common/net/minecraft/src/BlockChest.java
 +++ ../src_work/common/net/minecraft/src/BlockChest.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +4,10 @@
  import cpw.mods.fml.common.asm.SideOnly;
  import java.util.Iterator;
  import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.ChestActivatedEvent;
 +import static net.minecraftforge.common.ForgeDirection.*;
  
  public class BlockChest extends BlockContainer
  {
-@@ -383,7 +384,7 @@
+@@ -383,7 +387,7 @@
          {
              return true;
          }
@@ -17,7 +20,7 @@
          {
              return true;
          }
-@@ -391,19 +392,19 @@
+@@ -391,19 +395,19 @@
          {
              return true;
          }
@@ -50,3 +53,14 @@
          {
              return true;
          }
+@@ -435,6 +439,10 @@
+             }
+             else
+             {
++                if (MinecraftForge.EVENT_BUS.post(new ChestActivatedEvent(par5EntityPlayer, (IInventory) var10, par2, par3, par4)))
++                {
++                    return true;
++                }
+                 par5EntityPlayer.displayGUIChest((IInventory)var10);
+                 return true;
+             }
