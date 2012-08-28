@@ -6,7 +6,7 @@ import net.minecraftforge.event.Cancelable;
 
 public class CanHarvestBlockEvent extends PlayerEvent
 {
-	public boolean result;
+    public boolean result;
     public final Block block;
     
     public CanHarvestBlockEvent(EntityPlayer player, Block block, boolean result)
