@@ -1,0 +1,54 @@
+--- ../src_base/common/net/minecraft/src/BlockPane.java
++++ ../src_work/common/net/minecraft/src/BlockPane.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+ 
+@@ -12,6 +14,20 @@
+      */
+     private int sideTextureIndex;
+ 
++    /**
++     * Panes will connect to the blockIds in this list.
++     * Gets overridden by notConnectToId.
++     */
++    
++    public List connectToId = new ArrayList();
++    
++    /**
++     * Panes will not connect to the blockIds in this list.
++     * Overrides connectToId.
++     */
++    
++    public List notConnectToId = new ArrayList();
++    
+     /**
+      * If this field is true, the pane block drops itself when destroyed (like the iron fences), otherwise, it's just
+      * destroyed (like glass panes)
+@@ -24,6 +40,7 @@
+         this.sideTextureIndex = par3;
+         this.canDropItself = par5;
+         this.setCreativeTab(CreativeTabs.tabDeco);
++        connectToId.add(Block.glass.blockID);
+     }
+ 
+     /**
+@@ -193,9 +210,10 @@
+      * Gets passed in the blockID of the block adjacent and supposed to return true if its allowed to connect to the
+      * type of blockID passed in. Args: blockID
+      */
+-    public final boolean canThisPaneConnectToThisBlockID(int par1)
+-    {
+-        return Block.opaqueCubeLookup[par1] || par1 == this.blockID || par1 == Block.glass.blockID;
++    public boolean canThisPaneConnectToThisBlockID(int par1)
++    {
++    	if (notConnectToId.contains(par1)) return false;
++        return Block.opaqueCubeLookup[par1] || par1 == this.blockID || connectToId.contains(par1);
+     }
+ 
+     /**
