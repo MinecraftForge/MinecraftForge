@@ -144,26 +144,26 @@ public class DungeonHooks
         return rarity;
     }
     /**
-    * Adds an enchantable item to dungeon loot list.
-    *
-    * @param item The ItemStack to be added to the loot list
-    * @param rarity The relative chance that this item will spawn
-    * @param minLevel The minimum enchant level applied to enchanted items
-    * @param maxLevel The maximum enchant level applied to enchanted items (should be 50 or less)
-    * @param enchantChance The percent chance the item will be enchanted
-    */
+     * Adds an enchantable item to dungeon loot list.
+     *
+     * @param item The ItemStack to be added to the loot list
+     * @param rarity The relative chance that this item will spawn
+     * @param minLevel The minimum enchant level applied to enchanted items
+     * @param maxLevel The maximum enchant level applied to enchanted items (should be 50 or less)
+     * @param enchantChance The percent chance the item will be enchanted
+     */
     public static void addDungeonLoot(ItemStack item, int rarity, int minLevel, int maxLevel, int enchantChance)
     {
         dungeonLoot.add(new DungeonLoot(rarity, item, minLevel, maxLevel, enchantChance));
     }
 
     /**
-    * Adds a list of damage values for a single item ID to be selected randomly for dungeon loot
-    *
-    * @param rarity The relative chance that any potion in the list will spawn
-    * @param damage An array of damage values to chose from for adding multiple items with same item ID
-    * All items in the list have an equal chance of being selected
-    */
+     * Adds a list of damage values for a single item ID to be selected randomly for dungeon loot
+     *
+     * @param rarity The relative chance that any potion in the list will spawn
+     * @param damage An array of damage values to chose from for adding multiple items with same item ID
+     * All items in the list have an equal chance of being selected
+     */
     public static void addDungeonLoot(ItemStack item, int rarity, int damage[])
     {
         dungeonLoot.add(new DungeonLoot(rarity, item, damage));
@@ -253,12 +253,12 @@ public class DungeonHooks
             maxCount = max;
         }
 
-    /**
-     * @param item A item stack
-     * @param min Minimum level used for calculating enchantment
-     * @param max Maximum level used for calculating enchantment
-     * @param ench Percent chance item will be enchanted (should be > 0)
-     */
+        /**
+         * @param item A item stack
+         * @param min Minimum level used for calculating enchantment
+         * @param max Maximum level used for calculating enchantment
+         * @param ench Percent chance item will be enchanted (should be > 0)
+         */
         public DungeonLoot(int weight, ItemStack item, int min, int max, int ench)
         {
             super(weight);
@@ -275,12 +275,10 @@ public class DungeonHooks
             minCount = 1;
             maxCount = 1;
         }
-
         /**
-        * @param item An item stack
-        * @param damages A list of damage values to add several items at once with the same item ID
-        */
-
+         * @param item An item stack
+         * @param damages A list of damage values to add several items at once with the same item ID
+         */
         public DungeonLoot(int weight, ItemStack item, int damages[])
         {
             super(weight);
@@ -289,13 +287,12 @@ public class DungeonHooks
             maxCount = 1;
             damageList = damages;
         }
-        
         /**
-        * Grabs a ItemStack ready to be added to the dungeon chest,
-        * the stack size will be between minCount and maxCount
-        * @param rand World gen random number generator
-        * @return The ItemStack to be added to the chest
-        */
+         * Grabs a ItemStack ready to be added to the dungeon chest,
+         * the stack size will be between minCount and maxCount
+         * @param rand World gen random number generator
+         * @return The ItemStack to be added to the chest
+         */
         public ItemStack generateStack(Random rand)
         {
             ItemStack ret = this.itemStack.copy();
