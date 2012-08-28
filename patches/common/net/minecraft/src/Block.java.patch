@@ -104,7 +104,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1257,681 @@
+@@ -1249,4 +1257,680 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -778,10 +778,9 @@
 +     * Used by getTopSolidOrLiquidBlock while placing biome decorations, villages, etc
 +     * Also used to determine if the player can spawn on this block.
 +     * 
-+     * @param metadata The metadata
 +     * @return True to allow spawning
 +     */
-+    public boolean canCountAsTopBlock(int metadata)
++    public boolean isTopBlock(World world, int x, int y, int z)
 +    {
 +        return true;
 +    }
