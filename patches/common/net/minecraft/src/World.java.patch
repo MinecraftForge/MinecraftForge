@@ -80,6 +80,15 @@
          if (par1Entity != null && par2Str != null)
          {
              Iterator var5 = this.worldAccesses.iterator();
+@@ -1730,7 +1753,7 @@
+         {
+             int var5 = var3.getBlockID(par1, var4, par2);
+ 
+-            if (var5 != 0 && Block.blocksList[var5].blockMaterial.blocksMovement() && Block.blocksList[var5].blockMaterial != Material.leaves)
++            if (var5 != 0 && Block.blocksList[var5].blockMaterial.blocksMovement() && Block.blocksList[var5].blockMaterial != Material.leaves && Block.blocksList[var5].isTopBlock(var3.worldObj, par1, var4, par2))
+             {
+                 return var4 + 1;
+             }
 @@ -1887,7 +1910,7 @@
  
                      if (var8 != null)
