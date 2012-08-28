@@ -20,7 +20,7 @@ public class ItemStackEvent extends PlayerEvent
 	}
 	
 	/**
-	 * Called when an item is eaten. Such as an potion.
+	 * Called when an item is eaten. Such as a potion.
 	 */
 	public static class FoodEaten extends ItemStackEvent
 	{

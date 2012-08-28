@@ -14,13 +14,13 @@
       */
      public ItemStack useItemRightClick(World par1World, EntityPlayer par2EntityPlayer)
      {
-+    	MinecraftForge.EVENT_BUS.post(new ItemStackEvent.RightClick(par2EntityPlayer, getItem()));
++    	 MinecraftForge.EVENT_BUS.post(new ItemStackEvent.RightClick(par2EntityPlayer, getItem()));
          return this.getItem().onItemRightClick(this, par1World, par2EntityPlayer);
      }
  
      public ItemStack onFoodEaten(World par1World, EntityPlayer par2EntityPlayer)
      {
-+    	MinecraftForge.EVENT_BUS.post(new ItemStackEvent.FoodEaten(par2EntityPlayer, getItem()));
++    	 MinecraftForge.EVENT_BUS.post(new ItemStackEvent.FoodEaten(par2EntityPlayer, getItem()));
          return this.getItem().onFoodEaten(this, par1World, par2EntityPlayer);
      }
  
