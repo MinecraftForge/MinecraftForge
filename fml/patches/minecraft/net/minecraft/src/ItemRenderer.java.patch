@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/src/ItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/src/ItemRenderer.java
+@@ -26,8 +26,12 @@
+     public void func_78443_a(EntityLiving p_78443_1_, ItemStack p_78443_2_, int p_78443_3_)
+     {
+         GL11.glPushMatrix();
+-        Block var4 = Block.field_71973_m[p_78443_2_.field_77993_c];
+-
++
++        Block var4 = null;
++        if (p_78443_2_.field_77993_c < Block.field_71973_m.length)
++        {
++            var4 = Block.field_71973_m[p_78443_2_.field_77993_c];
++        }
+         if (var4 != null && RenderBlocks.func_78597_b(var4.func_71857_b()))
+         {
+             GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.field_78455_a.field_71446_o.func_78341_b("/terrain.png"));
