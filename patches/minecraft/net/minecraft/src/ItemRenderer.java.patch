@@ -13,12 +13,16 @@
  
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
-@@ -38,23 +44,21 @@
+@@ -38,27 +44,21 @@
      public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
--        Block var4 = Block.blocksList[par2ItemStack.itemID];
 -
+-        Block var4 = null;
+-        if (par2ItemStack.itemID < Block.blocksList.length)
+-        {
+-            var4 = Block.blocksList[par2ItemStack.itemID];
+-        }
 -        if (var4 != null && RenderBlocks.renderItemIn3d(var4.getRenderType()))
 -        {
 -            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
@@ -49,7 +53,7 @@
  
              Tessellator var5 = Tessellator.instance;
              int var6 = par1EntityLiving.getItemIcon(par2ItemStack, par3);
-@@ -253,8 +257,9 @@
+@@ -257,8 +257,9 @@
          Render var24;
          RenderPlayer var26;
  
@@ -61,7 +65,7 @@
              GL11.glPushMatrix();
              var7 = 0.8F;
              var20 = var3.getSwingProgress(par1);
-@@ -320,8 +325,15 @@
+@@ -324,8 +325,15 @@
              var28.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
              var28.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
              var28.draw();
@@ -79,7 +83,7 @@
              GL11.glPopMatrix();
          }
          else if (var17 != null)
-@@ -422,12 +434,15 @@
+@@ -426,12 +434,15 @@
              if (var17.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(var3, var17, 0);
