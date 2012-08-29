@@ -26,7 +26,9 @@ import com.google.common.collect.Maps;
 import net.minecraft.src.BaseMod;
 import net.minecraft.src.Container;
 import net.minecraft.src.Entity;
+import net.minecraft.src.EntityDragon;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.IAnimals;
 import net.minecraft.src.ICommand;
 import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -169,7 +171,7 @@ public class ModLoaderHelper
             boolean sendVelocityInfo)
     {
         EntityRegistration er = EntityRegistry.registerModLoaderEntity(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
-        er.setCustomSpawning(new ModLoaderEntitySpawnCallback(mod, er));
+        er.setCustomSpawning(new ModLoaderEntitySpawnCallback(mod, er), !(EntityDragon.class.isAssignableFrom(entityClass) || IAnimals.class.isAssignableFrom(entityClass)));
     }
 
     private static ModLoaderVillageTradeHandler[] tradeHelpers = new ModLoaderVillageTradeHandler[6];
