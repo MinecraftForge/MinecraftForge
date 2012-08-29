@@ -171,7 +171,7 @@ public class ModLoaderHelper
             boolean sendVelocityInfo)
     {
         EntityRegistration er = EntityRegistry.registerModLoaderEntity(mod, entityClass, entityTypeId, updateRange, updateInterval, sendVelocityInfo);
-        er.setCustomSpawning(new ModLoaderEntitySpawnCallback(mod, er), !(EntityDragon.class.isAssignableFrom(entityClass) || IAnimals.class.isAssignableFrom(entityClass)));
+        er.setCustomSpawning(new ModLoaderEntitySpawnCallback(mod, er), EntityDragon.class.isAssignableFrom(entityClass) || IAnimals.class.isAssignableFrom(entityClass));
     }
 
     private static ModLoaderVillageTradeHandler[] tradeHelpers = new ModLoaderVillageTradeHandler[6];
