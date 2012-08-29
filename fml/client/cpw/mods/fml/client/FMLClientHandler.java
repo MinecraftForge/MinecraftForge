@@ -106,6 +106,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private MissingModsException modsMissing;
 
+    private boolean loading;
+
     public void beginMinecraftLoading(Minecraft minecraft)
     {
         if (minecraft.func_71355_q())
@@ -115,6 +117,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             return;
         }
 
+        loading = true;
         client = minecraft;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
         TextureFXManager.instance().setClient(client);
@@ -178,6 +181,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         LanguageRegistry.reloadLanguageTable();
         RenderingRegistry.instance().loadEntityRenderers((Map<Class<? extends Entity>, Render>)RenderManager.field_78727_a.field_78729_o);
 
+        loading = false;
         KeyBindingRegistry.instance().uploadKeyBindingsToGame(client.field_71474_y);
     }
 
@@ -379,5 +383,14 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void displayMissingMods(ModMissingPacket modMissingPacket)
     {
         client.func_71373_a(new GuiModsMissingForServer(modMissingPacket));
+    }
+
+    /**
+     * If the client is in the midst of loading, we disable saving so that custom settings aren't wiped out
+     * @return
+     */
+    public boolean isLoading()
+    {
+        return loading;
     }
 }

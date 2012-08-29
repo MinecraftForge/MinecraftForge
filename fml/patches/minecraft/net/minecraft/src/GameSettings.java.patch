@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/src/GameSettings.java
++++ ../src-work/minecraft/net/minecraft/src/GameSettings.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.client.FMLClientHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.BufferedReader;
+@@ -571,6 +572,7 @@
+ 
+     public void func_74303_b()
+     {
++        if (FMLClientHandler.instance().isLoading()) return;
+         try
+         {
+             PrintWriter var1 = new PrintWriter(new FileWriter(this.field_74354_ai));
