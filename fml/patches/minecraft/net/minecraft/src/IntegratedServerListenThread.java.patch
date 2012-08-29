@@ -1,11 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/src/IntegratedServerListenThread.java
 +++ ../src-work/minecraft/net/minecraft/src/IntegratedServerListenThread.java
-@@ -4,6 +4,12 @@
+@@ -2,8 +2,18 @@
+ 
+ import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.network.FMLNetworkHandler;
++
  import java.io.IOException;
  import java.net.InetAddress;
 +import java.net.NetworkInterface;
++import java.util.Arrays;
 +import java.util.Collections;
++import java.util.List;
 +
 +import com.google.common.collect.Iterators;
 +import com.google.common.collect.Lists;
@@ -13,37 +19,21 @@
  import net.minecraft.server.MinecraftServer;
  
  @SideOnly(Side.CLIENT)
-@@ -48,7 +54,32 @@
+@@ -48,7 +58,7 @@
  
              try
              {
 -                this.field_71757_g = new ServerListenThread(this, InetAddress.getLocalHost(), var1);
-+                InetAddress add = null;
-+                NetworkInterface notLocal = null;
-+                for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces()))
-+                {
-+                    if (!ni.isLoopback() && ni.isUp())
-+                    {
-+                        notLocal = ni;
-+                        break;
-+                    }
-+                }
-+                if (notLocal != null)
-+                {
-+                    for (InetAddress inadd : Collections.list(notLocal.getInetAddresses()))
-+                    {
-+                        if (inadd.getAddress().length == 4)
-+                        {
-+                            add = inadd;
-+                            break;
-+                        }
-+                    }
-+                }
-+                if (add == null)
-+                {
-+                    add = InetAddress.getLocalHost();
-+                }
-+                this.field_71757_g = new ServerListenThread(this, add, var1);
++                this.field_71757_g = new ServerListenThread(this, null, var1);
                  this.field_71757_g.start();
              }
              catch (IOException var3)
+@@ -57,7 +67,7 @@
+             }
+         }
+ 
+-        return this.field_71757_g.func_71767_c().getHostAddress() + ":" + this.field_71757_g.func_71765_d();
++        return FMLNetworkHandler.computeLocalHost().getHostAddress() + ":" + this.field_71757_g.func_71765_d();
+     }
+ 
+     public void func_71744_a()

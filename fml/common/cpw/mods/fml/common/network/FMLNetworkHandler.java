@@ -2,7 +2,12 @@ package cpw.mods.fml.common.network;
 
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_REQUEST;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.SocketAddress;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,6 +27,7 @@ import net.minecraft.src.ServerConfigurationManager;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 
@@ -348,5 +354,40 @@ public class FMLNetworkHandler
         pkt.field_73628_b = pkt.field_73629_c.length;
 
         player.field_71135_a.func_72567_b(pkt);
+    }
+
+    public static InetAddress computeLocalHost() throws IOException
+    {
+        InetAddress add = null;
+        List<InetAddress> addresses = Lists.newArrayList();
+        InetAddress localHost = InetAddress.getLocalHost();
+        for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces()))
+        {
+            if (!ni.isLoopback() && ni.isUp())
+            {
+                addresses.addAll(Collections.list(ni.getInetAddresses()));
+                if (addresses.contains(localHost))
+                {
+                    add = localHost;
+                    break;
+                }
+            }
+        }
+        if (add == null && !addresses.isEmpty())
+        {
+            for (InetAddress addr: addresses)
+            {
+                if (addr.getAddress().length == 4)
+                {
+                    add = addr;
+                    break;
+                }
+            }
+        }
+        if (add == null)
+        {
+            add = localHost;
+        }
+        return add;
     }
 }
