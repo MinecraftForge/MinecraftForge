@@ -15,6 +15,7 @@ public class ModLoaderEntitySpawnCallback implements Function<EntitySpawnPacket,
 
     private BaseModProxy mod;
     private EntityRegistration registration;
+    private boolean isAnimal;
 
     public ModLoaderEntitySpawnCallback(BaseModProxy mod, EntityRegistration er)
     {

@@ -41,6 +41,7 @@ public class EntityRegistry
         private int updateFrequency;
         private boolean sendsVelocityUpdates;
         private Function<EntitySpawnPacket, Entity> customSpawnCallback;
+        private boolean usesVanillaSpawning;
         public EntityRegistration(ModContainer mc, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
         {
             this.container = mc;
@@ -79,6 +80,11 @@ public class EntityRegistry
         {
             return sendsVelocityUpdates;
         }
+
+        public boolean usesVanillaSpawning()
+        {
+            return usesVanillaSpawning;
+        }
         public boolean hasCustomSpawning()
         {
             return customSpawnCallback != null;
@@ -87,9 +93,10 @@ public class EntityRegistry
         {
             return customSpawnCallback.apply(packet);
         }
-        public void setCustomSpawning(Function<EntitySpawnPacket, Entity> callable)
+        public void setCustomSpawning(Function<EntitySpawnPacket, Entity> callable, boolean usesVanillaSpawning)
         {
             this.customSpawnCallback = callable;
+            this.usesVanillaSpawning = usesVanillaSpawning;
         }
     }
 
