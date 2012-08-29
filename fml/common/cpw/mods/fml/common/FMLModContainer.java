@@ -277,9 +277,7 @@ public class FMLModContainer implements ModContainer
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retreiver) throws IllegalAccessException
     {
-        System.out.println(annotationClassName);
         String[] annName = annotationClassName.split("\\.");
-        System.out.println(Arrays.toString(annName));
         String annotationName = annName[annName.length - 1];
         for (ASMData targets : annotations.get(annotationClassName))
         {
