@@ -16,6 +16,7 @@ package cpw.mods.fml.common;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -438,6 +439,21 @@ public class Loader
         modController.distributeStateMessage(FMLLoadEvent.class);
         sortModList();
         mods = ImmutableList.copyOf(mods);
+        for (File nonMod : disc.getNonModLibs())
+        {
+            if (nonMod.isFile())
+            {
+                FMLLog.severe("FML has found a non-mod file %s in your mods directory. It will now be injected into your classpath. This could severe stability issues, it should be removed if possible.", nonMod.getName());
+                try
+                {
+                    modClassLoader.addFile(nonMod);
+                }
+                catch (MalformedURLException e)
+                {
+                    FMLLog.log(Level.SEVERE, e, "Encountered a weird problem with non-mod file injection : %s", nonMod.getName());
+                }
+            }
+        }
         modController.transition(LoaderState.CONSTRUCTING);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
         modController.transition(LoaderState.PREINITIALIZATION);

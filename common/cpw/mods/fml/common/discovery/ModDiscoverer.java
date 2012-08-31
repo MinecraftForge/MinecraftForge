@@ -25,6 +25,8 @@ public class ModDiscoverer
 
     private ASMDataTable dataTable = new ASMDataTable();
 
+    private List<File> nonModLibs = Lists.newArrayList();
+
     public void findClasspathMods(ModClassLoader modClassLoader)
     {
         List<String> knownLibraries = ImmutableList.<String>builder().addAll(modClassLoader.getDefaultLibraries()).addAll(RelaunchLibraryManager.getLibraries()).build();
@@ -99,7 +101,14 @@ public class ModDiscoverer
             try
             {
                 List<ModContainer> mods = candidate.explore(dataTable);
-                modList.addAll(mods);
+                if (mods.isEmpty())
+                {
+                    nonModLibs.add(candidate.getModContainer());
+                }
+                else
+                {
+                    modList.addAll(mods);
+                }
             }
             catch (LoaderException le)
             {
@@ -117,6 +126,11 @@ public class ModDiscoverer
     public ASMDataTable getASMTable()
     {
         return dataTable;
+    }
+
+    public List<File> getNonModLibs()
+    {
+        return nonModLibs;
     }
 
 }
