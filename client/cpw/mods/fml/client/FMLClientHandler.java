@@ -350,9 +350,16 @@ public class FMLClientHandler implements IFMLSidedHandler
     public void adjustEntityLocationOnClient(EntitySpawnAdjustmentPacket packet)
     {
         Entity ent = client.field_71441_e.func_73024_a(packet.entityId);
-        ent.field_70118_ct = packet.serverX;
-        ent.field_70117_cu = packet.serverY;
-        ent.field_70116_cv = packet.serverZ;
+        if (ent != null)
+        {
+            ent.field_70118_ct = packet.serverX;
+            ent.field_70117_cu = packet.serverY;
+            ent.field_70116_cv = packet.serverZ;
+        }
+        else
+        {
+            FMLLog.fine("Attempted to adjust the position of entity %d which is not present on the client", packet.entityId);
+        }
     }
 
     @Override
