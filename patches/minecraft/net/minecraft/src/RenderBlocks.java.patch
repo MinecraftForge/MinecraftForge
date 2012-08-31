@@ -22,8 +22,8 @@
          float var10 = 1.0F;
          float var11 = 0.8F;
 @@ -1959,7 +1960,7 @@
+         double var28;
          double var30;
-         double var32;
  
 -        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4))
 +        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4, UP))
