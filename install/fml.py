@@ -31,10 +31,10 @@ def download_deps(mcp_path):
         
         if not os.path.isfile(target):
             try:
-                urllib.urlretrieve('http://cloud.github.com/downloads/cpw/FML/' + lib, target)
+                urllib.urlretrieve('http://files.minecraftforge.net/fmllibs/' + lib, target)
                 print 'Downloaded %s successfully' % lib
             except:
-                print 'Download %s failed, download manually from http://cloud.github.com/downloads/cpw/FML/%s and place in MCP/lib' % (lib, lib)
+                print 'Download %s failed, download manually from http://files.minecraftforge.net/fmllibs/%s or http://files.minecraftforge.net/fmllibs/fml_libs_dev.zip and place in MCP/lib' % (lib, lib)
                 ret = False
     
     return ret
