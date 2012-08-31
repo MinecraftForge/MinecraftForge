@@ -20,6 +20,7 @@ import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;
 
@@ -180,7 +181,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     @SideOnly(CLIENT)
     public void addRenderer(Map<Class<? extends Entity>, Render> renderers)
     {
-
     }
 
     /**

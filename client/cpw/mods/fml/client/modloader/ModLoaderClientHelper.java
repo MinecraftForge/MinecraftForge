@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
@@ -13,11 +14,15 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.KeyBinding;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Render;
+import net.minecraft.src.RenderManager;
 
+import com.google.common.base.Equivalences;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -56,17 +61,46 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
         FMLLog.finer("Handling post startup activities for ModLoader mod %s", mc.getModId());
         BaseMod mod = (BaseMod) mc.getMod();
 
-        Map<Class<? extends Entity>, Render> renderers = Maps.newHashMap();
+        Map<Class<? extends Entity>, Render> renderers = Maps.newHashMap(RenderManager.field_78727_a.field_78729_o);
 
-        mod.addRenderer(renderers);
+        try
+        {
+            FMLLog.finest("Requesting renderers from basemod %s", mc.getModId());
+            mod.addRenderer(renderers);
+            FMLLog.finest("Received %d renderers from basemod %s", renderers.size(), mc.getModId());
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.SEVERE, e, "A severe problem was detected with the mod %s during the addRenderer call. Continuing, but expect odd results", mc.getModId());
+        }
 
-        for (Entry<Class<? extends Entity>, Render> e : renderers.entrySet())
+        MapDifference<Class<? extends Entity>, Render> difference = Maps.difference(RenderManager.field_78727_a.field_78729_o, renderers, Equivalences.identity());
+
+        for ( Entry<Class<? extends Entity>, Render> e : difference.entriesOnlyOnLeft().entrySet())
+        {
+            FMLLog.warning("The mod %s attempted to remove an entity renderer %s from the entity map. This will be ignored.", mc.getModId(), e.getKey().getName());
+        }
+
+        for (Entry<Class<? extends Entity>, Render> e : difference.entriesOnlyOnRight().entrySet())
         {
             FMLLog.finest("Registering ModLoader entity renderer %s as instance of %s", e.getKey().getName(), e.getValue().getClass().getName());
             RenderingRegistry.registerEntityRenderingHandler(e.getKey(), e.getValue());
         }
 
-        mod.registerAnimation(game);
+        for (Entry<Class<? extends Entity>, ValueDifference<Render>> e : difference.entriesDiffering().entrySet())
+        {
+            FMLLog.finest("Registering ModLoader entity rendering override for %s as instance of %s", e.getKey().getName(), e.getValue().rightValue().getClass().getName());
+            RenderingRegistry.registerEntityRenderingHandler(e.getKey(), e.getValue().rightValue());
+        }
+
+        try
+        {
+            mod.registerAnimation(game);
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.SEVERE, e, "A severe problem was detected with the mod %s during the registerAnimation call. Continuing, but expect odd results", mc.getModId());
+        }
     }
 
     public ModLoaderClientHelper(Minecraft client)
