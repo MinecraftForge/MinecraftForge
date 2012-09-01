@@ -91,6 +91,17 @@ public class NetworkModHandler
             }
         }
 
+        FMLLog.finest("Testing mod %s to very it can accept it's own version in a remote connection", container.getModId());
+        boolean acceptsSelf = acceptVersion(container.getVersion());
+        if (!acceptsSelf)
+        {
+            FMLLog.severe("The mod %s appears to reject it's own version number (%s) in it's version handling. This is likely a severe bug in the mod!", container.getModId(), container.getVersion());
+        }
+        else
+        {
+            FMLLog.finest("The mod %s accepts it's own version (%s)", container.getModId(), container.getVersion());
+        }
+
         tryCreatingPacketHandler(container, mod.packetHandler(), mod.channels(), null);
         if (FMLCommonHandler.instance().getSide().isClient())
         {
