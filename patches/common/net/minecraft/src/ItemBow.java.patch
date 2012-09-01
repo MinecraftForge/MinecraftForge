@@ -1,15 +1,16 @@
 --- ../src_base/common/net/minecraft/src/ItemBow.java
 +++ ../src_work/common/net/minecraft/src/ItemBow.java
-@@ -1,4 +1,8 @@
+@@ -1,4 +1,9 @@
  package net.minecraft.src;
 +
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingShootBowEvent;
 +import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 +import net.minecraftforge.event.entity.player.ArrowNockEvent;
  
  public class ItemBow extends Item
  {
-@@ -15,11 +19,20 @@
+@@ -15,11 +20,20 @@
       */
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
@@ -31,7 +32,19 @@
              float var7 = (float)var6 / 20.0F;
              var7 = (var7 * var7 + var7 * 2.0F) / 3.0F;
  
-@@ -104,6 +117,13 @@
+@@ -57,6 +71,11 @@
+             if (EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, par1ItemStack) > 0)
+             {
+                 var8.setFire(100);
++            }
++            
++            if (MinecraftForge.EVENT_BUS.post(new LivingShootBowEvent(par3EntityPlayer, par1ItemStack, var8, var7))) {
++                var8.setDead();
++                return;
+             }
+ 
+             par1ItemStack.damageItem(1, par3EntityPlayer);
+@@ -104,6 +123,13 @@
       */
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {
