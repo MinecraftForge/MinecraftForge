@@ -4,8 +4,7 @@ import net.minecraft.src.EntityLiving;
 import net.minecraftforge.event.Cancelable;
 
 /**
- * Called when an Entity shoots a bow.
- * If the event is cancelled the arrow-entity will be destroyed.
+ * Called when an Entity is healed.
  */
 @Cancelable
 public class LivingHealEvent extends LivingEvent
