@@ -60,7 +60,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
             catch (Exception e)
             {
                 mc = MetadataCollection.from(null,"");
-                FMLLog.info("No mcmod.info file found in directory %s", modDir.getName());
+                FMLLog.fine("No mcmod.info file found in directory %s", modDir.getName());
             }
         }
 

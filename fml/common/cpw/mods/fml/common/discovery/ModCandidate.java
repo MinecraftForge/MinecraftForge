@@ -15,16 +15,18 @@ public class ModCandidate
     private ContainerType sourceType;
     private boolean classpath;
     private List<String> baseModTypes = Lists.newArrayList();
+    private boolean isMinecraft;
 
     public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType)
     {
-        this(classPathRoot, modContainer, sourceType, false);
+        this(classPathRoot, modContainer, sourceType, false, false);
     }
-    public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType, boolean classpath)
+    public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType, boolean isMinecraft, boolean classpath)
     {
         this.classPathRoot = classPathRoot;
         this.modContainer = modContainer;
         this.sourceType = sourceType;
+        this.isMinecraft = isMinecraft;
         this.classpath = classpath;
     }
 
@@ -58,5 +60,9 @@ public class ModCandidate
     public List<String> getRememberedBaseMods()
     {
         return baseModTypes;
+    }
+    public boolean isMinecraftJar()
+    {
+        return isMinecraft;
     }
 }
