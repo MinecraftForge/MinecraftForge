@@ -37,7 +37,7 @@ public class JarDiscoverer implements ITypeDiscoverer
             }
             else
             {
-                FMLLog.info("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
+                FMLLog.fine("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(null, "");
             }
             for (ZipEntry ze : Collections.list(jar.entries()))

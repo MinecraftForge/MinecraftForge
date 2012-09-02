@@ -34,7 +34,7 @@ public class ModDiscoverer
         if (minecraftSources.length == 1 && minecraftSources[0].isFile())
         {
             FMLLog.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());
-            candidates.add(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR));
+            candidates.add(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR, true, true));
         }
         else
         {
@@ -49,13 +49,13 @@ public class ModDiscoverer
                     else
                     {
                         FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                        candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, i!=0));
+                        candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.JAR, i==0, true));
                     }
                 }
                 else if (minecraftSources[i].isDirectory())
                 {
                     FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", minecraftSources[i].getAbsolutePath());
-                    candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, i!=0));
+                    candidates.add(new ModCandidate(minecraftSources[i], minecraftSources[i], ContainerType.DIR, i==0, true));
                 }
             }
         }
@@ -101,7 +101,7 @@ public class ModDiscoverer
             try
             {
                 List<ModContainer> mods = candidate.explore(dataTable);
-                if (mods.isEmpty())
+                if (mods.isEmpty() && !candidate.isClasspath())
                 {
                     nonModLibs.add(candidate.getModContainer());
                 }

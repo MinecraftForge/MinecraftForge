@@ -32,7 +32,7 @@ public class ModContainerFactory
         }
 
         // We warn if it's not a basemod instance -- compatibility requires it to be in net.minecraft.src *sigh*
-        if (className.startsWith("net.minecraft.src.") && container.isClasspath())
+        if (className.startsWith("net.minecraft.src.") && container.isClasspath() && !container.isMinecraftJar())
         {
             FMLLog.severe("FML has detected a mod that is using a package name based on 'net.minecraft.src' : %s. This is generally a severe programming error. "
                     + " There should be no mod code in the minecraft namespace. MOVE YOUR MOD! If you're in eclipse, select your source code and 'refactor' it into "
@@ -43,7 +43,7 @@ public class ModContainerFactory
         {
             if (ann.getASMType().equals(Type.getType(Mod.class)))
             {
-                FMLLog.fine("Identified a FMLMod type mod %s", className);
+                FMLLog.fine("Identified an FMLMod type mod %s", className);
                 return new FMLModContainer(className, modSource, ann.getValues());
             }
         }
