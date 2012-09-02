@@ -1,0 +1,59 @@
+--- ../src_base/common/net/minecraft/src/ItemSeeds.java
++++ ../src_work/common/net/minecraft/src/ItemSeeds.java
+@@ -3,7 +3,8 @@
+ public class ItemSeeds extends Item
+ {
+     /**
+-     * The type of block this seed turns into (wheat or pumpkin stems for instance)
++     * The type of block this seed turns into (wheat or pumpkin stems for
++     * instance)
+      */
+     private int blockType;
+ 
+@@ -18,30 +19,25 @@
+         this.setTabToDisplayOn(CreativeTabs.tabMaterials);
+     }
+ 
+-    public boolean tryPlaceIntoWorld(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
++    public boolean tryPlaceIntoWorld(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7,
++            float par8, float par9, float par10)
+     {
+-        if (par7 != 1)
++        if (par7 != 1) return false;
++
++        // If doesn't have permission to edit, return false.
++        if (par2EntityPlayer != null && !(par2EntityPlayer.canPlayerEdit(par4, par5, par6) || par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6))) { return false; }
++
++        // Otherwise, permissions are okey-dokey.
++        int var11 = par3World.getBlockId(par4, par5, par6);
++
++        if (var11 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
+         {
+-            return false;
++            par3World.setBlockWithNotify(par4, par5 + 1, par6, this.blockType);
++            --par1ItemStack.stackSize;
++            return true;
+         }
+-        else if (par2EntityPlayer.canPlayerEdit(par4, par5, par6) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6))
+-        {
+-            int var11 = par3World.getBlockId(par4, par5, par6);
+ 
+-            if (var11 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
+-            {
+-                par3World.setBlockWithNotify(par4, par5 + 1, par6, this.blockType);
+-                --par1ItemStack.stackSize;
+-                return true;
+-            }
+-            else
+-            {
+-                return false;
+-            }
+-        }
+-        else
+-        {
+-            return false;
+-        }
++        // Unable to place.
++        return false;
+     }
+ }
