@@ -18,7 +18,6 @@ import cpw.mods.fml.common.FMLLog;
 
 public class Downloader extends JOptionPane
 {
-    private static Downloader instance;
     private JDialog container;
     private JLabel currentActivity;
     private JProgressBar progress;
@@ -28,21 +27,6 @@ public class Downloader extends JOptionPane
     public Downloader()
     {
         super();
-        instance = this;
-        setMessageType(JOptionPane.INFORMATION_MESSAGE);
-        setMessage(makeProgressPanel());
-        setOptions(new Object[] { "Stop" });
-        addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                if (evt.getSource() == instance && evt.getPropertyName()==VALUE_PROPERTY)
-                {
-                    requestClose("This will stop minecraft from launching\nAre you sure you want to do this?");
-                }
-            }
-        });
     }
 
     private Box makeProgressPanel()
@@ -66,19 +50,27 @@ public class Downloader extends JOptionPane
         return box;
     }
 
-    public static void main(String[] args)
-    {
-        instance = new Downloader();
-        instance.makeDialog();
-    }
-
     JDialog makeDialog()
     {
+        setMessageType(JOptionPane.INFORMATION_MESSAGE);
+        setMessage(makeProgressPanel());
+        setOptions(new Object[] { "Stop" });
+        addPropertyChangeListener(new PropertyChangeListener()
+        {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                if (evt.getSource() == Downloader.this && evt.getPropertyName()==VALUE_PROPERTY)
+                {
+                    requestClose("This will stop minecraft from launching\nAre you sure you want to do this?");
+                }
+            }
+        });
         container = new JDialog(null, "Hello", ModalityType.MODELESS);
         container.setResizable(false);
         container.setLocationRelativeTo(null);
-        container.add(instance);
-        instance.updateUI();
+        container.add(this);
+        this.updateUI();
         container.pack();
         container.setMinimumSize(container.getPreferredSize());
         container.setVisible(true);
@@ -88,7 +80,7 @@ public class Downloader extends JOptionPane
             @Override
             public void windowClosing(WindowEvent e)
             {
-                instance.requestClose("Closing this window will stop minecraft from launching\nAre you sure you wish to do this?");
+                requestClose("Closing this window will stop minecraft from launching\nAre you sure you wish to do this?");
             }
         });
         return container;
@@ -132,11 +124,10 @@ public class Downloader extends JOptionPane
         }
     }
 
-    static void makeHeadless()
+    void makeHeadless()
     {
-        instance.container = null;
-        instance.progress = null;
-        instance.currentActivity = null;
+        container = null;
+        progress = null;
+        currentActivity = null;
     }
-
 }

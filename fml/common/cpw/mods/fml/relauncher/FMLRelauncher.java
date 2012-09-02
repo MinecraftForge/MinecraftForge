@@ -64,8 +64,8 @@ public class FMLRelauncher
         }
         catch (Exception e)
         {
-            Downloader.makeHeadless();
             popupWindow = null;
+            RelaunchLibraryManager.downloadMonitor.makeHeadless();
         }
     }
 
