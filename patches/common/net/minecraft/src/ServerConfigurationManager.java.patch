@@ -1,14 +1,24 @@
 --- ../src_base/common/net/minecraft/src/ServerConfigurationManager.java
 +++ ../src_work/common/net/minecraft/src/ServerConfigurationManager.java
-@@ -16,6 +16,7 @@
+@@ -16,6 +16,9 @@
  import cpw.mods.fml.common.network.NetworkRegistry;
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerJoinEvent;
  
  public abstract class ServerConfigurationManager
  {
-@@ -319,6 +320,7 @@
+@@ -163,6 +166,7 @@
+      */
+     public void playerLoggedIn(EntityPlayerMP par1EntityPlayerMP)
+     {
++        MinecraftForge.EVENT_BUS.post(new PlayerJoinEvent(par1EntityPlayerMP));
+         this.sendPacketToAllPlayers(new Packet201PlayerInfo(par1EntityPlayerMP.username, true, 1000));
+         this.playerEntityList.add(par1EntityPlayerMP);
+         WorldServer var2 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+@@ -319,6 +323,7 @@
  
          EntityPlayerMP var6 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.username, (ItemInWorldManager)var5);
          var6.clonePlayer(par1EntityPlayerMP, par3);
@@ -16,7 +26,7 @@
          var6.entityId = par1EntityPlayerMP.entityId;
          var6.serverForThisPlayer = par1EntityPlayerMP.serverForThisPlayer;
          WorldServer var7 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
-@@ -362,6 +364,11 @@
+@@ -362,6 +367,11 @@
  
      public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -28,7 +38,7 @@
          int var3 = par1EntityPlayerMP.dimension;
          WorldServer var4 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
-@@ -369,33 +376,14 @@
+@@ -369,33 +379,14 @@
          par1EntityPlayerMP.serverForThisPlayer.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          var4.removeEntity(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
@@ -70,7 +80,7 @@
          {
              ChunkCoordinates var12 = var5.getEntrancePortalLocation();
              var6 = (double)var12.posX;
-@@ -419,7 +407,7 @@
+@@ -419,7 +410,7 @@
                  var5.spawnEntityInWorld(par1EntityPlayerMP);
                  par1EntityPlayerMP.setLocationAndAngles(var6, par1EntityPlayerMP.posY, var8, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
                  var5.updateEntityWithOptionalForce(par1EntityPlayerMP, false);
