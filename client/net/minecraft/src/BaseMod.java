@@ -196,7 +196,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @return
      */
     @Override
-    public int dispenseEntity(World world, ItemStack item, Random rnd, double x, double y, double z, int xVel, int zVel, double entX, double entY, double entZ)
+    public int dispenseEntity(World world, ItemStack item, Random rnd, int x, int y, int z, int xVel, int zVel, double entX, double entY, double entZ)
     {
         return -1;
     }

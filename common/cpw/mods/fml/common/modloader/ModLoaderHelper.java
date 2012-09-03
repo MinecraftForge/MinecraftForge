@@ -34,6 +34,7 @@ import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IDispenserHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IWorldGenerator;
@@ -161,7 +162,7 @@ public class ModLoaderHelper
         return null;
     }
 
-    public static IDispenseHandler buildDispenseHelper(BaseModProxy mod)
+    public static IDispenserHandler buildDispenseHelper(BaseModProxy mod)
     {
         return new ModLoaderDispenseHelper(mod);
     }

@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IDispenserHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
@@ -44,7 +45,7 @@ public class GameRegistry
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
     private static List<ICraftingHandler> craftingHandlers = Lists.newArrayList();
-    private static List<IDispenseHandler> dispenserHandlers = Lists.newArrayList();
+    private static List<IDispenserHandler> dispenserHandlers = Lists.newArrayList();
     private static List<IPickupNotifier> pickupHandlers = Lists.newArrayList();
     private static List<IPlayerTracker> playerTrackers = Lists.newArrayList();
 
@@ -82,14 +83,27 @@ public class GameRegistry
         }
     }
 
+    public static void registerDispenserHandler(IDispenserHandler handler)
+    {
+        dispenserHandlers.add(handler);
+    }
     /**
      * Register a handler for dispensers
      *
      * @param handler
      */
-    public static void registerDispenserHandler(IDispenseHandler handler)
+    @Deprecated
+    public static void registerDispenserHandler(final IDispenseHandler handler)
     {
-        dispenserHandlers.add(handler);
+        registerDispenserHandler(new IDispenserHandler()
+        {
+
+            @Override
+            public int dispense(int x, int y, int z, int xVelocity, int zVelocity, World world, ItemStack item, Random random, double entX, double entY, double entZ)
+            {
+                return handler.dispense(x, y, z, xVelocity, zVelocity, world, item, random, entX, entY, entZ);
+            }
+        });
     }
 
 
@@ -106,9 +120,9 @@ public class GameRegistry
      * @param item
      * @return
      */
-    public static int tryDispense(World world, double x, double y, double z, int xVelocity, int zVelocity, ItemStack item, Random random, double entX, double entY, double entZ)
+    public static int tryDispense(World world, int x, int y, int z, int xVelocity, int zVelocity, ItemStack item, Random random, double entX, double entY, double entZ)
     {
-        for (IDispenseHandler handler : dispenserHandlers)
+        for (IDispenserHandler handler : dispenserHandlers)
         {
             int dispensed = handler.dispense(x, y, z, xVelocity, zVelocity, world, item, random, entX, entY, entZ);
             if (dispensed>-1)
@@ -261,30 +275,30 @@ public class GameRegistry
             notify.notifyPickup(item, player);
         }
     }
-    
+
     public static void registerPlayerTracker(IPlayerTracker tracker)
 	{
 		playerTrackers.add(tracker);
 	}
-	
+
 	public static void onPlayerLogin(EntityPlayer player)
 	{
 		for(IPlayerTracker tracker : playerTrackers)
 			tracker.onPlayerLogin(player);
 	}
-	
+
 	public static void onPlayerLogout(EntityPlayer player)
 	{
 		for(IPlayerTracker tracker : playerTrackers)
 			tracker.onPlayerLogout(player);
 	}
-	
+
 	public static void onPlayerChangedDimension(EntityPlayer player)
 	{
 		for(IPlayerTracker tracker : playerTrackers)
 			tracker.onPlayerChangedDimension(player);
 	}
-	
+
 	public static void onPlayerRespawn(EntityPlayer player)
 	{
 		for(IPlayerTracker tracker : playerTrackers)
