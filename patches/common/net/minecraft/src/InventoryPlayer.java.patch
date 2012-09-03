@@ -1,0 +1,74 @@
+--- ../src_base/common/net/minecraft/src/InventoryPlayer.java
++++ ../src_work/common/net/minecraft/src/InventoryPlayer.java
+@@ -1,4 +1,9 @@
+ package net.minecraft.src;
++
++import java.util.ArrayList;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+@@ -660,27 +665,40 @@
+     }
+ 
+     /**
+-     * Drop all armor and main inventory items.
+-     */
+-    public void dropAllItems()
+-    {
+-        int var1;
+-
+-        for (var1 = 0; var1 < this.mainInventory.length; ++var1)
+-        {
+-            if (this.mainInventory[var1] != null)
+-            {
+-                this.player.dropPlayerItemWithRandomChoice(this.mainInventory[var1], true);
+-                this.mainInventory[var1] = null;
+-            }
+-        }
+-
+-        for (var1 = 0; var1 < this.armorInventory.length; ++var1)
+-        {
+-            if (this.armorInventory[var1] != null)
+-            {
+-                this.player.dropPlayerItemWithRandomChoice(this.armorInventory[var1], true);
+-                this.armorInventory[var1] = null;
++     * Drops the full inventory into the world. Called when a player dies.
++     */
++    public void dropAllItems(DamageSource damageSource)
++    {
++        // Might as well start the arraylist out assuming a half full inventory.
++        ArrayList<EntityItem> drops = new ArrayList<EntityItem>(this.mainInventory.length + this.armorInventory.length / 2);
++        int index;
++
++        for (index = 0; index < this.mainInventory.length; ++index)
++        {
++            if (this.mainInventory[index] != null)
++            {
++                drops.add(this.player.createDroppedItem(this.mainInventory[index], false, 0));
++                this.mainInventory[index] = null;
++            }
++        }
++
++        for (index = 0; index < this.armorInventory.length; ++index)
++        {
++            if (this.armorInventory[index] != null)
++            {
++                drops.add(this.player.createDroppedItem(this.armorInventory[index], false, 0));
++                this.armorInventory[index] = null;
++            }
++        }
++
++        PlayerDropsEvent event = new PlayerDropsEvent(this.player, damageSource, drops);
++        if (!MinecraftForge.EVENT_BUS.post(event))
++        {
++            // Register all items with world and update stats.
++            for (EntityItem drop : drops)
++            {
++                this.player.joinEntityItemWithWorld(drop);
++                this.player.addStat(StatList.dropStat, drop.item.stackSize);
+             }
+         }
+     }

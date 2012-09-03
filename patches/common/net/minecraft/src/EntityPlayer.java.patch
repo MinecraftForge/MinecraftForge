@@ -1,24 +1,31 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayer.java
-@@ -7,6 +7,17 @@
+@@ -1,12 +1,21 @@
+ package net.minecraft.src;
  
- import java.util.Iterator;
- import java.util.List;
++import java.util.Iterator;
++import java.util.List;
 +
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.item.ItemDropEvent;
 +import net.minecraftforge.event.entity.item.ItemTossEvent;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
 +import net.minecraftforge.event.entity.player.AttackEntityEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.common.network.FMLNetworkHandler;
+-
+-import java.util.Iterator;
+-import java.util.List;
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -222,6 +233,7 @@
+@@ -222,6 +231,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -26,61 +33,186 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -627,7 +639,16 @@
+@@ -573,13 +583,15 @@
+         this.setSize(0.2F, 0.2F);
+         this.setPosition(this.posX, this.posY, this.posZ);
+         this.motionY = 0.10000000149011612D;
+-
++        
+         if (this.username.equals("Notch"))
+         {
+-            this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
+-        }
+-
+-        this.inventory.dropAllItems();
++            EntityItem eItem = this.createDroppedItem(new ItemStack(Item.appleRed, 1), false, 0);
++            this.joinEntityItemWithWorld(eItem);
++            this.addStat(StatList.dropStat, 1);
++        }
++
++        this.inventory.dropAllItems(par1DamageSource);
+ 
+         if (par1DamageSource != null)
+         {
+@@ -623,63 +635,108 @@
+     }
+ 
+     /**
+-     * Called when player presses the drop item key
++     * Drops a single item from the player's currently selected item into the
++     * world. Called when a player presses the drop item key.
       */
      public EntityItem dropOneItem()
      {
 -        return this.dropPlayerItemWithRandomChoice(this.inventory.decrStackSize(this.inventory.currentItem, 1), false);
+-    }
+-
+-    /**
+-     * Args: itemstack - called when player drops an item stack that's not in his inventory (like items still placed in
+-     * a workbench while the workbench'es GUI gets closed)
+-     */
+-    public EntityItem dropPlayerItem(ItemStack par1ItemStack)
+-    {
+-        return this.dropPlayerItemWithRandomChoice(par1ItemStack, false);
+-    }
+-
+-    /**
+-     * Args: itemstack, flag
+-     */
+-    public EntityItem dropPlayerItemWithRandomChoice(ItemStack par1ItemStack, boolean par2)
+-    {
+-        if (par1ItemStack == null)
+-        {
+-            return null;
+-        }
 +        ItemStack stack = inventory.getCurrentItem();
-+        if (stack == null)
-+        {
-+            return null;
-+        }
++        if (stack == null) return null;
++
 +        if (stack.getItem().onDroppedByPlayer(stack, this))
 +        {
-+            return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++            // Create EntityItem, register with world, and update stats.
++            EntityItem drop = this.createDroppedItem(inventory.decrStackSize(inventory.currentItem, 1), true, 0);
++
++            ItemTossEvent event = new ItemTossEvent(drop, this);
++            if (!MinecraftForge.EVENT_BUS.post(event))
++            {
++                this.joinEntityItemWithWorld(drop);
++                this.addStat(StatList.dropStat, drop.item.stackSize);
++                return drop;
++            }
 +        }
 +        return null;
-     }
- 
-     /**
-@@ -655,6 +676,8 @@
-             float var4 = 0.1F;
-             float var5;
- 
++    }
++
++    /**
++     * Drops an entire stack of items into the world. Called when a player drops
++     * an item stack by drag-dropping it outside an inventory screen, creating
++     * an item with a full inventory (filled buckets, bottles, etc.), or leaving
++     * it in certain inventories when they close (workbenches, etc).
++     * 
++     * @param itemStack
++     *            The ItemStack being dropped.
++     */
++    public EntityItem dropPlayerItem(ItemStack itemStack)
++    {
++        EntityItem drop = this.createDroppedItem(itemStack, true, 0);
++
++        ItemTossEvent event = new ItemTossEvent(drop, this);
++        if (!MinecraftForge.EVENT_BUS.post(event))
++        {
++            this.joinEntityItemWithWorld(drop);
++            this.addStat(StatList.dropStat, drop.item.stackSize);
++            return drop;
++        }
++        return null;
++    }
++
++    /**
++     * Creates a configured EntityItem from an ItemStack based on the player's
++     * current transformation.
++     * @param itemStack The ItemStack to prepare for dropping.
++     * @param toss If true, the item will be tossed forward rather than given
++     * a random velocity.
++     * @return An instantiated EntityItem, ready to be entered into the world.
++     */
++    public EntityItem createDroppedItem(ItemStack itemStack, boolean toss, int x)
++    {
++        if (itemStack == null) return null;
+         else
+         {
+-            EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY - 0.30000001192092896D + (double)this.getEyeHeight(), this.posZ, par1ItemStack);
+-            var3.delayBeforeCanPickup = 40;
+-            float var4 = 0.1F;
+-            float var5;
+-
+-            if (par2)
+-            {
+-                var5 = this.rand.nextFloat() * 0.5F;
+-                float var6 = this.rand.nextFloat() * (float)Math.PI * 2.0F;
+-                var3.motionX = (double)(-MathHelper.sin(var6) * var5);
+-                var3.motionZ = (double)(MathHelper.cos(var6) * var5);
+-                var3.motionY = 0.20000000298023224D;
++            EntityItem eItem = new EntityItem(this.worldObj, this.posX, this.posY - 0.30000001192092896D + (double)this.getEyeHeight(), this.posZ, itemStack);
++            eItem.delayBeforeCanPickup = 40;
++
 +            boolean cancelled = false;
 +            
-             if (par2)
-             {
-                 var5 = this.rand.nextFloat() * 0.5F;
-@@ -662,6 +685,9 @@
-                 var3.motionX = (double)(-MathHelper.sin(var6) * var5);
-                 var3.motionZ = (double)(MathHelper.cos(var6) * var5);
-                 var3.motionY = 0.20000000298023224D;
++            if (toss)
++            {
++                //Add forward throw velocity.
++                float velocity = 0.3F;
++                eItem.motionX = (double)(-MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * velocity);
++                eItem.motionZ = (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * velocity);
++                eItem.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * velocity + 0.1F);
++                //Add some random noise to the velocity.
++                velocity = 0.02F;
++                float theta = this.rand.nextFloat() * (float)Math.PI * 2.0F;
++                velocity *= this.rand.nextFloat();
++                eItem.motionX += Math.cos((double)theta) * (double)velocity;
++                eItem.motionY += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
++                eItem.motionZ += Math.sin((double)theta) * (double)velocity;
 +                
-+                ItemDropEvent event = new ItemDropEvent(var3, this);
-+                cancelled = MinecraftForge.EVENT_BUS.post(event);
++                //ItemTossEvent event = new ItemTossEvent(eItem, this);
++                //cancelled = MinecraftForge.EVENT_BUS.post(event);
              }
              else
              {
-@@ -675,8 +701,14 @@
-                 var3.motionX += Math.cos((double)var5) * (double)var4;
-                 var3.motionY += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
-                 var3.motionZ += Math.sin((double)var5) * (double)var4;
+-                var4 = 0.3F;
+-                var3.motionX = (double)(-MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * var4);
+-                var3.motionZ = (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(this.rotationPitch / 180.0F * (float)Math.PI) * var4);
+-                var3.motionY = (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI) * var4 + 0.1F);
+-                var4 = 0.02F;
+-                var5 = this.rand.nextFloat() * (float)Math.PI * 2.0F;
+-                var4 *= this.rand.nextFloat();
+-                var3.motionX += Math.cos((double)var5) * (double)var4;
+-                var3.motionY += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+-                var3.motionZ += Math.sin((double)var5) * (double)var4;
 -            }
 -
+-            this.joinEntityItemWithWorld(var3);
+-            this.addStat(StatList.dropStat, 1);
+-            return var3;
++                //Add random x,z velocity, fixed y velocity.
++                float velocity = this.rand.nextFloat() * 0.5F;
++                float theta = this.rand.nextFloat() * (float)Math.PI * 2.0F;
++                eItem.motionX = (double)(-MathHelper.sin(theta) * velocity);
++                eItem.motionZ = (double)(MathHelper.cos(theta) * velocity);
++                eItem.motionY = 0.20000000298023224D;
 +                
-+                ItemTossEvent event = new ItemTossEvent(var3, this);
-+                cancelled = MinecraftForge.EVENT_BUS.post(event);
++                //ItemDropEvent event = new ItemDropEvent(var3, this);
++                //cancelled = MinecraftForge.EVENT_BUS.post(event);
 +            }
 +
 +            //If the event was cancelled, we're done.
-+            if (cancelled) return null;
++            //if (cancelled) return null;
 +            
-             this.joinEntityItemWithWorld(var3);
-             this.addStat(StatList.dropStat, 1);
-             return var3;
-@@ -693,13 +725,21 @@
++            //this.joinEntityItemWithWorld(var3);
++            //this.addStat(StatList.dropStat, 1);
++            return eItem;
+         }
+     }
+ 
+@@ -693,13 +750,21 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
@@ -105,7 +237,7 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -992,12 +1032,23 @@
+@@ -992,12 +1057,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -130,7 +262,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1032,6 +1083,10 @@
+@@ -1032,6 +1108,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -141,7 +273,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1075,7 +1130,9 @@
+@@ -1075,7 +1155,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -151,7 +283,7 @@
      }
  
      /**
-@@ -1104,6 +1161,15 @@
+@@ -1104,6 +1186,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -167,7 +299,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1247,6 +1313,12 @@
+@@ -1247,6 +1338,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -180,7 +312,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1286,6 +1358,11 @@
+@@ -1286,6 +1383,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -192,7 +324,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1356,10 +1433,12 @@
+@@ -1356,10 +1458,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -209,7 +341,7 @@
  
              if (var5 == null)
              {
-@@ -1396,7 +1475,9 @@
+@@ -1396,7 +1500,9 @@
       */
      private boolean isInBed()
      {
@@ -220,7 +352,7 @@
      }
  
      /**
-@@ -1411,13 +1492,15 @@
+@@ -1411,13 +1517,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -238,7 +370,7 @@
              return var3;
          }
      }
-@@ -1431,8 +1514,11 @@
+@@ -1431,8 +1539,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -252,7 +384,7 @@
  
              switch (var2)
              {
-@@ -1725,6 +1811,7 @@
+@@ -1725,6 +1836,7 @@
                      return 101;
                  }
              }
