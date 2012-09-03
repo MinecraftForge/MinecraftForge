@@ -14,7 +14,7 @@
          float var15 = 1.1F;
          byte var16 = 6;
 -
-+        int modDispense = GameRegistry.tryDispense(p_72283_1_, p_72283_9_, p_72283_11_, p_72283_13_, p_72283_7_, p_72283_8_, p_72283_2_, p_72283_3_, p_72283_9_, p_72283_11_, p_72283_13_);
++        int modDispense = GameRegistry.tryDispense(p_72283_1_, p_72283_4_, p_72283_5_, p_72283_6_, p_72283_7_, p_72283_8_, p_72283_2_, p_72283_3_, p_72283_9_, p_72283_11_, p_72283_13_);
 +        if (modDispense > -1)
 +        {
 +            return modDispense;

@@ -5,8 +5,9 @@ import java.util.Random;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import cpw.mods.fml.common.IDispenseHandler;
+import cpw.mods.fml.common.IDispenserHandler;
 
-public class ModLoaderDispenseHelper implements IDispenseHandler
+public class ModLoaderDispenseHelper implements IDispenserHandler
 {
 
     private BaseModProxy mod;
@@ -17,10 +18,11 @@ public class ModLoaderDispenseHelper implements IDispenseHandler
     }
 
     @Override
-    public int dispense(double x, double y, double z, int xVelocity, int zVelocity, World world, ItemStack item, Random random, double entX, double entY,
+    public int dispense(int x, int y, int z, int xVelocity, int zVelocity, World world, ItemStack item, Random random, double entX, double entY,
             double entZ)
     {
-        return mod.dispenseEntity(world, item, random, x, y, z, xVelocity, zVelocity, entX, entY, entZ);
+        int ret = mod.dispenseEntity(world, item, random, x, y, z, xVelocity, zVelocity, entX, entY, entZ);
+        return ret == 0 ? -1 : ret;
     }
 
 }
