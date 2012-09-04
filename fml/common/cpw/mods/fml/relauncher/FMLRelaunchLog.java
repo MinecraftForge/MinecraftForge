@@ -4,15 +4,70 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 public class FMLRelaunchLog
 {
 
+    private static class ConsoleLogWrapper extends Handler
+    {
+        @Override
+        public void publish(LogRecord record)
+        {
+            try
+            {
+                ConsoleLogThread.recordQueue.put(record);
+            }
+            catch (InterruptedException e)
+            {
+                Thread.interrupted();
+            }
+        }
+
+        @Override
+        public void flush()
+        {
+
+        }
+
+        @Override
+        public void close() throws SecurityException
+        {
+        }
+
+    }
+    private static class ConsoleLogThread implements Runnable
+    {
+        static ConsoleHandler wrappedHandler = new ConsoleHandler();
+        static LinkedBlockingQueue<LogRecord> recordQueue = new LinkedBlockingQueue<LogRecord>();
+        @Override
+        public void run()
+        {
+            do
+            {
+                LogRecord lr;
+                try
+                {
+                    lr = recordQueue.take();
+                    wrappedHandler.publish(lr);
+                }
+                catch (InterruptedException e)
+                {
+                    Thread.interrupted();
+                    // Stupid
+                }
+            }
+            while (true);
+        }
+    }
     private static class LoggingOutStream extends ByteArrayOutputStream
     {
         private Logger log;
@@ -28,7 +83,7 @@ public class FMLRelaunchLog
         public void flush() throws IOException
         {
             String record;
-            synchronized(this)
+            synchronized(FMLRelaunchLog.class)
             {
                 super.flush();
                 record = this.toString();
@@ -57,6 +112,8 @@ public class FMLRelaunchLog
 
     static File minecraftHome;
     private static boolean configured;
+
+    private static Thread consoleLogThread;
     private Logger myLog;
 
     private FMLRelaunchLog()
@@ -80,11 +137,12 @@ public class FMLRelaunchLog
         FMLLogFormatter formatter = new FMLLogFormatter();
 
         // Console handler captures the normal stderr before it gets replaced
-        ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(Level.parse(System.getProperty("fml.log.level","INFO")));
         log.myLog.setUseParentHandlers(false);
-        log.myLog.addHandler(ch);
-        ch.setFormatter(formatter);
+        log.myLog.addHandler(new ConsoleLogWrapper());
+        consoleLogThread = new Thread(new ConsoleLogThread());
+        consoleLogThread.start();
+        ConsoleLogThread.wrappedHandler.setLevel(Level.parse(System.getProperty("fml.log.level","INFO")));
+        ConsoleLogThread.wrappedHandler.setFormatter(formatter);
         log.myLog.setLevel(Level.ALL);
         try
         {
