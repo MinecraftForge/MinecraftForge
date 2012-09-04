@@ -493,13 +493,19 @@ public class ModLoaderModContainer implements ModContainer
             Class<? extends BaseModProxy> modClazz = (Class<? extends BaseModProxy>) modClassLoader.loadBaseModClass(modClazzName);
             configureMod(modClazz, event.getASMHarvestedData());
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, modClazz, event.getASMHarvestedData());
-            Constructor<? extends BaseModProxy> ctor = modClazz.getConstructor();
-            ctor.setAccessible(true);
-            mod = modClazz.newInstance();
+            ModLoaderNetworkHandler dummyHandler = null;
             if (!isNetworkMod)
             {
                 FMLLog.fine("Injecting dummy network mod handler for BaseMod %s", getModId());
-                FMLNetworkHandler.instance().registerNetworkMod(new ModLoaderNetworkHandler(this, mod));
+                dummyHandler = new ModLoaderNetworkHandler(this);
+                FMLNetworkHandler.instance().registerNetworkMod(dummyHandler);
+            }
+            Constructor<? extends BaseModProxy> ctor = modClazz.getConstructor();
+            ctor.setAccessible(true);
+            mod = modClazz.newInstance();
+            if (dummyHandler != null)
+            {
+                dummyHandler.setBaseMod(mod);
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
         }

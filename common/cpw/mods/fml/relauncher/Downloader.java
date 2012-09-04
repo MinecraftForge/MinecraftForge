@@ -24,11 +24,6 @@ public class Downloader extends JOptionPane
     boolean stopIt;
     Thread pokeThread;
 
-    public Downloader()
-    {
-        super();
-    }
-
     private Box makeProgressPanel()
     {
         Box box = Box.createVerticalBox();
