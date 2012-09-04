@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.discovery.asm.ASMModParser;
 
 
 public class ModCandidate
@@ -16,6 +18,7 @@ public class ModCandidate
     private boolean classpath;
     private List<String> baseModTypes = Lists.newArrayList();
     private boolean isMinecraft;
+    private List<ASMModParser> baseModCandidateTypes = Lists.newArrayListWithCapacity(1);
 
     public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType)
     {
@@ -46,7 +49,16 @@ public class ModCandidate
     }
     public List<ModContainer> explore(ASMDataTable table)
     {
-        return sourceType.findMods(this, table);
+        List<ModContainer> mods = sourceType.findMods(this, table);
+        if (!baseModCandidateTypes.isEmpty())
+        {
+            FMLLog.info("Attempting to reparse the mod container %s", getModContainer().getName());
+            return sourceType.findMods(this, table);
+        }
+        else
+        {
+            return mods;
+        }
     }
 
     public boolean isClasspath()
@@ -64,5 +76,9 @@ public class ModCandidate
     public boolean isMinecraftJar()
     {
         return isMinecraft;
+    }
+    public void rememberModCandidateType(ASMModParser modParser)
+    {
+        baseModCandidateTypes.add(modParser);
     }
 }
