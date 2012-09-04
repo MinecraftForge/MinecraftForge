@@ -16,6 +16,7 @@ import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.World;
 
 import com.google.common.base.Charsets;
@@ -36,6 +37,10 @@ import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.FMLPacket.Type;
 
+/**
+ * @author cpw
+ *
+ */
 public class NetworkRegistry
 {
 
@@ -56,6 +61,7 @@ public class NetworkRegistry
     private Set<IConnectionHandler> connectionHandlers = Sets.newLinkedHashSet();
     private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
+    private List<IChatListener> chatListeners = Lists.newArrayList();
 
     public static NetworkRegistry instance()
     {
@@ -142,6 +148,15 @@ public class NetworkRegistry
     public void registerConnectionHandler(IConnectionHandler handler)
     {
         connectionHandlers.add(handler);
+    }
+
+    /**
+     * Register a chat listener
+     * @param listener
+     */
+    public void registerChatListener(IChatListener listener)
+    {
+        chatListeners.add(listener);
     }
 
     void playerLoggedIn(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
@@ -307,5 +322,19 @@ public class NetworkRegistry
     {
         IGuiHandler handler = clientGuiHandlers.get(mc);
         FMLCommonHandler.instance().showGuiScreen(handler.getClientGuiElement(modGuiId, player, world, x, y, z));
+    }
+    public Packet3Chat handleChat(NetHandler handler, Packet3Chat chat)
+    {
+        Side s = Side.CLIENT;
+        if (handler instanceof NetServerHandler)
+        {
+            s = Side.SERVER;
+        }
+        for (IChatListener listener : chatListeners)
+        {
+            chat = s.isClient() ? listener.clientChat(handler, chat) : listener.serverChat(handler, chat);
+        }
+
+        return chat;
     }
 }
