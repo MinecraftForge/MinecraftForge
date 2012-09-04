@@ -171,7 +171,18 @@ public class EntityRegistry
     {
         if (EntityList.field_75626_c.containsKey(entityClass))
         {
-            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", Loader.instance().activeModContainer().getModId(), entityClass);
+            ModContainer activeModContainer = Loader.instance().activeModContainer();
+            String modId = "unknown";
+            if (activeModContainer != null)
+            {
+                modId = activeModContainer.getModId();
+            }
+            else
+            {
+                FMLLog.severe("There is a rogue mod trying to register entities from outside the context of mod loading. This is incredibly dangerous and should be stopped.");
+                Thread.dumpStack();
+            }
+            FMLLog.warning("The mod %s tried to register the entity class %s which was already registered - if you wish to override default naming for FML mod entities, register it here first", modId, entityClass);
             return;
         }
         id = instance().validateAndClaimId(id);
