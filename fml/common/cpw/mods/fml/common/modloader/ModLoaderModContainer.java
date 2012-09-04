@@ -530,6 +530,7 @@ public class ModLoaderModContainer implements ModContainer
             GameRegistry.registerCraftingHandler(ModLoaderHelper.buildCraftingHelper(mod));
             GameRegistry.registerPickupHandler(ModLoaderHelper.buildPickupHelper(mod));
             GameRegistry.registerDispenserHandler(ModLoaderHelper.buildDispenseHelper(mod));
+            NetworkRegistry.instance().registerChatListener(ModLoaderHelper.buildChatListener(mod));
             NetworkRegistry.instance().registerConnectionHandler(ModLoaderHelper.buildConnectionHelper(mod));
         }
         catch (Exception e)

@@ -9,7 +9,15 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler
-@@ -957,6 +959,11 @@
+@@ -591,6 +593,7 @@
+ 
+     public void func_72481_a(Packet3Chat p_72481_1_)
+     {
++        p_72481_1_ = FMLNetworkHandler.handleChatMessage(this, p_72481_1_);
+         if (this.field_72574_e.func_71126_v() == 2)
+         {
+             this.func_72567_b(new Packet3Chat("Cannot send chat message."));
+@@ -957,6 +960,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -21,7 +29,7 @@
          DataInputStream var2;
          ItemStack var3;
          ItemStack var4;
-@@ -1029,4 +1036,11 @@
+@@ -1029,4 +1037,11 @@
              }
          }
      }

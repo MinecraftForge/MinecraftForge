@@ -41,7 +41,15 @@
          this.func_72552_c(new Packet204ClientInfo(this.field_72563_h.field_71474_y.field_74363_ab, this.field_72563_h.field_71474_y.field_74339_e, this.field_72563_h.field_71474_y.field_74343_n, this.field_72563_h.field_71474_y.field_74344_o, this.field_72563_h.field_71474_y.field_74318_M));
      }
  
-@@ -1167,6 +1173,11 @@
+@@ -605,6 +611,7 @@
+ 
+     public void func_72481_a(Packet3Chat p_72481_1_)
+     {
++        p_72481_1_ = FMLNetworkHandler.handleChatMessage(this, p_72481_1_);
+         this.field_72563_h.field_71456_v.func_73827_b().func_73765_a(p_72481_1_.field_73476_b);
+     }
+ 
+@@ -1167,6 +1174,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -53,7 +61,7 @@
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
              String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
-@@ -1211,4 +1222,10 @@
+@@ -1211,4 +1223,10 @@
      {
          return this.field_72555_g;
      }

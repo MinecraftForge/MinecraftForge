@@ -23,6 +23,7 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.Packet3Chat;
 import net.minecraft.src.ServerConfigurationManager;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldType;
@@ -389,5 +390,10 @@ public class FMLNetworkHandler
             add = localHost;
         }
         return add;
+    }
+
+    public static Packet3Chat handleChatMessage(NetHandler handler, Packet3Chat chat)
+    {
+        return NetworkRegistry.instance().handleChat(handler, chat);
     }
 }
