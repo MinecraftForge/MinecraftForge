@@ -9,10 +9,14 @@ public class ModLoaderNetworkHandler extends NetworkModHandler
 {
 
     private BaseModProxy baseMod;
-    public ModLoaderNetworkHandler(ModLoaderModContainer mlmc, BaseModProxy mod)
+    public ModLoaderNetworkHandler(ModLoaderModContainer mlmc)
     {
         super(mlmc, null);
-        this.baseMod = mod;
+    }
+
+    public void setBaseMod(BaseModProxy baseMod)
+    {
+        this.baseMod = baseMod;
     }
 
     @Override
@@ -20,13 +24,13 @@ public class ModLoaderNetworkHandler extends NetworkModHandler
     {
         return false;
     }
-    
+
     @Override
     public boolean requiresServerSide()
     {
         return false;
     }
-    
+
     @Override
     public boolean acceptVersion(String version)
     {

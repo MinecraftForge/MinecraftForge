@@ -31,6 +31,7 @@ import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.FMLPacket.Type;
@@ -263,6 +264,11 @@ public class NetworkRegistry
     public void registerGuiHandler(Object mod, IGuiHandler handler)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        if (mc == null)
+        {
+            mc = Loader.instance().activeModContainer();
+            FMLLog.log(Level.WARNING, "Mod %s attempted to register a gui network handler during a construction phase", mc.getModId());
+        }
         NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mc);
         if (nmh == null)
         {
