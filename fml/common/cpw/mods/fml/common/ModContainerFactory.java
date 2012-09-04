@@ -25,6 +25,11 @@ public class ModContainerFactory
             FMLLog.fine("Identified a BaseMod type mod %s", className);
             return new ModLoaderModContainer(className, modSource, modParser.getBaseModProperties());
         }
+        else if (modClass.matcher(className).find())
+        {
+            FMLLog.fine("Identified a class %s following modloader naming convention but not directly a BaseMod or currently seen subclass", className);
+            container.rememberModCandidateType(modParser);
+        }
         else if (modParser.isBaseMod(container.getRememberedBaseMods()))
         {
             FMLLog.fine("Found a basemod %s of non-standard naming format", className);
