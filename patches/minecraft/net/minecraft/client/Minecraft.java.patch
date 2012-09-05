@@ -8,6 +8,15 @@
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
+@@ -411,7 +412,7 @@
+ 
+         ColorizerWater.setWaterBiomeColorizer(this.renderEngine.getTextureContents("/misc/watercolor.png"));
+         ColorizerGrass.setGrassBiomeColorizer(this.renderEngine.getTextureContents("/misc/grasscolor.png"));
+-        ColorizerFoliage.getFoilageBiomeColorizer(this.renderEngine.getTextureContents("/misc/foliagecolor.png"));
++        ColorizerFoliage.setFoilageBiomeColorizer(this.renderEngine.getTextureContents("/misc/foliagecolor.png"));
+         this.entityRenderer = new EntityRenderer(this);
+         RenderManager.instance.itemRenderer = new ItemRenderer(this);
+         this.statFileWriter = new StatFileWriter(this.session, this.mcDataDir);
 @@ -2212,80 +2213,12 @@
          if (this.objectMouseOver != null)
          {

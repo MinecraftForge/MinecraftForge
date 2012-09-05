@@ -1,0 +1,68 @@
+--- ../src_base/common/net/minecraft/src/ColorizerFoliage.java
++++ ../src_work/common/net/minecraft/src/ColorizerFoliage.java
+@@ -1,15 +1,23 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.client.IFoliageColorizer;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+ public class ColorizerFoliage
+ {
++    /**
++     * Interface for overriding the functions within this class. Normally you 
++     * could just extend the class, but since all methods are static, rather 
++     * than being called through an instance, that won't really work.
++     */
++    public static IFoliageColorizer FoliageColorizer = null;
++    
+     /** Color buffer for foliage */
+     private static int[] foliageBuffer = new int[65536];
+ 
+-    public static void getFoilageBiomeColorizer(int[] par0ArrayOfInteger)
++    public static void setFoilageBiomeColorizer(int[] par0ArrayOfInteger)
+     {
+         foliageBuffer = par0ArrayOfInteger;
+     }
+@@ -19,6 +27,8 @@
+      */
+     public static int getFoliageColor(double par0, double par2)
+     {
++        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColor(par0, par2, foliageBuffer);
++        
+         par2 *= par0;
+         int var4 = (int)((1.0D - par0) * 255.0D);
+         int var5 = (int)((1.0D - par2) * 255.0D);
+@@ -30,7 +40,10 @@
+      */
+     public static int getFoliageColorPine()
+     {
+-        return 6396257;
++        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColorPine();
++        //Converted to hex, since color values are meaningless as ints.
++        //return 6396257;
++        return 0x619961;
+     }
+ 
+     /**
+@@ -38,11 +51,17 @@
+      */
+     public static int getFoliageColorBirch()
+     {
+-        return 8431445;
++        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColorBirch();
++        //Converted to hex, since color values are meaningless as ints.
++        //return 8431445;
++        return 0x80A755;
+     }
+ 
+     public static int getFoliageColorBasic()
+     {
+-        return 4764952;
++        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColorBasic();
++        //Converted to hex, since color values are meaningless as ints.
++        //return 4764952;
++        return 0x48B518;
+     }
+ }
