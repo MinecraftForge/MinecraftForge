@@ -167,7 +167,7 @@
 +    public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) 
 +    {
 +        int meta = world.getBlockMetadata(x, y, z);
-+        if (this instanceof BlockStep)
++        if (this instanceof BlockHalfSlab)
 +        {
 +            return (((meta & 8) == 8 && (side == UP)) || isOpaqueCube());
 +        }
