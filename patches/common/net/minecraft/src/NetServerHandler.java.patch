@@ -1,6 +1,38 @@
 --- ../src_base/common/net/minecraft/src/NetServerHandler.java
 +++ ../src_work/common/net/minecraft/src/NetServerHandler.java
-@@ -306,7 +306,7 @@
+@@ -189,6 +189,11 @@
+                     if (this.playerEntity.ridingEntity != null)
+                     {
+                         this.playerEntity.ridingEntity.updateRiderPosition();
++                    }
++
++                    if (!this.hasMoved)
++                    {
++                        return;
+                     }
+ 
+                     this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
+@@ -281,6 +286,11 @@
+                     this.playerEntity.addExhaustion(0.2F);
+                 }
+ 
++                if (!this.hasMoved)
++                {
++                    return;
++                }
++
+                 this.playerEntity.moveEntity(var13, var15, var17);
+                 this.playerEntity.onGround = par1Packet10Flying.onGround;
+                 this.playerEntity.addMovementStat(var13, var15, var17);
+@@ -303,10 +313,15 @@
+                     logger.warning(this.playerEntity.username + " moved wrongly!");
+                 }
+ 
++                if (!this.hasMoved)
++                {
++                    return;
++                }
++
                  this.playerEntity.setPositionAndRotation(var5, var7, var9, var11, var12);
                  boolean var32 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double)var27, (double)var27, (double)var27)).isEmpty();
  
@@ -9,7 +41,19 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
                      return;
-@@ -388,7 +388,10 @@
+@@ -333,6 +348,11 @@
+                     this.ticksForFloatKick = 0;
+                 }
+ 
++                if (!this.hasMoved)
++                {
++                    return;
++                }
++
+                 this.playerEntity.onGround = par1Packet10Flying.onGround;
+                 this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
+                 this.playerEntity.updateFlyingState(this.playerEntity.posY - var3, par1Packet10Flying.onGround);
+@@ -388,7 +408,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
  
@@ -21,7 +65,7 @@
                  {
                      return;
                  }
-@@ -410,7 +413,7 @@
+@@ -410,7 +433,7 @@
  
              if (par1Packet14BlockDig.status == 0)
              {
@@ -30,7 +74,7 @@
                  {
                      this.playerEntity.serverForThisPlayer.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
-@@ -490,7 +493,9 @@
+@@ -490,7 +513,9 @@
                  var12 = var11;
              }
  
