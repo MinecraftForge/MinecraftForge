@@ -31,20 +31,35 @@
  
                  if (var8)
                  {
-@@ -298,6 +306,12 @@
+@@ -298,10 +306,23 @@
          float var11 = (float)par8Vec3.zCoord - (float)par6;
          boolean var12 = false;
          int var13 = par2World.getBlockId(par4, par5, par6);
+-
+-        if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
+-        {
+-            var12 = true;
 +        if (par3ItemStack != null && 
 +            par3ItemStack.getItem() != null && 
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
 +        {
 +                return true;
 +        }
++
++        if (var13 > 0)
++        {
++            //Notify registered event listeners and abort block activation if any of them is canceled.
++            if (!ForgeHooks.onBlockActivated(par1EntityPlayer, par2World, par3ItemStack, par7, par7, par7, par7, var9, var10, var11))
++            {
++                if (Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
++                {
++                    var12 = true;
++                }
++            }
+         }
  
-         if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
-         {
-@@ -335,7 +349,15 @@
+         if (!var12 && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
+@@ -335,7 +356,15 @@
          }
          else
          {
@@ -61,7 +76,7 @@
          }
      }
  
-@@ -357,9 +379,10 @@
+@@ -357,9 +386,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
  

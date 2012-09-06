@@ -76,7 +76,7 @@
              }
  
              return true;
-@@ -315,6 +335,12 @@
+@@ -315,13 +335,26 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -88,8 +88,27 @@
 +        }
          int var11 = par2World.getBlockId(par4, par5, par6);
  
-         if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
-@@ -336,7 +362,15 @@
+-        if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
+-        {
+-            return true;
+-        }
+-        else if (par3ItemStack == null)
++        if (var11 > 0)
++        {
++            //Notify registered event listeners and abort block activation if any of them is canceled.
++            if (!ForgeHooks.onBlockActivated(par1EntityPlayer, par2World, par3ItemStack, par7, par7, par7, par7, par8, par9, par10))
++            {
++                if (Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
++                {
++                    return true;
++                }
++            }
++        }
++        if (par3ItemStack == null)
+         {
+             return false;
+         }
+@@ -336,7 +369,15 @@
          }
          else
          {
@@ -106,7 +125,7 @@
          }
      }
  
-@@ -347,4 +381,13 @@
+@@ -347,4 +388,13 @@
      {
          this.theWorld = par1WorldServer;
      }
