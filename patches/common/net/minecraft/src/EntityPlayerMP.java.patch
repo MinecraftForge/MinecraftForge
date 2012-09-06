@@ -1,0 +1,21 @@
+--- ../src_base/common/net/minecraft/src/EntityPlayerMP.java
++++ ../src_work/common/net/minecraft/src/EntityPlayerMP.java
+@@ -78,17 +78,10 @@
+         par4ItemInWorldManager.thisPlayerMP = this;
+         this.theItemInWorldManager = par4ItemInWorldManager;
+         this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
+-        ChunkCoordinates var5 = par2World.getSpawnPoint();
++        ChunkCoordinates var5 = par2World.getRandomizedSpawnPoint();
+         int var6 = var5.posX;
+         int var7 = var5.posZ;
+         int var8 = var5.posY;
+-
+-        if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
+-        {
+-            var6 += this.rand.nextInt(20) - 10;
+-            var8 = par2World.getTopSolidOrLiquidBlock(var6, var7);
+-            var7 += this.rand.nextInt(20) - 10;
+-        }
+ 
+         this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
+         this.mcServer = par1MinecraftServer;
