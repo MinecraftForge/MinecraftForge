@@ -1,0 +1,11 @@
+--- ../src-base/common/net/minecraft/src/Packet.java
++++ ../src-work/common/net/minecraft/src/Packet.java
+@@ -341,7 +341,7 @@
+         func_73285_a(107, true, true, Packet107CreativeSetSlot.class);
+         func_73285_a(108, false, true, Packet108EnchantItem.class);
+         func_73285_a(130, true, true, Packet130UpdateSign.class);
+-        func_73285_a(131, true, false, Packet131MapData.class);
++        func_73285_a(131, true, true, Packet131MapData.class);
+         func_73285_a(132, true, false, Packet132TileEntityData.class);
+         func_73285_a(200, true, false, Packet200Statistic.class);
+         func_73285_a(201, true, false, Packet201PlayerInfo.class);

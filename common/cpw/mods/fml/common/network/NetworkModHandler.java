@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.src.Item;
+
 import com.google.common.base.Strings;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -22,6 +24,7 @@ public class NetworkModHandler
     private static Object packetHandlerDefaultValue;
     private static Object clientHandlerDefaultValue;
     private static Object serverHandlerDefaultValue;
+    private static Object tinyPacketHandlerDefaultValue;
 
     private static int assignedIds = 1;
 
@@ -33,6 +36,7 @@ public class NetworkModHandler
     private Method checkHandler;
 
     private VersionRange acceptableRange;
+    private ITinyPacketHandler tinyPacketHandler;
 
     public NetworkModHandler(ModContainer container, NetworkMod modAnnotation)
     {
@@ -40,6 +44,11 @@ public class NetworkModHandler
         this.mod = modAnnotation;
         this.localId = assignedIds++;
         this.networkId = this.localId;
+        // Skip over the map object because it has special network id meaning
+        if (Item.field_77744_bd.field_77779_bT == assignedIds)
+        {
+            assignedIds++;
+        }
     }
     public NetworkModHandler(ModContainer container, Class<?> networkModClass, ASMDataTable table)
     {
@@ -130,6 +139,19 @@ public class NetworkModHandler
 
             NetworkRegistry.instance().registerConnectionHandler(instance);
         }
+
+        if (mod.tinyPacketHandler()!=tinyPacketHandlerDefaultValue)
+        {
+            try
+            {
+                tinyPacketHandler = mod.tinyPacketHandler().newInstance();
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Unable to create tiny packet handler instance %s", mod.tinyPacketHandler().getName());
+                throw new FMLNetworkException(e);
+            }
+        }
     }
     /**
      * @param container
@@ -206,6 +228,20 @@ public class NetworkModHandler
         }
     }
 
+    private Object getTinyPacketHandlerDefaultValue()
+    {
+        try {
+            if (tinyPacketHandlerDefaultValue == null)
+            {
+                tinyPacketHandlerDefaultValue = NetworkMod.class.getMethod("tinyPacketHandler").getDefaultValue();
+            }
+            return tinyPacketHandlerDefaultValue;
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new RuntimeException("Derp?", e);
+        }
+    }
     /**
      * @return
      */
@@ -301,5 +337,14 @@ public class NetworkModHandler
     public void setNetworkId(int value)
     {
         this.networkId = value;
+    }
+
+    public boolean hasTinyPacketHandler()
+    {
+        return tinyPacketHandler != null;
+    }
+    public ITinyPacketHandler getTinyPacketHandler()
+    {
+        return tinyPacketHandler;
     }
 }

@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.minecraft.src.Packet131MapData;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface NetworkMod
@@ -43,6 +45,13 @@ public @interface NetworkMod
     Class<? extends IPacketHandler> packetHandler() default NULL.class;
 
     /**
+     * A tiny packet handler implementation based on {@link Packet131MapData} for "small"
+     * data packet loads.
+     *
+     * @return
+     */
+    Class<? extends ITinyPacketHandler> tinyPacketHandler() default NULL.class;
+    /**
      * A connection handler implementation for this network mod
      *
      * @return
@@ -66,7 +75,7 @@ public @interface NetworkMod
      * @author cpw
      *
      */
-    static interface NULL extends IPacketHandler, IConnectionHandler {};
+    static interface NULL extends IPacketHandler, IConnectionHandler, ITinyPacketHandler {};
 
     /**
      * A marker for a method that will be offered the client's version string
@@ -89,4 +98,5 @@ public @interface NetworkMod
         String[] channels();
         Class<? extends IPacketHandler> packetHandler();
     }
+
 }
