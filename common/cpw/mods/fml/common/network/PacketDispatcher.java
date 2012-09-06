@@ -3,6 +3,7 @@ package cpw.mods.fml.common.network;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet250CustomPayload;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -70,5 +71,11 @@ public class PacketDispatcher
         {
             FMLLog.fine("Attempt to send packet to all in dimension without a server instance available");
         }
+    }
+
+    public static Packet131MapData getTinyPacket(Object mod, short tag, byte[] data)
+    {
+        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mod);
+        return new Packet131MapData((short) nmh.getNetworkId(), tag, data);
     }
 }
