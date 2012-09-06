@@ -25,6 +25,8 @@ import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.NetHandler;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.ServerListenThread;
 import net.minecraft.src.ThreadServerApplication;
 import net.minecraft.src.World;
@@ -400,5 +402,10 @@ public class FMLCommonHandler
         {
             crashReport.func_71500_a(call.getLabel(), call);
         }
+    }
+
+    public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
+    {
+        sidedDelegate.handleTinyPacket(handler, mapData);
     }
 }

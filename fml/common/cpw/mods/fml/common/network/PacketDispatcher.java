@@ -45,4 +45,30 @@ public class PacketDispatcher
             FMLLog.fine("Attempt to send packet to all around without a server instance available");
         }
     }
+
+    public static void sendPacketToAllInDimension(Packet packet, int dimId)
+    {
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server != null)
+        {
+            server.func_71203_ab().func_72396_a(packet, dimId);
+        }
+        else
+        {
+            FMLLog.fine("Attempt to send packet to all in dimension without a server instance available");
+        }
+    }
+
+    public static void sendPacketToAllPlayers(Packet packet)
+    {
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server != null)
+        {
+            server.func_71203_ab().func_72384_a(packet);
+        }
+        else
+        {
+            FMLLog.fine("Attempt to send packet to all in dimension without a server instance available");
+        }
+    }
 }

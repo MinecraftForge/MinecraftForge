@@ -27,7 +27,10 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.GuiScreen;
+import net.minecraft.src.NetClientHandler;
+import net.minecraft.src.NetHandler;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Render;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.World;
@@ -399,5 +402,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     public boolean isLoading()
     {
         return loading;
+    }
+
+    @Override
+    public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
+    {
+        ((NetClientHandler)handler).fmlPacket131Callback(mapData);
     }
 }

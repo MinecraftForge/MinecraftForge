@@ -16,11 +16,13 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.EnumGameType;
+import net.minecraft.src.Item;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Packet3Chat;
@@ -395,5 +397,17 @@ public class FMLNetworkHandler
     public static Packet3Chat handleChatMessage(NetHandler handler, Packet3Chat chat)
     {
         return NetworkRegistry.instance().handleChat(handler, chat);
+    }
+
+    public static void handlePacket131Packet(NetHandler handler, Packet131MapData mapData)
+    {
+        if (handler instanceof NetServerHandler || mapData.field_73438_a != Item.field_77744_bd.field_77779_bT)
+        {
+            NetworkRegistry.instance().handleTinyPacket(handler, mapData);
+        }
+        else
+        {
+            FMLCommonHandler.instance().handleTinyPacket(handler, mapData);
+        }
     }
 }

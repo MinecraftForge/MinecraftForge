@@ -29,10 +29,16 @@
          DataInputStream var2;
          ItemStack var3;
          ItemStack var4;
-@@ -1029,4 +1037,11 @@
+@@ -1029,4 +1037,17 @@
              }
          }
      }
++
++    @Override
++    public void func_72494_a(Packet131MapData p_72494_1_)
++    {
++        FMLNetworkHandler.handlePacket131Packet(this, p_72494_1_);
++    }
 +
 +    // modloader compat -- yuk!
 +    @Override
