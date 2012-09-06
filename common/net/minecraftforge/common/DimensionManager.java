@@ -9,6 +9,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.*;
+import net.minecraftforge.event.world.WorldEvent;
 
 public class DimensionManager
 {
@@ -17,6 +18,8 @@ public class DimensionManager
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Hashtable<Integer, Integer> dimensions = new Hashtable<Integer, Integer>();
+    private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
+    private static int nextFree;
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -35,6 +38,7 @@ public class DimensionManager
         {
             return;
         }
+        nextFree = 0; //FIXME: Load/store nextFree from/in file in world dir, since other dims could have been registered in previous sessions by a now uninstalled mod
         registerProviderType( 0, WorldProviderSurface.class, true);
         registerProviderType(-1, WorldProviderHell.class,    true);
         registerProviderType( 1, WorldProviderEnd.class,     false);
@@ -47,13 +51,24 @@ public class DimensionManager
     {
         if (!providers.containsKey(providerType))
         {
-            throw new IllegalArgumentException(String.format("Failed to register dimensiuon for id %d, provider type %d does not exist", id, providerType));
+            throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, provider type %d does not exist", id, providerType));
         }
         if (dimensions.containsKey(id))
         {
-            throw new IllegalArgumentException(String.format("Failed to register dimensiuon for id %d, One is already registered", id));
+            throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
         dimensions.put(id, providerType);
+        if (id >= nextFree)
+            nextFree = id+1;
+    }
+
+    public static void unregisterDimension(int id)
+    {
+        if (!dimensions.containsKey(id))
+        {
+            throw new IllegalArgumentException(String.format("Failed to unregister dimension for id %d; No provider registered", id));
+        }
+        dimensions.remove(id);
     }
 
     public static int getProviderType(int dim)
@@ -72,17 +87,26 @@ public class DimensionManager
 
     public static Integer[] getIDs()
     {
-        return dimensions.keySet().toArray(new Integer[0]);
+        return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
     }
 
     public static void setWorld(int id, WorldServer world)
     {
-        worlds.put(id, world);
+        if (world != null) {
+               worlds.put(id, world);
+            MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+        } else {
+            worlds.remove(id);
+            MinecraftServer.getServer().worldTickTimes.remove(id);
+        }
 
         ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
-        tmp.add(worlds.get( 0));
-        tmp.add(worlds.get(-1));
-        tmp.add(worlds.get( 1));
+        if (worlds.get( 0) != null)
+            tmp.add(worlds.get( 0));
+        if (worlds.get(-1) != null)
+            tmp.add(worlds.get(-1));
+        if (worlds.get( 1) != null)
+            tmp.add(worlds.get( 1));
 
         for (Entry<Integer, WorldServer> entry : worlds.entrySet())
         {
@@ -94,8 +118,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().theWorldServer = tmp.toArray(new WorldServer[0]);
-        MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+        MinecraftServer.getServer().theWorldServer = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static WorldServer getWorld(int id)
@@ -131,7 +154,7 @@ public class DimensionManager
             }
             else
             {
-                return null;
+                throw new RuntimeException(String.format("No WorldProvider bound for dimension %d", dim));
             }
         } 
         catch (Exception e)
@@ -141,5 +164,30 @@ public class DimensionManager
                     providers.get(getProviderType(dim)).getSimpleName()),e);
             throw new RuntimeException(e);
         }
+    }
+
+    public static void unloadWorld(int id) {
+        unloadQueue.add(id);
+    }
+
+    /*
+    * To be called by the server at the appropriate time, do not call from mod code.
+    */
+    public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
+        for (int id : unloadQueue) {
+            try {
+                worlds.get(id).saveAllChunks(true, null);
+            } catch (MinecraftException e) {
+                e.printStackTrace();
+            }
+            MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worlds.get(id)));
+            ((WorldServer)worlds.get(id)).flush();
+            setWorld(id, null);
+        }
+        unloadQueue.clear();
+    }
+
+    public static int getNextFreeDimId() {
+        return nextFree;
     }
 }
