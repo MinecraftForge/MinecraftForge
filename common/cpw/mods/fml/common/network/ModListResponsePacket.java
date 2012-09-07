@@ -112,7 +112,7 @@ public class ModListResponsePacket extends FMLPacket
             Logger.getLogger("Minecraft").info(String.format("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods));
             FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
             // Mark this as bad
-            FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, 3);
+            FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, FMLNetworkHandler.MISSING_MODS_OR_VERSIONS);
         }
         else
         {
