@@ -26,7 +26,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -251,4 +255,92 @@
+@@ -251,4 +255,656 @@
      }
  
      public abstract String func_80007_l();
@@ -116,6 +116,570 @@
 +    public void setSkyProvider(SkyProvider skyProvider)
 +    {
 +        this.skyProvider = skyProvider;
++    }
++
++    /*======================================= Start Moved From World =========================================*/
++    /**
++     * Gets the biome for a given set of x/z coordinates
++     * @param worldObj TODO
++     * @param par1 TODO
++     * @param par2 TODO
++     */
++    public BiomeGenBase getBiomeGenForCoords(int par1, int par2)
++    {
++        if (worldObj.blockExists(par1, 0, par2))
++        {
++            Chunk var3 = worldObj.getChunkFromBlockCoords(par1, par2);
++    
++            if (var3 != null)
++            {
++                return var3.getBiomeGenForWorldCoords(par1 & 15, par2 & 15, worldChunkMgr);
++            }
++        }
++    
++        return worldChunkMgr.getBiomeGenAt(par1, par2);
++    }
++
++    /**
++     * Checks whether its daytime by seeing if the light subtracted from the skylight is less than 4
++     * @param worldObj TODO
++     */
++    public boolean isDaytime()
++    {
++        return worldObj.skylightSubtracted < 4;
++    }
++
++    @SideOnly(Side.CLIENT)
++    
++    /**
++     * Calculates the color for the skybox
++     */
++    public Vec3 getSkyColor(Entity par1Entity, float par2)
++    {
++        float var3 = worldObj.getCelestialAngle(par2);
++        float var4 = MathHelper.cos(var3 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
++    
++        if (var4 < 0.0F)
++        {
++            var4 = 0.0F;
++        }
++    
++        if (var4 > 1.0F)
++        {
++            var4 = 1.0F;
++        }
++    
++        int var5 = MathHelper.floor_double(par1Entity.posX);
++        int var6 = MathHelper.floor_double(par1Entity.posZ);
++        BiomeGenBase var7 = worldObj.getBiomeGenForCoords(var5, var6);
++        float var8 = var7.getFloatTemperature();
++        int var9 = var7.getSkyColorByTemp(var8);
++        float var10 = (float)(var9 >> 16 & 255) / 255.0F;
++        float var11 = (float)(var9 >> 8 & 255) / 255.0F;
++        float var12 = (float)(var9 & 255) / 255.0F;
++        var10 *= var4;
++        var11 *= var4;
++        var12 *= var4;
++        float var13 = worldObj.getRainStrength(par2);
++        float var14;
++        float var15;
++    
++        if (var13 > 0.0F)
++        {
++            var14 = (var10 * 0.3F + var11 * 0.59F + var12 * 0.11F) * 0.6F;
++            var15 = 1.0F - var13 * 0.75F;
++            var10 = var10 * var15 + var14 * (1.0F - var15);
++            var11 = var11 * var15 + var14 * (1.0F - var15);
++            var12 = var12 * var15 + var14 * (1.0F - var15);
++        }
++    
++        var14 = worldObj.getWeightedThunderStrength(par2);
++    
++        if (var14 > 0.0F)
++        {
++            var15 = (var10 * 0.3F + var11 * 0.59F + var12 * 0.11F) * 0.2F;
++            float var16 = 1.0F - var14 * 0.75F;
++            var10 = var10 * var16 + var15 * (1.0F - var16);
++            var11 = var11 * var16 + var15 * (1.0F - var16);
++            var12 = var12 * var16 + var15 * (1.0F - var16);
++        }
++    
++        if (worldObj.lightningFlash > 0)
++        {
++            var15 = (float)worldObj.lightningFlash - par2;
++    
++            if (var15 > 1.0F)
++            {
++                var15 = 1.0F;
++            }
++    
++            var15 *= 0.45F;
++            var10 = var10 * (1.0F - var15) + 0.8F * var15;
++            var11 = var11 * (1.0F - var15) + 0.8F * var15;
++            var12 = var12 * (1.0F - var15) + 1.0F * var15;
++        }
++    
++        return Vec3.getVec3Pool().getVecFromPool((double)var10, (double)var11, (double)var12);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 drawClouds(float par1, long cloudColour)
++    {
++        float var2 = worldObj.getCelestialAngle(par1);
++        float var3 = MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
++    
++        if (var3 < 0.0F)
++        {
++            var3 = 0.0F;
++        }
++    
++        if (var3 > 1.0F)
++        {
++            var3 = 1.0F;
++        }
++    
++        float var4 = (float)(cloudColour >> 16 & 255L) / 255.0F;
++        float var5 = (float)(cloudColour >> 8 & 255L) / 255.0F;
++        float var6 = (float)(cloudColour & 255L) / 255.0F;
++        float var7 = worldObj.getRainStrength(par1);
++        float var8;
++        float var9;
++    
++        if (var7 > 0.0F)
++        {
++            var8 = (var4 * 0.3F + var5 * 0.59F + var6 * 0.11F) * 0.6F;
++            var9 = 1.0F - var7 * 0.95F;
++            var4 = var4 * var9 + var8 * (1.0F - var9);
++            var5 = var5 * var9 + var8 * (1.0F - var9);
++            var6 = var6 * var9 + var8 * (1.0F - var9);
++        }
++    
++        var4 *= var3 * 0.9F + 0.1F;
++        var5 *= var3 * 0.9F + 0.1F;
++        var6 *= var3 * 0.85F + 0.15F;
++        var8 = worldObj.getWeightedThunderStrength(par1);
++    
++        if (var8 > 0.0F)
++        {
++            var9 = (var4 * 0.3F + var5 * 0.59F + var6 * 0.11F) * 0.2F;
++            float var10 = 1.0F - var8 * 0.95F;
++            var4 = var4 * var10 + var9 * (1.0F - var10);
++            var5 = var5 * var10 + var9 * (1.0F - var10);
++            var6 = var6 * var10 + var9 * (1.0F - var10);
++        }
++    
++        return Vec3.getVec3Pool().getVecFromPool((double)var4, (double)var5, (double)var6);
++    }
++
++    @SideOnly(Side.CLIENT)
++    
++    /**
++     * How bright are stars in the sky
++     */
++    public float getStarBrightness(float par1)
++    {
++        float var2 = worldObj.getCelestialAngle(par1);
++        float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
++    
++        if (var3 < 0.0F)
++        {
++            var3 = 0.0F;
++        }
++    
++        if (var3 > 1.0F)
++        {
++            var3 = 1.0F;
++        }
++    
++        return var3 * var3 * 0.5F;
++    }
++
++    /**
++     * Set which types of mobs are allowed to spawn (peaceful vs hostile).
++     * @param worldObj TODO
++     * @param par1 TODO
++     * @param par2 TODO
++     */
++    public void setAllowedSpawnTypes(boolean par1, boolean par2)
++    {
++        worldObj.spawnHostileMobs = par1;
++        worldObj.spawnPeacefulMobs = par2;
++    }
++
++    /**
++     * Called from World constructor to set rainingStrength and thunderingStrength
++     * @param worldObj TODO
++     */
++    void calculateInitialWeather()
++    {
++        if (worldObj.worldInfo.isRaining())
++        {
++            worldObj.rainingStrength = 1.0F;
++    
++            if (worldObj.worldInfo.isThundering())
++            {
++                worldObj.thunderingStrength = 1.0F;
++            }
++        }
++    }
++
++    /**
++     * Updates all weather states.
++     * @param worldObj TODO
++     */
++    protected void updateWeather()
++    {
++        if (!hasNoSky)
++        {
++            if (worldObj.lastLightningBolt > 0)
++            {
++                --worldObj.lastLightningBolt;
++            }
++            if (!worldObj.isRemote) {
++                int var1 = worldObj.worldInfo.getThunderTime();
++
++                if (var1 <= 0)
++                {
++                    if (worldObj.worldInfo.isThundering())
++                    {
++                        worldObj.worldInfo.setThunderTime(worldObj.rand.nextInt(12000) + 3600);
++                    }
++                    else
++                    {
++                        worldObj.worldInfo.setThunderTime(worldObj.rand.nextInt(168000) + 12000);
++                    }
++                }
++                else
++                {
++                    --var1;
++                    worldObj.worldInfo.setThunderTime(var1);
++
++                    if (var1 <= 0)
++                    {
++                        worldObj.worldInfo.setThundering(!worldObj.worldInfo.isThundering());
++                    }
++                }
++
++                int var2 = worldObj.worldInfo.getRainTime();
++
++                if (var2 <= 0)
++                {
++                    if (worldObj.worldInfo.isRaining())
++                    {
++                        worldObj.worldInfo.setRainTime(worldObj.rand.nextInt(12000) + 12000);
++                    }
++                    else
++                    {
++                        worldObj.worldInfo.setRainTime(worldObj.rand.nextInt(168000) + 12000);
++                    }
++                }
++                else
++                {
++                    --var2;
++                    worldObj.worldInfo.setRainTime(var2);
++
++                    if (var2 <= 0)
++                    {
++                        worldObj.worldInfo.setRaining(!worldObj.worldInfo.isRaining());
++                    }
++                }
++            }
++            worldObj.prevRainingStrength = worldObj.rainingStrength;
++    
++            if (worldObj.worldInfo.isRaining())
++            {
++                worldObj.rainingStrength = (float)((double)worldObj.rainingStrength + 0.01D);
++            }
++            else
++            {
++                worldObj.rainingStrength = (float)((double)worldObj.rainingStrength - 0.01D);
++            }
++    
++            if (worldObj.rainingStrength < 0.0F)
++            {
++                worldObj.rainingStrength = 0.0F;
++            }
++    
++            if (worldObj.rainingStrength > 1.0F)
++            {
++                worldObj.rainingStrength = 1.0F;
++            }
++    
++            worldObj.prevThunderingStrength = worldObj.thunderingStrength;
++    
++            if (worldObj.worldInfo.isThundering())
++            {
++                worldObj.thunderingStrength = (float)((double)worldObj.thunderingStrength + 0.01D);
++            }
++            else
++            {
++                worldObj.thunderingStrength = (float)((double)worldObj.thunderingStrength - 0.01D);
++            }
++    
++            if (worldObj.thunderingStrength < 0.0F)
++            {
++                worldObj.thunderingStrength = 0.0F;
++            }
++    
++            if (worldObj.thunderingStrength > 1.0F)
++            {
++                worldObj.thunderingStrength = 1.0F;
++            }
++        }
++    }
++
++    public void toggleRain()
++    {
++        worldObj.worldInfo.setRainTime(1);
++    }
++
++    /**
++     * checks to see if a given block is both water, and cold enough to freeze - if the par4 boolean is set, this will
++     * only return true if there is a non-water block immediately adjacent to the specified block
++     * @param worldObj TODO
++     * @param par1 TODO
++     * @param par2 TODO
++     * @param par3 TODO
++     * @param par4 TODO
++     */
++    public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
++    {
++        BiomeGenBase var5 = worldObj.getBiomeGenForCoords(par1, par3);
++        float var6 = var5.getFloatTemperature();
++    
++        if (var6 > 0.15F)
++        {
++            return false;
++        }
++        else
++        {
++            if (par2 >= 0 && par2 < 256 && worldObj.getSavedLightValue(EnumSkyBlock.Block, par1, par2, par3) < 10)
++            {
++                int var7 = worldObj.getBlockId(par1, par2, par3);
++    
++                if ((var7 == Block.waterStill.blockID || var7 == Block.waterMoving.blockID) && worldObj.getBlockMetadata(par1, par2, par3) == 0)
++                {
++                    if (!par4)
++                    {
++                        return true;
++                    }
++    
++                    boolean var8 = true;
++    
++                    if (var8 && worldObj.getBlockMaterial(par1 - 1, par2, par3) != Material.water)
++                    {
++                        var8 = false;
++                    }
++    
++                    if (var8 && worldObj.getBlockMaterial(par1 + 1, par2, par3) != Material.water)
++                    {
++                        var8 = false;
++                    }
++    
++                    if (var8 && worldObj.getBlockMaterial(par1, par2, par3 - 1) != Material.water)
++                    {
++                        var8 = false;
++                    }
++    
++                    if (var8 && worldObj.getBlockMaterial(par1, par2, par3 + 1) != Material.water)
++                    {
++                        var8 = false;
++                    }
++    
++                    if (!var8)
++                    {
++                        return true;
++                    }
++                }
++            }
++    
++            return false;
++        }
++    }
++
++    /**
++     * Tests whether or not snow can be placed at a given location
++     * @param worldObj TODO
++     * @param par1 TODO
++     * @param par2 TODO
++     * @param par3 TODO
++     */
++    public boolean canSnowAt(int par1, int par2, int par3)
++    {
++        BiomeGenBase var4 = worldObj.getBiomeGenForCoords(par1, par3);
++        float var5 = var4.getFloatTemperature();
++    
++        if (var5 > 0.15F)
++        {
++            return false;
++        }
++        else
++        {
++            if (par2 >= 0 && par2 < 256 && worldObj.getSavedLightValue(EnumSkyBlock.Block, par1, par2, par3) < 10)
++            {
++                int var6 = worldObj.getBlockId(par1, par2 - 1, par3);
++                int var7 = worldObj.getBlockId(par1, par2, par3);
++    
++                if (var7 == 0 && Block.snow.canPlaceBlockAt(worldObj, par1, par2, par3) && var6 != 0 && var6 != Block.ice.blockID && Block.blocksList[var6].blockMaterial.blocksMovement())
++                {
++                    return true;
++                }
++            }
++    
++            return false;
++        }
++    }
++
++    /**
++     * Sets the world time.
++     * @param worldObj TODO
++     * @param par1 TODO
++     */
++    public void setWorldTime(long par1)
++    {
++        worldObj.worldInfo.setWorldTime(par1);
++    }
++
++    /**
++     * Retrieve the world seed from level.dat
++     * @param worldObj TODO
++     */
++    public long getSeed()
++    {
++        return worldObj.worldInfo.getSeed();
++    }
++
++    public long getWorldTime()
++    {
++        return worldObj.worldInfo.getWorldTime();
++    }
++
++    /**
++     * Returns the coordinates of the spawn point
++     * @param worldObj TODO
++     */
++    public ChunkCoordinates getSpawnPoint()
++    {
++        return new ChunkCoordinates(worldObj.worldInfo.getSpawnX(), worldObj.worldInfo.getSpawnY(), worldObj.worldInfo.getSpawnZ());
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setSpawnLocation(int par1, int par2, int par3)
++    {
++        worldObj.worldInfo.setSpawnPosition(par1, par2, par3);
++    }
++
++    /**
++     * Checks to see if the biome rainfall values for a given x,y,z coordinate set are extremely high
++     * @param worldObj TODO
++     * @param par1 TODO
++     * @param par2 TODO
++     * @param par3 TODO
++     */
++    public boolean isBlockHighHumidity(int par1, int par2, int par3)
++    {
++        BiomeGenBase var4 = worldObj.getBiomeGenForCoords(par1, par3);
++        return var4.isHighHumidity();
++    }
++
++    /**
++     * Returns current world height.
++     */
++    public int getHeight()
++    {
++        return 256;
++    }
++
++    /**
++     * Returns current world height.
++     * @param worldObj TODO
++     */
++    public int getActualHeight()
++    {
++        return hasNoSky ? 128 : 256;
++    }
++
++    @SideOnly(Side.CLIENT)
++    
++    /**
++     * Returns horizon height for use in rendering the sky.
++     */
++    public double getHorizon()
++    {
++        return worldObj.worldInfo.getTerrainType().getHorizon(worldObj);
++    }
++
++    public void resetRainAndThunder()
++    {
++        worldObj.worldInfo.setRainTime(0);
++        worldObj.worldInfo.setRaining(false);
++        worldObj.worldInfo.setThunderTime(0);
++        worldObj.worldInfo.setThundering(false);
++    }
++
++    public void tickBlocksAndAmbiance(Chunk var7)
++    {
++        int var5 = var7.xPosition << 4;
++        int var6 = var7.zPosition << 4;
++
++        int var8;
++        int var9;
++        int var10;
++        int var11;
++
++        worldObj.theProfiler.startSection("thunder");
++        if (worldObj.rand.nextInt(100000) == 0 && worldObj.isRaining() && worldObj.isThundering())
++        {
++            worldObj.updateLCG = worldObj.updateLCG * 3 + 1013904223;
++            var8 = worldObj.updateLCG >> 2;
++            var9 = var5 + (var8 & 15);
++            var10 = var6 + (var8 >> 8 & 15);
++            var11 = worldObj.getPrecipitationHeight(var9, var10);
++
++            if (worldObj.canLightningStrikeAt(var9, var11, var10))
++            {
++                worldObj.addWeatherEffect(new EntityLightningBolt(worldObj, (double)var9, (double)var11, (double)var10));
++                worldObj.lastLightningBolt = 2;
++            }
++        }
++        worldObj.theProfiler.endStartSection("iceandsnow");
++        int var13;
++
++        if (worldObj.rand.nextInt(16) == 0)
++        {
++            worldObj.updateLCG = worldObj.updateLCG * 3 + 1013904223;
++            var8 = worldObj.updateLCG >> 2;
++            var9 = var8 & 15;
++            var10 = var8 >> 8 & 15;
++            var11 = worldObj.getPrecipitationHeight(var9 + var5, var10 + var6);
++
++            if (worldObj.isBlockFreezableNaturally(var9 + var5, var11 - 1, var10 + var6))
++            {
++                worldObj.setBlockWithNotify(var9 + var5, var11 - 1, var10 + var6, Block.ice.blockID);
++            }
++
++            if (worldObj.isRaining() && this.canSnowAt(var9 + var5, var11, var10 + var6))
++            {
++                worldObj.setBlockWithNotify(var9 + var5, var11, var10 + var6, Block.snow.blockID);
++            }
++
++            if (worldObj.isRaining())
++            {
++                BiomeGenBase var12 = this.getBiomeGenForCoords(var9 + var5, var10 + var6);
++
++                if (var12.canSpawnLightningBolt())
++                {
++                    var13 = worldObj.getBlockId(var9 + var5, var11 - 1, var10 + var6);
++
++                    if (var13 != 0)
++                    {
++                        Block.blocksList[var13].fillWithRain(worldObj, var9 + var5, var11 - 1, var10 + var6);
++                    }
++                }
++            }
++        }
++
++        worldObj.theProfiler.endSection();
 +    }
 +
  }
