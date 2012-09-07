@@ -16,13 +16,13 @@ import java.util.logging.Level;
 public class RelaunchClassLoader extends URLClassLoader
 {
     private static String[] excludedPackages = {
-        "java.", "sun.", "javax.",
+        "java.", "sun.",
         "cpw.mods.fml.relauncher.", "net.minecraftforge.classloading."
     };
 
     private static String[] transformerExclusions =
     {
-        "org.objectweb.asm.", "com.google.common.", "cpw.mods.fml."
+        "org.objectweb.asm.", "com.google.common.", "cpw.mods.fml.", "javax."
     };
     private List<URL> sources;
     private ClassLoader parent;
