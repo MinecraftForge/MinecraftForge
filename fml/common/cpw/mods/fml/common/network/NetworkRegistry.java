@@ -340,7 +340,7 @@ public class NetworkRegistry
     }
     public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
     {
-        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler(mapData.field_73438_a);
+        NetworkModHandler nmh = FMLNetworkHandler.instance().findNetworkModHandler((int)mapData.field_73438_a);
         if (nmh == null)
         {
             FMLLog.info("Received a tiny packet for network id %d that is not recognised here", mapData.field_73438_a);
