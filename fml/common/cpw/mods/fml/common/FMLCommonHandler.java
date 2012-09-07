@@ -239,7 +239,7 @@ public class FMLCommonHandler
         {
             Builder brd = ImmutableList.<String>builder();
             brd.add(Loader.instance().getMCVersionString());
-            brd.add(Loader.instance().getFMLVersionString());
+            brd.add("FML v"+Loader.instance().getFMLVersionString());
             String forgeBranding = (String) callForgeMethod("getBrandingVersion");
             if (!Strings.isNullOrEmpty(forgeBranding))
             {
