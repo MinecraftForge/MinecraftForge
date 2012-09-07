@@ -326,7 +326,7 @@
              return par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -3958,4 +3981,65 @@
+@@ -3958,4 +3981,70 @@
              var7.destroyBlockPartially(par1, par2, par3, par4, par5);
          }
      }
@@ -390,5 +390,10 @@
 +        }
 +
 +        return block.isBlockSolidOnSide(this, X, Y, Z, side);
++    }
++
++    public ChunkCoordinates getRandomizedSpawnPoint()
++    {
++        return this.provider.getRandomizedSpawnPoint();
 +    }
  }
