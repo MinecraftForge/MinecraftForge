@@ -140,7 +140,7 @@ public class NetworkModHandler
             NetworkRegistry.instance().registerConnectionHandler(instance);
         }
 
-        if (mod.tinyPacketHandler()!=tinyPacketHandlerDefaultValue)
+        if (mod.tinyPacketHandler()!=getTinyPacketHandlerDefaultValue())
         {
             try
             {
