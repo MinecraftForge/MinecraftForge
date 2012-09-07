@@ -93,7 +93,7 @@ public class DimensionManager
     public static void setWorld(int id, WorldServer world)
     {
         if (world != null) {
-               worlds.put(id, world);
+            worlds.put(id, world);
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
         } else {
             worlds.remove(id);
@@ -124,6 +124,31 @@ public class DimensionManager
     public static WorldServer getWorld(int id)
     {
         return worlds.get(id);
+    }
+
+    public static void initDimension(int dim) {
+        WorldServer overworld = getWorld(0);
+        if (overworld == null) {
+            throw new RuntimeException("Cannot Hotload Dim: Overworld is not Loaded!");
+        }
+        try {
+            DimensionManager.getProviderType(dim);
+        } catch (Exception e) {
+            System.err.println("Cannot Hotload Dim: " + e.getMessage());
+            return; //If a provider hasn't been registered then we can't hotload the dim
+        }
+        MinecraftServer mcServer = overworld.getMinecraftServer();
+        ISaveHandler savehandler = overworld.getSaveHandler();
+        WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
+
+        WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
+        world.addWorldAccess(new WorldManager(mcServer, world));
+        if (!mcServer.isSinglePlayer())
+        {
+            world.getWorldInfo().setGameType(mcServer.getGameType());
+        }
+
+        mcServer.setDifficultyForAllDimensions(mcServer.getDifficulty());
     }
 
     public static WorldServer[] getWorlds()
