@@ -5,7 +5,7 @@
              var4.zCenter = par2World.getWorldInfo().getSpawnZ();
              var4.scale = 3;
 -            var4.dimension = (byte)par2World.provider.worldType;
-+            var4.dimension = par2World.provider.worldType;
++            var4.dimension = (short)par2World.provider.worldType;
              var4.markDirty();
              par2World.setItemData(var3, var4);
          }
@@ -32,7 +32,7 @@
          var5.zCenter = MathHelper.floor_double(par3EntityPlayer.posZ);
          var5.scale = 3;
 -        var5.dimension = (byte)par2World.provider.worldType;
-+        var5.dimension = par2World.provider.worldType;
++        var5.dimension = (short)par2World.provider.worldType;
          var5.markDirty();
      }
  
