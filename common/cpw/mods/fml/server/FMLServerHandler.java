@@ -163,4 +163,9 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         // NOOP on server
     }
+    @Override
+    public void setCompatibilityLevel(NetHandler netHandler, byte compatibilityLevel)
+    {
+        // NOOP on server
+    }
 }
