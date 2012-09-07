@@ -1,7 +1,9 @@
 package cpw.mods.mockmod;
 
 import net.minecraft.src.ItemBlock;
+import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
+import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet250CustomPayload;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Block;
@@ -14,21 +16,28 @@ import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.ITinyPacketHandler;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.ModMetadata;
 
-@Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="after:mod_testMod", useMetadata=true)
+@Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="after:FML@(3.0.184.0,3.0.184.1]", useMetadata=true)
 @NetworkMod(channels={"MockMod"},clientSideRequired=true,packetHandler=MockMod.PacketHandler.class,clientPacketHandlerSpec=
-@SidedPacketHandler(packetHandler=TestClass.class,channels={"Fish"}))
+@SidedPacketHandler(packetHandler=TestClass.class,channels={"Fish"}),tinyPacketHandler=MockMod.PacketHandler.class)
 public class MockMod
 {
-    public static class PacketHandler implements IPacketHandler
+    public static class PacketHandler implements IPacketHandler, ITinyPacketHandler
     {
         @Override
         public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player)
         {
+        }
+
+        @Override
+        public void handle(NetHandler handler, Packet131MapData mapData)
+        {
+
         }
     }
     public class TestItem extends ItemBlock

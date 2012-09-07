@@ -218,7 +218,7 @@ public class Loader
                 }
                 if (!versionMissingMods.isEmpty())
                 {
-                    FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), missingMods);
+                    FMLLog.severe("The mod %s (%s) requires mod versions %s to be available", mod.getModId(), mod.getName(), versionMissingMods);
                     throw new MissingModsException(versionMissingMods);
                 }
             }
@@ -545,7 +545,7 @@ public class Loader
      */
     public String getFMLVersionString()
     {
-        return String.format("FML v%s.%s.%s.%s", major, minor, rev, build);
+        return String.format("%s.%s.%s.%s", major, minor, rev, build);
     }
 
     /**
