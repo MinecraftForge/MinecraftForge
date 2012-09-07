@@ -1,16 +1,15 @@
 --- ../src_base/common/net/minecraft/src/EntityItem.java
 +++ ../src_work/common/net/minecraft/src/EntityItem.java
-@@ -1,6 +1,9 @@
- package net.minecraft.src;
+@@ -2,6 +2,8 @@
  
  import java.util.Iterator;
-+
+ 
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
- 
  import cpw.mods.fml.common.registry.GameRegistry;
  
-@@ -122,6 +125,11 @@
+ public class EntityItem extends Entity
+@@ -122,6 +124,11 @@
          {
              this.setDead();
          }
@@ -22,7 +21,7 @@
      }
  
      public boolean func_70289_a(EntityItem par1EntityItem)
-@@ -225,7 +233,7 @@
+@@ -225,7 +232,7 @@
          NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
          this.item = ItemStack.loadItemStackFromNBT(var2);
  
@@ -31,7 +30,7 @@
          {
              this.setDead();
          }
-@@ -238,9 +246,21 @@
+@@ -238,9 +245,21 @@
      {
          if (!this.worldObj.isRemote)
          {
