@@ -18,6 +18,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -25,6 +26,7 @@ import cpw.mods.fml.common.ModContainer;
 public class ModListRequestPacket extends FMLPacket
 {
     private List<String> sentModList;
+    private byte compatibilityLevel;
 
     public ModListRequestPacket()
     {
@@ -41,6 +43,7 @@ public class ModListRequestPacket extends FMLPacket
         {
             dat.writeUTF(mc.getModId());
         }
+        dat.writeByte(FMLNetworkHandler.getCompatibilityLevel());
         return dat.toByteArray();
     }
 
@@ -53,6 +56,14 @@ public class ModListRequestPacket extends FMLPacket
         for (int i = 0; i < listSize; i++)
         {
             sentModList.add(in.readUTF());
+        }
+        try
+        {
+            compatibilityLevel = in.readByte();
+        }
+        catch (IllegalArgumentException e)
+        {
+            FMLLog.fine("No compatibility byte found - the server is too old");
         }
         return this;
     }
@@ -99,6 +110,11 @@ public class ModListRequestPacket extends FMLPacket
             }
         }
 
+        if (compatibilityLevel != 0)
+        {
+            FMLLog.fine("The server has compatibility level %d", compatibilityLevel);
+            FMLCommonHandler.instance().getSidedDelegate().setCompatibilityLevel(netHandler, compatibilityLevel);
+        }
         Packet250CustomPayload pkt = new Packet250CustomPayload();
         pkt.field_73630_a = "FML";
         pkt.field_73629_c = FMLPacket.makePacket(MOD_LIST_RESPONSE, modVersions, missingMods);

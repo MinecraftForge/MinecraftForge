@@ -37,4 +37,6 @@ public interface IFMLSidedHandler
     void displayMissingMods(ModMissingPacket modMissingPacket);
 
     void handleTinyPacket(NetHandler handler, Packet131MapData mapData);
+
+    void setCompatibilityLevel(NetHandler netHandler, byte compatibilityLevel);
 }

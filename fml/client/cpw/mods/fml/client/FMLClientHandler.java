@@ -409,4 +409,10 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         ((NetClientHandler)handler).fmlPacket131Callback(mapData);
     }
+
+    @Override
+    public void setCompatibilityLevel(NetHandler netHandler, byte compatibilityLevel)
+    {
+        ((NetClientHandler)netHandler).setConnectionCompatibilityLevel(compatibilityLevel);
+    }
 }
