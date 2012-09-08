@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/ColorizerFoliage.java
 +++ ../src_work/common/net/minecraft/src/ColorizerFoliage.java
-@@ -1,15 +1,23 @@
+@@ -1,28 +1,34 @@
  package net.minecraft.src;
  
 +import net.minecraftforge.client.IFoliageColorizer;
@@ -8,14 +8,15 @@
  import cpw.mods.fml.common.asm.SideOnly;
  
  @SideOnly(Side.CLIENT)
- public class ColorizerFoliage
+-public class ColorizerFoliage
++public class ColorizerFoliage implements IFoliageColorizer
  {
 +    /**
 +     * Interface for overriding the functions within this class. Normally you 
 +     * could just extend the class, but since all methods are static, rather 
 +     * than being called through an instance, that won't really work.
 +     */
-+    public static IFoliageColorizer FoliageColorizer = null;
++    public static IFoliageColorizer FoliageColorizer = new ColorizerFoliage();
 +    
      /** Color buffer for foliage */
      private static int[] foliageBuffer = new int[65536];
@@ -25,44 +26,75 @@
      {
          foliageBuffer = par0ArrayOfInteger;
      }
-@@ -19,6 +27,8 @@
+ 
+     /**
+-     * Gets foliage color from temperature and humidity. Args: temperature, humidity
++     * Gets foliage color from temperature and humidity. Args: temperature,
++     * humidity
       */
      public static int getFoliageColor(double par0, double par2)
      {
-+        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColor(par0, par2, foliageBuffer);
-+        
-         par2 *= par0;
-         int var4 = (int)((1.0D - par0) * 255.0D);
-         int var5 = (int)((1.0D - par2) * 255.0D);
-@@ -30,7 +40,10 @@
+-        par2 *= par0;
+-        int var4 = (int)((1.0D - par0) * 255.0D);
+-        int var5 = (int)((1.0D - par2) * 255.0D);
+-        return foliageBuffer[var5 << 8 | var4];
++        return FoliageColorizer.colorizeFoliage(par0, par2, foliageBuffer);
+     }
+ 
+     /**
+@@ -30,7 +36,7 @@
       */
      public static int getFoliageColorPine()
      {
 -        return 6396257;
-+        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColorPine();
-+        //Converted to hex, since color values are meaningless as ints.
-+        //return 6396257;
-+        return 0x619961;
++        return FoliageColorizer.colorizePineFoliage();
      }
  
      /**
-@@ -38,11 +51,17 @@
+@@ -38,11 +44,44 @@
       */
      public static int getFoliageColorBirch()
      {
 -        return 8431445;
-+        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColorBirch();
-+        //Converted to hex, since color values are meaningless as ints.
-+        //return 8431445;
-+        return 0x80A755;
++        return FoliageColorizer.colorizeBirchFoliage();
      }
  
      public static int getFoliageColorBasic()
      {
 -        return 4764952;
-+        if (FoliageColorizer != null) return FoliageColorizer.getFoliageColorBasic();
-+        //Converted to hex, since color values are meaningless as ints.
-+        //return 4764952;
++        return FoliageColorizer.colorizeBasicFoliage();
++    }
++
++    @Override
++    public int colorizeFoliage(double temperature, double humidity, int[] foliageBuffer)
++    {
++        humidity *= temperature;
++        int var4 = (int) ((1.0D - temperature) * 255.0D);
++        int var5 = (int) ((1.0D - humidity) * 255.0D);
++        return foliageBuffer[var5 << 8 | var4];
++    }
++
++    @Override
++    public int colorizePineFoliage()
++    {
++        // Converted to hex, since color values are meaningless as ints.
++        // return 6396257;
++        return 0x619961;
++    }
++
++    @Override
++    public int colorizeBirchFoliage()
++    {
++        // Converted to hex, since color values are meaningless as ints.
++        // return 8431445;
++        return 0x80A755;
++    }
++
++    @Override
++    public int colorizeBasicFoliage()
++    {
++        // Converted to hex, since color values are meaningless as ints.
++        // return 4764952;
 +        return 0x48B518;
      }
  }

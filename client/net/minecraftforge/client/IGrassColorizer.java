@@ -19,5 +19,5 @@ public interface IGrassColorizer
      *            array.
      * @return The grass color to use for rendering.
      */
-    public int getGrassColor(double temperature, double humidity, int[] grassBuffer);
+    public int colorizeGrass(double temperature, double humidity, int[] grassBuffer);
 }

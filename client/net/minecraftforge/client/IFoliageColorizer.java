@@ -19,22 +19,22 @@ public interface IFoliageColorizer
      *            1D array.
      * @return The foliage color to use for rendering.
      */
-    public int getFoliageColor(double temperature, double humidity, int[] foliageBuffer);
+    public int colorizeFoliage(double temperature, double humidity, int[] foliageBuffer);
 
     /**
      * Gets the foliage color for spruce trees.
      */
-    public int getFoliageColorPine();
+    public int colorizePineFoliage();
 
     /**
      * Gets the foliage color for birch trees.
      */
-    public int getFoliageColorBirch();
+    public int colorizeBirchFoliage();
 
     /**
      * Get's the foliage color for oak trees.
      * 
      * @return An ARGB int, where the alpha channel is ignored.
      */
-    public int getFoliageColorBasic();
+    public int colorizeBasicFoliage();
 }

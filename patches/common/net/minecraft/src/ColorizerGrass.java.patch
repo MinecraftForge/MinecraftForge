@@ -8,24 +8,41 @@
  import cpw.mods.fml.common.asm.SideOnly;
  
  @SideOnly(Side.CLIENT)
- public class ColorizerGrass
+-public class ColorizerGrass
++public class ColorizerGrass implements IGrassColorizer
  {
 +    /**
 +     * Interface for overriding the functions within this class. Normally you 
 +     * could just extend the class, but since all methods are static, rather 
 +     * than being called through an instance, that won't really work.
 +     */
-+    public static IGrassColorizer GrassColorizer = null;
++    public static IGrassColorizer GrassColorizer = new ColorizerGrass();
 +    
      /** Color buffer for grass */
      private static int[] grassBuffer = new int[65536];
  
-@@ -19,6 +27,8 @@
+@@ -15,13 +23,19 @@
+     }
+ 
+     /**
+-     * Gets grass color from temperature and humidity. Args: temperature, humidity
++     * Gets grass color from temperature and humidity. Args: temperature,
++     * humidity
       */
      public static int getGrassColor(double par0, double par2)
      {
-+        if (GrassColorizer != null) return GrassColorizer.getGrassColor(par0, par2, grassBuffer);
-+        
-         par2 *= par0;
-         int var4 = (int)((1.0D - par0) * 255.0D);
-         int var5 = (int)((1.0D - par2) * 255.0D);
+-        par2 *= par0;
+-        int var4 = (int)((1.0D - par0) * 255.0D);
+-        int var5 = (int)((1.0D - par2) * 255.0D);
++        return GrassColorizer.colorizeGrass(par0, par2, grassBuffer);
++    }
++
++    public int colorizeGrass(double temperature, double humidity, int[] grassBuffer)
++    {
++        humidity *= temperature;
++        int var4 = (int) ((1.0D - temperature) * 255.0D);
++        int var5 = (int) ((1.0D - humidity) * 255.0D);
+         return grassBuffer[var5 << 8 | var4];
+     }
+-}
++}
