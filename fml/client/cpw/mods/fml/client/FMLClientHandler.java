@@ -419,8 +419,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public byte getClientCompatibilityLevel()
     {
-        System.out.printf("Client Compatibility %d\n", NetClientHandler.getConnectionCompatibilityLevel());
-        Thread.dumpStack();
         return NetClientHandler.getConnectionCompatibilityLevel();
     }
 }

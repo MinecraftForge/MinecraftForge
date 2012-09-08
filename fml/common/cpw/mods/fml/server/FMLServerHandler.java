@@ -172,8 +172,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public byte getClientCompatibilityLevel()
     {
-        System.out.printf("Server Compatibility %d\n", 0);
-        Thread.dumpStack();
         return 0;
     }
 }
