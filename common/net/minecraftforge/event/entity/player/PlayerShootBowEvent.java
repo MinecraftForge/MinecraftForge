@@ -1,7 +1,7 @@
-package net.minecraftforge.event.entity.living;
+package net.minecraftforge.event.entity.player;
 
 import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraftforge.event.Cancelable;
 
@@ -10,17 +10,15 @@ import net.minecraftforge.event.Cancelable;
  * If the event is cancelled the arrow-entity will be destroyed.
  */
 @Cancelable
-public class LivingShootBowEvent extends LivingEvent
+public class PlayerShootBowEvent extends PlayerEvent
 {
-    public final EntityLiving shooter;
     public final ItemStack bow;
     public final Entity projectile;
     public final float force;
 
-    public LivingShootBowEvent(EntityLiving entity, ItemStack bow, Entity projectile, float force)
+    public PlayerShootBowEvent(EntityPlayer entity, ItemStack bow, Entity projectile, float force)
     {
         super(entity);
-        this.shooter = entity;
         this.bow = bow;
         this.projectile = projectile;
         this.force = force;

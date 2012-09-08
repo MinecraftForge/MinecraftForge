@@ -4,9 +4,9 @@
  package net.minecraft.src;
 +
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.living.LivingShootBowEvent;
 +import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 +import net.minecraftforge.event.entity.player.ArrowNockEvent;
++import net.minecraftforge.event.entity.player.PlayerShootBowEvent;
  
  public class ItemBow extends Item
  {
@@ -38,7 +38,7 @@
                  var8.setFire(100);
 +            }
 +            
-+            if (MinecraftForge.EVENT_BUS.post(new LivingShootBowEvent(par3EntityPlayer, par1ItemStack, var8, var7))) {
++            if (MinecraftForge.EVENT_BUS.post(new PlayerShootBowEvent(par3EntityPlayer, par1ItemStack, var8, var7))) {
 +                var8.setDead();
 +                return;
              }
