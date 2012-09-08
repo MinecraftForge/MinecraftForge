@@ -12,12 +12,13 @@ public interface IGrassColorizer
      * 
      * @param temperature
      *            The temperature of the biome.
-     * @param humidity
-     *            The humidity of the biome.
+     * @param rainfall
+     *            The rainfall of the biome.
      * @param grassBuffer
      *            The default gradient image loaded into ColorizerGrass, as a 1D
      *            array.
-     * @return The grass color to use for rendering.
+     * @return The grass color to use for rendering, as an ARGB int (though A is
+     *         ignored).
      */
-    public int colorizeGrass(double temperature, double humidity, int[] grassBuffer);
+    public int colorizeGrass(double temperature, double rainfall, int[] grassBuffer);
 }

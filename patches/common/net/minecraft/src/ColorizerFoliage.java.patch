@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/ColorizerFoliage.java
 +++ ../src_work/common/net/minecraft/src/ColorizerFoliage.java
-@@ -1,28 +1,34 @@
+@@ -1,48 +1,112 @@
  package net.minecraft.src;
  
 +import net.minecraftforge.client.IFoliageColorizer;
@@ -12,12 +12,12 @@
 +public class ColorizerFoliage implements IFoliageColorizer
  {
 +    /**
-+     * Interface for overriding the functions within this class. Normally you 
-+     * could just extend the class, but since all methods are static, rather 
++     * Interface for overriding the functions within this class. Normally you
++     * could just extend the class, but since all methods are static, rather
 +     * than being called through an instance, that won't really work.
 +     */
 +    public static IFoliageColorizer FoliageColorizer = new ColorizerFoliage();
-+    
++
      /** Color buffer for foliage */
      private static int[] foliageBuffer = new int[65536];
  
@@ -29,70 +29,104 @@
  
      /**
 -     * Gets foliage color from temperature and humidity. Args: temperature, humidity
-+     * Gets foliage color from temperature and humidity. Args: temperature,
-+     * humidity
++     * Calculates the grass color for blocks based on their biome data. Returns
++     * the output of the current IFoliageColorizer interface.
++     * 
++     * @param temperature
++     *            The temperature of the biome.
++     * @param rainfall
++     *            The rainfall of the biome.
++     * @param grassBuffer
++     *            The default gradient image loaded into ColorizerGrass, as a 1D
++     *            array.
++     * @return The grass color to use for rendering, as an ARGB int (though A is
++     *         ignored).
       */
-     public static int getFoliageColor(double par0, double par2)
+-    public static int getFoliageColor(double par0, double par2)
++    public static int getFoliageColor(double temperature, double rainfall)
      {
 -        par2 *= par0;
 -        int var4 = (int)((1.0D - par0) * 255.0D);
 -        int var5 = (int)((1.0D - par2) * 255.0D);
--        return foliageBuffer[var5 << 8 | var4];
-+        return FoliageColorizer.colorizeFoliage(par0, par2, foliageBuffer);
-     }
- 
-     /**
-@@ -30,7 +36,7 @@
-      */
-     public static int getFoliageColorPine()
-     {
--        return 6396257;
++        return FoliageColorizer.colorizeFoliage(temperature, rainfall, foliageBuffer);
++    }
++
++    /**
++     * Gets the foliage color for spruce / pine (meta 1) trees. Returns the
++     * output of the current IFoliageColorizer interface.
++     * 
++     * @return The foliage color to use for rendering, as an ARGB int (though A
++     *         is ignored).
++     */
++    public static int getFoliageColorPine()
++    {
 +        return FoliageColorizer.colorizePineFoliage();
-     }
- 
-     /**
-@@ -38,11 +44,44 @@
-      */
-     public static int getFoliageColorBirch()
-     {
--        return 8431445;
++    }
++
++    /**
++     * Gets the foliage color for birch (meta 2) trees. Returns the output of
++     * the current IFoliageColorizer interface.
++     * 
++     * @return The foliage color to use for rendering, as an ARGB int (though A
++     *         is ignored).
++     */
++    public static int getFoliageColorBirch()
++    {
 +        return FoliageColorizer.colorizeBirchFoliage();
-     }
- 
-     public static int getFoliageColorBasic()
-     {
--        return 4764952;
++    }
++
++    /**
++     * Gets the foliage color for oak (meta 0) trees. Returns the output of the
++     * current IFoliageColorizer interface.
++     * 
++     * @return The foliage color to use for rendering, as an ARGB int (though A
++     *         is ignored).
++     */
++    public static int getFoliageColorBasic()
++    {
 +        return FoliageColorizer.colorizeBasicFoliage();
 +    }
 +
 +    @Override
-+    public int colorizeFoliage(double temperature, double humidity, int[] foliageBuffer)
++    public int colorizeFoliage(double temperature, double rainfall, int[] foliageBuffer)
 +    {
-+        humidity *= temperature;
++        rainfall *= temperature;
 +        int var4 = (int) ((1.0D - temperature) * 255.0D);
-+        int var5 = (int) ((1.0D - humidity) * 255.0D);
-+        return foliageBuffer[var5 << 8 | var4];
-+    }
-+
++        int var5 = (int) ((1.0D - rainfall) * 255.0D);
+         return foliageBuffer[var5 << 8 | var4];
+     }
+ 
+-    /**
+-     * Gets the foliage color for pine type (metadata 1) trees
+-     */
+-    public static int getFoliageColorPine()
 +    @Override
 +    public int colorizePineFoliage()
-+    {
+     {
+-        return 6396257;
 +        // Converted to hex, since color values are meaningless as ints.
 +        // return 6396257;
 +        return 0x619961;
-+    }
-+
+     }
+ 
+-    /**
+-     * Gets the foliage color for birch type (metadata 2) trees
+-     */
+-    public static int getFoliageColorBirch()
 +    @Override
 +    public int colorizeBirchFoliage()
-+    {
+     {
+-        return 8431445;
 +        // Converted to hex, since color values are meaningless as ints.
 +        // return 8431445;
 +        return 0x80A755;
-+    }
-+
+     }
+ 
+-    public static int getFoliageColorBasic()
 +    @Override
 +    public int colorizeBasicFoliage()
-+    {
+     {
+-        return 4764952;
 +        // Converted to hex, since color values are meaningless as ints.
 +        // return 4764952;
 +        return 0x48B518;
