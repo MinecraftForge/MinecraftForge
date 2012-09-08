@@ -1,5 +1,9 @@
 package cpw.mods.fml.relauncher;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
@@ -52,4 +56,23 @@ public interface IFMLLoadingPlugin
      * "coremodLocation" : the file this coremod loaded from,
      */
     void injectData(Map<String, Object> data);
+
+
+    /**
+     * Annotate your load plugin with a list of package prefixes that will *not* be
+     * processed by the ASM transformation stack.
+     *
+     * Your plugin, and any transformers should *definitely* be in this list, because
+     * otherwise you can face problems with the classloader trying to transform classes
+     * with your transformer, whilst it is *loading* your transformer. Not pretty.
+     *
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface TransformerExclusions
+    {
+        public String[] value() default "";
+    }
 }

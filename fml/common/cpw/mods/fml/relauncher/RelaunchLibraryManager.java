@@ -25,6 +25,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
+
 public class RelaunchLibraryManager
 {
     private static String[] rootPlugins =  { "cpw.mods.fml.relauncher.FMLCorePlugin" , "net.minecraftforge.classloading.FMLForgePlugin" };
@@ -319,7 +321,16 @@ public class RelaunchLibraryManager
             try
             {
                 downloadMonitor.updateProgressString("Loading coremod %s", coreMod.getName());
+                classLoader.addTransformerExclusion(fmlCorePlugin);
                 Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
+                TransformerExclusions trExclusions = coreModClass.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
+                if (trExclusions!=null)
+                {
+                    for (String st : trExclusions.value())
+                    {
+                        classLoader.addTransformerExclusion(st);
+                    }
+                }
                 IFMLLoadingPlugin plugin = (IFMLLoadingPlugin) coreModClass.newInstance();
                 loadPlugins.add(plugin);
                 pluginLocations .put(plugin, coreMod);
