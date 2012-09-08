@@ -13,7 +13,7 @@
      public int field_72556_d = 20;
      Random field_72557_e = new Random();
  
-+    public int connectionCompatibilityLevel;
++    private static byte connectionCompatibilityLevel;
 +
      public NetClientHandler(Minecraft p_i3103_1_, String p_i3103_2_, int p_i3103_3_) throws IOException
      {
@@ -91,12 +91,12 @@
 +        return field_72563_h.field_71439_g;
 +    }
 +
-+    public void setConnectionCompatibilityLevel(int connectionCompatibilityLevel)
++    public static void setConnectionCompatibilityLevel(byte connectionCompatibilityLevel)
 +    {
-+        this.connectionCompatibilityLevel = connectionCompatibilityLevel;
++        NetClientHandler.connectionCompatibilityLevel = connectionCompatibilityLevel;
 +    }
 +
-+    public int getConnectionCompatibilityLevel()
++    public static byte getConnectionCompatibilityLevel()
 +    {
 +        return connectionCompatibilityLevel;
 +    }
