@@ -41,7 +41,7 @@
 +        }
 +        else
 +        {
-+            this.field_73558_e = p_73267_1_.readShort();
++            this.field_73558_e = p_73267_1_.readInt();
 +        }
          this.field_73555_f = p_73267_1_.readByte();
          this.field_73556_g = p_73267_1_.readByte();
@@ -57,7 +57,7 @@
 +        }
 +        else
 +        {
-+            p_73273_1_.writeShort(this.field_73558_e);
++            p_73273_1_.writeInt(this.field_73558_e);
 +        }
          p_73273_1_.writeByte(this.field_73555_f);
          p_73273_1_.writeByte(this.field_73556_g);
@@ -67,6 +67,6 @@
          }
  
 -        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1;
-+        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 1);
++        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 3);
      }
  }
