@@ -9,26 +9,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class RelaunchClassLoader extends URLClassLoader
 {
-    private static String[] excludedPackages = {
-        "java.", "sun.",
-        "cpw.mods.fml.relauncher.", "net.minecraftforge.classloading."
-    };
+    // Left behind for CCC/NEI compatibility
+    private static String[] excludedPackages = new String[0];
+    // Left behind for CCC/NEI compatibility
+    private static String[] transformerExclusions = new String[0];
 
-    private static String[] transformerExclusions =
-    {
-        "org.objectweb.asm.", "com.google.common.", "cpw.mods.fml.", "javax."
-    };
     private List<URL> sources;
     private ClassLoader parent;
 
     private List<IClassTransformer> transformers;
     private Map<String, Class> cachedClasses;
+
+    private Set<String> classLoaderExceptions = new HashSet<String>();
+    private Set<String> transformerExceptions = new HashSet<String>();
 
     public RelaunchClassLoader(URL[] sources)
     {
@@ -39,6 +40,18 @@ public class RelaunchClassLoader extends URLClassLoader
         this.transformers = new ArrayList<IClassTransformer>(2);
 //        ReflectionHelper.setPrivateValue(ClassLoader.class, null, this, "scl");
         Thread.currentThread().setContextClassLoader(this);
+
+        // standard classloader exclusions
+        addClassLoaderExclusion("java.");
+        addClassLoaderExclusion("sun.");
+        addClassLoaderExclusion("cpw.mods.fml.relauncher.");
+        addClassLoaderExclusion("net.minecraftforge.classloading.");
+
+        // standard transformer exclusions
+        addTransformerExclusion("javax.");
+        addTransformerExclusion("cpw.mods.fml.");
+        addTransformerExclusion("org.objectweb.asm.");
+        addTransformerExclusion("com.google.common.");
     }
 
     public void registerTransformer(String transformerClassName)
@@ -55,7 +68,19 @@ public class RelaunchClassLoader extends URLClassLoader
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException
     {
-        for (String st : excludedPackages)
+        // NEI/CCC compatibility code
+        if (excludedPackages.length != 0)
+        {
+            classLoaderExceptions.addAll(Arrays.asList(excludedPackages));
+            excludedPackages = new String[0];
+        }
+        if (transformerExclusions.length != 0)
+        {
+            transformerExceptions.addAll(Arrays.asList(transformerExclusions));
+            transformerExclusions = new String[0];
+        }
+
+        for (String st : classLoaderExceptions)
         {
             if (name.startsWith(st))
             {
@@ -68,7 +93,7 @@ public class RelaunchClassLoader extends URLClassLoader
             return cachedClasses.get(name);
         }
 
-        for (String st : transformerExclusions)
+        for (String st : transformerExceptions)
         {
             if (name.startsWith(st))
             {
@@ -180,5 +205,15 @@ public class RelaunchClassLoader extends URLClassLoader
     public List<IClassTransformer> getTransformers()
     {
         return Collections.unmodifiableList(transformers);
+    }
+
+    private void addClassLoaderExclusion(String toExclude)
+    {
+        classLoaderExceptions.add(toExclude);
+    }
+
+    void addTransformerExclusion(String toExclude)
+    {
+        transformerExceptions.add(toExclude);
     }
 }
