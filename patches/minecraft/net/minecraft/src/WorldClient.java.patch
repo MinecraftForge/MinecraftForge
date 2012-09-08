@@ -1,0 +1,81 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldClient.java
++++ ../src_work/minecraft/net/minecraft/src/WorldClient.java
+@@ -7,6 +7,8 @@
+ import java.util.Random;
+ import java.util.Set;
+ import net.minecraft.client.Minecraft;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
+ 
+ @SideOnly(Side.CLIENT)
+ public class WorldClient extends World
+@@ -40,6 +42,12 @@
+         this.difficultySetting = par4;
+         this.setSpawnLocation(8, 64, 8);
+         this.mapStorage = par1NetClientHandler.mapStorage;
++        this.isRemote = true;
++        this.provider.registerWorld(this);
++        this.chunkProvider = this.createChunkProvider();
++        this.calculateInitialSkylight();
++        this.calculateInitialWeather_do();
++        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
+     }
+ 
+     /**
+@@ -265,55 +273,7 @@
+      */
+     protected void updateWeather()
+     {
+-        if (!this.provider.hasNoSky)
+-        {
+-            if (this.lastLightningBolt > 0)
+-            {
+-                --this.lastLightningBolt;
+-            }
+-
+-            this.prevRainingStrength = this.rainingStrength;
+-
+-            if (this.worldInfo.isRaining())
+-            {
+-                this.rainingStrength = (float)((double)this.rainingStrength + 0.01D);
+-            }
+-            else
+-            {
+-                this.rainingStrength = (float)((double)this.rainingStrength - 0.01D);
+-            }
+-
+-            if (this.rainingStrength < 0.0F)
+-            {
+-                this.rainingStrength = 0.0F;
+-            }
+-
+-            if (this.rainingStrength > 1.0F)
+-            {
+-                this.rainingStrength = 1.0F;
+-            }
+-
+-            this.prevThunderingStrength = this.thunderingStrength;
+-
+-            if (this.worldInfo.isThundering())
+-            {
+-                this.thunderingStrength = (float)((double)this.thunderingStrength + 0.01D);
+-            }
+-            else
+-            {
+-                this.thunderingStrength = (float)((double)this.thunderingStrength - 0.01D);
+-            }
+-
+-            if (this.thunderingStrength < 0.0F)
+-            {
+-                this.thunderingStrength = 0.0F;
+-            }
+-
+-            if (this.thunderingStrength > 1.0F)
+-            {
+-                this.thunderingStrength = 1.0F;
+-            }
+-        }
++        super.updateWeather();
+     }
+ 
+     public void func_73029_E(int par1, int par2, int par3)

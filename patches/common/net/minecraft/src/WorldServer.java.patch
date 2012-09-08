@@ -10,7 +10,16 @@
  
  public class WorldServer extends World
  {
-@@ -71,6 +74,7 @@
+@@ -50,6 +53,8 @@
+     /** An IntHashMap of entity IDs (integers) to their Entity objects. */
+     private IntHashMap entityIdMap;
+ 
++    protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
++
+     public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler)
+     {
+         super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler);
+@@ -71,6 +76,7 @@
          {
              this.pendingTickListEntries = new TreeSet();
          }
@@ -18,7 +27,104 @@
      }
  
      /**
-@@ -559,15 +563,27 @@
+@@ -179,10 +185,7 @@
+ 
+     private void resetRainAndThunder()
+     {
+-        this.worldInfo.setRainTime(0);
+-        this.worldInfo.setRaining(false);
+-        this.worldInfo.setThunderTime(0);
+-        this.worldInfo.setThundering(false);
++        this.provider.resetRainAndThunder();
+     }
+ 
+     public boolean areAllPlayersAsleep()
+@@ -253,6 +256,14 @@
+         int var1 = 0;
+         int var2 = 0;
+         Iterator var3 = this.activeChunkSet.iterator();
++
++        doneChunks.retainAll(activeChunkSet);
++        if (doneChunks.size() == activeChunkSet.size())
++        {
++                doneChunks.clear();
++        }
++
++        final long time = -System.currentTimeMillis();
+ 
+         while (var3.hasNext())
+         {
+@@ -263,64 +274,15 @@
+             Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
+             this.moodSoundAndLightCheck(var5, var6, var7);
+             this.theProfiler.endStartSection("tickChunk");
+-            var7.updateSkylight();
+-            this.theProfiler.endStartSection("thunder");
+-            int var8;
++            if (System.currentTimeMillis() + time <= 4 && doneChunks.add(var4)) {
++                var7.updateSkylight();
++            }
++            this.theProfiler.endStartSection("dimensionChunk");
+             int var9;
+             int var10;
+-            int var11;
+-
+-            if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
+-            {
+-                this.updateLCG = this.updateLCG * 3 + 1013904223;
+-                var8 = this.updateLCG >> 2;
+-                var9 = var5 + (var8 & 15);
+-                var10 = var6 + (var8 >> 8 & 15);
+-                var11 = this.getPrecipitationHeight(var9, var10);
+-
+-                if (this.canLightningStrikeAt(var9, var11, var10))
+-                {
+-                    this.addWeatherEffect(new EntityLightningBolt(this, (double)var9, (double)var11, (double)var10));
+-                    this.lastLightningBolt = 2;
+-                }
+-            }
+-
+-            this.theProfiler.endStartSection("iceandsnow");
+             int var13;
+ 
+-            if (this.rand.nextInt(16) == 0)
+-            {
+-                this.updateLCG = this.updateLCG * 3 + 1013904223;
+-                var8 = this.updateLCG >> 2;
+-                var9 = var8 & 15;
+-                var10 = var8 >> 8 & 15;
+-                var11 = this.getPrecipitationHeight(var9 + var5, var10 + var6);
+-
+-                if (this.isBlockFreezableNaturally(var9 + var5, var11 - 1, var10 + var6))
+-                {
+-                    this.setBlockWithNotify(var9 + var5, var11 - 1, var10 + var6, Block.ice.blockID);
+-                }
+-
+-                if (this.isRaining() && this.canSnowAt(var9 + var5, var11, var10 + var6))
+-                {
+-                    this.setBlockWithNotify(var9 + var5, var11, var10 + var6, Block.snow.blockID);
+-                }
+-
+-                if (this.isRaining())
+-                {
+-                    BiomeGenBase var12 = this.getBiomeGenForCoords(var9 + var5, var10 + var6);
+-
+-                    if (var12.canSpawnLightningBolt())
+-                    {
+-                        var13 = this.getBlockId(var9 + var5, var11 - 1, var10 + var6);
+-
+-                        if (var13 != 0)
+-                        {
+-                            Block.blocksList[var13].fillWithRain(this, var9 + var5, var11 - 1, var10 + var6);
+-                        }
+-                    }
+-                }
+-            }
++            provider.tickBlocksAndAmbiance(var7);
+ 
+             this.theProfiler.endStartSection("tickTiles");
+             ExtendedBlockStorage[] var19 = var7.getBlockStorageArray();
+@@ -559,15 +521,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -55,7 +161,7 @@
              }
          }
  
-@@ -587,7 +603,7 @@
+@@ -587,7 +561,7 @@
              var6 = var5;
          }
  
@@ -64,7 +170,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -710,6 +726,7 @@
+@@ -710,6 +684,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -72,3 +178,12 @@
          }
      }
  
+@@ -906,7 +881,7 @@
+         boolean var1 = this.isRaining();
+         super.updateWeather();
+ 
+-        if (var1 != this.isRaining())
++        if (var1 != this.isRaining() && this.provider.worldType == 0) //Only send data about weather changing on Overworld.  Does the native Weather model require rewrite to handle this right? Empirically works fine. - XCompWiz
+         {
+             if (var1)
+             {

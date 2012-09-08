@@ -22,23 +22,67 @@
      /**
       * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
       */
-@@ -167,6 +180,7 @@
-         this.chunkProvider = this.createChunkProvider();
-         this.calculateInitialSkylight();
-         this.calculateInitialWeather();
-+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
+@@ -133,17 +146,7 @@
+      */
+     public BiomeGenBase getBiomeGenForCoords(int par1, int par2)
+     {
+-        if (this.blockExists(par1, 0, par2))
+-        {
+-            Chunk var3 = this.getChunkFromBlockCoords(par1, par2);
+-
+-            if (var3 != null)
+-            {
+-                return var3.getBiomeGenForWorldCoords(par1 & 15, par2 & 15, this.provider.worldChunkMgr);
+-            }
+-        }
+-
+-        return this.provider.worldChunkMgr.getBiomeGenAt(par1, par2);
++        return provider.getBiomeGenForCoords(par1, par2);
+     }
+ 
+     public WorldChunkManager getWorldChunkManager()
+@@ -162,11 +165,7 @@
+         this.theProfiler = par5Profiler;
+         this.worldInfo = new WorldInfo(par4WorldSettings, par2Str);
+         this.provider = par3WorldProvider;
+-        this.mapStorage = new MapStorage(par1ISaveHandler);
+-        par3WorldProvider.registerWorld(this);
+-        this.chunkProvider = this.createChunkProvider();
+-        this.calculateInitialSkylight();
+-        this.calculateInitialWeather();
++        //Moved to WorldClient
      }
  
      public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler)
-@@ -213,6 +227,7 @@
+@@ -177,7 +176,7 @@
+         this.isRemote = false;
+         this.saveHandler = par1ISaveHandler;
+         this.theProfiler = par5Profiler;
+-        this.mapStorage = new MapStorage(par1ISaveHandler);
++        this.mapStorage = getMapStorage(par1ISaveHandler);
+         this.worldInfo = par1ISaveHandler.loadWorldInfo();
+ 
+         if (par4WorldProvider != null)
+@@ -213,6 +212,18 @@
  
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
 +        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
++    }
++
++    //Provides solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
++    private static MapStorage s_mapStorage;
++    private static ISaveHandler s_savehandler;
++    private MapStorage getMapStorage(ISaveHandler savehandler) {
++        if (s_savehandler != savehandler || s_mapStorage == null) {
++            s_mapStorage = new MapStorage(savehandler);
++            s_savehandler = savehandler;
++        }
++        return s_mapStorage;
      }
  
      /**
-@@ -269,7 +284,8 @@
+@@ -269,7 +280,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -48,7 +92,7 @@
      }
  
      /**
-@@ -278,7 +294,8 @@
+@@ -278,7 +290,8 @@
      public boolean blockHasTileEntity(int par1, int par2, int par3)
      {
          int var4 = this.getBlockId(par1, par2, par3);
@@ -58,7 +102,16 @@
      }
  
      /**
-@@ -1009,7 +1026,7 @@
+@@ -977,7 +990,7 @@
+      */
+     public boolean isDaytime()
+     {
+-        return this.skylightSubtracted < 4;
++        return provider.isDaytime();
+     }
+ 
+     /**
+@@ -1009,7 +1022,7 @@
                  int var12 = this.getBlockMetadata(var8, var9, var10);
                  Block var13 = Block.blocksList[var11];
  
@@ -67,7 +120,7 @@
                  {
                      MovingObjectPosition var14 = var13.collisionRayTrace(this, var8, var9, var10, par1Vec3, par2Vec3);
  
-@@ -1209,6 +1226,12 @@
+@@ -1209,6 +1222,12 @@
       */
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -80,7 +133,167 @@
          if (par1Entity != null && par2Str != null)
          {
              Iterator var5 = this.worldAccesses.iterator();
-@@ -1887,7 +1910,7 @@
+@@ -1552,76 +1571,13 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-
++    
+     /**
+      * Calculates the color for the skybox
+      */
+     public Vec3 getSkyColor(Entity par1Entity, float par2)
+     {
+-        float var3 = this.getCelestialAngle(par2);
+-        float var4 = MathHelper.cos(var3 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+-
+-        if (var4 < 0.0F)
+-        {
+-            var4 = 0.0F;
+-        }
+-
+-        if (var4 > 1.0F)
+-        {
+-            var4 = 1.0F;
+-        }
+-
+-        int var5 = MathHelper.floor_double(par1Entity.posX);
+-        int var6 = MathHelper.floor_double(par1Entity.posZ);
+-        BiomeGenBase var7 = this.getBiomeGenForCoords(var5, var6);
+-        float var8 = var7.getFloatTemperature();
+-        int var9 = var7.getSkyColorByTemp(var8);
+-        float var10 = (float)(var9 >> 16 & 255) / 255.0F;
+-        float var11 = (float)(var9 >> 8 & 255) / 255.0F;
+-        float var12 = (float)(var9 & 255) / 255.0F;
+-        var10 *= var4;
+-        var11 *= var4;
+-        var12 *= var4;
+-        float var13 = this.getRainStrength(par2);
+-        float var14;
+-        float var15;
+-
+-        if (var13 > 0.0F)
+-        {
+-            var14 = (var10 * 0.3F + var11 * 0.59F + var12 * 0.11F) * 0.6F;
+-            var15 = 1.0F - var13 * 0.75F;
+-            var10 = var10 * var15 + var14 * (1.0F - var15);
+-            var11 = var11 * var15 + var14 * (1.0F - var15);
+-            var12 = var12 * var15 + var14 * (1.0F - var15);
+-        }
+-
+-        var14 = this.getWeightedThunderStrength(par2);
+-
+-        if (var14 > 0.0F)
+-        {
+-            var15 = (var10 * 0.3F + var11 * 0.59F + var12 * 0.11F) * 0.2F;
+-            float var16 = 1.0F - var14 * 0.75F;
+-            var10 = var10 * var16 + var15 * (1.0F - var16);
+-            var11 = var11 * var16 + var15 * (1.0F - var16);
+-            var12 = var12 * var16 + var15 * (1.0F - var16);
+-        }
+-
+-        if (this.lightningFlash > 0)
+-        {
+-            var15 = (float)this.lightningFlash - par2;
+-
+-            if (var15 > 1.0F)
+-            {
+-                var15 = 1.0F;
+-            }
+-
+-            var15 *= 0.45F;
+-            var10 = var10 * (1.0F - var15) + 0.8F * var15;
+-            var11 = var11 * (1.0F - var15) + 0.8F * var15;
+-            var12 = var12 * (1.0F - var15) + 1.0F * var15;
+-        }
+-
+-        return Vec3.getVec3Pool().getVecFromPool((double)var10, (double)var11, (double)var12);
++        return provider.getSkyColor(par1Entity, par2);
+     }
+ 
+     /**
+@@ -1652,50 +1608,7 @@
+     @SideOnly(Side.CLIENT)
+     public Vec3 drawClouds(float par1)
+     {
+-        float var2 = this.getCelestialAngle(par1);
+-        float var3 = MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+-
+-        if (var3 < 0.0F)
+-        {
+-            var3 = 0.0F;
+-        }
+-
+-        if (var3 > 1.0F)
+-        {
+-            var3 = 1.0F;
+-        }
+-
+-        float var4 = (float)(this.cloudColour >> 16 & 255L) / 255.0F;
+-        float var5 = (float)(this.cloudColour >> 8 & 255L) / 255.0F;
+-        float var6 = (float)(this.cloudColour & 255L) / 255.0F;
+-        float var7 = this.getRainStrength(par1);
+-        float var8;
+-        float var9;
+-
+-        if (var7 > 0.0F)
+-        {
+-            var8 = (var4 * 0.3F + var5 * 0.59F + var6 * 0.11F) * 0.6F;
+-            var9 = 1.0F - var7 * 0.95F;
+-            var4 = var4 * var9 + var8 * (1.0F - var9);
+-            var5 = var5 * var9 + var8 * (1.0F - var9);
+-            var6 = var6 * var9 + var8 * (1.0F - var9);
+-        }
+-
+-        var4 *= var3 * 0.9F + 0.1F;
+-        var5 *= var3 * 0.9F + 0.1F;
+-        var6 *= var3 * 0.85F + 0.15F;
+-        var8 = this.getWeightedThunderStrength(par1);
+-
+-        if (var8 > 0.0F)
+-        {
+-            var9 = (var4 * 0.3F + var5 * 0.59F + var6 * 0.11F) * 0.2F;
+-            float var10 = 1.0F - var8 * 0.95F;
+-            var4 = var4 * var10 + var9 * (1.0F - var10);
+-            var5 = var5 * var10 + var9 * (1.0F - var10);
+-            var6 = var6 * var10 + var9 * (1.0F - var10);
+-        }
+-
+-        return Vec3.getVec3Pool().getVecFromPool((double)var4, (double)var5, (double)var6);
++        return provider.drawClouds(par1, this.cloudColour);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -1740,26 +1653,13 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-
++    
+     /**
+      * How bright are stars in the sky
+      */
+     public float getStarBrightness(float par1)
+     {
+-        float var2 = this.getCelestialAngle(par1);
+-        float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
+-
+-        if (var3 < 0.0F)
+-        {
+-            var3 = 0.0F;
+-        }
+-
+-        if (var3 > 1.0F)
+-        {
+-            var3 = 1.0F;
+-        }
+-
+-        return var3 * var3 * 0.5F;
++        return provider.getStarBrightness(par1);
+     }
+ 
+     /**
+@@ -1887,7 +1787,7 @@
  
                      if (var8 != null)
                      {
@@ -89,7 +302,7 @@
                      }
                  }
              }
-@@ -1897,6 +1920,10 @@
+@@ -1897,6 +1797,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -100,7 +313,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -1917,7 +1944,9 @@
+@@ -1917,7 +1821,9 @@
                      {
                          this.loadedTileEntityList.add(var9);
                      }
@@ -111,7 +324,7 @@
                      if (this.chunkExists(var9.xCoord >> 4, var9.zCoord >> 4))
                      {
                          Chunk var10 = this.getChunkFromChunkCoords(var9.xCoord >> 4, var9.zCoord >> 4);
-@@ -1927,8 +1956,6 @@
+@@ -1927,8 +1833,6 @@
                              var10.setChunkBlockTileEntity(var9.xCoord & 15, var9.yCoord, var9.zCoord & 15, var9);
                          }
                      }
@@ -120,7 +333,7 @@
                  }
              }
  
-@@ -1941,13 +1968,13 @@
+@@ -1941,13 +1845,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -141,7 +354,7 @@
          }
      }
  
-@@ -1968,8 +1995,14 @@
+@@ -1968,8 +1872,14 @@
          int var3 = MathHelper.floor_double(par1Entity.posX);
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
@@ -158,7 +371,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2204,6 +2237,14 @@
+@@ -2204,6 +2114,14 @@
                          {
                              return true;
                          }
@@ -173,7 +386,7 @@
                      }
                  }
              }
-@@ -2510,25 +2551,21 @@
+@@ -2510,25 +2428,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -214,7 +427,7 @@
          }
      }
  
-@@ -2537,27 +2574,10 @@
+@@ -2537,27 +2451,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -246,7 +459,7 @@
          }
      }
  
-@@ -2583,7 +2603,8 @@
+@@ -2583,7 +2480,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -256,7 +469,7 @@
      }
  
      /**
-@@ -2591,8 +2612,7 @@
+@@ -2591,8 +2489,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
@@ -266,7 +479,7 @@
      }
  
      /**
-@@ -2608,7 +2628,7 @@
+@@ -2608,7 +2505,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -275,7 +488,243 @@
              }
              else
              {
-@@ -3035,7 +3055,7 @@
+@@ -2639,8 +2536,7 @@
+      */
+     public void setAllowedSpawnTypes(boolean par1, boolean par2)
+     {
+-        this.spawnHostileMobs = par1;
+-        this.spawnPeacefulMobs = par2;
++        provider.setAllowedSpawnTypes(par1, par2);
+     }
+ 
+     /**
+@@ -2651,20 +2547,16 @@
+         this.updateWeather();
+     }
+ 
++    public void calculateInitialWeather_do() {
++        this.calculateInitialWeather();
++    }
++
+     /**
+      * Called from World constructor to set rainingStrength and thunderingStrength
+      */
+     private void calculateInitialWeather()
+     {
+-        if (this.worldInfo.isRaining())
+-        {
+-            this.rainingStrength = 1.0F;
+-
+-            if (this.worldInfo.isThundering())
+-            {
+-                this.thunderingStrength = 1.0F;
+-            }
+-        }
++        provider.calculateInitialWeather();
+     }
+ 
+     /**
+@@ -2672,108 +2564,12 @@
+      */
+     protected void updateWeather()
+     {
+-        if (!this.provider.hasNoSky)
+-        {
+-            if (this.lastLightningBolt > 0)
+-            {
+-                --this.lastLightningBolt;
+-            }
+-
+-            int var1 = this.worldInfo.getThunderTime();
+-
+-            if (var1 <= 0)
+-            {
+-                if (this.worldInfo.isThundering())
+-                {
+-                    this.worldInfo.setThunderTime(this.rand.nextInt(12000) + 3600);
+-                }
+-                else
+-                {
+-                    this.worldInfo.setThunderTime(this.rand.nextInt(168000) + 12000);
+-                }
+-            }
+-            else
+-            {
+-                --var1;
+-                this.worldInfo.setThunderTime(var1);
+-
+-                if (var1 <= 0)
+-                {
+-                    this.worldInfo.setThundering(!this.worldInfo.isThundering());
+-                }
+-            }
+-
+-            int var2 = this.worldInfo.getRainTime();
+-
+-            if (var2 <= 0)
+-            {
+-                if (this.worldInfo.isRaining())
+-                {
+-                    this.worldInfo.setRainTime(this.rand.nextInt(12000) + 12000);
+-                }
+-                else
+-                {
+-                    this.worldInfo.setRainTime(this.rand.nextInt(168000) + 12000);
+-                }
+-            }
+-            else
+-            {
+-                --var2;
+-                this.worldInfo.setRainTime(var2);
+-
+-                if (var2 <= 0)
+-                {
+-                    this.worldInfo.setRaining(!this.worldInfo.isRaining());
+-                }
+-            }
+-
+-            this.prevRainingStrength = this.rainingStrength;
+-
+-            if (this.worldInfo.isRaining())
+-            {
+-                this.rainingStrength = (float)((double)this.rainingStrength + 0.01D);
+-            }
+-            else
+-            {
+-                this.rainingStrength = (float)((double)this.rainingStrength - 0.01D);
+-            }
+-
+-            if (this.rainingStrength < 0.0F)
+-            {
+-                this.rainingStrength = 0.0F;
+-            }
+-
+-            if (this.rainingStrength > 1.0F)
+-            {
+-                this.rainingStrength = 1.0F;
+-            }
+-
+-            this.prevThunderingStrength = this.thunderingStrength;
+-
+-            if (this.worldInfo.isThundering())
+-            {
+-                this.thunderingStrength = (float)((double)this.thunderingStrength + 0.01D);
+-            }
+-            else
+-            {
+-                this.thunderingStrength = (float)((double)this.thunderingStrength - 0.01D);
+-            }
+-
+-            if (this.thunderingStrength < 0.0F)
+-            {
+-                this.thunderingStrength = 0.0F;
+-            }
+-
+-            if (this.thunderingStrength > 1.0F)
+-            {
+-                this.thunderingStrength = 1.0F;
+-            }
+-        }
++        provider.updateWeather();
+     }
+ 
+     public void toggleRain()
+     {
+-        this.worldInfo.setRainTime(1);
++        provider.toggleRain();
+     }
+ 
+     protected void setActivePlayerChunksAndCheckLight()
+@@ -2885,57 +2681,7 @@
+      */
+     public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
+     {
+-        BiomeGenBase var5 = this.getBiomeGenForCoords(par1, par3);
+-        float var6 = var5.getFloatTemperature();
+-
+-        if (var6 > 0.15F)
+-        {
+-            return false;
+-        }
+-        else
+-        {
+-            if (par2 >= 0 && par2 < 256 && this.getSavedLightValue(EnumSkyBlock.Block, par1, par2, par3) < 10)
+-            {
+-                int var7 = this.getBlockId(par1, par2, par3);
+-
+-                if ((var7 == Block.waterStill.blockID || var7 == Block.waterMoving.blockID) && this.getBlockMetadata(par1, par2, par3) == 0)
+-                {
+-                    if (!par4)
+-                    {
+-                        return true;
+-                    }
+-
+-                    boolean var8 = true;
+-
+-                    if (var8 && this.getBlockMaterial(par1 - 1, par2, par3) != Material.water)
+-                    {
+-                        var8 = false;
+-                    }
+-
+-                    if (var8 && this.getBlockMaterial(par1 + 1, par2, par3) != Material.water)
+-                    {
+-                        var8 = false;
+-                    }
+-
+-                    if (var8 && this.getBlockMaterial(par1, par2, par3 - 1) != Material.water)
+-                    {
+-                        var8 = false;
+-                    }
+-
+-                    if (var8 && this.getBlockMaterial(par1, par2, par3 + 1) != Material.water)
+-                    {
+-                        var8 = false;
+-                    }
+-
+-                    if (!var8)
+-                    {
+-                        return true;
+-                    }
+-                }
+-            }
+-
+-            return false;
+-        }
++        return provider.canBlockFreeze(par1, par2, par3, par4);
+     }
+ 
+     /**
+@@ -2943,28 +2689,7 @@
+      */
+     public boolean canSnowAt(int par1, int par2, int par3)
+     {
+-        BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
+-        float var5 = var4.getFloatTemperature();
+-
+-        if (var5 > 0.15F)
+-        {
+-            return false;
+-        }
+-        else
+-        {
+-            if (par2 >= 0 && par2 < 256 && this.getSavedLightValue(EnumSkyBlock.Block, par1, par2, par3) < 10)
+-            {
+-                int var6 = this.getBlockId(par1, par2 - 1, par3);
+-                int var7 = this.getBlockId(par1, par2, par3);
+-
+-                if (var7 == 0 && Block.snow.canPlaceBlockAt(this, par1, par2, par3) && var6 != 0 && var6 != Block.ice.blockID && Block.blocksList[var6].blockMaterial.blocksMovement())
+-                {
+-                    return true;
+-                }
+-            }
+-
+-            return false;
+-        }
++        return provider.canSnowAt(par1, par2, par3);
+     }
+ 
+     public void updateAllLightTypes(int par1, int par2, int par3)
+@@ -3035,7 +2760,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -284,7 +733,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3303,10 +3323,10 @@
+@@ -3303,10 +3028,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -299,7 +748,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3327,10 +3347,10 @@
+@@ -3327,10 +3052,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -314,7 +763,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3460,7 +3480,10 @@
+@@ -3460,7 +3185,10 @@
              {
                  var9 = null;
              }
@@ -326,7 +775,91 @@
              return par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -3958,4 +3981,65 @@
+@@ -3650,7 +3378,7 @@
+      */
+     public void setWorldTime(long par1)
+     {
+-        this.worldInfo.setWorldTime(par1);
++        provider.setWorldTime(par1);
+     }
+ 
+     /**
+@@ -3658,12 +3386,12 @@
+      */
+     public long getSeed()
+     {
+-        return this.worldInfo.getSeed();
++        return provider.getSeed();
+     }
+ 
+     public long getWorldTime()
+     {
+-        return this.worldInfo.getWorldTime();
++        return provider.getWorldTime();
+     }
+ 
+     /**
+@@ -3671,13 +3399,13 @@
+      */
+     public ChunkCoordinates getSpawnPoint()
+     {
+-        return new ChunkCoordinates(this.worldInfo.getSpawnX(), this.worldInfo.getSpawnY(), this.worldInfo.getSpawnZ());
++        return provider.getSpawnPoint();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public void setSpawnLocation(int par1, int par2, int par3)
+     {
+-        this.worldInfo.setSpawnPosition(par1, par2, par3);
++        provider.setSpawnLocation(par1, par2, par3);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -3821,8 +3549,7 @@
+      */
+     public boolean isBlockHighHumidity(int par1, int par2, int par3)
+     {
+-        BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
+-        return var4.isHighHumidity();
++        return provider.isBlockHighHumidity(par1, par2, par3);
+     }
+ 
+     /**
+@@ -3876,7 +3603,7 @@
+      */
+     public int getHeight()
+     {
+-        return 256;
++        return provider.getHeight();
+     }
+ 
+     /**
+@@ -3884,7 +3611,7 @@
+      */
+     public int getActualHeight()
+     {
+-        return this.provider.hasNoSky ? 128 : 256;
++        return provider.getActualHeight();
+     }
+ 
+     /**
+@@ -3924,13 +3651,13 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-
++    
+     /**
+      * Returns horizon height for use in rendering the sky.
+      */
+     public double getHorizon()
+     {
+-        return this.worldInfo.getTerrainType().getHorizon(this);
++        return provider.getHorizon();
+     }
+ 
+     /**
+@@ -3958,4 +3685,65 @@
              var7.destroyBlockPartially(par1, par2, par3, par4, par5);
          }
      }
