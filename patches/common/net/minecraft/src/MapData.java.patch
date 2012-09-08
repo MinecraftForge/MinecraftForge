@@ -5,7 +5,7 @@
      public int xCenter;
      public int zCenter;
 -    public byte dimension;
-+    public short dimension;
++    public int dimension;
      public byte scale;
  
      /** colours */
@@ -15,7 +15,7 @@
      {
 -        this.dimension = par1NBTTagCompound.getByte("dimension");
 +        NBTBase dimTag = par1NBTTagCompound.getTag("dimension");
-+        this.dimension = (short)Integer.parseInt(dimTag.toString());
++        this.dimension = Integer.parseInt(dimTag.toString());
          this.xCenter = par1NBTTagCompound.getInteger("xCenter");
          this.zCenter = par1NBTTagCompound.getInteger("zCenter");
          this.scale = par1NBTTagCompound.getByte("scale");
@@ -24,7 +24,7 @@
      public void writeToNBT(NBTTagCompound par1NBTTagCompound)
      {
 -        par1NBTTagCompound.setByte("dimension", this.dimension);
-+        par1NBTTagCompound.setShort("dimension", this.dimension);
++        par1NBTTagCompound.setInteger("dimension", this.dimension);
          par1NBTTagCompound.setInteger("xCenter", this.xCenter);
          par1NBTTagCompound.setInteger("zCenter", this.zCenter);
          par1NBTTagCompound.setByte("scale", this.scale);
