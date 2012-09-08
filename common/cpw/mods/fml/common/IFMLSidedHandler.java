@@ -38,5 +38,7 @@ public interface IFMLSidedHandler
 
     void handleTinyPacket(NetHandler handler, Packet131MapData mapData);
 
-    void setCompatibilityLevel(NetHandler netHandler, byte compatibilityLevel);
+    void setClientCompatibilityLevel(byte compatibilityLevel);
+
+    byte getClientCompatibilityLevel();
 }

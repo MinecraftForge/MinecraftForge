@@ -16,6 +16,7 @@ import java.util.List;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Entity;
+import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet131MapData;
@@ -164,8 +165,15 @@ public class FMLServerHandler implements IFMLSidedHandler
         // NOOP on server
     }
     @Override
-    public void setCompatibilityLevel(NetHandler netHandler, byte compatibilityLevel)
+    public void setClientCompatibilityLevel(byte compatibilityLevel)
     {
         // NOOP on server
+    }
+    @Override
+    public byte getClientCompatibilityLevel()
+    {
+        System.out.printf("Server Compatibility %d\n", 0);
+        Thread.dumpStack();
+        return 0;
     }
 }

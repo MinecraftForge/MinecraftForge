@@ -61,7 +61,7 @@ public class ModListRequestPacket extends FMLPacket
         {
             compatibilityLevel = in.readByte();
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalStateException e)
         {
             FMLLog.fine("No compatibility byte found - the server is too old");
         }
@@ -110,16 +110,9 @@ public class ModListRequestPacket extends FMLPacket
             }
         }
 
-        if (compatibilityLevel != 0)
-        {
-            FMLLog.fine("The server has compatibility level %d", compatibilityLevel);
-            FMLCommonHandler.instance().getSidedDelegate().setCompatibilityLevel(netHandler, compatibilityLevel);
-        }
-        Packet250CustomPayload pkt = new Packet250CustomPayload();
-        pkt.field_73630_a = "FML";
-        pkt.field_73629_c = FMLPacket.makePacket(MOD_LIST_RESPONSE, modVersions, missingMods);
-        pkt.field_73628_b = pkt.field_73629_c.length;
+        FMLLog.fine("The server has compatibility level %d", compatibilityLevel);
+        FMLCommonHandler.instance().getSidedDelegate().setClientCompatibilityLevel(compatibilityLevel);
 
-        mgr.func_74429_a(pkt);
+        mgr.func_74429_a(PacketDispatcher.getPacket("FML", FMLPacket.makePacket(MOD_LIST_RESPONSE, modVersions, missingMods)));
     }
 }

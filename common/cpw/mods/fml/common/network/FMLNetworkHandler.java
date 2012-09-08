@@ -218,6 +218,8 @@ public class FMLNetworkHandler
 
     public static Packet1Login getFMLFakeLoginPacket()
     {
+        // Always reset compat to zero before sending our fake packet
+        FMLCommonHandler.instance().getSidedDelegate().setClientCompatibilityLevel((byte) 0);
         Packet1Login fake = new Packet1Login();
         // Hash FML using a simple function
         fake.field_73561_a = FML_HASH;
@@ -411,5 +413,10 @@ public class FMLNetworkHandler
     public static int getCompatibilityLevel()
     {
         return PROTOCOL_VERSION;
+    }
+
+    public static boolean vanillaLoginPacketCompatibility()
+    {
+        return FMLCommonHandler.instance().getSidedDelegate().getClientCompatibilityLevel() == 0;
     }
 }
