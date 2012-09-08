@@ -24,6 +24,15 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
+@@ -496,7 +506,7 @@
+ 
+         if (this.worldObj.difficultySetting == 0 && this.getHealth() < this.getMaxHealth() && this.ticksExisted % 20 * 12 == 0)
+         {
+-            this.heal(1);
++            this.heal(1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.REGEN);
+         }
+ 
+         this.inventory.decrementAnimations();
 @@ -627,7 +637,16 @@
       */
      public EntityItem dropOneItem()

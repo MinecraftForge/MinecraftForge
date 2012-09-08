@@ -1,0 +1,23 @@
+--- ../src_base/common/net/minecraft/src/EntityDragon.java
++++ ../src_work/common/net/minecraft/src/EntityDragon.java
+@@ -4,6 +4,9 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.Iterator;
+ import java.util.List;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingHealEvent;
+ 
+ public class EntityDragon extends EntityDragonBase
+ {
+@@ -374,7 +377,9 @@
+             }
+             else if (this.ticksExisted % 10 == 0 && this.health < this.maxHealth)
+             {
+-                ++this.health;
++                if (MinecraftForge.EVENT_BUS.post(new LivingHealEvent(this, 1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.ENDER_CRYSTAL))) {
++                    ++this.health;
++                }
+             }
+         }
+ 

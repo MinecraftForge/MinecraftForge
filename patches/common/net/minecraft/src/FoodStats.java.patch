@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/FoodStats.java
++++ ../src_work/common/net/minecraft/src/FoodStats.java
+@@ -63,7 +63,7 @@
+ 
+             if (this.foodTimer >= 80)
+             {
+-                par1EntityPlayer.heal(1);
++                par1EntityPlayer.heal(1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.SATIATED);
+                 this.foodTimer = 0;
+             }
+         }
