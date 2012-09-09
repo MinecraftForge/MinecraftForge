@@ -11,7 +11,6 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
@@ -33,13 +32,13 @@ public class MinecraftForgeClient
         ForgeHooksClient.registerRenderContextHandler(texture, subid, handler);
     }
 
-    /** 
+    /**
      * Preload a texture.  Textures must be preloaded before the first
      * use, or they will cause visual anomalies.
      */
     public static void preloadTexture(String texture)
     {
-        ModLoader.getMinecraftInstance().renderEngine.getTexture(texture);
+        ForgeHooksClient.engine().getTexture(texture);
     }
 
     /** Render a block.  Render a block which may have a custom texture.
@@ -51,17 +50,17 @@ public class MinecraftForgeClient
         ForgeHooksClient.afterBlockRender(block, render);
     }
 
-    /** 
+    /**
      * Get the current render pass.
      */
     public static int getRenderPass()
     {
         return ForgeHooksClient.renderPass;
     }
-    
+
     private static IItemRenderer[] customItemRenderers = new IItemRenderer[Item.itemsList.length];
 
-    /** 
+    /**
      * Register a custom renderer for a specific item. This can be used to
      * render the item in-world as an EntityItem, when the item is equipped, or
      * when the item is in an inventory slot.
@@ -77,7 +76,7 @@ public class MinecraftForgeClient
     public static IItemRenderer getItemRenderer(ItemStack item, ItemRenderType type)
     {
         IItemRenderer renderer = customItemRenderers[item.itemID];
-        if (renderer != null && renderer.handleRenderType(item, type)) 
+        if (renderer != null && renderer.handleRenderType(item, type))
         {
             return customItemRenderers[item.itemID];
         }

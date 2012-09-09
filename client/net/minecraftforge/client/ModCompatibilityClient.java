@@ -3,6 +3,10 @@ package net.minecraftforge.client;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.logging.Level;
+
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLLog;
 
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecIBXM;
@@ -10,19 +14,19 @@ import paulscode.sound.codecs.CodecIBXM;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.*;
 
-public class ModCompatibilityClient 
+public class ModCompatibilityClient
 {
     /**
-     * Trys to get the class for the specified name, will also try the 
+     * Trys to get the class for the specified name, will also try the
      * net.minecraft.src package in case we are in MCP
      * Returns null if not found.
-     * 
+     *
      * @param name The class name
      * @return The Class, or null if not found
      */
     private static Class getClass(String name)
     {
-        try 
+        try
         {
             return Class.forName(name);
         }
@@ -38,23 +42,23 @@ public class ModCompatibilityClient
             }
         }
     }
-    
+
     /************************************************************************************************
      * Risugami's AudioMod Compatibility
      * http://www.minecraftforum.net/topic/75440-
-     * 
+     *
      * AudioMod adds a few extra codecs, loads audio from /resources/mods/*,
-     * introduces the concept of 'cave' sounds, which are determined by if 
+     * introduces the concept of 'cave' sounds, which are determined by if
      * the player is underneath a solid block.
-     * 
+     *
      * It also lowers the interval between background music songs to 6000
      */
     public static SoundPool audioModSoundPoolCave;
-    
+
     /**
      * Populates the sound pools with with sounds from the /resources/mods folder
      * And sets the interval between background music to 6000
-     * 
+     *
      * @param mngr The SoundManager instance
      */
     public static void audioModLoad(SoundManager mngr)
@@ -64,13 +68,13 @@ public class ModCompatibilityClient
         audioModLoadModAudio("resources/mod/streaming", mngr.soundPoolStreaming);
         audioModLoadModAudio("resources/mod/music", mngr.soundPoolMusic);
         audioModLoadModAudio("resources/mod/cavemusic", audioModSoundPoolCave);
-        
+
         if (mngr.MUSIC_INTERVAL == 12000)
         {
             mngr.MUSIC_INTERVAL = 6000;
         }
     }
-    
+
     /**
      * Walks the given path in the Minecraft app directory and adds audio to the SoundPool
      * @param path The path to walk
@@ -86,15 +90,14 @@ public class ModCompatibilityClient
         }
         catch (IOException ex)
         {
-            ModLoader.getLogger().fine("Loading Mod audio failed for folder: " + path);
-            ModLoader.getLogger().fine(ex.toString());
+            FMLLog.log(Level.FINE, ex, "Loading Mod audio failed for folder: %s", path);
             ex.printStackTrace();
         }
     }
-    
+
     /**
      * Walks the folder path recursively and calls pool.addSound on any file it finds.
-     * 
+     *
      * @param base The base path for the folder, determines the name when calling addSound
      * @param folder The current folder
      * @param pool The SoundPool to add the sound to
@@ -105,7 +108,7 @@ public class ModCompatibilityClient
         if (folder.exists() || folder.mkdirs())
         {
             for (File file : folder.listFiles())
-            {             
+            {
                 if (!file.getName().startsWith("."))
                 {
                     if (file.isDirectory())
@@ -125,7 +128,7 @@ public class ModCompatibilityClient
     /**
      * Adds the IBXM codec and associates it with .xm, .s3m, and .mod
      */
-    public static void audioModAddCodecs() 
+    public static void audioModAddCodecs()
     {
         SoundSystemConfig.setCodec("xm",  CodecIBXM.class);
         SoundSystemConfig.setCodec("s3m", CodecIBXM.class);
@@ -135,14 +138,14 @@ public class ModCompatibilityClient
     /**
      * If the current player is underground, it picks a random song from the cave sound pool,
      * if they are not it returns the passed in entry.
-     * 
+     *
      * @param soundManager The SoundManager instance
      * @param current The currently selected entry
      * @return A soundPool entry to be played as the background music
      */
-    public static SoundPoolEntry audioModPickBackgroundMusic(SoundManager soundManager, SoundPoolEntry current) 
+    public static SoundPoolEntry audioModPickBackgroundMusic(SoundManager soundManager, SoundPoolEntry current)
     {
-        Minecraft mc = ModLoader.getMinecraftInstance();
+        Minecraft mc = FMLClientHandler.instance().getClient();
         if (mc != null && mc.theWorld != null && audioModSoundPoolCave != null)
         {
             Entity ent = mc.renderViewEntity;
@@ -153,19 +156,19 @@ public class ModCompatibilityClient
         }
         return current;
     }
-    
+
     /***********************************************************************************************************
      * SDK's ModLoaderMP
      * http://www.minecraftforum.net/topic/86765-
-     * 
-     * ModLoaderMP was supposed to be a reliable server side version of ModLoader, however it has 
+     *
+     * ModLoaderMP was supposed to be a reliable server side version of ModLoader, however it has
      * gotten the reputation of being really slow to update. Never having bugfixes, breaking compatibility
      * with the client side ModLoader.
-     * 
+     *
      * So we have replaced it with our own system called FML (Forge ModLoader)
      * it is a stand alone mod, that Forge relies on, and that is open source/community driven.
      * https://github.com/cpw/FML
-     * 
+     *
      * However, for compatibilities sake, we provide the ModLoaderMP's hooks so that the end user
      * does not need to make a choice between the two on the client side.
      **/
@@ -185,9 +188,9 @@ public class ModCompatibilityClient
     }
 
     /**
-     * Attempts to spawn a vehicle using ModLoaderMP's vehicle spawn registry, if MLMP is not installed 
+     * Attempts to spawn a vehicle using ModLoaderMP's vehicle spawn registry, if MLMP is not installed
      * it returns the passed in currentEntity
-     * 
+     *
      * @param type The Type ID of the vehicle
      * @param world The current world
      * @param x The spawn X position
@@ -200,18 +203,18 @@ public class ModCompatibilityClient
      */
     public static Object mlmpVehicleSpawn(int type, World world, double x, double y, double z, Entity thrower, Object currentEntity) throws Exception
     {
-        Class mlmp = getClass("ModLoaderMp"); 
+        Class mlmp = getClass("ModLoaderMp");
         if (!isMLMPInstalled() || mlmp == null)
         {
             return currentEntity;
         }
-        
+
         Object entry = mlmp.getDeclaredMethod("handleNetClientHandlerEntities", int.class).invoke(null, type);
         if (entry == null)
         {
             return currentEntity;
         }
-        
+
         Class entityClass = (Class)entry.getClass().getDeclaredField("entityClass").get(entry);
         Object ret = (Entity)entityClass.getConstructor(World.class, Double.TYPE, Double.TYPE, Double.TYPE).newInstance(world, x, y, z);
 
@@ -227,7 +230,7 @@ public class ModCompatibilityClient
             if (thrower == null)
             {
                 System.out.println("Received spawn packet for entity with owner, but owner was not found.");
-                ModLoader.getLogger().fine("Received spawn packet for entity with owner, but owner was not found.");
+                FMLLog.fine("Received spawn packet for entity with owner, but owner was not found.");
             }
             else
             {
@@ -241,26 +244,26 @@ public class ModCompatibilityClient
         }
         return ret;
     }
-    
+
     /**
      * Attempts to invoke ModLoaderMp.handleGUI if ModLoaderMP is installed.
      * If not, it does nothing
-     * 
+     *
      * @param pkt The open window packet
      */
-    public static void mlmpOpenWindow(Packet100OpenWindow pkt) 
+    public static void mlmpOpenWindow(Packet100OpenWindow pkt)
     {
-        Class mlmp = getClass("ModLoaderMp"); 
+        Class mlmp = getClass("ModLoaderMp");
         if (!isMLMPInstalled() || mlmp == null)
         {
             return;
         }
-        
-        try 
+
+        try
         {
             mlmp.getDeclaredMethod("handleGUI", Packet100OpenWindow.class).invoke(null, pkt);
-        } 
-        catch (Exception e) 
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
