@@ -24,7 +24,72 @@
          if (this.mc.theWorld.provider.worldType == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1790,6 +1799,7 @@
+@@ -1591,6 +1600,64 @@
+         }
+     }
+ 
++    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityLiving, float par3)
++    {
++        double var4 = par2EntityLiving.lastTickPosX + (par2EntityLiving.posX - par2EntityLiving.lastTickPosX) * (double)par3;
++        double var6 = par2EntityLiving.lastTickPosY + (par2EntityLiving.posY - par2EntityLiving.lastTickPosY) * (double)par3;
++        double var8 = par2EntityLiving.lastTickPosZ + (par2EntityLiving.posZ - par2EntityLiving.lastTickPosZ) * (double)par3;
++
++        if (!this.field_72738_E.isEmpty())
++        {
++            GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
++            int var10 = this.renderEngine.getTexture("/terrain.png");
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, var10);
++            GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
++            GL11.glPushMatrix();
++            GL11.glDisable(GL11.GL_ALPHA_TEST);
++            GL11.glPolygonOffset(-3.0F, -3.0F);
++            GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
++            GL11.glEnable(GL11.GL_ALPHA_TEST);
++            par1Tessellator.startDrawingQuads();
++            par1Tessellator.setTranslation(-var4, -var6, -var8);
++            par1Tessellator.disableColor();
++            Iterator var11 = this.field_72738_E.values().iterator();
++
++            while (var11.hasNext())
++            {
++                DestroyBlockProgress var12 = (DestroyBlockProgress)var11.next();
++                double var13 = (double)var12.func_73110_b() - var4;
++                double var15 = (double)var12.func_73109_c() - var6;
++                double var17 = (double)var12.func_73108_d() - var8;
++
++                if (var13 * var13 + var15 * var15 + var17 * var17 > 1024.0D)
++                {
++                    var11.remove();
++                }
++                else
++                {
++                    int var19 = this.theWorld.getBlockId(var12.func_73110_b(), var12.func_73109_c(), var12.func_73108_d());
++                    Block var20 = var19 > 0 ? Block.blocksList[var19] : null;
++
++                    if (var20 == null)
++                    {
++                        var20 = Block.stone;
++                    }
++
++                    this.globalRenderBlocks.renderBlockUsingTexture(var20, var12.func_73110_b(), var12.func_73109_c(), var12.func_73108_d(), 240 + var12.func_73106_e());
++                }
++            }
++
++            par1Tessellator.draw();
++            par1Tessellator.setTranslation(0.0D, 0.0D, 0.0D);
++            GL11.glDisable(GL11.GL_ALPHA_TEST);
++            GL11.glPolygonOffset(0.0F, 0.0F);
++            GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
++            GL11.glEnable(GL11.GL_ALPHA_TEST);
++            GL11.glDepthMask(true);
++            GL11.glPopMatrix();
++        }
++    }
++
+     /**
+      * Draws the selection box for the player. Args: entityPlayer, rayTraceHit, i, itemStack, partialTickTime
+      */
+@@ -1790,6 +1857,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -32,7 +97,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -1909,6 +1919,7 @@
+@@ -1909,6 +1977,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -40,7 +105,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -1925,6 +1936,7 @@
+@@ -1925,6 +1994,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -48,7 +113,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -1938,17 +1950,19 @@
+@@ -1938,17 +2008,19 @@
                          {
                              var24 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                              var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var24]);
