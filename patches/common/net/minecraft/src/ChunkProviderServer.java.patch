@@ -1,0 +1,14 @@
+--- ../src_base/common/net/minecraft/src/ChunkProviderServer.java
++++ ../src_work/common/net/minecraft/src/ChunkProviderServer.java
+@@ -274,6 +274,11 @@
+     {
+         if (!this.currentServer.canNotSave)
+         {
++            for (ChunkCoordIntPair forced : currentServer.persistentChunks.keySet())
++            {
++                this.chunksToUnload.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
++            }
++
+             for (int var1 = 0; var1 < 100; ++var1)
+             {
+                 if (!this.chunksToUnload.isEmpty())

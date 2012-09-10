@@ -3,7 +3,10 @@ package net.minecraftforge.common;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.ModContainer;
 
 import net.minecraft.src.*;
 import net.minecraftforge.common.ForgeHooks.GrassEntry;
@@ -198,5 +201,43 @@ public class MinecraftForge
    public static String getBrandingVersion()
    {
        return "Minecraft Forge "+ ForgeVersion.getVersion();
+   }
+
+    /**
+     * Force a chunk to remain loaded by the supplied mod
+     *
+     * @param chunk the chunk to keep loaded
+     * @param world the world holding the chunk
+     * @param mod the mod (either {@link Mod} or {@link BaseMod}) that wishes to force the load
+     */
+    public static void forceChunkLoaded(ChunkCoordIntPair chunk, World world, Object mod)
+    {
+        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        if (mc == null)
+        {
+            FMLLog.warning("Attempt to force chunk load for a non-existent mod %s", mod.getClass().getName());
+            return;
+        }
+        String modId = mc.getModId();
+        world.getPersistentChunks().put(chunk, modId);
+    }
+
+    /**
+     * Stop forcing the chunk to remain loaded by the supplied mod (other mods may still
+     * keep the chunk loaded, however)
+     * @param chunk the chunk to keep loaded
+     * @param world the world holding the chunk
+     * @param mod the mod (either {@link Mod} or {@link BaseMod}) that wishes to unforce the load
+     */
+    public static void unforceChunkLoaded(ChunkCoordIntPair chunk, World world, Object mod)
+    {
+        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        if (mc == null)
+        {
+            FMLLog.warning("Attempt to unforce chunk load for a non-existent mod %s", mod.getClass().getName());
+            return;
+        }
+        String modId = mc.getModId();
+        world.getPersistentChunks().remove(chunk, modId);
    }
 }
