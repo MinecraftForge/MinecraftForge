@@ -26,6 +26,9 @@
      }
  
      /**
+@@ -272,1 +280,1 @@
+-    public final int getIconIndex(ItemStack par1ItemStack)
++    public int getIconIndex(ItemStack par1ItemStack)
 @@ -589,6 +597,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;
