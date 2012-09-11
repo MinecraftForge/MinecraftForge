@@ -21,7 +21,7 @@
          this.field_72554_f = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -658,7 +663,11 @@
+@@ -659,7 +664,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
@@ -34,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1013,6 +1022,19 @@
+@@ -1014,6 +1023,19 @@
              {
                  ((TileEntityMobSpawner)var2).readFromNBT(par1Packet132TileEntityData.customParam1);
              }
