@@ -17,7 +17,7 @@ import net.minecraft.src.*;
 public class ModCompatibilityClient
 {
     /**
-     * Trys to get the class for the specified name, will also try the
+     * Tries to get the class for the specified name, will also try the
      * net.minecraft.src package in case we are in MCP
      * Returns null if not found.
      *
@@ -77,6 +77,7 @@ public class ModCompatibilityClient
 
     /**
      * Walks the given path in the Minecraft app directory and adds audio to the SoundPool
+     *
      * @param path The path to walk
      * @param pool The pool to add sound to
      */
