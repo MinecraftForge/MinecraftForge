@@ -1,0 +1,40 @@
+--- ../src_base/common/net/minecraft/src/EntityPlayerMP.java
++++ ../src_work/common/net/minecraft/src/EntityPlayerMP.java
+@@ -8,6 +8,9 @@
+ import java.util.LinkedList;
+ import java.util.List;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+ 
+ public class EntityPlayerMP extends EntityPlayer implements ICrafting
+ {
+@@ -329,8 +332,27 @@
+      */
+     public void onDeath(DamageSource par1DamageSource)
+     {
++        if (ForgeHooks.onLivingDeath(this, par1DamageSource))
++        {
++            return;
++        }
++
+         this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(par1DamageSource.getDeathMessage(this)));
++
++        captureDrops = true;
++        capturedDrops.clear();
++
+         this.inventory.dropAllItems();
++
++        captureDrops = false;
++        PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
++        if (!MinecraftForge.EVENT_BUS.post(event))
++        {
++            for (EntityItem item : capturedDrops)
++            {
++                joinEntityItemWithWorld(item);
++            }
++        }
+     }
+ 
+     /**

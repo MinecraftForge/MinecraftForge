@@ -5,6 +5,7 @@ import java.util.*;
 import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.src.*;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.*;
 
@@ -337,5 +338,22 @@ public class ForgeHooks
     public static void onLivingJump(EntityLiving entity)
     {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
+    }
+
+    public static EntityItem onPlayerTossEvent(EntityPlayer player, ItemStack item)
+    {
+        player.captureDrops = true;
+        EntityItem ret = player.dropPlayerItemWithRandomChoice(item, false);
+        player.capturedDrops.clear();
+        player.captureDrops = false;
+
+        ItemTossEvent event = new ItemTossEvent(ret, player);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return null;
+        }
+
+        player.joinEntityItemWithWorld(event.entityItem);
+        return event.entityItem;
     }
 }

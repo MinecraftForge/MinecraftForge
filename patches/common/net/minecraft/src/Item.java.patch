@@ -37,7 +37,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -650,4 +662,199 @@
+@@ -650,4 +662,212 @@
      {
          StatList.initStats();
      }
@@ -235,5 +235,18 @@
 +            return null;
 +        }
 +        return new ItemStack(getContainerItem());
++    }
++
++    /**
++     * Retrieves the normal 'lifespan' of this item when it is dropped on the ground as a EntityItem.
++     * This is in ticks, standard result is 6000, or 5 mins.
++     * 
++     * @param itemStack The current ItemStack
++     * @param world The world the entity is in
++     * @return The normal lifespan in ticks.
++     */
++    public int getEntityLifespan(ItemStack itemStack, World world)
++    {
++        return 6000;
 +    }
  }
