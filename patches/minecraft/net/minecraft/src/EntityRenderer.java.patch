@@ -70,7 +70,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1102,8 +1109,11 @@
+@@ -1102,15 +1109,18 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -84,6 +84,14 @@
                  GL11.glEnable(GL11.GL_ALPHA_TEST);
              }
  
+             this.mc.mcProfiler.endStartSection("destroyProgress");
+             GL11.glEnable(GL11.GL_BLEND);
+             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+-            var5.drawBlockDamageTexture(Tessellator.instance, (EntityPlayer)var4, par1);
++            var5.drawBlockDamageTexture(Tessellator.instance, var4, par1);
+             GL11.glDisable(GL11.GL_BLEND);
+             this.mc.mcProfiler.endStartSection("weather");
+             this.renderRainSnow(par1);
 @@ -1127,6 +1137,9 @@
                  this.setupFog(1, par1);
                  GL11.glPopMatrix();

@@ -24,7 +24,19 @@
          if (this.mc.theWorld.provider.worldType == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1790,6 +1799,7 @@
+@@ -1535,6 +1544,11 @@
+ 
+     public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
+     {
++        drawBlockDamageTexture(par1Tessellator, (EntityLiving)par2EntityPlayer, par3);
++    }
++
++    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityPlayer, float par3)
++    {
+         double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
+         double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
+         double var8 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
+@@ -1790,6 +1804,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -32,7 +44,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -1909,6 +1919,7 @@
+@@ -1909,6 +1924,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -40,7 +52,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -1925,6 +1936,7 @@
+@@ -1925,6 +1941,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -48,7 +60,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -1938,17 +1950,19 @@
+@@ -1938,17 +1955,19 @@
                          {
                              var24 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                              var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var24]);
