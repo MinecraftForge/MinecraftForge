@@ -83,7 +83,7 @@
      /**
 @@ -688,18 +724,33 @@
       */
-     protected void joinEntityItemWithWorld(EntityItem par1EntityItem)
+     public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
 -        this.worldObj.spawnEntityInWorld(par1EntityItem);
 +        if (captureDrops)
