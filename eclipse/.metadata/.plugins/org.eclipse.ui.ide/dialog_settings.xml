@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="ChooseWorkspaceDialogSettings">
-		<item value="346" key="DIALOG_Y_ORIGIN"/>
-		<item value="658" key="DIALOG_X_ORIGIN"/>
+		<item value="366" key="DIALOG_Y_ORIGIN"/>
+		<item value="233" key="DIALOG_X_ORIGIN"/>
 	</section>
 	<section name="WORKBENCH_SETTINGS">
 		<list key="ENABLED_TRANSFERS">

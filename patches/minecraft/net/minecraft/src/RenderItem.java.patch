@@ -76,8 +76,8 @@
                  if (this.field_77024_a)
                  {
 @@ -192,9 +191,9 @@
+         float var11;
          float var12;
-         float var16;
  
 -        if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
 -        {
