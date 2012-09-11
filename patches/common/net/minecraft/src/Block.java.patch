@@ -104,7 +104,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1257,669 @@
+@@ -1249,4 +1257,680 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -772,5 +772,16 @@
 +        }
 +
 +        return new ItemStack(id, 1, getDamageValue(world, x, y, z));
++    }
++
++    /**
++     * Used by getTopSolidOrLiquidBlock while placing biome decorations, villages, etc
++     * Also used to determine if the player can spawn on this block.
++     * 
++     * @return False to disallow spawning
++     */
++    public boolean isBlockFoliage(World world, int x, int y, int z)
++    {
++        return false;
 +    }
  }

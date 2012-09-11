@@ -93,6 +93,15 @@
              }
  
              this.getChunkFromChunkCoords(var2, var3).addEntity(par1Entity);
+@@ -1730,7 +1759,7 @@
+         {
+             int var5 = var3.getBlockID(par1, var4, par2);
+ 
+-            if (var5 != 0 && Block.blocksList[var5].blockMaterial.blocksMovement() && Block.blocksList[var5].blockMaterial != Material.leaves)
++            if (var5 != 0 && Block.blocksList[var5].blockMaterial.blocksMovement() && Block.blocksList[var5].blockMaterial != Material.leaves && !Block.blocksList[var5].isBlockFoliage(this, par1, var4, par2))
+             {
+                 return var4 + 1;
+             }
 @@ -1887,7 +1916,7 @@
  
                      if (var8 != null)
