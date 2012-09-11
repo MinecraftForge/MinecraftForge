@@ -1,0 +1,13 @@
+--- ../src_base/common/net/minecraft/src/PlayerCapabilities.java
++++ ../src_work/common/net/minecraft/src/PlayerCapabilities.java
+@@ -75,4 +75,10 @@
+     {
+         return this.walkSpeed;
+     }
++    
++    @SideOnly(Side.CLIENT)
++    public void setWalkSpeed(float par1)
++    {
++        this.walkSpeed = par1;
++    }
+ }
