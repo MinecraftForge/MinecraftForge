@@ -24,28 +24,21 @@
          if (this.mc.theWorld.provider.worldType == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1532,12 +1541,17 @@
+@@ -1532,8 +1541,13 @@
          GL11.glDisable(GL11.GL_BLEND);
          GL11.glDisable(GL11.GL_ALPHA_TEST);
      }
 -
 +    
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
-     {
--        double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
--        double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
--        double var8 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
-+        drawBlockDamageTexture(Tessellator.instance, par2EntityPlayer, par3);
++    {
++        drawBlockDamageTexture(Tessellator.instance, (EntityLiving)par2EntityPlayer, par3);
 +    }
 +
-+    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityLiving, float par3)
-+    {
-+        double var4 = par2EntityLiving.lastTickPosX + (par2EntityLiving.posX - par2EntityLiving.lastTickPosX) * (double)par3;
-+        double var6 = par2EntityLiving.lastTickPosY + (par2EntityLiving.posY - par2EntityLiving.lastTickPosY) * (double)par3;
-+        double var8 = par2EntityLiving.lastTickPosZ + (par2EntityLiving.posZ - par2EntityLiving.lastTickPosZ) * (double)par3;
- 
-         if (!this.field_72738_E.isEmpty())
-         {
++    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityPlayer, float par3)
+     {
+         double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
+         double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
 @@ -1790,6 +1804,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
