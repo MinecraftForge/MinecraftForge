@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/EntityPlayerMP.java
++++ ../src_work/common/net/minecraft/src/EntityPlayerMP.java
+@@ -330,7 +330,7 @@
+     public void onDeath(DamageSource par1DamageSource)
+     {
+         this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(par1DamageSource.getDeathMessage(this)));
+-        this.inventory.dropAllItems();
++        this.inventory.dropAllItems(par1DamageSource);
+     }
+ 
+     /**

@@ -1,5 +1,14 @@
 --- ../src_base/common/net/minecraft/src/StatList.java
 +++ ../src_work/common/net/minecraft/src/StatList.java
+@@ -68,7 +68,7 @@
+     /** the times you've jumped */
+     public static StatBase jumpStat = (new StatBasic(2010, "stat.jump")).initIndependentStat().registerStat();
+ 
+-    /** the distance you've dropped (or times you've fallen?) */
++    /** the number of items you've dropped */
+     public static StatBase dropStat = (new StatBasic(2011, "stat.drop")).initIndependentStat().registerStat();
+ 
+     /** the amount of damage you've dealt */
 @@ -168,9 +168,9 @@
       */
      private static StatBase[] initMinableStats(String par0Str, int par1)
