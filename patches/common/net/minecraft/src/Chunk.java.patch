@@ -41,9 +41,9 @@
 +     * @param chunkX The chunk's X position
 +     * @param chunkZ The Chunk's Z position
 +     */
-+    public Chunk(World world, byte[] ids, byte[] metadata, int chunkX, int chunkY)
++    public Chunk(World world, byte[] ids, byte[] metadata, int chunkX, int chunkZ)
 +    {
-+        this(world, chunkX, chunkY);
++        this(world, chunkX, chunkZ);
 +        int var5 = ids.length / 256;
 +
 +        for (int x = 0; x < 16; ++x)

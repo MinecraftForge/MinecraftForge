@@ -60,7 +60,7 @@ public class OreDictionary
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
      *  
-     * @param id The ore ID, see getOreID
+     * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
     public static ArrayList<ItemStack> getOres(String name)

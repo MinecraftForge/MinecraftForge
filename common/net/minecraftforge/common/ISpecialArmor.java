@@ -31,7 +31,7 @@ public interface ISpecialArmor
      * same priority, damage will be distributed between them based on there
      * absorption ratio.
      *
-     * @param entity The entity wearing the armor.
+     * @param player The entity wearing the armor.
      * @param armor The ItemStack of the armor item itself.
      * @param source The source of the damage, which can be used to alter armor
      *     properties based on the type or source of damage.
@@ -57,7 +57,7 @@ public interface ISpecialArmor
      * up automatically.
      *
      * @param entity The entity wearing the armor
-     * @param armor The ItemStack of the armor item itself.
+     * @param stack The ItemStack of the armor item itself.
      * @param source The source of the damage, which can be used to alter armor
      *     properties based on the type or source of damage.
      * @param damage The amount of damage being applied to the armor

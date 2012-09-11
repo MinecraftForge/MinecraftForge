@@ -161,7 +161,7 @@
 +     * @param x X Position
 +     * @param y Y position
 +     * @param z Z position
-+     * @param size The side to check
++     * @param side The side to check
 +     * @return True if the block is solid on the specified side.
 +     */
 +    public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) 
@@ -338,7 +338,7 @@
 +     * @param z The blocks Z position
 +     * @param metadata The blocks current metadata
 +     * @param side The face that the fire is coming from
-+     * @return 
++     * @return True if this block sustains fire, meaning it will never go out.
 +     */
 +    public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side)
 +    {
@@ -416,8 +416,8 @@
 +     * 
 +     * @param world The current world
 +     * @param x X Position
-+     * @param Y Y Position
-+     * @param Z Z Position
++     * @param y Y Position
++     * @param z Z Position
 +     * @param metadata Current metadata
 +     * @param fortune Breakers fortune level
 +     * @return A ArrayList containing all items this block drops
@@ -677,15 +677,15 @@
 +    /**
 +     * Location sensitive version of getExplosionRestance
 +     * 
-+     * @param par1Entity
++     * @param par1Entity The entity that caused the explosion
 +     * @param world The current world
 +     * @param x X Position
 +     * @param y Y Position
 +     * @param z Z Position
-+     * @param explosionX
-+     * @param explosionY
-+     * @param explosionZ
-+     * @return
++     * @param explosionX Explosion source X Position
++     * @param explosionY Explosion source X Position
++     * @param explosionZ Explosion source X Position
++     * @return The amount of the explosion absorbed.
 +     */
 +    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
 +    {

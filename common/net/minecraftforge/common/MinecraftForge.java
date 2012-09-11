@@ -71,7 +71,7 @@ public class MinecraftForge
     *                  classes, if multiple tool types can be used to harvest this block.
     * @param harvestLevel The minimum tool harvest level required to successfully
     * harvest the block.
-    * @see setToolClass for details on tool classes.
+    * @see MinecraftForge#setToolClass for details on tool classes.
     */
    public static void setBlockHarvestLevel(Block block, int metadata, String toolClass, int harvestLevel)
    {
@@ -90,7 +90,7 @@ public class MinecraftForge
     * @param block The block to remove effectiveness from.
     * @param metadata The metadata for the block subtype.
     * @param toolClass The tool class to remove the effectiveness mapping from.
-    * @see setToolClass for details on tool classes.
+    * @see MinecraftForge#setToolClass for details on tool classes.
     */
    public static void removeBlockEffectiveness(Block block, int metadata, String toolClass)
    {
@@ -108,7 +108,7 @@ public class MinecraftForge
     *                  classes, if multiple tool types can be used to harvest this block.
     * @param harvestLevel The minimum tool harvest level required to successfully
     *                     harvest the block.
-    * @see setToolClass for details on tool classes.
+    * @see MinecraftForge#setToolClass for details on tool classes.
     */
    public static void setBlockHarvestLevel(Block block, String toolClass, int harvestLevel)
    {
@@ -126,7 +126,7 @@ public class MinecraftForge
     * @param block The block to check.
     * @param metadata The metadata for the block subtype.
     * @param toolClass The tool class to check as able to remove this block.
-    * @see setToolClass for details on tool classes.
+    * @see MinecraftForge#setToolClass for details on tool classes.
     * @return The harvest level or -1 if no mapping exists.
     */
    public static int getBlockHarvestLevel(Block block, int metadata, String toolClass)
@@ -150,7 +150,7 @@ public class MinecraftForge
     * 
     * @param block The block to remove effectiveness from.
     * @param toolClass The tool class to remove the effectiveness mapping from.
-    * @see setToolClass for details on tool classes.
+    * @see MinecraftForge#setToolClass for details on tool classes.
     */
    public static void removeBlockEffectiveness(Block block, String toolClass)
    {
