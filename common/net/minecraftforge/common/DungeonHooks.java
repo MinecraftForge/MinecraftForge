@@ -1,9 +1,6 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Iterator;
 import java.util.Random;
 
 import net.minecraft.src.Item;
@@ -156,18 +153,6 @@ public class DungeonHooks
     {
         dungeonLoot.add(new DungeonLoot(rarity, item, minLevel, maxLevel, enchantChance));
     }
-
-    /**
-     * Adds a list of damage values for a single item ID to be selected randomly for dungeon loot
-     *
-     * @param rarity The relative chance that any potion in the list will spawn
-     * @param damage An array of damage values to chose from for adding multiple items with same item ID
-     * All items in the list have an equal chance of being selected
-     */
-    public static void addDungeonLoot(ItemStack item, int rarity, int damage[])
-    {
-        dungeonLoot.add(new DungeonLoot(rarity, item, damage));
-    }
     /**
      * Removes a item stack from the dungeon loot list, this will remove all items
      * as long as the item stack matches, it will not care about matching the stack
@@ -238,7 +223,6 @@ public class DungeonHooks
         private int minEnchantLevel = 1;
         private int maxEnchantLevel = 1;
         private int enchantChance = 0;
-        private int damageList[];
 
         /**
          * @param item A item stack
@@ -276,18 +260,6 @@ public class DungeonHooks
             maxCount = 1;
         }
         /**
-         * @param item An item stack
-         * @param damages A list of damage values to add several items at once with the same item ID
-         */
-        public DungeonLoot(int weight, ItemStack item, int damages[])
-        {
-            super(weight);
-            this.itemStack = item;
-            minCount = 1;
-            maxCount = 1;
-            damageList = damages;
-        }
-        /**
          * Grabs a ItemStack ready to be added to the dungeon chest,
          * the stack size will be between minCount and maxCount
          * @param rand World gen random number generator
@@ -314,11 +286,6 @@ public class DungeonHooks
                         }
                     }
                 }
-            }
-            if (damageList.length > 0)
-            {
-                int selection = rand.nextInt(damageList.length);
-                ret = new ItemStack(ret.itemID, 1, damageList[selection]);
             }
             return ret;
         }
