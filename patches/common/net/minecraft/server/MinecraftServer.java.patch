@@ -8,15 +8,25 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.logging.Level;
-@@ -58,6 +59,7 @@
+@@ -16,6 +17,7 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.ArgsWrapper;
+ import cpw.mods.fml.relauncher.FMLRelauncher;
++
+ import net.minecraft.src.AnvilSaveConverter;
+ import net.minecraft.src.AxisAlignedBB;
+ import net.minecraft.src.CallableIsServerModded;
+@@ -58,6 +60,9 @@
  import net.minecraft.src.WorldServerMulti;
  import net.minecraft.src.WorldSettings;
  import net.minecraft.src.WorldType;
 +import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
  
  public abstract class MinecraftServer implements Runnable, IPlayerUsage, ICommandSender
  {
-@@ -129,7 +131,10 @@
+@@ -129,7 +134,10 @@
      public final long[] tickTimeArray = new long[100];
  
      /** stats are [dimension][tick%100] system.nanoTime is stored. */
@@ -28,7 +38,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -196,8 +201,6 @@
+@@ -196,8 +204,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -37,7 +47,7 @@
          ISaveHandler var6 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo var8 = var6.loadWorldInfo();
          WorldSettings var7;
-@@ -216,46 +219,18 @@
+@@ -216,46 +222,18 @@
              var7.enableBonusChest();
          }
  
@@ -94,7 +104,15 @@
          this.setDifficultyForAllDimensions(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -611,13 +586,13 @@
+@@ -401,6 +379,7 @@
+             {
+                 WorldServer var4 = var1[var3];
+                 var4.flush();
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var4));
+             }
+ 
+             if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
+@@ -611,13 +590,13 @@
      {
          this.theProfiler.startSection("levels");
  
@@ -112,26 +130,36 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
  
                  if (this.tickCounter % 20 == 0)
-@@ -648,7 +623,7 @@
+@@ -648,9 +627,11 @@
                  }
              }
  
 -            this.timeOfLastDimenstionTick[var1][this.tickCounter % 100] = System.nanoTime() - var2;
+-        }
+-
 +            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - var2;
-         }
- 
++        }
++
++        this.theProfiler.startSection("dim_unloading");
++        DimensionManager.unloadWorlds(worldTickTimes);
          this.theProfiler.endStartSection("connection");
-@@ -697,7 +672,8 @@
+         this.getNetworkThread().networkTick();
+         this.theProfiler.endStartSection("players");
+@@ -697,7 +678,12 @@
  
      public WorldServer worldServerForDimension(int par1)
      {
 -        return par1 == -1 ? this.theWorldServer[1] : (par1 == 1 ? this.theWorldServer[2] : this.theWorldServer[0]);
 +        WorldServer ret = DimensionManager.getWorld(par1);
-+        return (ret != null ? ret : DimensionManager.getWorld(0));
++        if (ret == null) {
++            DimensionManager.initDimension(par1);
++            ret = DimensionManager.getWorld(par1);
++        }
++        return ret; //Why's this default to the overworld where everything else follows the style of 'you did it wrong so fail'?  Why not return null and let the caller be intelligent?
      }
  
      @SideOnly(Side.SERVER)
-@@ -786,7 +762,7 @@
+@@ -786,7 +772,7 @@
  
      public String getServerModName()
      {
@@ -140,3 +168,11 @@
      }
  
      /**
+@@ -1061,6 +1047,7 @@
+             if (var2 != null)
+             {
+                 var2.flush();
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2));
+             }
+         }
+ 
