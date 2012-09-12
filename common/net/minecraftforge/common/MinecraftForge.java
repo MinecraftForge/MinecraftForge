@@ -3,6 +3,8 @@ package net.minecraftforge.common;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+import cpw.mods.fml.common.FMLLog;
+
 import net.minecraft.src.*;
 import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
@@ -19,6 +21,7 @@ public class MinecraftForge
      */
     public static final EventBus EVENT_BUS = new EventBus();
     public static boolean SPAWNER_ALLOW_ON_INVERTED = false;
+    private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
     
     
     /** Register a new plant to be planted when bonemeal is used on grass.
@@ -166,6 +169,9 @@ public class MinecraftForge
     */
    public static void initialize()
    {
+       System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
+       FMLLog.info("MinecraftForge v%s Initialized", ForgeVersion.getVersion());
+
        Block filler = new Block(0, Material.air);
        Block.blocksList[0] = null;
        Block.opaqueCubeLookup[0] = false;
@@ -185,6 +191,8 @@ public class MinecraftForge
            temp[x] = EntityEnderman.carriableBlocks[x];
        }
        EntityEnderman.carriableBlocks = temp;
+
+       EVENT_BUS.register(INTERNAL_HANDLER);
    }
    
    public static String getBrandingVersion()
