@@ -1,5 +1,6 @@
 package net.minecraftforge.event;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
@@ -64,11 +65,13 @@ public class EventBus
     private void register(Class<?> eventType, Object target, Method method)
     {
         try
-        {    
-            Event event = (Event)eventType.newInstance();
+        {
+            Constructor<?> ctr = eventType.getConstructor();
+            ctr.setAccessible(true);
+            Event event = (Event)ctr.newInstance();
             ASMEventHandler listener = new ASMEventHandler(target, method);
             event.getListenerList().register(busID, listener.getPriority(), listener);
-            
+
             ArrayList<IEventListener> others = listeners.get(target); 
             if (others == null)
             {
