@@ -9,3 +9,14 @@
      }
  
      /**
+@@ -265,6 +267,10 @@
+      */
+     protected void updateWeather()
+     {
++        super.updateWeather();
++    }
++    public void updateWeatherBody()
++    {
+         if (!this.provider.hasNoSky)
+         {
+             if (this.lastLightningBolt > 0)

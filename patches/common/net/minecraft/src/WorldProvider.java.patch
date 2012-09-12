@@ -26,7 +26,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -251,4 +255,93 @@
+@@ -251,4 +255,209 @@
      }
  
      public abstract String func_80007_l();
@@ -119,4 +119,120 @@
 +    }
 +
 +    /*======================================= Start Moved From World =========================================*/
++
++    public boolean tickBlocksAndAmbiance(Chunk var7)
++    {
++        return false;
++    }
++
++    public void resetRainAndThunder()
++    {
++        worldObj.resetRainAndThunderBody();
++    }
++
++    public BiomeGenBase getBiomeGenForCoords(int par1, int par2)
++    {
++        return worldObj.getBiomeGenForCoordsBody(par1, par2);
++    }
++
++    public boolean isDaytime()
++    {
++        return worldObj.isDaytimeBody();
++    }
++
++    public Vec3 getSkyColor(Entity par1Entity, float par2)
++    {
++        return worldObj.getSkyColorBody(par1Entity, par2);
++    }
++
++    public Vec3 drawClouds(float par1)
++    {
++        return worldObj.drawCloudsBody(par1);
++    }
++
++    public float getStarBrightness(float par1)
++    {
++        return worldObj.getStarBrightnessBody(par1);
++    }
++
++    public void setAllowedSpawnTypes(boolean par1, boolean par2)
++    {
++        worldObj.setAllowedSpawnTypesBody(par1, par2);
++    }
++
++    public void calculateInitialWeather()
++    {
++        worldObj.calculateInitialWeatherBody();
++    }
++
++    public void updateWeather()
++    {
++        worldObj.updateWeatherBody();
++    }
++
++    public void toggleRain()
++    {
++        worldObj.toggleRainBody();
++    }
++
++    public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
++    {
++        return worldObj.canBlockFreezeBody(par1, par2, par3, par4);
++    }
++
++    public boolean canSnowAt(int par1, int par2, int par3)
++    {
++        return worldObj.canSnowAtBody(par1, par2, par3);
++    }
++
++    public void setWorldTime(long par1)
++    {
++        worldObj.setWorldTimeBody(par1);
++    }
++
++    public long getWorldTime()
++    {
++        return worldObj.getWorldTimeBody();
++    }
++
++    public long getSeed()
++    {
++        return worldObj.getSeedBody();
++    }
++
++    public ChunkCoordinates getSpawnPoint()
++    {
++        return worldObj.getSpawnPointBody();
++    }
++
++    public void setSpawnLocation(int par1, int par2, int par3)
++    {
++        worldObj.setSpawnLocationBody(par1, par2, par3);
++    }
++
++    public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
++    {
++        return worldObj.canMineBlockBody(par1EntityPlayer, par2, par3, par4);
++    }
++
++    public boolean isBlockHighHumidity(int par1, int par2, int par3)
++    {
++        return worldObj.isBlockHighHumidityBody(par1, par2, par3);
++    }
++
++    public int getHeight()
++    {
++        return worldObj.getHeightBody();
++    }
++
++    public int getActualHeight()
++    {
++        return worldObj.getActualHeightBody();
++    }
++
++    public double getHorizon()
++    {
++        return worldObj.getHorizonBody();
++    }
++
  }

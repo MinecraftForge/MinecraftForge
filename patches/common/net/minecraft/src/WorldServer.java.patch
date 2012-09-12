@@ -27,10 +27,21 @@
      }
  
      /**
-@@ -254,6 +260,14 @@
+@@ -179,6 +185,9 @@
+ 
+     private void resetRainAndThunder()
+     {
++        this.provider.resetRainAndThunder();
++    }
++    public void resetRainAndThunderBody() {
+         this.worldInfo.setRainTime(0);
+         this.worldInfo.setRaining(false);
+         this.worldInfo.setThunderTime(0);
+@@ -253,6 +262,14 @@
+         int var1 = 0;
          int var2 = 0;
          Iterator var3 = this.activeChunkSet.iterator();
- 
++
 +        doneChunks.retainAll(activeChunkSet);
 +        if (doneChunks.size() == activeChunkSet.size())
 +        {
@@ -38,22 +49,50 @@
 +        }
 +
 +        final long time = -System.currentTimeMillis();
-+
+ 
          while (var3.hasNext())
          {
-             ChunkCoordIntPair var4 = (ChunkCoordIntPair)var3.next();
-@@ -263,7 +277,9 @@
+@@ -263,13 +280,19 @@
              Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
              this.moodSoundAndLightCheck(var5, var6, var7);
              this.theProfiler.endStartSection("tickChunk");
 -            var7.updateSkylight();
+-            this.theProfiler.endStartSection("thunder");
 +            if (System.currentTimeMillis() + time <= 4 && doneChunks.add(var4)) {
 +                var7.updateSkylight();
 +            }
-             this.theProfiler.endStartSection("thunder");
++            this.theProfiler.endStartSection("dimensionChunk");
++            this.theProfiler.startSection("unknown");
              int var8;
              int var9;
-@@ -559,15 +575,27 @@
+             int var10;
+             int var11;
+-
++            int var13;
++
++            if (!this.provider.tickBlocksAndAmbiance(var7)) {
++            this.theProfiler.startSection("thunder");
+             if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
+             {
+                 this.updateLCG = this.updateLCG * 3 + 1013904223;
+@@ -286,7 +309,6 @@
+             }
+ 
+             this.theProfiler.endStartSection("iceandsnow");
+-            int var13;
+ 
+             if (this.rand.nextInt(16) == 0)
+             {
+@@ -321,6 +343,8 @@
+                     }
+                 }
+             }
++            }
++            this.theProfiler.endSection();
+ 
+             this.theProfiler.endStartSection("tickTiles");
+             ExtendedBlockStorage[] var19 = var7.getBlockStorageArray();
+@@ -559,15 +583,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -90,7 +129,17 @@
              }
          }
  
-@@ -587,7 +615,7 @@
+@@ -579,6 +615,9 @@
+      */
+     public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
+     {
++        return super.canMineBlock(par1EntityPlayer, par2, par3, par4);
++    }
++    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4) {
+         int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
+         int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
+ 
+@@ -587,7 +626,7 @@
              var6 = var5;
          }
  
@@ -99,7 +148,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -710,6 +738,7 @@
+@@ -710,6 +749,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -107,7 +156,7 @@
          }
      }
  
-@@ -906,7 +935,7 @@
+@@ -906,7 +946,7 @@
          boolean var1 = this.isRaining();
          super.updateWeather();
  
