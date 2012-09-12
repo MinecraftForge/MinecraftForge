@@ -1,11 +1,18 @@
 --- ../src_base/common/net/minecraft/src/FoodStats.java
 +++ ../src_work/common/net/minecraft/src/FoodStats.java
-@@ -63,7 +63,7 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import static net.minecraftforge.event.entity.living.LivingHealEvent.HealReason;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+@@ -63,7 +64,7 @@
  
              if (this.foodTimer >= 80)
              {
 -                par1EntityPlayer.heal(1);
-+                par1EntityPlayer.heal(1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.SATIATED);
++                par1EntityPlayer.heal(1, HealReason.SATIATED);
                  this.foodTimer = 0;
              }
          }

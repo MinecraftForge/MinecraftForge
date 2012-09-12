@@ -1,29 +1,36 @@
 --- ../src_base/common/net/minecraft/src/Potion.java
 +++ ../src_work/common/net/minecraft/src/Potion.java
-@@ -118,7 +118,7 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import static net.minecraftforge.event.entity.living.LivingHealEvent.HealReason;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+@@ -118,7 +119,7 @@
          {
              if (par1EntityLiving.getHealth() < par1EntityLiving.getMaxHealth())
              {
 -                par1EntityLiving.heal(1);
-+                par1EntityLiving.heal(1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.MAGIC_REGEN);
++                par1EntityLiving.heal(1, HealReason.MAGIC_REGEN);
              }
          }
          else if (this.id == poison.id)
-@@ -141,7 +141,7 @@
+@@ -141,7 +142,7 @@
          }
          else
          {
 -            par1EntityLiving.heal(6 << par2);
-+            par1EntityLiving.heal(6 << par2, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.MAGIC);
++            par1EntityLiving.heal(6 << par2, HealReason.MAGIC);
          }
      }
  
-@@ -171,7 +171,7 @@
+@@ -171,7 +172,7 @@
          else
          {
              var6 = (int)(par4 * (double)(6 << par3) + 0.5D);
 -            par2EntityLiving.heal(var6);
-+            par2EntityLiving.heal(var6, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.MAGIC);
++            par2EntityLiving.heal(var6, HealReason.MAGIC);
          }
      }
  

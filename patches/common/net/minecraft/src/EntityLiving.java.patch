@@ -40,7 +40,7 @@
          super.onUpdate();
  
          if (this.arrowHitTempCounter > 0)
-@@ -786,11 +798,17 @@
+@@ -786,11 +798,19 @@
      /**
       * Heal living entity (param: amount of half-hearts)
       */
@@ -54,13 +54,15 @@
          if (this.health > 0)
          {
 -            this.health += par1;
-+            if (MinecraftForge.EVENT_BUS.post(new LivingHealEvent(this, par1, reason))) {
-+                this.health += par1;
++            LivingHealEvent event = new LivingHealEvent(this, par1, reason);
++            if (!MinecraftForge.EVENT_BUS.post(event)) 
++            {
++                this.health += event.amount;
 +            }
  
              if (this.health > this.getMaxHealth())
              {
-@@ -823,6 +841,11 @@
+@@ -823,6 +843,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -72,7 +74,7 @@
          if (this.worldObj.isRemote)
          {
              return false;
-@@ -1007,6 +1030,12 @@
+@@ -1007,6 +1032,12 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -85,7 +87,7 @@
          par2 = this.applyArmorCalculations(par1DamageSource, par2);
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.health -= par2;
-@@ -1070,6 +1099,11 @@
+@@ -1070,6 +1101,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -97,7 +99,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1093,13 +1127,17 @@
+@@ -1093,13 +1129,17 @@
                  var3 = EnchantmentHelper.getLootingModifier(((EntityPlayer)var2).inventory);
              }
  
@@ -116,7 +118,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1107,6 +1145,16 @@
+@@ -1107,6 +1147,16 @@
                      }
                  }
              }
@@ -133,7 +135,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1150,6 +1198,12 @@
+@@ -1150,6 +1200,12 @@
       */
      protected void fall(float par1)
      {
@@ -146,7 +148,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1337,7 +1391,7 @@
+@@ -1337,7 +1393,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -155,7 +157,7 @@
      }
  
      /**
-@@ -1600,6 +1654,7 @@
+@@ -1600,6 +1656,7 @@
          }
  
          this.isAirBorne = true;

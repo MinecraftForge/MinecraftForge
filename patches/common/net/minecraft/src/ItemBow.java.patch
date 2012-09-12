@@ -32,19 +32,20 @@
              float var7 = (float)var6 / 20.0F;
              var7 = (var7 * var7 + var7 * 2.0F) / 3.0F;
  
-@@ -57,6 +71,11 @@
+@@ -57,6 +71,12 @@
              if (EnchantmentHelper.getEnchantmentLevel(Enchantment.flame.effectId, par1ItemStack) > 0)
              {
                  var8.setFire(100);
 +            }
 +            
-+            if (MinecraftForge.EVENT_BUS.post(new PlayerShootBowEvent(par3EntityPlayer, par1ItemStack, var8, var7))) {
++            if (MinecraftForge.EVENT_BUS.post(new PlayerShootBowEvent(par3EntityPlayer, par1ItemStack, var8, var7))) 
++            {
 +                var8.setDead();
 +                return;
              }
  
              par1ItemStack.damageItem(1, par3EntityPlayer);
-@@ -104,6 +123,13 @@
+@@ -104,6 +124,13 @@
       */
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {

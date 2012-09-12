@@ -10,12 +10,13 @@
  
  public class EntityDragon extends EntityDragonBase
  {
-@@ -374,7 +377,9 @@
+@@ -374,7 +377,10 @@
              }
              else if (this.ticksExisted % 10 == 0 && this.health < this.maxHealth)
              {
 -                ++this.health;
-+                if (MinecraftForge.EVENT_BUS.post(new LivingHealEvent(this, 1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.ENDER_CRYSTAL))) {
++                if (MinecraftForge.EVENT_BUS.post(new LivingHealEvent(this, 1, net.minecraftforge.event.entity.living.LivingHealEvent.HealReason.ENDER_CRYSTAL))) 
++                {
 +                    ++this.health;
 +                }
              }

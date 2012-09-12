@@ -24,7 +24,7 @@
  
          if (var4 != null && var6)
          {
-@@ -243,19 +250,36 @@
+@@ -243,19 +250,38 @@
          }
          else
          {
@@ -33,10 +33,12 @@
 +            {
 +                return false;
 +            }
-+            if (theWorld.getBlockTileEntity(par1, par2, par3) == null) {
++            if (theWorld.getBlockTileEntity(par1, par2, par3) == null) 
++            {
 +                this.thisPlayerMP.serverForThisPlayer.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
 +            }
-+            if (MinecraftForge.EVENT_BUS.post(new BlockBreakEvent(thisPlayerMP, par1, par2, par3))) {
++            if (MinecraftForge.EVENT_BUS.post(new BlockBreakEvent(thisPlayerMP, par1, par2, par3))) 
++            {
 +                    return false;
 +            }
              int var4 = this.theWorld.getBlockId(par1, par2, par3);
@@ -63,7 +65,7 @@
  
                  if (var7 != null)
                  {
-@@ -264,9 +288,11 @@
+@@ -264,9 +290,11 @@
                      if (var7.stackSize == 0)
                      {
                          this.thisPlayerMP.destroyCurrentEquippedItem();
@@ -75,7 +77,7 @@
                  if (var6 && var8)
                  {
                      Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -303,6 +329,7 @@
+@@ -303,6 +331,7 @@
              if (var6.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -83,7 +85,7 @@
              }
  
              return true;
-@@ -315,6 +342,12 @@
+@@ -315,6 +344,12 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -96,7 +98,7 @@
          int var11 = par2World.getBlockId(par4, par5, par6);
  
          if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
-@@ -336,7 +369,15 @@
+@@ -336,7 +371,15 @@
          }
          else
          {
@@ -113,7 +115,7 @@
          }
      }
  
-@@ -347,4 +388,13 @@
+@@ -347,4 +390,13 @@
      {
          this.theWorld = par1WorldServer;
      }
