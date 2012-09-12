@@ -45,6 +45,7 @@ def main():
         error_level = e.code
     
     extract_fml_obfed()
+    extract_paulscode()
     version = load_version(build_num)
     version_str = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
         
@@ -152,10 +153,23 @@ def extract_fml_obfed():
     for line in lines:
         line = line.replace('\n', '').replace('\r', '').replace('/', os.sep)
         if not os.path.isfile(os.path.join(reobf_dir, line)):
-            print line
+            print '    %s' % line
             side = line.split(os.sep)[0]
             if side == 'minecraft':
                 client.extract(line[10:].replace(os.sep, '/'), client_dir)
+        
+    client.close()
+    
+def extract_paulscode():
+    client = zipfile.ZipFile(os.path.join(mcp_dir, 'temp', 'client_reobf.jar'))
+    
+    print 'Extracting Reobfed Paulscode for mac users -.-'
+    
+    for i in client.filelist:
+        if i.filename.startswith('paulscode'):
+            if not os.path.isfile(os.path.join(client_dir, i.filename)):
+                print '   %s' % i.filename
+                client.extract(i.filename, client_dir)
         
     client.close()
     
