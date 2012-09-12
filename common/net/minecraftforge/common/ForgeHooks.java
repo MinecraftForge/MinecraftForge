@@ -223,8 +223,6 @@ public class ForgeHooks
         grassList.add(new GrassEntry(Block.plantRed,    0, 10));
         seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
         initTools();
-        System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
-        FMLLog.info("MinecraftForge v%s Initialized", ForgeVersion.getVersion());
     }
 
     /**
