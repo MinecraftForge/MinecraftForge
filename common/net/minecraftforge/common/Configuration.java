@@ -187,7 +187,7 @@ public class Configuration
             if (file.canRead())
             {
                 FileInputStream fileinputstream = new FileInputStream(file);
-                buffer = new BufferedReader(new InputStreamReader(fileinputstream, "8859_1"));
+                buffer = new BufferedReader(new InputStreamReader(fileinputstream, "UTF-8"));
 
                 String line;
                 Map<String, Property> currentMap = null;
@@ -301,7 +301,7 @@ public class Configuration
             if (file.canWrite())
             {
                 FileOutputStream fos = new FileOutputStream(file);
-                BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, "8859_1"));
+                BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
 
                 buffer.write("# Configuration file\r\n");
                 buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
