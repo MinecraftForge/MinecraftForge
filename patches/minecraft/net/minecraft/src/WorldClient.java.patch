@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldClient.java
++++ ../src_work/minecraft/net/minecraft/src/WorldClient.java
+@@ -40,6 +40,8 @@
+         this.difficultySetting = par4;
+         this.setSpawnLocation(8, 64, 8);
+         this.mapStorage = par1NetClientHandler.mapStorage;
++        this.isRemote = true;
++        finishSetup();
+     }
+ 
+     /**

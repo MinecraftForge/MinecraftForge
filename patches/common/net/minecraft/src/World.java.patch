@@ -22,23 +22,57 @@
      /**
       * boolean; if true updates scheduled by scheduleBlockUpdate happen immediately
       */
-@@ -167,6 +180,7 @@
+@@ -162,11 +175,14 @@
+         this.theProfiler = par5Profiler;
+         this.worldInfo = new WorldInfo(par4WorldSettings, par2Str);
+         this.provider = par3WorldProvider;
+-        this.mapStorage = new MapStorage(par1ISaveHandler);
+-        par3WorldProvider.registerWorld(this);
++    }
++    @SideOnly(Side.CLIENT)
++    protected void finishSetup() {
++        this.provider.registerWorld(this);
          this.chunkProvider = this.createChunkProvider();
          this.calculateInitialSkylight();
-         this.calculateInitialWeather();
+-        this.calculateInitialWeather();
++        this.calculateInitialWeather_do();
 +        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
      }
  
      public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler)
-@@ -213,6 +227,7 @@
+@@ -177,7 +193,7 @@
+         this.isRemote = false;
+         this.saveHandler = par1ISaveHandler;
+         this.theProfiler = par5Profiler;
+-        this.mapStorage = new MapStorage(par1ISaveHandler);
++        this.mapStorage = getMapStorage(par1ISaveHandler);
+         this.worldInfo = par1ISaveHandler.loadWorldInfo();
+ 
+         if (par4WorldProvider != null)
+@@ -213,8 +229,20 @@
  
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
+-    }
+-
 +        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
-     }
- 
++    }
++
++    private static MapStorage s_mapStorage;
++    private static ISaveHandler s_savehandler;
++    //Provides solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
++    private MapStorage getMapStorage(ISaveHandler savehandler)
++    {
++        if (s_savehandler != savehandler || s_mapStorage == null) {
++            s_mapStorage = new MapStorage(savehandler);
++            s_savehandler = savehandler;
++        }
++        return s_mapStorage;
++    }
      /**
-@@ -269,7 +284,8 @@
+      * Creates the chunk provider for this world. Called in the constructor. Retrieves provider from worldProvider?
+      */
+@@ -269,7 +297,8 @@
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -48,7 +82,7 @@
      }
  
      /**
-@@ -278,7 +294,8 @@
+@@ -278,7 +307,8 @@
      public boolean blockHasTileEntity(int par1, int par2, int par3)
      {
          int var4 = this.getBlockId(par1, par2, par3);
@@ -58,7 +92,7 @@
      }
  
      /**
-@@ -1009,7 +1026,7 @@
+@@ -1009,7 +1039,7 @@
                  int var12 = this.getBlockMetadata(var8, var9, var10);
                  Block var13 = Block.blocksList[var11];
  
@@ -67,7 +101,7 @@
                  {
                      MovingObjectPosition var14 = var13.collisionRayTrace(this, var8, var9, var10, par1Vec3, par2Vec3);
  
-@@ -1209,6 +1226,12 @@
+@@ -1209,6 +1239,12 @@
       */
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -80,7 +114,7 @@
          if (par1Entity != null && par2Str != null)
          {
              Iterator var5 = this.worldAccesses.iterator();
-@@ -1887,7 +1910,7 @@
+@@ -1887,7 +1923,7 @@
  
                      if (var8 != null)
                      {
@@ -89,7 +123,7 @@
                      }
                  }
              }
-@@ -1897,6 +1920,10 @@
+@@ -1897,6 +1933,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -100,7 +134,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -1917,7 +1944,9 @@
+@@ -1917,7 +1957,9 @@
                      {
                          this.loadedTileEntityList.add(var9);
                      }
@@ -111,7 +145,7 @@
                      if (this.chunkExists(var9.xCoord >> 4, var9.zCoord >> 4))
                      {
                          Chunk var10 = this.getChunkFromChunkCoords(var9.xCoord >> 4, var9.zCoord >> 4);
-@@ -1927,8 +1956,6 @@
+@@ -1927,8 +1969,6 @@
                              var10.setChunkBlockTileEntity(var9.xCoord & 15, var9.yCoord, var9.zCoord & 15, var9);
                          }
                      }
@@ -120,7 +154,7 @@
                  }
              }
  
-@@ -1941,13 +1968,13 @@
+@@ -1941,13 +1981,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -141,7 +175,7 @@
          }
      }
  
-@@ -1968,8 +1995,14 @@
+@@ -1968,8 +2008,14 @@
          int var3 = MathHelper.floor_double(par1Entity.posX);
          int var4 = MathHelper.floor_double(par1Entity.posZ);
          byte var5 = 32;
@@ -158,7 +192,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2204,6 +2237,14 @@
+@@ -2204,6 +2250,14 @@
                          {
                              return true;
                          }
@@ -173,7 +207,7 @@
                      }
                  }
              }
-@@ -2510,25 +2551,21 @@
+@@ -2510,25 +2564,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -214,7 +248,7 @@
          }
      }
  
-@@ -2537,27 +2574,10 @@
+@@ -2537,27 +2587,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -246,7 +280,7 @@
          }
      }
  
-@@ -2583,7 +2603,8 @@
+@@ -2583,7 +2616,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -256,7 +290,7 @@
      }
  
      /**
-@@ -2591,8 +2612,7 @@
+@@ -2591,8 +2625,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
@@ -266,7 +300,7 @@
      }
  
      /**
-@@ -2608,7 +2628,7 @@
+@@ -2608,7 +2641,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -275,7 +309,19 @@
              }
              else
              {
-@@ -3035,7 +3055,7 @@
+@@ -2649,6 +2682,11 @@
+     public void tick()
+     {
+         this.updateWeather();
++    }
++
++    //Permission edit evasion for WorldClient
++    protected void calculateInitialWeather_do() {
++        this.calculateInitialWeather();
+     }
+ 
+     /**
+@@ -3035,7 +3073,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -284,7 +330,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3303,10 +3323,10 @@
+@@ -3303,10 +3341,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -299,7 +345,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3327,10 +3347,10 @@
+@@ -3327,10 +3365,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -314,7 +360,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3460,7 +3480,10 @@
+@@ -3460,7 +3498,10 @@
              {
                  var9 = null;
              }
@@ -326,7 +372,7 @@
              return par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -3958,4 +3981,65 @@
+@@ -3958,4 +3999,65 @@
              var7.destroyBlockPartially(par1, par2, par3, par4, par5);
          }
      }
