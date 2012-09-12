@@ -26,7 +26,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -251,4 +255,92 @@
+@@ -251,4 +255,109 @@
      }
  
      public abstract String func_80007_l();
@@ -118,4 +118,21 @@
 +        this.skyProvider = skyProvider;
 +    }
 +
++    public ChunkCoordinates getRandomizedSpawnPoint()
++    {
++        ChunkCoordinates var5 = new ChunkCoordinates(this.worldObj.getSpawnPoint());
++
++        boolean isAdventure = worldObj.getWorldInfo().getGameType() != EnumGameType.ADVENTURE;
++        int spawnFuzz = terrainType.getSpawnFuzz();
++        int spawnFuzzHalf = spawnFuzz / 2;
++
++        if (!this.hasNoSky && !isAdventure)
++        {
++            var5.posX += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
++            var5.posZ += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
++            var5.posY = this.worldObj.getTopSolidOrLiquidBlock(var5.posX, var5.posZ);
++        }
++
++        return var5;
++    }
  }
