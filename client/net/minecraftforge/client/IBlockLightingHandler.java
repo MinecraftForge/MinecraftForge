@@ -9,6 +9,9 @@ public interface IBlockLightingHandler
      * of any returned values as well as what Minecraft itself believes
      * the value should be.
      *
+     * This hook is only a visual change. This will not affect mechanics
+     * such as mob spawning.
+     *
      * @param x The x position of the block
      * @param y The y position of the block
      * @param z The z position of the block
