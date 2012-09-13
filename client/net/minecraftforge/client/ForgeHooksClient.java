@@ -1,6 +1,9 @@
 package net.minecraftforge.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -69,6 +72,7 @@ public class ForgeHooksClient
     public static Tessellator defaultTessellator = null;
     public static boolean inWorld = false;
     public static HashMap<TesKey, IRenderContextHandler> renderHandlers = new HashMap<TesKey, IRenderContextHandler>();
+    public static List<IBlockLightingHandler> blockLightingHandlers = new ArrayList<IBlockLightingHandler>();
     public static IRenderContextHandler unbindContext = null;
 
     protected static void registerRenderContextHandler(String texture, int subID, IRenderContextHandler handler)
@@ -224,6 +228,16 @@ public class ForgeHooksClient
             return ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
         }
         return _default;
+    }
+    
+    public static int modifyBlockLightLevel(int x, int y, int z, int real) {
+        int max = real;
+        
+        for (IBlockLightingHandler handler : blockLightingHandlers) {
+            max = Math.max(max, handler.getBlockLightLevel(x, y, z));
+        }
+        
+        return max;
     }
 
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
