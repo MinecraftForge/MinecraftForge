@@ -1,0 +1,59 @@
+--- ../src_base/common/net/minecraft/src/ColorizerGrass.java
++++ ../src_work/common/net/minecraft/src/ColorizerGrass.java
+@@ -1,11 +1,19 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.client.IGrassColorizer;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public class ColorizerGrass
++public class ColorizerGrass implements IGrassColorizer
+ {
++    /**
++     * Interface for overriding the functions within this class. Normally you 
++     * could just extend the class, but since all methods are static, rather 
++     * than being called through an instance, that won't really work.
++     */
++    public static IGrassColorizer GrassColorizer = new ColorizerGrass();
++    
+     /** Color buffer for grass */
+     private static int[] grassBuffer = new int[65536];
+ 
+@@ -15,13 +23,29 @@
+     }
+ 
+     /**
+-     * Gets grass color from temperature and humidity. Args: temperature, humidity
++     * Calculates the grass color for blocks based on their biome data.
++     * 
++     * @param temperature
++     *            The temperature of the biome.
++     * @param rainfall
++     *            The rainfall of the biome.
++     * @param grassBuffer
++     *            The default gradient image loaded into ColorizerGrass, as a 1D
++     *            array.
++     * @return The grass color to use for rendering, as an ARGB int (though A is
++     *         ignored).
+      */
+-    public static int getGrassColor(double par0, double par2)
++    public static int getGrassColor(double temperature, double rainfall)
+     {
+-        par2 *= par0;
+-        int var4 = (int)((1.0D - par0) * 255.0D);
+-        int var5 = (int)((1.0D - par2) * 255.0D);
++        return GrassColorizer.colorizeGrass(temperature, rainfall, grassBuffer);
++    }
++
++    @Override
++    public int colorizeGrass(double temperature, double rainfall, int[] grassBuffer)
++    {
++        rainfall *= temperature;
++        int var4 = (int) ((1.0D - temperature) * 255.0D);
++        int var5 = (int) ((1.0D - rainfall) * 255.0D);
+         return grassBuffer[var5 << 8 | var4];
+     }
+-}
++}
