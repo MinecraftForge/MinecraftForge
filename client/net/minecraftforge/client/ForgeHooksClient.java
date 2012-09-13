@@ -1,6 +1,11 @@
 package net.minecraftforge.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeSet;
 
@@ -24,6 +29,7 @@ import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderGlobal;
 import net.minecraft.src.Tessellator;
 import net.minecraft.src.TexturePackBase;
+import net.minecraftforge.client.ILightingHandler.LightingType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
@@ -69,6 +75,7 @@ public class ForgeHooksClient
     public static Tessellator defaultTessellator = null;
     public static boolean inWorld = false;
     public static HashMap<TesKey, IRenderContextHandler> renderHandlers = new HashMap<TesKey, IRenderContextHandler>();
+    protected static List<ILightingHandler> lightingHandlers = new ArrayList<ILightingHandler>();
     public static IRenderContextHandler unbindContext = null;
 
     protected static void registerRenderContextHandler(String texture, int subID, IRenderContextHandler handler)
@@ -224,6 +231,43 @@ public class ForgeHooksClient
             return ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
         }
         return _default;
+    }
+    
+    public static void registerLightingHandler(ILightingHandler handler) {
+        lightingHandlers.add(handler);
+        Collections.sort(lightingHandlers, new Comparator<ILightingHandler>() {
+            public int compare(ILightingHandler e1, ILightingHandler e2) {
+                int e1priority = e1.getLightingPriority();
+                int e2priority = e2.getLightingPriority();
+                return e1priority == e2priority ? 0 : (e1priority < e2priority ? -1 : 1);
+            }
+        });
+    }
+    
+    public static int modifySkyLightLevel(int x, int y, int z, int real, LightingType type) {
+        int lightLevel = real;
+
+        for (ILightingHandler handler : lightingHandlers) {
+            int tmp = handler.getSkyLightLevel(x, y, z, lightLevel, type);
+            if (tmp >= 0 && tmp <= 15) {
+                lightLevel = tmp;
+            }
+        }
+        
+        return lightLevel;
+    }
+    
+    public static int modifyBlockLightLevel(int x, int y, int z, int real, LightingType type) {
+        int lightLevel = real;
+        
+        for (ILightingHandler handler : lightingHandlers) {
+            int tmp = handler.getBlockLightLevel(x, y, z, lightLevel, type);
+            if (tmp >= 0 && tmp <= 15) {
+                lightLevel = tmp;
+            }
+        }
+        
+        return lightLevel;
     }
 
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
