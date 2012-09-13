@@ -24,6 +24,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.Item;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -33,6 +34,7 @@ public class Configuration
 {
 
     private boolean configBlocks[] = null;
+    private boolean configItems[] = null;
 
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_BLOCK   = "block";
@@ -116,6 +118,60 @@ public class Configuration
                 }
 
                 throw new RuntimeException("No more block ids available for " + key);
+            }
+        }
+    }
+
+    /**
+     * Gets or create an item id property. If the item id property key is
+     * already in the configuration, then it will be used. Otherwise,
+     * defaultId will be used, except if already taken, in which case this
+     * will try to determine a free default id.
+     */
+    public Property getOrCreateItemIdProperty(String key, int defaultId)
+    {
+        if (configItems == null)
+        {
+            configItems = new boolean[Item.itemsList.length];
+
+            for (int i = 0; i < configItems.length; ++i)
+            {
+                configItems[i] = false;
+            }
+        }
+
+        Map<String, Property> properties = categories.get(CATEGORY_ITEM);
+        if (properties.containsKey(key))
+        {
+            Property property = getOrCreateIntProperty(key, CATEGORY_ITEM, defaultId);
+            configItems[Integer.parseInt(property.value)] = true;
+            return property;
+        }
+        else
+        {
+            Property property = new Property();
+            properties.put(key, property);
+            property.setName(key);
+
+            if (Item.itemsList[defaultId] == null && !configItems[defaultId])
+            {
+                property.value = Integer.toString(defaultId);
+                configItems[defaultId] = true;
+                return property;
+            }
+            else
+            {
+                for (int j = configItems.length - 1; j >= 0; --j)
+                {
+                    if (Item.itemsList[j] == null && !configBlocks[j])
+                    {
+                        property.value = Integer.toString(j);
+                        configItems[j] = true;
+                        return property;
+                    }
+                }
+
+                throw new RuntimeException("No more item ids available for " + key);
             }
         }
     }
