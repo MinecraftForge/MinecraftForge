@@ -411,18 +411,17 @@
          BiomeGenBase var5 = this.getBiomeGenForCoords(par1, par3);
          float var6 = var5.getFloatTemperature();
  
-@@ -2942,6 +3008,10 @@
-      * Tests whether or not snow can be placed at a given location
+@@ -2943,6 +3009,9 @@
       */
      public boolean canSnowAt(int par1, int par2, int par3)
-+    {
+     {
 +        return this.provider.canSnowAt(par1, par2, par3);
 +    }
-+    public boolean canSnowAtBody(int par1, int par2, int par3)
-     {
++    public boolean canSnowAtBody(int par1, int par2, int par3) {
          BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
          float var5 = var4.getFloatTemperature();
-@@ -3035,7 +3105,7 @@
+ 
+@@ -3035,7 +3104,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
@@ -431,7 +430,7 @@
          int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
          int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
          int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3303,10 +3373,10 @@
+@@ -3303,10 +3372,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -446,7 +445,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3327,10 +3397,10 @@
+@@ -3327,10 +3396,10 @@
       */
      public List getEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB)
      {
@@ -461,7 +460,7 @@
          ArrayList var7 = new ArrayList();
  
          for (int var8 = var3; var8 <= var4; ++var8)
-@@ -3460,7 +3530,10 @@
+@@ -3460,7 +3529,10 @@
              {
                  var9 = null;
              }
@@ -473,18 +472,17 @@
              return par1 > 0 && var9 == null && var10.canPlaceBlockOnSide(this, par2, par3, par4, par6);
          }
      }
-@@ -3650,6 +3723,10 @@
+@@ -3650,6 +3722,9 @@
       */
      public void setWorldTime(long par1)
      {
 +        this.provider.setWorldTime(par1);
 +    }
-+    public void setWorldTimeBody(long par1)
-+    {
++    public void setWorldTimeBody(long par1) {
          this.worldInfo.setWorldTime(par1);
      }
  
-@@ -3658,11 +3735,17 @@
+@@ -3658,11 +3733,17 @@
       */
      public long getSeed()
      {
@@ -502,7 +500,7 @@
          return this.worldInfo.getWorldTime();
      }
  
-@@ -3671,12 +3754,19 @@
+@@ -3671,12 +3752,19 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -522,7 +520,7 @@
          this.worldInfo.setSpawnPosition(par1, par2, par3);
      }
  
-@@ -3710,6 +3800,9 @@
+@@ -3710,6 +3798,9 @@
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
@@ -532,7 +530,7 @@
          return true;
      }
  
-@@ -3821,6 +3914,9 @@
+@@ -3821,6 +3912,9 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -542,7 +540,7 @@
          BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
          return var4.isHighHumidity();
      }
-@@ -3876,6 +3972,9 @@
+@@ -3876,6 +3970,9 @@
       */
      public int getHeight()
      {
@@ -552,7 +550,7 @@
          return 256;
      }
  
-@@ -3884,6 +3983,9 @@
+@@ -3884,6 +3981,9 @@
       */
      public int getActualHeight()
      {
@@ -562,7 +560,7 @@
          return this.provider.hasNoSky ? 128 : 256;
      }
  
-@@ -3930,6 +4032,10 @@
+@@ -3930,6 +4030,10 @@
       */
      public double getHorizon()
      {
@@ -573,7 +571,7 @@
          return this.worldInfo.getTerrainType().getHorizon(this);
      }
  
-@@ -3958,4 +4064,68 @@
+@@ -3958,4 +4062,68 @@
              var7.destroyBlockPartially(par1, par2, par3, par4, par5);
          }
      }

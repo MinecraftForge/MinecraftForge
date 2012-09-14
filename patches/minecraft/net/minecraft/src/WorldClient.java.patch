@@ -1,22 +1,24 @@
 --- ../src_base/minecraft/net/minecraft/src/WorldClient.java
 +++ ../src_work/minecraft/net/minecraft/src/WorldClient.java
-@@ -40,6 +40,8 @@
+@@ -38,8 +38,10 @@
+         super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler);
+         this.sendQueue = par1NetClientHandler;
          this.difficultySetting = par4;
-         this.setSpawnLocation(8, 64, 8);
-         this.mapStorage = par1NetClientHandler.mapStorage;
++        this.mapStorage = par1NetClientHandler.mapStorage;
 +        this.isRemote = true;
 +        finishSetup();
+         this.setSpawnLocation(8, 64, 8);
+-        this.mapStorage = par1NetClientHandler.mapStorage;
      }
  
      /**
-@@ -265,6 +267,10 @@
+@@ -265,6 +267,9 @@
       */
      protected void updateWeather()
      {
 +        super.updateWeather();
 +    }
-+    public void updateWeatherBody()
-+    {
++    public void updateWeatherBody() {
          if (!this.provider.hasNoSky)
          {
              if (this.lastLightningBolt > 0)
