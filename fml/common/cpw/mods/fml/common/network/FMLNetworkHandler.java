@@ -304,9 +304,9 @@ public class FMLNetworkHandler
         NetworkRegistry.instance().connectionOpened(netClientHandler, server, networkManager);
     }
 
-    public static void onConnectionClosed(NetworkManager manager)
+    public static void onConnectionClosed(NetworkManager manager, EntityPlayer player)
     {
-        NetworkRegistry.instance().connectionClosed(manager);
+        NetworkRegistry.instance().connectionClosed(manager, player);
     }
 
 

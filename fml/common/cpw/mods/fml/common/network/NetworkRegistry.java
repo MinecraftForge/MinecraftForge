@@ -207,12 +207,13 @@ public class NetworkRegistry
         }
     }
 
-    void connectionClosed(NetworkManager manager)
+    void connectionClosed(NetworkManager manager, EntityPlayer player)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
             handler.connectionClosed(manager);
         }
+        activeChannels.removeAll(player);
     }
 
     void generateChannelRegistration(EntityPlayer player, NetHandler netHandler, NetworkManager manager)
