@@ -15,6 +15,7 @@ import net.minecraft.src.StructureVillagePieces;
 import net.minecraft.src.Tuple;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -33,6 +34,7 @@ public class VillagerRegistry
     private Multimap<Integer, IVillageTradeHandler> tradeHandlers = ArrayListMultimap.create();
     private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();
     private Map<Integer, String> newVillagers = Maps.newHashMap();
+    private List<Integer> newVillagerIds = Lists.newArrayList();
 
     /**
      * Allow access to the {@link StructureVillagePieces} array controlling new village
@@ -114,6 +116,7 @@ public class VillagerRegistry
             throw new RuntimeException();
         }
         newVillagers.put(villagerId, villagerSkin);
+        newVillagerIds.add(villagerId);
     }
 
     /**
@@ -201,5 +204,12 @@ public class VillagerRegistry
             EntityVillager.field_70960_bC.put(item.field_77779_bT, new Tuple(min, max));
         }
         villager.func_70949_b(list, item.func_77612_l(), random, chance);
+    }
+
+    public static void applyRandomTrade(EntityVillager villager, Random rand)
+    {
+        int extra = instance().newVillagerIds.size();
+        int trade = rand.nextInt(5 + extra);
+        villager.func_70938_b(trade < 5 ? trade : instance().newVillagerIds.get(trade - 5));
     }
 }
