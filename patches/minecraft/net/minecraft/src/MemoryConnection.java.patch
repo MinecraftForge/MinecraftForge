@@ -13,7 +13,7 @@
          if (this.field_74441_e && this.field_74442_b.isEmpty())
          {
              this.field_74440_d.func_72515_a(this.field_74438_f, this.field_74439_g);
-+            FMLNetworkHandler.onConnectionClosed(this);
++            FMLNetworkHandler.onConnectionClosed(this, this.field_74440_d.getPlayer());
          }
      }
  

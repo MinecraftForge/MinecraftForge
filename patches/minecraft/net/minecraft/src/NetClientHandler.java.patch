@@ -52,7 +52,7 @@
          {
              this.field_72555_g.func_74429_a(p_72546_1_);
              this.field_72555_g.func_74423_d();
-+            FMLNetworkHandler.onConnectionClosed(this.field_72555_g);
++            FMLNetworkHandler.onConnectionClosed(this.field_72555_g, this.getPlayer());
          }
      }
  
