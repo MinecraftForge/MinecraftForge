@@ -1,0 +1,18 @@
+--- ../src-base/common/net/minecraft/src/EntityAIVillagerMate.java
++++ ../src-work/common/net/minecraft/src/EntityAIVillagerMate.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
++
++import cpw.mods.fml.common.registry.VillagerRegistry;
+ 
+ public class EntityAIVillagerMate extends EntityAIBase
+ {
+@@ -104,7 +106,7 @@
+         this.field_75451_c.func_70873_a(6000);
+         this.field_75450_b.func_70873_a(6000);
+         var1.func_70873_a(-24000);
+-        var1.func_70938_b(this.field_75450_b.func_70681_au().nextInt(5));
++        VillagerRegistry.applyRandomTrade(var1, this.field_75450_b.func_70681_au());
+         var1.func_70012_b(this.field_75450_b.field_70165_t, this.field_75450_b.field_70163_u, this.field_75450_b.field_70161_v, 0.0F, 0.0F);
+         this.field_75448_d.func_72838_d(var1);
+         this.field_75448_d.func_72960_a(var1, (byte)12);
