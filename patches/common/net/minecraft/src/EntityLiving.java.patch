@@ -1,8 +1,10 @@
 --- ../src_base/common/net/minecraft/src/EntityLiving.java
 +++ ../src_work/common/net/minecraft/src/EntityLiving.java
-@@ -7,6 +7,10 @@
+@@ -6,7 +6,12 @@
+ import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
++import java.util.Map.Entry;
  import java.util.Random;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
@@ -11,7 +13,7 @@
  
  public abstract class EntityLiving extends Entity
  {
-@@ -314,6 +318,7 @@
+@@ -314,6 +319,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -19,7 +21,7 @@
      }
  
      public boolean isExplosiveMob(Class par1Class)
-@@ -370,6 +375,7 @@
+@@ -370,6 +376,7 @@
      {
          this.entityLivingToAttack = par1EntityLiving;
          this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
@@ -27,7 +29,7 @@
      }
  
      protected void entityInit()
-@@ -656,6 +662,11 @@
+@@ -656,6 +663,11 @@
       */
      public void onUpdate()
      {
@@ -39,7 +41,7 @@
          super.onUpdate();
  
          if (this.arrowHitTempCounter > 0)
-@@ -823,6 +834,11 @@
+@@ -823,6 +835,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -51,7 +53,7 @@
          if (this.worldObj.isRemote)
          {
              return false;
-@@ -1007,6 +1023,12 @@
+@@ -1007,6 +1024,12 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -64,7 +66,7 @@
          par2 = this.applyArmorCalculations(par1DamageSource, par2);
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.health -= par2;
-@@ -1070,6 +1092,11 @@
+@@ -1070,6 +1093,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -76,7 +78,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1093,13 +1120,17 @@
+@@ -1093,13 +1121,17 @@
                  var3 = EnchantmentHelper.getLootingModifier(((EntityPlayer)var2).inventory);
              }
  
@@ -95,7 +97,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1107,6 +1138,16 @@
+@@ -1107,6 +1139,16 @@
                      }
                  }
              }
@@ -112,7 +114,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1150,6 +1191,12 @@
+@@ -1150,6 +1192,12 @@
       */
      protected void fall(float par1)
      {
@@ -125,7 +127,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1337,7 +1384,7 @@
+@@ -1337,7 +1385,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -134,7 +136,7 @@
      }
  
      /**
-@@ -1600,6 +1647,7 @@
+@@ -1600,6 +1648,7 @@
          }
  
          this.isAirBorne = true;
@@ -142,3 +144,34 @@
      }
  
      /**
+@@ -2175,4 +2224,30 @@
+             this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().shiftedIndex, var4.xCoord, var4.yCoord, var4.zCoord, var3.xCoord, var3.yCoord + 0.05D, var3.zCoord);
+         }
+     }
++    
++    /***
++     * Removes all potion effects that have curativeItem as a curative item for its effect
++     * @param curativeItem The itemstack we are using to cure potion effects
++     */
++    public void curePotionEffects(ItemStack curativeItem)
++    {
++        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
++        
++        if (!worldObj.isRemote)
++        {
++            return;
++        }
++        
++        while (potionKey.hasNext())
++        {
++            Integer key = potionKey.next();
++            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++            
++            if (effect.isCurativeItem(curativeItem))
++            {
++                potionKey.remove();
++                onFinishedPotionEffect(effect);
++            }
++        }
++    }
+ }
