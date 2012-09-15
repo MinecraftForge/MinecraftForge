@@ -24,15 +24,29 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -279,6 +291,7 @@
+@@ -279,6 +291,21 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
 +        isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
++    }
++    
++    public int getLightOpacity(IBlockAccess iblockaccess, int x, int y, int z)
++    {
++        return lightOpacity[this.blockID];
++    }
++    
++    public static final int getBlockLightOpacity(IBlockAccess iblockaccess, int x, int y, int z)
++    {
++        int ID = iblockaccess.getBlockId(x, y, z);
++        if (ID == 0)
++            return 0;
++        else 
++            return blocksList[ID].getLightOpacity(iblockaccess, x, y, z);
      }
  
      /**
-@@ -417,9 +430,10 @@
+@@ -417,9 +444,10 @@
          return this.needsRandomTick;
      }
  
@@ -44,7 +58,7 @@
      }
  
      /**
-@@ -442,7 +456,7 @@
+@@ -442,7 +470,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -53,7 +67,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -452,7 +466,7 @@
+@@ -452,7 +480,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -62,7 +76,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -621,8 +635,7 @@
+@@ -621,8 +649,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -72,7 +86,7 @@
      }
  
      /**
-@@ -640,18 +653,13 @@
+@@ -640,18 +667,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -95,7 +109,7 @@
                  }
              }
          }
-@@ -985,7 +993,7 @@
+@@ -985,7 +1007,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -104,7 +118,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1257,680 @@
+@@ -1249,4 +1271,680 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
