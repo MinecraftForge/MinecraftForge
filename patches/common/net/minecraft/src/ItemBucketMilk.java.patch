@@ -1,0 +1,18 @@
+--- ../src_base/common/net/minecraft/src/ItemBucketMilk.java
++++ ../src_work/common/net/minecraft/src/ItemBucketMilk.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
++
++import java.util.HashMap;
+ 
+ public class ItemBucketMilk extends Item
+ {
+@@ -18,7 +20,7 @@
+ 
+         if (!par2World.isRemote)
+         {
+-            par3EntityPlayer.clearActivePotions();
++            par3EntityPlayer.curePotionEffects(par1ItemStack);
+         }
+ 
+         return par1ItemStack.stackSize <= 0 ? new ItemStack(Item.bucketEmpty) : par1ItemStack;
