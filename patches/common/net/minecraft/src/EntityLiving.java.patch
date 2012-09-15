@@ -157,7 +157,7 @@
 +    {
 +        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
 +        
-+        if (!worldObj.isRemote)
++        if (worldObj.isRemote)
 +        {
 +            return;
 +        }
