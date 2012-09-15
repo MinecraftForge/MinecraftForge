@@ -120,9 +120,9 @@ public class LoadController
             activeContainer = mc;
             String modId = mc.getModId();
             stateEvent.applyModContainer(activeContainer());
-            FMLLog.finer("Posting state event %s to mod %s", stateEvent, modId);
+            FMLLog.finer("Posting state event %s to mod %s", stateEvent.getEventType(), modId);
             eventChannels.get(modId).post(stateEvent);
-            FMLLog.finer("State event %s delivered to mod %s", stateEvent, modId);
+            FMLLog.finer("State event %s delivered to mod %s", stateEvent.getEventType(), modId);
             activeContainer = null;
             if (!errors.containsKey(modId))
             {
