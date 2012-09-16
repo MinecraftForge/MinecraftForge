@@ -73,7 +73,7 @@
 +        }
      }
  
-     public void func_78872_b(Entity par1Entity, float par2)
+     public void renderLitParticles(Entity par1Entity, float par2)
 @@ -144,6 +187,8 @@
          {
              this.fxLayers[var2].clear();

@@ -20,7 +20,7 @@
 +    private int rawBufferSize = 0;
 +    public int textureID = 0;
      /**
-      * Boolean used to check whether quads should be drawn as four triangles. Initialized to true and never changed.
+      * Boolean used to check whether quads should be drawn as two triangles. Initialized to false and never changed.
       */
 @@ -25,16 +33,16 @@
      private static boolean tryVBO = false;

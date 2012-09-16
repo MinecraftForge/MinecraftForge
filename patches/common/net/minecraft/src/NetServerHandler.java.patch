@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/NetServerHandler.java
 +++ ../src_work/common/net/minecraft/src/NetServerHandler.java
-@@ -306,7 +306,7 @@
+@@ -310,7 +310,7 @@
                  this.playerEntity.setPositionAndRotation(var5, var7, var9, var11, var12);
                  boolean var32 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double)var27, (double)var27, (double)var27)).isEmpty();
  
@@ -9,7 +9,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
                      return;
-@@ -314,7 +314,7 @@
+@@ -318,7 +318,7 @@
  
                  AxisAlignedBB var33 = this.playerEntity.boundingBox.copy().expand((double)var27, (double)var27, (double)var27).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -18,7 +18,7 @@
                  {
                      if (var29 >= -0.03125D)
                      {
-@@ -388,7 +388,10 @@
+@@ -395,7 +395,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
  
@@ -30,16 +30,16 @@
                  {
                      return;
                  }
-@@ -410,7 +413,7 @@
+@@ -417,7 +420,7 @@
  
              if (par1Packet14BlockDig.status == 0)
              {
 -                if (var20 <= 16 && !var3)
 +                if (var20 <= mcServer.spawnProtectionSize && !var3)
                  {
-                     this.playerEntity.serverForThisPlayer.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
+                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
-@@ -490,7 +493,9 @@
+@@ -497,7 +500,9 @@
                  var12 = var11;
              }
  
@@ -50,7 +50,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -787,7 +792,7 @@
+@@ -798,7 +803,7 @@
                      return;
                  }
  

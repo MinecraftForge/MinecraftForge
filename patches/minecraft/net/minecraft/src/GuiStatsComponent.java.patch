@@ -18,20 +18,20 @@
          this.displayStrings[0] = "Memory use: " + var1 / 1024L / 1024L + " mb (" + Runtime.getRuntime().freeMemory() * 100L / Runtime.getRuntime().maxMemory() + "% free)";
 @@ -51,14 +53,17 @@
  
-         if (this.field_79017_e.theWorldServer != null)
+         if (this.field_79017_e.worldServers != null)
          {
--            for (int var3 = 0; var3 < this.field_79017_e.theWorldServer.length; ++var3)
+-            for (int var3 = 0; var3 < this.field_79017_e.worldServers.length; ++var3)
 +            int x = 0;
 +            for (Integer id : DimensionManager.getIDs())
              {
--                this.displayStrings[5 + var3] = "Lvl " + var3 + " tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.timeOfLastDimenstionTick[var3]) * 1.0E-6D) + " ms";
+-                this.displayStrings[5 + var3] = "Lvl " + var3 + " tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.timeOfLastDimensionTick[var3]) * 1.0E-6D) + " ms";
 +                this.displayStrings[5 + x] = "Lvl " + id + " tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.worldTickTimes.get(id)) * 1.0E-6D) + " ms";
  
--                if (this.field_79017_e.theWorldServer[var3] != null && this.field_79017_e.theWorldServer[var3].theChunkProviderServer != null)
+-                if (this.field_79017_e.worldServers[var3] != null && this.field_79017_e.worldServers[var3].theChunkProviderServer != null)
 +                WorldServer world = DimensionManager.getWorld(id);
 +                if (world != null && world.theChunkProviderServer != null)
                  {
--                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + this.field_79017_e.theWorldServer[var3].theChunkProviderServer.makeString();
+-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + this.field_79017_e.worldServers[var3].theChunkProviderServer.makeString();
 +                    this.displayStrings[5 + x] = this.displayStrings[5 + x] + ", " + world.theChunkProviderServer.makeString();
                  }
 +                x++;

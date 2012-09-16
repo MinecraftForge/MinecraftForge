@@ -64,7 +64,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -710,6 +726,7 @@
+@@ -713,6 +729,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);

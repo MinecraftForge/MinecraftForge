@@ -8,7 +8,7 @@
      }
  
      /**
-@@ -32,7 +33,8 @@
+@@ -36,7 +37,8 @@
          {
              par7 = 1;
          }
@@ -18,7 +18,7 @@
          {
              if (par7 == 0)
              {
-@@ -81,14 +83,8 @@
+@@ -85,14 +87,8 @@
          {
              Block var12 = Block.blocksList[this.blockID];
  
@@ -35,7 +35,7 @@
                  par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getStepSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
                  --par1ItemStack.stackSize;
              }
-@@ -114,7 +110,8 @@
+@@ -118,7 +114,8 @@
          {
              par5 = 1;
          }
@@ -45,7 +45,7 @@
          {
              if (par5 == 0)
              {
-@@ -179,4 +176,28 @@
+@@ -183,4 +180,28 @@
      {
          Block.blocksList[this.blockID].getSubBlocks(par1, par2CreativeTabs, par3List);
      }

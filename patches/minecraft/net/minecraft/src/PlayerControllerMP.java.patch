@@ -10,7 +10,7 @@
  
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
-@@ -98,6 +101,11 @@
+@@ -104,6 +107,11 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -22,7 +22,7 @@
          if (this.currentGameType.isAdventure())
          {
              return false;
-@@ -115,7 +123,7 @@
+@@ -121,7 +129,7 @@
              {
                  var5.playAuxSFX(2001, par1, par2, par3, var6.blockID + (var5.getBlockMetadata(par1, par2, par3) << 12));
                  int var7 = var5.getBlockMetadata(par1, par2, par3);
@@ -31,7 +31,7 @@
  
                  if (var8)
                  {
-@@ -298,6 +306,12 @@
+@@ -304,6 +312,12 @@
          float var11 = (float)par8Vec3.zCoord - (float)par6;
          boolean var12 = false;
          int var13 = par2World.getBlockId(par4, par5, par6);
@@ -44,7 +44,7 @@
  
          if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
          {
-@@ -335,7 +349,15 @@
+@@ -341,7 +355,15 @@
          }
          else
          {
@@ -61,7 +61,7 @@
          }
      }
  
-@@ -357,9 +379,10 @@
+@@ -363,9 +385,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
  

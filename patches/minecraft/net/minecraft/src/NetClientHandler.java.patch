@@ -12,16 +12,16 @@
  import org.lwjgl.input.Keyboard;
  
  @SideOnly(Side.CLIENT)
-@@ -593,7 +598,7 @@
+@@ -597,7 +602,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
 -        this.netManager.networkShutdown("disconnect.kicked", new Object[0]);
 +        this.netManager.networkShutdown("disconnect.kicked", par1Packet255KickDisconnect.reason);
-         this.field_72554_f = true;
+         this.disconnected = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -659,7 +664,11 @@
+@@ -663,7 +668,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
@@ -34,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1014,6 +1023,19 @@
+@@ -1018,6 +1027,19 @@
              {
                  ((TileEntityMobSpawner)var2).readFromNBT(par1Packet132TileEntityData.customParam1);
              }

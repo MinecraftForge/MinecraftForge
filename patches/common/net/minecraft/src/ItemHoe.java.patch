@@ -8,7 +8,7 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -24,6 +26,17 @@
+@@ -28,6 +30,17 @@
          }
          else
          {

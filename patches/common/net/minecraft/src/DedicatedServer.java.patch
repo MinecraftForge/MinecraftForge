@@ -1,10 +1,10 @@
 --- ../src_base/common/net/minecraft/src/DedicatedServer.java
 +++ ../src_work/common/net/minecraft/src/DedicatedServer.java
 @@ -67,6 +67,7 @@
-         this.setAllowFlight(this.settings.getOrSetBoolProperty("allow-flight", false));
-         this.setTexturePack(this.settings.getOrSetProperty("texture-pack", ""));
-         this.setMOTD(this.settings.getOrSetProperty("motd", "A Minecraft Server"));
-+        spawnProtectionSize = this.settings.getOrSetIntProperty("spawn-protection-size", 16);
-         this.canSpawnStructures = this.settings.getOrSetBoolProperty("generate-structures", true);
-         int var2 = this.settings.getOrSetIntProperty("gamemode", EnumGameType.SURVIVAL.getID());
+         this.setAllowFlight(this.settings.getBooleanProperty("allow-flight", false));
+         this.setTexturePack(this.settings.getProperty("texture-pack", ""));
+         this.setMOTD(this.settings.getProperty("motd", "A Minecraft Server"));
++        spawnProtectionSize = this.settings.getIntProperty("spawn-protection-size", 16);
+         this.canSpawnStructures = this.settings.getBooleanProperty("generate-structures", true);
+         int var2 = this.settings.getIntProperty("gamemode", EnumGameType.SURVIVAL.getID());
          this.gameType = WorldSettings.getGameTypeById(var2);

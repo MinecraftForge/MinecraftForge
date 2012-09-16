@@ -10,7 +10,7 @@
  
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
-@@ -78,17 +81,10 @@
+@@ -85,17 +88,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -29,7 +29,7 @@
  
          this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
-@@ -329,8 +325,27 @@
+@@ -336,8 +332,27 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {

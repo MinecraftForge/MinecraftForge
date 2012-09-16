@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/TileEntity.java
 +++ ../src_work/common/net/minecraft/src/TileEntity.java
-@@ -250,4 +250,41 @@
+@@ -257,4 +257,41 @@
          addMapping(TileEntityEnchantmentTable.class, "EnchantTable");
          addMapping(TileEntityEndPortal.class, "Airportal");
      }

@@ -8,7 +8,7 @@
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
-@@ -2212,80 +2213,12 @@
+@@ -2221,80 +2222,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;

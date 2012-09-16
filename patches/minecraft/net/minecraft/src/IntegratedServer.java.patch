@@ -8,23 +8,23 @@
  
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
-@@ -46,44 +47,20 @@
-     protected void loadAllDimensions(String par1Str, String par2Str, long par3, WorldType par5WorldType)
+@@ -48,44 +49,20 @@
+     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType)
      {
          this.convertMapIfNeeded(par1Str);
--        this.theWorldServer = new WorldServer[3];
--        this.timeOfLastDimenstionTick = new long[this.theWorldServer.length][100];
+-        this.worldServers = new WorldServer[3];
+-        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
          ISaveHandler var6 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
  
--        for (int var7 = 0; var7 < this.theWorldServer.length; ++var7)
+-        for (int var7 = 0; var7 < this.worldServers.length; ++var7)
 -        {
 -            byte var8 = 0;
 -
 -            if (var7 == 1)
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var6, par2Str, 0, theProfiler) : new WorldServer(this, var6, par2Str, 0, field_71350_m, theProfiler));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var6, par2Str, 0, theProfiler) : new WorldServer(this, var6, par2Str, 0, theWorldSettings, theProfiler));
 +        for (int dim : DimensionManager.getIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, field_71350_m, overWorld, theProfiler));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, theWorldSettings, overWorld, theProfiler));
 +            world.addWorldAccess(new WorldManager(this, world));
 +            if (!this.isSinglePlayer())
              {
@@ -41,31 +41,31 @@
 -            {
 -                if (this.isDemo())
 -                {
--                    this.theWorldServer[var7] = new DemoWorldServer(this, var6, par2Str, var8, this.theProfiler);
+-                    this.worldServers[var7] = new DemoWorldServer(this, var6, par2Str, var8, this.theProfiler);
 -                }
 -                else
 -                {
--                    this.theWorldServer[var7] = new WorldServer(this, var6, par2Str, var8, this.field_71350_m, this.theProfiler);
+-                    this.worldServers[var7] = new WorldServer(this, var6, par2Str, var8, this.theWorldSettings, this.theProfiler);
 -                }
 -            }
 -            else
 -            {
--                this.theWorldServer[var7] = new WorldServerMulti(this, var6, par2Str, var8, this.field_71350_m, this.theWorldServer[0], this.theProfiler);
+-                this.worldServers[var7] = new WorldServerMulti(this, var6, par2Str, var8, this.theWorldSettings, this.worldServers[0], this.theProfiler);
 -            }
 -
--            this.theWorldServer[var7].addWorldAccess(new WorldManager(this, this.theWorldServer[var7]));
--            this.getConfigurationManager().setPlayerManager(this.theWorldServer);
+-            this.worldServers[var7].addWorldAccess(new WorldManager(this, this.worldServers[var7]));
+-            this.getConfigurationManager().setPlayerManager(this.worldServers);
 -        }
 -
 +        }
 +
 +        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
-         this.setDifficultyForAllDimensions(this.getDifficulty());
+         this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -104,6 +81,7 @@
-         this.loadAllDimensions(this.getFolderName(), this.getWorldName(), this.field_71350_m.getSeed(), this.field_71350_m.getTerrainType());
-         this.setMOTD(this.getServerOwner() + " - " + this.theWorldServer[0].getWorldInfo().getWorldName());
+@@ -106,6 +83,7 @@
+         this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType());
+         this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
          FMLCommonHandler.instance().handleServerStarting(this);
 +        spawnProtectionSize = 0;
          return true;

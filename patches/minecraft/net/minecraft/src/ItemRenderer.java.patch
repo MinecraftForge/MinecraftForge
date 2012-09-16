@@ -1,19 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/src/ItemRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/ItemRenderer.java
-@@ -5,6 +5,12 @@
- import net.minecraft.client.Minecraft;
+@@ -7,6 +7,12 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
-+
+ 
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IItemRenderer;
 +import net.minecraftforge.client.MinecraftForgeClient;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
- 
++
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
-@@ -38,27 +44,21 @@
+ {
+@@ -39,27 +45,21 @@
      public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
@@ -53,7 +53,7 @@
  
              Tessellator var5 = Tessellator.instance;
              int var6 = par1EntityLiving.getItemIcon(par2ItemStack, par3);
-@@ -257,8 +257,9 @@
+@@ -265,8 +265,9 @@
          Render var24;
          RenderPlayer var26;
  
@@ -65,7 +65,7 @@
              GL11.glPushMatrix();
              var7 = 0.8F;
              var20 = var3.getSwingProgress(par1);
-@@ -324,8 +325,15 @@
+@@ -332,8 +333,15 @@
              var28.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
              var28.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
              var28.draw();
@@ -83,7 +83,7 @@
              GL11.glPopMatrix();
          }
          else if (var17 != null)
-@@ -426,12 +434,15 @@
+@@ -434,12 +442,15 @@
              if (var17.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(var3, var17, 0);

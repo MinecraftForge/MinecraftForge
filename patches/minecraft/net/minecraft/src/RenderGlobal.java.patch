@@ -21,7 +21,7 @@
 +            skyProvider.render(par1, this.theWorld, mc);
 +            return;
 +        }
-         if (this.mc.theWorld.provider.worldType == 1)
+         if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
 @@ -1535,6 +1544,11 @@

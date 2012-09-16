@@ -14,7 +14,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -222,7 +228,7 @@
+@@ -225,7 +231,7 @@
              var4.onBlockHarvested(this.theWorld, par1, par2, par3, var5, this.thisPlayerMP);
          }
  
@@ -23,7 +23,7 @@
  
          if (var4 != null && var6)
          {
-@@ -243,19 +249,30 @@
+@@ -246,19 +252,30 @@
          }
          else
          {
@@ -41,7 +41,7 @@
              if (this.isCreative())
              {
 +                var6 = this.removeBlock(par1, par2, par3);
-                 this.thisPlayerMP.serverForThisPlayer.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
+                 this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
              }
              else
              {
@@ -56,7 +56,7 @@
  
                  if (var7 != null)
                  {
-@@ -264,9 +281,11 @@
+@@ -267,9 +284,11 @@
                      if (var7.stackSize == 0)
                      {
                          this.thisPlayerMP.destroyCurrentEquippedItem();
@@ -68,7 +68,7 @@
                  if (var6 && var8)
                  {
                      Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -303,6 +322,7 @@
+@@ -306,6 +325,7 @@
              if (var6.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -76,7 +76,7 @@
              }
  
              return true;
-@@ -315,6 +335,12 @@
+@@ -318,6 +338,12 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -89,7 +89,7 @@
          int var11 = par2World.getBlockId(par4, par5, par6);
  
          if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
-@@ -336,7 +362,15 @@
+@@ -339,7 +365,15 @@
          }
          else
          {
@@ -106,7 +106,7 @@
          }
      }
  
-@@ -347,4 +381,13 @@
+@@ -350,4 +384,13 @@
      {
          this.theWorld = par1WorldServer;
      }

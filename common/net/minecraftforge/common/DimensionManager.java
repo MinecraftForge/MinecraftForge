@@ -94,7 +94,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().theWorldServer = tmp.toArray(new WorldServer[0]);
+        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[0]);
         MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
     }
 

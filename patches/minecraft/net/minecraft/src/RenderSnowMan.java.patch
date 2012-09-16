@@ -10,7 +10,7 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
-@@ -22,12 +27,15 @@
+@@ -25,12 +30,15 @@
          super.renderEquippedItems(par1EntitySnowman, par2);
          ItemStack var3 = new ItemStack(Block.pumpkin, 1);
  
@@ -18,7 +18,7 @@
 +        if (var3 != null && var3.getItem() instanceof ItemBlock)
          {
              GL11.glPushMatrix();
-             this.snowmanModel.field_78195_c.postRender(0.0625F);
+             this.snowmanModel.head.postRender(0.0625F);
  
 -            if (RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var3, EQUIPPED);

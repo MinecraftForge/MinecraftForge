@@ -11,7 +11,7 @@
  
  public class ItemDye extends Item
  {
-@@ -49,6 +53,21 @@
+@@ -53,6 +57,21 @@
              if (par1ItemStack.getItemDamage() == 15)
              {
                  var11 = par3World.getBlockId(par4, par5, par6);
@@ -33,7 +33,7 @@
  
                  if (var11 == Block.sapling.blockID)
                  {
-@@ -148,16 +167,9 @@
+@@ -152,16 +171,9 @@
                                          par3World.setBlockAndMetadataWithNotify(var13, var14, var15, Block.tallGrass.blockID, 1);
                                      }
                                  }

@@ -21,7 +21,7 @@
          float var9 = 0.5F;
          float var10 = 1.0F;
          float var11 = 0.8F;
-@@ -1959,7 +1960,7 @@
+@@ -1965,7 +1966,7 @@
          double var30;
          double var32;
  
@@ -30,7 +30,7 @@
          {
              float var36 = 0.2F;
              float var19 = 0.0625F;
-@@ -1979,7 +1980,7 @@
+@@ -1985,7 +1986,7 @@
                  var9 = var20;
              }
  
@@ -39,7 +39,7 @@
              {
                  var5.addVertexWithUV((double)((float)par2 + var36), (double)((float)par3 + var17 + var19), (double)(par4 + 1), var11, var13);
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + var19), (double)(par4 + 1), var11, var15);
-@@ -1991,7 +1992,7 @@
+@@ -1997,7 +1998,7 @@
                  var5.addVertexWithUV((double)((float)par2 + var36), (double)((float)par3 + var17 + var19), (double)(par4 + 1), var11, var13);
              }
  
@@ -48,7 +48,7 @@
              {
                  var5.addVertexWithUV((double)((float)(par2 + 1) - var36), (double)((float)par3 + var17 + var19), (double)(par4 + 0), var9, var13);
                  var5.addVertexWithUV((double)(par2 + 1 - 0), (double)((float)(par3 + 0) + var19), (double)(par4 + 0), var9, var15);
-@@ -2003,7 +2004,7 @@
+@@ -2009,7 +2010,7 @@
                  var5.addVertexWithUV((double)((float)(par2 + 1) - var36), (double)((float)par3 + var17 + var19), (double)(par4 + 0), var9, var13);
              }
  
@@ -57,7 +57,7 @@
              {
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + var17 + var19), (double)((float)par4 + var36), var11, var13);
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + var19), (double)(par4 + 0), var11, var15);
-@@ -2015,7 +2016,7 @@
+@@ -2021,7 +2022,7 @@
                  var5.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + var17 + var19), (double)((float)par4 + var36), var11, var13);
              }
  
@@ -66,7 +66,7 @@
              {
                  var5.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + var17 + var19), (double)((float)(par4 + 1) - var36), var9, var13);
                  var5.addVertexWithUV((double)(par2 + 1), (double)((float)(par3 + 0) + var19), (double)(par4 + 1 - 0), var9, var15);
-@@ -2027,7 +2028,7 @@
+@@ -2033,7 +2034,7 @@
                  var5.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + var17 + var19), (double)((float)(par4 + 1) - var36), var9, var13);
              }
  
@@ -75,7 +75,7 @@
              {
                  var20 = (double)par2 + 0.5D + 0.5D;
                  var22 = (double)par2 + 0.5D - 0.5D;
-@@ -4211,7 +4212,7 @@
+@@ -4220,7 +4221,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
              this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -84,7 +84,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -4334,7 +4335,7 @@
+@@ -4343,7 +4344,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
              this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3));
  
@@ -93,7 +93,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -4457,7 +4458,7 @@
+@@ -4466,7 +4467,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
              this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -102,7 +102,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -4580,7 +4581,7 @@
+@@ -4589,7 +4590,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
              this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
  
@@ -111,7 +111,7 @@
              {
                  this.colorRedTopLeft *= par5;
                  this.colorRedBottomLeft *= par5;
-@@ -4692,7 +4693,7 @@
+@@ -4701,7 +4702,7 @@
              var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
              this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
  
@@ -120,7 +120,7 @@
              {
                  var8.setColorOpaque_F(var18 * par5, var21 * par6, var24 * par7);
                  this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -4708,7 +4709,7 @@
+@@ -4717,7 +4718,7 @@
              var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
              this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
  
@@ -129,7 +129,7 @@
              {
                  var8.setColorOpaque_F(var18 * par5, var21 * par6, var24 * par7);
                  this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -4724,7 +4725,7 @@
+@@ -4733,7 +4734,7 @@
              var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
              this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
  
@@ -138,7 +138,7 @@
              {
                  var8.setColorOpaque_F(var19 * par5, var22 * par6, var25 * par7);
                  this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -4740,7 +4741,7 @@
+@@ -4749,7 +4750,7 @@
              var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
              this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
  
