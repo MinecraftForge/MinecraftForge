@@ -45,22 +45,19 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.server.FMLServerHandler;
 
-/**
- * @author cpw
- *
- */
 public class ModLoader
 {
     public static final String fmlMarker = "This is an FML marker";
     // TODO dirty workaround for millinaire
     @Deprecated
     public static final Map<String,Map<String,String>> localizedStrings=Collections.emptyMap();
+
     /**
-     * Not used on the server.
+     * Adds localization info for an achievement, Not used on the server.
      *
-     * @param achievement
-     * @param name
-     * @param description
+     * @param achievement The achievement to name
+     * @param name The name
+     * @param description The description
      */
     public static void addAchievementDesc(Achievement achievement, String name, String description)
     {
@@ -72,11 +69,11 @@ public class ModLoader
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
      *
-     * {@link FMLCommonHandler#fuelLookup(int, int)}
+     * {@link GameRegistry#getFuelValue(ItemStack))}
      *
-     * @param id
-     * @param metadata
-     * @return
+     * @param id The Item ID
+     * @param metadata The Item Metadata
+     * @return The fuel strength, in ticks, 0 if unhandled
      */
     @Deprecated
     public static int addAllFuel(int id, int metadata)
@@ -97,9 +94,12 @@ public class ModLoader
     }
 
     /**
-     *
-     * @param armor
-     * @return
+     * Adds a new prefix to the armor texture list
+     * 
+     * {@link RenderingRegistry#addNewArmourRendererPrefix(String))}
+     * 
+     * @param armor The new armor prefix
+     * @return The new armor index
      */
     @SideOnly(CLIENT)
     public static int addArmor(String armor)
@@ -110,7 +110,7 @@ public class ModLoader
     /**
      * This method adds the supplied biome to the set of candidate biomes for the default world generator type.
      *
-     * @param biome
+     * @param biome The biome to add
      */
     public static void addBiome(BiomeGenBase biome)
     {
@@ -129,8 +129,8 @@ public class ModLoader
     /**
      * Add localization for the specified string
      *
-     * @param key
-     * @param value
+     * @param key Key
+     * @param value Value
      */
     public static void addLocalization(String key, String value)
     {
@@ -140,9 +140,9 @@ public class ModLoader
     /**
      * Add localization for the specified string
      *
-     * @param key
-     * @param lang
-     * @param value
+     * @param key Key
+     * @param lang Language identifier
+     * @param value Value
      */
     public static void addLocalization(String key, String lang, String value)
     {
@@ -152,8 +152,8 @@ public class ModLoader
     /**
      * Name the specified minecraft object with the supplied name
      *
-     * @param instance
-     * @param name
+     * @param instance Item to name
+     * @param name The name to give it
      */
     public static void addName(Object instance, String name)
     {
@@ -163,9 +163,9 @@ public class ModLoader
     /**
      * Unimplemented on the server as it does not generate names
      *
-     * @param instance
-     * @param lang
-     * @param name
+     * @param instance Item to name
+     * @param lang Languge identifier
+     * @param name Name to give it
      */
     public static void addName(Object instance, String lang, String name)
     {
@@ -173,11 +173,18 @@ public class ModLoader
     }
 
     /**
+     * Attempts to register a small image to be applied to a larger texture image, 
+     * typically how old ModLoader mods add custom Item/Block textures.
+     * 
+     * Forge mods should use setTextureFile in Item/Block
+     * 
+     * Will return the icon index it was applied to.
+     * 
      * Unimplemented on the server as it does not render textures
      *
-     * @param fileToOverride
-     * @param fileToAdd
-     * @return
+     * @param fileToOverride The texture to apply the new image to
+     * @param fileToAdd The new image
+     * @return The 'icon index' in the main image that the new image will be applied to
      */
     @SideOnly(CLIENT)
     public static int addOverride(String fileToOverride, String fileToAdd)
@@ -186,11 +193,16 @@ public class ModLoader
     }
 
     /**
+     * Attempts to register a small image to be applied to a larger texture image, 
+     * typically how old ModLoader mods add custom Item/Block textures.
+     * 
+     * Forge mods should use setTextureFile in Item/Block
+     * 
      * Unimplemented on the server as it does not render textures
      *
-     * @param path
-     * @param overlayPath
-     * @param index
+     * @param path The texture to apply the new image to
+     * @param overlayPath The new image
+     * @param index Where on the texture to apply it
      */
     @SideOnly(CLIENT)
     public static void addOverride(String path, String overlayPath, int index)
@@ -201,8 +213,8 @@ public class ModLoader
     /**
      * Add a Shaped Recipe
      *
-     * @param output
-     * @param params
+     * @param output The result
+     * @param params The input
      */
     public static void addRecipe(ItemStack output, Object... params)
     {
@@ -212,8 +224,8 @@ public class ModLoader
     /**
      * Add a shapeless recipe
      *
-     * @param output
-     * @param params
+     * @param output The result
+     * @param params The input
      */
     public static void addShapelessRecipe(ItemStack output, Object... params)
     {
@@ -322,7 +334,7 @@ public class ModLoader
      * @param xVel
      * @param zVel
      * @param item
-     * @return
+     * @return Always false, not implemented here
      */
     @Deprecated
     public static boolean dispenseEntity(World world, double x, double y, double z, int xVel, int zVel, ItemStack item)
@@ -392,7 +404,7 @@ public class ModLoader
      * Get a list of all BaseMod loaded into the system
      * {@link ModLoaderModContainer#findAll}
      *
-     * @return
+     * @return A list containing all loaded ModLoader mods
      */
     public static List<BaseMod> getLoadedMods()
     {
@@ -402,7 +414,7 @@ public class ModLoader
     /**
      * Get a logger instance {@link FMLCommonHandler#getFMLLogger()}
      *
-     * @return
+     * @return The current logger
      */
     public static Logger getLogger()
     {
@@ -415,10 +427,6 @@ public class ModLoader
         return FMLClientHandler.instance().getClient();
     }
 
-    /**
-     *
-     * @return
-     */
     public static MinecraftServer getMinecraftServerInstance()
     {
         return FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -431,7 +439,7 @@ public class ModLoader
      * @param instanceclass
      * @param instance
      * @param fieldindex
-     * @return
+     * @return The value in the specified field.
      */
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, int fieldindex)
     {
@@ -440,12 +448,12 @@ public class ModLoader
 
     /**
      * Get a value from a field using reflection
-     * {@link ObfuscationReflectionHelper#getPrivateValue(Class, Object, String)}
+     * {@link ObfuscationReflectionHelper#getPrivateValue(Class, Object, String[])}
      *
      * @param instanceclass
      * @param instance
      * @param field
-     * @return
+     * @return The value in the specified field.
      */
     public static <T, E> T getPrivateValue(Class<? super E> instanceclass, E instance, String field)
     {
@@ -464,9 +472,9 @@ public class ModLoader
 
     /**
      * Get a new unique entity id
-     * {@link Entity#getNextId()}
+     * {@link EntityRegistry#findGlobalUniqueEntityId()}
      *
-     * @return
+     * @return A unique entity ID
      */
     public static int getUniqueEntityId()
     {
@@ -485,7 +493,7 @@ public class ModLoader
      *
      * @param player
      * @param channel
-     * @return
+     * @return If the channel is registered to the current connection.
      */
     public static boolean isChannelActive(EntityPlayer player, String channel)
     {
@@ -503,7 +511,7 @@ public class ModLoader
      * {@link Loader#isModLoaded(String)}
      *
      * @param modname
-     * @return
+     * @return If the specified mod is loaded
      */
     public static boolean isModLoaded(String modname)
     {
@@ -555,7 +563,7 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLServerHandler#handlePacket250(Packet250CustomPayload, EntityPlayer)}
+     * {@link FMLNetworkHandler#handlePacket250(Packet250CustomPayload, NetworkManager, NetHandler)}
      *
      * @param packet
      */
@@ -636,7 +644,7 @@ public class ModLoader
 
     /**
      * Register the mod for packets on this channel.
-     * {@link FMLCommonHandler#registerChannel(cpw.mods.fml.common.ModContainer, String)}
+     * {@link NetworkRegistry#registerChannel(IPacketHandler, String)}
      *
      * @param mod
      * @param channel
@@ -759,7 +767,7 @@ public class ModLoader
     }
     /**
      * Send a chat message to the server
-     * {@link FMLClientHandler#handleChatPacket(Packet3Chat, EntityPlayer)}
+     * {@link FMLNetworkHandler#handleChatMessage(NetHandler, Packet3Chat)}
      *
      * @param text
      */

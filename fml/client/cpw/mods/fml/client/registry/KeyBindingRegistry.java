@@ -129,7 +129,7 @@ public class KeyBindingRegistry
          * Called when the key is first in the down position on any tick from the {@link #ticks()}
          * set. Will be called subsequently with isRepeat set to true
          *
-         * @see #keyUp(EnumSet, boolean)
+         * @see #keyUp(EnumSet, KeyBinding, boolean)
          *
          * @param types the type(s) of tick that fired when this key was first down
          * @param tickEnd was it an end or start tick which fired the key
@@ -139,7 +139,7 @@ public class KeyBindingRegistry
         /**
          * Fired once when the key changes state from down to up
          *
-         * @see #keyDown(EnumSet, boolean, boolean)
+         * @see #keyDown(EnumSet, KeyBinding, boolean, boolean)
          *
          * @param types the type(s) of tick that fired when this key was first down
          * @param tickEnd was it an end or start tick which fired the key

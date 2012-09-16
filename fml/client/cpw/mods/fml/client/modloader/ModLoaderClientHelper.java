@@ -41,12 +41,6 @@ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 
 public class ModLoaderClientHelper implements IModLoaderSidedHelper
 {
-
-    /**
-     * @param mod
-     * @param inventoryRenderer
-     * @return
-     */
     public static int obtainBlockModelIdFor(BaseMod mod, boolean inventoryRenderer)
     {
         int renderId=RenderingRegistry.getNextAvailableRenderId();

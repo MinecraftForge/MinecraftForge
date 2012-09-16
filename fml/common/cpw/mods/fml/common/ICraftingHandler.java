@@ -29,15 +29,15 @@ public interface ICraftingHandler
      * The object array contains these three arguments
      *
      * @param player
-     * @param craftedItem
-     * @param craftingGrid
+     * @param item
+     * @param craftMatrix
      */
     void onCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix);
 
     /**
      * The object array contains these two arguments
      * @param player
-     * @param smeltedItem
+     * @param item
      */
     void onSmelting(EntityPlayer player, ItemStack item);
 }

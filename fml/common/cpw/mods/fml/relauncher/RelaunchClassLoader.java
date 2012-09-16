@@ -126,11 +126,6 @@ public class RelaunchClassLoader extends URLClassLoader
         }
     }
 
-    /**
-     * @param name
-     * @return
-     * @throws IOException
-     */
     public byte[] getClassBytes(String name) throws IOException
     {
         InputStream classStream = null;

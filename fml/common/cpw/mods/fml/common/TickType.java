@@ -69,8 +69,6 @@ public enum TickType {
 
     /**
      * Partner ticks that are also cancelled by returning false from onTickInGame
-     *
-     * @return
      */
     public EnumSet<TickType> partnerTicks()
     {

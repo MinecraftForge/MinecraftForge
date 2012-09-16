@@ -73,7 +73,7 @@ public class ModListRequestPacket extends FMLPacket
      * This packet is executed on the client to evaluate the server's mod list against
      * the client
      *
-     * @see cpw.mods.fml.common.network.FMLPacket#execute()
+     * @see cpw.mods.fml.common.network.FMLPacket#execute(NetworkManager, FMLNetworkHandler, NetHandler, String)
      */
     @Override
     public void execute(NetworkManager mgr, FMLNetworkHandler handler, NetHandler netHandler, String userName)

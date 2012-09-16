@@ -29,13 +29,11 @@ public @interface SidedProxy
 {
     /**
      * The name of the client side class to load and populate
-     * @return
      */
     String clientSide() default "";
 
     /**
      * The name of the server side class to load and populate
-     * @return
      */
     String serverSide() default "";
 

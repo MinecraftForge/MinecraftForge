@@ -27,7 +27,6 @@ public interface IConnectionHandler
      *
      * @param netHandler
      * @param manager
-     * @return
      */
     String connectionReceived(NetLoginHandler netHandler, NetworkManager manager);
 

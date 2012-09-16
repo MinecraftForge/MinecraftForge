@@ -66,8 +66,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 /**
  * Handles primary communication from hooked code into the system
  *
- * The FML entry point is {@link #beginMinecraftLoading(MinecraftServer)} called from
- * {@link MinecraftServer}
+ * The FML entry point is {@link #beginMinecraftLoading(Minecraft)} called from
+ * {@link Minecraft}
  *
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code
@@ -94,13 +94,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     private Minecraft client;
 
-    /**
-     * Called to start the whole game off from
-     * {@link MinecraftServer#startServer}
-     *
-     * @param minecraftServer
-     */
-
     private DummyModContainer optifineContainer;
 
     private boolean guiLoaded;
@@ -111,6 +104,12 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private boolean loading;
 
+    /**
+     * Called to start the whole game off from
+     * {@link MinecraftServer#startServer}
+     *
+     * @param minecraftServer
+     */
     public void beginMinecraftLoading(Minecraft minecraft)
     {
         if (minecraft.func_71355_q())
@@ -201,8 +200,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
     /**
      * Get the server instance
-     *
-     * @return
      */
     public Minecraft getClient()
     {
@@ -397,7 +394,6 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     /**
      * If the client is in the midst of loading, we disable saving so that custom settings aren't wiped out
-     * @return
      */
     public boolean isLoading()
     {

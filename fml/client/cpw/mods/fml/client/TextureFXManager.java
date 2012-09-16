@@ -213,9 +213,6 @@ public class TextureFXManager
         return textureDims.get(id);
     }
 
-    /**
-     * @param anim
-     */
     public void addAnimation(TextureFX anim)
     {
         OverrideInfo info=new OverrideInfo();
@@ -229,9 +226,6 @@ public class TextureFXManager
     }
 
 
-    /**
-     * @param p_6531_1_
-     */
     public void loadTextures(TexturePackBase texturePack)
     {
         registerTextureOverrides(client.field_71446_o);
@@ -263,16 +257,10 @@ public class TextureFXManager
         }
     }
 
-    /**
-     * @param mod
-     */
     protected void registerAnimatedTexturesFor(ModContainer mod)
     {
     }
 
-    /**
-     * @param field_6539_c
-     */
     public void onEarlyTexturePackLoad(TexturePackBase fallback)
     {
         if (client==null) {
@@ -313,11 +301,6 @@ public class TextureFXManager
         FMLLog.fine("Overriding %s @ %d with %s. %d slots remaining",textureToOverride, location, overridingTexturePath, SpriteHelper.freeSlotCount(textureToOverride));
     }
 
-    /**
-     * @param renderEngine
-     * @param path
-     * @return
-     */
     public BufferedImage loadImageFromTexturePack(RenderEngine renderEngine, String path) throws IOException
     {
         InputStream image=client.field_71418_C.func_77292_e().func_77532_a(path);

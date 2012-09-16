@@ -36,7 +36,6 @@ public class RenderingRegistry
      * Add a new armour prefix to the RenderPlayer
      *
      * @param armor
-     * @return
      */
     public static int addNewArmourRendererPrefix(String armor)
     {
@@ -80,8 +79,6 @@ public class RenderingRegistry
     }
     /**
      * Get the next available renderId from the block render ID list
-     *
-     * @return
      */
     public static int getNextAvailableRenderId()
     {
@@ -93,7 +90,6 @@ public class RenderingRegistry
      *
      * @param fileToOverride
      * @param fileToAdd
-     * @return
      */
     public static int addTextureOverride(String fileToOverride, String fileToAdd)
     {
@@ -118,7 +114,6 @@ public class RenderingRegistry
      * Get and reserve a unique texture index for the supplied path
      *
      * @param path
-     * @return
      */
     public static int getUniqueTextureIndex(String path)
     {
@@ -141,16 +136,6 @@ public class RenderingRegistry
         private Render renderer;
     }
 
-    /**
-     * @param renderer
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param block
-     * @param modelId
-     * @return
-     */
     public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelId)
     {
         if (!blockRenderers.containsKey(modelId)) { return false; }
@@ -158,12 +143,6 @@ public class RenderingRegistry
         return bri.renderWorldBlock(world, x, y, z, block, modelId, renderer);
     }
 
-    /**
-     * @param renderer
-     * @param block
-     * @param metadata
-     * @param modelID
-     */
     public void renderInventoryBlock(RenderBlocks renderer, Block block, int metadata, int modelID)
     {
         if (!blockRenderers.containsKey(modelID)) { return; }
@@ -171,10 +150,6 @@ public class RenderingRegistry
         bri.renderInventoryBlock(block, metadata, modelID, renderer);
     }
 
-    /**
-     * @param p_1219_0_
-     * @return
-     */
     public boolean renderItemAsFull3DBlock(int modelId)
     {
         ISimpleBlockRenderingHandler bri = blockRenderers.get(modelId);

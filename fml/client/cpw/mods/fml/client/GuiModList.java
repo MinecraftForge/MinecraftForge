@@ -46,7 +46,7 @@ public class GuiModList extends GuiScreen
     private ArrayList<ModContainer> mods;
 
     /**
-     * @param guiMainMenu
+     * @param mainMenu
      */
     public GuiModList(GuiScreen mainMenu)
     {
@@ -174,10 +174,6 @@ public class GuiModList extends GuiScreen
         }
     }
 
-    /**
-     * @param var1
-     * @return
-     */
     public boolean modIndexSelected(int var1)
     {
         return var1==selected;

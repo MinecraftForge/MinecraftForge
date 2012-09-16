@@ -125,7 +125,7 @@ public class TopologicalSort
      *
      * Uses the reverse depth first search as outlined in ...
      * @param graph
-     * @return
+     * @return The sorted mods list.
      */
     public static <T> List<T> topologicalSort(DirectedGraph<T> graph)
     {

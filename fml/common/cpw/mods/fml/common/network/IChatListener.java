@@ -18,7 +18,6 @@ public interface IChatListener
      *
      * @param handler
      * @param message
-     * @return
      */
     public Packet3Chat clientChat(NetHandler handler, Packet3Chat message);
 }

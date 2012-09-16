@@ -41,30 +41,22 @@ public class ModProperty
     {
         this(field, (String)annotationInfo.get("info"), (Double)annotationInfo.get("min"), (Double)annotationInfo.get("max"), (String)annotationInfo.get("name"));
     }
-    /**
-     * @return
-     */
+
     public String name()
     {
         return name;
     }
-    /**
-     * @return
-     */
+
     public double min()
     {
         return min;
     }
-    /**
-     * @return
-     */
+
     public double max()
     {
         return max;
     }
-    /**
-     * @return
-     */
+
     public String info()
     {
         return info;

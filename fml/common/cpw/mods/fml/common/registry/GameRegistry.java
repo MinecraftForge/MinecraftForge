@@ -118,7 +118,6 @@ public class GameRegistry
      * @param xVelocity
      * @param zVelocity
      * @param item
-     * @return
      */
     public static int tryDispense(World world, int x, int y, int z, int xVelocity, int zVelocity, ItemStack item, Random random, double entX, double entY, double entZ)
     {
@@ -137,7 +136,6 @@ public class GameRegistry
      * @param container
      * @param type
      * @param annotation
-     * @return
      * @throws Exception
      */
     public static Object buildBlock(ModContainer container, Class<?> type, Block annotation) throws Exception

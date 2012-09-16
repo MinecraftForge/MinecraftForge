@@ -51,23 +51,12 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
         return true;
     }
 
-    /**
-     * @param minecraftInstance
-     * @return
-     *//*
-
-    *//**
-     * @param renderers
-     *//*
+   /*
     public final void onRenderHarvest(Map renderers)
     {
         addRenderer((Map<Class<? extends Entity>,Render>)renderers);
-
     }
 
-    *//**
-     *
-     *//*
     public final void onRegisterAnimations()
     {
         registerAnimation(FMLClientHandler.instance().getClient());
@@ -155,23 +144,20 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
             generateNether(w, random, chunkX << 4, chunkZ << 4);
         }
     }
-
-    *//**
-     * NO-OP on client side
-     *//*
+    
     @Override
     public final boolean handleCommand(String command, Object... data)
     {
         return false;
     }
 
-*/    // BASEMOD API
+    */
+    // BASEMOD API
     /**
      * Override if you wish to provide a fuel item for the furnace and return the fuel value of the item
      *
      * @param id
      * @param metadata
-     * @return
      */
     public int addFuel(int id, int metadata)
     {
@@ -193,7 +179,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @param xVel
      * @param zVel
      * @param item
-     * @return
      */
     @Override
     public int dispenseEntity(World world, ItemStack item, Random rnd, int x, int y, int z, int xVel, int zVel, double entX, double entY, double entZ)
@@ -232,7 +217,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * @param x
      * @param y
      * @param z
-     * @return
      */
     @SideOnly(CLIENT)
     public GuiContainer getContainerGUI(EntityClientPlayerMP player, int containerID, int x, int y, int z)
@@ -242,8 +226,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Return the name of your mod. Defaults to the class name
-     *
-     * @return
      */
     public String getName()
     {
@@ -252,8 +234,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Get your mod priorities
-     *
-     * @return
      */
     public String getPriorities()
     {
@@ -262,8 +242,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Return the version of your mod
-     *
-     * @return
      */
     public abstract String getVersion();
 
@@ -328,7 +306,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     @Override
     public void clientChat(String text)
     {
-        // TODO
     }
 
     /**
@@ -339,7 +316,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     @Override
     public void receiveCustomPacket(Packet250CustomPayload packet)
     {
-        // TODO
     }
 
     @SideOnly(CLIENT)
@@ -408,10 +384,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Called when a chat message is received. Return true to stop further processing
-     *
-     * @param source
-     * @param chat
-     * @return true if you want to consume the message so it is not available for further processing
      */
     @Override
     public void serverChat(NetServerHandler source, String message)
@@ -429,8 +401,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Called when a client logs out of the server.
-     *
-     * @param player
      */
     @Override
     public void onClientLogout(NetworkManager mgr)
@@ -439,14 +409,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     }
 
     /**
-     *
      * Spawn the entity of the supplied type, if it is your mod's
-     * @param entityId
-     * @param world
-     * @param scaledX
-     * @param scaledY
-     * @param scaledZ
-     * @return
      */
     @SideOnly(CLIENT)
     public Entity spawnEntity(int entityId, World world, double scaledX, double scaledY, double scaledZ)

@@ -357,7 +357,6 @@ public class ModLoaderModContainer implements ModContainer
     /**
      * Find all the BaseMods in the system
      * @param <A>
-     * @return
      */
     public static <A extends BaseModProxy> List<A> findAll(Class<A> clazz)
     {
@@ -426,16 +425,11 @@ public class ModLoaderModContainer implements ModContainer
         return mod.getVersion();
     }
 
-    /**
-     * @return
-     */
     public BaseModTicker getGameTickHandler()
     {
         return this.gameTickHandler;
     }
-    /**
-     * @return
-     */
+
     public BaseModTicker getGUITickHandler()
     {
         return this.guiTickHandler;
