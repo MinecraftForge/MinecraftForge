@@ -40,9 +40,6 @@ public class ModLoaderKeyBindingHandler extends KeyBindingRegistry.KeyHandler
     private boolean[] mlRepeats = new boolean[0];
     private boolean[] armed = new boolean[0];
 
-    /**
-     * @param keyHandler
-     */
     public ModLoaderKeyBindingHandler()
     {
         super(new KeyBinding[0], new boolean[0]);

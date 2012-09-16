@@ -138,7 +138,6 @@ public class FMLCommonHandler
     /**
      * Find the container that associates with the supplied mod object
      * @param mod
-     * @return
      */
     public ModContainer findContainerFor(Object mod)
     {
@@ -153,16 +152,6 @@ public class FMLCommonHandler
         return FMLLog.getLogger();
     }
 
-    /**
-     * @param key
-     * @param lang
-     * @param value
-     */
-    /**
-     * @param languagePack
-     * @param lang
-     */
-
     public Side getSide()
     {
         return sidedDelegate.getSide();
@@ -172,8 +161,6 @@ public class FMLCommonHandler
      * Return the effective side for the context in the game. This is dependent
      * on thread analysis to try and determine whether the code is running in the
      * server or not. Use at your own risk
-     *
-     * @return
      */
     public Side getEffectiveSide()
     {
@@ -187,10 +174,6 @@ public class FMLCommonHandler
     }
     /**
      * Raise an exception
-     *
-     * @param exception
-     * @param message
-     * @param stopGame
      */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
@@ -229,10 +212,7 @@ public class FMLCommonHandler
             return null;
         }
     }
-    /**
-     * @param string
-     * @return
-     */
+
     public void computeBranding()
     {
         if (brandings == null)
@@ -268,9 +248,6 @@ public class FMLCommonHandler
         return ImmutableList.copyOf(brandings);
     }
 
-    /**
-     * @return
-     */
     public IFMLSidedHandler getSidedDelegate()
     {
         return sidedDelegate;

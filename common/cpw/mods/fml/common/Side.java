@@ -18,7 +18,7 @@ public enum Side {
     CLIENT, SERVER, BUKKIT;
 
     /**
-     * @return
+     * @return If this is the server environment
      */
     public boolean isServer()
     {
@@ -26,7 +26,7 @@ public enum Side {
     }
 
     /**
-     * @return
+     * @return if this is the Client environment
      */
     public boolean isClient()
     {

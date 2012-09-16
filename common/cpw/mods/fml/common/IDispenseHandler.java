@@ -35,7 +35,6 @@ public interface IDispenseHandler
      * @param entX
      * @param entY
      * @param entZ
-     * @return
      */
     @Deprecated
     int dispense(double x, double y, double z, int xVelocity, int zVelocity, World world, ItemStack item, Random random, double entX, double entY, double entZ);

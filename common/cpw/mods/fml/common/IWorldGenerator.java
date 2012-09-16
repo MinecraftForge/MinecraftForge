@@ -19,8 +19,7 @@ import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.World;
 
 /**
- * This is called back during world generation. The {@link #generate(Random, int, int, Object...)} method passes in some additional data that
- * can be cast into minecraft objects.
+ * This is called back during world generation. 
  *
  * @author cpw
  *
@@ -34,7 +33,7 @@ public interface IWorldGenerator
      * @param chunkX the chunk X coordinate of this chunk.
      * @param chunkZ the chunk Z coordinate of this chunk.
      * @param world : additionalData[0] The minecraft {@link World} we're generating for.
-     * @param generator : additionalData[1] The {@link IChunkProvider} that is generating.
+     * @param chunkGenerator : additionalData[1] The {@link IChunkProvider} that is generating.
      * @param chunkProvider : additionalData[2] {@link IChunkProvider} that is requesting the world generation.
      *
      */

@@ -51,14 +51,11 @@ public interface ITickHandler
     
     /**
      * Returns the list of ticks this tick handler is interested in receiving at the minute
-     * 
-     * @return
      */
     public EnumSet<TickType> ticks();
     
     /**
      * A profiling label for this tick handler
-     * @return
      */
     public String getLabel();
 }

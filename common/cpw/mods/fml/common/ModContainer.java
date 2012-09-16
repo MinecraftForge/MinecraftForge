@@ -38,66 +38,48 @@ public interface ModContainer
 {
     /**
      * The globally unique modid for this mod
-     *
-     * @return
      */
     String getModId();
 
     /**
      * A human readable name
-     *
-     * @return
      */
 
     String getName();
 
     /**
      * A human readable version identifier
-     *
-     * @return
      */
     String getVersion();
 
     /**
      * The location on the file system which this mod came from
-     *
-     * @return
      */
     File getSource();
 
     /**
      * The metadata for this mod
-     *
-     * @return
      */
     ModMetadata getMetadata();
 
     /**
      * Attach this mod to it's metadata from the supplied metadata collection
-     *
-     * @param mc
      */
     void bindMetadata(MetadataCollection mc);
 
     /**
      * Set the enabled/disabled state of this mod
-     *
-     * @param enabled
      */
     void setEnabledState(boolean enabled);
 
     /**
      * A list of the modids that this mod requires loaded prior to loading
-     *
-     * @return
      */
     Set<ArtifactVersion> getRequirements();
 
     /**
      * A list of modids that should be loaded prior to this one. The special
      * value <strong>*</strong> indicates to load <em>before</em> any other mod.
-     *
-     * @return
      */
     List<ArtifactVersion> getDependencies();
 
@@ -105,16 +87,12 @@ public interface ModContainer
      * A list of modids that should be loaded <em>after</em> this one. The
      * special value <strong>*</strong> indicates to load <em>after</em> any
      * other mod.
-     *
-     * @return
      */
     List<ArtifactVersion> getDependants();
 
     /**
      * A representative string encapsulating the sorting preferences for this
      * mod
-     *
-     * @return
      */
     String getSortingRules();
 
@@ -126,7 +104,6 @@ public interface ModContainer
      *
      * @param bus
      * @param controller
-     * @return
      */
     boolean registerBus(EventBus bus, LoadController controller);
 
@@ -134,14 +111,11 @@ public interface ModContainer
      * Does this mod match the supplied mod
      *
      * @param mod
-     * @return
      */
     boolean matches(Object mod);
 
     /**
      * Get the actual mod object
-     *
-     * @return
      */
     Object getMod();
 

@@ -363,7 +363,6 @@ public class EntityRegistry
      * @param updateRange
      * @param updateInterval
      * @param sendVelocityInfo
-     * @return
      */
     @Deprecated
     public static EntityRegistration registerModLoaderEntity(Object mod, Class<? extends Entity> entityClass, int entityTypeId, int updateRange, int updateInterval,

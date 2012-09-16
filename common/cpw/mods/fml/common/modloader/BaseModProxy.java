@@ -40,29 +40,14 @@ import cpw.mods.fml.common.asm.SideOnly;
  */
 public interface BaseModProxy
 {
-    /**
-     *
-     */
     void modsLoaded();
 
-    /**
-     *
-     */
     void load();
 
-    /**
-     * @return
-     */
     String getName();
 
-    /**
-     * @return
-     */
     String getPriorities();
 
-    /**
-     * @return
-     */
     String getVersion();
 
     boolean doTickInGUI(TickType type, boolean end, Object... tickData);

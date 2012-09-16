@@ -24,7 +24,6 @@ public interface IDispenserHandler
      * @param entX
      * @param entY
      * @param entZ
-     * @return
      */
     int dispense(int x, int y, int z, int xVelocity, int zVelocity, World world, ItemStack item, Random random, double entX, double entY, double entZ);
 }

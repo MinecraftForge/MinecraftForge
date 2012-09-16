@@ -35,8 +35,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 /**
  * Handles primary communication from hooked code into the system
  *
- * The FML entry point is {@link #onPreLoad(MinecraftServer)} called from
- * {@link MinecraftServer}
+ * The FML entry point is {@link #beginServerLoading(MinecraftServer)} called from
+ * {@link DedicatedServer}
  *
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code
@@ -97,8 +97,6 @@ public class FMLServerHandler implements IFMLSidedHandler
 
     /**
      * Get the server instance
-     *
-     * @return
      */
     public MinecraftServer getServer()
     {

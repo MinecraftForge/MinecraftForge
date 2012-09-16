@@ -122,9 +122,6 @@ public class BaseModTicker implements ITickHandler
         return mod.getClass().getSimpleName();
     }
 
-    /**
-     * @param mod2
-     */
     public void setMod(BaseModProxy mod)
     {
         this.mod = mod;

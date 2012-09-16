@@ -424,7 +424,7 @@ public class Loader
 
     /**
      * Called from the hook to start mod loading. We trigger the
-     * {@link #identifyMods()} and {@link #preModInit()} phases here. Finally,
+     * {@link #identifyMods()} and Constructing, Preinitalization, and Initalization phases here. Finally,
      * the mod list is frozen completely and is consider immutable from then on.
      */
     public void loadMods()
@@ -512,16 +512,13 @@ public class Loader
      * Query if we know of a mod named modname
      *
      * @param modname
-     * @return
+     * @return If the mod is loaded
      */
     public static boolean isModLoaded(String modname)
     {
         return instance().namedMods.containsKey(modname) && instance().modController.getModState(instance.namedMods.get(modname))!=ModState.DISABLED;
     }
 
-    /**
-     * @return
-     */
     public File getConfigDir()
     {
         return canonicalConfigDir;
@@ -540,17 +537,11 @@ public class Loader
         return ret.toString();
     }
 
-    /**
-     * @return
-     */
     public String getFMLVersionString()
     {
         return String.format("%s.%s.%s.%s", major, minor, rev, build);
     }
 
-    /**
-     * @return
-     */
     public ClassLoader getModClassLoader()
     {
         return modClassLoader;

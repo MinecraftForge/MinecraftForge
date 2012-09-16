@@ -18,12 +18,12 @@ public interface IFMLLoadingPlugin
     /**
      * Return a list of classes that implement the ILibrarySet interface
      *
-     * @return
+     * @return a list of classes that implement the ILibrarySet interface
      */
     String[] getLibraryRequestClass();
     /**
      * Return a list of classes that implements the IClassTransformer interface
-     * @return
+     * @return a list of classes that implements the IClassTransformer interface
      */
     String[] getASMTransformerClass();
 

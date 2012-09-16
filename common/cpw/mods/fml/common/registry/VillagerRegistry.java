@@ -50,13 +50,11 @@ public class VillagerRegistry
          *
          * @param random
          * @param i
-         * @return
          */
         StructureVillagePieceWeight getVillagePieceWeight(Random random, int i);
 
         /**
          * The class of the root structure component to add to the village
-         * @return
          */
         Class<?> getComponentClass();
 
@@ -72,7 +70,6 @@ public class VillagerRegistry
          * @param p3
          * @param p4
          * @param p5
-         * @return
          */
         Object buildComponent(StructureVillagePieceWeight villagePiece, ComponentVillageStartPiece startPiece, List pieces, Random random, int p1,
                 int p2, int p3, int p4, int p5);
@@ -92,7 +89,6 @@ public class VillagerRegistry
          *
          * @param villager
          * @param recipeList
-         * @param random
          */
         void manipulateTradesForVillager(EntityVillager villager, MerchantRecipeList recipeList, Random random);
     }
@@ -145,7 +141,6 @@ public class VillagerRegistry
      *
      * @param villagerType
      * @param defaultSkin
-     * @return
      */
     public static String getVillagerSkin(int villagerType, String defaultSkin)
     {

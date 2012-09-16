@@ -32,28 +32,23 @@ public @interface Mod
 {
     /**
      * The unique mod identifier for this mod
-     * @return
      */
     String modid();
     /**
      * A user friendly name for the mod
-     * @return
      */
     String name() default "";
     /**
      * A version string for this mod
-     * @return
      */
     String version() default "";
     /**
      * A simple dependency string for this mod (see modloader's "priorities" string specification)
-     * @return
      */
     String dependencies() default "";
     /**
      * Whether to use the mcmod.info metadata by default for this mod.
      * If true, settings in the mcmod.info file will override settings in these annotations.
-     * @return
      */
     boolean useMetadata() default false;
 
@@ -115,7 +110,6 @@ public @interface Mod
     public @interface Instance {
         /**
          * The mod object to inject into this field
-         * @return
          */
         String value() default "";
     }
@@ -129,7 +123,6 @@ public @interface Mod
     public @interface Metadata {
         /**
          * The mod id specifying the metadata to load here
-         * @return
          */
         String value() default "";
     }
@@ -143,12 +136,10 @@ public @interface Mod
     public @interface Block {
         /**
          * The block's name
-         * @return
          */
         String name();
         /**
          * The associated ItemBlock subtype for the item (can be null for an ItemBlock)
-         * @return
          */
         Class<?> itemTypeClass() default ItemBlock.class;
     }
@@ -162,12 +153,10 @@ public @interface Mod
     public @interface Item {
         /**
          * The name of the item
-         * @return
          */
         String name();
         /**
          * The type of the item
-         * @return
          */
         String typeClass();
     }
