@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/src/ItemRenderer.java
 +++ ../src-work/minecraft/net/minecraft/src/ItemRenderer.java
-@@ -26,8 +26,12 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.client.TextureFXManager;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import net.minecraft.client.Minecraft;
+@@ -26,8 +27,12 @@
      public void func_78443_a(EntityLiving p_78443_1_, ItemStack p_78443_2_, int p_78443_3_)
      {
          GL11.glPushMatrix();
@@ -15,3 +22,74 @@
          if (var4 != null && RenderBlocks.func_78597_b(var4.func_71857_b()))
          {
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.field_78455_a.field_71446_o.func_78341_b("/terrain.png"));
+@@ -123,10 +128,17 @@
+         float var10;
+         float var11;
+ 
+-        for (var8 = 0; var8 < 16; ++var8)
+-        {
+-            var9 = (float)var8 / 16.0F;
+-            var10 = p_78439_2_ + (p_78439_4_ - p_78439_2_) * var9 - 0.001953125F;
++        /* Gets the width/16 of the currently bound texture, used 
++         * to fix the side rendering issues on textures != 16 */
++        int tileSize = TextureFXManager.instance().getTextureDimensions(GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D)).width / 16;
++        
++        float tx = 1.0f / (32 * tileSize);
++        float tz = 1.0f /  tileSize;
++
++        for (var8 = 0; var8 < tileSize; ++var8)
++        {
++            var9 = (float)var8 / tileSize;
++            var10 = p_78439_2_ + (p_78439_4_ - p_78439_2_) * var9 - tx;
+             var11 = var6 * var9;
+             p_78439_1_.func_78374_a((double)var11, 0.0D, (double)(0.0F - var7), (double)var10, (double)p_78439_5_);
+             p_78439_1_.func_78374_a((double)var11, 0.0D, 0.0D, (double)var10, (double)p_78439_5_);
+@@ -138,11 +150,11 @@
+         p_78439_1_.func_78382_b();
+         p_78439_1_.func_78375_b(1.0F, 0.0F, 0.0F);
+ 
+-        for (var8 = 0; var8 < 16; ++var8)
+-        {
+-            var9 = (float)var8 / 16.0F;
+-            var10 = p_78439_2_ + (p_78439_4_ - p_78439_2_) * var9 - 0.001953125F;
+-            var11 = var6 * var9 + 0.0625F;
++        for (var8 = 0; var8 < tileSize; ++var8)
++        {
++            var9 = (float)var8 / tileSize;
++            var10 = p_78439_2_ + (p_78439_4_ - p_78439_2_) * var9 - tx;
++            var11 = var6 * var9 + tz;
+             p_78439_1_.func_78374_a((double)var11, 1.0D, (double)(0.0F - var7), (double)var10, (double)p_78439_3_);
+             p_78439_1_.func_78374_a((double)var11, 1.0D, 0.0D, (double)var10, (double)p_78439_3_);
+             p_78439_1_.func_78374_a((double)var11, 0.0D, 0.0D, (double)var10, (double)p_78439_5_);
+@@ -153,11 +165,11 @@
+         p_78439_1_.func_78382_b();
+         p_78439_1_.func_78375_b(0.0F, 1.0F, 0.0F);
+ 
+-        for (var8 = 0; var8 < 16; ++var8)
+-        {
+-            var9 = (float)var8 / 16.0F;
+-            var10 = p_78439_5_ + (p_78439_3_ - p_78439_5_) * var9 - 0.001953125F;
+-            var11 = var6 * var9 + 0.0625F;
++        for (var8 = 0; var8 < tileSize; ++var8)
++        {
++            var9 = (float)var8 / tileSize;
++            var10 = p_78439_5_ + (p_78439_3_ - p_78439_5_) * var9 - tx;
++            var11 = var6 * var9 + tz;
+             p_78439_1_.func_78374_a(0.0D, (double)var11, 0.0D, (double)p_78439_2_, (double)var10);
+             p_78439_1_.func_78374_a((double)var6, (double)var11, 0.0D, (double)p_78439_4_, (double)var10);
+             p_78439_1_.func_78374_a((double)var6, (double)var11, (double)(0.0F - var7), (double)p_78439_4_, (double)var10);
+@@ -168,10 +180,10 @@
+         p_78439_1_.func_78382_b();
+         p_78439_1_.func_78375_b(0.0F, -1.0F, 0.0F);
+ 
+-        for (var8 = 0; var8 < 16; ++var8)
+-        {
+-            var9 = (float)var8 / 16.0F;
+-            var10 = p_78439_5_ + (p_78439_3_ - p_78439_5_) * var9 - 0.001953125F;
++        for (var8 = 0; var8 < tileSize; ++var8)
++        {
++            var9 = (float)var8 / tileSize;
++            var10 = p_78439_5_ + (p_78439_3_ - p_78439_5_) * var9 - tx;
+             var11 = var6 * var9;
+             p_78439_1_.func_78374_a((double)var6, (double)var11, 0.0D, (double)p_78439_4_, (double)var10);
+             p_78439_1_.func_78374_a(0.0D, (double)var11, 0.0D, (double)p_78439_2_, (double)var10);
