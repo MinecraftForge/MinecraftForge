@@ -64,6 +64,10 @@ public class FMLRelauncher
         }
         catch (Exception e)
         {
+            if (RelaunchLibraryManager.downloadMonitor == null)
+            {
+                e.printStackTrace();
+            }
             popupWindow = null;
             RelaunchLibraryManager.downloadMonitor.makeHeadless();
         }
