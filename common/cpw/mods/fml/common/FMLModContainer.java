@@ -13,6 +13,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,8 +21,12 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -150,6 +155,10 @@ public class FMLModContainer implements ModContainer
             modMetadata.name = getModId();
         }
         internalVersion = (String) descriptor.get("version");
+        if (Strings.isNullOrEmpty(internalVersion) && getSource().isFile())
+        {
+            internalVersion = searchForVersionProperties();
+        }
         if (Strings.isNullOrEmpty(internalVersion) && !Strings.isNullOrEmpty(modMetadata.version))
         {
             FMLLog.warning("Mod %s is missing the required element 'version'. Falling back to metadata version %s", getModId(), modMetadata.version);
@@ -159,6 +168,32 @@ public class FMLModContainer implements ModContainer
         {
             FMLLog.warning("Mod %s is missing the required element 'version' and no fallback can be found. Substituting '1.0'.", getModId());
             modMetadata.version = internalVersion = "1.0";
+        }
+    }
+
+    private String searchForVersionProperties()
+    {
+        try
+        {
+            FMLLog.fine("Attempting to load the file version.properties and from %s locate a version", getSource().getName());
+            String version = null;
+            ZipFile source = new ZipFile(getSource());
+            ZipEntry versionFile = source.getEntry("version.properties");
+            if (versionFile!=null)
+            {
+                Properties versionProps = new Properties();
+                versionProps.load(source.getInputStream(versionFile));
+                version = versionProps.getProperty(getModId()+".version");
+                FMLLog.fine("Found version %s for mod %s in version.properties", version, getModId());
+            }
+            source.close();
+            return version;
+        }
+        catch (Exception e)
+        {
+            Throwables.propagateIfPossible(e);
+            FMLLog.fine("Failed to find a usable version.properties file");
+            return null;
         }
     }
 
