@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayer.java
-@@ -7,6 +7,17 @@
+@@ -7,6 +7,16 @@
  
  import java.util.Iterator;
  import java.util.List;
@@ -10,15 +10,14 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
 +import net.minecraftforge.event.entity.player.AttackEntityEvent;
-+import net.minecraftforge.event.entity.player.CanHarvestBlockEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-+import net.minecraftforge.event.entity.player.PlayerStrVsBlockEvent;
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -222,6 +233,7 @@
+@@ -222,6 +232,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -26,7 +25,36 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -627,7 +639,16 @@
+@@ -574,12 +585,28 @@
+         this.setPosition(this.posX, this.posY, this.posZ);
+         this.motionY = 0.10000000149011612D;
+ 
++        captureDrops = true;
++        capturedDrops.clear();
++
+         if (this.username.equals("Notch"))
+         {
+             this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
+         }
+ 
+         this.inventory.dropAllItems();
++        captureDrops = false;
++
++        if (!worldObj.isRemote)
++        {
++            PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
++            if (!MinecraftForge.EVENT_BUS.post(event))
++            {
++                for (EntityItem item : capturedDrops)
++                {
++                    joinEntityItemWithWorld(item);
++                }
++            }
++        }
+ 
+         if (par1DamageSource != null)
+         {
+@@ -627,7 +654,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -38,18 +66,40 @@
 +        }
 +        if (stack.getItem().onDroppedByPlayer(stack, this))
 +        {
-+            return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
++            return ForgeHooks.onPlayerTossEvent(this, inventory.decrStackSize(inventory.currentItem, 1));
 +        }
 +        return null;
      }
  
      /**
-@@ -693,13 +714,27 @@
+@@ -636,7 +672,7 @@
+      */
+     public EntityItem dropPlayerItem(ItemStack par1ItemStack)
+     {
+-        return this.dropPlayerItemWithRandomChoice(par1ItemStack, false);
++        return ForgeHooks.onPlayerTossEvent(this, par1ItemStack);
+     }
+ 
+     /**
+@@ -688,18 +724,33 @@
+      */
+     public void joinEntityItemWithWorld(EntityItem par1EntityItem)
+     {
+-        this.worldObj.spawnEntityInWorld(par1EntityItem);
++        if (captureDrops)
++        {
++            capturedDrops.add(par1EntityItem);
++        }
++        else
++        {
++            this.worldObj.spawnEntityInWorld(par1EntityItem);
++        }
+     }
  
      /**
       * Returns how strong the player is against the specified block at this moment
 -     */
-+     * Deprecated in favor of the moresensitive version
++     * Deprecated in favor of the more sensitive version
 +     */
 +    @Deprecated
      public float getCurrentPlayerStrVsBlock(Block par1Block)
@@ -60,12 +110,6 @@
 +
 +    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
 +    {
-+        PlayerStrVsBlockEvent event = new PlayerStrVsBlockEvent(this, par1Block, meta);
-+        if (MinecraftForge.EVENT_BUS.post(event))
-+        {
-+            return event.result;
-+        }
-+
 +        ItemStack stack = inventory.getCurrentItem();
 +        float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
          int var3 = EnchantmentHelper.getEfficiencyModifier(this.inventory);
@@ -75,19 +119,7 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -732,7 +767,10 @@
-      */
-     public boolean canHarvestBlock(Block par1Block)
-     {
--        return this.inventory.canHarvestBlock(par1Block);
-+        CanHarvestBlockEvent event = new CanHarvestBlockEvent(this, par1Block, this.inventory.canHarvestBlock(par1Block));
-+        MinecraftForge.EVENT_BUS.post(event);
-+
-+        return event.result;
-     }
- 
-     /**
-@@ -992,12 +1030,23 @@
+@@ -992,12 +1043,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -112,7 +144,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1032,6 +1081,10 @@
+@@ -1032,6 +1094,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -123,7 +155,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1075,7 +1128,9 @@
+@@ -1075,7 +1141,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -133,7 +165,7 @@
      }
  
      /**
-@@ -1104,6 +1159,15 @@
+@@ -1104,6 +1172,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -149,7 +181,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1247,6 +1311,12 @@
+@@ -1247,6 +1324,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -162,7 +194,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1286,6 +1356,11 @@
+@@ -1286,6 +1369,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -174,7 +206,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1356,10 +1431,12 @@
+@@ -1356,10 +1444,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -191,7 +223,7 @@
  
              if (var5 == null)
              {
-@@ -1396,7 +1473,9 @@
+@@ -1396,7 +1486,9 @@
       */
      private boolean isInBed()
      {
@@ -202,7 +234,7 @@
      }
  
      /**
-@@ -1411,13 +1490,15 @@
+@@ -1411,13 +1503,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -220,7 +252,7 @@
              return var3;
          }
      }
-@@ -1431,8 +1512,11 @@
+@@ -1431,8 +1525,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -234,7 +266,7 @@
  
              switch (var2)
              {
-@@ -1725,6 +1809,7 @@
+@@ -1725,6 +1822,7 @@
                      return 101;
                  }
              }
