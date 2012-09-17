@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayer.java
-@@ -7,6 +7,18 @@
+@@ -7,6 +7,17 @@
  
  import java.util.Iterator;
  import java.util.List;
@@ -13,13 +13,12 @@
 +import net.minecraftforge.event.entity.player.CanHarvestBlockEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 +import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 +import net.minecraftforge.event.entity.player.PlayerStrVsBlockEvent;
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -222,6 +234,7 @@
+@@ -222,6 +233,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -27,36 +26,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -574,12 +587,28 @@
-         this.setPosition(this.posX, this.posY, this.posZ);
-         this.motionY = 0.10000000149011612D;
- 
-+        captureDrops = true;
-+        capturedDrops.clear();
-+
-         if (this.username.equals("Notch"))
-         {
-             this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-         }
- 
-         this.inventory.dropAllItems();
-+        captureDrops = false;
-+
-+        if (!worldObj.isRemote)
-+        {
-+            PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
-+            if (!MinecraftForge.EVENT_BUS.post(event))
-+            {
-+                for (EntityItem item : capturedDrops)
-+                {
-+                    joinEntityItemWithWorld(item);
-+                }
-+            }
-+        }
- 
-         if (par1DamageSource != null)
-         {
-@@ -627,7 +656,16 @@
+@@ -627,7 +639,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -68,40 +38,18 @@
 +        }
 +        if (stack.getItem().onDroppedByPlayer(stack, this))
 +        {
-+            return ForgeHooks.onPlayerTossEvent(this, inventory.decrStackSize(inventory.currentItem, 1));
++            return dropPlayerItemWithRandomChoice(inventory.decrStackSize(inventory.currentItem, 1), false);
 +        }
 +        return null;
      }
  
      /**
-@@ -636,7 +674,7 @@
-      */
-     public EntityItem dropPlayerItem(ItemStack par1ItemStack)
-     {
--        return this.dropPlayerItemWithRandomChoice(par1ItemStack, false);
-+        return ForgeHooks.onPlayerTossEvent(this, par1ItemStack);
-     }
- 
-     /**
-@@ -688,18 +726,39 @@
-      */
-     public void joinEntityItemWithWorld(EntityItem par1EntityItem)
-     {
--        this.worldObj.spawnEntityInWorld(par1EntityItem);
-+        if (captureDrops)
-+        {
-+            capturedDrops.add(par1EntityItem);
-+        }
-+        else
-+        {
-+            this.worldObj.spawnEntityInWorld(par1EntityItem);
-+        }
-     }
+@@ -693,13 +714,27 @@
  
      /**
       * Returns how strong the player is against the specified block at this moment
 -     */
-+     * Deprecated in favor of the more sensitive version
++     * Deprecated in favor of the moresensitive version
 +     */
 +    @Deprecated
      public float getCurrentPlayerStrVsBlock(Block par1Block)
@@ -127,7 +75,7 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -732,7 +791,11 @@
+@@ -732,7 +767,10 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -136,11 +84,10 @@
 +        MinecraftForge.EVENT_BUS.post(event);
 +
 +        return event.result;
-+
      }
  
      /**
-@@ -992,12 +1055,23 @@
+@@ -992,12 +1030,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -165,7 +112,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1032,6 +1106,10 @@
+@@ -1032,6 +1081,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -176,7 +123,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1075,7 +1153,9 @@
+@@ -1075,7 +1128,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -186,7 +133,7 @@
      }
  
      /**
-@@ -1104,6 +1184,15 @@
+@@ -1104,6 +1159,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -202,7 +149,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1247,6 +1336,12 @@
+@@ -1247,6 +1311,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -215,7 +162,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1286,6 +1381,11 @@
+@@ -1286,6 +1356,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -227,7 +174,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1356,10 +1456,12 @@
+@@ -1356,10 +1431,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -244,7 +191,7 @@
  
              if (var5 == null)
              {
-@@ -1396,7 +1498,9 @@
+@@ -1396,7 +1473,9 @@
       */
      private boolean isInBed()
      {
@@ -255,7 +202,7 @@
      }
  
      /**
-@@ -1411,13 +1515,15 @@
+@@ -1411,13 +1490,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -273,7 +220,7 @@
              return var3;
          }
      }
-@@ -1431,8 +1537,11 @@
+@@ -1431,8 +1512,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -287,7 +234,7 @@
  
              switch (var2)
              {
-@@ -1725,6 +1834,7 @@
+@@ -1725,6 +1809,7 @@
                      return 101;
                  }
              }
