@@ -157,11 +157,17 @@ public class FMLModContainer implements ModContainer
         internalVersion = (String) descriptor.get("version");
         if (Strings.isNullOrEmpty(internalVersion) && getSource().isFile())
         {
-            internalVersion = searchForVersionProperties();
+            Properties versionProps = searchForVersionProperties();
+            if (versionProps != null)
+            {
+                internalVersion = versionProps.getProperty(getModId()+".version");
+                FMLLog.fine("Found version %s for mod %s in version.properties", internalVersion, getModId());
+            }
+
         }
         if (Strings.isNullOrEmpty(internalVersion) && !Strings.isNullOrEmpty(modMetadata.version))
         {
-            FMLLog.warning("Mod %s is missing the required element 'version'. Falling back to metadata version %s", getModId(), modMetadata.version);
+            FMLLog.warning("Mod %s is missing the required element 'version' and a version.properties file could not be found. Falling back to metadata version %s", getModId(), modMetadata.version);
             internalVersion = modMetadata.version;
         }
         if (Strings.isNullOrEmpty(internalVersion))
@@ -171,22 +177,34 @@ public class FMLModContainer implements ModContainer
         }
     }
 
-    private String searchForVersionProperties()
+    public Properties searchForVersionProperties()
     {
         try
         {
-            FMLLog.fine("Attempting to load the file version.properties and from %s locate a version", getSource().getName());
-            String version = null;
-            ZipFile source = new ZipFile(getSource());
-            ZipEntry versionFile = source.getEntry("version.properties");
-            if (versionFile!=null)
+            FMLLog.fine("Attempting to load the file version.properties from %s to locate a version number for %s", getSource().getName(), getModId());
+            Properties version = null;
+            if (getSource().isFile())
             {
-                Properties versionProps = new Properties();
-                versionProps.load(source.getInputStream(versionFile));
-                version = versionProps.getProperty(getModId()+".version");
-                FMLLog.fine("Found version %s for mod %s in version.properties", version, getModId());
+                ZipFile source = new ZipFile(getSource());
+                ZipEntry versionFile = source.getEntry("version.properties");
+                if (versionFile!=null)
+                {
+                    version = new Properties();
+                    version.load(source.getInputStream(versionFile));
+                }
+                source.close();
             }
-            source.close();
+            else if (getSource().isDirectory())
+            {
+                File propsFile = new File(getSource(),"version.properties");
+                if (propsFile.exists() && propsFile.isFile())
+                {
+                    version = new Properties();
+                    FileInputStream fis = new FileInputStream(propsFile);
+                    version.load(fis);
+                    fis.close();
+                }
+            }
             return version;
         }
         catch (Exception e)

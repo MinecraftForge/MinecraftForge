@@ -1,8 +1,10 @@
 package cpw.mods.fml.common.event;
 
 import java.io.File;
+import java.util.Properties;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.discovery.ASMDataTable;
@@ -14,6 +16,7 @@ public class FMLPreInitializationEvent extends FMLStateEvent
     private File configurationDir;
     private File suggestedConfigFile;
     private ASMDataTable asmData;
+    private ModContainer modContainer;
 
     public FMLPreInitializationEvent(Object... data)
     {
@@ -31,6 +34,7 @@ public class FMLPreInitializationEvent extends FMLStateEvent
     @Override
     public void applyModContainer(ModContainer activeContainer)
     {
+        this.modContainer = activeContainer;
         this.modMetadata = activeContainer.getMetadata();
         this.sourceFile = activeContainer.getSource();
         this.suggestedConfigFile = new File(configurationDir, activeContainer.getModId()+".cfg");
@@ -59,5 +63,15 @@ public class FMLPreInitializationEvent extends FMLStateEvent
     public ASMDataTable getAsmData()
     {
         return asmData;
+    }
+
+    public Properties getVersionProperties()
+    {
+        if (this.modContainer instanceof FMLModContainer)
+        {
+            return ((FMLModContainer)(this.modContainer)).searchForVersionProperties();
+        }
+
+        return null;
     }
 }
