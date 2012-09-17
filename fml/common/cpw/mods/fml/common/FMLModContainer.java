@@ -153,7 +153,7 @@ public class FMLModContainer implements ModContainer
         if (Strings.isNullOrEmpty(internalVersion) && !Strings.isNullOrEmpty(modMetadata.version))
         {
             FMLLog.warning("Mod %s is missing the required element 'version'. Falling back to metadata version %s", getModId(), modMetadata.version);
-            modMetadata.version = internalVersion;
+            internalVersion = modMetadata.version;
         }
         if (Strings.isNullOrEmpty(internalVersion))
         {
