@@ -119,7 +119,7 @@
 +        else
 +        {
 +            int id = EntityList.getEntityID(this);
-+            if (id > 0 || EntityList.entityEggs.containsKey(id))
++            if (!(id <= 0 || !EntityList.entityEggs.containsKey(id)))
 +            {
 +                return new ItemStack(Item.monsterPlacer, 1, id);
 +            }
