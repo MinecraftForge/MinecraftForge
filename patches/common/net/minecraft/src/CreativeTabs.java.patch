@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/CreativeTabs.java
 +++ ../src_work/common/net/minecraft/src/CreativeTabs.java
-@@ -138,15 +138,23 @@
+@@ -138,15 +138,26 @@
     public void displayAllReleventItems(List par1List)
     {
         Item[] var2 = Item.itemsList;
@@ -15,14 +15,17 @@
             {
 -                var5.getSubItems(var5.shiftedIndex, this, par1List);
 +            	CreativeTabs[] tabs = var5.getCreativeTabs();
-+            	for(int i = 0; i < tabs.length; i++)
++            	if(tabs != null)
 +            	{
-+            		if(tabs[i] == this)
-+            		{
-+            			var5.getSubItems(var5.shiftedIndex, this, par1List);
-+            			break;
-+            		}
-+           	}	
++	            	for(int i = 0; i < tabs.length; i++)
++	            	{
++	            		if(tabs[i] == this)
++	            		{
++	            			var5.getSubItems(var5.shiftedIndex, this, par1List);
++	            			break;
++	            		}
++	            	}
++           	}
             }
         }
     }
