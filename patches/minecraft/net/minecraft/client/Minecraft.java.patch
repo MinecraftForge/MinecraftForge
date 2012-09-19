@@ -8,6 +8,15 @@
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
+@@ -1245,7 +1246,7 @@
+ 
+                 if (this.thePlayer.canPlayerEdit(var3, var4, var5))
+                 {
+-                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver.sideHit);
++                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver);
+                     this.thePlayer.swingItem();
+                 }
+             }
 @@ -2221,80 +2222,12 @@
          if (this.objectMouseOver != null)
          {

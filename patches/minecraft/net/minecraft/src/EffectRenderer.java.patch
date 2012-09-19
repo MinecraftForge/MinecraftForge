@@ -74,7 +74,7 @@
      }
  
      public void renderLitParticles(Entity par1Entity, float par2)
-@@ -144,6 +187,8 @@
+@@ -144,13 +187,15 @@
          {
              this.fxLayers[var2].clear();
          }
@@ -83,6 +83,16 @@
      }
  
      public void addBlockDestroyEffects(int par1, int par2, int par3, int par4, int par5)
+     {
+-        if (par4 != 0)
+-        {
+-            Block var6 = Block.blocksList[par4];
++        Block var6 = Block.blocksList[par4];
++        if (var6 != null && !var6.addBlockDestroyEffects(worldObj, par1, par2, par3, par5, this))
++        {
+             byte var7 = 4;
+ 
+             for (int var8 = 0; var8 < var7; ++var8)
 @@ -163,7 +208,7 @@
                          double var13 = (double)par2 + ((double)var9 + 0.5D) / (double)var7;
                          double var15 = (double)par3 + ((double)var10 + 0.5D) / (double)var7;
@@ -92,7 +102,7 @@
                      }
                  }
              }
-@@ -215,12 +260,51 @@
+@@ -215,12 +260,60 @@
                  var8 = (double)par1 + var6.maxX + (double)var7;
              }
  
@@ -144,5 +154,14 @@
 +        }        
 +        texture = ForgeHooks.getTexture(texture, obj);
 +        effectList.put(texture, effect);
++    }
++
++    public void addBlockHitEffects(int x, int y, int z, MovingObjectPosition target)
++    {
++        Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
++        if (block != null && !block.addBlockHitEffects(worldObj, target, this))
++        {
++            addBlockHitEffects(x, y, z, target.sideHit);
++        }
      }
  }
