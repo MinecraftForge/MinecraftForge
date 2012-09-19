@@ -254,7 +254,7 @@ public class ForgeHooksClient
             int size = entity.item.stackSize;
             int count = (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1)));
 
-            for(int j = 0; j < size; j++)
+            for(int j = 0; j < count; j++)
             {
                 GL11.glPushMatrix();
                 if (j > 0)
