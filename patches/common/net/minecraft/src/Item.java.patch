@@ -277,4 +277,14 @@
 +    {
 +        return null;
 +    }
++
++	 @SideOnly(Side.CLIENT)
++	 
++	 /**
++	  * gets the CreativeTabs this item is displayed on
++	  */
++    public CreativeTabs[] getCreativeTabs()
++    {
++        return new CreativeTabs[] { this.getCreativeTab() };
++    }
  }
