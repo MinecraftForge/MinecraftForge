@@ -108,7 +108,7 @@ public class ModTextureAnimation extends FMLTextureFX
         }
     }
     
-    public void func_783_a()
+    public void func_76846_a()
     {
         if (++ticks >= tickRate)
         {
@@ -120,5 +120,10 @@ public class ModTextureAnimation extends FMLTextureFX
             field_76852_a = images[index];
             ticks = 0;
         }
+    }
+    
+    public void func_76845_a(RenderEngine renderEngine)
+    {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, field_76847_f);
     }
 }
