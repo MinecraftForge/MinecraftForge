@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/src/WorldClient.java
++++ ../src_work/minecraft/net/minecraft/src/WorldClient.java
+@@ -265,6 +265,12 @@
+      */
+     protected void updateWeather()
+     {
++        super.updateWeather();
++    }
++
++    @Override
++    public void updateWeatherBody()
++    {
+         if (!this.provider.hasNoSky)
+         {
+             if (this.lastLightningBolt > 0)

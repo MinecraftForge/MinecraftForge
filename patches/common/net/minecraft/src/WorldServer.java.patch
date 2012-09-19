@@ -18,7 +18,37 @@
      }
  
      /**
-@@ -559,15 +563,27 @@
+@@ -179,10 +183,7 @@
+ 
+     private void resetRainAndThunder()
+     {
+-        this.worldInfo.setRainTime(0);
+-        this.worldInfo.setRaining(false);
+-        this.worldInfo.setThunderTime(0);
+-        this.worldInfo.setThundering(false);
++        provider.resetRainAndThunder();
+     }
+ 
+     public boolean areAllPlayersAsleep()
+@@ -270,7 +271,7 @@
+             int var10;
+             int var11;
+ 
+-            if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
++            if (provider.canDoLightning(var7) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
+             {
+                 this.updateLCG = this.updateLCG * 3 + 1013904223;
+                 var8 = this.updateLCG >> 2;
+@@ -288,7 +289,7 @@
+             this.theProfiler.endStartSection("iceandsnow");
+             int var13;
+ 
+-            if (this.rand.nextInt(16) == 0)
++            if (provider.canDoRainSnowIce(var7) && this.rand.nextInt(16) == 0)
+             {
+                 this.updateLCG = this.updateLCG * 3 + 1013904223;
+                 var8 = this.updateLCG >> 2;
+@@ -559,15 +560,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -55,7 +85,19 @@
              }
          }
  
-@@ -587,7 +603,7 @@
+@@ -578,6 +591,11 @@
+      * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
+      */
+     public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
++    {
++        return super.canMineBlock(par1EntityPlayer, par2, par3, par4);
++    }
++
++    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
+     {
+         int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
+         int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
+@@ -587,7 +605,7 @@
              var6 = var5;
          }
  
@@ -64,7 +106,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -713,6 +729,7 @@
+@@ -713,6 +731,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
