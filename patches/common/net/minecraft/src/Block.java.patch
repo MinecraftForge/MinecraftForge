@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/Block.java
 +++ ../src_work/common/net/minecraft/src/Block.java
-@@ -2,11 +2,23 @@
+@@ -2,11 +2,24 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
@@ -13,6 +13,7 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.common.ForgeDirection;
 +import static net.minecraftforge.common.ForgeDirection.*;
++import net.minecraftforge.event.entity.player.PlayerHarvestBlockEvent;
 +
  public class Block
  {
@@ -24,7 +25,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -279,6 +291,7 @@
+@@ -279,6 +292,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -32,7 +33,7 @@
      }
  
      /**
-@@ -417,9 +430,10 @@
+@@ -417,9 +431,10 @@
          return this.needsRandomTick;
      }
  
@@ -44,7 +45,7 @@
      }
  
      /**
-@@ -442,7 +456,7 @@
+@@ -442,7 +457,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -53,7 +54,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -452,7 +466,7 @@
+@@ -452,7 +467,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -62,7 +63,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -621,8 +635,7 @@
+@@ -621,8 +636,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -72,7 +73,7 @@
      }
  
      /**
-@@ -640,18 +653,13 @@
+@@ -640,18 +654,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -95,7 +96,14 @@
                  }
              }
          }
-@@ -985,7 +993,7 @@
+@@ -982,10 +991,14 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
+     {
++	
++		PlayerHarvestBlockEvent event = new PlayerHarvestBlockEvent(par2EntityPlayer, this.blockID, par6);
++		MinecraftForge.EVENT_BUS.post(event);
++	
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -104,7 +112,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1257,717 @@
+@@ -1249,4 +1262,717 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
