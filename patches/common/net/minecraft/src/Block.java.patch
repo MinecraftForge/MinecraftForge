@@ -1,10 +1,9 @@
---- orig.java	2012-09-20 19:24:20.451171000 +0100
-+++ Block.java	2012-09-20 19:10:35.306640600 +0100
-@@ -1,10 +1,25 @@
- package net.minecraft.src;
+--- ../src_base/common/net/minecraft/src/Block.java
++++ ../src_work/common/net/minecraft/src/Block.java
+@@ -2,11 +2,24 @@
  
-+import cpw.mods.fml.common.Side;
-+import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
 +
 +import java.util.ArrayList;
  import java.util.List;
@@ -26,42 +25,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -107,7 +122,7 @@
-     public static final Block workbench = (new BlockWorkbench(58)).setHardness(2.5F).setStepSound(soundWoodFootstep).setBlockName("workbench");
-     public static final Block crops = (new BlockCrops(59, 88)).setHardness(0.0F).setStepSound(soundGrassFootstep).setBlockName("crops").disableStats().setRequiresSelfNotify();
-     public static final Block tilledField = (new BlockFarmland(60)).setHardness(0.6F).setStepSound(soundGravelFootstep).setBlockName("farmland").setRequiresSelfNotify();
--    public static final Block stoneOvenIdle = (new BlockFurnace(61, false)).setHardness(3.5F).setStepSound(soundStoneFootstep).setBlockName("furnace").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
-+    public static final Block stoneOvenIdle = (new BlockFurnace(61, false)).setHardness(3.5F).setStepSound(soundStoneFootstep).setBlockName("furnace").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDeco);
-     public static final Block stoneOvenActive = (new BlockFurnace(62, true)).setHardness(3.5F).setStepSound(soundStoneFootstep).setLightValue(0.875F).setBlockName("furnace").setRequiresSelfNotify();
-     public static final Block signPost = (new BlockSign(63, TileEntitySign.class, true)).setHardness(1.0F).setStepSound(soundWoodFootstep).setBlockName("sign").disableStats().setRequiresSelfNotify();
-     public static final Block doorWood = (new BlockDoor(64, Material.wood)).setHardness(3.0F).setStepSound(soundWoodFootstep).setBlockName("doorWood").disableStats().setRequiresSelfNotify();
-@@ -172,14 +187,14 @@
-     public static final Block brewingStand = (new BlockBrewingStand(117)).setHardness(0.5F).setLightValue(0.125F).setBlockName("brewingStand").setRequiresSelfNotify();
-     public static final Block cauldron = (new BlockCauldron(118)).setHardness(2.0F).setBlockName("cauldron").setRequiresSelfNotify();
-     public static final Block endPortal = (new BlockEndPortal(119, Material.portal)).setHardness(-1.0F).setResistance(6000000.0F);
--    public static final Block endPortalFrame = (new BlockEndPortalFrame(120)).setStepSound(soundGlassFootstep).setLightValue(0.125F).setHardness(-1.0F).setBlockName("endPortalFrame").setRequiresSelfNotify().setResistance(6000000.0F).setCreativeTab(CreativeTabs.tabDecorations);
-+    public static final Block endPortalFrame = (new BlockEndPortalFrame(120)).setStepSound(soundGlassFootstep).setLightValue(0.125F).setHardness(-1.0F).setBlockName("endPortalFrame").setRequiresSelfNotify().setResistance(6000000.0F).setCreativeTab(CreativeTabs.tabDeco);
-     public static final Block whiteStone = (new Block(121, 175, Material.rock)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setBlockName("whiteStone").setCreativeTab(CreativeTabs.tabBlock);
-     public static final Block dragonEgg = (new BlockDragonEgg(122, 167)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setLightValue(0.125F).setBlockName("dragonEgg");
-     public static final Block redstoneLampIdle = (new BlockRedstoneLight(123, false)).setHardness(0.3F).setStepSound(soundGlassFootstep).setBlockName("redstoneLight").setCreativeTab(CreativeTabs.tabRedstone);
-     public static final Block redstoneLampActive = (new BlockRedstoneLight(124, true)).setHardness(0.3F).setStepSound(soundGlassFootstep).setBlockName("redstoneLight");
-     public static final BlockHalfSlab woodDoubleSlab = (BlockHalfSlab)(new BlockWoodSlab(125, true)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("woodSlab");
-     public static final BlockHalfSlab woodSingleSlab = (BlockHalfSlab)(new BlockWoodSlab(126, false)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("woodSlab");
--    public static final Block cocoaPlant = (new BlockCocoa(127)).setHardness(0.2F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("cocoa").setRequiresSelfNotify();
-+    public static final Block cocoa = (new BlockCocoa(127)).setHardness(0.2F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("cocoa").setRequiresSelfNotify();
-     public static final Block stairsSandStone = (new BlockStairs(128, sandStone, 0)).setBlockName("stairsSandStone").setRequiresSelfNotify();
-     public static final Block oreEmerald = (new BlockOre(129, 171)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setBlockName("oreEmerald");
-     public static final Block enderChest = (new BlockEnderChest(130)).setHardness(22.5F).setResistance(1000.0F).setStepSound(soundStoneFootstep).setBlockName("enderChest").setRequiresSelfNotify().setLightValue(0.5F);
-@@ -255,7 +270,7 @@
-     public float slipperiness;
-     private String blockName;
- 
--    protected Block(int par1, Material par2Material)
-+    public Block(int par1, Material par2Material)
-     {
-         this.blockConstructorCalled = true;
-         this.enableStats = true;
-@@ -277,6 +292,7 @@
+@@ -279,6 +292,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -69,79 +33,7 @@
      }
  
      /**
-@@ -295,7 +311,7 @@
-      */
-     protected void initializeBlock() {}
- 
--    protected Block(int par1, int par2, Material par3Material)
-+    public Block(int par1, int par2, Material par3Material)
-     {
-         this(par1, par3Material);
-         this.blockIndexInTexture = par2;
-@@ -304,7 +320,7 @@
-     /**
-      * Sets the footstep sound for the block. Returns the object for convenience in constructing.
-      */
--    protected Block setStepSound(StepSound par1StepSound)
-+    public Block setStepSound(StepSound par1StepSound)
-     {
-         this.stepSound = par1StepSound;
-         return this;
-@@ -313,7 +329,7 @@
-     /**
-      * Sets how much light is blocked going through this block. Returns the object for convenience in constructing.
-      */
--    protected Block setLightOpacity(int par1)
-+    public Block setLightOpacity(int par1)
-     {
-         lightOpacity[this.blockID] = par1;
-         return this;
-@@ -323,7 +339,7 @@
-      * Sets the amount of light emitted by a block from 0.0f to 1.0f (converts internally to 0-15). Returns the object
-      * for convenience in constructing.
-      */
--    protected Block setLightValue(float par1)
-+    public Block setLightValue(float par1)
-     {
-         lightValue[this.blockID] = (int)(15.0F * par1);
-         return this;
-@@ -332,7 +348,7 @@
-     /**
-      * Sets the the blocks resistance to explosions. Returns the object for convenience in constructing.
-      */
--    protected Block setResistance(float par1)
-+    public Block setResistance(float par1)
-     {
-         this.blockResistance = par1 * 3.0F;
-         return this;
-@@ -368,7 +384,7 @@
-     /**
-      * Sets how many hits it takes to break a block.
-      */
--    protected Block setHardness(float par1)
-+    public Block setHardness(float par1)
-     {
-         this.blockHardness = par1;
- 
-@@ -383,7 +399,7 @@
-     /**
-      * This method will make the hardness of the block equals to -1, and the block is indestructible.
-      */
--    protected Block setBlockUnbreakable()
-+    public Block setBlockUnbreakable()
-     {
-         this.setHardness(-1.0F);
-         return this;
-@@ -400,7 +416,7 @@
-     /**
-      * Sets whether this block type will receive random update ticks
-      */
--    protected Block setTickRandomly(boolean par1)
-+    public Block setTickRandomly(boolean par1)
-     {
-         this.needsRandomTick = par1;
-         return this;
-@@ -415,9 +431,10 @@
+@@ -417,9 +431,10 @@
          return this.needsRandomTick;
      }
  
@@ -153,14 +45,7 @@
      }
  
      /**
-@@ -433,22 +450,28 @@
-         this.maxZ = (double)par6;
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * How bright to render this block based on the light its receiving. Args: iBlockAccess, x, y, z
+@@ -442,7 +457,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -168,10 +53,8 @@
 +        return par1IBlockAccess.getBrightness(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
      }
  
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Goes straight to getLightBrightnessForSkyBlocks for Blocks, does some fancy computing for Fluids
+     @SideOnly(Side.CLIENT)
+@@ -452,7 +467,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -179,62 +62,8 @@
 +        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
      }
  
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
-      * coordinates.  Args: blockAccess, x, y, z, side
-@@ -467,6 +490,8 @@
-         return par1IBlockAccess.getBlockMaterial(par2, par3, par4).isSolid();
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Retrieves the block texture to use based on the display side. Args: iBlockAccess, x, y, z, side
-      */
-@@ -492,14 +517,6 @@
-     }
- 
-     /**
--     * Returns the bounding box of the wired rectangular prism to render.
--     */
--    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
--    {
--        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
--    }
--
--    /**
-      * if the specified block is in the given AABB, add its collision bounding box to the given list
-      */
-     public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
-@@ -512,6 +529,16 @@
-         }
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-+    /**
-+     * Returns the bounding box of the wired rectangular prism to render.
-+     */
-+    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-+    {
-+        return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
-+    }
-+
-     /**
-      * Returns a bounding box from the pool of bounding boxes (this means this box can change after the pool has been
-      * cleared to be reused)
-@@ -551,6 +578,8 @@
-      */
-     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random) {}
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * A randomly called display update to be able to add particles or other items for display
-      */
-@@ -607,8 +636,7 @@
+     @SideOnly(Side.CLIENT)
+@@ -621,8 +636,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -244,14 +73,15 @@
      }
  
      /**
-@@ -626,18 +654,13 @@
+@@ -640,18 +654,13 @@
      {
          if (!par1World.isRemote)
          {
 -            int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
-+            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
- 
+-
 -            for (int var9 = 0; var9 < var8; ++var9)
++            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
++
 +            for (ItemStack item : items)
              {
                  if (par1World.rand.nextFloat() <= par6)
@@ -266,68 +96,14 @@
                  }
              }
          }
-@@ -841,6 +864,8 @@
-      */
-     public void onBlockDestroyedByExplosion(World par1World, int par2, int par3, int par4) {}
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
-      */
-@@ -899,11 +924,22 @@
-      */
-     public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4) {}
- 
-+    /**
-+     * Is this block powering the block on the specified side
-+     */
-+    public boolean isPoweringTo(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-+    {
-+        return false;
-+    }
-+
-+    @SideOnly(Side.CLIENT)
-     public int getBlockColor()
-     {
-         return 16777215;
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Returns the color this block should be rendered. Used by leaves.
-      */
-@@ -912,6 +948,8 @@
-         return 16777215;
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Returns a integer with hex for 0xrrggbb with this color multiplied against the blocks color. Note only called
-      * when first determining what to render.
-@@ -922,14 +960,6 @@
-     }
- 
-     /**
--     * Is this block powering the block on the specified side
--     */
--    public boolean isPoweringTo(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
--    {
--        return false;
--    }
--
--    /**
-      * Can this block provide power. Only wire currently seems to have this change based on its state.
-      */
-     public boolean canProvidePower()
-@@ -961,10 +991,12 @@
+@@ -982,10 +991,14 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
++	
 +		PlayerHarvestBlockEvent event = new PlayerHarvestBlockEvent(this.blockID, par6);
-+        MinecraftForge.EVENT_BUS.post(event);
++		MinecraftForge.EVENT_BUS.post(event);
++	
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -336,97 +112,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1080,6 +1112,8 @@
-         return this.blockMaterial.getMaterialMobility();
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Returns the default ambient occlusion value based on block opacity
-      */
-@@ -1093,6 +1127,8 @@
-      */
-     public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-      */
-@@ -1102,6 +1138,22 @@
-     }
- 
-     /**
-+     * Sets the CreativeTab to display this block on.
-+     */
-+    public Block setCreativeTab(CreativeTabs par1CreativeTabs)
-+    {
-+        this.displayOnCreativeTab = par1CreativeTabs;
-+        return this;
-+    }
-+
-+    /**
-+     * Called when the block is attempted to be harvested
-+     */
-+    public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer) {}
-+
-+    @SideOnly(Side.CLIENT)
-+
-+    /**
-      * Get the block's damage value (for use with pick block).
-      */
-     public int getDamageValue(World par1World, int par2, int par3, int par4)
-@@ -1110,6 +1162,13 @@
-     }
- 
-     /**
-+     * Called when this block is set (with meta data).
-+     */
-+    public void onSetBlockIDWithMetaData(World par1World, int par2, int par3, int par4, int par5) {}
-+
-+    @SideOnly(Side.CLIENT)
-+
-+    /**
-      * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
-      */
-     public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
-@@ -1117,6 +1176,8 @@
-         par3List.add(new ItemStack(par1, 1, 0));
-     }
- 
-+    @SideOnly(Side.CLIENT)
-+
-     /**
-      * Returns the CreativeTab to display the given block on.
-      */
-@@ -1126,25 +1187,6 @@
-     }
- 
-     /**
--     * Sets the CreativeTab to display this block on.
--     */
--    public Block setCreativeTab(CreativeTabs par1CreativeTabs)
--    {
--        this.displayOnCreativeTab = par1CreativeTabs;
--        return this;
--    }
--
--    /**
--     * Called when the block is attempted to be harvested
--     */
--    public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer) {}
--
--    /**
--     * Called when this block is set (with meta data).
--     */
--    public void onSetBlockIDWithMetaData(World par1World, int par2, int par3, int par4, int par5) {}
--
--    /**
-      * currently only used by BlockCauldron to incrament meta-data during rain
-      */
-     public void fillWithRain(World par1World, int par2, int par3, int par4) {}
-@@ -1218,4 +1260,669 @@
+@@ -1249,4 +1262,717 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -483,7 +169,7 @@
 +     * @param x X Position
 +     * @param y Y position
 +     * @param z Z position
-+     * @param size The side to check
++     * @param side The side to check
 +     * @return True if the block is solid on the specified side.
 +     */
 +    public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side) 
@@ -660,7 +346,7 @@
 +     * @param z The blocks Z position
 +     * @param metadata The blocks current metadata
 +     * @param side The face that the fire is coming from
-+     * @return 
++     * @return True if this block sustains fire, meaning it will never go out.
 +     */
 +    public boolean isFireSource(World world, int x, int y, int z, int metadata, ForgeDirection side)
 +    {
@@ -738,8 +424,8 @@
 +     * 
 +     * @param world The current world
 +     * @param x X Position
-+     * @param Y Y Position
-+     * @param Z Z Position
++     * @param y Y Position
++     * @param z Z Position
 +     * @param metadata Current metadata
 +     * @param fortune Breakers fortune level
 +     * @return A ArrayList containing all items this block drops
@@ -999,15 +685,15 @@
 +    /**
 +     * Location sensitive version of getExplosionRestance
 +     * 
-+     * @param par1Entity
++     * @param par1Entity The entity that caused the explosion
 +     * @param world The current world
 +     * @param x X Position
 +     * @param y Y Position
 +     * @param z Z Position
-+     * @param explosionX
-+     * @param explosionY
-+     * @param explosionZ
-+     * @return
++     * @param explosionX Explosion source X Position
++     * @param explosionY Explosion source X Position
++     * @param explosionZ Explosion source X Position
++     * @return The amount of the explosion absorbed.
 +     */
 +    public float getExplosionResistance(Entity par1Entity, World world, int x, int y, int z, double explosionX, double explosionY, double explosionZ)
 +    {
@@ -1094,5 +780,53 @@
 +        }
 +
 +        return new ItemStack(id, 1, getDamageValue(world, x, y, z));
++    }
++
++    /**
++     * Used by getTopSolidOrLiquidBlock while placing biome decorations, villages, etc
++     * Also used to determine if the player can spawn on this block.
++     * 
++     * @return False to disallow spawning
++     */
++    public boolean isBlockFoliage(World world, int x, int y, int z)
++    {
++        return false;
++    }
++
++    /**
++     * Spawn a digging particle effect in the world, this is a wrapper 
++     * around EffectRenderer.addBlockHitEffects to allow the block more 
++     * control over the particles. Useful when you have entirely different
++     * texture sheets for different sides/locations in the world.
++     * 
++     * @param world The current world
++     * @param target The target the player is looking at {x/y/z/side/sub}
++     * @param effectRenderer A reference to the current effect renderer.
++     * @return True to prevent vanilla digging particles form spawning.
++     */
++    @SideOnly(Side.CLIENT)
++    public boolean addBlockHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer)
++    {
++        return false;
++    }
++
++    /**
++     * Spawn particles for when the block is destroyed. Due to the nature 
++     * of how this is invoked, the x/y/z locations are not always guaranteed 
++     * to host your block. So be sure to do proper sanity checks before assuming
++     * that the location is this block.
++     * 
++     * @param world The current world
++     * @param x X position to spawn the particle
++     * @param y Y position to spawn the particle
++     * @param z Z position to spawn the particle
++     * @param meta The metadata for the block before it was destroyed.
++     * @param effectRenderer A reference to the current effect renderer.
++     * @return True to prevent vanilla break particles from spawning.
++     */
++    @SideOnly(Side.CLIENT)
++    public boolean addBlockDestroyEffects(World world, int x, int y, int z, int meta, EffectRenderer effectRenderer)
++    {
++        return false;
 +    }
  }
