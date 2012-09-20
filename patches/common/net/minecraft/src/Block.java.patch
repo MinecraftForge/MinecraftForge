@@ -101,7 +101,7 @@
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
 +	
-+		PlayerHarvestBlockEvent event = new PlayerHarvestBlockEvent(this.blockID, par6);
++		PlayerHarvestBlockEvent event = new PlayerHarvestBlockEvent(par2EntityPlayer, this.blockID, par6);
 +		MinecraftForge.EVENT_BUS.post(event);
 +	
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
