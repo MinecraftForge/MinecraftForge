@@ -120,6 +120,12 @@ public class FMLNetworkHandler
                 netLoginHandler.completeConnection("You don't have FML installed, you cannot connect to this server");
                 return;
             }
+            else
+            {
+                // Vanilla kicked us for some reason - bye now!
+                FMLLog.fine("Connection from %s was closed by vanilla minecraft", userName);
+                return;
+            }
 
         }
         switch (loginStates.get(netLoginHandler))
