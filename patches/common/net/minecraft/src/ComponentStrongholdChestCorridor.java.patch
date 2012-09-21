@@ -1,0 +1,21 @@
+--- ../src_base/common/net/minecraft/src/ComponentStrongholdChestCorridor.java
++++ ../src_work/common/net/minecraft/src/ComponentStrongholdChestCorridor.java
+@@ -2,6 +2,9 @@
+ 
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentStrongholdChestCorridor extends ComponentStronghold
+ {
+@@ -68,7 +71,7 @@
+                 if (par3StructureBoundingBox.isVecInside(var5, var4, var6))
+                 {
+                     this.hasMadeChest = true;
+-                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 2, 3, strongholdChestContents, 2 + par2Random.nextInt(2));
++                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 2, 3, ChestGenHooks.getItems(STRONGHOLD_CORRIDOR), ChestGenHooks.getCount(STRONGHOLD_CORRIDOR, par2Random));
+                 }
+             }
+ 

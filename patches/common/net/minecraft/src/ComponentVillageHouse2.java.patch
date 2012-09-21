@@ -1,0 +1,21 @@
+--- ../src_base/common/net/minecraft/src/ComponentVillageHouse2.java
++++ ../src_work/common/net/minecraft/src/ComponentVillageHouse2.java
+@@ -2,6 +2,9 @@
+ 
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentVillageHouse2 extends ComponentVillage
+ {
+@@ -88,7 +91,7 @@
+             if (par3StructureBoundingBox.isVecInside(var5, var4, var6))
+             {
+                 this.hasMadeChest = true;
+-                this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 5, 1, 5, villageBlacksmithChestContents, 3 + par2Random.nextInt(6));
++                this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 5, 1, 5, ChestGenHooks.getItems(VILLAGE_BLACKSMITH), ChestGenHooks.getCount(VILLAGE_BLACKSMITH, par2Random));
+             }
+         }
+ 

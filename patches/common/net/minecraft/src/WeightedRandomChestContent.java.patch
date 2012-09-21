@@ -1,0 +1,82 @@
+--- ../src_base/common/net/minecraft/src/WeightedRandomChestContent.java
++++ ../src_work/common/net/minecraft/src/WeightedRandomChestContent.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.src;
+ 
+ import java.util.Random;
++
++import net.minecraftforge.common.ChestGenHooks;
+ 
+ public class WeightedRandomChestContent extends WeightedRandomItem
+ {
+@@ -15,6 +17,8 @@
+ 
+     /** The maximum chance of item generating. */
+     private int theMaximumChanceToGenerateItem;
++    
++    public final ItemStack itemStack;
+ 
+     public WeightedRandomChestContent(int par1, int par2, int par3, int par4, int par5)
+     {
+@@ -23,8 +27,16 @@
+         this.theItemDamage = par2;
+         this.theMinimumChanceToGenerateItem = par3;
+         this.theMaximumChanceToGenerateItem = par4;
++        itemStack = new ItemStack(par1, 1, par2);
+     }
+-
++    
++    public WeightedRandomChestContent(ItemStack stack, int min, int max, int weight)
++    {
++        super(weight);
++        itemStack = stack;
++        theMinimumChanceToGenerateItem = min;
++        theMaximumChanceToGenerateItem = max;
++    }
+     /**
+      * Generates the Chest contents.
+      */
+@@ -33,18 +45,11 @@
+         for (int var4 = 0; var4 < par3; ++var4)
+         {
+             WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+-            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.itemStack, var5.theMinimumChanceToGenerateItem, var5.theMinimumChanceToGenerateItem);
+ 
+-            if (Item.itemsList[var5.theItemId].getItemStackLimit() >= var6)
++            for (ItemStack item : stacks)
+             {
+-                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), new ItemStack(var5.theItemId, var6, var5.theItemDamage));
+-            }
+-            else
+-            {
+-                for (int var7 = 0; var7 < var6; ++var7)
+-                {
+-                    par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), new ItemStack(var5.theItemId, 1, var5.theItemDamage));
+-                }
++                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), item);
+             }
+         }
+     }
+@@ -57,18 +62,11 @@
+         for (int var4 = 0; var4 < par3; ++var4)
+         {
+             WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+-            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.itemStack, var5.theMinimumChanceToGenerateItem, var5.theMinimumChanceToGenerateItem);
+ 
+-            if (Item.itemsList[var5.theItemId].getItemStackLimit() >= var6)
++            for (ItemStack item : stacks)
+             {
+-                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), new ItemStack(var5.theItemId, var6, var5.theItemDamage));
+-            }
+-            else
+-            {
+-                for (int var7 = 0; var7 < var6; ++var7)
+-                {
+-                    par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), new ItemStack(var5.theItemId, 1, var5.theItemDamage));
+-                }
++                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), item);
+             }
+         }
+     }

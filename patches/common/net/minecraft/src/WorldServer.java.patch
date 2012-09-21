@@ -1,16 +1,18 @@
 --- ../src_base/common/net/minecraft/src/WorldServer.java
 +++ ../src_work/common/net/minecraft/src/WorldServer.java
-@@ -10,6 +10,9 @@
+@@ -10,6 +10,11 @@
  import java.util.Set;
  import java.util.TreeSet;
  import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.WorldEvent;
  
  public class WorldServer extends World
  {
-@@ -71,6 +74,7 @@
+@@ -71,6 +76,7 @@
          {
              this.pendingTickListEntries = new TreeSet();
          }
@@ -18,7 +20,7 @@
      }
  
      /**
-@@ -179,10 +183,7 @@
+@@ -179,10 +185,7 @@
  
      private void resetRainAndThunder()
      {
@@ -30,7 +32,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -270,7 +271,7 @@
+@@ -270,7 +273,7 @@
              int var10;
              int var11;
  
@@ -39,7 +41,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -288,7 +289,7 @@
+@@ -288,7 +291,7 @@
              this.theProfiler.endStartSection("iceandsnow");
              int var13;
  
@@ -48,7 +50,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -559,15 +560,27 @@
+@@ -559,15 +562,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -85,7 +87,7 @@
              }
          }
  
-@@ -578,6 +591,11 @@
+@@ -578,6 +593,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -97,7 +99,7 @@
      {
          int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
          int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
-@@ -587,7 +605,7 @@
+@@ -587,7 +607,7 @@
              var6 = var5;
          }
  
@@ -106,7 +108,16 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -713,6 +731,7 @@
+@@ -670,7 +690,7 @@
+      */
+     protected void createBonusChest()
+     {
+-        WorldGeneratorBonusChest var1 = new WorldGeneratorBonusChest(bonusChestContent, 10);
++        WorldGeneratorBonusChest var1 = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST), ChestGenHooks.getCount(BONUS_CHEST, rand));
+ 
+         for (int var2 = 0; var2 < 10; ++var2)
+         {
+@@ -713,6 +733,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
