@@ -1,5 +1,5 @@
---- ../src_base/common/net/minecraft/src/BlockCrops.java
-+++ ../src_work/common/net/minecraft/src/BlockCrops.java
+--- ../src_base/common/net/minecraft/src/BlockStem.java
++++ ../src_work/common/net/minecraft/src/BlockStem.java
 @@ -2,7 +2,11 @@
  
  import cpw.mods.fml.common.Side;
@@ -10,9 +10,19 @@
 +
 +import net.minecraftforge.common.ForgeDirection;
  
- public class BlockCrops extends BlockFlower
+ public class BlockStem extends BlockFlower
  {
-@@ -84,11 +88,11 @@
+@@ -96,7 +100,8 @@
+ 
+                     int var11 = par1World.getBlockId(var9, par3 - 1, var10);
+ 
+-                    if (par1World.getBlockId(var9, par3, var10) == 0 && (var11 == Block.tilledField.blockID || var11 == Block.dirt.blockID || var11 == Block.grass.blockID))
++                    boolean isSoil = (blocksList[var11] != null && blocksList[var11].canSustainPlant(par1World, var9, par3 - 1, var10, ForgeDirection.UP, this));
++                    if (par1World.getBlockId(var9, par3, var10) == 0 && (isSoil || var11 == Block.dirt.blockID || var11 == Block.grass.blockID))
+                     {
+                         par1World.setBlockWithNotify(var9, par3, var10, this.fruitType.blockID);
+                     }
+@@ -132,11 +137,11 @@
                  int var19 = par1World.getBlockId(var17, par3 - 1, var18);
                  float var20 = 0.0F;
  
@@ -26,42 +36,51 @@
                      {
                          var20 = 3.0F;
                      }
-@@ -138,25 +142,27 @@
+@@ -236,35 +241,22 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
-         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+-
+-        if (!par1World.isRemote)
+-        {
+-            Item var8 = null;
+-
+-            if (this.fruitType == Block.pumpkin)
 +    }
-+        
++
 +    @Override 
 +    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        if (metadata == 7)
++
++        for (int i = 0; i < 3; i++)
 +        {
-+            ret.add(new ItemStack(Item.wheat));
-+        }
- 
--        if (!par1World.isRemote)
-+        for (int n = 0; n < 3 + fortune; n++)
-         {
--            int var8 = 3 + par7;
- 
--            for (int var9 = 0; var9 < var8; ++var9)
 +            if (world.rand.nextInt(15) <= metadata)
              {
+-                var8 = Item.pumpkinSeeds;
++                ret.add(new ItemStack(fruitType == pumpkin ? Item.pumpkinSeeds : Item.melonSeeds));
+             }
+-
+-            if (this.fruitType == Block.melon)
+-            {
+-                var8 = Item.melonSeeds;
+-            }
+-
+-            for (int var9 = 0; var9 < 3; ++var9)
+-            {
 -                if (par1World.rand.nextInt(15) <= par5)
 -                {
 -                    float var10 = 0.7F;
 -                    float var11 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
 -                    float var12 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
 -                    float var13 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
--                    EntityItem var14 = new EntityItem(par1World, (double)((float)par2 + var11), (double)((float)par3 + var12), (double)((float)par4 + var13), new ItemStack(Item.seeds));
+-                    EntityItem var14 = new EntityItem(par1World, (double)((float)par2 + var11), (double)((float)par3 + var12), (double)((float)par4 + var13), new ItemStack(var8));
 -                    var14.delayBeforeCanPickup = 10;
 -                    par1World.spawnEntityInWorld(var14);
 -                }
-+                ret.add(new ItemStack(Item.seeds));
-             }
-         }
+-            }
+-        }
++        }
 +
 +        return ret;
      }

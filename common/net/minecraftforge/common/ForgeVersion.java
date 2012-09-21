@@ -11,8 +11,8 @@ public class ForgeVersion
     public static final int majorVersion    = 4;
     //This number is incremented every official release, and reset every Minecraft version
     public static final int minorVersion    = 1;
-    //This number is incremented every time a interface changes, and reset every Minecraft version
-    public static final int revisionVersion = 3;
+    //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
+    public static final int revisionVersion = 4;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     

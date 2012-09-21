@@ -1,0 +1,37 @@
+--- ../src_base/common/net/minecraft/src/BlockReed.java
++++ ../src_work/common/net/minecraft/src/BlockReed.java
+@@ -4,7 +4,10 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.Random;
+ 
+-public class BlockReed extends Block
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.IPlantable;
++
++public class BlockReed extends Block implements IPlantable
+ {
+     protected BlockReed(int par1, int par2)
+     {
+@@ -135,4 +138,22 @@
+     {
+         return Item.reed.shiftedIndex;
+     }
++
++    @Override
++    public EnumPlantType getPlantType(World world, int x, int y, int z)
++    {
++        return EnumPlantType.Beach;
++    }
++
++    @Override
++    public int getPlantID(World world, int x, int y, int z)
++    {
++        return blockID;
++    }
++
++    @Override
++    public int getPlantMetadata(World world, int x, int y, int z)
++    {
++        return world.getBlockMetadata(x, y, z);
++    }
+ }
