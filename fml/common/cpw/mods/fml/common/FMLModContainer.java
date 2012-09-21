@@ -155,13 +155,13 @@ public class FMLModContainer implements ModContainer
             modMetadata.name = getModId();
         }
         internalVersion = (String) descriptor.get("version");
-        if (Strings.isNullOrEmpty(internalVersion) && getSource().isFile())
+        if (Strings.isNullOrEmpty(internalVersion))
         {
             Properties versionProps = searchForVersionProperties();
             if (versionProps != null)
             {
                 internalVersion = versionProps.getProperty(getModId()+".version");
-                FMLLog.fine("Found version %s for mod %s in version.properties", internalVersion, getModId());
+                FMLLog.fine("Found version %s for mod %s in version.properties, using", internalVersion, getModId());
             }
 
         }
