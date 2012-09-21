@@ -19,7 +19,7 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
 -        return super.canPlaceBlockAt(par1World, par2, par3, par4) && this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
-+        return super.canPlaceBlockAt(par1World, par2, par3, par4) && canBlockStay(par1World, par2, par3 - 1, par4);
++        return super.canPlaceBlockAt(par1World, par2, par3, par4) && canBlockStay(par1World, par2, par3, par4);
      }
  
      /**
