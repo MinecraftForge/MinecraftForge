@@ -403,7 +403,7 @@ public class ForgeChunkManager
         }
         if (ticket.requestedChunks!=null)
         {
-            for (ChunkCoordIntPair chunk : ticket.requestedChunks)
+            for (ChunkCoordIntPair chunk : ImmutableSet.copyOf(ticket.requestedChunks))
             {
                 unforceChunk(ticket, chunk);
             }
