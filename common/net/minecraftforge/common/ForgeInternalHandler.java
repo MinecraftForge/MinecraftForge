@@ -1,5 +1,7 @@
 package net.minecraftforge.common;
 
+import java.util.UUID;
+
 import net.minecraft.src.*;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.*;
@@ -10,6 +12,17 @@ public class ForgeInternalHandler
     @ForgeSubscribe(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
+        if (!event.world.isRemote)
+        {
+            if (event.entity.getPersistentID() == null)
+            {
+                event.entity.generatePersistentID();
+            }
+            else
+            {
+                ForgeChunkManager.loadEntity(event.entity);
+            }
+        }
         Entity entity = event.entity;
         if (entity instanceof EntityItem)
         {

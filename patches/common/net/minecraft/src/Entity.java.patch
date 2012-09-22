@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/Entity.java
 +++ ../src_work/common/net/minecraft/src/Entity.java
-@@ -2,6 +2,8 @@
+@@ -2,9 +2,12 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
@@ -9,7 +9,11 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
-@@ -186,6 +188,10 @@
++import java.util.UUID;
+ 
+ public abstract class Entity
+ {
+@@ -186,6 +189,11 @@
      public boolean ignoreFrustumCheck;
      public boolean isAirBorne;
      public EnumEntitySize myEntitySize;
@@ -17,13 +21,19 @@
 +    private NBTTagCompound customEntityData;
 +    public boolean captureDrops = false;
 +    public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
++    private UUID persistentID;
  
      public Entity(World par1World)
      {
-@@ -1382,6 +1388,10 @@
+@@ -1382,6 +1390,15 @@
          par1NBTTagCompound.setShort("Fire", (short)this.fire);
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
++        if (persistentID != null)
++        {
++            par1NBTTagCompound.setLong("PersistentIDMSB", persistentID.getMostSignificantBits());
++            par1NBTTagCompound.setLong("PersistentIDLSB", persistentID.getLeastSignificantBits());
++        }
 +        if (customEntityData != null)
 +        {
 +            par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
@@ -31,7 +41,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1423,6 +1433,10 @@
+@@ -1423,6 +1440,14 @@
          this.onGround = par1NBTTagCompound.getBoolean("OnGround");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -39,10 +49,14 @@
 +        {
 +            customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
 +        }
++        if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
++        {
++            persistentID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
++        }
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1509,7 +1523,14 @@
+@@ -1509,7 +1534,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -58,7 +72,7 @@
          return var3;
      }
  
-@@ -1843,7 +1864,7 @@
+@@ -1843,7 +1875,7 @@
       */
      public boolean isRiding()
      {
@@ -67,7 +81,7 @@
      }
  
      /**
-@@ -2107,4 +2128,59 @@
+@@ -2107,4 +2139,72 @@
      {
          return String.format("%s[\'%s\'/%d, l=\'%s\', x=%.2f, y=%.2f, z=%.2f]", new Object[] {this.getClass().getSimpleName(), this.getEntityName(), Integer.valueOf(this.entityId), this.worldObj == null ? "~NULL~" : this.worldObj.getWorldInfo().getWorldName(), Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)});
      }
@@ -98,7 +112,7 @@
 +
 +    /**
 +     * Called when a user uses the creative pick block button on this entity.
-+     * 
++     *
 +     * @param target The full target the player is looking at
 +     * @return A ItemStack to add to the player's inventory, Null if nothing should be added.
 +     */
@@ -125,5 +139,18 @@
 +            }
 +        }
 +        return null;
++    }
++
++    public UUID getPersistentID()
++    {
++        return persistentID;
++    }
++
++    public synchronized void generatePersistentID()
++    {
++        if (persistentID == null)
++        {
++            persistentID = UUID.randomUUID();
++        }
 +    }
  }

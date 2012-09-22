@@ -9,9 +9,14 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
@@ -27,6 +32,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
+import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.CompressedStreamTools;
 import net.minecraft.src.Entity;
@@ -68,6 +74,7 @@ public class ForgeChunkManager
     private static Map<String, LoadingCallback> callbacks = Maps.newHashMap();
 
     private static Map<World, SetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = Maps.newHashMap();
+    private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
     /**
      * All mods requiring chunkloading need to implement this to handle the
@@ -108,9 +115,8 @@ public class ForgeChunkManager
         private World world;
         private int maxDepth;
         private String entityClazz;
-        private int entityX;
-        private int entityY;
-        private int entityZ;
+        private int entityChunkX;
+        private int entityChunkZ;
         private Entity entity;
 
         Ticket(String modId, Type type, World world)
@@ -120,14 +126,6 @@ public class ForgeChunkManager
             this.world = world;
             this.maxDepth = getMaxChunkDepthFor(modId);
             this.requestedChunks = Sets.newLinkedHashSet();
-        }
-
-        void bindEntityData(int x, int y, int z, String clazz)
-        {
-            this.entityX = x;
-            this.entityY = y;
-            this.entityZ = z;
-            this.entityClazz = clazz;
         }
 
         /**
@@ -189,37 +187,12 @@ public class ForgeChunkManager
         }
 
         /**
-         * Get the entity class associated with this ticket. Only valid for callbacks.
+         * Get the entity associated with this {@link Type#ENTITY} type ticket
          * @return
          */
-        public String getEntityClass()
+        public Entity getEntity()
         {
-            return this.entityClazz;
-        }
-
-        /**
-         * Get the last known entity X coordinate for this ticket. Only valid for callbacks.
-         * @return
-         */
-        public int getEntityX()
-        {
-            return entityX;
-        }
-        /**
-         * Get the last known entity Y coordinate for this ticket. Only valid for callbacks.
-         * @return
-         */
-        public int getEntityY()
-        {
-            return entityY;
-        }
-        /**
-         * Get the last known entity Z coordinate for this ticket. Only valid for callbacks.
-         * @return
-         */
-        public int getEntityZ()
-        {
-            return entityZ;
+            return entity;
         }
     }
 
@@ -287,16 +260,35 @@ public class ForgeChunkManager
                     tick.modData = modData;
                     if (type == Type.ENTITY)
                     {
-                        int entX = ticket.getInteger("entityX");
-                        int entY = ticket.getInteger("entityY");
-                        int entZ = ticket.getInteger("entityZ");
-                        String entClass = ticket.getString("entityClass");
-                        tick.bindEntityData(entX, entY, entZ, entClass);
+                        tick.entityChunkX = ticket.getInteger("chunkX");
+                        tick.entityChunkZ = ticket.getInteger("chunkZ");
+                        UUID uuid = new UUID(ticket.getLong("PersistentIDMSB"), ticket.getLong("PersistentIDLSB"));
+                        // add the ticket to the "pending entity" list
+                        pendingEntities.put(uuid, tick);
                     }
                     loadedTickets.put(modId, tick);
                 }
             }
 
+            for (Ticket tick : ImmutableSet.copyOf(pendingEntities.values()))
+            {
+                if (tick.ticketType == Type.ENTITY && tick.entity == null)
+                {
+                    // force the world to load the entity's chunk
+                    // the load will come back through the loadEntity method and attach the entity
+                    // to the ticket
+                    world.getChunkFromChunkCoords(tick.entityChunkX, tick.entityChunkZ);
+                }
+            }
+            for (Ticket tick : ImmutableSet.copyOf(pendingEntities.values()))
+            {
+                if (tick.ticketType == Type.ENTITY && tick.entity == null)
+                {
+                    FMLLog.warning("Failed to load persistent chunkloading entity %s from store.", pendingEntities.inverse().get(tick));
+                    loadedTickets.remove(tick.modId, tick);
+                }
+            }
+            pendingEntities.clear();
             // send callbacks
             for (String modId : loadedTickets.keySet())
             {
@@ -537,10 +529,10 @@ public class ForgeChunkManager
                 ticket.setCompoundTag("ModData", tick.modData);
                 if (tick.ticketType == Type.ENTITY)
                 {
-                    ticket.setInteger("entityX", MathHelper.floor_double(tick.entity.posX));
-                    ticket.setInteger("entityY", MathHelper.floor_double(tick.entity.posY));
-                    ticket.setInteger("entityZ", MathHelper.floor_double(tick.entity.posZ));
-                    ticket.setString("entityClass", tick.entity.getClass().getName());
+                    ticket.setInteger("chunkX", MathHelper.floor_double(tick.entity.chunkCoordX));
+                    ticket.setInteger("chunkZ", MathHelper.floor_double(tick.entity.chunkCoordZ));
+                    ticket.setLong("persistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
+                    ticket.setLong("persistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
                 }
             }
         }
@@ -552,6 +544,17 @@ public class ForgeChunkManager
         {
             FMLLog.log(Level.WARNING, e, "Unable to write forced chunk data to %s - chunkloading won't work", chunkLoaderData.getAbsolutePath());
             return;
+        }
+    }
+
+    static void loadEntity(Entity entity)
+    {
+        UUID id = entity.getPersistentID();
+        Ticket tick = pendingEntities.get(id);
+        if (tick != null)
+        {
+            tick.bindEntity(entity);
+            pendingEntities.remove(id);
         }
     }
 }
