@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/ChunkCache.java
++++ ../src_work/common/net/minecraft/src/ChunkCache.java
+@@ -162,7 +162,7 @@
+             {
+                 var5 = this.getBlockId(par1, par2, par3);
+ 
+-                if (var5 == Block.stoneSingleSlab.blockID || var5 == Block.woodSingleSlab.blockID || var5 == Block.tilledField.blockID || var5 == Block.stairCompactPlanks.blockID || var5 == Block.stairCompactCobblestone.blockID)
++                if (var5 != 0 && Block.blocksList[var5] != null && Block.blocksList[var5].useHalfSlabStairLightingCalculations())
+                 {
+                     var6 = this.getLightValueExt(par1, par2 + 1, par3, false);
+                     int var7 = this.getLightValueExt(par1 + 1, par2, par3, false);
