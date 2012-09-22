@@ -401,9 +401,12 @@ public class ForgeChunkManager
         {
             return;
         }
-        for (ChunkCoordIntPair chunk : ticket.requestedChunks)
+        if (ticket.requestedChunks!=null)
         {
-            unforceChunk(ticket, chunk);
+            for (ChunkCoordIntPair chunk : ticket.requestedChunks)
+            {
+                unforceChunk(ticket, chunk);
+            }
         }
         tickets.get(ticket.world).remove(ticket.modId, ticket);
     }
