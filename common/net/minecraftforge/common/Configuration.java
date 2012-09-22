@@ -20,6 +20,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
+
 import net.minecraft.src.Block;
 
 /**
@@ -36,12 +39,15 @@ public class Configuration
     public static final String CATEGORY_ITEM    = "item";
 
     File file;
-    
+
     public Map<String, Map<String, Property>> categories = new TreeMap<String, Map<String, Property>>();
-    
+
     public TreeMap<String, Property> blockProperties   = new TreeMap<String, Property>();
     public TreeMap<String, Property> itemProperties    = new TreeMap<String, Property>();
     public TreeMap<String, Property> generalProperties = new TreeMap<String, Property>();
+
+    private Map<String,String> customCategoryComments = Maps.newHashMap();
+    private boolean caseSensitiveCustomCategories;
     public static final String ALLOWED_CHARS = "._-";
 
     /**
@@ -55,6 +61,11 @@ public class Configuration
         categories.put(CATEGORY_ITEM, itemProperties);
     }
 
+    public Configuration(File file, boolean caseSensitiveCustomCategories)
+    {
+        this(file);
+        this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
+    }
     /**
      * Gets or create a block id property. If the block id property key is
      * already in the configuration, then it will be used. Otherwise,
@@ -72,7 +83,7 @@ public class Configuration
                 configBlocks[i] = false;
             }
         }
-        
+
         Map<String, Property> properties = categories.get(CATEGORY_BLOCK);
         if (properties.containsKey(key))
         {
@@ -108,7 +119,7 @@ public class Configuration
             }
         }
     }
-    
+
     public Property getOrCreateIntProperty(String key, String category, int defaultValue)
     {
         Property prop = getOrCreateProperty(key, category, Integer.toString(defaultValue));
@@ -123,7 +134,7 @@ public class Configuration
             return prop;
         }
     }
-    
+
     public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
     {
         Property prop = getOrCreateProperty(key, category, Boolean.toString(defaultValue));
@@ -137,10 +148,13 @@ public class Configuration
             return prop;
         }
     }
-    
+
     public Property getOrCreateProperty(String key, String category, String defaultValue)
     {
-        category = category.toLowerCase(Locale.ENGLISH);
+        if (!caseSensitiveCustomCategories)
+        {
+            category = category.toLowerCase(Locale.ENGLISH);
+        }
         Map<String, Property> source = categories.get(category);
 
         if(source == null)
@@ -276,7 +290,7 @@ public class Configuration
         {
             if (buffer != null)
             {
-                try 
+                try
                 {
                     buffer.close();
                 } catch (IOException e){}
@@ -311,6 +325,17 @@ public class Configuration
                 {
                     buffer.write("####################\r\n");
                     buffer.write("# " + category.getKey() + " \r\n");
+                    if (customCategoryComments.containsKey(category.getKey()))
+                    {
+                        buffer.write("#===================\r\n");
+                        String comment = customCategoryComments.get(category.getKey());
+                        Splitter splitter = Splitter.onPattern("\r?\n");
+                        for (String commentLine : splitter.split(comment))
+                        {
+                            buffer.write("# ");
+                            buffer.write(commentLine+"\r\n");
+                        }
+                    }
                     buffer.write("####################\r\n\r\n");
 
                     buffer.write(category.getKey() + " {\r\n");
@@ -328,13 +353,24 @@ public class Configuration
         }
     }
 
+    public void addCustomCategoryComment(String category, String comment)
+    {
+        if (!caseSensitiveCustomCategories)
+            category = category.toLowerCase(Locale.ENGLISH);
+        customCategoryComments.put(category, comment);
+    }
+
     private void writeProperties(BufferedWriter buffer, Collection<Property> props) throws IOException
     {
         for (Property property : props)
         {
             if (property.comment != null)
             {
-                buffer.write("   # " + property.comment + "\r\n");
+                Splitter splitter = Splitter.onPattern("\r?\n");
+                for (String commentLine : splitter.split(property.comment))
+                {
+                    buffer.write("   # " + commentLine + "\r\n");
+                }
             }
 
             buffer.write("   " + property.getName() + "=" + property.value);

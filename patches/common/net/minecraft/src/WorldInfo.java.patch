@@ -7,32 +7,3 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -59,6 +60,8 @@
-     private boolean hardcore;
-     private boolean allowCommands;
-     private boolean initialized;
-+
-+    public NBTTagCompound forgeWorldData;
- 
-     protected WorldInfo()
-     {
-@@ -139,6 +142,10 @@
-         {
-             this.playerTag = par1NBTTagCompound.getCompoundTag("Player");
-             this.dimension = this.playerTag.getInteger("Dimension");
-+        }
-+        if (par1NBTTagCompound.hasKey("ForgeData"))
-+        {
-+            this.forgeWorldData = par1NBTTagCompound.getCompoundTag("ForgeData");
-         }
-     }
- 
-@@ -228,6 +235,8 @@
-         {
-             par1NBTTagCompound.setCompoundTag("Player", par2NBTTagCompound);
-         }
-+
-+        par1NBTTagCompound.setCompoundTag("ForgeData", forgeWorldData);
-     }
- 
-     /**

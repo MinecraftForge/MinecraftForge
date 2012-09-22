@@ -1,0 +1,1 @@
+net.minecraftforge.common.ForgeChunkManager.loadConfiguration(new java.io.File("/tmp"));

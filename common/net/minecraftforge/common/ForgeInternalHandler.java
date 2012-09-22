@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import net.minecraft.src.*;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.*;
+import net.minecraftforge.event.world.WorldEvent;
 
 public class ForgeInternalHandler
 {
@@ -24,5 +25,17 @@ public class ForgeInternalHandler
                 }
             }
         }
+    }
+
+    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    public void onDimensionLoad(WorldEvent.Load event)
+    {
+        ForgeChunkManager.loadWorld(event.world);
+    }
+
+    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    public void onDimensionSave(WorldEvent.Save event)
+    {
+    	ForgeChunkManager.saveWorld(event.world);
     }
 }

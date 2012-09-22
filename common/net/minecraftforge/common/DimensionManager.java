@@ -2,8 +2,14 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -17,6 +23,7 @@ public class DimensionManager
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Hashtable<Integer, Integer> dimensions = new Hashtable<Integer, Integer>();
+    private static Map<World, ListMultimap<ChunkCoordIntPair, String>> persistentChunkStore = Maps.newHashMap();
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -133,12 +140,11 @@ public class DimensionManager
             {
                 return null;
             }
-        } 
+        }
         catch (Exception e)
         {
             FMLCommonHandler.instance().getFMLLogger().log(Level.SEVERE,String.format("An error occured trying to create an instance of WorldProvider %d (%s)",
-                    dim,
-                    providers.get(getProviderType(dim)).getSimpleName()),e);
+                    dim, providers.get(getProviderType(dim)).getSimpleName()),e);
             throw new RuntimeException(e);
         }
     }

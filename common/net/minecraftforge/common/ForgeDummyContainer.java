@@ -3,11 +3,13 @@ package net.minecraftforge.common;
 import java.util.Arrays;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 import static net.minecraftforge.common.ForgeVersion.*;
 
@@ -34,6 +36,13 @@ public class ForgeDummyContainer extends DummyModContainer
     @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
+    	bus.register(this);
         return true;
+    }
+
+    @Subscribe
+    public void preInit(FMLPreInitializationEvent evt)
+    {
+    	ForgeChunkManager.loadConfiguration(evt.getModConfigurationDirectory());
     }
 }

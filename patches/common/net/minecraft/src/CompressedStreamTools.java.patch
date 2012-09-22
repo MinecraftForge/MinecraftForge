@@ -1,0 +1,10 @@
+--- ../src_base/common/net/minecraft/src/CompressedStreamTools.java
++++ ../src_work/common/net/minecraft/src/CompressedStreamTools.java
+@@ -155,7 +155,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static NBTTagCompound read(File par0File) throws IOException
+     {
+         if (!par0File.exists())
