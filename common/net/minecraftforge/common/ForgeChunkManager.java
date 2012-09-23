@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -76,6 +78,7 @@ public class ForgeChunkManager
     private static Map<World, SetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = Maps.newHashMap();
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
+    private static Cache<Long, Chunk> dormantChunkCache;
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -472,18 +475,35 @@ public class ForgeChunkManager
             		"for a mod without an override. This is the maximum number of chunks a single ticket can force.";
             defaultMaxChunks = maxChunks.getInt(25);
 
+            Property dormantChunkCacheSize = config.getOrCreateIntProperty("dormantChunkCacheSize", "defaults", 0);
+            dormantChunkCacheSize.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
+            		"loading times. Specify the size of that cache here";
+            dormantChunkCache = CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize.getInt(0)).build();
+
             Property modOverridesEnabled = config.getOrCreateBooleanProperty("enabled", "defaults", true);
             modOverridesEnabled.comment = "Are mod overrides enabled?";
             overridesEnabled = modOverridesEnabled.getBoolean(true);
 
             config.addCustomCategoryComment("Forge", "Sample mod specific control section.\n" +
-            		"Copy this section and rename the with the modid for the mod you wish to override.\n" +
-            		"A value of zero in either entry effectively disables any chunkloading capabilities\n" +
-            		"for that mod");
+                    "Copy this section and rename the with the modid for the mod you wish to override.\n" +
+                    "A value of zero in either entry effectively disables any chunkloading capabilities\n" +
+                    "for that mod");
+
             Property sampleTC = config.getOrCreateIntProperty("maximumTicketCount", "Forge", 200);
             sampleTC.comment = "Maximum ticket count for the mod. Zero disables chunkloading capabilities.";
             sampleTC = config.getOrCreateIntProperty("maximumChunksPerTicket", "Forge", 25);
             sampleTC.comment = "Maximum chunks per ticket for the mod.";
+            for (String mod : config.categories.keySet())
+            {
+                if (mod.equals("Forge") || mod.equals("defaults"))
+                {
+                    continue;
+                }
+                Property modTC = config.getOrCreateIntProperty("maximumTicketCount", mod, 200);
+                Property modCPT = config.getOrCreateIntProperty("maximumChunksPerTicket", mod, 25);
+                ticketConstraints.put(mod, modTC.getInt(200));
+                chunkConstraints.put(mod, modCPT.getInt(25));
+            }
         }
         finally
         {
@@ -559,5 +579,15 @@ public class ForgeChunkManager
             tick.bindEntity(entity);
             pendingEntities.remove(id);
         }
+    }
+
+    public static void putDormantChunk(long coords, Chunk chunk)
+    {
+        dormantChunkCache.put(coords, chunk);
+    }
+
+    public static Chunk fetchDormantChunk(long coords)
+    {
+        return dormantChunkCache.getIfPresent(coords);
     }
 }
