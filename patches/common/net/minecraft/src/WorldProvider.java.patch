@@ -33,7 +33,6 @@
 +    
 +
 +    /*======================================= Forge Start =========================================*/
-+    private int dimensionID = 0;
 +
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -43,7 +42,7 @@
 +     */
 +    public void setDimension(int dim)
 +    {
-+        this.dimensionID = dim;
++        this.dimensionId = dim;
 +    }
 +
 +    /**
@@ -53,7 +52,7 @@
 +     */
 +    public String getSaveFolder()
 +    {
-+        return (dimensionID == 0 ? null : "DIM" + dimensionID);
++        return (dimensionId == 0 ? null : "DIM" + dimensionId);
 +    }
 +
 +    /**
