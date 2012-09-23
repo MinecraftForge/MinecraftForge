@@ -8,16 +8,7 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -30,6 +32,8 @@
- 
-     /** Array for sunrise/sunset colors (RGBA) */
-     private float[] colorsSunriseSunset = new float[4];
-+
-+    private SkyProvider skyProvider = null;
- 
-     /**
-      * associate an existing world with a World provider, and setup its lightbrightness table
-@@ -185,7 +189,7 @@
+@@ -185,7 +187,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -26,14 +17,13 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -254,4 +258,241 @@
+@@ -254,4 +256,238 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
-+    
 +
 +    /*======================================= Forge Start =========================================*/
-+
++    private SkyProvider skyProvider = null;
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
@@ -135,7 +125,6 @@
 +
 +        return var5;
 +    }
-+    
 +
 +    /*======================================= Start Moved From World =========================================*/
 +
