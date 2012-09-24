@@ -89,14 +89,14 @@ public class FMLRelaunchLog
                 record = this.toString();
                 super.reset();
 
-                currentMessage.append(record);
-                if (currentMessage.lastIndexOf(FMLLogFormatter.LINE_SEPARATOR)>=0)
+                currentMessage.append(record.replace(FMLLogFormatter.LINE_SEPARATOR, "\n"));
+                if (currentMessage.lastIndexOf("\n")>=0)
                 {
                     // Are we longer than just the line separator?
-                    if (currentMessage.length()>FMLLogFormatter.LINE_SEPARATOR.length())
+                    if (currentMessage.length()>1)
                     {
                         // Trim the line separator
-                        currentMessage.setLength(currentMessage.length()-FMLLogFormatter.LINE_SEPARATOR.length());
+                        currentMessage.setLength(currentMessage.length()-1);
                         log.log(Level.INFO, currentMessage.toString());
                     }
                     currentMessage.setLength(0);
