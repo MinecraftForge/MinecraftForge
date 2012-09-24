@@ -518,7 +518,7 @@ public class ForgeChunkManager
      */
     public static SetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
     {
-        return ImmutableSetMultimap.copyOf(forcedChunks.get(world));
+        return forcedChunks.containsKey(world) ? ImmutableSetMultimap.copyOf(forcedChunks.get(world)) : ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of();
     }
 
     static void saveWorld(World world)
