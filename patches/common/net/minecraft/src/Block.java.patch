@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1255,797 @@
+@@ -1249,4 +1255,811 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -120,6 +120,20 @@
 +    public int getLightValue(IBlockAccess world, int x, int y, int z) 
 +    {
 +        return lightValue[blockID];
++    }
++    
++    @SideOnly(Side.CLIENT)
++
++    /**
++     * Determines whether to apply stair and half slab lighting fixes to this block
++     * 
++     * @return true if lighting fixes should be applied
++     */
++    public boolean useHalfSlabStairLightingCalculations()
++    {
++        return blockID == stoneSingleSlab.blockID || blockID == woodSingleSlab.blockID || blockID == tilledField.blockID || blockID == stairCompactPlanks.blockID || blockID == stairCompactCobblestone.blockID
++                || blockID == stairsBrick.blockID || blockID == stairsStoneBrickSmooth.blockID || blockID == stairsNetherBrick.blockID || blockID == stairsSandStone.blockID || blockID == stairsWoodSpruce.blockID
++                || blockID == stairsWoodBirch.blockID || blockID == stairsWoodJungle.blockID;
 +    }
 +
 +    /**
