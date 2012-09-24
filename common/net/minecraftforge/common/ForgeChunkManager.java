@@ -90,12 +90,41 @@ public class ForgeChunkManager
     {
         /**
          * Called back when tickets are loaded from the world to allow the
-         * mod to re-register the chunks associated with those tickets
+         * mod to re-register the chunks associated with those tickets. The list supplied
+         * here is truncated to length prior to use. Tickets unwanted by the
+         * mod must be disposed of manually.
          *
          * @param tickets
          * @param world
          */
         public void ticketsLoaded(List<Ticket> tickets, World world);
+    }
+
+    /**
+     * This is a special LoadingCallback that can be implemented as well as the
+     * LoadingCallback to provide access to additional behaviour.
+     * Specifically, this callback will fire prior to Forge dropping excess
+     * tickets. Tickets in the returned list are presumed ordered and excess will
+     * be truncated from the returned list.
+     * This allows the mod to control not only if they actually <em>want</em> a ticket but
+     * also their preferred ticket ordering.
+     *
+     * @author cpw
+     *
+     */
+    public interface OrderedLoadingCallback extends LoadingCallback
+    {
+        /**
+         * Called back when tickets are loaded from the world to allow the
+         * mod to re-register the chunks associated with those tickets.
+         *
+         * @param tickets The tickets that your mod should re-register
+         * @param world The world
+         * @param maxTicketCount The maximum number of tickets that will be allowed.
+         * @return A list of the tickets this mod wishes to continue using. This list will be truncated
+         * to "maxTicketCount" size after the call returns.
+         */
+        public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount);
     }
     public enum Type
     {
@@ -139,9 +168,9 @@ public class ForgeChunkManager
          */
         public void setChunkListDepth(int depth)
         {
-            if (depth > getMaxChunkDepthFor(modId))
+            if (depth > getMaxChunkDepthFor(modId) || (depth <= 0 && getMaxChunkDepthFor(modId) > 0))
             {
-                FMLLog.warning("The mod %s tried to modify the chunk ticket depth to: %d, greater than it's maximum: %d", modId, depth, getMaxChunkDepthFor(modId));
+                FMLLog.warning("The mod %s tried to modify the chunk ticket depth to: %d, its allowed maximum is: %d", modId, depth, getMaxChunkDepthFor(modId));
             }
             else
             {
@@ -246,21 +275,17 @@ public class ForgeChunkManager
                     continue;
                 }
 
-                int maxTicketLength = getMaxTicketLengthFor(modId);
-
                 NBTTagList tickets = ticketHolder.getTagList("Tickets");
-                if (tickets.tagCount() > maxTicketLength)
-                {
-                    FMLLog.warning("The mod %s has more tickets in to load than it is allowed. Only the first %d will be loaded - the rest will be removed", modId, maxTicketLength);
-                }
-                for (int j = 0; j < Math.min(tickets.tagCount(), maxTicketLength); j++)
+                for (int j = 0; j < tickets.tagCount(); j++)
                 {
                     NBTTagCompound ticket = (NBTTagCompound) tickets.tagAt(j);
                     Type type = Type.values()[ticket.getByte("Type")];
                     byte ticketChunkDepth = ticket.getByte("ChunkListDepth");
-                    NBTTagCompound modData = ticket.getCompoundTag("ModData");
                     Ticket tick = new Ticket(modId, type, world);
-                    tick.modData = modData;
+                    if (ticket.hasKey("ModData"))
+                    {
+                        tick.modData = ticket.getCompoundTag("ModData");
+                    }
                     if (type == Type.ENTITY)
                     {
                         tick.entityChunkX = ticket.getInteger("chunkX");
@@ -295,7 +320,29 @@ public class ForgeChunkManager
             // send callbacks
             for (String modId : loadedTickets.keySet())
             {
-                callbacks.get(modId).ticketsLoaded(loadedTickets.get(modId), world);
+                LoadingCallback loadingCallback = callbacks.get(modId);
+                int maxTicketLength = getMaxTicketLengthFor(modId);
+                List<Ticket> tickets = loadedTickets.get(modId);
+                if (loadingCallback instanceof OrderedLoadingCallback)
+                {
+                    OrderedLoadingCallback orderedLoadingCallback = (OrderedLoadingCallback) loadingCallback;
+                    tickets = orderedLoadingCallback.ticketsLoaded(tickets, world, maxTicketLength);
+                    if (tickets.size() > maxTicketLength)
+                    {
+                        FMLLog.warning("The mod %s has too many open chunkloading tickets %d. Excess will be dropped", modId, tickets.size());
+                        tickets.subList(maxTicketLength, tickets.size()).clear();
+                    }
+                }
+                else
+                {
+                    if (tickets.size() > maxTicketLength)
+                    {
+                        FMLLog.warning("The mod %s has too many open chunkloading tickets %d. Excess will be dropped", modId, tickets.size());
+                        tickets.subList(maxTicketLength, tickets.size()).clear();
+                    }
+                    loadingCallback.ticketsLoaded(tickets, world);
+                }
+                ForgeChunkManager.tickets.get(world).putAll(modId, tickets);
             }
         }
     }
@@ -442,6 +489,23 @@ public class ForgeChunkManager
     }
 
     /**
+     * Reorganize the internal chunk list so that the chunk supplied is at the *end* of the list
+     * This helps if you wish to guarantee a certain "automatic unload ordering" for the chunks
+     * in the ticket list
+     *
+     * @param ticket The ticket holding the chunk list
+     * @param chunk The chunk you wish to push to the end (so that it would be unloaded last)
+     */
+    public static void reorderChunk(Ticket ticket, ChunkCoordIntPair chunk)
+    {
+        if (ticket == null || chunk == null || !ticket.requestedChunks.contains(chunk))
+        {
+            return;
+        }
+        ticket.requestedChunks.remove(chunk);
+        ticket.requestedChunks.add(chunk);
+    }
+    /**
      * Unforce the supplied chunk, allowing it to be unloaded and stop ticking.
      *
      * @param ticket The ticket holding the chunk
@@ -479,6 +543,7 @@ public class ForgeChunkManager
             dormantChunkCacheSize.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
             		"loading times. Specify the size of that cache here";
             dormantChunkCache = CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize.getInt(0)).build();
+            FMLLog.info("Configured a dormant chunk cache size of %d", dormantChunkCacheSize.getInt(0));
 
             Property modOverridesEnabled = config.getOrCreateBooleanProperty("enabled", "defaults", true);
             modOverridesEnabled.comment = "Are mod overrides enabled?";
@@ -549,13 +614,16 @@ public class ForgeChunkManager
                 tickets.appendTag(ticket);
                 ticket.setByte("Type", (byte) tick.ticketType.ordinal());
                 ticket.setByte("ChunkListDepth", (byte) tick.maxDepth);
-                ticket.setCompoundTag("ModData", tick.modData);
+                if (tick.modData != null)
+                {
+                    ticket.setCompoundTag("ModData", tick.modData);
+                }
                 if (tick.ticketType == Type.ENTITY)
                 {
                     ticket.setInteger("chunkX", MathHelper.floor_double(tick.entity.chunkCoordX));
                     ticket.setInteger("chunkZ", MathHelper.floor_double(tick.entity.chunkCoordZ));
-                    ticket.setLong("persistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
-                    ticket.setLong("persistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
+                    ticket.setLong("PersistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
+                    ticket.setLong("PersistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
                 }
             }
         }
