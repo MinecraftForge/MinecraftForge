@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import java.io.*;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -18,6 +19,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.Item;
+import static net.minecraftforge.common.Property.Type.*;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -25,28 +28,37 @@ import net.minecraft.src.Block;
  */
 public class Configuration
 {
-
-    private boolean configBlocks[] = null;
+    private static boolean[] configBlocks = new boolean[Block.blocksList.length];
+    private static boolean[] configItems  = new boolean[Item.itemsList.length];
+    private static final int ITEM_SHIFT = 256;
 
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_BLOCK   = "block";
     public static final String CATEGORY_ITEM    = "item";
+    public static final String ALLOWED_CHARS = "._-";
+    public static final String DEFAULT_ENCODING = "UTF-8";
+    private static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
 
     File file;
 
     public Map<String, Map<String, Property>> categories = new TreeMap<String, Map<String, Property>>();
 
+    //TO-DO 1.4 - Remove these, categories are dynamically added when needed, so no need to add default categories.
+    @Deprecated
     public TreeMap<String, Property> blockProperties   = new TreeMap<String, Property>();
+    @Deprecated
     public TreeMap<String, Property> itemProperties    = new TreeMap<String, Property>();
+    @Deprecated
     public TreeMap<String, Property> generalProperties = new TreeMap<String, Property>();
-
     private Map<String,String> customCategoryComments = Maps.newHashMap();
     private boolean caseSensitiveCustomCategories;
-    public static final String ALLOWED_CHARS = "._-";
-    public static final String DEFAULT_ENCODING = "UTF-8";
     public String defaultEncoding = DEFAULT_ENCODING;
-
-    private static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
+    
+    static
+    {
+        Arrays.fill(configBlocks, false);
+        Arrays.fill(configItems,  false);
+    }
 
     /**
      * Create a configuration file for the file given in parameter.
@@ -54,6 +66,7 @@ public class Configuration
     public Configuration(File file)
     {
         this.file = file;
+        //TO-DO 1.4 - Remove these, categories are dynamically added when needed, so no need to add default categories.
         categories.put(CATEGORY_GENERAL, generalProperties);
         categories.put(CATEGORY_BLOCK, blockProperties);
         categories.put(CATEGORY_ITEM, itemProperties);
@@ -64,52 +77,44 @@ public class Configuration
         this(file);
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
     }
+
     /**
      * Gets or create a block id property. If the block id property key is
      * already in the configuration, then it will be used. Otherwise,
      * defaultId will be used, except if already taken, in which case this
      * will try to determine a free default id.
      */
-    public Property getOrCreateBlockIdProperty(String key, int defaultId)
+    public Property getBlock(String key, int defaultID)
     {
-        if (configBlocks == null)
-        {
-            configBlocks = new boolean[Block.blocksList.length];
+        return getBlock(CATEGORY_BLOCK, key, defaultID);
+    }
 
-            for (int i = 0; i < configBlocks.length; ++i)
-            {
-                configBlocks[i] = false;
-            }
-        }
+    public Property getBlock(String category, String key, int defaultID)
+    {
+        Property prop = get(category, key, -1);
 
-        Map<String, Property> properties = categories.get(CATEGORY_BLOCK);
-        if (properties.containsKey(key))
+        if (prop.getInt() != -1)
         {
-            Property property = getOrCreateIntProperty(key, Configuration.CATEGORY_BLOCK, defaultId);
-            configBlocks[Integer.parseInt(property.value)] = true;
-            return property;
+            configBlocks[prop.getInt()] = true;
+            return prop;
         }
         else
         {
-            Property property = new Property();
-            properties.put(key, property);
-            property.setName(key);
-
-            if (Block.blocksList[defaultId] == null && !configBlocks[defaultId])
+            if (Block.blocksList[defaultID] == null && !configBlocks[defaultID])
             {
-                property.value = Integer.toString(defaultId);
-                configBlocks[defaultId] = true;
-                return property;
+                prop.value = Integer.toString(defaultID);
+                configBlocks[defaultID] = true;
+                return prop;
             }
             else
             {
-                for (int j = configBlocks.length - 1; j >= 0; --j)
+                for (int j = configBlocks.length - 1; j > 0; j--)
                 {
                     if (Block.blocksList[j] == null && !configBlocks[j])
                     {
-                        property.value = Integer.toString(j);
+                        prop.value = Integer.toString(j);
                         configBlocks[j] = true;
-                        return property;
+                        return prop;
                     }
                 }
 
@@ -118,41 +123,78 @@ public class Configuration
         }
     }
 
-    public Property getOrCreateIntProperty(String key, String category, int defaultValue)
+    public Property getItem(String key, int defaultID)
     {
-        Property prop = getOrCreateProperty(key, category, Integer.toString(defaultValue));
-        try
-        {
-            Integer.parseInt(prop.value);
-            return prop;
-        }
-        catch (NumberFormatException e)
-        {
-            prop.value = Integer.toString(defaultValue);
-            return prop;
-        }
+        return getItem(CATEGORY_ITEM, key, defaultID);
     }
 
-    public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
+    public Property getItem(String category, String key, int defaultID)
     {
-        Property prop = getOrCreateProperty(key, category, Boolean.toString(defaultValue));
-        if ("true".equals(prop.value.toLowerCase(Locale.ENGLISH)) || "false".equals(prop.value.toLowerCase(Locale.ENGLISH)))
+        Property prop = get(category, key, -1);
+        int defaultShift = defaultID + ITEM_SHIFT;
+
+        if (prop.getInt() != -1)
         {
+            configItems[prop.getInt() + ITEM_SHIFT] = true;
             return prop;
         }
         else
         {
-            prop.value = Boolean.toString(defaultValue);
-            return prop;
+            if (Item.itemsList[defaultShift] == null && !configItems[defaultShift] && defaultShift > Block.blocksList.length)
+            {
+                prop.value = Integer.toString(defaultID);
+                configItems[defaultShift] = true;
+                return prop;
+            }
+            else
+            {
+                for (int x = configItems.length - 1; x >= ITEM_SHIFT; x--)
+                {
+                    if (Item.itemsList[x] == null && !configItems[x])
+                    {
+                        prop.value = Integer.toString(x);
+                        configItems[x] = true;
+                        return prop;
+                    }
+                }
+
+                throw new RuntimeException("No more item ids available for " + key);
+            }
         }
     }
 
-    public Property getOrCreateProperty(String key, String category, String defaultValue)
+    public Property get(String category, String key, int defaultValue)
+    {
+        Property prop = get(category, key, Integer.toString(defaultValue), INTEGER);
+        if (!prop.isIntValue())
+        {
+            prop.value = Integer.toString(defaultValue);
+        }
+        return prop;
+    }
+
+    public Property get(String category, String key, boolean defaultValue)
+    {
+        Property prop = get(category, key, Boolean.toString(defaultValue), BOOLEAN);
+        if (!prop.isBooleanValue())
+        {
+            prop.value = Boolean.toString(defaultValue);
+        }
+        return prop;
+    }
+
+    public Property get(String category, String key, String defaultValue)
+    {
+        return get(category, key, defaultValue, STRING);
+    }
+
+    public Property get(String category, String key, String defaultValue, Property.Type type)
     {
         if (!caseSensitiveCustomCategories)
         {
             category = category.toLowerCase(Locale.ENGLISH);
         }
+
         Map<String, Property> source = categories.get(category);
 
         if(source == null)
@@ -167,18 +209,25 @@ public class Configuration
         }
         else if (defaultValue != null)
         {
-            Property property = new Property();
-
-            source.put(key, property);
-            property.setName(key);
-
-            property.value = defaultValue;
-            return property;
+            Property prop = new Property(key, defaultValue, type);
+            source.put(key, prop);
+            return prop;
         }
         else
         {
             return null;
         }
+    }
+
+    public boolean hasCategory(String category)
+    {
+        return categories.get(category) != null;
+    }
+
+    public boolean hasKey(String category, String key)
+    {
+        Map<String, Property> cat = categories.get(category);
+        return cat != null && cat.get(key) != null;
     }
 
     public void load()
@@ -400,6 +449,32 @@ public class Configuration
             buffer.write("\r\n");
         }
     }
+
+    //=====================Deprecated stuff, remove in 1.4=============================================
+    @Deprecated
+    public Property getOrCreateIntProperty(String key, String category, int defaultValue)
+    {
+        return get(category, key, defaultValue);
+    }
+
+    @Deprecated
+    public Property getOrCreateProperty(String key, String category, String defaultValue)
+    {
+        return get(category, key, defaultValue);
+    }
+
+    @Deprecated
+    public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
+    {
+        return get(category, key, defaultValue);
+    }
+
+    @Deprecated
+    public Property getOrCreateBlockIdProperty(String key, int defaultID)
+    {
+        return getBlock(CATEGORY_BLOCK, key, defaultID);
+    }
+    //======================End deprecated stuff=======================================================
 
     public static class UnicodeInputStreamReader extends Reader
     {

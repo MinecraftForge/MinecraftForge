@@ -550,23 +550,23 @@ public class ForgeChunkManager
                 FMLLog.log(Level.SEVERE, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
             }
             config.addCustomCategoryComment("defaults", "Default configuration for forge chunk loading control");
-            Property maxTicketCount = config.getOrCreateIntProperty("maximumTicketCount", "defaults", 200);
+            Property maxTicketCount = config.get("defaults", "maximumTicketCount", 200);
             maxTicketCount.comment = "The default maximum ticket count for a mod which does not have an override\n" +
             		"in this file. This is the number of chunk loading requests a mod is allowed to make.";
             defaultMaxCount = maxTicketCount.getInt(200);
 
-            Property maxChunks = config.getOrCreateIntProperty("maximumChunksPerTicket", "defaults", 25);
+            Property maxChunks = config.get("defaults", "maximumChunksPerTicket", 25);
             maxChunks.comment = "The default maximum number of chunks a mod can force, per ticket, \n" +
             		"for a mod without an override. This is the maximum number of chunks a single ticket can force.";
             defaultMaxChunks = maxChunks.getInt(25);
 
-            Property dormantChunkCacheSize = config.getOrCreateIntProperty("dormantChunkCacheSize", "defaults", 0);
+            Property dormantChunkCacheSize = config.get("defaults", "dormantChunkCacheSize", 0);
             dormantChunkCacheSize.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
             		"loading times. Specify the size of that cache here";
             dormantChunkCache = CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize.getInt(0)).build();
             FMLLog.info("Configured a dormant chunk cache size of %d", dormantChunkCacheSize.getInt(0));
 
-            Property modOverridesEnabled = config.getOrCreateBooleanProperty("enabled", "defaults", true);
+            Property modOverridesEnabled = config.get("defaults", "enabled", true);
             modOverridesEnabled.comment = "Are mod overrides enabled?";
             overridesEnabled = modOverridesEnabled.getBoolean(true);
 
@@ -575,9 +575,9 @@ public class ForgeChunkManager
                     "A value of zero in either entry effectively disables any chunkloading capabilities\n" +
                     "for that mod");
 
-            Property sampleTC = config.getOrCreateIntProperty("maximumTicketCount", "Forge", 200);
+            Property sampleTC = config.get("Forge", "maximumTicketCount", 200);
             sampleTC.comment = "Maximum ticket count for the mod. Zero disables chunkloading capabilities.";
-            sampleTC = config.getOrCreateIntProperty("maximumChunksPerTicket", "Forge", 25);
+            sampleTC = config.get("Forge", "maximumChunksPerTicket", 25);
             sampleTC.comment = "Maximum chunks per ticket for the mod.";
             for (String mod : config.categories.keySet())
             {
@@ -585,8 +585,8 @@ public class ForgeChunkManager
                 {
                     continue;
                 }
-                Property modTC = config.getOrCreateIntProperty("maximumTicketCount", mod, 200);
-                Property modCPT = config.getOrCreateIntProperty("maximumChunksPerTicket", mod, 25);
+                Property modTC = config.get(mod, "maximumTicketCount", 200);
+                Property modCPT = config.get(mod, "maximumChunksPerTicket", 25);
                 ticketConstraints.put(mod, modTC.getInt(200));
                 chunkConstraints.put(mod, modCPT.getInt(25));
             }

@@ -7,9 +7,26 @@ package net.minecraftforge.common;
 
 public class Property
 {
+    public enum Type
+    {
+        STRING,
+        INTEGER,
+        BOOLEAN
+    }
+
     private String name;
     public String value;
     public String comment;
+    private Type type; //Currently does nothing, need to design a way to save/load from the file.
+    
+    public Property(){}
+    
+    public Property(String name, String value, Type type)
+    {
+        setName(name);
+        this.value = value;
+        this.type = type;
+    }
     
     /**
      * Returns the value in this property as a integer,
@@ -92,16 +109,9 @@ public class Property
     {
         return name;
     }
-    
+
     public void setName(String name)
     {
-        for (char c : name.toCharArray())
-        {
-            if (!Character.isLetterOrDigit(c) && Configuration.ALLOWED_CHARS.indexOf(c) == -1 && !Character.isWhitespace(c))
-            {
-                throw new IllegalArgumentException("Invalid property name: \"" + name + "\"");
-            }
-        }
         this.name = name;
     }
 }
