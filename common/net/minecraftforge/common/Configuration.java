@@ -5,14 +5,7 @@
 
 package net.minecraftforge.common;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -50,6 +43,8 @@ public class Configuration
     private Map<String,String> customCategoryComments = Maps.newHashMap();
     private boolean caseSensitiveCustomCategories;
     public static final String ALLOWED_CHARS = "._-";
+    public static final String DEFAULT_ENCODING = "UTF-8";
+    public String defaultEncoding = DEFAULT_ENCODING;
 
     private static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
 
@@ -203,8 +198,9 @@ public class Configuration
 
             if (file.canRead())
             {
-                FileInputStream fileinputstream = new FileInputStream(file);
-                buffer = new BufferedReader(new InputStreamReader(fileinputstream, "UTF-8"));
+                UnicodeInputStreamReader input = new UnicodeInputStreamReader(new FileInputStream(file), defaultEncoding);
+                defaultEncoding = input.getEncoding();
+                buffer = new BufferedReader(input);
 
                 String line;
                 Map<String, Property> currentMap = null;
@@ -254,6 +250,7 @@ public class Configuration
                                         quoted = true;
                                     }
                                     break;
+
                                 case '{':
                                     String scopeName = line.substring(nameStart, nameEnd + 1);
 
@@ -332,7 +329,7 @@ public class Configuration
             if (file.canWrite())
             {
                 FileOutputStream fos = new FileOutputStream(file);
-                BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+                BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, defaultEncoding));
 
                 buffer.write("# Configuration file\r\n");
                 buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
@@ -401,6 +398,75 @@ public class Configuration
             }
             buffer.write("   " + propName + "=" + property.value);
             buffer.write("\r\n");
+        }
+    }
+
+    public static class UnicodeInputStreamReader extends Reader
+    {
+        private final InputStreamReader input;
+        private final String defaultEnc;
+
+        public UnicodeInputStreamReader(InputStream source, String encoding) throws IOException
+        {
+            defaultEnc = encoding;
+            String enc = encoding;
+            byte[] data = new byte[4];
+
+            PushbackInputStream pbStream = new PushbackInputStream(source, data.length);
+            int read = pbStream.read(data, 0, data.length);
+            int size = 4;
+
+            int bom16 = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
+            int bom24 = bom16 << 8 | (data[2] & 0xFF);
+            int bom32 = bom24 << 8 | (data[3] & 0xFF);
+
+            if (bom24 == 0xEFBBBF)
+            {
+                enc = "UTF-8";
+                size = 3;
+            }
+            else if (bom16 == 0xFEFF)
+            {
+                enc = "UTF-16BE";
+                size = 2;
+            }
+            else if (bom16 == 0xFFFE)
+            {
+                enc = "UTF-16LE";
+                size = 2;
+            }
+            else if (bom32 == 0x0000FEFF)
+            {
+                enc = "UTF-32BE";
+            }
+            else if (bom32 == 0xFFFE0000) //This will never happen as it'll be caught by UTF-16LE,
+            {                             //but if anyone ever runs across a 32LE file, i'd like to disect it.
+                enc = "UTF-32LE";
+            }
+
+            if (size < read)
+            {
+                pbStream.unread(data, size, read - size);
+            }
+
+            this.input = new InputStreamReader(pbStream, enc);
+        }
+
+        public String getEncoding()
+        {
+            return input.getEncoding();
+        }
+
+        @Override
+        public int read(char[] cbuf, int off, int len) throws IOException
+        {
+            return input.read(cbuf, off, len);
+        }
+
+        @Override
+        public void close() throws IOException
+        {
+            input.close();
         }
     }
 }
