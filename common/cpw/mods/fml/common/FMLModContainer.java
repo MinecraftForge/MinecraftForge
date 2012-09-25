@@ -128,9 +128,9 @@ public class FMLModContainer implements ModContainer
     {
         modMetadata = mc.getMetadataForId(getModId(), descriptor);
 
-        if (descriptor.containsKey("usesMetadata"))
+        if (descriptor.containsKey("useMetadata"))
         {
-            overridesMetadata = !((Boolean)descriptor.get("usesMetadata")).booleanValue();
+            overridesMetadata = !((Boolean)descriptor.get("useMetadata")).booleanValue();
         }
 
         if (overridesMetadata || !modMetadata.useDependencyInformation)
