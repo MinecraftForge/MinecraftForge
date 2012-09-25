@@ -152,7 +152,7 @@ public class Configuration
                 {
                     if (Item.itemsList[x] == null && !configItems[x])
                     {
-                        prop.value = Integer.toString(x);
+                        prop.value = Integer.toString(x - ITEM_SHIFT);
                         configItems[x] = true;
                         return prop;
                     }
