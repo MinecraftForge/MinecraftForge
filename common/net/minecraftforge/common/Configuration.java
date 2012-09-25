@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
@@ -49,6 +50,8 @@ public class Configuration
     private Map<String,String> customCategoryComments = Maps.newHashMap();
     private boolean caseSensitiveCustomCategories;
     public static final String ALLOWED_CHARS = "._-";
+
+    private static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
 
     /**
      * Create a configuration file for the file given in parameter.
@@ -217,10 +220,10 @@ public class Configuration
 
                     int nameStart = -1, nameEnd = -1;
                     boolean skip = false;
-
+                    boolean quoted = false;
                     for (int i = 0; i < line.length() && !skip; ++i)
                     {
-                        if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1)
+                        if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1 || (quoted && line.charAt(i) != '"'))
                         {
                             if (nameStart == -1)
                             {
@@ -241,6 +244,16 @@ public class Configuration
                                     skip = true;
                                     continue;
 
+                                case '"':
+                                    if (quoted)
+                                    {
+                                        quoted = false;
+                                    }
+                                    if (!quoted && nameStart == -1)
+                                    {
+                                        quoted = true;
+                                    }
+                                    break;
                                 case '{':
                                     String scopeName = line.substring(nameStart, nameEnd + 1);
 
@@ -278,6 +291,10 @@ public class Configuration
                                     throw new RuntimeException("unknown character " + line.charAt(i));
                             }
                         }
+                    }
+                    if (quoted)
+                    {
+                        throw new RuntimeException("unmatched quote");
                     }
                 }
             }
@@ -338,7 +355,12 @@ public class Configuration
                     }
                     buffer.write("####################\r\n\r\n");
 
-                    buffer.write(category.getKey() + " {\r\n");
+                    String catKey = category.getKey();
+                    if (!allowedProperties.matchesAllOf(catKey))
+                    {
+                    	catKey = '"'+catKey+'"';
+                    }
+                    buffer.write(catKey + " {\r\n");
                     writeProperties(buffer, category.getValue().values());
                     buffer.write("}\r\n\r\n");
                 }
@@ -372,8 +394,12 @@ public class Configuration
                     buffer.write("   # " + commentLine + "\r\n");
                 }
             }
-
-            buffer.write("   " + property.getName() + "=" + property.value);
+            String propName = property.getName();
+            if (!allowedProperties.matchesAllOf(propName))
+            {
+            	propName = '"'+propName+'"';
+            }
+            buffer.write("   " + propName + "=" + property.value);
             buffer.write("\r\n");
         }
     }
