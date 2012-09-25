@@ -577,10 +577,20 @@ public class ForgeChunkManager
                 chunkConstraints.put(mod, modCPT.getInt(25));
             }
         }
+        catch (Exception e)
+        {
+        	FMLLog.log(Level.SEVERE, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used");
+        }
         finally
         {
             config.save();
+            if (dormantChunkCache == null)
+            {
+            	dormantChunkCache = CacheBuilder.newBuilder().maximumSize(0).build();
+                FMLLog.info("Configured a dormant chunk cache size of 0");
+            }
         }
+
     }
 
     /**
