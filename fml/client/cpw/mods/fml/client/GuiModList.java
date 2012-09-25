@@ -60,6 +60,7 @@ public class GuiModList extends GuiScreen
                 if (parentContainer != null)
                 {
                     mod.getMetadata().parentMod = parentContainer;
+                    parentContainer.getMetadata().childMods.add(mod);
                     continue;
                 }
             }
