@@ -530,11 +530,25 @@ public class ForgeChunkManager
 
     static void loadConfiguration(File configDir)
     {
-        Configuration config = new Configuration(new File(configDir,"forgeChunkLoading.cfg"), true);
+        File cfgFile = new File(configDir,"forgeChunkLoading.cfg");
+        Configuration config = new Configuration(cfgFile, true);
         try
         {
             config.categories.clear();
-            config.load();
+            try
+            {
+                config.load();
+            }
+            catch (Exception e)
+            {
+                File dest = new File(configDir,"forgeChunkLoading.cfg.bak");
+                if (dest.exists())
+                {
+                    dest.delete();
+                }
+                cfgFile.renameTo(dest);
+                FMLLog.log(Level.SEVERE, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak");
+            }
             config.addCustomCategoryComment("defaults", "Default configuration for forge chunk loading control");
             Property maxTicketCount = config.getOrCreateIntProperty("maximumTicketCount", "defaults", 200);
             maxTicketCount.comment = "The default maximum ticket count for a mod which does not have an override\n" +
@@ -576,10 +590,6 @@ public class ForgeChunkManager
                 ticketConstraints.put(mod, modTC.getInt(200));
                 chunkConstraints.put(mod, modCPT.getInt(25));
             }
-        }
-        catch (Exception e)
-        {
-        	FMLLog.log(Level.SEVERE, e, "A critical error occured reading the forgeChunkLoading.cfg file, defaults will be used");
         }
         finally
         {
