@@ -1,18 +1,29 @@
 --- ../src_base/common/net/minecraft/src/SlotCrafting.java
 +++ ../src_work/common/net/minecraft/src/SlotCrafting.java
-@@ -1,4 +1,6 @@
+@@ -1,4 +1,8 @@
  package net.minecraft.src;
 +
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
  
  import cpw.mods.fml.common.registry.GameRegistry;
  
-@@ -122,7 +124,7 @@
+@@ -122,7 +126,16 @@
  
                  if (var3.getItem().hasContainerItem())
                  {
 -                    ItemStack var4 = new ItemStack(var3.getItem().getContainerItem());
 +                    ItemStack var4 = var3.getItem().getContainerItemStack(var3);
++                    
++                    if (var4.isItemStackDamageable())
++                    {
++	                    if (var4.getItemDamage() >= var4.getMaxDamage())
++	                    {
++	                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var4));
++	                        var4 = null;
++	                    }
++                    }
  
                      if (!var3.getItem().doesContainerItemLeaveCraftingGrid(var3) || !this.thePlayer.inventory.addItemStackToInventory(var4))
                      {
