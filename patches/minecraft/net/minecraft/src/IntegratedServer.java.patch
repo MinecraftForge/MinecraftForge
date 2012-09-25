@@ -1,14 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/IntegratedServer.java
 +++ ../src_work/minecraft/net/minecraft/src/IntegratedServer.java
-@@ -8,6 +8,7 @@
+@@ -8,6 +8,9 @@
  import cpw.mods.fml.common.FMLCommonHandler;
  import net.minecraft.client.Minecraft;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
  
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
-@@ -48,44 +49,20 @@
+@@ -48,44 +51,21 @@
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType)
      {
          this.convertMapIfNeeded(par1Str);
@@ -57,13 +59,14 @@
 -            this.getConfigurationManager().setPlayerManager(this.worldServers);
 -        }
 -
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 +        }
 +
 +        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -106,6 +83,7 @@
+@@ -106,6 +86,7 @@
          this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType());
          this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
          FMLCommonHandler.instance().handleServerStarting(this);

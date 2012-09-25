@@ -236,8 +236,8 @@ public class ForgeChunkManager
 
     static void loadWorld(World world)
     {
-        ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
-        tickets.put(world, loadedTickets);
+        ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.<String, Ticket>create();
+        tickets.put(world, newTickets);
 
         SetMultimap<ChunkCoordIntPair,Ticket> forcedChunkMap = LinkedHashMultimap.create();
         forcedChunks.put(world, forcedChunkMap);
@@ -253,6 +253,7 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
+            ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
             NBTTagCompound forcedChunkData;
             try
             {
@@ -638,19 +639,23 @@ public class ForgeChunkManager
             for (Ticket tick : ticketSet.get(modId))
             {
                 NBTTagCompound ticket = new NBTTagCompound();
-                tickets.appendTag(ticket);
                 ticket.setByte("Type", (byte) tick.ticketType.ordinal());
                 ticket.setByte("ChunkListDepth", (byte) tick.maxDepth);
                 if (tick.modData != null)
                 {
                     ticket.setCompoundTag("ModData", tick.modData);
                 }
-                if (tick.ticketType == Type.ENTITY)
+                if (tick.ticketType == Type.ENTITY && tick.entity != null)
                 {
                     ticket.setInteger("chunkX", MathHelper.floor_double(tick.entity.chunkCoordX));
                     ticket.setInteger("chunkZ", MathHelper.floor_double(tick.entity.chunkCoordZ));
                     ticket.setLong("PersistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
                     ticket.setLong("PersistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
+                    tickets.appendTag(ticket);
+                }
+                else if (tick.ticketType != Type.ENTITY)
+                {
+                    tickets.appendTag(ticket);
                 }
             }
         }
