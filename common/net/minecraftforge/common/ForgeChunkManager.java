@@ -18,6 +18,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -92,10 +93,11 @@ public class ForgeChunkManager
          * Called back when tickets are loaded from the world to allow the
          * mod to re-register the chunks associated with those tickets. The list supplied
          * here is truncated to length prior to use. Tickets unwanted by the
-         * mod must be disposed of manually.
+         * mod must be disposed of manually unless the mod is an OrderedLoadingCallback instance
+         * in which case, they will have been disposed of by the earlier callback.
          *
-         * @param tickets
-         * @param world
+         * @param tickets The tickets to re-register. The list is immutable and cannot be manipulated directly. Copy it first.
+         * @param world the world
          */
         public void ticketsLoaded(List<Ticket> tickets, World world);
     }
@@ -116,13 +118,17 @@ public class ForgeChunkManager
     {
         /**
          * Called back when tickets are loaded from the world to allow the
-         * mod to re-register the chunks associated with those tickets.
+         * mod to decide if it wants the ticket still, and prioritise overflow
+         * based on the ticket count.
+         * WARNING: You cannot force chunks in this callback, it is strictly for allowing the mod
+         * to be more selective in which tickets it wishes to preserve in an overflow situation
          *
-         * @param tickets The tickets that your mod should re-register
+         * @param tickets The tickets that you will want to select from. The list is immutable and cannot be manipulated directly. Copy it first.
          * @param world The world
          * @param maxTicketCount The maximum number of tickets that will be allowed.
          * @return A list of the tickets this mod wishes to continue using. This list will be truncated
-         * to "maxTicketCount" size after the call returns.
+         * to "maxTicketCount" size after the call returns and then offered to the other callback
+         * method
          */
         public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount);
     }
@@ -326,23 +332,15 @@ public class ForgeChunkManager
                 if (loadingCallback instanceof OrderedLoadingCallback)
                 {
                     OrderedLoadingCallback orderedLoadingCallback = (OrderedLoadingCallback) loadingCallback;
-                    tickets = orderedLoadingCallback.ticketsLoaded(tickets, world, maxTicketLength);
-                    if (tickets.size() > maxTicketLength)
-                    {
-                        FMLLog.warning("The mod %s has too many open chunkloading tickets %d. Excess will be dropped", modId, tickets.size());
-                        tickets.subList(maxTicketLength, tickets.size()).clear();
-                    }
+                    tickets = orderedLoadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets), world, maxTicketLength);
                 }
-                else
+                if (tickets.size() > maxTicketLength)
                 {
-                    if (tickets.size() > maxTicketLength)
-                    {
-                        FMLLog.warning("The mod %s has too many open chunkloading tickets %d. Excess will be dropped", modId, tickets.size());
-                        tickets.subList(maxTicketLength, tickets.size()).clear();
-                    }
-                    loadingCallback.ticketsLoaded(tickets, world);
+                    FMLLog.warning("The mod %s has too many open chunkloading tickets %d. Excess will be dropped", modId, tickets.size());
+                    tickets.subList(maxTicketLength, tickets.size()).clear();
                 }
                 ForgeChunkManager.tickets.get(world).putAll(modId, tickets);
+                loadingCallback.ticketsLoaded(ImmutableList.copyOf(tickets), world);
             }
         }
     }
@@ -451,6 +449,10 @@ public class ForgeChunkManager
         {
             return;
         }
+        if (!tickets.get(ticket.world).containsEntry(ticket.modId, ticket))
+        {
+            return;
+        }
         if (ticket.requestedChunks!=null)
         {
             for (ChunkCoordIntPair chunk : ImmutableSet.copyOf(ticket.requestedChunks))
@@ -478,6 +480,11 @@ public class ForgeChunkManager
         if (ticket.ticketType == Type.ENTITY && ticket.entity == null)
         {
             throw new RuntimeException("Attempted to use an entity ticket to force a chunk, without an entity");
+        }
+        if (!tickets.get(ticket.world).containsEntry(ticket.modId, ticket))
+        {
+            FMLLog.severe("The mod %s attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
+            return;
         }
         ticket.requestedChunks.add(chunk);
         forcedChunks.get(ticket.world).put(chunk, ticket);
