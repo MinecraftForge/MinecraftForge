@@ -45,11 +45,11 @@
      }
  
      public String func_77127_a()
-@@ -89,4 +109,63 @@
+@@ -89,4 +109,61 @@
  
          return null;
      }
-+    
++
 +    public WorldChunkManager getChunkManager(World world)
 +    {
 +        return this == field_77138_c ? new WorldChunkManagerHell(BiomeGenBase.field_76772_c, 0.5F, 0.5F) : new WorldChunkManager(world);
@@ -86,16 +86,14 @@
 +
 +    public void addNewBiome(BiomeGenBase biome)
 +    {
-+        Set<BiomeGenBase> newBiomesForWorld = Sets.newIdentityHashSet();
-+        newBiomesForWorld.addAll(Arrays.asList(biomesForWorldType));
++        Set<BiomeGenBase> newBiomesForWorld = Sets.newLinkedHashSet(Arrays.asList(biomesForWorldType));
 +        newBiomesForWorld.add(biome);
 +        biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
 +    }
 +
 +    public void removeBiome(BiomeGenBase biome)
 +    {
-+        Set<BiomeGenBase> newBiomesForWorld = Sets.newIdentityHashSet();
-+        newBiomesForWorld.addAll(Arrays.asList(biomesForWorldType));
++        Set<BiomeGenBase> newBiomesForWorld = Sets.newLinkedHashSet(Arrays.asList(biomesForWorldType));
 +        newBiomesForWorld.remove(biome);
 +        biomesForWorldType = newBiomesForWorld.toArray(new BiomeGenBase[0]);
 +    }
