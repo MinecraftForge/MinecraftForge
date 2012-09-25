@@ -1,0 +1,20 @@
+--- ../src_base/common/net/minecraft/src/ChunkCache.java
++++ ../src_work/common/net/minecraft/src/ChunkCache.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.client.ILightingHandler.LightingType;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+@@ -116,6 +118,9 @@
+     {
+         int var5 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3);
+         int var6 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3);
++        
++        var5 = ForgeHooksClient.modifySkyLightLevel(par1, par2, par3, var5, LightingType.Block);
++        var6 = ForgeHooksClient.modifyBlockLightLevel(par1, par2, par3, var6, LightingType.Block);
+ 
+         if (var6 < par4)
+         {
