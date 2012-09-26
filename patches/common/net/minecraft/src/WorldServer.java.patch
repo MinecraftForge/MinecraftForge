@@ -21,16 +21,15 @@
  
  public class WorldServer extends World
  {
-@@ -71,6 +78,8 @@
+@@ -71,6 +78,7 @@
          {
              this.pendingTickListEntries = new TreeSet();
          }
-+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
 +        DimensionManager.setWorld(par4, this);
      }
  
      /**
-@@ -179,10 +188,7 @@
+@@ -179,10 +187,7 @@
  
      private void resetRainAndThunder()
      {
@@ -42,7 +41,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -270,7 +276,7 @@
+@@ -270,7 +275,7 @@
              int var10;
              int var11;
  
@@ -51,7 +50,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -288,7 +294,7 @@
+@@ -288,7 +293,7 @@
              this.theProfiler.endStartSection("iceandsnow");
              int var13;
  
@@ -60,7 +59,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -362,7 +368,8 @@
+@@ -362,7 +367,8 @@
      public void scheduleBlockUpdate(int par1, int par2, int par3, int par4, int par5)
      {
          NextTickListEntry var6 = new NextTickListEntry(par1, par2, par3, par4);
@@ -70,7 +69,7 @@
  
          if (this.scheduledUpdatesAreImmediate)
          {
-@@ -418,7 +425,7 @@
+@@ -418,7 +424,7 @@
       */
      public void updateEntities()
      {
@@ -79,7 +78,7 @@
          {
              if (this.updateEntityTick++ >= 60)
              {
-@@ -462,7 +469,8 @@
+@@ -462,7 +468,8 @@
  
                  this.pendingTickListEntries.remove(var4);
                  this.field_73064_N.remove(var4);
@@ -89,7 +88,7 @@
  
                  if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
                  {
-@@ -559,15 +567,27 @@
+@@ -559,15 +566,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -126,7 +125,7 @@
              }
          }
  
-@@ -578,6 +598,11 @@
+@@ -578,6 +597,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -138,7 +137,7 @@
      {
          int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
          int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
-@@ -587,7 +612,7 @@
+@@ -587,7 +611,7 @@
              var6 = var5;
          }
  
@@ -147,7 +146,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -670,7 +695,7 @@
+@@ -670,7 +694,7 @@
       */
      protected void createBonusChest()
      {
@@ -156,7 +155,7 @@
  
          for (int var2 = 0; var2 < 10; ++var2)
          {
-@@ -713,6 +738,7 @@
+@@ -713,6 +737,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -164,7 +163,7 @@
          }
      }
  
-@@ -971,4 +997,9 @@
+@@ -971,4 +996,9 @@
      {
          return this.thePlayerManager;
      }
