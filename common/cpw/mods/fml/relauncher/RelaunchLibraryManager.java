@@ -154,7 +154,7 @@ public class RelaunchLibraryManager
         }
         finally
         {
-            if (downloadMonitor.stopIt)
+            if (downloadMonitor.shouldStopIt())
             {
                 return;
             }
@@ -433,7 +433,7 @@ public class RelaunchLibraryManager
         }
         catch (Exception e)
         {
-            if (downloadMonitor.stopIt)
+            if (downloadMonitor.shouldStopIt())
             {
                 FMLRelaunchLog.warning("You have stopped the downloading operation before it could complete");
                 return;
@@ -454,7 +454,7 @@ public class RelaunchLibraryManager
 
     private static final String HEXES = "0123456789abcdef";
     private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 22);
-    static Downloader downloadMonitor;
+    static IDownloadDisplay downloadMonitor;
 
     private static void performDownload(InputStream is, int sizeGuess, String validationHash, File target)
     {
@@ -469,19 +469,19 @@ public class RelaunchLibraryManager
         downloadMonitor.resetProgress(sizeGuess);
         try
         {
-            downloadMonitor.pokeThread = Thread.currentThread();
+            downloadMonitor.setPokeThread(Thread.currentThread());
             byte[] smallBuffer = new byte[1024];
             while ((bytesRead = is.read(smallBuffer)) >= 0) {
                 downloadBuffer.put(smallBuffer, 0, bytesRead);
                 fullLength += bytesRead;
-                if (downloadMonitor.stopIt)
+                if (downloadMonitor.shouldStopIt())
                 {
                     break;
                 }
                 downloadMonitor.updateProgress(fullLength);
             }
             is.close();
-            downloadMonitor.pokeThread = null;
+            downloadMonitor.setPokeThread(null);
             downloadBuffer.limit(fullLength);
             downloadBuffer.position(0);
         }

@@ -56,20 +56,28 @@ public class FMLRelauncher
         if (RelaunchLibraryManager.downloadMonitor != null) { return; }
         try
         {
-            RelaunchLibraryManager.downloadMonitor = new Downloader();
             if (showIt)
             {
-                popupWindow = RelaunchLibraryManager.downloadMonitor.makeDialog();
+                RelaunchLibraryManager.downloadMonitor = new Downloader();
+                popupWindow = (JDialog) RelaunchLibraryManager.downloadMonitor.makeDialog();
+            }
+            else
+            {
+                RelaunchLibraryManager.downloadMonitor = new DummyDownloader();
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             if (RelaunchLibraryManager.downloadMonitor == null)
             {
+                RelaunchLibraryManager.downloadMonitor = new DummyDownloader();
                 e.printStackTrace();
             }
+            else
+            {
+                RelaunchLibraryManager.downloadMonitor.makeHeadless();
+            }
             popupWindow = null;
-            RelaunchLibraryManager.downloadMonitor.makeHeadless();
         }
     }
 
@@ -94,7 +102,7 @@ public class FMLRelauncher
             }
         }
 
-        if (RelaunchLibraryManager.downloadMonitor.stopIt)
+        if (RelaunchLibraryManager.downloadMonitor.shouldStopIt())
         {
             System.exit(1);
         }
@@ -284,7 +292,7 @@ public class FMLRelauncher
                 popupWindow.setVisible(false);
                 popupWindow.dispose();
             }
-            if (RelaunchLibraryManager.downloadMonitor.stopIt)
+            if (RelaunchLibraryManager.downloadMonitor.shouldStopIt())
             {
                 System.exit(1);
             }
