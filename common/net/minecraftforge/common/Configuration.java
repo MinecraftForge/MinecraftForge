@@ -489,7 +489,7 @@ public class Configuration
 
             PushbackInputStream pbStream = new PushbackInputStream(source, data.length);
             int read = pbStream.read(data, 0, data.length);
-            int size = 4;
+            int size = 0;
 
             int bom16 = (data[0] & 0xFF) << 8 | (data[1] & 0xFF);
             int bom24 = bom16 << 8 | (data[2] & 0xFF);
@@ -513,10 +513,12 @@ public class Configuration
             else if (bom32 == 0x0000FEFF)
             {
                 enc = "UTF-32BE";
+                size = 4;
             }
             else if (bom32 == 0xFFFE0000) //This will never happen as it'll be caught by UTF-16LE,
             {                             //but if anyone ever runs across a 32LE file, i'd like to disect it.
                 enc = "UTF-32LE";
+                size = 4;
             }
 
             if (size < read)
