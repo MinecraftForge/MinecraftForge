@@ -16,7 +16,7 @@ import javax.swing.JProgressBar;
 
 import cpw.mods.fml.common.FMLLog;
 
-public class Downloader extends JOptionPane
+public class Downloader extends JOptionPane implements IDownloadDisplay
 {
     private JDialog container;
     private JLabel currentActivity;
@@ -45,7 +45,7 @@ public class Downloader extends JOptionPane
         return box;
     }
 
-    JDialog makeDialog()
+    public JDialog makeDialog()
     {
         setMessageType(JOptionPane.INFORMATION_MESSAGE);
         setMessage(makeProgressPanel());
@@ -94,7 +94,7 @@ public class Downloader extends JOptionPane
         }
     }
 
-    void updateProgressString(String progressUpdate, Object... data)
+    public void updateProgressString(String progressUpdate, Object... data)
     {
         FMLLog.finest(progressUpdate, data);
         if (currentActivity!=null)
@@ -103,7 +103,7 @@ public class Downloader extends JOptionPane
         }
     }
 
-    void resetProgress(int sizeGuess)
+    public void resetProgress(int sizeGuess)
     {
         if (progress!=null)
         {
@@ -111,7 +111,7 @@ public class Downloader extends JOptionPane
         }
     }
 
-    void updateProgress(int fullLength)
+    public void updateProgress(int fullLength)
     {
         if (progress!=null)
         {
@@ -119,10 +119,22 @@ public class Downloader extends JOptionPane
         }
     }
 
-    void makeHeadless()
+    public void makeHeadless()
     {
         container = null;
         progress = null;
         currentActivity = null;
+    }
+
+    @Override
+    public void setPokeThread(Thread currentThread)
+    {
+        this.pokeThread = currentThread;
+    }
+
+    @Override
+    public boolean shouldStopIt()
+    {
+        return stopIt;
     }
 }
