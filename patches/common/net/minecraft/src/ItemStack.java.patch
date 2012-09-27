@@ -1,0 +1,26 @@
+--- ../src_base/common/net/minecraft/src/ItemStack.java 
++++ ../src_work/common/net/minecraft/src/ItemStack.java 
+@@ -5,6 +5,9 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.ItemStackEvent;
++
+ public final class ItemStack
+ {
+     /** Size of the stack. */
+@@ -136,11 +139,13 @@
+      */
+     public ItemStack useItemRightClick(World par1World, EntityPlayer par2EntityPlayer)
+     {
++    	 MinecraftForge.EVENT_BUS.post(new ItemStackEvent.RightClick(par2EntityPlayer, getItem()));
+         return this.getItem().onItemRightClick(this, par1World, par2EntityPlayer);
+     }
+ 
+     public ItemStack onFoodEaten(World par1World, EntityPlayer par2EntityPlayer)
+     {
++    	 MinecraftForge.EVENT_BUS.post(new ItemStackEvent.FoodEaten(par2EntityPlayer, getItem()));
+         return this.getItem().onFoodEaten(this, par1World, par2EntityPlayer);
+     }
+ 
