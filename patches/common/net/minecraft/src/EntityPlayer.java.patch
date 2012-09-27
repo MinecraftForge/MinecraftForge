@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayer.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayer.java
-@@ -7,6 +7,16 @@
+@@ -7,6 +7,17 @@
  
  import java.util.Iterator;
  import java.util.List;
@@ -8,6 +8,7 @@
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
 +import net.minecraftforge.event.entity.player.AttackEntityEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
@@ -17,7 +18,7 @@
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -222,6 +232,7 @@
+@@ -222,6 +233,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -25,7 +26,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -574,12 +585,28 @@
+@@ -574,12 +586,28 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
  
@@ -54,7 +55,7 @@
  
          if (par1DamageSource != null)
          {
-@@ -627,7 +654,16 @@
+@@ -627,7 +655,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -72,7 +73,7 @@
      }
  
      /**
-@@ -636,7 +672,7 @@
+@@ -636,7 +673,7 @@
       */
      public EntityItem dropPlayerItem(ItemStack par1ItemStack)
      {
@@ -81,7 +82,7 @@
      }
  
      /**
-@@ -688,18 +724,33 @@
+@@ -688,18 +725,33 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -119,7 +120,26 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -992,12 +1043,23 @@
+@@ -724,7 +776,8 @@
+             var2 /= 5.0F;
+         }
+ 
+-        return var2;
++        var2 = ForgeEventFactory.getBreakSpeed(this, par1Block, meta, var2);
++        return (var2 < 0 ? 0 : var2);
+     }
+ 
+     /**
+@@ -732,7 +785,7 @@
+      */
+     public boolean canHarvestBlock(Block par1Block)
+     {
+-        return this.inventory.canHarvestBlock(par1Block);
++        return ForgeEventFactory.doPlayerHarvestCheck(this, par1Block, inventory.canHarvestBlock(par1Block));
+     }
+ 
+     /**
+@@ -992,12 +1045,23 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -144,7 +164,7 @@
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.addExhaustion(par1DamageSource.getHungerDamage());
          this.health -= par2;
-@@ -1032,6 +1094,10 @@
+@@ -1032,6 +1096,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -155,7 +175,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1075,7 +1141,9 @@
+@@ -1075,7 +1143,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -165,7 +185,7 @@
      }
  
      /**
-@@ -1104,6 +1172,15 @@
+@@ -1104,6 +1174,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -181,7 +201,7 @@
          if (par1Entity.canAttackWithItem())
          {
              int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1247,6 +1324,12 @@
+@@ -1247,6 +1326,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -194,7 +214,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1286,6 +1369,11 @@
+@@ -1286,6 +1371,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -206,7 +226,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1356,10 +1444,12 @@
+@@ -1356,10 +1446,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -223,7 +243,7 @@
  
              if (var5 == null)
              {
-@@ -1396,7 +1486,9 @@
+@@ -1396,7 +1488,9 @@
       */
      private boolean isInBed()
      {
@@ -234,7 +254,7 @@
      }
  
      /**
-@@ -1411,13 +1503,15 @@
+@@ -1411,13 +1505,15 @@
          var2.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var2.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -252,7 +272,7 @@
              return var3;
          }
      }
-@@ -1431,8 +1525,11 @@
+@@ -1431,8 +1527,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -266,7 +286,7 @@
  
              switch (var2)
              {
-@@ -1725,6 +1822,7 @@
+@@ -1725,6 +1824,7 @@
                      return 101;
                  }
              }
