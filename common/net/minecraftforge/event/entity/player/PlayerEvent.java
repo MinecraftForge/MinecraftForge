@@ -42,6 +42,7 @@ public class PlayerEvent extends LivingEvent
             this.block = block;
             this.metadata = metadata;
             this.originalSpeed = original;
+            this.newSpeed = original;
         }
     }
 }
