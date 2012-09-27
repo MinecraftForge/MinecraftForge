@@ -1,14 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -118,6 +118,7 @@
+@@ -118,6 +118,9 @@
  import net.minecraft.src.WorldInfo;
  import net.minecraft.src.WorldRenderer;
  import net.minecraft.src.WorldSettings;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
-@@ -1245,7 +1246,7 @@
+@@ -1245,7 +1248,7 @@
  
                  if (this.thePlayer.canPlayerEdit(var3, var4, var5))
                  {
@@ -17,7 +19,27 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -2221,80 +2222,12 @@
+@@ -1311,7 +1314,8 @@
+                 {
+                     int var8 = var3 != null ? var3.stackSize : 0;
+ 
+-                    if (this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, var3, var4, var5, var6, var7, this.objectMouseOver.hitVec))
++                    boolean result = ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_BLOCK, var4, var5, var6, var7);
++                    if (result && this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, var3, var4, var5, var6, var7, this.objectMouseOver.hitVec))
+                     {
+                         var2 = false;
+                         this.thePlayer.swingItem();
+@@ -1337,7 +1341,8 @@
+             {
+                 ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
+ 
+-                if (var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
++                boolean result = ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
++                if (result && var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
+                 {
+                     this.entityRenderer.itemRenderer.func_78445_c();
+                 }
+@@ -2221,80 +2226,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;

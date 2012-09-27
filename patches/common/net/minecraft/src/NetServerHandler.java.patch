@@ -1,6 +1,15 @@
 --- ../src_base/common/net/minecraft/src/NetServerHandler.java
 +++ ../src_work/common/net/minecraft/src/NetServerHandler.java
-@@ -310,7 +310,7 @@
+@@ -10,6 +10,8 @@
+ 
+ import cpw.mods.fml.common.network.FMLNetworkHandler;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+ 
+ public class NetServerHandler extends NetHandler
+ {
+@@ -310,7 +312,7 @@
                  this.playerEntity.setPositionAndRotation(var5, var7, var9, var11, var12);
                  boolean var32 = var2.getCollidingBoundingBoxes(this.playerEntity, this.playerEntity.boundingBox.copy().contract((double)var27, (double)var27, (double)var27)).isEmpty();
  
@@ -9,7 +18,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
                      return;
-@@ -318,7 +318,7 @@
+@@ -318,7 +320,7 @@
  
                  AxisAlignedBB var33 = this.playerEntity.boundingBox.copy().expand((double)var27, (double)var27, (double)var27).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -18,7 +27,7 @@
                  {
                      if (var29 >= -0.03125D)
                      {
-@@ -395,7 +395,10 @@
+@@ -395,7 +397,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
  
@@ -30,7 +39,7 @@
                  {
                      return;
                  }
-@@ -417,7 +420,7 @@
+@@ -417,7 +422,7 @@
  
              if (par1Packet14BlockDig.status == 0)
              {
@@ -39,7 +48,27 @@
                  {
                      this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
-@@ -497,7 +500,9 @@
+@@ -463,6 +468,7 @@
+ 
+     public void handlePlace(Packet15Place par1Packet15Place)
+     {
++        System.out.println("15: " + par1Packet15Place.creationTimeMillis);
+         WorldServer var2 = this.mcServer.worldServerForDimension(this.playerEntity.dimension);
+         ItemStack var3 = this.playerEntity.inventory.getCurrentItem();
+         boolean var4 = false;
+@@ -479,7 +485,10 @@
+                 return;
+             }
+ 
+-            this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, var2, var3);
++            if (ForgeEventFactory.onPlayerInteract(playerEntity, PlayerInteractEvent.Action.RIGHT_CLICK_AIR, 0, 0, 0, -1))
++            {
++                this.playerEntity.theItemInWorldManager.tryUseItem(this.playerEntity, var2, var3);
++            }
+         }
+         else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
+         {
+@@ -497,7 +506,9 @@
                  var12 = var11;
              }
  
@@ -50,7 +79,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -798,7 +803,7 @@
+@@ -798,7 +809,7 @@
                      return;
                  }
  

@@ -6,6 +6,13 @@ package net.minecraftforge.event;
  */
 public class Event
 {
+    public enum Result
+    {
+        DENY,
+        DEFAULT,
+        ALLOW
+    }
+
     private boolean isCanceled = false;
     private final boolean isCancelable;
     private static ListenerList listeners = new ListenerList();
