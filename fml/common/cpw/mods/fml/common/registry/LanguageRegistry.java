@@ -25,23 +25,23 @@ public class LanguageRegistry
 
     public String getStringLocalization(String key)
     {
-        return getStringLocalization(key, StringTranslate.getInstance().getCurrentLanguage());
+        return getStringLocalization(key, StringTranslate.func_74808_a().func_74811_c());
     }
-    
+
     public String getStringLocalization(String key, String lang)
     {
         String localizedString = "";
         Properties langPack = modLanguageData.get(lang);
-        
+
         if (langPack != null) {
             if (langPack.getProperty(key) != null) {
-                localizedString = langPack.getProperty(key); 
+                localizedString = langPack.getProperty(key);
             }
         }
-        
+
         return localizedString;
     }
-    
+
     public void addStringLocalization(String key, String value)
     {
         addStringLocalization(key, "en_US", value);
@@ -55,11 +55,11 @@ public class LanguageRegistry
         }
         langPack.put(key,value);
     }
-    
+
     public void addStringLocalization(Properties langPackAdditions) {
         addStringLocalization(langPackAdditions, "en_US");
     }
-    
+
     public void addStringLocalization(Properties langPackAdditions, String lang) {
         Properties langPack = modLanguageData.get(lang);
         if (langPack == null) {
@@ -74,9 +74,9 @@ public class LanguageRegistry
     public static void reloadLanguageTable()
     {
         // reload language table by forcing lang to null and reloading the properties file
-        String lang = StringTranslate.getInstance().getCurrentLanguage();
-        StringTranslate.getInstance().currentLanguage = null;
-        StringTranslate.getInstance().setLanguage(lang);
+        String lang = StringTranslate.func_74808_a().func_74811_c();
+        StringTranslate.func_74808_a().field_74813_d = null;
+        StringTranslate.func_74808_a().func_74810_a(lang);
     }
 
 
@@ -84,18 +84,18 @@ public class LanguageRegistry
     {
         String objectName;
         if (objectToName instanceof Item) {
-            objectName=((Item)objectToName).getItemName();
+            objectName=((Item)objectToName).func_77658_a();
         } else if (objectToName instanceof Block) {
-            objectName=((Block)objectToName).getBlockName();
+            objectName=((Block)objectToName).func_71917_a();
         } else if (objectToName instanceof ItemStack) {
-            objectName=((ItemStack)objectToName).getItem().getItemNameIS((ItemStack)objectToName);
+            objectName=((ItemStack)objectToName).func_77973_b().func_77667_c((ItemStack)objectToName);
         } else {
             throw new IllegalArgumentException(String.format("Illegal object for naming %s",objectToName));
         }
         objectName+=".name";
         addStringLocalization(objectName, lang, name);
     }
-    
+
     public static void addName(Object objectToName, String name)
     {
         instance().addNameForObject(objectToName, "en_US", name);
@@ -113,27 +113,27 @@ public class LanguageRegistry
         }
         languagePack.putAll(langPack);
     }
-    
+
     public void loadLocalization(String localizationFile, String lang, boolean isXML)
     {
         loadLocalization(this.getClass().getResource(localizationFile), lang, isXML);
     }
-    
+
     public void loadLocalization(URL localizationFile, String lang, boolean isXML)
     {
         InputStream langStream = null;
         Properties langPack = new Properties();
-        
+
         try    {
             langStream = localizationFile.openStream();
-            
+
             if (isXML) {
                 langPack.loadFromXML(langStream);
             }
             else {
                 langPack.load(langStream);
             }
-            
+
             addStringLocalization(langPack, lang);
         }
         catch (IOException e) {
