@@ -24,7 +24,7 @@
                      int var8 = var3 != null ? var3.stackSize : 0;
  
 -                    if (this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, var3, var4, var5, var6, var7, this.objectMouseOver.hitVec))
-+                    boolean result = ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_BLOCK, var4, var5, var6, var7);
++                    boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_BLOCK, var4, var5, var6, var7).isCanceled();
 +                    if (result && this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, var3, var4, var5, var6, var7, this.objectMouseOver.hitVec))
                      {
                          var2 = false;
@@ -34,7 +34,7 @@
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
 -                if (var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
-+                boolean result = ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1);
++                boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
 +                if (result && var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();

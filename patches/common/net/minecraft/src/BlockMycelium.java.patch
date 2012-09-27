@@ -1,0 +1,20 @@
+--- ../src_base/common/net/minecraft/src/BlockMycelium.java
++++ ../src_work/common/net/minecraft/src/BlockMycelium.java
+@@ -51,7 +51,7 @@
+     {
+         if (!par1World.isRemote)
+         {
+-            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && Block.lightOpacity[par1World.getBlockId(par2, par3 + 1, par4)] > 2)
++            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && par1World.getBlockLightOpacity(par2, par3 + 1, par4) > 2)
+             {
+                 par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
+             }
+@@ -64,7 +64,7 @@
+                     int var9 = par4 + par5Random.nextInt(3) - 1;
+                     int var10 = par1World.getBlockId(var7, var8 + 1, var9);
+ 
+-                    if (par1World.getBlockId(var7, var8, var9) == Block.dirt.blockID && par1World.getBlockLightValue(var7, var8 + 1, var9) >= 4 && Block.lightOpacity[var10] <= 2)
++                    if (par1World.getBlockId(var7, var8, var9) == Block.dirt.blockID && par1World.getBlockLightValue(var7, var8 + 1, var9) >= 4 && par1World.getBlockLightOpacity(var7, var8 + 1, var9) <= 2)
+                     {
+                         par1World.setBlockWithNotify(var7, var8, var9, this.blockID);
+                     }
