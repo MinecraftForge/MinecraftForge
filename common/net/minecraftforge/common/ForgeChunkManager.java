@@ -83,10 +83,12 @@ public class ForgeChunkManager
     private static Map<World, SetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = Maps.newHashMap();
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
-    private static Cache<Long, Chunk> dormantChunkCache;
+    private static Map<World,Cache<Long, Chunk>> dormantChunkCache = Maps.newHashMap();
+
     private static File cfgFile;
     private static Configuration config;
     private static int playerTicketLength;
+    private static int dormantChunkCacheSize;
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -287,6 +289,7 @@ public class ForgeChunkManager
             return;
         }
 
+        dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize).<Long, Chunk>build());
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
         File chunkLoaderData = new File(chunkDir, "forcedchunks.dat");
@@ -629,12 +632,6 @@ public class ForgeChunkManager
             chunkConstraints.put(mod, modCPT.getInt(25));
         }
         config.save();
-
-        if (dormantChunkCache == null)
-        {
-        	dormantChunkCache = CacheBuilder.newBuilder().maximumSize(0).build();
-            FMLLog.info("Configured a dormant chunk cache size of 0");
-        }
     }
 
     /**
@@ -721,12 +718,17 @@ public class ForgeChunkManager
 
     public static void putDormantChunk(long coords, Chunk chunk)
     {
-        dormantChunkCache.put(coords, chunk);
+        Cache<Long, Chunk> cache = dormantChunkCache.get(chunk.worldObj);
+        if (cache != null)
+        {
+            cache.put(coords, chunk);
+        }
     }
 
-    public static Chunk fetchDormantChunk(long coords)
+    public static Chunk fetchDormantChunk(long coords, World world)
     {
-        return dormantChunkCache.getIfPresent(coords);
+        Cache<Long, Chunk> cache = dormantChunkCache.get(world);
+        return cache == null ? null : cache.getIfPresent(coords);
     }
 
     static void captureConfig(File configDir)
@@ -763,11 +765,11 @@ public class ForgeChunkManager
         playerTicketCount.comment = "The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.";
         playerTicketLength = playerTicketCount.getInt(500);
 
-        Property dormantChunkCacheSize = config.get("defaults", "dormantChunkCacheSize", 0);
-        dormantChunkCacheSize.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
+        Property dormantChunkCacheSizeProperty = config.get("defaults", "dormantChunkCacheSize", 0);
+        dormantChunkCacheSizeProperty.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
                     "loading times. Specify the size of that cache here";
-        dormantChunkCache = CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize.getInt(0)).build();
-        FMLLog.info("Configured a dormant chunk cache size of %d", dormantChunkCacheSize.getInt(0));
+        dormantChunkCacheSize = dormantChunkCacheSizeProperty.getInt(0);
+        FMLLog.info("Configured a dormant chunk cache size of %d", dormantChunkCacheSizeProperty.getInt(0));
 
         Property modOverridesEnabled = config.get("defaults", "enabled", true);
         modOverridesEnabled.comment = "Are mod overrides enabled?";
