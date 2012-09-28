@@ -133,7 +133,7 @@
              }
  
              return true;
-@@ -318,29 +366,54 @@
+@@ -318,29 +366,55 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -202,15 +202,16 @@
 +            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
 +        }
 +
++        /* Re-enable if this causes bukkit incompatibility, or re-write client side to only send a single packet per right click.
 +        if (par3ItemStack != null && ((!result && event.useItem != Event.Result.DENY) || event.useItem == Event.Result.ALLOW))
 +        {
 +            this.tryUseItem(thisPlayerMP, par2World, par3ItemStack);
-+        }
++        }*/
 +        return result;
      }
  
      /**
-@@ -350,4 +423,13 @@
+@@ -350,4 +424,13 @@
      {
          this.theWorld = par1WorldServer;
      }
