@@ -9,6 +9,7 @@ import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 import static net.minecraftforge.common.ForgeVersion.*;
@@ -32,7 +33,7 @@ public class ForgeDummyContainer extends DummyModContainer
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
     }
-    
+
     @Override
     public boolean registerBus(EventBus bus, LoadController controller)
     {
@@ -43,6 +44,11 @@ public class ForgeDummyContainer extends DummyModContainer
     @Subscribe
     public void preInit(FMLPreInitializationEvent evt)
     {
-    	ForgeChunkManager.loadConfiguration(evt.getModConfigurationDirectory());
+        ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
+    }
+    @Subscribe
+    public void postInit(FMLPostInitializationEvent evt)
+    {
+    	ForgeChunkManager.loadConfiguration();
     }
 }
