@@ -1,5 +1,6 @@
 package net.minecraftforge.event.entity.player;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
@@ -60,6 +61,11 @@ public class BlockActivateEvent extends PlayerEvent {
     public final float zHitVector;
 
     /**
+     * The activated block type.
+     */
+    public final Block block;
+
+    /**
      * Creates a BlockActivateEvent.
      * 
      * @param entityPlayer the player activating the block
@@ -85,6 +91,8 @@ public class BlockActivateEvent extends PlayerEvent {
         this.xHitVector = xHitVector;
         this.yHitVector = yHitVector;
         this.zHitVector = zHitVector;
+        int blockId = world.getBlockId(x, y, z);
+        this.block = Block.blocksList[blockId];
     }
 
 }
