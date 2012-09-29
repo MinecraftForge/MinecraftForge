@@ -1,0 +1,38 @@
+--- ../src-base/common/net/minecraft/src/MapData.java
++++ ../src-work/common/net/minecraft/src/MapData.java
+@@ -11,7 +11,7 @@
+ {
+     public int field_76201_a;
+     public int field_76199_b;
+-    public byte field_76200_c;
++    public int field_76200_c;
+     public byte field_76197_d;
+     public byte[] field_76198_e = new byte[16384];
+     public int field_76195_f;
+@@ -26,7 +26,16 @@
+ 
+     public void func_76184_a(NBTTagCompound p_76184_1_)
+     {
+-        this.field_76200_c = p_76184_1_.func_74771_c("dimension");
++        NBTBase dimension = p_76184_1_.func_74781_a("dimension");
++
++        if (dimension instanceof NBTTagByte)
++        {
++            this.field_76200_c = ((NBTTagByte)dimension).field_74756_a;
++        }
++        else
++        {
++            this.field_76200_c = ((NBTTagInt)dimension).field_74748_a;
++        }
+         this.field_76201_a = p_76184_1_.func_74762_e("xCenter");
+         this.field_76199_b = p_76184_1_.func_74762_e("zCenter");
+         this.field_76197_d = p_76184_1_.func_74771_c("scale");
+@@ -77,7 +86,7 @@
+ 
+     public void func_76187_b(NBTTagCompound p_76187_1_)
+     {
+-        p_76187_1_.func_74774_a("dimension", this.field_76200_c);
++        p_76187_1_.func_74768_a("dimension", this.field_76200_c);
+         p_76187_1_.func_74768_a("xCenter", this.field_76201_a);
+         p_76187_1_.func_74768_a("zCenter", this.field_76199_b);
+         p_76187_1_.func_74774_a("scale", this.field_76197_d);

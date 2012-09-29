@@ -1,0 +1,20 @@
+--- ../src-base/common/net/minecraft/src/ItemMap.java
++++ ../src-work/common/net/minecraft/src/ItemMap.java
+@@ -40,7 +40,7 @@
+             var4.field_76201_a = p_77873_2_.func_72912_H().func_76079_c();
+             var4.field_76199_b = p_77873_2_.func_72912_H().func_76074_e();
+             var4.field_76197_d = 3;
+-            var4.field_76200_c = (byte)p_77873_2_.field_73011_w.field_76574_g;
++            var4.field_76200_c = p_77873_2_.field_73011_w.field_76574_g;
+             var4.func_76185_a();
+             p_77873_2_.func_72823_a(var3, var4);
+         }
+@@ -297,7 +297,7 @@
+         var5.field_76201_a = MathHelper.func_76128_c(p_77622_3_.field_70165_t);
+         var5.field_76199_b = MathHelper.func_76128_c(p_77622_3_.field_70161_v);
+         var5.field_76197_d = 3;
+-        var5.field_76200_c = (byte)p_77622_2_.field_73011_w.field_76574_g;
++        var5.field_76200_c = p_77622_2_.field_73011_w.field_76574_g;
+         var5.func_76185_a();
+     }
+ 
