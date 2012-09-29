@@ -96,7 +96,7 @@
 +        if (var11 > 0)
 +        {
 +            //Notify registered event listeners and abort block activation if any of them is canceled.
-+            if (!ForgeHooks.onBlockActivated(par1EntityPlayer, par2World, par3ItemStack, par7, par7, par7, par7, par8, par9, par10))
++            if (!ForgeHooks.onBlockActivated(par1EntityPlayer, par2World, par3ItemStack, par4, par5, par6, par7, par8, par9, par10))
 +            {
 +                if (Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
 +                {
