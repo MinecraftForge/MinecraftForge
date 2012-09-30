@@ -1,5 +1,14 @@
 --- ../src_base/common/net/minecraft/src/ItemMap.java
 +++ ../src_work/common/net/minecraft/src/ItemMap.java
+@@ -40,7 +40,7 @@
+             var4.xCenter = par2World.getWorldInfo().getSpawnX();
+             var4.zCenter = par2World.getWorldInfo().getSpawnZ();
+             var4.scale = 3;
+-            var4.dimension = (byte)par2World.provider.worldType;
++            var4.dimension = par2World.provider.worldType;
+             var4.markDirty();
+             par2World.setItemData(var3, var4);
+         }
 @@ -88,7 +88,7 @@
                              byte var23 = 0;
                              byte var24 = 0;
@@ -18,3 +27,12 @@
                                  {
                                      if (var26[var35] > var33)
                                      {
+@@ -304,7 +304,7 @@
+         var5.xCenter = MathHelper.floor_double(par3EntityPlayer.posX);
+         var5.zCenter = MathHelper.floor_double(par3EntityPlayer.posZ);
+         var5.scale = 3;
+-        var5.dimension = (byte)par2World.provider.worldType;
++        var5.dimension = par2World.provider.worldType;
+         var5.markDirty();
+     }
+ 
