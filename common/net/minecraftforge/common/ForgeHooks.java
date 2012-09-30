@@ -10,6 +10,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 
 import net.minecraft.src.*;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.*;
@@ -112,7 +113,8 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            return 1.0F / hardness / 100F;
+            float speed = ForgeEventFactory.getBreakSpeed(player, block, metadata, 1.0f);
+            return (speed < 0 ? 0 : speed) / hardness / 100F;
         }
         else
         {
