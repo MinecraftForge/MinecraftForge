@@ -7,6 +7,8 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.WeightedRandom;
 import net.minecraft.src.WeightedRandomItem;
+import net.minecraft.src.EnchantmentHelper;
+import net.minecraft.src.EnchantmentData;
 
 public class DungeonHooks
 {
@@ -139,6 +141,19 @@ public class DungeonHooks
         return rarity;
     }
     /**
+     * Adds an enchantable item to dungeon loot list.
+     *
+     * @param item The ItemStack to be added to the loot list
+     * @param rarity The relative chance that this item will spawn
+     * @param minLevel The minimum enchant level applied to enchanted items
+     * @param maxLevel The maximum enchant level applied to enchanted items (should be 50 or less)
+     * @param enchantChance The percent chance the item will be enchanted
+     */
+    public static void addDungeonLoot(ItemStack item, int rarity, int minLevel, int maxLevel, int enchantChance)
+    {
+        dungeonLoot.add(new DungeonLoot(rarity, item, minLevel, maxLevel, enchantChance));
+    }
+    /**
      * Removes a item stack from the dungeon loot list, this will remove all items
      * as long as the item stack matches, it will not care about matching the stack
      * size ranges perfectly.
@@ -205,6 +220,9 @@ public class DungeonHooks
         private ItemStack itemStack;
         private int minCount = 1;
         private int maxCount = 1;
+        private int minEnchantLevel = 1;
+        private int maxEnchantLevel = 1;
+        private int enchantChance = 0;
 
         /**
          * @param item A item stack
@@ -220,6 +238,28 @@ public class DungeonHooks
         }
 
         /**
+         * @param item A item stack
+         * @param min Minimum level used for calculating enchantment
+         * @param max Maximum level used for calculating enchantment
+         * @param ench Percent chance item will be enchanted (should be > 0)
+         */
+        public DungeonLoot(int weight, ItemStack item, int min, int max, int ench)
+        {
+            super(weight);
+            this.itemStack = item;
+            minEnchantLevel = min;
+            maxEnchantLevel = max;
+            if (max < min)
+            {
+                maxEnchantLevel = min;
+            }
+            enchantChance = ench;
+
+            // Enchantable items should never be stackable
+            minCount = 1;
+            maxCount = 1;
+        }
+        /**
          * Grabs a ItemStack ready to be added to the dungeon chest,
          * the stack size will be between minCount and maxCount
          * @param rand World gen random number generator
@@ -229,6 +269,24 @@ public class DungeonHooks
         {
             ItemStack ret = this.itemStack.copy();
             ret.stackSize = minCount + (rand.nextInt(maxCount - minCount + 1));
+            if (enchantChance > 0)
+            {
+                int i = rand.nextInt(100);
+                if (i < enchantChance)
+                {
+                    int level = minEnchantLevel + (rand.nextInt(maxEnchantLevel - minEnchantLevel + 1));
+                    ret.stackSize = 1;
+                    List list = EnchantmentHelper.buildEnchantmentList(rand, ret, level);
+                    if(list != null)
+                    {
+                        EnchantmentData enchantmentdata;
+                        for(Iterator iterator = list.iterator(); iterator.hasNext(); ret.addEnchantment(enchantmentdata.enchantmentobj, enchantmentdata.enchantmentLevel))
+                        {
+                            enchantmentdata = (EnchantmentData)iterator.next();
+                        }
+                    }
+                }
+            }
             return ret;
         }
 
