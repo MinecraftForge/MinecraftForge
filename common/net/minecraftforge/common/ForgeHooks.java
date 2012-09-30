@@ -112,7 +112,7 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            return 1.0F / hardness / 100F;
+            return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 100F;
         }
         else
         {
