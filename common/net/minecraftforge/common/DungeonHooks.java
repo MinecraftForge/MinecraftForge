@@ -262,7 +262,17 @@ public class DungeonHooks
             return false;
         }
     }
-    
+
+    public void addDungeonLoot(DungeonLoot loot)
+    {
+        dungeonLoot.add(loot);
+    }
+
+    public boolean removeDungeonLoot(DungeonLoot loot)
+    {
+        return dungeonLoot.remove(loot);
+    }
+
     static
     {
         addDungeonMob("Skeleton", 100);
