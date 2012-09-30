@@ -10,8 +10,11 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 import net.minecraft.src.BiomeGenBase;
+import net.minecraft.src.ChunkProviderGenerate;
+import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.MapGenStronghold;
 import net.minecraft.src.MapGenVillage;
+import net.minecraft.src.WorldChunkManager;
 
 /**
  * BiomeManager to manage most of the biome generation related things
@@ -89,13 +92,21 @@ public class BiomeManager
         }
     }
 
-    public static ArrayList<BiomeGenBase> getStrongholdBiomes()
-    {
-        return strongholdBiomes;
-    }
-
     public static ArrayList<BiomeGenBase> getSpawnBiomes()
     {
         return spawnBiomes;
+    }
+    
+    public static void initializeStrongholdGen(IChunkProvider ichunkprovider)
+    {
+    	if(!(ichunkprovider instanceof ChunkProviderGenerate))
+    	{
+    		return;
+    	}
+    	ChunkProviderGenerate chunkproviderenerate = (ChunkProviderGenerate)ichunkprovider;
+    	
+    	ArrayList biomes = new ArrayList(Arrays.asList(chunkproviderenerate.strongholdGenerator.allowedBiomeGenBases));
+    	biomes.addAll(strongholdBiomes);
+    	chunkproviderenerate.strongholdGenerator.allowedBiomeGenBases = (BiomeGenBase[]) biomes.toArray(new BiomeGenBase[0]);
     }
 }
