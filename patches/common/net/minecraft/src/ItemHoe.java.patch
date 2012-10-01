@@ -17,7 +17,7 @@
 +            {
 +                return false;
 +            }
-+            if (event.isHandeled())
++            if (event.isHandled())
 +            {
 +                par1ItemStack.damageItem(1, par2EntityPlayer);
 +                return true;

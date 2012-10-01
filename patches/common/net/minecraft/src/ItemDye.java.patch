@@ -22,7 +22,7 @@
 +                    return false;
 +                }
 +
-+                if (event.isHandeled())
++                if (event.isHandled())
 +                {
 +                   if (!par3World.isRemote)
 +                    {

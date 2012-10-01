@@ -16,7 +16,7 @@ public class UseHoeEvent extends PlayerEvent
     public final int y;
     public final int z;
     
-    private boolean handeled = false;
+    private boolean handled = false;
     
     public UseHoeEvent(EntityPlayer player, ItemStack current, World world, int x, int y, int z)
     {
@@ -28,13 +28,19 @@ public class UseHoeEvent extends PlayerEvent
         this.z = z;
     }
 
-    public boolean isHandeled()
+    public boolean isHandled()
     {
-        return handeled;
+        return handled;
     }
     
+    public void setHandled()
+    {
+        handled = true;
+    }
+    
+    @Deprecated
     public void setHandeled()
     {
-        handeled = true;
+        this.setHandled();
     }
 }

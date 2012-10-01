@@ -12,7 +12,7 @@ public class BonemealEvent extends PlayerEvent
     public final int X;
     public final int Y;
     public final int Z;
-    private boolean handeled = false;
+    private boolean handled = false;
     
     public BonemealEvent(EntityPlayer player, World world, int id, int x, int y, int z)
     {
@@ -24,13 +24,19 @@ public class BonemealEvent extends PlayerEvent
         this.Z = z;
     }
     
-    public void setHandeled()
+    public boolean isHandled()
     {
-        handeled = true;
+        return handled;
     }
     
-    public boolean isHandeled()
+    public void setHandled()
     {
-        return handeled;
+        handled = true;
+    }
+    
+    @Deprecated
+    public void setHandeled()
+    {
+        this.setHandled();
     }
 }

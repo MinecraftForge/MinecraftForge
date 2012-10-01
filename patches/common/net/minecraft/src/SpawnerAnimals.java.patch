@@ -41,7 +41,7 @@
      {
 +        LivingSpecialSpawnEvent event = new LivingSpecialSpawnEvent(par0EntityLiving, par1World, par2, par3, par4);
 +        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.isHandeled())
++        if (event.isHandled())
 +        {
 +            return;
 +        }
