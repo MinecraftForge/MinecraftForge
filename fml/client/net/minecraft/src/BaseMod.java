@@ -144,7 +144,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
             generateNether(w, random, chunkX << 4, chunkZ << 4);
         }
     }
-    
+
     @Override
     public final boolean handleCommand(String command, Object... data)
     {
@@ -308,6 +308,25 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     {
     }
 
+    /**
+     * Called when a client connects
+     * @param handler
+     */
+    @SideOnly(CLIENT)
+    public void clientConnect(NetClientHandler handler)
+    {
+
+    }
+
+    /**
+     * Called when the client disconnects
+     * @param handler
+     */
+    @SideOnly(CLIENT)
+    public void clientDisconnect(NetClientHandler handler)
+    {
+
+    }
     /**
      * Called client side to receive a custom payload for this mod
      *
