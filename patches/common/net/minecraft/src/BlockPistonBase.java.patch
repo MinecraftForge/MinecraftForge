@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/BlockPistonBase.java
 +++ ../src_work/common/net/minecraft/src/BlockPistonBase.java
-@@ -2,12 +2,17 @@
+@@ -2,7 +2,12 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
@@ -8,17 +8,12 @@
 +import java.util.ArrayList;
  import java.util.List;
 +
-+import net.minecraftforge.common.IOrientation;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.block.BlockOrientationEvent;
  
  public class BlockPistonBase extends Block
  {
-     /** This pistons is the sticky one? */
-     private boolean isSticky;
-+    public static List<IOrientation> orientationHooks = new ArrayList();
- 
-     public BlockPistonBase(int par1, int par2, boolean par3)
-     {
-@@ -316,23 +321,36 @@
+@@ -316,22 +321,24 @@
       */
      public static int determineOrientation(World par0World, int par1, int par2, int par3, EntityPlayer par4EntityPlayer)
      {
@@ -27,52 +22,32 @@
 -            double var5 = par4EntityPlayer.posY + 1.82D - (double)par4EntityPlayer.yOffset;
 -
 -            if (var5 - (double)par2 > 2.0D)
--            {
--                return 1;
--            }
++        BlockOrientationEvent event = new BlockOrientationEvent(Block.pistonBase, par0World, par4EntityPlayer, par1, par2, par3);
++        
++        MinecraftForge.EVENT_BUS.post(event);
++        
++        if (MathHelper.abs((float)event.entity.posX - (float)event.blockX) < 2.0F && MathHelper.abs((float)event.entity.posZ - (float)event.blockZ) < 2.0F)
++        {
++            double var5 = event.entity.posY + 1.82D - (double)event.entity.yOffset;
++
++            if (var5 - (double)event.blockY > 2.0D)
+             {
+                 return 1;
+             }
 -
 -            if ((double)par2 - var5 > 0.0D)
--            {
--                return 0;
--            }
--        }
++            if ((double)event.blockY - var5 > 0.0D)
+             {
+                 return 0;
+             }
+         }
 -
 -        int var7 = MathHelper.floor_double((double)(par4EntityPlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
--        return var7 == 0 ? 2 : (var7 == 1 ? 5 : (var7 == 2 ? 3 : (var7 == 3 ? 4 : 0)));
-+        boolean prematureExit = false;
-+        for (IOrientation hook : orientationHooks) {
-+            if (hook.beforeOrientation(par0World, par1, par2, par3, par4EntityPlayer)) {
-+                prematureExit = true;
-+            }
-+        }
-+        int currentOrientation = -1;
-+        if (!prematureExit) {
-+            if (MathHelper.abs((float)par4EntityPlayer.posX - (float)par1) < 2.0F && MathHelper.abs((float)par4EntityPlayer.posZ - (float)par3) < 2.0F)
-+            {
-+                double var5 = par4EntityPlayer.posY + 1.82D - (double)par4EntityPlayer.yOffset;
-+    
-+                if (var5 - (double)par2 > 2.0D)
-+                {
-+                    currentOrientation = 1;
-+                }
-+                if (currentOrientation == -1 && (double)par2 - var5 > 0.0D)
-+                {
-+                    currentOrientation = 0;
-+                }
-+            }
-+            if (currentOrientation == -1) {
-+                int var7 = MathHelper.floor_double((double)(par4EntityPlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-+                currentOrientation = var7 == 0 ? 2 : (var7 == 1 ? 5 : (var7 == 2 ? 3 : (var7 == 3 ? 4 : 0)));
-+            }
-+        }
-+        for(IOrientation hook : orientationHooks) {
-+            currentOrientation = hook.afterOrientation(par0World, par1, par2, par3, par4EntityPlayer, currentOrientation);
-+        }
-+        return currentOrientation;
++        int var7 = MathHelper.floor_double((double)(event.entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+         return var7 == 0 ? 2 : (var7 == 1 ? 5 : (var7 == 2 ? 3 : (var7 == 3 ? 4 : 0)));
      }
  
-     /**
-@@ -368,7 +386,7 @@
+@@ -368,7 +375,7 @@
                  return false;
              }
  
@@ -81,7 +56,7 @@
          }
      }
  
-@@ -386,7 +404,7 @@
+@@ -386,7 +393,7 @@
          {
              if (var8 < 13)
              {
@@ -90,7 +65,7 @@
                  {
                      return false;
                  }
-@@ -436,7 +454,7 @@
+@@ -436,7 +443,7 @@
  
              if (var9 < 13)
              {
@@ -99,14 +74,3 @@
                  {
                      return false;
                  }
-@@ -496,4 +514,10 @@
-             return true;
-         }
-     }
-+    
-+    public static void registerOrientationHook(IOrientation hook) {
-+        if (!orientationHooks.contains(hook)) {
-+            orientationHooks.add(hook);
-+        }
-+    }
- }
