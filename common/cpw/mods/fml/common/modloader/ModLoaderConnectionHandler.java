@@ -33,14 +33,17 @@ public class ModLoaderConnectionHandler implements IConnectionHandler
     @Override
     public void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager manager)
     {
-        // noop
+        ModLoaderHelper.sidedHelper.clientConnectionOpened(netClientHandler, manager, mod);
     }
 
     @Override
     public void connectionClosed(NetworkManager manager)
     {
-        mod.serverDisconnect();
-        mod.onClientLogout(manager);
+        if (!ModLoaderHelper.sidedHelper.clientConnectionClosed(manager, mod))
+        {
+            mod.serverDisconnect();
+            mod.onClientLogout(manager);
+        }
     }
 
     @Override
@@ -52,7 +55,7 @@ public class ModLoaderConnectionHandler implements IConnectionHandler
     @Override
     public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager)
     {
-        // noop
+        ModLoaderHelper.sidedHelper.clientConnectionOpened(netClientHandler, manager, mod);
     }
 
 }
