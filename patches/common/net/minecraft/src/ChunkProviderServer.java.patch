@@ -1,15 +1,25 @@
 --- ../src_base/common/net/minecraft/src/ChunkProviderServer.java
 +++ ../src_work/common/net/minecraft/src/ChunkProviderServer.java
-@@ -7,6 +7,8 @@
+@@ -7,6 +7,9 @@
  import java.util.List;
  import java.util.Set;
  
++import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.ForgeChunkManager;
 +
  import cpw.mods.fml.common.registry.GameRegistry;
  
  public class ChunkProviderServer implements IChunkProvider
-@@ -93,7 +95,11 @@
+@@ -50,7 +53,7 @@
+      */
+     public void unloadChunksIfNotNearSpawn(int par1, int par2)
+     {
+-        if (this.currentServer.provider.canRespawnHere())
++        if (this.currentServer.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(currentServer.provider.dimensionId))
+         {
+             ChunkCoordinates var3 = this.currentServer.getSpawnPoint();
+             int var4 = par1 * 16 + 8 - var3.posX;
+@@ -93,7 +96,11 @@
  
          if (var5 == null)
          {
@@ -22,7 +32,7 @@
  
              if (var5 == null)
              {
-@@ -274,6 +280,11 @@
+@@ -274,6 +281,11 @@
      {
          if (!this.currentServer.canNotSave)
          {
@@ -34,11 +44,15 @@
              for (int var1 = 0; var1 < 100; ++var1)
              {
                  if (!this.chunksToUnload.isEmpty())
-@@ -286,6 +297,7 @@
+@@ -286,6 +298,11 @@
                      this.chunksToUnload.remove(var2);
                      this.loadedChunkHashMap.remove(var2.longValue());
                      this.loadedChunks.remove(var3);
 +                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(var3.xPosition, var3.zPosition), var3);
++                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(currentServer).size() == 0 && !DimensionManager.shouldLoadSpawn(currentServer.provider.dimensionId)) {
++                        DimensionManager.unloadWorld(currentServer.provider.dimensionId);
++                        return currentChunkProvider.unload100OldestChunks();
++                    }
                  }
              }
  
