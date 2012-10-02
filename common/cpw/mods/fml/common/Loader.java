@@ -132,6 +132,7 @@ public class Loader
     private Exception capturedError;
     private File canonicalModsDir;
     private LoadController modController;
+    private MinecraftDummyContainer minecraft;
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
@@ -167,6 +168,8 @@ public class Loader
             FMLLog.severe("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, actualMCVersion);
             throw new LoaderException();
         }
+
+        minecraft = new MinecraftDummyContainer(actualMCVersion);
     }
 
     /**
@@ -187,6 +190,11 @@ public class Loader
 
             for (ModContainer mod : getActiveModList())
             {
+                if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
+                {
+                    FMLLog.severe("The mod %s does not wish to run in Minecraft version %s. You will have to remove it to play.", mod.getModId(), getMCVersionString());
+                    throw new WrongMinecraftVersionException(mod);
+                }
                 Map<String,ArtifactVersion> names = Maps.uniqueIndex(mod.getRequirements(), new Function<ArtifactVersion, String>()
                 {
                     public String apply(ArtifactVersion v)
@@ -194,8 +202,8 @@ public class Loader
                         return v.getLabel();
                     }
                 });
-                Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
                 Set<ArtifactVersion> versionMissingMods = Sets.newHashSet();
+                Set<String> missingMods = Sets.difference(names.keySet(), modVersions.keySet());
                 if (!missingMods.isEmpty())
                 {
                     FMLLog.severe("The mod %s (%s) requires mods %s to be available", mod.getModId(), mod.getName(), missingMods);
@@ -706,5 +714,10 @@ public class Loader
     public boolean isInState(LoaderState state)
     {
         return modController.isInState(state);
+    }
+
+    public MinecraftDummyContainer getMinecraftModContainer()
+    {
+        return minecraft;
     }
 }

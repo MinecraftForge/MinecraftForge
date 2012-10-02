@@ -9,6 +9,7 @@ import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionRange;
 
 public class DummyModContainer implements ModContainer
 {
@@ -131,5 +132,10 @@ public class DummyModContainer implements ModContainer
     public String getDisplayVersion()
     {
         return md.version;
+    }
+    @Override
+    public VersionRange acceptableMinecraftVersionRange()
+    {
+        return Loader.instance().getMinecraftModContainer().getStaticVersionRange();
     }
 }

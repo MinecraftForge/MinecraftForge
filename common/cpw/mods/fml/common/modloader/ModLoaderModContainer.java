@@ -65,6 +65,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionRange;
 
 public class ModLoaderModContainer implements ModContainer
 {
@@ -608,5 +609,11 @@ public class ModLoaderModContainer implements ModContainer
     public void addServerCommand(ICommand command)
     {
         serverCommands .add(command);
+    }
+
+    @Override
+    public VersionRange acceptableMinecraftVersionRange()
+    {
+        return Loader.instance().getMinecraftModContainer().getStaticVersionRange();
     }
 }
