@@ -1,0 +1,10 @@
+--- ../src_base/minecraft/net/minecraft/src/ModelBase.java
++++ ../src_work/minecraft/net/minecraft/src/ModelBase.java
+@@ -7,7 +7,6 @@
+ import java.util.List;
+ import java.util.Map;
+ 
+-@SideOnly(Side.CLIENT)
+ public abstract class ModelBase
+ {
+     public float onGround;
