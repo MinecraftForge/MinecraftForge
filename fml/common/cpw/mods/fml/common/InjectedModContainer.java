@@ -7,6 +7,7 @@ import java.util.Set;
 import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionRange;
 
 public class InjectedModContainer implements ModContainer
 {
@@ -109,5 +110,11 @@ public class InjectedModContainer implements ModContainer
     public String getDisplayVersion()
     {
         return wrappedContainer.getDisplayVersion();
+    }
+
+    @Override
+    public VersionRange acceptableMinecraftVersionRange()
+    {
+        return wrappedContainer.acceptableMinecraftVersionRange();
     }
 }

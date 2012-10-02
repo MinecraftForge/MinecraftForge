@@ -53,6 +53,13 @@ public @interface Mod
     boolean useMetadata() default false;
 
     /**
+     * The acceptable range of minecraft versions that this mod will load and run in
+     * The default ("empty string") indicates that only the current minecraft version is acceptable.
+     * FML will refuse to run with an error if the minecraft version is not in this range across all mods.
+     * @return A version range as specified by the maven version range specification or the empty string
+     */
+    String acceptedMinecraftVersions() default "";
+    /**
      * Mark the designated method as being called at the "pre-initialization" phase
      * @author cpw
      *

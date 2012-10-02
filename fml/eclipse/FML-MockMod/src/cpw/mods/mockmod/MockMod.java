@@ -22,7 +22,7 @@ import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.common.ModMetadata;
 
-@Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="after:FML@(3.0.184.0,3.0.184.1]", useMetadata=true)
+@Mod(modid="MockMod", name="Mock Mod",version="1.2.3", dependencies="after:FML@[3.1.29,)", useMetadata=true,acceptedMinecraftVersions="[1.4,),[12w27a,)")
 @NetworkMod(channels={"MockMod"},clientSideRequired=true,packetHandler=MockMod.PacketHandler.class,clientPacketHandlerSpec=
 @SidedPacketHandler(packetHandler=TestClass.class,channels={"Fish"}),tinyPacketHandler=MockMod.PacketHandler.class)
 public class MockMod

@@ -20,6 +20,7 @@ import java.util.Set;
 import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.versioning.ArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionRange;
 
 /**
  * The container that wraps around mods in the system.
@@ -126,4 +127,6 @@ public interface ModContainer
     boolean isNetworkMod();
 
     String getDisplayVersion();
+
+    VersionRange acceptableMinecraftVersionRange();
 }

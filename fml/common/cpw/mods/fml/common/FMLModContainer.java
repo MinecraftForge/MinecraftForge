@@ -56,6 +56,8 @@ import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
+import cpw.mods.fml.common.versioning.VersionParser;
+import cpw.mods.fml.common.versioning.VersionRange;
 
 public class FMLModContainer implements ModContainer
 {
@@ -84,6 +86,7 @@ public class FMLModContainer implements ModContainer
         .build();
     private static final BiMap<Class<? extends Annotation>, Class<? extends FMLStateEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
     private String annotationDependencies;
+    private VersionRange minecraftAccepted;
 
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
@@ -174,6 +177,16 @@ public class FMLModContainer implements ModContainer
         {
             FMLLog.warning("Mod %s is missing the required element 'version' and no fallback can be found. Substituting '1.0'.", getModId());
             modMetadata.version = internalVersion = "1.0";
+        }
+
+        String mcVersionString = (String) descriptor.get("acceptedMinecraftVersions");
+        if (!Strings.isNullOrEmpty(mcVersionString))
+        {
+            minecraftAccepted = VersionParser.parseRange(mcVersionString);
+        }
+        else
+        {
+            minecraftAccepted = Loader.instance().getMinecraftModContainer().getStaticVersionRange();
         }
     }
 
@@ -456,5 +469,11 @@ public class FMLModContainer implements ModContainer
     public String getDisplayVersion()
     {
         return modMetadata.version;
+    }
+
+    @Override
+    public VersionRange acceptableMinecraftVersionRange()
+    {
+        return minecraftAccepted;
     }
 }
