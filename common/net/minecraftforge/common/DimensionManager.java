@@ -1,6 +1,7 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +27,7 @@ public class DimensionManager
     private static Hashtable<Integer, Integer> dimensions = new Hashtable<Integer, Integer>();
     private static Map<World, ListMultimap<ChunkCoordIntPair, String>> persistentChunkStore = Maps.newHashMap(); //FIXME: Unused?
     private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
-    private static int nextFree;
+    private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -45,7 +46,6 @@ public class DimensionManager
         {
             return;
         }
-        nextFree = 0; //FIXME: Load/store nextFree from/in file in world dir, since other dims could have been registered in previous sessions by a now uninstalled mod
         registerProviderType( 0, WorldProviderSurface.class, true);
         registerProviderType(-1, WorldProviderHell.class,    true);
         registerProviderType( 1, WorldProviderEnd.class,     false);
@@ -65,8 +65,10 @@ public class DimensionManager
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
         dimensions.put(id, providerType);
-        if (id >= nextFree)
-            nextFree = id+1;
+        if (id >= 0)
+        {
+            dimensionMap.set(id);
+        }
     }
 
     /**
@@ -222,7 +224,67 @@ public class DimensionManager
         unloadQueue.clear();
     }
 
+    /**
+     * Return the next free dimension ID. Note: you are not guaranteed a contiguous
+     * block of free ids. Always call for each individual ID you wish to get.
+     * @return
+     */
     public static int getNextFreeDimId() {
-        return nextFree;
+        int next = 0;
+        while (true)
+        {
+            next = dimensionMap.nextClearBit(next);
+            if (dimensions.containsKey(next))
+            {
+                dimensionMap.set(next);
+            }
+            else
+            {
+                return next;
+            }
+        }
+    }
+
+    public static NBTTagCompound saveDimensionDataMap()
+    {
+        int[] data = new int[(dimensionMap.length() + Integer.SIZE - 1 )/ Integer.SIZE];
+        NBTTagCompound dimMap = new NBTTagCompound();
+        for (int i = 0; i < data.length; i++)
+        {
+            int val = 0;
+            for (int j = 0; j < Integer.SIZE; j++)
+            {
+                val |= dimensionMap.get(i * Integer.SIZE + j) ? (1 << j) : 0;
+            }
+            data[i] = val;
+        }
+        dimMap.setIntArray("DimensionArray", data);
+        return dimMap;
+    }
+
+    public static void loadDimensionDataMap(NBTTagCompound compoundTag)
+    {
+        if (compoundTag == null)
+        {
+            dimensionMap.clear();
+            for (Integer id : dimensions.keySet())
+            {
+                if (id >= 0)
+                {
+                    dimensionMap.set(id);
+                }
+            }
+        }
+        else
+        {
+            int[] intArray = compoundTag.getIntArray("DimensionArray");
+            for (int i = 0; i < intArray.length; i++)
+            {
+                for (int j = 0; j < Integer.SIZE; j++)
+                {
+                    dimensionMap.set(i * Integer.SIZE + j, (intArray[i] & (1 << j)) != 0);
+                }
+            }
+        }
     }
 }
