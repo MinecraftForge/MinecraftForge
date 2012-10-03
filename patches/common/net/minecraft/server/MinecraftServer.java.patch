@@ -95,7 +95,15 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -622,13 +602,13 @@
+@@ -408,6 +388,7 @@
+             for (int var3 = 0; var3 < var2; ++var3)
+             {
+                 WorldServer var4 = var1[var3];
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var4));
+                 var4.flush();
+             }
+ 
+@@ -622,13 +603,13 @@
      {
          this.theProfiler.startSection("levels");
  
@@ -113,26 +121,36 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
  
                  if (this.tickCounter % 20 == 0)
-@@ -659,7 +639,7 @@
+@@ -659,9 +640,11 @@
                  }
              }
  
 -            this.timeOfLastDimensionTick[var1][this.tickCounter % 100] = System.nanoTime() - var2;
+-        }
+-
 +            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - var2;
-         }
- 
++        }
++
++        this.theProfiler.endStartSection("dim_unloading");
++        DimensionManager.unloadWorlds(worldTickTimes);
          this.theProfiler.endStartSection("connection");
-@@ -717,7 +697,8 @@
+         this.getNetworkThread().networkTick();
+         this.theProfiler.endStartSection("players");
+@@ -717,7 +700,12 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
 -        return par1 == -1 ? this.worldServers[1] : (par1 == 1 ? this.worldServers[2] : this.worldServers[0]);
 +        WorldServer ret = DimensionManager.getWorld(par1);
-+        return (ret != null ? ret : DimensionManager.getWorld(0));
++        if (ret == null) {
++            DimensionManager.initDimension(par1);
++            ret = DimensionManager.getWorld(par1);
++        }
++        return ret;
      }
  
      @SideOnly(Side.SERVER)
-@@ -830,7 +811,7 @@
+@@ -830,7 +818,7 @@
  
      public String getServerModName()
      {
@@ -141,3 +159,11 @@
      }
  
      /**
+@@ -1104,6 +1092,7 @@
+ 
+             if (var2 != null)
+             {
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2));
+                 var2.flush();
+             }
+         }
