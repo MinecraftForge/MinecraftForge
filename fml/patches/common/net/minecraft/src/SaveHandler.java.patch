@@ -23,7 +23,7 @@
                  var3 = var2.func_74775_l("Data");
 -                return new WorldInfo(var3);
 +                worldInfo = new WorldInfo(var3);
-+                FMLCommonHandler.instance().handleWorldDataLoad(worldInfo, var2);
++                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, var2);
 +                return worldInfo;
              }
              catch (Exception var5)
@@ -34,7 +34,7 @@
                  var3 = var2.func_74775_l("Data");
 -                return new WorldInfo(var3);
 +                worldInfo = new WorldInfo(var3);
-+                FMLCommonHandler.instance().handleWorldDataLoad(worldInfo, var2);
++                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, var2);
 +                return worldInfo;
              }
              catch (Exception var4)
@@ -44,7 +44,7 @@
          NBTTagCompound var4 = new NBTTagCompound();
          var4.func_74782_a("Data", var3);
 -
-+        FMLCommonHandler.instance().handleWorldDataSave(p_75755_1_, var4);
++        FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, var4);
          try
          {
              File var5 = new File(this.field_75770_b, "level.dat_new");
@@ -53,7 +53,7 @@
          NBTTagCompound var3 = new NBTTagCompound();
          var3.func_74782_a("Data", var2);
 -
-+        FMLCommonHandler.instance().handleWorldDataSave(p_75761_1_, var3);
++        FMLCommonHandler.instance().handleWorldDataSave(this, p_75761_1_, var3);
          try
          {
              File var4 = new File(this.field_75770_b, "level.dat_new");
