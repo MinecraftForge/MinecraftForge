@@ -60,6 +60,13 @@ public @interface Mod
      */
     String acceptedMinecraftVersions() default "";
     /**
+     * An optional bukkit plugin that will be injected into the bukkit plugin framework if
+     * this mod is loaded into the FML framework and the bukkit coremod is present.
+     * Instances of the bukkit plugin can be obtained via the {@link BukkitPluginRef} annotation on fields.
+     * @return
+     */
+    String bukkitPlugin() default "";
+    /**
      * Mark the designated method as being called at the "pre-initialization" phase
      * @author cpw
      *
