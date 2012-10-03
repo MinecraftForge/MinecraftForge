@@ -1,0 +1,44 @@
+--- ../src-base/common/net/minecraft/src/WorldInfo.java
++++ ../src-work/common/net/minecraft/src/WorldInfo.java
+@@ -1,4 +1,8 @@
+ package net.minecraft.src;
++
++import java.util.Map;
++
++import com.google.common.collect.Maps;
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+@@ -26,6 +30,7 @@
+     private boolean field_76111_s;
+     private boolean field_76110_t;
+     private boolean field_76109_u;
++    private Map<String,NBTBase> additionalProperties;
+ 
+     protected WorldInfo()
+     {
+@@ -372,4 +377,24 @@
+     {
+         this.field_76109_u = p_76091_1_;
+     }
++
++    /**
++     * Allow access to additional mod specific world based properties
++     * Used by FML to store mod list associated with a world, and maybe an id map
++     * Used by Forge to store the dimensions available to a world
++     * @param additionalProperties
++     */
++    public void setAdditionalProperties(Map<String,NBTBase> additionalProperties)
++    {
++        // one time set for this
++        if (this.additionalProperties == null)
++        {
++            this.additionalProperties = additionalProperties;
++        }
++    }
++
++    public NBTBase getAdditionalProperty(String additionalProperty)
++    {
++        return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
++    }
+ }

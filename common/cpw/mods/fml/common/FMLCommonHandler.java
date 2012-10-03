@@ -15,7 +15,9 @@ package cpw.mods.fml.common;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,11 +27,15 @@ import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.src.NBTBase;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.Packet131MapData;
+import net.minecraft.src.SaveHandler;
 import net.minecraft.src.ServerListenThread;
 import net.minecraft.src.ThreadServerApplication;
 import net.minecraft.src.World;
+import net.minecraft.src.WorldInfo;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -37,6 +43,9 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
@@ -75,6 +84,8 @@ public class FMLCommonHandler
     private boolean noForge;
     private List<String> brandings;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
+    private Set<SaveHandler> handlerSet = Sets.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
+
 
 
     public void beginLoading(IFMLSidedHandler handler)
@@ -384,5 +395,47 @@ public class FMLCommonHandler
     public void handleTinyPacket(NetHandler handler, Packet131MapData mapData)
     {
         sidedDelegate.handleTinyPacket(handler, mapData);
+    }
+
+    public void handleWorldDataSave(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
+    {
+        for (ModContainer mc : Loader.instance().getModList())
+        {
+            if (mc instanceof InjectedModContainer)
+            {
+                WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
+                if (wac != null)
+                {
+                    NBTTagCompound dataForWriting = wac.getDataForWriting(handler, worldInfo);
+                    tagCompound.func_74766_a(mc.getModId(), dataForWriting);
+                }
+            }
+        }
+    }
+
+    public void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
+    {
+        if (getEffectiveSide()!=Side.SERVER)
+        {
+            return;
+        }
+        if (handlerSet.contains(handler))
+        {
+            return;
+        }
+        handlerSet.add(handler);
+        Map<String,NBTBase> additionalProperties = Maps.newHashMap();
+        worldInfo.setAdditionalProperties(additionalProperties);
+        for (ModContainer mc : Loader.instance().getModList())
+        {
+            if (mc instanceof InjectedModContainer)
+            {
+                WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
+                if (wac != null)
+                {
+                    wac.readData(handler, worldInfo, additionalProperties, tagCompound.func_74775_l(mc.getModId()));
+                }
+            }
+        }
     }
 }
