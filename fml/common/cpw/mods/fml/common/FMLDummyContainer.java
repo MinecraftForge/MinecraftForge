@@ -15,14 +15,26 @@
 package cpw.mods.fml.common;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
+import net.minecraft.src.NBTBase;
+import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
+import net.minecraft.src.NBTTagString;
+import net.minecraft.src.SaveHandler;
+import net.minecraft.src.WorldInfo;
+
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 
 /**
  * @author cpw
  *
  */
-public class FMLDummyContainer extends DummyModContainer
+public class FMLDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public FMLDummyContainer()
     {
@@ -48,5 +60,46 @@ public class FMLDummyContainer extends DummyModContainer
     public boolean registerBus(EventBus bus, LoadController controller)
     {
         return true;
+    }
+
+    @Override
+    public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
+    {
+        NBTTagCompound fmlData = new NBTTagCompound();
+        NBTTagList list = new NBTTagList();
+        for (ModContainer mc : Loader.instance().getActiveModList())
+        {
+            NBTTagCompound mod = new NBTTagCompound();
+            mod.func_74778_a("ModId", mc.getModId());
+            mod.func_74778_a("ModVersion", mc.getVersion());
+            list.func_74742_a(mod);
+        }
+        fmlData.func_74782_a("ModList", list);
+        return fmlData;
+    }
+
+    @Override
+    public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
+    {
+        if (tag.func_74764_b("ModList"))
+        {
+            NBTTagList modList = tag.func_74761_m("ModList");
+            for (int i = 0; i < modList.func_74745_c(); i++)
+            {
+                NBTTagCompound mod = (NBTTagCompound) modList.func_74743_b(i);
+                String modId = mod.func_74779_i("ModId");
+                String modVersion = mod.func_74779_i("ModVersion");
+                ModContainer container = Loader.instance().getIndexedModList().get(modId);
+                if (container == null)
+                {
+                    FMLLog.severe("This world was saved with mod %s which appears to be missing, things may not work well", modId);
+                    continue;
+                }
+                if (!modVersion.equals(container.getVersion()))
+                {
+                    FMLLog.info("This world was saved with mod %s version %s and it is now at version %s, things may not work well", modId, modVersion, container.getVersion());
+                }
+            }
+        }
     }
 }

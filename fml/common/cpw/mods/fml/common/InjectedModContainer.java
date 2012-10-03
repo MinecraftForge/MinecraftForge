@@ -117,4 +117,16 @@ public class InjectedModContainer implements ModContainer
     {
         return wrappedContainer.acceptableMinecraftVersionRange();
     }
+
+    public WorldAccessContainer getWrappedWorldAccessContainer()
+    {
+        if (wrappedContainer instanceof WorldAccessContainer)
+        {
+            return (WorldAccessContainer) wrappedContainer;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }
