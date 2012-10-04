@@ -13,6 +13,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.*;
@@ -107,9 +108,11 @@ public class DimensionManager
         if (world != null) {
             worlds.put(id, world);
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
+            FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
             worlds.remove(id);
             MinecraftServer.getServer().worldTickTimes.remove(id);
+            FMLLog.info("Unloading dimension %d", id);
         }
 
         ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
@@ -180,6 +183,15 @@ public class DimensionManager
         init();
     }
 
+    /**
+     * Not public API: used internally to get dimensions that should load at
+     * server startup
+     * @return
+     */
+    public static Integer[] getStaticDimensionIDs()
+    {
+        return dimensions.keySet().toArray(new Integer[dimensions.keySet().size()]);
+    }
     public static WorldProvider createProviderFor(int dim)
     {
         try

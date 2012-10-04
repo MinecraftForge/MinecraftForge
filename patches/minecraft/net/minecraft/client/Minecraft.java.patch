@@ -39,7 +39,26 @@
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();
                  }
-@@ -2221,80 +2226,12 @@
+@@ -1917,6 +1922,18 @@
+             if (this.theIntegratedServer != null)
+             {
+                 this.theIntegratedServer.initiateShutdown();
++                if (loadingScreen!=null)
++                {
++                    this.loadingScreen.resetProgresAndWorkingMessage("Shutting down internal server...");
++                }
++                while (!theIntegratedServer.isServerStopped())
++                {
++                    try
++                    {
++                        Thread.sleep(10);
++                    }
++                    catch (InterruptedException ie) {}
++                }
+             }
+ 
+             this.theIntegratedServer = null;
+@@ -2221,80 +2238,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;
