@@ -133,7 +133,7 @@
              }
  
              return true;
-@@ -318,29 +366,55 @@
+@@ -318,29 +366,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -147,6 +147,7 @@
 +        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
 +        if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
 +        {
++            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
 +            return true;
 +        }
 +
@@ -211,7 +212,7 @@
      }
  
      /**
-@@ -350,4 +424,13 @@
+@@ -350,4 +425,13 @@
      {
          this.theWorld = par1WorldServer;
      }
