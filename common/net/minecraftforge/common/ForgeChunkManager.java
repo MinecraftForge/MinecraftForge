@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
@@ -72,7 +73,7 @@ public class ForgeChunkManager
     private static int defaultMaxChunks;
     private static boolean overridesEnabled;
 
-    private static Map<World, Multimap<String, Ticket>> tickets = Maps.newHashMap();
+    private static Map<World, Multimap<String, Ticket>> tickets = new MapMaker().weakKeys().makeMap();
     private static Map<String, Integer> ticketConstraints = Maps.newHashMap();
     private static Map<String, Integer> chunkConstraints = Maps.newHashMap();
 
@@ -80,10 +81,10 @@ public class ForgeChunkManager
 
     private static Map<String, LoadingCallback> callbacks = Maps.newHashMap();
 
-    private static Map<World, SetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = Maps.newHashMap();
+    private static Map<World, SetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
-    private static Map<World,Cache<Long, Chunk>> dormantChunkCache = Maps.newHashMap();
+    private static Map<World,Cache<Long, Chunk>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
 
     private static File cfgFile;
     private static Configuration config;
