@@ -35,20 +35,22 @@ public class BiomeManager
      */
     public static void setVillageCanSpawnInBiome(BiomeGenBase biome, boolean canSpawn)
     {
-    	ArrayList<BiomeGenBase> biomesForVillage = new ArrayList<BiomeGenBase>(MapGenVillage.villageSpawnBiomes);
+        ArrayList<BiomeGenBase> biomesForVillage = new ArrayList<BiomeGenBase>(MapGenVillage.villageSpawnBiomes);
+
         if (canSpawn)
         {
-        	if(!villageBiomes.contains(biome))
-        	{
-	            villageBiomes.add(biome);
-	            biomesForVillage.add(biome);
-        	}
+            if (!villageBiomes.contains(biome))
+            {
+                villageBiomes.add(biome);
+                biomesForVillage.add(biome);
+            }
         }
         else
         {
             villageBiomes.remove(biome);
             biomesForVillage.remove(biome);
         }
+
         MapGenVillage.villageSpawnBiomes = biomesForVillage;
     }
 
@@ -61,10 +63,10 @@ public class BiomeManager
     {
         if (canSpawn)
         {
-        	if(!strongholdBiomes.contains(biome))
-        	{
-            	strongholdBiomes.add(biome);
-        	}
+            if (!strongholdBiomes.contains(biome))
+            {
+                strongholdBiomes.add(biome);
+            }
         }
         else
         {
@@ -81,10 +83,10 @@ public class BiomeManager
     {
         if (canSpawn)
         {
-        	if(!spawnBiomes.contains(biome))
-        	{
-            	spawnBiomes.add(biome);
-        	}
+            if (!spawnBiomes.contains(biome))
+            {
+                spawnBiomes.add(biome);
+            }
         }
         else
         {
@@ -96,17 +98,17 @@ public class BiomeManager
     {
         return spawnBiomes;
     }
-    
+
     public static void initializeStrongholdGen(IChunkProvider ichunkprovider)
     {
-    	if(!(ichunkprovider instanceof ChunkProviderGenerate))
-    	{
-    		return;
-    	}
-    	ChunkProviderGenerate chunkproviderenerate = (ChunkProviderGenerate)ichunkprovider;
-    	
-    	ArrayList biomes = new ArrayList(Arrays.asList(chunkproviderenerate.strongholdGenerator.allowedBiomeGenBases));
-    	biomes.addAll(strongholdBiomes);
-    	chunkproviderenerate.strongholdGenerator.allowedBiomeGenBases = (BiomeGenBase[]) biomes.toArray(new BiomeGenBase[0]);
+        if (!(ichunkprovider instanceof ChunkProviderGenerate))
+        {
+            return;
+        }
+
+        ChunkProviderGenerate chunkproviderenerate = (ChunkProviderGenerate)ichunkprovider;
+        ArrayList biomes = new ArrayList(Arrays.asList(chunkproviderenerate.strongholdGenerator.allowedBiomeGenBases));
+        biomes.addAll(strongholdBiomes);
+        chunkproviderenerate.strongholdGenerator.allowedBiomeGenBases = (BiomeGenBase[]) biomes.toArray(new BiomeGenBase[0]);
     }
 }
