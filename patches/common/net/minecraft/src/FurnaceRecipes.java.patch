@@ -15,7 +15,13 @@
  
      /**
       * Used to call methods addSmelting and getSmeltingResult.
-@@ -50,7 +52,9 @@
+@@ -45,12 +47,14 @@
+     public void addSmelting(int par1, ItemStack par2ItemStack, float par3)
+     {
+         this.smeltingList.put(Integer.valueOf(par1), par2ItemStack);
+-        this.experienceList.put(Integer.valueOf(par2ItemStack.itemID), Float.valueOf(par3));
++        this.experienceList.put(Arrays.asList(par2ItemStack.itemID, par2ItemStack.getItemDamage()), Float.valueOf(par3));
+     }
  
      /**
       * Returns the smelting result of an item.
@@ -25,10 +31,22 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
+<<<<<<< HEAD
 @@ -65,4 +69,47 @@
      {
          return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
+=======
+@@ -61,8 +65,51 @@
+         return this.smeltingList;
+>>>>>>> Also, furnace experience values can now be determined by the output's metadata.
      }
+ 
+-    public float getExperience(int par1)
++    public float getExperience(int par1, int par2)
+     {
+-        return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
++    	return this.experienceList.containsKey(Arrays.asList(par1, par2)) ? ((Float)this.experienceList.get(Arrays.asList(par1, par2))).floatValue() : 0.0F;
++    }
 +
 +    /**
 +     * Add a metadata-sensitive furnace recipe
@@ -51,7 +69,11 @@
 +    public void addSmelting(int itemID, int metadata, ItemStack itemstack, float par4)
 +    {
 +        metaSmeltingList.put(Arrays.asList(itemID, metadata), itemstack);
+<<<<<<< HEAD
 +        this.experienceList.put(Integer.valueOf(itemstack.itemID), Float.valueOf(par4));
+=======
++        this.experienceList.put(Arrays.asList(itemstack.itemID, itemstack.getItemDamage()), Float.valueOf(par4));
+>>>>>>> Also, furnace experience values can now be determined by the output's metadata.
 +    }
 +    
 +    /**
@@ -71,5 +93,5 @@
 +            return ret;
 +        }
 +        return (ItemStack)smeltingList.get(Integer.valueOf(item.itemID));
-+    }
+     }
  }
