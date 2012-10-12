@@ -278,24 +278,24 @@ public class ForgeChunkManager
         }
         
         public int getMaxDepth()
-    	{
-			return maxDepth;
-		}
+        {
+            return maxDepth;
+        }
         
         public String getModId()
-		{
-			return modId;
-		}
+        {
+            return modId;
+        }
         
         public Type getTicketType()
-		{
-			return ticketType;
-		}
+        {
+            return ticketType;
+        }
         
         public Set<ChunkCoordIntPair> getRequestedChunks()
-		{
-        	return Collections.unmodifiableSet(requestedChunks);
-		}
+        {
+            return Collections.unmodifiableSet(requestedChunks);
+        }
     }
 
     static void loadWorld(World world)
