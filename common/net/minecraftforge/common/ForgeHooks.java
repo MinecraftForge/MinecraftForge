@@ -277,6 +277,9 @@ public class ForgeHooks
         pickedMap.put(Block.tripWire.blockID, Item.silk.shiftedIndex);
     }
     
+    /**
+     * Called to look up the item ID for the block when 'pick block' is called.
+     */
     public static int lookupPickedID(int blockID)
     {
         initPicked();
