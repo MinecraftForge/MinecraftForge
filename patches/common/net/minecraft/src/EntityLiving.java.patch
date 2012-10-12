@@ -142,7 +142,16 @@
      }
  
      /**
-@@ -2180,4 +2228,30 @@
+@@ -2091,8 +2139,6 @@
+         return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+-
+     /**
+      * input is the potion id to remove from the current active potion effects
+      */
+@@ -2180,4 +2226,30 @@
              this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().shiftedIndex, var4.xCoord, var4.yCoord, var4.zCoord, var3.xCoord, var3.yCoord + 0.05D, var3.zCoord);
          }
      }
