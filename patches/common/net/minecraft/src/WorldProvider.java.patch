@@ -1,43 +1,23 @@
 --- ../src_base/common/net/minecraft/src/WorldProvider.java
 +++ ../src_work/common/net/minecraft/src/WorldProvider.java
-@@ -1,5 +1,8 @@
+@@ -1,5 +1,7 @@
  package net.minecraft.src;
-
+ 
 +import net.minecraftforge.client.SkyProvider;
-+import net.minecraftforge.common.BiomeManager;
 +import net.minecraftforge.common.DimensionManager;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
-
-@@ -62,6 +65,7 @@
-     protected void registerWorldChunkManager()
-     {
-         this.worldChunkMgr = this.terrainType.getChunkManager(this.worldObj);
-+        this.worldChunkMgr.biomesToSpawnIn.addAll(BiomeManager.getSpawnBiomes());
-     }
-
-     /**
-@@ -69,7 +73,9 @@
-      */
-     public IChunkProvider getChunkProvider()
-     {
--        return this.terrainType.getChunkGenerator(this.worldObj);
-+        IChunkProvider chunkProvider = this.terrainType.getChunkGenerator(this.worldObj);
-+        BiomeManager.initializeStrongholdGen(chunkProvider);
-+        return chunkProvider;
-     }
-
-     /**
-@@ -185,7 +191,7 @@
-
+ 
+@@ -185,7 +187,7 @@
+ 
      public static WorldProvider getProviderForDimension(int par0)
      {
 -        return (WorldProvider)(par0 == -1 ? new WorldProviderHell() : (par0 == 0 ? new WorldProviderSurface() : (par0 == 1 ? new WorldProviderEnd() : null)));
 +        return DimensionManager.createProviderFor(par0);
      }
-
+ 
      @SideOnly(Side.CLIENT)
-@@ -254,4 +260,238 @@
+@@ -254,4 +256,238 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
@@ -47,7 +27,7 @@
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
-+     *
++     * 
 +     * @param dim Dimension ID
 +     */
 +    public void setDimension(int dim)
@@ -97,7 +77,7 @@
 +        else if (this instanceof WorldProviderHell)
 +        {
 +            return "Leaving the Nether";
-+        }
++        } 
 +        return null;
 +    }
 +
@@ -265,12 +245,12 @@
 +        worldObj.worldInfo.setThunderTime(0);
 +        worldObj.worldInfo.setThundering(false);
 +    }
-+
++    
 +    public boolean canDoLightning(Chunk chunk)
 +    {
 +        return true;
 +    }
-+
++    
 +    public boolean canDoRainSnowIce(Chunk chunk)
 +    {
 +        return true;
