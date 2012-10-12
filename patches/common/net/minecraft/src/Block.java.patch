@@ -756,7 +756,7 @@
 +     */
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
-+        int id = idPicked(world, x, y, z);
++        int id = ForgeHooks.lookupPickedID(world.getBlockId(x, y, z));
 +        
 +        if (id == 0)
 +        {
@@ -769,7 +769,7 @@
 +            return null;
 +        }
 +
-+        return new ItemStack(id, 1, getDamageValue(world, x, y, z));
++        return new ItemStack(id, 1, this.damageDropped(world.getBlockMetadata(x, y, z)));
 +    }
 +
 +    /**
