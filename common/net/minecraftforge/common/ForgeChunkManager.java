@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -275,6 +276,26 @@ public class ForgeChunkManager
         {
             return player;
         }
+        
+        public int getMaxDepth()
+    	{
+			return maxDepth;
+		}
+        
+        public String getModId()
+		{
+			return modId;
+		}
+        
+        public Type getTicketType()
+		{
+			return ticketType;
+		}
+        
+        public Set<ChunkCoordIntPair> getRequestedChunks()
+		{
+        	return Collections.unmodifiableSet(requestedChunks);
+		}
     }
 
     static void loadWorld(World world)
