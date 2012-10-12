@@ -207,6 +207,19 @@ public class ForgeChunkManager
                 this.maxDepth = depth;
             }
         }
+
+        /**
+         * Gets the current max depth for this ticket. 
+         * Should be the same as getMaxChunkListDepth() 
+         * unless setChunkListDepth has been called.
+         * 
+         * @return Current max depth
+         */
+        public int getChunkListDepth()
+        {
+            return maxDepth;
+        }
+        
         /**
          * Get the maximum chunk depth size
          *
@@ -259,8 +272,6 @@ public class ForgeChunkManager
 
         /**
          * Is this a player associated ticket rather than a mod associated ticket?
-         *
-         * @return
          */
         public boolean isPlayerTicket()
         {
@@ -269,11 +280,34 @@ public class ForgeChunkManager
 
         /**
          * Get the player associated with this ticket
-         * @return
          */
         public String getPlayerName()
         {
             return player;
+        }
+
+        /**
+         * Get the associated mod id
+         */
+        public String getModId()
+        {
+            return modId;
+        }
+
+        /**
+         * Gets the ticket type
+         */
+        public Type getType()
+        {
+            return ticketType;
+        }
+
+        /**
+         * Gets a list of requested chunks for this ticket.
+         */
+        public ImmutableSet getChunkList()
+        {
+            return ImmutableSet.copyOf(requestedChunks);
         }
     }
 
