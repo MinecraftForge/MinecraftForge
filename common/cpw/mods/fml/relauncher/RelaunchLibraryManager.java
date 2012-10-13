@@ -85,13 +85,15 @@ public class RelaunchLibraryManager
                 {
                     boolean download = false;
                     String libName = lib.getLibraries()[i];
+                    File tmp = new File(libName);
+                    String targFileName = tmp.getName();
                     String checksum = lib.getHashes()[i];
-                    File libFile = new File(libDir, libName);
+                    File libFile = new File(libDir, targFileName);
                     if (!libFile.exists())
                     {
                         try
                         {
-                            downloadFile(libFile, lib.getRootURL(), checksum);
+                            downloadFile(libFile, lib.getRootURL(), libName, checksum);
                             download = true;
                         }
                         catch (Throwable e)
@@ -414,11 +416,14 @@ public class RelaunchLibraryManager
         return coreModDir;
     }
 
-    private static void downloadFile(File libFile, String rootUrl, String hash)
+    private static void downloadFile(File libFile, String rootUrl,String realFilePath, String hash)
     {
         try
         {
-            URL libDownload = new URL(String.format(rootUrl,libFile.getName()));
+        	//rootUrl.replace("%s", libFile.getPath())
+            URL libDownload = new URL(String.format(rootUrl,realFilePath));
+            System.out.println("Downloading file: " + libDownload.getHost() + libDownload.getPath());
+            System.out.println("The libFile's path is " + libFile.getAbsolutePath());
             String infoString = String.format("Downloading file %s", libDownload.toString());
             downloadMonitor.updateProgressString(infoString);
             FMLRelaunchLog.info(infoString);
