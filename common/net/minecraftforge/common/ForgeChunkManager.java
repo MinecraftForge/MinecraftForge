@@ -81,7 +81,7 @@ public class ForgeChunkManager
 
     private static Map<String, LoadingCallback> callbacks = Maps.newHashMap();
 
-    private static Map<World, SetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
+    private static Map<World, ImmutableSetMultimap<ChunkCoordIntPair,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
     private static Map<World,Cache<Long, Chunk>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
@@ -209,17 +209,17 @@ public class ForgeChunkManager
         }
 
         /**
-         * Gets the current max depth for this ticket. 
-         * Should be the same as getMaxChunkListDepth() 
+         * Gets the current max depth for this ticket.
+         * Should be the same as getMaxChunkListDepth()
          * unless setChunkListDepth has been called.
-         * 
+         *
          * @return Current max depth
          */
         public int getChunkListDepth()
         {
             return maxDepth;
         }
-        
+
         /**
          * Get the maximum chunk depth size
          *
@@ -316,8 +316,7 @@ public class ForgeChunkManager
         ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.<String, Ticket>create();
         tickets.put(world, newTickets);
 
-        SetMultimap<ChunkCoordIntPair,Ticket> forcedChunkMap = LinkedHashMultimap.create();
-        forcedChunks.put(world, forcedChunkMap);
+        forcedChunks.put(world, ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of());
 
         if (!(world instanceof WorldServer))
         {
@@ -612,7 +611,8 @@ public class ForgeChunkManager
             return;
         }
         ticket.requestedChunks.add(chunk);
-        forcedChunks.get(ticket.world).put(chunk, ticket);
+        ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>builder().putAll(forcedChunks.get(ticket.world)).put(chunk, ticket).build();
+        forcedChunks.put(ticket.world, newMap);
         if (ticket.maxDepth > 0 && ticket.requestedChunks.size() > ticket.maxDepth)
         {
             ChunkCoordIntPair removed = ticket.requestedChunks.iterator().next();
@@ -650,7 +650,10 @@ public class ForgeChunkManager
             return;
         }
         ticket.requestedChunks.remove(chunk);
-        forcedChunks.get(ticket.world).remove(chunk, ticket);
+        LinkedHashMultimap<ChunkCoordIntPair, Ticket> copy = LinkedHashMultimap.create(forcedChunks.get(ticket.world));
+        copy.remove(chunk, ticket);
+        ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.copyOf(copy);
+        forcedChunks.put(ticket.world,newMap);
     }
 
     static void loadConfiguration()
@@ -676,7 +679,7 @@ public class ForgeChunkManager
      */
     public static SetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
     {
-        return forcedChunks.containsKey(world) ? ImmutableSetMultimap.copyOf(forcedChunks.get(world)) : ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of();
+        return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of();
     }
 
     static void saveWorld(World world)
