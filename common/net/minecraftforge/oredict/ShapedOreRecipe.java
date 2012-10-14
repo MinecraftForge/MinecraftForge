@@ -20,22 +20,57 @@ public class ShapedOreRecipe implements IRecipe
     private Object[] input = null;
     private int width = 0;
     private int height = 0;
-    private boolean mirriored = true;
+    private boolean mirrored = true;
 
-    public ShapedOreRecipe(Block     result, Object... recipe){ this(result, true, recipe);}
-    public ShapedOreRecipe(Item      result, Object... recipe){ this(result, true, recipe); }
-    public ShapedOreRecipe(ItemStack result, Object... recipe){ this(result, true, recipe); }
-    public ShapedOreRecipe(Block     result, boolean mirrior, Object... recipe){ this(new ItemStack(result), mirrior, recipe);}
-    public ShapedOreRecipe(Item      result, boolean mirrior, Object... recipe){ this(new ItemStack(result), mirrior, recipe); }
-    
-    public ShapedOreRecipe(ItemStack result, boolean mirrior, Object... recipe)
+    //public ShapedOreRecipe(Block     result, Object... recipe){ this(result, true, recipe);}
+    //public ShapedOreRecipe(Item      result, Object... recipe){ this(result, true, recipe); }
+    //public ShapedOreRecipe(ItemStack result, Object... recipe){ this(result, true, recipe); }
+    /**
+     * Constructor for ShapedOreRecipe using a Block for ease-of-use.
+     * @param result Final result (as block)
+     * @param recipe Components of recipe and if recipe is to be mirrored.
+     */
+    public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe);}
+    /**
+     * Constructor for ShapedOreRecipe using an Item for ease-of-use.
+     * @param result Final result (as item)
+     * @param recipe Components of recipe and if recipe is to be mirrored.
+     */
+    public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
+    /**
+     * Main constructor for ShapedOreRecipe.
+     * A recipe can be mirrored or not, and this is determined by a boolean before the recipe.
+     * This is not visible in the constructor, as there was a problem with constructor ambiguity.
+     * Instead, if the second value is a boolean, mirrored is correctly set. Else, mirrored
+     * defaults to true. If the coder has used an Object[] directly, this maintains compatibility
+     * as well, so no changes SHOULD be needed.
+     * 
+     * The recipe is defined like so, with a demonstration recipe for a cobblestone sword.
+     * "CCC", " S ", " S ", 'C', Block.cobblestone, 'S', Item.stick
+     * @param result The final result
+     * @param recipe The recipe.
+     */
+    public ShapedOreRecipe(ItemStack result, Object... recipe)
     {
         output = result.copy();
-        mirriored = mirrior;
+        mirrored = true;
         
         String shape = "";
         int idx = 0;
 
+        if (recipe[idx] instanceof Boolean)
+        {
+            mirrored = (Boolean)recipe[idx];
+            if (recipe[idx+1] instanceof Object[])
+            {
+                recipe = (Object[])recipe[idx+1];
+            }
+            else
+            {
+                idx = 1;
+            }
+        }
+        
         if (recipe[idx] instanceof String[])
         {
             String[] parts = ((String[])recipe[idx++]);
@@ -135,7 +170,7 @@ public class ShapedOreRecipe implements IRecipe
                     return true;
                 }
     
-                if (mirriored && checkMatch(inv, x, y, false))
+                if (mirrored && checkMatch(inv, x, y, false))
                 {
                     return true;
                 }
@@ -145,7 +180,7 @@ public class ShapedOreRecipe implements IRecipe
         return false;
     }
     
-    private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirrior)
+    private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
         {
@@ -157,7 +192,7 @@ public class ShapedOreRecipe implements IRecipe
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
-                    if (mirrior)
+                    if (mirror)
                     {
                         target = input[width - subX - 1 + subY * width];
                     }
@@ -209,8 +244,14 @@ public class ShapedOreRecipe implements IRecipe
         return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
     }
     
-    public void setMirriored(boolean mirrior)
+    @Deprecated
+    public void setMirriored(boolean mirror)
     {
-        mirriored = mirrior;
+        mirrored = mirror;
+    }
+    
+    public void setMirrored(boolean mirror)
+    {
+        mirrored = mirror;
     }
 }
