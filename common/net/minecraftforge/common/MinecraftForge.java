@@ -166,6 +166,18 @@ public class MinecraftForge
            ForgeHooks.toolEffectiveness.remove(key);
        }
    }
+   
+   /**
+    * Register a block to be unbreakable by the ender dragon.
+    * 
+    * @param blockID the id of the block to register
+    * @param metadata The metadata for the block subtype.
+    */
+   public static void setUnbreakableByDragon(int blockID, int metadata)
+   {
+	   List key = Arrays.asList(blockID, metadata);
+       ForgeHooks.unbreakableByDragon.add(key);
+   }
 
    /**
     * Method invoked by FML before any other mods are loaded.

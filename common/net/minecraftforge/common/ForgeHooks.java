@@ -189,6 +189,15 @@ public class ForgeHooks
         MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
     }
+    
+    static HashSet<List> unbreakableByDragon = new HashSet<List>();
+
+    public static boolean isBreakableByDragon(int blockID, int metadata)
+    {
+    	if(blockID == Block.obsidian.blockID || blockID == Block.whiteStone.blockID || blockID == Block.bedrock.blockID)
+    			return false;
+    	return !unbreakableByDragon.contains(Arrays.asList(blockID, metadata));
+    }
 
     public static String getTexture(String _default, Object obj)
     {
