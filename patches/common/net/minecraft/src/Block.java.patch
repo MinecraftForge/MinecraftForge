@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1255,816 @@
+@@ -1249,4 +1255,831 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -917,5 +917,20 @@
 +    public int getLightOpacity(World world, int x, int y, int z)
 +    {
 +        return lightOpacity[blockID];
++    }
++
++    /**
++     * Determines if this block is destroyed when a ender dragon tries to fly through it.
++     * The block will be set to 0, nothing will drop.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z position
++     * @return True to allow the ender dragon to destroy this block
++     */
++    public boolean canDragonDestroy(World world, int x, int y, int z)
++    {
++        return blockID != obsidian.blockID && blockID != whiteStone.blockID && blockID != bedrock.blockID;
 +    }
  }
