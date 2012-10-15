@@ -3,4 +3,5 @@
 *.patch text
 *.png binary
 *.exe binary
+*.dll binary
 *.zip binary
