@@ -1,10 +1,13 @@
 package cpw.mods.mockmod;
 
+import net.minecraft.src.GuiErrorScreen;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.src.FontRenderer;
+import cpw.mods.fml.client.CustomModLoadingErrorDisplayException;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Block;
 import cpw.mods.fml.common.Mod.Init;
@@ -12,6 +15,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.Side;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -56,6 +60,8 @@ public class MockMod
     @Metadata
     private ModMetadata meta;
 
+    @SidedProxy(clientSide="cpw.mods.mockmod.MockProxyClient", serverSide="cpw.mods.mockmod.MockProxy")
+    public static MockProxy proxy;
 //    @Block(name="MyBlock", itemTypeClass=TestItem.class)
 //    private MockBlock myBlock;
 
@@ -70,5 +76,6 @@ public class MockMod
     public void init(FMLInitializationEvent evt)
     {
         System.out.printf("Hello from mockmod init : %s %s %s\n", myInstance, meta, MockBlock.tstInstance);
+        proxy.throwError();
     }
 }

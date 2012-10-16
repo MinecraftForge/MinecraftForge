@@ -35,7 +35,7 @@ public class GuiModsMissingForServer extends GuiScreen
     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
     {
         this.func_73873_v_();
-        int offset = 85 - modsMissing.getModList().size() * 10;
+        int offset = Math.max(85 - modsMissing.getModList().size() * 10, 10);
         this.func_73732_a(this.field_73886_k, "Forge Mod Loader could not connect to this server", this.field_73880_f / 2, offset, 0xFFFFFF);
         offset += 10;
         this.func_73732_a(this.field_73886_k, "The mods and versions listed below could not be found", this.field_73880_f / 2, offset, 0xFFFFFF);

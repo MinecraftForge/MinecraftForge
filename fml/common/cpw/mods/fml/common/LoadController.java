@@ -1,5 +1,6 @@
 package cpw.mods.fml.common;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -88,6 +89,7 @@ public class LoadController
         state = state.transition(!errors.isEmpty());
         if (state != desiredState)
         {
+            Throwable toThrow = null;
             FMLLog.severe("Fatal errors were detected during the transition from %s to %s. Loading cannot continue", oldState, desiredState);
             StringBuilder sb = new StringBuilder();
             printModStates(sb);
@@ -96,10 +98,23 @@ public class LoadController
             for (Entry<String, Throwable> error : errors.entries())
             {
                 FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
+                if (error.getValue() instanceof IFMLHandledException)
+                {
+                    toThrow = error.getValue();
+                }
+                else if (toThrow == null)
+                {
+                    toThrow = error.getValue();
+                }
             }
-
-            // Throw embedding the first error (usually the only one)
-            throw new LoaderException(errors.values().iterator().next());
+            if (toThrow != null && toThrow instanceof RuntimeException)
+            {
+                throw (RuntimeException)toThrow;
+            }
+            else
+            {
+                throw new LoaderException(toThrow);
+            }
         }
     }
 
@@ -158,7 +173,14 @@ public class LoadController
 
     public void errorOccurred(ModContainer modContainer, Throwable exception)
     {
-        errors.put(modContainer.getModId(), exception);
+        if (exception instanceof InvocationTargetException)
+        {
+            errors.put(modContainer.getModId(), ((InvocationTargetException)exception).getCause());
+        }
+        else
+        {
+            errors.put(modContainer.getModId(), exception);
+        }
     }
 
     public void printModStates(StringBuilder ret)
