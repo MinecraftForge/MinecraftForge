@@ -1,16 +1,17 @@
 --- ../src_base/common/net/minecraft/src/ChunkProviderEnd.java
 +++ ../src_work/common/net/minecraft/src/ChunkProviderEnd.java
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,10 @@
  
  import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.chunkprovider.InitChunkTerrainNoiseEvent;
++import net.minecraftforge.event.world.chunkprovider.ReplaceBlocksForBiomeEvent;
  
  public class ChunkProviderEnd implements IChunkProvider
  {
-@@ -41,6 +44,10 @@
+@@ -41,6 +45,10 @@
          byte var7 = 33;
          int var8 = var5 + 1;
          this.densities = this.initializeNoiseField(this.densities, par1 * var5, 0, par2 * var5, var6, var7, var8);
@@ -21,3 +22,14 @@
  
          for (int var9 = 0; var9 < var5; ++var9)
          {
+@@ -104,6 +112,10 @@
+ 
+     public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+     {
++        ReplaceBlocksForBiomeEvent event = new ReplaceBlocksForBiomeEvent(this, this.endWorld, par1, par2, par3ArrayOfByte, par4ArrayOfBiomeGenBase);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isHandeled()) return;
++
+         for (int var5 = 0; var5 < 16; ++var5)
+         {
+             for (int var6 = 0; var6 < 16; ++var6)
