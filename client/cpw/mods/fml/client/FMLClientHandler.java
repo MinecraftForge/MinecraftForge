@@ -396,7 +396,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     {
         if(client.field_71439_g != null)
         {
-            client.field_71439_g.field_71174_a.func_72552_c(packet);'
+            client.field_71439_g.field_71174_a.func_72552_c(packet);
         }
     }
 
