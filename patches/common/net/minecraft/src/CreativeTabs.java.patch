@@ -1,0 +1,128 @@
+--- /var/tmp/.diff1068262873	2012-10-16 23:54:35.000000000 +0400
++++ /var/tmp/.diff1661986711	2012-10-16 23:54:35.000000000 +0400
+@@ -2,38 +2,58 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.LanguageRegistry;
++
++import java.util.ArrayList;
+ import java.util.List;
+ public class CreativeTabs
+ {
+-    public static final CreativeTabs[] creativeTabArray = new CreativeTabs[12];
+-    public static final CreativeTabs tabBlock = new CreativeTabBlock(0, "buildingBlocks");
+-    public static final CreativeTabs tabDecorations = new CreativeTabDeco(1, "decorations");
+-    public static final CreativeTabs tabRedstone = new CreativeTabRedstone(2, "redstone");
+-    public static final CreativeTabs tabTransport = new CreativeTabTransport(3, "transportation");
+-    public static final CreativeTabs tabMisc = new CreativeTabMisc(4, "misc");
+-    public static final CreativeTabs tabAllSearch = (new CreativeTabSearch(5, "search")).setBackgroundImageName("search.png");
+-    public static final CreativeTabs tabFood = new CreativeTabFood(6, "food");
+-    public static final CreativeTabs tabTools = new CreativeTabTools(7, "tools");
+-    public static final CreativeTabs tabCombat = new CreativeTabCombat(8, "combat");
+-    public static final CreativeTabs tabBrewing = new CreativeTabBrewing(9, "brewing");
+-    public static final CreativeTabs tabMaterials = new CreativeTabMaterial(10, "materials");
+-    public static final CreativeTabs tabInventory = (new CreativeTabInventory(11, "inventory")).setBackgroundImageName("survival_inv.png").setNoScrollbar().setNoTitle();
++    public static final CreativeTabs[] creativeTabArray = new CreativeTabs[64];
++
++    public static final CreativeTabs tabAllSearch = (new CreativeTabSearch(0, "search")).setBackgroundImageName("search.png");
++    public static final CreativeTabs tabInventory = (new CreativeTabInventory(1, "inventory")).setBackgroundImageName("survival_inv.png").setNoScrollbar().setNoTitle();;
++    public static final CreativeTabs tabBlock = new CreativeTabBlock(2, "buildingBlocks");
++    public static final CreativeTabs tabDecorations = new CreativeTabDeco(3, "decorations");
++    public static final CreativeTabs tabRedstone = new CreativeTabRedstone(4, "redstone");
++    public static final CreativeTabs tabTransport = new CreativeTabTransport(5, "transportation");
++    public static final CreativeTabs tabMisc = new CreativeTabMisc(6, "misc");
++    public static final CreativeTabs tabFood = new CreativeTabFood(7, "food");
++    public static final CreativeTabs tabTools = new CreativeTabTools(8, "tools");
++    public static final CreativeTabs tabCombat = new CreativeTabCombat(9, "combat");
++    public static final CreativeTabs tabBrewing = new CreativeTabBrewing(10, "brewing");
++    public static final CreativeTabs tabMaterials = new CreativeTabMaterial(11, "materials");
+     private final int tabIndex;
+     private final String tabLabel;
+     /** Texture to use. */
+     private String backgroundImageName = "list_items.png";
+     private boolean hasScrollbar = true;
++
++    /** The index for the item whose icon this tab uses. */
++    private int iconIndex = 1;
+     /** Whether to draw the title in the foreground of the creative GUI */
+     private boolean drawTitle = true;
+-    public CreativeTabs(int par1, String par2Str)
++    public CreativeTabs(int index, String label)
+     {
+-        this.tabIndex = par1;
+-        this.tabLabel = par2Str;
+-        creativeTabArray[par1] = this;
++        this.tabIndex = index;
++        this.tabLabel = label;
++        creativeTabArray[index] = this;
++    }
++
++    public static int getWidthInTabs()
++    {
++    	int max = 0;
++    	for (int i = 0; i < creativeTabArray.length; i++)
++    	{
++    		if (creativeTabArray[i] != null)
++    		{
++    			max = i;
++    		}
++    	}
++    	return (int) (((float)max) / 2.0f + 0.5f);
+     }
+     @SideOnly(Side.CLIENT)
+@@ -47,6 +67,12 @@
+         this.backgroundImageName = par1Str;
+         return this;
+     }
++
++    public CreativeTabs setIconItemIndex(int iconIndex)
++    {
++    	this.iconIndex = iconIndex;
++    	return this;
++    }
+     @SideOnly(Side.CLIENT)
+     public String getTabLabel()
+@@ -77,7 +103,7 @@
+      */
+     public int getTabIconItemIndex()
+     {
+-        return 1;
++        return iconIndex;
+     }
+     @SideOnly(Side.CLIENT)
+@@ -111,23 +137,36 @@
+     }
+     @SideOnly(Side.CLIENT)
++
++    public static int getNumberOfTabs()
++    {
++    	int max = 0;
++        for (int i = 0; i < creativeTabArray.length; i++)
++        {
++        	if (creativeTabArray[i] != null)
++        	{
++        		max = i;
++        	}
++        }
++        return max;
++    }
+     /**
+-     * returns index % 6
++     * returns the value of the variable tabColumn
+      */
+     public int getTabColumn()
+     {
+-        return this.tabIndex % 6;
++    	return tabIndex % ((getNumberOfTabs() / 2) + 1);
+     }
+     @SideOnly(Side.CLIENT)
+     /**
+-     * returns tabIndex < 6
++     * returns the value of the variable tabInBottom
+      */
+     public boolean isTabInFirstRow()
+     {
+-        return this.tabIndex < 6;
++        return tabIndex < (getNumberOfTabs() / 2) + 1;
+     }
+     @SideOnly(Side.CLIENT)
