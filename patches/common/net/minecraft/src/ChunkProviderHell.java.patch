@@ -1,17 +1,16 @@
 --- ../src_base/common/net/minecraft/src/ChunkProviderHell.java
 +++ ../src_work/common/net/minecraft/src/ChunkProviderHell.java
-@@ -2,6 +2,10 @@
+@@ -2,6 +2,9 @@
  
  import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.chunkprovider.InitChunkTerrainNoiseEvent;
-+import net.minecraftforge.event.world.chunkprovider.ReplaceBlocksForBiomeEvent;
  
  public class ChunkProviderHell implements IChunkProvider
  {
-@@ -68,6 +72,10 @@
+@@ -68,6 +71,10 @@
          byte var7 = 17;
          int var8 = var4 + 1;
          this.noiseField = this.initializeNoiseField(this.noiseField, par1 * var4, 0, par2 * var4, var6, var7, var8);
@@ -22,14 +21,3 @@
  
          for (int var9 = 0; var9 < var4; ++var9)
          {
-@@ -139,6 +147,10 @@
-      */
-     public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte)
-     {
-+        ReplaceBlocksForBiomeEvent event = new ReplaceBlocksForBiomeEvent(this, this.worldObj, par1, par2, par3ArrayOfByte, new BiomeGenBase[] {BiomeGenBase.hell});
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (event.isHandeled()) return;
-+
-         byte var4 = 64;
-         double var5 = 0.03125D;
-         this.slowsandNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.slowsandNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var5, var5, 1.0D);

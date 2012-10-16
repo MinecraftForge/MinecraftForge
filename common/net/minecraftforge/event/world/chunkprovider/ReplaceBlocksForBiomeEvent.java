@@ -31,7 +31,7 @@ public class ReplaceBlocksForBiomeEvent extends ChunkProviderEvent
         return handled;
     }
     
-    public void setHandeled()
+    public void setHandled()
     {
         handled = true;
     }
