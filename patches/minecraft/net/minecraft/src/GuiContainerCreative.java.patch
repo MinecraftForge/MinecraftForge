@@ -1,19 +1,22 @@
---- /var/tmp/.diff309331491	2012-10-16 23:44:59.000000000 +0400
-+++ /var/tmp/.diff1463677975	2012-10-16 23:44:59.000000000 +0400
+--- /var/tmp/.diff685537544	2012-10-17 03:20:09.000000000 +0400
++++ /var/tmp/.diff89209707	2012-10-17 03:20:09.000000000 +0400
 @@ -13,734 +13,730 @@
  @SideOnly(Side.CLIENT)
  public class GuiContainerCreative extends InventoryEffectRenderer
  {
 -    private static InventoryBasic inventory = new InventoryBasic("tmp", 45);
 +	private static InventoryBasic inventory = new InventoryBasic("tmp", ContainerCreative.WIDTH * ContainerCreative.HEIGHT);
+
 -    /** Currently selected creative inventory tab index. */
 -    private static int selectedTabIndex = CreativeTabs.tabBlock.getTabIndex();
 +	/** Currently selected creative inventory tab index. */
 +	private static int selectedTabIndex = CreativeTabs.tabBlock.getTabIndex();
+
 -    /** Amount scrolled in Creative mode inventory (0 = top, 1 = bottom) */
 -    private float currentScroll = 0.0F;
 +	/** Amount scrolled in Creative mode inventory (0 = top, 1 = bottom) */
 +	private float currentScroll = 0.0F;
+
 -    /** True if the scrollbar is being dragged */
 -    private boolean isScrolling = false;
 -
@@ -755,7 +758,7 @@
 +		this.allowUserInput = true;
 +		par1EntityPlayer.addStat(AchievementList.openInventory, 1);
 +		this.ySize = 136;
-+		this.xSize = CreativeTabs.getWidthInTabs() * 28 + 36;
++		this.xSize = (CreativeTabs.getNumberOfTabs() / 2) * 28 + 36;
 +	}
 +
 +	/**
@@ -1031,7 +1034,7 @@
 +			int relY = y - this.guiTop;
 +			CreativeTabs[] tabArray = CreativeTabs.creativeTabArray;
 +			// int var7 = var6.length;
-+			int maxTab = CreativeTabs.getNumberOfTabs();
++			int maxTab = CreativeTabs.creativeTabArray.length - 1;
 +
 +			for (int i = 0; i <= maxTab; ++i)
 +			{
@@ -1234,7 +1237,7 @@
 +		super.drawScreen(par1, par2, par3);
 +		CreativeTabs[] tabArray = CreativeTabs.creativeTabArray;
 +		// int var12 = var11.length;
-+		int maxTab = CreativeTabs.getNumberOfTabs();
++		int maxTab = CreativeTabs.creativeTabArray.length - 1;
 +
 +		for (int i = 0; i <= maxTab; ++i)
 +		{
@@ -1270,7 +1273,7 @@
 +		int tabBGImage = this.mc.renderEngine.getTexture("/gui/creative_inv/" + selectedTab.getBackgroundImageName());
 +		CreativeTabs[] tabArray = CreativeTabs.creativeTabArray;
 +		// int var8 = var7.length;
-+		int maxTab = CreativeTabs.getNumberOfTabs();
++		int maxTab = CreativeTabs.creativeTabArray.length - 1;
 +
 +		for (int i = 0; i <= maxTab; ++i)
 +		{

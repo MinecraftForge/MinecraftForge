@@ -1,11 +1,11 @@
---- ContainerCreative.java      2012-10-13 00:30:06.690039000 -0500
-+++ ContainerCreative (2).java  2012-10-16 01:43:24.264510000 -0500
+--- /var/tmp/.diff1070367291	2012-10-17 03:18:53.000000000 +0400
++++ /var/tmp/.diff582592500	2012-10-17 03:18:53.000000000 +0400
 @@ -8,25 +8,31 @@
  @SideOnly(Side.CLIENT)
  class ContainerCreative extends Container
  {
-+       public static int WIDTH = 9;
-+       public static int HEIGHT = 5;
++	public static int WIDTH = 9;
++	public static int HEIGHT = 5;
      /** the list of items in this container */
      public List itemList = new ArrayList();
 
@@ -15,7 +15,7 @@
 -        int var3;
 +        InventoryPlayer playerInv = par1EntityPlayer.inventory;
 +
-+        int windowWidth = CreativeTabs.getWidthInTabs() * 28 + 36;
++        int windowWidth = (CreativeTabs.getNumberOfTabs() / 2) * 28 + 36;
 +        int midX = windowWidth / 2;
 +        int invWidth = 182;
 +        int left = midX - (invWidth / 2) + 3;

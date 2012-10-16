@@ -1,0 +1,32 @@
+--- /var/tmp/.diff1252698476	2012-10-17 03:16:25.000000000 +0400
++++ /var/tmp/.diff1806407482	2012-10-17 03:16:25.000000000 +0400
+@@ -5,9 +5,9 @@
+
+ final class CreativeTabSearch extends CreativeTabs
+ {
+-    CreativeTabSearch(int par1, String par2Str)
++    CreativeTabSearch(int index, String label)
+     {
+-        super(par1, par2Str);
++        super(index, label);
+     }
+
+     @SideOnly(Side.CLIENT)
+@@ -19,4 +19,17 @@
+     {
+         return Item.compass.shiftedIndex;
+     }
++
++    @Override
++    public int getTabColumn()
++    {
++    	int totalTabsTop = CreativeTabs.getWidthInTabs();
++    	return totalTabsTop + 1;
++    }
++
++    @Override
++    public boolean isTabInFirstRow()
++    {
++    	return true;
++    }
+ }
