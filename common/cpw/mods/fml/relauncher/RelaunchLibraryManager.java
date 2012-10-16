@@ -85,8 +85,7 @@ public class RelaunchLibraryManager
                 {
                     boolean download = false;
                     String libName = lib.getLibraries()[i];
-                    File tmp = new File(libName);
-                    String targFileName = tmp.getName();
+                    String targFileName = libName.lastIndexOf('/')>=0 ? libName.substring(libName.lastIndexOf('/')) : libName;
                     String checksum = lib.getHashes()[i];
                     File libFile = new File(libDir, targFileName);
                     if (!libFile.exists())
