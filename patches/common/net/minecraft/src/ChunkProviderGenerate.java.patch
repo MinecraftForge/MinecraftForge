@@ -1,0 +1,23 @@
+--- ../src_base/common/net/minecraft/src/ChunkProviderGenerate.java
++++ ../src_work/common/net/minecraft/src/ChunkProviderGenerate.java
+@@ -2,6 +2,9 @@
+ 
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.chunkprovider.InitChunkTerrainNoiseEvent;
+ 
+ public class ChunkProviderGenerate implements IChunkProvider
+ {
+@@ -103,6 +106,10 @@
+         int var9 = var4 + 1;
+         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, par1 * 4 - 2, par2 * 4 - 2, var7 + 5, var9 + 5);
+         this.noiseArray = this.initializeNoiseField(this.noiseArray, par1 * var4, 0, par2 * var4, var7, var8, var9);
++        
++        InitChunkTerrainNoiseEvent event = new InitChunkTerrainNoiseEvent(this.noiseArray, this, this.worldObj); 
++        MinecraftForge.EVENT_BUS.post(event);
++        this.noiseArray = event.getNoiseArray();
+ 
+         for (int var10 = 0; var10 < var4; ++var10)
+         {
