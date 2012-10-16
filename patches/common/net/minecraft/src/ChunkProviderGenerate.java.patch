@@ -1,17 +1,18 @@
 --- ../src_base/common/net/minecraft/src/ChunkProviderGenerate.java
 +++ ../src_work/common/net/minecraft/src/ChunkProviderGenerate.java
-@@ -2,6 +2,10 @@
+@@ -2,6 +2,11 @@
  
  import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.chunkprovider.ChunkFeatureEvent;
 +import net.minecraftforge.event.world.chunkprovider.InitChunkTerrainNoiseEvent;
 +import net.minecraftforge.event.world.chunkprovider.ReplaceBlocksForBiomeEvent;
  
  public class ChunkProviderGenerate implements IChunkProvider
  {
-@@ -103,6 +107,10 @@
+@@ -103,6 +108,10 @@
          int var9 = var4 + 1;
          this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, par1 * 4 - 2, par2 * 4 - 2, var7 + 5, var9 + 5);
          this.noiseArray = this.initializeNoiseField(this.noiseArray, par1 * var4, 0, par2 * var4, var7, var8, var9);
@@ -22,7 +23,7 @@
  
          for (int var10 = 0; var10 < var4; ++var10)
          {
-@@ -172,6 +180,10 @@
+@@ -172,6 +181,10 @@
       */
      public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
      {
@@ -33,3 +34,19 @@
          byte var5 = 63;
          double var6 = 0.03125D;
          this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var6 * 2.0D, var6 * 2.0D, var6 * 2.0D);
+@@ -278,7 +291,14 @@
+         this.generateTerrain(par1, par2, var3);
+         this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, par1 * 16, par2 * 16, 16, 16);
+         this.replaceBlocksForBiome(par1, par2, var3, this.biomesForGeneration);
+-        this.caveGenerator.generate(this, this.worldObj, par1, par2, var3);
++
++        ChunkFeatureEvent.GenerateCave event = new ChunkFeatureEvent.GenerateCave(this, this.worldObj, par1, par2, var3);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (!event.isHandled())
++        {
++            this.caveGenerator.generate(this, this.worldObj, par1, par2, var3);
++        }
++        
+         this.ravineGenerator.generate(this, this.worldObj, par1, par2, var3);
+ 
+         if (this.mapFeaturesEnabled)
