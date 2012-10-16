@@ -18,7 +18,7 @@
 +        
 +        InitChunkTerrainNoiseEvent event = new InitChunkTerrainNoiseEvent(this.noiseArray, this, this.worldObj); 
 +        MinecraftForge.EVENT_BUS.post(event);
-+        this.noiseArray = event.getNoiseArray();
++        this.noiseArray = event.noiseArray;
  
          for (int var10 = 0; var10 < var4; ++var10)
          {
