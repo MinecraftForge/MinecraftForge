@@ -40,7 +40,20 @@ public class DimensionManager
         spawnSettings.put(id, keepLoaded);
         return true;
     }
-
+    
+    public static boolean replaceProvider(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
+    {
+        MinecraftServer server=MinecraftServer.getServer();
+        if (server!=null)
+            if (server.isServerRunning())
+                return false;
+        
+        providers.put(id, provider);
+        spawnSettings.put(id, keepLoaded);
+        
+        return true;
+    }
+    
     public static void init()
     {
         if (hasInit)
