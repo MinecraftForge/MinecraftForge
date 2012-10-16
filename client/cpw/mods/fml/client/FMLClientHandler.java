@@ -107,6 +107,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private WrongMinecraftVersionException wrongMC;
 
+    private CustomModLoadingErrorDisplayException customError;
+
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
@@ -153,6 +155,11 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             modsMissing = missing;
         }
+        catch (CustomModLoadingErrorDisplayException custom)
+        {
+            FMLLog.log(Level.SEVERE, custom, "A custom exception was thrown by a mod, the game will now halt");
+            customError = custom;
+        }
         catch (LoaderException le)
         {
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
@@ -182,6 +189,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Loader.instance().initializeMods();
         }
+        catch (CustomModLoadingErrorDisplayException custom)
+        {
+            FMLLog.log(Level.SEVERE, custom, "A custom exception was thrown by a mod, the game will now halt");
+            customError = custom;
+            return;
+        }
         catch (LoaderException le)
         {
             haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
@@ -203,6 +216,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         else if (modsMissing != null)
         {
             client.func_71373_a(new GuiModsMissing(modsMissing));
+        }
+        else if (customError != null)
+        {
+            client.func_71373_a(new GuiCustomModLoadingErrorScreen(customError));
         }
         else
         {
