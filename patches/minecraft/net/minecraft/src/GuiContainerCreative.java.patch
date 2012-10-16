@@ -1,0 +1,1465 @@
+--- /var/tmp/.diff389274538	2012-10-17 03:49:10.000000000 +0400
++++ /var/tmp/.diff2020744315	2012-10-17 03:49:11.000000000 +0400
+@@ -13,734 +13,735 @@
+ @SideOnly(Side.CLIENT)
+ public class GuiContainerCreative extends InventoryEffectRenderer
+ {
+-    private static InventoryBasic inventory = new InventoryBasic("tmp", 45);
++	private static InventoryBasic inventory = new InventoryBasic("tmp", ContainerCreative.WIDTH * ContainerCreative.HEIGHT);
+
+-    /** Currently selected creative inventory tab index. */
+-    private static int selectedTabIndex = CreativeTabs.tabBlock.getTabIndex();
++	/** Currently selected creative inventory tab index. */
++	private static int selectedTabIndex = CreativeTabs.tabBlock.getTabIndex();
+
+-    /** Amount scrolled in Creative mode inventory (0 = top, 1 = bottom) */
+-    private float currentScroll = 0.0F;
++	/** Amount scrolled in Creative mode inventory (0 = top, 1 = bottom) */
++	private float currentScroll = 0.0F;
+
+-    /** True if the scrollbar is being dragged */
+-    private boolean isScrolling = false;
+-
+-    /**
+-     * True if the left mouse button was held down last time drawScreen was called.
+-     */
+-    private boolean wasClicking;
+-    private GuiTextField searchField;
+-    private List field_74236_u;
+-    private Slot field_74235_v = null;
+-    private boolean field_74234_w = false;
+-
+-    public GuiContainerCreative(EntityPlayer par1EntityPlayer)
+-    {
+-        super(new ContainerCreative(par1EntityPlayer));
+-        par1EntityPlayer.craftingInventory = this.inventorySlots;
+-        this.allowUserInput = true;
+-        par1EntityPlayer.addStat(AchievementList.openInventory, 1);
+-        this.ySize = 136;
+-        this.xSize = 195;
+-    }
+-
+-    /**
+-     * Called from the main game loop to update the screen.
+-     */
+-    public void updateScreen()
+-    {
+-        if (!this.mc.playerController.isInCreativeMode())
+-        {
+-            this.mc.displayGuiScreen(new GuiInventory(this.mc.thePlayer));
+-        }
+-    }
+-
+-    protected void handleMouseClick(Slot par1Slot, int par2, int par3, boolean par4)
+-    {
+-        this.field_74234_w = true;
+-        ItemStack var6;
+-        InventoryPlayer var9;
+-
+-        if (par1Slot != null)
+-        {
+-            int var5;
+-
+-            if (par1Slot == this.field_74235_v && par4)
+-            {
+-                for (var5 = 0; var5 < this.mc.thePlayer.inventorySlots.getInventory().size(); ++var5)
+-                {
+-                    this.mc.playerController.sendSlotPacket((ItemStack)null, var5);
+-                }
+-            }
+-            else
+-            {
+-                ItemStack var7;
+-
+-                if (selectedTabIndex == CreativeTabs.tabInventory.getTabIndex())
+-                {
+-                    if (par1Slot == this.field_74235_v)
+-                    {
+-                        this.mc.thePlayer.inventory.setItemStack((ItemStack)null);
+-                    }
+-                    else
+-                    {
+-                        var5 = SlotCreativeInventory.func_75240_a((SlotCreativeInventory)par1Slot).slotNumber;
+-                        var6 = this.mc.thePlayer.inventorySlots.getSlot(var5).getStack();
+-
+-                        if (par4 && (var6 == null || !(var6.getItem() instanceof ItemArmor)))
+-                        {
+-                            this.mc.playerController.sendSlotPacket((ItemStack)null, var5);
+-                        }
+-                        else
+-                        {
+-                            this.mc.thePlayer.inventorySlots.slotClick(var5, par3, par4, this.mc.thePlayer);
+-                            var7 = this.mc.thePlayer.inventorySlots.getSlot(var5).getStack();
+-                            this.mc.playerController.sendSlotPacket(var7, var5);
+-                        }
+-                    }
+-                }
+-                else if (par1Slot.inventory == inventory)
+-                {
+-                    var9 = this.mc.thePlayer.inventory;
+-                    var6 = var9.getItemStack();
+-                    var7 = par1Slot.getStack();
+-
+-                    if (var6 != null && var7 != null && var6.isItemEqual(var7))
+-                    {
+-                        if (par3 == 0)
+-                        {
+-                            if (par4)
+-                            {
+-                                var6.stackSize = var6.getMaxStackSize();
+-                            }
+-                            else if (var6.stackSize < var6.getMaxStackSize())
+-                            {
+-                                ++var6.stackSize;
+-                            }
+-                        }
+-                        else if (var6.stackSize <= 1)
+-                        {
+-                            var9.setItemStack((ItemStack)null);
+-                        }
+-                        else
+-                        {
+-                            --var6.stackSize;
+-                        }
+-                    }
+-                    else if (var7 != null && var6 == null)
+-                    {
+-                        boolean var8 = false;
+-
+-                        if (!var8)
+-                        {
+-                            var9.setItemStack(ItemStack.copyItemStack(var7));
+-                            var6 = var9.getItemStack();
+-
+-                            if (par4)
+-                            {
+-                                var6.stackSize = var6.getMaxStackSize();
+-                            }
+-                        }
+-                    }
+-                    else
+-                    {
+-                        var9.setItemStack((ItemStack)null);
+-                    }
+-                }
+-                else
+-                {
+-                    this.inventorySlots.slotClick(par1Slot.slotNumber, par3, par4, this.mc.thePlayer);
+-                    ItemStack var10 = this.inventorySlots.getSlot(par1Slot.slotNumber).getStack();
+-                    this.mc.playerController.sendSlotPacket(var10, par1Slot.slotNumber - this.inventorySlots.inventorySlots.size() + 9 + 36);
+-                }
+-            }
+-        }
+-        else
+-        {
+-            var9 = this.mc.thePlayer.inventory;
+-
+-            if (var9.getItemStack() != null)
+-            {
+-                if (par3 == 0)
+-                {
+-                    this.mc.thePlayer.dropPlayerItem(var9.getItemStack());
+-                    this.mc.playerController.func_78752_a(var9.getItemStack());
+-                    var9.setItemStack((ItemStack)null);
+-                }
+-
+-                if (par3 == 1)
+-                {
+-                    var6 = var9.getItemStack().splitStack(1);
+-                    this.mc.thePlayer.dropPlayerItem(var6);
+-                    this.mc.playerController.func_78752_a(var6);
+-
+-                    if (var9.getItemStack().stackSize == 0)
+-                    {
+-                        var9.setItemStack((ItemStack)null);
+-                    }
+-                }
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Adds the buttons (and other controls) to the screen in question.
+-     */
+-    public void initGui()
+-    {
+-        if (this.mc.playerController.isInCreativeMode())
+-        {
+-            super.initGui();
+-            this.controlList.clear();
+-            Keyboard.enableRepeatEvents(true);
+-            this.searchField = new GuiTextField(this.fontRenderer, this.guiLeft + 82, this.guiTop + 6, 89, this.fontRenderer.FONT_HEIGHT);
+-            this.searchField.setMaxStringLength(15);
+-            this.searchField.setEnableBackgroundDrawing(false);
+-            this.searchField.setVisible(false);
+-            this.searchField.setTextColor(16777215);
+-            int var1 = selectedTabIndex;
+-            selectedTabIndex = -1;
+-            this.func_74227_b(CreativeTabs.creativeTabArray[var1]);
+-        }
+-        else
+-        {
+-            this.mc.displayGuiScreen(new GuiInventory(this.mc.thePlayer));
+-        }
+-    }
+-
+-    /**
+-     * Called when the screen is unloaded. Used to disable keyboard repeat events
+-     */
+-    public void onGuiClosed()
+-    {
+-        super.onGuiClosed();
+-        Keyboard.enableRepeatEvents(false);
+-    }
+-
+-    /**
+-     * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+-     */
+-    protected void keyTyped(char par1, int par2)
+-    {
+-        if (selectedTabIndex != CreativeTabs.tabAllSearch.getTabIndex())
+-        {
+-            if (Keyboard.isKeyDown(this.mc.gameSettings.keyBindChat.keyCode))
+-            {
+-                this.func_74227_b(CreativeTabs.tabAllSearch);
+-            }
+-            else
+-            {
+-                super.keyTyped(par1, par2);
+-            }
+-        }
+-        else
+-        {
+-            if (this.field_74234_w)
+-            {
+-                this.field_74234_w = false;
+-                this.searchField.setText("");
+-            }
+-
+-            if (this.searchField.textboxKeyTyped(par1, par2))
+-            {
+-                this.func_74228_j();
+-            }
+-            else
+-            {
+-                super.keyTyped(par1, par2);
+-            }
+-        }
+-    }
+-
+-    private void func_74228_j()
+-    {
+-        ContainerCreative var1 = (ContainerCreative)this.inventorySlots;
+-        var1.itemList.clear();
+-        Item[] var2 = Item.itemsList;
+-        int var3 = var2.length;
+-
+-        for (int var4 = 0; var4 < var3; ++var4)
+-        {
+-            Item var5 = var2[var4];
+-
+-            if (var5 != null && var5.getCreativeTab() != null)
+-            {
+-                var5.getSubItems(var5.shiftedIndex, (CreativeTabs)null, var1.itemList);
+-            }
+-        }
+-
+-        Iterator var8 = var1.itemList.iterator();
+-        String var9 = this.searchField.getText().toLowerCase();
+-
+-        while (var8.hasNext())
+-        {
+-            ItemStack var10 = (ItemStack)var8.next();
+-            boolean var11 = false;
+-            Iterator var6 = var10.getItemNameandInformation().iterator();
+-
+-            while (true)
+-            {
+-                if (var6.hasNext())
+-                {
+-                    String var7 = (String)var6.next();
+-
+-                    if (!var7.toLowerCase().contains(var9))
+-                    {
+-                        continue;
+-                    }
+-
+-                    var11 = true;
+-                }
+-
+-                if (!var11)
+-                {
+-                    var8.remove();
+-                }
+-
+-                break;
+-            }
+-        }
+-
+-        this.currentScroll = 0.0F;
+-        var1.scrollTo(0.0F);
+-    }
+-
+-    /**
+-     * Draw the foreground layer for the GuiContainer (everything in front of the items)
+-     */
+-    protected void drawGuiContainerForegroundLayer()
+-    {
+-        CreativeTabs var1 = CreativeTabs.creativeTabArray[selectedTabIndex];
+-
+-        if (var1.drawInForegroundOfTab())
+-        {
+-            this.fontRenderer.drawString(var1.getTranslatedTabLabel(), 8, 6, 4210752);
+-        }
+-    }
+-
+-    /**
+-     * Called when the mouse is clicked.
+-     */
+-    protected void mouseClicked(int par1, int par2, int par3)
+-    {
+-        if (par3 == 0)
+-        {
+-            int var4 = par1 - this.guiLeft;
+-            int var5 = par2 - this.guiTop;
+-            CreativeTabs[] var6 = CreativeTabs.creativeTabArray;
+-            int var7 = var6.length;
+-
+-            for (int var8 = 0; var8 < var7; ++var8)
+-            {
+-                CreativeTabs var9 = var6[var8];
+-
+-                if (this.func_74232_a(var9, var4, var5))
+-                {
+-                    this.func_74227_b(var9);
+-                    return;
+-                }
+-            }
+-        }
+-
+-        super.mouseClicked(par1, par2, par3);
+-    }
+-
+-    /**
+-     * returns (if you are not on the inventoryTab) and (the flag isn't set) and( you have more than 1 page of items)
+-     */
+-    private boolean needsScrollBars()
+-    {
+-        return selectedTabIndex != CreativeTabs.tabInventory.getTabIndex() && CreativeTabs.creativeTabArray[selectedTabIndex].shouldHidePlayerInventory() && ((ContainerCreative)this.inventorySlots).hasMoreThan1PageOfItemsInList();
+-    }
+-
+-    private void func_74227_b(CreativeTabs par1CreativeTabs)
+-    {
+-        int var2 = selectedTabIndex;
+-        selectedTabIndex = par1CreativeTabs.getTabIndex();
+-        ContainerCreative var3 = (ContainerCreative)this.inventorySlots;
+-        var3.itemList.clear();
+-        par1CreativeTabs.displayAllReleventItems(var3.itemList);
+-
+-        if (par1CreativeTabs == CreativeTabs.tabInventory)
+-        {
+-            Container var4 = this.mc.thePlayer.inventorySlots;
+-
+-            if (this.field_74236_u == null)
+-            {
+-                this.field_74236_u = var3.inventorySlots;
+-            }
+-
+-            var3.inventorySlots = new ArrayList();
+-
+-            for (int var5 = 0; var5 < var4.inventorySlots.size(); ++var5)
+-            {
+-                SlotCreativeInventory var6 = new SlotCreativeInventory(this, (Slot)var4.inventorySlots.get(var5), var5);
+-                var3.inventorySlots.add(var6);
+-                int var7;
+-                int var8;
+-                int var9;
+-
+-                if (var5 >= 5 && var5 < 9)
+-                {
+-                    var7 = var5 - 5;
+-                    var8 = var7 / 2;
+-                    var9 = var7 % 2;
+-                    var6.xDisplayPosition = 9 + var8 * 54;
+-                    var6.yDisplayPosition = 6 + var9 * 27;
+-                }
+-                else if (var5 >= 0 && var5 < 5)
+-                {
+-                    var6.yDisplayPosition = -2000;
+-                    var6.xDisplayPosition = -2000;
+-                }
+-                else if (var5 < var4.inventorySlots.size())
+-                {
+-                    var7 = var5 - 9;
+-                    var8 = var7 % 9;
+-                    var9 = var7 / 9;
+-                    var6.xDisplayPosition = 9 + var8 * 18;
+-
+-                    if (var5 >= 36)
+-                    {
+-                        var6.yDisplayPosition = 112;
+-                    }
+-                    else
+-                    {
+-                        var6.yDisplayPosition = 54 + var9 * 18;
+-                    }
+-                }
+-            }
+-
+-            this.field_74235_v = new Slot(inventory, 0, 173, 112);
+-            var3.inventorySlots.add(this.field_74235_v);
+-        }
+-        else if (var2 == CreativeTabs.tabInventory.getTabIndex())
+-        {
+-            var3.inventorySlots = this.field_74236_u;
+-            this.field_74236_u = null;
+-        }
+-
+-        if (this.searchField != null)
+-        {
+-            if (par1CreativeTabs == CreativeTabs.tabAllSearch)
+-            {
+-                this.searchField.setVisible(true);
+-                this.searchField.setCanLoseFocus(false);
+-                this.searchField.setFocused(true);
+-                this.searchField.setText("");
+-                this.func_74228_j();
+-            }
+-            else
+-            {
+-                this.searchField.setVisible(false);
+-                this.searchField.setCanLoseFocus(true);
+-                this.searchField.setFocused(false);
+-            }
+-        }
+-
+-        this.currentScroll = 0.0F;
+-        var3.scrollTo(0.0F);
+-    }
+-
+-    /**
+-     * Handles mouse input.
+-     */
+-    public void handleMouseInput()
+-    {
+-        super.handleMouseInput();
+-        int var1 = Mouse.getEventDWheel();
+-
+-        if (var1 != 0 && this.needsScrollBars())
+-        {
+-            int var2 = ((ContainerCreative)this.inventorySlots).itemList.size() / 9 - 5 + 1;
+-
+-            if (var1 > 0)
+-            {
+-                var1 = 1;
+-            }
+-
+-            if (var1 < 0)
+-            {
+-                var1 = -1;
+-            }
+-
+-            this.currentScroll = (float)((double)this.currentScroll - (double)var1 / (double)var2);
+-
+-            if (this.currentScroll < 0.0F)
+-            {
+-                this.currentScroll = 0.0F;
+-            }
+-
+-            if (this.currentScroll > 1.0F)
+-            {
+-                this.currentScroll = 1.0F;
+-            }
+-
+-            ((ContainerCreative)this.inventorySlots).scrollTo(this.currentScroll);
+-        }
+-    }
+-
+-    /**
+-     * Draws the screen and all the components in it.
+-     */
+-    public void drawScreen(int par1, int par2, float par3)
+-    {
+-        boolean var4 = Mouse.isButtonDown(0);
+-        int var5 = this.guiLeft;
+-        int var6 = this.guiTop;
+-        int var7 = var5 + 175;
+-        int var8 = var6 + 18;
+-        int var9 = var7 + 14;
+-        int var10 = var8 + 112;
+-
+-        if (!this.wasClicking && var4 && par1 >= var7 && par2 >= var8 && par1 < var9 && par2 < var10)
+-        {
+-            this.isScrolling = this.needsScrollBars();
+-        }
+-
+-        if (!var4)
+-        {
+-            this.isScrolling = false;
+-        }
+-
+-        this.wasClicking = var4;
+-
+-        if (this.isScrolling)
+-        {
+-            this.currentScroll = ((float)(par2 - var8) - 7.5F) / ((float)(var10 - var8) - 15.0F);
+-
+-            if (this.currentScroll < 0.0F)
+-            {
+-                this.currentScroll = 0.0F;
+-            }
+-
+-            if (this.currentScroll > 1.0F)
+-            {
+-                this.currentScroll = 1.0F;
+-            }
+-
+-            ((ContainerCreative)this.inventorySlots).scrollTo(this.currentScroll);
+-        }
+-
+-        super.drawScreen(par1, par2, par3);
+-        CreativeTabs[] var11 = CreativeTabs.creativeTabArray;
+-        int var12 = var11.length;
+-
+-        for (int var13 = 0; var13 < var12; ++var13)
+-        {
+-            CreativeTabs var14 = var11[var13];
+-
+-            if (this.renderCreativeInventoryHoveringText(var14, par1, par2))
+-            {
+-                break;
+-            }
+-        }
+-
+-        if (this.field_74235_v != null && selectedTabIndex == CreativeTabs.tabInventory.getTabIndex() && this.func_74188_c(this.field_74235_v.xDisplayPosition, this.field_74235_v.yDisplayPosition, 16, 16, par1, par2))
+-        {
+-            this.drawCreativeTabHoveringText(StringTranslate.getInstance().translateKey("inventory.binSlot"), par1, par2);
+-        }
+-
+-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+-        GL11.glDisable(GL11.GL_LIGHTING);
+-    }
+-
+-    /**
+-     * Draw the background layer for the GuiContainer (everything behind the items)
+-     */
+-    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
+-    {
+-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+-        RenderHelper.enableGUIStandardItemLighting();
+-        int var4 = this.mc.renderEngine.getTexture("/gui/allitems.png");
+-        CreativeTabs var5 = CreativeTabs.creativeTabArray[selectedTabIndex];
+-        int var6 = this.mc.renderEngine.getTexture("/gui/creative_inv/" + var5.getBackgroundImageName());
+-        CreativeTabs[] var7 = CreativeTabs.creativeTabArray;
+-        int var8 = var7.length;
+-        int var9;
+-
+-        for (var9 = 0; var9 < var8; ++var9)
+-        {
+-            CreativeTabs var10 = var7[var9];
+-            this.mc.renderEngine.bindTexture(var4);
+-
+-            if (var10.getTabIndex() != selectedTabIndex)
+-            {
+-                this.renderCreativeTab(var10);
+-            }
+-        }
+-
+-        this.mc.renderEngine.bindTexture(var6);
+-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+-        this.searchField.drawTextBox();
+-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+-        int var11 = this.guiLeft + 175;
+-        var8 = this.guiTop + 18;
+-        var9 = var8 + 112;
+-        this.mc.renderEngine.bindTexture(var4);
+-
+-        if (var5.shouldHidePlayerInventory())
+-        {
+-            this.drawTexturedModalRect(var11, var8 + (int)((float)(var9 - var8 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+-        }
+-
+-        this.renderCreativeTab(var5);
+-
+-        if (var5 == CreativeTabs.tabInventory)
+-        {
+-            GuiInventory.func_74223_a(this.mc, this.guiLeft + 43, this.guiTop + 45, 20, (float)(this.guiLeft + 43 - par2), (float)(this.guiTop + 45 - 30 - par3));
+-        }
+-    }
+-
+-    protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
+-    {
+-        int var4 = par1CreativeTabs.getTabColumn();
+-        int var5 = 28 * var4;
+-        byte var6 = 0;
+-
+-        if (var4 == 5)
+-        {
+-            var5 = this.xSize - 28 + 2;
+-        }
+-        else if (var4 > 0)
+-        {
+-            var5 += var4;
+-        }
+-
+-        int var7;
+-
+-        if (par1CreativeTabs.isTabInFirstRow())
+-        {
+-            var7 = var6 - 32;
+-        }
+-        else
+-        {
+-            var7 = var6 + this.ySize;
+-        }
+-
+-        return par2 >= var5 && par2 <= var5 + 28 && par3 >= var7 && par3 <= var7 + 32;
+-    }
+-
+-    /**
+-     * Renders the creative inventory hovering text if mouse is over it. Returns true if did render or false otherwise.
+-     * Params: current creative tab to be checked, current mouse x position, current mouse y position.
+-     */
+-    protected boolean renderCreativeInventoryHoveringText(CreativeTabs par1CreativeTabs, int par2, int par3)
+-    {
+-        int var4 = par1CreativeTabs.getTabColumn();
+-        int var5 = 28 * var4;
+-        byte var6 = 0;
+-
+-        if (var4 == 5)
+-        {
+-            var5 = this.xSize - 28 + 2;
+-        }
+-        else if (var4 > 0)
+-        {
+-            var5 += var4;
+-        }
+-
+-        int var7;
+-
+-        if (par1CreativeTabs.isTabInFirstRow())
+-        {
+-            var7 = var6 - 32;
+-        }
+-        else
+-        {
+-            var7 = var6 + this.ySize;
+-        }
+-
+-        if (this.func_74188_c(var5 + 3, var7 + 3, 23, 27, par2, par3))
+-        {
+-            this.drawCreativeTabHoveringText(par1CreativeTabs.getTranslatedTabLabel(), par2, par3);
+-            return true;
+-        }
+-        else
+-        {
+-            return false;
+-        }
+-    }
+-
+-    /**
+-     * Renders passed creative inventory tab into the screen.
+-     */
+-    protected void renderCreativeTab(CreativeTabs par1CreativeTabs)
+-    {
+-        boolean var2 = par1CreativeTabs.getTabIndex() == selectedTabIndex;
+-        boolean var3 = par1CreativeTabs.isTabInFirstRow();
+-        int var4 = par1CreativeTabs.getTabColumn();
+-        int var5 = var4 * 28;
+-        int var6 = 0;
+-        int var7 = this.guiLeft + 28 * var4;
+-        int var8 = this.guiTop;
+-        byte var9 = 32;
+-
+-        if (var2)
+-        {
+-            var6 += 32;
+-        }
+-
+-        if (var4 == 5)
+-        {
+-            var7 = this.guiLeft + this.xSize - 28;
+-        }
+-        else if (var4 > 0)
+-        {
+-            var7 += var4;
+-        }
+-
+-        if (var3)
+-        {
+-            var8 -= 28;
+-        }
+-        else
+-        {
+-            var6 += 64;
+-            var8 += this.ySize - 4;
+-        }
+-
+-        GL11.glDisable(GL11.GL_LIGHTING);
+-        this.drawTexturedModalRect(var7, var8, var5, var6, 28, var9);
+-        this.zLevel = 100.0F;
+-        itemRenderer.zLevel = 100.0F;
+-        var7 += 6;
+-        var8 += 8 + (var3 ? 1 : -1);
+-        GL11.glEnable(GL11.GL_LIGHTING);
+-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+-        ItemStack var10 = new ItemStack(par1CreativeTabs.getTabIconItem());
+-        itemRenderer.renderItemIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
+-        itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
+-        GL11.glDisable(GL11.GL_LIGHTING);
+-        itemRenderer.zLevel = 0.0F;
+-        this.zLevel = 0.0F;
+-    }
+-
+-    /**
+-     * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
+-     */
+-    protected void actionPerformed(GuiButton par1GuiButton)
+-    {
+-        if (par1GuiButton.id == 0)
+-        {
+-            this.mc.displayGuiScreen(new GuiAchievements(this.mc.statFileWriter));
+-        }
+-
+-        if (par1GuiButton.id == 1)
+-        {
+-            this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
+-        }
+-    }
+-
+-    public int func_74230_h()
+-    {
+-        return selectedTabIndex;
+-    }
+-
+-    /**
+-     * Returns the creative inventory
+-     */
+-    static InventoryBasic getInventory()
+-    {
+-        return inventory;
+-    }
++	/** True if the scrollbar is being dragged */
++	private boolean isScrolling = false;
++
++	/**
++	 * True if the left mouse button was held down last time drawScreen was called.
++	 */
++	private boolean wasClicking;
++	private GuiTextField searchField;
++	private List field_74236_u;
++	private Slot field_74235_v = null;
++	private boolean field_74234_w = false;
++
++	public GuiContainerCreative(EntityPlayer par1EntityPlayer)
++	{
++		super(new ContainerCreative(par1EntityPlayer));
++		par1EntityPlayer.craftingInventory = this.inventorySlots;
++		this.allowUserInput = true;
++		par1EntityPlayer.addStat(AchievementList.openInventory, 1);
++		this.ySize = 136;
++		this.xSize = (CreativeTabs.getNumberOfTabs() / 2) * 28 + 36;
++	}
++
++	/**
++	 * Called from the main game loop to update the screen.
++	 */
++	public void updateScreen()
++	{
++		if (!this.mc.playerController.isInCreativeMode())
++		{
++			this.mc.displayGuiScreen(new GuiInventory(this.mc.thePlayer));
++		}
++	}
++
++	protected void handleMouseClick(Slot slot, int x, int y, boolean flag)
++	{
++		this.field_74234_w = true;
++		ItemStack stack;
++		InventoryPlayer playerInv;
++
++		if (slot != null)
++		{
++			int var5;
++
++			if (slot == this.field_74235_v && flag)
++			{
++				for (var5 = 0; var5 < this.mc.thePlayer.inventorySlots.getInventory().size(); ++var5)
++				{
++					this.mc.playerController.sendSlotPacket((ItemStack) null, var5);
++				}
++			} else
++			{
++				ItemStack var7;
++
++				if (selectedTabIndex == CreativeTabs.tabInventory.getTabIndex())
++				{
++					if (slot == this.field_74235_v)
++					{
++						this.mc.thePlayer.inventory.setItemStack((ItemStack) null);
++					} else
++					{
++						var5 = SlotCreativeInventory.func_75240_a((SlotCreativeInventory) slot).slotNumber;
++						stack = this.mc.thePlayer.inventorySlots.getSlot(var5).getStack();
++
++						if (flag && (stack == null || !(stack.getItem() instanceof ItemArmor)))
++						{
++							this.mc.playerController.sendSlotPacket((ItemStack) null, var5);
++						} else
++						{
++							this.mc.thePlayer.inventorySlots.slotClick(var5, y, flag, this.mc.thePlayer);
++							var7 = this.mc.thePlayer.inventorySlots.getSlot(var5).getStack();
++							this.mc.playerController.sendSlotPacket(var7, var5);
++						}
++					}
++				} else if (slot.inventory == inventory)
++				{
++					playerInv = this.mc.thePlayer.inventory;
++					stack = playerInv.getItemStack();
++					var7 = slot.getStack();
++
++					if (stack != null && var7 != null && stack.isItemEqual(var7))
++					{
++						if (y == 0)
++						{
++							if (flag)
++							{
++								stack.stackSize = stack.getMaxStackSize();
++							} else if (stack.stackSize < stack.getMaxStackSize())
++							{
++								++stack.stackSize;
++							}
++						} else if (stack.stackSize <= 1)
++						{
++							playerInv.setItemStack((ItemStack) null);
++						} else
++						{
++							--stack.stackSize;
++						}
++					} else if (var7 != null && stack == null)
++					{
++						boolean var8 = false;
++
++						if (!var8)
++						{
++							playerInv.setItemStack(ItemStack.copyItemStack(var7));
++							stack = playerInv.getItemStack();
++
++							if (flag)
++							{
++								stack.stackSize = stack.getMaxStackSize();
++							}
++						}
++					} else
++					{
++						playerInv.setItemStack((ItemStack) null);
++					}
++				} else
++				{
++					this.inventorySlots.slotClick(slot.slotNumber, y, flag, this.mc.thePlayer);
++					ItemStack var10 = this.inventorySlots.getSlot(slot.slotNumber).getStack();
++					this.mc.playerController.sendSlotPacket(var10, slot.slotNumber - this.inventorySlots.inventorySlots.size() + 9 + 36);
++				}
++			}
++		} else
++		{
++			playerInv = this.mc.thePlayer.inventory;
++
++			if (playerInv.getItemStack() != null)
++			{
++				if (y == 0)
++				{
++					this.mc.thePlayer.dropPlayerItem(playerInv.getItemStack());
++					this.mc.playerController.func_78752_a(playerInv.getItemStack());
++					playerInv.setItemStack((ItemStack) null);
++				}
++
++				if (y == 1)
++				{
++					stack = playerInv.getItemStack().splitStack(1);
++					this.mc.thePlayer.dropPlayerItem(stack);
++					this.mc.playerController.func_78752_a(stack);
++
++					if (playerInv.getItemStack().stackSize == 0)
++					{
++						playerInv.setItemStack((ItemStack) null);
++					}
++				}
++			}
++		}
++	}
++
++	/**
++	 * Adds the buttons (and other controls) to the screen in question.
++	 */
++	public void initGui()
++	{
++		if (this.mc.playerController.isInCreativeMode())
++		{
++			super.initGui();
++			this.controlList.clear();
++			Keyboard.enableRepeatEvents(true);
++			int invWidth = 182;
++			int midX = this.guiLeft + (int) (((float) this.xSize) / 2f);
++			int right = this.guiLeft + this.xSize;
++			this.searchField = new GuiTextField(this.fontRenderer, (midX - invWidth / 2) + 78, this.guiTop + 6, 89, this.fontRenderer.FONT_HEIGHT);
++			this.searchField.setMaxStringLength(15);
++			this.searchField.setEnableBackgroundDrawing(false);
++			this.searchField.setVisible(false);
++			this.searchField.setTextColor(16777215);
++			int var1 = selectedTabIndex;
++			selectedTabIndex = -1;
++			this.func_74227_b(CreativeTabs.creativeTabArray[var1]);
++		} else
++		{
++			this.mc.displayGuiScreen(new GuiInventory(this.mc.thePlayer));
++		}
++	}
++
++	/**
++	 * Called when the screen is unloaded. Used to disable keyboard repeat events
++	 */
++	public void onGuiClosed()
++	{
++		super.onGuiClosed();
++		Keyboard.enableRepeatEvents(false);
++	}
++
++	/**
++	 * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
++	 */
++	protected void keyTyped(char par1, int par2)
++	{
++		if (selectedTabIndex != CreativeTabs.tabAllSearch.getTabIndex())
++		{
++			if (Keyboard.isKeyDown(this.mc.gameSettings.keyBindChat.keyCode))
++			{
++				this.func_74227_b(CreativeTabs.tabAllSearch);
++			} else
++			{
++				super.keyTyped(par1, par2);
++			}
++		} else
++		{
++			if (this.field_74234_w)
++			{
++				this.field_74234_w = false;
++				this.searchField.setText("");
++			}
++
++			if (this.searchField.textboxKeyTyped(par1, par2))
++			{
++				this.func_74228_j();
++			} else
++			{
++				super.keyTyped(par1, par2);
++			}
++		}
++	}
++
++	private void func_74228_j()
++	{
++		ContainerCreative var1 = (ContainerCreative) this.inventorySlots;
++		var1.itemList.clear();
++		Item[] var2 = Item.itemsList;
++		int var3 = var2.length;
++
++		for (int var4 = 0; var4 < var3; ++var4)
++		{
++			Item var5 = var2[var4];
++
++			if (var5 != null && var5.getCreativeTab() != null)
++			{
++				var5.getSubItems(var5.shiftedIndex, (CreativeTabs) null, var1.itemList);
++			}
++		}
++
++		Iterator var8 = var1.itemList.iterator();
++		String var9 = this.searchField.getText().toLowerCase();
++
++		while (var8.hasNext())
++		{
++			ItemStack var10 = (ItemStack) var8.next();
++			boolean var11 = false;
++			Iterator var6 = var10.getItemNameandInformation().iterator();
++
++			while (true)
++			{
++				if (var6.hasNext())
++				{
++					String var7 = (String) var6.next();
++
++					if (!var7.toLowerCase().contains(var9))
++					{
++						continue;
++					}
++
++					var11 = true;
++				}
++
++				if (!var11)
++				{
++					var8.remove();
++				}
++
++				break;
++			}
++		}
++
++		this.currentScroll = 0.0F;
++		var1.scrollTo(0.0F);
++	}
++
++	/**
++	 * Draw the foreground layer for the GuiContainer (everything in front of the items)
++	 */
++	protected void drawGuiContainerForegroundLayer()
++	{
++		CreativeTabs var1 = CreativeTabs.creativeTabArray[selectedTabIndex];
++
++		int invWidth = 182;
++		int midX = this.guiLeft + (int) (((float) this.xSize) / 2f);
++		int left = midX - invWidth / 2;
++		int xOffset = left - guiLeft - 6;
++
++		if (var1.drawInForegroundOfTab())
++		{
++			this.fontRenderer.drawString(var1.getTranslatedTabLabel(), xOffset + 8, 6, 4210752);
++		}
++	}
++
++	/**
++	 * Called when the mouse is clicked.
++	 */
++	protected void mouseClicked(int x, int y, int button)
++	{
++		if (button == 0)
++		{
++			int relX = x - this.guiLeft;
++			int relY = y - this.guiTop;
++			CreativeTabs[] tabArray = CreativeTabs.creativeTabArray;
++			// int var7 = var6.length;
++			int maxTab = CreativeTabs.creativeTabArray.length - 1;
++
++			for (int i = 0; i <= maxTab; ++i)
++			{
++				CreativeTabs tab = tabArray[i];
++
++				if (tab != null)
++				{
++					if (this.func_74232_a(tab, relX, relY))
++					{
++						this.func_74227_b(tab);
++						return;
++					}
++				}
++			}
++		}
++
++		super.mouseClicked(x, y, button);
++	}
++
++	/**
++	 * returns (if you are not on the inventoryTab) and (the flag isn't set) and( you have more than 1 page of items)
++	 */
++	private boolean needsScrollBars()
++	{
++		return selectedTabIndex != CreativeTabs.tabInventory.getTabIndex() && CreativeTabs.creativeTabArray[selectedTabIndex].shouldHidePlayerInventory() && ((ContainerCreative) this.inventorySlots).hasMoreThan1PageOfItemsInList();
++	}
++
++	private void func_74227_b(CreativeTabs par1CreativeTabs)
++	{
++		int selectedTab = selectedTabIndex;
++		selectedTabIndex = par1CreativeTabs.getTabIndex();
++		ContainerCreative container = (ContainerCreative) this.inventorySlots;
++		container.itemList.clear();
++		par1CreativeTabs.displayAllReleventItems(container.itemList);
++
++		if (par1CreativeTabs == CreativeTabs.tabInventory)
++		{
++			Container playerContainer = this.mc.thePlayer.inventorySlots;
++
++			if (this.field_74236_u == null)
++			{
++				this.field_74236_u = container.inventorySlots;
++			}
++
++			container.inventorySlots = new ArrayList();
++
++			int invWidth = 182;
++			int midX = this.guiLeft + (int) (((float) this.xSize) / 2f);
++			int left = midX - invWidth / 2;
++			int xOffset = left - guiLeft - 6;
++
++			for (int i = 0; i < playerContainer.inventorySlots.size(); ++i)
++			{
++				SlotCreativeInventory creativeSlot = new SlotCreativeInventory(this, (Slot) playerContainer.inventorySlots.get(i), i);
++				container.inventorySlots.add(creativeSlot);
++				int var7;
++				int var8;
++				int var9;
++
++				if (i >= 5 && i < 9)
++				{
++					var7 = i - 5;
++					var8 = var7 / 2;
++					var9 = var7 % 2;
++					creativeSlot.xDisplayPosition = 9 + var8 * 54 + xOffset;
++					creativeSlot.yDisplayPosition = 6 + var9 * 27;
++				} else if (i >= 0 && i < 5)
++				{
++					creativeSlot.yDisplayPosition = -2000;
++					creativeSlot.xDisplayPosition = -2000 + xOffset;
++				} else if (i < playerContainer.inventorySlots.size())
++				{
++					var7 = i - 9;
++					var8 = var7 % 9;
++					var9 = var7 / 9;
++					creativeSlot.xDisplayPosition = 9 + var8 * 18 + xOffset;
++
++					if (i >= 36)
++					{
++						creativeSlot.yDisplayPosition = 112;
++					} else
++					{
++						creativeSlot.yDisplayPosition = 54 + var9 * 18;
++					}
++				}
++			}
++
++			this.field_74235_v = new Slot(inventory, 0, 173 + xOffset, 112);
++			container.inventorySlots.add(this.field_74235_v);
++		} else if (selectedTab == CreativeTabs.tabInventory.getTabIndex())
++		{
++			container.inventorySlots = this.field_74236_u;
++			this.field_74236_u = null;
++		}
++
++		if (this.searchField != null)
++		{
++			if (par1CreativeTabs == CreativeTabs.tabAllSearch)
++			{
++				this.searchField.setVisible(true);
++				this.searchField.setCanLoseFocus(false);
++				this.searchField.setFocused(true);
++				this.searchField.setText("");
++				this.func_74228_j();
++			} else
++			{
++				this.searchField.setVisible(false);
++				this.searchField.setCanLoseFocus(true);
++				this.searchField.setFocused(false);
++			}
++		}
++
++		this.currentScroll = 0.0F;
++		container.scrollTo(0.0F);
++	}
++
++	/**
++	 * Handles mouse input.
++	 */
++	public void handleMouseInput()
++	{
++		super.handleMouseInput();
++		int scrollDelta = Mouse.getEventDWheel();
++
++		if (scrollDelta != 0 && this.needsScrollBars())
++		{
++			int var2 = ((ContainerCreative) this.inventorySlots).itemList.size() / 9 - 5 + 1;
++
++			if (scrollDelta > 0)
++			{
++				scrollDelta = 1;
++			}
++
++			if (scrollDelta < 0)
++			{
++				scrollDelta = -1;
++			}
++
++			this.currentScroll = (float) ((double) this.currentScroll - (double) scrollDelta / (double) var2);
++
++			if (this.currentScroll < 0.0F)
++			{
++				this.currentScroll = 0.0F;
++			}
++
++			if (this.currentScroll > 1.0F)
++			{
++				this.currentScroll = 1.0F;
++			}
++
++			((ContainerCreative) this.inventorySlots).scrollTo(this.currentScroll);
++		}
++	}
++
++	/**
++	 * Draws the screen and all the components in it.
++	 */
++	public void drawScreen(int par1, int par2, float par3)
++	{
++		boolean var4 = Mouse.isButtonDown(0);
++		int left = this.guiLeft;
++		int top = this.guiTop;
++		int invWidth = 182;
++		int midX = this.guiLeft + (int) (((float) this.xSize) / 2f);
++		int right = this.guiLeft + this.xSize;
++		int scrollLeft = (midX - invWidth / 2) + 169;
++		int scrollTop = top + 18;
++		int scrollRight = scrollLeft + 14;
++		int scrollBottom = scrollTop + 112;
++
++		if (!this.wasClicking && var4 && par1 >= scrollLeft && par2 >= scrollTop && par1 < scrollRight && par2 < scrollBottom)
++		{
++			this.isScrolling = this.needsScrollBars();
++		}
++
++		if (!var4)
++		{
++			this.isScrolling = false;
++		}
++
++		this.wasClicking = var4;
++
++		if (this.isScrolling)
++		{
++			this.currentScroll = ((float) (par2 - scrollTop) - 7.5F) / ((float) (scrollBottom - scrollTop) - 15.0F);
++
++			if (this.currentScroll < 0.0F)
++			{
++				this.currentScroll = 0.0F;
++			}
++
++			if (this.currentScroll > 1.0F)
++			{
++				this.currentScroll = 1.0F;
++			}
++
++			((ContainerCreative) this.inventorySlots).scrollTo(this.currentScroll);
++		}
++
++		super.drawScreen(par1, par2, par3);
++		CreativeTabs[] tabArray = CreativeTabs.creativeTabArray;
++		// int var12 = var11.length;
++		int maxTab = CreativeTabs.creativeTabArray.length - 1;
++
++		for (int i = 0; i <= maxTab; ++i)
++		{
++			CreativeTabs tab = tabArray[i];
++
++			if (tab != null)
++			{
++				if (this.renderCreativeInventoryHoveringText(tab, par1, par2))
++				{
++					break;
++				}
++			}
++		}
++
++		if (this.field_74235_v != null && selectedTabIndex == CreativeTabs.tabInventory.getTabIndex() && this.func_74188_c(this.field_74235_v.xDisplayPosition, this.field_74235_v.yDisplayPosition, 16, 16, par1, par2))
++		{
++			this.drawCreativeTabHoveringText(StringTranslate.getInstance().translateKey("inventory.binSlot"), par1, par2);
++		}
++
++		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++		GL11.glDisable(GL11.GL_LIGHTING);
++	}
++
++	/**
++	 * Draw the background layer for the GuiContainer (everything behind the items)
++	 */
++	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
++	{
++		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++		RenderHelper.enableGUIStandardItemLighting();
++		int itemsTexture = this.mc.renderEngine.getTexture("/gui/allitems.png");
++		CreativeTabs selectedTab = CreativeTabs.creativeTabArray[selectedTabIndex];
++		int tabBGImage = this.mc.renderEngine.getTexture("/gui/creative_inv/" + selectedTab.getBackgroundImageName());
++		CreativeTabs[] tabArray = CreativeTabs.creativeTabArray;
++		// int var8 = var7.length;
++		int maxTab = CreativeTabs.creativeTabArray.length - 1;
++
++		for (int i = 0; i <= maxTab; ++i)
++		{
++			CreativeTabs tab = tabArray[i];
++			this.mc.renderEngine.bindTexture(itemsTexture);
++
++			if (tab != null)
++			{
++				if (tab.getTabIndex() != selectedTabIndex)
++				{
++					this.renderCreativeTab(tab);
++				}
++			}
++		}
++
++		this.mc.renderEngine.bindTexture(tabBGImage);
++		int invWidth = 182;
++		int midX = this.guiLeft + (int) (((float) this.xSize) / 2f);
++		int right = this.guiLeft + this.xSize;
++		int left = midX - invWidth / 2;
++		int xOffset = left - guiLeft - 6;
++
++		for (int ii = guiLeft + 4; ii < right - 4; ii += 2)
++		{
++			drawTexturedModalRect(ii, guiTop, 4, 0, 2, ySize);
++		}
++
++		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, 4, this.ySize);
++		this.drawTexturedModalRect(midX - invWidth / 2, this.guiTop, 6, 0, invWidth, this.ySize);
++		this.drawTexturedModalRect(right - 4, guiTop, 184 + 7, 0, 4, ySize);
++
++		this.searchField.drawTextBox();
++		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
++		int farRight = this.guiLeft + 175;
++		maxTab = this.guiTop + 18;
++		int i = maxTab + 112;
++		this.mc.renderEngine.bindTexture(itemsTexture);
++
++		if (selectedTab.shouldHidePlayerInventory())
++		{
++			this.drawTexturedModalRect((midX - invWidth / 2) + 169, maxTab + (int) ((float) (i - maxTab - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
++		}
++
++		this.renderCreativeTab(selectedTab);
++
++		if (selectedTab == CreativeTabs.tabInventory)
++		{
++			GuiInventory.func_74223_a(this.mc, this.guiLeft + 43 + xOffset, this.guiTop + 45, 20, (float) (this.guiLeft + 43 + xOffset - par2), (float) (this.guiTop + 45 - 30 - par3));
++		}
++	}
++
++	protected boolean func_74232_a(CreativeTabs tab, int relMouseX, int relMouseY)
++	{
++		int column = tab.getTabColumn();
++		int leftX = 28 * column;
++		byte zero = 0;
++
++		/*
++		 * if (column == 5) { leftX = this.xSize - 28 + 2; } else if (column > 0) { leftX += column; }
++		 */
++
++		int offsetY;
++
++		if (tab.isTabInFirstRow())
++		{
++			offsetY = zero - 32;
++		} else
++		{
++			offsetY = zero + this.ySize;
++		}
++
++		return relMouseX >= leftX && relMouseX <= leftX + 28 && relMouseY >= offsetY && relMouseY <= offsetY + 32;
++	}
++
++	/**
++	 * Renders the creative inventory hovering text if mouse is over it. Returns true if did render or false otherwise. Params: current creative tab to be checked, current mouse x position, current mouse y position.
++	 */
++	protected boolean renderCreativeInventoryHoveringText(CreativeTabs tab, int mouseX, int mouseY)
++	{
++		int column = tab.getTabColumn();
++		int leftX = 28 * column;
++		byte unknown = 0;
++
++		/*
++		 * if (column == 5) { leftX = this.xSize - 28 + 2; } else if (column > 0) { leftX += column; }
++		 */
++
++		int var7;
++
++		if (tab.isTabInFirstRow())
++		{
++			var7 = unknown - 32;
++		} else
++		{
++			var7 = unknown + this.ySize;
++		}
++
++		if (this.func_74188_c(leftX + 3, var7 + 3, 23, 27, mouseX, mouseY))
++		{
++			this.drawCreativeTabHoveringText(tab.getTranslatedTabLabel(), mouseX, mouseY);
++			return true;
++		} else
++		{
++			return false;
++		}
++	}
++
++	/**
++	 * Renders passed creative inventory tab into the screen.
++	 */
++	protected void renderCreativeTab(CreativeTabs tab)
++	{
++		boolean selected = tab.getTabIndex() == selectedTabIndex;
++		boolean firstRow = tab.isTabInFirstRow();
++		int column = tab.getTabColumn();
++		int imageOffsetX = 28; //make sure we get the tab that fits in the middle
++		int imageOffsetY = 0;
++		int tabLeft = this.guiLeft + 4 + 28 * column;
++		int tabTop = this.guiTop;
++		byte unknown = 32;
++
++		if (selected)
++		{
++			imageOffsetY += 32;
++		}
++
++		/*
++		 * if (var4 == 5) { var7 = this.guiLeft + this.xSize - 28; } else if (column > 0) { tabLeft += column; }
++		 */
++
++		if (firstRow)
++		{
++			tabTop -= 28;
++		} else
++		{
++			imageOffsetY += 64;
++			tabTop += this.ySize - 4;
++		}
++
++		GL11.glDisable(GL11.GL_LIGHTING);
++		this.drawTexturedModalRect(tabLeft, tabTop, imageOffsetX, imageOffsetY, 28, unknown);
++		this.zLevel = 100.0F;
++		itemRenderer.zLevel = 100.0F;
++		tabLeft += 6;
++		tabTop += 8 + (firstRow ? 1 : -1);
++		GL11.glEnable(GL11.GL_LIGHTING);
++		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
++		ItemStack itemStack = new ItemStack(tab.getTabIconItem());
++		itemRenderer.renderItemIntoGUI(this.fontRenderer, this.mc.renderEngine, itemStack, tabLeft, tabTop);
++		itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, itemStack, tabLeft, tabTop);
++		GL11.glDisable(GL11.GL_LIGHTING);
++		itemRenderer.zLevel = 0.0F;
++		this.zLevel = 0.0F;
++	}
++
++	/**
++	 * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
++	 */
++	protected void actionPerformed(GuiButton par1GuiButton)
++	{
++		if (par1GuiButton.id == 0)
++		{
++			this.mc.displayGuiScreen(new GuiAchievements(this.mc.statFileWriter));
++		}
++
++		if (par1GuiButton.id == 1)
++		{
++			this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
++		}
++	}
++
++	public int func_74230_h()
++	{
++		return selectedTabIndex;
++	}
++
++	/**
++	 * Returns the creative inventory
++	 */
++	static InventoryBasic getInventory()
++	{
++		return inventory;
++	}
+ }
