@@ -2,6 +2,7 @@ package net.minecraftforge.event.world.chunkprovider;
 
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.World;
+import net.minecraftforge.event.Cancelable;
 
 public class ChunkFeatureEvent extends ChunkProviderEvent
 {
@@ -32,10 +33,77 @@ public class ChunkFeatureEvent extends ChunkProviderEvent
         handled = true;
     }
 
+    @Cancelable
     public static class GenerateCave extends ChunkFeatureEvent
     {
 
         public GenerateCave(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
+        {
+            super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
+        }
+
+    }
+
+    @Cancelable
+    public static class GenerateRavine extends ChunkFeatureEvent
+    {
+
+        public GenerateRavine(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
+        {
+            super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
+        }
+
+    }
+
+    @Cancelable
+    public static class SetMineshaftLocation extends ChunkFeatureEvent
+    {
+
+        public SetMineshaftLocation(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
+        {
+            super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
+        }
+
+    }
+
+    @Cancelable
+    public static class SetVillageLocation extends ChunkFeatureEvent
+    {
+
+        public SetVillageLocation(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
+        {
+            super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
+        }
+
+    }
+
+    @Cancelable
+    public static class SetStrongholdLocation extends ChunkFeatureEvent
+    {
+
+        public SetStrongholdLocation(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
+        {
+            super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
+        }
+
+    }
+
+    @Cancelable
+    public static class SetScatteredFeatureLocation extends ChunkFeatureEvent
+    {
+
+        public SetScatteredFeatureLocation(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
+        {
+            super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
+        }
+
+    }
+
+    @Cancelable
+    public static class SetNetherBridgeLocation extends ChunkFeatureEvent
+    {
+
+        public SetNetherBridgeLocation(IChunkProvider chunkProvider, World world, int chunkX, int chunkZ, byte[] chunkBlocks)
         {
             super(chunkProvider, world, chunkX, chunkZ, chunkBlocks);
         }

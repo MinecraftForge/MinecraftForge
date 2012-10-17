@@ -34,19 +34,62 @@
          byte var5 = 63;
          double var6 = 0.03125D;
          this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var6 * 2.0D, var6 * 2.0D, var6 * 2.0D);
-@@ -278,7 +291,14 @@
+@@ -278,15 +291,52 @@
          this.generateTerrain(par1, par2, var3);
          this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, par1 * 16, par2 * 16, 16, 16);
          this.replaceBlocksForBiome(par1, par2, var3, this.biomesForGeneration);
 -        this.caveGenerator.generate(this, this.worldObj, par1, par2, var3);
+-        this.ravineGenerator.generate(this, this.worldObj, par1, par2, var3);
 +
-+        ChunkFeatureEvent.GenerateCave event = new ChunkFeatureEvent.GenerateCave(this, this.worldObj, par1, par2, var3);
-+        MinecraftForge.EVENT_BUS.post(event);
-+        if (!event.isHandled())
++        ChunkFeatureEvent.GenerateCave eventCaveGen = new ChunkFeatureEvent.GenerateCave(this, this.worldObj, par1, par2, var3);
++        MinecraftForge.EVENT_BUS.post(eventCaveGen);
++        if (!eventCaveGen.isHandled() && !eventCaveGen.isCanceled())
 +        {
 +            this.caveGenerator.generate(this, this.worldObj, par1, par2, var3);
 +        }
-+        
-         this.ravineGenerator.generate(this, this.worldObj, par1, par2, var3);
++ 
++        ChunkFeatureEvent.GenerateRavine eventRavineGen = new ChunkFeatureEvent.GenerateRavine(this, this.worldObj, par1, par2, var3);
++        MinecraftForge.EVENT_BUS.post(eventRavineGen);
++        if (!eventRavineGen.isHandled() && !eventRavineGen.isCanceled())
++        {
++            this.ravineGenerator.generate(this, this.worldObj, par1, par2, var3);
++        }
  
          if (this.mapFeaturesEnabled)
+         {
+-            this.mineshaftGenerator.generate(this, this.worldObj, par1, par2, var3);
+-            this.villageGenerator.generate(this, this.worldObj, par1, par2, var3);
+-            this.strongholdGenerator.generate(this, this.worldObj, par1, par2, var3);
+-            this.scatteredFeatureGenerator.generate(this, this.worldObj, par1, par2, var3);
++            
++            ChunkFeatureEvent.SetMineshaftLocation eventMineshaft = new ChunkFeatureEvent.SetMineshaftLocation(this, this.worldObj, par1, par2, var3);
++            MinecraftForge.EVENT_BUS.post(eventMineshaft);
++            if (!eventMineshaft.isHandled() && !eventMineshaft.isCanceled())
++            {
++                this.mineshaftGenerator.generate(this, this.worldObj, par1, par2, var3);
++            }
++            
++            ChunkFeatureEvent.SetVillageLocation eventVillage = new ChunkFeatureEvent.SetVillageLocation(this, this.worldObj, par1, par2, var3);
++            MinecraftForge.EVENT_BUS.post(eventVillage);
++            if (!eventVillage.isHandled() && !eventVillage.isCanceled())
++            {
++                this.villageGenerator.generate(this, this.worldObj, par1, par2, var3);
++            }
++            
++            ChunkFeatureEvent.SetStrongholdLocation eventStronghold = new ChunkFeatureEvent.SetStrongholdLocation(this, this.worldObj, par1, par2, var3);
++            MinecraftForge.EVENT_BUS.post(eventStronghold);
++            if (!eventStronghold.isHandled() && !eventStronghold.isCanceled())
++            {
++                this.strongholdGenerator.generate(this, this.worldObj, par1, par2, var3);
++            }
++            
++            ChunkFeatureEvent.SetScatteredFeatureLocation eventscatteredFeature = new ChunkFeatureEvent.SetScatteredFeatureLocation(this, this.worldObj, par1, par2, var3);
++            MinecraftForge.EVENT_BUS.post(eventscatteredFeature);
++            if (!eventscatteredFeature.isHandled() && !eventscatteredFeature.isCanceled())
++            {
++                this.scatteredFeatureGenerator.generate(this, this.worldObj, par1, par2, var3);
++            }
++            
+         }
+ 
+         Chunk var4 = new Chunk(this.worldObj, var3, par1, par2);
