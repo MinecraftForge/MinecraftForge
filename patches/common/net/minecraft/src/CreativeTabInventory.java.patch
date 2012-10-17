@@ -1,0 +1,20 @@
+--- /var/tmp/.diff1748585382	2012-10-17 03:15:07.000000000 +0400
++++ /var/tmp/.diff790873257	2012-10-17 03:15:07.000000000 +0400
+@@ -19,4 +19,17 @@
+     {
+         return Block.chest.blockID;
+     }
++
++    @Override
++    public int getTabColumn()
++    {
++    	int totalTabsTop = CreativeTabs.getWidthInTabs();
++    	return totalTabsTop + 1;
++    }
++
++    @Override
++    public boolean isTabInFirstRow()
++    {
++    	return false;
++    }
+ }

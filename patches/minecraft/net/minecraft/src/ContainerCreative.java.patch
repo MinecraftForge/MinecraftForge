@@ -1,0 +1,62 @@
+--- /var/tmp/.diff1992615536	2012-10-17 19:51:04.000000000 +0400
++++ /var/tmp/.diff771040026	2012-10-17 19:51:04.000000000 +0400
+@@ -8,25 +8,31 @@
+ @SideOnly(Side.CLIENT)
+ class ContainerCreative extends Container
+ {
++	public static int WIDTH = 9;
++	public static int HEIGHT = 5;
+     /** the list of items in this container */
+     public List itemList = new ArrayList();
+
+     public ContainerCreative(EntityPlayer par1EntityPlayer)
+     {
+-        InventoryPlayer var2 = par1EntityPlayer.inventory;
+-        int var3;
++        InventoryPlayer playerInv = par1EntityPlayer.inventory;
++
++        int windowWidth = (CreativeTabs.getWidthInTabs() + 1) * 28 + 36;
++        int midX = windowWidth / 2;
++        int invWidth = 182;
++        int left = midX - (invWidth / 2) + 3;
+
+-        for (var3 = 0; var3 < 5; ++var3)
++        for (int x = 0; x < HEIGHT; x++)
+         {
+-            for (int var4 = 0; var4 < 9; ++var4)
++            for (int y = 0; y < WIDTH; y++)
+             {
+-                this.addSlotToContainer(new Slot(GuiContainerCreative.getInventory(), var3 * 9 + var4, 9 + var4 * 18, 18 + var3 * 18));
++                this.addSlotToContainer(new Slot(GuiContainerCreative.getInventory(), x * WIDTH + y, left + y * 18, 18 + x * 18));
+             }
+         }
+
+-        for (var3 = 0; var3 < 9; ++var3)
++        for (int x = 0; x < 9; x++)
+         {
+-            this.addSlotToContainer(new Slot(var2, var3, 9 + var3 * 18, 112));
++            this.addSlotToContainer(new Slot(playerInv, x, left + x * 18, 112));
+         }
+
+         this.scrollTo(0.0F);
+@@ -70,10 +76,11 @@
+
+     /**
+      * theCreativeContainer seems to be hard coded to 9x5 items
++     * briman0094: well I say we fix this
+      */
+     public boolean hasMoreThan1PageOfItemsInList()
+     {
+-        return this.itemList.size() > 45;
++        return this.itemList.size() > WIDTH * HEIGHT;
+     }
+
+     protected void retrySlotClick(int par1, int par2, boolean par3, EntityPlayer par4EntityPlayer) {}
+@@ -89,7 +96,7 @@
+
+             if (var2 != null && var2.getHasStack())
+             {
+-                var2.putStack((ItemStack)null);
++                var2.putStack((ItemStack)null); //um...what is this?
+             }
+         }
