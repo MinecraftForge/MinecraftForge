@@ -1,6 +1,6 @@
---- /var/tmp/.diff1174713268	2012-10-17 03:17:04.000000000 +0400
-+++ /var/tmp/.diff58024119	2012-10-17 03:17:04.000000000 +0400
-@@ -2,152 +2,195 @@
+--- /var/tmp/.diff106981166	2012-10-17 19:47:05.000000000 +0400
++++ /var/tmp/.diff254700488	2012-10-17 19:47:05.000000000 +0400
+@@ -2,152 +2,280 @@
 
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
@@ -167,9 +167,8 @@
 +	public static final CreativeTabs tabCombat = new CreativeTabCombat(7, "combat");
 +	public static final CreativeTabs tabBrewing = new CreativeTabBrewing(8, "brewing");
 +	public static final CreativeTabs tabMaterials = new CreativeTabMaterial(9, "materials");
-+
 +	public static final CreativeTabs tabAllSearch = (new CreativeTabSearch(62, "search")).setBackgroundImageName("search.png");
-+	public static final CreativeTabs tabInventory = (new CreativeTabInventory(63, "inventory")).setBackgroundImageName("survival_inv.png").setNoScrollbar().setNoTitle();;
++	public static final CreativeTabs tabInventory = (new CreativeTabInventory(63, "inventory")).setBackgroundImageName("survival_inv.png").setNoScrollbar().setNoTitle();
 +
 +	private final int tabIndex;
 +	private final String tabLabel;
@@ -191,6 +190,84 @@
 +		creativeTabArray[index] = this;
 +	}
 +
++	/**
++	 * Returns whether or not a tab exists with the specified label.
++	 *
++	 * @param label
++	 *            The user-readable label of the tab
++	 * @return Whether or not the tab exists
++	 */
++	public static boolean tabExistsWithLabel(String label)
++	{
++		for (CreativeTabs tab : creativeTabArray)
++		{
++			if (tab != null)
++			{
++				if (tab.getTranslatedTabLabel().equalsIgnoreCase(label))
++				{
++					return true;
++				}
++				// for custom tabs (see below)
++				if (LanguageRegistry.instance().getStringLocalization("itemGroup." + tab.getTabLabel()).equalsIgnoreCase(label))
++				{
++					return true;
++				}
++			}
++		}
++
++		return false;
++	}
++
++	/**
++	 * Returns an instance of CreativeTabs with the specified label. If this tab already exists in the array, this method returns that tab. If this tab does not exist, it gets created. Notice that if a new tab is created, it will have a stone block as its icon. You should set its icon either way.
++	 *
++	 * @param label
++	 *            The user-readable label of the desired tab
++	 * @return An existing or newly related tab, or null if there are not enough available slots.
++	 */
++	public static CreativeTabs getTabByLabel(String label)
++	{
++		for (CreativeTabs tab : creativeTabArray)
++		{
++			if (tab != null)
++			{
++				if (tab.getTranslatedTabLabel().equalsIgnoreCase(label))
++				{
++					return tab;
++				}
++				// this is for if the tab is custom. it checks the language registry directly for the translation.
++				if (LanguageRegistry.instance().getStringLocalization("itemGroup." + tab.getTabLabel()).equalsIgnoreCase(label))
++				{
++					return tab;
++				}
++			}
++		}
++
++		int nextID = getNextAvailableIndex();
++		if (nextID >= 0)
++		{
++			String shortLabel = (label.toLowerCase()).replaceAll(" ", "");
++			CreativeTabs tab = new CreativeTabs(nextID, shortLabel);
++			LanguageRegistry.addName(tab, label);
++			return tab;
++		}
++
++		return null;
++	}
++
++	public static int getNextAvailableIndex()
++	{
++		for (int i = 0; i < creativeTabArray.length; i++)
++		{
++			if (creativeTabArray[i] == null)
++			{
++				return i;
++			}
++		}
++
++		return -1;
++	}
++
 +	public static int getWidthInTabs()
 +	{
 +		int max = 0;
@@ -204,7 +281,15 @@
 +				}
 +			}
 +		}
-+		return (int) (((float) max) / 2.0f + 0.5f);
++
++		if (max % 2 == 0) //even
++		{
++			return max / 2;
++		}
++		else
++		{
++			return max / 2 + 1;
++		}
 +	}
 +
 +	@SideOnly(Side.CLIENT)
@@ -293,11 +378,11 @@
 +		{
 +			if (creativeTabArray[i] != null)
 +			{
-+				//only count the actual tabs, not search and survival
-+				//if (!(creativeTabArray[i] instanceof CreativeTabSearch) && !(creativeTabArray[i] instanceof CreativeTabInventory))
-+				//{
-+					max++;
-+				//}
++				// only count the actual tabs, not search and survival
++				// if (!(creativeTabArray[i] instanceof CreativeTabSearch) && !(creativeTabArray[i] instanceof CreativeTabInventory))
++				// {
++				max++;
++				// }
 +			}
 +		}
 +		return max;

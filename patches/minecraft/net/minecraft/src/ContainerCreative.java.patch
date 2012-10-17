@@ -1,5 +1,5 @@
---- /var/tmp/.diff1070367291	2012-10-17 03:18:53.000000000 +0400
-+++ /var/tmp/.diff582592500	2012-10-17 03:18:53.000000000 +0400
+--- /var/tmp/.diff1992615536	2012-10-17 19:51:04.000000000 +0400
++++ /var/tmp/.diff771040026	2012-10-17 19:51:04.000000000 +0400
 @@ -8,25 +8,31 @@
  @SideOnly(Side.CLIENT)
  class ContainerCreative extends Container
@@ -15,7 +15,7 @@
 -        int var3;
 +        InventoryPlayer playerInv = par1EntityPlayer.inventory;
 +
-+        int windowWidth = (CreativeTabs.getNumberOfTabs() / 2) * 28 + 36;
++        int windowWidth = (CreativeTabs.getWidthInTabs() + 1) * 28 + 36;
 +        int midX = windowWidth / 2;
 +        int invWidth = 182;
 +        int left = midX - (invWidth / 2) + 3;

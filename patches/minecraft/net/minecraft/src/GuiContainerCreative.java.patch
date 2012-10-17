@@ -1,5 +1,5 @@
---- /var/tmp/.diff389274538	2012-10-17 03:49:10.000000000 +0400
-+++ /var/tmp/.diff2020744315	2012-10-17 03:49:11.000000000 +0400
+--- /var/tmp/.diff1548918273	2012-10-17 19:51:54.000000000 +0400
++++ /var/tmp/.diff816286541	2012-10-17 19:51:54.000000000 +0400
 @@ -13,734 +13,735 @@
  @SideOnly(Side.CLIENT)
  public class GuiContainerCreative extends InventoryEffectRenderer
@@ -758,7 +758,7 @@
 +		this.allowUserInput = true;
 +		par1EntityPlayer.addStat(AchievementList.openInventory, 1);
 +		this.ySize = 136;
-+		this.xSize = (CreativeTabs.getNumberOfTabs() / 2) * 28 + 36;
++		this.xSize = (CreativeTabs.getWidthInTabs() + 1) * 28 + 36;
 +	}
 +
 +	/**
