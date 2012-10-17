@@ -1,4 +1,4 @@
-package net.minecraftforge.event.world.chunkprovider;
+package net.minecraftforge.event.world.terraingen;
 
 import net.minecraft.src.BiomeGenBase;
 import net.minecraft.src.IChunkProvider;

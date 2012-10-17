@@ -1,4 +1,4 @@
-package net.minecraftforge.event.world.chunkprovider;
+package net.minecraftforge.event.world.terraingen;
 
 import java.util.Random;
 

@@ -6,8 +6,8 @@
  import java.util.Random;
 +
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.world.chunkprovider.InitChunkTerrainNoiseEvent;
-+import net.minecraftforge.event.world.chunkprovider.ReplaceBlocksForBiomeEvent;
++import net.minecraftforge.event.world.terraingen.InitChunkTerrainNoiseEvent;
++import net.minecraftforge.event.world.terraingen.ReplaceBlocksForBiomeEvent;
  
  public class ChunkProviderEnd implements IChunkProvider
  {
