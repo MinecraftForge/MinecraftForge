@@ -1,18 +1,19 @@
 --- ../src_base/common/net/minecraft/src/ChunkProviderHell.java
 +++ ../src_work/common/net/minecraft/src/ChunkProviderHell.java
-@@ -2,6 +2,11 @@
+@@ -2,6 +2,12 @@
  
  import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.chunkprovider.ChunkFeatureEvent;
++import net.minecraftforge.event.world.chunkprovider.ChunkStructureEvent;
 +import net.minecraftforge.event.world.chunkprovider.InitChunkTerrainNoiseEvent;
 +import net.minecraftforge.event.world.chunkprovider.ReplaceBlocksForBiomeEvent;
  
  public class ChunkProviderHell implements IChunkProvider
  {
-@@ -68,6 +73,10 @@
+@@ -68,6 +74,10 @@
          byte var7 = 17;
          int var8 = var4 + 1;
          this.noiseField = this.initializeNoiseField(this.noiseField, par1 * var4, 0, par2 * var4, var6, var7, var8);
@@ -23,7 +24,7 @@
  
          for (int var9 = 0; var9 < var4; ++var9)
          {
-@@ -139,6 +148,10 @@
+@@ -139,6 +149,10 @@
       */
      public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte)
      {
@@ -34,7 +35,7 @@
          byte var4 = 64;
          double var5 = 0.03125D;
          this.slowsandNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.slowsandNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var5, var5, 1.0D);
-@@ -253,8 +266,21 @@
+@@ -253,8 +267,21 @@
          byte[] var3 = new byte[32768];
          this.generateNetherTerrain(par1, par2, var3);
          this.replaceBlocksForBiome(par1, par2, var3);
@@ -58,3 +59,19 @@
          Chunk var4 = new Chunk(this.worldObj, var3, par1, par2);
          BiomeGenBase[] var5 = this.worldObj.getWorldChunkManager().loadBlockGeneratorData((BiomeGenBase[])null, par1 * 16, par2 * 16, 16, 16);
          byte[] var6 = var4.getBiomeArray();
+@@ -428,7 +455,14 @@
+         BlockSand.fallInstantly = true;
+         int var4 = par2 * 16;
+         int var5 = par3 * 16;
+-        this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.hellRNG, par2, par3);
++
++        ChunkStructureEvent.GenerateNetherBridge eventBridge = new ChunkStructureEvent.GenerateNetherBridge(this, this.worldObj, this.hellRNG, par2, par3);
++        MinecraftForge.EVENT_BUS.post(eventBridge);
++        if (!eventBridge.isHandled() && !eventBridge.isCanceled())
++        {
++            this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.hellRNG, par2, par3);
++        }
++        
+         int var6;
+         int var7;
+         int var8;
