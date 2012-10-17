@@ -22,13 +22,18 @@ public class FMLRelaunchLog
         @Override
         public void publish(LogRecord record)
         {
+            boolean currInt = Thread.interrupted();
             try
             {
                 ConsoleLogThread.recordQueue.put(record);
             }
             catch (InterruptedException e)
             {
-                Thread.interrupted();
+                e.printStackTrace(errCache);
+            }
+            if (currInt)
+            {
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -61,6 +66,7 @@ public class FMLRelaunchLog
                 }
                 catch (InterruptedException e)
                 {
+                    e.printStackTrace(errCache);
                     Thread.interrupted();
                     // Stupid
                 }
@@ -114,6 +120,8 @@ public class FMLRelaunchLog
     private static boolean configured;
 
     private static Thread consoleLogThread;
+
+    private static PrintStream errCache;
     private Logger myLog;
 
     private FMLRelaunchLog()
@@ -157,6 +165,8 @@ public class FMLRelaunchLog
         }
 
         // Set system out to a log stream
+        errCache = System.err;
+
         System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
         System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
 
