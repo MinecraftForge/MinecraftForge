@@ -427,7 +427,7 @@ public class Loader
 
     public List<ModContainer> getModList()
     {
-        return ImmutableList.copyOf(instance().mods);
+        return instance().mods != null ? ImmutableList.copyOf(instance().mods) : ImmutableList.<ModContainer>of();
     }
 
     /**
@@ -663,7 +663,7 @@ public class Loader
 
     public List<ModContainer> getActiveModList()
     {
-        return modController.getActiveModList();
+        return modController != null ? modController.getActiveModList() : ImmutableList.<ModContainer>of();
     }
 
     public ModState getModState(ModContainer selectedMod)
