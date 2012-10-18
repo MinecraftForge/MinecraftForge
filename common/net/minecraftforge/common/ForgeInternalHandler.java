@@ -24,7 +24,7 @@ public class ForgeInternalHandler
             }
         }
         Entity entity = event.entity;
-        if (entity instanceof EntityItem)
+        if (entity.getClass().equals(EntityItem.class))
         {
             ItemStack item = ((EntityItem)entity).item;
             if (item != null && item.getItem().hasCustomEntity(item))
