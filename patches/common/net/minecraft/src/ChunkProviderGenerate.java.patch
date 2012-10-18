@@ -11,8 +11,8 @@
 +import net.minecraftforge.event.world.terraingen.ChunkGenerateRareEvent.ChunkGenerateLakeEvent;
 +import net.minecraftforge.event.world.terraingen.ChunkGenerateRareEvent.ChunkGenerateLavaLakeEvent;
 +import net.minecraftforge.event.world.terraingen.ChunkGeneratorSnowAndIce;
-+import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPostDecorateEvent;
-+import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPreDecorateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPostBiomeDecorateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPreBiomeDecorateEvent;
 +import net.minecraftforge.event.world.terraingen.ChunkStructureEvent;
 +import net.minecraftforge.event.world.terraingen.InitChunkTerrainNoiseEvent;
 +import net.minecraftforge.event.world.terraingen.ReplaceBlocksForBiomeEvent;
@@ -227,9 +227,9 @@
 +            }
 +        }
 +
-+        MinecraftForge.EVENT_BUS.post(new ChunkPreDecorateEvent(this, this.worldObj));
++        MinecraftForge.EVENT_BUS.post(new ChunkPreBiomeDecorateEvent(this, this.worldObj));
          var6.decorate(this.worldObj, this.rand, var4, var5);
-+        MinecraftForge.EVENT_BUS.post(new ChunkPostDecorateEvent(this, this.worldObj));
++        MinecraftForge.EVENT_BUS.post(new ChunkPostBiomeDecorateEvent(this, this.worldObj));
 +        
          SpawnerAnimals.performWorldGenSpawning(this.worldObj, var6, var4 + 8, var5 + 8, 16, 16, this.rand);
          var4 += 8;

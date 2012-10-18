@@ -15,20 +15,20 @@ public abstract class ChunkProviderEvent extends WorldEvent
         this.chunkProvider = chunkProvider;
     }
 
-    public static class ChunkPreDecorateEvent extends ChunkProviderEvent
+    public static class ChunkPreBiomeDecorateEvent extends ChunkProviderEvent
     {
 
-        public ChunkPreDecorateEvent(IChunkProvider chunkProvider, World world)
+        public ChunkPreBiomeDecorateEvent(IChunkProvider chunkProvider, World world)
         {
             super(chunkProvider, world);
         }
         
     }
 
-    public static class ChunkPostDecorateEvent extends ChunkProviderEvent
+    public static class ChunkPostBiomeDecorateEvent extends ChunkProviderEvent
     {
 
-        public ChunkPostDecorateEvent(IChunkProvider chunkProvider, World world)
+        public ChunkPostBiomeDecorateEvent(IChunkProvider chunkProvider, World world)
         {
             super(chunkProvider, world);
         }
