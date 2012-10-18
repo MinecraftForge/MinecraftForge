@@ -1,19 +1,26 @@
 --- ../src_base/common/net/minecraft/src/ChunkProviderGenerate.java
 +++ ../src_work/common/net/minecraft/src/ChunkProviderGenerate.java
-@@ -2,6 +2,12 @@
+@@ -2,6 +2,19 @@
  
  import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.terraingen.ChunkFeatureEvent;
++import net.minecraftforge.event.world.terraingen.ChunkGenerateRareEvent;
++import net.minecraftforge.event.world.terraingen.ChunkGenerateRareEvent.ChunkGenerateLakeEvent;
++import net.minecraftforge.event.world.terraingen.ChunkGenerateRareEvent.ChunkGenerateLavaLakeEvent;
++import net.minecraftforge.event.world.terraingen.ChunkGeneratorSnowAndIce;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPostDecorateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPreDecorateEvent;
 +import net.minecraftforge.event.world.terraingen.ChunkStructureEvent;
 +import net.minecraftforge.event.world.terraingen.InitChunkTerrainNoiseEvent;
 +import net.minecraftforge.event.world.terraingen.ReplaceBlocksForBiomeEvent;
++import net.minecraftforge.event.world.terraingen.WorldGenEvent.WorldGenDungeonEvent;
  
  public class ChunkProviderGenerate implements IChunkProvider
  {
-@@ -103,6 +109,10 @@
+@@ -103,6 +116,10 @@
          int var9 = var4 + 1;
          this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, par1 * 4 - 2, par2 * 4 - 2, var7 + 5, var9 + 5);
          this.noiseArray = this.initializeNoiseField(this.noiseArray, par1 * var4, 0, par2 * var4, var7, var8, var9);
@@ -24,7 +31,7 @@
  
          for (int var10 = 0; var10 < var4; ++var10)
          {
-@@ -172,6 +182,10 @@
+@@ -172,6 +189,10 @@
       */
      public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
      {
@@ -35,7 +42,7 @@
          byte var5 = 63;
          double var6 = 0.03125D;
          this.stoneNoise = this.noiseGen4.generateNoiseOctaves(this.stoneNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var6 * 2.0D, var6 * 2.0D, var6 * 2.0D);
-@@ -278,15 +292,52 @@
+@@ -278,15 +299,52 @@
          this.generateTerrain(par1, par2, var3);
          this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, par1 * 16, par2 * 16, 16, 16);
          this.replaceBlocksForBiome(par1, par2, var3, this.biomesForGeneration);
@@ -94,7 +101,7 @@
          }
  
          Chunk var4 = new Chunk(this.worldObj, var3, par1, par2);
-@@ -477,10 +528,39 @@
+@@ -477,67 +535,119 @@
  
          if (this.mapFeaturesEnabled)
          {
@@ -138,3 +145,129 @@
          }
  
          int var12;
+         int var13;
+         int var14;
+ 
+-        if (!var11 && this.rand.nextInt(4) == 0)
+-        {
+-            var12 = var4 + this.rand.nextInt(16) + 8;
+-            var13 = this.rand.nextInt(128);
+-            var14 = var5 + this.rand.nextInt(16) + 8;
+-            (new WorldGenLakes(Block.waterStill.blockID)).generate(this.worldObj, this.rand, var12, var13, var14);
+-        }
+-
+-        if (!var11 && this.rand.nextInt(8) == 0)
+-        {
+-            var12 = var4 + this.rand.nextInt(16) + 8;
+-            var13 = this.rand.nextInt(this.rand.nextInt(120) + 8);
+-            var14 = var5 + this.rand.nextInt(16) + 8;
+-
+-            if (var13 < 63 || this.rand.nextInt(10) == 0)
+-            {
+-                (new WorldGenLakes(Block.lavaStill.blockID)).generate(this.worldObj, this.rand, var12, var13, var14);
+-            }
+-        }
+-
+-        for (var12 = 0; var12 < 8; ++var12)
+-        {
+-            var13 = var4 + this.rand.nextInt(16) + 8;
+-            var14 = this.rand.nextInt(128);
+-            int var15 = var5 + this.rand.nextInt(16) + 8;
+-
+-            if ((new WorldGenDungeons()).generate(this.worldObj, this.rand, var13, var14, var15))
+-            {
+-                ;
+-            }
+-        }
+-
++        ChunkGenerateLakeEvent eventLake = new ChunkGenerateLakeEvent(this, this.worldObj, this.rand, var4, var5, 4);
++        MinecraftForge.EVENT_BUS.post(eventLake);
++        if (!eventLake.isHandled() && !eventLake.isCanceled())
++        {
++            if (!var11 && this.rand.nextInt(eventLake.scarcity) == 0)
++            {
++                var12 = var4 + this.rand.nextInt(16) + 8;
++                var13 = this.rand.nextInt(128);
++                var14 = var5 + this.rand.nextInt(16) + 8;
++                (new WorldGenLakes(Block.waterStill.blockID)).generate(this.worldObj, this.rand, var12, var13, var14);
++            }
++        }
++
++        ChunkGenerateLavaLakeEvent eventLava = new ChunkGenerateLavaLakeEvent(this, this.worldObj, this.rand, var4, var5, 8);
++        MinecraftForge.EVENT_BUS.post(eventLava);
++        if (!eventLava.isHandled() && !eventLava.isCanceled())
++        {
++            if (!var11 && this.rand.nextInt(eventLava.scarcity) == 0)
++            {
++                var12 = var4 + this.rand.nextInt(16) + 8;
++                var13 = this.rand.nextInt(this.rand.nextInt(120) + 8);
++                var14 = var5 + this.rand.nextInt(16) + 8;
++    
++                if (var13 < 63 || this.rand.nextInt(10) == 0)
++                {
++                    (new WorldGenLakes(Block.lavaStill.blockID)).generate(this.worldObj, this.rand, var12, var13, var14);
++                }
++            }
++        }
++
++        WorldGenDungeonEvent eventDungeon = new WorldGenDungeonEvent(this.worldObj, this.rand, var4, var5, 8);
++        MinecraftForge.EVENT_BUS.post(eventDungeon);
++        if (!eventDungeon.isHandled() && !eventDungeon.isCanceled())
++        {
++            for (var12 = 0; var12 < eventDungeon.iterations; ++var12)
++            {
++                var13 = var4 + this.rand.nextInt(16) + 8;
++                var14 = this.rand.nextInt(128);
++                int var15 = var5 + this.rand.nextInt(16) + 8;
++    
++                if ((new WorldGenDungeons()).generate(this.worldObj, this.rand, var13, var14, var15))
++                {
++                    ;
++                }
++            }
++        }
++
++        MinecraftForge.EVENT_BUS.post(new ChunkPreDecorateEvent(this, this.worldObj));
+         var6.decorate(this.worldObj, this.rand, var4, var5);
++        MinecraftForge.EVENT_BUS.post(new ChunkPostDecorateEvent(this, this.worldObj));
++        
+         SpawnerAnimals.performWorldGenSpawning(this.worldObj, var6, var4 + 8, var5 + 8, 16, 16, this.rand);
+         var4 += 8;
+         var5 += 8;
+ 
+-        for (var12 = 0; var12 < 16; ++var12)
+-        {
+-            for (var13 = 0; var13 < 16; ++var13)
+-            {
+-                var14 = this.worldObj.getPrecipitationHeight(var4 + var12, var5 + var13);
+-
+-                if (this.worldObj.isBlockFreezable(var12 + var4, var14 - 1, var13 + var5))
+-                {
+-                    this.worldObj.setBlockWithNotify(var12 + var4, var14 - 1, var13 + var5, Block.ice.blockID);
+-                }
+-
+-                if (this.worldObj.canSnowAt(var12 + var4, var14, var13 + var5))
+-                {
+-                    this.worldObj.setBlockWithNotify(var12 + var4, var14, var13 + var5, Block.snow.blockID);
++        ChunkGeneratorSnowAndIce eventSnow = new ChunkGeneratorSnowAndIce(this.worldObj, this.rand, var4, var5);
++        MinecraftForge.EVENT_BUS.post(eventSnow);
++        if (!eventSnow.isHandled() && !eventSnow.isCanceled())
++        {
++            for (var12 = 0; var12 < 16; ++var12)
++            {
++                for (var13 = 0; var13 < 16; ++var13)
++                {
++                    var14 = this.worldObj.getPrecipitationHeight(var4 + var12, var5 + var13);
++    
++                    if (this.worldObj.isBlockFreezable(var12 + var4, var14 - 1, var13 + var5))
++                    {
++                        this.worldObj.setBlockWithNotify(var12 + var4, var14 - 1, var13 + var5, Block.ice.blockID);
++                    }
++    
++                    if (this.worldObj.canSnowAt(var12 + var4, var14, var13 + var5))
++                    {
++                        this.worldObj.setBlockWithNotify(var12 + var4, var14, var13 + var5, Block.snow.blockID);
++                    }
+                 }
+             }
+         }

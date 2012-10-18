@@ -4,7 +4,7 @@ import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.World;
 import net.minecraftforge.event.Cancelable;
 
-public class ChunkFeatureEvent extends ChunkProviderEvent
+public abstract class ChunkFeatureEvent extends ChunkProviderEvent
 {
 
     public final int chunkX;

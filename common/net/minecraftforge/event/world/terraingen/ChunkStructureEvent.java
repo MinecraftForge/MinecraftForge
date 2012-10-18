@@ -6,7 +6,7 @@ import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.World;
 import net.minecraftforge.event.Cancelable;
 
-public class ChunkStructureEvent extends ChunkProviderEvent
+public abstract class ChunkStructureEvent extends ChunkProviderEvent
 {
 
     public final int chunkX;
