@@ -1,0 +1,37 @@
+--- ../src_base/common/net/minecraft/src/WorldChunkManager.java
++++ ../src_work/common/net/minecraft/src/WorldChunkManager.java
+@@ -1,10 +1,13 @@
+ package net.minecraft.src;
+ 
+-import cpw.mods.fml.common.Side;
+-import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.InitializeBiomeGeneratorsEvent;
++import cpw.mods.fml.common.Side;
++import cpw.mods.fml.common.asm.SideOnly;
+ 
+ public class WorldChunkManager
+ {
+@@ -35,7 +38,17 @@
+     public WorldChunkManager(long par1, WorldType par3WorldType)
+     {
+         this();
+-        GenLayer[] var4 = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
++
++        GenLayer[] var4 = null;
++        InitializeBiomeGeneratorsEvent event = new InitializeBiomeGeneratorsEvent(par1, par3WorldType, null);
++        if (!MinecraftForge.EVENT_BUS.post(event))
++        {
++            var4 = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
++        }
++        else
++        {
++            var4 = event.genLayers;
++        }
+         this.genBiomes = var4[0];
+         this.biomeIndexLayer = var4[1];
+     }
