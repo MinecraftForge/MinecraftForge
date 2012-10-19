@@ -41,7 +41,7 @@
                  }
              }
  
-@@ -336,8 +335,27 @@
+@@ -336,9 +335,28 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -51,6 +51,7 @@
 +        }
 +
          this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(par1DamageSource.getDeathMessage(this)));
+         this.mcServer.getConfigurationManager().logger.info(par1DamageSource.getDeathMessage(this));
 +
 +        captureDrops = true;
 +        capturedDrops.clear();

@@ -55,6 +55,16 @@ def main():
         
     os.makedirs(out_folder)
     
+    version_file = 'forgeversion.properties'
+    if os.path.exists(version_file):
+        os.remove(version_file)
+    
+    with open(version_file, 'wb') as fh:
+        fh.write('forge.major.number=%d\n' % version['major'])
+        fh.write('forge.minor.number=%d\n' % version['minor'])
+        fh.write('forge.revision.number=%d\n' % version['revision'])
+        fh.write('forge.build.number=%d\n' % version['build'])
+    
     zip_start('minecraftforge-universal-%s.zip' % version_str)
     zip_folder(client_dir, '', zip)
     zip_add('client/forge_logo.png')
@@ -69,6 +79,8 @@ def main():
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
+    zip_add(version_file)
+    zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_end()
     
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
@@ -86,8 +98,12 @@ def main():
     zip_add('install/MinecraftForge-License.txt')
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
+    zip_add(version_file)
     zip_end()
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), 0)
+    
+    if os.path.exists(version_file):
+        os.remove(version_file)
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)

@@ -16,7 +16,7 @@
 -                    ItemStack var4 = new ItemStack(var3.getItem().getContainerItem());
 +                    ItemStack var4 = var3.getItem().getContainerItemStack(var3);
 +                    
-+                    if (var4.isItemStackDamageable() && var4.getItemDamage() >= var4.getMaxDamage())
++                    if (var4.isItemStackDamageable() && var4.getItemDamage() > var4.getMaxDamage())
 +                    {
 +                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var4));
 +                        var4 = null;
