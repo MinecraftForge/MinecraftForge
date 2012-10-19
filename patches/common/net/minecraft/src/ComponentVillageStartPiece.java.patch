@@ -1,0 +1,19 @@
+--- ../src_base/common/net/minecraft/src/ComponentVillageStartPiece.java
++++ ../src_work/common/net/minecraft/src/ComponentVillageStartPiece.java
+@@ -13,6 +13,8 @@
+     /** World terrain type, 0 for normal, 1 for flap map */
+     public final int terrainType;
+     public StructureVillagePieceWeight structVillagePieceWeight;
++    
++    public final BiomeGenBase biome;
+ 
+     /**
+      * Contains List of all spawnable Structure Piece Weights. If no more Pieces of a type can be spawned, they are
+@@ -30,6 +32,7 @@
+         this.terrainType = par7;
+         BiomeGenBase var8 = par1WorldChunkManager.getBiomeGenAt(par4, par5);
+         this.inDesert = var8 == BiomeGenBase.desert || var8 == BiomeGenBase.desertHills;
++        this.biome = var8;
+         this.startPiece = this;
+     }
+ 
