@@ -173,6 +173,7 @@
     <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
       <manifest>
         <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
+        <attribute name="Class-Path" value="minecraft_server.jar"/>
       </manifest>
       <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
