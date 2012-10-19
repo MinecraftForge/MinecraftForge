@@ -1,0 +1,24 @@
+--- ../src_base/common/net/minecraft/src/BlockSapling.java
++++ ../src_work/common/net/minecraft/src/BlockSapling.java
+@@ -4,6 +4,9 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.SaplingGrowTreeEvent;
+ 
+ public class BlockSapling extends BlockFlower
+ {
+@@ -56,6 +59,11 @@
+      */
+     public void growTree(World par1World, int par2, int par3, int par4, Random par5Random)
+     {
++        if (MinecraftForge.EVENT_BUS.post(new SaplingGrowTreeEvent(par1World, par2, par3, par4, par5Random)))
++        {
++            return;
++        }
++        
+         int var6 = par1World.getBlockMetadata(par2, par3, par4) & 3;
+         Object var7 = null;
+         int var8 = 0;
