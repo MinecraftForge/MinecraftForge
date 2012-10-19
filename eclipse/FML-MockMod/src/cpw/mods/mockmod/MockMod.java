@@ -76,6 +76,5 @@ public class MockMod
     public void init(FMLInitializationEvent evt)
     {
         System.out.printf("Hello from mockmod init : %s %s %s\n", myInstance, meta, MockBlock.tstInstance);
-        proxy.throwError();
     }
 }
