@@ -80,6 +80,7 @@ def main():
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
     zip_add(version_file)
+    zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_end()
     
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
