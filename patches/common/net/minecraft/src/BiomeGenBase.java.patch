@@ -1,0 +1,25 @@
+--- ../src_base/common/net/minecraft/src/BiomeGenBase.java
++++ ../src_work/common/net/minecraft/src/BiomeGenBase.java
+@@ -6,6 +6,9 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.terraingen.BiomeCreateDecoratorEvent;
+ 
+ public abstract class BiomeGenBase
+ {
+@@ -134,7 +137,11 @@
+         this.worldGeneratorSwamp = new WorldGenSwamp();
+         this.biomeID = par1;
+         biomeList[par1] = this;
+-        this.theBiomeDecorator = this.createBiomeDecorator();
++        
++        BiomeCreateDecoratorEvent eventCreateDecorator = new BiomeCreateDecoratorEvent(this.createBiomeDecorator());
++        MinecraftForge.EVENT_BUS.post(eventCreateDecorator);
++        this.theBiomeDecorator = eventCreateDecorator.biomeDecorator;
++        
+         this.spawnableCreatureList.add(new SpawnListEntry(EntitySheep.class, 12, 4, 4));
+         this.spawnableCreatureList.add(new SpawnListEntry(EntityPig.class, 10, 4, 4));
+         this.spawnableCreatureList.add(new SpawnListEntry(EntityChicken.class, 10, 4, 4));
