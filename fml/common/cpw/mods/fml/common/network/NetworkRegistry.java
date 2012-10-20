@@ -13,7 +13,7 @@ import net.minecraft.src.EntityPlayerMP;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
@@ -159,7 +159,7 @@ public class NetworkRegistry
         chatListeners.add(listener);
     }
 
-    void playerLoggedIn(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
+    void playerLoggedIn(EntityPlayerMP player, NetServerHandler netHandler, INetworkManager manager)
     {
         generateChannelRegistration(player, netHandler, manager);
         for (IConnectionHandler handler : connectionHandlers)
@@ -168,7 +168,7 @@ public class NetworkRegistry
         }
     }
 
-    String connectionReceived(NetLoginHandler netHandler, NetworkManager manager)
+    String connectionReceived(NetLoginHandler netHandler, INetworkManager manager)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
@@ -181,7 +181,7 @@ public class NetworkRegistry
         return null;
     }
 
-    void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager networkManager)
+    void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager networkManager)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
@@ -189,7 +189,7 @@ public class NetworkRegistry
         }
     }
 
-    void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager networkManager)
+    void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager networkManager)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
@@ -197,7 +197,7 @@ public class NetworkRegistry
         }
     }
 
-    void clientLoggedIn(NetHandler clientHandler, NetworkManager manager, Packet1Login login)
+    void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login)
     {
         generateChannelRegistration(clientHandler.getPlayer(), clientHandler, manager);
         for (IConnectionHandler handler : connectionHandlers)
@@ -206,7 +206,7 @@ public class NetworkRegistry
         }
     }
 
-    void connectionClosed(NetworkManager manager, EntityPlayer player)
+    void connectionClosed(INetworkManager manager, EntityPlayer player)
     {
         for (IConnectionHandler handler : connectionHandlers)
         {
@@ -215,7 +215,7 @@ public class NetworkRegistry
         activeChannels.removeAll(player);
     }
 
-    void generateChannelRegistration(EntityPlayer player, NetHandler netHandler, NetworkManager manager)
+    void generateChannelRegistration(EntityPlayer player, NetHandler netHandler, INetworkManager manager)
     {
         Packet250CustomPayload pkt = new Packet250CustomPayload();
         pkt.field_73630_a = "REGISTER";
@@ -224,7 +224,7 @@ public class NetworkRegistry
         manager.func_74429_a(pkt);
     }
 
-    void handleCustomPacket(Packet250CustomPayload packet, NetworkManager network, NetHandler handler)
+    void handleCustomPacket(Packet250CustomPayload packet, INetworkManager network, NetHandler handler)
     {
         if ("REGISTER".equals(packet.field_73630_a))
         {
@@ -241,7 +241,7 @@ public class NetworkRegistry
     }
 
 
-    private void handlePacket(Packet250CustomPayload packet, NetworkManager network, Player player)
+    private void handlePacket(Packet250CustomPayload packet, INetworkManager network, Player player)
     {
         String channel = packet.field_73630_a;
         for (IPacketHandler handler : Iterables.concat(universalPacketHandlers.get(channel), player instanceof EntityPlayerMP ? serverPacketHandlers.get(channel) : clientPacketHandlers.get(channel)))

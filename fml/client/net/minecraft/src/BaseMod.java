@@ -422,7 +422,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
      * Called when a client logs out of the server.
      */
     @Override
-    public void onClientLogout(NetworkManager mgr)
+    public void onClientLogout(INetworkManager mgr)
     {
 
     }

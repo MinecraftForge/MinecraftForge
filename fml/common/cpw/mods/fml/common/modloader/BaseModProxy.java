@@ -24,7 +24,7 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
@@ -59,7 +59,7 @@ public interface BaseModProxy
     void takenFromCrafting(EntityPlayer player, ItemStack item, IInventory craftMatrix);
     void takenFromFurnace(EntityPlayer player, ItemStack item);
 
-    public abstract void onClientLogout(NetworkManager manager);
+    public abstract void onClientLogout(INetworkManager manager);
 
     public abstract void onClientLogin(EntityPlayer player);
 

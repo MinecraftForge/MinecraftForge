@@ -2,7 +2,7 @@ package cpw.mods.fml.common.modloader;
 
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
@@ -17,7 +17,7 @@ public class ModLoaderPacketHandler implements IPacketHandler
     }
 
     @Override
-    public void onPacketData(NetworkManager manager, Packet250CustomPayload packet, Player player)
+    public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player)
     {
         if (player instanceof EntityPlayerMP)
         {

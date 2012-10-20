@@ -1,1 +1,7 @@
-* text=auto
+* text eol=lf
+*.bat text eol=crlf
+*.patch text
+*.png binary
+*.exe binary
+*.dll binary
+*.zip binary

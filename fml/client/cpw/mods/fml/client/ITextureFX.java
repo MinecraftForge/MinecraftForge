@@ -17,11 +17,11 @@ package cpw.mods.fml.client;
 import java.awt.Dimension;
 
 import net.minecraft.src.RenderEngine;
-import net.minecraft.src.TexturePackBase;
+import net.minecraft.src.ITexturePack;
 
 public interface ITextureFX
 {
-    public void onTexturePackChanged(RenderEngine engine, TexturePackBase texturepack, Dimension dimensions);
+    public void onTexturePackChanged(RenderEngine engine, ITexturePack texturepack, Dimension dimensions);
 
     public void onTextureDimensionsUpdate(int width, int height);
     

@@ -5,7 +5,7 @@ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 
 public interface IModLoaderSidedHelper
@@ -19,8 +19,8 @@ public interface IModLoaderSidedHelper
 
     void sendClientPacket(BaseModProxy mod, Packet250CustomPayload packet);
 
-    void clientConnectionOpened(NetHandler netClientHandler, NetworkManager manager, BaseModProxy mod);
+    void clientConnectionOpened(NetHandler netClientHandler, INetworkManager manager, BaseModProxy mod);
 
-    boolean clientConnectionClosed(NetworkManager manager, BaseModProxy mod);
+    boolean clientConnectionClosed(INetworkManager manager, BaseModProxy mod);
 
 }

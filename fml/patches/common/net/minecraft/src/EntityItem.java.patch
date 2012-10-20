@@ -9,7 +9,7 @@
  
  public class EntityItem extends Entity
  {
-@@ -225,6 +227,8 @@
+@@ -232,6 +234,8 @@
                      p_70100_1_.func_71029_a(AchievementList.field_76027_z);
                  }
  
