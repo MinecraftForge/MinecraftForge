@@ -744,7 +744,7 @@ def gen_merged_exc(mcp_dir, fml_dir):
                 print 'Error: Exec for shared function does not match client and server:'
                 print 'Function: ' + key
                 print 'Client: ' + value
-                print 'Server: ' + server[value]
+                print 'Server: ' + server[key]
             if value != '|':
                 common[key] = value
             client.pop(key)
