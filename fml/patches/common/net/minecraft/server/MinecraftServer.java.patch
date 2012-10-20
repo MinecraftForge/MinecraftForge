@@ -9,7 +9,7 @@
 +import cpw.mods.fml.relauncher.FMLRelauncher;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
- import net.minecraft.src.BehaviorDispenseBoat;
+ import net.minecraft.src.BehaviorArrowDispense;
 @@ -385,7 +388,10 @@
          {
              if (this.func_71197_b())
