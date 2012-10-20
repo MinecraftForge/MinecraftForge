@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
---- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Tue Aug 14 20:16:02 2012
-+++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Tue Aug 14 20:19:30 2012
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Oct 20 04:11:53 2012
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Oct 20 04:14:21 2012
 @@ -11,6 +11,10 @@
  
  public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
@@ -13,18 +13,9 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.jav
        if(this.field_74885_f != 2 && this.field_74885_f != 3) {
           this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
---- minecraft_server\net\minecraft\src\DedicatedServer.java	Tue Aug 14 20:16:03 2012
-+++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Tue Aug 14 20:24:26 2012
-@@ -184,7 +184,7 @@
- 
-    }
- 
--   protected CrashReport func_71230_b(CrashReport p_71230_1_) {
-+   public CrashReport func_71230_b(CrashReport p_71230_1_) {
-       p_71230_1_ = super.func_71230_b(p_71230_1_);
-       p_71230_1_.func_71500_a("Type", new CallableType(this));
-       return p_71230_1_;
-@@ -194,7 +194,7 @@
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Sat Oct 20 04:11:53 2012
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Sat Oct 20 04:13:58 2012
+@@ -195,7 +195,7 @@
        System.exit(0);
     }
  
@@ -33,20 +24,42 @@ diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_s
        super.func_71190_q();
        this.func_71333_ah();
     }
-diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
---- minecraft_server\net\minecraft\src\ItemMap.java	Tue Aug 14 20:16:03 2012
-+++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Tue Aug 14 20:19:30 2012
-@@ -24,7 +24,6 @@
+diff -r -U 3 minecraft_server\net\minecraft\src\EntityArrow.java minecraft_server_patched\net\minecraft\src\EntityArrow.java
+--- minecraft_server\net\minecraft\src\EntityArrow.java	Sat Oct 20 04:11:53 2012
++++ minecraft_server_patched\net\minecraft\src\EntityArrow.java	Sat Oct 20 04:13:43 2012
+@@ -381,4 +381,6 @@
+       byte var1 = this.field_70180_af.func_75683_a(16);
+       return (var1 & 1) != 0;
+    }
++
++   public void func_70186_c(double var1, double var3, double var5, float var7, float var8) { }
+ }
+diff -r -U 3 minecraft_server\net\minecraft\src\EnumFacing.java minecraft_server_patched\net\minecraft\src\EnumFacing.java
+--- minecraft_server\net\minecraft\src\EnumFacing.java	Sat Oct 20 04:11:53 2012
++++ minecraft_server_patched\net\minecraft\src\EnumFacing.java	Sat Oct 20 04:13:22 2012
+@@ -15,10 +15,6 @@
+    private final int field_82612_k;
+    private static final EnumFacing[] field_82609_l = new EnumFacing[6];
+ 
+-   public static EnumFacing[] func_82598_values() {
+-      return (EnumFacing[])field_82610_m.clone();
+-   }
+-
+    private EnumFacing(int p_i5027_3_, int p_i5027_4_, int p_i5027_5_, int p_i5027_6_, int p_i5027_7_) {
+       this.field_82603_g = p_i5027_3_;
+       this.field_82613_h = p_i5027_4_;
+@@ -40,7 +36,7 @@
     }
  
-    public MapData func_77873_a(ItemStack p_77873_1_, World p_77873_2_) {
--      "map_" + p_77873_1_.func_77960_j();
-       MapData var4 = (MapData)p_77873_2_.func_72943_a(MapData.class, "map_" + p_77873_1_.func_77960_j());
-       if(var4 == null) {
-          p_77873_1_.func_77964_b(p_77873_2_.func_72841_b("map"));
+    static {
+-      EnumFacing[] var0 = func_82598_values();
++      EnumFacing[] var0 = values();
+       int var1 = var0.length;
+ 
+       for(int var2 = 0; var2 < var1; ++var2) {
 diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
---- minecraft_server\net\minecraft\src\TcpMasterThread.java	Tue Aug 14 20:16:03 2012
-+++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Tue Aug 14 20:19:30 2012
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Sat Oct 20 04:11:54 2012
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Sat Oct 20 04:18:38 2012
 @@ -11,6 +11,7 @@
        this.field_74504_a = p_i3285_1_;
     }
@@ -56,26 +69,15 @@ diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_s
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Tue Aug 14 20:16:03 2012
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Tue Aug 14 20:19:30 2012
-@@ -20,7 +20,9 @@
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sat Oct 20 04:11:54 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sat Oct 20 04:19:13 2012
+@@ -20,7 +20,8 @@
     }
  
     public void run() {
-+      while(true) {
-       this.func_75736_b();
-+      }
+-      this.func_75736_b();
++      while(true)
++         this.func_75736_b();
     }
  
     private void func_75736_b() {
-diff -r -U 3 minecraft_server\net\minecraft\src\ItemMap.java minecraft_server_patched\net\minecraft\src\ItemMap.java
---- minecraft_server\net\minecraft\src\ItemMap.java	Wed Aug 01 18:15:37 2012
-+++ minecraft_server_patched\net\minecraft\src\ItemMap.java	Wed Aug 01 18:27:23 2012
-@@ -24,7 +24,6 @@
-    }
- 
-    public static MapData func_77874_a(short p_77874_0_, World p_77874_1_) {
--      "map_" + p_77874_0_;
-       MapData var3 = (MapData)p_77874_1_.func_72943_a(MapData.class, "map_" + p_77874_0_);
-       if(var3 == null) {
-          int var4 = p_77874_1_.func_72841_b("map");
