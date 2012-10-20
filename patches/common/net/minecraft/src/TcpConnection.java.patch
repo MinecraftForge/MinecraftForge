@@ -7,7 +7,7 @@
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
  
- public class TcpConnection implements NetworkManager
+ public class TcpConnection implements INetworkManager
  {
 @@ -377,6 +379,7 @@
          if (this.field_74472_n && this.field_74473_o.isEmpty())
