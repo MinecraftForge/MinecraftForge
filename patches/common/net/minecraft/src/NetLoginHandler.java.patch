@@ -1,6 +1,6 @@
 --- ../src-base/common/net/minecraft/src/NetLoginHandler.java
 +++ ../src-work/common/net/minecraft/src/NetLoginHandler.java
-@@ -9,6 +9,8 @@
+@@ -12,6 +12,8 @@
  import java.util.Random;
  import java.util.logging.Logger;
  import javax.crypto.SecretKey;
@@ -9,7 +9,7 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetLoginHandler extends NetHandler
-@@ -39,7 +41,7 @@
+@@ -42,7 +44,7 @@
              this.func_72529_d();
          }
  
@@ -18,7 +18,7 @@
          {
              this.func_72527_a("Took too long to log in");
          }
-@@ -125,12 +127,17 @@
+@@ -128,12 +130,17 @@
          }
      }
  
@@ -39,7 +39,7 @@
          if (var1 != null)
          {
              this.func_72527_a(var1);
-@@ -221,4 +228,20 @@
+@@ -250,4 +257,20 @@
      {
          return p_72531_0_.field_72544_i = p_72531_1_;
      }

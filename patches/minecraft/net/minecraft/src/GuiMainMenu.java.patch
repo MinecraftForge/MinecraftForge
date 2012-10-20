@@ -18,7 +18,7 @@
  
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
-@@ -121,7 +128,8 @@
+@@ -125,7 +132,8 @@
              this.func_73969_a(var4, 24, var2);
          }
  
@@ -28,7 +28,7 @@
  
          if (this.field_73882_e.field_71448_m)
          {
-@@ -185,6 +193,11 @@
+@@ -189,6 +197,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -40,7 +40,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -403,7 +416,14 @@
+@@ -407,7 +420,14 @@
              var9 = var9 + " Demo";
          }
  

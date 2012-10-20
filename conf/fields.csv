@@ -1072,6 +1072,7 @@ field_72699_b,players,2,players in the current instance
 field_72700_c,playerInstances,2,A map of chunk position (two ints concatenated into a long) to PlayerInstance
 field_72701_a,theWorldServer,2,
 field_72737_D,maxBlockZ,2,Maximum block Z
+field_72738_E,damagedBlocks,2,Stores blocks currently being broken. Key is entity ID of the thing doing the breaking. Value is a DestroyBlockProgress
 field_72739_F,renderDistance,2,
 field_72740_G,renderEntitiesStartupCounter,2,Render entities startup counter (init value=2)
 field_72741_A,minBlockZ,2,Minimum block Z
@@ -1223,7 +1224,7 @@ field_73139_h,lastPitch,2,
 field_73140_i,lastHeadMotion,2,
 field_73141_v,ridingEntity,2,
 field_73142_u,ticksSinceLastForcedTeleport,2,"every 400 ticks a  full teleport packet is sent, rather than just a ""move me +x"" command, so that position remains fully synced."
-field_73143_t,trackMotion,2,
+field_73143_t,sendVelocityUpdates,2,
 field_73144_s,isDataInitialized,2,set to true on first sendLocationToClients
 field_73145_r,posZ,2,
 field_73146_q,posY,2,

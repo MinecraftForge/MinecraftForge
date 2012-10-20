@@ -9,8 +9,8 @@
 +import cpw.mods.fml.relauncher.FMLRelauncher;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
- import net.minecraft.src.CallableIsServerModded;
-@@ -364,7 +367,10 @@
+ import net.minecraft.src.BehaviorArrowDispense;
+@@ -385,7 +388,10 @@
          {
              if (this.func_71197_b())
              {
@@ -21,7 +21,7 @@
  
                  for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
-@@ -403,6 +409,7 @@
+@@ -424,6 +430,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -29,19 +29,18 @@
              }
              else
              {
-@@ -466,9 +473,11 @@
+@@ -487,8 +494,10 @@
  
      public void func_71217_p()
      {
 +        FMLCommonHandler.instance().rescheduleTicks(Side.SERVER);
          long var1 = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
-         Vec3.func_72437_a().func_72343_a();
 +        FMLCommonHandler.instance().onPreServerTick();
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -514,6 +523,7 @@
+@@ -534,6 +543,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -49,17 +48,18 @@
      }
  
      public void func_71190_q()
-@@ -537,7 +547,9 @@
+@@ -560,8 +570,10 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
 +                FMLCommonHandler.instance().onPreWorldTick(var4);
                  var4.func_72835_b();
+                 var4.func_72939_s();
 +                FMLCommonHandler.instance().onPostWorldTick(var4);
-                 this.field_71304_b.func_76318_c("lights");
- 
-                 while (true)
-@@ -1118,6 +1130,12 @@
+                 this.field_71304_b.func_76319_b();
+                 this.field_71304_b.func_76320_a("tracker");
+                 var4.func_73039_n().func_72788_a();
+@@ -1149,6 +1161,12 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {

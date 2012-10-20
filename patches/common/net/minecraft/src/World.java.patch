@@ -1,6 +1,6 @@
 --- ../src-base/common/net/minecraft/src/World.java
 +++ ../src-work/common/net/minecraft/src/World.java
-@@ -3375,7 +3375,7 @@
+@@ -3473,7 +3473,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {

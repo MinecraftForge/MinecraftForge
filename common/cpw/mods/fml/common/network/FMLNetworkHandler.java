@@ -20,7 +20,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet131MapData;
 import net.minecraft.src.Packet1Login;
@@ -61,7 +61,7 @@ public class FMLNetworkHandler
 
     private Map<Integer, NetworkModHandler> networkIdLookup = Maps.newHashMap();
 
-    public static void handlePacket250Packet(Packet250CustomPayload packet, NetworkManager network, NetHandler handler)
+    public static void handlePacket250Packet(Packet250CustomPayload packet, INetworkManager network, NetHandler handler)
     {
         String target = packet.field_73630_a;
 
@@ -79,12 +79,12 @@ public class FMLNetworkHandler
         }
     }
 
-    public static void onConnectionEstablishedToServer(NetHandler clientHandler, NetworkManager manager, Packet1Login login)
+    public static void onConnectionEstablishedToServer(NetHandler clientHandler, INetworkManager manager, Packet1Login login)
     {
         NetworkRegistry.instance().clientLoggedIn(clientHandler, manager, login);
     }
 
-    private void handleFMLPacket(Packet250CustomPayload packet, NetworkManager network, NetHandler netHandler)
+    private void handleFMLPacket(Packet250CustomPayload packet, INetworkManager network, NetHandler netHandler)
     {
         FMLPacket pkt = FMLPacket.readPacket(packet.field_73629_c);
         String userName = "";
@@ -278,7 +278,7 @@ public class FMLNetworkHandler
         return networkModHandlers.keySet();
     }
 
-    public static void handlePlayerLogin(EntityPlayerMP player, NetServerHandler netHandler, NetworkManager manager)
+    public static void handlePlayerLogin(EntityPlayerMP player, NetServerHandler netHandler, INetworkManager manager)
     {
         NetworkRegistry.instance().playerLoggedIn(player, netHandler, manager);
         GameRegistry.onPlayerLogin(player);
@@ -300,17 +300,17 @@ public class FMLNetworkHandler
         }
     }
 
-    public static void onClientConnectionToRemoteServer(NetHandler netClientHandler, String server, int port, NetworkManager networkManager)
+    public static void onClientConnectionToRemoteServer(NetHandler netClientHandler, String server, int port, INetworkManager networkManager)
     {
         NetworkRegistry.instance().connectionOpened(netClientHandler, server, port, networkManager);
     }
 
-    public static void onClientConnectionToIntegratedServer(NetHandler netClientHandler, MinecraftServer server, NetworkManager networkManager)
+    public static void onClientConnectionToIntegratedServer(NetHandler netClientHandler, MinecraftServer server, INetworkManager networkManager)
     {
         NetworkRegistry.instance().connectionOpened(netClientHandler, server, networkManager);
     }
 
-    public static void onConnectionClosed(NetworkManager manager, EntityPlayer player)
+    public static void onConnectionClosed(INetworkManager manager, EntityPlayer player)
     {
         NetworkRegistry.instance().connectionClosed(manager, player);
     }
