@@ -77,16 +77,6 @@ diff -r -U 3 minecraft\net\minecraft\src\DedicatedServer.java minecraft_patched\
        super.func_71190_q();
        this.func_71333_ah();
     }
-diff -r -U 3 minecraft\net\minecraft\src\EntityArrow.java minecraft_patched\net\minecraft\src\EntityArrow.java
---- minecraft\net\minecraft\src\EntityArrow.java	Sat Oct 20 04:10:43 2012
-+++ minecraft_patched\net\minecraft\src\EntityArrow.java	Sat Oct 20 04:16:13 2012
-@@ -406,4 +406,6 @@
-       byte var1 = this.field_70180_af.func_75683_a(16);
-       return (var1 & 1) != 0;
-    }
-+
-+   public void func_70186_c(double var1, double var3, double var5, float var7, float var8) { }
- }
 diff -r -U 3 minecraft\net\minecraft\src\EnumFacing.java minecraft_patched\net\minecraft\src\EnumFacing.java
 --- minecraft\net\minecraft\src\EnumFacing.java	Sat Oct 20 04:10:44 2012
 +++ minecraft_patched\net\minecraft\src\EnumFacing.java	Sat Oct 20 04:15:54 2012
