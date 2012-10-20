@@ -61,8 +61,8 @@ def pre_decompile(mcp_dir, fml_dir):
     with open(server_jar, 'rb') as fh:
         md5_s = md5(fh.read()).hexdigest()
         
-    clean_c = "969699f13e5bbe7f12e40ac4f32b7d9a"
-    clean_s = "c047f82522e53f2ec3c6b64304dfad0f"
+    clean_c = "32a654388b54d3e4bb29c1a46e7d6a12"
+    clean_s = "99f84541e184979c5b0312e9afc56ce1"
     
     if not md5_c == clean_c:
         print 'Warning, Modified Client jar detected'
@@ -249,8 +249,8 @@ def setup_fml(fml_dir, mcp_dir):
         Commands.applyrg = applyrg_shunt
         Commands.checkjars = checkjars_shunt
         #decompile -d -n -r
-        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g
-        decompile(None, False, False, True, True, False, True, False, False, False, False)
+        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c     -s
+        decompile(None, False, False, True, True, False, True, False, False, False, False, False, False)
         reset_logger()
         os.chdir(fml_dir)
         
@@ -322,6 +322,9 @@ def merge_client_server(mcp_dir):
     if not os.path.isdir(shared):
         os.makedirs(shared)
         
+    #Nasty hack, but these three files sometimes decompile differently, but are identical, so just take the client file
+    special_cases = ['GuiStatsComponent.java', 'HttpUtilRunnable.java', 'PlayerUsageSnooper.java', 'RConThreadClient.java']
+        
     for path, _, filelist in os.walk(client, followlinks=True):
         for cur_file in filelist:
             f_client = os.path.normpath(os.path.join(client, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
@@ -338,7 +341,7 @@ def merge_client_server(mcp_dir):
             with open(f_server, 'rb') as fh:
                 md5_s = md5(fh.read()).hexdigest()
                 
-            if md5_c != md5_s:
+            if md5_c != md5_s and not cur_file in special_cases:
                 continue
                 
             new_dir = os.path.join(shared, path[len(client)+1:])
@@ -375,7 +378,7 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
         apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir)
     if copy_files and os.path.isdir(os.path.join(fml_dir, 'common')):
         copytree(os.path.join(fml_dir, 'common'), os.path.join(src_dir, 'common'))
-            
+
 def finish_setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
     from runtime.updatenames import updatenames
@@ -582,7 +585,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         commands_sanity_check()
     except ImportError as ex:
         print 'Could not verify commands.py patch integrity, this typically means that you are not in a clean MCP environment.'
-        print 'Download a clean version of MCP 7.0a and try again'
+        print 'Download a clean version of MCP 7.17 and try again'
         print ex
         sys.exit(1)
     
@@ -626,7 +629,7 @@ def normaliselines(in_filename):
 
 def get_conf_copy(mcp_dir, fml_dir):
     #Lets grab the files we dont work on
-    for file in ['astyle.cfg', 'version.cfg', 'patches/minecraft_ff.patch', 'patches/minecraft_server_ff.patch', 'newids.csv']:
+    for file in ['astyle.cfg', 'version.cfg', 'newids.csv']:
         dst_file = os.path.normpath(os.path.join(fml_dir, 'conf', file))
         src_file = os.path.normpath(os.path.join(mcp_dir, 'conf', file))
         if not os.path.isdir(os.path.dirname(dst_file)):
@@ -636,27 +639,6 @@ def get_conf_copy(mcp_dir, fml_dir):
         shutil.copy(src_file, dst_file)
         normaliselines(dst_file)
         print 'Grabbing: ' + src_file
-        
-    ff_server = os.path.normpath(os.path.join(fml_dir, 'conf', 'patches', 'minecraft_server_ff.patch'))
-    data = []
-    with open(ff_server) as f: data = f.readlines();
-    data = data + [
-        'diff -r -U 3 minecraft_server\\net\\minecraft\\src\\ItemMap.java minecraft_server_patched\\net\\minecraft\\src\\ItemMap.java',
-        '--- minecraft_server\\net\\minecraft\\src\\ItemMap.java	Wed Aug 01 18:15:37 2012',
-        '+++ minecraft_server_patched\\net\\minecraft\\src\\ItemMap.java	Wed Aug 01 18:27:23 2012',
-        '@@ -24,7 +24,6 @@',
-        '    }',
-        ' ',
-        '    public static MapData func_77874_a(short p_77874_0_, World p_77874_1_) {',
-        '-      "map_" + p_77874_0_;',
-        '       MapData var3 = (MapData)p_77874_1_.func_72943_a(MapData.class, "map_" + p_77874_0_);',
-        '       if(var3 == null) {',
-        '          int var4 = p_77874_1_.func_72841_b("map");'
-    ]
-    os.remove(ff_server)
-    with open(ff_server, 'wb') as f:
-        for line in data:
-            f.write(line.rstrip('\r\n') + '\n')
 
     common_srg = gen_merged_srg(mcp_dir, fml_dir)
     common_exc = gen_merged_exc(mcp_dir, fml_dir)
@@ -665,7 +647,7 @@ def get_conf_copy(mcp_dir, fml_dir):
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(fml_dir, 'conf', 'fields.csv'))
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'methods.csv'), os.path.join(fml_dir, 'conf', 'methods.csv'))
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'params.csv'), os.path.join(fml_dir, 'conf', 'params.csv'), main_key='param')
-        
+    
 def gen_merged_srg(mcp_dir, fml_dir):
     print 'Generating merged Retroguard data'
     srg_client = os.path.join(mcp_dir, 'conf', 'client.srg')
