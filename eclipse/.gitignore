@@ -18,16 +18,6 @@
 /.metadata/*
 !/.metadata/.plugins/
 /.metadata/.plugins/*
-!/.metadata/.plugins/org.eclipse.core.resources/
-/.metadata/.plugins/org.eclipse.core.resources/*
-!/.metadata/.plugins/org.eclipse.core.resources/.projects/
-/.metadata/.plugins/org.eclipse.core.resources/.projects/*
-!/.metadata/.plugins/org.eclipse.core.resources/.projects/Clean/
-/.metadata/.plugins/org.eclipse.core.resources/.projects/Clean/*
-!/.metadata/.plugins/org.eclipse.core.resources/.projects/Clean/placeholder
-!/.metadata/.plugins/org.eclipse.core.resources/.projects/FML/
-/.metadata/.plugins/org.eclipse.core.resources/.projects/FML/*
-!/.metadata/.plugins/org.eclipse.core.resources/.projects/FML/placeholder
 !/.metadata/.plugins/org.eclipse.core.runtime/
 /.metadata/.plugins/org.eclipse.core.runtime/*
 !/.metadata/.plugins/org.eclipse.core.runtime/.settings/
