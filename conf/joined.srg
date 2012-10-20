@@ -853,22 +853,22 @@ CL: fe net/minecraft/src/BanList
 CL: ff net/minecraft/src/ServerCommand
 CL: fh net/minecraft/src/ConsoleLogManager
 CL: fi net/minecraft/src/ConsoleLogFormatter
-CL: fj net/minecraft/src/ConvertProgressUpdater
-CL: fk net/minecraft/src/BehaviorMinecraftServer_10
-CL: fl net/minecraft/src/BehaviorMinecraftServer_11
+CL: fj net/minecraft/src/BehaviorArrowDispense
+CL: fk net/minecraft/src/BehaviorBucketFullDispense
+CL: fl net/minecraft/src/BehaviorBucketEmptyDispense
 CL: fm net/minecraft/src/ConvertingProgressUpdate
 CL: fn net/minecraft/src/ThreadDedicatedServer
 CL: fo net/minecraft/src/ThreadMinecraftServer
-CL: fp net/minecraft/src/CallableVanilla
-CL: fq net/minecraft/src/CallableMinecraftServer_16
-CL: fr net/minecraft/src/CallableMemoryStats
-CL: fs net/minecraft/src/CallableMinecraftServer_18
+CL: fp net/minecraft/src/CallableIsServerModded
+CL: fq net/minecraft/src/CallableServerProfiler
+CL: fr net/minecraft/src/CallableServerMemoryStats
+CL: fs net/minecraft/src/CallablePlayers
 CL: ft net/minecraft/src/BehaviorEggDispense
-CL: fu net/minecraft/src/ThreadServerApplication
-CL: fv net/minecraft/src/CallableIsServerModded
-CL: fw net/minecraft/src/CallableServerProfiler
-CL: fx net/minecraft/src/BehaviorPotionDispense
-CL: fy net/minecraft/src/CallablePlayers
+CL: fu net/minecraft/src/BehaviorSnowballDispense
+CL: fv net/minecraft/src/BehaviorExpBottleDispense
+CL: fw net/minecraft/src/BehaviorPotionDispense
+CL: fx net/minecraft/src/BehaviorPotionDispenseLogic
+CL: fy net/minecraft/src/BehaviorMobEggDispense
 CL: fz net/minecraft/src/BehaviorDispenseFireball
 CL: g net/minecraft/src/CallableJVMFlags
 CL: ga net/minecraft/src/BehaviorDispenseMinecart
@@ -2466,7 +2466,7 @@ FD: aqj/b net/minecraft/src/GLAllocation/field_74530_b
 FD: aqk/a net/minecraft/src/ThreadClientSleep/field_74532_a
 FD: aql/a net/minecraft/src/CallableClientProfiler/field_74500_a
 FD: aqm/a net/minecraft/src/CallableClientMemoryStats/field_82887_a
-FD: aqn/a net/minecraft/src/EnumOSHelper/field_82888_a
+FD: aqn/a net/minecraft/src/EnumOSHelper/field_74533_a
 FD: aqo/a net/minecraft/src/MinecraftFakeLauncher/field_74534_a
 FD: aqp/a net/minecraft/src/StatStringFormatKeyInv/field_74536_a
 FD: aqs/a net/minecraft/src/CallableLWJGLVersion/field_74421_a
@@ -4441,26 +4441,26 @@ FD: hk/e net/minecraft/src/ServerListenThread/field_71774_e
 FD: hk/f net/minecraft/src/ServerListenThread/field_71771_f
 FD: hk/g net/minecraft/src/ServerListenThread/field_71772_g
 FD: hk/h net/minecraft/src/ServerListenThread/field_71778_h
-FD: hl/a net/minecraft/src/ServerGUI/field_82039_a
-FD: hl/b net/minecraft/src/ServerGUI/field_82037_b
-FD: hl/c net/minecraft/src/ServerGUI/field_82038_c
-FD: hm/a net/minecraft/src/ServerWindowAdapter/field_82040_a
-FD: hn/a net/minecraft/src/ServerGuiCommandListener/field_82030_a
-FD: hn/b net/minecraft/src/ServerGuiCommandListener/field_82029_b
-FD: ho/a net/minecraft/src/ServerGuiFocusAdapter/field_82031_a
-FD: hp/a net/minecraft/src/PlayerListBox/field_82014_a
-FD: hp/b net/minecraft/src/PlayerListBox/field_82013_b
-FD: hq/a net/minecraft/src/GuiStatsComponent/field_82027_a
-FD: hq/b net/minecraft/src/GuiStatsComponent/field_82025_b
-FD: hq/c net/minecraft/src/GuiStatsComponent/field_82026_c
-FD: hq/d net/minecraft/src/GuiStatsComponent/field_82023_d
-FD: hq/e net/minecraft/src/GuiStatsComponent/field_82024_e
-FD: hr/a net/minecraft/src/GuiStatsListener/field_82015_a
-FD: hs/a net/minecraft/src/GuiLogOutputHandler/field_82019_a
-FD: hs/b net/minecraft/src/GuiLogOutputHandler/field_82017_b
-FD: hs/c net/minecraft/src/GuiLogOutputHandler/field_82018_c
-FD: hs/d net/minecraft/src/GuiLogOutputHandler/field_82016_d
-FD: ht/a net/minecraft/src/GuiLogFormatter/field_82028_a
+FD: hl/a net/minecraft/src/ServerGUI/field_79010_a
+FD: hl/b net/minecraft/src/ServerGUI/field_79008_b
+FD: hl/c net/minecraft/src/ServerGUI/field_79009_c
+FD: hm/a net/minecraft/src/ServerWindowAdapter/field_79002_a
+FD: hn/a net/minecraft/src/ServerGuiCommandListener/field_79027_a
+FD: hn/b net/minecraft/src/ServerGuiCommandListener/field_79026_b
+FD: ho/a net/minecraft/src/ServerGuiFocusAdapter/field_79028_a
+FD: hp/a net/minecraft/src/PlayerListBox/field_79012_a
+FD: hp/b net/minecraft/src/PlayerListBox/field_79011_b
+FD: hq/a net/minecraft/src/GuiStatsComponent/field_79020_a
+FD: hq/b net/minecraft/src/GuiStatsComponent/field_79018_b
+FD: hq/c net/minecraft/src/GuiStatsComponent/field_79019_c
+FD: hq/d net/minecraft/src/GuiStatsComponent/field_79016_d
+FD: hq/e net/minecraft/src/GuiStatsComponent/field_79017_e
+FD: hr/a net/minecraft/src/GuiStatsListener/field_79021_a
+FD: hs/a net/minecraft/src/GuiLogOutputHandler/field_79025_a
+FD: hs/b net/minecraft/src/GuiLogOutputHandler/field_79023_b
+FD: hs/c net/minecraft/src/GuiLogOutputHandler/field_79024_c
+FD: hs/d net/minecraft/src/GuiLogOutputHandler/field_79022_d
+FD: ht/a net/minecraft/src/GuiLogFormatter/field_79029_a
 FD: hu/a net/minecraft/src/DestroyBlockProgress/field_73115_a
 FD: hu/b net/minecraft/src/DestroyBlockProgress/field_73113_b
 FD: hu/c net/minecraft/src/DestroyBlockProgress/field_73114_c
@@ -11849,18 +11849,18 @@ MD: hk/b (Ljava/net/InetAddress;)Z net/minecraft/src/ServerListenThread/func_717
 MD: hk/c ()Ljava/net/InetAddress; net/minecraft/src/ServerListenThread/func_71767_c ()Ljava/net/InetAddress;
 MD: hk/d ()I net/minecraft/src/ServerListenThread/func_71765_d ()I
 MD: hk/run ()V net/minecraft/src/ServerListenThread/run ()V
-MD: hl/a (Lhf;)V net/minecraft/src/ServerGUI/func_82032_a (Lnet/minecraft/src/DedicatedServer;)V
-MD: hl/a (Lhl;)Lhf; net/minecraft/src/ServerGUI/func_82033_a (Lnet/minecraft/src/ServerGUI;)Lnet/minecraft/src/DedicatedServer;
-MD: hl/b ()Ljavax/swing/JComponent; net/minecraft/src/ServerGUI/func_82035_b ()Ljavax/swing/JComponent;
-MD: hl/c ()Ljavax/swing/JComponent; net/minecraft/src/ServerGUI/func_82036_c ()Ljavax/swing/JComponent;
-MD: hl/d ()Ljavax/swing/JComponent; net/minecraft/src/ServerGUI/func_82034_d ()Ljavax/swing/JComponent;
+MD: hl/a (Lhf;)V net/minecraft/src/ServerGUI/func_79003_a (Lnet/minecraft/src/DedicatedServer;)V
+MD: hl/a (Lhl;)Lhf; net/minecraft/src/ServerGUI/func_79004_a (Lnet/minecraft/src/ServerGUI;)Lnet/minecraft/src/DedicatedServer;
+MD: hl/b ()Ljavax/swing/JComponent; net/minecraft/src/ServerGUI/func_79006_b ()Ljavax/swing/JComponent;
+MD: hl/c ()Ljavax/swing/JComponent; net/minecraft/src/ServerGUI/func_79007_c ()Ljavax/swing/JComponent;
+MD: hl/d ()Ljavax/swing/JComponent; net/minecraft/src/ServerGUI/func_79005_d ()Ljavax/swing/JComponent;
 MD: hm/windowClosing (Ljava/awt/event/WindowEvent;)V net/minecraft/src/ServerWindowAdapter/windowClosing (Ljava/awt/event/WindowEvent;)V
 MD: hn/actionPerformed (Ljava/awt/event/ActionEvent;)V net/minecraft/src/ServerGuiCommandListener/actionPerformed (Ljava/awt/event/ActionEvent;)V
 MD: ho/focusGained (Ljava/awt/event/FocusEvent;)V net/minecraft/src/ServerGuiFocusAdapter/focusGained (Ljava/awt/event/FocusEvent;)V
 MD: hp/a ()V net/minecraft/src/PlayerListBox/func_73660_a ()V
-MD: hq/a ()V net/minecraft/src/GuiStatsComponent/func_82021_a ()V
-MD: hq/a (Lhq;)V net/minecraft/src/GuiStatsComponent/func_82020_a (Lnet/minecraft/src/GuiStatsComponent;)V
-MD: hq/a ([J)D net/minecraft/src/GuiStatsComponent/func_82022_a ([J)D
+MD: hq/a ()V net/minecraft/src/GuiStatsComponent/func_79014_a ()V
+MD: hq/a (Lhq;)V net/minecraft/src/GuiStatsComponent/func_79013_a (Lnet/minecraft/src/GuiStatsComponent;)V
+MD: hq/a ([J)D net/minecraft/src/GuiStatsComponent/func_79015_a ([J)D
 MD: hq/paint (Ljava/awt/Graphics;)V net/minecraft/src/GuiStatsComponent/paint (Ljava/awt/Graphics;)V
 MD: hr/actionPerformed (Ljava/awt/event/ActionEvent;)V net/minecraft/src/GuiStatsListener/actionPerformed (Ljava/awt/event/ActionEvent;)V
 MD: hs/close ()V net/minecraft/src/GuiLogOutputHandler/close ()V
