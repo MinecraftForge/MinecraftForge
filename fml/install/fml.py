@@ -701,48 +701,17 @@ def gen_merged_srg(mcp_dir, fml_dir):
     return common
 
 def gen_merged_exc(mcp_dir, fml_dir):
-    print 'Generating merged MCInjector config'
-    exc_client = os.path.join(mcp_dir, 'conf', 'client.exc')
-    exc_server = os.path.join(mcp_dir, 'conf', 'server.exc')
+    print 'Reading merged MCInjector config'
+    exc_joined = os.path.join(mcp_dir, 'conf', 'joined.exc')
     
-    client = {}
-    with open(exc_client, 'r') as fh:
+    joined = {}
+    with open(exc_joined, 'r') as fh:
         for line in fh:
             if not line.startswith('#'):
                 pts = line.rstrip('\r\n').split('=')
-                client[pts[0]] = pts[1]
-            
-    server = {}
-    with open(exc_server, 'r') as fh:
-        for line in fh:
-            if not line.startswith('#'):
-                pts = line.rstrip('\r\n').split('=')
-                server[pts[0]] = pts[1]
+                joined[pts[0]] = pts[1]
     
-    common = {}
-    for key, value in client.items():
-        if key in server:
-            if value != server[key]:
-                print 'Error: Exec for shared function does not match client and server:'
-                print 'Function: ' + key
-                print 'Client: ' + value
-                print 'Server: ' + server[key]
-            if value != '|':
-                common[key] = value
-            client.pop(key)
-            server.pop(key)
-        else:
-            if value != '|':
-                common[key] = value
-    
-    joined = dict(common.items() + server.items())
-    
-    #Print joined mcinjector files
-    with open(os.path.join(fml_dir, 'conf', 'joined.exc'), 'wb') as f:
-        for key in sorted(joined):
-            f.write('%s=%s\n' % (key, joined[key]))
-            
-    return common
+    return joined
 
 def gen_shared_searge_names(common_srg, common_exc):
     field = re.compile(r'field_[0-9]+_[a-zA-Z_]+$')
