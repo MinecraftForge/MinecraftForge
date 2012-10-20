@@ -67,7 +67,7 @@ public class FMLRenderAccessLibrary
         return TextureFXManager.instance().getTextureDimensions(textureFX);
     }
 
-    public static void onTexturePackChange(RenderEngine engine, TexturePackBase texturePack, List<TextureFX> textureFXList)
+    public static void onTexturePackChange(RenderEngine engine, ITexturePack texturePack, List<TextureFX> textureFXList)
     {
         TextureFXManager.instance().onTexturePackChange(engine, texturePack, textureFXList);
     }

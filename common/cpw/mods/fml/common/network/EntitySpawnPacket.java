@@ -13,7 +13,7 @@ import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.MathHelper;
 import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -168,7 +168,7 @@ public class EntitySpawnPacket extends FMLPacket
     }
 
     @Override
-    public void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName)
+    public void execute(INetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName)
     {
         NetworkModHandler nmh = handler.findNetworkModHandler(networkId);
         ModContainer mc = nmh.getContainer();

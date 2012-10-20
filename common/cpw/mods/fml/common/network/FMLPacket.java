@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 
 import com.google.common.base.Throwables;
 import com.google.common.primitives.Bytes;
@@ -91,7 +91,7 @@ public abstract class FMLPacket
 
     public abstract FMLPacket consumePacket(byte[] data);
 
-    public abstract void execute(NetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName);
+    public abstract void execute(INetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName);
     {
         // TODO Auto-generated method stub
 
