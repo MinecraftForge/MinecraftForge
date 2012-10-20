@@ -15,7 +15,7 @@
      public static final CreativeTabs tabBlock = new CreativeTabBlock(0, "buildingBlocks");
      public static final CreativeTabs tabDecorations = new CreativeTabDeco(1, "decorations");
      public static final CreativeTabs tabRedstone = new CreativeTabRedstone(2, "redstone");
-@@ -29,11 +31,32 @@
+@@ -29,8 +31,22 @@
      /** Whether to draw the title in the foreground of the creative GUI */
      private boolean drawTitle = true;
  
@@ -38,17 +38,7 @@
          this.tabIndex = par1;
          this.tabLabel = par2Str;
          creativeTabArray[par1] = this;
-+        if (par1 == 11)
-+        {
-+            new CreativeTabs("1");
-+            new CreativeTabs("2");
-+            new CreativeTabs("3");
-+            new CreativeTabs("4");
-+        }
-     }
- 
-     @SideOnly(Side.CLIENT)
-@@ -117,6 +140,10 @@
+@@ -117,6 +133,10 @@
       */
      public int getTabColumn()
      {
@@ -59,7 +49,7 @@
          return this.tabIndex % 6;
      }
  
-@@ -127,6 +154,10 @@
+@@ -127,6 +147,10 @@
       */
      public boolean isTabInFirstRow()
      {
@@ -70,7 +60,7 @@
          return this.tabIndex < 6;
      }
  
-@@ -150,4 +181,26 @@
+@@ -150,4 +174,26 @@
              }
          }
      }
