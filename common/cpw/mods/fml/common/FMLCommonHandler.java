@@ -176,10 +176,10 @@ public class FMLCommonHandler
     public Side getEffectiveSide()
     {
         Thread thr = Thread.currentThread();
-        if ((thr instanceof ThreadServerApplication) || (thr instanceof ServerListenThread))
-        {
-            return Side.SERVER;
-        }
+//        if ((thr instanceof ThreadServerApplication) || (thr instanceof ServerListenThread))
+//        {
+//            return Side.SERVER;
+//        }
 
         return Side.CLIENT;
     }
