@@ -9894,7 +9894,7 @@ MD: awx/j ()V net/minecraft/src/PlayerControllerMP/func_78750_j ()V
 MD: awy/B ()V net/minecraft/src/WorldClient/func_72882_A ()V
 MD: awy/E (III)V net/minecraft/src/WorldClient/func_73029_E (III)V
 MD: awy/a ()V net/minecraft/src/WorldClient/func_73022_a ()V
-MD: awy/a (I)Lla; net/minecraft/src/WorldClient/func_73045_a (I)Lnet/minecraft/src/Entity;
+MD: awy/a (I)Lla; net/minecraft/src/WorldClient/func_73024_a (I)Lnet/minecraft/src/Entity;
 MD: awy/a (IIZ)V net/minecraft/src/WorldClient/func_73025_a (IIZ)V
 MD: awy/a (ILla;)V net/minecraft/src/WorldClient/func_73027_a (ILnet/minecraft/src/Entity;)V
 MD: awy/a (La;)La; net/minecraft/src/WorldClient/func_72914_a (Lnet/minecraft/src/CrashReport;)Lnet/minecraft/src/CrashReport;
