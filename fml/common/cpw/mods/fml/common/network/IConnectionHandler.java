@@ -3,7 +3,7 @@ package cpw.mods.fml.common.network;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet1Login;
 
 public interface IConnectionHandler
@@ -16,7 +16,7 @@ public interface IConnectionHandler
      * @param netHandler
      * @param manager
      */
-    void playerLoggedIn(Player player, NetHandler netHandler, NetworkManager manager);
+    void playerLoggedIn(Player player, NetHandler netHandler, INetworkManager manager);
 
     /**
      * If you don't want the connection to continue, return a non-empty string here
@@ -28,7 +28,7 @@ public interface IConnectionHandler
      * @param netHandler
      * @param manager
      */
-    String connectionReceived(NetLoginHandler netHandler, NetworkManager manager);
+    String connectionReceived(NetLoginHandler netHandler, INetworkManager manager);
 
     /**
      * Fired when a remote connection is opened
@@ -38,7 +38,7 @@ public interface IConnectionHandler
      * @param server
      * @param port
      */
-    void connectionOpened(NetHandler netClientHandler, String server, int port, NetworkManager manager);
+    void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager);
     /**
      *
      * Fired when a local connection is opened
@@ -48,7 +48,7 @@ public interface IConnectionHandler
      * @param netClientHandler
      * @param server
      */
-    void connectionOpened(NetHandler netClientHandler, MinecraftServer server, NetworkManager manager);
+    void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager);
 
     /**
      * Fired when a connection closes
@@ -57,7 +57,7 @@ public interface IConnectionHandler
      *
      * @param manager
      */
-    void connectionClosed(NetworkManager manager);
+    void connectionClosed(INetworkManager manager);
 
     /**
      * Fired when the client established the connection to the server
@@ -67,6 +67,6 @@ public interface IConnectionHandler
      * @param manager
      * @param login
      */
-    void clientLoggedIn(NetHandler clientHandler, NetworkManager manager, Packet1Login login);
+    void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login);
 
 }

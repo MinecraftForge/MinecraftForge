@@ -14,7 +14,7 @@ import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.KeyBinding;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetworkManager;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import net.minecraft.src.Render;
 import net.minecraft.src.RenderManager;
@@ -155,9 +155,9 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
         ((net.minecraft.src.BaseMod)mod).clientCustomPayload(client.field_71439_g.field_71174_a, packet);
     }
 
-    private Map<NetworkManager,NetHandler> managerLookups = new MapMaker().weakKeys().weakValues().makeMap();
+    private Map<INetworkManager,NetHandler> managerLookups = new MapMaker().weakKeys().weakValues().makeMap();
     @Override
-    public void clientConnectionOpened(NetHandler netClientHandler, NetworkManager manager, BaseModProxy mod)
+    public void clientConnectionOpened(NetHandler netClientHandler, INetworkManager manager, BaseModProxy mod)
     {
         managerLookups.put(manager, netClientHandler);
         ((BaseMod)mod).clientConnect((NetClientHandler)netClientHandler);
@@ -165,7 +165,7 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
 
 
     @Override
-    public boolean clientConnectionClosed(NetworkManager manager, BaseModProxy mod)
+    public boolean clientConnectionClosed(INetworkManager manager, BaseModProxy mod)
     {
         if (managerLookups.containsKey(manager))
         {
