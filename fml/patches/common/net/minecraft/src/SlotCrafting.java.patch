@@ -9,9 +9,9 @@
  {
 @@ -83,6 +85,7 @@
  
-     public void func_75213_b(ItemStack p_75213_1_)
+     public void func_82870_a(EntityPlayer p_82870_1_, ItemStack p_82870_2_)
      {
-+        GameRegistry.onItemCrafted(field_75238_b, p_75213_1_, field_75239_a);
-         this.func_75208_c(p_75213_1_);
++        GameRegistry.onItemCrafted(p_82870_1_, p_82870_2_, field_75239_a);
+         this.func_75208_c(p_82870_2_);
  
-         for (int var2 = 0; var2 < this.field_75239_a.func_70302_i_(); ++var2)
+         for (int var3 = 0; var3 < this.field_75239_a.func_70302_i_(); ++var3)

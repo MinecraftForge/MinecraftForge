@@ -51,7 +51,7 @@
          int[] var5 = new int[var3 * var4];
          byte[] var6 = new byte[var3 * var4 * 4];
          p_78351_1_.getRGB(0, 0, var3, var4, var5, 0, var3);
-@@ -400,6 +410,7 @@
+@@ -405,6 +415,7 @@
  
      public void func_78355_a(TextureFX p_78355_1_)
      {
@@ -59,61 +59,55 @@
          this.field_78367_h.add(p_78355_1_);
          p_78355_1_.func_76846_a();
      }
-@@ -407,16 +418,31 @@
-     public void func_78343_a()
-     {
-         int var1 = -1;
--        Iterator var2 = this.field_78367_h.iterator();
--
--        while (var2.hasNext())
--        {
--            TextureFX var3 = (TextureFX)var2.next();
-+        
-+        for (int var2 = 0; var2 < this.field_78367_h.size(); ++var2)
-+        {
-+            TextureFX var3 = (TextureFX)this.field_78367_h.get(var2);
+@@ -418,15 +429,31 @@
+         {
+             var3 = (TextureFX)var2.next();
              var3.field_76851_c = this.field_78365_j.field_74337_g;
--            var3.func_76846_a();
--            this.field_78358_g.clear();
--            this.field_78358_g.put(var3.field_76852_a);
--            this.field_78358_g.position(0).limit(var3.field_76852_a.length);
-+            if (!TextureFXManager.instance().onUpdateTextureEffect(var3))
++            if (TextureFXManager.instance().onUpdateTextureEffect(var3))
 +            {
-+                continue;
++                var1 = this.func_82772_a(var3, var1);
 +            }
-+
-+            Dimension dim = TextureFXManager.instance().getTextureDimensions(var3);
-+            int tWidth  = dim.width >> 4;
-+            int tHeight = dim.height >> 4;
-+            int tLen = tWidth * tHeight << 2;
-+            
-+            if (var3.field_76852_a.length == tLen)
-+            {
-+                this.field_78358_g.clear();
-+                this.field_78358_g.put(var3.field_76852_a);
-+                this.field_78358_g.position(0).limit(var3.field_76852_a.length);
-+            }
-+            else
-+            {
-+                TextureFXManager.instance().scaleTextureFXData(var3.field_76852_a, field_78358_g, tWidth, tLen);
-+            }
+             var3.func_76846_a();
+         }
+     }
  
-             if (var3.field_76850_b != var1)
-             {
-@@ -426,9 +452,11 @@
+     public int func_82772_a(TextureFX p_82772_1_, int p_82772_2_)
+     {
+-        this.field_78358_g.clear();
+-        this.field_78358_g.put(p_82772_1_.field_76852_a);
+-        this.field_78358_g.position(0).limit(p_82772_1_.field_76852_a.length);
++        Dimension dim = TextureFXManager.instance().getTextureDimensions(p_82772_1_);
++        int tWidth  = dim.width >> 4;
++        int tHeight = dim.height >> 4;
++        int tLen = tWidth * tHeight << 2;
++        
++        if (p_82772_1_.field_76852_a.length == tLen)
++        {
++            this.field_78358_g.clear();
++            this.field_78358_g.put(p_82772_1_.field_76852_a);
++            this.field_78358_g.position(0).limit(p_82772_1_.field_76852_a.length);
++        }
++        else
++        {
++            TextureFXManager.instance().scaleTextureFXData(p_82772_1_.field_76852_a, field_78358_g, tWidth, tLen);
++        }
  
-             for (int var4 = 0; var4 < var3.field_76849_e; ++var4)
+         if (p_82772_1_.field_76850_b != p_82772_2_)
+         {
+@@ -436,9 +463,11 @@
+ 
+         for (int var3 = 0; var3 < p_82772_1_.field_76849_e; ++var3)
+         {
++            int xOffset = p_82772_1_.field_76850_b % 16 * tWidth + var3 * tWidth;
+             for (int var4 = 0; var4 < p_82772_1_.field_76849_e; ++var4)
              {
-+                int xOffset = var3.field_76850_b % 16 * tWidth + var4 * tWidth;
-                 for (int var5 = 0; var5 < var3.field_76849_e; ++var5)
-                 {
--                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, var3.field_76850_b % 16 * 16 + var4 * 16, var3.field_76850_b / 16 * 16 + var5 * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
-+                    int yOffset = var3.field_76850_b / 16 * tHeight + var5 * tHeight;
-+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
-                 }
+-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_82772_1_.field_76850_b % 16 * 16 + var3 * 16, p_82772_1_.field_76850_b / 16 * 16 + var4 * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
++                int yOffset = p_82772_1_.field_76850_b / 16 * tHeight + var4 * tHeight;
++                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
              }
          }
-@@ -493,8 +521,9 @@
+ 
+@@ -504,8 +533,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
@@ -125,7 +119,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -530,8 +559,9 @@
+@@ -541,8 +571,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }

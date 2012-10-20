@@ -45,10 +45,10 @@
          this.field_72556_d = p_72455_1_.field_73562_h;
          this.field_72563_h.field_71442_b.func_78746_a(p_72455_1_.field_73557_d);
 +        FMLNetworkHandler.onConnectionEstablishedToServer(this, field_72555_g, p_72455_1_);
-         this.func_72552_c(new Packet204ClientInfo(this.field_72563_h.field_71474_y.field_74363_ab, this.field_72563_h.field_71474_y.field_74339_e, this.field_72563_h.field_71474_y.field_74343_n, this.field_72563_h.field_71474_y.field_74344_o, this.field_72563_h.field_71474_y.field_74318_M));
+         this.field_72563_h.field_71474_y.func_82879_c();
      }
  
-@@ -566,6 +574,7 @@
+@@ -583,6 +591,7 @@
          {
              this.field_72555_g.func_74429_a(p_72546_1_);
              this.field_72555_g.func_74423_d();
@@ -56,7 +56,7 @@
          }
      }
  
-@@ -605,6 +614,7 @@
+@@ -622,6 +631,7 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
@@ -64,7 +64,7 @@
          this.field_72563_h.field_71456_v.func_73827_b().func_73765_a(p_72481_1_.field_73476_b);
      }
  
-@@ -1066,6 +1076,11 @@
+@@ -1105,6 +1115,11 @@
  
      public void func_72494_a(Packet131MapData p_72494_1_)
      {
@@ -76,19 +76,19 @@
          if (p_72494_1_.field_73438_a == Item.field_77744_bd.field_77779_bT)
          {
              ItemMap.func_77874_a(p_72494_1_.field_73436_b, this.field_72563_h.field_71441_e).func_76192_a(p_72494_1_.field_73437_c);
-@@ -1166,6 +1181,11 @@
-     }
+@@ -1214,6 +1229,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
-+    {
+     {
 +        FMLNetworkHandler.handlePacket250Packet(p_72501_1_, field_72555_g, this);
 +    }
 +
 +    public void handleVanilla250Packet(Packet250CustomPayload p_72501_1_)
-     {
++    {
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
-@@ -1211,4 +1231,20 @@
+             String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
+@@ -1258,4 +1278,20 @@
      {
          return this.field_72555_g;
      }

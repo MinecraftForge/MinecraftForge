@@ -8,8 +8,8 @@
 +
  import java.util.Collections;
  import java.util.HashMap;
- import java.util.Map;
-@@ -175,7 +177,7 @@
+ import java.util.Iterator;
+@@ -199,7 +201,7 @@
              case 4:
                  return "/mob/villager/butcher.png";
              default:
@@ -18,12 +18,20 @@
          }
      }
  
-@@ -393,6 +395,8 @@
-                 func_70949_b(var2, Item.field_77782_ar.field_77779_bT, this.field_70146_Z, 0.3F);
-                 func_70949_b(var2, Item.field_77734_bj.field_77779_bT, this.field_70146_Z, 0.3F);
-         }
-+
-+        VillagerRegistry.manageVillagerTrades(var2, this, this.func_70946_n(), this.field_70146_Z);
+@@ -380,6 +382,7 @@
  
-         if (var2.isEmpty())
-         {
+         MerchantRecipeList var2;
+         var2 = new MerchantRecipeList();
++        VillagerRegistry.manageVillagerTrades(var2, this, this.func_70946_n(), this.field_70146_Z);
+         label48:
+ 
+         switch (this.func_70946_n())
+@@ -584,7 +587,7 @@
+ 
+     public void func_82163_bD()
+     {
+-        this.func_70938_b(this.field_70170_p.field_73012_v.nextInt(5));
++        VillagerRegistry.applyRandomTrade(this, field_70170_p.field_73012_v);
+     }
+ 
+     public void func_82187_q()
