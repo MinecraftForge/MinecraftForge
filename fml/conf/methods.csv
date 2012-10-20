@@ -121,7 +121,9 @@ func_70220_a,moveTowards,2,"The location the eye should float/move towards. Curr
 func_70227_a,onImpact,2,Called when this EntityFireball hits a block or entity.
 func_70239_b,setDamage,2,
 func_70240_a,setKnockbackStrength,2,Sets the amount of knockback the arrow applies when it hits a mob.
+func_70241_g,getIsCritical,2,Whether the arrow has a stream of critical hit particles flying behind it.
 func_70242_d,getDamage,2,
+func_70243_d,setIsCritical,2,Whether the arrow has a stream of critical hit particles flying behind it.
 func_70244_c,setArrowHeading,2,"Uses the provided coordinates as a heading and determines the velocity from it with the set force and random variance. Args: x, y, z, force, forceVariation"
 func_70265_b,setTimeSinceHit,2,Sets the time to count down from since the last time entity was hit.
 func_70266_a,setDamageTaken,2,Sets the damage taken from the last hit.
@@ -765,7 +767,7 @@ func_71548_a,saveProfilerResults,2,
 func_71549_c,getWittyComment,2,"Returns a random ""witty"" comment."
 func_71552_a,setTime,2,Set the time in the server object.
 func_71553_b,addTime,2,Adds (or removes) time in the server object.
-func_71554_c,reallyToggleDownfall,2,Toggle rain and enable thundering.
+func_71554_c,toggleDownfall,2,Toggle rain and enable thundering.
 func_71555_a,getCommands,2,"returns a map of string to commads. All commands are returned, not just ones which someone has permission to use."
 func_71556_a,executeCommand,2,
 func_71557_a,getPossibleCommands,2,returns all commands that the commandSender can use
@@ -1862,6 +1864,7 @@ func_74192_a,drawSlotInventory,2,Draws an inventory slot
 func_74199_h,getIMerchant,2,Gets the Instance of IMerchant interface.
 func_74221_h,displayDebuffEffects,2,Displays debuff/potion effects that are currently being applied to the player
 func_74226_k,needsScrollBars,2,returns (if you are not on the inventoryTab) and (the flag isn't set) and( you have more than 1 page of items)
+func_74228_j,updateCreativeSearch,2,
 func_74229_i,getInventory,2,Returns the creative inventory
 func_74231_b,renderCreativeInventoryHoveringText,2,"Renders the creative inventory hovering text if mouse is over it. Returns true if did render or false otherwise. Params: current creative tab to be checked, current mouse x position, current mouse y position."
 func_74233_a,renderCreativeTab,2,Renders passed creative inventory tab into the screen.
@@ -3338,6 +3341,7 @@ func_77871_c,createMapDataPacket,2,returns null if no update is to be sent
 func_77872_a,updateMapData,2,
 func_77873_a,getMapData,2,
 func_77874_a,getMPMapData,2,
+func_77875_a,tryPlaceContainedLiquid,2,Attempts to place the liquid contained inside the bucket.
 func_77877_c,getMaxDamageArray,2,"Returns the 'max damage' factor array for the armor, each piece of armor have a durability factor (that gets multiplied by armor material factor)"
 func_77883_f,getBlockID,2,Returns the blockID for this Item
 func_77884_a,canPlaceItemBlockOnSide,2,Returns true if the given ItemBlock can be placed on the given side of the given block position.
@@ -3351,6 +3355,7 @@ func_77913_a,applyIngredient,2,"Generate a data value for a potion, given its pr
 func_77914_a,checkFlag,2,Is the bit given set to 1?
 func_77916_d,isFlagUnset,2,"Returns 0 if the flag is set, 1 if it is not set."
 func_77917_b,getPotionEffects,2,Returns a list of effects for the specified potion damage value.
+func_77941_a,onBlockDestroyed,2,
 func_77942_o,hasTagCompound,2,Returns true if the ItemStack has an NBTTagCompound. Currently used to store enchantments.
 func_77943_a,tryPlaceItemIntoWorld,2,
 func_77944_b,copyItemStack,2,"Creates a copy of a ItemStack, a null parameters will return a null."
