@@ -1,6 +1,6 @@
 --- ../src-base/common/net/minecraft/src/MapData.java
 +++ ../src-work/common/net/minecraft/src/MapData.java
-@@ -11,7 +11,7 @@
+@@ -12,7 +12,7 @@
  {
      public int field_76201_a;
      public int field_76199_b;
@@ -8,7 +8,7 @@
 +    public int field_76200_c;
      public byte field_76197_d;
      public byte[] field_76198_e = new byte[16384];
-     public int field_76195_f;
+     public List field_76196_g = new ArrayList();
 @@ -26,7 +26,16 @@
  
      public void func_76184_a(NBTTagCompound p_76184_1_)

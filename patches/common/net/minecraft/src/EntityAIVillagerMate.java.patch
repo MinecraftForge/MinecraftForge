@@ -7,7 +7,7 @@
  
  public class EntityAIVillagerMate extends EntityAIBase
  {
-@@ -104,7 +106,7 @@
+@@ -111,7 +113,7 @@
          this.field_75451_c.func_70873_a(6000);
          this.field_75450_b.func_70873_a(6000);
          var1.func_70873_a(-24000);

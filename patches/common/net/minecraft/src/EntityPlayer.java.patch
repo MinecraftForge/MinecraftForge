@@ -11,7 +11,7 @@
  import java.util.Iterator;
  import java.util.List;
  
-@@ -131,6 +134,7 @@
+@@ -125,6 +128,7 @@
  
      public void func_70071_h_()
      {
@@ -19,17 +19,17 @@
          if (this.field_71074_e != null)
          {
              ItemStack var1 = this.field_71071_by.func_70448_g();
-@@ -254,6 +258,7 @@
+@@ -248,6 +252,7 @@
          {
              this.field_71100_bB.func_75118_a(this);
          }
 +        FMLCommonHandler.instance().onPlayerPostTick(this);
      }
  
-     protected void func_71010_c(ItemStack p_71010_1_, int p_71010_2_)
-@@ -1608,4 +1613,9 @@
+     public int func_82145_z()
+@@ -1697,4 +1702,9 @@
      {
-         return this.field_71078_a;
+         return this.func_82241_s(1);
      }
 +
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
