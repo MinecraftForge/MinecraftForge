@@ -15,7 +15,7 @@
      protected BlockTrapDoor(int par1, Material par2Material)
      {
          super(par1, par2Material);
-@@ -188,7 +192,7 @@
+@@ -193,7 +197,7 @@
                  --var7;
              }
  
@@ -24,7 +24,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
                  this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
-@@ -248,6 +252,10 @@
+@@ -260,6 +264,10 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -35,7 +35,7 @@
          if (par5 == 0)
          {
              return false;
-@@ -278,7 +286,7 @@
+@@ -290,7 +298,7 @@
                  --par2;
              }
  
@@ -44,7 +44,7 @@
          }
      }
  
-@@ -293,6 +301,10 @@
+@@ -305,6 +313,10 @@
       */
      private static boolean isValidSupportBlock(int par0)
      {

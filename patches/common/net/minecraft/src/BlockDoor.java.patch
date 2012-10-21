@@ -8,7 +8,7 @@
  
  public class BlockDoor extends Block
  {
-@@ -263,7 +264,7 @@
+@@ -260,7 +261,7 @@
      {
          if (this.blockMaterial == Material.iron)
          {

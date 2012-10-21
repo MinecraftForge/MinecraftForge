@@ -7,9 +7,9 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -99,4 +100,15 @@
+@@ -104,4 +105,15 @@
      {
-         return this.toolMaterial.toString();
+         return this.toolMaterial.func_82844_f() == par2ItemStack.itemID ? true : super.func_82789_a(par1ItemStack, par2ItemStack);
      }
 +
 +    /** FORGE: Overridden to allow custom tool effectiveness */

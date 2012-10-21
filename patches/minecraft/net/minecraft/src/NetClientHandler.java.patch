@@ -12,7 +12,7 @@
  import org.lwjgl.input.Keyboard;
  
  @SideOnly(Side.CLIENT)
-@@ -597,7 +602,7 @@
+@@ -614,7 +619,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
@@ -21,7 +21,7 @@
          this.disconnected = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -663,7 +668,11 @@
+@@ -680,7 +685,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
@@ -34,23 +34,14 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1018,6 +1027,19 @@
-             {
-                 ((TileEntityMobSpawner)var2).readFromNBT(par1Packet132TileEntityData.customParam1);
+@@ -1056,6 +1065,10 @@
+                 {
+                     var2.readFromNBT(par1Packet132TileEntityData.customParam1);
+                 }
++                else
++                {
++                    var2.onDataPacket(netManager,  par1Packet132TileEntityData);
++                }
              }
-+            else if (var2 != null)
-+            {
-+                var2.onDataPacket(netManager,  par1Packet132TileEntityData);
-+            }
-+            else
-+            {
-+                /*Packet132TileEntityData pkt = par1Packet132TileEntityData;
-+                ModLoader.getLogger().log(Level.WARNING, String.format(
-+                        "Received a TileEntityData packet for a location that did not have a TileEntity: (%d, %d, %d) %d: %d, %d, %d",
-+                        pkt.xPosition, pkt.yPosition, pkt.zPosition,
-+                        pkt.actionType,
-+                        pkt.customParam1, pkt.customParam2, pkt.customParam3));*/
-+            }
          }
      }
- 

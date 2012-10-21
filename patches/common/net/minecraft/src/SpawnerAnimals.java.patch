@@ -16,15 +16,15 @@
  public final class SpawnerAnimals
  {
 @@ -79,6 +84,9 @@
-                 if ((!var34.getPeacefulCreature() || par2) && (var34.getPeacefulCreature() || par1) && par0WorldServer.countEntities(var34.getCreatureClass()) <= var34.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
+                 if ((!var35.getPeacefulCreature() || par2) && (var35.getPeacefulCreature() || par1) && (!var35.func_82705_e() || par3) && par0WorldServer.countEntities(var35.getCreatureClass()) <= var35.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
                  {
-                     Iterator var35 = eligibleChunksForSpawning.keySet().iterator();
+                     Iterator var37 = eligibleChunksForSpawning.keySet().iterator();
 +                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
 +                    Collections.shuffle(tmp);
-+                    var35 = tmp.iterator();
-                     label108:
++                    var37 = tmp.iterator();
+                     label110:
  
-                     while (var35.hasNext())
+                     while (var37.hasNext())
 @@ -207,7 +215,8 @@
          else
          {
@@ -45,7 +45,7 @@
 +        {
 +            return;
 +        }
-+        
-         if (par0EntityLiving instanceof EntitySpider && par1World.rand.nextInt(100) == 0)
-         {
-             EntitySkeleton var7 = new EntitySkeleton(par1World);
++
+         par0EntityLiving.func_82163_bD();
+     }
+ 

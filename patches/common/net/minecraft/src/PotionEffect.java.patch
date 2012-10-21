@@ -8,25 +8,26 @@
  
  public class PotionEffect
  {
-@@ -10,12 +13,17 @@
+@@ -13,6 +16,9 @@
+     private boolean field_82723_d;
+     private boolean field_82724_e;
  
-     /** The amplifier of the potion effect */
-     private int amplifier;
-+    
 +    /** List of ItemStack that can cure the potion effect **/
 +    private List<ItemStack> curativeItems;
- 
-     public PotionEffect(int par1, int par2, int par3)
++
+     public PotionEffect(int par1, int par2)
      {
-         this.potionID = par1;
+         this(par1, par2, 0);
+@@ -29,6 +35,8 @@
          this.duration = par2;
          this.amplifier = par3;
+         this.field_82724_e = par4;
 +        this.curativeItems = new ArrayList<ItemStack>();
 +        this.curativeItems.add(new ItemStack(Item.bucketMilk));
      }
  
      public PotionEffect(PotionEffect par1PotionEffect)
-@@ -23,6 +31,7 @@
+@@ -36,6 +44,7 @@
          this.potionID = par1PotionEffect.potionID;
          this.duration = par1PotionEffect.duration;
          this.amplifier = par1PotionEffect.amplifier;
@@ -34,7 +35,7 @@
      }
  
      /**
-@@ -63,6 +72,63 @@
+@@ -80,6 +89,63 @@
      public int getAmplifier()
      {
          return this.amplifier;
@@ -97,4 +98,4 @@
 +        }
      }
  
-     public boolean onUpdate(EntityLiving par1EntityLiving)
+     public void func_82721_a(boolean par1)

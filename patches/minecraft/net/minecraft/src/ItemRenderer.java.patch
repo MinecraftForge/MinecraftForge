@@ -65,29 +65,34 @@
              GL11.glPushMatrix();
              var7 = 0.8F;
              var20 = var3.getSwingProgress(par1);
-@@ -332,8 +333,15 @@
+@@ -332,11 +333,17 @@
              var28.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
              var28.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
              var28.draw();
 -            MapData var16 = Item.map.getMapData(var17, this.mc.theWorld);
--            this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var16);
+-
+-            if (var16 != null)
+-            {
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var16);
 +            MapData var16 = ((ItemMap)var17.getItem()).getMapData(var17, this.mc.theWorld);
 +            if (custom == null)
 +            {
-+                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var16);
++                if (var16 != null)
++                {
++                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var16);
++                }
 +            }
 +            else
 +            {
 +                custom.renderItem(FIRST_PERSON_MAP, var17, mc.thePlayer, mc.renderEngine, var16);
-+            }
+             }
+ 
              GL11.glPopMatrix();
-         }
-         else if (var17 != null)
-@@ -434,12 +442,15 @@
+@@ -439,12 +446,15 @@
              if (var17.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(var3, var17, 0);
--                int var25 = Item.itemsList[var17.itemID].getColorFromDamage(var17.getItemDamage(), 1);
+-                int var25 = Item.itemsList[var17.itemID].func_82790_a(var17, 1);
 -                var13 = (float)(var25 >> 16 & 255) / 255.0F;
 -                var14 = (float)(var25 >> 8 & 255) / 255.0F;
 -                var15 = (float)(var25 & 255) / 255.0F;
@@ -95,7 +100,7 @@
 -                this.renderItem(var3, var17, 1);
 +                for (int x = 1; x < var17.getItem().getRenderPasses(var17.getItemDamage()); x++)
 +                {
-+                    int var25 = Item.itemsList[var17.itemID].getColorFromDamage(var17.getItemDamage(), x);
++                    int var25 = Item.itemsList[var17.itemID].func_82790_a(var17, x);
 +                    var13 = (float)(var25 >> 16 & 255) / 255.0F;
 +                    var14 = (float)(var25 >> 8 & 255) / 255.0F;
 +                    var15 = (float)(var25 & 255) / 255.0F;

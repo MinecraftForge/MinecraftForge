@@ -8,7 +8,7 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -185,7 +187,7 @@
+@@ -187,7 +189,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -17,7 +17,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -254,4 +256,238 @@
+@@ -256,4 +258,238 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();

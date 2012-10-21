@@ -15,7 +15,7 @@
  
      /**
       * Used to call methods addSmelting and getSmeltingResult.
-@@ -50,7 +52,9 @@
+@@ -51,7 +53,9 @@
  
      /**
       * Returns the smelting result of an item.
@@ -25,7 +25,7 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -65,4 +69,34 @@
+@@ -66,4 +70,34 @@
      {
          return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
      }

@@ -8,7 +8,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.logging.Level;
-@@ -58,6 +59,9 @@
+@@ -71,6 +72,9 @@
  import net.minecraft.src.WorldServerMulti;
  import net.minecraft.src.WorldSettings;
  import net.minecraft.src.WorldType;
@@ -18,76 +18,76 @@
  
  public abstract class MinecraftServer implements Runnable, IPlayerUsage, ICommandSender
  {
-@@ -137,7 +141,9 @@
+@@ -150,7 +154,8 @@
      public final long[] tickTimeArray = new long[100];
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
 -    public long[][] timeOfLastDimensionTick;
 +    //public long[][] timeOfLastDimensionTick;
 +    public Hashtable<Integer, long[]> worldTickTimes = new Hashtable<Integer, long[]>();
-+    public int spawnProtectionSize = 16;
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -204,8 +210,6 @@
+@@ -238,8 +243,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
 -        this.worldServers = new WorldServer[3];
 -        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-         ISaveHandler var6 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
-         WorldInfo var8 = var6.loadWorldInfo();
-         WorldSettings var7;
-@@ -224,46 +228,22 @@
-             var7.enableBonusChest();
+         ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
+         WorldInfo var9 = var7.loadWorldInfo();
+         WorldSettings var8;
+@@ -259,46 +262,23 @@
+             var8.enableBonusChest();
          }
  
--        for (int var9 = 0; var9 < this.worldServers.length; ++var9)
+-        for (int var10 = 0; var10 < this.worldServers.length; ++var10)
 -        {
--            byte var10 = 0;
+-            byte var11 = 0;
 -
--            if (var9 == 1)
+-            if (var10 == 1)
 -            {
--                var10 = -1;
+-                var11 = -1;
 -            }
 -
--            if (var9 == 2)
+-            if (var10 == 2)
 -            {
--                var10 = 1;
+-                var11 = 1;
 -            }
 -
--            if (var9 == 0)
+-            if (var10 == 0)
 -            {
 -                if (this.isDemo())
 -                {
--                    this.worldServers[var9] = new DemoWorldServer(this, var6, par2Str, var10, this.theProfiler);
+-                    this.worldServers[var10] = new DemoWorldServer(this, var7, par2Str, var11, this.theProfiler);
 -                }
 -                else
 -                {
--                    this.worldServers[var9] = new WorldServer(this, var6, par2Str, var10, var7, this.theProfiler);
+-                    this.worldServers[var10] = new WorldServer(this, var7, par2Str, var11, var8, this.theProfiler);
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[var9] = new WorldServerMulti(this, var6, par2Str, var10, var7, this.worldServers[0], this.theProfiler);
+-                this.worldServers[var10] = new WorldServerMulti(this, var7, par2Str, var11, var8, this.worldServers[0], this.theProfiler);
 -            }
 -
--            this.worldServers[var9].addWorldAccess(new WorldManager(this, this.worldServers[var9]));
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var6, par2Str, 0, theProfiler) : new WorldServer(this, var6, par2Str, 0, var7, theProfiler));
+-            this.worldServers[var10].addWorldAccess(new WorldManager(this, this.worldServers[var10]));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, theProfiler) : new WorldServer(this, var7, par2Str, 0, var8, theProfiler));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, var7, overWorld, theProfiler));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var7, par2Str, dim, var8, overWorld, theProfiler));
 +            world.addWorldAccess(new WorldManager(this, world));
  
              if (!this.isSinglePlayer())
              {
--                this.worldServers[var9].getWorldInfo().setGameType(this.getGameType());
+-                this.worldServers[var10].getWorldInfo().setGameType(this.getGameType());
 +                world.getWorldInfo().setGameType(this.getGameType());
              }
  
              this.serverConfigManager.setPlayerManager(this.worldServers);
 -        }
 -
++
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 +        }
 +
@@ -95,7 +95,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -408,7 +388,9 @@
+@@ -429,7 +409,9 @@
              for (int var3 = 0; var3 < var2; ++var3)
              {
                  WorldServer var4 = var1[var3];
@@ -105,7 +105,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -622,13 +604,13 @@
+@@ -642,13 +624,13 @@
      {
          this.theProfiler.startSection("levels");
  
@@ -121,10 +121,10 @@
 +            {
 +                WorldServer var4 = DimensionManager.getWorld(id);
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
- 
-                 if (this.tickCounter % 20 == 0)
-@@ -659,9 +641,11 @@
-                 }
+                 this.theProfiler.startSection("pools");
+                 var4.func_82732_R().clear();
+@@ -673,9 +655,11 @@
+                 this.theProfiler.endSection();
              }
  
 -            this.timeOfLastDimensionTick[var1][this.tickCounter % 100] = System.nanoTime() - var2;
@@ -138,13 +138,14 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -717,7 +701,12 @@
+@@ -731,7 +715,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
 -        return par1 == -1 ? this.worldServers[1] : (par1 == 1 ? this.worldServers[2] : this.worldServers[0]);
 +        WorldServer ret = DimensionManager.getWorld(par1);
-+        if (ret == null) {
++        if (ret == null)
++        {
 +            DimensionManager.initDimension(par1);
 +            ret = DimensionManager.getWorld(par1);
 +        }
@@ -152,7 +153,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -830,7 +819,7 @@
+@@ -840,7 +830,7 @@
  
      public String getServerModName()
      {
@@ -161,7 +162,7 @@
      }
  
      /**
-@@ -1104,6 +1093,7 @@
+@@ -1119,6 +1109,7 @@
  
              if (var2 != null)
              {
