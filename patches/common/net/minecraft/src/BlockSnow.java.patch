@@ -18,24 +18,19 @@
              par1World.setBlockWithNotify(par2, par3, par4, 0);
              return false;
          }
-@@ -92,15 +92,7 @@
+@@ -92,10 +92,8 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
 -        int var7 = Item.snowball.shiftedIndex;
--        float var8 = 0.7F;
--        double var9 = (double)(par1World.rand.nextFloat() * var8) + (double)(1.0F - var8) * 0.5D;
--        double var11 = (double)(par1World.rand.nextFloat() * var8) + (double)(1.0F - var8) * 0.5D;
--        double var13 = (double)(par1World.rand.nextFloat() * var8) + (double)(1.0F - var8) * 0.5D;
--        EntityItem var15 = new EntityItem(par1World, (double)par3 + var9, (double)par4 + var11, (double)par5 + var13, new ItemStack(var7, 1, 0));
--        var15.delayBeforeCanPickup = 10;
--        par1World.spawnEntityInWorld(var15);
--        par1World.setBlockWithNotify(par3, par4, par5, 0);
-+        dropBlockAsItem(par1World, par3, par4, par5, par6, 0);
-         par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+-        this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(var7, 1, 0));
++        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
+         par1World.setBlockWithNotify(par3, par4, par5, 0);
+-        par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
      }
  
-@@ -117,7 +109,7 @@
+     /**
+@@ -111,7 +109,7 @@
       */
      public int quantityDropped(Random par1Random)
      {
@@ -44,7 +39,7 @@
      }
  
      /**
-@@ -127,7 +119,6 @@
+@@ -121,7 +119,6 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {
