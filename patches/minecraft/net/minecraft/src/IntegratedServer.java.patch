@@ -10,52 +10,52 @@
  
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
-@@ -48,44 +51,21 @@
-     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType)
+@@ -48,44 +51,22 @@
+     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
          this.convertMapIfNeeded(par1Str);
 -        this.worldServers = new WorldServer[3];
 -        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-         ISaveHandler var6 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
+         ISaveHandler var7 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
  
--        for (int var7 = 0; var7 < this.worldServers.length; ++var7)
+-        for (int var8 = 0; var8 < this.worldServers.length; ++var8)
 -        {
--            byte var8 = 0;
+-            byte var9 = 0;
 -
--            if (var7 == 1)
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var6, par2Str, 0, theProfiler) : new WorldServer(this, var6, par2Str, 0, theWorldSettings, theProfiler));
+-            if (var8 == 1)
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, theProfiler) : new WorldServer(this, var7, par2Str, 0, theWorldSettings, theProfiler));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var6, par2Str, dim, theWorldSettings, overWorld, theProfiler));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var7, par2Str, dim, theWorldSettings, overWorld, theProfiler));
 +            world.addWorldAccess(new WorldManager(this, world));
 +            if (!this.isSinglePlayer())
              {
--                var8 = -1;
+-                var9 = -1;
 +                world.getWorldInfo().setGameType(this.getGameType());
              }
--
--            if (var7 == 2)
+ 
+-            if (var8 == 2)
 -            {
--                var8 = 1;
+-                var9 = 1;
 -            }
 -
--            if (var7 == 0)
+-            if (var8 == 0)
 -            {
 -                if (this.isDemo())
 -                {
--                    this.worldServers[var7] = new DemoWorldServer(this, var6, par2Str, var8, this.theProfiler);
+-                    this.worldServers[var8] = new DemoWorldServer(this, var7, par2Str, var9, this.theProfiler);
 -                }
 -                else
 -                {
--                    this.worldServers[var7] = new WorldServer(this, var6, par2Str, var8, this.theWorldSettings, this.theProfiler);
+-                    this.worldServers[var8] = new WorldServer(this, var7, par2Str, var9, this.theWorldSettings, this.theProfiler);
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[var7] = new WorldServerMulti(this, var6, par2Str, var8, this.theWorldSettings, this.worldServers[0], this.theProfiler);
+-                this.worldServers[var8] = new WorldServerMulti(this, var7, par2Str, var9, this.theWorldSettings, this.worldServers[0], this.theProfiler);
 -            }
 -
--            this.worldServers[var7].addWorldAccess(new WorldManager(this, this.worldServers[var7]));
+-            this.worldServers[var8].addWorldAccess(new WorldManager(this, this.worldServers[var8]));
 -            this.getConfigurationManager().setPlayerManager(this.worldServers);
 -        }
 -
@@ -66,11 +66,3 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -106,6 +86,7 @@
-         this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.theWorldSettings.getSeed(), this.theWorldSettings.getTerrainType());
-         this.setMOTD(this.getServerOwner() + " - " + this.worldServers[0].getWorldInfo().getWorldName());
-         FMLCommonHandler.instance().handleServerStarting(this);
-+        spawnProtectionSize = 0;
-         return true;
-     }
- 
