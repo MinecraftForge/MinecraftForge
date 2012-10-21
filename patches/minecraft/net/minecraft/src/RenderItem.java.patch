@@ -9,7 +9,7 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -54,18 +56,21 @@
+@@ -55,13 +57,16 @@
  
          GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -22,11 +22,16 @@
 -        if (var14 != null && RenderBlocks.renderItemIn3d(var14.getRenderType()))
 +        if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
 +        {
-+           ;
++            ;
 +        }
 +        else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
          {
              GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
+ 
+@@ -72,9 +77,9 @@
+                 GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+             }
+ 
 -            this.loadTexture("/terrain.png");
 +            this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
              float var22 = 0.25F;
@@ -35,7 +40,7 @@
  
              if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
              {
-@@ -87,7 +92,7 @@
+@@ -96,7 +101,7 @@
                  }
  
                  var24 = 1.0F;
@@ -44,23 +49,24 @@
                  GL11.glPopMatrix();
              }
          }
-@@ -99,10 +104,11 @@
-             if (var10.getItem().requiresMultipleRenderPasses())
-             {
-                 GL11.glScalef(0.5F, 0.5F, 0.5F);
+@@ -118,10 +123,11 @@
+                     GL11.glScalef(0.5F, 0.5F, 0.5F);
+                 }
+ 
 -                this.loadTexture("/gui/items.png");
 -
 -                for (var15 = 0; var15 <= 1; ++var15)
+-                {
 +                this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
 +
 +                for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
-                 {
++                {
 +                    this.random.setSeed(187L); //Fixes Vanilla bug where layers would not render aligns properly.
                      var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);
                      var17 = 1.0F;
  
-@@ -123,14 +129,7 @@
-                 GL11.glScalef(0.5F, 0.5F, 0.5F);
+@@ -152,14 +158,7 @@
+ 
                  var15 = var10.getIconIndex();
  
 -                if (var14 != null)
@@ -75,37 +81,38 @@
  
                  if (this.field_77024_a)
                  {
-@@ -192,9 +191,9 @@
-         float var12;
+@@ -227,10 +226,10 @@
+         float var13;
          float var16;
  
--        if (par3 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
+-        if (var6 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var6].getRenderType()))
 -        {
 -            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
-+        if (Item.itemsList[par3] instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par3].getRenderType()))
++        if (par3ItemStack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par3ItemStack.itemID].getRenderType()))
 +        {
-+            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Block.blocksList[par3].getTextureFile()));
-             Block var15 = Block.blocksList[par3];
+             Block var15 = Block.blocksList[var6];
++            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(var15.getTextureFile()));
              GL11.glPushMatrix();
-             GL11.glTranslatef((float)(par6 - 2), (float)(par7 + 3), -3.0F + this.zLevel);
-@@ -226,9 +225,9 @@
-             if (Item.itemsList[par3].requiresMultipleRenderPasses())
+             GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
+             GL11.glScalef(10.0F, 10.0F, 10.0F);
+@@ -261,9 +260,9 @@
+             if (Item.itemsList[var6].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
 -                par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
 -
--                for (var8 = 0; var8 <= 1; ++var8)
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[par3].getTextureFile()));
+-                for (var9 = 0; var9 <= 1; ++var9)
++                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[var6].getTextureFile()));
 +
-+                for (var8 = 0; var8 <= Item.itemsList[par3].getRenderPasses(par4); ++var8)
++                for (var9 = 0; var9 <= Item.itemsList[var6].getRenderPasses(var7); ++var9)
                  {
-                     var9 = Item.itemsList[par3].getIconFromDamageForRenderPass(par4, var8);
-                     int var10 = Item.itemsList[par3].getColorFromDamage(par4, var8);
-@@ -250,14 +249,7 @@
+                     var10 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var9);
+                     int var11 = Item.itemsList[var6].func_82790_a(par3ItemStack, var9);
+@@ -285,14 +284,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
--                if (par3 < 256)
+-                if (var6 < 256)
 -                {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
 -                }
@@ -113,18 +120,18 @@
 -                {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
 -                }
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[par3].getTextureFile()));
++                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(par3ItemStack.getItem().getTextureFile()));
  
-                 var8 = Item.itemsList[par3].getColorFromDamage(par4, 0);
-                 float var14 = (float)(var8 >> 16 & 255) / 255.0F;
-@@ -284,7 +276,10 @@
+                 var9 = Item.itemsList[var6].func_82790_a(par3ItemStack, 0);
+                 float var17 = (float)(var9 >> 16 & 255) / 255.0F;
+@@ -316,7 +308,10 @@
      {
          if (par3ItemStack != null)
          {
--            this.drawItemIntoGui(par1FontRenderer, par2RenderEngine, par3ItemStack.itemID, par3ItemStack.getItemDamage(), par3ItemStack.getIconIndex(), par4, par5);
+-            this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
 +            if (!ForgeHooksClient.renderInventoryItem(renderBlocks, par2RenderEngine, par3ItemStack, field_77024_a, zLevel, (float)par4, (float)par5))
 +            {
-+                this.drawItemIntoGui(par1FontRenderer, par2RenderEngine, par3ItemStack.itemID, par3ItemStack.getItemDamage(), par3ItemStack.getIconIndex(), par4, par5);
++                this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
 +            }
  
              if (par3ItemStack != null && par3ItemStack.hasEffect())

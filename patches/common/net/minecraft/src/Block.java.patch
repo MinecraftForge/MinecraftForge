@@ -22,7 +22,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -279,6 +289,7 @@
+@@ -291,6 +301,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -30,7 +30,7 @@
      }
  
      /**
-@@ -417,9 +428,10 @@
+@@ -429,9 +440,10 @@
          return this.needsRandomTick;
      }
  
@@ -42,7 +42,7 @@
      }
  
      /**
-@@ -442,7 +454,7 @@
+@@ -454,7 +466,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -51,7 +51,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -452,7 +464,7 @@
+@@ -464,7 +476,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -60,7 +60,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -621,8 +633,7 @@
+@@ -633,8 +645,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -70,7 +70,7 @@
      }
  
      /**
-@@ -640,18 +651,13 @@
+@@ -652,18 +663,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -93,16 +93,16 @@
                  }
              }
          }
-@@ -985,7 +991,7 @@
+@@ -997,7 +1003,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
--        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
-+        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer.inventory))
+-        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
++        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1249,4 +1255,831 @@
+@@ -1267,4 +1273,831 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -732,7 +732,7 @@
 +        else
 +        {
 +            int id = world.getBlockId(x, y, z);
-+            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID;
++            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID || id == Block.field_82515_ce.blockID;
 +        }
 +    }
 +    

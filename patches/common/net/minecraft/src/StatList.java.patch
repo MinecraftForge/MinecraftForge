@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/StatList.java
 +++ ../src_work/common/net/minecraft/src/StatList.java
-@@ -168,9 +168,9 @@
+@@ -172,9 +172,9 @@
       */
      private static StatBase[] initMinableStats(String par0Str, int par1)
      {

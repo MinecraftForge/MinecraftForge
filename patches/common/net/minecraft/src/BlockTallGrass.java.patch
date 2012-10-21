@@ -43,7 +43,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -107,4 +104,35 @@
+@@ -105,4 +102,35 @@
              par3List.add(new ItemStack(par1, 1, var4));
          }
      }

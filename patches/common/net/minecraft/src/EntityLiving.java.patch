@@ -11,7 +11,7 @@
  
  public abstract class EntityLiving extends Entity
  {
-@@ -319,6 +323,7 @@
+@@ -336,6 +340,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -19,7 +19,7 @@
      }
  
      public boolean isExplosiveMob(Class par1Class)
-@@ -375,6 +380,7 @@
+@@ -419,6 +424,7 @@
      {
          this.entityLivingToAttack = par1EntityLiving;
          this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
@@ -27,7 +27,7 @@
      }
  
      protected void entityInit()
-@@ -661,6 +667,11 @@
+@@ -707,6 +713,11 @@
       */
      public void onUpdate()
      {
@@ -38,8 +38,8 @@
 +
          super.onUpdate();
  
-         if (this.arrowHitTempCounter > 0)
-@@ -828,6 +839,11 @@
+         if (!this.worldObj.isRemote)
+@@ -888,6 +899,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -51,7 +51,7 @@
          if (this.worldObj.isRemote)
          {
              return false;
-@@ -1012,6 +1028,12 @@
+@@ -1092,6 +1108,12 @@
       */
      protected void damageEntity(DamageSource par1DamageSource, int par2)
      {
@@ -64,7 +64,7 @@
          par2 = this.applyArmorCalculations(par1DamageSource, par2);
          par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
          this.health -= par2;
-@@ -1075,6 +1097,11 @@
+@@ -1155,6 +1177,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -76,17 +76,18 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1098,13 +1125,17 @@
-                 var3 = EnchantmentHelper.getLootingModifier(((EntityPlayer)var2).inventory);
+@@ -1177,6 +1204,10 @@
+             {
+                 var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
              }
- 
++
 +            captureDrops = true;
 +            capturedDrops.clear();
 +            int var4 = 0;
-+
-             if (!this.isChild())
+ 
+             if (!this.isChild() && this.worldObj.func_82736_K().func_82766_b("doMobLoot"))
              {
-                 this.dropFewItems(this.recentlyHit > 0, var3);
+@@ -1185,7 +1216,7 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -95,7 +96,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1112,6 +1143,16 @@
+@@ -1193,6 +1224,16 @@
                      }
                  }
              }
@@ -112,7 +113,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1155,6 +1196,12 @@
+@@ -1236,6 +1277,12 @@
       */
      protected void fall(float par1)
      {
@@ -125,7 +126,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1342,7 +1389,7 @@
+@@ -1423,7 +1470,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -134,7 +135,7 @@
      }
  
      /**
-@@ -1605,6 +1652,7 @@
+@@ -1828,6 +1875,7 @@
          }
  
          this.isAirBorne = true;
@@ -142,7 +143,7 @@
      }
  
      /**
-@@ -2091,8 +2139,6 @@
+@@ -2355,8 +2403,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -151,9 +152,9 @@
      /**
       * input is the potion id to remove from the current active potion effects
       */
-@@ -2180,4 +2226,30 @@
-             this.worldObj.spawnParticle("iconcrack_" + par1ItemStack.getItem().shiftedIndex, var4.xCoord, var4.yCoord, var4.zCoord, var3.xCoord, var3.yCoord + 0.05D, var3.zCoord);
-         }
+@@ -2774,4 +2820,30 @@
+     {
+         return false;
      }
 +
 +    /***

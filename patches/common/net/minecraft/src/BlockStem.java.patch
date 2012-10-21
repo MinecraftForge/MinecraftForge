@@ -36,7 +36,7 @@
                      {
                          var20 = 3.0F;
                      }
-@@ -236,35 +241,22 @@
+@@ -236,29 +241,22 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
@@ -70,13 +70,7 @@
 -            {
 -                if (par1World.rand.nextInt(15) <= par5)
 -                {
--                    float var10 = 0.7F;
--                    float var11 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
--                    float var12 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
--                    float var13 = par1World.rand.nextFloat() * var10 + (1.0F - var10) * 0.5F;
--                    EntityItem var14 = new EntityItem(par1World, (double)((float)par2 + var11), (double)((float)par3 + var12), (double)((float)par4 + var13), new ItemStack(var8));
--                    var14.delayBeforeCanPickup = 10;
--                    par1World.spawnEntityInWorld(var14);
+-                    this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var8));
 -                }
 -            }
 -        }

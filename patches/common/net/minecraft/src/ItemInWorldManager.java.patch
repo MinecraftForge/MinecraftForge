@@ -20,7 +20,7 @@
  
 @@ -134,6 +144,13 @@
      {
-         if (!this.gameType.isAdventure())
+         if (!this.gameType.func_82752_c() || this.thisPlayerMP.func_82246_f(par1, par2, par3))
          {
 +            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
 +            if (event.isCanceled())
@@ -125,15 +125,15 @@
                  if (var6 && var8)
                  {
                      Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -306,6 +353,7 @@
+@@ -310,6 +357,7 @@
              if (var6.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
 +                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thisPlayerMP, var6));
              }
  
-             return true;
-@@ -318,29 +366,56 @@
+             if (!par1EntityPlayer.isUsingItem())
+@@ -327,29 +375,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -212,7 +212,7 @@
      }
  
      /**
-@@ -350,4 +425,13 @@
+@@ -359,4 +434,13 @@
      {
          this.theWorld = par1WorldServer;
      }

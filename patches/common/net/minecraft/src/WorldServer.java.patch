@@ -21,7 +21,7 @@
  
  public class WorldServer extends World
  {
-@@ -50,6 +57,9 @@
+@@ -44,6 +51,9 @@
      /** An IntHashMap of entity IDs (integers) to their Entity objects. */
      private IntHashMap entityIdMap;
  
@@ -31,7 +31,7 @@
      public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler)
      {
          super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler);
-@@ -71,6 +81,7 @@
+@@ -65,6 +75,7 @@
          {
              this.pendingTickListEntries = new TreeSet();
          }
@@ -94,26 +94,26 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -362,7 +380,8 @@
-     public void scheduleBlockUpdate(int par1, int par2, int par3, int par4, int par5)
+@@ -367,7 +385,8 @@
+     public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
-         NextTickListEntry var6 = new NextTickListEntry(par1, par2, par3, par4);
--        byte var7 = 8;
-+        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var6.xCoord >> 4, var6.zCoord >> 4));
-+        byte var7 = isForced ? (byte)0 : 8;
+         NextTickListEntry var7 = new NextTickListEntry(par1, par2, par3, par4);
+-        byte var8 = 8;
++        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var7.xCoord >> 4, var7.zCoord >> 4));
++        byte var8 = isForced ? (byte)0 : 8;
  
-         if (this.scheduledUpdatesAreImmediate)
+         if (this.scheduledUpdatesAreImmediate && par4 > 0)
          {
-@@ -418,7 +437,7 @@
+@@ -429,7 +448,7 @@
       */
      public void updateEntities()
      {
 -        if (this.playerEntities.isEmpty())
 +        if (this.playerEntities.isEmpty() && getPersistentChunks().isEmpty())
          {
-             if (this.updateEntityTick++ >= 60)
+             if (this.updateEntityTick++ >= 1200)
              {
-@@ -462,7 +481,8 @@
+@@ -478,7 +497,8 @@
  
                  this.pendingTickListEntries.remove(var4);
                  this.field_73064_N.remove(var4);
@@ -123,7 +123,7 @@
  
                  if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
                  {
-@@ -559,15 +579,27 @@
+@@ -575,15 +595,27 @@
      public List getAllTileEntityInBox(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          ArrayList var7 = new ArrayList();
@@ -160,7 +160,7 @@
              }
          }
  
-@@ -578,6 +610,11 @@
+@@ -594,6 +626,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -172,16 +172,16 @@
      {
          int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
          int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
-@@ -587,7 +624,7 @@
+@@ -603,7 +640,7 @@
              var6 = var5;
          }
  
 -        return var6 > 16 || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
-+        return var6 > mcServer.spawnProtectionSize || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
++        return var6 > mcServer.func_82357_ak() || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -670,7 +707,7 @@
+@@ -686,7 +723,7 @@
       */
      protected void createBonusChest()
      {
@@ -190,7 +190,7 @@
  
          for (int var2 = 0; var2 < 10; ++var2)
          {
-@@ -713,6 +750,7 @@
+@@ -729,6 +766,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -198,7 +198,7 @@
          }
      }
  
-@@ -971,4 +1009,9 @@
+@@ -965,4 +1003,9 @@
      {
          return this.thePlayerManager;
      }

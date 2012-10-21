@@ -9,21 +9,21 @@
  
  import cpw.mods.fml.common.registry.GameRegistry;
  
-@@ -122,9 +126,15 @@
+@@ -119,9 +123,15 @@
  
-                 if (var3.getItem().hasContainerItem())
+                 if (var4.getItem().hasContainerItem())
                  {
--                    ItemStack var4 = new ItemStack(var3.getItem().getContainerItem());
-+                    ItemStack var4 = var3.getItem().getContainerItemStack(var3);
+-                    ItemStack var5 = new ItemStack(var4.getItem().getContainerItem());
++                    ItemStack var5 = var4.getItem().getContainerItemStack(var4);
 +                    
-+                    if (var4.isItemStackDamageable() && var4.getItemDamage() > var4.getMaxDamage())
++                    if (var5.isItemStackDamageable() && var5.getItemDamage() > var5.getMaxDamage())
 +                    {
-+                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var4));
++                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var5));
 +                        var4 = null;
 +                    }
  
--                    if (!var3.getItem().doesContainerItemLeaveCraftingGrid(var3) || !this.thePlayer.inventory.addItemStackToInventory(var4))
-+                    if (var4 != null && (!var3.getItem().doesContainerItemLeaveCraftingGrid(var3) || !this.thePlayer.inventory.addItemStackToInventory(var4)))
+-                    if (!var4.getItem().doesContainerItemLeaveCraftingGrid(var4) || !this.thePlayer.inventory.addItemStackToInventory(var5))
++                    if (var5 != null && (!var4.getItem().doesContainerItemLeaveCraftingGrid(var4) || !this.thePlayer.inventory.addItemStackToInventory(var5)))
                      {
-                         if (this.craftMatrix.getStackInSlot(var2) == null)
+                         if (this.craftMatrix.getStackInSlot(var3) == null)
                          {

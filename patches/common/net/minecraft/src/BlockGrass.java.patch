@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/BlockGrass.java
 +++ ../src_work/common/net/minecraft/src/BlockGrass.java
-@@ -51,7 +51,7 @@
+@@ -95,7 +95,7 @@
      {
          if (!par1World.isRemote)
          {
@@ -9,7 +9,7 @@
              {
                  par1World.setBlockWithNotify(par2, par3, par4, Block.dirt.blockID);
              }
-@@ -64,7 +64,7 @@
+@@ -108,7 +108,7 @@
                      int var9 = par4 + par5Random.nextInt(3) - 1;
                      int var10 = par1World.getBlockId(var7, var8 + 1, var9);
  

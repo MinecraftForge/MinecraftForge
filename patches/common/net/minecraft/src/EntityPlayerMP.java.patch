@@ -10,7 +10,7 @@
  
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
-@@ -85,17 +88,10 @@
+@@ -80,18 +83,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -22,26 +22,28 @@
 -
 -        if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
 -        {
--            var6 += this.rand.nextInt(20) - 10;
+-            int var9 = Math.max(5, par1MinecraftServer.func_82357_ak() - 6);
+-            var6 += this.rand.nextInt(var9 * 2) - var9;
+-            var7 += this.rand.nextInt(var9 * 2) - var9;
 -            var8 = par2World.getTopSolidOrLiquidBlock(var6, var7);
--            var7 += this.rand.nextInt(20) - 10;
 -        }
  
          this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
-@@ -193,7 +189,10 @@
+@@ -169,7 +164,11 @@
                  if (var4 != null && this.worldObj.blockExists(var4.chunkXPos << 4, 0, var4.chunkZPos << 4))
                  {
-                     var6.add(this.worldObj.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos));
+                     var1.add(this.worldObj.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos));
 -                    var3.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var4.chunkXPos * 16, 0, var4.chunkZPos * 16, var4.chunkXPos * 16 + 16, 256, var4.chunkZPos * 16 + 16));
 +                    //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
 +                    //ToDo: Find a way to efficiently clean abandoned chunks.
 +                    //var3.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var4.chunkXPos * 16, 0, var4.chunkZPos * 16, var4.chunkXPos * 16 + 16, 256, var4.chunkZPos * 16 + 16));
 +                    var3.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var4.chunkXPos * 16, 0, var4.chunkZPos * 16, var4.chunkXPos * 16 + 15, 256, var4.chunkZPos * 16 + 15));
++ 
                  }
              }
  
-@@ -336,9 +335,28 @@
+@@ -242,11 +241,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -51,22 +53,23 @@
 +        }
 +
          this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(par1DamageSource.getDeathMessage(this)));
-         this.mcServer.getConfigurationManager().logger.info(par1DamageSource.getDeathMessage(this));
+ 
+         if (!this.worldObj.func_82736_K().func_82766_b("keepInventory"))
+         {
++            captureDrops = true;
++            capturedDrops.clear();
 +
-+        captureDrops = true;
-+        capturedDrops.clear();
+             this.inventory.dropAllItems();
 +
-         this.inventory.dropAllItems();
-+
-+        captureDrops = false;
-+        PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
-+        if (!MinecraftForge.EVENT_BUS.post(event))
-+        {
-+            for (EntityItem item : capturedDrops)
++            captureDrops = false;
++            PlayerDropsEvent event = new PlayerDropsEvent(this, par1DamageSource, capturedDrops, recentlyHit > 0);
++            if (!MinecraftForge.EVENT_BUS.post(event))
 +            {
-+                joinEntityItemWithWorld(item);
++                for (EntityItem item : capturedDrops)
++                {
++                    joinEntityItemWithWorld(item);
++                }
 +            }
-+        }
+         }
      }
  
-     /**

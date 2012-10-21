@@ -1,8 +1,8 @@
 --- ../src_base/common/net/minecraft/src/BlockButton.java
 +++ ../src_work/common/net/minecraft/src/BlockButton.java
-@@ -1,6 +1,10 @@
- package net.minecraft.src;
+@@ -2,6 +2,10 @@
  
+ import java.util.List;
  import java.util.Random;
 +
 +import net.minecraftforge.common.ForgeDirection;
@@ -11,7 +11,7 @@
  
  public class BlockButton extends Block
  {
-@@ -50,7 +54,11 @@
+@@ -54,7 +58,11 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -24,7 +24,7 @@
      }
  
      /**
-@@ -58,7 +66,10 @@
+@@ -62,7 +70,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -36,7 +36,7 @@
      }
  
      /**
-@@ -69,20 +80,22 @@
+@@ -73,20 +84,22 @@
          int var9 = par1World.getBlockMetadata(par2, par3, par4);
          int var10 = var9 & 8;
          var9 &= 7;
@@ -64,7 +64,7 @@
          {
              var9 = 1;
          }
-@@ -99,7 +112,11 @@
+@@ -103,7 +116,11 @@
       */
      private int getOrientation(World par1World, int par2, int par3, int par4)
      {
@@ -77,7 +77,7 @@
      }
  
      /**
-@@ -113,22 +130,22 @@
+@@ -117,22 +134,22 @@
              int var6 = par1World.getBlockMetadata(par2, par3, par4) & 7;
              boolean var7 = false;
  

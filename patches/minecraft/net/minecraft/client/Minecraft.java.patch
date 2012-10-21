@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -118,6 +118,9 @@
+@@ -120,6 +120,9 @@
  import net.minecraft.src.WorldInfo;
  import net.minecraft.src.WorldRenderer;
  import net.minecraft.src.WorldSettings;
@@ -10,16 +10,16 @@
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
-@@ -1245,7 +1248,7 @@
+@@ -1251,7 +1254,7 @@
  
-                 if (this.thePlayer.canPlayerEdit(var3, var4, var5))
+                 if (this.thePlayer.func_82246_f(var3, var4, var5))
                  {
 -                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver.sideHit);
 +                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver);
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1311,7 +1314,8 @@
+@@ -1317,7 +1320,8 @@
                  {
                      int var8 = var3 != null ? var3.stackSize : 0;
  
@@ -29,7 +29,7 @@
                      {
                          var2 = false;
                          this.thePlayer.swingItem();
-@@ -1337,7 +1341,8 @@
+@@ -1343,7 +1347,8 @@
              {
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
@@ -39,7 +39,7 @@
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();
                  }
-@@ -1917,6 +1922,18 @@
+@@ -1941,6 +1946,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -58,7 +58,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2221,80 +2238,12 @@
+@@ -2250,95 +2267,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;
@@ -87,7 +87,7 @@
 -                }
 -
 -                var4 = Item.itemsList[var2].getHasSubtypes();
--                int var9 = var2 >= 256 ? var8.blockID : var2;
+-                int var9 = var2 < 256 && !Block.blocksList[var8.blockID].func_82505_u_() ? var2 : var8.blockID;
 -                var3 = Block.blocksList[var9].getDamageValue(this.theWorld, var5, var6, var7);
 -            }
 -            else
@@ -101,15 +101,30 @@
 -                {
 -                    var2 = Item.painting.shiftedIndex;
 -                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
+-                {
+-                    EntityItemFrame var10 = (EntityItemFrame)this.objectMouseOver.entityHit;
+-
+-                    if (var10.func_82335_i() == null)
+-                    {
+-                        var2 = Item.field_82802_bI.shiftedIndex;
+-                    }
+-                    else
+-                    {
+-                        var2 = var10.func_82335_i().itemID;
+-                        var3 = var10.func_82335_i().getItemDamage();
+-                        var4 = true;
+-                    }
+-                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
 -                {
--                    EntityMinecart var10 = (EntityMinecart)this.objectMouseOver.entityHit;
+-                    EntityMinecart var11 = (EntityMinecart)this.objectMouseOver.entityHit;
 -
--                    if (var10.minecartType == 2)
+-                    if (var11.minecartType == 2)
 -                    {
 -                        var2 = Item.minecartPowered.shiftedIndex;
 -                    }
--                    else if (var10.minecartType == 1)
+-                    else if (var11.minecartType == 1)
 -                    {
 -                        var2 = Item.minecartCrate.shiftedIndex;
 -                    }

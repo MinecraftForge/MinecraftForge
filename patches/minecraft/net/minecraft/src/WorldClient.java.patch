@@ -22,7 +22,7 @@
      }
  
      /**
-@@ -265,6 +270,12 @@
+@@ -271,6 +276,12 @@
       */
      protected void updateWeather()
      {

@@ -15,7 +15,7 @@
  {
      /**
       * Holds the RGB table of the sheep colors - in OpenGL glColor3f values - used to render the sheep colored fleece.
-@@ -134,27 +138,6 @@
+@@ -134,28 +138,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -38,14 +38,15 @@
 -            }
 -
 -            var2.damageItem(1, par1EntityPlayer);
+-            this.worldObj.playSoundAtEntity(this, "mob.sheep.shear", 1.0F, 1.0F);
 -        }
 -
          return super.interact(par1EntityPlayer);
      }
  
-@@ -287,4 +270,23 @@
-             this.setGrowingAge(var1);
-         }
+@@ -301,4 +283,24 @@
+     {
+         this.setFleeceColor(getRandomFleeceColor(this.worldObj.rand));
      }
 +
 +    @Override
@@ -64,6 +65,7 @@
 +        {
 +            ret.add(new ItemStack(Block.cloth.blockID, 1, getFleeceColor()));
 +        }
++        this.worldObj.playSoundAtEntity(this, "mob.sheep.shear", 1.0F, 1.0F);
 +        return ret;
 +    }
  }

@@ -12,7 +12,7 @@
  import org.lwjgl.input.Mouse;
  import org.lwjgl.opengl.Display;
  import org.lwjgl.opengl.GL11;
-@@ -292,8 +297,15 @@
+@@ -311,8 +316,15 @@
       */
      private void updateFovModifierHand()
      {
@@ -30,7 +30,7 @@
          this.fovModifierHandPrev = this.fovModifierHand;
          this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
      }
-@@ -309,7 +321,7 @@
+@@ -328,7 +340,7 @@
          }
          else
          {
@@ -39,7 +39,7 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -396,15 +408,7 @@
+@@ -415,15 +427,7 @@
  
              if (!this.mc.gameSettings.debugCamEnable)
              {
@@ -56,7 +56,7 @@
                  GL11.glRotatef(var2.prevRotationYaw + (var2.rotationYaw - var2.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(var2.prevRotationPitch + (var2.rotationPitch - var2.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1037,8 +1041,11 @@
+@@ -1101,8 +1105,11 @@
                      var17 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -70,7 +70,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1102,15 +1109,18 @@
+@@ -1166,15 +1173,18 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -92,9 +92,9 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1127,6 +1137,9 @@
-                 this.setupFog(1, par1);
-                 GL11.glPopMatrix();
+@@ -1184,6 +1194,9 @@
+             {
+                 this.func_82829_a(var5, par1);
              }
 +
 +            this.mc.mcProfiler.endStartSection("FRenderLast");
