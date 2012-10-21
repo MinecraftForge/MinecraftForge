@@ -37,7 +37,7 @@ def main():
     try:
         os.chdir(mcp_dir)
         reset_logger()
-        reobfuscate(None, False, True, True)
+        reobfuscate(None, False, True, True, True, False)
         reset_logger()
         os.chdir(forge_dir)
     except SystemExit, e:
