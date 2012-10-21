@@ -1,5 +1,5 @@
---- ../src_base/minecraft/net/minecraft/src/GuiStatsComponent.java
-+++ ../src_work/minecraft/net/minecraft/src/GuiStatsComponent.java
+--- ../src_base/common/net/minecraft/src/GuiStatsComponent.java
++++ ../src_work/common/net/minecraft/src/GuiStatsComponent.java
 @@ -8,6 +8,7 @@
  import java.text.DecimalFormat;
  import javax.swing.JComponent;
@@ -16,7 +16,7 @@
          long var1 = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
          System.gc();
          this.displayStrings[0] = "Memory use: " + var1 / 1024L / 1024L + " mb (" + Runtime.getRuntime().freeMemory() * 100L / Runtime.getRuntime().maxMemory() + "% free)";
-@@ -51,14 +53,17 @@
+@@ -51,15 +53,18 @@
  
          if (this.field_79017_e.worldServers != null)
          {
@@ -32,7 +32,9 @@
 +                if (world != null && world.theChunkProviderServer != null)
                  {
 -                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + this.field_79017_e.worldServers[var3].theChunkProviderServer.makeString();
+-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + this.field_79017_e.worldServers[var3].func_82732_R().func_82590_d() + " / " + this.field_79017_e.worldServers[var3].func_82732_R().func_82591_c();
 +                    this.displayStrings[5 + x] = this.displayStrings[5 + x] + ", " + world.theChunkProviderServer.makeString();
++                    this.displayStrings[5 + x] = this.displayStrings[5 + x] + ", Vec3: " + world.func_82732_R().func_82590_d() + " / " + world.func_82732_R().func_82591_c();
                  }
 +                x++;
              }
