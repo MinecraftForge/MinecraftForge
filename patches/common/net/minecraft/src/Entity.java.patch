@@ -1,21 +1,17 @@
 --- ../src_base/common/net/minecraft/src/Entity.java
 +++ ../src_work/common/net/minecraft/src/Entity.java
-@@ -2,9 +2,12 @@
- 
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
-+
-+import java.util.ArrayList;
+@@ -5,6 +5,8 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
 +import java.util.UUID;
++import java.util.ArrayList;
+ import net.minecraft.server.MinecraftServer;
  
  public abstract class Entity
- {
-@@ -186,6 +189,11 @@
-     public boolean ignoreFrustumCheck;
-     public boolean isAirBorne;
+@@ -197,6 +199,11 @@
+     public int dimension;
+     protected int field_82152_aq;
      public EnumEntitySize myEntitySize;
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -25,10 +21,10 @@
  
      public Entity(World par1World)
      {
-@@ -1382,6 +1390,15 @@
-         par1NBTTagCompound.setShort("Fire", (short)this.fire);
+@@ -1463,6 +1470,15 @@
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
+         par1NBTTagCompound.setInteger("Dimension", this.dimension);
 +        if (persistentID != null)
 +        {
 +            par1NBTTagCompound.setLong("PersistentIDMSB", persistentID.getMostSignificantBits());
@@ -41,8 +37,8 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1423,6 +1440,14 @@
-         this.onGround = par1NBTTagCompound.getBoolean("OnGround");
+@@ -1505,6 +1521,14 @@
+         this.dimension = par1NBTTagCompound.getInteger("Dimension");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
 +        if (par1NBTTagCompound.hasKey("ForgeData"))
@@ -56,7 +52,7 @@
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1509,7 +1534,14 @@
+@@ -1591,7 +1615,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -72,7 +68,7 @@
          return var3;
      }
  
-@@ -1843,7 +1875,7 @@
+@@ -1945,7 +1976,7 @@
       */
      public boolean isRiding()
      {
@@ -81,9 +77,18 @@
      }
  
      /**
-@@ -2107,4 +2139,72 @@
+@@ -2262,7 +2293,7 @@
+ 
+     public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
-         return String.format("%s[\'%s\'/%d, l=\'%s\', x=%.2f, y=%.2f, z=%.2f]", new Object[] {this.getClass().getSimpleName(), this.getEntityName(), Integer.valueOf(this.entityId), this.worldObj == null ? "~NULL~" : this.worldObj.getWorldInfo().getWorldName(), Double.valueOf(this.posX), Double.valueOf(this.posY), Double.valueOf(this.posZ)});
+-        return par2Block.getExplosionResistance(this);
++        return par2Block.getExplosionResistance(this, worldObj, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
+     }
+ 
+     public int func_82143_as()
+@@ -2279,4 +2310,84 @@
+     {
+         return false;
      }
 +
 +    /* ================================== Forge Start =====================================*/
@@ -129,6 +134,18 @@
 +        else if (this instanceof EntityBoat)
 +        {
 +            return new ItemStack(Item.boat);
++        }
++        else if (this instanceof EntityItemFrame)
++        {
++            ItemStack held = ((EntityItemFrame)this).func_82335_i();
++            if (held == null)
++            {
++                return new ItemStack(Item.field_82802_bI);
++            }
++            else
++            {
++                return held.copy();
++            }
 +        }
 +        else
 +        {
