@@ -22,26 +22,33 @@
                  ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  var7.bipedHead.showModel = par2 == 0;
                  var7.bipedHeadwear.showModel = par2 == 0;
-@@ -159,12 +165,14 @@
-         super.renderEquippedItems(par1EntityPlayer, par2);
-         ItemStack var3 = par1EntityPlayer.inventory.armorItemInSlot(3);
- 
--        if (var3 != null && var3.getItem().shiftedIndex < 256)
-+        if (var3 != null && var3.getItem() instanceof ItemBlock)
-         {
-             GL11.glPushMatrix();
-             this.modelBipedMain.bipedHead.postRender(0.0625F);
--
--            if (RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var3, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var3, BLOCK_3D));
-+
-+            if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
+@@ -104,7 +110,7 @@
+             if (var5 instanceof ItemArmor)
              {
-                 float var4 = 0.625F;
-                 GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -266,7 +274,10 @@
-                 var20 = var21.getItemUseAction();
+                 ItemArmor var6 = (ItemArmor)var5;
+-                this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png");
++                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
+                 float var7 = 1.0F;
+                 GL11.glColor3f(var7, var7, var7);
+             }
+@@ -230,9 +236,12 @@
+             this.modelBipedMain.bipedHead.postRender(0.0625F);
+             float var5;
+ 
+-            if (var4.getItem().shiftedIndex < 256)
+-            {
+-                if (RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
++            if (var4 != null && var4.getItem() instanceof ItemBlock)
++            {
++                IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var4, EQUIPPED);
++                boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var4, BLOCK_3D));
++        
++                if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
+                 {
+                     var5 = 0.625F;
+                     GL11.glTranslatef(0.0F, -0.25F, 0.0F);
+@@ -349,7 +358,10 @@
+                 var23 = var21.getItemUseAction();
              }
  
 -            if (var21.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var21.itemID].getRenderType()))
@@ -50,14 +57,14 @@
 +            
 +            if (var21.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var21.itemID].getRenderType())))
              {
-                 var6 = 0.5F;
+                 var7 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -319,7 +330,7 @@
+@@ -402,7 +414,7 @@
  
              if (var21.getItem().requiresMultipleRenderPasses())
              {
--                for (int var25 = 0; var25 <= 1; ++var25)
-+                for (int var25 = 0; var25 < var21.getItem().getRenderPasses(var21.getItemDamage()); ++var25)
+-                for (int var27 = 0; var27 <= 1; ++var27)
++                for (int var27 = 0; var27 <= var21.getItem().getRenderPasses(var21.getItemDamage()); ++var27)
                  {
-                     int var24 = var21.getItem().getColorFromDamage(var21.getItemDamage(), var25);
-                     float var26 = (float)(var24 >> 16 & 255) / 255.0F;
+                     int var26 = var21.getItem().func_82790_a(var21, var27);
+                     float var28 = (float)(var26 >> 16 & 255) / 255.0F;

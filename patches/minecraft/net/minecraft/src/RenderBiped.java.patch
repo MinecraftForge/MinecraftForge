@@ -11,26 +11,42 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
-@@ -35,7 +39,10 @@
-             GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
-             float var4;
+@@ -161,9 +165,12 @@
+             GL11.glPushMatrix();
+             this.modelBipedMain.bipedHead.postRender(0.0625F);
  
--            if (var3.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var3, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var3, BLOCK_3D));
+-            if (var5.getItem().shiftedIndex < 256)
+-            {
+-                if (RenderBlocks.renderItemIn3d(Block.blocksList[var5.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var5, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var5, BLOCK_3D));
 +
-+            if (var3.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType())))
-             {
-                 var4 = 0.5F;
-                 GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -75,7 +82,10 @@
++            if (var5.getItem() instanceof ItemBlock)
++            {
++                if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var5.itemID].getRenderType()))
+                 {
+                     var6 = 0.625F;
+                     GL11.glTranslatef(0.0F, -0.25F, 0.0F);
+@@ -205,7 +212,10 @@
+             this.modelBipedMain.bipedRightArm.postRender(0.0625F);
+             GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
-             if (var3.getItem().requiresMultipleRenderPasses())
+-            if (var4.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var4, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var4, BLOCK_3D));
++
++            if (var4.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType())))
              {
--                this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, 1);
-+                for (int x = 1; x < var3.getItem().getRenderPasses(var3.getItemDamage()); x++)
+                 var6 = 0.5F;
+                 GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
+@@ -252,7 +262,10 @@
+ 
+             if (var4.getItem().requiresMultipleRenderPasses())
+             {
+-                this.renderManager.itemRenderer.renderItem(par1EntityLiving, var4, 1);
++                for (int x = 1; x < var4.getItem().getRenderPasses(var4.getItemDamage()); x++)
 +                {
-+                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, var3, x);
++                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, var4, x);
 +                }
              }
  
