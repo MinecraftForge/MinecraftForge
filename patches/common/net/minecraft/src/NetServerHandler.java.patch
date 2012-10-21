@@ -85,19 +85,15 @@
                  {
                      return;
                  }
-@@ -417,8 +444,9 @@
- 
-             if (par1Packet14BlockDig.status == 0)
+@@ -419,6 +446,7 @@
              {
--                if (var20 <= 16 && !var3)
--                {
-+                if (var20 <= mcServer.spawnProtectionSize && !var3)
-+                {
+                 if (var20 <= this.mcServer.func_82357_ak() && !var3)
+                 {
 +                    ForgeEventFactory.onPlayerInteract(playerEntity, Action.LEFT_CLICK_BLOCK, var5, var6, var7, 0);
                      this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
                  else
-@@ -479,7 +507,11 @@
+@@ -477,7 +505,11 @@
                  return;
              }
  
@@ -110,18 +106,18 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -497,7 +529,9 @@
+@@ -495,7 +527,9 @@
                  var12 = var11;
              }
  
--            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > 16 || var9))
+-            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > this.mcServer.func_82357_ak() || var9))
 +            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
 +            dist *= dist;
-+            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > mcServer.spawnProtectionSize || var9))
++            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > this.mcServer.func_82357_ak() || var9))
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -798,7 +832,7 @@
+@@ -794,7 +828,7 @@
                      return;
                  }
  
