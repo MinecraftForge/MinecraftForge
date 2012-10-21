@@ -121,7 +121,7 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
         
         os.chdir(mcp_dir)
         reset_logger()
-        recompile(None)
+        recompile(None, True, False)
         reset_logger()
         os.chdir(forge_dir)
         
