@@ -9,6 +9,7 @@ import net.minecraft.src.InventoryCrafting;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ShapedRecipes;
+import net.minecraft.src.World;
 
 public class ShapedOreRecipe implements IRecipe 
 {
@@ -124,7 +125,7 @@ public class ShapedOreRecipe implements IRecipe
     public ItemStack getRecipeOutput(){ return output; }
 
     @Override
-    public boolean matches(InventoryCrafting inv)
+    public boolean matches(InventoryCrafting inv, World world)
     {        
         for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
         {
