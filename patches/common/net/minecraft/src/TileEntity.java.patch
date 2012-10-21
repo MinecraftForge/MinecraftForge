@@ -1,8 +1,8 @@
 --- ../src_base/common/net/minecraft/src/TileEntity.java
 +++ ../src_work/common/net/minecraft/src/TileEntity.java
-@@ -257,4 +257,41 @@
-         addMapping(TileEntityEnchantmentTable.class, "EnchantTable");
-         addMapping(TileEntityEndPortal.class, "Airportal");
+@@ -264,4 +264,33 @@
+         addMapping(TileEntityBeacon.class, "Beacon");
+         addMapping(TileEntitySkull.class, "Skull");
      }
 +
 +    /**
@@ -23,7 +23,7 @@
 +     * @param net The NetworkManager the packet originated from 
 +     * @param pkt The data packet
 +     */
-+    public void onDataPacket(NetworkManager net, Packet132TileEntityData pkt)
++    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
 +    {
 +    }
 +
@@ -32,13 +32,5 @@
 +     */
 +    public void onChunkUnload()
 +    {
-+    }
-+
-+    /**
-+     *  @return The maximum distance between the player and the TileEntity at which the TileEntitySpecialRenderer will be called
-+     */
-+    public double getRenderDistance()
-+    {
-+        return 64;
 +    }
  }
