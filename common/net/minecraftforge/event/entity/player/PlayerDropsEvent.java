@@ -27,7 +27,7 @@ public class PlayerDropsEvent extends LivingDropsEvent
     {
         super(entity, source, drops, 
             (source.getEntity() instanceof EntityPlayer) ? 
-                EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity()).inventory) : 0,
+                EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity())) : 0,
             recentlyHit, 0);
         
         this.entityPlayer = entity;
