@@ -386,9 +386,9 @@ def finish_setup_fml(fml_dir, mcp_dir):
     from runtime.updatemcp import updatemcp
     
     os.chdir(mcp_dir)
-    updatenames(None, True)
+    updatenames(None, True, False, False)
     reset_logger()
-    updatemd5(None, True)
+    updatemd5(None, True, False, False)
     reset_logger()
     os.chdir(fml_dir)
 
