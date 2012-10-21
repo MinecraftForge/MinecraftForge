@@ -7,6 +7,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.Render;
+import net.minecraft.src.RenderBiped;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.RenderPlayer;
@@ -26,7 +27,7 @@ public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private int nextRenderId = 32;
+    private int nextRenderId = 36;
 
     private Map<Integer, ISimpleBlockRenderingHandler> blockRenderers = Maps.newHashMap();
 
@@ -40,6 +41,7 @@ public class RenderingRegistry
     public static int addNewArmourRendererPrefix(String armor)
     {
         RenderPlayer.field_77110_j = ObjectArrays.concat(RenderPlayer.field_77110_j, armor);
+        RenderBiped.field_82424_k = RenderPlayer.field_77110_j;
         return RenderPlayer.field_77110_j.length - 1;
     }
 
