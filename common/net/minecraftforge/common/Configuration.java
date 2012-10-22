@@ -43,13 +43,6 @@ public class Configuration
 
     public Map<String, Map<String, Property>> categories = new TreeMap<String, Map<String, Property>>();
 
-    //TO-DO 1.4 - Remove these, categories are dynamically added when needed, so no need to add default categories.
-    @Deprecated
-    public TreeMap<String, Property> blockProperties   = new TreeMap<String, Property>();
-    @Deprecated
-    public TreeMap<String, Property> itemProperties    = new TreeMap<String, Property>();
-    @Deprecated
-    public TreeMap<String, Property> generalProperties = new TreeMap<String, Property>();
     private Map<String,String> customCategoryComments = Maps.newHashMap();
     private boolean caseSensitiveCustomCategories;
     public String defaultEncoding = DEFAULT_ENCODING;
@@ -66,10 +59,6 @@ public class Configuration
     public Configuration(File file)
     {
         this.file = file;
-        //TO-DO 1.4 - Remove these, categories are dynamically added when needed, so no need to add default categories.
-        categories.put(CATEGORY_GENERAL, generalProperties);
-        categories.put(CATEGORY_BLOCK, blockProperties);
-        categories.put(CATEGORY_ITEM, itemProperties);
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories)
@@ -449,32 +438,6 @@ public class Configuration
             buffer.write("\r\n");
         }
     }
-
-    //=====================Deprecated stuff, remove in 1.4=============================================
-    @Deprecated
-    public Property getOrCreateIntProperty(String key, String category, int defaultValue)
-    {
-        return get(category, key, defaultValue);
-    }
-
-    @Deprecated
-    public Property getOrCreateProperty(String key, String category, String defaultValue)
-    {
-        return get(category, key, defaultValue);
-    }
-
-    @Deprecated
-    public Property getOrCreateBooleanProperty(String key, String category, boolean defaultValue)
-    {
-        return get(category, key, defaultValue);
-    }
-
-    @Deprecated
-    public Property getOrCreateBlockIdProperty(String key, int defaultID)
-    {
-        return getBlock(CATEGORY_BLOCK, key, defaultID);
-    }
-    //======================End deprecated stuff=======================================================
 
     public static class UnicodeInputStreamReader extends Reader
     {
