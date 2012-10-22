@@ -21,21 +21,29 @@ public class ShapedOreRecipe implements IRecipe
     private Object[] input = null;
     private int width = 0;
     private int height = 0;
-    private boolean mirriored = true;
+    private boolean mirrored = true;
 
-    public ShapedOreRecipe(Block     result, Object... recipe){ this(result, true, recipe);}
-    public ShapedOreRecipe(Item      result, Object... recipe){ this(result, true, recipe); }
-    public ShapedOreRecipe(ItemStack result, Object... recipe){ this(result, true, recipe); }
-    public ShapedOreRecipe(Block     result, boolean mirrior, Object... recipe){ this(new ItemStack(result), mirrior, recipe);}
-    public ShapedOreRecipe(Item      result, boolean mirrior, Object... recipe){ this(new ItemStack(result), mirrior, recipe); }
-    
-    public ShapedOreRecipe(ItemStack result, boolean mirrior, Object... recipe)
+    public ShapedOreRecipe(Block     result, Object... recipe){ this(new ItemStack(result), recipe); }
+    public ShapedOreRecipe(Item      result, Object... recipe){ this(new ItemStack(result), recipe); }
+    public ShapedOreRecipe(ItemStack result, Object... recipe)
     {
         output = result.copy();
-        mirriored = mirrior;
-        
+
         String shape = "";
         int idx = 0;
+
+        if (recipe[idx] instanceof Boolean)
+        {
+            mirrored = (Boolean)recipe[idx];
+            if (recipe[idx+1] instanceof Object[])
+            {
+                recipe = (Object[])recipe[idx+1];
+            }
+            else
+            {
+                idx = 1;
+            }
+        }
 
         if (recipe[idx] instanceof String[])
         {
@@ -59,7 +67,7 @@ public class ShapedOreRecipe implements IRecipe
                 height++;
             }
         }
-        
+
         if (width * height != shape.length())
         {
             String ret = "Invalid shaped ore recipe: ";
@@ -136,7 +144,7 @@ public class ShapedOreRecipe implements IRecipe
                     return true;
                 }
     
-                if (mirriored && checkMatch(inv, x, y, false))
+                if (mirrored && checkMatch(inv, x, y, false))
                 {
                     return true;
                 }
@@ -146,7 +154,7 @@ public class ShapedOreRecipe implements IRecipe
         return false;
     }
     
-    private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirrior)
+    private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
         {
@@ -158,7 +166,7 @@ public class ShapedOreRecipe implements IRecipe
 
                 if (subX >= 0 && subY >= 0 && subX < width && subY < height)
                 {
-                    if (mirrior)
+                    if (mirror)
                     {
                         target = input[width - subX - 1 + subY * width];
                     }
@@ -210,8 +218,9 @@ public class ShapedOreRecipe implements IRecipe
         return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
     }
     
-    public void setMirriored(boolean mirrior)
+    public ShapedOreRecipe setMirrored(boolean mirror)
     {
-        mirriored = mirrior;
+        mirrored = mirror;
+        return this;
     }
 }
