@@ -9,7 +9,7 @@ public class LivingSpecialSpawnEvent extends LivingEvent
     public final float x;
     public final float y;
     public final float z;
-    private boolean handeled = false;
+    private boolean handled = false;
     
     public LivingSpecialSpawnEvent(EntityLiving entity, World world, float x, float y, float z)
     {
@@ -20,13 +20,19 @@ public class LivingSpecialSpawnEvent extends LivingEvent
         this.z = z;
     }
     
-    public void setHandeled()
+    public boolean isHandled()
     {
-        handeled = true;
+        return handled;
     }
     
-    public boolean isHandeled()
+    public void setHandled()
     {
-        return handeled;
+        handled = true;
+    }
+    
+    @Deprecated
+    public void setHandeled()
+    {
+        this.setHandled();
     }
 }

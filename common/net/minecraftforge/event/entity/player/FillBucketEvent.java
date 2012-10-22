@@ -14,7 +14,7 @@ public class FillBucketEvent extends PlayerEvent
     public final MovingObjectPosition target;
     
     public ItemStack result;
-    private boolean handeled = false;
+    private boolean handled = false;
     
     public FillBucketEvent(EntityPlayer player, ItemStack current, World world, MovingObjectPosition target)
     {
@@ -24,13 +24,19 @@ public class FillBucketEvent extends PlayerEvent
         this.target = target;
     }
     
-    public boolean isHandeled()
+    public boolean isHandled()
     {
-        return handeled;
+        return handled;
     }
     
+    public void setHandled()
+    {
+        handled = true;
+    }
+    
+    @Deprecated
     public void setHandeled()
     {
-        handeled = true;
+        this.setHandled();
     }
 }
