@@ -1,0 +1,12 @@
+--- ../src-base/common/net/minecraft/src/IBossDisplayData.java
++++ ../src-work/common/net/minecraft/src/IBossDisplayData.java
+@@ -1,9 +1,5 @@
+ package net.minecraft.src;
+ 
+-import cpw.mods.fml.common.Side;
+-import cpw.mods.fml.common.asm.SideOnly;
+-
+-@SideOnly(Side.CLIENT)
+ public interface IBossDisplayData
+ {
+     int func_70667_aM();
