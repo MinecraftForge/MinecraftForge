@@ -1,17 +1,18 @@
 --- ../src_base/common/net/minecraft/src/EntityItem.java
 +++ ../src_work/common/net/minecraft/src/EntityItem.java
-@@ -1,6 +1,10 @@
+@@ -1,6 +1,11 @@
  package net.minecraft.src;
  
  import java.util.Iterator;
 +
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.item.ItemExpireEvent;
 +import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
  
  import cpw.mods.fml.common.registry.GameRegistry;
  
-@@ -20,6 +24,11 @@
+@@ -20,6 +25,11 @@
  
      /** The EntityItem's random initial float height. */
      public float hoverStart = (float)(Math.random() * Math.PI * 2.0D);
@@ -23,7 +24,7 @@
  
      public EntityItem(World par1World, double par2, double par4, double par6, ItemStack par8ItemStack)
      {
-@@ -32,6 +41,7 @@
+@@ -32,6 +42,7 @@
          this.motionX = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
          this.motionY = 0.20000000298023224D;
          this.motionZ = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
@@ -31,7 +32,7 @@
      }
  
      /**
-@@ -118,7 +128,20 @@
+@@ -118,7 +129,20 @@
  
          ++this.age;
  
@@ -53,7 +54,7 @@
          {
              this.setDead();
          }
-@@ -215,6 +238,7 @@
+@@ -215,6 +239,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -61,7 +62,7 @@
  
          if (this.item != null)
          {
-@@ -232,10 +256,15 @@
+@@ -232,10 +257,15 @@
          NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
          this.item = ItemStack.loadItemStackFromNBT(var2);
  
@@ -78,7 +79,7 @@
      }
  
      /**
-@@ -245,9 +274,21 @@
+@@ -245,9 +275,21 @@
      {
          if (!this.worldObj.isRemote)
          {
@@ -97,7 +98,7 @@
              int var2 = this.item.stackSize;
  
 -            if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(this.item))
-+            if (this.delayBeforeCanPickup <= 0 && (event.isHandled() || var2 <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(this.item)))
++            if (this.delayBeforeCanPickup <= 0 && (event.getResult() == Result.ALLOW || var2 <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(this.item)))
              {
                  if (this.item.itemID == Block.wood.blockID)
                  {
