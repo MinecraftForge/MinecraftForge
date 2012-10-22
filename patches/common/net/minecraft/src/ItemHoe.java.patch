@@ -1,14 +1,15 @@
 --- ../src_base/common/net/minecraft/src/ItemHoe.java
 +++ ../src_work/common/net/minecraft/src/ItemHoe.java
-@@ -1,5 +1,7 @@
+@@ -1,5 +1,8 @@
  package net.minecraft.src;
  
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.UseHoeEvent;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.entity.player.UseHoeEvent;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -28,6 +30,17 @@
+@@ -28,6 +31,18 @@
          }
          else
          {
@@ -17,7 +18,8 @@
 +            {
 +                return false;
 +            }
-+            if (event.isHandeled())
++
++            if (event.getResult() == Result.ALLOW)
 +            {
 +                par1ItemStack.damageItem(1, par2EntityPlayer);
 +                return true;

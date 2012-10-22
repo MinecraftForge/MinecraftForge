@@ -1,17 +1,18 @@
 --- ../src_base/common/net/minecraft/src/ItemDye.java
 +++ ../src_work/common/net/minecraft/src/ItemDye.java
-@@ -3,6 +3,10 @@
+@@ -3,6 +3,11 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.util.List;
 +
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.player.BonemealEvent;
  
  public class ItemDye extends Item
  {
-@@ -53,6 +57,21 @@
+@@ -53,6 +58,21 @@
              if (par1ItemStack.getItemDamage() == 15)
              {
                  var11 = par3World.getBlockId(par4, par5, par6);
@@ -22,9 +23,9 @@
 +                    return false;
 +                }
 +
-+                if (event.isHandeled())
++                if (event.getResult() == Result.ALLOW)
 +                {
-+                   if (!par3World.isRemote)
++                    if (!par3World.isRemote)
 +                    {
 +                        par1ItemStack.stackSize--;
 +                    }
@@ -33,7 +34,7 @@
  
                  if (var11 == Block.sapling.blockID)
                  {
-@@ -152,16 +171,9 @@
+@@ -152,16 +172,9 @@
                                          par3World.setBlockAndMetadataWithNotify(var13, var14, var15, Block.tallGrass.blockID, 1);
                                      }
                                  }

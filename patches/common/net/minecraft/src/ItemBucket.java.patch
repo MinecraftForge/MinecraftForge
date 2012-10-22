@@ -1,14 +1,15 @@
 --- ../src_base/common/net/minecraft/src/ItemBucket.java
 +++ ../src_work/common/net/minecraft/src/ItemBucket.java
-@@ -1,4 +1,7 @@
+@@ -1,4 +1,8 @@
  package net.minecraft.src;
 +
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.entity.player.FillBucketEvent;
  
  public class ItemBucket extends Item
  {
-@@ -31,6 +34,32 @@
+@@ -31,6 +35,32 @@
          }
          else
          {
@@ -18,7 +19,7 @@
 +                return par1ItemStack;
 +            }
 +
-+            if (event.isHandeled())
++            if (event.getResult() == Event.Result.ALLOW)
 +            {
 +                if (par3EntityPlayer.capabilities.isCreativeMode)
 +                {
