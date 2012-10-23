@@ -59,7 +59,7 @@
 -                {
 +                this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
 +
-+                for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
++                for (var15 = 0; var15 < var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
 +                {
 +                    this.random.setSeed(187L); //Fixes Vanilla bug where layers would not render aligns properly.
                      var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);
@@ -104,7 +104,7 @@
 -                for (var9 = 0; var9 <= 1; ++var9)
 +                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[var6].getTextureFile()));
 +
-+                for (var9 = 0; var9 <= Item.itemsList[var6].getRenderPasses(var7); ++var9)
++                for (var9 = 0; var9 < Item.itemsList[var6].getRenderPasses(var7); ++var9)
                  {
                      var10 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var9);
                      int var11 = Item.itemsList[var6].func_82790_a(par3ItemStack, var9);
