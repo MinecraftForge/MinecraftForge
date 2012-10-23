@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/src/ModelBiped.java
++++ ../src_work/minecraft/net/minecraft/src/ModelBiped.java
+@@ -123,6 +123,8 @@
+      */
+     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity par7Entity)
+     {
++        ForgeHooksClient.onRotatePlayerModel(par7Entity, this, par1, par2, par3, par4, par5, par6);
++		
+         this.bipedHead.rotateAngleY = par4 / (180F / (float)Math.PI);
+         this.bipedHead.rotateAngleX = par5 / (180F / (float)Math.PI);
+         this.bipedHeadwear.rotateAngleY = this.bipedHead.rotateAngleY;
