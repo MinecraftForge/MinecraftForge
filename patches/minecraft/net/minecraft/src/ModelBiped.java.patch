@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/src/ModelBiped.java
++++ ../src_work/minecraft/net/minecraft/src/ModelBiped.java
+@@ -228,6 +228,8 @@
+             this.bipedRightArm.rotateAngleX += MathHelper.sin(par3 * 0.067F) * 0.05F;
+             this.bipedLeftArm.rotateAngleX -= MathHelper.sin(par3 * 0.067F) * 0.05F;
+         }
++     	
++        ForgeHooksClient.onRotatePlayerModel(par7Entity, this, par1, par2, par3, par4, par5, par6);
+     }
+ 
+     /**
