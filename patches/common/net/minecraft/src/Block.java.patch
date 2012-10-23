@@ -93,7 +93,7 @@
                  }
              }
          }
-@@ -997,7 +1003,7 @@
+@@ -1027,7 +1033,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1267,4 +1273,831 @@
+@@ -1297,4 +1303,831 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

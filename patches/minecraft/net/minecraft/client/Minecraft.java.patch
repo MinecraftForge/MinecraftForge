@@ -10,7 +10,7 @@
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
-@@ -1251,7 +1254,7 @@
+@@ -1252,7 +1255,7 @@
  
                  if (this.thePlayer.func_82246_f(var3, var4, var5))
                  {
@@ -19,7 +19,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1317,7 +1320,8 @@
+@@ -1318,7 +1321,8 @@
                  {
                      int var8 = var3 != null ? var3.stackSize : 0;
  
@@ -29,7 +29,7 @@
                      {
                          var2 = false;
                          this.thePlayer.swingItem();
-@@ -1343,7 +1347,8 @@
+@@ -1344,7 +1348,8 @@
              {
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
@@ -39,7 +39,7 @@
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();
                  }
-@@ -1941,6 +1946,18 @@
+@@ -1959,6 +1964,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -58,7 +58,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2250,95 +2267,12 @@
+@@ -2268,95 +2285,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;

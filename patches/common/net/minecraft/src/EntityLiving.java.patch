@@ -11,7 +11,7 @@
  
  public abstract class EntityLiving extends Entity
  {
-@@ -336,6 +340,7 @@
+@@ -337,6 +341,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -19,7 +19,7 @@
      }
  
      public boolean isExplosiveMob(Class par1Class)
-@@ -419,6 +424,7 @@
+@@ -420,6 +425,7 @@
      {
          this.entityLivingToAttack = par1EntityLiving;
          this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
@@ -27,7 +27,7 @@
      }
  
      protected void entityInit()
-@@ -707,6 +713,11 @@
+@@ -708,6 +714,11 @@
       */
      public void onUpdate()
      {
@@ -39,7 +39,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -888,6 +899,11 @@
+@@ -889,6 +900,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -51,20 +51,19 @@
          if (this.worldObj.isRemote)
          {
              return false;
-@@ -1092,6 +1108,12 @@
-      */
-     protected void damageEntity(DamageSource par1DamageSource, int par2)
+@@ -1095,6 +1111,11 @@
      {
-+        par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
-+        if (par2 <= 0)
-+        {
-+            return;
-+        }
-+
-         par2 = this.applyArmorCalculations(par1DamageSource, par2);
-         par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
-         this.health -= par2;
-@@ -1155,6 +1177,11 @@
+         if (!this.field_83001_bt)
+         {
++            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
++            if (par2 <= 0)
++            {
++                return;
++            }
+             par2 = this.applyArmorCalculations(par1DamageSource, par2);
+             par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
+             this.health -= par2;
+@@ -1159,6 +1180,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -76,7 +75,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1177,6 +1204,10 @@
+@@ -1181,6 +1207,10 @@
              {
                  var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
              }
@@ -87,7 +86,7 @@
  
              if (!this.isChild() && this.worldObj.func_82736_K().func_82766_b("doMobLoot"))
              {
-@@ -1185,7 +1216,7 @@
+@@ -1189,7 +1219,7 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -96,7 +95,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1193,6 +1224,16 @@
+@@ -1197,6 +1227,16 @@
                      }
                  }
              }
@@ -113,7 +112,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1236,6 +1277,12 @@
+@@ -1240,6 +1280,12 @@
       */
      protected void fall(float par1)
      {
@@ -126,7 +125,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1423,7 +1470,7 @@
+@@ -1427,7 +1473,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -135,7 +134,7 @@
      }
  
      /**
-@@ -1828,6 +1875,7 @@
+@@ -1835,6 +1881,7 @@
          }
  
          this.isAirBorne = true;
@@ -143,7 +142,7 @@
      }
  
      /**
-@@ -2355,8 +2403,6 @@
+@@ -2362,8 +2409,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -152,7 +151,7 @@
      /**
       * input is the potion id to remove from the current active potion effects
       */
-@@ -2774,4 +2820,30 @@
+@@ -2781,4 +2826,30 @@
      {
          return false;
      }
