@@ -43,6 +43,7 @@ import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.DummyModContainer;
+import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.IFMLSidedHandler;
@@ -109,6 +110,8 @@ public class FMLClientHandler implements IFMLSidedHandler
 
     private CustomModLoadingErrorDisplayException customError;
 
+	private DuplicateModsFoundException dupesFound;
+
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
@@ -151,6 +154,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             wrongMC = wrong;
         }
+        catch (DuplicateModsFoundException dupes)
+        {
+        	dupesFound = dupes;
+        }
         catch (MissingModsException missing)
         {
             modsMissing = missing;
@@ -181,7 +188,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @SuppressWarnings("deprecation")
     public void finishMinecraftLoading()
     {
-        if (modsMissing != null || wrongMC != null)
+        if (modsMissing != null || wrongMC != null || customError!=null || dupesFound!=null)
         {
             return;
         }
@@ -216,6 +223,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         else if (modsMissing != null)
         {
             client.func_71373_a(new GuiModsMissing(modsMissing));
+        }
+        else if (dupesFound != null)
+        {
+        	client.func_71373_a(new GuiDupesFound(dupesFound));
         }
         else if (customError != null)
         {

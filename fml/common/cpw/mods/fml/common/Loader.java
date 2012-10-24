@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -31,14 +32,17 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
@@ -341,7 +345,6 @@ public class Loader
 
     private void identifyDuplicates(List<ModContainer> mods)
     {
-        boolean foundDupe = false;
         TreeMultimap<ModContainer, File> dupsearch = TreeMultimap.create(new ModIdComparator(), Ordering.arbitrary());
         for (ModContainer mc : mods)
         {
@@ -352,15 +355,19 @@ public class Loader
         }
 
         ImmutableMultiset<ModContainer> duplist = Multisets.copyHighestCountFirst(dupsearch.keys());
+        SetMultimap<ModContainer, File> dupes = LinkedHashMultimap.create();
         for (Entry<ModContainer> e : duplist.entrySet())
         {
             if (e.getCount() > 1)
             {
                 FMLLog.severe("Found a duplicate mod %s at %s", e.getElement().getModId(), dupsearch.get(e.getElement()));
-                foundDupe = true;
+                dupes.putAll(e.getElement(),dupsearch.get(e.getElement()));
             }
         }
-        if (foundDupe) { throw new LoaderException(); }
+        if (!dupes.isEmpty())
+        {
+        	throw new DuplicateModsFoundException(dupes);
+        }
     }
 
     /**
@@ -451,7 +458,7 @@ public class Loader
         {
             if (nonMod.isFile())
             {
-                FMLLog.severe("FML has found a non-mod file %s in your mods directory. It will now be injected into your classpath. This could severe stability issues, it should be removed if possible.", nonMod.getName());
+                FMLLog.info("FML has found a non-mod file %s in your mods directory. It will now be injected into your classpath. This could severe stability issues, it should be removed if possible.", nonMod.getName());
                 try
                 {
                     modClassLoader.addFile(nonMod);
