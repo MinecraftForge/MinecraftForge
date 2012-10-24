@@ -46,7 +46,9 @@ import cpw.mods.fml.common.Mod.Metadata;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
@@ -76,15 +78,16 @@ public class FMLModContainer implements ModContainer
     private DefaultArtifactVersion processedVersion;
     private boolean isNetworkMod;
 
-    private static final BiMap<Class<? extends FMLStateEvent>, Class<? extends Annotation>> modAnnotationTypes = ImmutableBiMap.<Class<? extends FMLStateEvent>, Class<? extends Annotation>>builder()
+    private static final BiMap<Class<? extends FMLEvent>, Class<? extends Annotation>> modAnnotationTypes = ImmutableBiMap.<Class<? extends FMLEvent>, Class<? extends Annotation>>builder()
         .put(FMLPreInitializationEvent.class, Mod.PreInit.class)
         .put(FMLInitializationEvent.class, Mod.Init.class)
         .put(FMLPostInitializationEvent.class, Mod.PostInit.class)
         .put(FMLServerStartingEvent.class, Mod.ServerStarting.class)
         .put(FMLServerStartedEvent.class, Mod.ServerStarted.class)
         .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
+        .put(IMCEvent.class,Mod.IMCCallback.class)
         .build();
-    private static final BiMap<Class<? extends Annotation>, Class<? extends FMLStateEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
+    private static final BiMap<Class<? extends Annotation>, Class<? extends FMLEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
     private String annotationDependencies;
     private VersionRange minecraftAccepted;
 
@@ -422,7 +425,7 @@ public class FMLModContainer implements ModContainer
     }
 
     @Subscribe
-    public void handleModStateEvent(FMLStateEvent event)
+    public void handleModStateEvent(FMLEvent event)
     {
         Class<? extends Annotation> annotation = modAnnotationTypes.get(event.getClass());
         if (annotation == null)

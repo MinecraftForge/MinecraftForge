@@ -18,6 +18,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
+
 import net.minecraft.src.ItemBlock;
 
 /**
@@ -99,7 +102,7 @@ public @interface Mod
     @Target(ElementType.METHOD)
     public @interface ServerStarting {}
     /**
-     * Mark the designated method as being called at the "post-initialization" phase
+     * Mark the designated method as being called at the "server-started" phase
      * @author cpw
      *
      */
@@ -107,13 +110,22 @@ public @interface Mod
     @Target(ElementType.METHOD)
     public @interface ServerStarted {}
     /**
-     * Mark the designated method as being called at the "post-initialization" phase
+     * Mark the designated method as being called at the "server-stopping" phase
      * @author cpw
      *
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface ServerStopping {}
+    /**
+     * Mark the designated method as the receiver for {@link FMLInterModComms} messages
+     * Called between {@link Init} and {@link PostInit}
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface IMCCallback {}
     /**
      * Populate the annotated field with the mod instance.
      * @author cpw
