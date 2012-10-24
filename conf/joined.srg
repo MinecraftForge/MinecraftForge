@@ -7602,6 +7602,7 @@ MD: ais/c (Lxo;III)Z net/minecraft/src/BlockFenceGate/func_71918_c (Lnet/minecra
 MD: ais/d ()I net/minecraft/src/BlockFenceGate/func_71857_b ()I
 MD: ais/e (Lxe;III)Lamr; net/minecraft/src/BlockFenceGate/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: ait/a (Lxo;III)V net/minecraft/src/BlockFence/func_71902_a (Lnet/minecraft/src/IBlockAccess;III)V
+MD: ait/a (Lxo;IIII)Z net/minecraft/src/BlockFence/func_71877_c (Lnet/minecraft/src/IBlockAccess;IIII)Z
 MD: ait/b ()Z net/minecraft/src/BlockFence/func_71886_c ()Z
 MD: ait/c ()Z net/minecraft/src/BlockFence/func_71926_d ()Z
 MD: ait/c (I)Z net/minecraft/src/BlockFence/func_72249_c (I)Z
@@ -8362,6 +8363,7 @@ MD: als/o ()I net/minecraft/src/BlockVine/func_71933_m ()I
 MD: alt/a (II)I net/minecraft/src/BlockWall/func_71858_a (II)I
 MD: alt/a (ILsq;Ljava/util/List;)V net/minecraft/src/BlockWall/func_71879_a (ILnet/minecraft/src/CreativeTabs;Ljava/util/List;)V
 MD: alt/a (Lxo;III)V net/minecraft/src/BlockWall/func_71902_a (Lnet/minecraft/src/IBlockAccess;III)V
+MD: alt/a (Lxo;IIII)Z net/minecraft/src/BlockWall/func_71877_c (Lnet/minecraft/src/IBlockAccess;IIII)Z
 MD: alt/b ()Z net/minecraft/src/BlockWall/func_71886_c ()Z
 MD: alt/b (I)I net/minecraft/src/BlockWall/func_71899_b (I)I
 MD: alt/c ()Z net/minecraft/src/BlockWall/func_71926_d ()Z

@@ -61,8 +61,8 @@ def pre_decompile(mcp_dir, fml_dir):
     with open(server_jar, 'rb') as fh:
         md5_s = md5(fh.read()).hexdigest()
         
-    clean_c = "542621a5298659dc65f383f35170fc4c"
-    clean_s = "736ffcb0d9f36d47de96a6923ec82699"
+    clean_c = "771175c01778ea67395bc6919a5a9dc5"
+    clean_s = "a726380b5546635662d8706dae0586c7"
     
     if not md5_c == clean_c:
         print 'Warning, Modified Client jar detected'
