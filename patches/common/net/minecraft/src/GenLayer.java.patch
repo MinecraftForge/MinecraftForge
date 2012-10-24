@@ -1,0 +1,21 @@
+--- ../src_base/common/net/minecraft/src/GenLayer.java
++++ ../src_work/common/net/minecraft/src/GenLayer.java
+@@ -1,4 +1,7 @@
+ package net.minecraft.src;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.SetBiomeSizeEvent;
+ 
+ public abstract class GenLayer
+ {
+@@ -41,6 +44,10 @@
+             var4 = 6;
+         }
+ 
++        SetBiomeSizeEvent event = new SetBiomeSizeEvent(par0, par2WorldType, var4);
++        MinecraftForge.EVENT_BUS.post(event);
++        var4 = event.biomeSize;
++        
+         GenLayer var5 = GenLayerZoom.func_75915_a(1000L, var16, 0);
+         GenLayerRiverInit var13 = new GenLayerRiverInit(100L, var5);
+         var5 = GenLayerZoom.func_75915_a(1000L, var13, var4 + 2);

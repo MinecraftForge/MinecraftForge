@@ -1,0 +1,95 @@
+--- ../src_base/common/net/minecraft/src/BiomeDecorator.java
++++ ../src_work/common/net/minecraft/src/BiomeDecorator.java
+@@ -1,6 +1,19 @@
+ package net.minecraft.src;
+ 
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.terraingen.BiomeDecoratorEvent.PreOreGenerationEvent;
++import net.minecraftforge.event.world.terraingen.BiomeDecoratorEvent.PostOreGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.CoalGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.DiamondGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.DirtGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.GoldGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.GravelGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.IronGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.LapisGenerationEvent;
++import net.minecraftforge.event.world.terraingen.OreGenerationEvent.RedstoneGenerationEvent;
+ 
+ public class BiomeDecorator
+ {
+@@ -411,13 +424,64 @@
+      */
+     protected void generateOres()
+     {
+-        this.genStandardOre1(20, this.dirtGen, 0, 128);
+-        this.genStandardOre1(10, this.gravelGen, 0, 128);
+-        this.genStandardOre1(20, this.coalGen, 0, 128);
+-        this.genStandardOre1(20, this.ironGen, 0, 64);
+-        this.genStandardOre1(2, this.goldGen, 0, 32);
+-        this.genStandardOre1(8, this.redstoneGen, 0, 16);
+-        this.genStandardOre1(1, this.diamondGen, 0, 16);
+-        this.genStandardOre2(1, this.lapisGen, 16, 16);
++        MinecraftForge.EVENT_BUS.post(new PreOreGenerationEvent(this, this.currentWorld));
++        
++        DirtGenerationEvent eventDirtGen = new DirtGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 20, this.dirtGen, 0, 128);
++        MinecraftForge.EVENT_BUS.post(eventDirtGen);
++        if (!eventDirtGen.isHandled() && !eventDirtGen.isCanceled())
++        {
++            this.genStandardOre1(eventDirtGen.veinsToGenerate, eventDirtGen.worldGenerator, eventDirtGen.minY, eventDirtGen.maxY);
++        }
++        
++        GravelGenerationEvent eventGravelGen = new GravelGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 10, this.gravelGen, 0, 128);
++        MinecraftForge.EVENT_BUS.post(eventGravelGen);
++        if (!eventGravelGen.isHandled() && !eventGravelGen.isCanceled())
++        {
++            this.genStandardOre1(eventGravelGen.veinsToGenerate, eventGravelGen.worldGenerator, eventGravelGen.minY, eventGravelGen.maxY);
++        }
++        
++        CoalGenerationEvent eventCoalGen = new CoalGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 20, this.coalGen, 0, 128);
++        MinecraftForge.EVENT_BUS.post(eventCoalGen);
++        if (!eventCoalGen.isHandled() && !eventCoalGen.isCanceled())
++        {
++            this.genStandardOre1(eventCoalGen.veinsToGenerate, eventCoalGen.worldGenerator, eventCoalGen.minY, eventCoalGen.maxY);
++        }
++        
++        IronGenerationEvent eventIronGen = new IronGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 20, this.ironGen, 0, 64);
++        MinecraftForge.EVENT_BUS.post(eventIronGen);
++        if (!eventIronGen.isHandled() && !eventIronGen.isCanceled())
++        {
++            this.genStandardOre1(eventIronGen.veinsToGenerate, eventIronGen.worldGenerator, eventIronGen.minY, eventIronGen.maxY);
++        }
++        
++        GoldGenerationEvent eventGoldGen = new GoldGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 2, this.goldGen, 0, 32);
++        MinecraftForge.EVENT_BUS.post(eventGoldGen);
++        if (!eventGoldGen.isHandled() && !eventGoldGen.isCanceled())
++        {
++            this.genStandardOre1(eventGoldGen.veinsToGenerate, eventGoldGen.worldGenerator, eventGoldGen.minY, eventGoldGen.maxY);
++        }
++        
++        RedstoneGenerationEvent eventRedstoneGen = new RedstoneGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 8, this.redstoneGen, 0, 16);
++        MinecraftForge.EVENT_BUS.post(eventRedstoneGen);
++        if (!eventRedstoneGen.isHandled() && !eventRedstoneGen.isCanceled())
++        {
++            this.genStandardOre1(eventRedstoneGen.veinsToGenerate, eventRedstoneGen.worldGenerator, eventRedstoneGen.minY, eventRedstoneGen.maxY);
++        }
++        
++        DiamondGenerationEvent eventDiamondGen = new DiamondGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 1, this.diamondGen, 0, 16);
++        MinecraftForge.EVENT_BUS.post(eventDiamondGen);
++        if (!eventDiamondGen.isHandled() && !eventDiamondGen.isCanceled())
++        {
++            this.genStandardOre1(eventDiamondGen.veinsToGenerate, eventDiamondGen.worldGenerator, eventDiamondGen.minY, eventDiamondGen.maxY);
++        }
++        
++        LapisGenerationEvent eventLapisGen = new LapisGenerationEvent(this.currentWorld, this.randomGenerator, this.chunk_X, this.chunk_Z, 1, this.lapisGen, 16, 16);
++        MinecraftForge.EVENT_BUS.post(eventLapisGen);
++        if (!eventLapisGen.isHandled() && !eventLapisGen.isCanceled())
++        {
++            this.genStandardOre2(eventLapisGen.veinsToGenerate, eventLapisGen.worldGenerator, eventLapisGen.minY, eventLapisGen.maxY);
++        }
++
++        MinecraftForge.EVENT_BUS.post(new PostOreGenerationEvent(this, this.currentWorld));
+     }
+ }

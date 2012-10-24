@@ -1,0 +1,115 @@
+--- ../src_base/common/net/minecraft/src/ChunkProviderHell.java
++++ ../src_work/common/net/minecraft/src/ChunkProviderHell.java
+@@ -2,6 +2,22 @@
+ 
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.terraingen.ChunkInitTerrainNoiseEvent;
++import net.minecraftforge.event.world.terraingen.ChunkMapNetherFeatureEvent.ChunkMapNetherFeaturesGenerateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkMapNetherFeatureEvent.ChunkPostMapNetherFeaturesGenerateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkMapNetherFeatureEvent.ChunkPreMapNetherFeaturesGenerateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkMapNetherFeatureLocateEvent.ChunkPostSetMapNetherFeatureLocationsEvent;
++import net.minecraftforge.event.world.terraingen.ChunkMapNetherFeatureLocateEvent.ChunkPreSetMapNetherFeatureLocationsEvent;
++import net.minecraftforge.event.world.terraingen.ChunkMapNetherFeatureLocateEvent.ChunkSetMapNetherFeatureLocationsEvent;
++import net.minecraftforge.event.world.terraingen.ChunkPopulateEvent.ChunkNetherPopulateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkPopulateEvent.ChunkPostNetherPopulateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkPopulateEvent.ChunkPreNetherPopulateEvent;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkGenerateCavesAndRavinesEvent;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPostGenerateCavesAndRavinesEvent;
++import net.minecraftforge.event.world.terraingen.ChunkProviderEvent.ChunkPreGenerateCavesAndRavinesEvent;
++import net.minecraftforge.event.world.terraingen.ReplaceBlocksForBiomeEvent;
+ 
+ public class ChunkProviderHell implements IChunkProvider
+ {
+@@ -68,6 +84,10 @@
+         byte var7 = 17;
+         int var8 = var4 + 1;
+         this.noiseField = this.initializeNoiseField(this.noiseField, par1 * var4, 0, par2 * var4, var6, var7, var8);
++        
++        ChunkInitTerrainNoiseEvent event = new ChunkInitTerrainNoiseEvent(this, this.worldObj, par1, par2, this.noiseField); 
++        MinecraftForge.EVENT_BUS.post(event);
++        this.noiseField = event.noiseArray;
+ 
+         for (int var9 = 0; var9 < var4; ++var9)
+         {
+@@ -139,6 +159,11 @@
+      */
+     public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte)
+     {
++        if (MinecraftForge.EVENT_BUS.post(new ReplaceBlocksForBiomeEvent(this, this.worldObj, par1, par2, par3ArrayOfByte, new BiomeGenBase[] {BiomeGenBase.hell})))
++        {
++            return;
++        }
++ 
+         byte var4 = 64;
+         double var5 = 0.03125D;
+         this.slowsandNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.slowsandNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, var5, var5, 1.0D);
+@@ -253,8 +278,25 @@
+         byte[] var3 = new byte[32768];
+         this.generateNetherTerrain(par1, par2, var3);
+         this.replaceBlocksForBiome(par1, par2, var3);
+-        this.netherCaveGenerator.generate(this, this.worldObj, par1, par2, var3);
+-        this.genNetherBridge.generate(this, this.worldObj, par1, par2, var3);
++
++        MinecraftForge.EVENT_BUS.post(new ChunkPreGenerateCavesAndRavinesEvent(this, this.worldObj, par1, par2, var3));
++        
++        if (!MinecraftForge.EVENT_BUS.post(new ChunkGenerateCavesAndRavinesEvent(this, this.worldObj, par1, par2, var3)))
++        {
++            this.netherCaveGenerator.generate(this, this.worldObj, par1, par2, var3);
++        }
++
++        MinecraftForge.EVENT_BUS.post(new ChunkPostGenerateCavesAndRavinesEvent(this, this.worldObj, par1, par2, var3));
++     
++        MinecraftForge.EVENT_BUS.post(new ChunkPreSetMapNetherFeatureLocationsEvent(this, this.worldObj, par1, par2, var3, this.genNetherBridge));
++
++        if (!MinecraftForge.EVENT_BUS.post(new ChunkSetMapNetherFeatureLocationsEvent(this, this.worldObj, par1, par2, var3, this.genNetherBridge)))
++        {
++            this.genNetherBridge.generate(this, this.worldObj, par1, par2, var3);
++        }
++        
++        MinecraftForge.EVENT_BUS.post(new ChunkPostSetMapNetherFeatureLocationsEvent(this, this.worldObj, par1, par2, var3, this.genNetherBridge));
++        
+         Chunk var4 = new Chunk(this.worldObj, var3, par1, par2);
+         BiomeGenBase[] var5 = this.worldObj.getWorldChunkManager().loadBlockGeneratorData((BiomeGenBase[])null, par1 * 16, par2 * 16, 16, 16);
+         byte[] var6 = var4.getBiomeArray();
+@@ -428,12 +470,26 @@
+         BlockSand.fallInstantly = true;
+         int var4 = par2 * 16;
+         int var5 = par3 * 16;
+-        this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.hellRNG, par2, par3);
++
++        MinecraftForge.EVENT_BUS.post(new ChunkPreMapNetherFeaturesGenerateEvent(this, this.worldObj, par2, par3, this.genNetherBridge));
++
++        if (!MinecraftForge.EVENT_BUS.post(new ChunkMapNetherFeaturesGenerateEvent(this, this.worldObj, par2, par3, this.genNetherBridge)))
++        {
++            this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.hellRNG, par2, par3);
++        }
++
++        MinecraftForge.EVENT_BUS.post(new ChunkPostMapNetherFeaturesGenerateEvent(this, this.worldObj, par2, par3, this.genNetherBridge));
++        
+         int var6;
+         int var7;
+         int var8;
+         int var9;
+ 
++        MinecraftForge.EVENT_BUS.post(new ChunkPreNetherPopulateEvent(this, this.worldObj, par2, par3));
++
++        if (!MinecraftForge.EVENT_BUS.post(new ChunkNetherPopulateEvent(this, this.worldObj, par2, par3)))
++        {
++
+         for (var6 = 0; var6 < 8; ++var6)
+         {
+             var7 = var4 + this.hellRNG.nextInt(16) + 8;
+@@ -486,6 +542,10 @@
+             var9 = var5 + this.hellRNG.nextInt(16) + 8;
+             (new WorldGenFlowers(Block.mushroomRed.blockID)).generate(this.worldObj, this.hellRNG, var7, var8, var9);
+         }
++        
++        }
++
++        MinecraftForge.EVENT_BUS.post(new ChunkPostNetherPopulateEvent(this, this.worldObj, par2, par3));
+ 
+         BlockSand.fallInstantly = false;
+     }

@@ -1,0 +1,39 @@
+--- ../src_base/common/net/minecraft/src/ComponentVillage.java
++++ ../src_work/common/net/minecraft/src/ComponentVillage.java
+@@ -2,6 +2,10 @@
+ 
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.terraingen.BiomeGetVillageBlockEvent;
++import net.minecraftforge.event.world.terraingen.BiomeGetVillageBlockEvent.BiomeGetVillageBlockMetadataEvent;
+ 
+ public abstract class ComponentVillage extends StructureComponent
+ {
+@@ -133,6 +137,12 @@
+      */
+     protected int getBiomeSpecificBlock(int par1, int par2)
+     {
++        BiomeGetVillageBlockEvent event = new BiomeGetVillageBlockEvent(this.startPiece.biome, par1, par2);
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return event.result;
++        }
++        
+         if (this.startPiece.inDesert)
+         {
+             if (par1 == Block.wood.blockID)
+@@ -174,6 +184,12 @@
+      */
+     protected int getBiomeSpecificBlockMetadata(int par1, int par2)
+     {
++        BiomeGetVillageBlockMetadataEvent event = new BiomeGetVillageBlockMetadataEvent(this.startPiece.biome, par1, par2);
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return event.result;
++        }
++        
+         if (this.startPiece.inDesert)
+         {
+             if (par1 == Block.wood.blockID)
