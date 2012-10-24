@@ -19,6 +19,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.LoaderState.ModState;
+import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
@@ -124,7 +125,7 @@ public class LoadController
     }
 
     @Subscribe
-    public void propogateStateMessage(FMLStateEvent stateEvent)
+    public void propogateStateMessage(FMLEvent stateEvent)
     {
         if (stateEvent instanceof FMLPreInitializationEvent)
         {
@@ -135,17 +136,20 @@ public class LoadController
             activeContainer = mc;
             String modId = mc.getModId();
             stateEvent.applyModContainer(activeContainer());
-            FMLLog.finer("Posting state event %s to mod %s", stateEvent.getEventType(), modId);
+            FMLLog.finer("Sending event %s to mod %s", stateEvent.getEventType(), modId);
             eventChannels.get(modId).post(stateEvent);
-            FMLLog.finer("State event %s delivered to mod %s", stateEvent.getEventType(), modId);
+            FMLLog.finer("Sent event %s to mod %s", stateEvent.getEventType(), modId);
             activeContainer = null;
-            if (!errors.containsKey(modId))
+            if (stateEvent instanceof FMLStateEvent)
             {
-                modStates.put(modId, stateEvent.getModState());
-            }
-            else
-            {
-                modStates.put(modId, ModState.ERRORED);
+	            if (!errors.containsKey(modId))
+	            {
+	                modStates.put(modId, ((FMLStateEvent)stateEvent).getModState());
+	            }
+	            else
+	            {
+	                modStates.put(modId, ModState.ERRORED);
+	            }
             }
         }
     }
@@ -229,4 +233,8 @@ public class LoadController
     {
         return this.state == state;
     }
+
+	boolean hasReachedState(LoaderState state) {
+		return this.state.ordinal()>=state.ordinal() && this.state!=LoaderState.ERRORED;
+	}
 }

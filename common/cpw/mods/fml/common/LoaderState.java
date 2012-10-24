@@ -3,6 +3,7 @@ package cpw.mods.fml.common;
 import com.google.common.base.Throwables;
 
 import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.event.FMLEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -59,7 +60,7 @@ public enum LoaderState
     {
         return eventClass != null;
     }
-    
+
     public FMLStateEvent getEvent(Object... eventData)
     {
         try
@@ -87,7 +88,7 @@ public enum LoaderState
         AVAILABLE("Available"),
         DISABLED("Disabled"),
         ERRORED("Errored");
-        
+
         private String label;
 
         private ModState(String label)
