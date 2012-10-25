@@ -53,10 +53,9 @@ def main():
       f.write("%s=%s\n" %("fmlbuild.revision.number",rev))
       f.write("%s=%s\n" %("fmlbuild.githash",githash))
       f.write("%s=%s\n" %("fmlbuild.mcpversion",mcpversion))
-      f.write("%s=%s\n" %("fmlbuild.mcclientversion",mcclientversion))
-      f.write("%s=%s\n" %("fmlbuild.mcserverversion",mcserverversion))
+      f.write("%s=%s\n" %("fmlbuild.mcversion",mcclientversion))
 
-    print("Version information: FML %s.%s.%s using MCP %s for c:%s, s:%s" % (major, minor, rev, mcpversion, mcclientversion, mcserverversion))
+    print("Version information: FML %s.%s.%s using MCP %s for minecraft %s" % (major, minor, rev, mcpversion, mcclientversion))
     
 if __name__ == '__main__':
     main()

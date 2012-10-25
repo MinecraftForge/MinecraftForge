@@ -109,7 +109,7 @@ public class Loader
     private static String rev;
     private static String build;
     private static String mccversion;
-    private static String mcsversion;
+    private static String mcpversion;
 
     /**
      * The class loader we load the mods into.
@@ -138,6 +138,7 @@ public class Loader
     private File canonicalModsDir;
     private LoadController modController;
     private MinecraftDummyContainer minecraft;
+	private MCPDummyContainer mcp;
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
@@ -159,7 +160,7 @@ public class Loader
         rev = (String) data[2];
         build = (String) data[3];
         mccversion = (String) data[4];
-        mcsversion = (String) data[5];
+        mcpversion = (String) data[5];
         minecraftDir = (File) data[6];
         injectedContainers = (List<String>)data[7];
     }
@@ -175,6 +176,7 @@ public class Loader
         }
 
         minecraft = new MinecraftDummyContainer(actualMCVersion);
+        mcp = new MCPDummyContainer(MetadataCollection.from(getClass().getResourceAsStream("/mcpmod.info"), "MCP").getMetadataForId("mcp", null));
     }
 
     /**
@@ -304,6 +306,8 @@ public class Loader
     private ModDiscoverer identifyMods()
     {
         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+        // Add in the MCP mod container
+        mods.add(new InjectedModContainer(mcp,null));
         File coremod = new File(minecraftDir,"coremods");
         for (String cont : injectedContainers)
         {
@@ -732,5 +736,9 @@ public class Loader
 
 	public boolean hasReachedState(LoaderState state) {
 		return modController.hasReachedState(state);
+	}
+
+	public String getMCPVersionString() {
+		return String.format("MCP v%s", mcpversion);
 	}
 }
