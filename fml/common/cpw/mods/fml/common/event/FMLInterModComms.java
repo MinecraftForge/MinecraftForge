@@ -36,20 +36,10 @@ public class FMLInterModComms {
 	 *
 	 */
 	public static class IMCEvent extends FMLEvent {
-		private IMCEvent(List<IMCMessage> messages)
-		{
-			this.messages = Multimaps.index(messages, new Function<IMCMessage, String>() {
-				public String apply(IMCMessage msg) { return msg.sender; };
-			});
-		}
-
 		@Override
 		public void applyModContainer(ModContainer activeContainer) {
-			currentList = messages.get(activeContainer.getModId());
+			currentList = ImmutableList.copyOf(modMessages.get(activeContainer.getModId()));
 		}
-
-		private final ImmutableListMultimap<String, IMCMessage> messages;
-
 		private ImmutableList<IMCMessage> currentList;
 
 		public ImmutableList<IMCMessage> getMessages()
