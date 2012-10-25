@@ -154,7 +154,7 @@ public class FMLCommonHandler
     }
     /**
      * Get the forge mod loader logging instance (goes to the forgemodloader log file)
-     * @return
+     * @return The log instance for the FML log file
      */
     public Logger getFMLLogger()
     {

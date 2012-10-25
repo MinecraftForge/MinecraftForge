@@ -299,7 +299,7 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Only implemented on the client side
-     * {@link #serverChat(EntityPlayer, Packet3Chat)}
+     * {@link #serverChat(NetServerHandler, String)}
      *
      * @param text
      */

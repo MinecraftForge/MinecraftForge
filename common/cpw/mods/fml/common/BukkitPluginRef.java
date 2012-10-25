@@ -23,7 +23,7 @@ public @interface BukkitPluginRef
      * specification. If this is a bukkit enabled environment the field annotated by this
      * will be populated with a {@link BukkitProxy} instance if possible. This proxy will be gotten by
      * reflectively calling the "getModProxy" method on the bukkit plugin instance.
-     * @return
+     * @return The name of the plugin which we will inject into this field
      */
     String value();
 }
