@@ -66,7 +66,7 @@ public @interface Mod
      * An optional bukkit plugin that will be injected into the bukkit plugin framework if
      * this mod is loaded into the FML framework and the bukkit coremod is present.
      * Instances of the bukkit plugin can be obtained via the {@link BukkitPluginRef} annotation on fields.
-     * @return
+     * @return The name of the plugin to load for this mod
      */
     String bukkitPlugin() default "";
     /**

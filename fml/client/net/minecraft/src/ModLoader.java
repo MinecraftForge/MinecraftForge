@@ -69,7 +69,7 @@ public class ModLoader
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
      *
-     * {@link GameRegistry#getFuelValue(ItemStack))}
+     * {@link GameRegistry#getFuelValue(ItemStack)}
      *
      * @param id The Item ID
      * @param metadata The Item Metadata
@@ -95,9 +95,9 @@ public class ModLoader
 
     /**
      * Adds a new prefix to the armor texture list
-     * 
-     * {@link RenderingRegistry#addNewArmourRendererPrefix(String))}
-     * 
+     *
+     * {@link RenderingRegistry#addNewArmourRendererPrefix(String)}
+     *
      * @param armor The new armor prefix
      * @return The new armor index
      */
@@ -173,13 +173,13 @@ public class ModLoader
     }
 
     /**
-     * Attempts to register a small image to be applied to a larger texture image, 
+     * Attempts to register a small image to be applied to a larger texture image,
      * typically how old ModLoader mods add custom Item/Block textures.
-     * 
+     *
      * Forge mods should use setTextureFile in Item/Block
-     * 
+     *
      * Will return the icon index it was applied to.
-     * 
+     *
      * Unimplemented on the server as it does not render textures
      *
      * @param fileToOverride The texture to apply the new image to
@@ -193,11 +193,11 @@ public class ModLoader
     }
 
     /**
-     * Attempts to register a small image to be applied to a larger texture image, 
+     * Attempts to register a small image to be applied to a larger texture image,
      * typically how old ModLoader mods add custom Item/Block textures.
-     * 
+     *
      * Forge mods should use setTextureFile in Item/Block
-     * 
+     *
      * Unimplemented on the server as it does not render textures
      *
      * @param path The texture to apply the new image to
@@ -563,7 +563,6 @@ public class ModLoader
 
     /**
      * This method is a call in hook from modified external code. Implemented elsewhere.
-     * {@link FMLNetworkHandler#handlePacket250(Packet250CustomPayload, NetworkManager, NetHandler)}
      *
      * @param packet
      */
@@ -767,7 +766,6 @@ public class ModLoader
     }
     /**
      * Send a chat message to the server
-     * {@link FMLNetworkHandler#handleChatMessage(NetHandler, Packet3Chat)}
      *
      * @param text
      */

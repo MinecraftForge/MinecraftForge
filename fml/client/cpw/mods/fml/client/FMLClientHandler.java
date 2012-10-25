@@ -113,10 +113,9 @@ public class FMLClientHandler implements IFMLSidedHandler
 	private DuplicateModsFoundException dupesFound;
 
     /**
-     * Called to start the whole game off from
-     * {@link MinecraftServer#startServer}
+     * Called to start the whole game off
      *
-     * @param minecraftServer
+     * @param minecraft The minecraft instance being launched
      */
     public void beginMinecraftLoading(Minecraft minecraft)
     {
