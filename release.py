@@ -76,6 +76,8 @@ def main():
     zip_add('fml/common/fml_at.cfg')
     zip_add('fml/common/fml_marker.cfg')
     zip_add('fml/common/fmlversion.properties')
+    zip_add('fml/common/mcpmod.info')
+    zip_add('fml/client/mcp.png')
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
