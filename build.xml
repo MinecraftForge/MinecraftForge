@@ -206,8 +206,10 @@
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/client" />
+      <zipfileset dir="${client.src.dir}" includes="mcp.png" prefix="fml/client" />
       <zipfileset dir="${basedir}" includes="fmlversion.properties" prefix="fml/common" />
       <zipfileset dir="${common.src.dir}" includes="*.cfg" prefix="fml/common" />
+      <zipfileset dir="${common.src.dir}" includes="mcpmod.info" prefix="fml/common" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
       <zipfileset dir="${fml.conf.dir}" prefix="fml/conf" />
       <mappedresources>
