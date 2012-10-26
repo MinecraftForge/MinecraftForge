@@ -1,5 +1,8 @@
 package net.minecraftforge.event.world;
 
+import java.util.Random;
+
+import net.minecraft.src.NoiseGeneratorOctaves;
 import net.minecraft.src.World;
 import net.minecraftforge.event.Event;
 
@@ -25,5 +28,20 @@ public class WorldEvent extends Event
     public static class Save extends WorldEvent
     {
         public Save(World world) { super(world); }
+    }
+
+    public static class InitNoiseGens extends WorldEvent
+    {
+        public final Random rand;
+        public final NoiseGeneratorOctaves[] originalNoiseGens;
+        public NoiseGeneratorOctaves[] newNoiseGens;
+        
+        public InitNoiseGens(World world, Random rand, NoiseGeneratorOctaves[] original)
+        {
+            super(world);
+            this.rand = rand;
+            originalNoiseGens = original;
+            newNoiseGens = original.clone();
+        }
     }
 }

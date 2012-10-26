@@ -1,4 +1,6 @@
 package net.minecraftforge.event;
+import java.util.Random;
+
 import net.minecraft.src.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.*;
@@ -19,6 +21,13 @@ public class ForgeEventFactory
         WorldTypeEvent.InitBiomeGens event = new WorldTypeEvent.InitBiomeGens(worldType, seed, original);
         MinecraftForge.EVENT_BUS.post(event);
         return event.newBiomeGens;
+    }
+    
+    public static NoiseGeneratorOctaves[] getNoiseGenerators(World world, Random rand, NoiseGeneratorOctaves[] original)
+    {
+        WorldEvent.InitNoiseGens event = new WorldEvent.InitNoiseGens(world, rand, original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newNoiseGens;
     }
 
     public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
