@@ -3,9 +3,16 @@ import net.minecraft.src.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.world.*;
 
 public class ForgeEventFactory
 {
+    public static byte getBiomeSize(WorldType worldType, byte original)
+    {
+        WorldTypeEvent.BiomeSize event = new WorldTypeEvent.BiomeSize(worldType, original);
+        return event.newSize;
+    }
+
     public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
     {
         PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
