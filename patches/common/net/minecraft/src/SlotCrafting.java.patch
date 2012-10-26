@@ -19,7 +19,7 @@
 +                    if (var5.isItemStackDamageable() && var5.getItemDamage() > var5.getMaxDamage())
 +                    {
 +                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var5));
-+                        var4 = null;
++                        var5 = null;
 +                    }
  
 -                    if (!var4.getItem().doesContainerItemLeaveCraftingGrid(var4) || !this.thePlayer.inventory.addItemStackToInventory(var5))
