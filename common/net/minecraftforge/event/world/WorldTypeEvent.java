@@ -1,5 +1,6 @@
 package net.minecraftforge.event.world;
 
+import net.minecraft.src.GenLayer;
 import net.minecraft.src.WorldType;
 import net.minecraftforge.event.Event;
 
@@ -22,6 +23,21 @@ public class WorldTypeEvent extends Event
             super(worldType);
             originalSize = original;
             newSize = original;
+        }
+    }
+
+    public static class InitBiomeGens extends WorldTypeEvent
+    {
+        public final long seed;
+        public final GenLayer[] originalBiomeGens;
+        public GenLayer[] newBiomeGens;
+        
+        public InitBiomeGens(WorldType worldType, long seed, GenLayer[] original)
+        {
+            super(worldType);
+            this.seed = seed;
+            originalBiomeGens = original;
+            newBiomeGens = original.clone();
         }
     }
 }

@@ -10,7 +10,15 @@ public class ForgeEventFactory
     public static byte getBiomeSize(WorldType worldType, byte original)
     {
         WorldTypeEvent.BiomeSize event = new WorldTypeEvent.BiomeSize(worldType, original);
+        MinecraftForge.EVENT_BUS.post(event);
         return event.newSize;
+    }
+
+    public static GenLayer[] getBiomeGenerators(WorldType worldType, long seed, GenLayer[] original)
+    {
+        WorldTypeEvent.InitBiomeGens event = new WorldTypeEvent.InitBiomeGens(worldType, seed, original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newBiomeGens;
     }
 
     public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
