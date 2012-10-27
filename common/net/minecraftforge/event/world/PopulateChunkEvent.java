@@ -67,4 +67,22 @@ public class PopulateChunkEvent extends ChunkProviderEvent
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
+    
+    @HasResult
+    public static class GenFire extends PopulateChunkEvent
+    {
+        public GenFire(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        {
+            super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        }
+    }
+    
+    @HasResult
+    public static class GenGlowStone extends PopulateChunkEvent
+    {
+        public GenGlowStone(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        {
+            super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        }
+    }
 }

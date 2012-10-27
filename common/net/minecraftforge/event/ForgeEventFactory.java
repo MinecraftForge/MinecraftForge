@@ -64,11 +64,11 @@ public class ForgeEventFactory
         switch (type)
         {
         case CAVE:
-            InitMapGenEvent.NetherCave eventCave = new InitMapGenEvent.NetherCave(original);
+            InitMapGenEvent.Cave eventCave = new InitMapGenEvent.Cave(original);
             MinecraftForge.EVENT_BUS.post(eventCave);
             retVal = eventCave.newGen;
         case NETHER_CAVE:
-            InitMapGenEvent.Cave eventNetherCave = new InitMapGenEvent.Cave(original);
+            InitMapGenEvent.NetherCave eventNetherCave = new InitMapGenEvent.NetherCave(original);
             MinecraftForge.EVENT_BUS.post(eventNetherCave);
             retVal = eventNetherCave.newGen;
         default:
@@ -114,9 +114,28 @@ public class ForgeEventFactory
         return event.newGen;
     }
     
-    public static boolean doGenLake(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Block fluid)
+    public static enum DoGenEnum {DUNGEON, FIRE, GLOWSTONE, ICE, LAKE, LAVA, NETHER_LAVA}
+    
+    public static boolean doPopulate(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, DoGenEnum type)
     {
-        PopulateChunkEvent.GenLake event = new PopulateChunkEvent.GenLake(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, fluid);
+        PopulateChunkEvent event;
+        switch (type)
+        {
+        case DUNGEON:
+            event = new PopulateChunkEvent.GenDungeon(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        case FIRE:
+            event = new PopulateChunkEvent.GenFire(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        case GLOWSTONE:
+            event = new PopulateChunkEvent.GenGlowStone(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        case ICE:
+            event = new PopulateChunkEvent.GenDungeon(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
+        case LAKE:
+            event = new PopulateChunkEvent.GenLake(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, Block.waterStill);
+        case LAVA:
+            event = new PopulateChunkEvent.GenLake(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, Block.lavaStill);
+        default:
+            event = new PopulateChunkEvent.GenLake(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, Block.lavaMoving);
+        }
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() == Result.DEFAULT;
     }
