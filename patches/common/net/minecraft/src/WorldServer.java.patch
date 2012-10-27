@@ -198,7 +198,15 @@
          }
      }
  
-@@ -965,4 +1003,9 @@
+@@ -740,6 +778,7 @@
+         this.checkSessionLock();
+         this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getTagsFromLastWrite());
+         this.mapStorage.saveAllData();
++        this.perWorldStorage.saveAllData();
+     }
+ 
+     /**
+@@ -965,4 +1004,9 @@
      {
          return this.thePlayerManager;
      }
