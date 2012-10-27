@@ -3,6 +3,7 @@ import java.util.Random;
 
 import net.minecraft.src.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.*;
@@ -111,5 +112,12 @@ public class ForgeEventFactory
         InitMapGenEvent.NetherBridge event = new InitMapGenEvent.NetherBridge(original);
         MinecraftForge.EVENT_BUS.post(event);
         return event.newGen;
+    }
+    
+    public static boolean doGenLake(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Block fluid)
+    {
+        PopulateChunkEvent.GenLake event = new PopulateChunkEvent.GenLake(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated, fluid);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Result.DEFAULT;
     }
 }
