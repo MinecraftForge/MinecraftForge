@@ -31,4 +31,29 @@ public class ChunkProviderEvent extends Event
         }
        
     }
+    
+    @HasResult
+    public static class InitNoiseField extends ChunkProviderEvent 
+    {
+        public double[] noisefield;
+        public final int posX;
+        public final int posY;
+        public final int posZ;
+        public final int sizeX;
+        public final int sizeY;
+        public final int sizeZ;
+        
+        public InitNoiseField(IChunkProvider chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
+        {
+            super(chunkProvider);
+            this.noisefield = noisefield;
+            this.posX = posX;
+            this.posY = posY;
+            this.posZ = posZ;
+            this.sizeX = sizeX;
+            this.sizeY = sizeX;
+            this.sizeZ = sizeZ;
+        }
+       
+    }
 }
