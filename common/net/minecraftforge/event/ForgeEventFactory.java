@@ -54,4 +54,62 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
     }
+
+    public static enum MapGenEnum { RAVINE, CAVE, NETHER_CAVE }
+    
+    public static MapGenBase GetMapGen(MapGenBase original, MapGenEnum type)
+    {
+        MapGenBase retVal;
+        switch (type)
+        {
+        case CAVE:
+            InitMapGenEvent.NetherCave eventCave = new InitMapGenEvent.NetherCave(original);
+            MinecraftForge.EVENT_BUS.post(eventCave);
+            retVal = eventCave.newGen;
+        case NETHER_CAVE:
+            InitMapGenEvent.Cave eventNetherCave = new InitMapGenEvent.Cave(original);
+            MinecraftForge.EVENT_BUS.post(eventNetherCave);
+            retVal = eventNetherCave.newGen;
+        default:
+            InitMapGenEvent.Ravine eventRavine = new InitMapGenEvent.Ravine(original);
+            MinecraftForge.EVENT_BUS.post(eventRavine);
+            retVal = eventRavine.newGen;
+        }
+        return retVal;
+    }
+
+    public static MapGenStronghold GetMapGen(MapGenStronghold original)
+    {
+        InitMapGenEvent.Stronghold event = new InitMapGenEvent.Stronghold(original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newGen;
+    }
+
+    public static MapGenVillage GetMapGen(MapGenVillage original)
+    {
+        InitMapGenEvent.Village event = new InitMapGenEvent.Village(original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newGen;
+    }
+
+    public static MapGenMineshaft GetMapGen(MapGenMineshaft original)
+    {
+        InitMapGenEvent.Mineshaft event = new InitMapGenEvent.Mineshaft(original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newGen;
+    }
+
+    public static MapGenScatteredFeature GetMapGen(MapGenScatteredFeature original)
+    {
+        InitMapGenEvent.ScatteredFeature event = new InitMapGenEvent.ScatteredFeature(original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newGen;
+    }
+
+    public static MapGenNetherBridge GetMapGen(MapGenNetherBridge original)
+    {
+        InitMapGenEvent.NetherBridge event = new InitMapGenEvent.NetherBridge(original);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.newGen;
+    }
 }
