@@ -70,6 +70,21 @@ public @interface Mod
      */
     String bukkitPlugin() default "";
     /**
+     * Mods that this mod will <strong>not</strong> load with.
+     * An optional comma separated string of modid[@value], or the value - which specify mods that
+     * this mod will refuse to load with, resulting in the game failing to start. The special value - is
+     * interpreted as meaning <strong>all</strong> mods, except FML and MCP. The special value -f is
+     * interpreted as meaning <strong>all</strong> mods except FML, MCP and MinecraftForge.
+     *
+     * If a mod is present on the excluded list, the game will stop and show an error screen. If the
+     * class containing the {@link Mod} annotation has a "getCustomErrorException" method, it will be
+     * called to retrieve a custom error message for display in this case. If two mods have a declared
+     * exclusion which screen is shown is indeterminate.
+     *
+     * @return A string listing modids to exclude from loading with this mod.
+     */
+    String modExclusionList() default "";
+    /**
      * Mark the designated method as being called at the "pre-initialization" phase
      * @author cpw
      *
