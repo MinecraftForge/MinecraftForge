@@ -677,7 +677,7 @@ public class ForgeChunkManager
      * @param world
      * @return
      */
-    public static SetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
+    public static ImmutableSetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
     {
         return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of();
     }

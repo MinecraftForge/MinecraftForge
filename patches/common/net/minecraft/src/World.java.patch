@@ -4,7 +4,7 @@
  import java.util.Random;
  import java.util.Set;
  
-+import com.google.common.collect.SetMultimap;
++import com.google.common.collect.ImmutableSetMultimap;
 +
 +import net.minecraftforge.common.ForgeChunkManager;
 +import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -738,7 +738,7 @@
 +     *
 +     * @return
 +     */
-+    SetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunks()
++    public ImmutableSetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunks()
 +    {
 +        return ForgeChunkManager.getPersistentChunksFor(this);
 +    }
