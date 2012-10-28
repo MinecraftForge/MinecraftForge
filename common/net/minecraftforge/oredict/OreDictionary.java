@@ -19,6 +19,49 @@ public class OreDictionary
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
     
+    static {
+        initVanillaEntries();
+    }
+
+    public static void initVanillaEntries(){
+        registerOre("woodLog", new ItemStack(Block.wood, 1, 0));
+        registerOre("woodLog", new ItemStack(Block.wood, 1, 1));
+        registerOre("woodLog", new ItemStack(Block.wood, 1, 2));
+        registerOre("woodLog", new ItemStack(Block.wood, 1, 3));
+
+        registerOre("woodPlank", new ItemStack(Block.planks, 1, 0));
+        registerOre("woodPlank", new ItemStack(Block.planks, 1, 1));
+        registerOre("woodPlank", new ItemStack(Block.planks, 1, 2));
+        registerOre("woodPlank", new ItemStack(Block.planks, 1, 3));
+
+        registerOre("woodSlab", new ItemStack(Block.woodSingleSlab, 1, 0));
+        registerOre("woodSlab", new ItemStack(Block.woodSingleSlab, 1, 1));
+        registerOre("woodSlab", new ItemStack(Block.woodSingleSlab, 1, 2));
+        registerOre("woodSlab", new ItemStack(Block.woodSingleSlab, 1, 3));
+
+        registerOre("woodStair", Block.stairCompactPlanks);
+        registerOre("woodStair", Block.stairsWoodBirch);
+        registerOre("woodStair", Block.stairsWoodJungle);
+        registerOre("woodStair", Block.stairsWoodSpruce);
+
+        registerOre("dyeBlack", new ItemStack(Item.dyePowder, 1, 0));
+        registerOre("dyeRed", new ItemStack(Item.dyePowder, 1, 1));
+        registerOre("dyeGreen", new ItemStack(Item.dyePowder, 1, 2));
+        registerOre("dyeBrown", new ItemStack(Item.dyePowder, 1, 3));
+        registerOre("dyeBlue", new ItemStack(Item.dyePowder, 1, 4));
+        registerOre("dyePurple", new ItemStack(Item.dyePowder, 1, 5));
+        registerOre("dyeCyan", new ItemStack(Item.dyePowder, 1, 6));
+        registerOre("dyeLightGrey", new ItemStack(Item.dyePowder, 1, 7));
+        registerOre("dyeGrey", new ItemStack(Item.dyePowder, 1, 8));
+        registerOre("dyePink", new ItemStack(Item.dyePowder, 1, 9));
+        registerOre("dyeLime", new ItemStack(Item.dyePowder, 1, 10));
+        registerOre("dyeYellow", new ItemStack(Item.dyePowder, 1, 11));
+        registerOre("dyeLightBlue", new ItemStack(Item.dyePowder, 1, 12));
+        registerOre("dyeMagenta", new ItemStack(Item.dyePowder, 1, 13));
+        registerOre("dyeOrange", new ItemStack(Item.dyePowder, 1, 14));
+        registerOre("dyeWhite", new ItemStack(Item.dyePowder, 1, 15));
+    }
+
     /**
      * Gets the integer ID for the specified ore name. 
      * If the name does not have a ID it assigns it a new one.
