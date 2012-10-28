@@ -13,7 +13,16 @@
  import org.lwjgl.opengl.GL11;
  
  @SideOnly(Side.CLIENT)
-@@ -35,7 +41,7 @@
+@@ -12,6 +18,8 @@
+     private ModelBiped modelArmorChestplate;
+     private ModelBiped modelArmor;
+     public static String[] armorFilenamePrefix = new String[] {"cloth", "chain", "iron", "diamond", "gold"};
++    public static float NAME_TAG_RANGE = 64.0f;
++    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
+ 
+     public RenderPlayer()
+     {
+@@ -35,7 +43,7 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
@@ -22,7 +31,7 @@
                  ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  var7.bipedHead.showModel = par2 == 0;
                  var7.bipedHeadwear.showModel = par2 == 0;
-@@ -104,7 +110,7 @@
+@@ -104,7 +112,7 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
@@ -31,7 +40,16 @@
                  float var7 = 1.0F;
                  GL11.glColor3f(var7, var7, var7);
              }
-@@ -230,9 +236,12 @@
+@@ -164,7 +172,7 @@
+             float var8 = 1.6F;
+             float var9 = 0.016666668F * var8;
+             double var10 = par1EntityPlayer.getDistanceSqToEntity(this.renderManager.livingPlayer);
+-            float var12 = par1EntityPlayer.isSneaking() ? 32.0F : 64.0F;
++            float var12 = par1EntityPlayer.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
+ 
+             if (var10 < (double)(var12 * var12))
+             {
+@@ -230,9 +238,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float var5;
  
@@ -47,7 +65,7 @@
                  {
                      var5 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -349,7 +358,10 @@
+@@ -349,7 +360,10 @@
                  var23 = var21.getItemUseAction();
              }
  
@@ -59,7 +77,7 @@
              {
                  var7 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -402,7 +414,7 @@
+@@ -402,7 +416,7 @@
  
              if (var21.getItem().requiresMultipleRenderPasses())
              {
