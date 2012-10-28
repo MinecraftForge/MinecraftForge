@@ -1,5 +1,6 @@
 package net.minecraftforge.common;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -39,6 +40,18 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         meta.updateUrl   = "http://MinecraftForge.net/forum/index.php/topic,5.0.html";
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
+        
+        Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forge.cfg"));
+        if (!config.isChild)
+        {
+            config.load();
+            Property enableGlobalCfg = config.get(Configuration.CATEGORY_GENERAL, "enableGlobalConfig", false);
+            if (enableGlobalCfg.getBoolean(false))
+            {
+                Configuration.enableGlobalConfig();
+            }
+            config.save();
+        }
     }
 
     @Override
@@ -53,6 +66,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     {
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
     }
+
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {

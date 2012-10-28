@@ -13,10 +13,16 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.relauncher.FMLInjectionData;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
@@ -37,21 +43,29 @@ public class Configuration
     public static final String CATEGORY_ITEM    = "item";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
+    private static final Pattern CONFIG_START = Pattern.compile("START: \"([^\\\"]+)\"");
+    private static final Pattern CONFIG_END = Pattern.compile("END: \"([^\\\"]+)\"");
     private static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
+    private static Configuration PARENT = null;
 
     File file;
 
     public Map<String, Map<String, Property>> categories = new TreeMap<String, Map<String, Property>>();
+    private Map<String, Configuration> children = new TreeMap<String, Configuration>();
 
     private Map<String,String> customCategoryComments = Maps.newHashMap();
     private boolean caseSensitiveCustomCategories;
     public String defaultEncoding = DEFAULT_ENCODING;
-    
+    private String fileName = null;
+    public boolean isChild = false;
+
     static
     {
         Arrays.fill(configBlocks, false);
         Arrays.fill(configItems,  false);
     }
+
+    public Configuration(){}
 
     /**
      * Create a configuration file for the file given in parameter.
@@ -59,6 +73,17 @@ public class Configuration
     public Configuration(File file)
     {
         this.file = file;
+        String basePath = ((File)(FMLInjectionData.data()[6])).getAbsolutePath().replace(File.separatorChar, '/').replace("/.", "");
+        String path = file.getAbsolutePath().replace(File.separatorChar, '/').replace("/./", "/").replace(basePath, "");
+        if (PARENT != null)
+        {
+            PARENT.setChild(path, this);
+            isChild = true;
+        }
+        else
+        {
+            load();
+        }
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories)
@@ -221,6 +246,10 @@ public class Configuration
 
     public void load()
     {
+        if (PARENT != null && PARENT != this)
+        {
+            return;
+        }
         BufferedReader buffer = null;
         try
         {
@@ -250,6 +279,26 @@ public class Configuration
                     if (line == null)
                     {
                         break;
+                    }
+
+                    Matcher start = CONFIG_START.matcher(line);
+                    Matcher end = CONFIG_END.matcher(line);
+
+                    if (start.matches())
+                    {
+                        fileName = start.group(1);
+                        categories = new TreeMap<String, Map<String, Property>>();
+                        customCategoryComments = Maps.newHashMap();
+                        continue;
+                    }
+                    else if (end.matches())
+                    {
+                        fileName = end.group(1);
+                        Configuration child = new Configuration();
+                        child.categories = categories;
+                        child.customCategoryComments = customCategoryComments;
+                        this.children.put(fileName, child);
+                        continue;
                     }
 
                     int nameStart = -1, nameEnd = -1;
@@ -352,6 +401,12 @@ public class Configuration
 
     public void save()
     {
+        if (PARENT != null && PARENT != this)
+        {
+            PARENT.save();
+            return;
+        }
+
         try
         {
             if (file.getParentFile() != null)
@@ -373,31 +428,18 @@ public class Configuration
                 buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
                 buffer.write("\r\n");
 
-                for(Map.Entry<String, Map<String, Property>> category : categories.entrySet())
+                if (children.isEmpty())
                 {
-                    buffer.write("####################\r\n");
-                    buffer.write("# " + category.getKey() + " \r\n");
-                    if (customCategoryComments.containsKey(category.getKey()))
+                    save(buffer);
+                }
+                else
+                {
+                    for (Map.Entry<String, Configuration> entry : children.entrySet())
                     {
-                        buffer.write("#===================\r\n");
-                        String comment = customCategoryComments.get(category.getKey());
-                        Splitter splitter = Splitter.onPattern("\r?\n");
-                        for (String commentLine : splitter.split(comment))
-                        {
-                            buffer.write("# ");
-                            buffer.write(commentLine+"\r\n");
-                        }
+                        buffer.write("START: \"" + entry.getKey() + "\"\r\n");
+                        entry.getValue().save(buffer);
+                        buffer.write("END: \"" + entry.getKey() + "\"\r\n\r\n");
                     }
-                    buffer.write("####################\r\n\r\n");
-
-                    String catKey = category.getKey();
-                    if (!allowedProperties.matchesAllOf(catKey))
-                    {
-                    	catKey = '"'+catKey+'"';
-                    }
-                    buffer.write(catKey + " {\r\n");
-                    writeProperties(buffer, category.getValue().values());
-                    buffer.write("}\r\n\r\n");
                 }
 
                 buffer.close();
@@ -407,6 +449,36 @@ public class Configuration
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    private void save(BufferedWriter out) throws IOException
+    {
+        for(Map.Entry<String, Map<String, Property>> category : categories.entrySet())
+        {
+            out.write("####################\r\n");
+            out.write("# " + category.getKey() + " \r\n");
+            if (customCategoryComments.containsKey(category.getKey()))
+            {
+                out.write("#===================\r\n");
+                String comment = customCategoryComments.get(category.getKey());
+                Splitter splitter = Splitter.onPattern("\r?\n");
+                for (String commentLine : splitter.split(comment))
+                {
+                    out.write("# ");
+                    out.write(commentLine+"\r\n");
+                }
+            }
+            out.write("####################\r\n\r\n");
+
+            String catKey = category.getKey();
+            if (!allowedProperties.matchesAllOf(catKey))
+            {
+                catKey = '"'+catKey+'"';
+            }
+            out.write(catKey + " {\r\n");
+            writeProperties(out, category.getValue().values());
+            out.write("}\r\n\r\n");
         }
     }
 
@@ -437,6 +509,27 @@ public class Configuration
             buffer.write("   " + propName + "=" + property.value);
             buffer.write("\r\n");
         }
+    }
+
+    private void setChild(String name, Configuration child)
+    {
+        if (!children.containsKey(name))
+        {
+            children.put(name, child);
+        }
+        else
+        {
+            Configuration old = children.get(name);
+            child.categories = old.categories;
+            child.customCategoryComments = old.customCategoryComments;
+            child.fileName = old.fileName;
+        }
+    }
+
+    public static void enableGlobalConfig()
+    {
+        PARENT = new Configuration(new File(Loader.instance().getConfigDir(), "global.cfg"));
+        PARENT.load();
     }
 
     public static class UnicodeInputStreamReader extends Reader
