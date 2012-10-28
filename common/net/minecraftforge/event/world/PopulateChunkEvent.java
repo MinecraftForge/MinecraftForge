@@ -39,11 +39,11 @@ public class PopulateChunkEvent extends ChunkProviderEvent
     }
     
     @HasResult
-    public static class GenLake extends PopulateChunkEvent
+    public static class Lake extends PopulateChunkEvent
     {
         public Block fluid;
 
-        public GenLake(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Block fluid)
+        public Lake(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Block fluid)
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
             this.fluid = fluid;
@@ -51,36 +51,36 @@ public class PopulateChunkEvent extends ChunkProviderEvent
     }
     
     @HasResult
-    public static class GenDungeon extends PopulateChunkEvent
+    public static class Dungeon extends PopulateChunkEvent
     {
-        public GenDungeon(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        public Dungeon(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
     
     @HasResult
-    public static class GenIceAndSnow extends PopulateChunkEvent
+    public static class IceAndSnow extends PopulateChunkEvent
     {
-        public GenIceAndSnow(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        public IceAndSnow(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
     
     @HasResult
-    public static class GenFire extends PopulateChunkEvent
+    public static class Fire extends PopulateChunkEvent
     {
-        public GenFire(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        public Fire(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
     }
     
     @HasResult
-    public static class GenGlowStone extends PopulateChunkEvent
+    public static class GlowStone extends PopulateChunkEvent
     {
-        public GenGlowStone(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
+        public GlowStone(IChunkProvider chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated)
         {
             super(chunkProvider, world, rand, chunkX, chunkZ, hasVillageGenerated);
         }
