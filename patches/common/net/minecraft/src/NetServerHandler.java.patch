@@ -1,17 +1,19 @@
 --- ../src_base/common/net/minecraft/src/NetServerHandler.java
 +++ ../src_work/common/net/minecraft/src/NetServerHandler.java
-@@ -10,6 +10,10 @@
+@@ -10,6 +10,12 @@
  
  import cpw.mods.fml.common.network.FMLNetworkHandler;
  import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.ServerChatEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
  
  public class NetServerHandler extends NetHandler
  {
-@@ -193,6 +197,11 @@
+@@ -193,6 +199,11 @@
                      if (this.playerEntity.ridingEntity != null)
                      {
                          this.playerEntity.ridingEntity.updateRiderPosition();
@@ -23,7 +25,7 @@
                      }
  
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-@@ -285,6 +294,11 @@
+@@ -285,6 +296,11 @@
                      this.playerEntity.addExhaustion(0.2F);
                  }
  
@@ -35,7 +37,7 @@
                  this.playerEntity.moveEntity(var13, var15, var17);
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.playerEntity.addMovementStat(var13, var15, var17);
-@@ -307,10 +321,15 @@
+@@ -307,10 +323,15 @@
                      logger.warning(this.playerEntity.username + " moved wrongly!");
                  }
  
@@ -52,7 +54,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
                      return;
-@@ -318,7 +337,7 @@
+@@ -318,7 +339,7 @@
  
                  AxisAlignedBB var33 = this.playerEntity.boundingBox.copy().expand((double)var27, (double)var27, (double)var27).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -61,7 +63,7 @@
                  {
                      if (var29 >= -0.03125D)
                      {
-@@ -337,6 +356,11 @@
+@@ -337,6 +358,11 @@
                      this.ticksForFloatKick = 0;
                  }
  
@@ -73,7 +75,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - var3, par1Packet10Flying.onGround);
-@@ -395,7 +419,10 @@
+@@ -395,7 +421,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
  
@@ -85,7 +87,7 @@
                  {
                      return;
                  }
-@@ -419,6 +446,7 @@
+@@ -419,6 +448,7 @@
              {
                  if (var20 <= this.mcServer.func_82357_ak() && !var3)
                  {
@@ -93,7 +95,7 @@
                      this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
                  else
-@@ -477,7 +505,11 @@
+@@ -477,7 +507,11 @@
                  return;
              }
  
@@ -106,7 +108,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -495,7 +527,9 @@
+@@ -495,7 +529,9 @@
                  var12 = var11;
              }
  
@@ -117,7 +119,22 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -794,7 +828,7 @@
+@@ -662,8 +698,12 @@
+                         this.sendPacketToPlayer(new Packet3Chat("Cannot send chat message."));
+                         return;
+                     }
+-
+-                    var2 = "<" + this.playerEntity.username + "> " + var2;
++                    ServerChatEvent event = new ServerChatEvent(this.playerEntity, var2, "<" + this.playerEntity.username + "> " + var2);
++                    if (MinecraftForge.EVENT_BUS.post(event))
++                    {
++                        return;
++                    }
++                    var2 = event.line;
+                     logger.info(var2);
+                     this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(var2, false));
+                 }
+@@ -794,7 +834,7 @@
                      return;
                  }
  
