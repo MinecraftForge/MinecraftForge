@@ -223,6 +223,10 @@ public class ForgeHooks
         }
         return ret;
     }
+    
+    
+    private static boolean pickedInit = false;
+    private static HashMap<Integer, Integer> pickedMap = new HashMap();
 
     static
     {
@@ -230,7 +234,63 @@ public class ForgeHooks
         grassList.add(new GrassEntry(Block.plantRed,    0, 10));
         seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
         initTools();
+        initPicked();
     }
+    
+    static void initPicked()
+    {
+        if (pickedInit)
+        {
+            return;
+        }
+        
+        pickedInit = true;
+        
+        pickedMap.put(Block.bed.blockID, Item.bed.shiftedIndex);
+        pickedMap.put(Block.brewingStand.blockID, Item.brewingStand.shiftedIndex);
+        pickedMap.put(Block.cake.blockID, Item.cake.shiftedIndex);
+        pickedMap.put(Block.cauldron.blockID, Item.cauldron.shiftedIndex);
+        pickedMap.put(Block.cocoaPlant.blockID, Item.dyePowder.shiftedIndex);
+        pickedMap.put(Block.crops.blockID, Item.seeds.shiftedIndex);
+        pickedMap.put(Block.doorWood.blockID, Item.doorWood.shiftedIndex);
+        pickedMap.put(Block.doorSteel.blockID, Item.doorSteel.shiftedIndex);
+        pickedMap.put(Block.dragonEgg.blockID, 0);
+        pickedMap.put(Block.endPortal.blockID, 0);
+        pickedMap.put(Block.tilledField.blockID, Block.dirt.blockID);
+        pickedMap.put(Block.mobSpawner.blockID, 0);
+        pickedMap.put(Block.mushroomCapBrown.blockID, Block.mushroomBrown.blockID);
+        pickedMap.put(Block.mushroomCapRed.blockID, Block.mushroomRed.blockID);
+        pickedMap.put(Block.netherStalk.blockID, Item.netherStalkSeeds.shiftedIndex);
+        pickedMap.put(Block.pistonExtension.blockID, 0);
+        pickedMap.put(Block.pistonMoving.blockID, 0);
+        pickedMap.put(Block.portal.blockID, 0);
+        pickedMap.put(Block.redstoneLampActive.blockID, Block.redstoneLampIdle.blockID);
+        pickedMap.put(Block.redstoneRepeaterIdle.blockID, Item.redstoneRepeater.shiftedIndex);
+        pickedMap.put(Block.redstoneRepeaterActive.blockID, Item.redstoneRepeater.shiftedIndex);
+        pickedMap.put(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);
+        pickedMap.put(Block.redstoneWire.blockID, Item.redstone.shiftedIndex);
+        pickedMap.put(Block.reed.blockID, Item.reed.shiftedIndex);
+        pickedMap.put(Block.signPost.blockID, Item.sign.shiftedIndex);
+        pickedMap.put(Block.signWall.blockID, Item.sign.shiftedIndex);
+        pickedMap.put(Block.pumpkinStem.blockID, Item.pumpkinSeeds.shiftedIndex);
+        pickedMap.put(Block.melonStem.blockID, Item.melonSeeds.shiftedIndex);
+        pickedMap.put(Block.tripWire.blockID, Item.silk.shiftedIndex);
+    }
+    
+    /**
+     * Called to look up the item ID for the block when 'pick block' is called.
+     */
+    public static int lookupPickedID(int blockID)
+    {
+        initPicked();
+        if (pickedMap.containsKey(blockID))
+        {
+            return ((Integer)pickedMap.get(blockID)).intValue();
+        }
+        
+        return blockID;
+    }
+    
 
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
