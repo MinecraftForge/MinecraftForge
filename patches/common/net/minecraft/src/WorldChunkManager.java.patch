@@ -1,0 +1,32 @@
+--- ../src_base/common/net/minecraft/src/WorldChunkManager.java
++++ ../src_work/common/net/minecraft/src/WorldChunkManager.java
+@@ -3,11 +3,14 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.List;
+ import java.util.Random;
++import static net.minecraft.src.BiomeGenBase.*;
+ 
+ public class WorldChunkManager
+ {
++    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle. jungleHills));
+     private GenLayer genBiomes;
+ 
+     /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
+@@ -23,13 +26,7 @@
+     {
+         this.biomeCache = new BiomeCache(this);
+         this.biomesToSpawnIn = new ArrayList();
+-        this.biomesToSpawnIn.add(BiomeGenBase.forest);
+-        this.biomesToSpawnIn.add(BiomeGenBase.plains);
+-        this.biomesToSpawnIn.add(BiomeGenBase.taiga);
+-        this.biomesToSpawnIn.add(BiomeGenBase.taigaHills);
+-        this.biomesToSpawnIn.add(BiomeGenBase.forestHills);
+-        this.biomesToSpawnIn.add(BiomeGenBase.jungle);
+-        this.biomesToSpawnIn.add(BiomeGenBase.jungleHills);
++        this.biomesToSpawnIn.addAll(allowedBiomes);
+     }
+ 
+     public WorldChunkManager(long par1, WorldType par3WorldType)
