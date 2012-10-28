@@ -60,10 +60,27 @@
          return this.tabIndex < 6;
      }
  
-@@ -150,4 +174,26 @@
+@@ -144,10 +168,40 @@
+         {
+             Item var5 = var2[var4];
+ 
+-            if (var5 != null && var5.getCreativeTab() == this)
++            if (var5 == null)
+             {
+-                var5.getSubItems(var5.shiftedIndex, this, par1List);
++                continue;
              }
-         }
-     }
+-        }
++
++            for(CreativeTabs tab : var5.getCreativeTabs())
++            {
++                if (tab == this)
++                {
++                    var5.getSubItems(var5.shiftedIndex, this, par1List);
++                }
++            }
++        }
++    }
 +
 +    public int getTabPage()
 +    {
@@ -85,5 +102,5 @@
 +    public ItemStack getIconItemStack()
 +    {
 +        return new ItemStack(getTabIconItem());
-+    }
+     }
  }

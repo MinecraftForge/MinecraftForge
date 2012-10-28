@@ -37,7 +37,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -674,4 +686,240 @@
+@@ -674,4 +686,252 @@
      {
          StatList.initStats();
      }
@@ -276,5 +276,17 @@
 +    public Entity createEntity(World world, Entity location, ItemStack itemstack)
 +    {
 +        return null;
++    }
++
++    /**
++     * Gets a list of tabs that items belonging to this class can display on, 
++     * combined properly with getSubItems allows for a single item to span 
++     * many sub-items across many tabs.
++     * 
++     * @return A list of all tabs that this item could possibly be one.
++     */
++    public CreativeTabs[] getCreativeTabs()
++    {
++        return new CreativeTabs[]{ getCreativeTab() };
 +    }
  }
