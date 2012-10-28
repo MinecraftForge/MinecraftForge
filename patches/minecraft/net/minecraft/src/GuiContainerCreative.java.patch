@@ -143,9 +143,9 @@
              }
          }
  
-@@ -589,6 +644,14 @@
-         var9 = var8 + 112;
-         this.mc.renderEngine.bindTexture(var4);
+@@ -594,6 +649,14 @@
+             this.drawTexturedModalRect(var11, var8 + (int)((float)(var9 - var8 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+         }
  
 +        if (var5 == null || var5.getTabPage() != tabPage)
 +        {
@@ -155,9 +155,9 @@
 +            }
 +        }
 +
-         if (var5.shouldHidePlayerInventory())
-         {
-             this.drawTexturedModalRect(var11, var8 + (int)((float)(var9 - var8 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+         this.renderCreativeTab(var5);
+ 
+         if (var5 == CreativeTabs.tabInventory)
 @@ -604,6 +667,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
