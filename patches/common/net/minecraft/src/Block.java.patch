@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1297,4 +1303,831 @@
+@@ -1297,4 +1303,848 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -932,5 +932,22 @@
 +    public boolean canDragonDestroy(World world, int x, int y, int z)
 +    {
 +        return blockID != obsidian.blockID && blockID != whiteStone.blockID && blockID != bedrock.blockID;
++    }
++
++    /**
++     * Determines if this block can be used as the base of a beacon.
++     * 
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z position
++     * @param beaconX Beacons X Position
++     * @param beaconY Beacons Y Position
++     * @param beaconZ Beacons Z Position
++     * @return True, to support the beacon, and make it active with this block.
++     */
++    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
++    {
++        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
 +    }
  }
