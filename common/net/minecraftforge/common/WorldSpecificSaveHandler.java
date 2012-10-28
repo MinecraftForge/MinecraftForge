@@ -39,7 +39,6 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override
     public File getMapFileFromName(String name)
     {
-        System.out.println(new File(dataDir, name + ".dat"));
         return new File(dataDir, name + ".dat");
     }
 }
