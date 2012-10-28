@@ -37,7 +37,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -674,4 +686,252 @@
+@@ -674,4 +686,265 @@
      {
          StatList.initStats();
      }
@@ -288,5 +288,18 @@
 +    public CreativeTabs[] getCreativeTabs()
 +    {
 +        return new CreativeTabs[]{ getCreativeTab() };
++    }
++
++    /**
++     * Determines the base experience for a player when they remove this item from a furnace slot.
++     * This number must be between 0 and 1 for it to be valid. 
++     * This number will be multiplied by the stack size to get the total experience. 
++     * 
++     * @param item The item stack the player is picking up.
++     * @return The amount to award for each item.
++     */
++    public float getSmeltingExperience(ItemStack item)
++    {
++        return -1; //-1 will default to the old lookups.
 +    }
  }
