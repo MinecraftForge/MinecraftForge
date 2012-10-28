@@ -13,7 +13,7 @@
  public class MapGenStronghold extends MapGenStructure
  {
 +    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(BiomeGenBase.desert, BiomeGenBase.forest, BiomeGenBase.extremeHills, BiomeGenBase.swampland, BiomeGenBase.taiga, BiomeGenBase.icePlains, BiomeGenBase.iceMountains, BiomeGenBase.desertHills, BiomeGenBase.forestHills, BiomeGenBase.extremeHillsEdge, BiomeGenBase.jungle, BiomeGenBase.jungleHills)); 
-     public BiomeGenBase[] allowedBiomeGenBases;
+     private BiomeGenBase[] allowedBiomeGenBases;
  
      /**
 @@ -22,7 +24,7 @@
