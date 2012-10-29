@@ -1,5 +1,6 @@
 package net.minecraftforge.common;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -8,6 +9,7 @@ import com.google.common.collect.ListMultimap;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 import net.minecraft.src.*;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -223,6 +225,8 @@ public class ForgeHooks
         }
         return ret;
     }
+    
+    static HashMap<Integer, Integer> pickedMap = new HashMap<Integer, Integer>();
 
     static
     {
@@ -230,6 +234,87 @@ public class ForgeHooks
         grassList.add(new GrassEntry(Block.plantRed,    0, 10));
         seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
         initTools();
+        initPicked();
+    }
+    
+    public static boolean pickedInit;
+    private static Method idPickedMethod;
+    
+    static void initPicked()
+    {
+        if (pickedInit)
+        {
+            return;
+        }
+        
+        pickedInit = true;
+        
+        pickedMap.put(Block.bed.blockID, Item.bed.shiftedIndex);
+        pickedMap.put(Block.brewingStand.blockID, Item.brewingStand.shiftedIndex);
+        pickedMap.put(Block.cake.blockID, Item.cake.shiftedIndex);
+        pickedMap.put(Block.cauldron.blockID, Item.cauldron.shiftedIndex);
+        pickedMap.put(Block.cocoaPlant.blockID, Item.dyePowder.shiftedIndex);
+        pickedMap.put(Block.crops.blockID, Item.seeds.shiftedIndex);
+        pickedMap.put(Block.doorWood.blockID, Item.doorWood.shiftedIndex);
+        pickedMap.put(Block.doorSteel.blockID, Item.doorSteel.shiftedIndex);
+        pickedMap.put(Block.dragonEgg.blockID, 0);
+        pickedMap.put(Block.endPortal.blockID, 0);
+        pickedMap.put(Block.tilledField.blockID, Block.dirt.blockID);
+        pickedMap.put(Block.mobSpawner.blockID, 0);
+        pickedMap.put(Block.mushroomCapBrown.blockID, Block.mushroomBrown.blockID);
+        pickedMap.put(Block.mushroomCapRed.blockID, Block.mushroomRed.blockID);
+        pickedMap.put(Block.netherStalk.blockID, Item.netherStalkSeeds.shiftedIndex);
+        pickedMap.put(Block.pistonExtension.blockID, 0);
+        pickedMap.put(Block.pistonMoving.blockID, 0);
+        pickedMap.put(Block.portal.blockID, 0);
+        pickedMap.put(Block.redstoneLampActive.blockID, Block.redstoneLampIdle.blockID);
+        pickedMap.put(Block.redstoneRepeaterIdle.blockID, Item.redstoneRepeater.shiftedIndex);
+        pickedMap.put(Block.redstoneRepeaterActive.blockID, Item.redstoneRepeater.shiftedIndex);
+        pickedMap.put(Block.torchRedstoneIdle.blockID, Block.torchRedstoneActive.blockID);
+        pickedMap.put(Block.redstoneWire.blockID, Item.redstone.shiftedIndex);
+        pickedMap.put(Block.reed.blockID, Item.reed.shiftedIndex);
+        pickedMap.put(Block.signPost.blockID, Item.sign.shiftedIndex);
+        pickedMap.put(Block.signWall.blockID, Item.sign.shiftedIndex);
+        pickedMap.put(Block.field_82512_cj.blockID, Item.field_82799_bQ.shiftedIndex);
+        pickedMap.put(Block.pumpkinStem.blockID, Item.pumpkinSeeds.shiftedIndex);
+        pickedMap.put(Block.melonStem.blockID, Item.melonSeeds.shiftedIndex);
+        pickedMap.put(Block.tripWire.blockID, Item.silk.shiftedIndex);
+        pickedMap.put(Block.field_82513_cg.blockID, Item.field_82797_bK.shiftedIndex);
+        pickedMap.put(Block.field_82514_ch.blockID, Item.field_82794_bL.shiftedIndex);
+    }
+    
+    /**
+     * Called to look up the item ID for the block when 'pick block' is called.
+     */
+    public static int lookupPickedID(Block block, int blockID, World world, int x, int y, int z)
+    {
+        initPicked();
+        if (pickedMap.containsKey(blockID))
+        {
+            return ((Integer)pickedMap.get(blockID)).intValue();
+        }
+        
+        // special case for flower pot
+        if (blockID == Block.field_82516_cf.blockID)
+        {
+            ItemStack var5 = BlockFlowerPot.func_82531_c(world.getBlockMetadata(x, y, z));
+            return var5 == null ? Item.field_82796_bJ.shiftedIndex : var5.itemID;
+        }
+        
+        // try and call block method if exists, and it isn't a vanilla block
+        try
+        {
+            if (idPickedMethod == null)
+            {
+                String methodName = ObfuscationReflectionHelper.obfuscation ? "a" : "idPicked";
+                idPickedMethod = Block.class.getMethod(methodName, World.class, int.class, int.class, int.class);
+            }
+            return ((Integer)idPickedMethod.invoke(block, world, x, y, z)).intValue();
+        }
+        catch (Exception e) {}
+        
+        // fall back on the block ID
+        return blockID;
     }
 
     /**
