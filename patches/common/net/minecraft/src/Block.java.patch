@@ -756,7 +756,7 @@
 +     */
 +    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 +    {
-+        int id = idPicked(world, x, y, z);
++        int id = ForgeHooks.lookupPickedID(this, blockID, world, x, y, z);
 +        
 +        if (id == 0)
 +        {
