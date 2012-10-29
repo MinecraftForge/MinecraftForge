@@ -10,6 +10,7 @@ sys.path.append(mcp_dir)
 from runtime.reobfuscate import reobfuscate
 
 from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
+from changelog import make_changelog
 
 reobf_dir = os.path.join(mcp_dir, 'reobf')
 client_dir = os.path.join(reobf_dir, 'minecraft')
@@ -54,7 +55,10 @@ def main():
         shutil.rmtree(out_folder)
         
     os.makedirs(out_folder)
-    
+	
+    changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
+    make_changelog("http://jenkins.minecraftforge.net/job/forge/", build_num, changelog_file)
+	
     version_file = 'forgeversion.properties'
     if os.path.exists(version_file):
         os.remove(version_file)
@@ -82,6 +86,7 @@ def main():
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
     zip_add(version_file)
+    zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
     zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_end()
     
@@ -101,6 +106,7 @@ def main():
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add(version_file)
+    zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
     zip_end()
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), 0)
     
