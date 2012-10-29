@@ -57,7 +57,7 @@ def main():
     os.makedirs(out_folder)
 	
     changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
-    make_changelog("http://jenkins.minecraftforge.net/job/forge/", build_num, changelog_file)
+    make_changelog("http://jenkins.minecraftforge.net/job/forge/", build_num, changelog_file, version_str)
 	
     version_file = 'forgeversion.properties'
     if os.path.exists(version_file):
