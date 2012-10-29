@@ -235,7 +235,10 @@ public class FMLCommonHandler
             {
                 brd.add(forgeBranding);
             }
-            brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
+            if (sidedDelegate!=null)
+            {
+            	brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
+            }
             try {
                 Properties props=new Properties();
                 props.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
