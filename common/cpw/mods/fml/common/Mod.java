@@ -71,15 +71,31 @@ public @interface Mod
     String bukkitPlugin() default "";
     /**
      * Mods that this mod will <strong>not</strong> load with.
-     * An optional comma separated string of modid[@value], or the value - which specify mods that
-     * this mod will refuse to load with, resulting in the game failing to start. The special value - is
-     * interpreted as meaning <strong>all</strong> mods, except FML and MCP. The special value -f is
-     * interpreted as meaning <strong>all</strong> mods except FML, MCP and MinecraftForge.
+     * An optional comma separated string of (+|-)(*|modid[@value]) which specify mods that
+     * this mod will refuse to load with, resulting in the game failing to start.
+     * Entries can be prefixed with a + for a positive exclusion assertion, or - for a negative exclusion
+     * assertion. Asterisk is the wildcard and represents <strong>all</strong> mods.
+     *
+     * The <strong>only</strong> mods that cannot be excluded are FML and MCP, trivially.
+     * Other special values:
+     * <ul>
+     * <li>+f indicates that the mod will accept a minecraft forge environment.</li>
+     * <li>-* indicates that the mod will not accept any other mods.</li>
+     * </ul>
+     *
+     * Some examples:
+     * <ul>
+     * <li><em>-*,+f,+IronChest</em>: Will run only in a minecraft forge environment with the mod IronChests.
+     * The -* forces all mods to be excluded, then the +f and +IronChest add into the "allowed list".</li>
+     * <li><em>+f,-IC2</em>: Will run in a minecraft forge environment but will <strong>not</strong> run if
+     * IndustrialCraft 2 (IC2) is loaded alongside.</li>
+     * <li><em>-*</em>: Will not run if <strong>any</strong> othe mod is loaded except MCP/FML itself.</li>
+     * </ul>
      *
      * If a mod is present on the excluded list, the game will stop and show an error screen. If the
      * class containing the {@link Mod} annotation has a "getCustomErrorException" method, it will be
      * called to retrieve a custom error message for display in this case. If two mods have a declared
-     * exclusion which screen is shown is indeterminate.
+     * exclusion which is matched, the screen that is shown is indeterminate.
      *
      * @return A string listing modids to exclude from loading with this mod.
      */
