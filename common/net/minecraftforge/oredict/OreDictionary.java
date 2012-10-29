@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.BlockCloth;
 import net.minecraft.src.CraftingManager;
 import net.minecraft.src.IRecipe;
 import net.minecraft.src.Item;
@@ -17,7 +18,7 @@ public class OreDictionary
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
-    
+  
     static {
         initVanillaEntries();
     }
@@ -43,22 +44,30 @@ public class OreDictionary
         registerOre("stairWood", Block.stairsWoodJungle);
         registerOre("stairWood", Block.stairsWoodSpruce);
 
-        registerOre("dyeBlack", new ItemStack(Item.dyePowder, 1, 0));
-        registerOre("dyeRed", new ItemStack(Item.dyePowder, 1, 1));
-        registerOre("dyeGreen", new ItemStack(Item.dyePowder, 1, 2));
-        registerOre("dyeBrown", new ItemStack(Item.dyePowder, 1, 3));
-        registerOre("dyeBlue", new ItemStack(Item.dyePowder, 1, 4));
-        registerOre("dyePurple", new ItemStack(Item.dyePowder, 1, 5));
-        registerOre("dyeCyan", new ItemStack(Item.dyePowder, 1, 6));
-        registerOre("dyeLightGrey", new ItemStack(Item.dyePowder, 1, 7));
-        registerOre("dyeGrey", new ItemStack(Item.dyePowder, 1, 8));
-        registerOre("dyePink", new ItemStack(Item.dyePowder, 1, 9));
-        registerOre("dyeLime", new ItemStack(Item.dyePowder, 1, 10));
-        registerOre("dyeYellow", new ItemStack(Item.dyePowder, 1, 11));
-        registerOre("dyeLightBlue", new ItemStack(Item.dyePowder, 1, 12));
-        registerOre("dyeMagenta", new ItemStack(Item.dyePowder, 1, 13));
-        registerOre("dyeOrange", new ItemStack(Item.dyePowder, 1, 14));
-        registerOre("dyeWhite", new ItemStack(Item.dyePowder, 1, 15));
+        String[] dyes = {
+            "dyeBlack",
+            "dyeRed",
+            "dyeGreen",
+            "dyeBrown",
+            "dyeBlue",
+            "dyePurple",
+            "dyeCyan",
+            "dyeLightGrey",
+            "dyeGrey",
+            "dyePink",
+            "dyeLime",
+            "dyeYellow",
+            "dyeLightBlue",
+            "dyeMagenta",
+            "dyeOrange",
+            "dyeWhite",};
+
+        for(int i = 0; i < 16; i++) {
+            registerOre(dyes[i], new ItemStack(Item.dyePowder, 1, i));
+
+            IRecipe recipe = new ShapelessOreRecipe(new ItemStack(Block.cloth, 1, BlockCloth.getBlockFromDye(i)), new ItemStack(Block.cloth, 1, 0), dyes[i]);
+            CraftingManager.getInstance().getRecipeList().add(recipe);
+        }
 
         IRecipe recipe = new ShapedOreRecipe(Block.chest,
             "ppp",
@@ -217,6 +226,7 @@ public class OreDictionary
             Character.valueOf('s'), new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
+
 
     /**
      * Gets the integer ID for the specified ore name. 
