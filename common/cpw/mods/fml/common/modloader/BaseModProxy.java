@@ -73,9 +73,6 @@ public interface BaseModProxy
 
     public abstract void onItemPickup(EntityPlayer player, ItemStack item);
 
-    public abstract int dispenseEntity(World world, ItemStack item, Random rnd, int x, int y, int z, int xVel, int zVel, double entX,
-            double entY, double entZ);
-
     public abstract void serverCustomPayload(NetServerHandler handler, Packet250CustomPayload packet);
 
     public abstract void serverChat(NetServerHandler source, String message);
