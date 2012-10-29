@@ -279,6 +279,8 @@ public class ForgeHooks
         pickedMap.put(Block.pumpkinStem.blockID, Item.pumpkinSeeds.shiftedIndex);
         pickedMap.put(Block.melonStem.blockID, Item.melonSeeds.shiftedIndex);
         pickedMap.put(Block.tripWire.blockID, Item.silk.shiftedIndex);
+        pickedMap.put(Block.field_82513_cg.blockID, Item.field_82797_bK.shiftedIndex);
+        pickedMap.put(Block.field_82514_ch.blockID, Item.field_82794_bL.shiftedIndex);
     }
     
     /**
