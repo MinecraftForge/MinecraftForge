@@ -170,23 +170,6 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     }
 
     /**
-     * Override if you wish to perform some action other than just dispensing the item from the dispenser
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param xVel
-     * @param zVel
-     * @param item
-     */
-    @Override
-    public int dispenseEntity(World world, ItemStack item, Random rnd, int x, int y, int z, int xVel, int zVel, double entX, double entY, double entZ)
-    {
-        return -1;
-    }
-
-    /**
      * Override if you wish to generate Nether (Hell biome) blocks
      *
      * @param world
