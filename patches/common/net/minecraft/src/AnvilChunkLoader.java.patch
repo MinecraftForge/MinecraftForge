@@ -1,8 +1,8 @@
 --- ../src_base/common/net/minecraft/src/AnvilChunkLoader.java
 +++ ../src_work/common/net/minecraft/src/AnvilChunkLoader.java
-@@ -10,6 +10,9 @@
- import java.util.List;
- import java.util.Set;
+@@ -13,6 +13,9 @@
+ 
+ import cpw.mods.fml.common.FMLLog;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.ChunkDataEvent;
@@ -10,7 +10,7 @@
  public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
  {
      private List chunksToRemove = new ArrayList();
-@@ -94,6 +97,7 @@
+@@ -97,6 +100,7 @@
                  var5 = this.readChunkFromNBT(par1World, par4NBTTagCompound.getCompoundTag("Level"));
              }
  
@@ -18,7 +18,7 @@
              return var5;
          }
      }
-@@ -109,6 +113,7 @@
+@@ -112,6 +116,7 @@
              var3.setTag("Level", var4);
              this.writeChunkToNBT(par2Chunk, par1World, var4);
              this.func_75824_a(par2Chunk.getChunkCoordIntPair(), var3);
