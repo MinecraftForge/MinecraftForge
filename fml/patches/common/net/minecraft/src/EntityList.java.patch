@@ -1,0 +1,44 @@
+--- ../src-base/common/net/minecraft/src/EntityList.java
++++ ../src-work/common/net/minecraft/src/EntityList.java
+@@ -3,6 +3,9 @@
+ import java.util.HashMap;
+ import java.util.LinkedHashMap;
+ import java.util.Map;
++import java.util.logging.Level;
++
++import cpw.mods.fml.common.FMLLog;
+ 
+ public class EntityList
+ {
+@@ -52,10 +55,10 @@
+     public static Entity func_75615_a(NBTTagCompound p_75615_0_, World p_75615_1_)
+     {
+         Entity var2 = null;
+-
++        Class var3 = null;
+         try
+         {
+-            Class var3 = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            var3 = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+ 
+             if (var3 != null)
+             {
+@@ -69,7 +72,17 @@
+ 
+         if (var2 != null)
+         {
+-            var2.func_70020_e(p_75615_0_);
++            try
++            {
++                var2.func_70020_e(p_75615_0_);
++            }
++            catch (Exception e)
++            {
++                FMLLog.log(Level.SEVERE, e,
++                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_75615_0_.func_74779_i("id"), var3.getName());
++                var2 = null;
++            }
+         }
+         else
+         {

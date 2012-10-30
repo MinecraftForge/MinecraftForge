@@ -25,20 +25,22 @@
  
              if (var2 != null)
              {
-@@ -92,7 +94,15 @@
+@@ -92,7 +94,17 @@
  
          if (var1 != null)
          {
 -            var1.func_70307_a(p_70317_0_);
-+        	try
-+        	{
-+        		var1.func_70307_a(p_70317_0_);
-+        	}
-+        	catch (Exception e)
-+        	{
-+                FMLLog.log(Level.SEVERE, e, "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", p_70317_0_.func_74779_i("id"), var2.getName());
++            try
++            {
++                var1.func_70307_a(p_70317_0_);
++            }
++            catch (Exception e)
++            {
++                FMLLog.log(Level.SEVERE, e,
++                        "A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_70317_0_.func_74779_i("id"), var2.getName());
 +                var1 = null;
-+        	}
++            }
          }
          else
          {

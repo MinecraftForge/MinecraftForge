@@ -16,7 +16,7 @@
 -        this.field_72996_f.removeAll(this.field_72997_g);
 -        Iterator var5 = this.field_72997_g.iterator();
 +        List fml_entitiesToRemove = ImmutableList.copyOf(this.field_72997_g);
-+		this.field_72996_f.removeAll(fml_entitiesToRemove);
++        this.field_72996_f.removeAll(fml_entitiesToRemove);
 +        Iterator var5 = fml_entitiesToRemove.iterator();
          int var3;
          int var4;
