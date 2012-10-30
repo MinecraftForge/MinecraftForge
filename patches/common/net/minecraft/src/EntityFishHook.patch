@@ -1,0 +1,39 @@
+--- ../src_base/common/net/minecraft/src/EntityFishHook.java
++++ ../src_work/common/net/minecraft/src/EntityFishHook.java
+@@ -5,6 +5,10 @@
+ import java.util.Iterator;
+ import java.util.List;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.entity.player.CatchFishEvent;
++
+ public class EntityFishHook extends Entity
+ {
+     /** The tile this entity is on, X position */
+@@ -474,7 +478,24 @@
+             }
+             else if (this.ticksCatchable > 0)
+             {
+-                EntityItem var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
++                CatchFishEvent event = new CatchFishEvent(this.angler, this.worldObj, this.posX, this.posY, this.posZ);
++                if(MinecraftForge.EVENT_BUS.post(event))
++                {
++                    this.setDead();
++                    this.angler.fishEntity = null;
++                	return 2;
++                }
++                
++                EntityItem var13;
++                if (event.getResult() == Event.Result.ALLOW)
++                {
++                	var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, event.result);
++                } 
++                else 
++                { 
++                	var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
++                }
++                
+                 double var3 = this.angler.posX - this.posX;
+                 double var5 = this.angler.posY - this.posY;
+                 double var7 = this.angler.posZ - this.posZ;
