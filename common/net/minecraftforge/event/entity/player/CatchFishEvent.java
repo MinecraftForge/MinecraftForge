@@ -13,11 +13,15 @@ public class CatchFishEvent extends PlayerEvent
      * It can be canceled to completely prevent any further processing.
      * 
      * If you set the result to 'ALLOW', it means that you have set the
-     * result to the fish that will be caught instead of the default fish.
+     * result to the item that will be caught instead of the default fish.
+     * The rod will be damaged base on the damage specified in the event.
      * 
+     * If you set the result to 'DENY' no item will be caught and the
+     * rod will be damaged by the amount specified in the event.
      */
 	
 	public ItemStack result;
+	public byte damage;
     public final World world;
     public final double X;
     public final double Y;
@@ -26,6 +30,7 @@ public class CatchFishEvent extends PlayerEvent
 	public CatchFishEvent(EntityPlayer player, World world, double x, double y, double z)
 	{
 		super(player);
+		this.damage = 1;
 		this.world = world;
 		this.X = x;
 		this.Y = y;

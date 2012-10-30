@@ -1,5 +1,5 @@
---- ../src_base/common/net/minecraft/src/EntityFishHook.java
-+++ ../src_work/common/net/minecraft/src/EntityFishHook.java
+--- C:/Users/Keithy/Desktop/EntityFishHook (2).java	Fri Oct 26 13:24:29 2012
++++ C:/Users/Keithy/Desktop/EntityFishHook.java	Tue Oct 30 11:27:38 2012
 @@ -5,6 +5,10 @@
  import java.util.Iterator;
  import java.util.List;
@@ -21,7 +21,7 @@
 +                {
 +                    this.setDead();
 +                    this.angler.fishEntity = null;
-+                	return 2;
++                	return event.damage;
 +                }
 +                
 +                EntityItem var13;
@@ -37,3 +37,12 @@
                  double var3 = this.angler.posX - this.posX;
                  double var5 = this.angler.posY - this.posY;
                  double var7 = this.angler.posZ - this.posZ;
+@@ -486,7 +507,7 @@
+                 this.worldObj.spawnEntityInWorld(var13);
+                 this.angler.addStat(StatList.fishCaughtStat, 1);
+                 this.angler.worldObj.spawnEntityInWorld(new EntityXPOrb(this.angler.worldObj, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, this.rand.nextInt(3) + 1));
+-                var1 = 1;
++                var1 = event.damage;
+             }
+ 
+             if (this.inGround)
