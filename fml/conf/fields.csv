@@ -257,7 +257,6 @@ field_70521_d,zPosition,2,
 field_70522_e,art,2,
 field_70523_b,xPosition,2,
 field_70524_c,yPosition,2,
-field_70525_a,direction,2,the direction the painting faces
 field_70529_d,xpOrbHealth,2,The health of this XP orb.
 field_70530_e,xpValue,2,This is how much XP this orb has.
 field_70531_b,xpOrbAge,2,The age of the XP orb in ticks.
@@ -381,15 +380,12 @@ field_70796_c,waypointY,2,
 field_70797_a,courseChangeCooldown,2,
 field_70798_h,aggroCooldown,2,Cooldown time between target loss and new target aquirement.
 field_70810_d,slimeJumpDelay,2,the time between each jump of the slime
-field_70815_f,attackStrength,2,How much damage this mob's attacks deal
 field_70827_d,carriableBlocks,2,
 field_70828_e,teleportDelay,2,Counter to delay the teleportation of an enderman towards the currently attacked target
 field_70833_d,timeSinceIgnited,2,The amount of time since the creeper was close enough to the player to ignite
 field_70834_e,lastActiveTime,2,"Time when this creeper was last in an active state (Messed up code here, probably causes creeper animation to go weird)"
-field_70836_g,defaultHeldItem,2,"The ItemStack that any PigZombie holds (a gold sword, in fact)."
 field_70837_d,angerLevel,2,Above zero if this PigZombie is Angry.
 field_70838_e,randomSoundDelay,2,A random delay until this PigZombie next makes a sound.
-field_70842_d,defaultHeldItem,2,The ItemStack that any Skeleton holds (a bow).
 field_70843_d,allySummonCooldown,2,A cooldown before this entity will search for another Silverfish to join them in battle.
 field_70847_d,heightOffset,2,Random offset used in floating behaviour
 field_70848_e,heightOffsetUpdateTime,2,ticks until heightOffset is randomized
@@ -423,14 +419,12 @@ field_70953_g,isPlaying,2,
 field_70954_d,villageObj,2,
 field_70955_e,randomTickDivider,2,
 field_70956_bz,wealth,2,
-field_70957_bA,sellingRecipeList,2,Recipes for buying things from Villagers.
 field_70958_bB,villagerStockList,2,a villagers recipe list is intialized off this list ; the 2 params are min/max amount they will trade for 1 emerald
 field_70959_by,needsInitilization,2,addDefaultEquipmentAndRecipies is called if this is true
 field_70960_bC,blacksmithSellingList,2,"Selling list of Blacksmith items. negative numbers mean 1 emerald for n items, positive numbers are n emeralds for 1 item"
 field_70961_j,timeUntilReset,2,
 field_70962_h,buyingPlayer,2,This villager's current customer.
 field_70963_i,buyingList,2,Initialises the MerchantRecipeList.java
-field_70966_a,maxHealth,2,The maximum health of the Entity.
 field_70976_f,ringBufferIndex,2,Index into the ring buffer. Incremented once per tick and restarts at 0 once it reaches the end of the buffer.
 field_70977_g,dragonPartArray,2,An array containing all body parts of this dragon
 field_70978_d,targetZ,2,
@@ -477,9 +471,7 @@ field_71099_bE,score,2,
 field_71100_bB,foodStats,2,The player's food stats. (See class FoodStats)
 field_71101_bC,flyToggleTimer,2,"Used to tell if the player pressed jump twice. If this is at 0 and it's pressed (And they are allowed to fly, as defined in the player's movementInput) it sets this to 7. If it's pressed and it's greater than 0 enable fly."
 field_71102_ce,speedInAir,2,
-field_71103_bH,isSwinging,2,Whether the player is swinging the current item in their hand.
 field_71104_cf,fishEntity,2,"An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different"
-field_71105_bI,swingProgressInt,2,
 field_71106_cc,experience,2,The current amount of experience the player has within their Experience Bar.
 field_71107_bF,prevCameraYaw,2,
 field_71108_cd,speedOnGround,2,
@@ -496,7 +488,6 @@ field_71137_h,playerInventoryBeingManipulated,2,"poor mans concurency flag, lets
 field_71138_i,ping,2,
 field_71139_cq,currentWindowId,2,The currently in use window ID. Incremented every time a window is opened.
 field_71140_co,chatColours,2,
-field_71141_cp,lastActiveItems,2,"0 is the held item, 1-4 is armor ; used to detect changes in getCurrentItemOrArmor"
 field_71142_cm,renderDistance,2,must be between 3>x>15 (strictly between)
 field_71143_cn,chatVisibility,2,
 field_71144_ck,lastExperience,2,Amount of experience the client was last set to
@@ -660,12 +651,12 @@ field_71478_O,mainFrame,2,"Reference to the main frame, in this case, the applet
 field_71481_b,mc,2,Reference to the Minecraft object.
 field_71482_c,mcThread,2,Reference to the Minecraft main thread.
 field_71483_a,mcCanvas,2,Reference to the applet canvas.
-field_71486_a,crashReportMemoryInfo,2,Gets Memory Information for Crash Report.
-field_71488_a,crashReportJVMFlags,2,Gets additional Java Enviroment info for Crash Report.
-field_71490_a,crashReportJavaInfo,2,Gets Java Info to the Crash Report.
-field_71492_a,crashReportJavaInfo2,2,Gets Java Enviroment Info to the Crash Report.
-field_71494_a,crashReportMinecraftVersion,2,Gets the Crash Rrport current Minecraft version.
-field_71496_a,crashReportOSInfo,2,Gets OS Info for Crash Report.
+field_71486_a,theCrashReport,2,Reference to the CrashReport object.
+field_71488_a,theCrashReport,2,Reference to the CrashReport object.
+field_71490_a,theCrashReport,2,Reference to the CrashReport object.
+field_71492_a,theCrashReport,2,Reference to the CrashReport object.
+field_71494_a,theCrashReport,2,Reference to the CrashReport object.
+field_71496_a,theCrashReport,2,Reference to the CrashReport object.
 field_71510_d,crashReportFile,2,File of crash report.
 field_71511_b,cause,2,"The Throwable that is the ""cause"" for this crash and Crash Report."
 field_71512_c,crashReportSections,2,Holds the keys and values of all crash report sections.
@@ -693,7 +684,7 @@ field_71585_d,offsetsZForSide,2,gives the offset required for this axis to get t
 field_71586_b,offsetsXForSide,2,gives the offset required for this axis to get the block at that side.
 field_71587_c,offsetsYForSide,2,gives the offset required for this axis to get the block at that side.
 field_71588_a,faceToSide,2,Converts a face to a side.
-field_71743_a,minecraftServerType,2,Gets Decitated Server type.
+field_71743_a,theDecitatedServer,2,Reference to the DecitatedServer object.
 field_71748_d,connections,2,
 field_71749_b,isListening,2,Whether the network listener object is listening.
 field_71750_c,mcServer,2,Reference to the MinecraftServer object.
@@ -812,7 +803,7 @@ field_72030_cd,blockConstructorCalled,2,set to true when Block's constructor is 
 field_72031_aZ,fence,2,
 field_72032_aY,jukebox,2,
 field_72033_bA,netherBrick,2,
-field_72034_aR,button,2,
+field_72034_aR,stoneButton,2,
 field_72035_aQ,torchRedstoneActive,2,
 field_72036_aT,ice,2,
 field_72037_aS,snow,2,
@@ -1107,7 +1098,7 @@ field_72769_h,theWorld,2,
 field_72770_i,renderEngine,2,The RenderEngine instance used by RenderGlobal
 field_72771_w,glSkyList,2,OpenGL sky list
 field_72772_v,starGLCallList,2,The star GL Call list
-field_72773_u,cloudOffsetX,2,
+field_72773_u,cloudTickCounter,2,counts the cloud render updates. Used with mod to stagger some updates
 field_72774_t,occlusionEnabled,2,Is occlusion testing enabled
 field_72775_s,glOcclusionQueryBase,2,OpenGL occlusion query base
 field_72776_r,globalRenderBlocks,2,Global render blocks
@@ -1176,7 +1167,6 @@ field_73037_M,mc,2,
 field_73038_N,previousActiveChunkSet,2,
 field_73058_d,canNotSave,2,"set by CommandServerSave{all,Off,On}"
 field_73059_b,theChunkProviderServer,2,
-field_73060_c,actionsAllowed,2,"this is set related to Manager.areCommandsAllowed, but is never used is is also set back to false at the end of both functions which set it."
 field_73061_a,mcServer,2,
 field_73062_L,theEntityTracker,2,
 field_73063_M,thePlayerManager,2,
@@ -1229,9 +1219,7 @@ field_73144_s,isDataInitialized,2,set to true on first sendLocationToClients
 field_73145_r,posZ,2,
 field_73146_q,posY,2,
 field_73147_p,posX,2,
-field_73160_d,villageGen,2,
 field_73161_b,random,2,
-field_73162_c,useStructures,2,
 field_73163_a,worldObj,2,
 field_73167_f,noiseData3,2,
 field_73168_g,noiseData4,2,
@@ -1465,9 +1453,7 @@ field_73482_e,rotation,2,The item rotation.
 field_73483_b,xPosition,2,The item X position.
 field_73484_c,yPosition,2,The item Y position.
 field_73485_a,entityId,2,Unique entity ID.
-field_73486_j,itemDamage,2,The health of the item.
 field_73487_h,itemID,2,
-field_73488_i,count,2,The number of items.
 field_73490_f,velocityX,2,
 field_73491_g,velocityY,2,
 field_73492_d,yPosition,2,The Y position of the entity.
@@ -1627,6 +1613,7 @@ field_73745_b,height,2,Button height in pixels
 field_73746_c,xPosition,2,The x position of this control.
 field_73747_a,width,2,Button width in pixels
 field_73748_h,drawButton,2,Hides the button completely if false.
+field_73749_j,mirrored,2,"If true, then next page button will face to right, if false then next page button will face to left."
 field_73750_l,idFloat,2,Additional ID for this slider control.
 field_73751_j,sliderValue,2,The value of this slider control.
 field_73752_k,dragging,2,Is this slider control being dragged.
@@ -1865,8 +1852,10 @@ field_74202_p,nextRecipeButtonIndex,2,
 field_74203_o,theIMerchant,2,Instance of IMerchant interface.
 field_74204_o,furnaceInventory,2,
 field_74206_w,bookModel,2,The book model used on the GUI.
+field_74207_v,theItemStack,2,
 field_74215_y,containerEnchantment,2,ContainerEnchantment object associated with this gui
 field_74216_x,rand,2,
+field_74217_o,brewingStand,2,
 field_74218_q,inventoryRows,2,"window height is calculated with this values, the more rows, the heigher"
 field_74219_p,lowerChestInventory,2,
 field_74220_o,upperChestInventory,2,
@@ -1890,12 +1879,11 @@ field_74262_d,noMoreProgress,2,
 field_74263_b,workingMessage,2,
 field_74264_c,currentProgress,2,
 field_74265_a,progressMessage,2,
-field_74266_b,lastTimeMillis,2,lastTimeMillis
 field_74267_a,mcServer,2,Reference to the MinecraftServer object.
 field_74268_a,simpleDateFormatLogFormatter,2,Date Formatter of Log/Console.
-field_74270_a,minecraftServerPlayers,2,Gets Minecraft Server players.
-field_74272_a,minecraftServerProfiler,2,Gets Minecraft Server profile.
-field_74274_a,minecraftServerIsServerModded,2,For checking if Minecraft Server is modded.
+field_74270_a,mcServer,2,Reference to the MinecraftServer object.
+field_74272_a,mcServer,2,Reference to the MinecraftServer object.
+field_74274_a,mcServer,2,Reference to the MinecraftServer object.
 field_74276_f,lastHRTime,2,"The time reported by the high-resolution clock at the last call of updateTimer(), in seconds"
 field_74277_g,lastSyncSysClock,2,"The time reported by the system clock at the last sync, in milliseconds"
 field_74278_d,timerSpeed,2,A multiplier to make the timer (and therefore the game) go faster or slower.  0.5 makes the game run at half-speed.
@@ -1977,10 +1965,10 @@ field_74385_A,enumFloat,2,
 field_74386_B,enumBoolean,2,
 field_74387_C,enumString,2,
 field_74414_a,enumOptionsMappingHelperArray,2,
-field_74416_a,minecraftModded,2,Gets if Minecraft is Modded.
+field_74416_a,mc,2,Reference to the Minecraft object.
 field_74417_a,theTcpConnection,2,
-field_74419_a,minecraftGLInfo,2,Gets Minecraft Open GL Info.
-field_74421_a,minecraftLWJGLVersion,2,Gets Minecraft LWJGL version.
+field_74419_a,mc,2,Reference to the Minecraft object.
+field_74421_a,mc,2,Reference to the Minecraft object.
 field_74422_a,mcApplet,2,Reference to the MinecraftApplet object.
 field_74438_f,shutdownReason,2,
 field_74440_d,myNetHandler,2,
@@ -2009,9 +1997,9 @@ field_74487_p,dataPackets,2,Linked list of packets awaiting sending.
 field_74488_z,sharedKeyForEncryption,2,
 field_74489_y,sendQueueByteLength,2,The length in bytes of the packets in both send queues (data and chunkData).
 field_74498_a,theTcpConnection,2,
-field_74500_a,minecraftClientProfiler,2,Gets skin of Minecraft player.
+field_74500_a,mc,2,Reference to the Minecraft object.
 field_74501_a,theTcpConnection,2,
-field_74503_a,minecraftServerType2,2,Gets Client Server type.
+field_74503_a,mc,2,Reference to the Minecraft object.
 field_74504_a,theTcpConnection,2,
 field_74511_f,pressTime,2,
 field_74512_d,keyCode,2,
@@ -2171,13 +2159,15 @@ field_75008_c,isLargeRoom,2,
 field_75009_a,doorType,2,
 field_75011_a,doorType,2,
 field_75013_b,roomType,2,
+field_75014_c,strongholdRoomCrossingChestContents,2,Items that could generate in the chest that is located in Stronghold Room Crossing.
 field_75015_a,doorType,2,
 field_75017_a,doorType,2,
 field_75019_b,expandsX,2,
 field_75020_c,expandsZ,2,
 field_75021_a,doorType,2,
 field_75023_b,doorType,2,
-field_75025_b,portalRoom,2,
+field_75025_b,strongholdPortalRoom,2,
+field_75027_a,strongholdPieceWeight,2,
 field_75029_a,doorType,2,
 field_75038_b,rand,2,The RNG used by the MapGen classes.
 field_75039_c,worldObj,2,This world object.
@@ -2322,12 +2312,10 @@ field_75313_b,theTarget,2,
 field_75314_a,theEntityTameable,2,
 field_75315_b,theOwnerAttacker,2,
 field_75316_a,theDefendingTameable,2,
-field_75319_g,rangedAttackID,2,The ID of this ranged attack AI. This chooses which entity is to be used as a ranged attack.
 field_75320_d,rangedAttackTime,2,A decrementing tick that spawns a ranged attack once this value reaches 0. It is then set back to the maxRangedAttackTime.
 field_75321_e,entityMoveSpeed,2,
 field_75322_b,entityHost,2,The entity the AI instance has been applied to
 field_75323_c,attackTarget,2,
-field_75324_a,worldObj,2,
 field_75325_h,maxRangedAttackTime,2,The maximum time the AI has to wait before peforming another ranged attack.
 field_75326_b,leapTarget,2,The entity that the leaper is leaping towards.
 field_75327_c,leapMotionY,2,The entity's motionY after leaping.
@@ -2724,7 +2712,6 @@ field_76176_b,sourceURL,2,
 field_76178_a,feedbackHook,2,
 field_76189_a,dirty,2,Whether this MapDataBase needs saving to disk.
 field_76190_i,mapName,2,The name of the map data nbt
-field_76195_f,randomEffect,2,"Incremented each update of the map item, used for the patchy updating map effect and the spinning player icons while in the End and Nether."
 field_76196_g,playersArrayList,2,Holds a reference to the MapInfo of the players who own a copy of the map
 field_76197_d,scale,2,
 field_76198_e,colors,2,colours
@@ -3141,8 +3128,8 @@ field_76967_j,playerX,2,The player's X position in this rendering context
 field_76968_k,playerY,2,The player's Y position in this rendering context
 field_76969_h,playerYaw,2,
 field_76970_i,playerPitch,2,
-field_76972_a,integratedServerIsModded,2,Gets if Client Is Modded.
-field_76974_a,minecraftServerType3,2,Gets Intergated Server type.
+field_76972_a,theIntegratedServer,2,Reference to the IntegratedServer object.
+field_76974_a,theIntegratedServer,2,Reference to the IntegratedServer object.
 field_76987_f,shadowOpaque,2,Determines the darkness of the object's shadow. Higher value makes a darker shadow.
 field_76988_d,renderBlocks,2,
 field_76989_e,shadowSize,2,
@@ -3151,8 +3138,6 @@ field_76991_a,modelBase,2,
 field_76993_a,blockRenderer,2,
 field_76998_a,modelBoat,2,instance of ModelBoat for rendering
 field_77004_a,renderBlocks,2,
-field_77006_b,renderBlocksXPOrb,2,Instance of RenderBlocks.
-field_77011_a,rand,2,RNG.
 field_77013_a,modelMinecart,2,instance of ModelMinecart for rendering
 field_77022_g,renderBlocks,2,
 field_77023_b,zLevel,2,Defines the zLevel of rendering of item on GUI.
@@ -3168,7 +3153,6 @@ field_77073_a,scale,2,Scale of the model to use
 field_77077_b,rnd,2,
 field_77078_a,endermanModel,2,The model of the enderman
 field_77084_b,modelDragon,2,An instance of the dragon model in RenderDragon
-field_77085_a,entityDragon,2,The entity instance of the dragon. Note: This is a static field in RenderDragon because there is only supposed to be one dragon
 field_77086_i,updateModelState,2,Reloads the dragon model if not equal to 4. Presumably a leftover debugging field.
 field_77092_a,scaleAmount,2,
 field_77094_a,snowmanModel,2,A reference to the Snowman model in RenderSnowMan.
@@ -3235,6 +3219,7 @@ field_77270_a,parentTexturePackGui,2,
 field_77275_b,chunkZPos,2,The Z position of this Chunk Coordinate Pair
 field_77276_a,chunkXPos,2,The X position of this Chunk Coordinate Pair
 field_77280_f,explosionSize,2,
+field_77281_g,affectedBlockPositions,2,A list of ChunkPositions of blocks affected by this explosion
 field_77282_d,explosionZ,2,
 field_77283_e,exploder,2,
 field_77284_b,explosionX,2,
@@ -3305,7 +3290,7 @@ field_77400_d,toolUses,2,Saves how much has been tool used when put into to slot
 field_77401_b,secondItemToBuy,2,Second Item the Villager buys.
 field_77402_c,itemToSell,2,Item the Villager sells.
 field_77403_a,itemToBuy,2,Item the Villager buys.
-field_77405_a,worldLvl2,2,Gets loaded Entities.
+field_77405_a,theWorld,2,Reference to the World object.
 field_77426_f,dataFile,2,A file named 'stats_' [lower case username] '.dat'
 field_77427_g,unsentTempFile,2,A file named 'stats_' [lower case username] '_unsent.tmp'
 field_77428_d,statFileWriter,2,"The StatFileWriter object, presumably used to write to the statistics files"
@@ -3315,7 +3300,7 @@ field_77435_j,oldFile,2,A file named 'stats_' [lower case username] '.old'
 field_77436_k,theSession,2,The Session object
 field_77437_h,tempFile,2,A file named 'stats_' [lower case username] '.tmp'
 field_77438_i,unsentOldFile,2,A file named 'stats_' [lower case username] '_unsent.old'
-field_77440_a,worldLvl3,2,Gets loaded Entities.
+field_77440_a,theWorld,2,Reference to the World object.
 field_77454_d,statsSyncher,2,
 field_77461_d,nameToSoundPoolEntriesMapping,2,Maps a name (can be sound/newsound/streaming/music/newmusic) to a list of SoundPoolEntry's.
 field_77462_e,allSoundPoolEntries,2,A list of all SoundPoolEntries that have been loaded.
@@ -3328,7 +3313,7 @@ field_77477_c,useMultitextureARB,2,True if the renderer supports multitextures a
 field_77478_a,defaultTexUnit,2,"An OpenGL constant corresponding to GL_TEXTURE0, used when setting data pertaining to auxiliary OpenGL texture units."
 field_77481_a,grassBuffer,2,Color buffer for grass
 field_77482_b,syncher,2,
-field_77485_a,worldLvl1,2,Gets loaded Entities.
+field_77485_a,theWorld,2,Reference to the World object.
 field_77486_a,syncher,2,
 field_77491_c,timeLastSeen,2,Last time this LanServer was seen.
 field_77494_b,entityLiving,2,Used as parameter to calculate the (magic) extra damage based on enchantments of current equipped player item.
@@ -3565,12 +3550,8 @@ field_77880_c,renderIndex,2,"Used on RenderPlayer to select the correspondent ar
 field_77881_a,armorType,2,"Stores the armor type: 0 is helmet, 1 is plate, 2 is legs and 3 is boots"
 field_77882_bY,maxDamageArray,2,Holds the 'base' maxDamage that each armorType have.
 field_77885_a,blockID,2,The block ID of the Block associated with this ItemBlock
-field_77886_a,theWoodBlock,2,The instance of Block.
-field_77887_a,theSmoothStoneBlock,2,Instance of the Block.
 field_77889_b,theHalfSlab,2,Instance of BlockHalfSlab.
 field_77890_c,theHalfSlab2,2,Instance of BlockHalfSlab.
-field_77892_a,theBlock,2,Instance of Block.
-field_77893_a,theBlock,2,Instance of Block.
 field_77895_b,blockNames,2,
 field_77896_a,blockRef,2,
 field_77918_f,speckledMelonEffect,2,
@@ -3655,6 +3636,8 @@ field_78100_b,coverLeft,2,Left cover renderer (when facing the book)
 field_78101_c,pagesRight,2,The right pages renderer (when facing the book)
 field_78102_a,coverRight,2,Right cover renderer (when facing the book)
 field_78103_a,boatSides,2,
+field_78105_b,blazeHead,2,
+field_78106_a,blazeSticks,2,The sticks that fly around the Blaze.
 field_78112_f,bipedRightArm,2,
 field_78113_g,bipedLeftArm,2,
 field_78114_d,bipedHeadwear,2,
@@ -4100,8 +4083,8 @@ field_78828_a,weightClass,2,The class of the StructureComponent to which this we
 field_78829_b,responseTime,2,Player response time to server in milliseconds
 field_78830_c,nameinLowerCase,2,Player name in lowercase.
 field_78831_a,name,2,The string value of the object
-field_78833_a,worldClientMPL1,2,Initialises the WorldClient for CallableMPL1.
-field_78835_a,worldClientMPL2,2,Initialises the WorldClient for CallableMPL2.
+field_78833_a,theWorldClient,2,Reference to the WorldClient object.
+field_78835_a,theWorldClient,2,Reference to the WorldClient object.
 field_78843_d,serverMOTD,2,(better variable name would be 'hostname') server name as displayed in the server browser's second line (grey text)
 field_78844_e,pingToServer,2,last server ping that showed up in the server browser
 field_78845_b,serverIP,2,
@@ -4177,3 +4160,205 @@ field_79029_a,outputHandler,2,Reference to the GuiLogOutputHandler.
 field_80001_f,closestPlayer,2,The closest EntityPlayer to this orb.
 field_80004_Q,updateEntityTick,2,
 field_80005_w,hideServerAddress,2,
+field_82121_b,skullRotation,2,The skull's rotation.
+field_82122_c,extraType,2,"Extra data for this skull, used as player username by player heads"
+field_82123_a,skullType,2,Entity type for this skull.
+field_82133_f,primaryEffect,2,Primary potion effect given by this beacon.
+field_82134_g,secondaryEffect,2,Secondary potion effect given by this beacon.
+field_82136_e,levels,2,Level of this beacon's pyramid.
+field_82139_a,effectsList,2,List of effects that Beacon can apply
+field_82140_h,payment,2,Item given to this beacon as payment.
+field_82172_bs,canPickUpLoot,2,Whether this entity can pick up items from the ground.
+field_82173_br,swingProgressInt,2,
+field_82174_bp,equipmentDropChances,2,Chances for each equipment piece from dropping when this entity dies.
+field_82175_bq,isSwingInProgress,2,Whether an arm swing is currently in progress.
+field_82177_b,enchantmentProbability,2,An array of probabilities that determines whether a random enchantment should be added to the held item. Indexed by difficulty.
+field_82179_bU,persistenceRequired,2,Whether this entity should NOT despawn.
+field_82182_bS,equipment,2,Equipment (armor and held item) for this entity.
+field_82184_d,aiControlledByPlayer,2,AI task for player control.
+field_82189_bL,lastBuyingPlayer,2,"Last player to trade with this villager, used for aggressivity."
+field_82192_a,mobSelector,2,Entity selector for IMob types.
+field_82199_d,witchDrops,2,List of items a witch should drop on death.
+field_82200_e,witchAttackTimer,2,"Timer used as interval for a witch's attack, decremented every tick if aggressive and when reaches zero the witch will throw a potion at the target entity."
+field_82219_bJ,attackEntitySelector,2,Selector used to determine the entities a wither boss should attack.
+field_82226_g,explosionRadius,2,Explosion radius for this creeper.
+field_82234_d,conversionTime,2,Ticker used to determine the time remaining for this zombie to convert into a villager when cured.
+field_82237_a,currentFlightTarget,2,randomly selected ChunkCoordinates in a 7x6x7 box around the bat (y offset -2 to 4) towards which it will fly. upon getting close a new target will be selected
+field_82248_d,spawnForced,2,"Whether this player's spawn point is forced, preventing execution of bed checks."
+field_82250_a,mc,2,
+field_82259_k,buttonTexture,2,Texture for this button.
+field_82260_k,beaconGui,2,Beacon GUI this button belongs to.
+field_82263_k,beaconGui,2,Beacon GUI this button belongs to.
+field_82264_k,beaconGui,2,Beacon GUI this button belongs to.
+field_82267_b,allMultiplayerOptions,2,
+field_82276_d,customizationTitle,2,
+field_82277_b,createWorldGui,2,
+field_82278_r,buttonRemoveLayer,2,
+field_82279_c,theFlatGeneratorInfo,2,
+field_82280_q,buttonEditLayer,2,
+field_82281_p,buttonAddLayer,2,
+field_82282_a,theRenderItem,2,
+field_82283_n,heightLabel,2,
+field_82284_o,createFlatWorldListSlotGui,2,
+field_82285_m,layerMaterialLabel,2,
+field_82289_B,buttonCustomize,2,GuiButton in the more world options screen.
+field_82301_b,presets,2,List of defined flat world presets.
+field_82302_c,createFlatWorldGui,2,
+field_82303_q,theTextField,2,
+field_82304_p,theButton,2,
+field_82305_a,presetIconRenderer,2,RenderItem instance used to render preset icons.
+field_82307_o,theFlatPresetsListSlot,2,
+field_82310_a,mcServer,2,Reference to the MinecraftServer object.
+field_82317_b,commandBlock,2,Command block being edited.
+field_82318_a,commandTextField,2,Text field containing the command block's command.
+field_82320_o,theSlot,2,
+field_82321_q,buttonsNotDrawn,2,
+field_82322_p,beaconConfirmButton,2,
+field_82323_o,beacon,2,
+field_82337_e,itemDropChance,2,Chance for this item frame's item to drop from the frame.
+field_82346_a,theContainer,2,Container of this anvil's block.
+field_82365_a,difficulties,2,
+field_82373_c,directions,2,
+field_82374_e,facings,2,
+field_82397_a,skullRenderer,2,
+field_82401_a,skeletonHeadModel,2,The Skeleton's head model.
+field_82424_k,bipedArmorFilenamePrefix,2,List of armor texture filenames.
+field_82446_a,renderedBatSize,2,"not actually sure this is size, is not used as of now, but the model would be recreated if the value changed and it seems a good match for a bats size"
+field_82453_b,createFlatWorldGui,2,
+field_82458_b,flatPresetsGui,2,
+field_82475_b,theMinecart,2,Minecart which sound is being updated.
+field_82476_c,thePlayer,2,The player that is getting the minecart sound updates.
+field_82477_a,theSoundManager,2,
+field_82483_a,itemDispenseBehaviorProvider,2,
+field_82484_c,defaultItemDispenseBehavior,2,Reference to the BehaviorDefaultDispenseItem object.
+field_82490_b,mcServer,2,
+field_82491_c,defaultItemDispenseBehavior,2,Reference to the BehaviorDefaultDispenseItem object.
+field_82492_b,mcServer,2,
+field_82493_c,defaultItemDispenseBehavior,2,Reference to the BehaviorDefaultDispenseItem object.
+field_82494_b,mcServer,2,Reference to the MinecraftServer object.
+field_82495_c,defaultItemDispenseBehavior,2,Reference to the BehaviorDefaultDispenseItem object.
+field_82496_b,mcServer,2,
+field_82497_c,defaultItemDispenseBehavior,2,Reference to the BehaviorDefaultDispenseItem object.
+field_82501_b,potionStackToDispense,2,
+field_82502_c,potionDispenseBehavior,2,Reference to the BehaviorPotionDispense object.
+field_82503_b,mcServer,2,
+field_82504_b,mcServer,2,
+field_82507_n,soundLadderFootstep,2,
+field_82508_o,soundAnvilFootstep,2,
+field_82509_m,soundSnowFootstep,2,
+field_82510_ck,anvil,2,
+field_82511_ci,woodenButton,2,
+field_82512_cj,skull,2,
+field_82513_cg,carrot,2,
+field_82514_ch,potatoe,2,
+field_82515_ce,cobblestoneWall,2,
+field_82516_cf,flowerPot,2,
+field_82517_cc,commandBlock,2,
+field_82518_cd,beacon,2,
+field_82522_a,statuses,2,List of types/statues the Anvil can be in.
+field_82527_a,dispenseBehaviorRegistry,2,Registry for all dispense behaviors.
+field_82537_a,sensible,2,"Whether this button is sensible to arrows, used by wooden buttons."
+field_82539_a,types,2,The types of the wall.
+field_82548_a,theChunkCoordinates,2,
+field_82550_a,mcServer,2,
+field_82552_a,mcServer,2,
+field_82553_a,mcServer,2,
+field_82555_a,mcServer,2,
+field_82557_a,mcServer,2,Reference to the MinecraftServer object.
+field_82575_g,dayTime,2,Total time for this world.
+field_82577_x,theGameRules,2,
+field_82578_b,NBTTypes,2,
+field_82584_b,theNBTTagCompound,2,
+field_82587_b,theNBTTagCompound,2,
+field_82596_a,registryObjects,2,Objects registered on this registry.
+field_82597_b,defaultObject,2,"Default object for this registry, returned when an object is not found."
+field_82624_d,zPos,2,
+field_82625_b,xPos,2,
+field_82626_c,yPos,2,
+field_82627_a,worldObj,2,
+field_82635_f,maxSpeedBoostTime,2,Maximum time the entity's speed should be boosted for.
+field_82636_d,speedBoosted,2,Whether the entity's speed is boosted.
+field_82637_e,speedBoostTime,2,"Counter for speed boosting, upon reaching maxSpeedBoostTime the speed boost will be disabled"
+field_82638_b,maxSpeed,2,
+field_82639_c,currentSpeed,2,
+field_82640_a,thisEntity,2,
+field_82641_b,rangedAttackEntityHost,2,The entity (as a RangedAttackMob) the AI instance has been applied to.
+field_82653_b,worldFeatures,2,List of world features enabled on this preset.
+field_82655_a,flatLayers,2,List of layers on this preset.
+field_82661_d,layerMinimumY,2,
+field_82662_b,layerFillBlock,2,Block type used on this set of layers.
+field_82663_c,layerFillBlockMeta,2,Block metadata used on this set of laeyrs.
+field_82664_a,layerCount,2,Amount of layers for this set of layers.
+field_82678_d,cropTypeC,2,Third crop type for this field.
+field_82679_b,cropTypeA,2,First crop type for this field.
+field_82680_c,cropTypeB,2,Second crop type for this field.
+field_82681_h,cropTypeD,2,Fourth crop type for this field.
+field_82682_h,hasWitch,2,Whether this swamp hut has a witch.
+field_82693_j,playerReputation,2,List of player reputations with this village
+field_82707_i,isAnimal,2,Whether this creature type is an animal.
+field_82717_g,anvil,2,
+field_82727_n,wither,2,
+field_82728_o,anvil,2,
+field_82729_p,fallingBlock,2,
+field_82730_x,magicDamage,2,
+field_82731_v,wither,2,The wither Potion object.
+field_82741_K,vecPool,2,The world-local pool of vectors
+field_82745_f,createdAtCloudUpdateTick,2,keeps track of how many ticks this PartiallyDestroyedBlock already exists
+field_82748_f,worldTypeId,2,ID for this world type.
+field_82755_b,isSmoking,2,whether or not this explosion spawns smoke particles
+field_82759_d,valueDouble,2,
+field_82760_b,valueBoolean,2,
+field_82761_c,valueInteger,2,
+field_82762_a,valueString,2,
+field_82771_a,theGameRules,2,
+field_82786_e,maxTradeUses,2,Maximum times this trade can be used.
+field_82791_bT,pumpkinPie,2,
+field_82792_bS,netherStar,2,
+field_82793_bR,carrotOnAStick,2,
+field_82794_bL,potatoe,2,
+field_82795_bM,bakedPotato,2,
+field_82796_bJ,flowerPot,2,
+field_82797_bK,carrot,2,
+field_82798_bP,goldenCarrot,2,
+field_82799_bQ,skull,2,
+field_82800_bN,poisonousPotato,2,
+field_82801_bO,emptyMap,2,
+field_82802_bI,itemFrame,2,
+field_82805_a,theBlock,2,
+field_82807_a,skullTypes,2,
+field_82808_b,cropId,2,Block ID of the crop this seed food should place.
+field_82809_c,soilId,2,Block ID of the soil this seed food should be planted on.
+field_82811_a,hangingEntityClass,2,
+field_82822_g,gameVersion,2,Game version for this server.
+field_82823_k,hideAddress,2,Whether to hide the IP address for this server.
+field_82827_c,bossName,2,
+field_82828_a,healthScale,2,
+field_82843_f,itemFrame,2,"Item frame this stack is on, or null if not on an item frame."
+field_82852_f,outputSlot,2,Here comes out item you merged and/or renamed.
+field_82853_g,inputSlots,2,The 2slots where you put your items in that you want to merge and/or rename.
+field_82854_e,maximumCost,2,The maximum cost of repairing/renaming in the anvil.
+field_82855_n,thePlayer,2,The player that has this container open.
+field_82860_h,theWorld,2,
+field_82862_h,thePlayer,2,
+field_82864_f,beaconSlot,2,"This beacon's slot where you put in Emerald, Diamond, Gold or Iron Ingot."
+field_82866_e,theBeacon,2,
+field_82872_e,anvil,2,The anvil this slot belongs to.
+field_82875_a,theWorld,2,
+field_82876_a,beacon,2,The beacon this slot belongs to.
+field_82880_z,showCape,2,Whether to show your cape
+field_82881_y,pauseOnLostFocus,2,"Whether to pause when the game loses focus, toggled by F3+P"
+field_82882_x,advancedItemTooltips,2,"Whether to show advanced information on item tooltips, toggled by F3+H"
+field_82887_a,mc,2,
+field_82890_f,batOuterLeftWing,2,The outer left wing box of the bat model.
+field_82891_d,batLeftWing,2,The inner left wing box of the bat model.
+field_82892_e,batOuterRightWing,2,The outer right wing box of the bat model.
+field_82893_b,batBody,2,The body box of the bat model.
+field_82894_c,batRightWing,2,The inner right wing box of the bat model.
+field_82895_a,batHead,2,
+field_82896_a,skeletonHead,2,
+field_82909_b,presetName,2,Name for this preset.
+field_82910_c,presetData,2,Data for this preset.
+field_82911_a,iconId,2,ID for the item used as icon for this preset.
+field_82915_S,theWorldGenerator,2,
+field_83004_a,theCrashReport,2,
+field_83016_L,theCalendar,2,
