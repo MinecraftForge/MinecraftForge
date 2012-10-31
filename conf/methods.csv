@@ -59,6 +59,7 @@ func_70058_J,handleLavaMovement,2,Whether or not the current entity is in lava
 func_70059_ac,updateCloak,2,
 func_70060_a,moveFlying,2,Used in both water and by flying objects
 func_70061_h,unmountEntity,2,Called when a player unounts an entity.
+func_70062_b,setCurrentItemOrArmor,2,"Sets the held item, or an armor slot. Slot 0 is held item. Slot 1-4 is armor. Params: Item, slot"
 func_70063_aa,setInPortal,2,Called by portal blocks when an entity is within it.
 func_70064_a,updateFallState,2,"Takes in the distance the entity has fallen this tick and whether its on the ground to update the fall distance and deal fall damage if landing on the ground.  Args: distanceFallenThisTick, onGround"
 func_70065_x,preparePlayerToSpawn,2,Keeps moving the entity up so it isn't colliding with blocks and other requirements for this entity to be spawned (only actually used on players though its also on Entity)
@@ -268,7 +269,7 @@ func_70614_a,rayTrace,2,"Performs a ray trace for the distance specified and usi
 func_70615_aA,eatGrassBonus,2,This function applies the benefits of growing back wool and faster growing up to the acting entity. (This function is used in the AIEatGrass)
 func_70616_bs,getSpeedModifier,2,"This method returns a value to be applied directly to entity speed, this factor is less than 1 when a slowdown potion effect is applied, more than 1 when a haste potion effect is applied and 2 for fleeing entities."
 func_70617_f_,isOnLadder,2,"returns true if this entity is by a ladder, false otherwise"
-func_70618_n,removePotionEffect,2,input is the potion id to remove from the current active potion effects
+func_70618_n,removePotionEffectClient,2,Remove the speified potion effect from this entity.
 func_70619_bc,updateAITasks,2,
 func_70620_b,getItemIcon,2,Gets the Icon Index of the item currently held
 func_70621_aR,getHurtSound,2,Returns the sound this mob makes when it is hurt.
@@ -393,7 +394,7 @@ func_70873_a,setGrowingAge,2,"The age value may be negative or positive or zero.
 func_70874_b,getGrowingAge,2,"The age value may be negative or positive or zero. If it's negative, it get's incremented on each tick, if it's positive, it get's decremented each tick. Don't confuse this with EntityLiving.getAge. With a negative value the Entity is considered a child."
 func_70875_t,resetInLove,2,
 func_70876_c,procreate,2,Creates a baby animal according to the animal type of the target at the actual position and spawns 'love' particles.
-func_70877_b,isWheat,2,Checks if the parameter is an wheat item.
+func_70877_b,isBreedingItem,2,"Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on the animal type)"
 func_70878_b,canMateWith,2,Returns true if the mob is currently able to mate with the specified mob.
 func_70879_a,spawnBabyAnimal,2,This function is used when two same-species animals in 'love mode' breed to generate the new baby animal.
 func_70880_s,isInLove,2,Returns if the entity is currently in 'love mode'.
@@ -480,7 +481,7 @@ func_71023_q,addExperience,2,This method increases the player's current amount o
 func_71024_bL,getFoodStats,2,Returns the player's FoodStats object.
 func_71025_t,getTranslator,2,
 func_71026_bH,isPlayerFullyAsleep,2,Returns whether or not the player is asleep and the screen has fully faded.
-func_71027_c,travelToTheEnd,2,
+func_71027_c,travelToDimension,2,Teleports the entity to another dimension. Params: Dimension number to teleport to
 func_71028_bD,destroyCurrentEquippedItem,2,Destroys the currently equipped item from the player's inventory.
 func_71029_a,triggerAchievement,2,Will trigger the specified trigger.
 func_71030_a,displayGUIMerchant,2,
@@ -2675,7 +2676,7 @@ func_76340_b,getSecond,2,Get the second Object in the Tuple
 func_76341_a,getFirst,2,Get the first Object in the Tuple
 func_76345_d,getHungerDamage,2,How much satiate(food) is consumed by this DamageSource
 func_76346_g,getEntity,2,
-func_76347_k,fireDamage,2,Returns true if the damage is fire based.
+func_76347_k,isFireDamage,2,Returns true if the damage is fire based.
 func_76348_h,setDamageBypassesArmor,2,
 func_76349_b,setProjectile,2,Define the damage type as projectile based.
 func_76352_a,isProjectile,2,Returns true if the damage is projectile based.
@@ -3088,6 +3089,7 @@ func_77218_a,isSelected,2,returns true if the element passed in is currently sel
 func_77219_a,actionPerformed,2,
 func_77220_a,registerScrollButtons,2,Registers the IDs that can be used for the scrollbar's buttons.
 func_77221_c,drawBackground,2,
+func_77225_g,getScrollBarX,2,
 func_77226_h,bindAmountScrolled,2,stop the thing from scrolling out of bounds
 func_77271_a,getChunkPosition,2,
 func_77272_a,chunkXZ2Int,2,converts a chunk coordinate pair to an integer (suitable for hashing)
@@ -3693,6 +3695,7 @@ func_82126_i,getPrimaryEffect,2,Return the primary potion effect given by this b
 func_82129_c,setLevels,2,Set the levels of this beacon's pyramid.
 func_82130_k,getLevels,2,Return the levels of this beacon's pyramid.
 func_82132_j,getSecondaryEffect,2,Return the secondary potion effect given by this beacon.
+func_82141_a,copyDataFrom,2,"Copies important data from another entity to this entity. Used when teleporting entities between worlds, as this actually deletes the teleporting entity and re-creates it on the other side. Params: Entity to copy from, unused (always true)"
 func_82144_au,doesEntityNotTriggerPressurePlate,2,Return whether this entity should NOT trigger a pressure plate or a tripwire.
 func_82145_z,getMaxInPortalTime,2,Return the amount of time this entity should stay in a portal before being transported.
 func_82147_ab,getPortalCooldown,2,Return the amount of cooldown before this entity can use a portal again.
@@ -3757,6 +3760,16 @@ func_82403_a,renderFrameItemAsBlock,2,Render the item frame's item as a block.
 func_82406_b,renderItemAndEffectIntoGUI,2,"Render the item's icon or block into the GUI, including the glint effect."
 func_82448_a,transferEntityToWorld,2,Transfers an entity from a world to another world.
 func_82449_a,findPlayers,2,Find all players in a specified range and narrowing down by other parameters
+func_82460_a,updateSoundLocation,2,Updates the sound associated with the entity with that entity's position and velocity. Args: the entity
+func_82461_f,resumeAllSounds,2,Resumes playing all currently playing sounds (after pauseAllSounds)
+func_82462_a,updateSoundLocation,2,"Updates the sound associated with soundEntity with the position and velocity of trackEntity. Args: soundEntity, trackEntity"
+func_82463_b,setEntitySoundPitch,2,"Sets the pitch of the sound associated with the given entity, if one is playing. Args: the entity, the pitch"
+func_82464_d,stopAllSounds,2,Stops all currently playing sounds
+func_82465_b,isEntitySoundPlaying,2,"Returns true if a sound is currently associated with the given entity, or false otherwise."
+func_82466_e,pauseAllSounds,2,Pauses all currently playing sounds
+func_82467_a,playEntitySound,2,"If a sound is already playing from the given entity, update the position and velocity of that sound to match the entity. Otherwise, start playing a sound from that entity. Args: The sound name, the entity, the volume, the pitch, unknown flag"
+func_82468_a,setEntitySoundVolume,2,"Sets the volume of the sound associated with the given entity, if one is playing. The volume is scaled by the global sound volume. Args: the entity, the volume (from 0 to 1)"
+func_82469_c,stopEntitySound,2,Stops playing the sound associated with the given entity
 func_82482_a,dispense,2,Dispenses the specified ItemStack from a dispenser.
 func_82485_a,playDispenseSound,2,Play the dispense sound from the specified block.
 func_82487_b,dispenseStack,2,"Dispense the specified stack, play the dispense sound and spawn particles."
@@ -3797,7 +3810,8 @@ func_82657_a,getLayerCount,2,Return the amount of layers for this set of layers.
 func_82658_c,getFillBlockMeta,2,Return the block metadata used on this set of layers.
 func_82659_b,getFillBlock,2,Return the block type used on this set of layers.
 func_82660_d,setMinY,2,Set the minimum Y coordinate for this layer.
-func_82677_a,getCrop,2,Return a crop type to be planted on this field.
+func_82674_a,pickRandomCrop,2,Returns a crop type to be planted on this field.
+func_82677_a,pickRandomCrop,2,Returns a crop type to be planted on this field.
 func_82684_a,getReputationForPlayer,2,Return the village reputation for a player
 func_82687_d,isPlayerReputationTooLow,2,Return whether this player has a too low reputation with this village.
 func_82688_a,setReputationForPlayer,2,Set the village reputation for a player
@@ -3811,10 +3825,10 @@ func_82711_a,setWatchableObjectWatched,2,Set whether the specified watchable obj
 func_82719_a,writeCustomPotionEffectToNBT,2,Write a custom potion effect to a potion item's NBT data.
 func_82721_a,setSplashPotion,2,Set whether this potion is a splash potion.
 func_82722_b,readCustomPotionEffectFromNBT,2,Read a custom potion effect from a potion item's NBT data.
-func_82725_o,magicDamage,2,Returns true if the damage is magic based.
+func_82725_o,isMagicDamage,2,Returns true if the damage is magic based.
 func_82726_p,setMagicDamage,2,Define the damage type as magic based.
 func_82732_R,getWorldVec3Pool,2,Return the Vec3Pool object for this world.
-func_82736_K,getGameRulesInstance,2,Gets the GameRules Class Instance.
+func_82736_K,getGameRules,2,Gets the GameRules instance
 func_82737_E,getTotalWorldTime,2,
 func_82743_f,getCreationCloudUpdateTick,2,retrieves the 'date' at which the PartiallyDestroyedBlock was created
 func_82744_b,setCloudUpdateTick,2,saves the current Cloud update tick into the PartiallyDestroyedBlock
@@ -3842,8 +3856,10 @@ func_82816_b_,hasColor,2,Return whether the specified armor ItemStack has a colo
 func_82833_r,getDisplayName,2,returns the display name of the itemstack
 func_82834_c,setItemName,2,Sets the item's name (used by anvil to rename the items).
 func_82836_z,getItemFrame,2,Return the item frame this stack is on. Returns null if not on an item frame.
+func_82837_s,hasDisplayName,2,Returns true if the itemstack has a display name
 func_82838_A,getRepairCost,2,"Get this stack's repair cost, or 0 if no repair cost is defined."
 func_82839_y,isOnItemFrame,2,Return whether this stack is on an item frame.
+func_82840_a,getTooltip,2,Return a list of strings containing information about the item
 func_82841_c,setRepairCost,2,Set this stack's repair cost.
 func_82842_a,setItemFrame,2,Set the item frame this stack is on.
 func_82844_f,getToolCraftingMaterial,2,"Return the crafting material for this tool material, used to determine the item that can be used to repair a tool with an anvil"
@@ -3862,3 +3878,4 @@ func_83008_x,getBlockBoundsMinY,2,returns the block bounderies minY value
 func_83009_v,getBlockBoundsMinX,2,returns the block bounderies minX value
 func_83010_y,getBlockBoundsMaxY,2,returns the block bounderies maxY value
 func_83015_S,getCurrentDate,2,returns a calendar object containing the current date
+func_83020_a,setRenderMinMax,2,"Sets the size and offset of the block to be rendered, ie: half size and rendered center block: 0.25D, 0.75D"

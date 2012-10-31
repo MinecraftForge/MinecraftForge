@@ -564,7 +564,7 @@ field_71318_t,serverConfigManager,2,The ServerConfigurationManager instance.
 field_71319_s,serverPort,2,The server's port.
 field_71320_r,hostname,2,The server's hostname.
 field_71321_q,commandManager,2,
-field_71322_p,playersOnline,2,List of names of players who are online.
+field_71322_p,tickables,2,Collection of objects to update every tick. Type: List<IUpdatePlayerListBox>
 field_71323_z,canSpawnNPCs,2,
 field_71324_y,canSpawnAnimals,2,True if the server has animals turned on.
 field_71325_x,onlineMode,2,True if the server is in online mode.
@@ -4226,6 +4226,7 @@ field_82424_k,bipedArmorFilenamePrefix,2,List of armor texture filenames.
 field_82446_a,renderedBatSize,2,"not actually sure this is size, is not used as of now, but the model would be recreated if the value changed and it seems a good match for a bats size"
 field_82453_b,createFlatWorldGui,2,
 field_82458_b,flatPresetsGui,2,
+field_82470_g,playingSounds,2,Identifiers of all currently playing sounds. Type: HashSet<String>
 field_82475_b,theMinecart,2,Minecart which sound is being updated.
 field_82476_c,thePlayer,2,The player that is getting the minecart sound updates.
 field_82477_a,theSoundManager,2,
