@@ -19,7 +19,7 @@
  
      def creatergcfg(self, reobf=False, keep_lvt=False, keep_generics=False, rg_update=False):
          """Create the files necessary for RetroGuard"""
-@@ -781,7 +786,8 @@
+@@ -781,13 +786,16 @@
          testlk = {CLIENT: self.testclient, SERVER: self.testserver}
  
          if not os.path.exists(os.path.join(srclk[side], os.path.normpath(testlk[side] + '.java'))):
@@ -29,7 +29,15 @@
          return True
  
      def checkbins(self, side):
-@@ -1029,6 +1035,10 @@
+         binlk = {CLIENT: self.binclient, SERVER: self.binserver}
+         testlk = {CLIENT: self.testclient, SERVER: self.testserver}
+ 
++        if side == SERVER:
++            return self.checkbins(CLIENT)
+         if not os.path.exists(os.path.join(binlk[side], os.path.normpath(testlk[side] + '.class'))):
+             return False
+         return True
+@@ -1029,6 +1037,10 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
          pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
  
@@ -40,7 +48,7 @@
          if not os.path.exists(pathbinlk[side]):
              os.makedirs(pathbinlk[side])
  
-@@ -1041,6 +1051,7 @@
+@@ -1041,6 +1053,7 @@
              all_files = True
              append_pattern = False
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=append_pattern, all_files=all_files)
@@ -48,16 +56,16 @@
          dirs = ' '.join(pkglist)
          classpath = os.pathsep.join(cplk[side])
          forkcmd = self.cmdrecomp.format(classpath=classpath, sourcepath=pathsrclk[side], outpath=pathbinlk[side],
-@@ -1062,7 +1073,7 @@
+@@ -1062,7 +1075,7 @@
              raise
  
      def startserver(self):
 -        classpath = [self.binserver] + self.cpathserver
-+        classpath = [self.binserver, self.srcshared] + self.cpathserver
++        classpath = [self.binclient, self.srcshared] + self.cpathserver
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1070,7 +1081,7 @@
+@@ -1070,7 +1083,7 @@
          self.runmc(forkcmd)
  
      def startclient(self):
@@ -66,7 +74,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          natives = os.path.join('..', self.dirnatives)
-@@ -1197,20 +1208,20 @@
+@@ -1197,20 +1210,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -90,7 +98,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1240,6 +1251,11 @@
+@@ -1240,6 +1253,11 @@
  
          # HINT: We pathwalk the sources
          for path, _, filelist in os.walk(pathsrclk[side], followlinks=True):
@@ -102,7 +110,7 @@
              for cur_file in fnmatch.filter(filelist, '*.java'):
                  updatefile(os.path.normpath(os.path.join(path, cur_file)))
          return True
-@@ -1322,12 +1338,14 @@
+@@ -1322,12 +1340,14 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
  
          strip_comments(pathsrclk[side])
@@ -117,7 +125,7 @@
  
      def process_javadoc(self, side):
          """Add CSV descriptions to methods and fields as javadoc"""
-@@ -1336,6 +1354,21 @@
+@@ -1336,6 +1356,21 @@
          if not self.has_doc_csv:
              self.logger.warning('!! javadoc disabled due to no csvs !!')
              return False
@@ -139,7 +147,7 @@
  
          #HINT: We read the relevant CSVs
          methodsreader = csv.DictReader(open(self.csvmethods, 'r'))
-@@ -1344,13 +1377,13 @@
+@@ -1344,13 +1379,13 @@
          methods = {}
          for row in methodsreader:
              #HINT: Only include methods that have a non-empty description
@@ -155,7 +163,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1422,12 +1455,13 @@
+@@ -1422,12 +1457,13 @@
  
          # HINT: We create the list of source directories based on the list of packages
          pkglist = filterdirs(pathsrclk[side], '*.java', append_pattern=True)
@@ -170,7 +178,7 @@
          if not reobf:
              md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
          else:
-@@ -1442,6 +1476,9 @@
+@@ -1442,6 +1478,9 @@
                      class_path = ''
                  else:
                      class_path += '/'
@@ -180,7 +188,7 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1594,6 +1631,9 @@
+@@ -1594,6 +1633,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -190,7 +198,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1614,6 +1654,9 @@
+@@ -1614,6 +1656,9 @@
          md5reoblk = {CLIENT: self.md5reobfclient, SERVER: self.md5reobfserver}
          outpathlk = {CLIENT: self.srcmodclient, SERVER: self.srcmodserver}
          src = {CLIENT: self.srcclient, SERVER: self.srcserver}
@@ -200,7 +208,7 @@
  
          # HINT: We need a table for the old md5 and the new ones
          md5table = {}
-@@ -1646,6 +1689,7 @@
+@@ -1646,6 +1691,7 @@
          # HINT: We extract the source files for the modified class files
          for in_class in trgclasses:
              src_file = os.path.normpath(os.path.join(src[side], in_class + '.java'))
@@ -208,7 +216,7 @@
              dest_file = os.path.normpath(os.path.join(outpathlk[side], in_class + '.java'))
              if os.path.isfile(src_file):
                  if not os.path.exists(os.path.dirname(dest_file)):
-@@ -1655,4 +1699,15 @@
+@@ -1655,4 +1701,15 @@
                      self.logger.info('> Outputted %s to %s', in_class.ljust(35), outpathlk[side])
                  except IOError:
                      self.logger.error('* File %s copy failed', in_class)
