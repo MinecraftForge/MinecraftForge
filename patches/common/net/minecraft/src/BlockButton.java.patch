@@ -11,7 +11,7 @@
  
  public class BlockButton extends Block
  {
-@@ -54,7 +58,11 @@
+@@ -55,7 +59,11 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -24,7 +24,7 @@
      }
  
      /**
-@@ -62,7 +70,10 @@
+@@ -63,7 +71,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -36,7 +36,7 @@
      }
  
      /**
-@@ -73,20 +84,22 @@
+@@ -74,20 +85,22 @@
          int var9 = par1World.getBlockMetadata(par2, par3, par4);
          int var10 = var9 & 8;
          var9 &= 7;
@@ -64,7 +64,7 @@
          {
              var9 = 1;
          }
-@@ -103,7 +116,11 @@
+@@ -104,7 +117,11 @@
       */
      private int getOrientation(World par1World, int par2, int par3, int par4)
      {
@@ -77,7 +77,7 @@
      }
  
      /**
-@@ -117,22 +134,22 @@
+@@ -118,22 +135,22 @@
              int var6 = par1World.getBlockMetadata(par2, par3, par4) & 7;
              boolean var7 = false;
  

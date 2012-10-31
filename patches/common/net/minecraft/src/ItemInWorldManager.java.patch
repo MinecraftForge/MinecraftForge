@@ -20,7 +20,7 @@
  
 @@ -134,6 +144,13 @@
      {
-         if (!this.gameType.func_82752_c() || this.thisPlayerMP.func_82246_f(par1, par2, par3))
+         if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
          {
 +            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
 +            if (event.isCanceled())

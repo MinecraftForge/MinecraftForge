@@ -37,7 +37,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -674,4 +686,265 @@
+@@ -677,4 +689,265 @@
      {
          StatList.initStats();
      }

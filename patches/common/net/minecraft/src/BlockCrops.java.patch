@@ -26,7 +26,7 @@
                      {
                          var20 = 3.0F;
                      }
-@@ -152,22 +156,37 @@
+@@ -158,22 +162,37 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
@@ -41,7 +41,7 @@
 -                {
 -                    if (par1World.rand.nextInt(15) <= par5)
 -                    {
--                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(this.func_82532_h(), 1, 0));
+-                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(this.getSeedItem(), 1, 0));
 -                    }
 -                }
 -            }
@@ -71,7 +71,7 @@
 +            {
 +                if (world.rand.nextInt(15) <= metadata)
 +                {
-+                    ret.add(new ItemStack(this.func_82532_h(), 1, 0));
++                    ret.add(new ItemStack(this.getSeedItem(), 1, 0));
 +                }
 +            }
 +        }

@@ -177,7 +177,7 @@
          }
  
 -        return var6 > 16 || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
-+        return var6 > mcServer.func_82357_ak() || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
++        return var6 > mcServer.getSpawnProtectionSize() || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
      }
  
      protected void initialize(WorldSettings par1WorldSettings)

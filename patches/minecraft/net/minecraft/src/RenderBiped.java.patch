@@ -12,16 +12,16 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
-@@ -46,7 +51,7 @@
+@@ -48,7 +53,7 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
--                this.loadTexture("/armor/" + field_82424_k[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
-+                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + field_82424_k[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
+-                this.loadTexture("/armor/" + bipedArmorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
++                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + bipedArmorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
                  ModelBiped var7 = par2 == 2 ? this.field_82425_h : this.field_82423_g;
                  var7.bipedHead.showModel = par2 == 0;
                  var7.bipedHeadwear.showModel = par2 == 0;
-@@ -161,9 +166,12 @@
+@@ -163,9 +168,12 @@
              GL11.glPushMatrix();
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
@@ -37,7 +37,7 @@
                  {
                      var6 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -205,7 +213,10 @@
+@@ -207,7 +215,10 @@
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
@@ -49,7 +49,7 @@
              {
                  var6 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -252,7 +263,10 @@
+@@ -254,7 +265,10 @@
  
              if (var4.getItem().requiresMultipleRenderPasses())
              {
