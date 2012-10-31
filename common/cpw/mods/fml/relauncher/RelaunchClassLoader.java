@@ -27,6 +27,7 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private List<IClassTransformer> transformers;
     private Map<String, Class> cachedClasses;
+    private Set<String> invalidClasses;
 
     private Set<String> classLoaderExceptions = new HashSet<String>();
     private Set<String> transformerExceptions = new HashSet<String>();
@@ -37,6 +38,7 @@ public class RelaunchClassLoader extends URLClassLoader
         this.sources = new ArrayList<URL>(Arrays.asList(sources));
         this.parent = getClass().getClassLoader();
         this.cachedClasses = new HashMap<String,Class>(1000);
+        this.invalidClasses = new HashSet<String>(1000);
         this.transformers = new ArrayList<IClassTransformer>(2);
 //        ReflectionHelper.setPrivateValue(ClassLoader.class, null, this, "scl");
         Thread.currentThread().setContextClassLoader(this);
@@ -69,6 +71,10 @@ public class RelaunchClassLoader extends URLClassLoader
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException
     {
+        if (invalidClasses.contains(name))
+        {
+            throw new ClassNotFoundException(name);
+        }
         // NEI/CCC compatibility code
         if (excludedPackages.length != 0)
         {
@@ -98,9 +104,17 @@ public class RelaunchClassLoader extends URLClassLoader
         {
             if (name.startsWith(st))
             {
-                Class<?> cl = super.findClass(name);
-                cachedClasses.put(name, cl);
-                return cl;
+                try
+                {
+                    Class<?> cl = super.findClass(name);
+                    cachedClasses.put(name, cl);
+                    return cl;
+                }
+                catch (ClassNotFoundException e)
+                {
+                    invalidClasses.add(name);
+                    throw e;
+                }
             }
         }
 
@@ -123,6 +137,7 @@ public class RelaunchClassLoader extends URLClassLoader
         }
         catch (Throwable e)
         {
+            invalidClasses.add(name);
             throw new ClassNotFoundException(name, e);
         }
     }
