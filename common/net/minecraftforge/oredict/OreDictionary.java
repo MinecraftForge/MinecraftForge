@@ -73,84 +73,84 @@ public class OreDictionary
             "ppp",
             "p p",
             "ppp",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.workbench,
             "pp",
             "pp",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.pickaxeWood,
             "ppp",
             " s ",
             " s ",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.shovelWood,
             "p",
             "s",
             "s",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.axeWood,
             "pp",
             "ps",
             " s",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.hoeWood,
             "pp",
             " s",
             " s",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.swordWood,
             "p",
             "p",
             "s",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.fenceGate,
             "sps",
             "sps",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.jukebox,
             "ppp",
             "pdp",
             "ppp",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('r'), new ItemStack(Item.diamond));
+            'p', "plankWood",
+            'r', new ItemStack(Item.diamond));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.music,
             "ppp",
             "prp",
             "ppp",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('r'), new ItemStack(Item.redstone));
+            'p', "plankWood",
+            'r', new ItemStack(Item.redstone));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.bookShelf,
             "ppp",
             "bbb",
             "ppp",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('b'), new ItemStack(Item.book));
+            'p', "plankWood",
+            'b', new ItemStack(Item.book));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapelessOreRecipe(Block.field_82511_ci, "plankWood");
@@ -160,70 +160,70 @@ public class OreDictionary
             "pp",
             "pp",
             "pp",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(new ItemStack(Block.trapdoor, 2),
             "ppp",
             "ppp",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(new ItemStack(Item.sign, 3),
             "ppp",
             "ppp",
             " s ",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(new ItemStack(Item.stick, 4),
             "p",
             "p",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(new ItemStack(Item.bowlEmpty, 4),
             "p p",
             " p ",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.boat,
             "p p",
             "ppp",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.pressurePlatePlanks,
             "pp",
-            Character.valueOf('p'), "plankWood");
+            'p', "plankWood");
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Block.pistonBase,
             "ppp",
             "cic",
             "crc",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('c'), new ItemStack(Block.cobblestone),
-            Character.valueOf('i'), new ItemStack(Item.ingotIron),
-            Character.valueOf('r'), new ItemStack(Item.redstone));
+            'p', "plankWood",
+            'c', new ItemStack(Block.cobblestone),
+            'i', new ItemStack(Item.ingotIron),
+            'r', new ItemStack(Item.redstone));
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(Item.bed,
             "ccc",
             "ppp",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('c'), Block.cloth);
+            'p', "plankWood",
+            'c', Block.cloth);
         CraftingManager.getInstance().getRecipeList().add(recipe);
 
         recipe = new ShapedOreRecipe(new ItemStack(Block.tripWireSource, 2),
             "i",
             "s",
             "p",
-            Character.valueOf('p'), "plankWood",
-            Character.valueOf('i'), new ItemStack(Item.ingotIron),
-            Character.valueOf('s'), new ItemStack(Item.stick));
+            'p', "plankWood",
+            'i', new ItemStack(Item.ingotIron),
+            's', new ItemStack(Item.stick));
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
