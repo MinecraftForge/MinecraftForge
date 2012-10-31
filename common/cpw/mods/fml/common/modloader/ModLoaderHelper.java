@@ -32,6 +32,7 @@ import net.minecraft.src.IAnimals;
 import net.minecraft.src.ICommand;
 import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IDispenserHandler;
@@ -63,7 +64,12 @@ public class ModLoaderHelper
 
     public static void updateStandardTicks(BaseModProxy mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
+        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().getReversedModObjectList().get(mod);
+        if (mlmc==null)
+        {
+            FMLLog.severe("Attempted to register ModLoader ticking for invalid BaseMod %s",mod);
+            return;
+        }
         BaseModTicker ticker = mlmc.getGameTickHandler();
         EnumSet<TickType> ticks = ticker.ticks();
         // If we're enabled we get render ticks
@@ -84,7 +90,12 @@ public class ModLoaderHelper
 
     public static void updateGUITicks(BaseModProxy mod, boolean enable, boolean useClock)
     {
-        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
+        ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().getReversedModObjectList().get(mod);
+        if (mlmc==null)
+        {
+            FMLLog.severe("Attempted to register ModLoader ticking for invalid BaseMod %s",mod);
+            return;
+        }
         EnumSet<TickType> ticks = mlmc.getGUITickHandler().ticks();
         // If we're enabled and we don't want clock ticks we get render ticks
         if (enable && !useClock) {
