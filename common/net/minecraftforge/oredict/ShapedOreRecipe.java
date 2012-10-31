@@ -2,6 +2,8 @@ package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IRecipe;
@@ -11,12 +13,12 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.ShapedRecipes;
 import net.minecraft.src.World;
 
-public class ShapedOreRecipe implements IRecipe 
+public class ShapedOreRecipe implements IRecipe
 {
     //Added in for future ease of change, but hard coded for now.
     private static final int MAX_CRAFT_GRID_WIDTH = 3;
     private static final int MAX_CRAFT_GRID_HEIGHT = 3;
-    
+
     private ItemStack output = null;
     private Object[] input = null;
     private int width = 0;
@@ -54,7 +56,7 @@ public class ShapedOreRecipe implements IRecipe
                 width = s.length();
                 shape += s;
             }
-            
+
             height = parts.length;
         }
         else
@@ -119,7 +121,34 @@ public class ShapedOreRecipe implements IRecipe
         int x = 0;
         for (char chr : shape.toCharArray())
         {
-            input[x++] = itemMap.get(chr);   
+            input[x++] = itemMap.get(chr);
+        }
+    }
+
+    ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
+    {
+        output = recipe.getRecipeOutput();
+        width = recipe.recipeWidth;
+        height = recipe.recipeHeight;
+
+        input = new Object[recipe.recipeItems.length];
+
+        for(int i = 0; i < input.length; i++)
+        {
+            ItemStack ingred = recipe.recipeItems[i];
+
+            if(ingred == null) continue;
+
+            input[i] = recipe.recipeItems[i];
+
+            for(Entry<ItemStack, String> replace : replacements.entrySet())
+            {
+                if(ingred.isItemEqual(replace.getKey()))
+                {
+                    input[i] = OreDictionary.getOres(replace.getValue());
+                    break;
+                }
+            }
         }
     }
 
@@ -134,7 +163,7 @@ public class ShapedOreRecipe implements IRecipe
 
     @Override
     public boolean matches(InventoryCrafting inv, World world)
-    {        
+    {
         for (int x = 0; x <= MAX_CRAFT_GRID_WIDTH - width; x++)
         {
             for (int y = 0; y <= MAX_CRAFT_GRID_HEIGHT - height; ++y)
@@ -143,17 +172,17 @@ public class ShapedOreRecipe implements IRecipe
                 {
                     return true;
                 }
-    
+
                 if (mirrored && checkMatch(inv, x, y, false))
                 {
                     return true;
                 }
             }
         }
-    
+
         return false;
     }
-    
+
     private boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < MAX_CRAFT_GRID_WIDTH; x++)
@@ -177,7 +206,7 @@ public class ShapedOreRecipe implements IRecipe
                 }
 
                 ItemStack slot = inv.getStackInRowAndColumn(x, y);
-                
+
                 if (target instanceof ItemStack)
                 {
                     if (!checkItemEquals((ItemStack)target, slot))
@@ -188,12 +217,12 @@ public class ShapedOreRecipe implements IRecipe
                 else if (target instanceof ArrayList)
                 {
                     boolean matched = false;
-                    
+
                     for (ItemStack item : (ArrayList<ItemStack>)target)
                     {
                         matched = matched || checkItemEquals(item, slot);
                     }
-                    
+
                     if (!matched)
                     {
                         return false;
@@ -208,7 +237,7 @@ public class ShapedOreRecipe implements IRecipe
 
         return true;
     }
-    
+
     private boolean checkItemEquals(ItemStack target, ItemStack input)
     {
         if (input == null && target != null || input != null && target == null)
@@ -217,7 +246,7 @@ public class ShapedOreRecipe implements IRecipe
         }
         return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
     }
-    
+
     public ShapedOreRecipe setMirrored(boolean mirror)
     {
         mirrored = mirror;
