@@ -13,7 +13,7 @@
          else
          {
              int var5 = par1World.getBlockId(par2, par3, par4);
--            return var5 == Block.fence.blockID || var5 == Block.netherFence.blockID || var5 == Block.glass.blockID || var5 == Block.field_82515_ce.blockID;
+-            return var5 == Block.fence.blockID || var5 == Block.netherFence.blockID || var5 == Block.glass.blockID || var5 == Block.cobblestoneWall.blockID;
 +            return (Block.blocksList[var5] != null && Block.blocksList[var5].canPlaceTorchOnTop(par1World, par2, par3, par4));
          }
      }

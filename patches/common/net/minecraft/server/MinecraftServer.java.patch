@@ -18,7 +18,7 @@
  
  public abstract class MinecraftServer implements Runnable, IPlayerUsage, ICommandSender
  {
-@@ -150,7 +154,8 @@
+@@ -152,7 +156,8 @@
      public final long[] tickTimeArray = new long[100];
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
@@ -28,7 +28,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -238,8 +243,6 @@
+@@ -243,8 +248,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -37,7 +37,7 @@
          ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo var9 = var7.loadWorldInfo();
          WorldSettings var8;
-@@ -259,46 +262,23 @@
+@@ -264,46 +267,23 @@
              var8.enableBonusChest();
          }
  
@@ -95,7 +95,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -429,7 +409,9 @@
+@@ -434,7 +414,9 @@
              for (int var3 = 0; var3 < var2; ++var3)
              {
                  WorldServer var4 = var1[var3];
@@ -105,7 +105,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -642,13 +624,13 @@
+@@ -647,13 +629,13 @@
      {
          this.theProfiler.startSection("levels");
  
@@ -122,8 +122,8 @@
 +                WorldServer var4 = DimensionManager.getWorld(id);
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
-                 var4.func_82732_R().clear();
-@@ -673,9 +655,11 @@
+                 var4.getWorldVec3Pool().clear();
+@@ -678,9 +660,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -138,7 +138,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -731,7 +715,13 @@
+@@ -736,7 +720,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -153,7 +153,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -840,7 +830,7 @@
+@@ -845,7 +835,7 @@
  
      public String getServerModName()
      {
@@ -162,7 +162,7 @@
      }
  
      /**
-@@ -1119,6 +1109,7 @@
+@@ -1124,6 +1114,7 @@
  
              if (var2 != null)
              {

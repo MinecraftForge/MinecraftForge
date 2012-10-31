@@ -10,11 +10,11 @@
  
  public class ComponentStrongholdRoomCrossing extends ComponentStronghold
  {
-@@ -137,7 +140,7 @@
+@@ -140,7 +143,7 @@
                      this.placeBlockAtCurrentPosition(par1World, Block.ladder.blockID, this.getMetadataWithOffset(Block.ladder.blockID, 4), 9, 1, 3, par3StructureBoundingBox);
                      this.placeBlockAtCurrentPosition(par1World, Block.ladder.blockID, this.getMetadataWithOffset(Block.ladder.blockID, 4), 9, 2, 3, par3StructureBoundingBox);
                      this.placeBlockAtCurrentPosition(par1World, Block.ladder.blockID, this.getMetadataWithOffset(Block.ladder.blockID, 4), 9, 3, 3, par3StructureBoundingBox);
--                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 4, 8, field_75014_c, 1 + par2Random.nextInt(4));
+-                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 4, 8, strongholdRoomCrossingChestContents, 1 + par2Random.nextInt(4));
 +                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 4, 8, ChestGenHooks.getItems(STRONGHOLD_CROSSING), ChestGenHooks.getCount(STRONGHOLD_CROSSING, par2Random));
              }
  

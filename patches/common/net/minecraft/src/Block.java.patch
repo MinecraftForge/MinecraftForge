@@ -93,7 +93,7 @@
                  }
              }
          }
-@@ -1027,7 +1033,7 @@
+@@ -1045,7 +1051,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1297,4 +1303,848 @@
+@@ -1315,4 +1321,848 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -732,7 +732,7 @@
 +        else
 +        {
 +            int id = world.getBlockId(x, y, z);
-+            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID || id == Block.field_82515_ce.blockID;
++            return id == Block.fence.blockID || id == Block.netherFence.blockID || id == Block.glass.blockID || id == Block.cobblestoneWall.blockID;
 +        }
 +    }
 +    

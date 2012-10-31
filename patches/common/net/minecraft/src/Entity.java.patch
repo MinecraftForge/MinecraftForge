@@ -21,7 +21,7 @@
  
      public Entity(World par1World)
      {
-@@ -1463,6 +1470,15 @@
+@@ -1466,6 +1473,15 @@
          par1NBTTagCompound.setShort("Air", (short)this.getAir());
          par1NBTTagCompound.setBoolean("OnGround", this.onGround);
          par1NBTTagCompound.setInteger("Dimension", this.dimension);
@@ -37,7 +37,7 @@
          this.writeEntityToNBT(par1NBTTagCompound);
      }
  
-@@ -1505,6 +1521,14 @@
+@@ -1508,6 +1524,14 @@
          this.dimension = par1NBTTagCompound.getInteger("Dimension");
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -52,7 +52,7 @@
          this.readEntityFromNBT(par1NBTTagCompound);
      }
  
-@@ -1591,7 +1615,14 @@
+@@ -1594,7 +1618,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -68,7 +68,7 @@
          return var3;
      }
  
-@@ -1945,7 +1976,7 @@
+@@ -1954,7 +1985,7 @@
       */
      public boolean isRiding()
      {
@@ -77,7 +77,7 @@
      }
  
      /**
-@@ -2262,7 +2293,7 @@
+@@ -2279,7 +2310,7 @@
  
      public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
@@ -86,7 +86,7 @@
      }
  
      public int func_82143_as()
-@@ -2279,4 +2310,84 @@
+@@ -2299,4 +2330,84 @@
      {
          return false;
      }
@@ -140,7 +140,7 @@
 +            ItemStack held = ((EntityItemFrame)this).func_82335_i();
 +            if (held == null)
 +            {
-+                return new ItemStack(Item.field_82802_bI);
++                return new ItemStack(Item.itemFrame);
 +            }
 +            else
 +            {

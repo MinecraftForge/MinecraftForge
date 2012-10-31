@@ -12,7 +12,7 @@
  import org.lwjgl.Sys;
 @@ -1252,7 +1255,7 @@
  
-                 if (this.thePlayer.func_82246_f(var3, var4, var5))
+                 if (this.thePlayer.canCurrentToolHarvestBlock(var3, var4, var5))
                  {
 -                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver.sideHit);
 +                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver);
@@ -107,7 +107,7 @@
 -
 -                    if (var10.func_82335_i() == null)
 -                    {
--                        var2 = Item.field_82802_bI.shiftedIndex;
+-                        var2 = Item.itemFrame.shiftedIndex;
 -                    }
 -                    else
 -                    {

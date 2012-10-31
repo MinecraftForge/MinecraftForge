@@ -20,7 +20,7 @@
 +            return false;
 +        }
 +
-         if (this.currentGameType.func_82752_c() && !this.mc.thePlayer.func_82246_f(par1, par2, par3))
+         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
          {
              return false;
 @@ -121,7 +130,7 @@

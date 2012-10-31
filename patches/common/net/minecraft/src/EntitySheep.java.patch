@@ -44,7 +44,7 @@
          return super.interact(par1EntityPlayer);
      }
  
-@@ -301,4 +283,24 @@
+@@ -304,4 +286,24 @@
      {
          this.setFleeceColor(getRandomFleeceColor(this.worldObj.rand));
      }

@@ -45,22 +45,22 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          var4.removeEntity(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
--        this.func_82448_a(par1EntityPlayerMP, var3, var4, var5);
-+        this.func_82448_a(par1EntityPlayerMP, var3, var4, var5, teleporter);
+-        this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5);
++        this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5, teleporter);
          this.func_72375_a(par1EntityPlayerMP, var4);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(var5);
-@@ -394,37 +407,22 @@
- 
-     public void func_82448_a(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
+@@ -397,37 +410,22 @@
+      */
+     public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
 -        double var5 = par1Entity.posX;
 -        double var7 = par1Entity.posZ;
 -        double var9 = 8.0D;
-+        func_82448_a(par1Entity, par2, par3WorldServer, par4WorldServer, new Teleporter());
++        transferEntityToWorld(par1Entity, par2, par3WorldServer, par4WorldServer, new Teleporter());
 +    }
 +
-+    public void func_82448_a(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
++    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
 +    {
 +        WorldProvider pOld = par3WorldServer.provider;
 +        WorldProvider pNew = par4WorldServer.provider;
@@ -99,7 +99,7 @@
          {
              ChunkCoordinates var18;
  
-@@ -458,7 +456,7 @@
+@@ -461,7 +459,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);

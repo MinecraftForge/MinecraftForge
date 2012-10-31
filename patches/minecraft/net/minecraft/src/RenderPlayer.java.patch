@@ -84,5 +84,5 @@
 -                for (int var27 = 0; var27 <= 1; ++var27)
 +                for (int var27 = 0; var27 < var21.getItem().getRenderPasses(var21.getItemDamage()); ++var27)
                  {
-                     int var26 = var21.getItem().func_82790_a(var21, var27);
+                     int var26 = var21.getItem().getColorFromItemStack(var21, var27);
                      float var28 = (float)(var26 >> 16 & 255) / 255.0F;

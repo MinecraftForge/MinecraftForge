@@ -132,7 +132,7 @@
                  }
              }
 @@ -215,12 +267,60 @@
-                 var8 = (double)par1 + var6.func_83007_w() + (double)var7;
+                 var8 = (double)par1 + var6.getBlockBoundsMaxX() + (double)var7;
              }
  
 -            this.addEffect((new EntityDiggingFX(this.worldObj, var8, var10, var12, 0.0D, 0.0D, 0.0D, var6, par4, this.worldObj.getBlockMetadata(par1, par2, par3))).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
