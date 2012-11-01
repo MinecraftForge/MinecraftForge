@@ -1,0 +1,54 @@
+--- ../src-base/common/net/minecraft/src/RegionFileCache.java
++++ ../src-work/common/net/minecraft/src/RegionFileCache.java
+@@ -4,8 +4,6 @@
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.IOException;
+-import java.lang.ref.Reference;
+-import java.lang.ref.SoftReference;
+ import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.Map;
+@@ -18,17 +16,11 @@
+     {
+         File var3 = new File(p_76550_0_, "region");
+         File var4 = new File(var3, "r." + (p_76550_1_ >> 5) + "." + (p_76550_2_ >> 5) + ".mca");
+-        Reference var5 = (Reference)field_76553_a.get(var4);
+-        RegionFile var6;
++        RegionFile var6 = (RegionFile) field_76553_a.get(var4);
+ 
+-        if (var5 != null)
++        if (var6 != null)
+         {
+-            var6 = (RegionFile)var5.get();
+-
+-            if (var6 != null)
+-            {
+-                return var6;
+-            }
++            return var6;
+         }
+ 
+         if (!var3.exists())
+@@ -42,7 +34,7 @@
+         }
+ 
+         var6 = new RegionFile(var4);
+-        field_76553_a.put(var4, new SoftReference(var6));
++        field_76553_a.put(var4, var6);
+         return var6;
+     }
+ 
+@@ -52,11 +44,9 @@
+ 
+         while (var0.hasNext())
+         {
+-            Reference var1 = (Reference)var0.next();
+-
+             try
+             {
+-                RegionFile var2 = (RegionFile)var1.get();
++                RegionFile var2 = (RegionFile)var0.next();
+ 
+                 if (var2 != null)
+                 {
