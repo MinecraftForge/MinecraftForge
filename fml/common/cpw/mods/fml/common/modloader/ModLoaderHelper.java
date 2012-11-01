@@ -67,6 +67,10 @@ public class ModLoaderHelper
         ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().getReversedModObjectList().get(mod);
         if (mlmc==null)
         {
+            mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
+        }
+        if (mlmc == null)
+        {
             FMLLog.severe("Attempted to register ModLoader ticking for invalid BaseMod %s",mod);
             return;
         }
@@ -92,6 +96,10 @@ public class ModLoaderHelper
     {
         ModLoaderModContainer mlmc = (ModLoaderModContainer) Loader.instance().getReversedModObjectList().get(mod);
         if (mlmc==null)
+        {
+            mlmc = (ModLoaderModContainer) Loader.instance().activeModContainer();
+        }
+        if (mlmc == null)
         {
             FMLLog.severe("Attempted to register ModLoader ticking for invalid BaseMod %s",mod);
             return;
