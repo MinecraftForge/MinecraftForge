@@ -7,11 +7,11 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.io.File;
-@@ -40,6 +41,7 @@
-         this.func_71500_a("Memory", new CallableMemoryInfo(this));
-         this.func_71500_a("JVM Flags", new CallableJVMFlags(this));
-         this.func_71500_a("AABB Pool Size", new CallableCrashMemoryReport(this));
-+        FMLCommonHandler.instance().enhanceCrashReport(this);
+@@ -43,6 +44,7 @@
+         this.field_85061_c.func_71500_a("AABB Pool Size", new CallableCrashMemoryReport(this));
+         this.field_85061_c.func_71500_a("Suspicious classes", new CallableSuspiciousClasses(this));
+         this.field_85061_c.func_71500_a("IntCache", new CallableIntCache(this));
++        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
      }
  
-     public void func_71500_a(String p_71500_1_, Callable p_71500_2_)
+     public String func_71501_a()

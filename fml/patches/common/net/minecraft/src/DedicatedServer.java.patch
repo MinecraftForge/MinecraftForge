@@ -16,7 +16,7 @@
          field_71306_a.info("Loading properties");
          this.field_71340_o = new PropertyManager(new File("server.properties"));
  
-@@ -101,6 +104,7 @@
+@@ -111,6 +114,7 @@
              field_71306_a.warning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
          }
  
@@ -24,7 +24,7 @@
          this.func_71210_a(new DedicatedPlayerList(this));
          long var4 = System.nanoTime();
  
-@@ -161,7 +165,7 @@
+@@ -171,7 +175,7 @@
              this.field_71339_n = new RConThreadMain(this);
              this.field_71339_n.func_72602_a();
          }

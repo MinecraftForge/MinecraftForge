@@ -1,6 +1,27 @@
+diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java
+--- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Fri Nov 02 00:00:17 2012
++++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Fri Nov 02 00:07:35 2012
+@@ -21,9 +21,14 @@
+ 
+    public String func_85085_a() {
+       StringBuilder var1 = new StringBuilder();
+-      Field var2 = ClassLoader.class.getDeclaredField("classes");
+-      var2.setAccessible(true);
+-      ArrayList var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
++      ArrayList var3;
++      try {
++         Field var2 = ClassLoader.class.getDeclaredField("classes");
++         var2.setAccessible(true);
++         var3 = new ArrayList((Vector)var2.get(CrashReport.class.getClassLoader()));
++      } catch(Exception ex) {
++    	 return "";
++      }
+       boolean var4 = true;
+       boolean var5 = !CrashReport.class.getCanonicalName().equals("net.minecraft.CrashReport");
+       HashMap var6 = new HashMap();
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
---- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Oct 20 04:11:53 2012
-+++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Oct 20 04:14:21 2012
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Nov 02 00:00:18 2012
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Nov 02 00:00:47 2012
 @@ -11,6 +11,10 @@
  
  public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
@@ -13,9 +34,9 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.jav
        if(this.field_74885_f != 2 && this.field_74885_f != 3) {
           this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
---- minecraft_server\net\minecraft\src\DedicatedServer.java	Sat Oct 20 04:11:53 2012
-+++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Sat Oct 20 04:13:58 2012
-@@ -195,7 +195,7 @@
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Fri Nov 02 00:00:18 2012
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Fri Nov 02 00:00:47 2012
+@@ -203,7 +203,7 @@
        System.exit(0);
     }
  
@@ -25,8 +46,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_s
        this.func_71333_ah();
     }
 diff -r -U 3 minecraft_server\net\minecraft\src\EnumFacing.java minecraft_server_patched\net\minecraft\src\EnumFacing.java
---- minecraft_server\net\minecraft\src\EnumFacing.java	Sat Oct 20 04:11:53 2012
-+++ minecraft_server_patched\net\minecraft\src\EnumFacing.java	Sat Oct 20 04:13:22 2012
+--- minecraft_server\net\minecraft\src\EnumFacing.java	Fri Nov 02 00:00:18 2012
++++ minecraft_server_patched\net\minecraft\src\EnumFacing.java	Fri Nov 02 00:00:47 2012
 @@ -15,10 +15,6 @@
     private final int field_82612_k;
     private static final EnumFacing[] field_82609_l = new EnumFacing[6];
@@ -48,8 +69,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\EnumFacing.java minecraft_server
  
        for(int var2 = 0; var2 < var1; ++var2) {
 diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
---- minecraft_server\net\minecraft\src\TcpMasterThread.java	Sat Oct 20 04:11:54 2012
-+++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Sat Oct 20 04:18:38 2012
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Fri Nov 02 00:00:19 2012
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Fri Nov 02 00:00:47 2012
 @@ -11,6 +11,7 @@
        this.field_74504_a = p_i3285_1_;
     }
@@ -59,8 +80,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_s
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sat Oct 20 04:11:54 2012
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sat Oct 20 04:19:13 2012
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Nov 02 00:00:19 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Nov 02 00:00:47 2012
 @@ -20,7 +20,8 @@
     }
  

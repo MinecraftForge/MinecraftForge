@@ -45,7 +45,7 @@
      }
  
      public String func_77127_a()
-@@ -97,4 +117,69 @@
+@@ -96,4 +116,69 @@
      {
          return this.field_82748_f;
      }

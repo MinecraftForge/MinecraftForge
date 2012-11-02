@@ -9,7 +9,7 @@
  
  public class ChunkProviderServer implements IChunkProvider
  {
-@@ -182,6 +184,7 @@
+@@ -194,6 +196,7 @@
              if (this.field_73246_d != null)
              {
                  this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);

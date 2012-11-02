@@ -17,9 +17,9 @@
  
      protected WorldInfo()
      {
-@@ -430,4 +435,24 @@
+@@ -528,4 +533,24 @@
      {
-         return this.field_82577_x;
+         return var0.field_76110_t;
      }
 +
 +    /**

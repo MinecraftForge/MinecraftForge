@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.CrashReport;
+import net.minecraft.src.CrashReportCategory;
 import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
@@ -386,11 +387,11 @@ public class FMLCommonHandler
         crashCallables.add(callable);
     }
 
-    public void enhanceCrashReport(CrashReport crashReport)
+    public void enhanceCrashReport(CrashReport crashReport, CrashReportCategory category)
     {
         for (ICrashCallable call: crashCallables)
         {
-            crashReport.func_71500_a(call.getLabel(), call);
+            category.func_71500_a(call.getLabel(), call);
         }
     }
 
