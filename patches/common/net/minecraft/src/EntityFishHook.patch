@@ -1,5 +1,5 @@
---- C:/Users/Keithy/Desktop/EntityFishHook (2).java	Fri Oct 26 13:24:29 2012
-+++ C:/Users/Keithy/Desktop/EntityFishHook.java	Tue Oct 30 11:27:38 2012
+--- C:/Users/Keithy/Desktop/EntityFishHook_orig.java	Fri Oct 26 13:24:29 2012
++++ C:/Users/Keithy/Desktop/EntityFishHook.java	Thu Nov 01 21:22:15 2012
 @@ -5,6 +5,10 @@
  import java.util.Iterator;
  import java.util.List;
@@ -21,17 +21,17 @@
 +                {
 +                    this.setDead();
 +                    this.angler.fishEntity = null;
-+                	return event.damage;
++                    return event.damage;
 +                }
 +                
 +                EntityItem var13;
 +                if (event.getResult() == Event.Result.ALLOW)
 +                {
-+                	var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, event.result);
++                    var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, event.result);
 +                } 
 +                else 
 +                { 
-+                	var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
++                    var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
 +                }
 +                
                  double var3 = this.angler.posX - this.posX;
