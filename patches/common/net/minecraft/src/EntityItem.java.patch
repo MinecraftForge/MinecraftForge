@@ -9,12 +9,12 @@
  
  public class EntityItem extends Entity
  {
-@@ -232,6 +234,8 @@
+@@ -245,6 +247,8 @@
                      p_70100_1_.func_71029_a(AchievementList.field_76027_z);
                  }
  
 +                GameRegistry.onPickupNotification(p_70100_1_, this);
 +
-                 this.field_70170_p.func_72956_a(this, "random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                 this.func_85030_a("random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
                  p_70100_1_.func_71001_a(this, var2);
  

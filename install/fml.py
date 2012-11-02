@@ -61,8 +61,8 @@ def pre_decompile(mcp_dir, fml_dir):
     with open(server_jar, 'rb') as fh:
         md5_s = md5(fh.read()).hexdigest()
         
-    clean_c = "771175c01778ea67395bc6919a5a9dc5"
-    clean_s = "a726380b5546635662d8706dae0586c7"
+    clean_c = "9cc3295931edb6339f22989fe1b612a6"
+    clean_s = "21b673f18d20cf7682b77fa8df6c195c"
     
     if not md5_c == clean_c:
         print 'Warning, Modified Client jar detected'
@@ -323,7 +323,7 @@ def merge_client_server(mcp_dir):
         os.makedirs(shared)
         
     #Nasty hack, but these three files sometimes decompile differently, but are identical, so just take the client file
-    special_cases = ['GuiStatsComponent.java', 'HttpUtilRunnable.java', 'PlayerUsageSnooper.java', 'RConThreadClient.java']
+    special_cases = ['GuiStatsComponent.java', 'HttpUtilRunnable.java', 'PlayerUsageSnooper.java', 'RConThreadClient.java', 'World.java']
         
     for path, _, filelist in os.walk(client, followlinks=True):
         for cur_file in filelist:
@@ -585,7 +585,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         commands_sanity_check()
     except ImportError as ex:
         print 'Could not verify commands.py patch integrity, this typically means that you are not in a clean MCP environment.'
-        print 'Download a clean version of MCP 7.17 and try again'
+        print 'Download a clean version of MCP 7.20 and try again'
         print ex
         sys.exit(1)
     
@@ -693,6 +693,9 @@ def gen_merged_srg(mcp_dir, fml_dir):
             common[type][key] = value #+ ' #S'
             
     #Print joined retroguard files
+    if fml_dir is None:
+	return common
+
     with open(os.path.join(fml_dir, 'conf', 'joined.srg'), 'wb') as f:
         for type in ['PK:', 'CL:', 'FD:', 'MD:']:
             for key in sorted(common[type]):

@@ -134,8 +134,9 @@ public class MCPMerger
             String line;
             while ((line = br.readLine()) != null)
             {
+		line = line.split("#")[0];
                 boolean toClient = line.charAt(0) == '<';
-                line = line.substring(1);
+                line = line.substring(1).trim();
                 if (toClient) copyToClient.add(line);
                 else copyToServer.add(line);
             }
@@ -288,7 +289,7 @@ public class MCPMerger
 
         reader.accept(classNode, 0);
 
-        if (!classNode.name.equals("bct")) //Special case CodecMus so I dont have to make a new patch, anyone who uses this in production code is.. bad.
+        if (!classNode.name.equals("bdz")) //Special case CodecMus so I dont have to make a new patch, anyone who uses this in production code is.. bad.
         {
             if (classNode.visibleAnnotations == null) classNode.visibleAnnotations = new ArrayList<AnnotationNode>();
             classNode.visibleAnnotations.add(getSideAnn(isClientOnly));

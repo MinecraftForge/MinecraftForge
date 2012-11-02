@@ -9,37 +9,15 @@
  
  public abstract class World implements IBlockAccess
  {
-@@ -1552,8 +1554,9 @@
-         }
- 
-         this.field_72984_F.func_76318_c("remove");
--        this.field_72996_f.removeAll(this.field_72997_g);
--        Iterator var5 = this.field_72997_g.iterator();
-+        List fml_entitiesToRemove = ImmutableList.copyOf(this.field_72997_g);
-+        this.field_72996_f.removeAll(fml_entitiesToRemove);
-+        Iterator var5 = fml_entitiesToRemove.iterator();
-         int var3;
-         int var4;
- 
-@@ -1569,7 +1572,7 @@
-             }
-         }
- 
--        var5 = this.field_72997_g.iterator();
-+        var5 = fml_entitiesToRemove.iterator();
- 
-         while (var5.hasNext())
-         {
-@@ -1577,7 +1580,7 @@
+@@ -1693,7 +1695,6 @@
              this.func_72847_b(var2);
          }
  
 -        this.field_72997_g.clear();
-+        this.field_72997_g.removeAll(fml_entitiesToRemove);
          this.field_72984_F.func_76318_c("regular");
  
          for (var1 = 0; var1 < this.field_72996_f.size(); ++var1)
-@@ -3475,7 +3478,7 @@
+@@ -3644,7 +3645,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -47,4 +25,4 @@
 +        return this.field_72986_A.func_76067_t().getHorizon(this);
      }
  
-     public CrashReport func_72914_a(CrashReport p_72914_1_)
+     public CrashReportCategory func_72914_a(CrashReport var1)

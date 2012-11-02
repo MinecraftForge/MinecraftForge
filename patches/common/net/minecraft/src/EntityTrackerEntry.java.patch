@@ -9,7 +9,7 @@
  
  public class EntityTrackerEntry
  {
-@@ -293,6 +295,13 @@
+@@ -304,6 +306,13 @@
                      this.field_73138_k = this.field_73132_a.field_70181_x;
                      this.field_73135_l = this.field_73132_a.field_70179_y;
  
@@ -23,7 +23,7 @@
                      if (this.field_73143_t && !(var6 instanceof Packet24MobSpawn))
                      {
                          p_73117_1_.field_71135_a.func_72567_b(new Packet28EntityVelocity(this.field_73132_a.field_70157_k, this.field_73132_a.field_70159_w, this.field_73132_a.field_70181_x, this.field_73132_a.field_70179_y));
-@@ -368,6 +377,13 @@
+@@ -379,6 +388,13 @@
          if (this.field_73132_a.field_70128_L)
          {
              System.out.println("Fetching addPacket for removed entity");

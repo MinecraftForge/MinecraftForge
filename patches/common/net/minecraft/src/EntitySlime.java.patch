@@ -1,6 +1,6 @@
 --- ../src-base/common/net/minecraft/src/EntitySlime.java
 +++ ../src-work/common/net/minecraft/src/EntitySlime.java
-@@ -224,7 +224,7 @@
+@@ -231,7 +231,7 @@
      {
          Chunk var1 = this.field_70170_p.func_72938_d(MathHelper.func_76128_c(this.field_70165_t), MathHelper.func_76128_c(this.field_70161_v));
  

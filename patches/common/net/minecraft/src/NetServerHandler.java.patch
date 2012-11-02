@@ -9,7 +9,7 @@
  import net.minecraft.server.MinecraftServer;
  
  public class NetServerHandler extends NetHandler
-@@ -587,6 +589,7 @@
+@@ -576,6 +578,7 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
@@ -17,7 +17,7 @@
          if (this.field_72574_e.func_71126_v() == 2)
          {
              this.func_72567_b(new Packet3Chat("Cannot send chat message."));
-@@ -952,6 +955,11 @@
+@@ -941,6 +944,11 @@
      }
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
@@ -29,7 +29,7 @@
      {
          DataInputStream var2;
          ItemStack var3;
-@@ -1114,4 +1122,17 @@
+@@ -1105,4 +1113,17 @@
              }
          }
      }

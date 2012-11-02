@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/src/MemoryConnection.java
-+++ ../src-work/minecraft/net/minecraft/src/MemoryConnection.java
+--- ../src-base/common/net/minecraft/src/MemoryConnection.java
++++ ../src-work/common/net/minecraft/src/MemoryConnection.java
 @@ -8,6 +8,8 @@
  import java.util.ArrayList;
  import java.util.Collections;
@@ -7,9 +7,9 @@
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
  
- @SideOnly(Side.CLIENT)
  public class MemoryConnection implements INetworkManager
-@@ -70,6 +72,7 @@
+ {
+@@ -71,6 +73,7 @@
          if (this.field_74441_e && this.field_74442_b.isEmpty())
          {
              this.field_74440_d.func_72515_a(this.field_74438_f, this.field_74439_g);

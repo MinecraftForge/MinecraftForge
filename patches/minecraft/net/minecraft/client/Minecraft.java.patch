@@ -10,7 +10,7 @@
  import net.minecraft.src.AchievementList;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
-@@ -118,6 +120,7 @@
+@@ -119,6 +121,7 @@
  import net.minecraft.src.WorldInfo;
  import net.minecraft.src.WorldRenderer;
  import net.minecraft.src.WorldSettings;
@@ -18,7 +18,7 @@
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
  import org.lwjgl.input.Keyboard;
-@@ -130,6 +133,12 @@
+@@ -131,6 +134,12 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
@@ -31,7 +31,7 @@
  
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
-@@ -312,7 +321,7 @@
+@@ -313,7 +322,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
@@ -40,7 +40,7 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab);
-@@ -357,6 +366,8 @@
+@@ -358,6 +367,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -49,7 +49,7 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -385,6 +396,7 @@
+@@ -386,6 +397,7 @@
          {
              this.func_71352_k();
          }
@@ -57,7 +57,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -743,9 +755,11 @@
+@@ -744,9 +756,11 @@
  
              if (!this.field_71454_w)
              {
@@ -69,7 +69,7 @@
              }
  
              GL11.glFlush();
-@@ -1271,11 +1285,13 @@
+@@ -1272,11 +1286,13 @@
  
      public void func_71407_l()
      {
@@ -83,7 +83,7 @@
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
          this.field_71424_I.func_76318_c("gui");
-@@ -1672,6 +1688,7 @@
+@@ -1698,6 +1714,7 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -91,7 +91,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1926,6 +1943,12 @@
+@@ -1952,6 +1969,12 @@
  
      public static void main(String[] p_main_0_)
      {
