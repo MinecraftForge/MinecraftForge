@@ -36,7 +36,7 @@
          double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
          double var8 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
-@@ -1815,6 +1829,7 @@
+@@ -1828,6 +1842,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -44,7 +44,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -1947,6 +1962,7 @@
+@@ -1960,6 +1975,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -52,7 +52,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -1963,6 +1979,7 @@
+@@ -1976,6 +1992,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -60,23 +60,24 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -1988,17 +2005,19 @@
-                         {
-                             var25 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
-                             var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var25]);
-+                            effectObject = Item.itemsList[var25];
-                         }
-                         else if (par1Str.startsWith("tilecrack_"))
-                         {
-                             var25 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
-                             var21 = new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, 0);
-+                            effectObject = Block.blocksList[var25];
-                         }
+@@ -1997,6 +2014,7 @@
+                     {
+                         int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
+                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
++                        effectObject = Item.itemsList[var27];
+                     }
+                     else if (par1Str.startsWith("tilecrack_"))
+                     {
+@@ -2004,11 +2022,13 @@
+                         int var25 = Integer.parseInt(var28[1]);
+                         int var26 = Integer.parseInt(var28[2]);
+                         var21 = new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26);
++                        effectObject = Block.blocksList[var25];
                      }
  
                      if (var21 != null)
                      {
--                        this.mc.effectRenderer.addEffect((EntityFX)var21);
+                         this.mc.effectRenderer.addEffect((EntityFX)var21);
 +                        this.mc.effectRenderer.addEffect((EntityFX)var21, effectObject);
                      }
  

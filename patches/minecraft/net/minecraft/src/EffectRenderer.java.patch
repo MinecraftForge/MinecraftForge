@@ -60,7 +60,7 @@
              }
          }
      }
-@@ -105,12 +132,34 @@
+@@ -107,6 +134,7 @@
                  for (int var11 = 0; var11 < this.fxLayers[var8].size(); ++var11)
                  {
                      EntityFX var12 = (EntityFX)this.fxLayers[var8].get(var11);
@@ -68,8 +68,9 @@
                      var10.setBrightness(var12.getBrightnessForRender(par2));
                      var12.renderParticle(var10, par2, var3, var7, var4, var5, var6);
                  }
- 
+@@ -114,6 +142,27 @@
                  var10.draw();
+                 GL11.glDisable(GL11.GL_BLEND);
              }
 +        }
 +
@@ -82,20 +83,20 @@
 +                Tessellator tessallator = Tessellator.instance;
 +                //GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getTexture(key));
 +                tessallator.startDrawingQuads();
-+    
++
 +                if (entry.getFXLayer() != 3)
 +                {
 +                    tessallator.setBrightness(entry.getBrightnessForRender(par2));
 +                    entry.renderParticle(tessallator, par2, var3, var7, var4, var5, var6);
 +                }
-+    
++
 +                tessallator.draw();
 +            }
 +            ForgeHooksClient.unbindTexture();
          }
      }
  
-@@ -130,6 +179,7 @@
+@@ -133,6 +182,7 @@
              for (int var11 = 0; var11 < this.fxLayers[var9].size(); ++var11)
              {
                  EntityFX var12 = (EntityFX)this.fxLayers[var9].get(var11);
@@ -103,7 +104,7 @@
                  var10.setBrightness(var12.getBrightnessForRender(par2));
                  var12.renderParticle(var10, par2, var4, var8, var5, var6, var7);
              }
-@@ -144,13 +194,15 @@
+@@ -147,13 +197,15 @@
          {
              this.fxLayers[var2].clear();
          }
@@ -122,7 +123,7 @@
              byte var7 = 4;
  
              for (int var8 = 0; var8 < var7; ++var8)
-@@ -163,7 +215,7 @@
+@@ -166,7 +218,7 @@
                          double var13 = (double)par2 + ((double)var9 + 0.5D) / (double)var7;
                          double var15 = (double)par3 + ((double)var10 + 0.5D) / (double)var7;
                          int var17 = this.rand.nextInt(6);
@@ -131,7 +132,7 @@
                      }
                  }
              }
-@@ -215,12 +267,60 @@
+@@ -218,12 +270,60 @@
                  var8 = (double)par1 + var6.getBlockBoundsMaxX() + (double)var7;
              }
  
@@ -180,7 +181,7 @@
 +        else if (effect.getFXLayer() == 2)
 +        {
 +            texture = "/gui/items.png";
-+        }        
++        }
 +        texture = ForgeHooks.getTexture(texture, obj);
 +        effectList.put(texture, effect);
 +    }

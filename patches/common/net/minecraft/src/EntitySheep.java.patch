@@ -38,7 +38,7 @@
 -            }
 -
 -            var2.damageItem(1, par1EntityPlayer);
--            this.worldObj.playSoundAtEntity(this, "mob.sheep.shear", 1.0F, 1.0F);
+-            this.func_85030_a("mob.sheep.shear", 1.0F, 1.0F);
 -        }
 -
          return super.interact(par1EntityPlayer);
@@ -50,13 +50,13 @@
      }
 +
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
++    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
 +    {
 +        return !getSheared() && !isChild();
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        setSheared(true);

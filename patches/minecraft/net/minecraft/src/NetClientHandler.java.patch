@@ -34,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1056,6 +1065,10 @@
+@@ -1065,6 +1074,10 @@
                  {
                      var2.readFromNBT(par1Packet132TileEntityData.customParam1);
                  }

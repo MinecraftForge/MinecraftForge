@@ -32,7 +32,7 @@
  
              if (var5 == null)
              {
-@@ -279,6 +286,11 @@
+@@ -291,6 +298,11 @@
      {
          if (!this.currentServer.canNotSave)
          {
@@ -44,7 +44,7 @@
              for (int var1 = 0; var1 < 100; ++var1)
              {
                  if (!this.chunksToUnload.isEmpty())
-@@ -291,6 +303,11 @@
+@@ -303,6 +315,11 @@
                      this.chunksToUnload.remove(var2);
                      this.loadedChunkHashMap.remove(var2.longValue());
                      this.loadedChunks.remove(var3);
