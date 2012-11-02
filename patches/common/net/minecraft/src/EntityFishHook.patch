@@ -1,17 +1,37 @@
 --- ../src_base/common/net/minecraft/src/EntityFishHook.java
 +++ ../src_work/common/net/minecraft/src/EntityFishHook.java
-@@ -5,6 +5,10 @@
+@@ -5,6 +5,11 @@
  import java.util.Iterator;
  import java.util.List;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.entity.player.CatchFishEvent;
++import net.minecraftforge.event.entity.player.FishBiteEvent;
 +
  public class EntityFishHook extends Entity
  {
      /** The tile this entity is on, X position */
-@@ -474,7 +478,24 @@
+@@ -369,7 +374,17 @@
+                             var28 = 300;
+                         }
+ 
+-                        if (this.rand.nextInt(var28) == 0)
++                        FishBiteEvent event = new FishBiteEvent(this.angler, this.worldObj, this.posX, this.posY, this.posZ);
++                        if(MinecraftForge.EVENT_BUS.post(event))
++                        {
++                            var28 = 0;
++                        }
++                        else if (event.getResult() == Event.Result.ALLOW)
++                        {
++                            var28 = event.chance;
++                        }
++                        
++                        if (var28 != 0 && this.rand.nextInt(var28) == 0)
+                         {
+                             this.ticksCatchable = this.rand.nextInt(30) + 10;
+                             this.motionY -= 0.20000000298023224D;
+@@ -474,7 +489,24 @@
              }
              else if (this.ticksCatchable > 0)
              {
@@ -21,23 +41,23 @@
 +                {
 +                    this.setDead();
 +                    this.angler.fishEntity = null;
-+                    return event.damage;
++                	return event.damage;
 +                }
 +                
 +                EntityItem var13;
 +                if (event.getResult() == Event.Result.ALLOW)
 +                {
-+                    var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, event.result);
++                	var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, event.result);
 +                } 
 +                else 
 +                { 
-+                    var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
++                	var13 = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, new ItemStack(Item.fishRaw));
 +                }
 +                
                  double var3 = this.angler.posX - this.posX;
                  double var5 = this.angler.posY - this.posY;
                  double var7 = this.angler.posZ - this.posZ;
-@@ -486,7 +507,7 @@
+@@ -486,7 +518,7 @@
                  this.worldObj.spawnEntityInWorld(var13);
                  this.angler.addStat(StatList.fishCaughtStat, 1);
                  this.angler.worldObj.spawnEntityInWorld(new EntityXPOrb(this.angler.worldObj, this.angler.posX, this.angler.posY + 0.5D, this.angler.posZ + 0.5D, this.rand.nextInt(3) + 1));
