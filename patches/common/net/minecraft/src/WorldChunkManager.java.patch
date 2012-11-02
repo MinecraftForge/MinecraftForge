@@ -30,12 +30,3 @@
      }
  
      public WorldChunkManager(long par1, WorldType par3WorldType)
-@@ -236,7 +233,7 @@
-         ChunkPosition var13 = null;
-         int var14 = 0;
- 
--        for (int var15 = 0; var15 < var12.length; ++var15)
-+        for (int var15 = 0; var15 < var10 * var11; ++var15) //Vanilla Bug-Fix, AIOOB -1 when cant find biome
-         {
-             int var16 = var6 + var15 % var10 << 2;
-             int var17 = var7 + var15 / var10 << 2;

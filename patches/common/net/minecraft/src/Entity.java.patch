@@ -9,9 +9,9 @@
  import net.minecraft.server.MinecraftServer;
  
  public abstract class Entity
-@@ -197,6 +199,11 @@
-     public int dimension;
+@@ -198,6 +200,11 @@
      protected int field_82152_aq;
+     private boolean field_83001_bt;
      public EnumEntitySize myEntitySize;
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -21,38 +21,38 @@
  
      public Entity(World par1World)
      {
-@@ -1466,6 +1473,15 @@
-         par1NBTTagCompound.setShort("Air", (short)this.getAir());
-         par1NBTTagCompound.setBoolean("OnGround", this.onGround);
-         par1NBTTagCompound.setInteger("Dimension", this.dimension);
-+        if (persistentID != null)
-+        {
-+            par1NBTTagCompound.setLong("PersistentIDMSB", persistentID.getMostSignificantBits());
-+            par1NBTTagCompound.setLong("PersistentIDLSB", persistentID.getLeastSignificantBits());
-+        }
-+        if (customEntityData != null)
-+        {
-+            par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
-+        }
-         this.writeEntityToNBT(par1NBTTagCompound);
-     }
- 
-@@ -1508,6 +1524,14 @@
-         this.dimension = par1NBTTagCompound.getInteger("Dimension");
-         this.setPosition(this.posX, this.posY, this.posZ);
-         this.setRotation(this.rotationYaw, this.rotationPitch);
-+        if (par1NBTTagCompound.hasKey("ForgeData"))
-+        {
-+            customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
-+        }
-+        if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
-+        {
-+            persistentID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
-+        }
-         this.readEntityFromNBT(par1NBTTagCompound);
-     }
- 
-@@ -1594,7 +1618,14 @@
+@@ -1493,6 +1500,15 @@
+             par1NBTTagCompound.setInteger("Dimension", this.dimension);
+             par1NBTTagCompound.setBoolean("Invulnerable", this.field_83001_bt);
+             par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
++            if (persistentID != null)
++            {
++                par1NBTTagCompound.setLong("PersistentIDMSB", persistentID.getMostSignificantBits());
++                par1NBTTagCompound.setLong("PersistentIDLSB", persistentID.getLeastSignificantBits());
++            }
++            if (customEntityData != null)
++            {
++                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
++            }
+             this.writeEntityToNBT(par1NBTTagCompound);
+         }
+         catch (Throwable var5)
+@@ -1547,6 +1563,14 @@
+             this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
+             this.setPosition(this.posX, this.posY, this.posZ);
+             this.setRotation(this.rotationYaw, this.rotationPitch);
++            if (par1NBTTagCompound.hasKey("ForgeData"))
++            {
++                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
++            }
++            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
++            {
++                persistentID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
++            }
+             this.readEntityFromNBT(par1NBTTagCompound);
+         }
+         catch (Throwable var5)
+@@ -1641,7 +1665,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -68,7 +68,7 @@
          return var3;
      }
  
-@@ -1954,7 +1985,7 @@
+@@ -2001,7 +2032,7 @@
       */
      public boolean isRiding()
      {
@@ -77,7 +77,7 @@
      }
  
      /**
-@@ -2279,7 +2310,7 @@
+@@ -2336,7 +2367,7 @@
  
      public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
@@ -86,9 +86,9 @@
      }
  
      public int func_82143_as()
-@@ -2299,4 +2330,84 @@
-     {
-         return false;
+@@ -2366,4 +2397,84 @@
+         par1CrashReportCategory.addCrashSection("Block location", CrashReportCategory.func_85071_a(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
+         par1CrashReportCategory.addCrashSection("Momentum", String.format("%.2f, %.2f, %.2f", new Object[] {Double.valueOf(this.motionX), Double.valueOf(this.motionY), Double.valueOf(this.motionZ)}));
      }
 +
 +    /* ================================== Forge Start =====================================*/

@@ -43,7 +43,7 @@
                  }
              }
  
-@@ -245,11 +244,29 @@
+@@ -253,11 +252,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
