@@ -11,7 +11,7 @@ public class FishBiteEvent extends PlayerEvent
     /**
      * This event is called before checking if a fish bites the hook. It can be
      * canceled to stop fish from biting, or the chance of a fish biting can be
-     * changed
+     * changed. Odds of a fish biting is 1/chance.
      * 
      * If the result is set to 'ALLOW', then a the fish hook will use the event's
      * chance value to check if a fish can be caught.
