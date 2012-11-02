@@ -25,4 +25,4 @@
 +        return this.field_72986_A.func_76067_t().getHorizon(this);
      }
  
-     public CrashReportCategory func_72914_a(CrashReport var1)
+     public CrashReportCategory func_72914_a(CrashReport p_72914_1_)
