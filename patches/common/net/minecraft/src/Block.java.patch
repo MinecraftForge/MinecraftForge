@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1315,4 +1321,848 @@
+@@ -1322,4 +1328,848 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

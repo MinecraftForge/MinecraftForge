@@ -8,7 +8,7 @@
  
  public class BlockChest extends BlockContainer
  {
-@@ -383,7 +384,7 @@
+@@ -411,7 +412,7 @@
          {
              return true;
          }
@@ -17,7 +17,7 @@
          {
              return true;
          }
-@@ -391,19 +392,19 @@
+@@ -419,19 +420,19 @@
          {
              return true;
          }

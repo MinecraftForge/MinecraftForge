@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/TileEntity.java
 +++ ../src_work/common/net/minecraft/src/TileEntity.java
-@@ -276,4 +276,33 @@
+@@ -287,4 +287,33 @@
          addMapping(TileEntityBeacon.class, "Beacon");
          addMapping(TileEntitySkull.class, "Skull");
      }

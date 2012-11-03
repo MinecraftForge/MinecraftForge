@@ -9,7 +9,7 @@
  
  public class BlockLadder extends Block
  {
-@@ -107,7 +109,10 @@
+@@ -96,29 +98,32 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -20,35 +20,34 @@
 +               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH);
      }
  
-     /**
-@@ -117,22 +122,22 @@
+     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
      {
-         int var9 = par1World.getBlockMetadata(par2, par3, par4);
+         int var10 = par9;
  
--        if ((var9 == 0 || par5 == 2) && par1World.isBlockNormalCube(par2, par3, par4 + 1))
-+        if ((var9 == 0 || par5 == 2) && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
+-        if ((par9 == 0 || par5 == 2) && par1World.isBlockNormalCube(par2, par3, par4 + 1))
++        if ((var10 == 0 || par5 == 2) && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
          {
-             var9 = 2;
+             var10 = 2;
          }
  
--        if ((var9 == 0 || par5 == 3) && par1World.isBlockNormalCube(par2, par3, par4 - 1))
-+        if ((var9 == 0 || par5 == 3) && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
+-        if ((var10 == 0 || par5 == 3) && par1World.isBlockNormalCube(par2, par3, par4 - 1))
++        if ((var10 == 0 || par5 == 3) && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
          {
-             var9 = 3;
+             var10 = 3;
          }
  
--        if ((var9 == 0 || par5 == 4) && par1World.isBlockNormalCube(par2 + 1, par3, par4))
-+        if ((var9 == 0 || par5 == 4) && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+-        if ((var10 == 0 || par5 == 4) && par1World.isBlockNormalCube(par2 + 1, par3, par4))
++        if ((var10 == 0 || par5 == 4) && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
          {
-             var9 = 4;
+             var10 = 4;
          }
  
--        if ((var9 == 0 || par5 == 5) && par1World.isBlockNormalCube(par2 - 1, par3, par4))
-+        if ((var9 == 0 || par5 == 5) && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+-        if ((var10 == 0 || par5 == 5) && par1World.isBlockNormalCube(par2 - 1, par3, par4))
++        if ((var10 == 0 || par5 == 5) && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
          {
-             var9 = 5;
+             var10 = 5;
          }
-@@ -149,22 +154,22 @@
+@@ -135,22 +140,22 @@
          int var6 = par1World.getBlockMetadata(par2, par3, par4);
          boolean var7 = false;
  
@@ -75,7 +74,7 @@
          {
              var7 = true;
          }
-@@ -185,4 +190,10 @@
+@@ -171,4 +176,10 @@
      {
          return 1;
      }

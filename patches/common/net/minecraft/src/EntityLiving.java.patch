@@ -11,7 +11,7 @@
  
  public abstract class EntityLiving extends Entity
  {
-@@ -351,6 +355,7 @@
+@@ -344,6 +348,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -27,7 +27,7 @@
      }
  
      protected void entityInit()
-@@ -722,6 +728,11 @@
+@@ -723,6 +729,11 @@
       */
      public void onUpdate()
      {
@@ -39,7 +39,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -903,6 +914,11 @@
+@@ -908,6 +919,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -48,12 +48,12 @@
 +            return false;
 +        }
 +
-         if (this.worldObj.isRemote)
+         if (this.func_85032_ar())
          {
              return false;
-@@ -1109,6 +1125,11 @@
+@@ -1118,6 +1134,11 @@
      {
-         if (!this.field_83001_bt)
+         if (!this.func_85032_ar())
          {
 +            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
 +            if (par2 <= 0)
@@ -63,7 +63,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.health -= par2;
-@@ -1173,6 +1194,11 @@
+@@ -1182,6 +1203,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -75,7 +75,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1195,6 +1221,10 @@
+@@ -1204,6 +1230,10 @@
              {
                  var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
              }
@@ -86,7 +86,7 @@
  
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
-@@ -1203,7 +1233,7 @@
+@@ -1212,7 +1242,7 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -95,7 +95,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1211,6 +1241,16 @@
+@@ -1220,6 +1250,16 @@
                      }
                  }
              }
@@ -112,7 +112,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1254,6 +1294,12 @@
+@@ -1263,6 +1303,12 @@
       */
      protected void fall(float par1)
      {
@@ -125,7 +125,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1441,7 +1487,7 @@
+@@ -1465,7 +1511,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -134,7 +134,7 @@
      }
  
      /**
-@@ -1849,6 +1895,7 @@
+@@ -1874,6 +1920,7 @@
          }
  
          this.isAirBorne = true;
@@ -142,7 +142,7 @@
      }
  
      /**
-@@ -2379,8 +2426,6 @@
+@@ -2411,8 +2458,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -151,9 +151,9 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2818,4 +2863,30 @@
+@@ -2860,4 +2905,30 @@
      {
-         return false;
+         this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }
 +
 +    /***
@@ -163,17 +163,17 @@
 +    public void curePotionEffects(ItemStack curativeItem)
 +    {
 +        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
-+        
++
 +        if (worldObj.isRemote)
 +        {
 +            return;
 +        }
-+        
++
 +        while (potionKey.hasNext())
 +        {
 +            Integer key = potionKey.next();
 +            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
-+            
++
 +            if (effect.isCurativeItem(curativeItem))
 +            {
 +                potionKey.remove();

@@ -32,7 +32,7 @@
      }
  
      /**
-@@ -118,7 +129,20 @@
+@@ -112,7 +123,20 @@
  
          ++this.age;
  
@@ -54,7 +54,7 @@
          {
              this.setDead();
          }
-@@ -215,6 +239,7 @@
+@@ -228,6 +252,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -62,7 +62,7 @@
  
          if (this.item != null)
          {
-@@ -232,10 +257,15 @@
+@@ -245,10 +270,15 @@
          NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
          this.item = ItemStack.loadItemStackFromNBT(var2);
  
@@ -79,7 +79,7 @@
      }
  
      /**
-@@ -245,9 +275,21 @@
+@@ -258,9 +288,21 @@
      {
          if (!this.worldObj.isRemote)
          {

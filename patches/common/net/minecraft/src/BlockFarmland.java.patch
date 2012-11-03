@@ -14,7 +14,7 @@
              {
                  int var8 = par1World.getBlockId(var6, par3 + 1, var7);
  
--                if (var8 == Block.crops.blockID || var8 == Block.melonStem.blockID || var8 == Block.pumpkinStem.blockID)
+-                if (var8 == Block.crops.blockID || var8 == Block.melonStem.blockID || var8 == Block.pumpkinStem.blockID || var8 == Block.potatoe.blockID || var8 == Block.carrot.blockID)
 +                Block plant = blocksList[var8];
 +                if (plant instanceof IPlantable && canSustainPlant(par1World, par2, par3, par4, ForgeDirection.UP, (IPlantable)plant))
                  {

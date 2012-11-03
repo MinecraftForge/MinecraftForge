@@ -8,7 +8,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.logging.Level;
-@@ -71,6 +72,9 @@
+@@ -70,6 +71,9 @@
  import net.minecraft.src.WorldServerMulti;
  import net.minecraft.src.WorldSettings;
  import net.minecraft.src.WorldType;
@@ -16,9 +16,9 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.WorldEvent;
  
- public abstract class MinecraftServer implements Runnable, IPlayerUsage, ICommandSender
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
  {
-@@ -152,7 +156,8 @@
+@@ -151,7 +155,8 @@
      public final long[] tickTimeArray = new long[100];
  
      /** Stats are [dimension][tick%100] system.nanoTime is stored. */
@@ -28,7 +28,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -243,8 +248,6 @@
+@@ -242,8 +247,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -37,7 +37,7 @@
          ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo var9 = var7.loadWorldInfo();
          WorldSettings var8;
-@@ -264,46 +267,23 @@
+@@ -263,46 +266,23 @@
              var8.enableBonusChest();
          }
  
@@ -95,7 +95,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -434,7 +414,9 @@
+@@ -433,7 +413,9 @@
              for (int var3 = 0; var3 < var2; ++var3)
              {
                  WorldServer var4 = var1[var3];
@@ -105,7 +105,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -647,13 +629,13 @@
+@@ -646,13 +628,13 @@
      {
          this.theProfiler.startSection("levels");
  
@@ -123,7 +123,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  var4.getWorldVec3Pool().clear();
-@@ -678,9 +660,11 @@
+@@ -699,9 +681,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -138,7 +138,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -736,7 +720,13 @@
+@@ -757,7 +741,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -153,7 +153,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -845,7 +835,7 @@
+@@ -866,7 +856,7 @@
  
      public String getServerModName()
      {
@@ -162,7 +162,7 @@
      }
  
      /**
-@@ -1124,6 +1114,7 @@
+@@ -1128,6 +1118,7 @@
  
              if (var2 != null)
              {

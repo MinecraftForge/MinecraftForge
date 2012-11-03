@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityOcelot.java
 +++ ../src_work/common/net/minecraft/src/EntityOcelot.java
-@@ -326,8 +326,9 @@
+@@ -333,8 +333,9 @@
                  }
  
                  int var4 = this.worldObj.getBlockId(var1, var2 - 1, var3);

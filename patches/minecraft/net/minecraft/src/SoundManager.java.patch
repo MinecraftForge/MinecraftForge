@@ -55,7 +55,7 @@
                      sndSystem.backgroundMusic("BgMusic", var1.soundUrl, var1.soundName, false);
                      sndSystem.setVolume("BgMusic", this.options.musicVolume);
                      sndSystem.play("BgMusic");
-@@ -239,6 +251,7 @@
+@@ -240,6 +252,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry var6 = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -63,7 +63,7 @@
  
                  if (var6 != null)
                  {
-@@ -250,6 +263,7 @@
+@@ -251,6 +264,7 @@
                      float var7 = 16.0F;
                      sndSystem.newStreamingSource(true, var5, var6.soundUrl, var6.soundName, false, par2, par3, par4, 2, var7 * 4.0F);
                      sndSystem.setVolume(var5, 0.5F * this.options.soundVolume);
@@ -71,7 +71,7 @@
                      sndSystem.play(var5);
                  }
              }
-@@ -429,6 +443,7 @@
+@@ -430,6 +444,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var7 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -79,7 +79,7 @@
  
              if (var7 != null && par5 > 0.0F)
              {
-@@ -450,6 +465,7 @@
+@@ -451,6 +466,7 @@
                  }
  
                  sndSystem.setVolume(var8, par5 * this.options.soundVolume);
@@ -87,7 +87,7 @@
                  sndSystem.play(var8);
              }
          }
-@@ -464,6 +480,7 @@
+@@ -465,6 +481,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var4 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -95,7 +95,7 @@
  
              if (var4 != null)
              {
-@@ -479,6 +496,7 @@
+@@ -480,6 +497,7 @@
                  par2 *= 0.25F;
                  sndSystem.setPitch(var5, par3);
                  sndSystem.setVolume(var5, par2 * this.options.soundVolume);
