@@ -29,7 +29,16 @@
          var7.entityId = par1EntityPlayerMP.entityId;
          WorldServer var8 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          this.func_72381_a(var7, par1EntityPlayerMP, var8);
-@@ -367,6 +375,7 @@
+@@ -363,14 +371,20 @@
+ 
+     public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
+     {
++        transferPlayerToDimension(par1EntityPlayerMP, par2, mcServer.worldServerForDimension(par2).func_85176_s());
++    }
++
++    public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2, Teleporter teleporter)
++    {
+         int var3 = par1EntityPlayerMP.dimension;
          WorldServer var4 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          par1EntityPlayerMP.dimension = par2;
          WorldServer var5 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
@@ -37,13 +46,23 @@
          par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, var5.getWorldInfo().getTerrainType(), var5.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
          var4.removeEntity(par1EntityPlayerMP);
          par1EntityPlayerMP.isDead = false;
-@@ -391,38 +400,18 @@
+-        this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5);
++        this.transferEntityToWorld(par1EntityPlayerMP, var3, var4, var5, teleporter);
+         this.func_72375_a(par1EntityPlayerMP, var4);
+         par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
+         par1EntityPlayerMP.theItemInWorldManager.setWorld(var5);
+@@ -391,38 +405,23 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
 -        double var5 = par1Entity.posX;
 -        double var7 = par1Entity.posZ;
 -        double var9 = 8.0D;
++        transferEntityToWorld(par1Entity, par2, par3WorldServer, par4WorldServer, par4WorldServer.func_85176_s());
++    }
++
++    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
++    {
 +        WorldProvider pOld = par3WorldServer.provider;
 +        WorldProvider pNew = par4WorldServer.provider;
 +        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
@@ -82,3 +101,12 @@
          {
              ChunkCoordinates var18;
  
+@@ -459,7 +458,7 @@
+                 par4WorldServer.spawnEntityInWorld(par1Entity);
+                 par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+                 par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+-                par4WorldServer.func_85176_s().placeInPortal(par1Entity, var11, var13, var15, var17);
++                teleporter.placeInPortal(par1Entity, var11, var13, var15, var17);
+             }
+ 
+             par3WorldServer.theProfiler.endSection();
