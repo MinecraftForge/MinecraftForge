@@ -7,10 +7,10 @@ package net.minecraftforge.common;
 
 public class ForgeVersion
 {
-    //This number is incremented every Minecraft version, and never reset
+    //This number is incremented every time we remove deprecated code/major API changes, never reset
     public static final int majorVersion    = 6;
-    //This number is incremented every official release, and reset every Minecraft version
-    public static final int minorVersion    = 0;
+    //This number is incremented every minecraft release, never reset
+    public static final int minorVersion    = 2;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
     public static final int revisionVersion = 1;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
