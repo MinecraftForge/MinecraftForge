@@ -102,7 +102,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1322,4 +1328,848 @@
+@@ -1322,4 +1328,849 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -665,10 +665,11 @@
 +     * 
 +     * @param texture The texture file
 +     */
-+    public void setTextureFile(String texture)
++    public Block setTextureFile(String texture)
 +    {
 +        currentTexture = texture;
 +        isDefaultTexture = false;
++        return this;
 +    }
 +    
 +
