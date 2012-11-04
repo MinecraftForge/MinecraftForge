@@ -7,7 +7,7 @@
 +    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;
 +
-     protected Item(int par1)
+     public Item(int par1)
      {
          this.shiftedIndex = 256 + par1;
  
@@ -37,7 +37,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -678,4 +690,265 @@
+@@ -678,4 +690,266 @@
      {
          StatList.initStats();
      }
@@ -215,10 +215,11 @@
 +     * 
 +     * @param texture The texture file
 +     */
-+    public void setTextureFile(String texture)
++    public Item setTextureFile(String texture)
 +    {
 +        currentTexture = texture;
 +        isDefaultTexture = false;
++        return this;
 +    }
 +
 +    /**
