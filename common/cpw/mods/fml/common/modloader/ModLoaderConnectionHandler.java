@@ -39,7 +39,7 @@ public class ModLoaderConnectionHandler implements IConnectionHandler
     @Override
     public void connectionClosed(INetworkManager manager)
     {
-        if (!ModLoaderHelper.sidedHelper.clientConnectionClosed(manager, mod))
+        if (ModLoaderHelper.sidedHelper==null || !ModLoaderHelper.sidedHelper.clientConnectionClosed(manager, mod))
         {
             mod.serverDisconnect();
             mod.onClientLogout(manager);
