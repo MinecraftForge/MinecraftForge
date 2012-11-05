@@ -10,7 +10,7 @@
  
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
-@@ -104,6 +107,12 @@
+@@ -105,6 +108,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -20,10 +20,10 @@
 +            return false;
 +        }
 +
-         if (this.currentGameType.func_82752_c() && !this.mc.thePlayer.func_82246_f(par1, par2, par3))
+         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
          {
              return false;
-@@ -121,7 +130,7 @@
+@@ -122,7 +131,7 @@
              {
                  var5.playAuxSFX(2001, par1, par2, par3, var6.blockID + (var5.getBlockMetadata(par1, par2, par3) << 12));
                  int var7 = var5.getBlockMetadata(par1, par2, par3);
@@ -32,7 +32,7 @@
  
                  if (var8)
                  {
-@@ -309,6 +318,12 @@
+@@ -318,6 +327,12 @@
          float var11 = (float)par8Vec3.zCoord - (float)par6;
          boolean var12 = false;
          int var13 = par2World.getBlockId(par4, par5, par6);
@@ -45,7 +45,7 @@
  
          if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
          {
-@@ -346,7 +361,15 @@
+@@ -355,7 +370,15 @@
          }
          else
          {
@@ -62,7 +62,7 @@
          }
      }
  
-@@ -368,9 +391,10 @@
+@@ -377,9 +400,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
  

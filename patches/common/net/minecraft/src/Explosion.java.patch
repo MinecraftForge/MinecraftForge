@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/Explosion.java
 +++ ../src_work/common/net/minecraft/src/Explosion.java
-@@ -78,7 +78,7 @@
+@@ -82,7 +82,7 @@
                              if (var25 > 0)
                              {
                                  Block var26 = Block.blocksList[var25];

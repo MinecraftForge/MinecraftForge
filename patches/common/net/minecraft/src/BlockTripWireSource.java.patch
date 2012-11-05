@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -66,7 +73,10 @@
+@@ -66,29 +73,32 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -34,35 +34,34 @@
 +               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST );
      }
  
-     /**
-@@ -76,22 +86,22 @@
+     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
      {
-         byte var9 = 0;
+         byte var10 = 0;
  
 -        if (par5 == 2 && par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
 +        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST, true))
          {
-             var9 = 2;
+             var10 = 2;
          }
  
 -        if (par5 == 3 && par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
 +        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST, true))
          {
-             var9 = 0;
+             var10 = 0;
          }
  
 -        if (par5 == 4 && par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
 +        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH, true))
          {
-             var9 = 1;
+             var10 = 1;
          }
  
 -        if (par5 == 5 && par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
 +        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH, true))
          {
-             var9 = 3;
+             var10 = 3;
          }
-@@ -113,22 +123,22 @@
+@@ -115,22 +125,22 @@
                  int var7 = var6 & 3;
                  boolean var8 = false;
  
@@ -89,7 +88,7 @@
                  {
                      var8 = true;
                  }
-@@ -149,7 +159,7 @@
+@@ -151,7 +161,7 @@
          boolean var12 = (par6 & 8) == 8;
          boolean var13 = par5 == Block.tripWireSource.blockID;
          boolean var14 = false;

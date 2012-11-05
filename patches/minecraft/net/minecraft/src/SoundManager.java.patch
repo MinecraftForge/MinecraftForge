@@ -10,7 +10,7 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.io.File;
-@@ -44,9 +48,11 @@
+@@ -46,9 +50,11 @@
      private Random rand = new Random();
      private int ticksBeforeMusic;
  
@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -61,6 +67,8 @@
+@@ -63,6 +69,8 @@
          {
              this.tryToSetLibraryAndCodecs();
          }
@@ -32,7 +32,7 @@
      }
  
      /**
-@@ -80,6 +88,8 @@
+@@ -82,6 +90,8 @@
              SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
              SoundSystemConfig.setCodec("mus", CodecMus.class);
              SoundSystemConfig.setCodec("wav", CodecWav.class);
@@ -41,7 +41,7 @@
              sndSystem = new SoundSystem();
              this.options.soundVolume = var1;
              this.options.musicVolume = var2;
-@@ -168,10 +178,12 @@
+@@ -170,10 +180,12 @@
                  }
  
                  SoundPoolEntry var1 = this.soundPoolMusic.getRandomSound();
@@ -55,7 +55,7 @@
                      sndSystem.backgroundMusic("BgMusic", var1.soundUrl, var1.soundName, false);
                      sndSystem.setVolume("BgMusic", this.options.musicVolume);
                      sndSystem.play("BgMusic");
-@@ -234,6 +246,7 @@
+@@ -240,6 +252,7 @@
              if (par1Str != null)
              {
                  SoundPoolEntry var6 = this.soundPoolStreaming.getRandomSoundFromSoundPool(par1Str);
@@ -63,7 +63,7 @@
  
                  if (var6 != null)
                  {
-@@ -245,6 +258,7 @@
+@@ -251,6 +264,7 @@
                      float var7 = 16.0F;
                      sndSystem.newStreamingSource(true, var5, var6.soundUrl, var6.soundName, false, par2, par3, par4, 2, var7 * 4.0F);
                      sndSystem.setVolume(var5, 0.5F * this.options.soundVolume);
@@ -71,7 +71,7 @@
                      sndSystem.play(var5);
                  }
              }
-@@ -399,6 +413,7 @@
+@@ -430,6 +444,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var7 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -79,7 +79,7 @@
  
              if (var7 != null && par5 > 0.0F)
              {
-@@ -420,6 +435,7 @@
+@@ -451,6 +466,7 @@
                  }
  
                  sndSystem.setVolume(var8, par5 * this.options.soundVolume);
@@ -87,7 +87,7 @@
                  sndSystem.play(var8);
              }
          }
-@@ -434,6 +450,7 @@
+@@ -465,6 +481,7 @@
          if (loaded && this.options.soundVolume != 0.0F)
          {
              SoundPoolEntry var4 = this.soundPoolSounds.getRandomSoundFromSoundPool(par1Str);
@@ -95,7 +95,7 @@
  
              if (var4 != null)
              {
-@@ -449,6 +466,7 @@
+@@ -480,6 +497,7 @@
                  par2 *= 0.25F;
                  sndSystem.setPitch(var5, par3);
                  sndSystem.setVolume(var5, par2 * this.options.soundVolume);

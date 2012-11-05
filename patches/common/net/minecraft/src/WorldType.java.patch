@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/WorldType.java
 +++ ../src_work/common/net/minecraft/src/WorldType.java
-@@ -217,8 +217,19 @@
+@@ -218,8 +218,19 @@
      {
          return this == FLAT ? random.nextInt(4) != 1 : false;
      }

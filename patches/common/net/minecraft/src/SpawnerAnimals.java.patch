@@ -16,7 +16,7 @@
  public final class SpawnerAnimals
  {
 @@ -79,6 +84,9 @@
-                 if ((!var35.getPeacefulCreature() || par2) && (var35.getPeacefulCreature() || par1) && (!var35.func_82705_e() || par3) && par0WorldServer.countEntities(var35.getCreatureClass()) <= var35.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
+                 if ((!var35.getPeacefulCreature() || par2) && (var35.getPeacefulCreature() || par1) && (!var35.getAnimal() || par3) && par0WorldServer.countEntities(var35.getCreatureClass()) <= var35.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
                  {
                      Iterator var37 = eligibleChunksForSpawning.keySet().iterator();
 +                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
@@ -44,6 +44,6 @@
 +            return;
 +        }
 +
-         par0EntityLiving.func_82163_bD();
+         par0EntityLiving.initCreature();
      }
  

@@ -30,7 +30,7 @@
      /**
 @@ -112,12 +115,8 @@
      {
-         if (par1World.func_82736_K().func_82766_b("doFireTick"))
+         if (par1World.getGameRules().getGameRuleBooleanValue("doFireTick"))
          {
 -            boolean var6 = par1World.getBlockId(par2, par3 - 1, par4) == Block.netherrack.blockID;
 -

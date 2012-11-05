@@ -18,7 +18,7 @@
  
  public abstract class EntityPlayer extends EntityLiving implements ICommandSender
  {
-@@ -206,6 +217,7 @@
+@@ -210,6 +221,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -26,7 +26,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -552,6 +564,9 @@
+@@ -577,6 +589,9 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
  
@@ -36,8 +36,8 @@
          if (this.username.equals("Notch"))
          {
              this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-@@ -560,6 +575,20 @@
-         if (!this.worldObj.func_82736_K().func_82766_b("keepInventory"))
+@@ -585,6 +600,20 @@
+         if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
              this.inventory.dropAllItems();
 +        }
@@ -57,7 +57,7 @@
          }
  
          if (par1DamageSource != null)
-@@ -599,7 +628,16 @@
+@@ -624,7 +653,16 @@
       */
      public EntityItem dropOneItem()
      {
@@ -75,7 +75,7 @@
      }
  
      /**
-@@ -608,7 +646,7 @@
+@@ -633,7 +671,7 @@
       */
      public EntityItem dropPlayerItem(ItemStack par1ItemStack)
      {
@@ -84,7 +84,7 @@
      }
  
      /**
-@@ -660,18 +698,33 @@
+@@ -685,18 +723,33 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -122,7 +122,7 @@
          {
              var2 += (float)(var3 * var3 + 1);
          }
-@@ -696,7 +749,8 @@
+@@ -721,7 +774,8 @@
              var2 /= 5.0F;
          }
  
@@ -132,7 +132,7 @@
      }
  
      /**
-@@ -704,7 +758,7 @@
+@@ -729,7 +783,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -141,9 +141,9 @@
      }
  
      /**
-@@ -980,12 +1034,22 @@
+@@ -1014,12 +1068,22 @@
      {
-         if (!this.field_83001_bt)
+         if (!this.func_85032_ar())
          {
 +            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
 +            if (par2 <= 0)
@@ -165,7 +165,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.addExhaustion(par1DamageSource.getHungerDamage());
              this.health -= par2;
-@@ -1023,6 +1087,10 @@
+@@ -1060,6 +1124,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -176,7 +176,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1066,7 +1134,9 @@
+@@ -1103,7 +1171,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -186,7 +186,7 @@
      }
  
      /**
-@@ -1083,6 +1153,15 @@
+@@ -1120,6 +1190,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -201,8 +201,8 @@
 +        }
          if (par1Entity.canAttackWithItem())
          {
-             int var2 = this.inventory.getDamageVsEntity(par1Entity);
-@@ -1226,6 +1305,12 @@
+             if (!par1Entity.func_85031_j(this))
+@@ -1266,6 +1345,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -215,7 +215,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1265,6 +1350,11 @@
+@@ -1305,6 +1390,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -227,7 +227,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1335,10 +1425,12 @@
+@@ -1375,10 +1465,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -244,7 +244,7 @@
  
              if (var5 == null)
              {
-@@ -1375,7 +1467,9 @@
+@@ -1415,7 +1507,9 @@
       */
      private boolean isInBed()
      {
@@ -255,26 +255,23 @@
      }
  
      /**
-@@ -1390,13 +1484,16 @@
+@@ -1430,9 +1524,12 @@
          var3.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var3.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
--        if (par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) != Block.bed.blockID)
+-        if (par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) == Block.bed.blockID)
+-        {
+-            ChunkCoordinates var8 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
 +        ChunkCoordinates c = par1ChunkCoordinates;
 +        Block block = Block.blocksList[par0World.getBlockId(c.posX, c.posY, c.posZ)];
 +
 +        if (block == null || !block.isBed(par0World, c.posX, c.posY, c.posZ, null))
-         {
-             return par2 && par0World.isAirBlock(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) && par0World.isAirBlock(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY + 1, par1ChunkCoordinates.posZ) ? par1ChunkCoordinates : null;
++        {
++            ChunkCoordinates var8 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
+             return var8;
          }
          else
-         {
--            ChunkCoordinates var4 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
-+            ChunkCoordinates var4 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
-             return var4;
-         }
-     }
-@@ -1410,8 +1507,11 @@
+@@ -1454,8 +1551,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -288,7 +285,7 @@
  
              switch (var2)
              {
-@@ -1731,6 +1831,7 @@
+@@ -1786,6 +1886,7 @@
                      return 101;
                  }
              }

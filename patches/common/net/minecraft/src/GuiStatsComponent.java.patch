@@ -21,22 +21,22 @@
          if (this.field_79017_e.worldServers != null)
          {
 -            for (int var3 = 0; var3 < this.field_79017_e.worldServers.length; ++var3)
-+            int x = 0;
++            int var3 = 0;
 +            for (Integer id : DimensionManager.getIDs())
              {
 -                this.displayStrings[5 + var3] = "Lvl " + var3 + " tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.timeOfLastDimensionTick[var3]) * 1.0E-6D) + " ms";
-+                this.displayStrings[5 + x] = "Lvl " + id + " tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.worldTickTimes.get(id)) * 1.0E-6D) + " ms";
++                this.displayStrings[5 + var3] = "Lvl " + id + " tick: " + field_79020_a.format(this.func_79015_a(this.field_79017_e.worldTickTimes.get(id)) * 1.0E-6D) + " ms";
  
 -                if (this.field_79017_e.worldServers[var3] != null && this.field_79017_e.worldServers[var3].theChunkProviderServer != null)
 +                WorldServer world = DimensionManager.getWorld(id);
 +                if (world != null && world.theChunkProviderServer != null)
                  {
 -                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + this.field_79017_e.worldServers[var3].theChunkProviderServer.makeString();
--                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + this.field_79017_e.worldServers[var3].func_82732_R().func_82590_d() + " / " + this.field_79017_e.worldServers[var3].func_82732_R().func_82591_c();
-+                    this.displayStrings[5 + x] = this.displayStrings[5 + x] + ", " + world.theChunkProviderServer.makeString();
-+                    this.displayStrings[5 + x] = this.displayStrings[5 + x] + ", Vec3: " + world.func_82732_R().func_82590_d() + " / " + world.func_82732_R().func_82591_c();
+-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + this.field_79017_e.worldServers[var3].getWorldVec3Pool().func_82590_d() + " / " + this.field_79017_e.worldServers[var3].getWorldVec3Pool().func_82591_c();
++                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + world.theChunkProviderServer.makeString();
++                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + world.getWorldVec3Pool().func_82590_d() + " / " + world.getWorldVec3Pool().func_82591_c();
                  }
-+                x++;
++                var3++;
              }
          }
  

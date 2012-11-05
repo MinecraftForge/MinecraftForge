@@ -13,7 +13,7 @@
  
  public class NetServerHandler extends NetHandler
  {
-@@ -193,6 +199,11 @@
+@@ -182,6 +188,11 @@
                      if (this.playerEntity.ridingEntity != null)
                      {
                          this.playerEntity.ridingEntity.updateRiderPosition();
@@ -25,7 +25,7 @@
                      }
  
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-@@ -285,6 +296,11 @@
+@@ -274,6 +285,11 @@
                      this.playerEntity.addExhaustion(0.2F);
                  }
  
@@ -37,7 +37,7 @@
                  this.playerEntity.moveEntity(var13, var15, var17);
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.playerEntity.addMovementStat(var13, var15, var17);
-@@ -307,10 +323,15 @@
+@@ -296,10 +312,15 @@
                      logger.warning(this.playerEntity.username + " moved wrongly!");
                  }
  
@@ -54,7 +54,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
                      return;
-@@ -318,7 +339,7 @@
+@@ -307,7 +328,7 @@
  
                  AxisAlignedBB var33 = this.playerEntity.boundingBox.copy().expand((double)var27, (double)var27, (double)var27).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -63,7 +63,7 @@
                  {
                      if (var29 >= -0.03125D)
                      {
-@@ -337,6 +358,11 @@
+@@ -326,6 +347,11 @@
                      this.ticksForFloatKick = 0;
                  }
  
@@ -75,7 +75,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - var3, par1Packet10Flying.onGround);
-@@ -395,7 +421,10 @@
+@@ -384,7 +410,10 @@
                  double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
                  double var14 = var8 * var8 + var10 * var10 + var12 * var12;
  
@@ -87,15 +87,15 @@
                  {
                      return;
                  }
-@@ -419,6 +448,7 @@
+@@ -408,6 +437,7 @@
              {
-                 if (var20 <= this.mcServer.func_82357_ak() && !var3)
+                 if (var20 <= this.mcServer.getSpawnProtectionSize() && !var3)
                  {
 +                    ForgeEventFactory.onPlayerInteract(playerEntity, Action.LEFT_CLICK_BLOCK, var5, var6, var7, 0);
                      this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
                  }
                  else
-@@ -477,7 +507,11 @@
+@@ -466,7 +496,11 @@
                  return;
              }
  
@@ -108,18 +108,18 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -495,7 +529,9 @@
+@@ -484,7 +518,9 @@
                  var12 = var11;
              }
  
--            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > this.mcServer.func_82357_ak() || var9))
+-            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > this.mcServer.getSpawnProtectionSize() || var9))
 +            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
 +            dist *= dist;
-+            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > this.mcServer.func_82357_ak() || var9))
++            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > this.mcServer.getSpawnProtectionSize() || var9))
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -662,8 +698,12 @@
+@@ -651,8 +687,12 @@
                          this.sendPacketToPlayer(new Packet3Chat("Cannot send chat message."));
                          return;
                      }
@@ -134,7 +134,7 @@
                      logger.info(var2);
                      this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(var2, false));
                  }
-@@ -794,7 +834,7 @@
+@@ -783,7 +823,7 @@
                      return;
                  }
  

@@ -90,7 +90,7 @@ public class OreDictionary
         // Get the recipe list
         List recipes = CraftingManager.getInstance().getRecipeList();
 
-        // Caches for recipes to modify
+        // Caches of recipes to modify
         List<IRecipe> recipesToRemove = new ArrayList<IRecipe>();
         List<IRecipe> recipesToAdd = new ArrayList<IRecipe>();
 

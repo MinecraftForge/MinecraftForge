@@ -13,7 +13,7 @@
          else
          {
              int var5 = par1World.getBlockId(par2, par3, par4);
--            return var5 == Block.fence.blockID || var5 == Block.netherFence.blockID || var5 == Block.glass.blockID || var5 == Block.field_82515_ce.blockID;
+-            return var5 == Block.fence.blockID || var5 == Block.netherFence.blockID || var5 == Block.glass.blockID || var5 == Block.cobblestoneWall.blockID;
 +            return (Block.blocksList[var5] != null && Block.blocksList[var5].canPlaceTorchOnTop(par1World, par2, par3, par4));
          }
      }
@@ -30,35 +30,35 @@
 +               canPlaceTorchOn(par1World, par2, par3 - 1, par4);
      }
  
-     /**
-@@ -83,22 +89,22 @@
-             var9 = 5;
+     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
+@@ -80,22 +86,22 @@
+             var10 = 5;
          }
  
 -        if (par5 == 2 && par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
 +        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
          {
-             var9 = 4;
+             var10 = 4;
          }
  
 -        if (par5 == 3 && par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
 +        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
          {
-             var9 = 3;
+             var10 = 3;
          }
  
 -        if (par5 == 4 && par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
 +        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
          {
-             var9 = 2;
+             var10 = 2;
          }
  
 -        if (par5 == 5 && par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
 +        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
          {
-             var9 = 1;
+             var10 = 1;
          }
-@@ -124,19 +130,19 @@
+@@ -121,19 +127,19 @@
       */
      public void onBlockAdded(World par1World, int par2, int par3, int par4)
      {
@@ -82,7 +82,7 @@
          {
              par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
          }
-@@ -159,22 +165,22 @@
+@@ -156,22 +162,22 @@
              int var6 = par1World.getBlockMetadata(par2, par3, par4);
              boolean var7 = false;
  

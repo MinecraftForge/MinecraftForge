@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -120,6 +120,9 @@
+@@ -121,6 +121,9 @@
  import net.minecraft.src.WorldInfo;
  import net.minecraft.src.WorldRenderer;
  import net.minecraft.src.WorldSettings;
@@ -10,16 +10,16 @@
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
-@@ -1252,7 +1255,7 @@
+@@ -1253,7 +1256,7 @@
  
-                 if (this.thePlayer.func_82246_f(var3, var4, var5))
+                 if (this.thePlayer.canCurrentToolHarvestBlock(var3, var4, var5))
                  {
 -                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver.sideHit);
 +                    this.effectRenderer.addBlockHitEffects(var3, var4, var5, this.objectMouseOver);
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1318,7 +1321,8 @@
+@@ -1319,7 +1322,8 @@
                  {
                      int var8 = var3 != null ? var3.stackSize : 0;
  
@@ -29,7 +29,7 @@
                      {
                          var2 = false;
                          this.thePlayer.swingItem();
-@@ -1344,7 +1348,8 @@
+@@ -1345,7 +1349,8 @@
              {
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
@@ -39,7 +39,7 @@
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();
                  }
-@@ -1959,6 +1964,18 @@
+@@ -1985,6 +1990,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -58,7 +58,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2268,95 +2285,12 @@
+@@ -2294,95 +2311,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;
@@ -107,7 +107,7 @@
 -
 -                    if (var10.func_82335_i() == null)
 -                    {
--                        var2 = Item.field_82802_bI.shiftedIndex;
+-                        var2 = Item.itemFrame.shiftedIndex;
 -                    }
 -                    else
 -                    {

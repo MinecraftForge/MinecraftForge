@@ -272,7 +272,7 @@ public class ForgeHooks
         for (int x = 0; x < 9; x++)
         {
             ItemStack stack = player.inventory.getStackInSlot(x);
-            if (stack != null && stack.isItemEqual(result) && ItemStack.func_77970_a(stack, result))
+            if (stack != null && stack.isItemEqual(result) && ItemStack.areItemStackTagsEqual(stack, result))
             {
                 player.inventory.currentItem = x;
                 return true;

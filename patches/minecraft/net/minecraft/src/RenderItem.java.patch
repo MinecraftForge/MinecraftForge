@@ -107,7 +107,7 @@
 +                for (var9 = 0; var9 < Item.itemsList[var6].getRenderPasses(var7); ++var9)
                  {
                      var10 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var9);
-                     int var11 = Item.itemsList[var6].func_82790_a(par3ItemStack, var9);
+                     int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
 @@ -285,14 +284,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -122,9 +122,9 @@
 -                }
 +                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(par3ItemStack.getItem().getTextureFile()));
  
-                 var9 = Item.itemsList[var6].func_82790_a(par3ItemStack, 0);
+                 var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
                  float var17 = (float)(var9 >> 16 & 255) / 255.0F;
-@@ -316,7 +308,10 @@
+@@ -319,7 +311,10 @@
      {
          if (par3ItemStack != null)
          {

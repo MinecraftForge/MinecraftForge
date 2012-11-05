@@ -22,7 +22,7 @@
 -
 -        if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
 -        {
--            int var9 = Math.max(5, par1MinecraftServer.func_82357_ak() - 6);
+-            int var9 = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
 -            var6 += this.rand.nextInt(var9 * 2) - var9;
 -            var7 += this.rand.nextInt(var9 * 2) - var9;
 -            var8 = par2World.getTopSolidOrLiquidBlock(var6, var7);
@@ -30,7 +30,7 @@
  
          this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
-@@ -169,7 +164,11 @@
+@@ -172,7 +167,11 @@
                  if (var4 != null && this.worldObj.blockExists(var4.chunkXPos << 4, 0, var4.chunkZPos << 4))
                  {
                      var1.add(this.worldObj.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos));
@@ -43,7 +43,7 @@
                  }
              }
  
-@@ -242,11 +241,29 @@
+@@ -253,11 +252,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -54,7 +54,7 @@
 +
          this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(par1DamageSource.getDeathMessage(this)));
  
-         if (!this.worldObj.func_82736_K().func_82766_b("keepInventory"))
+         if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
 +            captureDrops = true;
 +            capturedDrops.clear();

@@ -24,7 +24,7 @@
          }
          else
          {
-@@ -322,7 +332,7 @@
+@@ -327,7 +337,7 @@
      {
          CreativeTabs var3 = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -33,7 +33,7 @@
          {
              this.fontRenderer.drawString(var3.getTranslatedTabLabel(), 8, 6, 4210752);
          }
-@@ -344,7 +354,7 @@
+@@ -349,7 +359,7 @@
              {
                  CreativeTabs var9 = var6[var8];
  
@@ -42,7 +42,7 @@
                  {
                      this.func_74227_b(var9);
                      return;
-@@ -360,11 +370,17 @@
+@@ -365,11 +375,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -60,7 +60,7 @@
          int var2 = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative var3 = (ContainerCreative)this.inventorySlots;
-@@ -534,21 +550,42 @@
+@@ -539,21 +555,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] var11 = CreativeTabs.creativeTabArray;
@@ -108,7 +108,7 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -569,14 +606,32 @@
+@@ -574,14 +611,32 @@
          int var8 = var7.length;
          int var9;
  
@@ -143,7 +143,7 @@
              }
          }
  
-@@ -594,6 +649,14 @@
+@@ -599,6 +654,14 @@
              this.drawTexturedModalRect(var11, var8 + (int)((float)(var9 - var8 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -158,7 +158,7 @@
          this.renderCreativeTab(var5);
  
          if (var5 == CreativeTabs.tabInventory)
-@@ -604,6 +667,15 @@
+@@ -609,6 +672,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -174,16 +174,16 @@
          int var4 = par1CreativeTabs.getTabColumn();
          int var5 = 28 * var4;
          byte var6 = 0;
-@@ -718,7 +790,7 @@
+@@ -723,7 +795,7 @@
          var8 += 8 + (var3 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 -        ItemStack var10 = new ItemStack(par1CreativeTabs.getTabIconItem());
 +        ItemStack var10 = par1CreativeTabs.getIconItemStack();
-         itemRenderer.func_82406_b(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
+         itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
          itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -740,6 +812,15 @@
+@@ -745,6 +817,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }
