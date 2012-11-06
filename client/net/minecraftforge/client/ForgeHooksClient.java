@@ -19,12 +19,14 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.MathHelper;
+import net.minecraft.src.ModelBiped;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderGlobal;
 import net.minecraft.src.Tessellator;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.PlayerModelRotationEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
@@ -387,6 +389,11 @@ public class ForgeHooksClient
     public static void onTextureLoad(String texture, ITexturePack pack)
     {
         MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+    
+    public static void onRotatePlayerModel(EntityPlayer player, ModelBiped biped, float par3, float par4, float par5, float par6, float par7, float par8)
+    {
+    	MinecraftForge.EVENT_BUS.post(new PlayerModelRotationEvent(player, biped, par3, par4, par5, par6, par7, par8));
     }
 
     /**
