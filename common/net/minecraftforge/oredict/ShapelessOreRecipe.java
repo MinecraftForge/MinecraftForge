@@ -2,6 +2,9 @@ package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.List;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.CraftingManager;
@@ -51,6 +54,25 @@ public class ShapelessOreRecipe implements IRecipe
                 ret += output;
                 throw new RuntimeException(ret);
             }
+        }
+    }
+
+    ShapelessOreRecipe(ShapelessRecipes recipe, Map<ItemStack, String> replacements)
+    {
+        output = recipe.getRecipeOutput();
+
+        for(ItemStack ingred : ((List<ItemStack>)recipe.recipeItems))
+        {
+            Object finalObj = ingred;
+            for(Entry<ItemStack, String> replace : replacements.entrySet())
+            {
+                if(OreDictionary.itemMatches(replace.getKey(), ingred, false))
+                {
+                    finalObj = OreDictionary.getOres(replace.getValue());
+                    break;
+                }
+            }
+            input.add(finalObj);
         }
     }
 
