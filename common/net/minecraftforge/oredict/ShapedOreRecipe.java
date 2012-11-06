@@ -2,6 +2,8 @@ package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IRecipe;
@@ -123,6 +125,33 @@ public class ShapedOreRecipe implements IRecipe
         }
     }
 
+    ShapedOreRecipe(ShapedRecipes recipe, Map<ItemStack, String> replacements)
+    {
+        output = recipe.getRecipeOutput();
+        width = recipe.recipeWidth;
+        height = recipe.recipeHeight;
+
+        input = new Object[recipe.recipeItems.length];
+
+        for(int i = 0; i < input.length; i++)
+        {
+            ItemStack ingred = recipe.recipeItems[i];
+
+            if(ingred == null) continue;
+
+            input[i] = recipe.recipeItems[i];
+
+            for(Entry<ItemStack, String> replace : replacements.entrySet())
+            {
+                if(OreDictionary.itemMatches(replace.getKey(), ingred, true))
+                {
+                    input[i] = OreDictionary.getOres(replace.getValue());
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     public ItemStack getCraftingResult(InventoryCrafting var1){ return output.copy(); }
 
@@ -208,7 +237,7 @@ public class ShapedOreRecipe implements IRecipe
 
         return true;
     }
-    
+
     private boolean checkItemEquals(ItemStack target, ItemStack input)
     {
         if (input == null && target != null || input != null && target == null)
@@ -217,7 +246,7 @@ public class ShapedOreRecipe implements IRecipe
         }
         return (target.itemID == input.itemID && (target.getItemDamage() == -1 || target.getItemDamage() == input.getItemDamage()));
     }
-    
+
     public ShapedOreRecipe setMirrored(boolean mirror)
     {
         mirrored = mirror;
