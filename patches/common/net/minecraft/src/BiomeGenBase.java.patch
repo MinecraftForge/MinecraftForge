@@ -13,7 +13,7 @@
 @@ -155,8 +158,8 @@
       * Allocate a new BiomeDecorator for this BiomeGenBase
       */
-     protected BiomeDecorator createBiomeDecorator()
+     public BiomeDecorator createBiomeDecorator()
 -    {
 -        return new BiomeDecorator(this);
 +    {   
@@ -21,7 +21,7 @@
      }
  
      /**
-@@ -362,4 +365,11 @@
+@@ -362,4 +365,16 @@
          double var3 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
          return ColorizerFoliage.getFoliageColor(var1, var3);
      }
@@ -31,5 +31,10 @@
 +        BiomeEvent.CreateDecorator event = new BiomeEvent.CreateDecorator(this, original);
 +        MinecraftForge.TERRAIN_GEN_BUS.post(event);
 +        return event.newBiomeDecorator;
++    }
++    
++    public void setEnableRain(boolean enableRain)
++    {
++        this.enableRain = enableRain;
 +    }
  }
