@@ -30,4 +30,10 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
     }
+    
+    public static void onBlockHarvested(EntityPlayer player, Block block, int x, int y, int z, int metadata)
+    {
+    	PlayerEvent.HarvestBlock event = new PlayerEvent.HarvestBlock(player, block, x, y, z, metadata);
+    	MinecraftForge.EVENT_BUS.post(event);
+    }
 }

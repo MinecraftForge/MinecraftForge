@@ -14,8 +14,8 @@ Extract fernflower.jar into your MCP's runtime/bin folder.
 Now just start the install.cmd/.sh, MCForge will install itself into the proper
 locations and copy all needed files, as well as modifying the needed baseclasses.
 
-Forge also includes a snapshot of the MCP mapings, this may not be the current 
-version of the mapings. But you must use the provided mapings in order for the 
+Forge also includes a snapshot of the MCP mappings, this may not be the current 
+version of the mappings. But you must use the provided mappings in order for the 
 patch files to work together.
 
 The install scripts should take care of everything for you, so you should not need

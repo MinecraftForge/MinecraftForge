@@ -27,6 +27,25 @@ public class PlayerEvent extends LivingEvent
             this.success = success;
         }
     }
+    
+    public static class HarvestBlock extends PlayerEvent
+    {
+        public final Block block;
+        public final int x;
+        public final int y;
+        public final int z;
+        public final int metadata;
+
+        public HarvestBlock(EntityPlayer player, Block block, int x, int y, int z, int metadata)
+        {
+            super(player);
+            this.block = block;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.metadata = metadata;
+        }
+    }
 
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
