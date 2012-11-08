@@ -2,6 +2,7 @@ package net.minecraftforge.event;
 import net.minecraft.src.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerEvent.HarvestBlock;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 public class ForgeEventFactory
@@ -29,5 +30,11 @@ public class ForgeEventFactory
     public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
+    }
+
+    public static void onBlockHarvested(World world, Block block, int x, int y, int z, int metadata, EntityPlayer player)
+    {
+        PlayerEvent.HarvestBlock event = new HarvestBlock(world, block, x, y, z, metadata, player);
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }

@@ -71,7 +71,11 @@
                  }
  
                  if (var6 > 0 && var5 >= 1.0F)
-@@ -225,7 +259,7 @@
+@@ -222,10 +256,11 @@
+ 
+         if (var4 != null)
+         {
++            ForgeEventFactory.onBlockHarvested(this.theWorld, var4, par1, par2, par3, var5, this.thisPlayerMP);
              var4.onBlockHarvested(this.theWorld, par1, par2, par3, var5, this.thisPlayerMP);
          }
  
@@ -80,7 +84,7 @@
  
          if (var4 != null && var6)
          {
-@@ -246,19 +280,30 @@
+@@ -246,19 +281,30 @@
          }
          else
          {
@@ -113,7 +117,7 @@
  
                  if (var7 != null)
                  {
-@@ -267,9 +312,11 @@
+@@ -267,9 +313,11 @@
                      if (var7.stackSize == 0)
                      {
                          this.thisPlayerMP.destroyCurrentEquippedItem();
@@ -125,7 +129,7 @@
                  if (var6 && var8)
                  {
                      Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -310,6 +357,7 @@
+@@ -310,6 +358,7 @@
              if (var6.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -133,7 +137,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -327,29 +375,56 @@
+@@ -327,29 +376,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -212,7 +216,7 @@
      }
  
      /**
-@@ -359,4 +434,13 @@
+@@ -359,4 +435,13 @@
      {
          this.theWorld = par1WorldServer;
      }
