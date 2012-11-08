@@ -151,7 +151,22 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2860,4 +2905,30 @@
+@@ -2851,6 +2896,14 @@
+         return false;
+     }
+ 
++    /** Returns true if the entity's rider (EntityPlayer) should face forward when mounted, 
++     * such as when the player is riding a pig.
++     * */
++    public boolean shouldRiderFaceForward()
++    {
++        return false;
++    }
++
+     public final int func_85035_bI()
+     {
+         return this.dataWatcher.getWatchableObjectByte(10);
+@@ -2860,4 +2913,30 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }

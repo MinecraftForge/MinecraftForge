@@ -1,0 +1,14 @@
+--- ../src_base/common/net/minecraft/src/EntityPig.java
++++ ../src_work/common/net/minecraft/src/EntityPig.java
+@@ -51,6 +51,11 @@
+         ItemStack var1 = ((EntityPlayer)this.riddenByEntity).getHeldItem();
+         return var1 != null && var1.itemID == Item.carrotOnAStick.shiftedIndex;
+     }
++    
++    public boolean shouldRiderFaceForward()
++    {
++        return true;
++    }
+ 
+     protected void entityInit()
+     {
