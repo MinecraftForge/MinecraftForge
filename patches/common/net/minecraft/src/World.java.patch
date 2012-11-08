@@ -9,15 +9,15 @@
  
  public abstract class World implements IBlockAccess
  {
-@@ -1693,7 +1695,6 @@
-             this.func_72847_b(var2);
+@@ -1652,7 +1654,6 @@
+             this.func_72847_b((Entity)this.field_72997_g.get(var1));
          }
  
 -        this.field_72997_g.clear();
          this.field_72984_F.func_76318_c("regular");
  
          for (var1 = 0; var1 < this.field_72996_f.size(); ++var1)
-@@ -3644,7 +3645,7 @@
+@@ -3595,7 +3596,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {

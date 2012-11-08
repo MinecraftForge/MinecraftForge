@@ -12,9 +12,10 @@ ctorparamre = re.compile('(([ZBCSIJFD]|L([\w\/]+);))')
 common = gen_merged_srg('..',None)
 rev_common = {t:{v.split(' ')[0]:k for k, v in m.items()} for t,m in common.items()}
 
-if len(sys.argv) < 1:
+if len(sys.argv) < 2:
   print('Give me a file to process please')
   sys.exit(1)
+print(sys.argv, len(sys.argv))
 
 if sys.argv[1]=='mcp_merge.cfg':
   print('Fixing mcp_merge.cfg')
@@ -26,7 +27,7 @@ if sys.argv[1]=='mcp_merge.cfg':
         newpart = parts[0][0]+rev_common['CL:'][target]+" #"+target+'\n'
 	nf.write(newpart)
   sys.exit(0)
-elif len(sys.argv)==1:
+elif len(sys.argv)==2:
   with open(sys.argv[1]+'-new','w') as nf:
     with open(sys.argv[1]) as f:
       for line in f:

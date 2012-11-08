@@ -289,7 +289,7 @@ public class MCPMerger
 
         reader.accept(classNode, 0);
 
-        if (!classNode.name.equals("bdz")) //Special case CodecMus so I dont have to make a new patch, anyone who uses this in production code is.. bad.
+        if (!classNode.name.equals("beg")) //Special case CodecMus so I dont have to make a new patch, anyone who uses this in production code is.. bad.
         {
             if (classNode.visibleAnnotations == null) classNode.visibleAnnotations = new ArrayList<AnnotationNode>();
             classNode.visibleAnnotations.add(getSideAnn(isClientOnly));

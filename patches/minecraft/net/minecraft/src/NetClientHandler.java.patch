@@ -48,7 +48,7 @@
          this.field_72563_h.field_71474_y.func_82879_c();
      }
  
-@@ -583,6 +591,7 @@
+@@ -580,6 +588,7 @@
          {
              this.field_72555_g.func_74429_a(p_72546_1_);
              this.field_72555_g.func_74423_d();
@@ -56,7 +56,7 @@
          }
      }
  
-@@ -622,6 +631,7 @@
+@@ -619,6 +628,7 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
@@ -64,7 +64,7 @@
          this.field_72563_h.field_71456_v.func_73827_b().func_73765_a(p_72481_1_.field_73476_b);
      }
  
-@@ -1114,6 +1124,11 @@
+@@ -1108,6 +1118,11 @@
  
      public void func_72494_a(Packet131MapData p_72494_1_)
      {
@@ -76,7 +76,7 @@
          if (p_72494_1_.field_73438_a == Item.field_77744_bd.field_77779_bT)
          {
              ItemMap.func_77874_a(p_72494_1_.field_73436_b, this.field_72563_h.field_71441_e).func_76192_a(p_72494_1_.field_73437_c);
-@@ -1223,6 +1238,11 @@
+@@ -1217,6 +1232,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -88,7 +88,7 @@
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
              String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
-@@ -1267,4 +1287,20 @@
+@@ -1261,4 +1281,20 @@
      {
          return this.field_72555_g;
      }
