@@ -10,7 +10,7 @@
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
  import net.minecraft.src.BehaviorArrowDispense;
-@@ -384,7 +387,10 @@
+@@ -382,7 +385,10 @@
          {
              if (this.func_71197_b())
              {
@@ -21,7 +21,7 @@
  
                  for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
-@@ -423,6 +429,7 @@
+@@ -421,6 +427,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -29,7 +29,7 @@
              }
              else
              {
-@@ -486,8 +493,10 @@
+@@ -484,8 +491,10 @@
  
      public void func_71217_p()
      {
@@ -40,7 +40,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -533,6 +542,7 @@
+@@ -531,6 +540,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -48,7 +48,7 @@
      }
  
      public void func_71190_q()
-@@ -559,6 +569,7 @@
+@@ -558,6 +568,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -56,7 +56,7 @@
                  CrashReport var6;
  
                  try
-@@ -583,6 +594,7 @@
+@@ -582,6 +593,7 @@
                      throw new ReportedException(var6);
                  }
  
@@ -64,7 +64,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  var4.func_73039_n().func_72788_a();
-@@ -1153,6 +1165,12 @@
+@@ -1150,6 +1162,12 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {

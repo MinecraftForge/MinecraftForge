@@ -59,15 +59,15 @@
          this.field_78367_h.add(p_78355_1_);
          p_78355_1_.func_76846_a();
      }
-@@ -418,15 +429,31 @@
-         {
-             var3 = (TextureFX)var2.next();
+@@ -418,15 +429,30 @@
+             TextureFX var3 = (TextureFX)this.field_78367_h.get(var2);
              var3.field_76851_c = this.field_78365_j.field_74337_g;
+             var3.func_76846_a();
+-            var1 = this.func_82772_a(var3, var1);
 +            if (TextureFXManager.instance().onUpdateTextureEffect(var3))
 +            {
 +                var1 = this.func_82772_a(var3, var1);
 +            }
-             var3.func_76846_a();
          }
      }
  
@@ -80,7 +80,7 @@
 +        int tWidth  = dim.width >> 4;
 +        int tHeight = dim.height >> 4;
 +        int tLen = tWidth * tHeight << 2;
-+        
++
 +        if (p_82772_1_.field_76852_a.length == tLen)
 +        {
 +            this.field_78358_g.clear();
@@ -94,7 +94,7 @@
  
          if (p_82772_1_.field_76850_b != p_82772_2_)
          {
-@@ -436,9 +463,11 @@
+@@ -436,9 +462,11 @@
  
          for (int var3 = 0; var3 < p_82772_1_.field_76849_e; ++var3)
          {
@@ -107,7 +107,7 @@
              }
          }
  
-@@ -504,8 +533,9 @@
+@@ -504,8 +532,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
@@ -119,7 +119,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -541,8 +571,9 @@
+@@ -541,8 +570,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }

@@ -10,7 +10,7 @@
  
  public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
  {
-@@ -227,9 +230,18 @@
+@@ -223,9 +226,18 @@
                  p_75820_1_.field_76644_m = true;
                  var10 = new NBTTagCompound();
  
@@ -32,7 +32,7 @@
                  }
              }
          }
-@@ -242,8 +254,17 @@
+@@ -238,8 +250,17 @@
          {
              TileEntity var21 = (TileEntity)var17.next();
              var10 = new NBTTagCompound();

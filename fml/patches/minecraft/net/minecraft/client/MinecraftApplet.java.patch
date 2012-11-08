@@ -21,7 +21,7 @@
      {
          this.field_71483_a = new CanvasMinecraftApplet(this);
          boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
-@@ -63,6 +70,11 @@
+@@ -64,6 +71,11 @@
  
      public void start()
      {
