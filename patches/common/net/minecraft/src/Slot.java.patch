@@ -1,0 +1,17 @@
+--- ../src_base/common/net/minecraft/src/Slot.java
++++ ../src_work/common/net/minecraft/src/Slot.java
+@@ -147,4 +147,14 @@
+     {
+         return -1;
+     }
++
++    @SideOnly(Side.CLIENT)
++
++    /**
++     * Returns the texture file to use for the background image of the slot.
++     */
++    public String getBackgroundIconTexture()
++    {
++        return "/gui/items.png";
++    }
+ }
