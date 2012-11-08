@@ -26,7 +26,7 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -448,7 +460,7 @@
+@@ -448,11 +460,11 @@
          this.cameraYaw = 0.0F;
          this.addMountedMovementStat(this.posX - var1, this.posY - var3, this.posZ - var5);
  
@@ -35,6 +35,11 @@
          {
              this.rotationPitch = var8;
              this.rotationYaw = var7;
+-            this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
++            this.renderYawOffset = ((EntityLiving)this.ridingEntity).renderYawOffset;
+         }
+     }
+ 
 @@ -577,6 +589,9 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
