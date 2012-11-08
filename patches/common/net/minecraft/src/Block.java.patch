@@ -102,18 +102,6 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1225,7 +1225,10 @@
-     /**
-      * Called when the block is attempted to be harvested
-      */
--    public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer) {}
-+    public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer) 
-+    {
-+        ForgeEventFactory.onBlockHarvested(par6EntityPlayer, this, par2, par3, par4, par5);
-+    }
- 
-     @SideOnly(Side.CLIENT)
- 
 @@ -1322,4 +1328,849 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();

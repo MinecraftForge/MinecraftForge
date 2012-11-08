@@ -113,6 +113,18 @@
  
                  if (var7 != null)
                  {
+@@ -258,6 +258,11 @@
+         {
+             var4.onBlockHarvested(this.theWorld, par1, par2, par3, var5, this.thisPlayerMP);          
+         }
++        
++        if (var4 != null)
++        {
++        	ForgeEventFactory.onBlockHarvested(this.theWorld, var4, par1, par2, par3, var5, this.thisPlayerMP);  
++        }
+ 
+         boolean var6 = (var4 != null && var4.removeBlockByPlayer(theWorld, thisPlayerMP, par1, par2, par3));
+ 
 @@ -267,9 +312,11 @@
                      if (var7.stackSize == 0)
                      {

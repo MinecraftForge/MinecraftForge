@@ -3,6 +3,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.src.Block;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.World;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -30,15 +31,17 @@ public class PlayerEvent extends LivingEvent
     
     public static class HarvestBlock extends PlayerEvent
     {
+    	public final World world;
         public final Block block;
         public final int x;
         public final int y;
         public final int z;
         public final int metadata;
 
-        public HarvestBlock(EntityPlayer player, Block block, int x, int y, int z, int metadata)
+        public HarvestBlock(World world, Block block, int x, int y, int z, int metadata, EntityPlayer player)
         {
             super(player);
+            this.world = world;
             this.block = block;
             this.x = x;
             this.y = y;
