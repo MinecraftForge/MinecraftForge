@@ -22,7 +22,7 @@
              NodeList var5 = var4.getElementsByTagName("Contents");
  
              for (int var6 = 0; var6 < 2; ++var6)
-@@ -172,7 +178,11 @@
+@@ -168,7 +174,11 @@
      private void downloadResource(URL par1URL, File par2File, long par3) throws IOException
      {
          byte[] var5 = new byte[4096];

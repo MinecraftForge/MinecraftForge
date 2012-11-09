@@ -58,31 +58,31 @@
          {
              var10 = 1;
          }
-@@ -121,19 +127,19 @@
-      */
-     public void onBlockAdded(World par1World, int par2, int par3, int par4)
+@@ -123,19 +129,19 @@
      {
--        if (par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
-+        if (par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
+         if (par1World.getBlockMetadata(par2, par3, par4) == 0)
          {
-             par1World.setBlockMetadataWithNotify(par2, par3, par4, 1);
-         }
--        else if (par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
-+        else if (par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
-         {
-             par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
-         }
--        else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
-+        else if (par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
-         {
-             par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
-         }
--        else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
-+        else if (par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
-         {
-             par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
-         }
-@@ -156,22 +162,22 @@
+-            if (par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
++            if (par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
+             {
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 1);
+             }
+-            else if (par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
++            else if (par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
+             {
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
+             }
+-            else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
++            else if (par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
+             {
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
+             }
+-            else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
++            else if (par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
+             {
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
+             }
+@@ -159,22 +165,22 @@
              int var6 = par1World.getBlockMetadata(par2, par3, par4);
              boolean var7 = false;
  

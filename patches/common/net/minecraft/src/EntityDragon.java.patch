@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EntityDragon.java
 +++ ../src_work/common/net/minecraft/src/EntityDragon.java
-@@ -519,10 +519,11 @@
+@@ -517,10 +517,11 @@
                  for (int var12 = var4; var12 <= var7; ++var12)
                  {
                      int var13 = this.worldObj.getBlockId(var10, var11, var12);

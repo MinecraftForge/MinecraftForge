@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/EnchantmentHelper.java
 +++ ../src_work/common/net/minecraft/src/EnchantmentHelper.java
-@@ -414,7 +414,7 @@
+@@ -411,7 +411,7 @@
          {
              Enchantment var7 = var4[var6];
  

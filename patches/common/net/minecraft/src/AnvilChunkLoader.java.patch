@@ -10,7 +10,7 @@
  public class AnvilChunkLoader implements IThreadedFileIO, IChunkLoader
  {
      private List chunksToRemove = new ArrayList();
-@@ -97,6 +100,7 @@
+@@ -93,6 +96,7 @@
                  var5 = this.readChunkFromNBT(par1World, par4NBTTagCompound.getCompoundTag("Level"));
              }
  
@@ -18,7 +18,7 @@
              return var5;
          }
      }
-@@ -112,6 +116,7 @@
+@@ -108,6 +112,7 @@
              var3.setTag("Level", var4);
              this.writeChunkToNBT(par2Chunk, par1World, var4);
              this.func_75824_a(par2Chunk.getChunkCoordIntPair(), var3);

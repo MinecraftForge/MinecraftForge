@@ -301,23 +301,23 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -966,6 +1025,7 @@
-             List var4 = var1[var3];
-             this.worldObj.addLoadedEntities(var4);
+@@ -963,6 +1022,7 @@
+         {
+             this.worldObj.addLoadedEntities(this.entityLists[var1]);
          }
 +        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(this));
      }
  
      /**
-@@ -990,6 +1050,7 @@
-             List var4 = var5[var3];
-             this.worldObj.unloadEntities(var4);
+@@ -983,6 +1043,7 @@
+         {
+             this.worldObj.unloadEntities(this.entityLists[var3]);
          }
 +        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
      }
  
      /**
-@@ -1006,8 +1067,8 @@
+@@ -999,8 +1060,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -328,7 +328,7 @@
  
          if (var4 < 0)
          {
-@@ -1055,8 +1116,8 @@
+@@ -1047,8 +1108,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -339,7 +339,7 @@
  
          if (var5 < 0)
          {
-@@ -1240,6 +1301,15 @@
+@@ -1231,6 +1292,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -355,7 +355,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1336,12 +1406,26 @@
+@@ -1327,12 +1397,26 @@
          }
  
          this.generateHeightMap();
@@ -388,7 +388,7 @@
          }
      }
  
-@@ -1450,4 +1534,18 @@
+@@ -1441,4 +1525,18 @@
              }
          }
      }

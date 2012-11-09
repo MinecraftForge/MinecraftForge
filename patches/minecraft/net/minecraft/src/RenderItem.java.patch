@@ -9,79 +9,79 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
-@@ -55,13 +57,16 @@
+@@ -58,13 +60,16 @@
  
-         GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
-         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
--        Block var14 = Block.blocksList[var10.itemID];
-         int var16;
-         float var19;
-         float var20;
-         float var24;
+             GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
+             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+-            Block var14 = Block.blocksList[var10.itemID];
+             int var16;
+             float var19;
+             float var20;
+             float var24;
  
--        if (var14 != null && RenderBlocks.renderItemIn3d(var14.getRenderType()))
-+        if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
-+        {
-+            ;
-+        }
-+        else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
-         {
-             GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
- 
-@@ -72,9 +77,9 @@
-                 GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
-             }
- 
--            this.loadTexture("/terrain.png");
-+            this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
-             float var22 = 0.25F;
--            var16 = var14.getRenderType();
-+            var16 = Block.blocksList[var10.itemID].getRenderType();
- 
-             if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
+-            if (var14 != null && RenderBlocks.renderItemIn3d(var14.getRenderType()))
++            if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
++            {
++                ;
++            }
++            else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
              {
-@@ -96,7 +101,7 @@
+                 GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
+ 
+@@ -75,9 +80,9 @@
+                     GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
                  }
  
-                 var24 = 1.0F;
--                this.renderBlocks.renderBlockAsItem(var14, var10.getItemDamage(), var24);
-+                this.renderBlocks.renderBlockAsItem(Block.blocksList[var10.itemID], var10.getItemDamage(), var24);
-                 GL11.glPopMatrix();
-             }
-         }
-@@ -118,10 +123,11 @@
-                     GL11.glScalef(0.5F, 0.5F, 0.5F);
-                 }
+-                this.loadTexture("/terrain.png");
++                this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
+                 float var22 = 0.25F;
+-                var16 = var14.getRenderType();
++                var16 = Block.blocksList[var10.itemID].getRenderType();
  
--                this.loadTexture("/gui/items.png");
--
--                for (var15 = 0; var15 <= 1; ++var15)
--                {
-+                this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
-+
-+                for (var15 = 0; var15 < var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
-+                {
-+                    this.random.setSeed(187L); //Fixes Vanilla bug where layers would not render aligns properly.
-                     var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);
-                     var17 = 1.0F;
- 
-@@ -152,14 +158,7 @@
- 
-                 var15 = var10.getIconIndex();
- 
--                if (var14 != null)
--                {
--                    this.loadTexture("/terrain.png");
--                }
--                else
--                {
--                    this.loadTexture("/gui/items.png");
--                }
-+                this.loadTexture(var10.getItem().getTextureFile());
- 
-                 if (this.field_77024_a)
+                 if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
                  {
-@@ -227,10 +226,10 @@
+@@ -99,7 +104,7 @@
+                     }
+ 
+                     var24 = 1.0F;
+-                    this.renderBlocks.renderBlockAsItem(var14, var10.getItemDamage(), var24);
++                    this.renderBlocks.renderBlockAsItem(Block.blocksList[var10.itemID], var10.getItemDamage(), var24);
+                     GL11.glPopMatrix();
+                 }
+             }
+@@ -121,10 +126,11 @@
+                         GL11.glScalef(0.5F, 0.5F, 0.5F);
+                     }
+ 
+-                    this.loadTexture("/gui/items.png");
+-
+-                    for (var15 = 0; var15 <= 1; ++var15)
+-                    {
++                    this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
++
++                    for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
++                    {
++                        this.random.setSeed(187L); //Fixes Vanilla bug where layers would not render aligns properly.
+                         var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);
+                         var17 = 1.0F;
+ 
+@@ -155,14 +161,7 @@
+ 
+                     var15 = var10.getIconIndex();
+ 
+-                    if (var14 != null)
+-                    {
+-                        this.loadTexture("/terrain.png");
+-                    }
+-                    else
+-                    {
+-                        this.loadTexture("/gui/items.png");
+-                    }
++                    var10.getItem().getTextureFile();
+ 
+                     if (this.field_77024_a)
+                     {
+@@ -231,10 +230,10 @@
          float var13;
          float var16;
  
@@ -95,7 +95,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -261,9 +260,9 @@
+@@ -265,9 +264,9 @@
              if (Item.itemsList[var6].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -108,7 +108,7 @@
                  {
                      var10 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var9);
                      int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
-@@ -285,14 +284,7 @@
+@@ -289,14 +288,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
@@ -124,7 +124,7 @@
  
                  var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
                  float var17 = (float)(var9 >> 16 & 255) / 255.0F;
-@@ -319,7 +311,10 @@
+@@ -323,7 +315,10 @@
      {
          if (par3ItemStack != null)
          {
