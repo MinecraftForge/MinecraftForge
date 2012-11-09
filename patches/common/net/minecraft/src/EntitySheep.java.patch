@@ -13,9 +13,9 @@
 +
 +public class EntitySheep extends EntityAnimal implements IShearable
  {
-     /**
-      * Holds the RGB table of the sheep colors - in OpenGL glColor3f values - used to render the sheep colored fleece.
-@@ -134,28 +138,6 @@
+     private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
+ 
+@@ -118,28 +122,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -44,9 +44,9 @@
          return super.interact(par1EntityPlayer);
      }
  
-@@ -304,4 +286,24 @@
+@@ -328,4 +310,24 @@
      {
-         this.setFleeceColor(getRandomFleeceColor(this.worldObj.rand));
+         return this.func_90015_b(par1EntityAgeable);
      }
 +
 +    @Override

@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/BlockRedstoneWire.java
 +++ ../src_work/common/net/minecraft/src/BlockRedstoneWire.java
-@@ -556,7 +556,7 @@
+@@ -554,7 +554,7 @@
          }
          else if (var5 != Block.redstoneRepeaterIdle.blockID && var5 != Block.redstoneRepeaterActive.blockID)
          {

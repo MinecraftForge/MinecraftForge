@@ -1,6 +1,6 @@
 --- ../src_base/common/net/minecraft/src/RailLogic.java
 +++ ../src_work/common/net/minecraft/src/RailLogic.java
-@@ -19,6 +19,7 @@
+@@ -18,6 +18,7 @@
      private List connectedTracks;
  
      final BlockRail rail;
@@ -8,7 +8,7 @@
  
      public RailLogic(BlockRail par1BlockRail, World par2World, int par3, int par4, int par5)
      {
-@@ -29,18 +30,11 @@
+@@ -28,18 +29,11 @@
          this.trackY = par4;
          this.trackZ = par5;
          int var6 = par2World.getBlockId(par3, par4, par5);
@@ -32,7 +32,7 @@
          this.setConnections(var7);
      }
  
-@@ -267,7 +261,7 @@
+@@ -258,7 +252,7 @@
              }
          }
  
@@ -41,7 +41,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX, this.trackY + 1, this.trackZ - 1))
              {
-@@ -280,7 +274,7 @@
+@@ -271,7 +265,7 @@
              }
          }
  
@@ -50,7 +50,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX + 1, this.trackY + 1, this.trackZ))
              {
-@@ -431,7 +425,7 @@
+@@ -422,7 +416,7 @@
              }
          }
  
@@ -59,7 +59,7 @@
          {
              if (BlockRail.isRailBlockAt(this.worldObj, this.trackX, this.trackY + 1, this.trackZ - 1))
              {
-@@ -444,7 +438,7 @@
+@@ -435,7 +429,7 @@
              }
          }
  

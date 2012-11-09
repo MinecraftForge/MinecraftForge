@@ -8,7 +8,7 @@
  
  public abstract class ServerConfigurationManager
  {
-@@ -298,6 +299,12 @@
+@@ -296,6 +297,12 @@
       */
      public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
      {
@@ -21,7 +21,7 @@
          par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeAllTrackingPlayers(par1EntityPlayerMP);
          par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeEntityFromAllTrackingPlayers(par1EntityPlayerMP);
          par1EntityPlayerMP.getServerForPlayer().getPlayerManager().removePlayer(par1EntityPlayerMP);
-@@ -320,6 +327,7 @@
+@@ -318,6 +325,7 @@
          EntityPlayerMP var7 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.username, (ItemInWorldManager)var6);
          var7.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
          var7.clonePlayer(par1EntityPlayerMP, par3);
@@ -29,7 +29,7 @@
          var7.entityId = par1EntityPlayerMP.entityId;
          WorldServer var8 = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
          this.func_72381_a(var7, par1EntityPlayerMP, var8);
-@@ -363,14 +371,20 @@
+@@ -361,14 +369,20 @@
  
      public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
      {
@@ -51,7 +51,7 @@
          this.func_72375_a(par1EntityPlayerMP, var4);
          par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
          par1EntityPlayerMP.theItemInWorldManager.setWorld(var5);
-@@ -391,38 +405,23 @@
+@@ -389,38 +403,23 @@
       */
      public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
      {
@@ -101,7 +101,7 @@
          {
              ChunkCoordinates var18;
  
-@@ -459,7 +458,7 @@
+@@ -457,7 +456,7 @@
                  par4WorldServer.spawnEntityInWorld(par1Entity);
                  par1Entity.setLocationAndAngles(var5, par1Entity.posY, var7, par1Entity.rotationYaw, par1Entity.rotationPitch);
                  par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);

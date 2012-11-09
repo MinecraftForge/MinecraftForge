@@ -95,23 +95,26 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -433,7 +413,9 @@
-             for (int var3 = 0; var3 < var2; ++var3)
+@@ -431,7 +411,9 @@
+             for (int var1 = 0; var1 < this.worldServers.length; ++var1)
              {
-                 WorldServer var4 = var1[var3];
-+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var4));
-                 var4.flush();
-+                DimensionManager.setWorld(var4.provider.dimensionId, null);
+                 WorldServer var2 = this.worldServers[var1];
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2));
+                 var2.flush();
++                DimensionManager.setWorld(var2.provider.dimensionId, null);
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -646,13 +628,13 @@
-     {
+@@ -645,13 +627,15 @@
          this.theProfiler.startSection("levels");
+         int var1;
  
--        for (int var1 = 0; var1 < this.worldServers.length; ++var1)
-+        for (Integer id : DimensionManager.getIDs())
-         {
+-        for (var1 = 0; var1 < this.worldServers.length; ++var1)
+-        {
++        Integer[] ids = DimensionManager.getIDs();
++        for (int x = 0; x < ids.length; x++)
++        {
++            int id = ids[x];
              long var2 = System.nanoTime();
  
 -            if (var1 == 0 || this.getAllowNether())
@@ -123,7 +126,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  var4.getWorldVec3Pool().clear();
-@@ -699,9 +681,11 @@
+@@ -698,9 +682,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -138,7 +141,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -757,7 +741,13 @@
+@@ -754,7 +740,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -153,7 +156,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -866,7 +856,7 @@
+@@ -863,7 +855,7 @@
  
      public String getServerModName()
      {
@@ -162,7 +165,7 @@
      }
  
      /**
-@@ -1128,6 +1118,7 @@
+@@ -1125,6 +1117,7 @@
  
              if (var2 != null)
              {

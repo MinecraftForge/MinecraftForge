@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/EntityRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/EntityRenderer.java
-@@ -8,6 +8,11 @@
+@@ -7,6 +7,11 @@
  import java.util.List;
  import java.util.Random;
  import net.minecraft.client.Minecraft;
@@ -12,7 +12,7 @@
  import org.lwjgl.input.Mouse;
  import org.lwjgl.opengl.Display;
  import org.lwjgl.opengl.GL11;
-@@ -311,8 +316,15 @@
+@@ -309,8 +314,15 @@
       */
      private void updateFovModifierHand()
      {
@@ -30,7 +30,7 @@
          this.fovModifierHandPrev = this.fovModifierHand;
          this.fovModifierHand += (this.fovMultiplierTemp - this.fovModifierHand) * 0.5F;
      }
-@@ -328,7 +340,7 @@
+@@ -326,7 +338,7 @@
          }
          else
          {
@@ -39,7 +39,7 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -415,15 +427,7 @@
+@@ -413,15 +425,7 @@
  
              if (!this.mc.gameSettings.debugCamEnable)
              {
@@ -56,7 +56,7 @@
                  GL11.glRotatef(var2.prevRotationYaw + (var2.rotationYaw - var2.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(var2.prevRotationPitch + (var2.rotationPitch - var2.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1101,8 +1105,11 @@
+@@ -1112,8 +1116,11 @@
                      var17 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -70,7 +70,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1166,15 +1173,18 @@
+@@ -1177,15 +1184,18 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -92,7 +92,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1184,6 +1194,9 @@
+@@ -1195,6 +1205,9 @@
              {
                  this.func_82829_a(var5, par1);
              }

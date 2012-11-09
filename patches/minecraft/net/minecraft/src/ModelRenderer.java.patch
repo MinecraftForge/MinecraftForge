@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/src/ModelRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/ModelRenderer.java
-@@ -7,7 +7,6 @@
+@@ -6,7 +6,6 @@
  import java.util.List;
  import org.lwjgl.opengl.GL11;
  
@@ -8,7 +8,7 @@
  public class ModelRenderer
  {
      /** The size of the texture file's width in pixels. */
-@@ -120,7 +119,8 @@
+@@ -119,7 +118,8 @@
          this.rotationPointY = par2;
          this.rotationPointZ = par3;
      }
@@ -18,7 +18,7 @@
      public void render(float par1)
      {
          if (!this.isHidden)
-@@ -213,6 +213,7 @@
+@@ -202,6 +202,7 @@
          }
      }
  
@@ -26,7 +26,7 @@
      public void renderWithRotation(float par1)
      {
          if (!this.isHidden)
-@@ -251,6 +252,7 @@
+@@ -240,6 +241,7 @@
      /**
       * Allows the changing of Angles after a box has been rendered
       */
@@ -34,7 +34,7 @@
      public void postRender(float par1)
      {
          if (!this.isHidden)
-@@ -295,6 +297,7 @@
+@@ -284,6 +286,7 @@
      /**
       * Compiles a GL display list for this model
       */

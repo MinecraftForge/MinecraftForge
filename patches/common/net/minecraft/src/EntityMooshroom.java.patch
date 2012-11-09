@@ -45,9 +45,9 @@
      }
  
      /**
-@@ -65,4 +45,29 @@
+@@ -70,4 +50,29 @@
      {
-         return new EntityMooshroom(this.worldObj);
+         return this.spawnBabyAnimal(par1EntityAgeable);
      }
 +    
 +    @Override
