@@ -1,9 +1,34 @@
 --- ../src_base/common/net/minecraft/src/Slot.java
 +++ ../src_work/common/net/minecraft/src/Slot.java
-@@ -147,4 +147,14 @@
+@@ -6,7 +6,7 @@
+ public class Slot
+ {
+     /** The index of the slot in the inventory. */
+-    private final int slotIndex;
++    protected final int slotIndex;
+ 
+     /** The inventory we want to extract a slot from. */
+     public final IInventory inventory;
+@@ -19,6 +19,12 @@
+ 
+     /** display position of the inventory slot on the screen y axis */
+     public int yDisplayPosition;
++
++    /** Background texture index, -1 is none */
++    protected int backgroundIndex = -1;
++
++    /** Custom background texture file assigned to this slot */
++    protected String customTexture = null;
+ 
+     public Slot(IInventory par1IInventory, int par2, int par3, int par4)
      {
-         return -1;
-     }
+@@ -145,6 +151,36 @@
+      */
+     public int getBackgroundIconIndex()
+     {
+-        return -1;
++        return backgroundIndex;
++    }
 +
 +    @SideOnly(Side.CLIENT)
 +
@@ -12,6 +37,26 @@
 +     */
 +    public String getBackgroundIconTexture()
 +    {
-+        return "/gui/items.png";
++        return customTexture == null ? "/gui/items.png" : customTexture;
 +    }
++
++    @SideOnly(Side.CLIENT)
++
++    /**
++     * Sets the icon index to use as background image of the slot when it's empty. -1 for none
++     */
++    public void setBackgroundIconIndex(int i)
++    {
++        backgroundIndex = i;
++    }
++
++    @SideOnly(Side.CLIENT)
++
++    /**
++     * Sets the texture file to use for the background image of the slot when it's empty. Null uses default items.png
++     */
++    public void setBackgroundIconTexture(String tex)
++    {
++        customTexture = tex;
+     }
  }
