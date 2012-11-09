@@ -46,12 +46,12 @@ def download_file(url, target, md5=None):
     if not os.path.isfile(target):
         try:
             urllib.urlretrieve(url, target)
-            print 'Downladed %s' % name
             if not md5 == None:
                 if not get_md5(target) == md5:
                     print 'Download of %s failed md5 check, deleting' % name
                     os.remove(target)
                     return False
+            print 'Downloaded %s successfully' % name
         except Exception as e:
             print e
             print 'Download of %s failed, download it manually from \'%s\' to \'%s\'' % (target, url, target)
