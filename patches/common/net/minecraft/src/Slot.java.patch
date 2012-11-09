@@ -14,45 +14,54 @@
      /** display position of the inventory slot on the screen y axis */
      public int yDisplayPosition;
 +
-+    /** Background texture index, -1 is none */
-+    protected int backgroundIndex = -1;
++    /** Position within background texture file, normally -1 which causes no background to be drawn. */
++    protected int backgroundTextureIndex = -1;
 +
-+    /** Custom background texture file assigned to this slot */
-+    protected String customTexture = null;
++    /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
++    protected String customTextureFilename = null;
  
      public Slot(IInventory par1IInventory, int par2, int par3, int par4)
      {
-@@ -145,6 +151,32 @@
+@@ -145,6 +151,41 @@
       */
      public int getBackgroundIconIndex()
      {
 -        return -1;
-+        return backgroundIndex;
++        return backgroundTextureIndex;
 +    }
 +
-+    @SideOnly(Side.CLIENT)
-+
 +    /**
-+     * Returns the texture file to use for the background image of the slot.
++     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
++     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
 +     */
++    @SideOnly(Side.CLIENT)
 +    public String getBackgroundIconTexture()
 +    {
-+        return customTexture == null ? "/gui/items.png" : customTexture;
++        if (customTextureFilename == null)
++        {
++            return "/gui/items.png";
++        }
++        else
++        {
++            return customTextureFilename;
++        }
 +    }
 +
 +    /**
-+     * Sets the icon index to use as background image of the slot when it's empty. -1 for none
++     * Sets which icon index to use as the background image of the slot when it's empty.
++     * @param iconIndex int: The index into the texture file, 0-255, or -1 for no background.  
 +     */
-+    public void setBackgroundIconIndex(int i)
++    public void setBackgroundIconIndex(int iconIndex)
 +    {
-+        backgroundIndex = i;
++        backgroundTextureIndex = iconIndex;
 +    }
 +
 +    /**
-+     * Sets the texture file to use for the background image of the slot when it's empty. Null uses default items.png
++     * Sets the texture file to use for the background image of the slot when it's empty.
++     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
 +     */
-+    public void setBackgroundIconTexture(String tex)
++    public void setBackgroundIconTexture(String textureFilename)
 +    {
-+        customTexture = tex;
++        customTextureFilename = textureFilename;
      }
  }
