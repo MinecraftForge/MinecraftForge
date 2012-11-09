@@ -22,7 +22,7 @@
  
      public Slot(IInventory par1IInventory, int par2, int par3, int par4)
      {
-@@ -145,6 +151,36 @@
+@@ -145,6 +151,32 @@
       */
      public int getBackgroundIconIndex()
      {
@@ -40,8 +40,6 @@
 +        return customTexture == null ? "/gui/items.png" : customTexture;
 +    }
 +
-+    @SideOnly(Side.CLIENT)
-+
 +    /**
 +     * Sets the icon index to use as background image of the slot when it's empty. -1 for none
 +     */
@@ -49,8 +47,6 @@
 +    {
 +        backgroundIndex = i;
 +    }
-+
-+    @SideOnly(Side.CLIENT)
 +
 +    /**
 +     * Sets the texture file to use for the background image of the slot when it's empty. Null uses default items.png
