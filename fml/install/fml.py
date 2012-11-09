@@ -2,26 +2,13 @@ import os, os.path, sys
 import urllib, zipfile
 import shutil, glob, fnmatch
 import subprocess, logging, re, shlex
-import csv
+import csv, ConfigParser
 from hashlib import md5  # pylint: disable-msg=E0611
+from pprint import pprint
+from zipfile import ZipFile
 
 def download_deps(mcp_path):
-    bin_path = os.path.normpath(os.path.join(mcp_path, 'runtime', 'bin'))
-    ff_path = os.path.normpath(os.path.join(bin_path, 'fernflower.jar'))
     ret = True
-    
-    if not os.path.isfile(ff_path):
-        try:
-            urllib.urlretrieve("http://goo.gl/PnJHp", 'fernflower.zip')
-            zf = zipfile.ZipFile('fernflower.zip')
-            zf.extract('fernflower.jar', bin_path)
-            zf.close()
-            os.remove('fernflower.zip')
-            print "Downloaded Fernflower successfully"
-        except:
-            print "Downloading Fernflower failed download manually from http://goo.gl/PnJHp"
-            ret = False
-    
     for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'guava-12.0.1-sources.jar', 'asm-all-4.0.jar', 'asm-all-4.0-source.jar']:
         libF = os.path.join(mcp_path, 'lib')
         if not os.path.isdir(libF):
@@ -38,63 +25,140 @@ def download_deps(mcp_path):
                 ret = False
     
     return ret
-        
-def pre_decompile(mcp_dir, fml_dir):
-    file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar')
-    file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar')
+
+def config_get_section(config, section):
+    dict = {}
+    options = config.options(section)
+    for option in options:
+        try:
+            dict[option] = config.get(section, option)
+        except:
+            dict[option] = None
+    return dict
+
+def download_file(url, target, md5=None):
+    name = os.path.basename(target)
+    if os.path.isfile(target) and not md5 == None:
+        if not get_md5(target) == md5:
+            print 'Modified %s detected, removing' % name
+            os.remove(target)
     
-    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar.backup')
-    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar.backup')
+    if not os.path.isfile(target):
+        try:
+            urllib.urlretrieve(url, target)
+            print 'Downladed %s' % name
+            if not md5 == None:
+                if not get_md5(target) == md5:
+                    print 'Download of %s failed md5 check, deleting' % name
+                    os.remove(target)
+                    return False
+        except Exception as e:
+            print e
+            print 'Download of %s failed, download it manually from \'%s\' to \'%s\'' % (target, url, target)
+            return False
+    else:
+        print 'File Exists: %s' % os.path.basename(target)
+    return True
     
-    if not os.path.isfile(client_jar):
-        print 'Could not find Client jar, decompile requires both client and server.'
+def download_native(url, folder, name):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    
+    target = os.path.join(folder, name)
+    if not download_file(url + name, target):
+        return False
+    
+    with ZipFile(target) as zip:
+        for name in zip.namelist():
+            if not name.startswith('META-INF') and not name.endswith('/'):
+                out_file = os.path.join(folder, name)
+                if not os.path.isfile(out_file):
+                    print '    Extracting %s' % name
+                    out = open(out_file, 'wb')
+                    out.write(zip.read(name))
+                    out.flush()
+                    out.close()
+    return True 
+    
+def download_minecraft(mcp_dir, fml_dir, version=None):
+    versions_file = os.path.join(fml_dir, 'mc_versions.cfg')
+    if not os.path.isfile(versions_file):
+        print 'Could not find mc_versions.cfg in FML directory.'
         sys.exit(1)
     
-    if not os.path.isfile(server_jar):
-        print 'Could not find Server jar, decompile requires both client and server.'
-        #sys.exit(1)
-        
-    md5_c = ""
-    md5_s = ""
-    with open(client_jar, 'rb') as fh:
-        md5_c = md5(fh.read()).hexdigest()
-    with open(server_jar, 'rb') as fh:
-        md5_s = md5(fh.read()).hexdigest()
-        
-    clean_c = "7aa46c8058cba2f38e9d2ddddcc77c72"
-    clean_s = "b5feed15df1db87c9aaf78dcefad513d"
+    config = ConfigParser.ConfigParser()
+    config.read(versions_file)
     
-    if not md5_c == clean_c:
-        print 'Warning, Modified Client jar detected'
-        print 'Continuing with decompile may produce unpredictable results'
-        print 'If you continue, do not come to the FML or Forge team with decompile issues.'
-        answer = raw_input('If you really want to continue, enter "Yes" ')
-        if answer.lower() not in ['yes', 'y']:
-            print 'You have not entered "Yes", aborting the decompile process'
-            sys.exit(1)
-            
-    if not md5_s == clean_s:
-        print 'Warning, Modified Server jar detected'
-        print 'Continuing with decompile may produce unpredictable results'
-        print 'If you continue, do not come to the FML or Forge team with decompile issues.'
-        answer = raw_input('If you really want to continue, enter "Yes" ')
-        if answer.lower() not in ['yes', 'y']:
-            print 'You have not entered "Yes", aborting the decompile process'
-            sys.exit(1)
+    default = config_get_section(config, 'default')
+    if version is None:
+        version = default['current_ver']
     
-def file_backup(base, file):
-    back_jar = os.path.join(base, file + '.backup')
+    
+    bin_folder = os.path.join(mcp_dir, 'jars', 'bin')
+    if not os.path.exists(bin_folder):
+        os.makedirs(bin_folder)
+        
+    failed = False
+
+    for lib in default['libraries'].split(' '):
+        failed = not download_file(default['base_url'] + lib, os.path.join(bin_folder, lib)) or failed
+    for native in default['natives'].split(' '):
+        failed = not download_native(default['base_url'], os.path.join(bin_folder, 'natives'), native) or failed
+    
+    if not config.has_section(version):
+        print 'Error: Invalid minecraft version, could not find \'%s\' in mc_versions.cfg' % version
+        sys.exit(1)
+    
+    mc_info = config_get_section(config, version)
+    
+    client_jar = os.path.join(bin_folder, 'minecraft.jar')
+    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar')
+    
+    # Remove any invalid files
+    file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar', mc_info['client_md5'])
+    file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar', mc_info['server_md5'])
+        
+    failed = not download_file(mc_info['client_url'], client_jar, mc_info['client_md5']) or failed
+    failed = not download_file(mc_info['server_url'], server_jar, mc_info['server_md5']) or failed
+    
+    # Backup clean jars, or delete if corrupted
+    file_backup(os.path.join(mcp_dir, 'jars', 'bin'), 'minecraft.jar', mc_info['client_md5'])
+    file_backup(os.path.join(mcp_dir, 'jars'), 'minecraft_server.jar', mc_info['server_md5'])
+    
+    if failed:
+        print 'Something failed verifying minecraft files, see log for details.'
+        sys.exit(1)
+
+def get_md5(file):
+    if not os.path.isfile(file):
+        return ""
+    with open(file, 'rb') as fh:
+        return md5(fh.read()).hexdigest()
+
+def pre_decompile(mcp_dir, fml_dir):
+    download_minecraft(mcp_dir, fml_dir)
+    
+def file_backup(base, file, md5):
+    bck_jar = os.path.join(base, file + '.backup')
     src_jar = os.path.join(base, file)
     
-    if not os.path.isfile(src_jar) and not os.path.isfile(back_jar):
+    if not os.path.isfile(src_jar) and not os.path.isfile(bck_jar):
         return
     
-    if os.path.isfile(back_jar):
-        if os.path.isfile(src_jar):
+    if os.path.isfile(bck_jar):
+        if get_md5(bck_jar) == md5:
+            if os.path.isfile(src_jar):
+                os.remove(src_jar)
+            shutil.move(bck_jar, src_jar)
+        else:
+            os.remove(bck_jar)
+    
+    if os.path.isfile(src_jar):
+        if not get_md5(src_jar) == md5:
+            print 'Modified %s detected, removing' % os.path.basename(src_jar)
             os.remove(src_jar)
-        shutil.copy(back_jar, src_jar)
-    else:
-        shutil.copy(src_jar, back_jar)
+        else:
+            shutil.copy(src_jar, bck_jar)
         
 def post_decompile(mcp_dir, fml_dir):
     bin_dir = os.path.join(mcp_dir, 'jars', 'bin')
@@ -180,7 +244,6 @@ def setup_fml(fml_dir, mcp_dir):
         binDir = os.path.join(fml_dir, 'bin')
         if not os.path.isdir(binDir):
             os.makedirs(binDir)
-            
         
         if (side == CLIENT):        
             #Compile AccessTransformer

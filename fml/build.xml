@@ -203,7 +203,7 @@
   <target name="build-source-pack" depends="makeversion">
     <property name="srcpack.jarname" value="${modname}-src-${version}" />
     <zip destfile="${basedir}/target/${srcpack.jarname}.zip">
-      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg" prefix="fml" />
+      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg,mc_versions.cfg" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
       <zipfileset dir="${client.src.dir}" includes="**/*.java" prefix="fml/client" />
       <zipfileset dir="${client.src.dir}" includes="mcp.png" prefix="fml/client" />
