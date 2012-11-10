@@ -3,24 +3,24 @@ package net.minecraftforge.common;
 public enum ForgeDirection
 {
     /** -Y */
-    DOWN(0, -1, 0), 
-    
+    DOWN(0, -1, 0),
+
     /** +Y */
     UP(0, 1, 0),
-    
+
     /** -Z */
     NORTH(0, 0, -1),
-    
+
     /** +Z */
     SOUTH(0, 0, 1),
-    
+
     /** -X */
     WEST(-1, 0, 0),
-    
+
     /** +X */
     EAST(1, 0, 0),
-    
-    /** 
+
+    /**
      * Used only by getOrientation, for invalid inputs
      */
     UNKNOWN(0, 0, 0);
@@ -31,6 +31,7 @@ public enum ForgeDirection
     public final int flag;
     public static final ForgeDirection[] VALID_DIRECTIONS = {DOWN, UP, NORTH, SOUTH, WEST, EAST};
     public static final int[] opposite = {1, 0, 3, 2, 5, 4, 6};
+    public static final int[] toLeft = {0, 1, 5, 4, 3, 2, 6};
 
     private ForgeDirection(int x, int y, int z)
     {
@@ -52,5 +53,10 @@ public enum ForgeDirection
     public ForgeDirection getOpposite()
     {
         return getOrientation(opposite[ordinal()]);
+    }
+
+    public ForgeDirection getLeftRotation()
+    {
+    	return getOrientation(toLeft[ordinal()]);
     }
 }
