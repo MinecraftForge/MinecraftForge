@@ -29,7 +29,9 @@ public enum ForgeDirection
     public final int offsetY;
     public final int offsetZ;
     public final int flag;
-    
+    public static final ForgeDirection[] VALID_DIRECTIONS = {DOWN, UP, NORTH, SOUTH, WEST, EAST};
+    public static final int[] opposite = {1, 0, 3, 2, 5, 4, 6};
+
     private ForgeDirection(int x, int y, int z)
     {
         offsetX = x;
@@ -37,17 +39,15 @@ public enum ForgeDirection
         offsetZ = z;
         flag = 1 << ordinal();
     }
-    
+
     public static ForgeDirection getOrientation(int id)
     {
-        if (id >= 0 && id < ForgeDirection.values().length)
+        if (id >= 0 && id < VALID_DIRECTIONS.length)
         {
-            return ForgeDirection.values()[id];
+            return VALID_DIRECTIONS[id];
         }
         return UNKNOWN;
     }
-
-    public static final int[] opposite = new int[] { 1, 0,  3, 2,  5, 4, 6};
 
     public ForgeDirection getOpposite()
     {
