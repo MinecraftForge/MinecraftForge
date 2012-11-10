@@ -155,12 +155,12 @@
          return false;
      }
  
-+    /** Returns true if the entity's rider (EntityPlayer) should face forward when mounted, 
-+     * such as when the player is riding a pig.
++    /** Returns true if the entity's rider (EntityPlayer) should face forward when mounted. 
++     * currently only used in vanilla code by pigs.
 +     * */
 +    public boolean shouldRiderFaceForward()
 +    {
-+        return false;
++        return this instanceof EntityPig;
 +    }
 +
      public final int func_85035_bI()
