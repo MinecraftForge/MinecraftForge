@@ -30,8 +30,8 @@ public enum ForgeDirection
     public final int offsetZ;
     public final int flag;
     public static final ForgeDirection[] VALID_DIRECTIONS = {DOWN, UP, NORTH, SOUTH, WEST, EAST};
-    public static final int[] opposite = {1, 0, 3, 2, 5, 4, 6};
-    public static final int[] toLeft = {0, 1, 5, 4, 3, 2, 6};
+    public static final int[] OPPOSITES = {1, 0, 3, 2, 5, 4, 6};
+    public static final int[] TO_LEFT = {0, 1, 5, 4, 3, 2, 6};
 
     private ForgeDirection(int x, int y, int z)
     {
@@ -52,11 +52,11 @@ public enum ForgeDirection
 
     public ForgeDirection getOpposite()
     {
-        return getOrientation(opposite[ordinal()]);
+        return getOrientation(OPPOSITES[ordinal()]);
     }
 
     public ForgeDirection getLeftRotation()
     {
-    	return getOrientation(toLeft[ordinal()]);
+    	return getOrientation(TO_LEFT[ordinal()]);
     }
 }
