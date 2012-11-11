@@ -1,0 +1,67 @@
+--- ../src_base/common/net/minecraft/src/Slot.java
++++ ../src_work/common/net/minecraft/src/Slot.java
+@@ -6,7 +6,7 @@
+ public class Slot
+ {
+     /** The index of the slot in the inventory. */
+-    private final int slotIndex;
++    protected final int slotIndex;
+ 
+     /** The inventory we want to extract a slot from. */
+     public final IInventory inventory;
+@@ -19,6 +19,12 @@
+ 
+     /** display position of the inventory slot on the screen y axis */
+     public int yDisplayPosition;
++
++    /** Position within background texture file, normally -1 which causes no background to be drawn. */
++    protected int backgroundTextureIndex = -1;
++
++    /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
++    protected String customTextureFilename = null;
+ 
+     public Slot(IInventory par1IInventory, int par2, int par3, int par4)
+     {
+@@ -145,6 +151,41 @@
+      */
+     public int getBackgroundIconIndex()
+     {
+-        return -1;
++        return backgroundTextureIndex;
++    }
++
++    /**
++     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
++     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
++     */
++    @SideOnly(Side.CLIENT)
++    public String getBackgroundIconTexture()
++    {
++        if (customTextureFilename == null)
++        {
++            return "/gui/items.png";
++        }
++        else
++        {
++            return customTextureFilename;
++        }
++    }
++
++    /**
++     * Sets which icon index to use as the background image of the slot when it's empty.
++     * @param iconIndex int: The index into the texture file, 0-255, or -1 for no background.  
++     */
++    public void setBackgroundIconIndex(int iconIndex)
++    {
++        backgroundTextureIndex = iconIndex;
++    }
++
++    /**
++     * Sets the texture file to use for the background image of the slot when it's empty.
++     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
++     */
++    public void setBackgroundIconTexture(String textureFilename)
++    {
++        customTextureFilename = textureFilename;
+     }
+ }
