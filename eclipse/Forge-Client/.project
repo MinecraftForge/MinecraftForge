@@ -78,7 +78,7 @@
 	<variableList>
 		<variable>
 			<name>MCP_LOC</name>
-			<value>$%7BPARENT-2-WORKSPACE_LOC%7D</value>
+			<value>$%7BPARENT-3-PROJECT_LOC%7D</value>
 		</variable>
 	</variableList>
 </projectDescription>

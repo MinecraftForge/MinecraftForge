@@ -26,7 +26,7 @@
                      {
                          var20 = 3.0F;
                      }
-@@ -158,22 +162,37 @@
+@@ -158,22 +162,25 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
@@ -34,7 +34,17 @@
 -        if (!par1World.isRemote)
 -        {
 -            if (par5 >= 7)
--            {
++    }
++
++    @Override 
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = super.getBlockDropped(world, x, y, z, metadata, fortune);
++
++        if (metadata >= 7)
++        {
++            for (int n = 0; n < 3 + fortune; n++)
+             {
 -                int var8 = 3 + par7;
 -
 -                for (int var9 = 0; var9 < var8; ++var9)
@@ -43,38 +53,12 @@
 -                    {
 -                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(this.getSeedItem(), 1, 0));
 -                    }
--                }
--            }
--        }
-+    }
-+
-+    @Override 
-+    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
-+    {
-+        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-+        if (metadata == 7)
-+        {      
-+            int count = quantityDropped(metadata, fortune, world.rand);
-+            for(int i = 0; i < count; i++)
-+            {
-+                int id = idDropped(metadata, world.rand, 0);
-+                if (id > 0)
-+                {
-+                    ret.add(new ItemStack(id, 1, damageDropped(metadata)));
-+                }
-+            }
-+        }
-+
-+        if (metadata >= 7)
-+        {
-+            for (int n = 0; n < 3 + fortune; n++)
-+            {
 +                if (world.rand.nextInt(15) <= metadata)
 +                {
 +                    ret.add(new ItemStack(this.getSeedItem(), 1, 0));
-+                }
-+            }
-+        }
+                 }
+             }
+         }
 +
 +        return ret;
      }
