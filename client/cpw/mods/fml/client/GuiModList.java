@@ -57,7 +57,7 @@ public class GuiModList extends GuiScreen
             if (mod.getMetadata()!=null && !Strings.isNullOrEmpty(mod.getMetadata().parent)) {
                 String parentMod = mod.getMetadata().parent;
                 ModContainer parentContainer = Loader.instance().getIndexedModList().get(parentMod);
-                if (parentContainer != null)
+                if (parentContainer != null && mod.getMetadata().parentMod==null)
                 {
                     mod.getMetadata().parentMod = parentContainer;
                     parentContainer.getMetadata().childMods.add(mod);
