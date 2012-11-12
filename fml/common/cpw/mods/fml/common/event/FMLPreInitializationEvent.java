@@ -2,7 +2,9 @@ package cpw.mods.fml.common.event;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.logging.Logger;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.ModContainer;
@@ -73,5 +75,17 @@ public class FMLPreInitializationEvent extends FMLStateEvent
         }
 
         return null;
+    }
+
+    /**
+     * Get a logger instance configured to write to the FML Log as a parent, identified by modid. Handy for mod logging!
+     *
+     * @return A logger
+     */
+    public Logger getModLog()
+    {
+        Logger log = Logger.getLogger(modContainer.getModId());
+        log.setParent(FMLLog.getLogger());
+        return log;
     }
 }

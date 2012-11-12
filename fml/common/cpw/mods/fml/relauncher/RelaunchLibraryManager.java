@@ -170,11 +170,11 @@ public class RelaunchLibraryManager
 
                     if (!download)
                     {
-                        downloadMonitor.updateProgressString("Found library file %s present and correct in lib dir\n", libName);
+                        downloadMonitor.updateProgressString("Found library file %s present and correct in lib dir", libName);
                     }
                     else
                     {
-                        downloadMonitor.updateProgressString("Library file %s was downloaded and verified successfully\n", libName);
+                        downloadMonitor.updateProgressString("Library file %s was downloaded and verified successfully", libName);
                     }
 
                     try
@@ -455,11 +455,9 @@ public class RelaunchLibraryManager
     {
         try
         {
-        	//rootUrl.replace("%s", libFile.getPath())
             URL libDownload = new URL(String.format(rootUrl,realFilePath));
-            String infoString = String.format("Downloading file %s", libDownload.toString());
-            downloadMonitor.updateProgressString(infoString);
-            FMLRelaunchLog.info(infoString);
+            downloadMonitor.updateProgressString("Downloading file %s", libDownload.toString());
+            FMLRelaunchLog.info("Downloading file %s", libDownload.toString());
             URLConnection connection = libDownload.openConnection();
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
