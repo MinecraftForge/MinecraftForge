@@ -31,6 +31,8 @@ public class OreDictionary
         registerOre("stairWood", Block.stairsWoodJungle);
         registerOre("stairWood", Block.stairsWoodSpruce);
         registerOre("stickWood", Item.stick);
+        registerOre("treeSapling", new ItemStack(Block.sapling, 1, -1));
+        registerOre("treeLeaves", new ItemStack(Block.leaves, 1, -1));
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
