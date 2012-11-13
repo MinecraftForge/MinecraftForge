@@ -299,6 +299,15 @@
  
              switch (var2)
              {
+@@ -1774,7 +1874,7 @@
+         {
+             if (par1ItemStack.getItem().requiresMultipleRenderPasses())
+             {
+-                return par1ItemStack.getItem().getIconFromDamageForRenderPass(par1ItemStack.getItemDamage(), par2);
++                return par1ItemStack.getItem().getIconFromItemStackForMultiplePasses(par1ItemStack, par2);
+             }
+ 
+             if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.shiftedIndex)
 @@ -1796,6 +1896,7 @@
                      return 101;
                  }
