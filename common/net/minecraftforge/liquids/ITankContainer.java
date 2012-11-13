@@ -40,8 +40,17 @@ public interface ITankContainer {
 
 	/**
 	 * @param direction tank side: UNKNOWN for default tank set
-	 * @return Array of {@link LiquidTank}s contained in this ITankContainer
+	 * @return Array of {@link LiquidTank}s contained in this ITankContainer for this direction
 	 */
 	ILiquidTank[] getTanks(ForgeDirection direction);
+
+	/**
+	 * Return the tank that this tank container desired to be used for the specified liquid type from the specified direction
+	 *
+	 * @param direction the direction
+	 * @param type the liquid type, null is always an acceptable value
+	 * @return a tank or null for no such tank
+	 */
+	ILiquidTank getTank(ForgeDirection direction, LiquidStack type);
 
 }

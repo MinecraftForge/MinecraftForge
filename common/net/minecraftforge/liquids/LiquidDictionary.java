@@ -3,6 +3,13 @@ package net.minecraftforge.liquids;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.src.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event;
+import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
+
+import com.google.common.collect.ImmutableMap;
+
 /**
  * When creating liquids you should register them with this class.
  *
@@ -31,15 +38,16 @@ public abstract class LiquidDictionary
             return existing.copy();
         }
         liquids.put(name, liquid.copy());
+        MinecraftForge.EVENT_BUS.post(new LiquidRegisterEvent(name, liquid));
         return liquid;
     }
-    
+
     /**
      * Returns the liquid matching the name,
      * if such a liquid exists.
-     * 
+     *
      * Can return null.
-     * 
+     *
      * @param name the name of the liquid
      * @param amount the amout of liquid
      * @return
@@ -47,11 +55,40 @@ public abstract class LiquidDictionary
     public static LiquidStack getLiquid(String name, int amount)
     {
         LiquidStack liquid = liquids.get(name);
-        if(liquid == null) 
+        if(liquid == null)
             return null;
-            
+
         liquid = liquid.copy();
         liquid.amount = amount;
         return liquid;
+    }
+
+    /**
+     * Get an immutable list of the liquids defined
+     *
+     * @return the defined liquids
+     */
+    public Map<String, LiquidStack> getDefinedLiquids()
+    {
+    	return ImmutableMap.copyOf(liquids);
+    }
+
+
+    /**
+     * Fired when a new liquid is created
+     *
+     * @author cpw
+     *
+     */
+    public static class LiquidRegisterEvent extends Event
+    {
+        public final String Name;
+        public final LiquidStack Liquid;
+
+        public LiquidRegisterEvent(String name, LiquidStack liquid)
+        {
+            this.Name = name;
+            this.Liquid = liquid.copy();
+        }
     }
 }
