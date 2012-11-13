@@ -151,7 +151,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2861,4 +2906,30 @@
+@@ -2861,4 +2906,42 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }
@@ -180,5 +180,17 @@
 +                onFinishedPotionEffect(effect);
 +            }
 +        }
++    }
++
++    /** 
++     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
++     * currently only used in vanilla code by pigs.
++     * 
++     * @param player The player who is riding the entity.
++     * @return If the player should orient the same direction as this entity.
++     */
++    public boolean shouldRiderFaceForward(EntityPlayer player)
++    {
++        return this instanceof EntityPig;
 +    }
  }
