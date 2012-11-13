@@ -3,7 +3,7 @@ package net.minecraftforge.liquids;
 import net.minecraftforge.common.ForgeDirection;
 
 public interface ITankContainer {
-	
+
 	/**
 	 * Fills liquid into internal tanks, distribution is left to the ITankContainer.
 	 * @param from Orientation the liquid is pumped in from.
@@ -13,7 +13,7 @@ public interface ITankContainer {
 	 */
 	int fill(ForgeDirection from, LiquidStack resource, boolean doFill);
 	/**
-	 * Fills liquid into the specified internal tank. 
+	 * Fills liquid into the specified internal tank.
 	 * @param from Orientation the liquid is pumped in from.
 	 * @param resource LiquidStack representing the maximum amount of liquid filled into the ITankContainer
 	 * @param doFill If false filling will only be simulated.
@@ -37,10 +37,11 @@ public interface ITankContainer {
 	 * @return LiquidStack representing the liquid and amount actually drained from the ITankContainer
 	 */
 	LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain);
-	
+
 	/**
+	 * @param direction tank side: UNKNOWN for default tank set
 	 * @return Array of {@link LiquidTank}s contained in this ITankContainer
 	 */
-	ILiquidTank[] getTanks();
-	
+	ILiquidTank[] getTanks(ForgeDirection direction);
+
 }
