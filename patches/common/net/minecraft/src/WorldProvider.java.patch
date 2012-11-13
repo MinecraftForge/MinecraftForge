@@ -112,11 +112,11 @@
 +    {
 +        ChunkCoordinates var5 = new ChunkCoordinates(this.worldObj.getSpawnPoint());
 +
-+        boolean isAdventure = worldObj.getWorldInfo().getGameType() != EnumGameType.ADVENTURE;
++        boolean isAdventure = worldObj.getWorldInfo().getGameType() == EnumGameType.ADVENTURE;
 +        int spawnFuzz = terrainType.getSpawnFuzz();
 +        int spawnFuzzHalf = spawnFuzz / 2;
 +
-+        if (!this.hasNoSky && !isAdventure)
++        if (!hasNoSky && !isAdventure)
 +        {
 +            var5.posX += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
 +            var5.posZ += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
