@@ -1,17 +1,10 @@
 --- ../src_base/common/net/minecraft/src/SlotBrewingStandPotion.java
 +++ ../src_work/common/net/minecraft/src/SlotBrewingStandPotion.java
-@@ -1,4 +1,6 @@
- package net.minecraft.src;
-+
-+import cpw.mods.fml.common.Brewable;
- 
- class SlotBrewingStandPotion extends Slot
- {
-@@ -40,6 +42,6 @@
+@@ -40,6 +40,6 @@
  
      public static boolean func_75243_a_(ItemStack par0ItemStack)
      {
 -        return par0ItemStack != null && (par0ItemStack.itemID == Item.potion.shiftedIndex || par0ItemStack.itemID == Item.glassBottle.shiftedIndex);
-+        return par0ItemStack != null && (par0ItemStack.itemID == Item.potion.shiftedIndex || par0ItemStack.itemID == Item.glassBottle.shiftedIndex || Item.itemsList[par0ItemStack.itemID].getClass().isAnnotationPresent(Brewable.class));
++        return par0ItemStack != null && (par0ItemStack.itemID == Item.potion.shiftedIndex || par0ItemStack.itemID == Item.glassBottle.shiftedIndex || Item.itemsList[par0ItemStack.itemID].isBrewable());
      }
  }

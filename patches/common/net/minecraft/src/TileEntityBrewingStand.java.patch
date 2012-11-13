@@ -1,14 +1,11 @@
 --- ../src_base/common/net/minecraft/src/TileEntityBrewingStand.java
 +++ ../src_work/common/net/minecraft/src/TileEntityBrewingStand.java
-@@ -1,10 +1,14 @@
- package net.minecraft.src;
- 
-+import cpw.mods.fml.common.IPotionIngredient;
- import cpw.mods.fml.common.Side;
+@@ -4,7 +4,11 @@
  import cpw.mods.fml.common.asm.SideOnly;
  import java.util.List;
  
 -public class TileEntityBrewingStand extends TileEntity implements IInventory
++import net.minecraftforge.common.IPotionIngredient;
 +import net.minecraftforge.common.ISidedInventory;
 +import net.minecraftforge.common.ForgeDirection;
 +

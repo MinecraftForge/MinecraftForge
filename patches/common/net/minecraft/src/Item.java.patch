@@ -1,11 +1,13 @@
 --- ../src_base/common/net/minecraft/src/Item.java
 +++ ../src_work/common/net/minecraft/src/Item.java
-@@ -209,16 +209,24 @@
+@@ -209,16 +209,26 @@
      /** full name of item from language file */
      private String itemName;
  
 +    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;
++    
++    private boolean isBrewable = false;
 +
      public Item(int par1)
      {
@@ -26,7 +28,7 @@
      }
  
      /**
-@@ -604,6 +612,10 @@
+@@ -604,6 +614,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;
          double var21 = 5.0D;
@@ -37,7 +39,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -678,4 +690,266 @@
+@@ -678,4 +692,285 @@
      {
          StatList.initStats();
      }
@@ -114,6 +116,25 @@
 +    public Item setNoRepair() 
 +    {
 +        canRepair = false;
++        return this;
++    }
++    
++    /**
++     * Finds out if you can brew ingredients into this item.
++     * @return True if you can
++     */
++    public boolean isBrewable()
++    {
++        return isBrewable;
++    }
++    
++    /**
++     * Sets whether you can brew ingredients into this potion.
++     * @return The current Item instance
++     */
++    public Item setBrewable(boolean isBrewable)
++    {
++        this.isBrewable = isBrewable;
 +        return this;
 +    }
 +

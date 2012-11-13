@@ -3,7 +3,7 @@
 @@ -1,4 +1,6 @@
  package net.minecraft.src;
 +
-+import cpw.mods.fml.common.IPotionIngredient;
++import net.minecraftforge.common.IPotionIngredient;
  
  class SlotBrewingStandIngredient extends Slot
  {
