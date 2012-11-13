@@ -40,6 +40,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Override
     public void setCanceled(boolean cancel)
     {
+        super.setCanceled(cancel);
         useBlock = (cancel ? DENY : useBlock == DENY ? DEFAULT : useBlock);
         useItem = (cancel ? DENY : useItem == DENY ? DEFAULT : useItem);
     }
