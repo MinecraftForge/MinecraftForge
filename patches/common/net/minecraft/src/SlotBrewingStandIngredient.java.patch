@@ -1,0 +1,18 @@
+--- ../src_base/common/net/minecraft/src/SlotBrewingStandIngredient.java
++++ ../src_work/common/net/minecraft/src/SlotBrewingStandIngredient.java
+@@ -1,4 +1,6 @@
+ package net.minecraft.src;
++
++import cpw.mods.fml.common.IPotionIngredient;
+ 
+ class SlotBrewingStandIngredient extends Slot
+ {
+@@ -16,7 +18,7 @@
+      */
+     public boolean isItemValid(ItemStack par1ItemStack)
+     {
+-        return par1ItemStack != null ? Item.itemsList[par1ItemStack.itemID].isPotionIngredient() : false;
++        return par1ItemStack != null ? Item.itemsList[par1ItemStack.itemID].isPotionIngredient() || Item.itemsList[par1ItemStack.itemID] instanceof IPotionIngredient : false;
+     }
+ 
+     /**

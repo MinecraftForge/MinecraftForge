@@ -1,6 +1,10 @@
 --- ../src_base/common/net/minecraft/src/TileEntityBrewingStand.java
 +++ ../src_work/common/net/minecraft/src/TileEntityBrewingStand.java
-@@ -4,7 +4,10 @@
+@@ -1,10 +1,14 @@
+ package net.minecraft.src;
+ 
++import cpw.mods.fml.common.IPotionIngredient;
+ import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.util.List;
  
@@ -12,7 +16,44 @@
  {
      /** The itemstacks currently placed in the slots of the brewing stand */
      private ItemStack[] brewingItemStacks = new ItemStack[4];
-@@ -158,7 +161,7 @@
+@@ -85,6 +89,18 @@
+         if (this.brewingItemStacks[3] != null && this.brewingItemStacks[3].stackSize > 0)
+         {
+             ItemStack var1 = this.brewingItemStacks[3];
++            
++            if (Item.itemsList[var1.itemID] instanceof IPotionIngredient)
++            {
++                for (int var3 = 0; var3 < 3; ++var3)
++                {
++                    if (((IPotionIngredient) Item.itemsList[var1.itemID]).canAffectPotion(this.brewingItemStacks[var3]))
++                    {
++                        return true;
++                    }
++                }
++                return false;
++            }
+ 
+             if (!Item.itemsList[var1.itemID].isPotionIngredient())
+             {
+@@ -132,6 +148,17 @@
+         if (this.canBrew())
+         {
+             ItemStack var1 = this.brewingItemStacks[3];
++            
++            if (Item.itemsList[var1.itemID] instanceof IPotionIngredient)
++            {
++                for (int var2 = 0; var2 < 3; ++var2)
++                {
++                    if (((IPotionIngredient) Item.itemsList[var1.itemID]).canAffectPotion(this.brewingItemStacks[var2]))
++                    {
++                        this.brewingItemStacks[var2] = this.getPotionResult(var1, this.brewingItemStacks[var2]);
++                    }
++                }
++            }
+ 
+             for (int var2 = 0; var2 < 3; ++var2)
+             {
+@@ -158,7 +185,7 @@
  
              if (Item.itemsList[var1.itemID].hasContainerItem())
              {
@@ -21,7 +62,19 @@
              }
              else
              {
-@@ -325,4 +328,16 @@
+@@ -178,6 +205,11 @@
+     private int getPotionResult(int par1, ItemStack par2ItemStack)
+     {
+         return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient() ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect()) : par1);
++    }
++    
++    private ItemStack getPotionResult(ItemStack input, ItemStack potion)
++    {
++        return ((IPotionIngredient) input.getItem()).getBrewingResult(potion);
+     }
+ 
+     /**
+@@ -325,4 +357,16 @@
  
          return var1;
      }
