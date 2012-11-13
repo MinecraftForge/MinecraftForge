@@ -22,15 +22,118 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -291,6 +301,7 @@
-             lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
-             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
-         }
+@@ -32,20 +42,8 @@
+      */
+     public static final boolean[] opaqueCubeLookup = new boolean[4096];
+ 
+-    /** How much light is subtracted for going through this block */
+-    public static final int[] lightOpacity = new int[4096];
+-
+-    /** Array of booleans that tells if a block can grass */
+-    public static final boolean[] canBlockGrass = new boolean[4096];
+-
+-    /** Amount of light emitted */
+-    public static final int[] lightValue = new int[4096];
+     public static final boolean[] requiresSelfNotify = new boolean[4096];
+ 
+-    /**
+-     * Flag if block ID should use the brightest neighbor light value as its own
+-     */
+-    public static boolean[] useNeighborBrightness = new boolean[4096];
+     public static final Block stone = (new BlockStone(1, 1)).setHardness(1.5F).setResistance(10.0F).setStepSound(soundStoneFootstep).setBlockName("stone");
+     public static final BlockGrass grass = (BlockGrass)(new BlockGrass(2)).setHardness(0.6F).setStepSound(soundGrassFootstep).setBlockName("grass");
+     public static final Block dirt = (new BlockDirt(3, 2)).setHardness(0.5F).setStepSound(soundGravelFootstep).setBlockName("dirt");
+@@ -55,10 +53,10 @@
+     public static final Block bedrock = (new Block(7, 17, Material.rock)).setBlockUnbreakable().setResistance(6000000.0F).setStepSound(soundStoneFootstep).setBlockName("bedrock").disableStats().setCreativeTab(CreativeTabs.tabBlock);
+     public static final Block waterMoving = (new BlockFlowing(8, Material.water)).setHardness(100.0F).setLightOpacity(3).setBlockName("water").disableStats().setRequiresSelfNotify();
+     public static final Block waterStill = (new BlockStationary(9, Material.water)).setHardness(100.0F).setLightOpacity(3).setBlockName("water").disableStats().setRequiresSelfNotify();
+-    public static final Block lavaMoving = (new BlockFlowing(10, Material.lava)).setHardness(0.0F).setLightValue(1.0F).setLightOpacity(255).setBlockName("lava").disableStats().setRequiresSelfNotify();
++    public static final Block lavaMoving = (new BlockFlowing(10, Material.lava)).setHardness(0.0F).setLightValue(1.0F).setBlockName("lava").disableStats().setRequiresSelfNotify();
+ 
+     /** Stationary lava source block */
+-    public static final Block lavaStill = (new BlockStationary(11, Material.lava)).setHardness(100.0F).setLightValue(1.0F).setLightOpacity(255).setBlockName("lava").disableStats().setRequiresSelfNotify();
++    public static final Block lavaStill = (new BlockStationary(11, Material.lava)).setHardness(100.0F).setLightValue(1.0F).setBlockName("lava").disableStats().setRequiresSelfNotify();
+     public static final Block sand = (new BlockSand(12, 18)).setHardness(0.5F).setStepSound(soundSandFootstep).setBlockName("sand");
+     public static final Block gravel = (new BlockGravel(13, 19)).setHardness(0.6F).setStepSound(soundGravelFootstep).setBlockName("gravel");
+     public static final Block oreGold = (new BlockOre(14, 32)).setHardness(3.0F).setResistance(5.0F).setStepSound(soundStoneFootstep).setBlockName("oreGold");
+@@ -140,7 +138,7 @@
+     public static final Block pumpkin = (new BlockPumpkin(86, 102, false)).setHardness(1.0F).setStepSound(soundWoodFootstep).setBlockName("pumpkin").setRequiresSelfNotify();
+     public static final Block netherrack = (new BlockNetherrack(87, 103)).setHardness(0.4F).setStepSound(soundStoneFootstep).setBlockName("hellrock");
+     public static final Block slowSand = (new BlockSoulSand(88, 104)).setHardness(0.5F).setStepSound(soundSandFootstep).setBlockName("hellsand");
+-    public static final Block glowStone = (new BlockGlowStone(89, 105, Material.glass)).setHardness(0.3F).setStepSound(soundGlassFootstep).setLightValue(1.0F).setBlockName("lightgem");
++    public static final Block glowStone = (new BlockGlowStone(89, 105, Material.glass)).setHardness(0.3F).setStepSound(soundGlassFootstep).setLightValue(1.0F).setBlockName("lightgem").setLightMask(new long[] {0, 0, 0});
+ 
+     /** The purple teleport blocks inside the obsidian circle */
+     public static final BlockPortal portal = (BlockPortal)(new BlockPortal(90, 14)).setHardness(-1.0F).setStepSound(soundGlassFootstep).setLightValue(0.75F).setBlockName("portal");
+@@ -173,15 +171,15 @@
+     public static final Block netherFence = (new BlockFence(113, 224, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setBlockName("netherFence");
+     public static final Block stairsNetherBrick = (new BlockStairs(114, netherBrick, 0)).setBlockName("stairsNetherBrick").setRequiresSelfNotify();
+     public static final Block netherStalk = (new BlockNetherStalk(115)).setBlockName("netherStalk").setRequiresSelfNotify();
+-    public static final Block enchantmentTable = (new BlockEnchantmentTable(116)).setHardness(5.0F).setResistance(2000.0F).setBlockName("enchantmentTable");
++    public static final Block enchantmentTable = (new BlockEnchantmentTable(116)).setHardness(5.0F).setResistance(2000.0F).setBlockName("enchantmentTable").setLightMask(new long[]{0, -1, 0xFFFFFFFFFFFFL});
+     public static final Block brewingStand = (new BlockBrewingStand(117)).setHardness(0.5F).setLightValue(0.125F).setBlockName("brewingStand").setRequiresSelfNotify();
+-    public static final Block cauldron = (new BlockCauldron(118)).setHardness(2.0F).setBlockName("cauldron").setRequiresSelfNotify();
++    public static final Block cauldron = (new BlockCauldron(118)).setHardness(2.0F).setBlockName("cauldron").setRequiresSelfNotify().setSkyBlock(2).setLightMask(new long[]{-1, 0, ~0x3C3CL});
+     public static final Block endPortal = (new BlockEndPortal(119, Material.portal)).setHardness(-1.0F).setResistance(6000000.0F);
+-    public static final Block endPortalFrame = (new BlockEndPortalFrame(120)).setStepSound(soundGlassFootstep).setLightValue(0.125F).setHardness(-1.0F).setBlockName("endPortalFrame").setRequiresSelfNotify().setResistance(6000000.0F).setCreativeTab(CreativeTabs.tabDecorations);
++    public static final Block endPortalFrame = (new BlockEndPortalFrame(120)).setStepSound(soundGlassFootstep).setLightValue(0.125F).setHardness(-1.0F).setBlockName("endPortalFrame").setRequiresSelfNotify().setResistance(6000000.0F).setCreativeTab(CreativeTabs.tabDecorations).setLightMask(new long[]{0, -1, 0xFFFFFFFFFFFFL});
+     public static final Block whiteStone = (new Block(121, 175, Material.rock)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setBlockName("whiteStone").setCreativeTab(CreativeTabs.tabBlock);
+     public static final Block dragonEgg = (new BlockDragonEgg(122, 167)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setLightValue(0.125F).setBlockName("dragonEgg");
+     public static final Block redstoneLampIdle = (new BlockRedstoneLight(123, false)).setHardness(0.3F).setStepSound(soundGlassFootstep).setBlockName("redstoneLight").setCreativeTab(CreativeTabs.tabRedstone);
+-    public static final Block redstoneLampActive = (new BlockRedstoneLight(124, true)).setHardness(0.3F).setStepSound(soundGlassFootstep).setBlockName("redstoneLight");
++    public static final Block redstoneLampActive = (new BlockRedstoneLight(124, true)).setHardness(0.3F).setStepSound(soundGlassFootstep).setBlockName("redstoneLight").setLightValue(1.0F).setLightMask(new long[]{0, 0, 0});
+     public static final BlockHalfSlab woodDoubleSlab = (BlockHalfSlab)(new BlockWoodSlab(125, true)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("woodSlab");
+     public static final BlockHalfSlab woodSingleSlab = (BlockHalfSlab)(new BlockWoodSlab(126, false)).setHardness(2.0F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("woodSlab");
+     public static final Block cocoaPlant = (new BlockCocoa(127)).setHardness(0.2F).setResistance(5.0F).setStepSound(soundWoodFootstep).setBlockName("cocoa").setRequiresSelfNotify();
+@@ -268,6 +266,11 @@
+      */
+     public float slipperiness;
+     private String blockName;
++    
++    protected int emission;
++    protected long[] mask = null;
++    protected int skyBlock = 0;
++	private int opacity;
+ 
+     public Block(int par1, Material par2Material)
+     {
+@@ -288,9 +291,10 @@
+             this.blockID = par1;
+             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+             opaqueCubeLookup[par1] = this.isOpaqueCube();
+-            lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
+-            canBlockGrass[par1] = !par2Material.getCanBlockGrass();
+-        }
++            skyBlock = this.isOpaqueCube() ? 2 : 0;
++            setLightOpacity(1);
++        }
 +        isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
      }
  
      /**
-@@ -429,9 +440,10 @@
+@@ -329,7 +333,7 @@
+      */
+     public Block setLightOpacity(int par1)
+     {
+-        lightOpacity[this.blockID] = par1;
++        opacity = par1;
+         return this;
+     }
+ 
+@@ -339,10 +343,10 @@
+      */
+     public Block setLightValue(float par1)
+     {
+-        lightValue[this.blockID] = (int)(15.0F * par1);
++        emission = (int)(15.0F * par1);
+         return this;
+     }
+-
++    
+     /**
+      * Sets the the blocks resistance to explosions. Returns the object for convenience in constructing.
+      */
+@@ -429,9 +433,10 @@
          return this.needsRandomTick;
      }
  
@@ -42,7 +145,7 @@
      }
  
      /**
-@@ -454,7 +466,7 @@
+@@ -454,7 +459,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -51,7 +154,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -464,7 +476,7 @@
+@@ -464,7 +469,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -60,7 +163,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -633,8 +645,7 @@
+@@ -633,8 +638,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -70,7 +173,7 @@
      }
  
      /**
-@@ -652,18 +663,13 @@
+@@ -652,18 +656,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -93,7 +196,7 @@
                  }
              }
          }
-@@ -1045,7 +1051,7 @@
+@@ -1045,7 +1044,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -102,8 +205,53 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1322,4 +1328,849 @@
-         canBlockGrass[0] = true;
+@@ -1280,46 +1279,888 @@
+ 
+         for (int var0 = 0; var0 < 256; ++var0)
+         {
+-            if (blocksList[var0] != null)
++            Block block = blocksList[var0];
++            if (block != null)
+             {
+                 if (Item.itemsList[var0] == null)
+                 {
+                     Item.itemsList[var0] = new ItemBlock(var0 - 256);
+-                    blocksList[var0].initializeBlock();
++                    block.initializeBlock();
+                 }
+-
+-                boolean var1 = false;
+-
+-                if (var0 > 0 && blocksList[var0].getRenderType() == 10)
+-                {
+-                    var1 = true;
+-                }
+-
+-                if (var0 > 0 && blocksList[var0] instanceof BlockHalfSlab)
+-                {
+-                    var1 = true;
+-                }
+-
+-                if (var0 == tilledField.blockID)
+-                {
+-                    var1 = true;
+-                }
+-
+-                if (canBlockGrass[var0])
+-                {
+-                    var1 = true;
+-                }
+-
+-                if (lightOpacity[var0] == 0)
+-                {
+-                    var1 = true;
+-                }
+-
+-                useNeighborBrightness[var0] = var1;
+             }
+         }
+ 
+-        canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
 +        
@@ -119,7 +267,52 @@
 +     */
 +    public int getLightValue(IBlockAccess world, int x, int y, int z) 
 +    {
-+        return lightValue[blockID];
++        return emission;
++    }
++    
++    public int getLightValue(World world, int x, int y, int z, ForgeDirection side, EnumSkyBlock layer)
++    {
++        int light = layer == EnumSkyBlock.Block ? emission : 0;
++        return Math.max(light, world.getSkyBlockTypeBrightness(layer, x, y, z)) - getOpacityForSide(world, x, y, z, side);
++    }
++    
++    public long getLightMask(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++    	if (mask != null) return mask[side.ordinal()];
++    	else if (isOpaqueCube()) return -1;
++    	else return 0;
++    }
++    
++    public Block setLightMask(long[] sides)
++    {
++    	if (sides.length == 6) mask = sides;
++    	else if (sides.length == 3)
++    	{
++    		mask = new long[6];
++    		mask[0] = sides[0];
++    		mask[1] = sides[1];
++    		mask[2] = sides[2];
++    		mask[3] = sides[2];
++    		mask[4] = sides[2];
++    		mask[5] = sides[2];
++    	}
++    	return this;
++    }
++    
++    public int getSkyBlock(IBlockAccess world, int x, int y, int z) 
++    {
++    	return isOpaqueCube() ? 2 : 0;
++    }
++    
++    public Block setSkyBlock(int value)
++    {
++    	skyBlock = value;
++    	return this;
++    }
++    
++    public int getOpacityForSide(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++		return side == UNKNOWN ? 0 : opacity;
 +    }
 +
 +    /**
@@ -167,7 +360,7 @@
 +        int meta = world.getBlockMetadata(x, y, z);
 +        if (this instanceof BlockHalfSlab)
 +        {
-+            return (((meta & 8) == 8 && (side == UP)) || isOpaqueCube());
++            return (((meta & 8) == 8 && (side == UP)) || ((meta & 8) == 0 && (side == DOWN)) || isOpaqueCube());
 +        }
 +        else if (this instanceof BlockFarmland)
 +        {
@@ -176,7 +369,7 @@
 +        else if (this instanceof BlockStairs)
 +        {
 +            boolean flipped = ((meta & 4) != 0);
-+            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped);
++            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped) || (side == DOWN && !flipped);
 +        }
 +        return isBlockNormalCube(world, x, y, z);
 +    }
@@ -900,26 +1093,7 @@
 +
 +        return false;
 +    }
-+    
-+    /**
-+     * Location aware and overrideable version of the lightOpacity array,
-+     * return the number to subtract from the light value when it passes through this block.
-+     * 
-+     * This is not guaranteed to have the tile entity in place before this is called, so it is
-+     * Recommended that you have your tile entity call relight after being placed if you
-+     * rely on it for light info.
-+     * 
-+     * @param world The current world
-+     * @param x X Position
-+     * @param y Y Position
-+     * @param z Z position
-+     * @return The amount of light to block, 0 for air, 255 for fully opaque.
-+     */
-+    public int getLightOpacity(World world, int x, int y, int z)
-+    {
-+        return lightOpacity[blockID];
-+    }
-+
++        
 +    /**
 +     * Determines if this block is destroyed when a ender dragon tries to fly through it.
 +     * The block will be set to 0, nothing will drop.

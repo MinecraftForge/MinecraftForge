@@ -31,3 +31,94 @@
          }
      }
  
+@@ -309,7 +322,7 @@
+     public boolean isAirBlock(int par1, int par2, int par3)
+     {
+         Block var4 = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return var4 == null;
++        return var4 == null || var4.isAirBlock(worldObj, par1, par2, par3);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -320,81 +333,6 @@
+      */
+     public int getSkyBlockTypeBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
+     {
+-        if (par3 < 0)
+-        {
+-            par3 = 0;
+-        }
+-
+-        if (par3 >= 256)
+-        {
+-            par3 = 255;
+-        }
+-
+-        if (par3 >= 0 && par3 < 256 && par2 >= -30000000 && par4 >= -30000000 && par2 < 30000000 && par4 <= 30000000)
+-        {
+-            int var5;
+-            int var6;
+-
+-            if (Block.useNeighborBrightness[this.getBlockId(par2, par3, par4)])
+-            {
+-                var5 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2, par3 + 1, par4);
+-                var6 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2 + 1, par3, par4);
+-                int var7 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2 - 1, par3, par4);
+-                int var8 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2, par3, par4 + 1);
+-                int var9 = this.getSpecialBlockBrightness(par1EnumSkyBlock, par2, par3, par4 - 1);
+-
+-                if (var6 > var5)
+-                {
+-                    var5 = var6;
+-                }
+-
+-                if (var7 > var5)
+-                {
+-                    var5 = var7;
+-                }
+-
+-                if (var8 > var5)
+-                {
+-                    var5 = var8;
+-                }
+-
+-                if (var9 > var5)
+-                {
+-                    var5 = var9;
+-                }
+-
+-                return var5;
+-            }
+-            else
+-            {
+-                var5 = (par2 >> 4) - this.chunkX;
+-                var6 = (par4 >> 4) - this.chunkZ;
+-                return this.chunkArray[var5][var6].getSavedLightValue(par1EnumSkyBlock, par2 & 15, par3, par4 & 15);
+-            }
+-        }
+-        else
+-        {
+-            return par1EnumSkyBlock.defaultLightValue;
+-        }
+-    }
+-
+-    @SideOnly(Side.CLIENT)
+-
+-    /**
+-     * is only used on stairs and tilled fields
+-     */
+-    public int getSpecialBlockBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
+-    {
+-        if (par3 < 0)
+-        {
+-            par3 = 0;
+-        }
+-
+-        if (par3 >= 256)
+-        {
+-            par3 = 255;
+-        }
+-
+         if (par3 >= 0 && par3 < 256 && par2 >= -30000000 && par4 >= -30000000 && par2 < 30000000 && par4 <= 30000000)
+         {
+             int var5 = (par2 >> 4) - this.chunkX;
