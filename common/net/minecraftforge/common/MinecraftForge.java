@@ -14,6 +14,7 @@ import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.event.EventBus;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class MinecraftForge
 {
@@ -196,6 +197,7 @@ public class MinecraftForge
        EntityEnderman.carriableBlocks = temp;
 
        EVENT_BUS.register(INTERNAL_HANDLER);
+       OreDictionary.getOreName(0);
    }
 
    public static String getBrandingVersion()

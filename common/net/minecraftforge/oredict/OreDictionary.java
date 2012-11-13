@@ -13,6 +13,7 @@ import net.minecraftforge.event.Event;
 
 public class OreDictionary
 {
+    private static boolean hasInit = false;
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
@@ -23,14 +24,19 @@ public class OreDictionary
 
     public static void initVanillaEntries()
     {
-        registerOre("logWood",   new ItemStack(Block.wood, 1, -1));
-        registerOre("plankWood", new ItemStack(Block.planks, 1, -1));
-        registerOre("slabWood",  new ItemStack(Block.woodSingleSlab, 1, -1));
-        registerOre("stairWood", Block.stairCompactPlanks);
-        registerOre("stairWood", Block.stairsWoodBirch);
-        registerOre("stairWood", Block.stairsWoodJungle);
-        registerOre("stairWood", Block.stairsWoodSpruce);
-        registerOre("stickWood", Item.stick);
+        if (!hasInit)
+        {
+            registerOre("logWood",     new ItemStack(Block.wood, 1, -1));
+            registerOre("plankWood",   new ItemStack(Block.planks, 1, -1));
+            registerOre("slabWood",    new ItemStack(Block.woodSingleSlab, 1, -1));
+            registerOre("stairWood",   Block.stairCompactPlanks);
+            registerOre("stairWood",   Block.stairsWoodBirch);
+            registerOre("stairWood",   Block.stairsWoodJungle);
+            registerOre("stairWood",   Block.stairsWoodSpruce);
+            registerOre("stickWood",   Item.stick);
+            registerOre("treeSapling", new ItemStack(Block.sapling, 1, -1));
+            registerOre("treeLeaves",  new ItemStack(Block.leaves, 1, -1));
+        }
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
@@ -61,9 +67,13 @@ public class OreDictionary
         for(int i = 0; i < 16; i++)
         {
             ItemStack dye = new ItemStack(Item.dyePowder, 1, i);
-            registerOre(dyes[i], dye);
+            if (!hasInit)
+            {
+                registerOre(dyes[i], dye);
+            }
             replacements.put(dye, dyes[i]);
         }
+        hasInit = true;
 
         ItemStack[] replaceStacks = replacements.keySet().toArray(new ItemStack[0]);
 
@@ -116,7 +126,10 @@ public class OreDictionary
 
         recipes.removeAll(recipesToRemove);
         recipes.addAll(recipesToAdd);
-        System.out.println(recipesToRemove.size() + " " + recipesToAdd.size());
+        if (recipesToRemove.size() > 0)
+        {
+            System.out.println("Replaced " + recipesToRemove.size() + " ore recipies");
+        }
     }
 
     /**
