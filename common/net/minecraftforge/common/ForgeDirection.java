@@ -31,7 +31,16 @@ public enum ForgeDirection
     public final int flag;
     public static final ForgeDirection[] VALID_DIRECTIONS = {DOWN, UP, NORTH, SOUTH, WEST, EAST};
     public static final int[] OPPOSITES = {1, 0, 3, 2, 5, 4, 6};
-    public static final int[] TO_LEFT = {0, 1, 5, 4, 3, 2, 6};
+    // Left hand rule rotation matrix for all possible axes of rotation
+    public static final int[][] ROTATION_MATRIX = {
+    	{0, 1, 4, 5, 2, 3, 6},
+    	{0, 1, 5, 4, 3, 2, 6},
+    	{5, 4, 2, 3, 0, 1, 6},
+    	{4, 5, 2, 3, 1, 0, 6},
+    	{2, 3, 0, 1, 4, 5, 6},
+    	{3, 2, 1, 0, 4, 5, 6},
+    	{0, 1, 2, 3, 4, 5, 6},
+    };
 
     private ForgeDirection(int x, int y, int z)
     {
@@ -55,8 +64,8 @@ public enum ForgeDirection
         return getOrientation(OPPOSITES[ordinal()]);
     }
 
-    public ForgeDirection getLeftRotation()
+    public ForgeDirection getRotation(ForgeDirection axis)
     {
-    	return getOrientation(TO_LEFT[ordinal()]);
+    	return getOrientation(ROTATION_MATRIX[axis.ordinal()][ordinal()]);
     }
 }
