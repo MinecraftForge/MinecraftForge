@@ -1,0 +1,20 @@
+--- ../src_base/common/net/minecraft/src/BlockIce.java
++++ ../src_work/common/net/minecraft/src/BlockIce.java
+@@ -3,6 +3,8 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.Random;
++
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockIce extends BlockBreakable
+ {
+@@ -85,7 +87,7 @@
+      */
+     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
+     {
+-        if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11 - Block.lightOpacity[this.blockID])
++        if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
+         {
+             if (par1World.provider.isHellWorld)
+             {

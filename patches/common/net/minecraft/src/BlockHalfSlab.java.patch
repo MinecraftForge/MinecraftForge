@@ -1,0 +1,47 @@
+--- ../src_base/common/net/minecraft/src/BlockHalfSlab.java
++++ ../src_work/common/net/minecraft/src/BlockHalfSlab.java
+@@ -4,6 +4,8 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.List;
+ import java.util.Random;
++
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public abstract class BlockHalfSlab extends Block
+ {
+@@ -22,8 +24,6 @@
+         {
+             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.5F, 1.0F);
+         }
+-
+-        this.setLightOpacity(255);
+     }
+ 
+     /**
+@@ -160,4 +160,26 @@
+      * Returns the slab block name with step type.
+      */
+     public abstract String getFullSlabName(int var1);
++
++    @Override
++    public int getSkyBlock(IBlockAccess world, int x, int y, int z)
++    {
++    	return (this.isDoubleSlab || world.getBlockMetadata(x, y, z) >= 8) ? 2 : 1;
++    }
++
++    @Override
++    public long getLightMask(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++    	if (this.isDoubleSlab) return -1;
++    	boolean usd = world.getBlockMetadata(x, y, z) >= 8;
++    	switch (side)
++    	{
++    	    case UP:
++    	    	return usd ? -1 : 0;
++    	    case DOWN:
++    	    	return usd ? 0 : -1;
++    	    default:
++    	    	return usd ? ~0xFFFFFFFFL : 0xFFFFFFFFL;
++    	}
++    }
+ }

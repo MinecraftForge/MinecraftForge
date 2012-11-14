@@ -1,0 +1,34 @@
+--- ../src_base/common/net/minecraft/src/BlockFurnace.java
++++ ../src_work/common/net/minecraft/src/BlockFurnace.java
+@@ -3,6 +3,8 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.Random;
++
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockFurnace extends BlockContainer
+ {
+@@ -287,4 +289,22 @@
+ 
+         super.breakBlock(par1World, par2, par3, par4, par5, par6);
+     }
++    
++    public boolean isOpaqueCube()
++    {
++    	return false;
++    }
++    
++    @Override
++    public long getLightMask(IBlockAccess world, int x, int y, int z, ForgeDirection side)
++    {
++    	switch (side)
++    	{
++    	    case UP:
++    	    case DOWN:
++    	    	return -1;
++    	    default:
++    	    	return side.ordinal() == world.getBlockMetadata(x, y, z) ? ~0x3C3CL : -1;
++    	}
++    }
+ }

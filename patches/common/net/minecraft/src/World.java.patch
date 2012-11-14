@@ -99,12 +99,10 @@
          }
          else
          {
-@@ -265,6 +306,19 @@
- 
-         this.calculateInitialSkylight();
+@@ -267,6 +308,19 @@
          this.calculateInitialWeather();
-+    }
-+
+     }
+ 
 +    private static MapStorage s_mapStorage;
 +    private static ISaveHandler s_savehandler;
 +    //Provides a solution for different worlds getting different copies of the same data, potentially rewriting the data or causing race conditions/stale data
@@ -116,10 +114,41 @@
 +            s_savehandler = savehandler;
 +        }
 +        return s_mapStorage;
++    }
++
+     /**
+      * Creates the chunk provider for this world. Called in the constructor. Retrieves provider from worldProvider?
+      */
+@@ -324,8 +378,12 @@
+ 
+                 try
+                 {
+-                    var4 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+-                    return var4.getBlockID(par1 & 15, par2, par3 & 15);
++                    if (this.chunkExists(par1 >> 4, par3 >> 4))
++                    {
++                        var4 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++                        return var4.getBlockID(par1 & 15, par2, par3 & 15);
++                    }
++                    else return 0;
+                 }
+                 catch (Throwable var8)
+                 {
+@@ -343,17 +401,18 @@
+         }
      }
  
+-    public int getBlockLightOpacity(int par1, int par2, int par3)
+-    {
+-        return par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000 ? (par2 < 0 ? 0 : (par2 >= 256 ? 0 : this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4).getBlockLightOpacity(par1 & 15, par2, par3 & 15))) : 0;
+-    }
++//    public int getBlockLightOpacity(int par1, int par2, int par3)
++//    {
++//        return par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000 ? (par2 < 0 ? 0 : (par2 >= 256 ? 0 : this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4).getBlockLightOpacity(par1 & 15, par2, par3 & 15))) : 0;
++//    }
+ 
      /**
-@@ -353,7 +407,8 @@
+      * Returns true if the block at the specified coordinates is empty
       */
      public boolean isAirBlock(int par1, int par2, int par3)
      {
@@ -129,7 +158,7 @@
      }
  
      /**
-@@ -362,7 +417,8 @@
+@@ -362,7 +421,8 @@
      public boolean blockHasTileEntity(int par1, int par2, int par3)
      {
          int var4 = this.getBlockId(par1, par2, par3);
@@ -139,7 +168,118 @@
      }
  
      public int func_85175_e(int par1, int par2, int par3)
-@@ -1099,7 +1155,7 @@
+@@ -551,10 +611,14 @@
+             }
+             else
+             {
+-                Chunk var4 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+-                par1 &= 15;
+-                par3 &= 15;
+-                return var4.getBlockMetadata(par1, par2, par3);
++                if (this.chunkExists(par1 >> 4, par3 >> 4))
++                {
++                    Chunk var4 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
++                    par1 &= 15;
++                    par3 &= 15;
++                    return var4.getBlockMetadata(par1, par2, par3);
++                }
++                else return 0;
+             }
+         }
+         else
+@@ -790,54 +854,8 @@
+      */
+     public int getBlockLightValue(int par1, int par2, int par3)
+     {
+-        return this.getBlockLightValue_do(par1, par2, par3, true);
+-    }
+-
+-    /**
+-     * Gets the light value of a block location. This is the actual function that gets the value and has a bool flag
+-     * that indicates if its a half step block to get the maximum light value of a direct neighboring block (left,
+-     * right, forward, back, and up)
+-     */
+-    public int getBlockLightValue_do(int par1, int par2, int par3, boolean par4)
+-    {
+         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
+         {
+-            if (par4)
+-            {
+-                int var5 = this.getBlockId(par1, par2, par3);
+-
+-                if (var5 == Block.stoneSingleSlab.blockID || var5 == Block.woodSingleSlab.blockID || var5 == Block.tilledField.blockID || var5 == Block.stairCompactCobblestone.blockID || var5 == Block.stairCompactPlanks.blockID)
+-                {
+-                    int var6 = this.getBlockLightValue_do(par1, par2 + 1, par3, false);
+-                    int var7 = this.getBlockLightValue_do(par1 + 1, par2, par3, false);
+-                    int var8 = this.getBlockLightValue_do(par1 - 1, par2, par3, false);
+-                    int var9 = this.getBlockLightValue_do(par1, par2, par3 + 1, false);
+-                    int var10 = this.getBlockLightValue_do(par1, par2, par3 - 1, false);
+-
+-                    if (var7 > var6)
+-                    {
+-                        var6 = var7;
+-                    }
+-
+-                    if (var8 > var6)
+-                    {
+-                        var6 = var8;
+-                    }
+-
+-                    if (var9 > var6)
+-                    {
+-                        var6 = var9;
+-                    }
+-
+-                    if (var10 > var6)
+-                    {
+-                        var6 = var10;
+-                    }
+-
+-                    return var6;
+-                }
+-            }
+-
+             if (par2 < 0)
+             {
+                 return 0;
+@@ -936,36 +954,6 @@
+                 {
+                     return par1EnumSkyBlock.defaultLightValue;
+                 }
+-                else if (Block.useNeighborBrightness[this.getBlockId(par2, par3, par4)])
+-                {
+-                    int var12 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3 + 1, par4);
+-                    int var8 = this.getSavedLightValue(par1EnumSkyBlock, par2 + 1, par3, par4);
+-                    int var9 = this.getSavedLightValue(par1EnumSkyBlock, par2 - 1, par3, par4);
+-                    int var10 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 + 1);
+-                    int var11 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 - 1);
+-
+-                    if (var8 > var12)
+-                    {
+-                        var12 = var8;
+-                    }
+-
+-                    if (var9 > var12)
+-                    {
+-                        var12 = var9;
+-                    }
+-
+-                    if (var10 > var12)
+-                    {
+-                        var12 = var10;
+-                    }
+-
+-                    if (var11 > var12)
+-                    {
+-                        var12 = var11;
+-                    }
+-
+-                    return var12;
+-                }
+                 else
+                 {
+                     Chunk var7 = this.getChunkFromChunkCoords(var5, var6);
+@@ -1099,7 +1087,7 @@
       */
      public boolean isDaytime()
      {
@@ -148,7 +288,7 @@
      }
  
      /**
-@@ -1131,7 +1187,7 @@
+@@ -1131,7 +1119,7 @@
                  int var12 = this.getBlockMetadata(var8, var9, var10);
                  Block var13 = Block.blocksList[var11];
  
@@ -157,7 +297,7 @@
                  {
                      MovingObjectPosition var14 = var13.collisionRayTrace(this, var8, var9, var10, par1Vec3, par2Vec3);
  
-@@ -1331,6 +1387,12 @@
+@@ -1331,6 +1319,12 @@
       */
      public void playSoundAtEntity(Entity par1Entity, String par2Str, float par3, float par4)
      {
@@ -170,7 +310,7 @@
          if (par1Entity != null && par2Str != null)
          {
              for (int var5 = 0; var5 < this.worldAccesses.size(); ++var5)
-@@ -1428,6 +1490,11 @@
+@@ -1428,6 +1422,11 @@
                  EntityPlayer var5 = (EntityPlayer)par1Entity;
                  this.playerEntities.add(var5);
                  this.updateAllPlayersSleepingFlag();
@@ -182,7 +322,7 @@
              }
  
              this.getChunkFromChunkCoords(var2, var3).addEntity(par1Entity);
-@@ -1671,6 +1738,12 @@
+@@ -1671,6 +1670,12 @@
       * Calculates the color for the skybox
       */
      public Vec3 getSkyColor(Entity par1Entity, float par2)
@@ -195,7 +335,7 @@
      {
          float var3 = this.getCelestialAngle(par2);
          float var4 = MathHelper.cos(var3 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
-@@ -1766,6 +1839,12 @@
+@@ -1766,6 +1771,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3 drawClouds(float par1)
      {
@@ -208,7 +348,7 @@
          float var2 = this.getCelestialAngle(par1);
          float var3 = MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
-@@ -1844,7 +1923,7 @@
+@@ -1844,7 +1855,7 @@
          {
              int var5 = var3.getBlockID(par1, var4, par2);
  
@@ -217,7 +357,7 @@
              {
                  return var4 + 1;
              }
-@@ -1859,6 +1938,12 @@
+@@ -1859,6 +1870,12 @@
       * How bright are stars in the sky
       */
      public float getStarBrightness(float par1)
@@ -230,7 +370,7 @@
      {
          float var2 = this.getCelestialAngle(par1);
          float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
-@@ -2058,7 +2143,7 @@
+@@ -2058,7 +2075,7 @@
  
                      if (var11 != null)
                      {
@@ -239,7 +379,7 @@
                      }
                  }
              }
-@@ -2068,6 +2153,10 @@
+@@ -2068,6 +2085,10 @@
  
          if (!this.entityRemoval.isEmpty())
          {
@@ -250,7 +390,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -2086,7 +2175,9 @@
+@@ -2086,7 +2107,9 @@
                      {
                          this.loadedTileEntityList.add(var12);
                      }
@@ -261,7 +401,7 @@
                      if (this.chunkExists(var12.xCoord >> 4, var12.zCoord >> 4))
                      {
                          Chunk var15 = this.getChunkFromChunkCoords(var12.xCoord >> 4, var12.zCoord >> 4);
-@@ -2096,8 +2187,6 @@
+@@ -2096,8 +2119,6 @@
                              var15.setChunkBlockTileEntity(var12.xCoord & 15, var12.yCoord, var12.zCoord & 15, var12);
                          }
                      }
@@ -270,7 +410,7 @@
                  }
              }
  
-@@ -2110,13 +2199,13 @@
+@@ -2110,13 +2131,13 @@
  
      public void addTileEntity(Collection par1Collection)
      {
@@ -291,7 +431,7 @@
          }
      }
  
-@@ -2136,9 +2225,17 @@
+@@ -2136,9 +2157,17 @@
      {
          int var3 = MathHelper.floor_double(par1Entity.posX);
          int var4 = MathHelper.floor_double(par1Entity.posZ);
@@ -312,7 +452,7 @@
          {
              par1Entity.lastTickPosX = par1Entity.posX;
              par1Entity.lastTickPosY = par1Entity.posY;
-@@ -2370,6 +2467,14 @@
+@@ -2370,6 +2399,14 @@
                          {
                              return true;
                          }
@@ -327,7 +467,7 @@
                      }
                  }
              }
-@@ -2675,25 +2780,21 @@
+@@ -2675,25 +2712,21 @@
       */
      public void setBlockTileEntity(int par1, int par2, int par3, TileEntity par4TileEntity)
      {
@@ -368,7 +508,7 @@
          }
      }
  
-@@ -2702,27 +2803,10 @@
+@@ -2702,27 +2735,10 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
@@ -400,7 +540,7 @@
          }
      }
  
-@@ -2748,7 +2832,8 @@
+@@ -2748,7 +2764,8 @@
       */
      public boolean isBlockNormalCube(int par1, int par2, int par3)
      {
@@ -410,7 +550,7 @@
      }
  
      public boolean func_85174_u(int par1, int par2, int par3)
-@@ -2771,8 +2856,7 @@
+@@ -2771,8 +2788,7 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
@@ -420,7 +560,7 @@
      }
  
      /**
-@@ -2788,7 +2872,7 @@
+@@ -2788,7 +2804,7 @@
              if (var5 != null && !var5.isEmpty())
              {
                  Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
@@ -429,7 +569,7 @@
              }
              else
              {
-@@ -2819,8 +2903,7 @@
+@@ -2819,8 +2835,7 @@
       */
      public void setAllowedSpawnTypes(boolean par1, boolean par2)
      {
@@ -439,7 +579,7 @@
      }
  
      /**
-@@ -2836,6 +2919,11 @@
+@@ -2836,6 +2851,11 @@
       */
      private void calculateInitialWeather()
      {
@@ -451,7 +591,7 @@
          if (this.worldInfo.isRaining())
          {
              this.rainingStrength = 1.0F;
-@@ -2851,6 +2939,11 @@
+@@ -2851,6 +2871,11 @@
       * Updates all weather states.
       */
      protected void updateWeather()
@@ -463,7 +603,7 @@
      {
          if (!this.provider.hasNoSky)
          {
-@@ -2953,12 +3046,14 @@
+@@ -2953,12 +2978,14 @@
  
      public void toggleRain()
      {
@@ -479,7 +619,7 @@
          this.theProfiler.startSection("buildList");
          int var1;
          EntityPlayer var2;
-@@ -3065,6 +3160,11 @@
+@@ -3065,6 +3092,11 @@
       */
      public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
      {
@@ -491,46 +631,289 @@
          BiomeGenBase var5 = this.getBiomeGenForCoords(par1, par3);
          float var6 = var5.getFloatTemperature();
  
-@@ -3122,6 +3222,11 @@
-      * Tests whether or not snow can be placed at a given location
+@@ -3123,6 +3155,11 @@
       */
      public boolean canSnowAt(int par1, int par2, int par3)
-+    {
+     {
 +        return provider.canSnowAt(par1, par2, par3);
 +    }
 +
 +    public boolean canSnowAtBody(int par1, int par2, int par3)
-     {
++    {
          BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
          float var5 = var4.getFloatTemperature();
-@@ -3215,7 +3320,7 @@
  
-     private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
+@@ -3157,102 +3194,33 @@
+         this.updateLightByType(EnumSkyBlock.Block, par1, par2, par3);
+     }
+ 
+-    private int computeSkyLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
++    public int computeLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
      {
+         int var7 = 0;
+ 
+-        if (this.canBlockSeeTheSky(par2, par3, par4))
++        Block block = Block.blocksList[par5];
++        if (par1EnumSkyBlock == EnumSkyBlock.Block && block != null)
++        {
++            var7 = block.getLightValue(this, par2, par3, par4);
++        }
++        if (par1EnumSkyBlock == EnumSkyBlock.Sky && canBlockSeeTheSky(par2, par3, par4))
+         {
+             var7 = 15;
+         }
+-        else
+-        {
+-            if (par6 == 0)
+-            {
+-                par6 = 1;
+-            }
+-
+-            int var8 = this.getSavedLightValue(EnumSkyBlock.Sky, par2 - 1, par3, par4) - par6;
+-            int var9 = this.getSavedLightValue(EnumSkyBlock.Sky, par2 + 1, par3, par4) - par6;
+-            int var10 = this.getSavedLightValue(EnumSkyBlock.Sky, par2, par3 - 1, par4) - par6;
+-            int var11 = this.getSavedLightValue(EnumSkyBlock.Sky, par2, par3 + 1, par4) - par6;
+-            int var12 = this.getSavedLightValue(EnumSkyBlock.Sky, par2, par3, par4 - 1) - par6;
+-            int var13 = this.getSavedLightValue(EnumSkyBlock.Sky, par2, par3, par4 + 1) - par6;
+-
+-            if (var8 > var7)
+-            {
+-                var7 = var8;
+-            }
+-
+-            if (var9 > var7)
+-            {
+-                var7 = var9;
+-            }
+-
+-            if (var10 > var7)
+-            {
+-                var7 = var10;
+-            }
+-
+-            if (var11 > var7)
+-            {
+-                var7 = var11;
+-            }
+-
+-            if (var12 > var7)
+-            {
+-                var7 = var12;
+-            }
+-
+-            if (var13 > var7)
+-            {
+-                var7 = var13;
+-            }
+-        }
+-
+-        return var7;
+-    }
+-
+-    private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
+-    {
 -        int var7 = Block.lightValue[par5];
-+        int var7 = (par5 == 0 || Block.blocksList[par5] == null ? 0 : Block.blocksList[par5].getLightValue(this, par2, par3, par4));
-         int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
-         int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
-         int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
-@@ -3350,7 +3455,7 @@
-                                     int var21 = var24 + (var18 / 2 + 1) % 3 / 2 * var19;
-                                     int var22 = var12 + (var18 / 2 + 2) % 3 / 2 * var19;
+-        int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
+-        int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
+-        int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
+-        int var11 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 + 1, par4) - par6;
+-        int var12 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4 - 1) - par6;
+-        int var13 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4 + 1) - par6;
+-
+-        if (var8 > var7)
+-        {
+-            var7 = var8;
+-        }
+-
+-        if (var9 > var7)
+-        {
+-            var7 = var9;
+-        }
+-
+-        if (var10 > var7)
+-        {
+-            var7 = var10;
+-        }
+-
+-        if (var11 > var7)
+-        {
+-            var7 = var11;
+-        }
+-
+-        if (var12 > var7)
+-        {
+-            var7 = var12;
+-        }
+-
+-        if (var13 > var7)
+-        {
+-            var7 = var13;
+-        }
+-
++        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
++        {
++            int xOff = par2 + dir.offsetX;
++            int yOff = par3 + dir.offsetY;
++            int zOff = par4 + dir.offsetZ;
++            Block block2 = Block.blocksList[getBlockId(xOff, yOff, zOff)];
++            long mask = block == null ? 0 : block.getLightMask(this, par2, par3, par4, dir);
++            mask |= block2 == null ? 0 : block2.getLightMask(this, xOff, yOff, zOff, dir.getOpposite());
++            int light = block2 == null ? getSavedLightValue(par1EnumSkyBlock, xOff, yOff, zOff) - 1 : block2.getLightValue(this, xOff, yOff, zOff, dir.getOpposite(), par1EnumSkyBlock);
++            if (mask != -1 && var7 < light)
++            {
++        	var7 = light;
++            }
++        }
+         return var7;
+     }
+ 
+@@ -3266,25 +3234,8 @@
+             int var7 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4);
+             boolean var8 = false;
+             int var9 = this.getBlockId(par2, par3, par4);
+-            int var10 = this.getBlockLightOpacity(par2, par3, par4);
+-
+-            if (var10 == 0)
+-            {
+-                var10 = 1;
+-            }
+-
+-            boolean var11 = false;
+-            int var24;
+-
+-            if (par1EnumSkyBlock == EnumSkyBlock.Sky)
+-            {
+-                var24 = this.computeSkyLightValue(var7, par2, par3, par4, var9, var10);
+-            }
+-            else
+-            {
+-                var24 = this.computeBlockLightValue(var7, par2, par3, par4, var9, var10);
+-            }
+-
++            int var10;
++            int var24 = this.computeLightValue(par1EnumSkyBlock, par2, par3, par4, var9);
+             int var12;
+             int var13;
+             int var14;
+@@ -3298,13 +3249,8 @@
+             {
+                 this.lightUpdateBlockList[var6++] = 133152;
+             }
+-            else if (var24 < var7)
+-            {
+-                if (par1EnumSkyBlock != EnumSkyBlock.Block)
+-                {
+-                    ;
+-                }
+-
++            else
++            {
+                 this.lightUpdateBlockList[var6++] = 133152 + (var7 << 18);
+ 
+                 while (var5 < var6)
+@@ -3343,23 +3289,19 @@
+ 
+                             if (var15 + var16 + var17 < 17)
+                             {
+-                                for (var18 = 0; var18 < 6; ++var18)
++                                Block block = Block.blocksList[getBlockId(var10, var24, var12)];
++                                for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
+                                 {
+-                                    var19 = var18 % 2 * 2 - 1;
+-                                    int var20 = var10 + var18 / 2 % 3 / 2 * var19;
+-                                    int var21 = var24 + (var18 / 2 + 1) % 3 / 2 * var19;
+-                                    int var22 = var12 + (var18 / 2 + 2) % 3 / 2 * var19;
++                                    int var20 = var10 + dir.offsetX;
++                                    int var21 = var24 + dir.offsetY;
++                                    int var22 = var12 + dir.offsetZ;
++                                    int block2 = getBlockId(var20, var21, var22);
                                      var14 = this.getSavedLightValue(par1EnumSkyBlock, var20, var21, var22);
 -                                    int var23 = Block.lightOpacity[this.getBlockId(var20, var21, var22)];
-+                                    int var23 = this.getBlockLightOpacity(var20, var21, var22);
- 
-                                     if (var23 == 0)
+-
+-                                    if (var23 == 0)
++                                    int var23 = this.computeLightValue(par1EnumSkyBlock, var20, var21, var22, block2);
++
++                                    if (var14 != var23 && var6 < this.lightUpdateBlockList.length)
                                      {
-@@ -3381,7 +3486,7 @@
+-                                        var23 = 1;
+-                                    }
+-
+-                                    if (var14 == var13 - var23 && var6 < this.lightUpdateBlockList.length)
+-                                    {
+-                                        this.lightUpdateBlockList[var6++] = var20 - par2 + 32 + (var21 - par3 + 32 << 6) + (var22 - par4 + 32 << 12) + (var13 - var23 << 18);
++                                        this.lightUpdateBlockList[var6++] = var20 - par2 + 32 + (var21 - par3 + 32 << 6) + (var22 - par4 + 32 << 12) + (var14 << 18);
+                                     }
+                                 }
+                             }
+@@ -3381,23 +3323,10 @@
                  var12 = (var9 >> 12 & 63) - 32 + par4;
                  var13 = this.getSavedLightValue(par1EnumSkyBlock, var10, var24, var12);
                  var14 = this.getBlockId(var10, var24, var12);
 -                var15 = Block.lightOpacity[var14];
-+                var15 = this.getBlockLightOpacity(var10, var24, var12);
+-
+-                if (var15 == 0)
+-                {
+-                    var15 = 1;
+-                }
  
-                 if (var15 == 0)
+                 boolean var25 = false;
+ 
+-                if (par1EnumSkyBlock == EnumSkyBlock.Sky)
+-                {
+-                    var16 = this.computeSkyLightValue(var13, var10, var24, var12, var14, var15);
+-                }
+-                else
+-                {
+-                    var16 = this.computeBlockLightValue(var13, var10, var24, var12, var14, var15);
+-                }
++                var16 = this.computeLightValue(par1EnumSkyBlock, var10, var24, var12, var14);
+ 
+                 if (var16 != var13)
                  {
-@@ -3483,10 +3588,10 @@
+@@ -3426,34 +3355,15 @@
+ 
+                         if (var17 + var18 + var19 < 17 && var6 < this.lightUpdateBlockList.length - 6)
+                         {
+-                            if (this.getSavedLightValue(par1EnumSkyBlock, var10 - 1, var24, var12) < var16)
++                            for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
+                             {
+-                                this.lightUpdateBlockList[var6++] = var10 - 1 - par2 + 32 + (var24 - par3 + 32 << 6) + (var12 - par4 + 32 << 12);
+-                            }
+-
+-                            if (this.getSavedLightValue(par1EnumSkyBlock, var10 + 1, var24, var12) < var16)
+-                            {
+-                                this.lightUpdateBlockList[var6++] = var10 + 1 - par2 + 32 + (var24 - par3 + 32 << 6) + (var12 - par4 + 32 << 12);
+-                            }
+-
+-                            if (this.getSavedLightValue(par1EnumSkyBlock, var10, var24 - 1, var12) < var16)
+-                            {
+-                                this.lightUpdateBlockList[var6++] = var10 - par2 + 32 + (var24 - 1 - par3 + 32 << 6) + (var12 - par4 + 32 << 12);
+-                            }
+-
+-                            if (this.getSavedLightValue(par1EnumSkyBlock, var10, var24 + 1, var12) < var16)
+-                            {
+-                                this.lightUpdateBlockList[var6++] = var10 - par2 + 32 + (var24 + 1 - par3 + 32 << 6) + (var12 - par4 + 32 << 12);
+-                            }
+-
+-                            if (this.getSavedLightValue(par1EnumSkyBlock, var10, var24, var12 - 1) < var16)
+-                            {
+-                                this.lightUpdateBlockList[var6++] = var10 - par2 + 32 + (var24 - par3 + 32 << 6) + (var12 - 1 - par4 + 32 << 12);
+-                            }
+-
+-                            if (this.getSavedLightValue(par1EnumSkyBlock, var10, var24, var12 + 1) < var16)
+-                            {
+-                                this.lightUpdateBlockList[var6++] = var10 - par2 + 32 + (var24 - par3 + 32 << 6) + (var12 + 1 - par4 + 32 << 12);
++                                int var20 = var10 + dir.offsetX;
++                                int var21 = var24 + dir.offsetY;
++                                int var22 = var12 + dir.offsetZ;
++                                if (this.getSavedLightValue(par1EnumSkyBlock, var20, var21, var22) < var16)
++                                {
++                                    this.lightUpdateBlockList[var6++] = (var20 - par2 + 32) + ((var21 - par3 + 32) << 6) + ((var22 - par4 + 32) << 12);
++                                }
+                             }
+                         }
+                     }
+@@ -3483,10 +3393,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
@@ -545,7 +928,7 @@
  
          for (int var7 = var3; var7 <= var4; ++var7)
          {
-@@ -3512,10 +3617,10 @@
+@@ -3512,10 +3422,10 @@
  
      public List func_82733_a(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
@@ -560,7 +943,7 @@
          ArrayList var8 = new ArrayList();
  
          for (int var9 = var4; var9 <= var5; ++var9)
-@@ -3608,11 +3713,14 @@
+@@ -3608,11 +3518,14 @@
       */
      public void addLoadedEntities(List par1List)
      {
@@ -578,7 +961,7 @@
          }
      }
  
-@@ -3646,6 +3754,11 @@
+@@ -3646,6 +3559,11 @@
          else
          {
              if (var9 != null && (var9 == Block.waterMoving || var9 == Block.waterStill || var9 == Block.lavaMoving || var9 == Block.lavaStill || var9 == Block.fire || var9.blockMaterial.isGroundCover()))
@@ -590,7 +973,7 @@
              {
                  var9 = null;
              }
-@@ -3863,7 +3976,7 @@
+@@ -3863,7 +3781,7 @@
       */
      public long getSeed()
      {
@@ -599,7 +982,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3873,7 +3986,7 @@
+@@ -3873,7 +3791,7 @@
  
      public long getWorldTime()
      {
@@ -608,7 +991,7 @@
      }
  
      /**
-@@ -3881,7 +3994,7 @@
+@@ -3881,7 +3799,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -617,7 +1000,7 @@
      }
  
      /**
-@@ -3889,13 +4002,13 @@
+@@ -3889,13 +3807,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -633,7 +1016,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3919,7 +4032,10 @@
+@@ -3919,7 +3837,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -645,7 +1028,7 @@
          }
      }
  
-@@ -3927,6 +4043,11 @@
+@@ -3927,6 +3848,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -657,7 +1040,7 @@
      {
          return true;
      }
-@@ -4047,8 +4168,7 @@
+@@ -4047,8 +3973,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -667,7 +1050,7 @@
      }
  
      /**
-@@ -4110,7 +4230,7 @@
+@@ -4110,7 +4035,7 @@
       */
      public int getHeight()
      {
@@ -676,7 +1059,7 @@
      }
  
      /**
-@@ -4118,7 +4238,7 @@
+@@ -4118,7 +4043,7 @@
       */
      public int getActualHeight()
      {
@@ -685,7 +1068,7 @@
      }
  
      public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-@@ -4161,7 +4281,7 @@
+@@ -4161,7 +4086,7 @@
       */
      public double getHorizon()
      {
@@ -694,7 +1077,7 @@
      }
  
      /**
-@@ -4219,4 +4339,75 @@
+@@ -4219,4 +4144,75 @@
  
          return this.theCalendar;
      }

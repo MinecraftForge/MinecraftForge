@@ -179,7 +179,6 @@ public class MinecraftForge
        Block filler = new Block(0, Material.air);
        Block.blocksList[0] = null;
        Block.opaqueCubeLookup[0] = false;
-       Block.lightOpacity[0] = 0;
 
        for (int x = 256; x < 4096; x++)
        {
