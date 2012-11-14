@@ -1,64 +1,73 @@
+
 package net.minecraftforge.liquids;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import net.minecraft.src.Block;
+import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 
 public class LiquidManager {
-	
-	public static final int BUCKET_VOLUME = 1000;
-	public static LinkedList<LiquidData> liquids = new LinkedList<LiquidData>();
-	
-	public static LiquidStack getLiquidForFilledItem(ItemStack filledItem) {
-		if (filledItem == null)
-			return null;
 
-		for (LiquidData liquid : liquids)
-			if (liquid.filled.isItemEqual(filledItem))
-				return liquid.stillLiquid;
+    public static final int BUCKET_VOLUME = 1000;
 
-		return null;
-	}
-	
-	public static int getLiquidIDForFilledItem(ItemStack filledItem) {
-		LiquidStack liquidForFilledItem = getLiquidForFilledItem(filledItem);
-		
-		if (liquidForFilledItem == null)
-			return 0;
-		
-		return liquidForFilledItem.itemID;
-	}
+    private static Map<List, ItemStack> mapItemFromLiquid = new HashMap();
+    private static Map<List, LiquidStack> mapLiquidFromItem = new HashMap();
+    private static Set<List> setLiquidValidation = new HashSet();
+    private static ArrayList<LiquidData> liquids = new ArrayList();
 
-	public static ItemStack getFilledItemForLiquid(LiquidStack liquid) {
-		for (LiquidData data : liquids)
-			if(data.stillLiquid.isLiquidEqual(liquid))
-				return data.filled.copy();
+    static {
+        registerLiquid(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME),
+                new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidData(new LiquidStack(Block.lavaStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(
+                Item.bucketLava), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME),
+                new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
+    }
 
-		return null;
-	}
-	
-	public static ItemStack fillLiquidContainer(int liquidId, int quantity, ItemStack emptyContainer) {
-		return fillLiquidContainer(new LiquidStack(liquidId, quantity, 0), emptyContainer);
-	}
-	
-	public static ItemStack fillLiquidContainer(LiquidStack liquid, ItemStack emptyContainer) {
-		for(LiquidData data : liquids)
-			if(liquid.containsLiquid(data.stillLiquid)
-					&& data.container.isItemEqual(emptyContainer))
-				return data.filled.copy();
-        return null;
-	}
+    public static void registerLiquid(LiquidData data) {
 
-	public static boolean isLiquid(ItemStack block) {
-		if (block.itemID == 0)
-			return false;
+        mapItemFromLiquid.put(Arrays.asList(data.container.itemID, data.container.getItemDamage(), data.stillLiquid.itemID, data.stillLiquid.itemMeta), data.filled);
+        mapLiquidFromItem.put(Arrays.asList(data.filled.itemID, data.filled.getItemDamage()), data.stillLiquid);
+        setLiquidValidation.add(Arrays.asList(data.stillLiquid.itemID, data.stillLiquid.itemMeta));
 
-		for (LiquidData liquid : liquids)
-			if (liquid.stillLiquid.isLiquidEqual(block) || liquid.movingLiquid.isLiquidEqual(block))
-				return true;
+        liquids.add(data);
+    }
 
-		return false;
-	}
+    public static LiquidStack getLiquidForFilledItem(ItemStack filledItem) {
 
+        if (filledItem == null) {
+            return null;
+        }
+        return mapLiquidFromItem.get(Arrays.asList(filledItem.itemID, filledItem.getItemDamage()));
+    }
 
+    public static ItemStack fillLiquidContainer(int liquidId, int quantity, ItemStack emptyContainer) {
+
+        return fillLiquidContainer(new LiquidStack(liquidId, quantity, 0), emptyContainer);
+    }
+
+    public static ItemStack fillLiquidContainer(LiquidStack liquid, ItemStack emptyContainer) {
+
+        if (emptyContainer == null || liquid == null) {
+            return null;
+        }
+        return mapItemFromLiquid.get(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage(), liquid.itemID, liquid.itemMeta));
+    }
+
+    public static boolean isLiquid(ItemStack block) {
+
+        return setLiquidValidation.contains(Arrays.asList(block.itemID, block.getItemDamage()));
+    }
+
+    public static ArrayList<LiquidData> getRegisteredLiquids() {
+
+        return liquids;
+    }
 }
