@@ -1,13 +1,37 @@
 package net.minecraftforge.liquids;
 
+/**
+ * A tank is the unit of interaction with liquid inventories.
+ *
+ * @author cpw
+ */
 public interface ILiquidTank {
 
 	/**
 	 * @return LiquidStack representing the liquid contained in the tank, null if empty.
 	 */
 	LiquidStack getLiquid();
+
+	/**
+	 * These shouldn't be used to interact with a foreign tank. Use {@link #fill(LiquidStack, boolean)}
+	 * and {@link #drain(int, boolean)}.
+	 *
+	 * @param liquid
+	 */
+	@Deprecated
 	void setLiquid(LiquidStack liquid);
+	/**
+	 * This method should not be used to interact with a foreign tank. Use {@link #fill(LiquidStack, boolean)}
+	 * and {@link #drain(int, boolean)}.
+	 *
+	 * @param capacity
+	 */
+	@Deprecated
 	void setCapacity(int capacity);
+
+	/**
+	 * @return capacity of this tank
+	 */
 	int getCapacity();
 
 	/**
