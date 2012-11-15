@@ -16,67 +16,127 @@ import net.minecraft.src.ItemStack;
 public class LiquidItemRegistry {
 
     public static final int BUCKET_VOLUME = 1000;
+    public static final ItemStack EMPTY_BUCKET = new ItemStack(Item.bucketEmpty);
 
-    private static Map<List, ItemStack> mapItemFromLiquid = new HashMap();
-    private static Map<List, LiquidStack> mapLiquidFromItem = new HashMap();
+    private static Map<List, LiquidContainerData> mapFilledItemFromLiquid = new HashMap();
+    private static Map<List, LiquidContainerData> mapLiquidFromFilledItem = new HashMap();
+    private static Set<List> setContainerValidation = new HashSet();
     private static Set<List> setLiquidValidation = new HashSet();
     private static ArrayList<LiquidContainerData> liquids = new ArrayList();
 
+    /**
+     * Default registrations
+     */
     static {
-        registerLiquid(
-        	new LiquidContainerData(
-        		new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME),
-                new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
-        registerLiquid(
-        	new LiquidContainerData(
-        		new LiquidStack(Block.lavaStill, LiquidItemRegistry.BUCKET_VOLUME),
-        		new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
-        registerLiquid(
-        	new LiquidContainerData(
-        			new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME),
-        			new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
-/*        registerLiquid(
-        	new LiquidContainerData(
-        			new LiquidStack(Item.milk, LiquidItemRegistry.BUCKET_VOLUME),
-        			new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
-*/    }
+        registerLiquid(new LiquidContainerData(new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(Block.waterMoving,
+                LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidContainerData(new LiquidStack(Block.lavaStill, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving,
+                LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidContainerData(new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(Block.waterMoving,
+                LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
+        // registerLiquid(new LiquidContainerData(new LiquidStack(Item.bucketMilk, LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketMilk), new
+        // ItemStack(Item.bucketEmpty)));
+    }
 
+    /**
+     * To register a container with a non-bucket size, the LiquidContainerData entry simply needs to use a size other than LiquidManager.BUCKET_VOLUME
+     */
     public static void registerLiquid(LiquidContainerData data) {
 
-        mapItemFromLiquid.put(Arrays.asList(data.container.itemID, data.container.getItemDamage(), data.stillLiquid.itemID, data.stillLiquid.itemMeta), data.filled);
-        mapLiquidFromItem.put(Arrays.asList(data.filled.itemID, data.filled.getItemDamage()), data.stillLiquid);
+        mapFilledItemFromLiquid.put(Arrays.asList(data.container.itemID, data.container.getItemDamage(), data.stillLiquid.itemID, data.stillLiquid.itemMeta), data);
+        mapLiquidFromFilledItem.put(Arrays.asList(data.filled.itemID, data.filled.getItemDamage()), data);
+        setContainerValidation.add(Arrays.asList(data.container.itemID, data.container.getItemDamage()));
         setLiquidValidation.add(Arrays.asList(data.stillLiquid.itemID, data.stillLiquid.itemMeta));
 
         liquids.add(data);
     }
 
-    public static LiquidStack getLiquidForFilledItem(ItemStack filledItem) {
+    public static LiquidStack getLiquidForFilledItem(ItemStack filledContainer) {
 
-        if (filledItem == null) {
+        if (filledContainer == null) {
             return null;
         }
-        return mapLiquidFromItem.get(Arrays.asList(filledItem.itemID, filledItem.getItemDamage()));
-    }
-
-    public static ItemStack fillLiquidContainer(int liquidId, int quantity, ItemStack emptyContainer) {
-
-        return fillLiquidContainer(new LiquidStack(liquidId, quantity, 0), emptyContainer);
+        LiquidContainerData ret = mapLiquidFromFilledItem.get(Arrays.asList(filledContainer.itemID, filledContainer.getItemDamage()));
+        if (ret != null) {
+            return ret.stillLiquid.copy();
+        }
+        return null;
     }
 
     public static ItemStack fillLiquidContainer(LiquidStack liquid, ItemStack emptyContainer) {
 
         if (emptyContainer == null || liquid == null) {
-            return null;
+            return emptyContainer;
         }
-        return mapItemFromLiquid.get(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage(), liquid.itemID, liquid.itemMeta));
+        LiquidContainerData ret = mapFilledItemFromLiquid.get(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage(), liquid.itemID, liquid.itemMeta));
+        if (ret != null) {
+            if (liquid.amount >= ret.stillLiquid.amount) {
+                return ret.filled.copy();
+            }
+        }
+        return emptyContainer;
+    }
+
+    public static boolean containsLiquid(ItemStack filledContainer, LiquidStack liquid) {
+
+        if (filledContainer == null || liquid == null) {
+            return false;
+        }
+        LiquidContainerData ret = mapLiquidFromFilledItem.get(Arrays.asList(filledContainer.itemID, filledContainer.getItemDamage()));
+        if (ret != null) {
+            return ret.stillLiquid.isLiquidEqual(liquid);
+        }
+        return false;
+    }
+
+    public static boolean isBucket(ItemStack container) {
+
+        if (container == null) {
+            return false;
+        }
+
+        if (container.isItemEqual(EMPTY_BUCKET)) {
+            return true;
+        }
+
+        LiquidContainerData ret = mapLiquidFromFilledItem.get(Arrays.asList(container.itemID, container.getItemDamage()));
+        if (ret != null) {
+            return ret.container.isItemEqual(EMPTY_BUCKET);
+        }
+        return false;
+    }
+
+    public static boolean isContainer(ItemStack container) {
+
+        return isEmptyContainer(container) || isFilledContainer(container);
+    }
+
+    public static boolean isEmptyContainer(ItemStack emptyContainer) {
+
+        if (emptyContainer == null) {
+            return false;
+        }
+        return setContainerValidation.contains(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage()));
+    }
+
+    public static boolean isFilledContainer(ItemStack filledContainer) {
+
+        if (filledContainer == null) {
+            return false;
+        }
+        return getLiquidForFilledItem(filledContainer) != null;
     }
 
     public static boolean isLiquid(ItemStack block) {
 
+        if (block == null) {
+            return false;
+        }
         return setLiquidValidation.contains(Arrays.asList(block.itemID, block.getItemDamage()));
     }
 
-    public static ArrayList<LiquidContainerData> getRegisteredLiquids() {
-        return liquids;
+    public static LiquidContainerData[] getRegisteredLiquidContainerData() {
+
+        return liquids.toArray(new LiquidContainerData[0]);
     }
 }
