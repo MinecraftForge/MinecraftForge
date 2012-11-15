@@ -22,12 +22,12 @@ public class LiquidContainerData {
 
 	@Deprecated
 	public LiquidContainerData(int stillLiquidId, int movingLiquidId, Item filled) {
-		this(new LiquidStack(stillLiquidId, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(movingLiquidId, LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(filled, 1), new ItemStack(Item.bucketEmpty));
+		this(new LiquidStack(stillLiquidId, LiquidContainerRegistry.BUCKET_VOLUME), new LiquidStack(movingLiquidId, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(filled, 1), new ItemStack(Item.bucketEmpty));
 	}
 
 	@Deprecated
 	public LiquidContainerData(int stillLiquidId, int movingLiquidId, ItemStack filled) {
-		this(new LiquidStack(stillLiquidId, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(movingLiquidId, LiquidItemRegistry.BUCKET_VOLUME), filled, new ItemStack(Item.bucketEmpty));
+		this(new LiquidStack(stillLiquidId, LiquidContainerRegistry.BUCKET_VOLUME), new LiquidStack(movingLiquidId, LiquidContainerRegistry.BUCKET_VOLUME), filled, new ItemStack(Item.bucketEmpty));
 	}
 
 	public LiquidContainerData(LiquidStack stillLiquid, ItemStack filled, ItemStack container) {

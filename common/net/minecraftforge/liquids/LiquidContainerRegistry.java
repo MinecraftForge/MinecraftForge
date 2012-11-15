@@ -13,7 +13,7 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 
-public class LiquidItemRegistry {
+public class LiquidContainerRegistry {
 
     public static final int BUCKET_VOLUME = 1000;
     public static final ItemStack EMPTY_BUCKET = new ItemStack(Item.bucketEmpty);
@@ -28,14 +28,10 @@ public class LiquidItemRegistry {
      * Default registrations
      */
     static {
-        registerLiquid(new LiquidContainerData(new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(Block.waterMoving,
-                LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
-        registerLiquid(new LiquidContainerData(new LiquidStack(Block.lavaStill, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving,
-                LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
-        registerLiquid(new LiquidContainerData(new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME), new LiquidStack(Block.waterMoving,
-                LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
-        // registerLiquid(new LiquidContainerData(new LiquidStack(Item.bucketMilk, LiquidItemRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketMilk), new
-        // ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidContainerData(new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidContainerData(new LiquidStack(Block.lavaStill, LiquidContainerRegistry.BUCKET_VOLUME),  new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(new LiquidContainerData(new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
+        // registerLiquid(new LiquidContainerData(new LiquidStack(Item.bucketMilk, LiquidContainerRegistry.BUCKET_VOLUME), new ItemStack(Item.bucketMilk), new ItemStack(Item.bucketEmpty)));
     }
 
     /**
@@ -127,12 +123,12 @@ public class LiquidItemRegistry {
         return getLiquidForFilledItem(filledContainer) != null;
     }
 
-    public static boolean isLiquid(ItemStack block) {
+    public static boolean isLiquid(ItemStack item) {
 
-        if (block == null) {
+        if (item == null) {
             return false;
         }
-        return setLiquidValidation.contains(Arrays.asList(block.itemID, block.getItemDamage()));
+        return setLiquidValidation.contains(Arrays.asList(item.itemID, item.getItemDamage()));
     }
 
     public static LiquidContainerData[] getRegisteredLiquidContainerData() {
