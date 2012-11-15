@@ -32,7 +32,7 @@ public class ModTextureStatic extends FMLTextureFX
     private String targetTex = null;
     private int storedSize;
     private BufferedImage overrideData = null;
-    private int needApply = 2;
+    private int needApply = 10;
 
 
     public ModTextureStatic(int icon, int target, BufferedImage image)
@@ -106,7 +106,7 @@ public class ModTextureStatic extends FMLTextureFX
 
     public void update()
     {
-        needApply = 2;
+        needApply = 10;
         for (int idx = 0; idx < pixels.length; idx++)
         {
             int i = idx * 4;
