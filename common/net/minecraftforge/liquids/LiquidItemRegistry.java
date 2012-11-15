@@ -13,25 +13,35 @@ import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 
-public class LiquidManager {
+public class LiquidItemRegistry {
 
     public static final int BUCKET_VOLUME = 1000;
 
     private static Map<List, ItemStack> mapItemFromLiquid = new HashMap();
     private static Map<List, LiquidStack> mapLiquidFromItem = new HashMap();
     private static Set<List> setLiquidValidation = new HashSet();
-    private static ArrayList<LiquidData> liquids = new ArrayList();
+    private static ArrayList<LiquidContainerData> liquids = new ArrayList();
 
     static {
-        registerLiquid(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME),
+        registerLiquid(
+        	new LiquidContainerData(
+        		new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME),
                 new ItemStack(Item.bucketWater), new ItemStack(Item.bucketEmpty)));
-        registerLiquid(new LiquidData(new LiquidStack(Block.lavaStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.lavaMoving, LiquidManager.BUCKET_VOLUME), new ItemStack(
-                Item.bucketLava), new ItemStack(Item.bucketEmpty)));
-        registerLiquid(new LiquidData(new LiquidStack(Block.waterStill, LiquidManager.BUCKET_VOLUME), new LiquidStack(Block.waterMoving, LiquidManager.BUCKET_VOLUME),
-                new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
-    }
+        registerLiquid(
+        	new LiquidContainerData(
+        		new LiquidStack(Block.lavaStill, LiquidItemRegistry.BUCKET_VOLUME),
+        		new ItemStack(Item.bucketLava), new ItemStack(Item.bucketEmpty)));
+        registerLiquid(
+        	new LiquidContainerData(
+        			new LiquidStack(Block.waterStill, LiquidItemRegistry.BUCKET_VOLUME),
+        			new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
+/*        registerLiquid(
+        	new LiquidContainerData(
+        			new LiquidStack(Item.milk, LiquidItemRegistry.BUCKET_VOLUME),
+        			new ItemStack(Item.potion), new ItemStack(Item.glassBottle)));
+*/    }
 
-    public static void registerLiquid(LiquidData data) {
+    public static void registerLiquid(LiquidContainerData data) {
 
         mapItemFromLiquid.put(Arrays.asList(data.container.itemID, data.container.getItemDamage(), data.stillLiquid.itemID, data.stillLiquid.itemMeta), data.filled);
         mapLiquidFromItem.put(Arrays.asList(data.filled.itemID, data.filled.getItemDamage()), data.stillLiquid);
@@ -66,8 +76,7 @@ public class LiquidManager {
         return setLiquidValidation.contains(Arrays.asList(block.itemID, block.getItemDamage()));
     }
 
-    public static ArrayList<LiquidData> getRegisteredLiquids() {
-
+    public static ArrayList<LiquidContainerData> getRegisteredLiquids() {
         return liquids;
     }
 }
