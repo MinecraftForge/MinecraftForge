@@ -70,7 +70,7 @@ public class LiquidContainerRegistry {
                 return ret.filled.copy();
             }
         }
-        return emptyContainer;
+        return null;
     }
 
     public static boolean containsLiquid(ItemStack filledContainer, LiquidStack liquid) {
