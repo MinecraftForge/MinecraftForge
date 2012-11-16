@@ -45,6 +45,11 @@
 			<type>2</type>
 			<locationURI>MCP_LOC/src-work/common</locationURI>
 		</link>
+		<link>
+			<name>fml-common/fmlversion.properties</name>
+			<type>1</type>
+			<locationURI>FML_LOC/fmlversion.properties</locationURI>
+		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
