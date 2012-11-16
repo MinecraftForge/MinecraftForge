@@ -32,9 +32,9 @@
 +                if (world != null && world.theChunkProviderServer != null)
                  {
 -                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + this.field_79017_e.worldServers[var3].theChunkProviderServer.makeString();
--                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + this.field_79017_e.worldServers[var3].getWorldVec3Pool().func_82590_d() + " / " + this.field_79017_e.worldServers[var3].getWorldVec3Pool().func_82591_c();
+-                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + this.field_79017_e.worldServers[var3].getWorldVec3Pool().func_82590_d() + " / " + this.field_79017_e.worldServers[var3].getWorldVec3Pool().getPoolSize();
 +                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", " + world.theChunkProviderServer.makeString();
-+                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + world.getWorldVec3Pool().func_82590_d() + " / " + world.getWorldVec3Pool().func_82591_c();
++                    this.displayStrings[5 + var3] = this.displayStrings[5 + var3] + ", Vec3: " + world.getWorldVec3Pool().func_82590_d() + " / " + world.getWorldVec3Pool().getPoolSize();
                  }
 +                var3++;
              }

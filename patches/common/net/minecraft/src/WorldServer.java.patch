@@ -125,7 +125,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -483,7 +507,8 @@
+@@ -486,7 +510,8 @@
  
                  this.pendingTickListEntries.remove(var4);
                  this.field_73064_N.remove(var4);
@@ -135,7 +135,7 @@
  
                  if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
                  {
-@@ -602,16 +627,28 @@
+@@ -605,16 +630,28 @@
      {
          ArrayList var7 = new ArrayList();
  
@@ -174,7 +174,7 @@
          return var7;
      }
  
-@@ -619,6 +656,11 @@
+@@ -622,6 +659,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -186,7 +186,7 @@
      {
          int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
          int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
-@@ -628,7 +670,7 @@
+@@ -631,7 +673,7 @@
              var6 = var5;
          }
  
@@ -195,7 +195,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -711,7 +753,7 @@
+@@ -714,7 +756,7 @@
       */
      protected void createBonusChest()
      {
@@ -204,7 +204,7 @@
  
          for (int var2 = 0; var2 < 10; ++var2)
          {
-@@ -754,6 +796,7 @@
+@@ -757,6 +799,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -212,7 +212,7 @@
          }
      }
  
-@@ -765,6 +808,7 @@
+@@ -768,6 +811,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getTagsFromLastWrite());
          this.mapStorage.saveAllData();
@@ -220,7 +220,7 @@
      }
  
      /**
-@@ -987,4 +1031,9 @@
+@@ -990,4 +1034,9 @@
      {
          return this.field_85177_Q;
      }

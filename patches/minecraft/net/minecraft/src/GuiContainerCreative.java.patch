@@ -12,7 +12,7 @@
 @@ -207,6 +209,14 @@
              this.func_74227_b(CreativeTabs.creativeTabArray[var1]);
              this.field_82324_x = new CreativeCrafting(this.mc);
-             this.mc.thePlayer.inventorySlots.addCraftingToCrafters(this.field_82324_x);
+             this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_82324_x);
 +            int tabCount = CreativeTabs.creativeTabArray.length;
 +            if (tabCount > 12)
 +            {

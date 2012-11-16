@@ -105,14 +105,14 @@
 -                {
 -                    EntityItemFrame var10 = (EntityItemFrame)this.objectMouseOver.entityHit;
 -
--                    if (var10.func_82335_i() == null)
+-                    if (var10.getDisplayedItem() == null)
 -                    {
 -                        var2 = Item.itemFrame.shiftedIndex;
 -                    }
 -                    else
 -                    {
--                        var2 = var10.func_82335_i().itemID;
--                        var3 = var10.func_82335_i().getItemDamage();
+-                        var2 = var10.getDisplayedItem().itemID;
+-                        var3 = var10.getDisplayedItem().getItemDamage();
 -                        var4 = true;
 -                    }
 -                }

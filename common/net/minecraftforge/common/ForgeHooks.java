@@ -68,7 +68,7 @@ public class ForgeHooks
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)
     {
-        if (block.blockMaterial.isHarvestable())
+        if (block.blockMaterial.isToolNotRequired())
         {
             return true;
         }
