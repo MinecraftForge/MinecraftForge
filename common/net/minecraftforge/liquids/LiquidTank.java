@@ -1,5 +1,7 @@
 package net.minecraftforge.liquids;
 
+import net.minecraft.src.TileEntity;
+
 /**
  * Reference implementation of ILiquidTank. Use this or implement your own.
  */
@@ -7,6 +9,7 @@ public class LiquidTank implements ILiquidTank {
 	private LiquidStack liquid;
 	private int capacity;
 	private int tankPressure;
+	private TileEntity tile;
 
 	public LiquidTank(int capacity) {
 		this(null, capacity);
@@ -15,11 +18,22 @@ public class LiquidTank implements ILiquidTank {
 	public LiquidTank(int liquidId, int quantity, int capacity) {
 		this(new LiquidStack(liquidId, quantity), capacity);
 	}
+
+	public LiquidTank(int liquidId, int quantity, int capacity, TileEntity tile) {
+		this(liquidId, quantity, capacity);
+		this.tile = tile;
+	}
+
 	public LiquidTank(LiquidStack liquid, int capacity) {
 		this.liquid = liquid;
 		this.capacity = capacity;
 	}
 
+	public LiquidTank(LiquidStack liquid, int capacity, TileEntity tile)
+	{
+		this(liquid, capacity);
+		this.tile = tile;
+	}
 	@Override
 	public LiquidStack getLiquid() {
 		return this.liquid;
@@ -54,6 +68,8 @@ public class LiquidTank implements ILiquidTank {
 				if(doFill) {
 					this.liquid = resource.copy();
 					this.liquid.amount = capacity;
+					if (tile!=null)
+						LiquidEvent.fireEvent(new LiquidEvent.LiquidFillingEvent(liquid, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord, this));
 				}
 				return capacity;
 			}
@@ -95,6 +111,9 @@ public class LiquidTank implements ILiquidTank {
 		// Reset liquid if emptied
 		if(liquid.amount <= 0)
 			liquid = null;
+
+		if (doDrain && tile!=null)
+			LiquidEvent.fireEvent(new LiquidEvent.LiquidDrainingEvent(drained, tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord, this));
 
 		return drained;
 	}
