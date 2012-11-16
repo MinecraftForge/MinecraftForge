@@ -141,6 +141,8 @@ field_70278_an,velocityZ,2,
 field_70280_j,velocityY,2,
 field_70281_h,boatPitch,2,
 field_70282_i,velocityX,2,
+field_70284_d,shouldDropItem,2,
+field_70285_b,metadata,2,
 field_70286_c,fallTime,2,How long the block has been falling for.
 field_70287_a,blockID,2,
 field_70290_d,hoverStart,2,The EntityItem's random initial float height.
@@ -447,8 +449,8 @@ field_70994_bF,slowed,2,"Activated if the dragon is flying though obsidian, whit
 field_70995_bG,deathTicks,2,
 field_71067_cb,experienceTotal,2,The total amount of experience the player has. This also includes the amount of experience within their Experience Bar.
 field_71068_ca,experienceLevel,2,The current experience level the player is on.
-field_71069_bz,inventorySlots,2,the crafting inventory in you get when opening your inventory
-field_71070_bA,craftingInventory,2,the crafting inventory you are currently using
+field_71069_bz,inventoryContainer,2,The Container for the player's inventory (which opens when they press E)
+field_71070_bA,openContainer,2,The Container the player has open.
 field_71071_by,inventory,2,Inventory of the player
 field_71072_f,itemInUseCount,2,This field starts off equal to getMaxItemUseDuration and is decremented on each tick
 field_71073_d,startMinecartRidingCoordinate,2,Holds the coordinate of the player when enter a minecraft to ride.
@@ -698,6 +700,7 @@ field_71772_g,myServerAddress,2,
 field_71773_d,connectionCounter,2,
 field_71774_e,myServerSocket,2,
 field_71775_b,pendingConnections,2,
+field_71776_c,recentConnections,2,This map stores a list of InetAddresses and the last time which they connected at
 field_71777_a,logger,2,
 field_71778_h,myPort,2,
 field_71781_b,parameters,2,
@@ -1522,6 +1525,7 @@ field_73556_g,worldHeight,2,Defaults to 128
 field_73557_d,gameType,2,
 field_73558_e,dimension,2,"-1: The Nether, 0: The Overworld, 1: The End"
 field_73559_b,terrainType,2,
+field_73560_c,hardcoreMode,2,
 field_73561_a,clientEntityId,2,The player's entity ID
 field_73562_h,maxPlayers,2,The maximum players.
 field_73563_d,posY,2,
@@ -1745,6 +1749,7 @@ field_74001_a,message1,2,Unused class. Would contain a message drawn to the cent
 field_74022_d,serverSlotContainer,2,Slot container for the server list
 field_74023_b,lock,2,Lock object for use with synchronized()
 field_74025_c,parentScreen,2,A reference to the screen object that created this. Used for navigating between screens.
+field_74026_B,listofLanServers,2,
 field_74027_a,threadsPending,2,Number of outstanding ThreadPollServers threads
 field_74028_n,selectedServer,2,Index of the currently selected server
 field_74029_o,buttonEdit,2,The 'Edit' button
@@ -2010,6 +2015,7 @@ field_74516_a,keybindArray,2,
 field_74522_a,colorBuffer,2,Float buffer used to set OpenGL material colors
 field_74532_a,mc,2,A reference to the Minecraft object.
 field_74533_a,enumOSMappingHelperArray,2,
+field_74534_a,arguments,2,"Arguments that were passed to Minecraft.jar (username, sessionid etc)"
 field_74536_a,mc,2,Minecraft instance
 field_74537_a,logo,2,BufferedImage object containing the Majong logo.
 field_74541_b,lineString,2,
@@ -2737,9 +2743,9 @@ field_76235_G,canBurn,2,Bool defining if the block can burn or not.
 field_76236_A,dragonEgg,2,
 field_76237_B,portal,2,Material used for portals
 field_76238_C,cake,2,"Cake's material, see BlockCake"
-field_76239_H,groundCover,2,"Indicates if the material is a form of ground cover, e.g. Snow"
+field_76239_H,replaceable,2,"Determines whether blocks with this material can be ""overwritten"" by other blocks when placed - eg snow, vines and tall grass."
 field_76240_I,isTranslucent,2,Indicates if the material is translucent
-field_76241_J,canHarvest,2,Determines if the materials is one that can be collected by the player.
+field_76241_J,requiresNoTool,2,Determines if the material can be harvested without a tool (or with the wrong tool)
 field_76242_K,mobilityFlag,2,"Mobility information flag. 0 indicates that this block is normal, 1 indicates that it can't push other blocks, 2 indicates that it can't be pushed."
 field_76243_f,iron,2,
 field_76244_g,water,2,
@@ -3315,7 +3321,9 @@ field_77481_a,grassBuffer,2,Color buffer for grass
 field_77482_b,syncher,2,
 field_77485_a,theWorld,2,Reference to the World object.
 field_77486_a,syncher,2,
+field_77490_b,lanServerIpPort,2,
 field_77491_c,timeLastSeen,2,Last time this LanServer was seen.
+field_77492_a,lanServerMotd,2,
 field_77494_b,entityLiving,2,Used as parameter to calculate the (magic) extra damage based on enchantments of current equipped player item.
 field_77495_a,livingModifier,2,Used to calculate the (magic) extra damage based on enchantments of current equipped player item.
 field_77496_b,source,2,Used as parameter to calculate the damage modifier (extra armor) on enchantments that the player have on equipped armors.
@@ -3339,6 +3347,8 @@ field_77546_b,firstDescriptionLine,2,First line of texture pack description (fro
 field_77547_c,secondDescriptionLine,2,Second line of texture pack description (from /pack.txt) displayed in the GUI
 field_77548_a,texturePackFile,2,File object for the texture pack's zip file in TexturePackCustom or the directory in TexturePackFolder.
 field_77550_e,texturePackZipFile,2,ZipFile object used to access the texture pack file's contents.
+field_77555_b,listOfLanServers,2,
+field_77556_a,wasUpdated,2,
 field_77574_d,recipeItems,2,Is a array of ItemStack that composes the recipe.
 field_77575_e,recipeOutput,2,Is the ItemStack that you get when craft the recipe.
 field_77576_b,recipeWidth,2,How many horizontal slots this recipe is wide.
@@ -3552,6 +3562,7 @@ field_77882_bY,maxDamageArray,2,Holds the 'base' maxDamage that each armorType h
 field_77885_a,blockID,2,The block ID of the Block associated with this ItemBlock
 field_77889_b,theHalfSlab,2,Instance of BlockHalfSlab.
 field_77890_c,theHalfSlab2,2,Instance of BlockHalfSlab.
+field_77891_a,isFullBlock,2,
 field_77895_b,blockNames,2,
 field_77896_a,blockRef,2,
 field_77918_f,speckledMelonEffect,2,
@@ -4168,6 +4179,8 @@ field_82134_g,secondaryEffect,2,Secondary potion effect given by this beacon.
 field_82136_e,levels,2,Level of this beacon's pyramid.
 field_82139_a,effectsList,2,List of effects that Beacon can apply
 field_82140_h,payment,2,Item given to this beacon as payment.
+field_82155_f,isAnvil,2,
+field_82157_e,isBreakingAnvil,2,
 field_82172_bs,canPickUpLoot,2,Whether this entity can pick up items from the ground.
 field_82173_br,swingProgressInt,2,
 field_82174_bp,equipmentDropChances,2,Chances for each equipment piece from dropping when this entity dies.
@@ -4181,6 +4194,7 @@ field_82192_a,mobSelector,2,Entity selector for IMob types.
 field_82199_d,witchDrops,2,List of items a witch should drop on death.
 field_82200_e,witchAttackTimer,2,"Timer used as interval for a witch's attack, decremented every tick if aggressive and when reaches zero the witch will throw a potion at the target entity."
 field_82219_bJ,attackEntitySelector,2,Selector used to determine the entities a wither boss should attack.
+field_82225_f,fuseTime,2,
 field_82226_g,explosionRadius,2,Explosion radius for this creeper.
 field_82234_d,conversionTime,2,Ticker used to determine the time remaining for this zombie to convert into a villager when cured.
 field_82237_a,currentFlightTarget,2,randomly selected ChunkCoordinates in a 7x6x7 box around the bat (y offset -2 to 4) towards which it will fly. upon getting close a new target will be selected
@@ -4215,8 +4229,10 @@ field_82320_o,theSlot,2,
 field_82321_q,buttonsNotDrawn,2,
 field_82322_p,beaconConfirmButton,2,
 field_82323_o,beacon,2,
+field_82332_a,hangingDirection,2,
 field_82337_e,itemDropChance,2,Chance for this item frame's item to drop from the frame.
 field_82346_a,theContainer,2,Container of this anvil's block.
+field_82354_a,command,2,The command this block will execute when powered.
 field_82365_a,difficulties,2,
 field_82373_c,directions,2,
 field_82374_e,facings,2,
@@ -4251,7 +4267,7 @@ field_82510_ck,anvil,2,
 field_82511_ci,woodenButton,2,
 field_82512_cj,skull,2,
 field_82513_cg,carrot,2,
-field_82514_ch,potatoe,2,
+field_82514_ch,potato,2,
 field_82515_ce,cobblestoneWall,2,
 field_82516_cf,flowerPot,2,
 field_82517_cc,commandBlock,2,
@@ -4266,11 +4282,14 @@ field_82552_a,mcServer,2,
 field_82553_a,mcServer,2,
 field_82555_a,mcServer,2,
 field_82557_a,mcServer,2,Reference to the MinecraftServer object.
+field_82564_f,showCape,2,
 field_82575_g,dayTime,2,Total time for this world.
+field_82576_c,generatorOptions,2,
 field_82577_x,theGameRules,2,
 field_82578_b,NBTTypes,2,
 field_82584_b,theNBTTagCompound,2,
 field_82587_b,theNBTTagCompound,2,
+field_82592_a,vec3dPool,2,
 field_82596_a,registryObjects,2,Objects registered on this registry.
 field_82597_b,defaultObject,2,"Default object for this registry, returned when an object is not found."
 field_82624_d,zPos,2,
@@ -4290,6 +4309,9 @@ field_82661_d,layerMinimumY,2,
 field_82662_b,layerFillBlock,2,Block type used on this set of layers.
 field_82663_c,layerFillBlockMeta,2,Block metadata used on this set of laeyrs.
 field_82664_a,layerCount,2,Amount of layers for this set of layers.
+field_82668_f,scatteredFeatureSpawnList,2,contains possible spawns for scattered features
+field_82669_g,maxDistanceBetweenScatteredFeatures,2,the maximum distance between scattered features
+field_82670_h,minDistanceBetweenScatteredFeatures,2,the minimum distance between scattered features
 field_82678_d,cropTypeC,2,Third crop type for this field.
 field_82679_b,cropTypeA,2,First crop type for this field.
 field_82680_c,cropTypeB,2,Second crop type for this field.
@@ -4316,7 +4338,7 @@ field_82786_e,maxTradeUses,2,Maximum times this trade can be used.
 field_82791_bT,pumpkinPie,2,
 field_82792_bS,netherStar,2,
 field_82793_bR,carrotOnAStick,2,
-field_82794_bL,potatoe,2,
+field_82794_bL,potato,2,
 field_82795_bM,bakedPotato,2,
 field_82796_bJ,flowerPot,2,
 field_82797_bK,carrot,2,

@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java
---- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Thu Nov 08 22:07:52 2012
-+++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Thu Nov 08 22:09:16 2012
+--- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Fri Nov 16 21:43:38 2012
++++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Fri Nov 16 21:44:48 2012
 @@ -21,9 +21,14 @@
  
     public String func_85085_a() {
@@ -20,8 +20,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java m
        boolean var5 = !CrashReport.class.getCanonicalName().equals("net.minecraft.CrashReport");
        HashMap var6 = new HashMap();
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
---- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Thu Nov 08 22:07:53 2012
-+++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Thu Nov 08 22:09:16 2012
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Nov 16 21:43:38 2012
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Nov 16 21:44:48 2012
 @@ -11,6 +11,10 @@
  
  public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
@@ -34,8 +34,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.jav
        if(this.field_74885_f != 2 && this.field_74885_f != 3) {
           this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
---- minecraft_server\net\minecraft\src\DedicatedServer.java	Thu Nov 08 22:07:53 2012
-+++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Thu Nov 08 22:09:16 2012
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Fri Nov 16 21:43:38 2012
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Fri Nov 16 21:44:48 2012
 @@ -203,7 +203,7 @@
        System.exit(0);
     }
@@ -46,8 +46,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_s
        this.func_71333_ah();
     }
 diff -r -U 3 minecraft_server\net\minecraft\src\EntityMooshroom.java minecraft_server_patched\net\minecraft\src\EntityMooshroom.java
---- minecraft_server\net\minecraft\src\EntityMooshroom.java	Thu Nov 08 22:07:53 2012
-+++ minecraft_server_patched\net\minecraft\src\EntityMooshroom.java	Thu Nov 08 22:15:13 2012
+--- minecraft_server\net\minecraft\src\EntityMooshroom.java	Fri Nov 16 21:43:39 2012
++++ minecraft_server_patched\net\minecraft\src\EntityMooshroom.java	Fri Nov 16 21:44:48 2012
 @@ -56,10 +56,10 @@
        return new EntityMooshroom(this.field_70170_p);
     }
@@ -64,8 +64,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\EntityMooshroom.java minecraft_s
     // $FF: synthetic method
     public EntityAgeable func_90011_a(EntityAgeable p_90011_1_) {
 diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
---- minecraft_server\net\minecraft\src\TcpMasterThread.java	Thu Nov 08 22:07:54 2012
-+++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Thu Nov 08 22:09:16 2012
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Fri Nov 16 21:43:40 2012
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Fri Nov 16 21:44:48 2012
 @@ -11,6 +11,7 @@
        this.field_74504_a = p_i3285_1_;
     }
@@ -75,8 +75,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_s
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Thu Nov 08 22:07:54 2012
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Thu Nov 08 22:09:16 2012
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Nov 16 21:43:40 2012
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Nov 16 21:44:48 2012
 @@ -20,7 +20,8 @@
     }
  

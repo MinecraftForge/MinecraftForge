@@ -648,7 +648,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         commands_sanity_check()
     except ImportError as ex:
         print 'Could not verify commands.py patch integrity, this typically means that you are not in a clean MCP environment.'
-        print 'Download a clean version of MCP 7.20 and try again'
+        print 'Download a clean version of MCP 7.22 and try again'
         print ex
         sys.exit(1)
     
