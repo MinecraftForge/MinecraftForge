@@ -62,7 +62,7 @@ public class LiquidContainerRegistry {
     public static ItemStack fillLiquidContainer(LiquidStack liquid, ItemStack emptyContainer) {
 
         if (emptyContainer == null || liquid == null) {
-            return emptyContainer;
+            return null;
         }
         LiquidContainerData ret = mapFilledItemFromLiquid.get(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage(), liquid.itemID, liquid.itemMeta));
         if (ret != null) {
