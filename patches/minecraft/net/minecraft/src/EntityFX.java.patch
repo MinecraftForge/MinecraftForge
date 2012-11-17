@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/src/EntityFX.java
++++ ../src_work/minecraft/net/minecraft/src/EntityFX.java
+@@ -37,9 +37,9 @@
+         this.setSize(0.2F, 0.2F);
+         this.yOffset = this.height / 2.0F;
+         this.setPosition(par2, par4, par6);
+-        this.lastTickPosX = par2;
+-        this.lastTickPosY = par4;
+-        this.lastTickPosZ = par6;
++        this.prevPosX = par2;
++        this.prevPosY = par4;
++        this.prevPosZ = par6;
+         this.particleRed = this.particleGreen = this.particleBlue = 1.0F;
+         this.motionX = par8 + (double)((float)(Math.random() * 2.0D - 1.0D) * 0.4F);
+         this.motionY = par10 + (double)((float)(Math.random() * 2.0D - 1.0D) * 0.4F);
