@@ -45,7 +45,7 @@
          CrashReport var2;
          CrashReportCategory var3;
  
-+        boolean cancelInputPolling = !MinecraftForge.EVENT_BUS.post(new PollInputEvent());
++        boolean cancelInputPolling = MinecraftForge.EVENT_BUS.post(new PollInputEvent());
 +        
          if (this.currentScreen != null)
          {
