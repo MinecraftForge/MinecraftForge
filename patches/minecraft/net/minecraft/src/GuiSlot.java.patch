@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiSlot.java
 +++ ../src_work/minecraft/net/minecraft/src/GuiSlot.java
-@@ -67,6 +67,8 @@
+@@ -4,6 +4,9 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.List;
+ import net.minecraft.client.Minecraft;
++import net.minecraftforge.client.event.PollInputEvent;
++import net.minecraftforge.common.MinecraftForge;
++
+ import org.lwjgl.input.Mouse;
+ import org.lwjgl.opengl.GL11;
+ 
+@@ -67,6 +70,8 @@
      private boolean showSelectionBox = true;
      private boolean field_77243_s;
      private int field_77242_t;
@@ -9,7 +19,16 @@
  
      public GuiSlot(Minecraft par1Minecraft, int par2, int par3, int par4, int par5, int par6)
      {
-@@ -331,16 +333,7 @@
+@@ -305,7 +310,7 @@
+         }
+         else
+         {
+-            while (!this.mc.gameSettings.field_85185_A && Mouse.next())
++            while (!MinecraftForge.EVENT_BUS.post(new PollInputEvent()) && !this.mc.gameSettings.field_85185_A && Mouse.next())
+             {
+                 int var16 = Mouse.getEventDWheel();
+ 
+@@ -331,16 +336,7 @@
          GL11.glDisable(GL11.GL_LIGHTING);
          GL11.glDisable(GL11.GL_FOG);
          Tessellator var18 = Tessellator.instance;
@@ -27,7 +46,7 @@
          var9 = this.width / 2 - 92 - 16;
          var10 = this.top + 4 - (int)this.amountScrolled;
  
-@@ -469,10 +462,10 @@
+@@ -469,10 +465,10 @@
      /**
       * Overlays the background to hide scrolled items
       */
@@ -40,7 +59,7 @@
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
          float var6 = 32.0F;
          var5.startDrawingQuads();
-@@ -484,4 +477,18 @@
+@@ -484,4 +480,18 @@
          var5.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / var6));
          var5.draw();
      }
