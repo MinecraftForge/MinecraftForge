@@ -43,7 +43,7 @@ public class Category
 			return name;
 		else
 		{
-			return (new StringBuilder()).append(parent.getQualifiedName()).append(':').append(name).toString();
+			return (new StringBuilder()).append(parent.getQualifiedName()).append(Configuration.CATEGORY_SPLITTER).append(name).toString();
 		}
 	}
 	
