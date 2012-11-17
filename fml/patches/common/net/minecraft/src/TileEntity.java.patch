@@ -44,3 +44,12 @@
          }
          else
          {
+@@ -177,7 +189,7 @@
+     public void func_85027_a(CrashReportCategory p_85027_1_)
+     {
+         p_85027_1_.func_71500_a("Name", new CallableTileEntityName(this));
+-        CrashReportCategory.func_85068_a(p_85027_1_, this.field_70329_l, this.field_70330_m, this.field_70327_n, this.field_70324_q.field_71990_ca, this.field_70325_p);
++        CrashReportCategory.func_85068_a(p_85027_1_, this.field_70329_l, this.field_70330_m, this.field_70327_n, this.field_70324_q != null ? this.field_70324_q.field_71990_ca : 0, this.field_70325_p);
+     }
+ 
+     static Map func_85028_t()

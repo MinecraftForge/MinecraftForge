@@ -14,6 +14,8 @@ package cpw.mods.fml.server;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Entity;
 import net.minecraft.src.NetClientHandler;
@@ -117,7 +119,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     @Override
     public List<String> getAdditionalBrandingInformation()
     {
-        return null;
+        return ImmutableList.<String>of();
     }
 
     /* (non-Javadoc)

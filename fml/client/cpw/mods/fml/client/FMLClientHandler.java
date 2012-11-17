@@ -37,6 +37,7 @@ import net.minecraft.src.World;
 import net.minecraft.src.WorldClient;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
@@ -289,7 +290,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             return Arrays.asList(String.format("Optifine %s",optifineContainer.getVersion()));
         } else {
-            return Collections.emptyList();
+            return ImmutableList.<String>of();
         }
     }
 
