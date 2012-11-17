@@ -1,9 +1,0 @@
---- ../src-base/common/net/minecraft/src/EntityAIVillagerMate.java
-+++ ../src-work/common/net/minecraft/src/EntityAIVillagerMate.java
-@@ -1,4 +1,6 @@
- package net.minecraft.src;
-+
-+import cpw.mods.fml.common.registry.VillagerRegistry;
- 
- public class EntityAIVillagerMate extends EntityAIBase
- {
