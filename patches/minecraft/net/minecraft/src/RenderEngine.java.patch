@@ -59,7 +59,7 @@
          this.field_78367_h.add(p_78355_1_);
          p_78355_1_.func_76846_a();
      }
-@@ -417,16 +428,30 @@
+@@ -417,28 +428,44 @@
          {
              TextureFX var3 = (TextureFX)this.field_78367_h.get(var2);
              var3.field_76851_c = this.field_78365_j.field_74337_g;
@@ -77,6 +77,8 @@
 -        this.field_78358_g.clear();
 -        this.field_78358_g.put(p_82772_1_.field_76852_a);
 -        this.field_78358_g.position(0).limit(p_82772_1_.field_76852_a.length);
+-
+-        if (p_82772_1_.field_76850_b != p_82772_2_)
 +        Dimension dim = TextureFXManager.instance().getTextureDimensions(p_82772_1_);
 +        int tWidth  = dim.width >> 4;
 +        int tHeight = dim.height >> 4;
@@ -92,10 +94,13 @@
 +        {
 +            TextureFXManager.instance().scaleTextureFXData(p_82772_1_.field_76852_a, field_78358_g, tWidth, tLen);
 +        }
- 
-         if (p_82772_1_.field_76850_b != p_82772_2_)
++
++        if (p_82772_1_.field_76848_d != p_82772_2_)
          {
-@@ -436,9 +461,11 @@
+             p_82772_1_.func_76845_a(this);
+-            p_82772_2_ = p_82772_1_.field_76850_b;
++            p_82772_2_ = p_82772_1_.field_76848_d;
+         }
  
          for (int var3 = 0; var3 < p_82772_1_.field_76849_e; ++var3)
          {
