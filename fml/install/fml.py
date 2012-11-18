@@ -757,7 +757,7 @@ def gen_merged_srg(mcp_dir, fml_dir):
             
     #Print joined retroguard files
     if fml_dir is None:
-	return common
+        return common
 
     with open(os.path.join(fml_dir, 'conf', 'joined.srg'), 'wb') as f:
         for type in ['PK:', 'CL:', 'FD:', 'MD:']:
