@@ -1,16 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -124,6 +124,9 @@
+@@ -124,6 +124,11 @@
  import net.minecraft.src.WorldInfo;
  import net.minecraft.src.WorldRenderer;
  import net.minecraft.src.WorldSettings;
++import net.minecraftforge.client.event.PollInputEvent;
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
  
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
-@@ -1260,7 +1263,7 @@
+@@ -1260,7 +1265,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(var3, var4, var5))
                  {
@@ -19,7 +21,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1326,7 +1329,8 @@
+@@ -1326,7 +1331,8 @@
                  {
                      int var8 = var3 != null ? var3.stackSize : 0;
  
@@ -29,7 +31,7 @@
                      {
                          var2 = false;
                          this.thePlayer.swingItem();
-@@ -1352,7 +1356,8 @@
+@@ -1352,7 +1358,8 @@
              {
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
@@ -39,7 +41,34 @@
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();
                  }
-@@ -2026,6 +2031,18 @@
+@@ -1503,11 +1510,16 @@
+         CrashReport var2;
+         CrashReportCategory var3;
+ 
++        boolean cancelInputPolling = MinecraftForge.EVENT_BUS.post(new PollInputEvent());
++        
+         if (this.currentScreen != null)
+         {
+             try
+             {
+-                this.currentScreen.handleInput();
++                if (!cancelInputPolling)
++                {
++                    this.currentScreen.handleInput();
++                }
+             }
+             catch (Throwable var6)
+             {
+@@ -1545,7 +1557,7 @@
+             }
+         }
+ 
+-        if (this.currentScreen == null || this.currentScreen.allowUserInput)
++        if (!cancelInputPolling && (this.currentScreen == null || this.currentScreen.allowUserInput))
+         {
+             this.mcProfiler.endStartSection("mouse");
+ 
+@@ -2026,6 +2038,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -58,7 +87,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2335,95 +2352,12 @@
+@@ -2335,95 +2359,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;
