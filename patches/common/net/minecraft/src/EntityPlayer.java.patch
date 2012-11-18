@@ -279,7 +279,7 @@
 +        ChunkCoordinates c = par1ChunkCoordinates;
 +        Block block = Block.blocksList[par0World.getBlockId(c.posX, c.posY, c.posZ)];
 +
-+        if (block == null || !block.isBed(par0World, c.posX, c.posY, c.posZ, null))
++        if (block != null && block.isBed(par0World, c.posX, c.posY, c.posZ, null))
 +        {
 +            ChunkCoordinates var8 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
              return var8;
