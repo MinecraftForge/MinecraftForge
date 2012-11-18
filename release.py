@@ -18,9 +18,12 @@ zip = None
 zip_name = None
 zip_base = None
 version_str = None
+version_mc = None
 
 def main():
     global version_str
+    global version_mc
+    
     build_num = 0
     if len(sys.argv) > 1:
         try:
@@ -48,17 +51,20 @@ def main():
     extract_fml_obfed()
     extract_paulscode()
     version = load_version(build_num)
-    version_str = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
+    version_forge = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
+    version_mc = load_mc_version(forge_dir)
+    
+    version_str = '%s-%s' % (version_mc, version_forge)
         
     out_folder = os.path.join(forge_dir, 'forge-%s' % version_str)
     if os.path.isdir(out_folder):
         shutil.rmtree(out_folder)
         
     os.makedirs(out_folder)
-	
+    
     changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
     make_changelog("http://jenkins.minecraftforge.net/job/forge/", build_num, changelog_file, version_str)
-	
+    
     version_file = 'forgeversion.properties'
     if os.path.exists(version_file):
         os.remove(version_file)
@@ -135,7 +141,7 @@ def zip_start(name, base=None):
     global zip, zip_name, zip_base
     zip_name = name
     
-    print '=================================== %s Start =================================' % zip_name
+    print '================== %s Start ==================' % zip_name
     zip_file = os.path.join(forge_dir, 'forge-%s' % version_str, name)
     zip = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
     zip_base = base
@@ -143,24 +149,26 @@ def zip_start(name, base=None):
 def zip_end():
     global zip, zip_name, zip_base
     zip.close()
-    print '=================================== %s Finished =================================' % zip_name
+    print '================== %s Finished ==================' % zip_name
     zip_name = None
     zip_base = None
     
-def update_info(input, version):
-        input = os.path.join(forge_dir, input.replace('/', os.sep))
-        temp = os.path.join(forge_dir, 'file.backup')
-        
-        shutil.move(input, temp)
-        
-        with open(temp, 'r') as fh:
-            buf = fh.read()
-            
-        buf = re.sub(r'{version}', version, buf)
-            
-        with open(input, 'w') as fh:
-            fh.write(buf)
+def load_mc_version(forge_dir):
+    props = os.path.join(forge_dir, 'fml', 'common', 'fmlversion.properties')
     
+    if not os.path.isfile(props):
+        print 'Could not load fmlversion.properties, build failed'
+        sys.exit(1)
+    
+    with open(props, 'r') as fh:
+        for line in fh:
+            line = line.strip()
+            if line.startswith('fmlbuild.mcversion'):
+                return line.split('=')[1].strip()
+    
+    print 'Could not load fmlversion.properties, build failed'
+    sys.exit(1)
+
 def extract_fml_obfed():
     fml_file = os.path.join(forge_dir, 'fml', 'difflist.txt')
     if not os.path.isfile(fml_file):
