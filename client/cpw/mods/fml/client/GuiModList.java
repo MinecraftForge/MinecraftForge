@@ -54,15 +54,19 @@ public class GuiModList extends GuiScreen
         this.mods=new ArrayList<ModContainer>();
         FMLClientHandler.instance().addSpecialModEntries(mods);
         for (ModContainer mod : Loader.instance().getModList()) {
-            if (mod.getMetadata()!=null && !Strings.isNullOrEmpty(mod.getMetadata().parent)) {
+            if (mod.getMetadata()!=null && mod.getMetadata().parentMod==null && !Strings.isNullOrEmpty(mod.getMetadata().parent)) {
                 String parentMod = mod.getMetadata().parent;
                 ModContainer parentContainer = Loader.instance().getIndexedModList().get(parentMod);
-                if (parentContainer != null && mod.getMetadata().parentMod==null)
+                if (parentContainer != null)
                 {
                     mod.getMetadata().parentMod = parentContainer;
                     parentContainer.getMetadata().childMods.add(mod);
                     continue;
                 }
+            }
+            else if (mod.getMetadata()!=null && mod.getMetadata().parentMod!=null)
+            {
+            	 continue;
             }
             mods.add(mod);
         }
