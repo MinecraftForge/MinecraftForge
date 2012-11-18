@@ -159,15 +159,11 @@ public class TextureFXManager
         }
 
         int old = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-
         effect.func_76845_a(client.field_71446_o);
-
         id = GL11.glGetInteger(GL_TEXTURE_BINDING_2D);
-
         GL11.glBindTexture(GL_TEXTURE_2D, old);
-
         effectTextures.put(effect, id);
-
+        effect.field_76848_d = id;
         return id;
     }
 
