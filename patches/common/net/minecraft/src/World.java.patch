@@ -1,23 +1,6 @@
 --- ../src-base/common/net/minecraft/src/World.java
 +++ ../src-work/common/net/minecraft/src/World.java
-@@ -10,6 +10,8 @@
- import java.util.List;
- import java.util.Random;
- import java.util.Set;
-+
-+import com.google.common.collect.ImmutableList;
- 
- public abstract class World implements IBlockAccess
- {
-@@ -1652,7 +1654,6 @@
-             this.func_72847_b((Entity)this.field_72997_g.get(var1));
-         }
- 
--        this.field_72997_g.clear();
-         this.field_72984_F.func_76318_c("regular");
- 
-         for (var1 = 0; var1 < this.field_72996_f.size(); ++var1)
-@@ -3595,7 +3596,7 @@
+@@ -3595,7 +3595,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
