@@ -206,71 +206,72 @@ public class Configuration
     }
 
     public Property get(String category, String key, String defaultValue, Property.Type type)
-	{
-		if (!caseSensitiveCustomCategories)
-		{
-			category = category.toLowerCase(Locale.ENGLISH);
-		}
+    {
+        if (!caseSensitiveCustomCategories)
+        {
+            category = category.toLowerCase(Locale.ENGLISH);
+        }
 
-		Category source = categories.get(category);
+        Category source = categories.get(category);
 
-		if (source == null)
-		{
-			if (category.contains(CATEGORY_SPLITTER))
-			{
-				String[] hierarchy = category.split(CATEGORY_SPLITTER);
+        if (source == null)
+        {
+            if (category.contains(CATEGORY_SPLITTER))
+            {
+                String[] hierarchy = category.split(CATEGORY_SPLITTER);
 
-				for (int i = 0; i < hierarchy.length; i++)
-				{
-					// only the first run.
-					if (i == 0)
-					{
-						Category cat = categories.get(hierarchy[i]);
+                for (int i = 0; i < hierarchy.length; i++)
+                {
+                    // only the first run.
+                    if (i == 0)
+                    {
+                        Category cat = categories.get(hierarchy[i]);
 
-						if (cat == null)
-						{
-							cat = new Category(hierarchy[i]);
-							categories.put(hierarchy[i], cat);
-						}
-					}
-					// the last child
-					else if (i == hierarchy.length - 1)
-					{
-						Category parent = categories.get(hierarchy[i - 1]);
+                        if (cat == null)
+                        {
+                            cat = new Category(hierarchy[i]);
+                            categories.put(hierarchy[i], cat);
+                        
+                        }
+                    }
+                    // the last child
+                    else if (i == hierarchy.length - 1)
+                    {
+                        Category parent = categories.get(hierarchy[i - 1]);
 
-						Category child = categories.get(hierarchy[i]);
+                        Category child = categories.get(hierarchy[i]);
 
-						if (child == null)
-						{
-							child = new Category(hierarchy[i], parent);
-							categories.put(hierarchy[i], child);
-							parent.children.add(child.name);
-						}
+                        if (child == null)
+                        {
+                            child = new Category(hierarchy[i], parent);
+                            categories.put(hierarchy[i], child);
+                            parent.children.add(child.name);
+                        }
 
-						source = child;
-					}
-					// other children/parents between
-					else
-					{
-						Category parent = categories.get(hierarchy[i - 1]);
+                        source = child;
+                    }
+                    // other children/parents between
+                    else
+                    {
+                        Category parent = categories.get(hierarchy[i - 1]);
 
-						Category child = categories.get(hierarchy[i]);
+                        Category child = categories.get(hierarchy[i]);
 
-						if (child == null)
-						{
-							child = new Category(hierarchy[i], parent);
-							categories.put(hierarchy[i], child);
-							parent.children.add(child.name);
-						}
-					}
-				}
-			}
-			else
-			{
-				source = new Category(category);
-				categories.put(category, source);
-			}
-		}
+                        if (child == null)
+                        {
+                            child = new Category(hierarchy[i], parent);
+                            categories.put(hierarchy[i], child);
+                            parent.children.add(child.name);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                source = new Category(category);
+                categories.put(category, source);
+            }
+        }
 
         if (source.properties.containsKey(key))
         {
@@ -408,8 +409,8 @@ public class Configuration
                                     break;
 
                                 case '}':
-                                	
-                                	currentCat = currentCat.parent;
+                                    
+                                    currentCat = currentCat.parent;
 
                                 case '=':
                                     String propertyName = line.substring(nameStart, nameEnd + 1);
