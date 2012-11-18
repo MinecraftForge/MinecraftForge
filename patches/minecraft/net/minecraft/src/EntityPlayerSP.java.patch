@@ -10,19 +10,23 @@
  
  @SideOnly(Side.CLIENT)
  public class EntityPlayerSP extends EntityPlayer
-@@ -467,6 +470,12 @@
+@@ -466,9 +469,15 @@
+             if (par1StatBase.isAchievement())
              {
                  Achievement var3 = (Achievement)par1StatBase;
- 
-+                AchievementEvent event = new AchievementEvent(var3, par2);
-+                if(MinecraftForge.EVENT_BUS.post(event)) return;
-+                
-+                par1StatBase = var3 = event.achievement;
-+                par2 = event.incrementAmount;
+-
 +                
                  if (var3.parentAchievement == null || this.mc.statFileWriter.hasAchievementUnlocked(var3.parentAchievement))
                  {
++                    AchievementEvent event = new AchievementEvent(var3, par2);
++                    if(MinecraftForge.EVENT_BUS.post(event)) return;
++                    
++                    par1StatBase = var3 = event.achievement;
++                    par2 = event.incrementAmount;
++                    
                      if (!this.mc.statFileWriter.hasAchievementUnlocked(var3))
+                     {
+                         this.mc.guiAchievement.queueTakenAchievement(var3);
 @@ -479,6 +488,12 @@
              }
              else
