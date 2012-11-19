@@ -1,5 +1,21 @@
 --- ../src-base/common/net/minecraft/src/World.java
 +++ ../src-work/common/net/minecraft/src/World.java
+@@ -1764,13 +1764,13 @@
+             }
+         }
+ 
+-        this.field_72989_L = false;
+-
+         if (!this.field_73000_b.isEmpty())
+         {
+             this.field_73009_h.removeAll(this.field_73000_b);
+             this.field_73000_b.clear();
+         }
++
++        this.field_72989_L = false;
+ 
+         this.field_72984_F.func_76318_c("pendingTileEntities");
+ 
 @@ -3595,7 +3595,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
