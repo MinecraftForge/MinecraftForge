@@ -3506,9 +3506,8 @@ FD: aze/i net/minecraft/src/EntityFX/field_70553_i
 FD: aze/j net/minecraft/src/EntityFX/field_70551_j
 FD: azf/a net/minecraft/src/EffectRenderer/field_78878_a
 FD: azf/b net/minecraft/src/EffectRenderer/field_78876_b
-FD: azf/c net/minecraft/src/EffectRenderer/field_90038_c
-FD: azf/d net/minecraft/src/EffectRenderer/field_78877_c
-FD: azf/e net/minecraft/src/EffectRenderer/field_78875_d
+FD: azf/c net/minecraft/src/EffectRenderer/field_78877_c
+FD: azf/d net/minecraft/src/EffectRenderer/field_78875_d
 FD: azg/a net/minecraft/src/CallableLastTickedParticle/field_90041_a
 FD: azg/b net/minecraft/src/CallableLastTickedParticle/field_90040_b
 FD: azh/a net/minecraft/src/EntityCloudFX/field_70569_a
@@ -10404,7 +10403,6 @@ MD: azf/a (Laze;)V net/minecraft/src/EffectRenderer/func_78873_a (Lnet/minecraft
 MD: azf/a (Llq;F)V net/minecraft/src/EffectRenderer/func_78874_a (Lnet/minecraft/src/Entity;F)V
 MD: azf/a (Lxv;)V net/minecraft/src/EffectRenderer/func_78870_a (Lnet/minecraft/src/World;)V
 MD: azf/b ()Ljava/lang/String; net/minecraft/src/EffectRenderer/func_78869_b ()Ljava/lang/String;
-MD: azf/b (Laze;)V net/minecraft/src/EffectRenderer/func_90037_b (Lnet/minecraft/src/EntityFX;)V
 MD: azf/b (Llq;F)V net/minecraft/src/EffectRenderer/func_78872_b (Lnet/minecraft/src/Entity;F)V
 MD: azg/a ()Ljava/lang/String; net/minecraft/src/CallableLastTickedParticle/func_90039_a ()Ljava/lang/String;
 MD: azg/call ()Ljava/lang/Object; net/minecraft/src/CallableLastTickedParticle/call ()Ljava/lang/Object;
