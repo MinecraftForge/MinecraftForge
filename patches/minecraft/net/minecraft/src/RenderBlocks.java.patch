@@ -38,8 +38,8 @@
          var29 = var27 & 240;
          var30 = (double)((float)var28 / 256.0F);
 @@ -2316,7 +2319,7 @@
-         double var28;
          double var30;
+         double var32;
  
 -        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4))
 +        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4, UP))
