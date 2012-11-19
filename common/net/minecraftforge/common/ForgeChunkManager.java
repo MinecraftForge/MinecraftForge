@@ -312,26 +312,28 @@ public class ForgeChunkManager
         }
     }
 
-    public static class ForceChunkEvent extends Event
-    {
-		public final Ticket ticket;
-    	public final ChunkCoordIntPair location;
+    public static class ForceChunkEvent extends Event {
+        public final Ticket ticket;
+        public final ChunkCoordIntPair location;
 
-    	public ForceChunkEvent(Ticket ticket, ChunkCoordIntPair location) {
-			this.ticket = ticket;
-			this.location = location;
-		}
+        public ForceChunkEvent(Ticket ticket, ChunkCoordIntPair location)
+        {
+            this.ticket = ticket;
+            this.location = location;
+        }
     }
-    public static class UnforceChunkEvent extends Event
-    {
-		public final Ticket ticket;
-    	public final ChunkCoordIntPair location;
 
-    	public UnforceChunkEvent(Ticket ticket, ChunkCoordIntPair location) {
-			this.ticket = ticket;
-			this.location = location;
-		}
+    public static class UnforceChunkEvent extends Event {
+        public final Ticket ticket;
+        public final ChunkCoordIntPair location;
+
+        public UnforceChunkEvent(Ticket ticket, ChunkCoordIntPair location)
+        {
+            this.ticket = ticket;
+            this.location = location;
+        }
     }
+
     static void loadWorld(World world)
     {
         ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.<String, Ticket>create();
