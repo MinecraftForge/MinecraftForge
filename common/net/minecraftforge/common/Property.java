@@ -17,7 +17,7 @@ public class Property
         
         public char getIDChar()
         {
-        	return this.name().charAt(0);
+            return this.name().charAt(0);
         }
     }
 
@@ -31,7 +31,7 @@ public class Property
     
     public Property(String name, String value, Type type)
     {
-    	this.name = name;
+        this.name = name;
         this.value = value;
         this.valueList = new String[] {value};
         this.type = type;
@@ -39,12 +39,12 @@ public class Property
     
     public Property(String name, String[] value)
     {
-    	this.name = name;
+        this.name = name;
         this.valueList = value;
         
         StringBuilder builder = new StringBuilder();
         for (String string : value)
-        	builder.append("|").append(string);
+            builder.append("|").append(string);
         
         this.value = builder.toString();
         
@@ -125,7 +125,7 @@ public class Property
      */
     public boolean isBooleanValue()
     {
-    	return ("true".equals(value.toLowerCase()) || "false".equals(value.toLowerCase()));
+        return ("true".equals(value.toLowerCase()) || "false".equals(value.toLowerCase()));
     }
     
     /**
@@ -167,7 +167,7 @@ public class Property
     
     public Type getType()
     {
-    	return type;
+        return type;
     }
 
     /**
