@@ -38,7 +38,7 @@ def process_file(file, srg):
                     newpart = '%s%s #%s\n' % (parts[0][0], srg['CL:'][target], target)
                     nf.write(newpart)
     else:
-        with open(file + '-new', 'w') as nf:
+        with open(file + '-new', 'wb') as nf:
             with open(file) as f:
                 for line in f:
                     parts = line.split('#')
