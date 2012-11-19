@@ -440,8 +440,10 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
     cpw_mc_dir = os.path.join(src_dir, 'minecraft', 'cpw')
     cpw_com_dir = os.path.join(src_dir, 'common', 'cpw')
-    if os.path.isdir(cpw_mc_dir) shutil.rmtree(cpw_mc_dir)
-    if os.path.isdir(cpw_com_dir) shutil.rmtree(cpw_com_dir)
+    if os.path.isdir(cpw_mc_dir):
+        shutil.rmtree(cpw_mc_dir)
+    if os.path.isdir(cpw_com_dir):
+        shutil.rmtree(cpw_com_dir)
         
     #patch files
     print 'Applying Forge ModLoader patches'
