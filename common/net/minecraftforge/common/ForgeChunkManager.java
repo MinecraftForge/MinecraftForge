@@ -49,6 +49,7 @@ import net.minecraft.src.NBTTagList;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldServer;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.event.Event;
 
 /**
  * Manages chunkloading for mods.
@@ -311,6 +312,26 @@ public class ForgeChunkManager
         }
     }
 
+    public static class ForceChunkEvent extends Event
+    {
+		public final Ticket ticket;
+    	public final ChunkCoordIntPair location;
+
+    	public ForceChunkEvent(Ticket ticket, ChunkCoordIntPair location) {
+			this.ticket = ticket;
+			this.location = location;
+		}
+    }
+    public static class UnforceChunkEvent extends Event
+    {
+		public final Ticket ticket;
+    	public final ChunkCoordIntPair location;
+
+    	public UnforceChunkEvent(Ticket ticket, ChunkCoordIntPair location) {
+			this.ticket = ticket;
+			this.location = location;
+		}
+    }
     static void loadWorld(World world)
     {
         ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.<String, Ticket>create();
@@ -611,6 +632,8 @@ public class ForgeChunkManager
             return;
         }
         ticket.requestedChunks.add(chunk);
+        MinecraftForge.EVENT_BUS.post(new ForceChunkEvent(ticket, chunk));
+
         ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>builder().putAll(forcedChunks.get(ticket.world)).put(chunk, ticket).build();
         forcedChunks.put(ticket.world, newMap);
         if (ticket.maxDepth > 0 && ticket.requestedChunks.size() > ticket.maxDepth)
@@ -650,6 +673,7 @@ public class ForgeChunkManager
             return;
         }
         ticket.requestedChunks.remove(chunk);
+        MinecraftForge.EVENT_BUS.post(new UnforceChunkEvent(ticket, chunk));
         LinkedHashMultimap<ChunkCoordIntPair, Ticket> copy = LinkedHashMultimap.create(forcedChunks.get(ticket.world));
         copy.remove(chunk, ticket);
         ImmutableSetMultimap<ChunkCoordIntPair, Ticket> newMap = ImmutableSetMultimap.copyOf(copy);
