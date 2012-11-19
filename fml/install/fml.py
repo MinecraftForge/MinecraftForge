@@ -6,6 +6,9 @@ import csv, ConfigParser
 from hashlib import md5  # pylint: disable-msg=E0611
 from pprint import pprint
 from zipfile import ZipFile
+from pprint import pprint
+
+mcp_version = '7.22'
 
 def download_deps(mcp_path):
     ret = True
@@ -185,7 +188,7 @@ def reset_logger():
     log = logging.getLogger()
     while len(log.handlers) > 0:
         log.removeHandler(log.handlers[0])
-        
+
 count = 0
 def cleanup_source(path):
     path = os.path.normpath(path)
@@ -216,7 +219,7 @@ def cleanup_source(path):
         for cur_file in fnmatch.filter(filelist, '*.java'):
             src_file = os.path.normpath(os.path.join(path, cur_file))
             updatefile(src_file)
-        
+
 def setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
     from runtime.decompile import decompile
@@ -309,7 +312,7 @@ def setup_fml(fml_dir, mcp_dir):
         Commands.checkjars = checkjars_shunt
         #decompile -d -n -r
         #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c     -s
-        decompile(None, False, False, True, True, False, True, False, False, False, False, False, False)
+        decompile(None, False, False, True, True, False, True, False, False, False, False, True, False)
         reset_logger()
         os.chdir(fml_dir)
         
@@ -331,9 +334,8 @@ def setup_fml(fml_dir, mcp_dir):
     os.chdir(mcp_dir)
     commands = Commands(verify=True)
     updatemd5_side(mcp_dir, commands, CLIENT)
-    updatemd5_side(mcp_dir, commands, SERVER)
     reset_logger()
-        
+    
     os.chdir(fml_dir)
     
 def updatemd5_side(mcp_dir, commands, side):
@@ -367,58 +369,79 @@ def runcmd(commands, command, echo=True):
         return False
     return True
 
+def get_joined_srg(mcp_dir):
+    joined = os.path.join(mcp_dir, 'conf', 'joined.srg')
+    values = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
+    
+    if not os.path.isfile(joined):
+        print 'Could not read joined.srg, file not found'
+        sys.exit(1)
+    else:
+        with open(joined, 'r') as fh:
+            for line in fh:
+                pts = line.rstrip('\r\n').split(' ')
+                if pts[0] == 'MD:':
+                    values[pts[0]][pts[1] + ' ' + pts[2]] = pts[3] + ' ' + pts[4]
+                else:
+                    values[pts[0]][pts[1]] = pts[2]
+    
+    return values
+    
 def merge_client_server(mcp_dir):
     client = os.path.join(mcp_dir, 'src', 'minecraft')
-    server = os.path.join(mcp_dir, 'src', 'minecraft_server')
     shared = os.path.join(mcp_dir, 'src', 'common')
     
-    if not os.path.isdir(shared):
-        os.makedirs(shared)
+    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar')
+    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar')
+    joined_srg = get_joined_srg(mcp_dir)['CL:']
     
-    if not os.path.isdir(client) or not os.path.isdir(server):
+    if not os.path.isfile(client_jar) or not os.path.isfile(server_jar):
         return
         
     if not os.path.isdir(shared):
         os.makedirs(shared)
-        
-    #Nasty hack, but these three files sometimes decompile differently, but are identical, so just take the client file
-    special_cases = ['GuiStatsComponent.java', 'HttpUtilRunnable.java', 'PlayerUsageSnooper.java', 'RConThreadClient.java', 'World.java']
-        
-    for path, _, filelist in os.walk(client, followlinks=True):
-        for cur_file in filelist:
-            f_client = os.path.normpath(os.path.join(client, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
-            f_server = os.path.normpath(os.path.join(server, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
-            f_shared = os.path.normpath(os.path.join(shared, path[len(client)+1:], cur_file)).replace(os.path.sep, '/')
+    
+    client_classes = []
+    server_classes = []
+    
+    zip = ZipFile(client_jar)
+    for i in zip.filelist:
+        if i.filename.endswith('.class'):
+            client_classes.append(i.filename[:-6])
             
-            if not os.path.isfile(f_client) or not os.path.isfile(f_server):
+    zip = ZipFile(server_jar)
+    for i in zip.filelist:
+        if i.filename.endswith('.class'):
+            server_classes.append(i.filename[:-6])
+    
+    for cls in client_classes:
+        if cls in server_classes:
+            if cls in joined_srg.keys():
+                cls = joined_srg[cls]
+            cls += '.java'
+            
+            f_client = os.path.normpath(os.path.join(client, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+            f_shared = os.path.normpath(os.path.join(shared, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+            
+            if not os.path.isfile(f_client):
+                print 'Issue Merging File Not Found: ' + cls
                 continue
                 
-            md5_c = ""
-            md5_s = ""
-            with open(f_client, 'rb') as fh:
-                md5_c = md5(fh.read()).hexdigest()
-            with open(f_server, 'rb') as fh:
-                md5_s = md5(fh.read()).hexdigest()
-                
-            if md5_c != md5_s and not cur_file in special_cases:
-                continue
-                
-            new_dir = os.path.join(shared, path[len(client)+1:])
-            if not os.path.isdir(new_dir):
-                os.makedirs(new_dir)
+            if not cls.rfind('/') == -1:
+                new_dir = os.path.join(shared, cls.rsplit('/', 1)[0])
+                if not os.path.isdir(new_dir):
+                    os.makedirs(new_dir)
                 
             shutil.move(f_client, f_shared)
-            os.remove(f_server)
             
-    cleanDirs(server)
     cleanDirs(client)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
-    cpw_dir = os.path.join(src_dir, 'common', 'cpw')
-    print 'Deleting common/cpw: ' + cpw_dir
-    if os.path.isdir(cpw_dir):
-        shutil.rmtree(cpw_dir)
+    cpw_mc_dir = os.path.join(src_dir, 'minecraft', 'cpw')
+    cpw_com_dir = os.path.join(src_dir, 'common', 'cpw')
+    if os.path.isdir(cpw_mc_dir) shutil.rmtree(cpw_mc_dir)
+    if os.path.isdir(cpw_com_dir) shutil.rmtree(cpw_com_dir)
         
     #patch files
     print 'Applying Forge ModLoader patches'
@@ -445,9 +468,9 @@ def finish_setup_fml(fml_dir, mcp_dir):
     from runtime.updatemcp import updatemcp
     
     os.chdir(mcp_dir)
-    updatenames(None, True, False, False)
+    updatenames(None, True, True, False)
     reset_logger()
-    updatemd5(None, True, False, False)
+    updatemd5(None, True, True, False)
     reset_logger()
     os.chdir(fml_dir)
 
@@ -599,6 +622,7 @@ def merge_tree(root_src_dir, root_dst_dir):
             shutil.copy(src_file, dst_dir)
             
 def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
+    global mcp_version
     backup = os.path.join(mcp_dir, 'runtime', 'commands.py.bck')
     runtime = os.path.join(mcp_dir, 'runtime', 'commands.py')
     patch = os.path.join(fml_dir, 'commands.patch')
@@ -644,7 +668,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         commands_sanity_check()
     except ImportError as ex:
         print 'Could not verify commands.py patch integrity, this typically means that you are not in a clean MCP environment.'
-        print 'Download a clean version of MCP 7.22 and try again'
+        print 'Download a clean version of MCP %s and try again' % mcp_version
         print ex
         sys.exit(1)
     
