@@ -1,0 +1,165 @@
+--- ../src_base/minecraft/net/minecraft/src/RenderBlocks.java
++++ ../src_work/minecraft/net/minecraft/src/RenderBlocks.java
+@@ -3,6 +3,8 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import net.minecraft.client.Minecraft;
++import static net.minecraftforge.common.ForgeDirection.*;
++
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
+@@ -492,9 +494,8 @@
+     public boolean renderBlockBed(Block par1Block, int par2, int par3, int par4)
+     {
+         Tessellator var5 = Tessellator.instance;
+-        int var6 = this.blockAccess.getBlockMetadata(par2, par3, par4);
+-        int var7 = BlockBed.getDirection(var6);
+-        boolean var8 = BlockBed.isBlockHeadOfBed(var6);
++        int var7 = par1Block.getBedDirection(blockAccess, par2, par3, par4);
++        boolean var8 = par1Block.isBedFoot(blockAccess, par2, par3, par4);
+         float var9 = 0.5F;
+         float var10 = 1.0F;
+         float var11 = 0.8F;
+@@ -503,6 +504,7 @@
+         var5.setBrightness(var25);
+         var5.setColorOpaque_F(var9, var9, var9);
+         int var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 0);
++        if (overrideBlockTexture >= 0) var27 = overrideBlockTexture; //BugFix Proper breaking texture on underside
+         int var28 = (var27 & 15) << 4;
+         int var29 = var27 & 240;
+         double var30 = (double)((float)var28 / 256.0F);
+@@ -521,6 +523,7 @@
+         var5.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4));
+         var5.setColorOpaque_F(var10, var10, var10);
+         var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 1);
++        if (overrideBlockTexture >= 0) var27 = overrideBlockTexture; //BugFix Proper breaking texture on top
+         var28 = (var27 & 15) << 4;
+         var29 = var27 & 240;
+         var30 = (double)((float)var28 / 256.0F);
+@@ -1965,7 +1968,7 @@
+         double var30;
+         double var32;
+ 
+-        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4))
++        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4, UP))
+         {
+             float var36 = 0.2F;
+             float var19 = 0.0625F;
+@@ -1985,7 +1988,7 @@
+                 var9 = var20;
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4, EAST))
+             {
+                 var5.addVertexWithUV((double)((float)par2 + var36), (double)((float)par3 + var17 + var19), (double)(par4 + 1), var11, var13);
+                 var5.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + var19), (double)(par4 + 1), var11, var15);
+@@ -1997,7 +2000,7 @@
+                 var5.addVertexWithUV((double)((float)par2 + var36), (double)((float)par3 + var17 + var19), (double)(par4 + 1), var11, var13);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 + 1, par3, par4))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 + 1, par3, par4, WEST))
+             {
+                 var5.addVertexWithUV((double)((float)(par2 + 1) - var36), (double)((float)par3 + var17 + var19), (double)(par4 + 0), var9, var13);
+                 var5.addVertexWithUV((double)(par2 + 1 - 0), (double)((float)(par3 + 0) + var19), (double)(par4 + 0), var9, var15);
+@@ -2009,7 +2012,7 @@
+                 var5.addVertexWithUV((double)((float)(par2 + 1) - var36), (double)((float)par3 + var17 + var19), (double)(par4 + 0), var9, var13);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 - 1))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 - 1, SOUTH))
+             {
+                 var5.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + var17 + var19), (double)((float)par4 + var36), var11, var13);
+                 var5.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + var19), (double)(par4 + 0), var11, var15);
+@@ -2021,7 +2024,7 @@
+                 var5.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + var17 + var19), (double)((float)par4 + var36), var11, var13);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 + 1))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 + 1, NORTH))
+             {
+                 var5.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + var17 + var19), (double)((float)(par4 + 1) - var36), var9, var13);
+                 var5.addVertexWithUV((double)(par2 + 1), (double)((float)(par3 + 0) + var19), (double)(par4 + 1 - 0), var9, var15);
+@@ -2033,7 +2036,7 @@
+                 var5.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + var17 + var19), (double)((float)(par4 + 1) - var36), var9, var13);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4, DOWN))
+             {
+                 var20 = (double)par2 + 0.5D + 0.5D;
+                 var22 = (double)par2 + 0.5D - 0.5D;
+@@ -4220,7 +4223,7 @@
+             var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
+             this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
+ 
+-            if (fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
+             {
+                 this.colorRedTopLeft *= par5;
+                 this.colorRedBottomLeft *= par5;
+@@ -4343,7 +4346,7 @@
+             var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
+             this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3));
+ 
+-            if (fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
+             {
+                 this.colorRedTopLeft *= par5;
+                 this.colorRedBottomLeft *= par5;
+@@ -4466,7 +4469,7 @@
+             var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
+             this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
+ 
+-            if (fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
+             {
+                 this.colorRedTopLeft *= par5;
+                 this.colorRedBottomLeft *= par5;
+@@ -4589,7 +4592,7 @@
+             var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
+             this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, var27);
+ 
+-            if (fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var27 == 3 && this.overrideBlockTexture < 0)
+             {
+                 this.colorRedTopLeft *= par5;
+                 this.colorRedBottomLeft *= par5;
+@@ -4701,7 +4704,7 @@
+             var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
+             this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
+ 
+-            if (fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
+             {
+                 var8.setColorOpaque_F(var18 * par5, var21 * par6, var24 * par7);
+                 this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
+@@ -4717,7 +4720,7 @@
+             var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
+             this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
+ 
+-            if (fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
+             {
+                 var8.setColorOpaque_F(var18 * par5, var21 * par6, var24 * par7);
+                 this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
+@@ -4733,7 +4736,7 @@
+             var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
+             this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
+ 
+-            if (fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
+             {
+                 var8.setColorOpaque_F(var19 * par5, var22 * par6, var25 * par7);
+                 this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
+@@ -4749,7 +4752,7 @@
+             var28 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
+             this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, var28);
+ 
+-            if (fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
++            if (Tessellator.instance.defaultTexture && fancyGrass && var28 == 3 && this.overrideBlockTexture < 0)
+             {
+                 var8.setColorOpaque_F(var19 * par5, var22 * par6, var25 * par7);
+                 this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
