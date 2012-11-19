@@ -68,16 +68,17 @@ def download_native(url, folder, name):
     if not download_file(url + name, target):
         return False
     
-    with ZipFile(target) as zip:
-        for name in zip.namelist():
-            if not name.startswith('META-INF') and not name.endswith('/'):
-                out_file = os.path.join(folder, name)
-                if not os.path.isfile(out_file):
-                    print '    Extracting %s' % name
-                    out = open(out_file, 'wb')
-                    out.write(zip.read(name))
-                    out.flush()
-                    out.close()
+    zip = ZipFile(target)
+    for name in zip.namelist():
+        if not name.startswith('META-INF') and not name.endswith('/'):
+            out_file = os.path.join(folder, name)
+            if not os.path.isfile(out_file):
+                print '    Extracting %s' % name
+                out = open(out_file, 'wb')
+                out.write(zip.read(name))
+                out.flush()
+                out.close()
+    zip.close()
     return True 
     
 def download_minecraft(mcp_dir, fml_dir, version=None):
@@ -241,40 +242,35 @@ def setup_fml(fml_dir, mcp_dir):
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
         jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
         
-        binDir = os.path.join(fml_dir, 'bin')
-        if not os.path.isdir(binDir):
-            os.makedirs(binDir)
+        dir_bin = os.path.join(fml_dir, 'bin')
+        if not os.path.isdir(dir_bin):
+            os.makedirs(dir_bin)
         
-        if (side == CLIENT):        
-            #Compile AccessTransformer
+        class_path = os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*'), dir_bin])
+        dir_common = os.path.join(fml_dir, 'common')
+        dir_trans  = os.path.join(dir_common, 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers')
+        cmd_compile = '"%s" -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac
+        cmd_compile = cmd_compile.format(classpath=class_path, sourcepath=dir_common, outpath=dir_bin, target="{target}")
+        
+        if (side == CLIENT):
             self.logger.info('> Compiling AccessTransformer')
-            forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
-                classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
-                target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'AccessTransformer.java'))
-                
-            if not runcmd(self, forkcmd, echo=False):
+            if not runcmd(self, cmd_compile.format(target=os.path.join(dir_trans, 'AccessTransformer.java')), echo=False):
                 sys.exit(1)
                 
             self.logger.info('> Compiling MCPMerger')
-            forkcmd = ('%s -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac).format(
-                classpath=os.pathsep.join(['.', os.path.join(mcp_dir, 'lib', '*')]), sourcepath=os.path.join(fml_dir, 'common'), outpath=os.path.join(fml_dir, 'bin'), 
-                target=os.path.join(fml_dir, 'common', 'cpw', 'mods', 'fml', 'common', 'asm', 'transformers', 'MCPMerger.java'))
-                
-            if not runcmd(self, forkcmd, echo=False):
+            if not runcmd(self, cmd_compile.format(target=os.path.join(dir_trans, 'MCPMerger.java')), echo=False):
                 sys.exit(1)
             
             self.logger.info('> Running MCPMerger')
-            #Run MCPMerger
             forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
-                classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
+                classpath=class_path, mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
                 
             if not runcmd(self, forkcmd):
                 sys.exit(1)
         
         self.logger.info('> Running AccessTransformer')
-        #Run AccessTransformer
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
-            classpath=os.pathsep.join([os.path.join(mcp_dir, 'lib', '*'), binDir]), jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
+            classpath=class_path, jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
             
         forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
         if os.path.isfile(forge_cfg):
