@@ -93,16 +93,16 @@
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/reobfuscate.py" />
     </exec>
-  	<fail message="Reobfuscation failed">
-  		<condition>
-  	        <not>
-  	        	<and>
-  	        	  <available file="${mcp.home}/temp/client.md5"/>
+    <fail message="Reobfuscation failed">
+        <condition>
+            <not>
+                <and>
+                  <available file="${mcp.home}/temp/client.md5"/>
                   <available file="${mcp.home}/temp/client_reobf.md5"/>
-  	        	</and>
-  	        </not>
-  		</condition>
-  	</fail>
+                </and>
+            </not>
+        </condition>
+    </fail>
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${basedir}/generatechangedfilelist.py"/>
       <arg value="${mcp.home}"/>
@@ -114,13 +114,13 @@
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
-  	<fail message="Compilation failed">
-  		<condition>
-  	        <not>
-        	  <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
-  	        </not>
-  		</condition>
-  	</fail>
+    <fail message="Compilation failed">
+        <condition>
+            <not>
+              <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
+            </not>
+        </condition>
+    </fail>
   </target>
 
   <target name="merge-client" depends="buildenvsetup">
@@ -252,7 +252,7 @@
     </condition>
     <fail if="do.not.continue">You have decided not to continue. This script will stop now.</fail>
     <echo>Preparing the MCP environment at ${mcp.home}</echo>
-  	<antcall target="fmldecompile"/>
+    <antcall target="fmldecompile"/>
     <echo>Moving old patched sources at ${patch.mcp.srcdir} out of the way</echo>
     <move todir="${mcp.home}/src-work${timestamp}" failonerror="false" verbose="true">
       <fileset dir="${patch.mcp.srcdir}"/>
@@ -334,15 +334,15 @@
   <target name="checkpatches" depends="buildenvsetup">
     <uptodate property="checkUptodate.uptodate">
       <srcfiles dir="${patch.mcp.srcdir}" includes="**/*.java">
-      	<present targetdir="${patch.src.dir}">
-      		<globmapper from="*.java" to="*.java.patch"/>
-      	</present>
+        <present targetdir="${patch.src.dir}">
+            <globmapper from="*.java" to="*.java.patch"/>
+        </present>
       </srcfiles>
       <globmapper from="*.java" to="${patch.src.dir}/*.java.patch"/>
     </uptodate>
-  	<fail unless="checkUptodate.uptodate">
-  		A patch is out of date. Update your patches!
-  	</fail>
+    <fail unless="checkUptodate.uptodate">
+        A patch is out of date. Update your patches!
+    </fail>
   </target>
 
   <target name="updatepatches" depends="buildenvsetup">
