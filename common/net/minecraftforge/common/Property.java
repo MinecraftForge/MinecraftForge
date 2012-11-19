@@ -11,21 +11,44 @@ public class Property
     {
         STRING,
         INTEGER,
-        BOOLEAN
+        BOOLEAN,
+        LIST,
+        DOUBLE;
+        
+        public char getIDChar()
+        {
+        	return this.name().charAt(0);
+        }
     }
 
-    private String name;
+    public String name;
     public String value;
+    public String[] valueList; // used for List configs
     public String comment;
-    private Type type; //Currently does nothing, need to design a way to save/load from the file.
+    private Type type;
     
     public Property(){}
     
     public Property(String name, String value, Type type)
     {
-        setName(name);
+    	this.name = name;
         this.value = value;
+        this.valueList = new String[] {value};
         this.type = type;
+    }
+    
+    public Property(String name, String[] value)
+    {
+    	this.name = name;
+        this.valueList = value;
+        
+        StringBuilder builder = new StringBuilder();
+        for (String string : value)
+        	builder.append("|").append(string);
+        
+        this.value = builder.toString();
+        
+        this.type = Type.LIST;
     }
     
     /**
@@ -40,7 +63,7 @@ public class Property
     }
     
     /**
-     * Returns the value in this property as a integer,
+     * Returns the value in this property as an integer,
      * if the value is not a valid integer, it will return the
      * provided default.
      * 
@@ -61,7 +84,7 @@ public class Property
     
     /**
      * Checks if the current value stored in this property can be converted to an integer.
-     * @return True if the vslue can be converted to an integer
+     * @return True if the type of the Property is a Double
      */
     public boolean isIntValue()
     {
@@ -102,14 +125,64 @@ public class Property
      */
     public boolean isBooleanValue()
     {
-        return ("true".equals(value.toLowerCase()) || "false".equals(value.toLowerCase()));
+    	return ("true".equals(value.toLowerCase()) || "false".equals(value.toLowerCase()));
+    }
+    
+    /**
+     * Checks if the current value held by this property is a valid double value.
+     * @return True if the value can be converted to an double
+     */
+    public boolean isDoubleValue()
+    {
+        try
+        {
+            Double.parseDouble(value);
+            return true;
+        }
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns the value in this property as a double,
+     * if the value is not a valid double, it will return the
+     * provided default.
+     * 
+     * @param _default The default to provide if the current value is not a valid double
+     * @return The value
+     */
+    public double getDouble(double _default)
+    {
+        try
+        {
+            return Double.parseDouble(value);
+        }
+        catch (NumberFormatException e)
+        {
+            return _default;
+        }
+    }
+    
+    public Type getType()
+    {
+    	return type;
     }
 
+    /**
+     * @deprecated use the public var name instead
+     */
+    @Deprecated
     public String getName()
     {
         return name;
     }
 
+    /**
+     * @deprecated use the public var name instead
+     */
+    @Deprecated
     public void setName(String name)
     {
         this.name = name;
