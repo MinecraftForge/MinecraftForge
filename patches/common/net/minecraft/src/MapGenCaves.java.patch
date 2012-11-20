@@ -1,0 +1,98 @@
+--- ../src_base/common/net/minecraft/src/MapGenCaves.java
++++ ../src_work/common/net/minecraft/src/MapGenCaves.java
+@@ -7,15 +7,15 @@
+     /**
+      * Generates a larger initial cave node than usual. Called 25% of the time.
+      */
+-    protected void generateLargeCaveNode(long par1, int par3, int par4, byte[] par5ArrayOfByte, double par6, double par8, double par10)
++    protected void generateLargeCaveNode(long par1, int par3, int par4, int[] par5ArrayOfInt, double par6, double par8, double par10)
+     {
+-        this.generateCaveNode(par1, par3, par4, par5ArrayOfByte, par6, par8, par10, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
++        this.generateCaveNode(par1, par3, par4, par5ArrayOfInt, par6, par8, par10, 1.0F + this.rand.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
+     }
+ 
+     /**
+      * Generates a node in the current cave system recursion tree.
+      */
+-    protected void generateCaveNode(long par1, int par3, int par4, byte[] par5ArrayOfByte, double par6, double par8, double par10, float par12, float par13, float par14, int par15, int par16, double par17)
++    protected void generateCaveNode(long par1, int par3, int par4, int[] par5ArrayOfInt, double par6, double par8, double par10, float par12, float par13, float par14, int par15, int par16, double par17)
+     {
+         double var19 = (double)(par3 * 16 + 8);
+         double var21 = (double)(par4 * 16 + 8);
+@@ -67,8 +67,8 @@
+ 
+             if (!var54 && par15 == var27 && par12 > 1.0F && par16 > 0)
+             {
+-                this.generateCaveNode(var25.nextLong(), par3, par4, par5ArrayOfByte, par6, par8, par10, var25.nextFloat() * 0.5F + 0.5F, par13 - ((float)Math.PI / 2F), par14 / 3.0F, par15, par16, 1.0D);
+-                this.generateCaveNode(var25.nextLong(), par3, par4, par5ArrayOfByte, par6, par8, par10, var25.nextFloat() * 0.5F + 0.5F, par13 + ((float)Math.PI / 2F), par14 / 3.0F, par15, par16, 1.0D);
++                this.generateCaveNode(var25.nextLong(), par3, par4, par5ArrayOfInt, par6, par8, par10, var25.nextFloat() * 0.5F + 0.5F, par13 - ((float)Math.PI / 2F), par14 / 3.0F, par15, par16, 1.0D);
++                this.generateCaveNode(var25.nextLong(), par3, par4, par5ArrayOfInt, par6, par8, par10, var25.nextFloat() * 0.5F + 0.5F, par13 + ((float)Math.PI / 2F), par14 / 3.0F, par15, par16, 1.0D);
+                 return;
+             }
+ 
+@@ -137,7 +137,7 @@
+ 
+                                 if (var44 >= 0 && var44 < 128)
+                                 {
+-                                    if (par5ArrayOfByte[var45] == Block.waterMoving.blockID || par5ArrayOfByte[var45] == Block.waterStill.blockID)
++                                    if (par5ArrayOfInt[var45] == Block.waterMoving.blockID || par5ArrayOfInt[var45] == Block.waterStill.blockID)
+                                     {
+                                         var58 = true;
+                                     }
+@@ -171,7 +171,7 @@
+ 
+                                         if (var51 > -0.7D && var59 * var59 + var51 * var51 + var46 * var46 < 1.0D)
+                                         {
+-                                            byte var53 = par5ArrayOfByte[var48];
++                                            int var53 = par5ArrayOfInt[var48];
+ 
+                                             if (var53 == Block.grass.blockID)
+                                             {
+@@ -182,15 +182,15 @@
+                                             {
+                                                 if (var50 < 10)
+                                                 {
+-                                                    par5ArrayOfByte[var48] = (byte)Block.lavaMoving.blockID;
++                                                    par5ArrayOfInt[var48] = (byte)Block.lavaMoving.blockID;
+                                                 }
+                                                 else
+                                                 {
+-                                                    par5ArrayOfByte[var48] = 0;
+-
+-                                                    if (var49 && par5ArrayOfByte[var48 - 1] == Block.dirt.blockID)
++                                                    par5ArrayOfInt[var48] = 0;
++
++                                                    if (var49 && par5ArrayOfInt[var48 - 1] == Block.dirt.blockID)
+                                                     {
+-                                                        par5ArrayOfByte[var48 - 1] = this.worldObj.getBiomeGenForCoords(var42 + par3 * 16, var45 + par4 * 16).topBlock;
++                                                        par5ArrayOfInt[var48 - 1] = this.worldObj.getBiomeGenForCoords(var42 + par3 * 16, var45 + par4 * 16).topBlock;
+                                                     }
+                                                 }
+                                             }
+@@ -215,7 +215,7 @@
+     /**
+      * Recursively called by generate() (generate) and optionally by itself.
+      */
+-    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, byte[] par6ArrayOfByte)
++    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, int[] par6ArrayOfInt)
+     {
+         int var7 = this.rand.nextInt(this.rand.nextInt(this.rand.nextInt(40) + 1) + 1);
+ 
+@@ -233,7 +233,7 @@
+ 
+             if (this.rand.nextInt(4) == 0)
+             {
+-                this.generateLargeCaveNode(this.rand.nextLong(), par4, par5, par6ArrayOfByte, var9, var11, var13);
++                this.generateLargeCaveNode(this.rand.nextLong(), par4, par5, par6ArrayOfInt, var9, var11, var13);
+                 var15 += this.rand.nextInt(4);
+             }
+ 
+@@ -248,7 +248,7 @@
+                     var19 *= this.rand.nextFloat() * this.rand.nextFloat() * 3.0F + 1.0F;
+                 }
+ 
+-                this.generateCaveNode(this.rand.nextLong(), par4, par5, par6ArrayOfByte, var9, var11, var13, var19, var17, var18, 0, 0, 1.0D);
++                this.generateCaveNode(this.rand.nextLong(), par4, par5, par6ArrayOfInt, var9, var11, var13, var19, var17, var18, 0, 0, 1.0D);
+             }
+         }
+     }

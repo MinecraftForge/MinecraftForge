@@ -1,0 +1,20 @@
+--- ../src_base/common/net/minecraft/src/MapGenStructure.java
++++ ../src_work/common/net/minecraft/src/MapGenStructure.java
+@@ -18,7 +18,7 @@
+     /**
+      * Recursively called by generate() (generate) and optionally by itself.
+      */
+-    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, byte[] par6ArrayOfByte)
++    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, int[] par6ArrayOfInt)
+     {
+         if (!this.structureMap.containsKey(Long.valueOf(ChunkCoordIntPair.chunkXZ2Int(par2, par3))))
+         {
+@@ -108,7 +108,7 @@
+         long var9 = (long)(par2 >> 4) * var5;
+         long var11 = (long)(par4 >> 4) * var7;
+         this.rand.setSeed(var9 ^ var11 ^ par1World.getSeed());
+-        this.recursiveGenerate(par1World, par2 >> 4, par4 >> 4, 0, 0, (byte[])null);
++        this.recursiveGenerate(par1World, par2 >> 4, par4 >> 4, 0, 0, (int[])null);
+         double var13 = Double.MAX_VALUE;
+         ChunkPosition var15 = null;
+         Iterator var16 = this.structureMap.values().iterator();

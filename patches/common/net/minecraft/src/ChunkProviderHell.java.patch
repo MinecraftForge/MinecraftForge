@@ -1,0 +1,139 @@
+--- ../src_base/common/net/minecraft/src/ChunkProviderHell.java
++++ ../src_work/common/net/minecraft/src/ChunkProviderHell.java
+@@ -60,7 +60,7 @@
+     /**
+      * Generates the shape of the terrain in the nether.
+      */
+-    public void generateNetherTerrain(int par1, int par2, byte[] par3ArrayOfByte)
++    public void generateNetherTerrain(int par1, int par2, int[] par3ArrayOfInt)
+     {
+         byte var4 = 4;
+         byte var5 = 32;
+@@ -115,7 +115,7 @@
+                                     var51 = Block.netherrack.blockID;
+                                 }
+ 
+-                                par3ArrayOfByte[var42] = (byte)var51;
++                                par3ArrayOfInt[var42] = var51;
+                                 var42 += var43;
+                                 var46 += var48;
+                             }
+@@ -137,7 +137,7 @@
+     /**
+      * name based on ChunkProviderGenerate
+      */
+-    public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte)
++    public void replaceBlocksForBiome(int par1, int par2, int[] par3ArrayOfInt)
+     {
+         byte var4 = 64;
+         double var5 = 0.03125D;
+@@ -153,8 +153,8 @@
+                 boolean var10 = this.gravelNoise[var7 + var8 * 16] + this.hellRNG.nextDouble() * 0.2D > 0.0D;
+                 int var11 = (int)(this.netherrackExclusivityNoise[var7 + var8 * 16] / 3.0D + 3.0D + this.hellRNG.nextDouble() * 0.25D);
+                 int var12 = -1;
+-                byte var13 = (byte)Block.netherrack.blockID;
+-                byte var14 = (byte)Block.netherrack.blockID;
++                int var13 = Block.netherrack.blockID;
++                int var14 = Block.netherrack.blockID;
+ 
+                 for (int var15 = 127; var15 >= 0; --var15)
+                 {
+@@ -162,7 +162,7 @@
+ 
+                     if (var15 < 127 - this.hellRNG.nextInt(5) && var15 > 0 + this.hellRNG.nextInt(5))
+                     {
+-                        byte var17 = par3ArrayOfByte[var16];
++                        int var17 = par3ArrayOfInt[var16];
+ 
+                         if (var17 == 0)
+                         {
+@@ -175,60 +175,60 @@
+                                 if (var11 <= 0)
+                                 {
+                                     var13 = 0;
+-                                    var14 = (byte)Block.netherrack.blockID;
++                                    var14 = Block.netherrack.blockID;
+                                 }
+                                 else if (var15 >= var4 - 4 && var15 <= var4 + 1)
+                                 {
+-                                    var13 = (byte)Block.netherrack.blockID;
+-                                    var14 = (byte)Block.netherrack.blockID;
++                                    var13 = Block.netherrack.blockID;
++                                    var14 = Block.netherrack.blockID;
+ 
+                                     if (var10)
+                                     {
+-                                        var13 = (byte)Block.gravel.blockID;
++                                        var13 = Block.gravel.blockID;
+                                     }
+ 
+                                     if (var10)
+                                     {
+-                                        var14 = (byte)Block.netherrack.blockID;
++                                        var14 =Block.netherrack.blockID;
+                                     }
+ 
+                                     if (var9)
+                                     {
+-                                        var13 = (byte)Block.slowSand.blockID;
++                                        var13 = Block.slowSand.blockID;
+                                     }
+ 
+                                     if (var9)
+                                     {
+-                                        var14 = (byte)Block.slowSand.blockID;
++                                        var14 = Block.slowSand.blockID;
+                                     }
+                                 }
+ 
+                                 if (var15 < var4 && var13 == 0)
+                                 {
+-                                    var13 = (byte)Block.lavaStill.blockID;
++                                    var13 = Block.lavaStill.blockID;
+                                 }
+ 
+                                 var12 = var11;
+ 
+                                 if (var15 >= var4 - 1)
+                                 {
+-                                    par3ArrayOfByte[var16] = var13;
++                                    par3ArrayOfInt[var16] = var13;
+                                 }
+                                 else
+                                 {
+-                                    par3ArrayOfByte[var16] = var14;
++                                    par3ArrayOfInt[var16] = var14;
+                                 }
+                             }
+                             else if (var12 > 0)
+                             {
+                                 --var12;
+-                                par3ArrayOfByte[var16] = var14;
++                                par3ArrayOfInt[var16] = var14;
+                             }
+                         }
+                     }
+                     else
+                     {
+-                        par3ArrayOfByte[var16] = (byte)Block.bedrock.blockID;
++                        par3ArrayOfInt[var16] = Block.bedrock.blockID;
+                     }
+                 }
+             }
+@@ -250,7 +250,7 @@
+     public Chunk provideChunk(int par1, int par2)
+     {
+         this.hellRNG.setSeed((long)par1 * 341873128712L + (long)par2 * 132897987541L);
+-        byte[] var3 = new byte[32768];
++        int[] var3 = new int[32768];
+         this.generateNetherTerrain(par1, par2, var3);
+         this.replaceBlocksForBiome(par1, par2, var3);
+         this.netherCaveGenerator.generate(this, this.worldObj, par1, par2, var3);
+@@ -555,6 +555,6 @@
+ 
+     public void recreateStructures(int par1, int par2)
+     {
+-        this.genNetherBridge.generate(this, this.worldObj, par1, par2, (byte[])null);
++        this.genNetherBridge.generate(this, this.worldObj, par1, par2, (int[])null);
+     }
+ }

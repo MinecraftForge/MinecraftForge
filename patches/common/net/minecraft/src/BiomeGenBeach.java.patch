@@ -1,0 +1,13 @@
+--- ../src_base/common/net/minecraft/src/BiomeGenBeach.java
++++ ../src_work/common/net/minecraft/src/BiomeGenBeach.java
+@@ -6,8 +6,8 @@
+     {
+         super(par1);
+         this.spawnableCreatureList.clear();
+-        this.topBlock = (byte)Block.sand.blockID;
+-        this.fillerBlock = (byte)Block.sand.blockID;
++        this.topBlock = Block.sand.blockID;
++        this.fillerBlock = Block.sand.blockID;
+         this.theBiomeDecorator.treesPerChunk = -999;
+         this.theBiomeDecorator.deadBushPerChunk = 0;
+         this.theBiomeDecorator.reedsPerChunk = 0;

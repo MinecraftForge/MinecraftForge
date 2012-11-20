@@ -1,0 +1,84 @@
+--- ../src_base/common/net/minecraft/src/ChunkProviderEnd.java
++++ ../src_work/common/net/minecraft/src/ChunkProviderEnd.java
+@@ -34,7 +34,7 @@
+         this.noiseGen5 = new NoiseGeneratorOctaves(this.endRNG, 16);
+     }
+ 
+-    public void generateTerrain(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
++    public void generateTerrain(int par1, int par2, int[] par3ArrayOfInt, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+     {
+         byte var5 = 2;
+         int var6 = var5 + 1;
+@@ -83,7 +83,7 @@
+                                     var51 = Block.whiteStone.blockID;
+                                 }
+ 
+-                                par3ArrayOfByte[var42] = (byte)var51;
++                                par3ArrayOfInt[var42] = var51;
+                                 var42 += var43;
+                                 var46 += var48;
+                             }
+@@ -102,7 +102,7 @@
+         }
+     }
+ 
+-    public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte, BiomeGenBase[] par4ArrayOfBiomeGenBase)
++    public void replaceBlocksForBiome(int par1, int par2, int[] par3ArrayOfInt, BiomeGenBase[] par4ArrayOfBiomeGenBase)
+     {
+         for (int var5 = 0; var5 < 16; ++var5)
+         {
+@@ -110,13 +110,13 @@
+             {
+                 byte var7 = 1;
+                 int var8 = -1;
+-                byte var9 = (byte)Block.whiteStone.blockID;
+-                byte var10 = (byte)Block.whiteStone.blockID;
++                int var9 = Block.whiteStone.blockID;
++                int var10 = Block.whiteStone.blockID;
+ 
+                 for (int var11 = 127; var11 >= 0; --var11)
+                 {
+                     int var12 = (var6 * 16 + var5) * 128 + var11;
+-                    byte var13 = par3ArrayOfByte[var12];
++                    int var13 = par3ArrayOfInt[var12];
+ 
+                     if (var13 == 0)
+                     {
+@@ -129,24 +129,24 @@
+                             if (var7 <= 0)
+                             {
+                                 var9 = 0;
+-                                var10 = (byte)Block.whiteStone.blockID;
++                                var10 = Block.whiteStone.blockID;
+                             }
+ 
+                             var8 = var7;
+ 
+                             if (var11 >= 0)
+                             {
+-                                par3ArrayOfByte[var12] = var9;
++                                par3ArrayOfInt[var12] = var9;
+                             }
+                             else
+                             {
+-                                par3ArrayOfByte[var12] = var10;
++                                par3ArrayOfInt[var12] = var10;
+                             }
+                         }
+                         else if (var8 > 0)
+                         {
+                             --var8;
+-                            par3ArrayOfByte[var12] = var10;
++                            par3ArrayOfInt[var12] = var10;
+                         }
+                     }
+                 }
+@@ -169,7 +169,7 @@
+     public Chunk provideChunk(int par1, int par2)
+     {
+         this.endRNG.setSeed((long)par1 * 341873128712L + (long)par2 * 132897987541L);
+-        byte[] var3 = new byte[32768];
++        int[] var3 = new int[32768];
+         this.biomesForGeneration = this.endWorld.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, par1 * 16, par2 * 16, 16, 16);
+         this.generateTerrain(par1, par2, var3, this.biomesForGeneration);
+         this.replaceBlocksForBiome(par1, par2, var3, this.biomesForGeneration);

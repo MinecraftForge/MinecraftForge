@@ -1,0 +1,68 @@
+--- ../src_base/common/net/minecraft/src/MapGenRavine.java
++++ ../src_work/common/net/minecraft/src/MapGenRavine.java
+@@ -6,7 +6,7 @@
+ {
+     private float[] field_75046_d = new float[1024];
+ 
+-    protected void generateRavine(long par1, int par3, int par4, byte[] par5ArrayOfByte, double par6, double par8, double par10, float par12, float par13, float par14, int par15, int par16, double par17)
++    protected void generateRavine(long par1, int par3, int par4, int[] par5ArrayOfInt, double par6, double par8, double par10, float par12, float par13, float par14, int par15, int par16, double par17)
+     {
+         Random var19 = new Random(par1);
+         double var20 = (double)(par3 * 16 + 8);
+@@ -124,7 +124,7 @@
+ 
+                                 if (var43 >= 0 && var43 < 128)
+                                 {
+-                                    if (par5ArrayOfByte[var44] == Block.waterMoving.blockID || par5ArrayOfByte[var44] == Block.waterStill.blockID)
++                                    if (par5ArrayOfInt[var44] == Block.waterMoving.blockID || par5ArrayOfInt[var44] == Block.waterStill.blockID)
+                                     {
+                                         var58 = true;
+                                     }
+@@ -158,7 +158,7 @@
+ 
+                                         if ((var59 * var59 + var45 * var45) * (double)this.field_75046_d[var49] + var50 * var50 / 6.0D < 1.0D)
+                                         {
+-                                            byte var52 = par5ArrayOfByte[var47];
++                                            int var52 = par5ArrayOfInt[var47];
+ 
+                                             if (var52 == Block.grass.blockID)
+                                             {
+@@ -169,15 +169,15 @@
+                                             {
+                                                 if (var49 < 10)
+                                                 {
+-                                                    par5ArrayOfByte[var47] = (byte)Block.lavaMoving.blockID;
++                                                    par5ArrayOfInt[var47] = Block.lavaMoving.blockID;
+                                                 }
+                                                 else
+                                                 {
+-                                                    par5ArrayOfByte[var47] = 0;
+-
+-                                                    if (var48 && par5ArrayOfByte[var47 - 1] == Block.dirt.blockID)
++                                                    par5ArrayOfInt[var47] = 0;
++
++                                                    if (var48 && par5ArrayOfInt[var47 - 1] == Block.dirt.blockID)
+                                                     {
+-                                                        par5ArrayOfByte[var47 - 1] = this.worldObj.getBiomeGenForCoords(var41 + par3 * 16, var44 + par4 * 16).topBlock;
++                                                        par5ArrayOfInt[var47 - 1] = this.worldObj.getBiomeGenForCoords(var41 + par3 * 16, var44 + par4 * 16).topBlock;
+                                                     }
+                                                 }
+                                             }
+@@ -202,7 +202,7 @@
+     /**
+      * Recursively called by generate() (generate) and optionally by itself.
+      */
+-    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, byte[] par6ArrayOfByte)
++    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, int[] par6ArrayOfInt)
+     {
+         if (this.rand.nextInt(50) == 0)
+         {
+@@ -216,7 +216,7 @@
+                 float var15 = this.rand.nextFloat() * (float)Math.PI * 2.0F;
+                 float var16 = (this.rand.nextFloat() - 0.5F) * 2.0F / 8.0F;
+                 float var17 = (this.rand.nextFloat() * 2.0F + this.rand.nextFloat()) * 2.0F;
+-                this.generateRavine(this.rand.nextLong(), par4, par5, par6ArrayOfByte, var7, var9, var11, var17, var15, var16, 0, 0, 3.0D);
++                this.generateRavine(this.rand.nextLong(), par4, par5, par6ArrayOfInt, var7, var9, var11, var17, var15, var16, 0, 0, 3.0D);
+             }
+         }
+     }

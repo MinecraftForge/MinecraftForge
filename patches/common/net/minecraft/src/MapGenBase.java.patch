@@ -1,0 +1,27 @@
+--- ../src_base/common/net/minecraft/src/MapGenBase.java
++++ ../src_work/common/net/minecraft/src/MapGenBase.java
+@@ -13,7 +13,7 @@
+     /** This world object. */
+     protected World worldObj;
+ 
+-    public void generate(IChunkProvider par1IChunkProvider, World par2World, int par3, int par4, byte[] par5ArrayOfByte)
++    public void generate(IChunkProvider par1IChunkProvider, World par2World, int par3, int par4, int[] par5ArrayOfInt)
+     {
+         int var6 = this.range;
+         this.worldObj = par2World;
+@@ -28,7 +28,7 @@
+                 long var13 = (long)var11 * var7;
+                 long var15 = (long)var12 * var9;
+                 this.rand.setSeed(var13 ^ var15 ^ par2World.getSeed());
+-                this.recursiveGenerate(par2World, var11, var12, par3, par4, par5ArrayOfByte);
++                this.recursiveGenerate(par2World, var11, var12, par3, par4, par5ArrayOfInt);
+             }
+         }
+     }
+@@ -36,5 +36,5 @@
+     /**
+      * Recursively called by generate() (generate) and optionally by itself.
+      */
+-    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, byte[] par6ArrayOfByte) {}
++    protected void recursiveGenerate(World par1World, int par2, int par3, int par4, int par5, int[] par6ArrayOfInt) {}
+ }

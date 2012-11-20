@@ -1,0 +1,26 @@
+--- ../src_base/common/net/minecraft/src/BiomeGenBase.java
++++ ../src_work/common/net/minecraft/src/BiomeGenBase.java
+@@ -52,10 +52,10 @@
+     public int color;
+ 
+     /** The block expected to be on the top of this biome */
+-    public byte topBlock;
++    public int topBlock;
+ 
+     /** The block to fill spots in when not on the top */
+-    public byte fillerBlock;
++    public int fillerBlock;
+     public int field_76754_C;
+ 
+     /** The minimum height of this biome. Default 0.1. */
+@@ -117,8 +117,8 @@
+ 
+     public BiomeGenBase(int par1)
+     {
+-        this.topBlock = (byte)Block.grass.blockID;
+-        this.fillerBlock = (byte)Block.dirt.blockID;
++        this.topBlock = Block.grass.blockID;
++        this.fillerBlock = Block.dirt.blockID;
+         this.field_76754_C = 5169201;
+         this.minHeight = 0.1F;
+         this.maxHeight = 0.3F;

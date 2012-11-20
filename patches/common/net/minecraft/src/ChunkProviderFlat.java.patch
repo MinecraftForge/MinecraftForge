@@ -1,0 +1,38 @@
+--- ../src_base/common/net/minecraft/src/ChunkProviderFlat.java
++++ ../src_work/common/net/minecraft/src/ChunkProviderFlat.java
+@@ -10,7 +10,7 @@
+ {
+     private World worldObj;
+     private Random random;
+-    private final byte[] field_82700_c = new byte[256];
++    private final int[] field_82700_c = new int[256];
+     private final byte[] field_82698_d = new byte[256];
+     private final FlatGeneratorInfo field_82699_e;
+     private final List field_82696_f = new ArrayList();
+@@ -78,7 +78,7 @@
+ 
+             for (int var8 = var10.getMinY(); var8 < var10.getMinY() + var10.getLayerCount(); ++var8)
+             {
+-                this.field_82700_c[var8] = (byte)(var10.getFillBlock() & 255);
++                this.field_82700_c[var8] = var10.getFillBlock();
+                 this.field_82698_d[var8] = (byte)var10.getFillBlockMeta();
+             }
+         }
+@@ -135,7 +135,7 @@
+         while (var12.hasNext())
+         {
+             MapGenStructure var13 = (MapGenStructure)var12.next();
+-            var13.generate(this, this.worldObj, par1, par2, (byte[])null);
++            var13.generate(this, this.worldObj, par1, par2, (int[])null);
+         }
+ 
+         var3.generateSkylightMap();
+@@ -295,7 +295,7 @@
+         while (var3.hasNext())
+         {
+             MapGenStructure var4 = (MapGenStructure)var3.next();
+-            var4.generate(this, this.worldObj, par1, par2, (byte[])null);
++            var4.generate(this, this.worldObj, par1, par2, (int[])null);
+         }
+     }
+ }
