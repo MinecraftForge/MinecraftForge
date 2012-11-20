@@ -1,11 +1,12 @@
---- ../src-base/minecraft/net/minecraft/src/TextureFlamesFX.java
-+++ ../src-work/minecraft/net/minecraft/src/TextureFlamesFX.java
-@@ -1,17 +1,31 @@
- package net.minecraft.src;
+--- ../src-base/minecraft/net/minecraft/client/TextureFlamesFX.java
++++ ../src-work/minecraft/net/minecraft/client/TextureFlamesFX.java
+@@ -1,18 +1,32 @@
+ package net.minecraft.client;
  
 +import cpw.mods.fml.client.FMLTextureFX;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
+ import net.minecraft.shared.Block;
  
  @SideOnly(Side.CLIENT)
 -public class TextureFlamesFX extends TextureFX
@@ -33,15 +34,14 @@
      }
  
      public void func_76846_a()
-@@ -20,31 +34,36 @@
+@@ -20,32 +34,34 @@
+         int var3;
          float var4;
          int var6;
++        float fireFactor1 = 3.0F + (float)(tileSizeBase >> 4);
++        float fireFactor2 = 1.01F + (0.8F / tileSizeBase);
  
 -        for (int var1 = 0; var1 < 16; ++var1)
-+        float fireFactor1 = 3.0F + (float)(tileSizeBase >> 4);
-+        
-+        float fireFactor2 = 1.01F + (0.8F / tileSizeBase);
-+
 +        for (int var1 = 0; var1 < tileSizeBase; ++var1)
          {
 -            for (int var2 = 0; var2 < 20; ++var2)
@@ -50,7 +50,6 @@
 -                var3 = 18;
 -                var4 = this.field_76869_g[var1 + (var2 + 1) % 20 * 16] * (float)var3;
 +                var3 = fireTileSize - (tileSizeBase >> 3);
-+
 +                var4 = this.field_76869_g[var1 + (var2 + 1) % fireTileSize * tileSizeBase] * (float)var3;
  
                  for (int var5 = var1 - 1; var5 <= var1 + 1; ++var5)
@@ -79,7 +78,7 @@
                  }
              }
          }
-@@ -53,7 +72,7 @@
+@@ -54,7 +70,7 @@
          this.field_76870_h = this.field_76869_g;
          this.field_76869_g = var13;
  

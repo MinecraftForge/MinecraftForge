@@ -1,6 +1,15 @@
---- ../src-base/minecraft/net/minecraft/src/RenderBlocks.java
-+++ ../src-work/minecraft/net/minecraft/src/RenderBlocks.java
-@@ -184,7 +184,81 @@
+--- ../src-base/minecraft/net/minecraft/client/RenderBlocks.java
++++ ../src-work/minecraft/net/minecraft/client/RenderBlocks.java
+@@ -33,6 +33,8 @@
+ import net.minecraft.shared.MathHelper;
+ import net.minecraft.shared.Vec3;
+ import net.minecraft.shared.World;
++import net.minecraft.src.FMLRenderAccessLibrary;
++
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
+@@ -214,7 +216,81 @@
          int var5 = p_78612_1_.func_71857_b();
          p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);
          this.func_83018_a(p_78612_1_);
@@ -83,7 +92,7 @@
      }
  
      public boolean func_78567_v(Block p_78567_1_, int p_78567_2_, int p_78567_3_, int p_78567_4_)
-@@ -6510,6 +6584,10 @@
+@@ -6540,6 +6616,10 @@
                  this.func_83020_a(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
                  this.func_78595_a();
              }
@@ -94,7 +103,7 @@
          }
          else
          {
-@@ -6568,6 +6646,36 @@
+@@ -6598,6 +6678,36 @@
  
      public static boolean func_78597_b(int p_78597_0_)
      {
