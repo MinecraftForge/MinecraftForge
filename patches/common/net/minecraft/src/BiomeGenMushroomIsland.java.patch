@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/BiomeGenMushroomIsland.java
++++ ../src_work/common/net/minecraft/src/BiomeGenMushroomIsland.java
+@@ -10,7 +10,7 @@
+         this.theBiomeDecorator.grassPerChunk = -100;
+         this.theBiomeDecorator.mushroomsPerChunk = 1;
+         this.theBiomeDecorator.bigMushroomsPerChunk = 1;
+-        this.topBlock = (byte)Block.mycelium.blockID;
++        this.topBlock = Block.mycelium.blockID;
+         this.spawnableMonsterList.clear();
+         this.spawnableCreatureList.clear();
+         this.spawnableWaterCreatureList.clear();

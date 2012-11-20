@@ -1,0 +1,13 @@
+--- ../src_base/common/net/minecraft/src/BiomeGenEnd.java
++++ ../src_work/common/net/minecraft/src/BiomeGenEnd.java
+@@ -13,8 +13,8 @@
+         this.spawnableWaterCreatureList.clear();
+         this.field_82914_M.clear();
+         this.spawnableMonsterList.add(new SpawnListEntry(EntityEnderman.class, 10, 4, 4));
+-        this.topBlock = (byte)Block.dirt.blockID;
+-        this.fillerBlock = (byte)Block.dirt.blockID;
++        this.topBlock = Block.dirt.blockID;
++        this.fillerBlock = Block.dirt.blockID;
+         this.theBiomeDecorator = new BiomeEndDecorator(this);
+     }
+ 

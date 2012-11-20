@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/ExtendedBlockStorage.java
++++ ../src_work/common/net/minecraft/src/ExtendedBlockStorage.java
+@@ -68,7 +68,7 @@
+      */
+     public void setExtBlockID(int par1, int par2, int par3, int par4)
+     {
+-        int var5 = this.blockLSBArray[par2 << 8 | par3 << 4 | par1] & 255;
++        int var5 = this.blockLSBArray[par2 << 8 | par3 << 4 | par1];
+ 
+         if (this.blockMSBArray != null)
+         {
