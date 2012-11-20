@@ -2126,7 +2126,6 @@ net/minecraft/src/EffectRenderer.func_78871_a(IIIII)V=|p_78871_1_,p_78871_2_,p_7
 net/minecraft/src/EffectRenderer.func_78872_b(Lnet/minecraft/src/Entity;F)V=|p_78872_1_,p_78872_2_
 net/minecraft/src/EffectRenderer.func_78873_a(Lnet/minecraft/src/EntityFX;)V=|p_78873_1_
 net/minecraft/src/EffectRenderer.func_78874_a(Lnet/minecraft/src/Entity;F)V=|p_78874_1_,p_78874_2_
-net/minecraft/src/EffectRenderer.func_90037_b(Lnet/minecraft/src/EntityFX;)V=|p_90037_1_
 net/minecraft/src/EmptyChunk.<init>(Lnet/minecraft/src/World;II)V=|p_i3770_1_,p_i3770_2_,p_i3770_3_
 net/minecraft/src/EmptyChunk.func_76588_a(Lnet/minecraft/src/Entity;Lnet/minecraft/src/AxisAlignedBB;Ljava/util/List;)V=|p_76588_1_,p_76588_2_,p_76588_3_
 net/minecraft/src/EmptyChunk.func_76589_b(IIII)Z=|p_76589_1_,p_76589_2_,p_76589_3_,p_76589_4_
