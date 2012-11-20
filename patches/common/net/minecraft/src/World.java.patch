@@ -250,7 +250,7 @@
              this.loadedTileEntityList.removeAll(this.entityRemoval);
              this.entityRemoval.clear();
          }
-@@ -2090,7 +2179,9 @@
+@@ -2090,18 +2179,18 @@
                      {
                          this.loadedTileEntityList.add(var12);
                      }
@@ -261,8 +261,11 @@
                      if (this.chunkExists(var12.xCoord >> 4, var12.zCoord >> 4))
                      {
                          Chunk var15 = this.getChunkFromChunkCoords(var12.xCoord >> 4, var12.zCoord >> 4);
-@@ -2100,8 +2191,6 @@
-                             var15.setChunkBlockTileEntity(var12.xCoord & 15, var12.yCoord, var12.zCoord & 15, var12);
+ 
+                         if (var15 != null)
+                         {
+-                            var15.setChunkBlockTileEntity(var12.xCoord & 15, var12.yCoord, var12.zCoord & 15, var12);
++                            var15.cleanChunkBlockTileEntity(var12.xCoord & 15, var12.yCoord, var12.zCoord & 15);
                          }
                      }
 -
