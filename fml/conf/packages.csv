@@ -159,7 +159,6 @@ GuiVideoSettings,net/minecraft/client
 GuiWinGame,net/minecraft/client
 GuiWorldSlot,net/minecraft/client
 GuiYesNo,net/minecraft/client
-IBossDisplayData,net/minecraft/client
 ICamera,net/minecraft/client
 IDownloadSuccess,net/minecraft/client
 IImageBuffer,net/minecraft/client
@@ -900,6 +899,7 @@ IAnimals,net/minecraft/shared
 IBehaviorDispenseItem,net/minecraft/shared
 IBlockAccess,net/minecraft/shared
 IBlockSource,net/minecraft/shared
+IBossDisplayData,net/minecraft/shared
 IChunkLoader,net/minecraft/shared
 IChunkProvider,net/minecraft/shared
 ICommand,net/minecraft/shared
