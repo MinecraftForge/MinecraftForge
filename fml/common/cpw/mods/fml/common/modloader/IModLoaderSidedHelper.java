@@ -2,11 +2,7 @@ package cpw.mods.fml.common.modloader;
 
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.shared.*;
 
 public interface IModLoaderSidedHelper
 {

@@ -3,8 +3,8 @@ package cpw.mods.fml.client;
 import cpw.mods.fml.common.IFMLHandledException;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.GuiErrorScreen;
+import net.minecraft.client.FontRenderer;
+import net.minecraft.client.GuiErrorScreen;
 
 /**
  * If a mod throws this exception during loading, it will be called back to render

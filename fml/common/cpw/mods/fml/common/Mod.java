@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 
-import net.minecraft.src.ItemBlock;
+import net.minecraft.shared.ItemBlock;
 
 /**
  * The new mod style in FML 1.3

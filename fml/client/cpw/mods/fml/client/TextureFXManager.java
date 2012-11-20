@@ -20,9 +20,9 @@ import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModTextureStatic;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.TextureFX;
-import net.minecraft.src.ITexturePack;
+import net.minecraft.client.RenderEngine;
+import net.minecraft.client.TextureFX;
+import net.minecraft.client.ITexturePack;
 
 import org.lwjgl.opengl.GL11;
 

@@ -1,9 +1,6 @@
 package cpw.mods.fml.common.modloader;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.shared.*;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 

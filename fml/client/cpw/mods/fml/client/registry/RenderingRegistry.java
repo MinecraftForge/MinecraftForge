@@ -3,14 +3,8 @@ package cpw.mods.fml.client.registry;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Render;
-import net.minecraft.src.RenderBiped;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.RenderManager;
-import net.minecraft.src.RenderPlayer;
+import net.minecraft.shared.*;
+import net.minecraft.client.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

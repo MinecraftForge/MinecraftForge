@@ -1,11 +1,7 @@
 package cpw.mods.fml.common.modloader;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet1Login;
+import net.minecraft.shared.*;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
 

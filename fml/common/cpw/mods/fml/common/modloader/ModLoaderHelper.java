@@ -24,12 +24,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 import net.minecraft.src.BaseMod;
-import net.minecraft.src.Container;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityDragon;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IAnimals;
-import net.minecraft.src.ICommand;
+import net.minecraft.shared.*;
 import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;

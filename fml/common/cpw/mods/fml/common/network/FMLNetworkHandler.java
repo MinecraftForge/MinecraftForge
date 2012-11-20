@@ -12,23 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.EnumGameType;
-import net.minecraft.src.Item;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet;
-import net.minecraft.src.Packet131MapData;
-import net.minecraft.src.Packet1Login;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.Packet3Chat;
-import net.minecraft.src.ServerConfigurationManager;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldType;
+import net.minecraft.shared.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

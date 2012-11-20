@@ -8,12 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.minecraft.src.DataWatcher;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.shared.*;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;

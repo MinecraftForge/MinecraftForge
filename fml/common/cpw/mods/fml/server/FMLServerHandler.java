@@ -17,12 +17,11 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.Entity;
-import net.minecraft.src.NetClientHandler;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.Packet;
-import net.minecraft.src.Packet131MapData;
-import net.minecraft.src.World;
+import net.minecraft.shared.Entity;
+import net.minecraft.shared.NetHandler;
+import net.minecraft.shared.Packet;
+import net.minecraft.shared.Packet131MapData;
+import net.minecraft.shared.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
@@ -38,7 +37,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
  * Handles primary communication from hooked code into the system
  *
  * The FML entry point is {@link #beginServerLoading(MinecraftServer)} called from
- * {@link net.minecraft.src.DedicatedServer}
+ * {@link net.minecraft.shared.DedicatedServer}
  *
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code

@@ -19,12 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.NBTTagString;
-import net.minecraft.src.SaveHandler;
-import net.minecraft.src.WorldInfo;
+import net.minecraft.shared.*;
 
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;

@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.minecraft.src.Packet131MapData;
+import net.minecraft.shared.Packet131MapData;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

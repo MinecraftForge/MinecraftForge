@@ -1,8 +1,6 @@
 package cpw.mods.fml.common.modloader;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
+import net.minecraft.shared.*;
 import cpw.mods.fml.common.ICraftingHandler;
 
 public class ModLoaderCraftingHelper implements ICraftingHandler

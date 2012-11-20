@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
+import net.minecraft.shared.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

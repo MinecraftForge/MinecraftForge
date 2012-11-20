@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.StringTranslate;
+import net.minecraft.shared.Block;
+import net.minecraft.shared.Item;
+import net.minecraft.shared.ItemStack;
+import net.minecraft.shared.StringTranslate;
 
 public class LanguageRegistry
 {

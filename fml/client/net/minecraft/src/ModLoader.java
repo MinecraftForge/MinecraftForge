@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.client.*;
+import net.minecraft.server.*;
+import net.minecraft.shared.*;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;

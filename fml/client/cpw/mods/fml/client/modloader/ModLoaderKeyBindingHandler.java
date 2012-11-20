@@ -23,7 +23,7 @@ import org.lwjgl.input.Mouse;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.primitives.Booleans;
 
-import net.minecraft.src.KeyBinding;
+import net.minecraft.client.KeyBinding;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.modloader.ModLoaderModContainer;

@@ -14,8 +14,7 @@ package cpw.mods.fml.common;
 
 import java.util.Random;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.shared.*;
 
 
 public interface IDispenseHandler

@@ -14,7 +14,7 @@
 
 package cpw.mods.fml.common;
 
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.shared.EntityPlayer;
 
 /**
  * @author cpw

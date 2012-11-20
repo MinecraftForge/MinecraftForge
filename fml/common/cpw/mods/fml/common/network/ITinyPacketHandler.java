@@ -1,7 +1,6 @@
 package cpw.mods.fml.common.network;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.Packet131MapData;
+import net.minecraft.shared.*;
 
 public interface ITinyPacketHandler
 {

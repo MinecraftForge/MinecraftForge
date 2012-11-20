@@ -6,8 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.shared.*;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteArrayDataInput;
