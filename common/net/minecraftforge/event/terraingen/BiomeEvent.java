@@ -90,9 +90,9 @@ public class BiomeEvent extends Event
      */
 
     @SideOnly(Side.CLIENT)
-    public static class GetBiomeGrassColor extends BiomeColor
+    public static class GetGrassColor extends BiomeColor
     {
-        public GetBiomeGrassColor(BiomeGenBase biome, int original)
+        public GetGrassColor(BiomeGenBase biome, int original)
         {
             super(biome, original);
         }
@@ -102,9 +102,21 @@ public class BiomeEvent extends Event
      * This event is fired when a biome is queried for its grass color. 
      */
     @SideOnly(Side.CLIENT)
-    public static class GetBiomeFoliageColor extends BiomeColor
+    public static class GetFoliageColor extends BiomeColor
     {
-        public GetBiomeFoliageColor(BiomeGenBase biome, int original)
+        public GetFoliageColor(BiomeGenBase biome, int original)
+        {
+            super(biome, original);
+        }
+    }
+    
+    /**
+     * This event is fired when a biome is queried for its water color. 
+     */
+    @SideOnly(Side.CLIENT)
+    public static class GetWaterColor extends BiomeColor
+    {
+        public GetWaterColor(BiomeGenBase biome, int original)
         {
             super(biome, original);
         }
