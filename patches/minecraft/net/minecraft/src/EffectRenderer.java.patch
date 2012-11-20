@@ -1,8 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/src/EffectRenderer.java
 +++ ../src_work/minecraft/net/minecraft/src/EffectRenderer.java
-@@ -5,8 +5,16 @@
+@@ -3,9 +3,18 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
  import java.util.ArrayList;
- import java.util.Iterator;
++import java.util.Iterator;
  import java.util.List;
 +import java.util.Map.Entry;
  import java.util.Random;
@@ -17,7 +19,7 @@
  
  @SideOnly(Side.CLIENT)
  public class EffectRenderer
-@@ -20,6 +28,8 @@
+@@ -18,6 +27,8 @@
      /** RNG. */
      private Random rand = new Random();
  
@@ -26,7 +28,7 @@
      public EffectRenderer(World par1World, RenderEngine par2RenderEngine)
      {
          if (par1World != null)
-@@ -63,9 +73,13 @@
+@@ -56,9 +67,13 @@
                  for (int var3 = 0; var3 < this.fxLayers[var1].size(); ++var3)
                  {
                      var2 = (EntityFX)this.fxLayers[var1].get(var3);
@@ -43,7 +45,7 @@
                      {
                          this.fxLayers[var1].remove(var3--);
                      }
-@@ -78,6 +92,17 @@
+@@ -71,6 +86,17 @@
                  var5.addCrashSectionCallable("Last ticked particle", new CallableLastTickedParticle(this, var2));
                  var5.addCrashSection("Texture index", Integer.valueOf(var1));
                  throw new ReportedException(var4);
@@ -60,8 +62,8 @@
 +                itr.remove();
              }
          }
- 
-@@ -136,6 +161,7 @@
+     }
+@@ -120,6 +146,7 @@
                  for (int var11 = 0; var11 < this.fxLayers[var8].size(); ++var11)
                  {
                      EntityFX var12 = (EntityFX)this.fxLayers[var8].get(var11);
@@ -69,7 +71,7 @@
                      var10.setBrightness(var12.getBrightnessForRender(par2));
                      var12.renderParticle(var10, par2, var3, var7, var4, var5, var6);
                  }
-@@ -143,6 +169,27 @@
+@@ -127,6 +154,27 @@
                  var10.draw();
                  GL11.glDisable(GL11.GL_BLEND);
              }
@@ -97,7 +99,7 @@
          }
      }
  
-@@ -162,6 +209,7 @@
+@@ -146,6 +194,7 @@
              for (int var11 = 0; var11 < this.fxLayers[var9].size(); ++var11)
              {
                  EntityFX var12 = (EntityFX)this.fxLayers[var9].get(var11);
@@ -105,7 +107,7 @@
                  var10.setBrightness(var12.getBrightnessForRender(par2));
                  var12.renderParticle(var10, par2, var4, var8, var5, var6, var7);
              }
-@@ -176,13 +224,15 @@
+@@ -160,13 +209,15 @@
          {
              this.fxLayers[var2].clear();
          }
@@ -124,7 +126,7 @@
              byte var7 = 4;
  
              for (int var8 = 0; var8 < var7; ++var8)
-@@ -195,7 +245,7 @@
+@@ -179,7 +230,7 @@
                          double var13 = (double)par2 + ((double)var9 + 0.5D) / (double)var7;
                          double var15 = (double)par3 + ((double)var10 + 0.5D) / (double)var7;
                          int var17 = this.rand.nextInt(6);
@@ -133,7 +135,7 @@
                      }
                  }
              }
-@@ -247,12 +297,60 @@
+@@ -231,12 +282,60 @@
                  var8 = (double)par1 + var6.getBlockBoundsMaxX() + (double)var7;
              }
  
