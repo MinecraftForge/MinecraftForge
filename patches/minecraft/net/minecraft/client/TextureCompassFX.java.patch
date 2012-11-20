@@ -1,14 +1,14 @@
---- ../src-base/minecraft/net/minecraft/src/TextureCompassFX.java
-+++ ../src-work/minecraft/net/minecraft/src/TextureCompassFX.java
+--- ../src-base/minecraft/net/minecraft/client/TextureCompassFX.java
++++ ../src-work/minecraft/net/minecraft/client/TextureCompassFX.java
 @@ -1,5 +1,6 @@
- package net.minecraft.src;
+ package net.minecraft.client;
  
 +import cpw.mods.fml.client.FMLTextureFX;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.awt.image.BufferedImage;
-@@ -8,26 +9,41 @@
- import net.minecraft.client.Minecraft;
+@@ -9,13 +10,17 @@
+ import net.minecraft.shared.Item;
  
  @SideOnly(Side.CLIENT)
 -public class TextureCompassFX extends TextureFX
@@ -26,10 +26,10 @@
  
      public TextureCompassFX(Minecraft p_i3212_1_)
      {
-         super(Item.field_77750_aQ.func_77617_a(0));
+@@ -23,12 +28,24 @@
          this.field_76865_g = p_i3212_1_;
          this.field_76847_f = 1;
--
+ 
 +        setup();
 +    }
 +
@@ -55,7 +55,7 @@
          }
          catch (IOException var5)
          {
-@@ -56,7 +72,7 @@
+@@ -57,7 +74,7 @@
          int var17;
          int var16;
  
@@ -64,7 +64,7 @@
          {
              int var11 = var8[var10] >> 24 & 255;
              int var12 = var8[var10] >> 16 & 255;
-@@ -139,11 +155,12 @@
+@@ -140,11 +157,11 @@
          int var24;
          int var26;
  
@@ -78,11 +78,10 @@
 +            var17 = (int)((stileSizeBase >> 1) + 0.5D + var31 * (double)var16 * 0.3D);
 +            var18 = (int)((stileSizeBase >> 1) - 0.5D - var30 * (double)var16 * 0.3D * 0.5D);
 +            var19 = var18 * stileSizeBase + var17;
-+
              var20 = 100;
              var21 = 100;
              var22 = 100;
-@@ -165,11 +182,12 @@
+@@ -166,11 +183,11 @@
              var9[var19 * 4 + 3] = (byte)var23;
          }
  
@@ -96,7 +95,6 @@
 +            var17 = (int)((stileSizeBase >> 1) + 0.5D + var30 * (double)var16 * 0.3D);
 +            var18 = (int)((stileSizeBase >> 1) - 0.5D + var31 * (double)var16 * 0.3D * 0.5D);
 +            var19 = var18 * stileSizeBase + var17;
-+            
              var20 = var16 >= 0 ? 255 : 100;
              var21 = var16 >= 0 ? 20 : 100;
              var22 = var16 >= 0 ? 20 : 100;

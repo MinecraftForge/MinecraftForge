@@ -1,24 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -15,7 +15,9 @@
- import java.text.DecimalFormat;
- import java.util.HashMap;
- import java.util.List;
-+
- import javax.swing.JPanel;
-+
- import net.minecraft.src.AchievementList;
- import net.minecraft.src.AnvilSaveConverter;
- import net.minecraft.src.AxisAlignedBB;
-@@ -122,6 +124,7 @@
- import net.minecraft.src.WorldInfo;
- import net.minecraft.src.WorldRenderer;
- import net.minecraft.src.WorldSettings;
-+
- import org.lwjgl.LWJGLException;
- import org.lwjgl.Sys;
- import org.lwjgl.input.Keyboard;
-@@ -134,6 +137,12 @@
+@@ -61,6 +61,12 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
@@ -31,7 +13,7 @@
  
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
-@@ -316,7 +325,7 @@
+@@ -243,7 +249,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
@@ -40,7 +22,7 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab);
-@@ -361,6 +370,8 @@
+@@ -288,6 +294,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -49,7 +31,7 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -389,6 +400,7 @@
+@@ -316,6 +324,7 @@
          {
              this.func_71352_k();
          }
@@ -57,7 +39,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -747,9 +759,11 @@
+@@ -674,9 +683,11 @@
  
              if (!this.field_71454_w)
              {
@@ -69,7 +51,7 @@
              }
  
              GL11.glFlush();
-@@ -1279,11 +1293,13 @@
+@@ -1206,11 +1217,13 @@
  
      public void func_71407_l()
      {
@@ -83,7 +65,7 @@
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
          this.field_71424_I.func_76318_c("gui");
-@@ -1739,6 +1755,7 @@
+@@ -1666,6 +1679,7 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -91,7 +73,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1993,6 +2010,12 @@
+@@ -1920,6 +1934,12 @@
  
      public static void main(String[] p_main_0_)
      {

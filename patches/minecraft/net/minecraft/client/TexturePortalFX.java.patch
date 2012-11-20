@@ -1,12 +1,14 @@
---- ../src-base/minecraft/net/minecraft/src/TexturePortalFX.java
-+++ ../src-work/minecraft/net/minecraft/src/TexturePortalFX.java
-@@ -1,35 +1,44 @@
- package net.minecraft.src;
+--- ../src-base/minecraft/net/minecraft/client/TexturePortalFX.java
++++ ../src-work/minecraft/net/minecraft/client/TexturePortalFX.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.client;
  
 +import cpw.mods.fml.client.FMLTextureFX;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import java.util.Random;
+@@ -7,31 +8,39 @@
+ import net.minecraft.shared.MathHelper;
  
  @SideOnly(Side.CLIENT)
 -public class TexturePortalFX extends TextureFX
@@ -53,7 +55,7 @@
  
                          if (var9 < -1.0F)
                          {
-@@ -63,7 +72,7 @@
+@@ -65,7 +74,7 @@
                      int var13 = (int)(var5 * var5 * 200.0F + 55.0F);
                      int var14 = (int)(var5 * var5 * var5 * var5 * 255.0F);
                      int var15 = (int)(var5 * 100.0F + 155.0F);
@@ -62,7 +64,7 @@
                      this.field_76854_h[var2][var16 * 4 + 0] = (byte)var13;
                      this.field_76854_h[var2][var16 * 4 + 1] = (byte)var14;
                      this.field_76854_h[var2][var16 * 4 + 2] = (byte)var6;
-@@ -78,7 +87,7 @@
+@@ -80,7 +89,7 @@
          ++this.field_76853_g;
          byte[] var1 = this.field_76854_h[this.field_76853_g & 31];
  

@@ -1,11 +1,12 @@
---- ../src-base/minecraft/net/minecraft/src/TextureWaterFlowFX.java
-+++ ../src-work/minecraft/net/minecraft/src/TextureWaterFlowFX.java
-@@ -1,10 +1,11 @@
- package net.minecraft.src;
+--- ../src-base/minecraft/net/minecraft/client/TextureWaterFlowFX.java
++++ ../src-work/minecraft/net/minecraft/client/TextureWaterFlowFX.java
+@@ -1,11 +1,12 @@
+ package net.minecraft.client;
  
 +import cpw.mods.fml.client.FMLTextureFX;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
+ import net.minecraft.shared.Block;
  
  @SideOnly(Side.CLIENT)
 -public class TextureWaterFlowFX extends TextureFX
@@ -13,7 +14,7 @@
  {
      protected float[] field_76880_g = new float[256];
      protected float[] field_76883_h = new float[256];
-@@ -16,6 +17,18 @@
+@@ -17,6 +18,18 @@
      {
          super(Block.field_71942_A.field_72059_bZ + 1);
          this.field_76849_e = 2;
@@ -32,7 +33,7 @@
      }
  
      public void func_76846_a()
-@@ -27,39 +40,39 @@
+@@ -28,39 +41,39 @@
          int var5;
          int var6;
  
@@ -85,7 +86,7 @@
                  }
              }
          }
-@@ -68,9 +81,9 @@
+@@ -69,9 +82,9 @@
          this.field_76883_h = this.field_76880_g;
          this.field_76880_g = var12;
  
