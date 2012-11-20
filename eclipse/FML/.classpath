@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="mc-common"/>
 	<classpathentry kind="src" path="fml-client"/>
 	<classpathentry kind="src" path="fml-common"/>
 	<classpathentry kind="src" path="mc-client"/>
