@@ -8,16 +8,8 @@ import java.util.logging.Level;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.BaseMod;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityClientPlayerMP;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.KeyBinding;
-import net.minecraft.src.NetClientHandler;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.Render;
-import net.minecraft.src.RenderManager;
+import net.minecraft.client.*;
+import net.minecraft.shared.*;
 
 import com.google.common.base.Equivalences;
 import com.google.common.base.Supplier;

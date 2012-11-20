@@ -17,8 +17,9 @@ import static cpw.mods.fml.common.Side.CLIENT;
 import java.util.Map;
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.shared.*;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.TickType;

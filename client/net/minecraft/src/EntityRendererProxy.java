@@ -14,6 +14,7 @@
 
 package net.minecraft.src;
 
+import net.minecraft.client.EntityRenderer;
 import net.minecraft.client.Minecraft;
 
 public class EntityRendererProxy extends EntityRenderer

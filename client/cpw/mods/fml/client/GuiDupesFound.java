@@ -7,7 +7,7 @@ import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
-import net.minecraft.src.GuiErrorScreen;
+import net.minecraft.client.GuiErrorScreen;
 
 public class GuiDupesFound extends GuiErrorScreen
 {

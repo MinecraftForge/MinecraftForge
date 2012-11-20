@@ -3,8 +3,7 @@ package cpw.mods.fml.common.network;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.shared.*;
 
 import com.google.common.base.Throwables;
 import com.google.common.primitives.Bytes;

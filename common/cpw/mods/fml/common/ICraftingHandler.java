@@ -13,9 +13,7 @@
  */
 package cpw.mods.fml.common;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.ItemStack;
+import net.minecraft.shared.*;
 
 /**
  * Return a crafting handler for the mod container to call

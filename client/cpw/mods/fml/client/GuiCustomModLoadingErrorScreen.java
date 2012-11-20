@@ -2,7 +2,7 @@ package cpw.mods.fml.client;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.WrongMinecraftVersionException;
-import net.minecraft.src.GuiErrorScreen;
+import net.minecraft.client.GuiErrorScreen;
 
 public class GuiCustomModLoadingErrorScreen extends GuiErrorScreen
 {

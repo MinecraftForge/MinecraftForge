@@ -3,8 +3,8 @@ package cpw.mods.fml.client;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.GuiButton;
+import net.minecraft.client.Tessellator;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;

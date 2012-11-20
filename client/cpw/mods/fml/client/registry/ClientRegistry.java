@@ -1,8 +1,8 @@
 package cpw.mods.fml.client.registry;
 
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityRenderer;
-import net.minecraft.src.TileEntitySpecialRenderer;
+import net.minecraft.shared.TileEntity;
+import net.minecraft.client.TileEntityRenderer;
+import net.minecraft.client.TileEntitySpecialRenderer;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ClientRegistry

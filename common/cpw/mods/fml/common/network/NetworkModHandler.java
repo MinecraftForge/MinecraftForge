@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.minecraft.src.Item;
+import net.minecraft.shared.Item;
 
 import com.google.common.base.Strings;
 

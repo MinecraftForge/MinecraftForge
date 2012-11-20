@@ -19,6 +19,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.minecraft.client.ITexturePack;
+import net.minecraft.client.RenderBlocks;
+import net.minecraft.client.RenderEngine;
+import net.minecraft.client.TextureFX;
+import net.minecraft.shared.Block;
+import net.minecraft.shared.IBlockAccess;
+
 import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLLog;

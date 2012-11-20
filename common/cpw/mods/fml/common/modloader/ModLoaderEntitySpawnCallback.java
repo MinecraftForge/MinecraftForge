@@ -8,7 +8,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 
-import net.minecraft.src.Entity;
+import net.minecraft.shared.Entity;
 
 public class ModLoaderEntitySpawnCallback implements Function<EntitySpawnPacket, Entity>
 {
