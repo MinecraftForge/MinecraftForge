@@ -30,7 +30,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -360,6 +363,30 @@
+@@ -360,6 +363,38 @@
      {
          double var1 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
          double var3 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
@@ -44,11 +44,19 @@
 +        MinecraftForge.TERRAIN_GEN_BUS.post(event);
 +        return event.newBiomeDecorator;
 +    }
++
++    @SideOnly(Side.CLIENT)
++    public int getWaterColorMultiplier()
++    {
++        BiomeEvent.GetWaterColor event = new BiomeEvent.GetWaterColor(this, waterColorMultiplier);
++        MinecraftForge.EVENT_BUS.post(event);
++        return event.newColor;
++    }
 +    
 +    @SideOnly(Side.CLIENT)
 +    public int getModdedBiomeGrassColor(int original)
 +    {
-+        BiomeEvent.GetBiomeGrassColor event = new BiomeEvent.GetBiomeGrassColor(this, original);
++        BiomeEvent.GetGrassColor event = new BiomeEvent.GetGrassColor(this, original);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
 +    }
@@ -57,7 +65,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public int getModdedBiomeFoliageColor(int original)
 +    {
-+        BiomeEvent.GetBiomeFoliageColor event = new BiomeEvent.GetBiomeFoliageColor(this, original);
++        BiomeEvent.GetFoliageColor event = new BiomeEvent.GetFoliageColor(this, original);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        return event.newColor;
      }
