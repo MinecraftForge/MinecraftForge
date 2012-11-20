@@ -1,5 +1,5 @@
---- ../src-base/common/net/minecraft/src/IBossDisplayData.java
-+++ ../src-work/common/net/minecraft/src/IBossDisplayData.java
+--- ../src-base/minecraft/net/minecraft/src/IBossDisplayData.java
++++ ../src-work/minecraft/net/minecraft/src/IBossDisplayData.java
 @@ -1,9 +1,5 @@
  package net.minecraft.src;
  

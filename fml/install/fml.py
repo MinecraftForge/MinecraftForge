@@ -401,38 +401,31 @@ def merge_client_server(mcp_dir):
     if not os.path.isdir(shared):
         os.makedirs(shared)
     
-    client_classes = []
     server_classes = []
-    
-    zip = ZipFile(client_jar)
-    for i in zip.filelist:
-        if i.filename.endswith('.class'):
-            client_classes.append(i.filename[:-6])
             
     zip = ZipFile(server_jar)
     for i in zip.filelist:
         if i.filename.endswith('.class'):
             server_classes.append(i.filename[:-6])
     
-    for cls in client_classes:
-        if cls in server_classes:
-            if cls in joined_srg.keys():
-                cls = joined_srg[cls]
-            cls += '.java'
+    for cls in server_classes:
+        if cls in joined_srg.keys():
+            cls = joined_srg[cls]
+        cls += '.java'
+        
+        f_client = os.path.normpath(os.path.join(client, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+        f_shared = os.path.normpath(os.path.join(shared, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+        
+        if not os.path.isfile(f_client):
+            print 'Issue Merging File Not Found: ' + cls
+            continue
             
-            f_client = os.path.normpath(os.path.join(client, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
-            f_shared = os.path.normpath(os.path.join(shared, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+        if not cls.rfind('/') == -1:
+            new_dir = os.path.join(shared, cls.rsplit('/', 1)[0])
+            if not os.path.isdir(new_dir):
+                os.makedirs(new_dir)
             
-            if not os.path.isfile(f_client):
-                print 'Issue Merging File Not Found: ' + cls
-                continue
-                
-            if not cls.rfind('/') == -1:
-                new_dir = os.path.join(shared, cls.rsplit('/', 1)[0])
-                if not os.path.isdir(new_dir):
-                    os.makedirs(new_dir)
-                
-            shutil.move(f_client, f_shared)
+        shutil.move(f_client, f_shared)
             
     cleanDirs(client)
 
@@ -728,7 +721,7 @@ def get_conf_copy(mcp_dir, fml_dir):
     common_srg = gen_merged_srg(mcp_dir, fml_dir)
     common_exc = gen_merged_exc(mcp_dir, fml_dir)
     common_map = gen_shared_searge_names(common_srg, common_exc)
-    #ToDo use common_map to merge the remaining csvs, client taking precidense, setting the common items to side '2' and editing commands.py in FML to have 'if csv_side == side || csv_side == '2''
+    
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'fields.csv'), os.path.join(fml_dir, 'conf', 'fields.csv'))
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'methods.csv'), os.path.join(fml_dir, 'conf', 'methods.csv'))
     gen_merged_csv(common_map, os.path.join(mcp_dir, 'conf', 'params.csv'), os.path.join(fml_dir, 'conf', 'params.csv'), main_key='param')
