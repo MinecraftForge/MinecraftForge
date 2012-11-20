@@ -45,6 +45,7 @@ public class MCPMerger
     private static Hashtable<String, ClassInfo> servers = new Hashtable<String, ClassInfo>();
     private static HashSet<String> copyToServer = new HashSet<String>();
     private static HashSet<String> copyToClient = new HashSet<String>();
+    private static HashSet<String> dontAnnotate = new HashSet<String>();
     private static final boolean DEBUG = false;
 
     public static void main(String[] args)
@@ -134,11 +135,16 @@ public class MCPMerger
             String line;
             while ((line = br.readLine()) != null)
             {
-		line = line.split("#")[0];
-                boolean toClient = line.charAt(0) == '<';
+                line = line.split("#")[0];
+                char cmd = line.charAt(0);
                 line = line.substring(1).trim();
-                if (toClient) copyToClient.add(line);
-                else copyToServer.add(line);
+                
+                switch (cmd)
+                {
+                    case '!': dontAnnotate.add(line); break;
+                    case '<': copyToClient.add(line); break;
+                    case '>': copyToServer.add(line); break; 
+                }
             }
 
             in.close();
@@ -225,20 +231,14 @@ public class MCPMerger
                 cAdded.add(name);
                 sAdded.add(name);
             }
+
             for (Entry<String, ZipEntry> entry : sClasses.entrySet())
             {
-                if (!copyToClient.contains(entry.getKey()))
+                if (DEBUG)
                 {
-                    copyClass(sInJar, entry.getValue(), null, sOutJar, false);
+                    System.out.println("Copy class s->c : " + entry.getKey());
                 }
-                else
-                {
-                    if (DEBUG)
-                    {
-                        System.out.println("Copy class s->c : " + entry.getKey());
-                    }
-                    copyClass(sInJar, entry.getValue(), cOutJar, sOutJar, false);
-                }
+                copyClass(sInJar, entry.getValue(), cOutJar, sOutJar, false);
             }
 
             for (String name : new String[]{SideOnly.class.getName(), Side.class.getName()})
@@ -289,7 +289,7 @@ public class MCPMerger
 
         reader.accept(classNode, 0);
 
-        if (!classNode.name.equals("beg")) //Special case CodecMus so I dont have to make a new patch, anyone who uses this in production code is.. bad.
+        if (!dontAnnotate.contains(classNode.name))
         {
             if (classNode.visibleAnnotations == null) classNode.visibleAnnotations = new ArrayList<AnnotationNode>();
             classNode.visibleAnnotations.add(getSideAnn(isClientOnly));
