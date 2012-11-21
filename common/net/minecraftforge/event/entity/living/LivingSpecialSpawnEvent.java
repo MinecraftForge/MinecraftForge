@@ -3,8 +3,10 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.World;
 import net.minecraftforge.event.Cancelable;
+import net.minecraftforge.event.Event.HasResult;
 
 @Cancelable
+@HasResult
 public class LivingSpecialSpawnEvent extends LivingEvent
 {
     public final World world;
