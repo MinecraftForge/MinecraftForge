@@ -22,7 +22,7 @@
  
                      if (var9 != 0)
                      {
-@@ -143,6 +149,48 @@
+@@ -143,6 +149,90 @@
      }
  
      /**
@@ -68,10 +68,52 @@
 +    }
 +
 +    /**
++     * A Chunk Constructor which handles shorts to allow block ids > 256 (full 4096 range)
++     * Meta data sensitive
++     * NOTE: The x,y,z order of the array is different from the native Chunk constructor to allow for generation > y127
++     * NOTE: This is possibly more efficient than the standard constructor due to less memory skipping
++     *
++     * @param world The world this chunk belongs to
++     * @param ids A ShortArray containing all the BlockID's to set this chunk to (x is low order, z is mid, y is high)
++     * @param metadata A ByteArray containing all the metadata to set this chunk to
++     * @param chunkX The chunk's X position
++     * @param chunkZ The Chunk's Z position
++     */
++    public Chunk(World world, short[] ids, byte[] metadata, int chunkX, int chunkZ)
++    {
++        this(world, chunkX, chunkZ);
++        int max = ids.length / 256;
++
++        for (int y = 0; y < max; ++y)
++        {
++            for (int x = 0; x < 16; ++x)
++            {
++                for (int z = 0; z < 16; ++z)
++                {
++                    int idx = y << 8 | z << 4 | x;
++                    int id = ids[idx] & 0xFFFFFF;
++                    int meta = metadata[idx];
++
++                    if (id != 0) {
++                        int storageBlock = y >> 4;
++
++                        if (this.storageArrays[storageBlock] == null) {
++                                this.storageArrays[storageBlock] = new ExtendedBlockStorage(storageBlock << 4);
++                            }
++        
++                            this.storageArrays[storageBlock].setExtBlockID(x, y & 15, z, id);
++                            this.storageArrays[storageBlock].setExtBlockMetadata(x, y & 15, z, meta);
++                        }
++                }
++            }
++        }
++    }
++
++    /**
       * Checks whether the chunk is at the X/Z location specified
       */
      public boolean isAtLocation(int par1, int par2)
-@@ -206,7 +254,7 @@
+@@ -206,7 +296,7 @@
                      {
                          int var5 = this.getBlockID(var2, var4 - 1, var3);
  
@@ -80,7 +122,7 @@
                          {
                              --var4;
                              continue;
-@@ -512,7 +560,10 @@
+@@ -512,7 +602,10 @@
  
      public int getBlockLightOpacity(int par1, int par2, int par3)
      {
@@ -92,7 +134,7 @@
      }
  
      /**
-@@ -520,7 +571,7 @@
+@@ -520,7 +613,7 @@
       */
      public int getBlockID(int par1, int par2, int par3)
      {
@@ -101,7 +143,7 @@
          {
              return 0;
          }
-@@ -536,7 +587,7 @@
+@@ -536,7 +629,7 @@
       */
      public int getBlockMetadata(int par1, int par2, int par3)
      {
@@ -110,7 +152,7 @@
          {
              return 0;
          }
-@@ -577,6 +628,11 @@
+@@ -577,6 +670,11 @@
          }
          else
          {
@@ -122,7 +164,7 @@
              ExtendedBlockStorage var10 = this.storageArrays[par2 >> 4];
              boolean var11 = false;
  
-@@ -607,7 +663,7 @@
+@@ -607,7 +705,7 @@
                  {
                      Block.blocksList[var8].breakBlock(this.worldObj, var12, par2, var13, var8, var9);
                  }
@@ -131,7 +173,7 @@
                  {
                      this.worldObj.removeBlockTileEntity(var12, par2, var13);
                  }
-@@ -627,7 +683,7 @@
+@@ -627,7 +725,7 @@
                  }
                  else
                  {
@@ -140,7 +182,7 @@
                      {
                          if (par2 >= var7)
                          {
-@@ -651,29 +707,21 @@
+@@ -651,29 +749,21 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, var12, par2, var13);
                      }
  
@@ -173,7 +215,7 @@
                      }
                  }
  
-@@ -688,7 +736,7 @@
+@@ -688,7 +778,7 @@
       */
      public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
      {
@@ -182,7 +224,7 @@
  
          if (var5 == null)
          {
-@@ -708,7 +756,7 @@
+@@ -708,7 +798,7 @@
                  var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
  
@@ -191,7 +233,7 @@
                  {
                      TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -729,7 +777,7 @@
+@@ -729,7 +819,7 @@
       */
      public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
      {
@@ -200,7 +242,7 @@
          return var5 == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? var5.getExtSkylightValue(par2, par3 & 15, par4) : (par1EnumSkyBlock == EnumSkyBlock.Block ? var5.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
      }
  
-@@ -739,6 +787,11 @@
+@@ -739,6 +829,11 @@
       */
      public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
      {
@@ -212,7 +254,7 @@
          ExtendedBlockStorage var6 = this.storageArrays[par3 >> 4];
  
          if (var6 == null)
-@@ -767,7 +820,7 @@
+@@ -767,7 +862,7 @@
       */
      public int getBlockLightValue(int par1, int par2, int par3, int par4)
      {
@@ -221,7 +263,7 @@
  
          if (var5 == null)
          {
-@@ -820,7 +873,7 @@
+@@ -820,7 +915,7 @@
          {
              var4 = this.entityLists.length - 1;
          }
@@ -230,7 +272,7 @@
          par1Entity.addedToChunk = true;
          par1Entity.chunkCoordX = this.xPosition;
          par1Entity.chunkCoordY = var4;
-@@ -870,33 +923,33 @@
+@@ -870,33 +965,33 @@
          ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
          TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
  
@@ -275,7 +317,7 @@
      }
  
      /**
-@@ -911,7 +964,7 @@
+@@ -911,7 +1006,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -284,7 +326,7 @@
          }
      }
  
-@@ -926,8 +979,14 @@
+@@ -926,8 +1021,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -301,7 +343,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(var5, par4TileEntity);
          }
-@@ -963,6 +1022,7 @@
+@@ -963,6 +1064,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[var1]);
          }
@@ -309,7 +351,7 @@
      }
  
      /**
-@@ -983,6 +1043,7 @@
+@@ -983,6 +1085,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[var3]);
          }
@@ -317,7 +359,7 @@
      }
  
      /**
-@@ -999,8 +1060,8 @@
+@@ -999,8 +1102,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -328,7 +370,7 @@
  
          if (var4 < 0)
          {
-@@ -1047,8 +1108,8 @@
+@@ -1047,8 +1150,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -339,7 +381,7 @@
  
          if (var5 < 0)
          {
-@@ -1231,6 +1292,15 @@
+@@ -1231,6 +1334,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -355,7 +397,7 @@
          int var5 = 0;
          int var6;
  
-@@ -1327,12 +1397,26 @@
+@@ -1327,12 +1439,26 @@
          }
  
          this.generateHeightMap();
@@ -388,7 +430,7 @@
          }
      }
  
-@@ -1441,4 +1525,18 @@
+@@ -1441,4 +1567,18 @@
              }
          }
      }
