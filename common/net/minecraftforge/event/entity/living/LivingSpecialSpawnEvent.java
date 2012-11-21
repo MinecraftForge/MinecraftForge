@@ -5,6 +5,15 @@ import net.minecraft.src.World;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event.HasResult;
 
+/**
+ * Fires before special spawn events. Cancel the event to cancel special spawn.
+ * 
+ * On slime spawns, result is significant:
+ *    DEFAULT: use vanilla spawn rules
+ *    ALLOW:   allow the spawn
+ *    DENY:    deny the spawn
+ *
+ */
 @Cancelable
 @HasResult
 public class LivingSpecialSpawnEvent extends LivingEvent
