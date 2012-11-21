@@ -99,11 +99,11 @@
 +
 +                        if (this.storageArrays[storageBlock] == null) {
 +                                this.storageArrays[storageBlock] = new ExtendedBlockStorage(storageBlock << 4);
-+                            }
-+        
-+                            this.storageArrays[storageBlock].setExtBlockID(x, y & 15, z, id);
-+                            this.storageArrays[storageBlock].setExtBlockMetadata(x, y & 15, z, meta);
 +                        }
++        
++                        this.storageArrays[storageBlock].setExtBlockID(x, y & 15, z, id);
++                        this.storageArrays[storageBlock].setExtBlockMetadata(x, y & 15, z, meta);
++                    }
 +                }
 +            }
 +        }
