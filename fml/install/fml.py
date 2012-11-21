@@ -647,7 +647,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     #update workspace
     print 'Fixing MCP Workspace'
-    if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
+    if not os.path.isdir(os.path.join(fml_dir, 'install')):
         mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
         if os.path.isdir(mcp_eclipse):
             shutil.rmtree(mcp_eclipse)
