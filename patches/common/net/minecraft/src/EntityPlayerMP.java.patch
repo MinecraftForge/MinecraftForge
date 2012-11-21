@@ -1,16 +1,17 @@
 --- ../src_base/common/net/minecraft/src/EntityPlayerMP.java
 +++ ../src_work/common/net/minecraft/src/EntityPlayerMP.java
-@@ -8,6 +8,9 @@
+@@ -8,6 +8,10 @@
  import java.util.LinkedList;
  import java.util.List;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.PlayerDropsEvent;
++import net.minecraftforge.event.world.ChunkWatchEvent;
  
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
-@@ -80,18 +83,10 @@
+@@ -80,18 +84,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -30,7 +31,7 @@
  
          this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
-@@ -188,7 +183,10 @@
+@@ -188,7 +184,10 @@
                  if (var9 != null && this.worldObj.blockExists(var9.chunkXPos << 4, 0, var9.chunkZPos << 4))
                  {
                      var6.add(this.worldObj.getChunkFromChunkCoords(var9.chunkXPos, var9.chunkZPos));
@@ -42,7 +43,15 @@
                  }
              }
  
-@@ -253,11 +251,29 @@
+@@ -209,6 +208,7 @@
+                 {
+                     Chunk var10 = (Chunk)var11.next();
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, var10);
++                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(var10.getChunkCoordIntPair(), this));
+                 }
+             }
+         }
+@@ -253,11 +253,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
