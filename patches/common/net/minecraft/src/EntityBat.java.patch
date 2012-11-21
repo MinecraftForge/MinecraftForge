@@ -1,16 +1,18 @@
---- ../src_base/common/net/minecraft/src/EntitySlime.java
-+++ ../src_work/common/net/minecraft/src/EntitySlime.java
-@@ -1,4 +1,9 @@
+--- ../src_base/common/net/minecraft/src/EntityBat.java
++++ ../src_work/common/net/minecraft/src/EntityBat.java
+@@ -1,6 +1,11 @@
  package net.minecraft.src;
+ 
+ import java.util.Calendar;
 +
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.living.LivingCanSpawnEvent;
  
- public class EntitySlime extends EntityLiving implements IMob
+ public class EntityBat extends EntityAmbientCreature
  {
-@@ -276,6 +281,20 @@
+@@ -252,6 +257,20 @@
       */
      public boolean getCanSpawnHere()
      {
@@ -28,6 +30,6 @@
 +            return false;
 +        }
 +        
-         Chunk var1 = this.worldObj.getChunkFromBlockCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ));
+         int var1 = MathHelper.floor_double(this.boundingBox.minY);
  
-         if (this.worldObj.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, worldObj))
+         if (var1 >= 63)

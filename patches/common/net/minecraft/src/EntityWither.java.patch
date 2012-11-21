@@ -1,19 +1,25 @@
---- ../src_base/common/net/minecraft/src/EntitySlime.java
-+++ ../src_work/common/net/minecraft/src/EntitySlime.java
-@@ -1,4 +1,9 @@
- package net.minecraft.src;
+--- ../src_base/common/net/minecraft/src/EntityWither.java
++++ ../src_work/common/net/minecraft/src/EntityWither.java
+@@ -3,6 +3,11 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.List;
 +
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.living.LivingCanSpawnEvent;
  
- public class EntitySlime extends EntityLiving implements IMob
+ public class EntityWither extends EntityMob implements IBossDisplayData, IRangedAttackMob
  {
-@@ -276,6 +281,20 @@
-      */
-     public boolean getCanSpawnHere()
+@@ -646,4 +651,24 @@
      {
+         return EnumCreatureAttribute.UNDEAD;
+     }
++
++    @Override
++    public boolean getCanSpawnHere()
++    {
 +        Event event = new LivingCanSpawnEvent(this, this.worldObj, (float)this.posX, (float)this.posY, (float)this.posZ);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
@@ -28,6 +34,6 @@
 +            return false;
 +        }
 +        
-         Chunk var1 = this.worldObj.getChunkFromBlockCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ));
- 
-         if (this.worldObj.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, worldObj))
++        return super.getCanSpawnHere();
++    }
+ }

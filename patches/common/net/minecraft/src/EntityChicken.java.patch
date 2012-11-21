@@ -1,5 +1,5 @@
---- ../src_base/common/net/minecraft/src/EntitySlime.java
-+++ ../src_work/common/net/minecraft/src/EntitySlime.java
+--- ../src_base/common/net/minecraft/src/EntityChicken.java
++++ ../src_work/common/net/minecraft/src/EntityChicken.java
 @@ -1,4 +1,9 @@
  package net.minecraft.src;
 +
@@ -8,12 +8,16 @@
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.living.LivingCanSpawnEvent;
  
- public class EntitySlime extends EntityLiving implements IMob
+ public class EntityChicken extends EntityAnimal
  {
-@@ -276,6 +281,20 @@
-      */
-     public boolean getCanSpawnHere()
+@@ -173,4 +178,24 @@
      {
+         return this.spawnBabyAnimal(par1EntityAgeable);
+     }
++
++    @Override
++    public boolean getCanSpawnHere()
++    {
 +        Event event = new LivingCanSpawnEvent(this, this.worldObj, (float)this.posX, (float)this.posY, (float)this.posZ);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
@@ -28,6 +32,6 @@
 +            return false;
 +        }
 +        
-         Chunk var1 = this.worldObj.getChunkFromBlockCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ));
- 
-         if (this.worldObj.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, worldObj))
++        return super.getCanSpawnHere();
++    }
+ }

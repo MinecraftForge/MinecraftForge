@@ -1,5 +1,5 @@
---- ../src_base/common/net/minecraft/src/EntitySlime.java
-+++ ../src_work/common/net/minecraft/src/EntitySlime.java
+--- ../src_base/common/net/minecraft/src/EntitySilverfish.java
++++ ../src_work/common/net/minecraft/src/EntitySilverfish.java
 @@ -1,4 +1,9 @@
  package net.minecraft.src;
 +
@@ -8,12 +8,13 @@
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.entity.living.LivingCanSpawnEvent;
  
- public class EntitySlime extends EntityLiving implements IMob
+ public class EntitySilverfish extends EntityMob
  {
-@@ -276,6 +281,20 @@
+@@ -216,7 +221,21 @@
       */
      public boolean getCanSpawnHere()
      {
+-        if (super.getCanSpawnHere())
 +        Event event = new LivingCanSpawnEvent(this, this.worldObj, (float)this.posX, (float)this.posY, (float)this.posZ);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
@@ -28,6 +29,7 @@
 +            return false;
 +        }
 +        
-         Chunk var1 = this.worldObj.getChunkFromBlockCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ));
- 
-         if (this.worldObj.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, worldObj))
++       if (super.getCanSpawnHere())
+         {
+             EntityPlayer var1 = this.worldObj.getClosestPlayerToEntity(this, 5.0D);
+             return var1 == null;
