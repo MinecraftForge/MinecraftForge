@@ -8,7 +8,7 @@
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.ChunkWatchEvent;
  
- class PlayerInstance
+ public class PlayerInstance
  {
 @@ -48,6 +51,8 @@
              par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), true, 0));
