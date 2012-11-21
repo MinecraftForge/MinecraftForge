@@ -86,9 +86,9 @@
 +
 +        for (int y = 0; y < max; ++y)
 +        {
-+            for (int x = 0; x < 16; ++x)
++            for (int z = 0; z < 16; ++z)
 +            {
-+                for (int z = 0; z < 16; ++z)
++                for (int x = 0; x < 16; ++x)
 +                {
 +                    int idx = y << 8 | z << 4 | x;
 +                    int id = ids[idx] & 0xFFFFFF;
