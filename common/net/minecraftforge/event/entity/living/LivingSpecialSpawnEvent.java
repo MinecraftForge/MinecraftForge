@@ -11,7 +11,6 @@ public class LivingSpecialSpawnEvent extends LivingEvent
     public final float x;
     public final float y;
     public final float z;
-    private boolean handeled = false;
     
     public LivingSpecialSpawnEvent(EntityLiving entity, World world, float x, float y, float z)
     {
