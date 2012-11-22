@@ -29,3 +29,12 @@
                              List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 16, var4 + 16, var2 + 16);
  
                              for (int var6 = 0; var6 < var5.size(); ++var6)
+@@ -167,6 +175,8 @@
+             this.numberOfTilesToUpdate = 0;
+             this.field_73260_f = 0;
+         }
++        
++        MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.SendChunkUpdates(chunkLocation, this, myManager.getWorldServer()));
+     }
+ 
+     private void sendTileToAllPlayersWatchingChunk(TileEntity par1TileEntity)
