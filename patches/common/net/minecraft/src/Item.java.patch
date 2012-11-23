@@ -26,6 +26,15 @@
      }
  
      /**
+@@ -257,7 +265,7 @@
+     /**
+      * Returns the icon index of the stack given as argument.
+      */
+-    public final int getIconIndex(ItemStack par1ItemStack)
++    public int getIconIndex(ItemStack par1ItemStack)
+     {
+         return this.getIconFromDamage(par1ItemStack.getItemDamage());
+     }
 @@ -604,6 +612,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;
@@ -314,6 +323,6 @@
 +     */
 +    public int getIconFromItemStackForMultiplePasses(ItemStack stack, int pass)
 +    {
-+    	return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
++         return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
 +    }
  }
