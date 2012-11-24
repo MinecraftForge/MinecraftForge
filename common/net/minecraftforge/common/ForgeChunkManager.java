@@ -744,7 +744,7 @@ public class ForgeChunkManager
                 {
                     ticket.setCompoundTag("ModData", tick.modData);
                 }
-                if (tick.ticketType == Type.ENTITY && tick.entity != null)
+                if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.addEntityID(new NBTTagCompound()))
                 {
                     ticket.setInteger("chunkX", MathHelper.floor_double(tick.entity.chunkCoordX));
                     ticket.setInteger("chunkZ", MathHelper.floor_double(tick.entity.chunkCoordZ));
