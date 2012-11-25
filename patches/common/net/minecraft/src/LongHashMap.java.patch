@@ -1,0 +1,709 @@
+--- ../src_base/common/net/minecraft/src/LongHashMap.java
++++ ../src_work/common/net/minecraft/src/LongHashMap.java
+@@ -1,232 +1,488 @@
+ package net.minecraft.src;
+ 
+-public class LongHashMap
+-{
+-    /** the array of all elements in the hash */
+-    private transient LongHashMapEntry[] hashArray = new LongHashMapEntry[16];
+-
+-    /** the number of elements in the hash array */
+-    private transient int numHashElements;
+-
+-    /**
+-     * the maximum amount of elements in the hash (probably 3/4 the size due to meh hashing function)
+-     */
+-    private int capacity = 12;
+-
+-    /**
+-     * percent of the hasharray that can be used without hash colliding probably
+-     */
+-    private final float percentUseable = 0.75F;
+-
+-    /** count of times elements have been added/removed */
+-    private transient volatile int modCount;
+-
+-    /**
+-     * returns the hashed key given the original key
+-     */
+-    private static int getHashedKey(long par0)
++import java.io.IOException;
++import java.io.ObjectInputStream;
++import java.io.ObjectOutputStream;
++import java.io.Serializable;
++import java.util.AbstractCollection;
++import java.util.AbstractSet;
++import java.util.Arrays;
++import java.util.Collection;
++import java.util.ConcurrentModificationException;
++import java.util.HashSet;
++import java.util.Iterator;
++import java.util.Map;
++import java.util.NoSuchElementException;
++import java.util.Set;
++import java.lang.reflect.Array;
++
++
++@SuppressWarnings("unchecked")
++public class LongHashMap<V> implements Cloneable, Serializable {
++    static final long serialVersionUID = 2841537710170573815L;
++
++    private static final long EMPTY_KEY = Long.MIN_VALUE;
++    private static final int  BUCKET_SIZE = 4096;
++
++    private transient long[][] keys;
++    private transient V[][]    values;
++    private transient int      modCount;
++    private transient int      size;
++
++    public LongHashMap() {
++        initialize();
++    }
++
++    public LongHashMap(Map<? extends Long, ? extends V> map) {
++        this();
++        putAll(map);
++    }
++    
++    public boolean containsItem(long key)
+     {
+-        return hash((int)(par0 ^ par0 >>> 32));
+-    }
+-
+-    /**
+-     * the hash function
+-     */
+-    private static int hash(int par0)
++        return containsKey(key);
++    }
++    
++    public V getValueByKey(long key)
+     {
+-        par0 ^= par0 >>> 20 ^ par0 >>> 12;
+-        return par0 ^ par0 >>> 7 ^ par0 >>> 4;
+-    }
+-
+-    /**
+-     * gets the index in the hash given the array length and the hashed key
+-     */
+-    private static int getHashIndex(int par0, int par1)
++        return get(key);
++    }
++    
++    public V add(long key, V value)
+     {
+-        return par0 & par1 - 1;
+-    }
+-
++        return put(key, value);
++    }
++    
+     public int getNumHashElements()
+     {
+-        return this.numHashElements;
++        return size;
++    }
++    
++    // Bukkit methods //
++    public int size() {
++        return size;
++    }
++
++    public boolean isEmpty() {
++        return size == 0;
++    }
++
++    public boolean containsKey(long key) {
++        return get(key) != null;
++    }
++
++    public boolean containsValue(V value) {
++        for (V val : values()) {
++            if (val == value || val.equals(value)) {
++                return true;
++            }
++        }
++
++        return false;
++    }
++
++    public V get(long key) {
++        int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
++        long[] inner = keys[index];
++        if (inner == null) return null;
++
++        for (int i = 0; i < inner.length; i++) {
++            long innerKey = inner[i];
++            if (innerKey == EMPTY_KEY) {
++                return null;
++            } else if (innerKey == key) {
++                return values[index][i];
++            }
++        }
++
++        return null;
++    }
++
++    public V put(long key, V value) {
++        int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
++        long[] innerKeys = keys[index];
++        V[] innerValues = values[index];
++        modCount++;
++
++        if (innerKeys == null) {
++            // need to make a new chain
++            keys[index] = innerKeys = new long[8];
++            Arrays.fill(innerKeys, EMPTY_KEY);
++            values[index] = innerValues = (V[]) new Object[8];
++            innerKeys[0] = key;
++            innerValues[0] = value;
++            size++;
++        } else {
++            int i;
++            for (i = 0; i < innerKeys.length; i++) {
++                // found an empty spot in the chain to put this
++                if (innerKeys[i] == EMPTY_KEY) {
++                    size++;
++                    innerKeys[i] = key;
++                    innerValues[i] = value;
++                    return null;
++                }
++
++                // found an existing entry in the chain with this key, replace it
++                if (innerKeys[i] == key) {
++                    V oldValue = innerValues[i];
++                    innerKeys[i] = key;
++                    innerValues[i] = value;
++                    return oldValue;
++                }
++            }
++
++            // chain is full, resize it and add our new entry
++            keys[index] = innerKeys = Arrays_copyOf(innerKeys, i << 1);
++            Arrays.fill(innerKeys, i, innerKeys.length, EMPTY_KEY);
++            values[index] = innerValues = Arrays_copyOf(innerValues, i << 1);
++            innerKeys[i] = key;
++            innerValues[i] = value;
++            size++;
++        }
++
++        return null;
++    }
++
++    public V remove(long key) {
++        int index = (int) (keyIndex(key) & (BUCKET_SIZE - 1));
++        long[] inner = keys[index];
++        if (inner == null) {
++            return null;
++        }
++
++        for (int i = 0; i < inner.length; i++) {
++            // hit the end of the chain, didn't find this entry
++            if (inner[i] == EMPTY_KEY) {
++                break;
++            }
++
++            if (inner[i] == key) {
++                V value = values[index][i];
++
++                for (i++; i < inner.length; i++) {
++                    if (inner[i] == EMPTY_KEY) {
++                        break;
++                    }
++
++                    inner[i - 1] = inner[i];
++                    values[index][i - 1] = values[index][i];
++                }
++
++                inner[i - 1] = EMPTY_KEY;
++                values[index][i - 1] = null;
++                size--;
++                modCount++;
++                return value;
++            }
++        }
++
++        return null;
++    }
++
++    public void putAll(Map<? extends Long, ? extends V> map) {
++        for (Map.Entry entry : map.entrySet()) {
++            put((Long) entry.getKey(), (V) entry.getValue());
++        }
++    }
++
++    public void clear() {
++        if (size == 0) {
++            return;
++        }
++
++        modCount++;
++        size = 0;
++        Arrays.fill(keys, null);
++        Arrays.fill(values, null);
++    }
++
++    public Set<Long> keySet() {
++        return new KeySet();
++    }
++
++    public Collection<V> values() {
++        return new ValueCollection();
+     }
+ 
+     /**
+-     * get the value from the map given the key
++     * Returns a Set of Entry objects for the HashMap. This is not how the internal
++     * implementation is laid out so this constructs the entire Set when called. For
++     * this reason it should be avoided if at all possible.
++     *
++     * @return Set of Entry objects
++     * @deprecated
+      */
+-    public Object getValueByKey(long par1)
+-    {
+-        int var3 = getHashedKey(par1);
+-
+-        for (LongHashMapEntry var4 = this.hashArray[getHashIndex(var3, this.hashArray.length)]; var4 != null; var4 = var4.nextEntry)
+-        {
+-            if (var4.key == par1)
+-            {
+-                return var4.value;
+-            }
+-        }
+-
+-        return null;
+-    }
+-
+-    public boolean containsItem(long par1)
+-    {
+-        return this.getEntry(par1) != null;
+-    }
+-
+-    final LongHashMapEntry getEntry(long par1)
+-    {
+-        int var3 = getHashedKey(par1);
+-
+-        for (LongHashMapEntry var4 = this.hashArray[getHashIndex(var3, this.hashArray.length)]; var4 != null; var4 = var4.nextEntry)
+-        {
+-            if (var4.key == par1)
+-            {
+-                return var4;
+-            }
+-        }
+-
+-        return null;
+-    }
+-
+-    /**
+-     * Add a key-value pair.
+-     */
+-    public void add(long par1, Object par3Obj)
+-    {
+-        int var4 = getHashedKey(par1);
+-        int var5 = getHashIndex(var4, this.hashArray.length);
+-
+-        for (LongHashMapEntry var6 = this.hashArray[var5]; var6 != null; var6 = var6.nextEntry)
+-        {
+-            if (var6.key == par1)
+-            {
+-                var6.value = par3Obj;
+-                return;
+-            }
+-        }
+-
+-        ++this.modCount;
+-        this.createKey(var4, par1, par3Obj, var5);
+-    }
+-
+-    /**
+-     * resizes the table
+-     */
+-    private void resizeTable(int par1)
+-    {
+-        LongHashMapEntry[] var2 = this.hashArray;
+-        int var3 = var2.length;
+-
+-        if (var3 == 1073741824)
+-        {
+-            this.capacity = Integer.MAX_VALUE;
+-        }
+-        else
+-        {
+-            LongHashMapEntry[] var4 = new LongHashMapEntry[par1];
+-            this.copyHashTableTo(var4);
+-            this.hashArray = var4;
+-            this.capacity = (int)((float)par1 * this.percentUseable);
+-        }
+-    }
+-
+-    /**
+-     * copies the hash table to the specified array
+-     */
+-    private void copyHashTableTo(LongHashMapEntry[] par1ArrayOfLongHashMapEntry)
+-    {
+-        LongHashMapEntry[] var2 = this.hashArray;
+-        int var3 = par1ArrayOfLongHashMapEntry.length;
+-
+-        for (int var4 = 0; var4 < var2.length; ++var4)
+-        {
+-            LongHashMapEntry var5 = var2[var4];
+-
+-            if (var5 != null)
+-            {
+-                var2[var4] = null;
+-                LongHashMapEntry var6;
+-
+-                do
+-                {
+-                    var6 = var5.nextEntry;
+-                    int var7 = getHashIndex(var5.hash, var3);
+-                    var5.nextEntry = par1ArrayOfLongHashMapEntry[var7];
+-                    par1ArrayOfLongHashMapEntry[var7] = var5;
+-                    var5 = var6;
++    @Deprecated
++    public Set<Map.Entry<Long, V>> entrySet() {
++        HashSet<Map.Entry<Long, V>> set = new HashSet<Map.Entry<Long, V>>();
++        for (long key : keySet()) {
++            set.add(new Entry(key, get(key)));
++        }
++
++        return set;
++    }
++
++    public Object clone() throws CloneNotSupportedException {
++        LongHashMap clone = (LongHashMap) super.clone();
++        // Make sure we clear any existing information from the clone
++        clone.clear();
++        // Make sure the clone is properly setup for new entries
++        clone.initialize();
++
++        // Iterate through the data normally to do a safe clone
++        for (long key : keySet()) {
++            final V value = get(key);
++            clone.put(key, value);
++        }
++
++        return clone;
++    }
++
++    private void initialize() {
++        keys = new long[BUCKET_SIZE][];
++        values = (V[][]) new Object[BUCKET_SIZE][];
++    }
++
++    private long keyIndex(long key) {
++        key ^= key >>> 33;
++        key *= 0xff51afd7ed558ccdL;
++        key ^= key >>> 33;
++            key *= 0xc4ceb9fe1a85ec53L;
++            key ^= key >>> 33;
++        return key;
++    }
++
++    private void writeObject(ObjectOutputStream outputStream) throws IOException {
++        outputStream.defaultWriteObject();
++
++        for (long key : keySet()) {
++            V value = get(key);
++            outputStream.writeLong(key);
++            outputStream.writeObject(value);
++        }
++
++        outputStream.writeLong(EMPTY_KEY);
++        outputStream.writeObject(null);
++    }
++
++    private void readObject(ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
++        inputStream.defaultReadObject();
++        initialize();
++
++        while (true) {
++            long key = inputStream.readLong();
++            V value = (V) inputStream.readObject();
++            if (key == EMPTY_KEY && value == null) {
++                break;
++            }
++
++            put(key, value);
++        }
++    }
++
++    public static <T> T[] Arrays_copyOfRange(T[] original, int start, int end) {
++        if (original.length >= start && 0 <= start) {
++            if (start <= end) {
++                int length = end - start;
++                int copyLength = Math.min(length, original.length - start);
++                T[] copy = (T[]) Array.newInstance(original.getClass().getComponentType(), length);
++
++                System.arraycopy(original, start, copy, 0, copyLength);
++                return copy;
++            }
++            throw new IllegalArgumentException();
++        }
++        throw new ArrayIndexOutOfBoundsException();
++    }
++
++    public static <T> T[] Arrays_copyOf(T[] original, int newLength) {
++        if (0 <= newLength) {
++            return Arrays_copyOfRange(original, 0, newLength);
++        }
++        throw new NegativeArraySizeException();
++    }
++
++    public static long[] Arrays_copyOf(long[] original, int newLength) {
++        if (0 <= newLength) {
++            return Arrays_copyOfRange(original, 0, newLength);
++        }
++        throw new NegativeArraySizeException();
++    }
++
++    private static long[] Arrays_copyOfRange(long[] original, int start, int end) {
++        if (original.length >= start && 0 <= start) {
++            if (start <= end) {
++                int length = end - start;
++                int copyLength = Math.min(length, original.length - start);
++                long[] copy = (long[]) Array.newInstance(original.getClass().getComponentType(), length);
++                System.arraycopy(original, start, copy, 0, copyLength);
++                return copy;
++            }
++            throw new IllegalArgumentException();
++        }
++        throw new ArrayIndexOutOfBoundsException();
++    }
++
++
++    private class ValueIterator implements Iterator<V> {
++        private int count;
++        private int index;
++        private int innerIndex;
++        private int expectedModCount;
++        private long lastReturned = EMPTY_KEY;
++
++        long prevKey = EMPTY_KEY;
++        V prevValue;
++
++        ValueIterator() {
++            expectedModCount = LongHashMap.this.modCount;
++        }
++
++        public boolean hasNext() {
++            return count < LongHashMap.this.size;
++        }
++
++        public void remove() {
++            if (LongHashMap.this.modCount != expectedModCount) {
++                throw new ConcurrentModificationException();
++            }
++
++            if (lastReturned == EMPTY_KEY) {
++                throw new IllegalStateException();
++            }
++
++            count--;
++            LongHashMap.this.remove(lastReturned);
++            lastReturned = EMPTY_KEY;
++            expectedModCount = LongHashMap.this.modCount;
++        }
++
++        public V next() {
++            if (LongHashMap.this.modCount != expectedModCount) {
++                throw new ConcurrentModificationException();
++            }
++
++            if (!hasNext()) {
++                throw new NoSuchElementException();
++            }
++
++            long[][] keys = LongHashMap.this.keys;
++            count++;
++
++            if (prevKey != EMPTY_KEY) {
++                innerIndex++;
++            }
++
++            for (; index < keys.length; index++) {
++                if (keys[index] != null) {
++                    for (; innerIndex < keys[index].length; ) {
++                        long key = keys[index][innerIndex];
++                        V value = values[index][innerIndex];
++                        if (key == EMPTY_KEY) {
++                            break;
++                        }
++
++                        lastReturned = key;
++                        prevKey = key;
++                        prevValue = value;
++                        return prevValue;
++                    }
++                    innerIndex = 0;
+                 }
+-                while (var6 != null);
+-            }
+-        }
+-    }
+-
+-    /**
+-     * calls the removeKey method and returns removed object
+-     */
+-    public Object remove(long par1)
+-    {
+-        LongHashMapEntry var3 = this.removeKey(par1);
+-        return var3 == null ? null : var3.value;
+-    }
+-
+-    /**
+-     * removes the key from the hash linked list
+-     */
+-    final LongHashMapEntry removeKey(long par1)
+-    {
+-        int var3 = getHashedKey(par1);
+-        int var4 = getHashIndex(var3, this.hashArray.length);
+-        LongHashMapEntry var5 = this.hashArray[var4];
+-        LongHashMapEntry var6;
+-        LongHashMapEntry var7;
+-
+-        for (var6 = var5; var6 != null; var6 = var7)
+-        {
+-            var7 = var6.nextEntry;
+-
+-            if (var6.key == par1)
+-            {
+-                ++this.modCount;
+-                --this.numHashElements;
+-
+-                if (var5 == var6)
+-                {
+-                    this.hashArray[var4] = var7;
+-                }
+-                else
+-                {
+-                    var5.nextEntry = var7;
+-                }
+-
+-                return var6;
+-            }
+-
+-            var5 = var6;
+-        }
+-
+-        return var6;
+-    }
+-
+-    /**
+-     * creates the key in the hash table
+-     */
+-    private void createKey(int par1, long par2, Object par4Obj, int par5)
+-    {
+-        LongHashMapEntry var6 = this.hashArray[par5];
+-        this.hashArray[par5] = new LongHashMapEntry(par1, par2, par4Obj, var6);
+-
+-        if (this.numHashElements++ >= this.capacity)
+-        {
+-            this.resizeTable(2 * this.hashArray.length);
+-        }
+-    }
+-
+-    /**
+-     * public method to get the hashed key(hashCode)
+-     */
+-    static int getHashCode(long par0)
+-    {
+-        return getHashedKey(par0);
++            }
++
++            throw new NoSuchElementException();
++        }
++    }
++
++    private class KeyIterator implements Iterator<Long> {
++        final ValueIterator iterator;
++
++        public KeyIterator() {
++            iterator = new ValueIterator();
++        }
++
++        public void remove() {
++            iterator.remove();
++        }
++
++        public boolean hasNext() {
++            return iterator.hasNext();
++        }
++
++        public Long next() {
++            iterator.next();
++            return iterator.prevKey;
++        }
++    }
++
++
++    private class KeySet extends AbstractSet<Long> {
++        public void clear() {
++            LongHashMap.this.clear();
++        }
++
++        public int size() {
++            return LongHashMap.this.size();
++        }
++
++        public boolean contains(Object key) {
++            return key instanceof Long && LongHashMap.this.containsKey((Long) key);
++
++        }
++
++        public boolean remove(Object key) {
++            return LongHashMap.this.remove((Long) key) != null;
++        }
++
++        public Iterator<Long> iterator() {
++            return new KeyIterator();
++        }
++    }
++
++
++    private class ValueCollection extends AbstractCollection<V> {
++        public void clear() {
++            LongHashMap.this.clear();
++        }
++
++        public int size() {
++            return LongHashMap.this.size();
++        }
++
++        public boolean contains(Object value) {
++            return LongHashMap.this.containsValue((V) value);
++        }
++
++        public Iterator<V> iterator() {
++            return new ValueIterator();
++        }
++    }
++
++
++    private class Entry implements Map.Entry<Long, V> {
++        private final Long key;
++        private V value;
++
++        Entry(long k, V v) {
++            key = k;
++            value = v;
++        }
++
++        public Long getKey() {
++            return key;
++        }
++
++        public V getValue() {
++            return value;
++        }
++
++        public V setValue(V v) {
++            V old = value;
++            value = v;
++            put(key, v);
++            return old;
++        }
+     }
+ }
