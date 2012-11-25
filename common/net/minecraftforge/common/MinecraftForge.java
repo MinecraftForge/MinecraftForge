@@ -13,6 +13,7 @@ import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.event.EventBus;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.block.BlockModSetEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 
 public class MinecraftForge
@@ -26,7 +27,35 @@ public class MinecraftForge
     public static boolean SPAWNER_ALLOW_ON_INVERTED = false;
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
+    /**
+     * Set a block id and meta in the world
+     * 
+     * @param mod Caller mod class with the FML @Mod attribute
+     * @param callerEntity Tile entity that is updating the block, if any. Can be null
+     * @param playerPlacedBy Player in whose name the update is being done. Save the tile entity placer in NBT
+     * @param world World that's being changed
+     * @param newBlock ID of the new block
+     * @param newMeta Extra data for the block 
+     * @param x X-coordinate
+     * @param y Y-coordinate
+     * @param z Z-coordinate
+     * @return False if Forge mods stopped the block change (permissions issues mostly)
+     */
+    public static boolean setBlock(Class mod, TileEntity callerEntity, String playerPlacedBy, World world, int newBlock, int newMeta, int x, int y, int z)
+    {
+        int oldMeta = world.getBlockMetadata(x, y, z);
+        Block oldB = Block.blocksList[world.getBlockId(x, y, z)];
+        Block newB = Block.blocksList[newBlock];
+        
+        BlockModSetEvent ev = new BlockModSetEvent(mod, callerEntity, playerPlacedBy, world, oldB, oldMeta, newB, newMeta, x, y, z);
+        
+        if (MinecraftForge.EVENT_BUS.post(ev))
+            return false;
 
+        world.setBlockAndMetadata(x, y, z, newBlock, newMeta);
+        return true;
+    }
+    
     /** Register a new plant to be planted when bonemeal is used on grass.
      * @param block The block to place.
      * @param metadata The metadata to set for the block when being placed.
