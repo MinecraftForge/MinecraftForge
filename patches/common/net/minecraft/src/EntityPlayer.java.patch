@@ -170,7 +170,7 @@
          this.capabilities.writeCapabilitiesToNBT(par1NBTTagCompound);
          par1NBTTagCompound.setTag("EnderItems", this.theInventoryEnderChest.saveInventoryToNBT());
 +        
-+        MinecraftForge.EVENT_BUS.post(new PlayerDataEvent.Load(this, par1NBTTagCompound));
++        MinecraftForge.EVENT_BUS.post(new PlayerDataEvent.Save(this, par1NBTTagCompound));
      }
  
      /**
