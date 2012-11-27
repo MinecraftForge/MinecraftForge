@@ -170,6 +170,29 @@ public class OreDictionary
     }
     
     /**
+     * Gets the integer ID for the specified item stack.
+     * If the item stack is not linked to any ore, this will return -1 and no new entry will be created.
+     *
+     * @param itemStack The item stack of the ore.
+     * @return A number representing the ID for this ore type, or -1 if couldn't find it.
+     */
+    public static int getOreID(ItemStack itemStack)
+    {
+        if( itemStack == null )
+            return -1;
+
+        for(int oreID : oreStacks.keySet())
+        {
+            for(ItemStack target : oreStacks.get(oreID))
+            {
+                if(itemStack.itemID == target.itemID && (target.getItemDamage() == -1 || itemStack.getItemDamage() == target.getItemDamage()))
+                    return oreID;
+            }
+        }
+        return -1; // didn't find it.
+    }
+    
+    /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
      *  
