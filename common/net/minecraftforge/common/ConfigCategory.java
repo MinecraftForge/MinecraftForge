@@ -5,17 +5,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Splitter;
 
 import static net.minecraftforge.common.Configuration.*;
 
-public class ConfigCategory
+public class ConfigCategory implements Map<String, Property>
 {
     private String name;
     private String comment;
     private ArrayList<ConfigCategory> children = new ArrayList<ConfigCategory>();
-    private HashMap<String, Property> properties = new HashMap<String, Property>();
+    private Map<String, Property> properties = new HashMap<String, Property>();
     public final ConfigCategory parent;
 
     public ConfigCategory(String name)
@@ -64,7 +66,7 @@ public class ConfigCategory
         return parent != null;
     }
 
-    public HashMap<String, Property> getValues()
+    public Map<String, Property> getValues()
     {
         return properties;
     }
@@ -180,4 +182,20 @@ public class ConfigCategory
         }
         return buf.toString();
     }
+
+
+    //Map bouncer functions for compatibility with older mods, to be removed once all mods stop using it.
+    @Override public int size(){ return properties.size(); }
+    @Override public boolean isEmpty() { return properties.isEmpty(); }
+    @Override public boolean containsKey(Object key) { return properties.containsKey(key); }
+    @Override public boolean containsValue(Object value){ return properties.containsValue(value); }
+    @Override public Property get(Object key) { return properties.get(key); }
+    @Override public Property put(String key, Property value) { return properties.put(key, value); }
+    @Override public Property remove(Object key) { return properties.remove(key); }
+    @Override public void putAll(Map<? extends String, ? extends Property> m) { properties.putAll(m); }
+    @Override public void clear() { properties.clear(); }
+    @Override public Set<String> keySet() { return properties.keySet(); }
+    @Override public Collection<Property> values() { return properties.values(); }
+    @Override public Set<java.util.Map.Entry<String, Property>> entrySet() { return properties.entrySet(); }
+
 }

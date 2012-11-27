@@ -22,6 +22,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 
@@ -101,14 +102,27 @@ public class Configuration
      * defaultId will be used, except if already taken, in which case this
      * will try to determine a free default id.
      */
-    public Property getBlock(String key, int defaultID)
+    public Property getBlock(String key, int defaultID) { return getBlock(CATEGORY_BLOCK, key, defaultID, null); }
+    public Property getBlock(String key, int defaultID, String comment) { return getBlock(CATEGORY_BLOCK, key, defaultID, comment); }
+    public Property getBlock(String category, String key, int defaultID) { return getBlockInternal(category, key, defaultID, null, 256, Block.blocksList.length); }
+    public Property getBlock(String category, String key, int defaultID, String comment) { return getBlockInternal(category, key, defaultID, comment, 256, Block.blocksList.length); }
+
+    /**
+     * Special version of getBlock to be used when you want to garentee the ID you get is below 256
+     * This should ONLY be used by mods who do low level terrain generation, or ones that add new
+     * biomes.
+     * EXA: ExtraBiomesXL
+     * 
+     * Normal mods such as '50 new ores' do not need to be below 256 so should use the normal getBlock
+     */
+    public Property getTerrainBlock(String category, String key, int defaultID, String comment)
     {
-        return getBlock(CATEGORY_BLOCK, key, defaultID);
+        return getBlockInternal(category, key, defaultID, comment, 0, 256); 
     }
 
-    public Property getBlock(String category, String key, int defaultID)
+    private Property getBlockInternal(String category, String key, int defaultID, String comment, int lower, int upper)
     {
-        Property prop = get(category, key, -1);
+        Property prop = get(category, key, -1, comment);
 
         if (prop.getInt() != -1)
         {
@@ -117,6 +131,16 @@ public class Configuration
         }
         else
         {
+            if (defaultID < lower)
+            {
+                FMLLog.warning(
+                    "Mod attempted to get a block ID with a default in the Terrain Generation section, " +
+                    "mod authors should make sure there defaults are above 256 unless explicitly needed " +
+                    "for terrain generation. Most ores do not need to be below 256.");
+                FMLLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
+                defaultID = upper;
+            }
+
             if (Block.blocksList[defaultID] == null && !configMarkers[defaultID])
             {
                 prop.value = Integer.toString(defaultID);
@@ -125,7 +149,7 @@ public class Configuration
             }
             else
             {
-                for (int j = Block.blocksList.length - 1; j > 0; j--)
+                for (int j = upper - 1; j > 0; j--)
                 {
                     if (Block.blocksList[j] == null && !configMarkers[j])
                     {
@@ -140,14 +164,13 @@ public class Configuration
         }
     }
 
-    public Property getItem(String key, int defaultID)
-    {
-        return getItem(CATEGORY_ITEM, key, defaultID);
-    }
+    public Property getItem(String key, int defaultID) { return getItem(CATEGORY_ITEM, key, defaultID, null); }
+    public Property getItem(String key, int defaultID, String comment) { return getItem(CATEGORY_ITEM, key, defaultID, comment); }
+    public Property getItem(String category, String key, int defaultID) { return getItem(category, key, defaultID, null); }
 
-    public Property getItem(String category, String key, int defaultID)
+    public Property getItem(String category, String key, int defaultID, String comment)
     {
-        Property prop = get(category, key, -1);
+        Property prop = get(category, key, -1, comment);
         int defaultShift = defaultID + ITEM_SHIFT;
 
         if (prop.getInt() != -1)
@@ -157,6 +180,15 @@ public class Configuration
         }
         else
         {
+            if (defaultID < MAX_BLOCKS - ITEM_SHIFT)
+            {
+                FMLLog.warning(
+                    "Mod attempted to get a item ID with a default value in the block ID section, " +
+                    "mod authors should make sure there defaults are above %d unless explicitly needed " +
+                    "so that all block ids are free to store blocks.", MAX_BLOCKS - ITEM_SHIFT);
+                FMLLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
+            }
+
             if (Item.itemsList[defaultShift] == null && !configMarkers[defaultShift] && defaultShift > Block.blocksList.length)
             {
                 prop.value = Integer.toString(defaultID);
@@ -182,7 +214,12 @@ public class Configuration
 
     public Property get(String category, String key, int defaultValue)
     {
-        Property prop = get(category, key, Integer.toString(defaultValue), INTEGER);
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, int defaultValue, String comment)
+    {
+        Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER);
         if (!prop.isIntValue())
         {
             prop.value = Integer.toString(defaultValue);
@@ -192,7 +229,12 @@ public class Configuration
 
     public Property get(String category, String key, boolean defaultValue)
     {
-        Property prop = get(category, key, Boolean.toString(defaultValue), BOOLEAN);
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, boolean defaultValue, String comment)
+    {
+        Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN);
         if (!prop.isBooleanValue())
         {
             prop.value = Boolean.toString(defaultValue);
@@ -200,10 +242,14 @@ public class Configuration
         return prop;
     }
 
-    
     public Property get(String category, String key, double defaultValue)
     {
-        Property prop = get(category, key, Double.toString(defaultValue), DOUBLE);
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, double defaultValue, String comment)
+    {
+        Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE);
         if (!prop.isDoubleValue())
         {
             prop.value = Double.toString(defaultValue);
@@ -213,15 +259,30 @@ public class Configuration
 
     public Property get(String category, String key, String defaultValue)
     {
-        return get(category, key, defaultValue, STRING);
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, String defaultValue, String comment)
+    {
+        return get(category, key, defaultValue, comment, STRING);
     }
 
     public Property get(String category, String key, String[] defaultValue)
     {
-        return get(category, key, defaultValue, STRING);
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, String[] defaultValue, String comment)
+    {
+        return get(category, key, defaultValue, comment, STRING);
     }
 
     public Property get(String category, String key, int[] defaultValue)
+    {
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, int[] defaultValue, String comment)
     {
         String[] values = new String[defaultValue.length];
         for (int i = 0; i < defaultValue.length; i++)
@@ -229,7 +290,7 @@ public class Configuration
             values[i] = Integer.toString(defaultValue[i]);
         }
 
-        Property prop =  get(category, key, values, INTEGER);
+        Property prop =  get(category, key, values, comment, INTEGER);
         if (!prop.isIntList())
         {
             prop.valueList = values;
@@ -240,13 +301,18 @@ public class Configuration
 
     public Property get(String category, String key, double[] defaultValue)
     {
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, double[] defaultValue, String comment)
+    {
         String[] values = new String[defaultValue.length];
         for (int i = 0; i < defaultValue.length; i++)
         {
             values[i] = Double.toString(defaultValue[i]);
         }
 
-        Property prop =  get(category, key, values, DOUBLE);
+        Property prop =  get(category, key, values, comment, DOUBLE);
         
         if (!prop.isDoubleList())
         {
@@ -258,13 +324,18 @@ public class Configuration
 
     public Property get(String category, String key, boolean[] defaultValue)
     {
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, boolean[] defaultValue, String comment)
+    {
         String[] values = new String[defaultValue.length];
         for (int i = 0; i < defaultValue.length; i++)
         {
             values[i] = Boolean.toString(defaultValue[i]);
         }
 
-        Property prop =  get(category, key, values, BOOLEAN);
+        Property prop =  get(category, key, values, comment, BOOLEAN);
         
         if (!prop.isBooleanList())
         {
@@ -274,7 +345,7 @@ public class Configuration
         return prop;
     }
 
-    public Property get(String category, String key, String defaultValue, Property.Type type)
+    public Property get(String category, String key, String defaultValue, String comment, Property.Type type)
     {
         if (!caseSensitiveCustomCategories)
         {
@@ -293,12 +364,14 @@ public class Configuration
                 cat.set(key, prop);
             }
 
+            prop.comment = comment;
             return prop;
         }
         else if (defaultValue != null)
         {
             Property prop = new Property(key, defaultValue, type);
             cat.set(key, prop);
+            prop.comment = comment;
             return prop;
         }
         else
@@ -307,7 +380,7 @@ public class Configuration
         }
     }
 
-    public Property get(String category, String key, String[] defaultValue, Property.Type type)
+    public Property get(String category, String key, String[] defaultValue, String comment, Property.Type type)
     {
         if (!caseSensitiveCustomCategories)
         {
@@ -326,11 +399,14 @@ public class Configuration
                 cat.set(key, prop);
             }
 
+            prop.comment = comment;
+
             return prop;
         }
         else if (defaultValue != null)
         {
             Property prop = new Property(key, defaultValue, type);
+            prop.comment = comment;
             cat.set(key, prop);
             return prop;
         }

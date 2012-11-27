@@ -799,7 +799,6 @@ public class ForgeChunkManager
     {
         cfgFile = new File(configDir,"forgeChunkLoading.cfg");
         config = new Configuration(cfgFile, true);
-        config.categories.clear();
         try
         {
             config.load();
