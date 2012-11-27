@@ -150,14 +150,18 @@ public class ConfigCategory implements Map<String, Property>
             if (prop.isList())
             {
                 out.write(String.format(pad + "%s:%s <" + NEW_LINE, prop.getType().getID(), propName));
-                pad = getIndent(indent + 2)
-;
+                pad = getIndent(indent + 2);
+
                 for (String line : prop.valueList)
                 {
                     out.write(pad + line + NEW_LINE);
                 }
 
                 out.write(getIndent(indent + 1) + " >" + NEW_LINE);
+            }
+            else if (prop.getType() == null)
+            {
+                out.write(String.format(pad + "%s=%s" + NEW_LINE, propName, prop.value));
             }
             else
             {
