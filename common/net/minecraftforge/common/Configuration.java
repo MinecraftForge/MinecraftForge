@@ -113,6 +113,11 @@ public class Configuration
      * biomes.
      * EXA: ExtraBiomesXL
      * 
+     * Specifically, if your block is used BEFORE the Chunk is created, and placed in the terrain byte array directly.
+     * If you add a new biome and you set the top/filler block, they need to be <256, nothing else.
+     * 
+     * If you're adding a new ore, DON'T call this function.
+     * 
      * Normal mods such as '50 new ores' do not need to be below 256 so should use the normal getBlock
      */
     public Property getTerrainBlock(String category, String key, int defaultID, String comment)

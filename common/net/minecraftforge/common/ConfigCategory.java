@@ -4,9 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.google.common.base.Splitter;
 
@@ -17,7 +17,7 @@ public class ConfigCategory implements Map<String, Property>
     private String name;
     private String comment;
     private ArrayList<ConfigCategory> children = new ArrayList<ConfigCategory>();
-    private Map<String, Property> properties = new HashMap<String, Property>();
+    private Map<String, Property> properties = new TreeMap<String, Property>();
     public final ConfigCategory parent;
 
     public ConfigCategory(String name)
