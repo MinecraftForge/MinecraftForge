@@ -161,7 +161,7 @@ public class ForgeChunkManager
         private Type ticketType;
         private LinkedHashSet<ChunkCoordIntPair> requestedChunks;
         private NBTTagCompound modData;
-        private World world;
+        public final World world;
         private int maxDepth;
         private String entityClazz;
         private int entityChunkX;
@@ -511,16 +511,21 @@ public class ForgeChunkManager
         return container;
     }
 
-    private static int getMaxTicketLengthFor(String modId)
+    public static int getMaxTicketLengthFor(String modId)
     {
         int allowedCount = ticketConstraints.containsKey(modId) && overridesEnabled ? ticketConstraints.get(modId) : defaultMaxCount;
         return allowedCount;
     }
 
-    private static int getMaxChunkDepthFor(String modId)
+    public static int getMaxChunkDepthFor(String modId)
     {
         int allowedCount = chunkConstraints.containsKey(modId) && overridesEnabled ? chunkConstraints.get(modId) : defaultMaxChunks;
         return allowedCount;
+    }
+    
+    public static int ticketCountAvaliableFor(String username)
+    {
+    	return playerTickets.get(username).size()-playerTicketLength;
     }
 
     public static Ticket requestPlayerTicket(Object mod, EntityPlayer player, World world, Type type)
