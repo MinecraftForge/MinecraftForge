@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import java.io.*;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -34,26 +35,27 @@ import static net.minecraftforge.common.Property.Type.*;
  */
 public class Configuration
 {
-    private static boolean[] configBlocks = new boolean[Block.blocksList.length];
-    private static boolean[] configItems  = new boolean[Item.itemsList.length];
+    private static boolean[] configMarkers = new boolean[Item.itemsList.length];
     private static final int ITEM_SHIFT = 256;
+    private static final int MAX_BLOCKS = 4096;
 
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_BLOCK   = "block";
     public static final String CATEGORY_ITEM    = "item";
     public static final String ALLOWED_CHARS = "._-";
     public static final String DEFAULT_ENCODING = "UTF-8";
+    public static final String CATEGORY_SPLITTER = ".";
+    public static final String NEW_LINE;
     private static final Pattern CONFIG_START = Pattern.compile("START: \"([^\\\"]+)\"");
     private static final Pattern CONFIG_END = Pattern.compile("END: \"([^\\\"]+)\"");
-    private static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
+    public static final CharMatcher allowedProperties = CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf(ALLOWED_CHARS));
     private static Configuration PARENT = null;
 
     File file;
 
-    public Map<String, Map<String, Property>> categories = new TreeMap<String, Map<String, Property>>();
+    public Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
     private Map<String, Configuration> children = new TreeMap<String, Configuration>();
 
-    private Map<String,String> customCategoryComments = Maps.newHashMap();
     private boolean caseSensitiveCustomCategories;
     public String defaultEncoding = DEFAULT_ENCODING;
     private String fileName = null;
@@ -61,8 +63,8 @@ public class Configuration
 
     static
     {
-        Arrays.fill(configBlocks, false);
-        Arrays.fill(configItems,  false);
+        Arrays.fill(configMarkers, false);
+        NEW_LINE = System.getProperty("line.separator");
     }
 
     public Configuration(){}
@@ -82,6 +84,7 @@ public class Configuration
         }
         else
         {
+            fileName = path;
             load();
         }
     }
@@ -109,25 +112,25 @@ public class Configuration
 
         if (prop.getInt() != -1)
         {
-            configBlocks[prop.getInt()] = true;
+            configMarkers[prop.getInt()] = true;
             return prop;
         }
         else
         {
-            if (Block.blocksList[defaultID] == null && !configBlocks[defaultID])
+            if (Block.blocksList[defaultID] == null && !configMarkers[defaultID])
             {
                 prop.value = Integer.toString(defaultID);
-                configBlocks[defaultID] = true;
+                configMarkers[defaultID] = true;
                 return prop;
             }
             else
             {
-                for (int j = configBlocks.length - 1; j > 0; j--)
+                for (int j = Block.blocksList.length - 1; j > 0; j--)
                 {
-                    if (Block.blocksList[j] == null && !configBlocks[j])
+                    if (Block.blocksList[j] == null && !configMarkers[j])
                     {
                         prop.value = Integer.toString(j);
-                        configBlocks[j] = true;
+                        configMarkers[j] = true;
                         return prop;
                     }
                 }
@@ -149,25 +152,25 @@ public class Configuration
 
         if (prop.getInt() != -1)
         {
-            configItems[prop.getInt() + ITEM_SHIFT] = true;
+            configMarkers[prop.getInt() + ITEM_SHIFT] = true;
             return prop;
         }
         else
         {
-            if (Item.itemsList[defaultShift] == null && !configItems[defaultShift] && defaultShift > Block.blocksList.length)
+            if (Item.itemsList[defaultShift] == null && !configMarkers[defaultShift] && defaultShift > Block.blocksList.length)
             {
                 prop.value = Integer.toString(defaultID);
-                configItems[defaultShift] = true;
+                configMarkers[defaultShift] = true;
                 return prop;
             }
             else
             {
-                for (int x = configItems.length - 1; x >= ITEM_SHIFT; x--)
+                for (int x = Item.itemsList.length - 1; x >= ITEM_SHIFT; x--)
                 {
-                    if (Item.itemsList[x] == null && !configItems[x])
+                    if (Item.itemsList[x] == null && !configMarkers[x])
                     {
                         prop.value = Integer.toString(x - ITEM_SHIFT);
-                        configItems[x] = true;
+                        configMarkers[x] = true;
                         return prop;
                     }
                 }
@@ -197,9 +200,78 @@ public class Configuration
         return prop;
     }
 
+    
+    public Property get(String category, String key, double defaultValue)
+    {
+        Property prop = get(category, key, Double.toString(defaultValue), DOUBLE);
+        if (!prop.isDoubleValue())
+        {
+            prop.value = Double.toString(defaultValue);
+        }
+        return prop;
+    }
+
     public Property get(String category, String key, String defaultValue)
     {
         return get(category, key, defaultValue, STRING);
+    }
+
+    public Property get(String category, String key, String[] defaultValue)
+    {
+        return get(category, key, defaultValue, STRING);
+    }
+
+    public Property get(String category, String key, int[] defaultValue)
+    {
+        String[] values = new String[defaultValue.length];
+        for (int i = 0; i < defaultValue.length; i++)
+        {
+            values[i] = Integer.toString(defaultValue[i]);
+        }
+
+        Property prop =  get(category, key, values, INTEGER);
+        if (!prop.isIntList())
+        {
+            prop.valueList = values;
+        }
+
+        return prop;
+    }
+
+    public Property get(String category, String key, double[] defaultValue)
+    {
+        String[] values = new String[defaultValue.length];
+        for (int i = 0; i < defaultValue.length; i++)
+        {
+            values[i] = Double.toString(defaultValue[i]);
+        }
+
+        Property prop =  get(category, key, values, DOUBLE);
+        
+        if (!prop.isDoubleList())
+        {
+            prop.valueList = values;
+        }
+
+        return prop;
+    }
+
+    public Property get(String category, String key, boolean[] defaultValue)
+    {
+        String[] values = new String[defaultValue.length];
+        for (int i = 0; i < defaultValue.length; i++)
+        {
+            values[i] = Boolean.toString(defaultValue[i]);
+        }
+
+        Property prop =  get(category, key, values, BOOLEAN);
+        
+        if (!prop.isBooleanList())
+        {
+            prop.valueList = values;
+        }
+
+        return prop;
     }
 
     public Property get(String category, String key, String defaultValue, Property.Type type)
@@ -209,22 +281,57 @@ public class Configuration
             category = category.toLowerCase(Locale.ENGLISH);
         }
 
-        Map<String, Property> source = categories.get(category);
+        ConfigCategory cat = getCategory(category);
 
-        if(source == null)
+        if (cat.containsKey(key))
         {
-            source = new TreeMap<String, Property>();
-            categories.put(category, source);
-        }
+            Property prop = cat.get(key);
 
-        if (source.containsKey(key))
-        {
-            return source.get(key);
+            if (prop.getType() == null)
+            {
+                prop = new Property(prop.getName(), prop.value, type);
+                cat.set(key, prop);
+            }
+
+            return prop;
         }
         else if (defaultValue != null)
         {
             Property prop = new Property(key, defaultValue, type);
-            source.put(key, prop);
+            cat.set(key, prop);
+            return prop;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public Property get(String category, String key, String[] defaultValue, Property.Type type)
+    {
+        if (!caseSensitiveCustomCategories)
+        {
+            category = category.toLowerCase(Locale.ENGLISH);
+        }
+
+        ConfigCategory cat = getCategory(category);
+
+        if (cat.containsKey(key))
+        {
+            Property prop = cat.get(key);
+
+            if (prop.getType() == null)
+            {
+                prop = new Property(prop.getName(), prop.value, type);
+                cat.set(key, prop);
+            }
+
+            return prop;
+        }
+        else if (defaultValue != null)
+        {
+            Property prop = new Property(key, defaultValue, type);
+            cat.set(key, prop);
             return prop;
         }
         else
@@ -240,8 +347,8 @@ public class Configuration
 
     public boolean hasKey(String category, String key)
     {
-        Map<String, Property> cat = categories.get(category);
-        return cat != null && cat.get(key) != null;
+        ConfigCategory cat = categories.get(category);
+        return cat != null && cat.containsKey(key);
     }
 
     public void load()
@@ -250,6 +357,7 @@ public class Configuration
         {
             return;
         }
+
         BufferedReader buffer = null;
         try
         {
@@ -270,10 +378,15 @@ public class Configuration
                 buffer = new BufferedReader(input);
 
                 String line;
-                Map<String, Property> currentMap = null;
+                ConfigCategory currentCat = null;
+                Property.Type type = null;
+                ArrayList<String> tmpList = null;
+                int lineNum = 0;
+                String name = null;
 
                 while (true)
                 {
+                    lineNum++;
                     line = buffer.readLine();
 
                     if (line == null)
@@ -287,8 +400,7 @@ public class Configuration
                     if (start.matches())
                     {
                         fileName = start.group(1);
-                        categories = new TreeMap<String, Map<String, Property>>();
-                        customCategoryComments = Maps.newHashMap();
+                        categories = new TreeMap<String, ConfigCategory>();
                         continue;
                     }
                     else if (end.matches())
@@ -296,7 +408,6 @@ public class Configuration
                         fileName = end.group(1);
                         Configuration child = new Configuration();
                         child.categories = categories;
-                        child.customCategoryComments = customCategoryComments;
                         this.children.put(fileName, child);
                         continue;
                     }
@@ -304,6 +415,7 @@ public class Configuration
                     int nameStart = -1, nameEnd = -1;
                     boolean skip = false;
                     boolean quoted = false;
+
                     for (int i = 0; i < line.length() && !skip; ++i)
                     {
                         if (Character.isLetterOrDigit(line.charAt(i)) || ALLOWED_CHARS.indexOf(line.charAt(i)) != -1 || (quoted && line.charAt(i) != '"'))
@@ -339,46 +451,85 @@ public class Configuration
                                     break;
 
                                 case '{':
-                                    String scopeName = line.substring(nameStart, nameEnd + 1);
+                                    name = line.substring(nameStart, nameEnd + 1);
+                                    String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
 
-                                    currentMap = categories.get(scopeName);
-                                    if (currentMap == null)
+                                    currentCat = categories.get(qualifiedName);
+                                    if (currentCat == null)
                                     {
-                                        currentMap = new TreeMap<String, Property>();
-                                        categories.put(scopeName, currentMap);
+                                        currentCat = new ConfigCategory(name, null);
+                                        categories.put(qualifiedName, currentCat);
                                     }
+                                    name = null;
 
                                     break;
 
                                 case '}':
-                                    currentMap = null;
+                                    currentCat = currentCat.parent;
                                     break;
 
                                 case '=':
-                                    String propertyName = line.substring(nameStart, nameEnd + 1);
+                                    name = line.substring(nameStart, nameEnd + 1);
 
-                                    if (currentMap == null)
+                                    if (currentCat == null)
                                     {
-                                        throw new RuntimeException("property " + propertyName + " has no scope");
+                                        throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
                                     }
 
-                                    Property prop = new Property();
-                                    prop.setName(propertyName);
-                                    prop.value = line.substring(i + 1);
+                                    Property prop = new Property(name, line.substring(i + 1), type, true);
                                     i = line.length();
 
-                                    currentMap.put(propertyName, prop);
+                                    currentCat.set(name, prop);
 
                                     break;
 
+                                case ':':
+                                    type = Property.Type.tryParse(line.substring(nameStart, nameEnd + 1).charAt(0));
+                                    nameStart = nameEnd = -1;
+                                    break;
+
+                                case '<':
+                                    if (tmpList != null)
+                                    {
+                                        throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
+                                    }
+
+                                    name = line.substring(nameStart, nameEnd + 1);
+
+                                    if (currentCat == null)
+                                    {
+                                        throw new RuntimeException(String.format("'%s' has no scope in '%s:%d'", name, fileName, lineNum));
+                                    }
+
+                                    tmpList = new ArrayList<String>();
+
+                                    break;
+
+                                case '>':
+                                    if (tmpList == null)
+                                    {
+                                        throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
+                                    }
+
+                                    currentCat.set(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
+                                    name = null;
+                                    tmpList = null;
+                                    type = null;
+                                    break;
+
                                 default:
-                                    throw new RuntimeException("unknown character " + line.charAt(i));
+                                    throw new RuntimeException(String.format("Unknown character '%s' in '%s:%d'", line.charAt(i), fileName, lineNum));
                             }
                         }
                     }
+
                     if (quoted)
                     {
-                        throw new RuntimeException("unmatched quote");
+                        throw new RuntimeException(String.format("Unmatched quote in '%s:%d'", fileName, lineNum));
+                    }
+                    else if (tmpList != null)
+                    {
+                        tmpList.add(line.trim());
                     }
                 }
             }
@@ -424,9 +575,8 @@ public class Configuration
                 FileOutputStream fos = new FileOutputStream(file);
                 BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, defaultEncoding));
 
-                buffer.write("# Configuration file\r\n");
-                buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + "\r\n");
-                buffer.write("\r\n");
+                buffer.write("# Configuration file" + NEW_LINE);
+                buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + NEW_LINE + NEW_LINE);
 
                 if (children.isEmpty())
                 {
@@ -436,9 +586,9 @@ public class Configuration
                 {
                     for (Map.Entry<String, Configuration> entry : children.entrySet())
                     {
-                        buffer.write("START: \"" + entry.getKey() + "\"\r\n");
+                        buffer.write("START: \"" + entry.getKey() + "\"" + NEW_LINE);
                         entry.getValue().save(buffer);
-                        buffer.write("END: \"" + entry.getKey() + "\"\r\n\r\n");
+                        buffer.write("END: \"" + entry.getKey() + "\"" + NEW_LINE + NEW_LINE);
                     }
                 }
 
@@ -454,61 +604,63 @@ public class Configuration
 
     private void save(BufferedWriter out) throws IOException
     {
-        for(Map.Entry<String, Map<String, Property>> category : categories.entrySet())
+        for (ConfigCategory cat : categories.values())
         {
-            out.write("####################\r\n");
-            out.write("# " + category.getKey() + " \r\n");
-            if (customCategoryComments.containsKey(category.getKey()))
+            if (!cat.isChild())
             {
-                out.write("#===================\r\n");
-                String comment = customCategoryComments.get(category.getKey());
-                Splitter splitter = Splitter.onPattern("\r?\n");
-                for (String commentLine : splitter.split(comment))
+                cat.write(out, 0);
+                out.newLine();
+            }
+        }
+    }
+
+    public ConfigCategory getCategory(String category)
+    {
+        ConfigCategory ret = categories.get(category);
+
+        if (ret == null)
+        {
+            if (category.contains(CATEGORY_SPLITTER))
+            {
+                String[] hierarchy = category.split("\\"+CATEGORY_SPLITTER);
+                ConfigCategory parent = categories.get(hierarchy[0]);
+
+                if (parent == null)
                 {
-                    out.write("# ");
-                    out.write(commentLine+"\r\n");
+                    parent = new ConfigCategory(hierarchy[0]);
+                    categories.put(parent.getQualifiedName(), parent);
+                }
+
+                for (int i = 1; i < hierarchy.length; i++)
+                {
+                    String name = ConfigCategory.getQualifiedName(hierarchy[i], parent);
+                    ConfigCategory child = categories.get(name);
+
+                    if (child == null)
+                    {
+                        child = new ConfigCategory(hierarchy[i], parent);
+                        categories.put(name, child);
+                    }
+
+                    ret = child;
+                    parent = child;
                 }
             }
-            out.write("####################\r\n\r\n");
-
-            String catKey = category.getKey();
-            if (!allowedProperties.matchesAllOf(catKey))
+            else
             {
-                catKey = '"'+catKey+'"';
+                ret = new ConfigCategory(category);
+                categories.put(category, ret);
             }
-            out.write(catKey + " {\r\n");
-            writeProperties(out, category.getValue().values());
-            out.write("}\r\n\r\n");
         }
+
+        return ret;
     }
 
     public void addCustomCategoryComment(String category, String comment)
     {
         if (!caseSensitiveCustomCategories)
             category = category.toLowerCase(Locale.ENGLISH);
-        customCategoryComments.put(category, comment);
-    }
-
-    private void writeProperties(BufferedWriter buffer, Collection<Property> props) throws IOException
-    {
-        for (Property property : props)
-        {
-            if (property.comment != null)
-            {
-                Splitter splitter = Splitter.onPattern("\r?\n");
-                for (String commentLine : splitter.split(property.comment))
-                {
-                    buffer.write("   # " + commentLine + "\r\n");
-                }
-            }
-            String propName = property.getName();
-            if (!allowedProperties.matchesAllOf(propName))
-            {
-            	propName = '"'+propName+'"';
-            }
-            buffer.write("   " + propName + "=" + property.value);
-            buffer.write("\r\n");
-        }
+        getCategory(category).setComment(comment);
     }
 
     private void setChild(String name, Configuration child)
@@ -521,7 +673,6 @@ public class Configuration
         {
             Configuration old = children.get(name);
             child.categories = old.categories;
-            child.customCategoryComments = old.customCategoryComments;
             child.fileName = old.fileName;
         }
     }
