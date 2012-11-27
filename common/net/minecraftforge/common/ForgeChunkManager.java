@@ -865,13 +865,13 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container != null)
         {
-            Map<String, Property> map = config.categories.get(container.getModId());
-            if (map == null)
+            Category cat = config.categories.get(container.getModId());
+            if (cat == null)
             {
-                map = Maps.newHashMap();
-                config.categories.put(container.getModId(), map);
+                cat = new Category(container.getModId());
+                config.categories.put(container.getModId(), cat);
             }
-            return map;
+            return cat.properties;
         }
 
         return null;
@@ -882,7 +882,7 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container != null)
         {
-            Map<String, Property> props = config.categories.get(container.getModId());
+            Map<String, Property> props = config.categories.get(container.getModId()).properties;
             props.put(propertyName, new Property(propertyName, value, type));
         }
     }
