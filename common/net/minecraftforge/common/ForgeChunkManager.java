@@ -178,12 +178,12 @@ public class ForgeChunkManager
             this.requestedChunks = Sets.newLinkedHashSet();
         }
 
-        Ticket(String modId, Type type, World world, EntityPlayer player)
+        Ticket(String modId, Type type, World world, String player)
         {
             this(modId, type, world);
             if (player != null)
             {
-                this.player = player.getEntityName();
+                this.player = player;
             }
             else
             {
@@ -528,7 +528,7 @@ public class ForgeChunkManager
     	return playerTickets.get(username).size()-playerTicketLength;
     }
 
-    public static Ticket requestPlayerTicket(Object mod, EntityPlayer player, World world, Type type)
+    public static Ticket requestPlayerTicket(Object mod, String username, World world, Type type)
     {
         ModContainer mc = getContainer(mod);
         if (mc == null)
@@ -536,13 +536,13 @@ public class ForgeChunkManager
             FMLLog.log(Level.SEVERE, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
             return null;
         }
-        if (playerTickets.get(player.getEntityName()).size()>playerTicketLength)
+        if (playerTickets.get(username).size()>playerTicketLength)
         {
-            FMLLog.warning("Unable to assign further chunkloading tickets to player %s (on behalf of mod %s)", player.getEntityName(), mc.getModId());
+            FMLLog.warning("Unable to assign further chunkloading tickets to player %s (on behalf of mod %s)", username, mc.getModId());
             return null;
         }
-        Ticket ticket = new Ticket(mc.getModId(),type,world,player);
-        playerTickets.put(player.getEntityName(), ticket);
+        Ticket ticket = new Ticket(mc.getModId(),type,world,username);
+        playerTickets.put(username, ticket);
         tickets.get(world).put("Forge", ticket);
         return ticket;
     }
