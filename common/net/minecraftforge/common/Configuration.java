@@ -138,7 +138,7 @@ public class Configuration
                     "mod authors should make sure there defaults are above 256 unless explicitly needed " +
                     "for terrain generation. Most ores do not need to be below 256.");
                 FMLLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
-                defaultID = upper;
+                defaultID = upper - 1;
             }
 
             if (Block.blocksList[defaultID] == null && !configMarkers[defaultID])
