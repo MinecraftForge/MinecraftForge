@@ -41,7 +41,7 @@
          {
              WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
 -            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.itemStack, var5.theMinimumChanceToGenerateItem, var5.theMinimumChanceToGenerateItem);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.itemStack, var5.theMinimumChanceToGenerateItem, var5.theMaximumChanceToGenerateItem);
  
 -            if (Item.itemsList[var5.theItemId].getItemStackLimit() >= var6)
 +            for (ItemStack item : stacks)
@@ -63,7 +63,7 @@
          {
              WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
 -            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.itemStack, var5.theMinimumChanceToGenerateItem, var5.theMinimumChanceToGenerateItem);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.itemStack, var5.theMinimumChanceToGenerateItem, var5.theMaximumChanceToGenerateItem);
  
 -            if (Item.itemsList[var5.theItemId].getItemStackLimit() >= var6)
 +            for (ItemStack item : stacks)
