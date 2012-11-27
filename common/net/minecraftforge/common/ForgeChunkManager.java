@@ -161,7 +161,7 @@ public class ForgeChunkManager
         private Type ticketType;
         private LinkedHashSet<ChunkCoordIntPair> requestedChunks;
         private NBTTagCompound modData;
-        private World world;
+        public final World world;
         private int maxDepth;
         private String entityClazz;
         private int entityChunkX;
@@ -178,12 +178,12 @@ public class ForgeChunkManager
             this.requestedChunks = Sets.newLinkedHashSet();
         }
 
-        Ticket(String modId, Type type, World world, EntityPlayer player)
+        Ticket(String modId, Type type, World world, String player)
         {
             this(modId, type, world);
             if (player != null)
             {
-                this.player = player.getEntityName();
+                this.player = player;
             }
             else
             {
@@ -511,19 +511,30 @@ public class ForgeChunkManager
         return container;
     }
 
-    private static int getMaxTicketLengthFor(String modId)
+    public static int getMaxTicketLengthFor(String modId)
     {
         int allowedCount = ticketConstraints.containsKey(modId) && overridesEnabled ? ticketConstraints.get(modId) : defaultMaxCount;
         return allowedCount;
     }
 
-    private static int getMaxChunkDepthFor(String modId)
+    public static int getMaxChunkDepthFor(String modId)
     {
         int allowedCount = chunkConstraints.containsKey(modId) && overridesEnabled ? chunkConstraints.get(modId) : defaultMaxChunks;
         return allowedCount;
     }
 
+    public static int ticketCountAvaliableFor(String username)
+    {
+        return playerTickets.get(username).size() - playerTicketLength;
+    }
+
+    @Deprecated
     public static Ticket requestPlayerTicket(Object mod, EntityPlayer player, World world, Type type)
+    {
+        return requestPlayerTicket(mod, player.getEntityName(), world, type);
+    }
+
+    public static Ticket requestPlayerTicket(Object mod, String player, World world, Type type)
     {
         ModContainer mc = getContainer(mod);
         if (mc == null)
@@ -531,13 +542,13 @@ public class ForgeChunkManager
             FMLLog.log(Level.SEVERE, "Failed to locate the container for mod instance %s (%s : %x)", mod, mod.getClass().getName(), System.identityHashCode(mod));
             return null;
         }
-        if (playerTickets.get(player.getEntityName()).size()>playerTicketLength)
+        if (playerTickets.get(player).size()>playerTicketLength)
         {
-            FMLLog.warning("Unable to assign further chunkloading tickets to player %s (on behalf of mod %s)", player.getEntityName(), mc.getModId());
+            FMLLog.warning("Unable to assign further chunkloading tickets to player %s (on behalf of mod %s)", player, mc.getModId());
             return null;
         }
         Ticket ticket = new Ticket(mc.getModId(),type,world,player);
-        playerTickets.put(player.getEntityName(), ticket);
+        playerTickets.put(player, ticket);
         tickets.get(world).put("Forge", ticket);
         return ticket;
     }
