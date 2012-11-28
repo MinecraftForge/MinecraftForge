@@ -2,6 +2,8 @@ package net.minecraftforge.common;
 
 import java.util.UUID;
 
+import cpw.mods.fml.common.FMLLog;
+
 import net.minecraft.src.*;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.*;
@@ -23,13 +25,33 @@ public class ForgeInternalHandler
                 ForgeChunkManager.loadEntity(event.entity);
             }
         }
+
         Entity entity = event.entity;
         if (entity.getClass().equals(EntityItem.class))
         {
-            ItemStack item = ((EntityItem)entity).item;
-            if (item != null && item.getItem().hasCustomEntity(item))
+            ItemStack stack = ((EntityItem)entity).item;
+
+            if (stack == null)
             {
-                Entity newEntity = item.getItem().createEntity(event.world, entity, item);
+                entity.setDead();
+                event.setCanceled(true);
+                return;
+            }
+
+            Item item = stack.getItem();
+            if (item == null)
+            {
+                FMLLog.warning("Attempted to add a EntityItem to the world with a invalid item: ID %d at " + 
+                    "(%d,  %d, %d), this is most likely a config issue between you and the server. Please double check your configs",
+                    stack.itemID, entity.posX, entity.posY, entity.posZ);
+                entity.setDead();
+                event.setCanceled(true);
+                return;
+            }
+
+            if (item.hasCustomEntity(stack))
+            {
+                Entity newEntity = item.createEntity(event.world, entity, stack);
                 if (newEntity != null)
                 {
                     entity.setDead();
