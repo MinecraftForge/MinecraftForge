@@ -1,0 +1,31 @@
+--- ../src_base/common/net/minecraft/src/InventoryPlayer.java
++++ ../src_work/common/net/minecraft/src/InventoryPlayer.java
+@@ -349,6 +349,28 @@
+             return true;
+         }
+     }
++    
++    /**
++     * damage sensitive version of @link:consumeInventoryItem(int)
++     */
++    public boolean consumeInventoryItem(int par1, int par2)
++    {
++        int var2 = this.getInventorySlotContainItemAndDamage(par1, par2);
++
++        if (var2 < 0)
++        {
++            return false;
++        }
++        else
++        {
++            if (--this.mainInventory[var2].stackSize <= 0)
++            {
++                this.mainInventory[var2] = null;
++            }
++
++            return true;
++        }
++    }
+ 
+     /**
+      * Get if a specifiied item id is inside the inventory.
