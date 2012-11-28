@@ -1,5 +1,5 @@
---- ../src_base/common/net/minecraft/src/EntityOcelot.java
-+++ ../src_work/common/net/minecraft/src/EntityOcelot.java
+--- ../src_base/common/net/minecraft/src/EntityCreeper.java
++++ ../src_work/common/net/minecraft/src/EntityCreeper.java
 @@ -1,5 +1,9 @@
  package net.minecraft.src;
  
@@ -10,10 +10,14 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -315,6 +319,20 @@
-      */
-     public boolean getCanSpawnHere()
-     {
+@@ -241,4 +245,24 @@
+         super.onStruckByLightning(par1EntityLightningBolt);
+         this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
+     }
++
++    @Override
++    public boolean getCanSpawnHere()
++    {
 +        Event event = new LivingCanSpawnEvent(this, this.worldObj, (float)this.posX, (float)this.posY, (float)this.posZ);
 +        if (MinecraftForge.EVENT_BUS.post(event))
 +        {
@@ -28,18 +32,6 @@
 +            return false;
 +        }
 +        
-         if (this.worldObj.rand.nextInt(3) == 0)
-         {
-             return false;
-@@ -333,8 +351,9 @@
-                 }
- 
-                 int var4 = this.worldObj.getBlockId(var1, var2 - 1, var3);
--
--                if (var4 == Block.grass.blockID || var4 == Block.leaves.blockID)
-+                Block block = Block.blocksList[var4];
-+
-+                if (var4 == Block.grass.blockID || (block != null && block.isLeaves(worldObj, var1, var2 - 1, var3)))
-                 {
-                     return true;
-                 }
++        return super.getCanSpawnHere();
++    }
+ }
