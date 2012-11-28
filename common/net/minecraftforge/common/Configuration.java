@@ -535,17 +535,25 @@ public class Configuration
                                     name = line.substring(nameStart, nameEnd + 1);
                                     String qualifiedName = ConfigCategory.getQualifiedName(name, currentCat);
 
-                                    currentCat = categories.get(qualifiedName);
-                                    if (currentCat == null)
+                                    ConfigCategory cat = categories.get(qualifiedName);
+                                    if (cat == null)
                                     {
-                                        currentCat = new ConfigCategory(name, null);
+                                        currentCat = new ConfigCategory(name, currentCat);
                                         categories.put(qualifiedName, currentCat);
+                                    }
+                                    else
+                                    {
+                                        currentCat = cat;
                                     }
                                     name = null;
 
                                     break;
 
                                 case '}':
+                                    if (currentCat == null)
+                                    {
+                                        throw new RuntimeException(String.format("Config file corrupt, attepted to close to many categories '%s:%d'", fileName, lineNum));
+                                    }
                                     currentCat = currentCat.parent;
                                     break;
 
