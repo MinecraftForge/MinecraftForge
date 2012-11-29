@@ -523,7 +523,7 @@ public class ForgeChunkManager
         return allowedCount;
     }
 
-    public static int ticketCountAvaliableFor(String username)
+    public static int ticketCountAvailableFor(String username)
     {
         return playerTicketLength - playerTickets.get(username).size();
     }
