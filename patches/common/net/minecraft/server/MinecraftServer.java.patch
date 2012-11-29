@@ -95,17 +95,22 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -431,7 +411,9 @@
+@@ -431,7 +411,14 @@
              for (int var1 = 0; var1 < this.worldServers.length; ++var1)
              {
                  WorldServer var2 = this.worldServers[var1];
 +                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2));
                  var2.flush();
-+                DimensionManager.setWorld(var2.provider.dimensionId, null);
++            }
++
++            WorldServer[] tmp = worldServers;
++            for (WorldServer world : tmp)
++            {
++                DimensionManager.setWorld(world.provider.dimensionId, null);
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -645,13 +627,15 @@
+@@ -645,13 +632,15 @@
          this.theProfiler.startSection("levels");
          int var1;
  
@@ -126,7 +131,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  var4.getWorldVec3Pool().clear();
-@@ -698,9 +682,11 @@
+@@ -698,9 +687,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -141,7 +146,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -754,7 +740,13 @@
+@@ -754,7 +745,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -156,7 +161,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -863,7 +855,7 @@
+@@ -863,7 +860,7 @@
  
      public String getServerModName()
      {
@@ -165,7 +170,7 @@
      }
  
      /**
-@@ -1125,6 +1117,7 @@
+@@ -1125,6 +1122,7 @@
  
              if (var2 != null)
              {
