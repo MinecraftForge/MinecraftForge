@@ -37,6 +37,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.src.Chunk;
 import net.minecraft.src.ChunkCoordIntPair;
 import net.minecraft.src.CompressedStreamTools;
@@ -168,6 +169,7 @@ public class ForgeChunkManager
         private int entityChunkZ;
         private Entity entity;
         private String player;
+		public boolean save = true;
 
         Ticket(String modId, Type type, World world)
         {
@@ -464,6 +466,19 @@ public class ForgeChunkManager
             }
         }
     }
+    
+    static void unloadWorld(World world)
+    {
+    	if (!(world instanceof WorldServer))
+        {
+            return;
+        }
+    	
+    	forcedChunks.remove(world);
+    	dormantChunkCache.remove(world);
+    	if(!MinecraftServer.getServer().isServerRunning())//integrated server shutdown
+    		playerTickets.clear();
+    }
 
     /**
      * Set a chunkloading callback for the supplied mod object
@@ -525,7 +540,7 @@ public class ForgeChunkManager
 
     public static int ticketCountAvaliableFor(String username)
     {
-        return playerTickets.get(username).size() - playerTicketLength;
+    	return playerTicketLength-playerTickets.get(username).size();
     }
 
     @Deprecated
@@ -743,6 +758,8 @@ public class ForgeChunkManager
 
             for (Ticket tick : ticketSet.get(modId))
             {
+            	if(!tick.save)
+            		continue;
                 NBTTagCompound ticket = new NBTTagCompound();
                 ticket.setByte("Type", (byte) tick.ticketType.ordinal());
                 ticket.setByte("ChunkListDepth", (byte) tick.maxDepth);
