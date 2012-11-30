@@ -169,7 +169,7 @@ public class ForgeChunkManager
         private int entityChunkZ;
         private Entity entity;
         private String player;
-		public boolean save = true;
+        public boolean save = true;
 
         Ticket(String modId, Type type, World world)
         {
@@ -469,15 +469,15 @@ public class ForgeChunkManager
     
     static void unloadWorld(World world)
     {
-    	if (!(world instanceof WorldServer))
+        if (!(world instanceof WorldServer))
         {
             return;
         }
-    	
-    	forcedChunks.remove(world);
-    	dormantChunkCache.remove(world);
-    	if(!MinecraftServer.getServer().isServerRunning())//integrated server shutdown
-    		playerTickets.clear();
+        
+        forcedChunks.remove(world);
+        dormantChunkCache.remove(world);
+        if(!MinecraftServer.getServer().isServerRunning())//integrated server shutdown
+            playerTickets.clear();
     }
 
     /**
@@ -538,9 +538,9 @@ public class ForgeChunkManager
         return allowedCount;
     }
 
-    public static int ticketCountAvaliableFor(String username)
+    public static int ticketCountAvailableFor(String username)
     {
-    	return playerTicketLength-playerTickets.get(username).size();
+        return playerTicketLength-playerTickets.get(username).size();
     }
 
     @Deprecated
@@ -758,8 +758,8 @@ public class ForgeChunkManager
 
             for (Ticket tick : ticketSet.get(modId))
             {
-            	if(!tick.save)
-            		continue;
+                if(!tick.save)
+                    continue;
                 NBTTagCompound ticket = new NBTTagCompound();
                 ticket.setByte("Type", (byte) tick.ticketType.ordinal());
                 ticket.setByte("ChunkListDepth", (byte) tick.maxDepth);

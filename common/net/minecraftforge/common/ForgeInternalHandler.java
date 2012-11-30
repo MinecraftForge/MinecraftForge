@@ -71,12 +71,12 @@ public class ForgeInternalHandler
     @ForgeSubscribe(priority = EventPriority.HIGHEST)
     public void onDimensionSave(WorldEvent.Save event)
     {
-    	ForgeChunkManager.saveWorld(event.world);
+        ForgeChunkManager.saveWorld(event.world);
     }
 
     @ForgeSubscribe(priority = EventPriority.HIGHEST)
     public void onDimensionUnLoad(WorldEvent.Unload event)
     {
-    	ForgeChunkManager.unloadWorld(event.world);
+        ForgeChunkManager.unloadWorld(event.world);
     }
 }
