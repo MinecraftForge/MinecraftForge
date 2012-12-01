@@ -1,6 +1,50 @@
 --- ../src_base/common/net/minecraft/src/BlockPistonBase.java
 +++ ../src_work/common/net/minecraft/src/BlockPistonBase.java
-@@ -368,7 +368,7 @@
+@@ -3,6 +3,9 @@
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.List;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.block.BlockOrientationEvent;
+ 
+ public class BlockPistonBase extends Block
+ {
+@@ -316,22 +319,26 @@
+      */
+     public static int determineOrientation(World par0World, int par1, int par2, int par3, EntityPlayer par4EntityPlayer)
+     {
+-        if (MathHelper.abs((float)par4EntityPlayer.posX - (float)par1) < 2.0F && MathHelper.abs((float)par4EntityPlayer.posZ - (float)par3) < 2.0F)
+-        {
+-            double var5 = par4EntityPlayer.posY + 1.82D - (double)par4EntityPlayer.yOffset;
+-
+-            if (var5 - (double)par2 > 2.0D)
++        BlockOrientationEvent event = new BlockOrientationEvent(par0World, par4EntityPlayer, par1, par2, par3);
++        
++        MinecraftForge.EVENT_BUS.post(event);
++        
++        if (MathHelper.abs((float)event.entityLiving.posX - (float)event.blockX) < 2.0F && MathHelper.abs((float)event.entityLiving.posZ - (float)event.blockZ) < 2.0F)
++        {
++            double var5 = event.entityLiving.posY + 1.82D - (double)event.entityLiving.yOffset;
++
++            if (var5 - (double)event.blockY > 2.0D)
+             {
+                 return 1;
+             }
+ 
+-            if ((double)par2 - var5 > 0.0D)
++            if ((double)event.blockY - var5 > 0.0D)
+             {
+                 return 0;
+             }
+         }
+ 
+-        int var7 = MathHelper.floor_double((double)(par4EntityPlayer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
++        int var7 = MathHelper.floor_double((double)(event.entityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+         return var7 == 0 ? 2 : (var7 == 1 ? 5 : (var7 == 2 ? 3 : (var7 == 3 ? 4 : 0)));
+     }
+ 
+@@ -368,7 +375,7 @@
                  return false;
              }
  
@@ -9,3 +53,21 @@
          }
      }
  
+@@ -386,7 +393,7 @@
+         {
+             if (var8 < 13)
+             {
+-                if (var6 <= 0 || var6 >= 255)
++                if (var6 <= 0 || var6 >= par0World.getHeight() - 1)
+                 {
+                     return false;
+                 }
+@@ -436,7 +443,7 @@
+ 
+             if (var9 < 13)
+             {
+-                if (var7 <= 0 || var7 >= 255)
++                if (var7 <= 0 || var7 >= par1World.getHeight() - 1)
+                 {
+                     return false;
+                 }
