@@ -41,7 +41,7 @@ public class ForgeInternalHandler
             Item item = stack.getItem();
             if (item == null)
             {
-                FMLLog.warning("Attempted to add a EntityItem to the world with a invalid item: ID %d at " + 
+                FMLLog.warning("Attempted to add a EntityItem to the world with a invalid item: ID %d at " +
                     "(%d,  %d, %d), this is most likely a config issue between you and the server. Please double check your configs",
                     stack.itemID, entity.posX, entity.posY, entity.posZ);
                 entity.setDead();
@@ -72,5 +72,11 @@ public class ForgeInternalHandler
     public void onDimensionSave(WorldEvent.Save event)
     {
     	ForgeChunkManager.saveWorld(event.world);
+    }
+
+    @ForgeSubscribe(priority = EventPriority.HIGHEST)
+    public void onDimensionUnload(WorldEvent.Unload event)
+    {
+        ForgeChunkManager.unloadWorld(event.world);
     }
 }
