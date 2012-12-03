@@ -1,6 +1,33 @@
 --- ../src_base/common/net/minecraft/src/CraftingManager.java
 +++ ../src_work/common/net/minecraft/src/CraftingManager.java
-@@ -263,7 +263,7 @@
+@@ -4,6 +4,10 @@
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.List;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.entity.EntityCraftMatchEvent;
+ 
+ public class CraftingManager
+ {
+@@ -235,8 +239,14 @@
+ 
+         this.recipes.add(new ShapelessRecipes(par1ItemStack, var3));
+     }
+-
++    
++    @Deprecated
+     public ItemStack findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World)
++    {
++    	return findMatchingRecipe(null, par1InventoryCrafting, par2World, 0, 0, 0);
++    }
++
++    public ItemStack findMatchingRecipe(Entity crafter, InventoryCrafting par1InventoryCrafting, World par2World, double x, double y, double z)
+     {
+         int var3 = 0;
+         ItemStack var4 = null;
+@@ -263,7 +273,7 @@
              }
          }
  
@@ -9,3 +36,25 @@
          {
              Item var11 = Item.itemsList[var4.itemID];
              int var13 = var11.getMaxDamage() - var4.getItemDamageForDisplay();
+@@ -286,7 +296,20 @@
+ 
+                 if (var12.matches(par1InventoryCrafting, par2World))
+                 {
+-                    return var12.getCraftingResult(par1InventoryCrafting);
++                    ItemStack result = var12.getCraftingResult(par1InventoryCrafting);
++
++                    EntityCraftMatchEvent event = new EntityCraftMatchEvent(crafter, var12, result, par2World, x, y, z);
++                    if (MinecraftForge.EVENT_BUS.post(event) || event.getResult() == Result.DENY)
++                    {
++                        return null;
++                    }
++
++                    if (event.getResult() == Result.ALLOW)
++                    {
++                        return event.newResult;
++                    }
++
++                    return result;
+                 }
+             }
+ 

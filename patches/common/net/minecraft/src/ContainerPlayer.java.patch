@@ -1,0 +1,11 @@
+--- ../src_base/common/net/minecraft/src/ContainerPlayer.java
++++ ../src_work/common/net/minecraft/src/ContainerPlayer.java
+@@ -52,7 +52,7 @@
+      */
+     public void onCraftMatrixChanged(IInventory par1IInventory)
+     {
+-        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.thePlayer.worldObj));
++        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.thePlayer, this.craftMatrix, this.thePlayer.worldObj, this.thePlayer.posX, this.thePlayer.posY, this.thePlayer.posZ));
+     }
+ 
+     /**

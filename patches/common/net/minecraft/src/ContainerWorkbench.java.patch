@@ -1,0 +1,29 @@
+--- ../src_base/common/net/minecraft/src/ContainerWorkbench.java
++++ ../src_work/common/net/minecraft/src/ContainerWorkbench.java
+@@ -41,15 +41,24 @@
+             this.addSlotToContainer(new Slot(par1InventoryPlayer, var6, 8 + var6 * 18, 142));
+         }
+ 
+-        this.onCraftMatrixChanged(this.craftMatrix);
++        this.onCraftMatrixChanged(par1InventoryPlayer.player, this.craftMatrix);
+     }
+-
++    
+     /**
+      * Callback for when the crafting matrix is changed.
+      */
++    @Deprecated
+     public void onCraftMatrixChanged(IInventory par1IInventory)
+     {
+         this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
++    }
++    
++    /**
++     * Callback for when the crafting matrix is changed.
++     */
++    public void onCraftMatrixChanged(Entity crafter, IInventory par1IInventory)
++    {
++        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(crafter, this.craftMatrix, this.worldObj, crafter.posX, crafter.posY, crafter.posZ));
+     }
+ 
+     /**
