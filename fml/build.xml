@@ -9,20 +9,6 @@
      ====================================================================== -->
 <project name="FML" default="jenkinsbuild">
   <description>The Forge Mod Loader</description>
-  <macrodef name="side">
-    <attribute name="prop" />
-    <attribute name="src" />
-    <attribute name="side" />
-    <sequential>
-      <property name="@{prop}" value="${@{side}.@{src}}" />
-      <condition property="is.client">
-        <equals arg1="@{side}" arg2="client" />
-      </condition>
-      <condition property="is.server">
-        <equals arg1="@{side}" arg2="server" />
-      </condition>
-    </sequential>
-  </macrodef>
   <target name="writeversion" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}" failonerror="true">
       <arg value="${basedir}/getversion.py" />
@@ -78,6 +64,8 @@
     <property name="version.major" value="${fmlbuild.major.number}" />
     <property name="version.minor" value="${fmlbuild.minor.number}" />
     <property name="version.rev" value="${fmlbuild.revision.number}" />
+    <property name="version.minecraft" value="${fmlbuild.mcversion}" />
+    <property name="version.branch" value="${fmlbuild.branch}" />
     <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
   </target>
 
@@ -88,11 +76,7 @@
     </exec>
   </target>
   
-  <target name="clean" depends="buildenvsetup">
-    <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/cleanup.py" />
-      <arg value="-f" />
-    </exec>
+  <target name="clean" depends="buildenvsetup,makeclean" if="mcp.exists">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/decompile.py" />
       <arg value="-d" />
@@ -148,38 +132,11 @@
 
   <target name="merge-source" depends="buildenvsetup,merge-client,merge-common" />
 
-  <target name="build-client" depends="buildenvsetup,merge-client,merge-common,reobfuscate,makeversion"/>
+  <target name="build-universal" depends="buildenvsetup,merge-client,merge-common,reobfuscate,makeversion">
+    <condition property="universal.jarname" value="${modname}-universal-${version.minecraft}-${version}" else="${modname}-universal-${version.minecraft}-${version}-${version.branch}">
+      <equals arg1="${version.branch}" arg2="master" />
+    </condition>
 
-  <target name="extract-built-jar">
-    <side prop="output" src="mcp.obfoutput" side="${side}" />
-    <property name="jarname" value="${modname}-${side}-${version}" />
-    <mkdir dir="${basedir}/target" />
-    <zip destfile="${basedir}/target/${jarname}.zip">
-      <fileset dir="${output}" includes="**/*.class" />
-      <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
-      <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
-      <zipfileset dir="${basedir}" includes="install/CREDITS-fml.txt" fullpath="CREDITS-fml.txt"/>
-      <zipfileset dir="${common.src.dir}" includes="*.cfg" />
-      <mappedresources>
-        <concat>
-          <fileset dir="${basedir}/install" includes="README.txt" />
-          <filterchain>
-            <replacetokens>
-              <token key="MAJOR" value="${version.major}" />
-              <token key="MINOR" value="${version.minor}" />
-              <token key="REV" value="${version.rev}" />
-              <token key="BUILD" value="${version.build}" />
-              <token key="MCVERSION" value="${version.minecraft}" />
-            </replacetokens>
-          </filterchain>
-        </concat>
-        <mergemapper to="README-fml.txt" />
-      </mappedresources>
-    </zip>
-  </target>
-
-  <target name="build-universal" depends="build-client">
-    <property name="universal.jarname" value="${modname}-universal-${version}" />
     <mkdir dir="${basedir}/target" />
     <jar destfile="${basedir}/target/${universal.jarname}.zip" duplicate="preserve">
       <manifest>
@@ -212,7 +169,7 @@
   </target>
 
   <target name="build-source-pack" depends="makeversion">
-    <property name="srcpack.jarname" value="${modname}-src-${version}" />
+    <property name="srcpack.jarname" value="${modname}-src-${version.minecraft}-${version.branch}-${version}" />
     <zip destfile="${basedir}/target/${srcpack.jarname}.zip">
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt,difflist.txt,commands.patch,mcp_merge.cfg,mc_versions.cfg" prefix="fml" />
       <zipfileset dir="${common.src.dir}" includes="**/*.java" prefix="fml/common" />
@@ -243,7 +200,7 @@
     </zip>
   </target>
 
-  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-client,build-universal,build-source-pack" />
+  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
 
@@ -282,9 +239,9 @@
       <fileset dir="${mcp.srcdir}"/>
     </copy>
     <antcall target="writeversion"/>
-    <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
+    <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML project</echo>
   </target>
-  
+
   <target name="fmldecompile" depends="buildenvsetup,makeclean">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/decompile.py" />

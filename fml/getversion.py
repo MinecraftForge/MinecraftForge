@@ -47,6 +47,14 @@ def main():
 
     (mcpversion,mcclientversion,mcserverversion) = re.match("[.\w]+ \(data: ([.\w]+), client: ([.\w.]+), server: ([.\w.]+)\)",Commands.fullversion()).groups()
     
+    cmd = "git rev-parse --abbrev-ref HEAD"
+    try:
+      process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
+      branch, _ = process.communicate()
+    except OSError:
+      print("Git not found")
+      branch="none"
+
     with open("fmlversion.properties","w") as f:
       f.write("%s=%s\n" %("fmlbuild.major.number",major))
       f.write("%s=%s\n" %("fmlbuild.minor.number",minor))
@@ -54,8 +62,9 @@ def main():
       f.write("%s=%s\n" %("fmlbuild.githash",githash))
       f.write("%s=%s\n" %("fmlbuild.mcpversion",mcpversion))
       f.write("%s=%s\n" %("fmlbuild.mcversion",mcclientversion))
+      f.write("%s=%s\n" %("fmlbuild.branch",branch))
 
-    print("Version information: FML %s.%s.%s using MCP %s for minecraft %s" % (major, minor, rev, mcpversion, mcclientversion))
+    print("Version information: FML %s.%s.%s (%s) using MCP %s for minecraft %s" % (major, minor, rev, branch, mcpversion, mcclientversion))
     
 if __name__ == '__main__':
     main()
