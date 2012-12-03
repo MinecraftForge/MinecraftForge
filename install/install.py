@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     if not options.mcp_dir is None:
         fml_main(fml_dir, os.path.abspath(options.mcp_dir))
-    if not os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
+    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
         fml_main(fml_dir, os.path.abspath('..'))
     else:
         fml_main(fml_dir, os.path.abspath('mcp'))
