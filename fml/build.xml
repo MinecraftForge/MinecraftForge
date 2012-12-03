@@ -46,8 +46,12 @@
     <condition property="mcp.home" value="${env.WORKSPACE}/mcpworkspace" else="${default.mcp.home}">
       <isset property="env.WORKSPACE" />
     </condition>
-    <condition property="python.exe" value="${mcp.home}/runtime/bin/python/python_mcp" else="python">
+    <property name="fml.python.dir" location="${basedir}/python" />
+    <condition property="python.exe" value="${fml.python.dir}/python_fml" else="python">
       <os family="Windows" />
+    </condition>
+    <condition property="mcp.exists">
+      <available file="${mcp.home}/runtime/commands.py"/>
     </condition>
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
     <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
@@ -77,6 +81,13 @@
     <property name="version" value="${version.major}.${version.minor}.${version.rev}.${version.build}" />
   </target>
 
+  <target name="makeclean" depends="buildenvsetup" if="mcp.exists">
+    <exec executable="${python.exe}" dir="${mcp.home}">
+      <arg value="${mcp.home}/runtime/cleanup.py" />
+      <arg value="-f" />
+    </exec>
+  </target>
+  
   <target name="clean" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${mcp.home}/runtime/cleanup.py" />
@@ -212,6 +223,7 @@
       <zipfileset dir="${common.src.dir}" includes="mcpmod.info" prefix="fml/common" />
       <zipfileset dir="${patch.src.dir}" includes="**/*.patch" prefix="fml/patches" />
       <zipfileset dir="${fml.conf.dir}" prefix="fml/conf" />
+      <zipfileset dir="${fml.python.dir}" prefix="fml/python" />
       <mappedresources>
         <concat>
           <fileset dir="${basedir}/install" includes="README.txt" />
@@ -272,12 +284,8 @@
     <antcall target="writeversion"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML-Server and FML-Client projects</echo>
   </target>
-
-  <target name="fmldecompile" depends="buildenvsetup">
-    <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/cleanup.py" />
-      <arg value="-f" />
-    </exec>
+  
+  <target name="fmldecompile" depends="buildenvsetup,makeclean">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/decompile.py" />
       <arg value="${mcp.home}" />
@@ -285,11 +293,7 @@
     </exec>
   </target>
 
-  <target name="jenkinsfmldecompile" depends="buildenvsetup">
-    <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/cleanup.py" />
-      <arg value="-f" />
-    </exec>
+  <target name="jenkinsfmldecompile" depends="buildenvsetup,makeclean">
     <exec executable="${python.exe}" dir="${basedir}">
       <arg value="${basedir}/decompile.py" />
       <arg value="${mcp.home}" />
