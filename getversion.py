@@ -56,7 +56,7 @@ def main():
         print("Git not found")
         branch="none"
     else:
-      branch=os.getenv("GIT_BRANCH")
+      branch=os.getenv("GIT_BRANCH").rpartition('/')[2]
 
     with open("fmlversion.properties","w") as f:
       f.write("%s=%s\n" %("fmlbuild.major.number",major))
