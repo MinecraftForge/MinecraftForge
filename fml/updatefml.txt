@@ -1,0 +1,17 @@
+Updating FML:
+1. Grab MCP
+2. Complete the mc_versions.cfg - add a new entry and update md5s from MCP
+3. Copy joined.exc from MCP conf into FML conf.
+4. Merge other mcp configuration changes into FML conf. (generally only mcp.cfg should need changing to update md5s)
+If obfuscation changed:
+5. Run the updateasmdata.py script to refresh the ASM metadata in fml_at.cfg (only 
+6. Inspect and update mcp_merge.cfg
+7. Inspect and update fml_marker.cfg
+Always:
+8. Merge MCP mcmod.info into mcpmod.info and update the mcp.png graphic if necessary
+9. Run ant setupenvironment to try and build the FML environment
+10. Fix up any patch rejections
+11. Commit the result to git
+12. Tag git with a new version: git tag -a vx.y
+13. Update jenkins with new MCP and jars
+14. Push tags to git followed by the commit itself
