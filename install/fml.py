@@ -95,8 +95,7 @@ def download_minecraft(mcp_dir, fml_dir, version=None):
     
     default = config_get_section(config, 'default')
     if version is None:
-        version = default['current_ver']
-    
+        version = default['current_ver']    
     
     bin_folder = os.path.join(mcp_dir, 'jars', 'bin')
     if not os.path.exists(bin_folder):
@@ -615,9 +614,54 @@ def merge_tree(root_src_dir, root_dst_dir):
             if os.path.exists(dst_file):
                 os.remove(dst_file)
             shutil.copy(src_file, dst_dir)
-            
+
+def download_mcp(mcp_dir, fml_dir, version=None):
+    if os.path.isfile(os.path.join(mcp_dir, 'runtime', 'commands.py')):
+        print 'MCP Detected already, not downloading'
+        return True
+        
+    if os.path.isdir(mcp_dir):
+        print 'Old MCP Directory exists, but MCP was not detected, please delete MCP directory at \'%s\'' % mcp_dir
+        sys.exit(1)
+        
+    versions_file = os.path.join(fml_dir, 'mc_versions.cfg')
+    if not os.path.isfile(versions_file):
+        print 'Could not find mc_versions.cfg in FML directory.'
+        sys.exit(1)
+    
+    config = ConfigParser.ConfigParser()
+    config.read(versions_file)
+    
+    default = config_get_section(config, 'default')
+    if version is None:
+        version = default['current_ver']
+    
+    if not config.has_section(version):
+        print 'Error: Invalid minecraft version, could not find \'%s\' in mc_versions.cfg' % version
+        sys.exit(1)
+
+    mc_info = config_get_section(config, version)
+    mcp_zip = os.path.join(fml_dir, 'mcp%s.zip' % mc_info['mcp_ver'])
+    
+    if not download_file(mc_info['mcp_url'], mcp_zip, mc_info['mcp_md5']):
+        sys.exit(1)
+        
+    if not os.path.isdir(mcp_dir):
+        _mkdir(mcp_dir)
+        
+    print 'Extracting MCP to \'%s\'' % mcp_dir
+    zf = ZipFile(mcp_zip)
+    zf.extractall(mcp_dir)
+    zf.close()
+    
+    return True
+    
 def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     global mcp_version
+    
+    if not download_mcp(mcp_dir, fml_dir):
+        sys.exit(1)
+    
     backup = os.path.join(mcp_dir, 'runtime', 'commands.py.bck')
     runtime = os.path.join(mcp_dir, 'runtime', 'commands.py')
     patch = os.path.join(fml_dir, 'commands.patch')
