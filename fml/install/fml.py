@@ -279,7 +279,7 @@ def setup_fml(fml_dir, mcp_dir):
             self.logger.info('   Forge config detected')
             forkcmd += ' "%s"' % forge_cfg
 
-        for dirname, dirnames, filenames in os.walk(os.path.join(fml_dir, ',,', 'accesstransformers')):
+        for dirname, dirnames, filenames in os.walk(os.path.join(fml_dir, '..', 'accesstransformers')):
             for filename in filenames:
                 accesstransformer = os.path.join(dirname, filename)
                 if os.path.isfile(accesstransformer):              
