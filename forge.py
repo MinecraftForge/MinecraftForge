@@ -6,9 +6,6 @@ import csv, shutil
 import pprint
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
-mcp_dir = os.path.abspath('..')
-src_dir = os.path.join(mcp_dir, 'src')
-sys.path.append(mcp_dir)
         
 def reset_logger():
     log = logging.getLogger()
@@ -124,10 +121,10 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
         recompile(None, True, False)
         reset_logger()
         os.chdir(forge_dir)
-        
     except SystemExit, e:
-        print 'Recompile Exception: %d ' % e.code
-        error_level = e.code
+        if not e.code == 0:
+            print 'Recompile Exception: %d ' % e.code
+            error_level = e.code
         
     print '=================================== Build Finished %d =================================' % error_level
     return error_level

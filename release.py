@@ -1,19 +1,12 @@
 import os, os.path, sys
 import shutil, fnmatch
 import logging, zipfile, re
+from optparse import OptionParser
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
-mcp_dir = os.path.abspath('..')
-src_dir = os.path.join(mcp_dir, 'src')
-
-sys.path.append(mcp_dir)
-from runtime.reobfuscate import reobfuscate
-
 from forge import reset_logger, load_version, zip_folder, zip_create, inject_version, build_forge_dev
 from changelog import make_changelog
 
-reobf_dir = os.path.join(mcp_dir, 'reobf')
-client_dir = os.path.join(reobf_dir, 'minecraft')
 zip = None
 zip_name = None
 zip_base = None
@@ -24,21 +17,36 @@ def main():
     global version_str
     global version_mc
     
+    parser = OptionParser()
+    parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='MCP Path', default=None)
+    parser.add_option('-b', '--build', action='store', dest='build', help='Build number', default=None)
+    options, _ = parser.parse_args()
+    
     build_num = 0
-    if len(sys.argv) > 1:
+    if not options.build is None:
         try:
-            build_num = int(sys.argv[1])
+            build_num = int(options.build)
         except:
             pass
+
+    mcp_dir = os.path.join(forge_dir, 'mcp')
+    if not options.mcp_dir is None:
+        mcp_dir = os.path.abspath(options.mcp_dir)
+    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
+        mcp_dir = os.path.abspath('..')
+        
     ret = 0
     fml_dir = os.path.join(forge_dir, 'fml')
     build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num)
     if ret != 0:
         sys.exit(ret)
     
+
     print '=================================== Release Start ================================='
     error_level = 0
     try:
+        sys.path.append(mcp_dir)
+        from runtime.reobfuscate import reobfuscate
         os.chdir(mcp_dir)
         reset_logger()
         reobfuscate(None, False, True, True, True, False)
@@ -48,13 +56,20 @@ def main():
         print 'Reobfusicate Exception: %d ' % e.code
         error_level = e.code
     
-    extract_fml_obfed()
-    extract_paulscode()
+    src_dir = os.path.join(mcp_dir, 'src')
+    reobf_dir = os.path.join(mcp_dir, 'reobf')
+    client_dir = os.path.join(reobf_dir, 'minecraft')
+    
+    extract_fml_obfed(mcp_dir, reobf_dir, client_dir)
+    extract_paulscode(mcp_dir, client_dir)
     version = load_version(build_num)
     version_forge = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
     version_mc = load_mc_version(forge_dir)
+    branch = get_branch_name()
     
     version_str = '%s-%s' % (version_mc, version_forge)
+    if not branch == "":
+        version_str = '%s-%s' % (version_str, branch)
         
     out_folder = os.path.join(forge_dir, 'forge-%s' % version_str)
     if os.path.isdir(out_folder):
@@ -102,15 +117,8 @@ def main():
     zip_add('common',  'common')
     zip_add('patches', 'patches')
     zip_add('fml',     'fml')
-    zip_add('install/install.cmd')
-    zip_add('install/install.sh')
-    zip_add('install/README-MinecraftForge.txt')
-    zip_add('install/install.py')
+    zip_add('install', '')
     zip_add('forge.py')
-    zip_add('install/MinecraftForge-Credits.txt')
-    zip_add('install/MinecraftForge-License.txt')
-    zip_add('install/Paulscode IBXM Library License.txt')
-    zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add(version_file)
     zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
     zip_end()
@@ -169,7 +177,7 @@ def load_mc_version(forge_dir):
     print 'Could not load fmlversion.properties, build failed'
     sys.exit(1)
 
-def extract_fml_obfed():
+def extract_fml_obfed(mcp_dir, reobf_dir, client_dir):
     fml_file = os.path.join(forge_dir, 'fml', 'difflist.txt')
     if not os.path.isfile(fml_file):
         print 'Could not find Forge ModLoader\'s DiffList, looking for it at: %s' % fml_file
@@ -192,7 +200,7 @@ def extract_fml_obfed():
         
     client.close()
     
-def extract_paulscode():
+def extract_paulscode(mcp_dir, client_dir):
     client = zipfile.ZipFile(os.path.join(mcp_dir, 'temp', 'client_reobf.jar'))
     
     print 'Extracting Reobfed Paulscode for mac users -.-'
@@ -204,6 +212,22 @@ def extract_paulscode():
                 client.extract(i.filename, client_dir)
         
     client.close()
+
+def get_branch_name():
+    from subprocess import Popen, PIPE, STDOUT
+    branch = ''
+    if os.getenv("GIT_BRANCH") is None:
+        try:
+            process = Popen(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=PIPE, stderr=STDOUT, bufsize=-1)
+            branch, _ = process.communicate()
+            branch = branch.rstrip('\r\n')
+        except OSError:
+            print "Git not found"
+    else:
+        branch = os.getenv("GIT_BRANCH").rpartition('/')[2]
+    branch = branch.replace('master', '')
+    print 'Detected Branch as \'%s\'' % branch
+    return branch
     
 if __name__ == '__main__':
     main()

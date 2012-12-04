@@ -1,17 +1,30 @@
-import os, os.path, sys
-import urllib, zipfile
+import os, os.path, sys, zipfile
 import shutil, glob, fnmatch
-import subprocess, logging
+from optparse import OptionParser
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
-mcp_dir = os.path.abspath('..')
-src_dir = os.path.join(mcp_dir, 'src')
 
 from forge import apply_forge_patches
 
 def main():
     print '=================================== Setup Start ================================='
-    setup_fml()
+    
+    parser = OptionParser()
+    parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
+    parser.add_option('-n', '--no-extract', action='store_true', dest='no_extract', help='Do not attempt to extract FML zip files', default=False)
+    options, _ = parser.parse_args()
+    
+    fml_dir = os.path.join(forge_dir, 'fml')
+    mcp_dir = os.path.join(forge_dir, 'mcp')
+
+    if not options.mcp_dir is None:
+        mcp_dir = os.path.abspath(options.mcp_dir)
+    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
+        mcp_dir = os.path.abspath('..')
+        
+    src_dir = os.path.join(mcp_dir, 'src')
+    
+    setup_fml(mcp_dir, fml_dir, options.no_extract)
     
     base_dir = os.path.join(mcp_dir, 'src_base')
     work_dir = os.path.join(mcp_dir, 'src_work')
@@ -30,26 +43,25 @@ def main():
     
     print '=================================== Setup Finished ================================='
     
-def setup_fml():        
+def setup_fml(mcp_dir, fml_dir, dont_extract=False):        
     print 'Setting up Forge ModLoader'
-    fml = glob.glob(os.path.join(forge_dir, 'fml-src-*.zip'))
-    if not len(fml) == 1:
-        if len(fml) == 0:
-            print 'Missing FML source zip, should be named fml-src-*.zip inside your forge folder, obtain it from the repo'
-        else:
-            print 'To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported'
-        sys.exit(1)
+    if not dont_extract:
+        fml = glob.glob(os.path.join(forge_dir, 'fml-src-*.zip'))
+        if not len(fml) == 1:
+            if len(fml) == 0:
+                print 'Missing FML source zip, should be named fml-src-*.zip inside your forge folder, obtain it from the repo'
+            else:
+                print 'To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported'
+            sys.exit(1)
         
-    fml_dir = os.path.join(forge_dir, 'fml')
-    
-    if os.path.isdir(fml_dir):
-        shutil.rmtree(fml_dir)
+        if os.path.isdir(fml_dir):
+            shutil.rmtree(fml_dir)
+            
+        print 'Extracting: %s' % os.path.basename(fml[0]) 
         
-    print 'Extracting: %s' % os.path.basename(fml[0]) 
-    
-    zf = zipfile.ZipFile(fml[0])
-    zf.extractall(forge_dir)
-    zf.close()
+        zf = zipfile.ZipFile(fml[0])
+        zf.extractall(forge_dir)
+        zf.close()
     
     sys.path.append(fml_dir)
     from install import fml_main

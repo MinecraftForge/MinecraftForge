@@ -1,2 +1,2 @@
 @echo off
-..\runtime\bin\python\python_mcp update_patches.py .. .
+fml\python\python_fml update_patches.py %*

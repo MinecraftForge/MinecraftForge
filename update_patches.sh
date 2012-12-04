@@ -1,1 +1,2 @@
-python update_patches.py .. .
+#!/bin/bash
+python update_patches.py "$@"

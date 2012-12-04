@@ -1,2 +1,2 @@
 @echo off
-..\runtime\bin\python\python_mcp release.py %*
+fml\python\python_fml release.py %*
