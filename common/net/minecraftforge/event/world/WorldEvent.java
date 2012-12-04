@@ -11,6 +11,14 @@ public class WorldEvent extends Event
     {
         this.world = world;
     }
+    
+    /**
+     * Do not do anything that will load a chunk during this event
+     */
+    public static class PreLoad extends WorldEvent
+    {
+        public PreLoad(World world) { super(world); }
+    }
 
     public static class Load extends WorldEvent
     {

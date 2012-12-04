@@ -153,6 +153,7 @@ public class DimensionManager
 
         WorldServer world = (dim == 0 ? overworld : new WorldServerMulti(mcServer, savehandler, overworld.getWorldInfo().getWorldName(), dim, worldSettings, overworld, mcServer.theProfiler));
         world.addWorldAccess(new WorldManager(mcServer, world));
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.PreLoad(world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         if (!mcServer.isSinglePlayer())
         {
