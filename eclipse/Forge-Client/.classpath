@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src-client"/>
+	<classpathentry kind="src" path="test-common"/>
+	<classpathentry kind="src" path="test-client"/>
 	<classpathentry kind="src" path="src-common"/>
 	<classpathentry kind="src" path="forge-client"/>
 	<classpathentry kind="src" path="forge-common"/>

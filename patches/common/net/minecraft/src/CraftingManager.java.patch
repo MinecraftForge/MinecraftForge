@@ -36,7 +36,7 @@
          {
              Item var11 = Item.itemsList[var4.itemID];
              int var13 = var11.getMaxDamage() - var4.getItemDamageForDisplay();
-@@ -286,7 +296,20 @@
+@@ -286,7 +296,14 @@
  
                  if (var12.matches(par1InventoryCrafting, par2World))
                  {
@@ -44,17 +44,11 @@
 +                    ItemStack result = var12.getCraftingResult(par1InventoryCrafting);
 +
 +                    EntityCraftMatchEvent event = new EntityCraftMatchEvent(crafter, var12, result, par2World, x, y, z);
-+                    if (MinecraftForge.EVENT_BUS.post(event) || event.getResult() == Result.DENY)
++                    if (MinecraftForge.EVENT_BUS.post(event))
 +                    {
 +                        return null;
 +                    }
-+
-+                    if (event.getResult() == Result.ALLOW)
-+                    {
-+                        return event.newResult;
-+                    }
-+
-+                    return result;
++                    return event.getItemResult();
                  }
              }
  
