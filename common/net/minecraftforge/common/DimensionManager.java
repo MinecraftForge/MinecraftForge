@@ -175,7 +175,7 @@ public class DimensionManager
     public static boolean shouldLoadSpawn(int dim)
     {
         int id = getProviderType(dim);
-        return spawnSettings.contains(id) && spawnSettings.get(id);
+        return spawnSettings.containsKey(id) && spawnSettings.get(id);
     }
 
     static
