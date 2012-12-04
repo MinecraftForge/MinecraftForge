@@ -137,7 +137,7 @@ public class GuiModList extends GuiScreen
                 shifty += 12;
 
                 shifty = drawLine(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()), offset, shifty);
-                shifty = drawLine(String.format("Mod State: %s", Loader.instance().getModState(selectedMod)), offset, shifty);
+                shifty = drawLine(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)), offset, shifty);
                 if (!selectedMod.getMetadata().credits.isEmpty()) {
                    shifty = drawLine(String.format("Credits: %s", selectedMod.getMetadata().credits), offset, shifty);
                 }
