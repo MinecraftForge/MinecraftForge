@@ -274,12 +274,12 @@ def setup_fml(fml_dir, mcp_dir):
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
             classpath=class_path, jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
             
-        forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
+        forge_cfg = os.path.join(fml_dir, '..', 'common', 'forge_at.cfg')
         if os.path.isfile(forge_cfg):
             self.logger.info('   Forge config detected')
             forkcmd += ' "%s"' % forge_cfg
 
-        for dirname, dirnames, filenames in os.walk(os.path.join(mcp_dir, 'forge', 'accesstransformers')):
+        for dirname, dirnames, filenames in os.walk(os.path.join(fml_dir, ',,', 'accesstransformers')):
             for filename in filenames:
                 accesstransformer = os.path.join(dirname, filename)
                 if os.path.isfile(accesstransformer):              
