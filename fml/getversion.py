@@ -54,9 +54,11 @@ def main():
         branch, _ = process.communicate()
       except OSError:
         print("Git not found")
-        branch="none"
+        branch="master"
     else:
       branch=os.getenv("GIT_BRANCH").rpartition('/')[2]
+      if branch == 'HEAD':
+        branch = "master"
 
     with open("fmlversion.properties","w") as f:
       f.write("%s=%s\n" %("fmlbuild.major.number",major))
