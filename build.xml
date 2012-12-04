@@ -316,7 +316,7 @@
     <echo>
       Extracting fresh eclipse workspace to ${basedir}/eclipse
     </echo>
-    <unzip file="${basedir}/eclipse_workspace.zip" dest="${basedir}" verbose="true"/>
+    <unzip src="${basedir}/eclipse-workspace.zip" dest="${basedir}"/>
   </target>
 
   <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,reobfuscate">
