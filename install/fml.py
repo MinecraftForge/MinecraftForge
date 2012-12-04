@@ -274,12 +274,12 @@ def setup_fml(fml_dir, mcp_dir):
         forkcmd = ('%s -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
             classpath=class_path, jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
             
-        forge_cfg = os.path.join(mcp_dir, 'forge', 'common', 'forge_at.cfg')
+        forge_cfg = os.path.join(fml_dir, '..', 'common', 'forge_at.cfg')
         if os.path.isfile(forge_cfg):
             self.logger.info('   Forge config detected')
             forkcmd += ' "%s"' % forge_cfg
 
-        for dirname, dirnames, filenames in os.walk(os.path.join(mcp_dir, 'forge', 'accesstransformers')):
+        for dirname, dirnames, filenames in os.walk(os.path.join(fml_dir, '..', 'accesstransformers')):
             for filename in filenames:
                 accesstransformer = os.path.join(dirname, filename)
                 if os.path.isfile(accesstransformer):              
@@ -383,6 +383,48 @@ def get_joined_srg(mcp_dir):
                     values[pts[0]][pts[1]] = pts[2]
     
     return values
+    
+def merge_client_server(mcp_dir):
+    client = os.path.join(mcp_dir, 'src', 'minecraft')
+    shared = os.path.join(mcp_dir, 'src', 'common')
+    
+    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar')
+    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar')
+    joined_srg = get_joined_srg(mcp_dir)['CL:']
+    
+    if not os.path.isfile(client_jar) or not os.path.isfile(server_jar):
+        return
+        
+    if not os.path.isdir(shared):
+        os.makedirs(shared)
+    
+    server_classes = []
+            
+    zip = ZipFile(server_jar)
+    for i in zip.filelist:
+        if i.filename.endswith('.class'):
+            server_classes.append(i.filename[:-6])
+    
+    for cls in server_classes:
+        if cls in joined_srg.keys():
+            cls = joined_srg[cls]
+        cls += '.java'
+        
+        f_client = os.path.normpath(os.path.join(client, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+        f_shared = os.path.normpath(os.path.join(shared, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
+        
+        if not os.path.isfile(f_client):
+            print 'Issue Merging File Not Found: ' + cls
+            continue
+            
+        if not cls.rfind('/') == -1:
+            new_dir = os.path.join(shared, cls.rsplit('/', 1)[0])
+            if not os.path.isdir(new_dir):
+                os.makedirs(new_dir)
+            
+        shutil.move(f_client, f_shared)
+            
+    cleanDirs(client)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
@@ -689,13 +731,13 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     gen_renamed_conf(mcp_dir, fml_dir)
     
-    #update workspace
-    print 'Fixing MCP Workspace'
-    if not os.path.isdir(os.path.join(fml_dir, 'install')):
-        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
-        if os.path.isdir(mcp_eclipse):
-            shutil.rmtree(mcp_eclipse)
-        shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
+#    #update workspace
+#    print 'Fixing MCP Workspace'
+#    if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
+#        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
+#        if os.path.isdir(mcp_eclipse):
+#            shutil.rmtree(mcp_eclipse)
+#        shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
 
 def normaliselines(in_filename):
     in_filename = os.path.normpath(in_filename)

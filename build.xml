@@ -24,12 +24,8 @@
       <format pattern="yyMMddHHmmss" property="timestamp" />
     </tstamp>
     <property environment="env" />
-    <property file="fmlbuild.properties" />
     <property name="modname" value="fml" />
-    <condition property="dev.home" value="${env.WORKSPACE}" else="${default.dev.home}">
-      <isset property="env.WORKSPACE" />
-    </condition>
-    <condition property="mcp.home" value="${env.WORKSPACE}/mcpworkspace" else="${default.mcp.home}">
+    <condition property="mcp.home" value="${env.WORKSPACE}/mcp" else="${basedir}/mcp">
       <isset property="env.WORKSPACE" />
     </condition>
     <property name="fml.python.dir" location="${basedir}/python" />
@@ -55,6 +51,7 @@
     <condition property="version.build" value="${env.BUILD_NUMBER}" else="1">
       <isset property="env.BUILD_NUMBER" />
     </condition>
+    <available file="eclipse" property="eclipse.exists"/>
   </target>
 
   <target name="makeversion" depends="buildenvsetup">
@@ -78,9 +75,9 @@
   
   <target name="clean" depends="buildenvsetup,makeclean" if="mcp.exists">
     <exec executable="${python.exe}" dir="${mcp.home}">
-      <arg value="${mcp.home}/runtime/decompile.py" />
-      <arg value="-d" />
-      <arg value="-n" />
+      <arg value="${basedir}/decompile.py" />
+      <arg value="${mcp.home}" />
+      <arg value="${basedir}" />
     </exec>
   </target>
 
@@ -239,6 +236,7 @@
       <fileset dir="${mcp.srcdir}"/>
     </copy>
     <antcall target="writeversion"/>
+    <antcall target="makeeclipse"/>
     <echo>Setup complete! You should now be able to open ${basedir}/eclipse as a workspace in eclipse and import/refresh the FML project</echo>
   </target>
 
@@ -312,6 +310,13 @@
       <arg value="${mcp.home}"/>
       <arg value="${basedir}"/>
     </exec>
+  </target>
+
+  <target name="makeeclipse" depends="buildenvsetup" unless="eclipse.exists">
+    <echo>
+      Extracting fresh eclipse workspace to ${basedir}/eclipse
+    </echo>
+    <unzip file="${basedir}/eclipse_workspace.zip" dest="${basedir}" verbose="true"/>
   </target>
 
   <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,reobfuscate">
