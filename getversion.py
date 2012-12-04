@@ -48,13 +48,7 @@ def main():
     (mcpversion,mcclientversion,mcserverversion) = re.match("[.\w]+ \(data: ([.\w]+), client: ([.\w.]+), server: ([.\w.]+)\)",Commands.fullversion()).groups()
     
     if os.getenv("GIT_BRANCH") is None:
-      cmd = "git rev-parse --abbrev-ref HEAD"
-      try:
-        process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
-        branch, _ = process.communicate()
-      except OSError:
-        print("Git not found")
-        branch="none"
+      branch="master"
     else:
       branch=os.getenv("GIT_BRANCH").rpartition('/')[2]
 
