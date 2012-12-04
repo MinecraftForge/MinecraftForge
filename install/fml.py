@@ -731,13 +731,13 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     print 'Copying FML conf'
     shutil.copytree(fml_conf, mcp_conf)
     
-    #update workspace
-    print 'Fixing MCP Workspace'
-    if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
-        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
-        if os.path.isdir(mcp_eclipse):
-            shutil.rmtree(mcp_eclipse)
-        shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
+#    #update workspace
+#    print 'Fixing MCP Workspace'
+#    if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
+#        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
+#        if os.path.isdir(mcp_eclipse):
+#            shutil.rmtree(mcp_eclipse)
+#        shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
 
 def normaliselines(in_filename):
     in_filename = os.path.normpath(in_filename)
