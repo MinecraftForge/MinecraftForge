@@ -591,7 +591,9 @@ public class Configuration
                                     }
 
                                     tmpList = new ArrayList<String>();
-
+                                    
+                                    skip = true;
+                                    
                                     break;
 
                                 case '>':
@@ -616,7 +618,7 @@ public class Configuration
                     {
                         throw new RuntimeException(String.format("Unmatched quote in '%s:%d'", fileName, lineNum));
                     }
-                    else if (tmpList != null)
+                    else if (tmpList != null && !skip)
                     {
                         tmpList.add(line.trim());
                     }
