@@ -37,7 +37,7 @@
          ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo var9 = var7.loadWorldInfo();
          WorldSettings var8;
-@@ -263,46 +266,23 @@
+@@ -263,46 +266,24 @@
              var8.enableBonusChest();
          }
  
@@ -88,6 +88,7 @@
 -        }
 -
 +
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.PreLoad(world));
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 +        }
 +
@@ -95,7 +96,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -431,7 +411,14 @@
+@@ -431,7 +412,14 @@
              for (int var1 = 0; var1 < this.worldServers.length; ++var1)
              {
                  WorldServer var2 = this.worldServers[var1];
@@ -110,7 +111,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -645,13 +632,15 @@
+@@ -645,13 +633,15 @@
          this.theProfiler.startSection("levels");
          int var1;
  
@@ -131,7 +132,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  var4.getWorldVec3Pool().clear();
-@@ -698,9 +687,11 @@
+@@ -698,9 +688,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -146,7 +147,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -754,7 +745,13 @@
+@@ -754,7 +746,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -161,7 +162,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -863,7 +860,7 @@
+@@ -863,7 +861,7 @@
  
      public String getServerModName()
      {
@@ -170,7 +171,7 @@
      }
  
      /**
-@@ -1125,6 +1122,7 @@
+@@ -1125,6 +1123,7 @@
  
              if (var2 != null)
              {

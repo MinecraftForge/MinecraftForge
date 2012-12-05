@@ -9,7 +9,7 @@
  
  @SideOnly(Side.CLIENT)
  public class WorldClient extends World
-@@ -38,8 +40,11 @@
+@@ -38,8 +40,12 @@
          super(new SaveHandlerMP(), "MpServer", WorldProvider.getProviderForDimension(par3), par2WorldSettings, par5Profiler);
          this.sendQueue = par1NetClientHandler;
          this.difficultySetting = par4;
@@ -18,11 +18,12 @@
 +        finishSetup();
          this.setSpawnLocation(8, 64, 8);
 -        this.mapStorage = par1NetClientHandler.mapStorage;
++        MinecraftForge.EVENT_BUS.post(new WorldEvent.PreLoad(this));
 +        MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this));
      }
  
      /**
-@@ -271,6 +276,12 @@
+@@ -271,6 +277,12 @@
       */
      protected void updateWeather()
      {

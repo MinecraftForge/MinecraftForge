@@ -10,7 +10,7 @@
  
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
-@@ -48,44 +51,22 @@
+@@ -48,44 +51,23 @@
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
          this.convertMapIfNeeded(par1Str);
@@ -59,6 +59,7 @@
 -            this.getConfigurationManager().setPlayerManager(this.worldServers);
 -        }
 -
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.PreLoad(world));
 +            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 +        }
 +
