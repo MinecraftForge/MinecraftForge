@@ -1,6 +1,29 @@
 --- ../src_base/common/net/minecraft/src/PlayerInstance.java
 +++ ../src_work/common/net/minecraft/src/PlayerInstance.java
-@@ -137,7 +137,10 @@
+@@ -3,9 +3,12 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.ChunkWatchEvent;
++
+ public class PlayerInstance
+ {
+-    private final List playersInChunk;
++    public final List playersInChunk;
+ 
+     /** note: this is final */
+     private final ChunkCoordIntPair chunkLocation;
+@@ -48,6 +51,8 @@
+             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), true, 0));
+             this.playersInChunk.remove(par1EntityPlayerMP);
+             par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
++            
++            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(chunkLocation, par1EntityPlayerMP));
+ 
+             if (this.playersInChunk.isEmpty())
+             {
+@@ -137,7 +142,10 @@
                          if ((this.field_73260_f & 1 << var3) != 0)
                          {
                              var4 = var3 << 4;
