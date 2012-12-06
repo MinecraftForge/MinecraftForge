@@ -19,11 +19,16 @@ import net.minecraftforge.oredict.OreDictionary;
 public class MinecraftForge
 {
     /**
-     * The core Forge EventBus, all events for Forge will be fired on this,
+     * The core Forge EventBusses, all events for Forge will be fired on these,
      * you should use this to register all your listeners.
      * This replaces every register*Handler() function in the old version of Forge.
+     * TERRAIN_GEN_BUS for terrain gen events
+     * ORE_GEN_BUS for ore gen events
+     * EVENT_BUS for everything else
      */
     public static final EventBus EVENT_BUS = new EventBus();
+    public static final EventBus TERRAIN_GEN_BUS = new EventBus();
+    public static final EventBus ORE_GEN_BUS = new EventBus();
     public static boolean SPAWNER_ALLOW_ON_INVERTED = false;
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
