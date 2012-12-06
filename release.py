@@ -226,6 +226,7 @@ def get_branch_name():
     else:
         branch = os.getenv("GIT_BRANCH").rpartition('/')[2]
     branch = branch.replace('master', '')
+    branch = branch.replace('HEAD', '')
     print 'Detected Branch as \'%s\'' % branch
     return branch
     
