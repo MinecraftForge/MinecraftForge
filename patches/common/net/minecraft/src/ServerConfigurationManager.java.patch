@@ -17,10 +17,10 @@
 +        {
 +            par2 = 0;
 +        }
-+ 	else if (!world.provider.canRespawnHere())
-+		{
-+			par2 = world.provider.getRespawnDimensionID();
-+		}
++        else if (!world.provider.canRespawnHere())
++        {
++            par2 = world.provider.getRespawnDimensionID();
++        }
 +
          par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeAllTrackingPlayers(par1EntityPlayerMP);
          par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeEntityFromAllTrackingPlayers(par1EntityPlayerMP);
