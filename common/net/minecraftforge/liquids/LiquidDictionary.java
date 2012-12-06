@@ -68,7 +68,7 @@ public abstract class LiquidDictionary
      *
      * @return the defined liquids
      */
-    public Map<String, LiquidStack> getDefinedLiquids()
+    public static Map<String, LiquidStack> getDefinedLiquids()
     {
     	return ImmutableMap.copyOf(liquids);
     }
