@@ -915,7 +915,7 @@ public class ForgeChunkManager
                     "for a mod without an override. This is the maximum number of chunks a single ticket can force.";
         defaultMaxChunks = maxChunks.getInt(25);
 
-        Property playerTicketCount = config.get("defaults", "playetTicketCount", 500);
+        Property playerTicketCount = config.get("defaults", "playerTicketCount", 500);
         playerTicketCount.comment = "The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.";
         playerTicketLength = playerTicketCount.getInt(500);
 
