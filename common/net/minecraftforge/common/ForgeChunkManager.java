@@ -97,6 +97,8 @@ public class ForgeChunkManager
     private static Configuration config;
     private static int playerTicketLength;
     private static int dormantChunkCacheSize;
+
+    private static Set<String> warnedMods = Sets.newHashSet();
     /**
      * All mods requiring chunkloading need to implement this to handle the
      * re-registration of chunk tickets at world loading time
@@ -657,9 +659,10 @@ public class ForgeChunkManager
 
         int allowedCount = ticketConstraints.containsKey(modId) ? ticketConstraints.get(modId) : defaultMaxCount;
 
-        if (tickets.get(world).get(modId).size() >= allowedCount)
+        if (tickets.get(world).get(modId).size() >= allowedCount && !warnedMods.contains(modId))
         {
             FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
+            warnedMods.add(modId);
             return null;
         }
         Ticket ticket = new Ticket(modId, type, world);
