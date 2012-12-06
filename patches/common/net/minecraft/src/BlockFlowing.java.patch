@@ -13,10 +13,10 @@
              if (this.blockMaterial == Material.lava && par1World.getBlockMaterial(par2, par3 - 1, par4) == Material.water)
              {
 -                par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
-+  			if (!MinecraftForge.EVENT_BUS.post(new LavaWaterCollisionEvent(par1World, par2, par3 - 1, par4, Block.stone)))
-+				{
-+					par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
-+				}
++  			           if (!MinecraftForge.EVENT_BUS.post(new LavaWaterCollisionEvent(par1World, par2, par3 - 1, par4, Block.stone)))
++				            {
++					               par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
++				            }
                  this.triggerLavaMixEffects(par1World, par2, par3 - 1, par4);
                  return;
              }
