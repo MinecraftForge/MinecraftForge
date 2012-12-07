@@ -20,6 +20,7 @@ def main():
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='MCP Path', default=None)
     parser.add_option('-b', '--build', action='store', dest='build', help='Build number', default=None)
+    parser.add_option('-s', '--skipchangelog', action='store', dest='skip_changelog', help='Skip Changelog', default=False)
     options, _ = parser.parse_args()
     
     build_num = 0
@@ -77,8 +78,9 @@ def main():
         
     os.makedirs(out_folder)
     
-    changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
-    make_changelog("http://jenkins.minecraftforge.net/job/forge/", build_num, changelog_file, version_str)
+    if not options.skip_changelog:
+      changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
+      make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", build_num, changelog_file, version_str)
     
     version_file = 'forgeversion.properties'
     if os.path.exists(version_file):
