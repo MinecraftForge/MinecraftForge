@@ -9,7 +9,7 @@
  
  public class SaveHandler implements ISaveHandler, IPlayerFileData
  {
-@@ -97,14 +99,16 @@
+@@ -97,17 +99,23 @@
          File var1 = new File(this.field_75770_b, "level.dat");
          NBTTagCompound var2;
          NBTTagCompound var3;
@@ -28,7 +28,14 @@
              }
              catch (Exception var5)
              {
-@@ -120,7 +124,9 @@
++                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
++                {
++                    throw (RuntimeException)var5;
++                }
+                 var5.printStackTrace();
+             }
+         }
+@@ -120,7 +128,9 @@
              {
                  var2 = CompressedStreamTools.func_74796_a(new FileInputStream(var1));
                  var3 = var2.func_74775_l("Data");
@@ -39,7 +46,7 @@
              }
              catch (Exception var4)
              {
-@@ -136,7 +142,7 @@
+@@ -136,7 +146,7 @@
          NBTTagCompound var3 = p_75755_1_.func_76082_a(p_75755_2_);
          NBTTagCompound var4 = new NBTTagCompound();
          var4.func_74782_a("Data", var3);
@@ -48,7 +55,7 @@
          try
          {
              File var5 = new File(this.field_75770_b, "level.dat_new");
-@@ -174,7 +180,7 @@
+@@ -174,7 +184,7 @@
          NBTTagCompound var2 = p_75761_1_.func_76066_a();
          NBTTagCompound var3 = new NBTTagCompound();
          var3.func_74782_a("Data", var2);
