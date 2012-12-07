@@ -25,6 +25,9 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.ItemData;
+
 /**
  * @author cpw
  *
@@ -70,6 +73,9 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
             list.func_74742_a(mod);
         }
         fmlData.func_74782_a("ModList", list);
+        NBTTagList itemList = new NBTTagList();
+        GameRegistry.writeItemData(itemList);
+        fmlData.func_74782_a("ModItemData", itemList);
         return fmlData;
     }
 
@@ -96,5 +102,16 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
                 }
             }
         }
+        if (tag.func_74764_b("ModItemData"))
+        {
+            NBTTagList modList = tag.func_74761_m("ModItemData");
+            Set<ItemData> worldSaveItems = GameRegistry.buildWorldItemData(modList);
+            GameRegistry.validateWorldSave(worldSaveItems);
+        }
+        else
+        {
+            GameRegistry.validateWorldSave(null);
+        }
     }
+
 }

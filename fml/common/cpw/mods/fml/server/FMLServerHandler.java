@@ -15,6 +15,7 @@ package cpw.mods.fml.server;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MapDifference;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.shared.Entity;
@@ -31,6 +32,8 @@ import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 /**
@@ -88,6 +91,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         Loader.instance().initializeMods();
         LanguageRegistry.reloadLanguageTable();
+        GameRegistry.initializeServerGate(1);
     }
 
     @Override
@@ -172,5 +176,16 @@ public class FMLServerHandler implements IFMLSidedHandler
     public byte getClientCompatibilityLevel()
     {
         return 0;
+    }
+
+    @Override
+    public boolean shouldServerShouldBeKilledQuietly()
+    {
+        return false;
+    }
+    @Override
+    public void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler handler, INetworkManager mgr)
+    {
+
     }
 }

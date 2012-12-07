@@ -17,6 +17,13 @@ import java.util.Random;
 import net.minecraft.shared.*;
 
 
+/**
+ * Deprecated without replacement, use vanilla DispenserRegistry code
+ *
+ * @author cpw
+ *
+ */
+@Deprecated
 public interface IDispenseHandler
 {
     /**

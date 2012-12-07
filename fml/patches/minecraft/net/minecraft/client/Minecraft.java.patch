@@ -5,6 +5,8 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
 +
++import com.google.common.collect.MapDifference;
++
 +import cpw.mods.fml.client.FMLClientHandler;
 +import cpw.mods.fml.common.FMLCommonHandler;
 +import cpw.mods.fml.common.Side;
@@ -73,7 +75,31 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1920,6 +1934,12 @@
+@@ -1777,8 +1799,23 @@
+         }
+ 
+         this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
++        GameRegistry.initializeServerGate(2);
+         this.field_71437_Z = new IntegratedServer(this, p_71371_1_, p_71371_2_, p_71371_3_);
+         this.field_71437_Z.func_71256_s();
++        MapDifference<Integer, ItemData> idDifferences = GameRegistry.gateWorldLoadingForValidation();
++        if (idDifferences!=null)
++        {
++            FMLClientHandler.instance().warnIDMismatch(idDifferences, true);
++        }
++        else
++        {
++            GameRegistry.releaseGate(true);
++            continueWorldLoading();
++        }
++
++    }
++    public void continueWorldLoading()
++    {
+         this.field_71455_al = true;
+         this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
+ 
+@@ -1993,6 +2030,12 @@
  
      public static void main(String[] p_main_0_)
      {

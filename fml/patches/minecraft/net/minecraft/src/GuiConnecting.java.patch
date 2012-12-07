@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/src/GuiConnecting.java
++++ ../src-work/minecraft/net/minecraft/src/GuiConnecting.java
+@@ -122,4 +122,10 @@
+     {
+         return p_74251_0_.field_73882_e;
+     }
++
++    public static void forceTermination(GuiConnecting gui)
++    {
++        gui.field_74258_b = true;
++        gui.field_74259_a = null;
++    }
+ }

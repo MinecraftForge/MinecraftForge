@@ -31,7 +31,7 @@ import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 public class FMLNetworkHandler
 {
     private static final int FML_HASH = Hashing.murmur3_32().hashString("FML").asInt();
-    private static final int PROTOCOL_VERSION = 0x1;
+    private static final int PROTOCOL_VERSION = 0x2;
     private static final FMLNetworkHandler INSTANCE = new FMLNetworkHandler();
 
     // List of states for connections from clients to server
@@ -70,7 +70,12 @@ public class FMLNetworkHandler
 
     private void handleFMLPacket(Packet250CustomPayload packet, INetworkManager network, NetHandler netHandler)
     {
-        FMLPacket pkt = FMLPacket.readPacket(packet.field_73629_c);
+        FMLPacket pkt = FMLPacket.readPacket(network, packet.field_73629_c);
+        // Part of an incomplete multipart packet
+        if (pkt == null)
+        {
+            return;
+        }
         String userName = "";
         if (netHandler instanceof NetLoginHandler)
         {
