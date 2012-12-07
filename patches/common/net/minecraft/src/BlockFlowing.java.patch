@@ -1,0 +1,22 @@
+--- ../src_base/common/net/minecraft/src/BlockFlowing.java
++++ ../src_work/common/net/minecraft/src/BlockFlowing.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.LavaWaterCollisionEvent;
+ import java.util.Random;
+ 
+ public class BlockFlowing extends BlockFluid
+@@ -137,7 +139,10 @@
+         {
+             if (this.blockMaterial == Material.lava && par1World.getBlockMaterial(par2, par3 - 1, par4) == Material.water)
+             {
+-                par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
++                if (!MinecraftForge.EVENT_BUS.post(new LavaWaterCollisionEvent(par1World, par2, par3 - 1, par4, Block.stone)))
++                {
++                    par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
++                }
+                 this.triggerLavaMixEffects(par1World, par2, par3 - 1, par4);
+                 return;
+             }
