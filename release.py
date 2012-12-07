@@ -1,4 +1,4 @@
-import os, os.path, sys
+import os, os.path, sys, glob
 import shutil, fnmatch
 import logging, zipfile, re
 from optparse import OptionParser
@@ -110,6 +110,11 @@ def main():
     zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
     zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_end()
+    
+    zips = glob.glob('fml/mcp*.zip')
+    for i in zips:
+        print 'Removing MCP Zip: %s' % os.path.basename(i)
+        os.remove(i)
     
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
