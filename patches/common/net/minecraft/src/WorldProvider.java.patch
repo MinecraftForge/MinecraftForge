@@ -17,7 +17,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -256,4 +258,238 @@
+@@ -256,4 +258,258 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
@@ -125,6 +125,26 @@
 +
 +        return var5;
 +    }
++ 
++    /**
++     * The dimension ID in which the player will respawn after death.
++     * If canRespawnHere() returns false, the player will be transferred to the dimension associated with this ID.
++	    * If canRespawnHere() returns true, the player will respawn in the current dimension as usual.
++	    *
++     * @return The ID of the dimension to respawn in
++     */
++	   public int getRespawnDimensionID()
++    {
++		      return 0;
++	   }
++	
++    /**
++     * Whether to spin the player icon on maps in this dimension.
++	    */
++	   public boolean shouldMapSpin()
++	   {
++		      return dimensionId < 0;
++	   }
 +
 +    /*======================================= Start Moved From World =========================================*/
 +
