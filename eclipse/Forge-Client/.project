@@ -45,6 +45,16 @@
 			<type>2</type>
 			<locationURI>MCP_LOC/src_work/common</locationURI>
 		</link>
+		<link>
+			<name>test-client</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/forge/test/minecraft</locationURI>
+		</link>
+		<link>
+			<name>test-common</name>
+			<type>2</type>
+			<locationURI>MCP_LOC/forge/test/common</locationURI>
+		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>

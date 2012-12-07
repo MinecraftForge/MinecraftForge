@@ -1,0 +1,25 @@
+--- ../src_base/common/net/minecraft/src/EntityTrackerEntry.java
++++ ../src_work/common/net/minecraft/src/EntityTrackerEntry.java
+@@ -4,6 +4,9 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerSpawnSendedEvent;
+ 
+ import cpw.mods.fml.common.network.FMLNetworkHandler;
+ 
+@@ -318,6 +321,12 @@
+                     Packet var6 = this.getPacketForThisEntity();
+                     par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(var6);
+ 
++                    if (var6 instanceof Packet20NamedEntitySpawn)
++                    {
++                        PlayerSpawnSendedEvent event = new PlayerSpawnSendedEvent(par1EntityPlayerMP, (EntityPlayerMP)this.myEntity);
++                        MinecraftForge.EVENT_BUS.post(event);
++                    }
++                    
+                     if (this.myEntity instanceof EntityItemFrame)
+                     {
+                         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet40EntityMetadata(this.myEntity.entityId, this.myEntity.getDataWatcher(), true));

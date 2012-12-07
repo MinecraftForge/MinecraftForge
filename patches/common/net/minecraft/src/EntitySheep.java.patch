@@ -44,6 +44,15 @@
          return super.interact(par1EntityPlayer);
      }
  
+@@ -304,7 +286,7 @@
+         int var4 = this.func_90013_b(par2EntityAnimal);
+         this.field_90016_e.getStackInSlot(0).setItemDamage(var3);
+         this.field_90016_e.getStackInSlot(1).setItemDamage(var4);
+-        ItemStack var5 = CraftingManager.getInstance().findMatchingRecipe(this.field_90016_e, ((EntitySheep)par1EntityAnimal).worldObj);
++        ItemStack var5 = CraftingManager.getInstance().findMatchingRecipe(par1EntityAnimal, this.field_90016_e, ((EntitySheep)par1EntityAnimal).worldObj, par1EntityAnimal.posX, par1EntityAnimal.posY, par1EntityAnimal.posZ);
+         int var6;
+ 
+         if (var5 != null && var5.getItem().shiftedIndex == Item.dyePowder.shiftedIndex)
 @@ -328,4 +310,24 @@
      {
          return this.func_90015_b(par1EntityAgeable);
