@@ -721,7 +721,7 @@ public class Loader
 
     public ModContainer activeModContainer()
     {
-        return modController.activeContainer();
+        return modController != null ? modController.activeContainer() : null;
     }
 
     public boolean isInState(LoaderState state)
@@ -735,7 +735,7 @@ public class Loader
     }
 
 	public boolean hasReachedState(LoaderState state) {
-		return modController.hasReachedState(state);
+		return modController != null ? modController.hasReachedState(state) : false;
 	}
 
 	public String getMCPVersionString() {

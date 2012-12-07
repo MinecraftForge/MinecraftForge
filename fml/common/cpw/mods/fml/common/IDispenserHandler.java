@@ -6,9 +6,13 @@ import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
 /**
+ *
+ * Deprecated without replacement. Use vanilla DispenserRegistry code.
+ *
  * @author cpw
  *
  */
+@Deprecated
 public interface IDispenserHandler
 {
     /**

@@ -26,7 +26,9 @@ import net.minecraft.src.CrashReport;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
+import net.minecraft.src.GuiConnecting;
 import net.minecraft.src.GuiScreen;
+import net.minecraft.src.INetworkManager;
 import net.minecraft.src.NetClientHandler;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.Packet;
@@ -39,6 +41,7 @@ import net.minecraft.src.WorldClient;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.MapDifference;
 
 import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
@@ -61,8 +64,10 @@ import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
+import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
@@ -112,6 +117,8 @@ public class FMLClientHandler implements IFMLSidedHandler
     private CustomModLoadingErrorDisplayException customError;
 
 	private DuplicateModsFoundException dupesFound;
+
+    private boolean serverShouldBeKilledQuietly;
 
     /**
      * Called to start the whole game off
@@ -404,6 +411,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void beginServerLoading(MinecraftServer server)
     {
+        serverShouldBeKilledQuietly = false;
         // NOOP
     }
 
@@ -458,5 +466,50 @@ public class FMLClientHandler implements IFMLSidedHandler
     public byte getClientCompatibilityLevel()
     {
         return NetClientHandler.getConnectionCompatibilityLevel();
+    }
+
+    public void warnIDMismatch(MapDifference<Integer, ItemData> idDifferences, boolean mayContinue)
+    {
+        GuiIdMismatchScreen mismatch = new GuiIdMismatchScreen(idDifferences, mayContinue);
+        client.func_71373_a(mismatch);
+    }
+
+    public void callbackIdDifferenceResponse(boolean response)
+    {
+        if (response)
+        {
+            serverShouldBeKilledQuietly = false;
+            GameRegistry.releaseGate(true);
+            client.continueWorldLoading();
+        }
+        else
+        {
+            serverShouldBeKilledQuietly = true;
+            GameRegistry.releaseGate(false);
+            // Reset and clear the client state
+            client.func_71403_a((WorldClient)null);
+            client.func_71373_a(null);
+        }
+    }
+
+    @Override
+    public boolean shouldServerShouldBeKilledQuietly()
+    {
+        return serverShouldBeKilledQuietly;
+    }
+
+    @Override
+    public void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler toKill, INetworkManager mgr)
+    {
+        // Nuke the connection
+        ((NetClientHandler)toKill).func_72553_e();
+        // Stop GuiConnecting
+        GuiConnecting.forceTermination((GuiConnecting)client.field_71462_r);
+        // pulse the network manager queue to clear cruft
+        mgr.func_74428_b();
+        // Nuke the world client
+        client.func_71403_a((WorldClient)null);
+        // Show error screen
+        warnIDMismatch(s, false);
     }
 }

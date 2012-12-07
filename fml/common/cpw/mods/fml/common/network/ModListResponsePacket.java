@@ -3,12 +3,14 @@ package cpw.mods.fml.common.network;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDENTIFIERS;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_LIST_RESPONSE;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_MISSING;
+import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import net.minecraft.src.NBTTagList;
 import net.minecraft.src.NetHandler;
 import net.minecraft.src.NetLoginHandler;
 import net.minecraft.src.INetworkManager;
@@ -23,6 +25,7 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ModListResponsePacket extends FMLPacket
 {
@@ -113,16 +116,25 @@ public class ModListResponsePacket extends FMLPacket
             FMLLog.info("User %s connection failed: missing %s, bad versions %s", userName, missingClientMods, versionIncorrectMods);
             // Mark this as bad
             FMLNetworkHandler.setHandlerState((NetLoginHandler) netHandler, FMLNetworkHandler.MISSING_MODS_OR_VERSIONS);
+            pkt.field_73628_b = pkt.field_73629_c.length;
+            network.func_74429_a(pkt);
         }
         else
         {
             pkt.field_73629_c = FMLPacket.makePacket(MOD_IDENTIFIERS, netHandler);
             Logger.getLogger("Minecraft").info(String.format("User %s connecting with mods %s", userName, modVersions.keySet()));
             FMLLog.info("User %s connecting with mods %s", userName, modVersions.keySet());
+            pkt.field_73628_b = pkt.field_73629_c.length;
+            network.func_74429_a(pkt);
+            NBTTagList itemList = new NBTTagList();
+            GameRegistry.writeItemData(itemList);
+            byte[][] registryPackets = FMLPacket.makePacketSet(MOD_IDMAP, itemList);
+            for (int i = 0; i < registryPackets.length; i++)
+            {
+                network.func_74429_a(PacketDispatcher.getPacket("FML", registryPackets[i]));
+            }
         }
 
-        pkt.field_73628_b = pkt.field_73629_c.length;
-        network.func_74429_a(pkt);
         // reset the continuation flag - we have completed extra negotiation and the login should complete now
         NetLoginHandler.func_72531_a((NetLoginHandler) netHandler, true);
     }
