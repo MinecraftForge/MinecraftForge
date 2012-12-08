@@ -1,0 +1,37 @@
+--- ../src_base/common/net/minecraft/src/BlockFluid.java
++++ ../src_work/common/net/minecraft/src/BlockFluid.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.LavaWaterCollisionEvent;
+ import java.util.Random;
+ 
+ public abstract class BlockFluid extends Block
+@@ -590,14 +592,20 @@
+ 
+                     if (var6 == 0)
+                     {
+-                        par1World.setBlockWithNotify(par2, par3, par4, Block.obsidian.blockID);
++                        if (!MinecraftForge.EVENT_BUS.post(new LavaWaterCollisionEvent(par1World, par2, par3, par4, Block.obsidian)))
++                        {
++                            par1World.setBlockWithNotify(par2, par3, par4, Block.obsidian.blockID);
++                            this.triggerLavaMixEffects(par1World, par2, par3, par4);
++                        }
+                     }
+                     else if (var6 <= 4)
+                     {
+-                        par1World.setBlockWithNotify(par2, par3, par4, Block.cobblestone.blockID);
+-                    }
+-
+-                    this.triggerLavaMixEffects(par1World, par2, par3, par4);
++                        if (!MinecraftForge.EVENT_BUS.post(new LavaWaterCollisionEvent(par1World, par2, par3, par4, Block.cobblestone)))
++                        {
++                            par1World.setBlockWithNotify(par2, par3, par4, Block.cobblestone.blockID);
++                            this.triggerLavaMixEffects(par1World, par2, par3, par4);
++                        }
++                    }
+                 }
+             }
+         }
