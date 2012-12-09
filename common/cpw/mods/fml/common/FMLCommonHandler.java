@@ -20,8 +20,21 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.shared.*;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet131MapData;
+import net.minecraft.server.*;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;

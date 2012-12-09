@@ -15,8 +15,9 @@ package cpw.mods.fml.common;
 
 import java.util.Random;
 
-import net.minecraft.shared.IChunkProvider;
-import net.minecraft.shared.World;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkProvider;
+
 
 /**
  * This is called back during world generation. 

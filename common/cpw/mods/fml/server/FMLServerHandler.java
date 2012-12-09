@@ -17,12 +17,13 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapDifference;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet131MapData;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.shared.Entity;
-import net.minecraft.shared.NetHandler;
-import net.minecraft.shared.Packet;
-import net.minecraft.shared.Packet131MapData;
-import net.minecraft.shared.World;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;

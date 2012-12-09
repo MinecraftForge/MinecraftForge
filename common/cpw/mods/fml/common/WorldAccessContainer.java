@@ -2,7 +2,9 @@ package cpw.mods.fml.common;
 
 import java.util.Map;
 
-import net.minecraft.shared.*;
+import net.minecraft.nbt.*;
+import net.minecraft.world.storage.*;
+
 
 public interface WorldAccessContainer
 {

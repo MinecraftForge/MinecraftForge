@@ -16,8 +16,15 @@ package cpw.mods.fml.common.modloader;
 
 import java.util.Random;
 
-import net.minecraft.shared.*;
-import net.minecraft.client.WorldClient;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.NetServerHandler;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.world.World;
+
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.asm.SideOnly;

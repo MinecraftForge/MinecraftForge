@@ -1,9 +1,9 @@
 package cpw.mods.fml.client;
 
-import net.minecraft.client.GuiButton;
-import net.minecraft.client.GuiScreen;
-import net.minecraft.client.GuiSmallButton;
-import net.minecraft.shared.StringTranslate;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSmallButton;
+import net.minecraft.util.StringTranslate;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 

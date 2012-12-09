@@ -2,15 +2,15 @@ package cpw.mods.fml.common.registry;
 
 import java.util.Map;
 
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 
 import cpw.mods.fml.common.ModContainer;
-
-import net.minecraft.src.Item;
-import net.minecraft.src.NBTTagCompound;
 
 public class ItemData {
 

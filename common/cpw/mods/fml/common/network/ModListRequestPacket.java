@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.minecraft.shared.*;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

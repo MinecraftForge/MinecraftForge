@@ -5,8 +5,10 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.shared.*;
+import net.minecraft.entity.EntityVillager;
+import net.minecraft.item.Item;
 import net.minecraft.src.TradeEntry;
+import net.minecraft.village.MerchantRecipeList;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.common.registry.VillagerRegistry.IVillageTradeHandler;
 
