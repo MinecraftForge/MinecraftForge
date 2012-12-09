@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.entity.item;
+ 
+ import java.util.Iterator;
++
++import cpw.mods.fml.common.registry.GameRegistry;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.Entity;
+@@ -257,6 +259,8 @@
+                     p_70100_1_.func_71029_a(AchievementList.field_76027_z);
+                 }
+ 
++                GameRegistry.onPickupNotification(p_70100_1_, this);
++
+                 this.func_85030_a("random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                 p_70100_1_.func_71001_a(this, var2);
+ 

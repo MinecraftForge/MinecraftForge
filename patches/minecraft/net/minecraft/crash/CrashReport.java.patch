@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.crash;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.File;
+@@ -44,6 +45,7 @@
+         this.field_85061_c.func_71500_a("AABB Pool Size", new CallableCrashMemoryReport(this));
+         this.field_85061_c.func_71500_a("Suspicious classes", new CallableSuspiciousClasses(this));
+         this.field_85061_c.func_71500_a("IntCache", new CallableIntCache(this));
++        FMLCommonHandler.instance().enhanceCrashReport(this, this.field_85061_c);
+     }
+ 
+     public String func_71501_a()

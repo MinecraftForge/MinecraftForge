@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
+@@ -1,7 +1,10 @@
+ package net.minecraft.entity.player;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.network.FMLNetworkHandler;
++
+ import java.util.Iterator;
+ import java.util.List;
+ import net.minecraft.block.Block;
+@@ -172,6 +175,7 @@
+ 
+     public void func_70071_h_()
+     {
++        FMLCommonHandler.instance().onPlayerPreTick(this);
+         if (this.field_71074_e != null)
+         {
+             ItemStack var1 = this.field_71071_by.func_70448_g();
+@@ -295,6 +299,7 @@
+         {
+             this.field_71100_bB.func_75118_a(this);
+         }
++        FMLCommonHandler.instance().onPlayerPostTick(this);
+     }
+ 
+     public int func_82145_z()
+@@ -1802,4 +1807,9 @@
+     {
+         return this.func_82241_s(1);
+     }
++
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
++    {
++        FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++    }
+ }

@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
+@@ -2,6 +2,9 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.network.FMLNetworkHandler;
++import cpw.mods.fml.common.registry.GameRegistry;
++
+ import java.io.File;
+ import java.net.SocketAddress;
+ import java.text.SimpleDateFormat;
+@@ -107,6 +110,8 @@
+         }
+ 
+         p_72355_2_.func_71116_b();
++
++        FMLNetworkHandler.handlePlayerLogin(p_72355_2_, var6, p_72355_1_);
+     }
+ 
+     public void func_72364_a(WorldServer[] p_72364_1_)
+@@ -173,6 +178,7 @@
+ 
+     public void func_72367_e(EntityPlayerMP p_72367_1_)
+     {
++        GameRegistry.onPlayerLogout(p_72367_1_);
+         this.func_72391_b(p_72367_1_);
+         WorldServer var2 = p_72367_1_.func_71121_q();
+         var2.func_72900_e(p_72367_1_);
+@@ -322,6 +328,7 @@
+         var8.func_72838_d(var7);
+         this.field_72404_b.add(var7);
+         var7.func_71116_b();
++        GameRegistry.onPlayerRespawn(var7);
+         return var7;
+     }
+ 
+@@ -347,6 +354,8 @@
+             PotionEffect var7 = (PotionEffect)var6.next();
+             p_72356_1_.field_71135_a.func_72567_b(new Packet41EntityEffect(p_72356_1_.field_70157_k, var7));
+         }
++
++        GameRegistry.onPlayerChangedDimension(p_72356_1_);
+     }
+ 
+     public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_)

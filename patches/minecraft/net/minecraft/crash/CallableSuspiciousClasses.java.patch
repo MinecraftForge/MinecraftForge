@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/crash/CallableSuspiciousClasses.java
++++ ../src-work/minecraft/net/minecraft/crash/CallableSuspiciousClasses.java
+@@ -130,6 +130,6 @@
+ 
+     public Object call()
+     {
+-        return this.func_85085_a();
++        return "FML is installed";
+     }
+ }

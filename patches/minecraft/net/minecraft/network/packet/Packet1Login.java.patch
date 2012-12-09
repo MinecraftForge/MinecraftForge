@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/network/packet/Packet1Login.java
++++ ../src-work/minecraft/net/minecraft/network/packet/Packet1Login.java
+@@ -3,6 +3,8 @@
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.IOException;
++
++import cpw.mods.fml.common.network.FMLNetworkHandler;
+ import net.minecraft.world.EnumGameType;
+ import net.minecraft.world.WorldType;
+ 
+@@ -17,7 +19,12 @@
+     public byte field_73556_g;
+     public byte field_73562_h;
+ 
+-    public Packet1Login() {}
++    private boolean vanillaCompatible;
++    
++    public Packet1Login()
++    {
++        this.vanillaCompatible = FMLNetworkHandler.vanillaLoginPacketCompatibility();
++    }
+ 
+     public Packet1Login(int p_i3327_1_, WorldType p_i3327_2_, EnumGameType p_i3327_3_, boolean p_i3327_4_, int p_i3327_5_, int p_i3327_6_, int p_i3327_7_, int p_i3327_8_)
+     {
+@@ -29,6 +36,7 @@
+         this.field_73556_g = (byte)p_i3327_7_;
+         this.field_73562_h = (byte)p_i3327_8_;
+         this.field_73560_c = p_i3327_4_;
++        this.vanillaCompatible = false;
+     }
+ 
+     public void func_73267_a(DataInputStream p_73267_1_) throws IOException
+@@ -46,7 +54,16 @@
+         this.field_73560_c = (var3 & 8) == 8;
+         int var4 = var3 & -9;
+         this.field_73557_d = EnumGameType.func_77146_a(var4);
+-        this.field_73558_e = p_73267_1_.readByte();
++
++        if (vanillaCompatible)
++        {
++            this.field_73558_e = p_73267_1_.readByte();
++        }
++        else
++        {
++            this.field_73558_e = p_73267_1_.readInt();
++        }
++
+         this.field_73555_f = p_73267_1_.readByte();
+         this.field_73556_g = p_73267_1_.readByte();
+         this.field_73562_h = p_73267_1_.readByte();
+@@ -64,7 +81,16 @@
+         }
+ 
+         p_73273_1_.writeByte(var2);
+-        p_73273_1_.writeByte(this.field_73558_e);
++
++        if (vanillaCompatible)
++        {
++            p_73273_1_.writeByte(this.field_73558_e);
++        }
++        else
++        {
++            p_73273_1_.writeInt(this.field_73558_e);
++        }
++
+         p_73273_1_.writeByte(this.field_73555_f);
+         p_73273_1_.writeByte(this.field_73556_g);
+         p_73273_1_.writeByte(this.field_73562_h);
+@@ -84,6 +110,6 @@
+             var1 = this.field_73559_b.func_77127_a().length();
+         }
+ 
+-        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1;
++        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 3);
+     }
+ }

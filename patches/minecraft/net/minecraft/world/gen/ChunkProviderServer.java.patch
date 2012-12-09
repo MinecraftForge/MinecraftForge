@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -6,6 +6,8 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
++import cpw.mods.fml.common.registry.GameRegistry;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.EnumCreatureType;
+@@ -210,6 +212,7 @@
+             if (this.field_73246_d != null)
+             {
+                 this.field_73246_d.func_73153_a(p_73153_1_, p_73153_2_, p_73153_3_);
++                GameRegistry.generateWorld(p_73153_2_, p_73153_3_, field_73251_h, field_73246_d, p_73153_1_);
+                 var4.func_76630_e();
+             }
+         }

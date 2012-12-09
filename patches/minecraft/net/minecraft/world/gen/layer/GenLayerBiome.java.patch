@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayerBiome.java
+@@ -10,13 +10,8 @@
+     public GenLayerBiome(long p_i3888_1_, GenLayer p_i3888_3_, WorldType p_i3888_4_)
+     {
+         super(p_i3888_1_);
+-        this.field_75914_b = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g, BiomeGenBase.field_76782_w};
++        this.field_75914_b = p_i3888_4_.getBiomesForWorldType();
+         this.field_75909_a = p_i3888_3_;
+-
+-        if (p_i3888_4_ == WorldType.field_77136_e)
+-        {
+-            this.field_75914_b = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
+-        }
+     }
+ 
+     public int[] func_75904_a(int p_75904_1_, int p_75904_2_, int p_75904_3_, int p_75904_4_)
