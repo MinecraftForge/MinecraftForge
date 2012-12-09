@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkListenThread.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkListenThread.java
+@@ -6,6 +6,8 @@
+ import java.util.List;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
++
++import cpw.mods.fml.common.FMLLog;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ReportedException;
+@@ -51,6 +53,7 @@
+                     throw new ReportedException(var4);
+                 }
+ 
++                FMLLog.log(Level.SEVERE, var5, "A critical server error occured handling a packet, kicking %s", var2.getPlayer().field_70157_k);
+                 field_71751_a.log(Level.WARNING, "Failed to handle packet for " + var2.field_72574_e.func_70023_ak() + "/" + var2.field_72574_e.func_71114_r() + ": " + var5, var5);
+                 var2.func_72565_c("Internal server error");
+             }

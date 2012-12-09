@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityVillager.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityVillager.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.VillagerRegistry;
++
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Iterator;
+@@ -235,7 +237,7 @@
+             case 4:
+                 return "/mob/villager/butcher.png";
+             default:
+-                return super.func_70073_O();
++                return VillagerRegistry.getVillagerSkin(this.func_70946_n(), super.func_70073_O());
+         }
+     }
+ 
+@@ -416,6 +418,7 @@
+ 
+         MerchantRecipeList var2;
+         var2 = new MerchantRecipeList();
++        VillagerRegistry.manageVillagerTrades(var2, this, this.func_70946_n(), this.field_70146_Z);
+         label48:
+ 
+         switch (this.func_70946_n())
+@@ -620,7 +623,7 @@
+ 
+     public void func_82163_bD()
+     {
+-        this.func_70938_b(this.field_70170_p.field_73012_v.nextInt(5));
++        VillagerRegistry.applyRandomTrade(this, field_70170_p.field_73012_v);
+     }
+ 
+     public void func_82187_q()

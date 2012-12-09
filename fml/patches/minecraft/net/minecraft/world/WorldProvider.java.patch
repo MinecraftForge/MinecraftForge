@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
++++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
+@@ -48,20 +48,12 @@
+ 
+     protected void func_76572_b()
+     {
+-        if (this.field_76579_a.func_72912_H().func_76067_t() == WorldType.field_77138_c)
+-        {
+-            FlatGeneratorInfo var1 = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76773_a[var1.func_82648_a()], 0.5F, 0.5F);
+-        }
+-        else
+-        {
+-            this.field_76578_c = new WorldChunkManager(this.field_76579_a);
+-        }
++        field_76578_c = field_76577_b.getChunkManager(field_76579_a);
+     }
+ 
+     public IChunkProvider func_76555_c()
+     {
+-        return (IChunkProvider)(this.field_76577_b == WorldType.field_77138_c ? new ChunkProviderFlat(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r(), this.field_82913_c) : new ChunkProviderGenerate(this.field_76579_a, this.field_76579_a.func_72905_C(), this.field_76579_a.func_72912_H().func_76089_r()));
++        return field_76577_b.getChunkGenerator(field_76579_a, field_82913_c);
+     }
+ 
+     public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
+@@ -179,19 +171,19 @@
+ 
+     public int func_76557_i()
+     {
+-        return this.field_76577_b == WorldType.field_77138_c ? 4 : 64;
++        return this.field_76577_b.getMinimumSpawnHeight(this.field_76579_a);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public boolean func_76564_j()
+     {
+-        return this.field_76577_b != WorldType.field_77138_c && !this.field_76576_e;
++        return this.field_76577_b.hasVoidParticles(this.field_76576_e);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public double func_76565_k()
+     {
+-        return this.field_76577_b == WorldType.field_77138_c ? 1.0D : 0.03125D;
++        return this.field_76577_b.voidFadeMagnitude();
+     }
+ 
+     @SideOnly(Side.CLIENT)
