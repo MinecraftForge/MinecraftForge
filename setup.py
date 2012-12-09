@@ -41,6 +41,8 @@ def main():
     print 'Applying forge patches'
     apply_forge_patches(os.path.join(forge_dir, 'fml'), mcp_dir, forge_dir, work_dir, False)
     
+    setup_eclipse(forge_dir)
+    
     print '=================================== Setup Finished ================================='
     
 def setup_fml(mcp_dir, fml_dir, dont_extract=False):        
@@ -67,5 +69,15 @@ def setup_fml(mcp_dir, fml_dir, dont_extract=False):
     from install import fml_main
     fml_main(fml_dir, mcp_dir, True)
 
+def setup_eclipse(forge_dir):
+    eclipse_dir = os.path.join(forge_dir, 'eclipse')
+    eclipse_zip = os.path.join(forge_dir, 'eclipse-workspace-dev.zip')
+    
+    if not os.path.isdir(eclipse_dir) and os.path.isfile(eclipse_zip):
+        print 'Extracting Dev Workspace'
+        zf = zipfile.ZipFile(eclipse_zip)
+        zf.extractall(forge_dir)
+        zf.close()
+        
 if __name__ == '__main__':
     main()
