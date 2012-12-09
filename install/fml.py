@@ -22,7 +22,7 @@ def download_deps(mcp_path):
         if not os.path.isfile(target):
             try:
                 urllib.urlretrieve('http://files.minecraftforge.net/fmllibs/' + lib, target)
-                print 'Downloaded %s successfully' % lib
+                print 'Downloaded %s' % lib
             except:
                 print 'Download %s failed, download manually from http://files.minecraftforge.net/fmllibs/%s or http://files.minecraftforge.net/fmllibs/fml_libs_dev.zip and place in MCP/lib' % (lib, lib)
                 ret = False
@@ -54,7 +54,7 @@ def download_file(url, target, md5=None):
                     print 'Download of %s failed md5 check, deleting' % name
                     os.remove(target)
                     return False
-            print 'Downloaded %s successfully' % name
+            print 'Downloaded %s' % name
         except Exception as e:
             print e
             print 'Download of %s failed, download it manually from \'%s\' to \'%s\'' % (target, url, target)
@@ -383,57 +383,12 @@ def get_joined_srg(mcp_dir):
                     values[pts[0]][pts[1]] = pts[2]
     
     return values
-    
-def merge_client_server(mcp_dir):
-    client = os.path.join(mcp_dir, 'src', 'minecraft')
-    shared = os.path.join(mcp_dir, 'src', 'common')
-    
-    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar')
-    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar')
-    joined_srg = get_joined_srg(mcp_dir)['CL:']
-    
-    if not os.path.isfile(client_jar) or not os.path.isfile(server_jar):
-        return
-        
-    if not os.path.isdir(shared):
-        os.makedirs(shared)
-    
-    server_classes = []
-            
-    zip = ZipFile(server_jar)
-    for i in zip.filelist:
-        if i.filename.endswith('.class'):
-            server_classes.append(i.filename[:-6])
-    
-    for cls in server_classes:
-        if cls in joined_srg.keys():
-            cls = joined_srg[cls]
-        cls += '.java'
-        
-        f_client = os.path.normpath(os.path.join(client, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
-        f_shared = os.path.normpath(os.path.join(shared, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
-        
-        if not os.path.isfile(f_client):
-            print 'Issue Merging File Not Found: ' + cls
-            continue
-            
-        if not cls.rfind('/') == -1:
-            new_dir = os.path.join(shared, cls.rsplit('/', 1)[0])
-            if not os.path.isdir(new_dir):
-                os.makedirs(new_dir)
-            
-        shutil.move(f_client, f_shared)
-            
-    cleanDirs(client)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
-    #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
+    #Delete /minecraft/cpw to get rid of the Side/SideOnly classes used in decompilation
     cpw_mc_dir = os.path.join(src_dir, 'minecraft', 'cpw')
-    cpw_com_dir = os.path.join(src_dir, 'common', 'cpw')
     if os.path.isdir(cpw_mc_dir):
         shutil.rmtree(cpw_mc_dir)
-    if os.path.isdir(cpw_com_dir):
-        shutil.rmtree(cpw_com_dir)
         
     #patch files
     print 'Applying Forge ModLoader patches'
@@ -443,15 +398,12 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
         apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
     if copy_files and os.path.isdir(os.path.join(fml_dir, 'client')):
         copytree(os.path.join(fml_dir, 'client'), os.path.join(src_dir, 'minecraft'))
+    if copy_files and os.path.isdir(os.path.join(fml_dir, 'common')):
+        copytree(os.path.join(fml_dir, 'common'), os.path.join(src_dir, 'minecraft'))
 
     #delete argo
     if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
         shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
-            
-    if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
-        apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir)
-    if copy_files and os.path.isdir(os.path.join(fml_dir, 'common')):
-        copytree(os.path.join(fml_dir, 'common'), os.path.join(src_dir, 'common'))
 
 def finish_setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
@@ -652,6 +604,10 @@ def download_mcp(mcp_dir, fml_dir, version=None):
     zf.extractall(mcp_dir)
     zf.close()
     
+    eclipse_dir = os.path.join(mcp_dir, 'eclipse')
+    if os.path.isdir(eclipse_dir):
+        shutil.rmtree(eclipse_dir)
+    
     return True
     
 def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
@@ -666,12 +622,12 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     print 'Setting up MCP'
     if os.path.isfile(backup):
-        print '> Restoring commands.py backup'
+        print 'Restoring commands.py backup'
         if os.path.exists(runtime):
             os.remove(runtime)
         shutil.copy(backup, runtime)
     else:
-        print '> Backing up commands.py'
+        print 'Backing up commands.py'
         shutil.copy(runtime, backup)
     
     if not os.path.isfile(patch):
@@ -681,8 +637,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     temp = os.path.abspath('temp.patch')
     cmd = 'patch -i "%s" ' % temp
     
-    windows = os.name == 'nt'
-    if windows:
+    if os.name == 'nt':
         applydiff = os.path.abspath(os.path.join(mcp_dir, 'runtime', 'bin', 'applydiff.exe'))
         cmd = '"%s" -uf -i "%s"' % (applydiff, temp)
         
@@ -690,8 +645,6 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         cmd = cmd.replace('\\', '\\\\')
     cmd = shlex.split(cmd)
     
-    if windows:
-        print 'Patching file %s' % os.path.normpath(runtime)
     fix_patch(patch, temp)
     process = subprocess.Popen(cmd, cwd=os.path.join(mcp_dir, 'runtime'), bufsize=-1)
     process.communicate()
@@ -731,13 +684,12 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     gen_renamed_conf(mcp_dir, fml_dir)
     
-#    #update workspace
-#    print 'Fixing MCP Workspace'
-#    if not os.path.isdir(os.path.join(fml_dir, 'eclipse', 'Clean-Client')):
-#        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
-#        if os.path.isdir(mcp_eclipse):
-#            shutil.rmtree(mcp_eclipse)
-#        shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
+    #update workspace
+    if not os.path.isfile(os.path.join(fml_dir, 'fmlbuild.properties')):
+        mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
+        if not os.path.isdir(mcp_eclipse):
+            print 'Fixing MCP Workspace'
+            shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
 
 def normaliselines(in_filename):
     in_filename = os.path.normpath(in_filename)
