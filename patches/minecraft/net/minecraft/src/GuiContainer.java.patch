@@ -1,5 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/src/GuiContainer.java
 +++ ../src_work/minecraft/net/minecraft/src/GuiContainer.java
+@@ -287,7 +287,7 @@
+     /**
+      * Draws an inventory slot
+      */
+-    private void drawSlotInventory(Slot par1Slot)
++    protected void drawSlotInventory(Slot par1Slot)
+     {
+         int var2 = par1Slot.xDisplayPosition;
+         int var3 = par1Slot.yDisplayPosition;
 @@ -309,7 +309,7 @@
              if (var6 >= 0)
              {
