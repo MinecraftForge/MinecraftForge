@@ -74,13 +74,13 @@ def main():
             print 'New Class: %s' % cls
             if cls.find('/') == -1:
                 if cls in server_classes and cls in client_classes:
-                    pkgs[cls] = 'net/minecraft/shared'
+                    pkgs[cls] = 'get_me_out_of_here_shared'
                 elif cls in server_classes:
-                    pkgs[cls] = 'net/minecraft/server'
+                    pkgs[cls] = 'get_me_out_of_here_server'
                 elif cls in client_classes:
-                    pkgs[cls] = 'net/minecraft/client'
+                    pkgs[cls] = 'get_me_out_of_here_client'
                 else:
-                    pkgs[cls] = 'net/minecraft/src'
+                    pkgs[cls] = 'get_me_out_of_here_src'
     
     tmp=[]
     for cls,pkg in pkgs.items():
