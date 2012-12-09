@@ -1,6 +1,7 @@
 package cpw.mods.fml.common.modloader;
 
-import net.minecraft.shared.*;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.IPickupNotifier;
 
 public class ModLoaderPickupNotifier implements IPickupNotifier

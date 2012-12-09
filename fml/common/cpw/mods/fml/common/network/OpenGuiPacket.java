@@ -1,8 +1,8 @@
 package cpw.mods.fml.common.network;
 
-import net.minecraft.shared.EntityPlayer;
-import net.minecraft.shared.NetHandler;
-import net.minecraft.shared.INetworkManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;

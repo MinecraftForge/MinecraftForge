@@ -23,8 +23,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
+import net.minecraft.command.ICommand;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.animal.IAnimals;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.src.BaseMod;
-import net.minecraft.shared.*;
 import net.minecraft.src.TradeEntry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;

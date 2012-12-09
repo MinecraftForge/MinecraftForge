@@ -14,7 +14,7 @@
 
 package cpw.mods.fml.client;
 
-import net.minecraft.client.TextureFX;
+import net.minecraft.client.renderer.texturefx.TextureFX;
 
 class OverrideInfo
 {

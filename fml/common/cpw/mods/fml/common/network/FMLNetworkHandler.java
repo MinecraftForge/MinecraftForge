@@ -11,8 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.network.*;
+import net.minecraft.network.packet.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.shared.*;
+import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.world.EnumGameType;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

@@ -1,6 +1,7 @@
 package cpw.mods.fml.common.network;
 
-import net.minecraft.shared.*;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet250CustomPayload;
 
 public interface IPacketHandler
 {

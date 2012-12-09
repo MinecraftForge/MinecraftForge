@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import net.minecraft.shared.*;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.*;
+import net.minecraft.network.packet.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

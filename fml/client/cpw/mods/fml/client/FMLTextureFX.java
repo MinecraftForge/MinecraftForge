@@ -18,9 +18,10 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.logging.Logger;
 
-import net.minecraft.client.RenderEngine;
-import net.minecraft.client.TextureFX;
-import net.minecraft.client.ITexturePack;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.texturefx.TextureFX;
+import net.minecraft.client.texturepacks.ITexturePack;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 

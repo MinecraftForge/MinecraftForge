@@ -16,8 +16,8 @@ package cpw.mods.fml.client;
 
 import java.awt.Dimension;
 
-import net.minecraft.client.RenderEngine;
-import net.minecraft.client.ITexturePack;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.texturepacks.ITexturePack;
 
 public interface ITextureFX
 {

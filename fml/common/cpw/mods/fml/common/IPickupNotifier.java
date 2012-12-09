@@ -13,8 +13,8 @@
  */
 package cpw.mods.fml.common;
 
-import net.minecraft.shared.EntityItem;
-import net.minecraft.shared.EntityPlayer;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 
 public interface IPickupNotifier
 {

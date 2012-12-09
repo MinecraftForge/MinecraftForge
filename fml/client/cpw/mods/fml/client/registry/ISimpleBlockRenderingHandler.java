@@ -1,8 +1,8 @@
 package cpw.mods.fml.client.registry;
 
-import net.minecraft.shared.Block;
-import net.minecraft.shared.IBlockAccess;
-import net.minecraft.client.RenderBlocks;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.world.IBlockAccess;
 
 public interface ISimpleBlockRenderingHandler
 {

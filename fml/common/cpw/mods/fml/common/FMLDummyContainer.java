@@ -19,7 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import net.minecraft.shared.*;
+import net.minecraft.nbt.*;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;

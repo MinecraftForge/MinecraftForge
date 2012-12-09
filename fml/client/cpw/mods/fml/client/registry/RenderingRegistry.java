@@ -3,8 +3,11 @@ package cpw.mods.fml.client.registry;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.shared.*;
-import net.minecraft.client.*;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.IBlockAccess;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
