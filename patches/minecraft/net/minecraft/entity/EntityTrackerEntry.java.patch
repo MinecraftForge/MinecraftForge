@@ -6,10 +6,10 @@
  import java.util.Set;
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
- import net.minecraft.entity.animal.IAnimals;
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.item.EntityBoat;
-@@ -349,6 +351,14 @@
+ import net.minecraft.entity.item.EntityEnderCrystal;
+@@ -351,6 +353,14 @@
                      this.field_73137_j = this.field_73132_a.field_70159_w;
                      this.field_73138_k = this.field_73132_a.field_70181_x;
                      this.field_73135_l = this.field_73132_a.field_70179_y;
@@ -24,7 +24,7 @@
  
                      if (this.field_73143_t && !(var6 instanceof Packet24MobSpawn))
                      {
-@@ -422,6 +432,13 @@
+@@ -424,6 +434,13 @@
          if (this.field_73132_a.field_70128_L)
          {
              System.out.println("Fetching addPacket for removed entity");

@@ -6,10 +6,10 @@
  import java.util.Set;
 +
 +import cpw.mods.fml.common.registry.EntityRegistry;
- import net.minecraft.entity.animal.EntityBat;
- import net.minecraft.entity.animal.EntitySquid;
- import net.minecraft.entity.animal.IAnimals;
-@@ -47,6 +49,11 @@
+ import net.minecraft.entity.boss.EntityDragon;
+ import net.minecraft.entity.boss.EntityWither;
+ import net.minecraft.entity.item.EntityBoat;
+@@ -49,6 +51,11 @@
  
      public void func_72786_a(Entity p_72786_1_)
      {

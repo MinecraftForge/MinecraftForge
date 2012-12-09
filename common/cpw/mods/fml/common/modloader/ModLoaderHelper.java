@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.animal.IAnimals;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

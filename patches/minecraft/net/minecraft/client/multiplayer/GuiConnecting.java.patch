@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/GuiConnecting.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/GuiConnecting.java
-@@ -128,4 +128,10 @@
+@@ -126,4 +126,10 @@
      {
          return p_74251_0_.field_73882_e;
      }

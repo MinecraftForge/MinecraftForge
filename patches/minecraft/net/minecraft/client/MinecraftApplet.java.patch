@@ -9,7 +9,7 @@
  import java.applet.Applet;
  import java.awt.BorderLayout;
  import java.awt.Canvas;
-@@ -14,6 +16,11 @@
+@@ -15,6 +17,11 @@
      private Thread field_71482_c = null;
  
      public void init()
@@ -21,7 +21,7 @@
      {
          this.field_71483_a = new CanvasMinecraftApplet(this);
          boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
-@@ -61,6 +68,11 @@
+@@ -62,6 +69,11 @@
  
      public void start()
      {
