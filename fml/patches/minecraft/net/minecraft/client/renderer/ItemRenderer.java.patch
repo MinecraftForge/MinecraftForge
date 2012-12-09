@@ -7,7 +7,7 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  import net.minecraft.block.Block;
-@@ -41,7 +42,12 @@
+@@ -40,7 +41,12 @@
      public void func_78443_a(EntityLiving p_78443_1_, ItemStack p_78443_2_, int p_78443_3_)
      {
          GL11.glPushMatrix();
@@ -21,7 +21,7 @@
  
          if (var4 != null && RenderBlocks.func_78597_b(var4.func_71857_b()))
          {
-@@ -138,10 +144,17 @@
+@@ -137,10 +143,17 @@
          float var10;
          float var11;
  
@@ -43,7 +43,7 @@
              var11 = var6 * var9;
              p_78439_1_.func_78374_a((double)var11, 0.0D, (double)(0.0F - var7), (double)var10, (double)p_78439_5_);
              p_78439_1_.func_78374_a((double)var11, 0.0D, 0.0D, (double)var10, (double)p_78439_5_);
-@@ -153,11 +166,11 @@
+@@ -152,11 +165,11 @@
          p_78439_1_.func_78382_b();
          p_78439_1_.func_78375_b(1.0F, 0.0F, 0.0F);
  
@@ -60,7 +60,7 @@
              p_78439_1_.func_78374_a((double)var11, 1.0D, (double)(0.0F - var7), (double)var10, (double)p_78439_3_);
              p_78439_1_.func_78374_a((double)var11, 1.0D, 0.0D, (double)var10, (double)p_78439_3_);
              p_78439_1_.func_78374_a((double)var11, 0.0D, 0.0D, (double)var10, (double)p_78439_5_);
-@@ -168,11 +181,11 @@
+@@ -167,11 +180,11 @@
          p_78439_1_.func_78382_b();
          p_78439_1_.func_78375_b(0.0F, 1.0F, 0.0F);
  
@@ -77,7 +77,7 @@
              p_78439_1_.func_78374_a(0.0D, (double)var11, 0.0D, (double)p_78439_2_, (double)var10);
              p_78439_1_.func_78374_a((double)var6, (double)var11, 0.0D, (double)p_78439_4_, (double)var10);
              p_78439_1_.func_78374_a((double)var6, (double)var11, (double)(0.0F - var7), (double)p_78439_4_, (double)var10);
-@@ -183,10 +196,10 @@
+@@ -182,10 +195,10 @@
          p_78439_1_.func_78382_b();
          p_78439_1_.func_78375_b(0.0F, -1.0F, 0.0F);
  

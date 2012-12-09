@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Set;
 
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.KeyBinding;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

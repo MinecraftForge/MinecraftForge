@@ -1,5 +1,5 @@
---- ../src-base/minecraft/net/minecraft/client/IntegratedServerListenThread.java
-+++ ../src-work/minecraft/net/minecraft/client/IntegratedServerListenThread.java
+--- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServerListenThread.java
++++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServerListenThread.java
 @@ -2,6 +2,8 @@
  
  import cpw.mods.fml.common.Side;

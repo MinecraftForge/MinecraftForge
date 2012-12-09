@@ -1,17 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -3,6 +3,10 @@
+@@ -3,6 +3,9 @@
  import java.util.HashMap;
  import java.util.LinkedHashMap;
  import java.util.Map;
 +import java.util.logging.Level;
 +
 +import cpw.mods.fml.common.FMLLog;
-+
- import net.minecraft.entity.animal.EntityBat;
- import net.minecraft.entity.animal.EntityChicken;
- import net.minecraft.entity.animal.EntityCow;
-@@ -98,9 +102,10 @@
+ import net.minecraft.entity.boss.EntityDragon;
+ import net.minecraft.entity.boss.EntityWither;
+ import net.minecraft.entity.item.EntityBoat;
+@@ -102,9 +105,10 @@
      {
          Entity var2 = null;
  
@@ -23,7 +22,7 @@
  
              if (var3 != null)
              {
-@@ -114,7 +119,17 @@
+@@ -118,7 +122,17 @@
  
          if (var2 != null)
          {
