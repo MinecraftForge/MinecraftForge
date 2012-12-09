@@ -3,9 +3,9 @@ import shutil, glob, fnmatch
 import csv, re
 from pprint import pprint
 from zipfile import ZipFile
+from optparse import OptionParser
 
-def get_merged_info():
-    mcp_dir = os.path.join(os.getcwd(), '..')
+def get_merged_info(mcp_dir):
     joined = os.path.join(mcp_dir, 'conf', 'joined.srg')
     values = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
     
@@ -24,8 +24,20 @@ def get_merged_info():
     return {t:{v.split(' ')[0]:k for k, v in m.items()} for t,m in values.items()}
 
 def main():
-    client_jar = os.path.join('..', 'jars', 'bin', 'minecraft.jar.backup')
-    server_jar = os.path.join('..', 'jars', 'minecraft_server.jar.backup')
+    parser = OptionParser()
+    parser.add_option('-m', '--mcp-dir', action='store_true', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
+    options, _ = parser.parse_args()
+    
+    fml_dir = os.path.dirname(os.path.abspath(__file__))
+    mcp_dir = os.path.abspath('mcp')
+    
+    if not options.mcp_dir is None:
+        mcp_dir = os.path.abspath(options.mcp_dir)
+    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
+        mcp_dir = os.path.abspath('..')
+
+    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar.backup')
+    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar.backup')
     
     server_classes = []
     client_classes = []
@@ -42,7 +54,7 @@ def main():
             server_classes.append(i.filename[:-6])
     zip.close()
 
-    srg = get_merged_info()
+    srg = get_merged_info(mcp_dir)
     pkgs = {}    
     pkg_file = os.path.join('conf', 'packages.csv')
     
