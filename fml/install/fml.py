@@ -685,11 +685,11 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     gen_renamed_conf(mcp_dir, fml_dir)
     
     #update workspace
-    if not os.path.isfile(os.path.join(fml_dir, 'fmlbuild.properties')):
+    if not os.path.isfile(os.path.join(fml_dir, 'fmlbuild.properties-sample')):
         mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
-        if not os.path.isdir(mcp_eclipse):
+        if not os.path.isdir(mcp_eclipse) and os.path.isdir(os.path.join(fml_dir, 'eclipse')):
             print 'Fixing MCP Workspace'
-            shutil.copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
+            copytree(os.path.join(fml_dir, 'eclipse'), mcp_eclipse)
 
 def normaliselines(in_filename):
     in_filename = os.path.normpath(in_filename)
