@@ -103,3 +103,43 @@
              {
                  var7 = true;
              }
+@@ -292,7 +310,7 @@
+ 
+             if ((var6 & 8) != 0)
+             {
+-                if (this.sensible)
++                if (this.isSensible(par1World, par2, par3, par4))
+                 {
+                     this.func_82535_o(par1World, par2, par3, par4);
+                 }
+@@ -320,13 +338,29 @@
+     }
+ 
+     /**
++     * Returns if the button instance is sensitive or not
++     * Overriden to retrieve the sensible value using the given parameters
++     * 
++     * @param par1World the world
++     * @param par2 the xCoord
++     * @param par3 the yCoord
++     * @param par4 the zCoord
++     * 
++     * @return sensible value
++     */
++    protected boolean isSensible(World par1World, int par2, int par3, int par4)
++    {
++        return this.sensible;
++    }
++
++    /**
+      * Triggered whenever an entity collides with this block (enters into the block). Args: world, x, y, z, entity
+      */
+     public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
+     {
+         if (!par1World.isRemote)
+         {
+-            if (this.sensible)
++            if (this.isSensible(par1World, par2, par3, par4))
+             {
+                 if ((par1World.getBlockMetadata(par2, par3, par4) & 8) == 0)
+                 {
