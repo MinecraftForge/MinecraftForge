@@ -38,7 +38,7 @@ def main(mcp_dir):
     
 if __name__ == '__main__':
     parser = OptionParser()
-    parser.add_option('-m', '--mcp-dir', action='store_true', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
+    parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
     options, _ = parser.parse_args()
 
     if not options.mcp_dir is None:
