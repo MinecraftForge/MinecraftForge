@@ -1,16 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,10 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.GameData;
 +import cpw.mods.fml.common.registry.GameRegistry;
 +import cpw.mods.fml.common.registry.ItemData;
 +
  import java.awt.BorderLayout;
  import java.awt.Canvas;
  import java.awt.Color;
-@@ -15,7 +18,9 @@
+@@ -15,7 +19,9 @@
  import java.text.DecimalFormat;
  import java.util.HashMap;
  import java.util.List;
@@ -20,7 +21,7 @@
  import net.minecraft.src.AchievementList;
  import net.minecraft.src.AnvilSaveConverter;
  import net.minecraft.src.AxisAlignedBB;
-@@ -122,6 +127,7 @@
+@@ -122,6 +128,7 @@
  import net.minecraft.src.WorldInfo;
  import net.minecraft.src.WorldRenderer;
  import net.minecraft.src.WorldSettings;
@@ -28,7 +29,7 @@
  import org.lwjgl.LWJGLException;
  import org.lwjgl.Sys;
  import org.lwjgl.input.Keyboard;
-@@ -134,6 +140,14 @@
+@@ -134,6 +141,14 @@
  import org.lwjgl.opengl.GLContext;
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
@@ -43,7 +44,7 @@
  
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
-@@ -316,7 +330,7 @@
+@@ -316,7 +331,7 @@
          this.func_71357_I();
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
@@ -52,7 +53,7 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab);
-@@ -361,6 +375,8 @@
+@@ -361,6 +376,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -61,7 +62,7 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -389,6 +405,7 @@
+@@ -389,6 +406,7 @@
          {
              this.func_71352_k();
          }
@@ -69,7 +70,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -747,9 +764,11 @@
+@@ -747,9 +765,11 @@
  
              if (!this.field_71454_w)
              {
@@ -81,7 +82,7 @@
              }
  
              GL11.glFlush();
-@@ -1279,11 +1298,13 @@
+@@ -1279,11 +1299,13 @@
  
      public void func_71407_l()
      {
@@ -95,7 +96,7 @@
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
          this.field_71424_I.func_76318_c("gui");
-@@ -1739,6 +1760,7 @@
+@@ -1739,6 +1761,7 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -103,21 +104,21 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1777,8 +1799,23 @@
+@@ -1777,8 +1800,23 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
-+        GameRegistry.initializeServerGate(2);
++        GameData.initializeServerGate(2);
          this.field_71437_Z = new IntegratedServer(this, p_71371_1_, p_71371_2_, p_71371_3_);
          this.field_71437_Z.func_71256_s();
-+        MapDifference<Integer, ItemData> idDifferences = GameRegistry.gateWorldLoadingForValidation();
++        MapDifference<Integer, ItemData> idDifferences = GameData.gateWorldLoadingForValidation();
 +        if (idDifferences!=null)
 +        {
 +            FMLClientHandler.instance().warnIDMismatch(idDifferences, true);
 +        }
 +        else
 +        {
-+            GameRegistry.releaseGate(true);
++            GameData.releaseGate(true);
 +            continueWorldLoading();
 +        }
 +
@@ -127,7 +128,7 @@
          this.field_71455_al = true;
          this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
  
-@@ -1993,6 +2030,12 @@
+@@ -1993,6 +2031,12 @@
  
      public static void main(String[] p_main_0_)
      {

@@ -34,6 +34,7 @@ import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -93,7 +94,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     {
         Loader.instance().initializeMods();
         LanguageRegistry.reloadLanguageTable();
-        GameRegistry.initializeServerGate(1);
+        GameData.initializeServerGate(1);
     }
 
     @Override
