@@ -1,3 +1,3 @@
 @echo off
-..\runtime\bin\python\python_mcp install.py
+.\fml\python\python_fml install.py
 pause
