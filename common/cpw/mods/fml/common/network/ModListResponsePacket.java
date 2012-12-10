@@ -23,6 +23,7 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ModListResponsePacket extends FMLPacket
@@ -125,7 +126,7 @@ public class ModListResponsePacket extends FMLPacket
             pkt.field_73628_b = pkt.field_73629_c.length;
             network.func_74429_a(pkt);
             NBTTagList itemList = new NBTTagList();
-            GameRegistry.writeItemData(itemList);
+            GameData.writeItemData(itemList);
             byte[][] registryPackets = FMLPacket.makePacketSet(MOD_IDMAP, itemList);
             for (int i = 0; i < registryPackets.length; i++)
             {

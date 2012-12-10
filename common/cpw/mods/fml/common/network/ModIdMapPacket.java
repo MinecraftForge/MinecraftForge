@@ -19,6 +19,7 @@ import com.google.common.primitives.UnsignedBytes;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
@@ -75,14 +76,14 @@ public class ModIdMapPacket extends FMLPacket {
     public void execute(INetworkManager network, FMLNetworkHandler handler, NetHandler netHandler, String userName)
     {
         byte[] allData = Bytes.concat(partials);
-        GameRegistry.initializeServerGate(1);
+        GameData.initializeServerGate(1);
         try
         {
             NBTTagCompound serverList = CompressedStreamTools.func_74792_a(allData);
             NBTTagList list = serverList.func_74761_m("List");
-            Set<ItemData> itemData = GameRegistry.buildWorldItemData(list);
-            GameRegistry.validateWorldSave(itemData);
-            MapDifference<Integer, ItemData> serverDifference = GameRegistry.gateWorldLoadingForValidation();
+            Set<ItemData> itemData = GameData.buildWorldItemData(list);
+            GameData.validateWorldSave(itemData);
+            MapDifference<Integer, ItemData> serverDifference = GameData.gateWorldLoadingForValidation();
             if (serverDifference!=null)
             {
                 FMLCommonHandler.instance().disconnectIDMismatch(serverDifference, netHandler, network);
