@@ -5,7 +5,6 @@
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
 +import cpw.mods.fml.common.registry.GameData;
-+import cpw.mods.fml.common.registry.GameRegistry;
 +
  import java.util.List;
  import java.util.Random;
