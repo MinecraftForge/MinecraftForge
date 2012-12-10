@@ -110,7 +110,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -645,13 +632,15 @@
+@@ -653,13 +640,15 @@
          this.theProfiler.startSection("levels");
          int var1;
  
@@ -131,7 +131,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  var4.getWorldVec3Pool().clear();
-@@ -698,9 +687,11 @@
+@@ -706,9 +695,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -146,7 +146,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -754,7 +745,13 @@
+@@ -762,7 +753,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -161,7 +161,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -863,7 +860,7 @@
+@@ -871,7 +868,7 @@
  
      public String getServerModName()
      {
@@ -170,7 +170,7 @@
      }
  
      /**
-@@ -1125,6 +1122,7 @@
+@@ -1133,6 +1130,7 @@
  
              if (var2 != null)
              {
