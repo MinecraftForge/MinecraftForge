@@ -20,7 +20,7 @@ def main():
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='MCP Path', default=None)
     parser.add_option('-b', '--build', action='store', dest='build', help='Build number', default=None)
-    parser.add_option('-s', '--skipchangelog', action='store', dest='skip_changelog', help='Skip Changelog', default=False)
+    parser.add_option('-s', '--skipchangelog', action='store_true', dest='skip_changelog', help='Skip Changelog', default=False)
     options, _ = parser.parse_args()
     
     build_num = 0
@@ -109,7 +109,8 @@ def main():
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
     zip_add(version_file)
-    zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
+    if not options.skip_changelog:
+        zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
     zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_end()
     
@@ -127,7 +128,8 @@ def main():
     zip_add('install', '')
     zip_add('forge.py')
     zip_add(version_file)
-    zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
+    if not options.skip_changelog:
+        zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
     zip_end()
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), 0)
     
