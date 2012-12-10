@@ -4,6 +4,7 @@
  
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.GameData;
 +import cpw.mods.fml.common.registry.GameRegistry;
 +
  import java.util.List;
@@ -14,7 +15,7 @@
  
          field_77698_e[256 + p_i3659_1_] = this;
 +
-+        GameRegistry.newItemAdded(this);
++        GameData.newItemAdded(this);
      }
  
      public Item func_77665_c(int p_77665_1_)

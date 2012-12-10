@@ -7,6 +7,7 @@
 +import cpw.mods.fml.common.FMLCommonHandler;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.common.registry.GameData;
 +import cpw.mods.fml.common.registry.GameRegistry;
 +import cpw.mods.fml.common.registry.ItemData;
 +import cpw.mods.fml.relauncher.ArgsWrapper;
@@ -92,19 +93,19 @@
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
 +
-+        GameRegistry.initializeServerGate(2);
++        GameData.initializeServerGate(2);
 +
          this.field_71437_Z = new IntegratedServer(this, p_71371_1_, p_71371_2_, p_71371_3_);
          this.field_71437_Z.func_71256_s();
 +
-+        MapDifference<Integer, ItemData> idDifferences = GameRegistry.gateWorldLoadingForValidation();
++        MapDifference<Integer, ItemData> idDifferences = GameData.gateWorldLoadingForValidation();
 +        if (idDifferences!=null)
 +        {
 +            FMLClientHandler.instance().warnIDMismatch(idDifferences, true);
 +        }
 +        else
 +        {
-+            GameRegistry.releaseGate(true);
++            GameData.releaseGate(true);
 +            continueWorldLoading();
 +        }
 +

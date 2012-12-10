@@ -64,6 +64,7 @@ import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.network.ModMissingPacket;
 import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.common.registry.IThrowableEntity;
@@ -479,13 +480,13 @@ public class FMLClientHandler implements IFMLSidedHandler
         if (response)
         {
             serverShouldBeKilledQuietly = false;
-            GameRegistry.releaseGate(true);
+            GameData.releaseGate(true);
             client.continueWorldLoading();
         }
         else
         {
             serverShouldBeKilledQuietly = true;
-            GameRegistry.releaseGate(false);
+            GameData.releaseGate(false);
             // Reset and clear the client state
             client.func_71403_a((WorldClient)null);
             client.func_71373_a(null);
