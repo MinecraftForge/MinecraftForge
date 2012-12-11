@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -7,6 +7,8 @@
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.util.logging.Logger;
++
++import cpw.mods.fml.common.FMLCommonHandler;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -104,16 +106,24 @@
+         NBTTagCompound var2;
+         NBTTagCompound var3;
+ 
++        WorldInfo worldInfo = null;
++
+         if (var1.exists())
+         {
+             try
+             {
+                 var2 = CompressedStreamTools.func_74796_a(new FileInputStream(var1));
+                 var3 = var2.func_74775_l("Data");
+-                return new WorldInfo(var3);
++                worldInfo = new WorldInfo(var3);
++                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, var2);
++                return worldInfo;
+             }
+             catch (Exception var5)
+             {
++                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
++                {
++                    throw (RuntimeException)var5;
++                }
+                 var5.printStackTrace();
+             }
+         }
+@@ -126,7 +136,9 @@
+             {
+                 var2 = CompressedStreamTools.func_74796_a(new FileInputStream(var1));
+                 var3 = var2.func_74775_l("Data");
+-                return new WorldInfo(var3);
++                worldInfo = new WorldInfo(var3);
++                FMLCommonHandler.instance().handleWorldDataLoad(this, worldInfo, var2);
++                return worldInfo;
+             }
+             catch (Exception var4)
+             {
+@@ -142,6 +154,8 @@
+         NBTTagCompound var3 = p_75755_1_.func_76082_a(p_75755_2_);
+         NBTTagCompound var4 = new NBTTagCompound();
+         var4.func_74782_a("Data", var3);
++
++        FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, var4);
+ 
+         try
+         {
+@@ -180,6 +194,8 @@
+         NBTTagCompound var2 = p_75761_1_.func_76066_a();
+         NBTTagCompound var3 = new NBTTagCompound();
+         var3.func_74782_a("Data", var2);
++
++        FMLCommonHandler.instance().handleWorldDataSave(this, p_75761_1_, var3);
+ 
+         try
+         {

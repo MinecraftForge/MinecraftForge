@@ -2,10 +2,9 @@ package cpw.mods.fml.common;
 
 import java.util.Map;
 
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.SaveHandler;
-import net.minecraft.src.WorldInfo;
+import net.minecraft.nbt.*;
+import net.minecraft.world.storage.*;
+
 
 public interface WorldAccessContainer
 {

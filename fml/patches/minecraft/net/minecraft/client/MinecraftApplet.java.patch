@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/client/MinecraftApplet.java
 +++ ../src-work/minecraft/net/minecraft/client/MinecraftApplet.java
-@@ -5,6 +5,8 @@
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.relauncher.FMLRelauncher;
++
  import java.applet.Applet;
  import java.awt.BorderLayout;
  import java.awt.Canvas;
-+
-+import cpw.mods.fml.relauncher.FMLRelauncher;
- import net.minecraft.src.CanvasMinecraftApplet;
- import net.minecraft.src.MinecraftAppletImpl;
- import net.minecraft.src.Session;
-@@ -17,6 +19,11 @@
+@@ -15,6 +17,11 @@
      private Thread field_71482_c = null;
  
      public void init()
@@ -21,7 +21,7 @@
      {
          this.field_71483_a = new CanvasMinecraftApplet(this);
          boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
-@@ -64,6 +71,11 @@
+@@ -62,6 +69,11 @@
  
      public void start()
      {

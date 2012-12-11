@@ -2,8 +2,9 @@ package cpw.mods.fml.common.modloader;
 
 import java.util.Random;
 
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.World;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
 import cpw.mods.fml.common.IDispenseHandler;
 import cpw.mods.fml.common.IDispenserHandler;
 

@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.minecraft.src.ICommand;
+import net.minecraft.command.ICommand;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;

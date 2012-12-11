@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiErrorScreen.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiErrorScreen.java
+@@ -9,6 +9,8 @@
+     private String field_74001_a;
+     private String field_74000_b;
+ 
++    public GuiErrorScreen(){}
++
+     public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_)
+     {
+         this.func_73733_a(0, 0, this.field_73880_f, this.field_73881_g, -12574688, -11530224);

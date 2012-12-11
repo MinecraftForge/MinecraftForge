@@ -22,7 +22,7 @@ def download_deps(mcp_path):
         if not os.path.isfile(target):
             try:
                 urllib.urlretrieve('http://files.minecraftforge.net/fmllibs/' + lib, target)
-                print 'Downloaded %s successfully' % lib
+                print 'Downloaded %s' % lib
             except:
                 print 'Download %s failed, download manually from http://files.minecraftforge.net/fmllibs/%s or http://files.minecraftforge.net/fmllibs/fml_libs_dev.zip and place in MCP/lib' % (lib, lib)
                 ret = False
@@ -54,7 +54,7 @@ def download_file(url, target, md5=None):
                     print 'Download of %s failed md5 check, deleting' % name
                     os.remove(target)
                     return False
-            print 'Downloaded %s successfully' % name
+            print 'Downloaded %s' % name
         except Exception as e:
             print e
             print 'Download of %s failed, download it manually from \'%s\' to \'%s\'' % (target, url, target)
@@ -328,8 +328,6 @@ def setup_fml(fml_dir, mcp_dir):
     #cleanup_source
     cleanup_source(src_dir)
     
-    merge_client_server(mcp_dir)
-    
     os.chdir(mcp_dir)
     commands = Commands(verify=True)
     updatemd5_side(mcp_dir, commands, CLIENT)
@@ -385,57 +383,12 @@ def get_joined_srg(mcp_dir):
                     values[pts[0]][pts[1]] = pts[2]
     
     return values
-    
-def merge_client_server(mcp_dir):
-    client = os.path.join(mcp_dir, 'src', 'minecraft')
-    shared = os.path.join(mcp_dir, 'src', 'common')
-    
-    client_jar = os.path.join(mcp_dir, 'jars', 'bin', 'minecraft.jar')
-    server_jar = os.path.join(mcp_dir, 'jars', 'minecraft_server.jar')
-    joined_srg = get_joined_srg(mcp_dir)['CL:']
-    
-    if not os.path.isfile(client_jar) or not os.path.isfile(server_jar):
-        return
-        
-    if not os.path.isdir(shared):
-        os.makedirs(shared)
-    
-    server_classes = []
-            
-    zip = ZipFile(server_jar)
-    for i in zip.filelist:
-        if i.filename.endswith('.class'):
-            server_classes.append(i.filename[:-6])
-    
-    for cls in server_classes:
-        if cls in joined_srg.keys():
-            cls = joined_srg[cls]
-        cls += '.java'
-        
-        f_client = os.path.normpath(os.path.join(client, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
-        f_shared = os.path.normpath(os.path.join(shared, cls.replace('/', os.path.sep))).replace(os.path.sep, '/')
-        
-        if not os.path.isfile(f_client):
-            print 'Issue Merging File Not Found: ' + cls
-            continue
-            
-        if not cls.rfind('/') == -1:
-            new_dir = os.path.join(shared, cls.rsplit('/', 1)[0])
-            if not os.path.isdir(new_dir):
-                os.makedirs(new_dir)
-            
-        shutil.move(f_client, f_shared)
-            
-    cleanDirs(client)
 
 def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
-    #Delete /common/cpw to get rid of the Side/SideOnly classes used in decompilation
+    #Delete /minecraft/cpw to get rid of the Side/SideOnly classes used in decompilation
     cpw_mc_dir = os.path.join(src_dir, 'minecraft', 'cpw')
-    cpw_com_dir = os.path.join(src_dir, 'common', 'cpw')
     if os.path.isdir(cpw_mc_dir):
         shutil.rmtree(cpw_mc_dir)
-    if os.path.isdir(cpw_com_dir):
-        shutil.rmtree(cpw_com_dir)
         
     #patch files
     print 'Applying Forge ModLoader patches'
@@ -445,15 +398,12 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
         apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'minecraft'), src_dir)
     if copy_files and os.path.isdir(os.path.join(fml_dir, 'client')):
         copytree(os.path.join(fml_dir, 'client'), os.path.join(src_dir, 'minecraft'))
+    if copy_files and os.path.isdir(os.path.join(fml_dir, 'common')):
+        copytree(os.path.join(fml_dir, 'common'), os.path.join(src_dir, 'minecraft'))
 
     #delete argo
     if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
         shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
-            
-    if os.path.isdir(os.path.join(fml_dir, 'patches', 'common')):
-        apply_patches(mcp_dir, os.path.join(fml_dir, 'patches', 'common'), src_dir)
-    if copy_files and os.path.isdir(os.path.join(fml_dir, 'common')):
-        copytree(os.path.join(fml_dir, 'common'), os.path.join(src_dir, 'common'))
 
 def finish_setup_fml(fml_dir, mcp_dir):
     sys.path.append(mcp_dir)
@@ -654,6 +604,10 @@ def download_mcp(mcp_dir, fml_dir, version=None):
     zf.extractall(mcp_dir)
     zf.close()
     
+    eclipse_dir = os.path.join(mcp_dir, 'eclipse')
+    if os.path.isdir(eclipse_dir):
+        shutil.rmtree(eclipse_dir)
+    
     return True
     
 def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
@@ -668,12 +622,12 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     print 'Setting up MCP'
     if os.path.isfile(backup):
-        print '> Restoring commands.py backup'
+        print 'Restoring commands.py backup'
         if os.path.exists(runtime):
             os.remove(runtime)
         shutil.copy(backup, runtime)
     else:
-        print '> Backing up commands.py'
+        print 'Backing up commands.py'
         shutil.copy(runtime, backup)
     
     if not os.path.isfile(patch):
@@ -683,8 +637,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     temp = os.path.abspath('temp.patch')
     cmd = 'patch -i "%s" ' % temp
     
-    windows = os.name == 'nt'
-    if windows:
+    if os.name == 'nt':
         applydiff = os.path.abspath(os.path.join(mcp_dir, 'runtime', 'bin', 'applydiff.exe'))
         cmd = '"%s" -uf -i "%s"' % (applydiff, temp)
         
@@ -692,8 +645,6 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
         cmd = cmd.replace('\\', '\\\\')
     cmd = shlex.split(cmd)
     
-    if windows:
-        print 'Patching file %s' % os.path.normpath(runtime)
     fix_patch(patch, temp)
     process = subprocess.Popen(cmd, cwd=os.path.join(mcp_dir, 'runtime'), bufsize=-1)
     process.communicate()
@@ -730,6 +681,8 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     
     print 'Copying FML conf'
     shutil.copytree(fml_conf, mcp_conf)
+    
+    gen_renamed_conf(mcp_dir, fml_dir)
     
     #update workspace
     if not os.path.isfile(os.path.join(fml_dir, 'fmlbuild.properties-sample')):
@@ -881,3 +834,106 @@ def gen_merged_csv(common_map, in_file, out_file, main_key='searge'):
     writer.writeheader()
     for row in sorted(common, key=lambda row: row[main_key]):
         writer.writerow(row)
+
+def repackage_class(pkgs, cls):
+    if cls.startswith('net/minecraft/src/'):
+        tmp = cls[18:]
+        if tmp in pkgs.keys():
+           return '%s/%s' % (pkgs[tmp], tmp)
+    return cls
+
+typere = re.compile('([\[ZBCSIJFDV]|L([\w\/]+);)')
+def repackage_signature(pkgs, sig):
+    global typere
+    sig1 = sig
+    params = sig.rsplit(')', 1)[0][1:]
+    ret = sig.rsplit(')', 1)[1]
+    
+    sig = '('
+    for arg in typere.findall(params):
+        if len(arg[1]) > 0:
+            sig += 'L%s;' % repackage_class(pkgs, arg[1])
+        else:
+            sig += arg[0]
+    sig += ')'
+    for tmp in typere.findall(ret):
+        if len(tmp[1]) > 0:
+            sig += 'L%s;' % repackage_class(pkgs, tmp[1])
+        else:
+            sig += tmp[0]
+    return sig
+
+def gen_renamed_conf(mcp_dir, fml_dir):
+    pkg_file = os.path.join(fml_dir, 'conf', 'packages.csv')
+    srg_in = os.path.join(mcp_dir, 'conf', 'joined.srg')
+    srg_out = os.path.join(mcp_dir, 'conf', 'packaged.srg')
+    exc_in = os.path.join(mcp_dir, 'conf', 'joined.exc')
+    exc_out = os.path.join(mcp_dir, 'conf', 'packaged.exc')
+    
+    pkgs = {}
+    if os.path.isfile(pkg_file):
+        with open(pkg_file) as fh:
+            reader = csv.DictReader(fh)
+            for line in reader:
+                pkgs[line['class']] = line['package']
+    
+    print 'Creating re-packaged srg'
+    with open(srg_in, 'r') as inf:
+        with open(srg_out, 'wb') as outf:
+            for line in inf:
+                pts = line.rstrip('\r\n').split(' ')
+                if pts[0] == 'PK:':
+                    outf.write(' '.join(pts) + '\n')
+                elif pts[0] == 'CL:':
+                    pts[2] = repackage_class(pkgs, pts[2])
+                    outf.write('CL: %s %s\n' % (pts[1], pts[2]))
+                elif pts[0] == 'FD:':
+                    tmp = pts[2].rsplit('/', 1)
+                    tmp[0] = repackage_class(pkgs, tmp[0])
+                    outf.write('FD: %s %s/%s\n' % (pts[1], tmp[0], tmp[1]))
+                elif pts[0] == 'MD:':
+                    tmp = pts[3].rsplit('/', 1)
+                    pts[3] = '%s/%s' % (repackage_class(pkgs, tmp[0]), tmp[1])
+                    pts[4] = repackage_signature(pkgs, pts[4])
+                    outf.write('MD: %s %s %s %s\n' % (pts[1], pts[2], pts[3], pts[4]))
+                else:
+                    print 'Line unknown in SRG: ' + line
+                    outf.write(line)
+    
+    excre = re.compile('([\[ZBCSIJFDV]|L([\w\/]+);)')
+    print 'Creating re-packaged exc'
+    with open(exc_in, 'r') as inf:
+        with open(exc_out, 'wb') as outf:
+            for line in inf:
+                line = line.rstrip('\r\n')
+                cls = line.split('.')[0]
+                named = line.rsplit('=', 1)[1]
+                line = line[len(cls)+1:-1*len(named)-1]
+                func = line.split('(')[0]
+                
+                tmp = named.split('|', 1)
+                if len(tmp[0]) > 0:
+                    excs = tmp[0].split(',')
+                    for x in range(len(excs)):
+                        excs[x] = repackage_class(pkgs, excs[x])
+                    named = '%s|%s' % (','.join(excs), tmp[1])
+                    
+                sig = repackage_signature(pkgs, line[len(func):])
+                cls = repackage_class(pkgs, cls)
+                outf.write('%s.%s%s=%s\n' % (cls, func, sig, named))
+    
+    print 'Creating re-packaged MCP patch'
+    patch_in = os.path.join(mcp_dir, 'conf', 'patches', 'minecraft_ff.patch')
+    patch_tmp = os.path.join(mcp_dir, 'conf', 'patches', 'minecraft_ff.patch.tmp')
+    
+    regnms = re.compile(r'net\\minecraft\\src\\(\w+)')
+    with open(patch_in, 'r') as fh:
+        buf = fh.read()
+        def mapname(match):
+            return repackage_class(pkgs, match.group(0).replace('\\', '/')).replace('/', '\\')
+        buf = regnms.sub(mapname, buf)
+        
+    with open(patch_tmp, 'w') as fh:
+        fh.write(buf)
+                    
+    shutil.move(patch_tmp, patch_in)

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
+@@ -214,6 +214,8 @@
+                     }
+                 }
+ 
++                WorldType.field_77139_a[this.field_73916_E].onGUICreateWorldPress();
++
+                 EnumGameType var8 = EnumGameType.func_77142_a(this.field_73927_m);
+                 WorldSettings var6 = new WorldSettings(var2, var8, this.field_73925_n, this.field_73933_r, WorldType.field_77139_a[this.field_73916_E]);
+                 var6.func_82750_a(this.field_82290_a);

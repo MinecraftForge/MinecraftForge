@@ -17,17 +17,13 @@ package cpw.mods.fml.common;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.NBTTagString;
-import net.minecraft.src.SaveHandler;
-import net.minecraft.src.WorldInfo;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 
 import cpw.mods.fml.common.registry.GameData;

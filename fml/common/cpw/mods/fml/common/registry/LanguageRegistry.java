@@ -7,12 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import cpw.mods.fml.common.FMLLog;
-
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.StringTranslate;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.StringTranslate;
 
 public class LanguageRegistry
 {

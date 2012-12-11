@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.MapMaker;

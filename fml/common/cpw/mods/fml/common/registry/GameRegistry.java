@@ -7,23 +7,22 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.CraftingManager;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.FurnaceRecipes;
-import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.IInventory;
-import net.minecraft.src.IRecipe;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldType;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
@@ -139,7 +138,7 @@ public class GameRegistry
     public static Object buildBlock(ModContainer container, Class<?> type, Block annotation) throws Exception
     {
         Object o = type.getConstructor(int.class).newInstance(findSpareBlockId());
-        registerBlock((net.minecraft.src.Block) o);
+        registerBlock((net.minecraft.block.Block) o);
         return o;
     }
 
@@ -157,7 +156,7 @@ public class GameRegistry
      * Register a block with the world
      *
      */
-    public static void registerBlock(net.minecraft.src.Block block)
+    public static void registerBlock(net.minecraft.block.Block block)
     {
         registerBlock(block, ItemBlock.class);
     }
@@ -168,7 +167,7 @@ public class GameRegistry
      * @param block
      * @param itemclass
      */
-    public static void registerBlock(net.minecraft.src.Block block, Class<? extends ItemBlock> itemclass)
+    public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass)
     {
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
         {

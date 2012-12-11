@@ -16,8 +16,8 @@ import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionRange;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.INetworkManager;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
 
 public class ModMissingPacket extends FMLPacket
 {

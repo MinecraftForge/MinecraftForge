@@ -18,12 +18,12 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.GuiButton;
-import net.minecraft.src.GuiScreen;
-import net.minecraft.src.GuiSmallButton;
-import net.minecraft.src.StringTranslate;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiSmallButton;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
 

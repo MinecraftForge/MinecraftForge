@@ -1,8 +1,6 @@
 package cpw.mods.fml.common.network;
 
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.Packet3Chat;
+import net.minecraft.network.packet.*;
 
 public interface IChatListener
 {

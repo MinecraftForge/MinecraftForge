@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
++++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.integrated;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.File;
+@@ -110,6 +111,7 @@
+         this.func_71253_a(CryptManager.func_75891_b());
+         this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());
+         this.func_71205_p(this.func_71214_G() + " - " + this.field_71305_c[0].func_72912_H().func_76065_j());
++        FMLCommonHandler.instance().handleServerStarting(this);
+         return true;
+     }
+ 

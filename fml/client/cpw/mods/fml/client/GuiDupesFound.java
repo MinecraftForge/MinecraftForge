@@ -3,11 +3,12 @@ package cpw.mods.fml.client;
 import java.io.File;
 import java.util.Map.Entry;
 
+import net.minecraft.client.gui.GuiErrorScreen;
+
 import cpw.mods.fml.common.DuplicateModsFoundException;
 import cpw.mods.fml.common.MissingModsException;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
-import net.minecraft.src.GuiErrorScreen;
 
 public class GuiDupesFound extends GuiErrorScreen
 {

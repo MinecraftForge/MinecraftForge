@@ -1,10 +1,10 @@
 package cpw.mods.fml.client;
 
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiErrorScreen;
 import cpw.mods.fml.common.IFMLHandledException;
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import net.minecraft.src.FontRenderer;
-import net.minecraft.src.GuiErrorScreen;
 
 /**
  * If a mod throws this exception during loading, it will be called back to render

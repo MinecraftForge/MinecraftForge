@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityList.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
+@@ -3,6 +3,9 @@
+ import java.util.HashMap;
+ import java.util.LinkedHashMap;
+ import java.util.Map;
++import java.util.logging.Level;
++
++import cpw.mods.fml.common.FMLLog;
+ import net.minecraft.entity.boss.EntityDragon;
+ import net.minecraft.entity.boss.EntityWither;
+ import net.minecraft.entity.item.EntityBoat;
+@@ -102,9 +105,10 @@
+     {
+         Entity var2 = null;
+ 
++        Class var3 = null;
+         try
+         {
+-            Class var3 = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            var3 = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+ 
+             if (var3 != null)
+             {
+@@ -118,7 +122,17 @@
+ 
+         if (var2 != null)
+         {
+-            var2.func_70020_e(p_75615_0_);
++            try
++            {
++                var2.func_70020_e(p_75615_0_);
++            }
++            catch (Exception e)
++            {
++                FMLLog.log(Level.SEVERE, e,
++                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                        p_75615_0_.func_74779_i("id"), var3.getName());
++                var2 = null;
++            }
+         }
+         else
+         {

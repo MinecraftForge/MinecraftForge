@@ -6,19 +6,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.*;
+import net.minecraft.network.packet.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.Container;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EntityPlayerMP;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.NetLoginHandler;
-import net.minecraft.src.NetServerHandler;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.Packet131MapData;
-import net.minecraft.src.Packet1Login;
-import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.Packet3Chat;
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
