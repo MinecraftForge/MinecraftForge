@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import cpw.mods.fml.common.FMLLog;
+
 import net.minecraft.src.Block;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
@@ -137,6 +139,7 @@ public class LanguageRegistry
             addStringLocalization(langPack, lang);
         }
         catch (IOException e) {
+            FMLLog.getLogger().severe("Unable to load localization from file: " + localizationFile);
             e.printStackTrace();
         }
         finally    {
