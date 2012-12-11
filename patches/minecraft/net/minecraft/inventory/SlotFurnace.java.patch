@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotFurnace.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnace.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory;
+ 
++import cpw.mods.fml.common.registry.GameRegistry;
+ import net.minecraft.entity.item.EntityXPOrb;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.Item;
+@@ -82,6 +83,8 @@
+ 
+         this.field_75228_b = 0;
+ 
++        GameRegistry.onItemSmelted(field_75229_a, p_75208_1_);
++
+         if (p_75208_1_.field_77993_c == Item.field_77703_o.field_77779_bT)
+         {
+             this.field_75229_a.func_71064_a(AchievementList.field_76016_k, 1);

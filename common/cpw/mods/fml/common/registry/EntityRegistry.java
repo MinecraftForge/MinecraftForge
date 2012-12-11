@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityList;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityTracker;
-import net.minecraft.src.EnumCreatureType;
-import net.minecraft.src.SpawnListEntry;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityTracker;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.SpawnListEntry;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;

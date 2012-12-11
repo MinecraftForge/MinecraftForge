@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.dedicated;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.File;
+@@ -57,6 +58,8 @@
+             field_71306_a.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+         }
+ 
++        FMLCommonHandler.instance().onServerStart(this);
++
+         field_71306_a.info("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"));
+ 
+@@ -125,6 +128,8 @@
+             field_71306_a.warning("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
+             field_71306_a.warning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+         }
++
++        FMLCommonHandler.instance().onServerStarted();
+ 
+         this.func_71210_a(new DedicatedPlayerList(this));
+         long var4 = System.nanoTime();
+@@ -187,6 +192,8 @@
+             this.field_71339_n.func_72602_a();
+         }
+ 
++        FMLCommonHandler.instance().handleServerStarting(this);
++
+         return true;
+     }
+ 

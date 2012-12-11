@@ -38,7 +38,6 @@
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
     <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
     <property name="mcp.srcdir" location="${mcp.home}/src" />
-    <property name="common.mcp.srcdir" location="${mcp.srcdir}/common" />
     <property name="client.mcp.srcdir" location="${mcp.srcdir}/minecraft" />
     <property name="clean.mcp.srcdir" location="${mcp.home}/src-base" />
     <property name="patch.mcp.srcdir" location="${mcp.home}/src-work" />
@@ -122,7 +121,7 @@
   </target>
 
   <target name="merge-common">
-    <copy todir="${common.mcp.srcdir}" overwrite="true" verbose="true">
+    <copy todir="${client.mcp.srcdir}" overwrite="true" verbose="true">
       <fileset dir="${common.src.dir}" includes="**/*.java" />
     </copy>
   </target>
@@ -316,7 +315,7 @@
     <echo>
       Extracting fresh eclipse workspace to ${basedir}/eclipse
     </echo>
-    <unzip src="${basedir}/eclipse-workspace.zip" dest="${basedir}"/>
+    <unzip src="${basedir}/eclipse-workspace-dev.zip" dest="${basedir}"/>
   </target>
 
   <target name="makerenamedsource" depends="buildenvsetup,repatch,merge-client,merge-common,reobfuscate">

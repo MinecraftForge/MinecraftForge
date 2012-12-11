@@ -1,0 +1,143 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
+@@ -29,6 +29,7 @@
+ import net.minecraft.block.BlockWall;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.src.FMLRenderAccessLibrary;
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+@@ -215,7 +216,82 @@
+         int var5 = p_78612_1_.func_71857_b();
+         p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);
+         this.func_83018_a(p_78612_1_);
+-        return var5 == 0 ? this.func_78570_q(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 31 ? this.func_78581_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 4 ? this.func_78621_p(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 13 ? this.func_78584_s(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 1 ? this.func_78620_l(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 19 ? this.func_78603_m(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 23 ? this.func_78566_o(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 6 ? this.func_78614_n(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 2 ? this.func_78572_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 3 ? this.func_78590_h(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 5 ? this.func_78589_i(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 8 ? this.func_78576_j(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 7 ? this.func_78601_u(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 9 ? this.func_78586_a((BlockRail)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 10 ? this.func_78565_t((BlockStairs)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 27 ? this.func_78618_a((BlockDragonEgg)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 11 ? this.func_78582_a((BlockFence)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 32 ? this.func_82779_a((BlockWall)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 12 ? this.func_78594_e(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 29 ? this.func_78577_f(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 30 ? this.func_78619_g(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 14 ? this.func_78574_w(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 15 ? this.func_78610_x(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 16 ? this.func_78593_b(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, false) : (var5 == 17 ? this.func_78608_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, true) : (var5 == 18 ? this.func_78592_a((BlockPane)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 20 ? this.func_78598_k(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 21 ? this.func_78580_a((BlockFenceGate)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 24 ? this.func_78615_a((BlockCauldron)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 33 ? this.func_82780_a((BlockFlowerPot)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 35 ? this.func_82775_a((BlockAnvil)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 25 ? this.func_78585_a((BlockBrewingStand)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 26 ? this.func_78567_v(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 28 ? this.func_78616_a((BlockCocoa)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (var5 == 34 ? this.func_82778_a((BlockBeacon)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : false))))))))))))))))))))))))))))))))));
++
++        switch (var5)
++        {
++            case 0:
++                return this.func_78570_q(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 31:
++                return this.func_78581_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 4:
++                return this.func_78621_p(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 13:
++                return this.func_78584_s(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 1:
++                return this.func_78620_l(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 19:
++                return this.func_78603_m(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 23:
++                return this.func_78566_o(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 6:
++                return this.func_78614_n(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 2:
++                return this.func_78572_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 3:
++                return this.func_78590_h(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 5:
++                return this.func_78589_i(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 8:
++                return this.func_78576_j(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 7:
++                return this.func_78601_u(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 9:
++                return this.func_78586_a((BlockRail)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 10:
++                return this.func_78565_t((BlockStairs)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 27:
++                return this.func_78618_a((BlockDragonEgg)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 11:
++                return this.func_78582_a((BlockFence)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 32:
++                return this.func_82779_a((BlockWall)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 12:
++                return this.func_78594_e(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 29:
++                return this.func_78577_f(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 30:
++                return this.func_78619_g(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 14:
++                return this.func_78574_w(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 15:
++                return this.func_78610_x(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 16:
++                return this.func_78593_b(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, false);
++            case 17:
++                return this.func_78608_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, true);
++            case 18:
++                return this.func_78592_a((BlockPane)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 20:
++                return this.func_78598_k(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 21:
++                return this.func_78580_a((BlockFenceGate)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 24:
++                return this.func_78615_a((BlockCauldron)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 33:
++                return this.func_82780_a((BlockFlowerPot)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 35:
++                return this.func_82775_a((BlockAnvil)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 25:
++                return this.func_78585_a((BlockBrewingStand)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 26:
++                return this.func_78567_v(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 28:
++                return this.func_78616_a((BlockCocoa)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            case 34:
++                return this.func_82778_a((BlockBeacon)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
++            default:
++                return FMLRenderAccessLibrary.renderWorldBlock(this, field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_, p_78612_1_, var5);
++        }
+     }
+ 
+     public boolean func_78567_v(Block p_78567_1_, int p_78567_2_, int p_78567_3_, int p_78567_4_)
+@@ -6541,6 +6617,10 @@
+                 this.func_83020_a(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
+                 this.func_78595_a();
+             }
++            else
++            {
++                FMLRenderAccessLibrary.renderInventoryBlock(this, p_78600_1_, p_78600_2_, var6);
++            }
+         }
+         else
+         {
+@@ -6599,6 +6679,36 @@
+ 
+     public static boolean func_78597_b(int p_78597_0_)
+     {
+-        return p_78597_0_ == 0 ? true : (p_78597_0_ == 31 ? true : (p_78597_0_ == 13 ? true : (p_78597_0_ == 10 ? true : (p_78597_0_ == 11 ? true : (p_78597_0_ == 27 ? true : (p_78597_0_ == 22 ? true : (p_78597_0_ == 21 ? true : (p_78597_0_ == 16 ? true : (p_78597_0_ == 26 ? true : (p_78597_0_ == 32 ? true : (p_78597_0_ == 34 ? true : p_78597_0_ == 35)))))))))));
++        switch (p_78597_0_)
++        {
++            case 0:
++                return true;
++            case 31:
++                return true;
++            case 13:
++                return true;
++            case 10:
++                return true;
++            case 11:
++                return true;
++            case 27:
++                return true;
++            case 22:
++                return true;
++            case 21:
++                return true;
++            case 16:
++                return true;
++            case 26:
++                return true;
++            case 32:
++                return true;
++            case 34:
++                return true;
++            case 35:
++                return true;
++            default:
++                return FMLRenderAccessLibrary.renderItemAsFull3DBlock(p_78597_0_);
++        }
+     }
+ }

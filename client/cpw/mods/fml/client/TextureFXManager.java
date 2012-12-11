@@ -19,10 +19,10 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.texturefx.TextureFX;
+import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.src.ModTextureStatic;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.TextureFX;
-import net.minecraft.src.ITexturePack;
 
 import org.lwjgl.opengl.GL11;
 

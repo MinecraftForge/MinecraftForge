@@ -1,0 +1,114 @@
+--- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
+@@ -1,7 +1,11 @@
+ package net.minecraft.server;
+ 
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import cpw.mods.fml.relauncher.ArgsWrapper;
++import cpw.mods.fml.relauncher.FMLRelauncher;
++
+ import java.awt.GraphicsEnvironment;
+ import java.io.File;
+ import java.io.IOException;
+@@ -376,7 +380,11 @@
+         {
+             if (this.func_71197_b())
+             {
++                FMLCommonHandler.instance().handleServerStarted();
++
+                 long var1 = System.currentTimeMillis();
++
++                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
+ 
+                 for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
+                 {
+@@ -415,6 +423,7 @@
+ 
+                     Thread.sleep(1L);
+                 }
++                FMLCommonHandler.instance().handleServerStopping();
+             }
+             else
+             {
+@@ -423,6 +432,10 @@
+         }
+         catch (Throwable var48)
+         {
++            if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
++            {
++                return;
++            }
+             var48.printStackTrace();
+             field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + var48.getClass().getSimpleName(), var48);
+             CrashReport var2 = null;
+@@ -453,6 +466,10 @@
+         {
+             try
+             {
++                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
++                {
++                    return;
++                }
+                 this.func_71260_j();
+                 this.field_71316_v = true;
+             }
+@@ -478,8 +495,10 @@
+ 
+     public void func_71217_p()
+     {
++        FMLCommonHandler.instance().rescheduleTicks(Side.SERVER);
+         long var1 = System.nanoTime();
+         AxisAlignedBB.func_72332_a().func_72298_a();
++        FMLCommonHandler.instance().onPreServerTick();
+         ++this.field_71315_w;
+ 
+         if (this.field_71295_T)
+@@ -525,6 +544,7 @@
+ 
+         this.field_71304_b.func_76319_b();
+         this.field_71304_b.func_76319_b();
++        FMLCommonHandler.instance().onPostServerTick();
+     }
+ 
+     public void func_71190_q()
+@@ -552,6 +572,7 @@
+                 }
+ 
+                 this.field_71304_b.func_76320_a("tick");
++                FMLCommonHandler.instance().onPreWorldTick(var4);
+                 CrashReport var6;
+ 
+                 try
+@@ -576,6 +597,7 @@
+                     throw new ReportedException(var6);
+                 }
+ 
++                FMLCommonHandler.instance().onPostWorldTick(var4);
+                 this.field_71304_b.func_76319_b();
+                 this.field_71304_b.func_76320_a("tracker");
+                 var4.func_73039_n().func_72788_a();
+@@ -703,7 +725,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return "fml";
+     }
+ 
+     public CrashReport func_71230_b(CrashReport p_71230_1_)
+@@ -1144,6 +1166,13 @@
+     @SideOnly(Side.SERVER)
+     public static void main(String[] p_main_0_)
+     {
++        FMLRelauncher.handleServerRelaunch(new ArgsWrapper(p_main_0_));
++    }
++
++    @SideOnly(Side.SERVER)
++    public static void fmlReentry(ArgsWrapper wrap)
++    {
++        String[] p_main_0_ = wrap.args;
+         StatList.func_75919_a();
+ 
+         try

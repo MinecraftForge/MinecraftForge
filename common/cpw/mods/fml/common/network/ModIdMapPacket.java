@@ -5,6 +5,10 @@ import java.util.BitSet;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.minecraft.nbt.*;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.NetHandler;
+
 import com.google.common.collect.MapDifference;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -18,12 +22,6 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
-import net.minecraft.src.CompressedStreamTools;
-import net.minecraft.src.INetworkManager;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.NetHandler;
-import net.minecraft.src.WorldClient;
 import static cpw.mods.fml.common.network.FMLPacket.Type.MOD_IDMAP;
 
 public class ModIdMapPacket extends FMLPacket {

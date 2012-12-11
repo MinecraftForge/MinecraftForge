@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import net.minecraft.src.ComponentVillageStartPiece;
-import net.minecraft.src.EntityVillager;
-import net.minecraft.src.Item;
-import net.minecraft.src.MapGenVillage;
-import net.minecraft.src.MerchantRecipeList;
-import net.minecraft.src.StructureVillagePieceWeight;
-import net.minecraft.src.StructureVillagePieces;
-import net.minecraft.src.Tuple;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.item.Item;
+import net.minecraft.util.Tuple;
+import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.gen.structure.ComponentVillageStartPiece;
+import net.minecraft.world.gen.structure.StructureVillagePieceWeight;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;

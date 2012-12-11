@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/network/NetServerHandler.java
++++ ../src-work/minecraft/net/minecraft/network/NetServerHandler.java
+@@ -7,6 +7,8 @@
+ import java.util.Iterator;
+ import java.util.Random;
+ import java.util.logging.Logger;
++
++import cpw.mods.fml.common.network.FMLNetworkHandler;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.player.EntityPlayerMP;
+@@ -32,6 +34,7 @@
+ import net.minecraft.network.packet.Packet108EnchantItem;
+ import net.minecraft.network.packet.Packet10Flying;
+ import net.minecraft.network.packet.Packet130UpdateSign;
++import net.minecraft.network.packet.Packet131MapData;
+ import net.minecraft.network.packet.Packet13PlayerLookMove;
+ import net.minecraft.network.packet.Packet14BlockDig;
+ import net.minecraft.network.packet.Packet15Place;
+@@ -628,6 +631,7 @@
+ 
+     public void func_72481_a(Packet3Chat p_72481_1_)
+     {
++        p_72481_1_ = FMLNetworkHandler.handleChatMessage(this, p_72481_1_);
+         if (this.field_72574_e.func_71126_v() == 2)
+         {
+             this.func_72567_b(new Packet3Chat("Cannot send chat message."));
+@@ -993,6 +997,11 @@
+     }
+ 
+     public void func_72501_a(Packet250CustomPayload p_72501_1_)
++    {
++        FMLNetworkHandler.handlePacket250Packet(p_72501_1_, field_72575_b, this);
++    }
++
++    public void handleVanilla250Packet(Packet250CustomPayload p_72501_1_)
+     {
+         DataInputStream var2;
+         ItemStack var3;
+@@ -1157,4 +1166,18 @@
+             }
+         }
+     }
++    
++
++    @Override
++    public void func_72494_a(Packet131MapData p_72494_1_)
++    {
++        FMLNetworkHandler.handlePacket131Packet(this, p_72494_1_);
++    }
++
++    // modloader compat -- yuk!
++    @Override
++    public EntityPlayerMP getPlayer()
++    {
++        return field_72574_e;
++    }
+ }
