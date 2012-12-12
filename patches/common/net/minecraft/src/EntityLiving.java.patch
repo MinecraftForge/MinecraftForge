@@ -151,7 +151,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2867,4 +2912,42 @@
+@@ -2867,4 +2912,46 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }
@@ -173,11 +173,15 @@
 +        {
 +            Integer key = potionKey.next();
 +            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
-+
-+            if (effect.isCurativeItem(curativeItem))
++            
++            LivingCureEffects event = new LivingCureEffects(this, curativeItem, effect);
++            if (!MinecraftForge.EVENT_BUS.post(event))
 +            {
-+                potionKey.remove();
-+                onFinishedPotionEffect(effect);
++                if (effect.isCurativeItem(curativeItem))
++                {
++                    potionKey.remove();
++                    onFinishedPotionEffect(effect);
++                }
 +            }
 +        }
 +    }
