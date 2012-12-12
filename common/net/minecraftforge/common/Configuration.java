@@ -695,6 +695,25 @@ public class Configuration
 
     private void save(BufferedWriter out) throws IOException
     {
+        Object[] categoryArray = categories.values().toArray();
+        for (Object o : categoryArray)
+        {
+            if (o instanceof TreeMap)
+            {
+                TreeMap treeMap = (TreeMap) o;
+                ConfigCategory converted = new ConfigCategory(file.getName());
+                FMLLog.warning("Forge found a Treemap saved for Configuration file "+file.getName()+", this is deprecated behaviour!");
+                for (Object key : treeMap.keySet())
+                {
+                    FMLLog.warning("Converting Treemap to ConfigCategory, key: "+key+", property value: "+((Property)treeMap.get(key)).value);
+                    converted.set((String)key, (Property)treeMap.get(key));
+                }
+                
+                categories.values().remove(o);
+                categories.put(file.getName(), converted);
+            }
+        }
+        
         for (ConfigCategory cat : categories.values())
         {
             if (!cat.isChild())
