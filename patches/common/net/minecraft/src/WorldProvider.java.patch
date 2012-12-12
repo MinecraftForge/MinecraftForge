@@ -1,14 +1,15 @@
 --- ../src_base/common/net/minecraft/src/WorldProvider.java
 +++ ../src_work/common/net/minecraft/src/WorldProvider.java
-@@ -1,5 +1,7 @@
+@@ -1,5 +1,8 @@
  package net.minecraft.src;
  
++import net.minecraftforge.client.CloudProvider;
 +import net.minecraftforge.client.SkyProvider;
 +import net.minecraftforge.common.DimensionManager;
  import cpw.mods.fml.common.Side;
  import cpw.mods.fml.common.asm.SideOnly;
  
-@@ -187,7 +189,7 @@
+@@ -187,7 +190,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -17,13 +18,14 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -256,4 +258,238 @@
+@@ -256,4 +259,251 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
 +
 +    /*======================================= Forge Start =========================================*/
 +    private SkyProvider skyProvider = null;
++    private CloudProvider cloudProvider = null;
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
@@ -106,6 +108,18 @@
 +    public void setSkyProvider(SkyProvider skyProvider)
 +    {
 +        this.skyProvider = skyProvider;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public CloudProvider getCloudProvider()
++    {
++        return this.cloudProvider;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setCloudProvider(CloudProvider cloudProvider)
++    {
++        this.cloudProvider = cloudProvider;
 +    }
 +
 +    public ChunkCoordinates getRandomizedSpawnPoint()
