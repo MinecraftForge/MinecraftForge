@@ -102,7 +102,7 @@ public class EntityCraftMatchEvent extends EntityEvent
      */
 	public double getWorldY()
     {
-        return _x;
+        return _y;
     }
 
 	/**
@@ -111,7 +111,7 @@ public class EntityCraftMatchEvent extends EntityEvent
      */
 	public double getWorldZ()
     {
-        return _x;
+        return _z;
     }
 
 	/**
