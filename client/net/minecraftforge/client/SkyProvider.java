@@ -5,6 +5,7 @@ import cpw.mods.fml.common.asm.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.WorldClient;
 
+//To-Do: Rename this to something more generic.. IRenderHandler?
 public abstract class SkyProvider
 {
     @SideOnly(Side.CLIENT)

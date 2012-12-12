@@ -24,19 +24,33 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1547,6 +1556,11 @@
+@@ -1120,6 +1129,13 @@
+ 
+     public void renderClouds(float par1)
+     {
++        SkyProvider renderer = null;
++        if ((renderer = theWorld.provider.getCloudRenderer()) != null)
++        {
++            renderer.render(par1, theWorld, mc);
++            return;
++        }
++
+         if (this.mc.theWorld.provider.isSurfaceWorld())
+         {
+             if (this.mc.gameSettings.fancyGraphics)
+@@ -1546,6 +1562,11 @@
+     }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
-     {
++    {
 +        drawBlockDamageTexture(par1Tessellator, (EntityLiving)par2EntityPlayer, par3);
 +    }
 +
 +    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityPlayer, float par3)
-+    {
+     {
          double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
-         double var8 = par2EntityPlayer.lastTickPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.lastTickPosZ) * (double)par3;
-@@ -1817,6 +1831,7 @@
+@@ -1817,6 +1838,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -44,7 +58,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -1949,6 +1964,7 @@
+@@ -1949,6 +1971,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -52,7 +66,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -1965,6 +1981,7 @@
+@@ -1965,6 +1988,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -60,7 +74,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -1986,6 +2003,7 @@
+@@ -1986,6 +2010,7 @@
                      {
                          int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
@@ -68,7 +82,7 @@
                      }
                      else if (par1Str.startsWith("tilecrack_"))
                      {
-@@ -1993,11 +2011,12 @@
+@@ -1993,11 +2018,12 @@
                          int var25 = Integer.parseInt(var28[1]);
                          int var26 = Integer.parseInt(var28[2]);
                          var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).func_90019_g(var26);

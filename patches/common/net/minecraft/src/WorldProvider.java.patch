@@ -17,13 +17,15 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -256,4 +258,263 @@
+@@ -256,4 +258,277 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
 +
 +    /*======================================= Forge Start =========================================*/
 +    private SkyProvider skyProvider = null;
++    private SkyProvider cloudRenderer = null;
++    
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
 +     * Added to allow default providers to be registered for multiple dimensions.
@@ -106,6 +108,18 @@
 +    public void setSkyProvider(SkyProvider skyProvider)
 +    {
 +        this.skyProvider = skyProvider;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public SkyProvider getCloudRenderer()
++    {
++        return cloudRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setCloudRenderer(SkyProvider renderer)
++    {
++        cloudRenderer = renderer;
 +    }
 +
 +    public ChunkCoordinates getRandomizedSpawnPoint()
