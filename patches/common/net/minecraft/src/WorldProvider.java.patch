@@ -17,7 +17,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -256,4 +258,238 @@
+@@ -256,4 +258,263 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
@@ -124,6 +124,31 @@
 +        }
 +
 +        return var5;
++    }
++    
++    /**
++     * Determine if the cusor on the map should 'spin' when rendered, like it does for the player in the nether.
++     * 
++     * @param entity The entity holding the map, playername, or frame-ENTITYID
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Postion
++     * @return True to 'spin' the cursor
++     */
++    public boolean shouldMapSpin(String entity, double x, double y, double z)
++    {
++        return dimensionId < 0;
++    }
++
++    /**
++     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
++     * 
++     * @param player The player that is respawning
++     * @return The dimension to respawn the player in
++     */
++    public int getRespawnDimension(EntityPlayerMP player)
++    {
++        return 0;
 +    }
 +
 +    /*======================================= Start Moved From World =========================================*/
