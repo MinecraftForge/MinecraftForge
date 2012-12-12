@@ -242,6 +242,10 @@ def setup_fml(fml_dir, mcp_dir):
         sys.exit(1)
     
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
+        if not self.has_wine and not self.has_astyle:
+                self.logger.error('!! Please install either wine or astyle for source cleanup !!')
+                self.logger.error('!! This is REQUIRED by FML/Forge Cannot proceed !!')
+                sys.exit(1)
         jars = {CLIENT: self.jarclient, SERVER: self.jarserver}
         
         dir_bin = os.path.join(fml_dir, 'bin')
@@ -608,6 +612,16 @@ def download_mcp(mcp_dir, fml_dir, version=None):
     if os.path.isdir(eclipse_dir):
         shutil.rmtree(eclipse_dir)
     
+    if os.name != 'nt':
+        for path, _, filelist in os.walk(mcp_dir):
+            for cur_file in fnmatch.filter(filelist, '*.sh'):
+              file_name = os.path.join(path, cur_file)
+              process = subprocess.Popen(cmdsplit('chmod +x "%s"' % file_name), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
+              output, _ = process.communicate()
+             
+        process = subprocess.Popen(cmdsplit('chmod +x "%s/runtime/bin/astyle-osx"' % mcp_dir), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
+        output, _ = process.communicate()
+        
     return True
     
 def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
