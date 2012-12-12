@@ -9,3 +9,21 @@
          }
      }
  
+@@ -386,7 +386,7 @@
+         {
+             if (var8 < 13)
+             {
+-                if (var6 <= 0 || var6 >= 255)
++                if (var6 <= 0 || var6 >= par0World.getHeight() - 1)
+                 {
+                     return false;
+                 }
+@@ -436,7 +436,7 @@
+ 
+             if (var9 < 13)
+             {
+-                if (var7 <= 0 || var7 >= 255)
++                if (var7 <= 0 || var7 >= par1World.getHeight() - 1)
+                 {
+                     return false;
+                 }
