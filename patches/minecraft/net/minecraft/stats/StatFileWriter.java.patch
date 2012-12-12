@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatFileWriter.java
++++ ../src-work/minecraft/net/minecraft/stats/StatFileWriter.java
+@@ -6,6 +6,7 @@
+ import argo.jdom.JsonStringNode;
+ import argo.saj.InvalidSyntaxException;
+ import cpw.mods.fml.common.Side;
++import cpw.mods.fml.common.asm.ReobfuscationMarker;
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.io.File;
+ import java.util.HashMap;
+@@ -16,6 +17,7 @@
+ import net.minecraft.util.MD5String;
+ import net.minecraft.util.Session;
+ 
++@ReobfuscationMarker
+ @SideOnly(Side.CLIENT)
+ public class StatFileWriter
+ {
