@@ -589,7 +589,8 @@
 +                var9 = null;
 +            }
 +
-+            if (var9 != null && var9.isBlockReplaceable(this, par2, par3, par4))
+-            if (var9 != null && var9.isBlockReplaceable(this, par2, par3, par4))
++            if (var9 != null && var9.isBlockReplaceableByEntity(this, par7Entity, par2, par3, par4))
              {
                  var9 = null;
              }

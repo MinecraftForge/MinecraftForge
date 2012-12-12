@@ -14,7 +14,8 @@
          }
 -        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID)
 +        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID
-+                && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))
+-                && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceable(par3World, par4, par5, par6)))
++                && (Block.blocksList[var11] == null || !Block.blocksList[var11].isBlockReplaceableByEntity(par3World, par2EntityPlayer, par4, par5, par6)))
          {
              if (par7 == 0)
              {
@@ -41,7 +42,8 @@
          }
 -        else if (var8 != Block.vine.blockID && var8 != Block.tallGrass.blockID && var8 != Block.deadBush.blockID)
 +        else if (var8 != Block.vine.blockID && var8 != Block.tallGrass.blockID && var8 != Block.deadBush.blockID
-+                && (Block.blocksList[var8] == null || !Block.blocksList[var8].isBlockReplaceable(par1World, par2, par3, par4)))
+-                && (Block.blocksList[var8] == null || !Block.blocksList[var8].isBlockReplaceable(par1World, par2, par3, par4)))
++                && (Block.blocksList[var8] == null || !Block.blocksList[var8].isBlockReplaceableByEntity(par1World, par6EntityPlayer, par2, par3, par4)))
          {
              if (par5 == 0)
              {

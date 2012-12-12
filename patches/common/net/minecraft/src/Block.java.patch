@@ -201,6 +201,22 @@
 +     * Used in the player's placement code to make the block act like water, and lava.
 +     * 
 +     * @param world The current world
++     * @param player Entity trying to replace
++     * @param x X Position
++     * @param y Y position
++     * @param z Z position
++     * @return True if the block is replaceable by another block
++     */
++    public boolean isBlockReplaceableByEntity(World world, Entity entity, int x, int y, int z) 
++    {
++        return isBlockReplaceable(world, x, y, z);
++    }
++
++    /**
++     * Determines if a new block can be replace the space occupied by this one,
++     * Used in the player's placement code to make the block act like water, and lava.
++     * 
++     * @param world The current world
 +     * @param x X Position
 +     * @param y Y position
 +     * @param z Z position
