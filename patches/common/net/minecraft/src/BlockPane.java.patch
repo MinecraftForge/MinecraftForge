@@ -1,0 +1,24 @@
+--- ../src_base/common/net/minecraft/src/BlockPane.java
++++ ../src_work/common/net/minecraft/src/BlockPane.java
+@@ -2,6 +2,7 @@
+ 
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+ 
+@@ -193,9 +194,10 @@
+      * Gets passed in the blockID of the block adjacent and supposed to return true if its allowed to connect to the
+      * type of blockID passed in. Args: blockID
+      */
+-    public final boolean canThisPaneConnectToThisBlockID(int par1)
+-    {
+-        return Block.opaqueCubeLookup[par1] || par1 == this.blockID || par1 == Block.glass.blockID;
++    public static List ConnectableBlockIDs = new ArrayList();
++    public boolean canThisPaneConnectToThisBlockID(int par1)
++    {
++        return Block.opaqueCubeLookup[par1] || par1 == this.blockID || par1 == Block.glass.blockID || ConnectableBlockIDs.contains(par1);
+     }
+ 
+     /**
