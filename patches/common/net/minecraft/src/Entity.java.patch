@@ -82,7 +82,7 @@
      public boolean isRiding()
      {
 -        return this.ridingEntity != null || this.getFlag(2);
-+        return (this.ridingEntity != null && ridingEntity.shouldRiderSit()) || this.getFlag(2);
++        return (this.ridingEntity != null && ridingEntity.shouldRiderSit()) && this.getFlag(2);
      }
  
      /**
