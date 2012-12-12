@@ -21,6 +21,15 @@
  
      public Entity(World par1World)
      {
+@@ -519,7 +526,7 @@
+         if (!this.worldObj.isRemote)
+         {
+             this.setFlag(0, this.fire > 0);
+-            this.setFlag(2, this.ridingEntity != null);
++            this.setFlag(2, this.ridingEntity != null && ridingEntity.shouldRiderSit());
+         }
+ 
+         this.firstUpdate = false;
 @@ -1489,6 +1496,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.field_83001_bt);
