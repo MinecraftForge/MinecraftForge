@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentVillageStartPiece.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentVillageStartPiece.java
+@@ -11,6 +11,7 @@
+ 
+     /** Boolean that determines if the village is in a desert or not. */
+     public final boolean inDesert;
++    public final BiomeGenBase biome;
+ 
+     /** World terrain type, 0 for normal, 1 for flap map */
+     public final int terrainType;
+@@ -32,6 +33,7 @@
+         this.terrainType = par7;
+         BiomeGenBase var8 = par1WorldChunkManager.getBiomeGenAt(par4, par5);
+         this.inDesert = var8 == BiomeGenBase.desert || var8 == BiomeGenBase.desertHills;
++        this.biome = var8;
+         this.startPiece = this;
+     }
+ 

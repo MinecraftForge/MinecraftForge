@@ -1,0 +1,144 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiControls.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiControls.java
+@@ -5,6 +5,8 @@
+ import net.minecraft.client.settings.GameSettings;
+ import net.minecraft.client.settings.KeyBinding;
+ import net.minecraft.util.StringTranslate;
++
++import net.minecraftforge.client.GuiControlsScrollPanel;
+ 
+ @SideOnly(Side.CLIENT)
+ public class GuiControls extends GuiScreen
+@@ -23,6 +25,8 @@
+     /** The ID of the  button that has been pressed. */
+     private int buttonId = -1;
+ 
++    private GuiControlsScrollPanel scrollPane;
++
+     public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
+     {
+         this.parentScreen = par1GuiScreen;
+@@ -39,15 +43,12 @@
+      */
+     public void initGui()
+     {
++        scrollPane = new GuiControlsScrollPanel(this, options, mc);
+         StringTranslate var1 = StringTranslate.getInstance();
+         int var2 = this.func_73907_g();
+ 
+-        for (int var3 = 0; var3 < this.options.keyBindings.length; ++var3)
+-        {
+-            this.controlList.add(new GuiSmallButton(var3, var2 + var3 % 2 * 160, this.height / 6 + 24 * (var3 >> 1), 70, 20, this.options.getOptionDisplayString(var3)));
+-        }
+-
+-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
++        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, var1.translateKey("gui.done")));
++        scrollPane.registerScrollButtons(controlList, 7, 8);
+         this.screenTitle = var1.translateKey("controls.title");
+     }
+ 
+@@ -56,19 +57,9 @@
+      */
+     protected void actionPerformed(GuiButton par1GuiButton)
+     {
+-        for (int var2 = 0; var2 < this.options.keyBindings.length; ++var2)
+-        {
+-            ((GuiButton)this.controlList.get(var2)).displayString = this.options.getOptionDisplayString(var2);
+-        }
+-
+         if (par1GuiButton.id == 200)
+         {
+             this.mc.displayGuiScreen(this.parentScreen);
+-        }
+-        else
+-        {
+-            this.buttonId = par1GuiButton.id;
+-            par1GuiButton.displayString = "> " + this.options.getOptionDisplayString(par1GuiButton.id) + " <";
+         }
+     }
+ 
+@@ -77,17 +68,7 @@
+      */
+     protected void mouseClicked(int par1, int par2, int par3)
+     {
+-        if (this.buttonId >= 0)
+-        {
+-            this.options.setKeyBinding(this.buttonId, -100 + par3);
+-            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+-            this.buttonId = -1;
+-            KeyBinding.resetKeyBindingArrayAndHash();
+-        }
+-        else
+-        {
+-            super.mouseClicked(par1, par2, par3);
+-        }
++        super.mouseClicked(par1, par2, par3);
+     }
+ 
+     /**
+@@ -95,14 +76,7 @@
+      */
+     protected void keyTyped(char par1, int par2)
+     {
+-        if (this.buttonId >= 0)
+-        {
+-            this.options.setKeyBinding(this.buttonId, par2);
+-            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+-            this.buttonId = -1;
+-            KeyBinding.resetKeyBindingArrayAndHash();
+-        }
+-        else
++        if (scrollPane.keyTyped(par1, par2))
+         {
+             super.keyTyped(par1, par2);
+         }
+@@ -114,47 +88,8 @@
+     public void drawScreen(int par1, int par2, float par3)
+     {
+         this.drawDefaultBackground();
+-        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
+-        int var4 = this.func_73907_g();
+-        int var5 = 0;
+-
+-        while (var5 < this.options.keyBindings.length)
+-        {
+-            boolean var6 = false;
+-            int var7 = 0;
+-
+-            while (true)
+-            {
+-                if (var7 < this.options.keyBindings.length)
+-                {
+-                    if (var7 == var5 || this.options.keyBindings[var5].keyCode != this.options.keyBindings[var7].keyCode)
+-                    {
+-                        ++var7;
+-                        continue;
+-                    }
+-
+-                    var6 = true;
+-                }
+-
+-                if (this.buttonId == var5)
+-                {
+-                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
+-                }
+-                else if (var6)
+-                {
+-                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7c" + this.options.getOptionDisplayString(var5);
+-                }
+-                else
+-                {
+-                    ((GuiButton)this.controlList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
+-                }
+-
+-                this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(var5), var4 + var5 % 2 * 160 + 70 + 6, this.height / 6 + 24 * (var5 >> 1) + 7, -1);
+-                ++var5;
+-                break;
+-            }
+-        }
+-
++        scrollPane.drawScreen(par1, par2, par3);
++        drawCenteredString(fontRenderer, screenTitle, width / 2, 4, 0xffffff);
+         super.drawScreen(par1, par2, par3);
+     }
+ }

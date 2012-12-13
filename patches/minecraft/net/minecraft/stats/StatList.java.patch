@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/stats/StatList.java
++++ ../src_work/minecraft/net/minecraft/stats/StatList.java
+@@ -182,9 +182,9 @@
+      */
+     private static StatBase[] initMinableStats(String par0Str, int par1)
+     {
+-        StatBase[] var2 = new StatBase[256];
+-
+-        for (int var3 = 0; var3 < 256; ++var3)
++        StatBase[] var2 = new StatBase[Block.blocksList.length];
++
++        for (int var3 = 0; var3 < Block.blocksList.length; ++var3)
+         {
+             if (Block.blocksList[var3] != null && Block.blocksList[var3].getEnableStats())
+             {

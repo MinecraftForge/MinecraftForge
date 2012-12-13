@@ -1,0 +1,74 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
+@@ -17,13 +17,15 @@
+ import net.minecraft.world.chunk.Chunk;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++
+ @SideOnly(Side.CLIENT)
+ public class WorldRenderer
+ {
+     /** Reference to the World object. */
+     public World worldObj;
+     private int glRenderList = -1;
+-    private static Tessellator tessellator = Tessellator.instance;
++    //private static Tessellator tessellator = Tessellator.instance;
+     public static int chunksUpdated = 0;
+     public int posX;
+     public int posY;
+@@ -192,15 +194,16 @@
+                                         GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
+                                         GL11.glScalef(var19, var19, var19);
+                                         GL11.glTranslatef(8.0F, 8.0F, 8.0F);
+-                                        tessellator.startDrawingQuads();
+-                                        tessellator.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
++                                        ForgeHooksClient.beforeRenderPass(var11);
++                                        Tessellator.instance.startDrawingQuads();
++                                        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
+                                     }
+ 
+                                     Block var23 = Block.blocksList[var18];
+ 
+                                     if (var23 != null)
+                                     {
+-                                        if (var11 == 0 && var23.hasTileEntity())
++                                        if (var11 == 0 && var23.hasTileEntity(var9.getBlockMetadata(var17, var15, var16)))
+                                         {
+                                             TileEntity var20 = var9.getBlockTileEntity(var17, var15, var16);
+ 
+@@ -212,14 +215,17 @@
+ 
+                                         int var24 = var23.getRenderBlockPass();
+ 
+-                                        if (var24 != var11)
++                                        if (var24 > var11)
+                                         {
+                                             var12 = true;
+                                         }
+-                                        else if (var24 == var11)
++                                        if (!var23.canRenderInPass(var11))
+                                         {
+-                                            var13 |= var10.renderBlockByRenderType(var23, var17, var15, var16);
++                                            continue;
+                                         }
++                                        ForgeHooksClient.beforeBlockRender(var23, var10);
++                                        var13 |= var10.renderBlockByRenderType(var23, var17, var15, var16);
++                                        ForgeHooksClient.afterBlockRender(var23, var10);
+                                     }
+                                 }
+                             }
+@@ -228,10 +234,11 @@
+ 
+                     if (var14)
+                     {
+-                        this.bytesDrawn += tessellator.draw();
++                        ForgeHooksClient.afterRenderPass(var11);
++                        this.bytesDrawn += Tessellator.instance.draw();
+                         GL11.glPopMatrix();
+                         GL11.glEndList();
+-                        tessellator.setTranslation(0.0D, 0.0D, 0.0D);
++                        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
+                     }
+                     else
+                     {

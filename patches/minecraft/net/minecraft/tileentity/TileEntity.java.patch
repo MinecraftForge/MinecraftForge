@@ -1,0 +1,65 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -11,7 +11,9 @@
+ import net.minecraft.block.TileEntityRecordPlayer;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.network.INetworkManager;
+ import net.minecraft.network.packet.Packet;
++import net.minecraft.network.packet.Packet132TileEntityData;
+ import net.minecraft.world.World;
+ 
+ public class TileEntity
+@@ -296,4 +298,52 @@
+         addMapping(TileEntityBeacon.class, "Beacon");
+         addMapping(TileEntitySkull.class, "Skull");
+     }
++
++    /**
++     * Determines if this TileEntity requires update calls.
++     * @return True if you want updateEntity() to be called, false if not
++     */
++    public boolean canUpdate()
++    {
++        return true;
++    }
++
++    /**
++     * Called when you receive a TileEntityData packet for the location this
++     * TileEntity is currently in. On the client, the NetworkManager will always
++     * be the remote server. On the server, it will be whomever is responsible for 
++     * sending the packet.
++     * 
++     * @param net The NetworkManager the packet originated from 
++     * @param pkt The data packet
++     */
++    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
++    {
++    }
++
++    /**
++     * Called when the chunk this TileEntity is on is Unloaded.
++     */
++    public void onChunkUnload()
++    {
++    }
++
++    /**
++     * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
++     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
++     * 
++     * @param oldID The old ID of the block
++     * @param newID The new ID of the block (May be the same)
++     * @param oldMeta The old metadata of the block
++     * @param newMeta The new metadata of the block (May be the same)
++     * @param world Current world 
++     * @param x X Postion
++     * @param y Y Position
++     * @param z Z Position
++     * @return True to remove the old tile entity, false to keep it in tact {and create a new one if the new values specify to}
++     */
++    public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z)
++    {
++        return true;
++    }
+ }

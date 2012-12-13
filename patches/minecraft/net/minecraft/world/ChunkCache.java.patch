@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/world/ChunkCache.java
++++ ../src_work/minecraft/net/minecraft/world/ChunkCache.java
+@@ -99,7 +99,15 @@
+     {
+         int var4 = (par1 >> 4) - this.chunkX;
+         int var5 = (par3 >> 4) - this.chunkZ;
+-        return this.chunkArray[var4][var5].getChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
++        if (var4 >= 0 && var4 < this.chunkArray.length && var5 >= 0 && var5 < this.chunkArray[var4].length)
++        {
++            Chunk var6 = this.chunkArray[var4][var5];
++            return var6 == null ? null : var6.getChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
++        }
++        else
++        {
++            return null;
++        }
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -247,7 +255,12 @@
+         {
+             int var4 = (par1 >> 4) - this.chunkX;
+             int var5 = (par3 >> 4) - this.chunkZ;
+-            return this.chunkArray[var4][var5].getBlockMetadata(par1 & 15, par2, par3 & 15);
++            if (var4 >= 0 && var4 < this.chunkArray.length && var5 >= 0 && var5 < this.chunkArray[var4].length)
++            {
++                Chunk var6 = this.chunkArray[var4][var5];
++                return var6 == null ? 0 : var6.getBlockMetadata(par1 & 15, par2, par3 & 15);
++            }
++            return 0;
+         }
+     }
+ 

@@ -1,0 +1,36 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockLog.java
++++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
+@@ -63,14 +63,9 @@
+                     {
+                         int var12 = par1World.getBlockId(par2 + var9, par3 + var10, par4 + var11);
+ 
+-                        if (var12 == Block.leaves.blockID)
++                        if (Block.blocksList[var12] != null)
+                         {
+-                            int var13 = par1World.getBlockMetadata(par2 + var9, par3 + var10, par4 + var11);
+-
+-                            if ((var13 & 8) == 0)
+-                            {
+-                                par1World.setBlockMetadata(par2 + var9, par3 + var10, par4 + var11, var13 | 8);
+-                            }
++                            Block.blocksList[var12].beginLeavesDecay(par1World, par2 + var9, par3 + var10, par4 + var11);
+                         }
+                     }
+                 }
+@@ -148,4 +143,16 @@
+     {
+         return new ItemStack(this.blockID, 1, limitToValidMetadata(par1));
+     }
++
++    @Override
++    public boolean canSustainLeaves(World world, int x, int y, int z)
++    {
++        return true;
++    }
++
++    @Override
++    public boolean isWood(World world, int x, int y, int z)
++    {
++        return true;
++    }
+ }

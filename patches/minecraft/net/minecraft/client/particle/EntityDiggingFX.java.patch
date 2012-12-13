@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
++++ ../src_work/minecraft/net/minecraft/client/particle/EntityDiggingFX.java
+@@ -10,20 +10,22 @@
+ public class EntityDiggingFX extends EntityFX
+ {
+     private Block blockInstance;
++    private int side;
+ 
+     public EntityDiggingFX(World par1World, double par2, double par4, double par6, double par8, double par10, double par12, Block par14Block, int par15, int par16)
+     {
+         super(par1World, par2, par4, par6, par8, par10, par12);
+         this.blockInstance = par14Block;
+-        this.setParticleTextureIndex(par14Block.getBlockTextureFromSideAndMetadata(0, par16));
++        this.setParticleTextureIndex(par14Block.getBlockTextureFromSideAndMetadata(par15, par16));
+         this.particleGravity = par14Block.blockParticleGravity;
+         this.particleRed = this.particleGreen = this.particleBlue = 0.6F;
+         this.particleScale /= 2.0F;
++        this.side = par15;
+     }
+ 
+     public EntityDiggingFX func_70596_a(int par1, int par2, int par3)
+     {
+-        if (this.blockInstance == Block.grass)
++        if (this.blockInstance == Block.grass && this.side != 1)
+         {
+             return this;
+         }

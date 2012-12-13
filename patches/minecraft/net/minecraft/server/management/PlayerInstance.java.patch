@@ -1,0 +1,37 @@
+--- ../src_base/minecraft/net/minecraft/server/management/PlayerInstance.java
++++ ../src_work/minecraft/net/minecraft/server/management/PlayerInstance.java
+@@ -10,9 +10,12 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.world.ChunkCoordIntPair;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.ChunkWatchEvent;
++
+ public class PlayerInstance
+ {
+-    private final List playersInChunk;
++    public final List playersInChunk;
+ 
+     /** note: this is final */
+     private final ChunkCoordIntPair chunkLocation;
+@@ -55,6 +58,8 @@
+             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), true, 0));
+             this.playersInChunk.remove(par1EntityPlayerMP);
+             par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
++            
++            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(chunkLocation, par1EntityPlayerMP));
+ 
+             if (this.playersInChunk.isEmpty())
+             {
+@@ -144,7 +149,10 @@
+                         if ((this.field_73260_f & 1 << var3) != 0)
+                         {
+                             var4 = var3 << 4;
+-                            List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 16, var4 + 16, var2 + 16);
++                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
++                            //ToDo: Find a way to efficiently clean abandoned chunks.
++                            //List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 16, var4 + 16, var2 + 16);
++                            List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 15, var4 + 16, var2 + 15);
+ 
+                             for (int var6 = 0; var6 < var5.size(); ++var6)
+                             {

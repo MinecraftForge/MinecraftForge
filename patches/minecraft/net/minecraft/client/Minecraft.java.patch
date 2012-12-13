@@ -1,16 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -128,6 +128,9 @@
- import net.minecraft.src.WorldInfo;
- import net.minecraft.src.WorldRenderer;
- import net.minecraft.src.WorldSettings;
+@@ -130,6 +130,10 @@
+ 
+ import com.google.common.collect.MapDifference;
+ 
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
- 
- import org.lwjgl.LWJGLException;
- import org.lwjgl.Sys;
-@@ -1266,7 +1269,7 @@
++
+ @SideOnly(Side.CLIENT)
+ public abstract class Minecraft implements Runnable, IPlayerUsage
+ {
+@@ -1249,7 +1253,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(var3, var4, var5))
                  {
@@ -19,7 +20,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1332,7 +1335,8 @@
+@@ -1315,7 +1319,8 @@
                  {
                      int var8 = var3 != null ? var3.stackSize : 0;
  
@@ -29,7 +30,7 @@
                      {
                          var2 = false;
                          this.thePlayer.swingItem();
-@@ -1358,7 +1362,8 @@
+@@ -1341,7 +1346,8 @@
              {
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
@@ -39,7 +40,7 @@
                  {
                      this.entityRenderer.itemRenderer.func_78445_c();
                  }
-@@ -2047,6 +2052,18 @@
+@@ -2037,6 +2043,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -58,7 +59,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2356,95 +2373,12 @@
+@@ -2346,95 +2364,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;

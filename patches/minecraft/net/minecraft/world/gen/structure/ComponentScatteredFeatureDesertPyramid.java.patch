@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentScatteredFeatureDesertPyramid extends ComponentScatteredFeature
+ {
+@@ -221,7 +224,7 @@
+             {
+                 int var11 = Direction.offsetX[var10] * 2;
+                 int var12 = Direction.offsetZ[var10] * 2;
+-                this.field_74940_h[var10] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + var11, -11, 10 + var12, itemsToGenerateInTemple, 2 + par2Random.nextInt(5));
++                this.field_74940_h[var10] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + var11, -11, 10 + var12, ChestGenHooks.getItems(PYRAMID_DESERT_CHEST), ChestGenHooks.getCount(PYRAMID_DESERT_CHEST, par2Random));
+             }
+         }
+ 

@@ -1,0 +1,96 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
+@@ -61,6 +61,8 @@
+ import org.lwjgl.opengl.ARBOcclusionQuery;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraftforge.client.SkyProvider;
++
+ @SideOnly(Side.CLIENT)
+ public class RenderGlobal implements IWorldAccess
+ {
+@@ -928,6 +930,12 @@
+      */
+     public void renderSky(float par1)
+     {
++        SkyProvider skyProvider = null;
++        if ((skyProvider = this.mc.theWorld.provider.getSkyProvider()) != null)
++        {
++            skyProvider.render(par1, this.theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.dimensionId == 1)
+         {
+             GL11.glDisable(GL11.GL_FOG);
+@@ -1166,6 +1174,13 @@
+ 
+     public void renderClouds(float par1)
+     {
++        SkyProvider renderer = null;
++        if ((renderer = theWorld.provider.getCloudRenderer()) != null)
++        {
++            renderer.render(par1, theWorld, mc);
++            return;
++        }
++
+         if (this.mc.theWorld.provider.isSurfaceWorld())
+         {
+             if (this.mc.gameSettings.fancyGraphics)
+@@ -1592,6 +1607,11 @@
+     }
+ 
+     public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
++    {
++        drawBlockDamageTexture(par1Tessellator, (EntityLiving)par2EntityPlayer, par3);
++    }
++
++    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityPlayer, float par3)
+     {
+         double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
+         double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
+@@ -1863,6 +1883,7 @@
+             double var17 = this.mc.renderViewEntity.posY - par4;
+             double var19 = this.mc.renderViewEntity.posZ - par6;
+             EntityFX var21 = null;
++            Object effectObject = null;
+ 
+             if (par1Str.equals("hugeexplosion"))
+             {
+@@ -1995,6 +2016,7 @@
+                     else if (par1Str.equals("snowballpoof"))
+                     {
+                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
++                        effectObject = Item.snowball;
+                     }
+                     else if (par1Str.equals("dripWater"))
+                     {
+@@ -2011,6 +2033,7 @@
+                     else if (par1Str.equals("slime"))
+                     {
+                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
++                        effectObject = Item.slimeBall;
+                     }
+                     else if (par1Str.equals("heart"))
+                     {
+@@ -2032,6 +2055,7 @@
+                     {
+                         int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
+                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
++                        effectObject = Item.itemsList[var27];
+                     }
+                     else if (par1Str.startsWith("tilecrack_"))
+                     {
+@@ -2039,11 +2063,12 @@
+                         int var25 = Integer.parseInt(var28[1]);
+                         int var26 = Integer.parseInt(var28[2]);
+                         var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).func_90019_g(var26);
++                        effectObject = Block.blocksList[var25];
+                     }
+ 
+                     if (var21 != null)
+                     {
+-                        this.mc.effectRenderer.addEffect((EntityFX)var21);
++                        this.mc.effectRenderer.addEffect((EntityFX)var21, effectObject);
+                     }
+ 
+                     return (EntityFX)var21;

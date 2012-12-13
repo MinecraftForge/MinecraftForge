@@ -1,0 +1,61 @@
+--- ../src_base/minecraft/net/minecraft/inventory/Slot.java
++++ ../src_work/minecraft/net/minecraft/inventory/Slot.java
+@@ -21,6 +21,12 @@
+ 
+     /** display position of the inventory slot on the screen y axis */
+     public int yDisplayPosition;
++
++    /** Position within background texture file, normally -1 which causes no background to be drawn. */
++    protected int backgroundIconIndex = -1;
++
++    /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
++    protected String texture = "/gui/items.png";
+ 
+     public Slot(IInventory par1IInventory, int par2, int par3, int par4)
+     {
+@@ -147,6 +153,44 @@
+      */
+     public int getBackgroundIconIndex()
+     {
+-        return -1;
++        return backgroundIconIndex;
++    }
++
++    /**
++     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
++     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
++     */
++    public String getBackgroundIconTexture()
++    {
++        return (texture == null ? "/gui/items.png" : texture);
++    }
++
++    /**
++     * Sets which icon index to use as the background image of the slot when it's empty.
++     * @param iconIndex int: The index into the texture file, 0-255, or -1 for no background.  
++     */
++    public void setBackgroundIconIndex(int iconIndex)
++    {
++        backgroundIconIndex = iconIndex;
++    }
++
++    /**
++     * Sets the texture file to use for the background image of the slot when it's empty.
++     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
++     */
++    public void setBackgroundIconTexture(String textureFilename)
++    {
++        texture = textureFilename;
++    }
++
++    /**
++     * Retrieves the index in the inventory for this slot, this value should typically not 
++     * be used, but can be useful for some occasions.
++     * 
++     * @return Index in associated inventory for this slot.
++     */
++    public int getSlotIndex()
++    {
++        return slotIndex;
+     }
+ }

@@ -1,0 +1,95 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.item.Item;
++import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemHoe;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.ItemSword;
+@@ -17,7 +18,10 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ 
+-public class TileEntityFurnace extends TileEntity implements IInventory
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.ISidedInventory;
++
++public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
+ {
+     /**
+      * The ItemStacks that hold the items currently being used in the furnace
+@@ -247,8 +251,7 @@
+ 
+                         if (this.furnaceItemStacks[1].stackSize == 0)
+                         {
+-                            Item var3 = this.furnaceItemStacks[1].getItem().getContainerItem();
+-                            this.furnaceItemStacks[1] = var3 != null ? new ItemStack(var3) : null;
++                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
+                         }
+                     }
+                 }
+@@ -294,8 +297,12 @@
+         }
+         else
+         {
+-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().shiftedIndex);
+-            return var1 == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(var1) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < var1.getMaxStackSize())));
++            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
++            if (var1 == null) return false;
++            if (this.furnaceItemStacks[2] == null) return true;
++            if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
++            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
++            return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
+         }
+     }
+ 
+@@ -306,15 +313,15 @@
+     {
+         if (this.canSmelt())
+         {
+-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().shiftedIndex);
++            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+ 
+             if (this.furnaceItemStacks[2] == null)
+             {
+                 this.furnaceItemStacks[2] = var1.copy();
+             }
+-            else if (this.furnaceItemStacks[2].itemID == var1.itemID)
+-            {
+-                ++this.furnaceItemStacks[2].stackSize;
++            else if (this.furnaceItemStacks[2].isItemEqual(var1))
++            {
++                furnaceItemStacks[2].stackSize += var1.stackSize;
+             }
+ 
+             --this.furnaceItemStacks[0].stackSize;
+@@ -341,7 +348,7 @@
+             int var1 = par0ItemStack.getItem().shiftedIndex;
+             Item var2 = par0ItemStack.getItem();
+ 
+-            if (var1 < 256 && Block.blocksList[var1] != null)
++            if (par0ItemStack.getItem() instanceof ItemBlock && Block.blocksList[var1] != null)
+             {
+                 Block var3 = Block.blocksList[var1];
+ 
+@@ -387,4 +394,18 @@
+     public void openChest() {}
+ 
+     public void closeChest() {}
++
++    @Override
++    public int getStartInventorySide(ForgeDirection side)
++    {
++        if (side == ForgeDirection.DOWN) return 1;
++        if (side == ForgeDirection.UP) return 0; 
++        return 2;
++    }
++
++    @Override
++    public int getSizeInventorySide(ForgeDirection side)
++    {
++        return 1;
++    }
+ }

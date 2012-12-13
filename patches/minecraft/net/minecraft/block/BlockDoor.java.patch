@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDoor.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDoor.java
+@@ -268,7 +268,7 @@
+     {
+         if (this.blockMaterial == Material.iron)
+         {
+-            return true;
++            return false; //Allow items to interact with the door
+         }
+         else
+         {

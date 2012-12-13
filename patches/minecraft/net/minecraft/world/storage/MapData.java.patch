@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/MapData.java
++++ ../src_work/minecraft/net/minecraft/world/storage/MapData.java
+@@ -173,7 +173,7 @@
+             par8 += par8 < 0.0D ? -8.0D : 8.0D;
+             var15 = (byte)((int)(par8 * 16.0D / 360.0D));
+ 
+-            if (this.dimension < 0)
++            if (par2World.provider.shouldMapSpin(par3Str, par4, par6, par8))
+             {
+                 int var17 = (int)(par2World.getWorldInfo().getWorldTime() / 10L);
+                 var15 = (byte)(var17 * var17 * 34187121 + var17 * 121 >> 15 & 15);

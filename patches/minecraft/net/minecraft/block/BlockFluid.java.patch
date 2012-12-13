@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockFluid.java
++++ ../src_work/minecraft/net/minecraft/block/BlockFluid.java
+@@ -54,7 +54,7 @@
+             {
+                 for (int var9 = -1; var9 <= 1; ++var9)
+                 {
+-                    int var10 = par1IBlockAccess.getBiomeGenForCoords(par2 + var9, par4 + var8).waterColorMultiplier;
++                    int var10 = par1IBlockAccess.getBiomeGenForCoords(par2 + var9, par4 + var8).getWaterColorMultiplier();
+                     var5 += (var10 & 16711680) >> 16;
+                     var6 += (var10 & 65280) >> 8;
+                     var7 += var10 & 255;

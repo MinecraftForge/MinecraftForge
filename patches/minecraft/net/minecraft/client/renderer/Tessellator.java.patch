@@ -1,0 +1,188 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/Tessellator.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/Tessellator.java
+@@ -7,6 +7,8 @@
+ import java.nio.FloatBuffer;
+ import java.nio.IntBuffer;
+ import java.nio.ShortBuffer;
++import java.util.Arrays;
++
+ import org.lwjgl.opengl.ARBVertexBufferObject;
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GLContext;
+@@ -14,6 +16,12 @@
+ @SideOnly(Side.CLIENT)
+ public class Tessellator
+ {
++    private static int nativeBufferSize = 0x200000;
++    private static int trivertsInBuffer = (nativeBufferSize / 48) * 6;
++    public static boolean renderingWorldRenderer = false;
++    public boolean defaultTexture = false;
++    private int rawBufferSize = 0;
++    public int textureID = 0;
+     /**
+      * Boolean used to check whether quads should be drawn as two triangles. Initialized to false and never changed.
+      */
+@@ -25,16 +33,16 @@
+     private static boolean tryVBO = false;
+ 
+     /** The byte buffer used for GL allocation. */
+-    private ByteBuffer byteBuffer;
++    private static ByteBuffer byteBuffer = GLAllocation.createDirectByteBuffer(nativeBufferSize * 4);
+ 
+     /** The same memory as byteBuffer, but referenced as an integer buffer. */
+-    private IntBuffer intBuffer;
++    private static IntBuffer intBuffer = byteBuffer.asIntBuffer();
+ 
+     /** The same memory as byteBuffer, but referenced as an float buffer. */
+-    private FloatBuffer floatBuffer;
++    private static FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
+ 
+     /** Short buffer */
+-    private ShortBuffer shortBuffer;
++    private static ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+ 
+     /** Raw integer array. */
+     private int[] rawBuffer;
+@@ -110,10 +118,10 @@
+     public boolean isDrawing = false;
+ 
+     /** Whether we are currently using VBO or not. */
+-    private boolean useVBO = false;
++    private static boolean useVBO = false;
+ 
+     /** An IntBuffer used to store the indices of vertex buffer objects. */
+-    private IntBuffer vertexBuffers;
++    private static IntBuffer vertexBuffers;
+ 
+     /**
+      * The index of the last VBO used. This is used in round-robin fashion, sequentially, through the vboCount vertex
+@@ -122,25 +130,28 @@
+     private int vboIndex = 0;
+ 
+     /** Number of vertex buffer objects allocated for use. */
+-    private int vboCount = 10;
++    private static int vboCount = 10;
+ 
+     /** The size of the buffers used (in integers). */
+     private int bufferSize;
+ 
+     private Tessellator(int par1)
+     {
+-        this.bufferSize = par1;
+-        this.byteBuffer = GLAllocation.createDirectByteBuffer(par1 * 4);
+-        this.intBuffer = this.byteBuffer.asIntBuffer();
+-        this.floatBuffer = this.byteBuffer.asFloatBuffer();
+-        this.shortBuffer = this.byteBuffer.asShortBuffer();
+-        this.rawBuffer = new int[par1];
+-        this.useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
+-
+-        if (this.useVBO)
+-        {
+-            this.vertexBuffers = GLAllocation.createDirectIntBuffer(this.vboCount);
+-            ARBVertexBufferObject.glGenBuffersARB(this.vertexBuffers);
++    }
++    
++    public Tessellator()
++    {
++    }
++    
++    static
++    {
++        instance.defaultTexture = true;
++        useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
++
++        if (useVBO)
++        {
++            vertexBuffers = GLAllocation.createDirectIntBuffer(vboCount);
++            ARBVertexBufferObject.glGenBuffersARB(vertexBuffers);
+         }
+     }
+ 
+@@ -157,12 +168,23 @@
+         {
+             this.isDrawing = false;
+ 
+-            if (this.vertexCount > 0)
+-            {
++            int offs = 0;
++            while (offs < vertexCount)
++            {
++                int vtc = 0;
++                if (drawMode == 7 && convertQuadsToTriangles)
++                {
++                    vtc = Math.min(vertexCount - offs, trivertsInBuffer);
++                }
++                else
++                {
++                    vtc = Math.min(vertexCount - offs, nativeBufferSize >> 5);
++                }
+                 this.intBuffer.clear();
+-                this.intBuffer.put(this.rawBuffer, 0, this.rawBufferIndex);
++                this.intBuffer.put(this.rawBuffer, offs * 8, vtc * 8);
+                 this.byteBuffer.position(0);
+-                this.byteBuffer.limit(this.rawBufferIndex * 4);
++                this.byteBuffer.limit(vtc * 32);
++                offs += vtc;
+ 
+                 if (this.useVBO)
+                 {
+@@ -248,11 +270,11 @@
+ 
+                 if (this.drawMode == 7 && convertQuadsToTriangles)
+                 {
+-                    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, this.vertexCount);
++                    GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, vtc);
+                 }
+                 else
+                 {
+-                    GL11.glDrawArrays(this.drawMode, 0, this.vertexCount);
++                    GL11.glDrawArrays(this.drawMode, 0, vtc);
+                 }
+ 
+                 GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+@@ -278,6 +300,12 @@
+                 {
+                     GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+                 }
++            }
++
++            if (rawBufferSize > 0x20000 && rawBufferIndex < (rawBufferSize << 3))
++            {
++                rawBufferSize = 0;
++                rawBuffer = null;
+             }
+ 
+             int var1 = this.rawBufferIndex * 4;
+@@ -442,6 +470,19 @@
+      */
+     public void addVertex(double par1, double par3, double par5)
+     {
++        if (rawBufferIndex >= rawBufferSize - 32) 
++        {
++            if (rawBufferSize == 0)
++            {
++                rawBufferSize = 0x10000;
++                rawBuffer = new int[rawBufferSize];
++            }
++            else
++            {
++                rawBufferSize *= 2;
++                rawBuffer = Arrays.copyOf(rawBuffer, rawBufferSize);
++            }
++        }
+         ++this.addedVertices;
+ 
+         if (this.drawMode == 7 && convertQuadsToTriangles && this.addedVertices % 4 == 0)
+@@ -500,12 +541,6 @@
+         this.rawBuffer[this.rawBufferIndex + 2] = Float.floatToRawIntBits((float)(par5 + this.zOffset));
+         this.rawBufferIndex += 8;
+         ++this.vertexCount;
+-
+-        if (this.vertexCount % 4 == 0 && this.rawBufferIndex >= this.bufferSize - 32)
+-        {
+-            this.draw();
+-            this.isDrawing = true;
+-        }
+     }
+ 
+     /**

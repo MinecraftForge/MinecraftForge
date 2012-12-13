@@ -1,0 +1,50 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
+@@ -67,7 +67,13 @@
+                         {
+                             var12 = par1World.getBlockId(var10, var8, var11);
+ 
+-                            if (var12 != 0 && var12 != Block.leaves.blockID && var12 != Block.grass.blockID && var12 != Block.dirt.blockID && var12 != Block.wood.blockID)
++                            Block block = Block.blocksList[var12];
++
++                            if (var12 != 0 &&
++                               !block.isLeaves(par1World, var10, var8, var11) &&
++                                var12 != Block.grass.blockID &&
++                                var12 != Block.dirt.blockID &&
++                               !block.isWood(par1World, var10, var8, var11))
+                             {
+                                 var7 = false;
+                             }
+@@ -110,7 +116,10 @@
+                             {
+                                 int var17 = var16 - par5;
+ 
+-                                if ((Math.abs(var15) != var13 || Math.abs(var17) != var13 || par2Random.nextInt(2) != 0 && var12 != 0) && par1World.isAirBlock(var14, var11, var16))
++                                Block block = Block.blocksList[par1World.getBlockId(var14, var11, var16)];
++
++                                if ((Math.abs(var15) != var13 || Math.abs(var17) != var13 || par2Random.nextInt(2) != 0 && var12 != 0) &&
++                                    (block == null || block.canBeReplacedByLeaves(par1World, var14, var11, var16)))
+                                 {
+                                     this.setBlockAndMetadata(par1World, var14, var11, var16, Block.leaves.blockID, this.metaLeaves);
+                                 }
+@@ -122,7 +131,9 @@
+                     {
+                         var12 = par1World.getBlockId(par3, par4 + var11, par5);
+ 
+-                        if (var12 == 0 || var12 == Block.leaves.blockID)
++                        Block block = Block.blocksList[var12];
++
++                        if (var12 == 0 || block == null || block.isLeaves(par1World, par3, par4 + var11, par5))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + var11, par5, Block.wood.blockID, this.metaWood);
+ 
+@@ -162,7 +173,8 @@
+                             {
+                                 for (var15 = par5 - var13; var15 <= par5 + var13; ++var15)
+                                 {
+-                                    if (par1World.getBlockId(var14, var11, var15) == Block.leaves.blockID)
++                                    Block block = Block.blocksList[par1World.getBlockId(var14, var11, var15)];
++                                    if (block != null && block.isLeaves(par1World, var14, var11, var15))
+                                     {
+                                         if (par2Random.nextInt(4) == 0 && par1World.getBlockId(var14 - 1, var11, var15) == 0)
+                                         {

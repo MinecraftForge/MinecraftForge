@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockChest.java
++++ ../src_work/minecraft/net/minecraft/block/BlockChest.java
+@@ -21,6 +21,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import static net.minecraftforge.common.ForgeDirection.*;
++
+ public class BlockChest extends BlockContainer
+ {
+     private Random random = new Random();
+@@ -427,7 +429,7 @@
+         {
+             return true;
+         }
+-        else if (par1World.isBlockNormalCube(par2, par3 + 1, par4))
++        else if (par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN))
+         {
+             return true;
+         }
+@@ -435,19 +437,19 @@
+         {
+             return true;
+         }
+-        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 - 1, par3 + 1, par4) || isOcelotBlockingChest(par1World, par2 - 1, par3, par4)))
+-        {
+-            return true;
+-        }
+-        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockNormalCube(par2 + 1, par3 + 1, par4) || isOcelotBlockingChest(par1World, par2 + 1, par3, par4)))
+-        {
+-            return true;
+-        }
+-        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 - 1) || isOcelotBlockingChest(par1World, par2, par3, par4 - 1)))
+-        {
+-            return true;
+-        }
+-        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockNormalCube(par2, par3 + 1, par4 + 1) || isOcelotBlockingChest(par1World, par2, par3, par4 + 1)))
++        else if (par1World.getBlockId(par2 - 1, par3, par4) == this.blockID && (par1World.isBlockSolidOnSide(par2 - 1, par3 + 1, par4, DOWN) || isOcelotBlockingChest(par1World, par2 - 1, par3, par4)))
++        {
++            return true;
++        }
++        else if (par1World.getBlockId(par2 + 1, par3, par4) == this.blockID && (par1World.isBlockSolidOnSide(par2 + 1, par3 + 1, par4, DOWN) || isOcelotBlockingChest(par1World, par2 + 1, par3, par4)))
++        {
++            return true;
++        }
++        else if (par1World.getBlockId(par2, par3, par4 - 1) == this.blockID && (par1World.isBlockSolidOnSide(par2, par3 + 1, par4 - 1, DOWN) || isOcelotBlockingChest(par1World, par2, par3, par4 - 1)))
++        {
++            return true;
++        }
++        else if (par1World.getBlockId(par2, par3, par4 + 1) == this.blockID && (par1World.isBlockSolidOnSide(par2, par3 + 1, par4 + 1, DOWN) || isOcelotBlockingChest(par1World, par2, par3, par4 + 1)))
+         {
+             return true;
+         }

@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiIngame.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiIngame.java
+@@ -26,6 +26,8 @@
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
++import net.minecraftforge.common.ForgeHooks;
++
+ @SideOnly(Side.CLIENT)
+ public class GuiIngame extends Gui
+ {
+@@ -157,7 +159,7 @@
+ 
+                 var47 = var7 - 39;
+                 var22 = var47 - 10;
+-                var23 = this.mc.thePlayer.getTotalArmorValue();
++                var23 = ForgeHooks.getTotalArmorValue(mc.thePlayer);
+                 var24 = -1;
+ 
+                 if (this.mc.thePlayer.isPotionActive(Potion.regeneration))

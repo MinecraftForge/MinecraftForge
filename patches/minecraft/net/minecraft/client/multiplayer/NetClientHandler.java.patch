@@ -1,0 +1,47 @@
+--- ../src_base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
++++ ../src_work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
+@@ -159,6 +159,11 @@
+ import net.minecraft.world.storage.MapStorage;
+ import org.lwjgl.input.Keyboard;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.client.event.ClientChatReceivedEvent;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++
+ @SideOnly(Side.CLIENT)
+ public class NetClientHandler extends NetHandler
+ {
+@@ -746,7 +751,7 @@
+ 
+     public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
+     {
+-        this.netManager.networkShutdown("disconnect.kicked", new Object[0]);
++        this.netManager.networkShutdown("disconnect.kicked", par1Packet255KickDisconnect.reason);
+         this.disconnected = true;
+         this.mc.loadWorld((WorldClient)null);
+         this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
+@@ -811,7 +816,11 @@
+     public void handleChat(Packet3Chat par1Packet3Chat)
+     {
+         FMLNetworkHandler.onConnectionClosed(this.netManager, this.getPlayer());
+-        this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
++        ClientChatReceivedEvent event = new ClientChatReceivedEvent(par1Packet3Chat.message);
++        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
++        {
++            this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
++        }
+     }
+ 
+     public void handleAnimation(Packet18Animation par1Packet18Animation)
+@@ -1193,6 +1202,10 @@
+                 {
+                     var2.readFromNBT(par1Packet132TileEntityData.customParam1);
+                 }
++                else
++                {
++                    var2.onDataPacket(netManager,  par1Packet132TileEntityData);
++                }
+             }
+         }
+     }

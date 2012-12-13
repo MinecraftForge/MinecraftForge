@@ -1,0 +1,55 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemDye.java
++++ ../src_work/minecraft/net/minecraft/item/ItemDye.java
+@@ -18,6 +18,11 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event.Result;
++import net.minecraftforge.event.entity.player.BonemealEvent;
++
+ public class ItemDye extends Item
+ {
+     /** List of dye color names */
+@@ -68,6 +73,21 @@
+             if (par1ItemStack.getItemDamage() == 15)
+             {
+                 var11 = par3World.getBlockId(par4, par5, par6);
++
++                BonemealEvent event = new BonemealEvent(par2EntityPlayer, par3World, var11, par4, par5, par6);
++                if (MinecraftForge.EVENT_BUS.post(event))
++                {
++                    return false;
++                }
++
++                if (event.getResult() == Result.ALLOW)
++                {
++                    if (!par3World.isRemote)
++                    {
++                        par1ItemStack.stackSize--;
++                    }
++                    return true;
++                }
+ 
+                 if (var11 == Block.sapling.blockID)
+                 {
+@@ -167,16 +187,9 @@
+                                         par3World.setBlockAndMetadataWithNotify(var13, var14, var15, Block.tallGrass.blockID, 1);
+                                     }
+                                 }
+-                                else if (itemRand.nextInt(3) != 0)
++                                else
+                                 {
+-                                    if (Block.plantYellow.canBlockStay(par3World, var13, var14, var15))
+-                                    {
+-                                        par3World.setBlockWithNotify(var13, var14, var15, Block.plantYellow.blockID);
+-                                    }
+-                                }
+-                                else if (Block.plantRed.canBlockStay(par3World, var13, var14, var15))
+-                                {
+-                                    par3World.setBlockWithNotify(var13, var14, var15, Block.plantRed.blockID);
++                                    ForgeHooks.plantGrass(par3World, var13, var14, var15);
+                                 }
+                             }
+                         }

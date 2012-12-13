@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
+@@ -8,6 +8,9 @@
+ import net.minecraft.tileentity.TileEntityChest;
+ import net.minecraft.tileentity.TileEntityMobSpawner;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.DungeonHooks;
++import net.minecraftforge.common.MinecraftForge;
+ 
+ public class WorldGenDungeons extends WorldGenerator
+ {
+@@ -124,9 +127,9 @@
+ 
+                                     if (var16 != null)
+                                     {
+-                                        for (int var17 = 0; var17 < 8; ++var17)
++                                        for (int var17 = 0; var17 < DungeonHooks.getDungeonLootTries(); ++var17)
+                                         {
+-                                            ItemStack var18 = this.pickCheckLootItem(par2Random);
++                                            ItemStack var18 = DungeonHooks.getRandomDungeonLoot(par2Random);
+ 
+                                             if (var18 != null)
+                                             {
+@@ -154,7 +157,7 @@
+ 
+             if (var19 != null)
+             {
+-                var19.setMobID(this.pickMobSpawner(par2Random));
++                var19.setMobID(DungeonHooks.getRandomDungeonMob(par2Random));
+             }
+             else
+             {

@@ -1,0 +1,69 @@
+--- ../src_base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
++++ ../src_work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
+@@ -21,6 +21,10 @@
+ import net.minecraft.world.demo.DemoWorldServer;
+ import net.minecraft.world.storage.ISaveHandler;
+ 
++import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
++
+ @SideOnly(Side.CLIENT)
+ public class IntegratedServer extends MinecraftServer
+ {
+@@ -60,44 +64,22 @@
+     protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
+     {
+         this.convertMapIfNeeded(par1Str);
+-        this.worldServers = new WorldServer[3];
+-        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
+         ISaveHandler var7 = this.getActiveAnvilConverter().getSaveLoader(par1Str, true);
+ 
+-        for (int var8 = 0; var8 < this.worldServers.length; ++var8)
+-        {
+-            byte var9 = 0;
+-
+-            if (var8 == 1)
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, theProfiler) : new WorldServer(this, var7, par2Str, 0, theWorldSettings, theProfiler));
++        for (int dim : DimensionManager.getStaticDimensionIDs())
++        {
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var7, par2Str, dim, theWorldSettings, overWorld, theProfiler));
++            world.addWorldAccess(new WorldManager(this, world));
++            if (!this.isSinglePlayer())
+             {
+-                var9 = -1;
++                world.getWorldInfo().setGameType(this.getGameType());
+             }
+ 
+-            if (var8 == 2)
+-            {
+-                var9 = 1;
+-            }
+-
+-            if (var8 == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.worldServers[var8] = new DemoWorldServer(this, var7, par2Str, var9, this.theProfiler);
+-                }
+-                else
+-                {
+-                    this.worldServers[var8] = new WorldServer(this, var7, par2Str, var9, this.theWorldSettings, this.theProfiler);
+-                }
+-            }
+-            else
+-            {
+-                this.worldServers[var8] = new WorldServerMulti(this, var7, par2Str, var9, this.theWorldSettings, this.worldServers[0], this.theProfiler);
+-            }
+-
+-            this.worldServers[var8].addWorldAccess(new WorldManager(this, this.worldServers[var8]));
+-            this.getConfigurationManager().setPlayerManager(this.worldServers);
+-        }
+-
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
++        }
++
++        this.getConfigurationManager().setPlayerManager(new WorldServer[]{ overWorld });
+         this.setDifficultyForAllWorlds(this.getDifficulty());
+         this.initialWorldChunkLoad();
+     }

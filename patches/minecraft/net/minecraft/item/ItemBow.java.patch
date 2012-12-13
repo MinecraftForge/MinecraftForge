@@ -1,0 +1,49 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemBow.java
++++ ../src_work/minecraft/net/minecraft/item/ItemBow.java
+@@ -6,6 +6,10 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.ArrowLooseEvent;
++import net.minecraftforge.event.entity.player.ArrowNockEvent;
+ 
+ public class ItemBow extends Item
+ {
+@@ -22,11 +26,20 @@
+      */
+     public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
+     {
++        int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
++        
++        ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, var6);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return;
++        }
++        var6 = event.charge;
++        
+         boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
+ 
+         if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         {
+-            int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
+             float var7 = (float)var6 / 20.0F;
+             var7 = (var7 * var7 + var7 * 2.0F) / 3.0F;
+ 
+@@ -111,6 +124,13 @@
+      */
+     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+     {
++        ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return event.result;
++        }
++        
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         {
+             par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

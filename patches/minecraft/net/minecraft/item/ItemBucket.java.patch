@@ -1,0 +1,46 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemBucket.java
++++ ../src_work/minecraft/net/minecraft/item/ItemBucket.java
+@@ -8,6 +8,10 @@
+ import net.minecraft.util.EnumMovingObjectType;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.entity.player.FillBucketEvent;
+ 
+ public class ItemBucket extends Item
+ {
+@@ -40,6 +44,32 @@
+         }
+         else
+         {
++            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, var12);
++            if (MinecraftForge.EVENT_BUS.post(event))
++            {
++                return par1ItemStack;
++            }
++
++            if (event.getResult() == Event.Result.ALLOW)
++            {
++                if (par3EntityPlayer.capabilities.isCreativeMode)
++                {
++                    return par1ItemStack;
++                }
++
++                if (--par1ItemStack.stackSize <= 0)
++                {
++                    return event.result;
++                }
++
++                if (!par3EntityPlayer.inventory.addItemStackToInventory(event.result))
++                {
++                    par3EntityPlayer.dropPlayerItem(event.result);
++                }
++
++                return par1ItemStack;
++            }
++
+             if (var12.typeOfHit == EnumMovingObjectType.TILE)
+             {
+                 int var13 = var12.blockX;

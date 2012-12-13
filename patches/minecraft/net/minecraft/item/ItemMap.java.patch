@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemMap.java
++++ ../src_work/minecraft/net/minecraft/item/ItemMap.java
+@@ -98,7 +98,7 @@
+                             boolean var21 = var19 * var19 + var20 * var20 > (var11 - 2) * (var11 - 2);
+                             int var22 = (var7 / var6 + var13 - var4 / 2) * var6;
+                             int var23 = (var8 / var6 + var18 - var5 / 2) * var6;
+-                            int[] var24 = new int[256];
++                            int[] var24 = new int[Block.blocksList.length];
+                             Chunk var25 = par1World.getChunkFromBlockCoords(var22, var23);
+ 
+                             if (!var25.isEmpty())
+@@ -194,7 +194,7 @@
+                                 var31 = 0;
+                                 var32 = 0;
+ 
+-                                for (var33 = 0; var33 < 256; ++var33)
++                                for (var33 = 0; var33 < Block.blocksList.length; ++var33)
+                                 {
+                                     if (var24[var33] > var31)
+                                     {

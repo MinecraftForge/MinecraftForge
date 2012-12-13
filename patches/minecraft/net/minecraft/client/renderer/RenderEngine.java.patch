@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/RenderEngine.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/RenderEngine.java
+@@ -29,6 +29,8 @@
+ import net.minecraft.util.IntHashMap;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++
+ @SideOnly(Side.CLIENT)
+ public class RenderEngine
+ {
+@@ -172,6 +174,7 @@
+ 
+             try
+             {
++                ForgeHooksClient.onTextureLoadPre(par1Str);
+                 this.singleIntBuffer.clear();
+                 GLAllocation.generateTextureNames(this.singleIntBuffer);
+                 int var3 = this.singleIntBuffer.get(0);
+@@ -215,6 +218,7 @@
+                 }
+ 
+                 this.textureMap.put(par1Str, Integer.valueOf(var3));
++                ForgeHooksClient.onTextureLoad(par1Str, var6);
+                 return var3;
+             }
+             catch (Exception var5)

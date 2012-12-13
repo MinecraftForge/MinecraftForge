@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
++++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
+@@ -530,10 +530,11 @@
+                 for (int var12 = var4; var12 <= var7; ++var12)
+                 {
+                     int var13 = this.worldObj.getBlockId(var10, var11, var12);
+-
+-                    if (var13 != 0)
++                    Block block = Block.blocksList[var13];
++
++                    if (block != null)
+                     {
+-                        if (var13 != Block.obsidian.blockID && var13 != Block.whiteStone.blockID && var13 != Block.bedrock.blockID)
++                        if (block.canDragonDestroy(worldObj, var10, var11, var12))
+                         {
+                             var9 = true;
+                             this.worldObj.setBlockWithNotify(var10, var11, var12, 0);

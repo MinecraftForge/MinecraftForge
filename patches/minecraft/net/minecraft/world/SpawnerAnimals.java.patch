@@ -1,0 +1,52 @@
+--- ../src_base/minecraft/net/minecraft/world/SpawnerAnimals.java
++++ ../src_work/minecraft/net/minecraft/world/SpawnerAnimals.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.world;
+ 
++import java.util.ArrayList;
++import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -19,6 +21,9 @@
+ import net.minecraft.world.biome.SpawnListEntry;
+ import net.minecraft.world.chunk.Chunk;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
++
+ public final class SpawnerAnimals
+ {
+     /** The 17x17 area around the player where mobs can spawn */
+@@ -93,6 +98,9 @@
+                 if ((!var35.getPeacefulCreature() || par2) && (var35.getPeacefulCreature() || par1) && (!var35.getAnimal() || par3) && par0WorldServer.countEntities(var35.getCreatureClass()) <= var35.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
+                 {
+                     Iterator var37 = eligibleChunksForSpawning.keySet().iterator();
++                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
++                    Collections.shuffle(tmp);
++                    var37 = tmp.iterator();
+                     label110:
+ 
+                     while (var37.hasNext())
+@@ -221,7 +229,8 @@
+         else
+         {
+             int var5 = par1World.getBlockId(par2, par3 - 1, par4);
+-            return var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
++            boolean spawnBlock = (Block.blocksList[var5] != null && Block.blocksList[var5].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4));
++            return spawnBlock && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
+         }
+     }
+ 
+@@ -230,6 +239,11 @@
+      */
+     private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
+     {
++        if (MinecraftForge.EVENT_BUS.post(new LivingSpecialSpawnEvent(par0EntityLiving, par1World, par2, par3, par4)))
++        {
++            return;
++        }
++
+         par0EntityLiving.initCreature();
+     }
+ 

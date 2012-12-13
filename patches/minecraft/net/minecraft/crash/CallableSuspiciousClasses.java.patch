@@ -1,0 +1,10 @@
+--- ../src_base/minecraft/net/minecraft/crash/CallableSuspiciousClasses.java
++++ ../src_work/minecraft/net/minecraft/crash/CallableSuspiciousClasses.java
+@@ -130,6 +130,6 @@
+ 
+     public Object call()
+     {
+-        return "FML is installed";
++        return "FML and Forge are installed";
+     }
+ }
