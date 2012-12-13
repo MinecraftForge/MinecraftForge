@@ -702,7 +702,7 @@ def setup_mcp(fml_dir, mcp_dir, dont_gen_conf=True):
     if not os.path.isfile(os.path.join(fml_dir, 'fmlbuild.properties-sample')):
         mcp_eclipse = os.path.join(mcp_dir, 'eclipse')
         
-        if os.path.isdir(os.path.join(mcp_eclipse, 'Client')) and os.path.isdir(os.path.join(eclipse_dir, 'Server')):
+        if os.path.isdir(os.path.join(mcp_eclipse, 'Client')) and os.path.isdir(os.path.join(mcp_eclipse, 'Server')):
             shutil.rmtree(mcp_eclipse)
             
         if not os.path.isdir(mcp_eclipse) and os.path.isdir(os.path.join(fml_dir, 'eclipse')):
