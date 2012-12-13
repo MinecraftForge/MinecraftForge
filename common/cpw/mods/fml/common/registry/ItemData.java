@@ -2,7 +2,9 @@ package cpw.mods.fml.common.registry;
 
 import java.util.Map;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.google.common.base.Objects;
@@ -23,7 +25,14 @@ public class ItemData {
     public ItemData(Item item, ModContainer mc)
     {
         this.itemId = item.field_77779_bT;
-        this.itemType = item.getClass().getName();
+        if (item.getClass().equals(ItemBlock.class))
+        {
+            this.itemType =  Block.field_71973_m[this.itemId].getClass().getName();
+        }
+        else
+        {
+            this.itemType = item.getClass().getName();
+        }
         this.modId = mc.getModId();
         if (!modOrdinals.containsKey(mc.getModId()))
         {
@@ -68,5 +77,16 @@ public class ItemData {
         {
             return false;
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("Item %d, Type %s, owned by %s, ordinal %d", itemId, itemType, modId, ordinal);
+    }
+
+    public boolean mayDifferByOrdinal(ItemData rightValue)
+    {
+        return Objects.equal(itemType, rightValue.itemType) && Objects.equal(modId, rightValue.modId);
     }
 }

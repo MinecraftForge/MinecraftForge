@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +43,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapDifference;
+import com.google.common.collect.MapDifference.ValueDifference;
 
 import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
@@ -502,6 +504,21 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void disconnectIDMismatch(MapDifference<Integer, ItemData> s, NetHandler toKill, INetworkManager mgr)
     {
+        boolean criticalMismatch = !s.entriesOnlyOnLeft().isEmpty();
+        for (Entry<Integer, ValueDifference<ItemData>> mismatch : s.entriesDiffering().entrySet())
+        {
+            ValueDifference<ItemData> vd = mismatch.getValue();
+            if (!vd.leftValue().mayDifferByOrdinal(vd.rightValue()))
+            {
+                criticalMismatch = true;
+            }
+        }
+
+        if (!criticalMismatch)
+        {
+            // We'll carry on with this connection, and just log a message instead
+            return;
+        }
         // Nuke the connection
         ((NetClientHandler)toKill).func_72553_e();
         // Stop GuiConnecting
