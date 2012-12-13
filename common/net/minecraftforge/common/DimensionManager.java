@@ -15,8 +15,20 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.*;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.MinecraftException;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldManager;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderEnd;
+import net.minecraft.world.WorldProviderHell;
+import net.minecraft.world.WorldProviderSurface;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldServerMulti;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class DimensionManager

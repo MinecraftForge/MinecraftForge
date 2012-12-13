@@ -2,7 +2,9 @@ package net.minecraftforge.event.terraingen;
 
 import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.asm.SideOnly;
-import net.minecraft.src.*;
+
+import net.minecraft.world.biome.BiomeDecorator;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.*;
 
 public class BiomeEvent extends Event

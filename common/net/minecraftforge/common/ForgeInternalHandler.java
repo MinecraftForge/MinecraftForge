@@ -4,7 +4,10 @@ import java.util.UUID;
 
 import cpw.mods.fml.common.FMLLog;
 
-import net.minecraft.src.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.*;
 import net.minecraftforge.event.world.WorldEvent;

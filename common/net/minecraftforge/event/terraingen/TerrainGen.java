@@ -2,7 +2,11 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
-import net.minecraft.src.*;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.MapGenBase;
+import net.minecraft.world.gen.NoiseGeneratorOctaves;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.*;
 import net.minecraftforge.event.Event.*;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.*;

@@ -2,7 +2,10 @@ package net.minecraftforge.common;
 
 import java.util.*;
 
-import net.minecraft.src.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.*;
 
 public class ChestGenHooks
 {

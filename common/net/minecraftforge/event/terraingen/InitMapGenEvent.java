@@ -1,6 +1,6 @@
 package net.minecraftforge.event.terraingen;
 
-import net.minecraft.src.*;
+import net.minecraft.world.gen.MapGenBase;
 import net.minecraftforge.event.*;
 
 public class InitMapGenEvent extends Event

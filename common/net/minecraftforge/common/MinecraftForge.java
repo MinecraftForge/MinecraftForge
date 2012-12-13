@@ -8,7 +8,11 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.ModContainer;
 
-import net.minecraft.src.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.GrassEntry;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.event.EventBus;

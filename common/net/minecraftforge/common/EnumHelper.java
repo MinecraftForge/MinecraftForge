@@ -1,8 +1,22 @@
 package net.minecraftforge.common;
 
-import net.minecraft.src.*;
 import java.lang.reflect.*;
 import java.util.*;
+
+import net.minecraft.block.EnumMobType;
+import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.EnumEntitySize;
+import net.minecraft.entity.player.EnumStatus;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.item.EnumToolMaterial;
+import net.minecraft.util.EnumArt;
+import net.minecraft.util.EnumMovingObjectType;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.gen.structure.EnumDoor;
 
 public class EnumHelper
 {

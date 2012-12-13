@@ -2,9 +2,9 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
-import net.minecraft.src.*;
-import net.minecraftforge.event.Event.*;
-import net.minecraftforge.event.world.*;
+import net.minecraft.world.World;
+import net.minecraftforge.event.Event.HasResult;
+import net.minecraftforge.event.world.WorldEvent;
 
 /**
  * This event is fired when a sapling grows a tree.
