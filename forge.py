@@ -83,13 +83,11 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
 
     if os.path.isdir(os.path.join(forge_dir, 'patches', 'minecraft')):
         apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'minecraft'), src_dir)
+        
     if copy_files and os.path.isdir(os.path.join(forge_dir, 'client')):
         copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'))
-            
-    if os.path.isdir(os.path.join(forge_dir, 'patches', 'common')):
-        apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'common'), src_dir)
     if copy_files and os.path.isdir(os.path.join(forge_dir, 'common')):
-        copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'common'))
+        copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'minecraft'))
 
 def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     version = load_version(build_num)
@@ -107,9 +105,9 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     print '\nCopying Client Code'
     copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'), -1)
     print '\nCopying Common Code'
-    copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'common'), -1)
+    copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'minecraft'), -1)
     print
-    inject_version(os.path.join(src_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
+    inject_version(os.path.join(src_dir, 'minecraft/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     
     error_level = 0
     try:
