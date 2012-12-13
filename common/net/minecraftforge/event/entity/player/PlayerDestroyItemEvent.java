@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemStack;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class PlayerDestroyItemEvent extends PlayerEvent
 {

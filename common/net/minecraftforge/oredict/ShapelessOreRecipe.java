@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.List;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.CraftingManager;
-import net.minecraft.src.IRecipe;
-import net.minecraft.src.InventoryCrafting;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.ShapelessRecipes;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.world.World;
 
 public class ShapelessOreRecipe implements IRecipe 
 {

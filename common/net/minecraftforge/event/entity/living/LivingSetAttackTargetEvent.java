@@ -1,6 +1,6 @@
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.src.EntityLiving;
+import net.minecraft.entity.EntityLiving;
 
 public class LivingSetAttackTargetEvent extends LivingEvent
 {

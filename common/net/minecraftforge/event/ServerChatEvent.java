@@ -1,6 +1,6 @@
 package net.minecraftforge.event;
 
-import net.minecraft.src.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 @Cancelable
 public class ServerChatEvent extends Event {

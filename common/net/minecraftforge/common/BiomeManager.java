@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.src.BiomeGenBase;
-import net.minecraft.src.ChunkProviderGenerate;
-import net.minecraft.src.IChunkProvider;
-import net.minecraft.src.MapGenStronghold;
-import net.minecraft.src.MapGenVillage;
-import net.minecraft.src.WorldChunkManager;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.structure.MapGenStronghold;
+import net.minecraft.world.gen.structure.MapGenVillage;
+import net.minecraft.world.biome.WorldChunkManager;
 
 import com.google.common.collect.Lists;
 

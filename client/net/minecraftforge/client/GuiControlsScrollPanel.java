@@ -4,11 +4,11 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.GameSettings;
-import net.minecraft.src.GuiControls;
-import net.minecraft.src.GuiSlot;
-import net.minecraft.src.KeyBinding;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiSlot;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.renderer.Tessellator;
 
 public class GuiControlsScrollPanel extends GuiSlot
 {

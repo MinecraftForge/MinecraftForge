@@ -26,8 +26,8 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Item;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import static net.minecraftforge.common.Property.Type.*;
 
 /**

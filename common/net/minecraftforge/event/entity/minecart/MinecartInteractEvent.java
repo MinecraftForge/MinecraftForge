@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.minecart;
 
-import net.minecraft.src.EntityMinecart;
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.Cancelable;
 
 @Cancelable

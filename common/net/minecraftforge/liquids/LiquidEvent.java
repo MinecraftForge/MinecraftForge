@@ -1,7 +1,7 @@
 package net.minecraftforge.liquids;
 
-import net.minecraft.src.TileEntity;
-import net.minecraft.src.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 

@@ -1,6 +1,6 @@
 package net.minecraftforge.event.entity;
 
-import net.minecraft.src.Entity;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.event.Event;
 
 public class EntityEvent extends Event

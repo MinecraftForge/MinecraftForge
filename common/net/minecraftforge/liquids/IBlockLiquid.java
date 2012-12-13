@@ -1,6 +1,6 @@
 package net.minecraftforge.liquids;
 
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Implementors of this interface are a liquid which may receive a block implementation and can be placed in the world.

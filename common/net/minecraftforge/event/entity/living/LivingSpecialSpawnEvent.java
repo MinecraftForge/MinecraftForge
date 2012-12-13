@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.World;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.World;
 import net.minecraftforge.event.Cancelable;
 
 @Cancelable

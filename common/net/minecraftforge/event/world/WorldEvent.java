@@ -1,6 +1,6 @@
 package net.minecraftforge.event.world;
 
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 import net.minecraftforge.event.Event;
 
 public class WorldEvent extends Event

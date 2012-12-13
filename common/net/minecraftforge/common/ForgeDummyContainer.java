@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.SaveHandler;
-import net.minecraft.src.WorldInfo;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;

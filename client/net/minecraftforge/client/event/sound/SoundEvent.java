@@ -1,8 +1,8 @@
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.SoundManager;
-import net.minecraft.src.SoundPoolEntry;
+import net.minecraft.entity.Entity;
+import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.Event;

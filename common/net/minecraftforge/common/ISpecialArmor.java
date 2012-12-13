@@ -8,11 +8,11 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.minecraft.src.DamageSource;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemArmor;
-import net.minecraft.src.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 
 /**
  * This interface is to be implemented by ItemArmor classes. It will allow to

@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.src.IInventory;
+import net.minecraft.inventory.IInventory;
 
 /** Inventory ranges mapped by side.  This class is implemented by TileEntities
  * that provide different inventory slot ranges to different sides.

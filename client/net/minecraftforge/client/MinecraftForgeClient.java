@@ -7,12 +7,12 @@ package net.minecraftforge.client;
 
 import org.lwjgl.opengl.Display;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.common.MinecraftForge;
 

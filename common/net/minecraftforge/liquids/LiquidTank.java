@@ -1,6 +1,6 @@
 package net.minecraftforge.liquids;
 
-import net.minecraft.src.TileEntity;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * Reference implementation of ILiquidTank. Use this or implement your own.

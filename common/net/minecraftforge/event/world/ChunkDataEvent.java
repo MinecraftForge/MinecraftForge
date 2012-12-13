@@ -1,7 +1,7 @@
 package net.minecraftforge.event.world;
 
-import net.minecraft.src.Chunk;
-import net.minecraft.src.NBTTagCompound;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ChunkDataEvent extends ChunkEvent
 {

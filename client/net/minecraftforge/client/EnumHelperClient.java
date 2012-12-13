@@ -1,9 +1,9 @@
 package net.minecraftforge.client;
 
-import net.minecraft.src.EnumGameType;
-import net.minecraft.src.EnumOS;
-import net.minecraft.src.EnumOptions;
-import net.minecraft.src.EnumRarity;
+import net.minecraft.world.EnumGameType;
+import net.minecraft.util.EnumOS;
+import net.minecraft.client.settings.EnumOptions;
+import net.minecraft.item.EnumRarity;
 import net.minecraftforge.common.EnumHelper;
 
 public class EnumHelperClient extends EnumHelper

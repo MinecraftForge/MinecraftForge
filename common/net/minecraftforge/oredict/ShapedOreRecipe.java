@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.IRecipe;
-import net.minecraft.src.InventoryCrafting;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.ShapedRecipes;
-import net.minecraft.src.World;
+import net.minecraft.block.Block;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.world.World;
 
 public class ShapedOreRecipe implements IRecipe 
 {

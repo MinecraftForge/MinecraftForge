@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.src.ITexturePack;
+import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraftforge.event.Event;
 
 public class TextureLoadEvent extends Event

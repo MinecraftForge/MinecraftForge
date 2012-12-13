@@ -2,9 +2,9 @@ package net.minecraftforge.event.entity.living;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.DamageSource;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityLiving;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.event.Cancelable;
 
 @Cancelable

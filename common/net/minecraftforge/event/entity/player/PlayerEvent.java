@@ -1,8 +1,8 @@
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.src.Block;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.living.LivingEvent;
 

@@ -3,7 +3,7 @@ package net.minecraftforge.liquids;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;

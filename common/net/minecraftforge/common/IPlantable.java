@@ -1,6 +1,6 @@
 package net.minecraftforge.common;
 
-import net.minecraft.src.World;
+import net.minecraft.world.World;
 
 public interface IPlantable
 {

@@ -43,17 +43,17 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.src.Chunk;
-import net.minecraft.src.ChunkCoordIntPair;
-import net.minecraft.src.CompressedStreamTools;
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.NBTBase;
-import net.minecraft.src.NBTTagCompound;
-import net.minecraft.src.NBTTagList;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldServer;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.event.Event;
 

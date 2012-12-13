@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.src.Achievement;
+import net.minecraft.stats.Achievement;
 
 public class AchievementPage
 {

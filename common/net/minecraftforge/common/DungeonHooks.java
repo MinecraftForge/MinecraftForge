@@ -3,10 +3,10 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Random;
 
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.WeightedRandom;
-import net.minecraft.src.WeightedRandomItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.WeightedRandomItem;
 
 public class DungeonHooks
 {
