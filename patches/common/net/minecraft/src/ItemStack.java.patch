@@ -1,0 +1,34 @@
+--- ../src_base/common/net/minecraft/src/ItemStack.java
++++ ../src_work/common/net/minecraft/src/ItemStack.java
+@@ -4,6 +4,8 @@
+ import cpw.mods.fml.common.asm.SideOnly;
+ import java.util.ArrayList;
+ import java.util.List;
++
++import com.google.common.base.Objects;
+ 
+ public final class ItemStack
+ {
+@@ -722,4 +724,22 @@
+ 
+         this.stackTagCompound.setInteger("RepairCost", par1);
+     }
++    
++    public boolean equals(Object o) {
++        if (this == o) return true;
++        if (!(o instanceof ItemStack))
++            return false;
++        ItemStack is = (ItemStack) o;
++        if (is.stackSize == stackSize &&
++            is.itemID == itemID &&
++            is.itemDamage == itemDamage &&
++            is.animationsToGo == is.animationsToGo &&
++            is.itemFrame == itemFrame &&
++            Objects.equal(is.stackTagCompound, stackTagCompound)) return true;
++        return false;
++    }
++    
++    public int hashCode() {
++        return Objects.hashCode(itemID, itemDamage, stackSize, animationsToGo, itemFrame, stackTagCompound);
++    }
+ }
