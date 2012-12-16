@@ -4,8 +4,8 @@
  package net.minecraft.client.renderer;
  
 +import cpw.mods.fml.client.TextureFXManager;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.block.Block;
 @@ -40,7 +41,12 @@
      public void func_78443_a(EntityLiving p_78443_1_, ItemStack p_78443_2_, int p_78443_3_)
@@ -29,10 +29,10 @@
 -        {
 -            var9 = (float)var8 / 16.0F;
 -            var10 = p_78439_2_ + (p_78439_4_ - p_78439_2_) * var9 - 0.001953125F;
-+        /* Gets the width/16 of the currently bound texture, used 
++        /* Gets the width/16 of the currently bound texture, used
 +         * to fix the side rendering issues on textures != 16 */
 +        int tileSize = TextureFXManager.instance().getTextureDimensions(GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D)).width / 16;
-+        
++
 +        float tx = 1.0f / (32 * tileSize);
 +        float tz = 1.0f /  tileSize;
 +

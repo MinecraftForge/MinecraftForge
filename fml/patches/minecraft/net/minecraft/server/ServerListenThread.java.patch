@@ -4,8 +4,8 @@
  package net.minecraft.server;
  
 +import cpw.mods.fml.common.FMLLog;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
 @@ -53,6 +54,7 @@
                  catch (Exception var6)

@@ -42,6 +42,10 @@ public class JarDiscoverer implements ITypeDiscoverer
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
             {
+                if (ze.getName()!=null && ze.getName().startsWith("__MACOSX"))
+                {
+                    continue;
+                }
                 Matcher match = classFile.matcher(ze.getName());
                 if (match.matches())
                 {

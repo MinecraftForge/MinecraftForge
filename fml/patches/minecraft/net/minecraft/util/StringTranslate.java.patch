@@ -1,15 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
 +++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
-@@ -2,6 +2,8 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.util;
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
 +import cpw.mods.fml.common.registry.LanguageRegistry;
-+
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
- import java.io.IOException;
- import java.io.InputStreamReader;
-@@ -80,6 +82,7 @@
+@@ -80,6 +81,7 @@
                  }
              }
          }
@@ -17,7 +15,7 @@
      }
  
      public void func_74810_a(String p_74810_1_)
-@@ -138,7 +141,6 @@
+@@ -138,7 +140,6 @@
          }
      }
  
