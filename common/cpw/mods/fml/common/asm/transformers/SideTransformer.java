@@ -11,9 +11,9 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import cpw.mods.fml.common.asm.SideOnly;
 import cpw.mods.fml.relauncher.FMLRelauncher;
 import cpw.mods.fml.relauncher.IClassTransformer;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class SideTransformer implements IClassTransformer
 {

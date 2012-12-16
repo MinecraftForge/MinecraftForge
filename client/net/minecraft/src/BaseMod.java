@@ -12,7 +12,7 @@
  */
 package net.minecraft.src;
 
-import static cpw.mods.fml.common.Side.CLIENT;
+import static cpw.mods.fml.relauncher.Side.CLIENT;
 
 import java.util.Map;
 import java.util.Random;
@@ -40,7 +40,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.common.asm.SideOnly;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModProxy
 {

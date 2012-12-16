@@ -5,8 +5,8 @@
  
 +import cpw.mods.fml.client.TextureFXManager;
 +import cpw.mods.fml.common.FMLLog;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.Color;
 +import java.awt.Dimension;
  import java.awt.Graphics;

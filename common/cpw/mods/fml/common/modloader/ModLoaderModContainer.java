@@ -48,7 +48,6 @@ import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.ProxyInjector;
-import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
@@ -66,6 +65,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionRange;
+import cpw.mods.fml.relauncher.Side;
 
 public class ModLoaderModContainer implements ModContainer
 {

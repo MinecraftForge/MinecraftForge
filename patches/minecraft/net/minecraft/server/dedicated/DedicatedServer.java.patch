@@ -4,8 +4,8 @@
  package net.minecraft.server.dedicated;
  
 +import cpw.mods.fml.common.FMLCommonHandler;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
 @@ -57,6 +58,8 @@
              field_71306_a.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");

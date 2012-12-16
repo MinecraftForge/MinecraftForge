@@ -1,15 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
 +++ ../src-work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
-@@ -2,6 +2,8 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.client.multiplayer;
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
-+
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
- import java.io.ByteArrayInputStream;
- import java.io.DataInputStream;
-@@ -172,11 +174,14 @@
+@@ -172,11 +173,14 @@
      public int field_72556_d = 20;
      Random field_72557_e = new Random();
  
@@ -24,7 +22,7 @@
      }
  
      public NetClientHandler(Minecraft p_i3104_1_, IntegratedServer p_i3104_2_) throws IOException
-@@ -184,6 +189,7 @@
+@@ -184,6 +188,7 @@
          this.field_72563_h = p_i3104_1_;
          this.field_72555_g = new MemoryConnection(this);
          p_i3104_2_.func_71343_a().func_71754_a((MemoryConnection)this.field_72555_g, p_i3104_1_.field_71449_j.field_74286_b);
@@ -32,7 +30,7 @@
      }
  
      public void func_72547_c()
-@@ -254,6 +260,7 @@
+@@ -254,6 +259,7 @@
  
      public void func_72513_a(Packet252SharedKey p_72513_1_)
      {
@@ -40,7 +38,7 @@
          this.func_72552_c(new Packet205ClientCommand(0));
      }
  
-@@ -269,6 +276,7 @@
+@@ -269,6 +275,7 @@
          this.field_72563_h.field_71439_g.field_70157_k = p_72455_1_.field_73561_a;
          this.field_72556_d = p_72455_1_.field_73562_h;
          this.field_72563_h.field_71442_b.func_78746_a(p_72455_1_.field_73557_d);
@@ -48,7 +46,7 @@
          this.field_72563_h.field_71474_y.func_82879_c();
      }
  
-@@ -754,6 +762,7 @@
+@@ -754,6 +761,7 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
@@ -56,7 +54,7 @@
          this.field_72563_h.field_71456_v.func_73827_b().func_73765_a(p_72481_1_.field_73476_b);
      }
  
-@@ -1243,6 +1252,11 @@
+@@ -1243,6 +1251,11 @@
  
      public void func_72494_a(Packet131MapData p_72494_1_)
      {
@@ -68,7 +66,7 @@
          if (p_72494_1_.field_73438_a == Item.field_77744_bd.field_77779_bT)
          {
              ItemMap.func_77874_a(p_72494_1_.field_73436_b, this.field_72563_h.field_71441_e).func_76192_a(p_72494_1_.field_73437_c);
-@@ -1352,6 +1366,11 @@
+@@ -1352,6 +1365,11 @@
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
      {
@@ -80,7 +78,7 @@
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
              String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
-@@ -1396,4 +1415,20 @@
+@@ -1396,4 +1414,20 @@
      {
          return this.field_72555_g;
      }

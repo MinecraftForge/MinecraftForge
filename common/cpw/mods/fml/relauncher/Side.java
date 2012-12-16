@@ -12,7 +12,7 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-package cpw.mods.fml.common;
+package cpw.mods.fml.relauncher;
 
 public enum Side {
     CLIENT, SERVER, BUKKIT;

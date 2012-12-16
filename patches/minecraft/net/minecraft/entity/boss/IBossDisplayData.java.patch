@@ -3,8 +3,8 @@
 @@ -1,9 +1,5 @@
  package net.minecraft.entity.boss;
  
--import cpw.mods.fml.common.Side;
--import cpw.mods.fml.common.asm.SideOnly;
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
 -
 -@SideOnly(Side.CLIENT)
  public interface IBossDisplayData

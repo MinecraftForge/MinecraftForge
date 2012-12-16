@@ -1,13 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -2,6 +2,7 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.tileentity;
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
 +import cpw.mods.fml.common.registry.GameRegistry;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.block.Block;
- import net.minecraft.block.BlockFurnace;
- import net.minecraft.block.material.Material;
 @@ -287,7 +288,15 @@
                  }
              }
