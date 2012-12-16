@@ -52,6 +52,7 @@ def main():
       try:
         process = subprocess.Popen(cmdsplit(cmd), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=-1)
         branch, _ = process.communicate()
+        branch = branch.strip()
       except OSError:
         print("Git not found")
         branch="master"
