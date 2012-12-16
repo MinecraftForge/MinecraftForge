@@ -1,5 +1,9 @@
 package cpw.mods.fml.common.asm;
 
+import java.io.ObjectInputStream.GetField;
+import java.net.JarURLConnection;
+import java.security.CodeSource;
+import java.security.cert.Certificate;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -9,11 +13,14 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
+import cpw.mods.fml.common.CertificateHelper;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
+    private static final String FMLFINGERPRINT = "";
     static class MLDetectorClassVisitor extends ClassVisitor
     {
         private boolean foundMarker = false;
@@ -38,6 +45,29 @@ public class FMLSanityChecker implements IFMLCallHook
     @Override
     public Void call() throws Exception
     {
+        CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
+        boolean goodFML = false;
+        if (codeSource.getLocation().getProtocol().equals("jar"))
+        {
+            Certificate[] certificates = codeSource.getCertificates();
+            if (certificates!=null && certificates.length>0)
+            {
+                Certificate certificate = certificates[0];
+                String fingerprint = CertificateHelper.getFingerprint(certificate);
+                if (fingerprint.equals(FMLFINGERPRINT))
+                {
+                    goodFML = true;
+                }
+            }
+        }
+        else
+        {
+            goodFML = true;
+        }
+        if (!goodFML)
+        {
+            FMLLog.severe("FML appears to be missing it's signature data. This is not a good thing");
+        }
         byte[] mlClass = cl.getClassBytes("ModLoader");
         // Only care in obfuscated env
         if (mlClass == null)
