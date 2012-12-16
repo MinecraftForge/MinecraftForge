@@ -17,11 +17,6 @@ import java.util.logging.Level;
 
 public class RelaunchClassLoader extends URLClassLoader
 {
-    // Left behind for CCC/NEI compatibility
-    private static String[] excludedPackages = new String[0];
-    // Left behind for CCC/NEI compatibility
-    private static String[] transformerExclusions = new String[0];
-
     private List<URL> sources;
     private ClassLoader parent;
 
@@ -75,18 +70,6 @@ public class RelaunchClassLoader extends URLClassLoader
         {
             throw new ClassNotFoundException(name);
         }
-        // NEI/CCC compatibility code
-        if (excludedPackages.length != 0)
-        {
-            classLoaderExceptions.addAll(Arrays.asList(excludedPackages));
-            excludedPackages = new String[0];
-        }
-        if (transformerExclusions.length != 0)
-        {
-            transformerExceptions.addAll(Arrays.asList(transformerExclusions));
-            transformerExclusions = new String[0];
-        }
-
         for (String st : classLoaderExceptions)
         {
             if (name.startsWith(st))
