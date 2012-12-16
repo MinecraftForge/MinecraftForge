@@ -54,6 +54,15 @@
          }
  
          this.firstUpdate = false;
+@@ -850,7 +863,7 @@
+                 {
+                     double var40 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
+ 
+-                    if (var40 > 0.0D)
++                    if (var40 > 0.0D && !this.worldObj.isRemote)
+                     {
+                         this.ySize = (float)((double)this.ySize + var40 + 0.01D);
+                     }
 @@ -1513,6 +1526,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.field_83001_bt);
