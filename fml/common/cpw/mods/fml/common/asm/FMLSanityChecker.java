@@ -20,7 +20,8 @@ import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
-    private static final String FMLFINGERPRINT = "EE:E2:73:7A:8B:90:5F:7D:C6:02:D5:B7:23:9F:B6:29:C2:18:0F:3E".toLowerCase().replace(":","");
+    private static final String FMLFINGERPRINT = "AE:F6:54:79:96:E9:1B:D1:59:70:6C:B4:6B:F5:4A:89:C5:CE:08:1D".toLowerCase().replace(":","");
+    private static final String FORGEFINGERPRINT = "".toLowerCase().replace(":", "");
     static class MLDetectorClassVisitor extends ClassVisitor
     {
         private boolean foundMarker = false;
@@ -59,6 +60,11 @@ public class FMLSanityChecker implements IFMLCallHook
                     FMLLog.info("Found valid fingerprint for FML: %s", fingerprint);
                     goodFML = true;
                 }
+                else if (fingerprint.equals(FORGEFINGERPRINT))
+                {
+                    FMLLog.info("Found valid fingerprint for Minecraft Forge: %s", fingerprint);
+                    goodFML = true;
+                }
                 else
                 {
                     FMLLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
@@ -71,7 +77,7 @@ public class FMLSanityChecker implements IFMLCallHook
         }
         if (!goodFML)
         {
-            FMLLog.severe("FML appears to be missing it's signature data. This is not a good thing");
+            FMLLog.severe("FML appears to be missing any signature data. This is not a good thing");
         }
         byte[] mlClass = cl.getClassBytes("ModLoader");
         // Only care in obfuscated env
