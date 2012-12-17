@@ -142,7 +142,11 @@
         <attribute name="Main-Class" value="net.minecraft.server.MinecraftServer"/>
         <attribute name="Class-Path" value="minecraft_server.jar"/>
       </manifest>
-      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" />
+      <fileset dir="${client.mcp.obfoutput}" includes="**/*.class" excludes="*.class"/>
+    </jar>
+  	<antcall target="signjar"/>
+    <zip update="true" destfile="${basedir}/target/${universal.jarname}.zip" >
+      <fileset dir="${client.mcp.obfoutput}" includes="*.class"/>
       <zipfileset dir="${basedir}" includes="fmlversion.properties"/>
       <zipfileset dir="${basedir}" includes="LICENSE-fml.txt" />
         <zipfileset dir="${common.src.dir}" includes="mcpmod.info" />
@@ -164,7 +168,7 @@
         </concat>
         <mergemapper to="README-fml.txt" />
       </mappedresources>
-    </jar>
+    </zip>
   </target>
 
   <target name="build-source-pack" depends="makeversion">
@@ -201,7 +205,7 @@
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack" />
 
-  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build,signjar"/>
+  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
 
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
