@@ -25,13 +25,13 @@ public class GuiIdMismatchScreen extends GuiYesNo {
         field_73942_a = this;
         for (Entry<Integer, ItemData> entry : idDifferences.entriesOnlyOnLeft().entrySet())
         {
-            missingIds.add(String.format("ID %d (ModID: %s, type %s) is missing", entry.getValue().itemId, entry.getValue().modId, entry.getValue().itemType));
+            missingIds.add(String.format("ID %d (ModID: %s, type %s) is missing", entry.getValue().getItemId(), entry.getValue().getModId(), entry.getValue().getItemType()));
         }
         for (Entry<Integer, ValueDifference<ItemData>> entry : idDifferences.entriesDiffering().entrySet())
         {
             ItemData world = entry.getValue().leftValue();
             ItemData game = entry.getValue().rightValue();
-            mismatchedIds.add(String.format("ID %d is mismatched. World: (ModID: %s, type %s, ordinal %d) Game (ModID: %s, type %s, ordinal %d)", world.itemId, world.modId, world.itemType, world.ordinal, game.modId, game.itemType, game.ordinal));
+            mismatchedIds.add(String.format("ID %d is mismatched. World: (ModID: %s, type %s, ordinal %d) Game (ModID: %s, type %s, ordinal %d)", world.getItemId(), world.getModId(), world.getItemType(), world.getOrdinal(), game.getModId(), game.getItemType(), game.getOrdinal()));
         }
         this.allowContinue = allowContinue;
     }
