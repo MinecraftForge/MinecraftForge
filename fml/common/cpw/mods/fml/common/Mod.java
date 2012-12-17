@@ -101,6 +101,26 @@ public @interface Mod
      */
     String modExclusionList() default "";
     /**
+     * Specifying this field allows for a mod to expect a signed jar with a fingerprint matching this value.
+     * The fingerprint should be SHA-1 encoded, lowercase with ':' removed. An empty value indicates that
+     * the mod is not expecting to be signed.
+     *
+     * Any incorrectness of the fingerprint, be it missing or wrong, will result in the {@link FingerprintWarning}
+     * method firing <i>prior to any other event on the mod</i>.
+     *
+     * @return A certificate fingerprint that is expected for this mod.
+     */
+    String certificateFingerprint() default "";
+    /**
+     * Mark the designated method as to be called at if there is something wrong with the certificate fingerprint of
+     * the mod's jar, or it is missing, or otherwise a problem.
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface FingerprintWarning {}
+    /**
      * Mark the designated method as being called at the "pre-initialization" phase
      * @author cpw
      *
