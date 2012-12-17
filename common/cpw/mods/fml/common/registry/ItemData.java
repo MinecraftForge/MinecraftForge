@@ -132,6 +132,12 @@ public class ItemData {
 
     public void setName(String name, String modId)
     {
+        if (name == null)
+        {
+            this.forcedName = null;
+            this.forcedModId = null;
+            return;
+        }
         String localModId = modId;
         if (modId == null)
         {
