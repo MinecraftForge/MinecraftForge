@@ -35,6 +35,9 @@
     <condition property="mcp.exists">
       <available file="${mcp.home}/runtime/commands.py"/>
     </condition>
+  	<condition property="signature.exists">
+        <available file="${env.JENKINS_HOME}/fmlsigned.properties"/>
+  	</condition>
     <property name="mcp.obfoutput" location="${mcp.home}/reobf" />
     <property name="client.mcp.obfoutput" location="${mcp.obfoutput}/minecraft" />
     <property name="mcp.srcdir" location="${mcp.home}/src" />
@@ -71,7 +74,7 @@
       <arg value="-f" />
     </exec>
   </target>
-  
+
   <target name="clean" depends="buildenvsetup,makeclean" if="mcp.exists">
     <exec executable="${python.exe}" dir="${mcp.home}">
       <arg value="${basedir}/decompile.py" />
@@ -198,7 +201,7 @@
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack" />
 
-  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
+  <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build,signjar"/>
 
   <target name="patch" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}">
@@ -333,5 +336,13 @@
     <move todir="${mcp.srcdir}">
       <fileset dir="${tmp.mcp.srcdir}"/>
     </move>
+  </target>
+  <target name="signjar" depends="buildenvsetup,makeversion" if="signature.exists">
+    <condition property="universal.jarname" value="${modname}-universal-${version.minecraft}-${version}" else="${modname}-universal-${version.minecraft}-${version}-${version.branch}">
+      <equals arg1="${version.branch}" arg2="master" />
+    </condition>
+  	<property file="${env.JENKINS_HOME}/fmlsigned.properties" prefix="sign"/>
+  	<echo>${env.JENKINS_HOME} ${universal.jarname} ${sign.KEYPASS}</echo>
+  	<signjar alias="FML" jar="${basedir}/target/${universal.jarname}.zip" keypass="${sign.KEYPASS}" keystore="${env.JENKINS_HOME}/${sign.KEYSTORE}" storepass="${sign.STOREPASS}" verbose="true"/>
   </target>
 </project>
