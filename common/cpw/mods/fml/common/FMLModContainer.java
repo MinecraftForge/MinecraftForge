@@ -18,6 +18,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
@@ -86,10 +89,13 @@ public class FMLModContainer implements ModContainer
         .put(FMLServerStartedEvent.class, Mod.ServerStarted.class)
         .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
         .put(IMCEvent.class,Mod.IMCCallback.class)
+        .put(FMLFingerprintViolationEvent.class, Mod.FingerprintWarning.class)
         .build();
     private static final BiMap<Class<? extends Annotation>, Class<? extends FMLEvent>> modTypeAnnotations = modAnnotationTypes.inverse();
     private String annotationDependencies;
     private VersionRange minecraftAccepted;
+    private boolean fingerprintNotPresent;
+    private Set<String> sourceFingerprints;
 
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
@@ -335,13 +341,6 @@ public class FMLModContainer implements ModContainer
                 return mc.getMetadata();
             }
         });
-
-//TODO
-//        for (Object o : annotations.get(Block.class))
-//        {
-//            Field f = (Field) o;
-//            f.set(modInstance, GameRegistry.buildBlock(this, f.getType(), f.getAnnotation(Block.class)));
-//        }
     }
 
     private void parseSimpleFieldAnnotation(SetMultimap<String, ASMData> annotations, String annotationClassName, Function<ModContainer, Object> retreiver) throws IllegalAccessException
@@ -408,12 +407,39 @@ public class FMLModContainer implements ModContainer
             ModClassLoader modClassLoader = event.getModClassLoader();
             modClassLoader.addFile(source);
             Class<?> clazz = Class.forName(className, true, modClassLoader);
-            ASMDataTable asmHarvestedAnnotations = event.getASMHarvestedData();
-            // TODO
-            asmHarvestedAnnotations.getAnnotationsFor(this);
+
+            Certificate[] certificates = clazz.getProtectionDomain().getCodeSource().getCertificates();
+            int len = 0;
+            if (certificates != null)
+            {
+                len = certificates.length;
+            }
+            Builder<String> certBuilder = ImmutableSet.<String>builder();
+            for (int i = 0; i < len; i++)
+            {
+                certBuilder.add(CertificateHelper.getFingerprint(certificates[i]));
+            }
+
+            sourceFingerprints = certBuilder.build();
+
+            String expectedFingerprint = (String) descriptor.get("certificateFingerprint");
+
+            if (expectedFingerprint != "" &&  !sourceFingerprints.contains(expectedFingerprint))
+            {
+                Level warnLevel = Level.SEVERE;
+                if (source.isDirectory())
+                {
+                    warnLevel = Level.FINER;
+                }
+                FMLLog.log(warnLevel, "The mod %s is expecting signature %s for source %s, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
+            }
             annotations = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = clazz.newInstance();
+            if (fingerprintNotPresent)
+            {
+                handleModStateEvent(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints)));
+            }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
             processFieldAnnotations(event.getASMHarvestedData());
         }
