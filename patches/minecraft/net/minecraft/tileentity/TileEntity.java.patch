@@ -4,8 +4,8 @@
  package net.minecraft.tileentity;
  
 +import cpw.mods.fml.common.FMLLog;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.util.HashMap;
  import java.util.Map;
 +import java.util.logging.Level;

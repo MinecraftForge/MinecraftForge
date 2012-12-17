@@ -1,18 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -1,10 +1,25 @@
- package net.minecraft.world;
-+
+@@ -3,8 +3,23 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ 
 +import java.util.Arrays;
 +import java.util.Random;
 +import java.util.Set;
 +
 +import com.google.common.collect.ObjectArrays;
 +import com.google.common.collect.Sets;
- 
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
- 
++
 +import net.minecraft.world.*;
 +import net.minecraft.world.gen.*;
 +import net.minecraft.world.biome.*;
@@ -22,7 +20,7 @@
  {
 +    public static final BiomeGenBase[] base11Biomes = new BiomeGenBase[] {BiomeGenBase.field_76769_d, BiomeGenBase.field_76767_f, BiomeGenBase.field_76770_e, BiomeGenBase.field_76780_h, BiomeGenBase.field_76772_c, BiomeGenBase.field_76768_g};
 +    public static final BiomeGenBase[] base12Biomes = ObjectArrays.concat(base11Biomes, BiomeGenBase.field_76782_w);
-+    
++
      public static final WorldType[] field_77139_a = new WorldType[16];
      public static final WorldType field_77137_b = (new WorldType(0, "default", 1)).func_77129_f();
      public static final WorldType field_77138_c = new WorldType(1, "flat");
@@ -70,7 +68,7 @@
 +    }
 +
 +    public IChunkProvider getChunkGenerator(World world, String generatorOptions)
-+    { 
++    {
 +        return (this == field_77138_c ? new ChunkProviderFlat(world, world.func_72905_C(), world.func_72912_H().func_76089_r(), generatorOptions) : new ChunkProviderGenerate(world, world.func_72905_C(), world.func_72912_H().func_76089_r()));
 +    }
 +

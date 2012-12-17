@@ -4,8 +4,8 @@
  package net.minecraft.client.settings;
  
 +import cpw.mods.fml.client.FMLClientHandler;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
 @@ -607,6 +608,7 @@
  

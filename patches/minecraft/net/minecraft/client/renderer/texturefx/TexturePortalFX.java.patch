@@ -4,8 +4,8 @@
  package net.minecraft.client.renderer.texturefx;
  
 +import cpw.mods.fml.client.FMLTextureFX;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Random;
 @@ -7,31 +8,39 @@
  import net.minecraft.util.MathHelper;
