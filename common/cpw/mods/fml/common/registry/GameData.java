@@ -42,7 +42,7 @@ public class GameData {
         if (idMap.containsKey(item.field_77779_bT))
         {
             ItemData id = idMap.get(item.field_77779_bT);
-            FMLLog.warning("[ItemTracker] The mod %s is attempting to overwrite existing item at %d (%s from %s) with %s", mc.getModId(), id.itemId, id.itemType, id.modId, itemType);
+            FMLLog.warning("[ItemTracker] The mod %s is attempting to overwrite existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
         }
         idMap.put(item.field_77779_bT, itemData);
         FMLLog.fine("[ItemTracker] Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
@@ -68,7 +68,7 @@ public class GameData {
 
         Function<? super ItemData, Integer> idMapFunction = new Function<ItemData, Integer>() {
             public Integer apply(ItemData input) {
-                return input.itemId;
+                return input.getItemId();
             };
         };
 
@@ -154,6 +154,13 @@ public class GameData {
             worldSaveItems.add(dat);
         }
         return worldSaveItems;
+    }
+
+    static void setName(Item item, String name, String modId)
+    {
+        int id = item.field_77779_bT;
+        ItemData itemData = idMap.get(id);
+        itemData.setName(name,modId);
     }
 
 

@@ -153,21 +153,80 @@ public class GameRegistry
     }
 
     /**
+     * Register an item with the item registry with a custom name : this allows for easier server->client resolution
+     *
+     * @param item The item to register
+     * @param name The mod-unique name of the item
+     */
+    public static void registerItem(net.minecraft.item.Item item, String name)
+    {
+        registerItem(item, name, null);
+    }
+
+    /**
+     * Register the specified Item with a mod specific name : overrides the standard type based name
+     * @param item The item to register
+     * @param name The mod-unique name to register it as - null will remove a custom name
+     * @param modId An optional modId that will "own" this block - generally used by multi-mod systems
+     * where one mod should "own" all the blocks of all the mods, null defaults to the active mod
+     */
+    public static void registerItem(net.minecraft.item.Item item, String name, String modId)
+    {
+        GameData.setName(item, name, modId);
+    }
+
+    /**
      * Register a block with the world
      *
      */
+    @Deprecated
     public static void registerBlock(net.minecraft.block.Block block)
     {
         registerBlock(block, ItemBlock.class);
     }
 
+
+    /**
+     * Register a block with the specified mod specific name : overrides the standard type based name
+     * @param block The block to register
+     * @param name The mod-unique name to register it as
+     */
+    public static void registerBlock(net.minecraft.block.Block block, String name)
+    {
+        registerBlock(block, ItemBlock.class, name);
+    }
+
     /**
      * Register a block with the world, with the specified item class
      *
-     * @param block
-     * @param itemclass
+     * Deprecated in favour of named versions
+     *
+     * @param block The block to register
+     * @param itemclass The item type to register with it
      */
+    @Deprecated
     public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass)
+    {
+        registerBlock(block, itemclass, null);
+    }
+    /**
+     * Register a block with the world, with the specified item class and block name
+     * @param block The block to register
+     * @param itemclass The item type to register with it
+     * @param name The mod-unique name to register it with
+     */
+    public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass, String name)
+    {
+        registerBlock(block, itemclass, name, null);
+    }
+    /**
+     * Register a block with the world, with the specified item class, block name and owning modId
+     * @param block The block to register
+     * @param itemclass The iterm type to register with it
+     * @param name The mod-unique name to register it with
+     * @param modId The modId that will own the block name. null defaults to the active modId
+     */
+    public static void registerBlock(net.minecraft.block.Block block, Class<? extends ItemBlock> itemclass, String name, String modId)
     {
         if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
         {
@@ -178,7 +237,8 @@ public class GameRegistry
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
             int blockItemId = block.field_71990_ca - 256;
-            itemclass.getConstructor(int.class).newInstance(blockItemId);
+            Item i = itemclass.getConstructor(int.class).newInstance(blockItemId);
+            GameRegistry.registerItem(i,name, modId);
         }
         catch (Exception e)
         {
