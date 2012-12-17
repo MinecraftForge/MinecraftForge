@@ -118,7 +118,7 @@ public class RelaunchClassLoader extends URLClassLoader
         {
             CodeSigner[] signers = null;
             int lastDot = name.lastIndexOf('.');
-            String pkgname = name.substring(0, lastDot);
+            String pkgname = lastDot == -1 ? "" : name.substring(0, lastDot);
             String fName = name.replace('.', '/').concat(".class");
             String pkgPath = pkgname.replace('.', '/');
             URLConnection urlConnection = findCodeSourceConnectionFor(fName);
@@ -131,13 +131,12 @@ public class RelaunchClassLoader extends URLClassLoader
                     Manifest mf = jf.getManifest();
                     JarEntry ent = jf.getJarEntry(fName);
                     Package pkg = getPackage(pkgname);
+                    getClassBytes(name);
+                    signers = ent.getCodeSigners();
                     if (pkg == null)
                     {
                         pkg = definePackage(pkgname, mf, jarUrlConn.getJarFileURL());
                         packageManifests.put(pkg, mf);
-                        // need to read the bytes to force the signing to be checked
-                        getClassBytes(name);
-                        signers = ent.getCodeSigners();
                     }
                     else
                     {
