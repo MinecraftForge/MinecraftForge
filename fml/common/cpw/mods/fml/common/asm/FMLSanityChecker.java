@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
-    private static final String FMLFINGERPRINT = "";
+    private static final String FMLFINGERPRINT = "EE:E2:73:7A:8B:90:5F:7D:C6:02:D5:B7:23:9F:B6:29:C2:18:0F:3E".toLowerCase().replace(":","");
     static class MLDetectorClassVisitor extends ClassVisitor
     {
         private boolean foundMarker = false;
@@ -56,7 +56,12 @@ public class FMLSanityChecker implements IFMLCallHook
                 String fingerprint = CertificateHelper.getFingerprint(certificate);
                 if (fingerprint.equals(FMLFINGERPRINT))
                 {
+                    FMLLog.info("Found valid fingerprint for FML: %s", fingerprint);
                     goodFML = true;
+                }
+                else
+                {
+                    FMLLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
                 }
             }
         }
