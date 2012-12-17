@@ -5,8 +5,8 @@
  
 +import cpw.mods.fml.client.GuiModList;
 +import cpw.mods.fml.common.FMLCommonHandler;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.image.BufferedImage;
 @@ -10,6 +12,7 @@
  import java.util.ArrayList;

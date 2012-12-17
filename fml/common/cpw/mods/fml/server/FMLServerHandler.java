@@ -28,7 +28,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IFMLSidedHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.EntitySpawnAdjustmentPacket;
 import cpw.mods.fml.common.network.EntitySpawnPacket;
 import cpw.mods.fml.common.network.ModMissingPacket;
@@ -37,6 +36,7 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.ItemData;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 /**
  * Handles primary communication from hooked code into the system

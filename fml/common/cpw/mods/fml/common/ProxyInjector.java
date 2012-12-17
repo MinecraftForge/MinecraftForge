@@ -21,6 +21,7 @@ import java.util.logging.Level;
 
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
+import cpw.mods.fml.relauncher.Side;
 
 /**
  * @author cpw

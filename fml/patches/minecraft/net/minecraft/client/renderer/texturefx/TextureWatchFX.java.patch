@@ -4,8 +4,8 @@
  package net.minecraft.client.renderer.texturefx;
  
 +import cpw.mods.fml.client.FMLTextureFX;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
 +
 +import java.awt.Graphics2D;
  import java.awt.image.BufferedImage;
@@ -29,7 +29,7 @@
          this.field_76847_f = 1;
 +        setup();
 +    }
-+ 
++
 +    @Override
 +    public void setup()
 +    {

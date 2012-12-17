@@ -11,12 +11,12 @@ import com.google.common.base.Strings;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.discovery.ASMDataTable;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
 import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
 import cpw.mods.fml.common.versioning.InvalidVersionSpecificationException;
 import cpw.mods.fml.common.versioning.VersionRange;
+import cpw.mods.fml.relauncher.Side;
 
 public class NetworkModHandler
 {

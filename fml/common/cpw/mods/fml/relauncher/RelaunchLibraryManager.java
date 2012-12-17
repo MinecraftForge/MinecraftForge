@@ -25,6 +25,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
+import cpw.mods.fml.common.CertificateHelper;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 public class RelaunchLibraryManager
@@ -488,7 +489,6 @@ public class RelaunchLibraryManager
         return loadedLibraries;
     }
 
-    private static final String HEXES = "0123456789abcdef";
     private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 22);
     static IDownloadDisplay downloadMonitor;
 
@@ -560,21 +560,6 @@ public class RelaunchLibraryManager
 
     private static String generateChecksum(ByteBuffer buffer)
     {
-        try
-        {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            digest.update(buffer);
-            byte[] chksum = digest.digest();
-            final StringBuilder hex = new StringBuilder( 2 * chksum.length );
-            for ( final byte b : chksum ) {
-              hex.append(HEXES.charAt((b & 0xF0) >> 4))
-                 .append(HEXES.charAt((b & 0x0F)));
-            }
-            return hex.toString();
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
+        return CertificateHelper.getFingerprint(buffer);
     }
 }
