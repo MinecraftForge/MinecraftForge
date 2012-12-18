@@ -13,23 +13,6 @@ public interface ILiquidTank {
 	LiquidStack getLiquid();
 
 	/**
-	 * These shouldn't be used to interact with a foreign tank. Use {@link #fill(LiquidStack, boolean)}
-	 * and {@link #drain(int, boolean)}.
-	 *
-	 * @param liquid
-	 */
-	@Deprecated
-	void setLiquid(LiquidStack liquid);
-	/**
-	 * This method should not be used to interact with a foreign tank. Use {@link #fill(LiquidStack, boolean)}
-	 * and {@link #drain(int, boolean)}.
-	 *
-	 * @param capacity
-	 */
-	@Deprecated
-	void setCapacity(int capacity);
-
-	/**
 	 * @return capacity of this tank
 	 */
 	int getCapacity();

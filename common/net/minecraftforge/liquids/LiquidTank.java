@@ -40,16 +40,6 @@ public class LiquidTank implements ILiquidTank {
 	}
 
 	@Override
-	public void setLiquid(LiquidStack liquid) {
-		this.liquid = liquid;
-	}
-
-	@Override
-	public void setCapacity(int capacity) {
-		this.capacity = capacity;
-	}
-
-	@Override
 	public int getCapacity() {
 		return this.capacity;
 	}

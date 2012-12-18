@@ -28,7 +28,7 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -65,8 +71,70 @@
+@@ -65,8 +71,58 @@
          return this.smeltingList;
      }
  
@@ -37,18 +37,6 @@
      {
          return this.experienceList.containsKey(Integer.valueOf(par1)) ? ((Float)this.experienceList.get(Integer.valueOf(par1))).floatValue() : 0.0F;
      }
-+
-+    /**
-+     * Add a metadata-sensitive furnace recipe
-+     * @param itemID The Item ID
-+     * @param metadata The Item Metadata
-+     * @param itemstack The ItemStack for the result
-+     */
-+    @Deprecated //In favor of the exp version, will remove next major MC version.
-+    public void addSmelting(int itemID, int metadata, ItemStack itemstack)
-+    {
-+        addSmelting(itemID, metadata, itemstack, 0.0f);
-+    }
 +
 +    /**
 +     * A metadata sensitive version of adding a furnace recipe.

@@ -67,19 +67,6 @@ public abstract class LiquidDictionary
      * Get an immutable list of the liquids defined
      *
      * @return the defined liquids
-     * @see LiquidDictionary#getLiquids()
-     */
-    @Deprecated
-    public Map<String, LiquidStack> getDefinedLiquids()
-    {
-        return getLiquids();
-    }
-
-
-    /**
-     * Get an immutable list of the liquids defined
-     *
-     * @return the defined liquids
      */
     public static Map<String, LiquidStack> getLiquids()
     {

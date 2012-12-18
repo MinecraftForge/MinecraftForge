@@ -605,17 +605,9 @@ public class ForgeChunkManager
         return allowedCount;
     }
 
-    @Deprecated
-    public static int ticketCountAvaliableFor(String username){ return ticketCountAvailableFor(username); }
     public static int ticketCountAvailableFor(String username)
     {
         return playerTicketLength - playerTickets.get(username).size();
-    }
-
-    @Deprecated
-    public static Ticket requestPlayerTicket(Object mod, EntityPlayer player, World world, Type type)
-    {
-        return requestPlayerTicket(mod, player.getEntityName(), world, type);
     }
 
     public static Ticket requestPlayerTicket(Object mod, String player, World world, Type type)
