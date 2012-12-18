@@ -38,8 +38,6 @@ def write_changed(fh, pre, post, name):
         if clazz.startswith("net/minecraft/src/"):
             clazz=clazz[len("net/minecraft/src/"):]
         fh.write("%s/%s.class\n" %(name,clazz))
-    fh.write("%s/cpw/mods/fml/common/asm/SideOnly.class\n" % name)
-    fh.write("%s/cpw/mods/fml/common/Side.class\n" % name)
     
 if __name__ == '__main__':
     main()
