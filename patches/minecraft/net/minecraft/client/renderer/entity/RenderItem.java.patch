@@ -15,7 +15,35 @@
  @SideOnly(Side.CLIENT)
  public class RenderItem extends Render
  {
-@@ -74,13 +77,16 @@
+@@ -48,39 +51,22 @@
+         if (var10.getItem() != null)
+         {
+             GL11.glPushMatrix();
+-            float var11 = MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F;
++            float var11 = shouldBob() ? MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F : 0F;
+             float var12 = (((float)par1EntityItem.age + par9) / 20.0F + par1EntityItem.hoverStart) * (180F / (float)Math.PI);
+-            byte var13 = 1;
+-
+-            if (par1EntityItem.func_92014_d().stackSize > 1)
+-            {
+-                var13 = 2;
+-            }
+-
+-            if (par1EntityItem.func_92014_d().stackSize > 5)
+-            {
+-                var13 = 3;
+-            }
+-
+-            if (par1EntityItem.func_92014_d().stackSize > 20)
+-            {
+-                var13 = 4;
+-            }
+-
+-            if (par1EntityItem.func_92014_d().stackSize > 40)
+-            {
+-                var13 = 5;
+-            }
++            byte var13 = getMiniBlockCountForItemStack(var10);
  
              GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
              GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -34,7 +62,7 @@
              {
                  GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
  
-@@ -91,9 +97,9 @@
+@@ -91,9 +77,9 @@
                      GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
                  }
  
@@ -46,7 +74,7 @@
  
                  if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
                  {
-@@ -115,7 +121,7 @@
+@@ -115,7 +101,7 @@
                      }
  
                      var24 = 1.0F;
@@ -55,7 +83,7 @@
                      GL11.glPopMatrix();
                  }
              }
-@@ -136,12 +142,12 @@
+@@ -136,12 +122,12 @@
                          GL11.glScalef(0.5F, 0.5F, 0.5F);
                      }
  
@@ -72,7 +100,7 @@
                          var17 = 1.0F;
  
                          if (this.field_77024_a)
-@@ -173,14 +179,7 @@
+@@ -173,14 +159,7 @@
  
                      var15 = var10.getIconIndex();
  
@@ -88,7 +116,32 @@
  
                      if (this.field_77024_a)
                      {
-@@ -255,16 +254,16 @@
+@@ -232,39 +211,27 @@
+             var17 = 0.021875F;
+             ItemStack var18 = par1EntityItem.func_92014_d();
+             int var19 = var18.stackSize;
+-            byte var24;
+-
+-            if (var19 < 2)
+-            {
+-                var24 = 1;
+-            }
+-            else if (var19 < 16)
+-            {
+-                var24 = 2;
+-            }
+-            else if (var19 < 32)
+-            {
+-                var24 = 3;
+-            }
+-            else
+-            {
+-                var24 = 4;
+-            }
++            byte var24 = getMiniItemCountForItemStack(var18);
++
+ 
+             GL11.glTranslatef(-var14, -var15, -((var16 + var17) * (float)var24 / 2.0F));
  
              for (int var20 = 0; var20 < var24; ++var20)
              {
@@ -97,25 +150,26 @@
 -                if (Block.blocksList[var18.itemID] != null)
 -                {
 -                    this.loadTexture("/terrain.png");
--                }
--                else
--                {
--                    this.loadTexture("/gui/items.png");
--                }
 +                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
-+                if (var20 > 0)
++                if (var20 > 0 && shouldSpreadItems())
 +                {
 +                    float x = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    float y = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    float z = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    GL11.glTranslatef(x, y, var16 + var17);
+                 }
+                 else
+                 {
+-                    this.loadTexture("/gui/items.png");
+-                }
++                    GL11.glTranslatef(0f, 0f, var16 + var17);
 +                }
 +
 +                this.loadTexture(Item.itemsList[var18.itemID].getTextureFile());
  
                  GL11.glColor4f(par5, par6, par7, 1.0F);
                  ItemRenderer.renderItemIn2D(var8, var10, var11, var9, var12, var16);
-@@ -348,10 +347,10 @@
+@@ -348,10 +315,10 @@
          float var13;
          float var16;
  
@@ -129,7 +183,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -382,11 +381,11 @@
+@@ -382,11 +349,11 @@
              if (Item.itemsList[var6].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -146,7 +200,7 @@
                      int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
                      var12 = (float)(var11 >> 16 & 255) / 255.0F;
                      var13 = (float)(var11 >> 8 & 255) / 255.0F;
-@@ -406,14 +405,7 @@
+@@ -406,14 +373,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
@@ -162,7 +216,7 @@
  
                  var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
                  float var17 = (float)(var9 >> 16 & 255) / 255.0F;
-@@ -440,7 +432,10 @@
+@@ -440,7 +400,10 @@
      {
          if (par3ItemStack != null)
          {
@@ -174,3 +228,81 @@
  
              if (par3ItemStack != null && par3ItemStack.hasEffect())
              {
+@@ -578,4 +541,77 @@
+     {
+         this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
+     }
++
++    /* ==== Forge start ===== */
++    /**
++     * Items should spread out when rendered in 3d?
++     * @return
++     */
++    public boolean shouldSpreadItems()
++    {
++        return true;
++    }
++
++    /**
++     * Items should have a bob effect
++     * @return
++     */
++    public boolean shouldBob()
++    {
++        return true;
++    }
++
++    public byte getMiniBlockCountForItemStack(ItemStack stack)
++    {
++        byte var13 = 1;
++        if (stack.stackSize > 1)
++        {
++            var13 = 2;
++        }
++
++        if (stack.stackSize > 5)
++        {
++            var13 = 3;
++        }
++
++        if (stack.stackSize > 20)
++        {
++            var13 = 4;
++        }
++
++        if (stack.stackSize > 40)
++        {
++            var13 = 5;
++        }
++        return var13;
++    }
++
++    /**
++     * Allows for a subclass to override how many rendered items appear in a
++     * "mini item 3d stack"
++     * @param stack
++     * @return
++     */
++    public byte getMiniItemCountForItemStack(ItemStack stack)
++    {
++        byte var24;
++        int var19 = stack.stackSize;
++        if (var19 < 2)
++        {
++            var24 = 1;
++        }
++        else if (var19 < 16)
++        {
++            var24 = 2;
++        }
++        else if (var19 < 32)
++        {
++            var24 = 3;
++        }
++        else
++        {
++            var24 = 4;
++        }
++        return var24;
++    }
+ }
