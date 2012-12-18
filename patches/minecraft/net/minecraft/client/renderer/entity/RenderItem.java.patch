@@ -63,7 +63,7 @@
 -
 -                    for (var15 = 0; var15 <= 1; ++var15)
 +                    this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
-+                    
++
 +                    for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
                      {
                          this.random.setSeed(187L);
@@ -88,7 +88,23 @@
  
                      if (this.field_77024_a)
                      {
-@@ -348,10 +347,10 @@
+@@ -257,14 +256,7 @@
+             {
+                 GL11.glTranslatef(0.0F, 0.0F, var16 + var17);
+ 
+-                if (Block.blocksList[var18.itemID] != null)
+-                {
+-                    this.loadTexture("/terrain.png");
+-                }
+-                else
+-                {
+-                    this.loadTexture("/gui/items.png");
+-                }
++                this.loadTexture(Item.itemsList[var18.itemID].getTextureFile());
+ 
+                 GL11.glColor4f(par5, par6, par7, 1.0F);
+                 ItemRenderer.renderItemIn2D(var8, var10, var11, var9, var12, var16);
+@@ -348,10 +340,10 @@
          float var13;
          float var16;
  
@@ -102,7 +118,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -382,11 +381,11 @@
+@@ -382,11 +374,11 @@
              if (Item.itemsList[var6].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -119,7 +135,7 @@
                      int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
                      var12 = (float)(var11 >> 16 & 255) / 255.0F;
                      var13 = (float)(var11 >> 8 & 255) / 255.0F;
-@@ -406,14 +405,7 @@
+@@ -406,14 +398,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
@@ -135,7 +151,7 @@
  
                  var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
                  float var17 = (float)(var9 >> 16 & 255) / 255.0F;
-@@ -440,7 +432,10 @@
+@@ -440,7 +425,10 @@
      {
          if (par3ItemStack != null)
          {
