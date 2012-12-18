@@ -56,7 +56,7 @@
 +
 +                        if (this.storageArrays[var10] == null)
 +                        {
-+                            this.storageArrays[var10] = new ExtendedBlockStorage(var10 << 4);
++                            this.storageArrays[var10] = new ExtendedBlockStorage(var10 << 4, !world.provider.hasNoSky);
 +                        }
 +
 +                        this.storageArrays[var10].setExtBlockID(x, y & 15, z, id);
@@ -98,7 +98,7 @@
 +                        int storageBlock = y >> 4;
 +
 +                        if (this.storageArrays[storageBlock] == null) {
-+                                this.storageArrays[storageBlock] = new ExtendedBlockStorage(storageBlock << 4);
++                                this.storageArrays[storageBlock] = new ExtendedBlockStorage(storageBlock << 4, !world.provider.hasNoSky);
 +                        }
 +        
 +                        this.storageArrays[storageBlock].setExtBlockID(x, y & 15, z, id);
@@ -247,7 +247,7 @@
      {
 -        ExtendedBlockStorage var5 = this.storageArrays[par3 >> 4];
 +        ExtendedBlockStorage var5 = (par3 >> 4 >= storageArrays.length || par3 >> 4 < 0 ? null : storageArrays[par3 >> 4]);
-         return var5 == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? var5.getExtSkylightValue(par2, par3 & 15, par4) : (par1EnumSkyBlock == EnumSkyBlock.Block ? var5.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
+         return var5 == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : var5.getExtSkylightValue(par2, par3 & 15, par4)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? var5.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
      }
  
 @@ -754,6 +848,11 @@
@@ -403,9 +403,9 @@
 +        }
 +
          int var5 = 0;
-         int var6;
- 
-@@ -1342,12 +1458,26 @@
+         boolean var6 = !this.worldObj.provider.hasNoSky;
+         int var7;
+@@ -1346,12 +1462,26 @@
          }
  
          this.generateHeightMap();
@@ -413,8 +413,8 @@
 -
 -        while (var10.hasNext())
 -        {
--            TileEntity var9 = (TileEntity)var10.next();
--            var9.updateContainingBlockInfo();
+-            TileEntity var11 = (TileEntity)var10.next();
+-            var11.updateContainingBlockInfo();
 +
 +        List<TileEntity> invalidList = new ArrayList<TileEntity>();
 +        iterator = chunkTileEntityMap.values().iterator();
@@ -438,7 +438,7 @@
          }
      }
  
-@@ -1456,4 +1586,18 @@
+@@ -1460,4 +1590,18 @@
              }
          }
      }

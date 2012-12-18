@@ -1,15 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/achievement/GuiAchievements.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,9 @@
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.LinkedList;
 +import java.util.List;
  import java.util.Random;
  import net.minecraft.block.Block;
  import net.minecraft.client.Minecraft;
-@@ -19,6 +21,8 @@
+@@ -19,6 +22,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -18,7 +19,7 @@
  @SideOnly(Side.CLIENT)
  public class GuiAchievements extends GuiScreen
  {
-@@ -55,6 +59,10 @@
+@@ -55,6 +60,10 @@
      /** Whether the Mouse Button is down or not */
      private int isMouseButtonDown = 0;
      private StatFileWriter statFileWriter;
@@ -29,7 +30,7 @@
  
      public GuiAchievements(StatFileWriter par1StatFileWriter)
      {
-@@ -63,6 +71,14 @@
+@@ -63,6 +72,14 @@
          short var3 = 141;
          this.field_74117_m = this.guiMapX = this.field_74124_q = (double)(AchievementList.openInventory.displayColumn * 24 - var2 / 2 - 12);
          this.field_74115_n = this.guiMapY = this.field_74123_r = (double)(AchievementList.openInventory.displayRow * 24 - var3 / 2);
@@ -44,7 +45,7 @@
      }
  
      /**
-@@ -72,6 +88,7 @@
+@@ -72,6 +89,7 @@
      {
          this.controlList.clear();
          this.controlList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
@@ -52,7 +53,7 @@
      }
  
      /**
-@@ -83,6 +100,16 @@
+@@ -83,6 +101,16 @@
          {
              this.mc.displayGuiScreen((GuiScreen)null);
              this.mc.setIngameFocus();
@@ -69,7 +70,7 @@
          }
  
          super.actionPerformed(par1GuiButton);
-@@ -307,11 +334,12 @@
+@@ -307,11 +335,12 @@
          int var27;
          int var30;
  
@@ -87,7 +88,7 @@
              {
                  var24 = var33.displayColumn * 24 - var4 + 11 + var10;
                  var25 = var33.displayRow * 24 - var5 + 11 + var11;
-@@ -345,9 +373,9 @@
+@@ -345,9 +374,9 @@
          int var42;
          int var41;
  

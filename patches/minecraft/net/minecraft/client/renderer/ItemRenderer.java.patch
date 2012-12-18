@@ -60,7 +60,7 @@
  
              Tessellator var5 = Tessellator.instance;
              int var6 = par1EntityLiving.getItemIcon(par2ItemStack, par3);
-@@ -280,8 +282,9 @@
+@@ -279,8 +281,9 @@
          Render var24;
          RenderPlayer var26;
  
@@ -72,7 +72,7 @@
              GL11.glPushMatrix();
              var7 = 0.8F;
              var20 = var3.getSwingProgress(par1);
-@@ -347,11 +350,17 @@
+@@ -346,11 +349,17 @@
              var28.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
              var28.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
              var28.draw();
@@ -95,7 +95,7 @@
              }
  
              GL11.glPopMatrix();
-@@ -454,12 +463,15 @@
+@@ -453,12 +462,15 @@
              if (var17.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(var3, var17, 0);

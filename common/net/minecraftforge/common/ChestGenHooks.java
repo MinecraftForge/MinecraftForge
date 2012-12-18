@@ -2,6 +2,7 @@ package net.minecraftforge.common;
 
 import java.util.*;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.WorldServer;
@@ -42,6 +43,15 @@ public class ChestGenHooks
         addInfo(STRONGHOLD_CROSSING,      ComponentStrongholdRoomCrossing.strongholdRoomCrossingChestContents,     1,  5);
         addInfo(VILLAGE_BLACKSMITH,       ComponentVillageHouse2.villageBlacksmithChestContents,                   3,  9);
         addInfo(BONUS_CHEST,              WorldServer.bonusChestContent,                                          10, 10);
+
+        ItemStack book = new ItemStack(Item.field_92053_bW, 1, 0);
+        WeightedRandomChestContent tmp = new WeightedRandomChestContent(book, 1, 1, 1);
+        getInfo(MINESHAFT_CORRIDOR  ).addItem(tmp);
+        getInfo(PYRAMID_DESERT_CHEST).addItem(tmp);        
+        getInfo(PYRAMID_JUNGLE_CHEST).addItem(tmp);
+        getInfo(STRONGHOLD_CORRIDOR ).addItem(tmp);
+        getInfo(STRONGHOLD_LIBRARY  ).addItem(new WeightedRandomChestContent(book, 1, 5, 2));
+        getInfo(STRONGHOLD_CROSSING ).addItem(tmp);
     }
 
     private static void addInfo(String category, WeightedRandomChestContent[] items, int min, int max)
@@ -103,7 +113,7 @@ public class ChestGenHooks
     }
 
     //shortcut functions, See the non-static versions below
-    public static WeightedRandomChestContent[] getItems(String category){ return getInfo(category).getItems(); }
+    public static WeightedRandomChestContent[] getItems(String category, Random rnd){ return getInfo(category).getItems(rnd); }
     public static int getCount(String category, Random rand){ return getInfo(category).getCount(rand); }
     public static void addItem(String category, WeightedRandomChestContent item){ getInfo(category).addItem(item); }
     public static void removeItem(String category, ItemStack item){ getInfo(category).removeItem(item); }
@@ -151,7 +161,7 @@ public class ChestGenHooks
         while(itr.hasNext())
         {
             WeightedRandomChestContent cont = itr.next();
-            if (item.isItemEqual(cont.itemStack) || (item.getItemDamage() == -1 && item.itemID == cont.itemStack.itemID))
+            if (item.isItemEqual(cont.theItemId) || (item.getItemDamage() == -1 && item.itemID == cont.theItemId.itemID))
             {
                 itr.remove();
             }
@@ -163,9 +173,25 @@ public class ChestGenHooks
      * 
      * @return The random objects
      */
-    public WeightedRandomChestContent[] getItems()
+    public WeightedRandomChestContent[] getItems(Random rnd)
     {
-        return contents.toArray(new WeightedRandomChestContent[contents.size()]);
+        ArrayList<WeightedRandomChestContent> ret = new ArrayList<WeightedRandomChestContent>();
+        
+        for (WeightedRandomChestContent orig : contents)
+        {
+            Item item = orig.theItemId.getItem();
+
+            if (item != null)
+            {
+                WeightedRandomChestContent n = item.getChestGenBase(this, rnd, orig);
+                if (n != null)
+                {
+                    ret.add(n);
+                }
+            }
+        }
+
+        return ret.toArray(new WeightedRandomChestContent[ret.size()]);
     }
 
     /**

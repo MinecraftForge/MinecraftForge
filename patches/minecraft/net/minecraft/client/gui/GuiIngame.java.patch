@@ -9,7 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class GuiIngame extends Gui
  {
-@@ -157,7 +159,7 @@
+@@ -159,7 +161,7 @@
  
                  var47 = var7 - 39;
                  var22 = var47 - 10;

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src_work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -268,7 +268,7 @@
+@@ -269,7 +269,7 @@
              }
          }
  

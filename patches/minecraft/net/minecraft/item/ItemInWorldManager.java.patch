@@ -20,7 +20,7 @@
      /** The world object that this object is connected to. */
      public World theWorld;
  
-@@ -142,6 +153,13 @@
+@@ -145,6 +156,13 @@
      {
          if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
          {
@@ -34,7 +34,7 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -151,15 +169,32 @@
+@@ -154,15 +172,32 @@
              }
              else
              {
@@ -73,7 +73,7 @@
                  }
  
                  if (var6 > 0 && var5 >= 1.0F)
-@@ -233,7 +268,7 @@
+@@ -236,7 +271,7 @@
              var4.onBlockHarvested(this.theWorld, par1, par2, par3, var5, this.thisPlayerMP);
          }
  
@@ -82,7 +82,7 @@
  
          if (var4 != null && var6)
          {
-@@ -254,19 +289,30 @@
+@@ -257,19 +292,30 @@
          }
          else
          {
@@ -115,7 +115,7 @@
  
                  if (var7 != null)
                  {
-@@ -278,6 +324,7 @@
+@@ -281,6 +327,7 @@
                      }
                  }
  
@@ -123,7 +123,7 @@
                  if (var6 && var8)
                  {
                      Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -318,6 +365,7 @@
+@@ -321,6 +368,7 @@
              if (var6.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,10 +131,11 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -335,29 +383,56 @@
+@@ -338,35 +386,65 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
+-        int var11;
 +        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
 +        if (event.isCanceled())
 +        {
@@ -142,6 +143,35 @@
 +            return false;
 +        }
 +
++        int var11 = par2World.getBlockId(par4, par5, par6);
+ 
+         if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
+         {
+-            var11 = par2World.getBlockId(par4, par5, par6);
+-
+             if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
+             {
+                 return true;
+             }
+         }
+ 
+-        if (par3ItemStack == null)
+-        {
+-            return false;
+-        }
+-        else if (this.isCreative())
+-        {
+-            var11 = par3ItemStack.getItemDamage();
+-            int var12 = par3ItemStack.stackSize;
+-            boolean var13 = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
+-            par3ItemStack.setItemDamage(var11);
+-            par3ItemStack.stackSize = var12;
+-            return var13;
+-        }
+-        else
+-        {
+-            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
+-        }
 +        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
 +        if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
 +        {
@@ -149,29 +179,6 @@
 +            return true;
 +        }
 +
-         int var11 = par2World.getBlockId(par4, par5, par6);
--
--        if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
--        {
--            return true;
--        }
--        else if (par3ItemStack == null)
--        {
--            return false;
--        }
--        else if (this.isCreative())
--        {
--            int var12 = par3ItemStack.getItemDamage();
--            int var13 = par3ItemStack.stackSize;
--            boolean var14 = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
--            par3ItemStack.setItemDamage(var12);
--            par3ItemStack.stackSize = var13;
--            return var14;
--        }
--        else
--        {
--            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
--        }
 +        Block block = Block.blocksList[var11];
 +        boolean result = false;
 +
@@ -210,7 +217,7 @@
      }
  
      /**
-@@ -367,4 +442,13 @@
+@@ -376,4 +454,13 @@
      {
          this.theWorld = par1WorldServer;
      }

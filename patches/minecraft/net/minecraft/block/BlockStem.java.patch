@@ -1,14 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockStem.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockStem.java
-@@ -2,6 +2,7 @@
+@@ -2,6 +2,8 @@
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
  import java.util.Random;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.item.Item;
-@@ -9,6 +10,8 @@
+@@ -9,6 +11,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -17,7 +18,7 @@
  public class BlockStem extends BlockFlower
  {
      /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
-@@ -101,7 +104,8 @@
+@@ -101,7 +105,8 @@
  
                      int var11 = par1World.getBlockId(var9, par3 - 1, var10);
  
@@ -27,7 +28,7 @@
                      {
                          par1World.setBlockWithNotify(var9, par3, var10, this.fruitType.blockID);
                      }
-@@ -137,11 +141,11 @@
+@@ -137,11 +142,11 @@
                  int var19 = par1World.getBlockId(var17, par3 - 1, var18);
                  float var20 = 0.0F;
  
@@ -41,7 +42,7 @@
                      {
                          var20 = 3.0F;
                      }
-@@ -241,29 +245,22 @@
+@@ -241,29 +246,22 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);

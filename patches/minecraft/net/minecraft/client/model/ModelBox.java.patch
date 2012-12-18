@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/client/model/ModelBox.java
 +++ ../src_work/minecraft/net/minecraft/client/model/ModelBox.java
 @@ -4,7 +4,6 @@
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.client.renderer.Tessellator;
  
 -@SideOnly(Side.CLIENT)

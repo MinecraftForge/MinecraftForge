@@ -1,12 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src_work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -1,18 +1,25 @@
- package net.minecraft.world;
- 
-+import net.minecraftforge.client.SkyProvider;
-+import net.minecraftforge.common.DimensionManager;
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+@@ -3,16 +3,23 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.block.Block;
 +import net.minecraft.entity.Entity;
 +import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +19,8 @@
  import net.minecraft.world.gen.ChunkProviderGenerate;
  import net.minecraft.world.gen.FlatGeneratorInfo;
 +import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.client.IRenderHandler;
++import net.minecraftforge.common.DimensionManager;
  
  public abstract class WorldProvider
  {
@@ -41,8 +39,8 @@
      public abstract String getDimensionName();
 +
 +    /*======================================= Forge Start =========================================*/
-+    private SkyProvider skyProvider = null;
-+    private SkyProvider cloudRenderer = null;
++    private IRenderHandler skyRenderer = null;
++    private IRenderHandler cloudRenderer = null;
 +    
 +    /**
 +     * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -117,25 +115,25 @@
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public SkyProvider getSkyProvider()
++    public IRenderHandler getSkyRenderer()
 +    {
-+        return this.skyProvider;
++        return this.skyRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public void setSkyProvider(SkyProvider skyProvider)
++    public void setSkyRenderer(IRenderHandler skyRenderer)
 +    {
-+        this.skyProvider = skyProvider;
++        this.skyRenderer = skyRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public SkyProvider getCloudRenderer()
++    public IRenderHandler getCloudRenderer()
 +    {
 +        return cloudRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
-+    public void setCloudRenderer(SkyProvider renderer)
++    public void setCloudRenderer(IRenderHandler renderer)
 +    {
 +        cloudRenderer = renderer;
 +    }

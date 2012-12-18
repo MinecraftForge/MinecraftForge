@@ -251,7 +251,8 @@ public class ForgeHooksClient
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
             GL11.glScalef(scale, scale, scale);
-            int size = entity.item.stackSize;
+            
+            int size = item.stackSize;
             int count = (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1)));
 
             for(int j = 0; j < count; j++)

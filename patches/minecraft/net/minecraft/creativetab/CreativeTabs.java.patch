@@ -1,23 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/creativetab/CreativeTabs.java
 +++ ../src_work/minecraft/net/minecraft/creativetab/CreativeTabs.java
-@@ -2,13 +2,15 @@
- 
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
-+import java.util.Arrays;
- import java.util.List;
+@@ -7,6 +7,7 @@
+ import net.minecraft.enchantment.EnchantmentData;
+ import net.minecraft.enchantment.EnumEnchantmentType;
  import net.minecraft.item.Item;
 +import net.minecraft.item.ItemStack;
  import net.minecraft.util.StringTranslate;
  
  public class CreativeTabs
- {
--    public static final CreativeTabs[] creativeTabArray = new CreativeTabs[12];
-+    public static CreativeTabs[] creativeTabArray = new CreativeTabs[12];
-     public static final CreativeTabs tabBlock = new CreativeTabBlock(0, "buildingBlocks");
-     public static final CreativeTabs tabDecorations = new CreativeTabDeco(1, "decorations");
-     public static final CreativeTabs tabRedstone = new CreativeTabRedstone(2, "redstone");
-@@ -31,8 +33,22 @@
+@@ -34,8 +35,22 @@
      /** Whether to draw the title in the foreground of the creative GUI */
      private boolean drawTitle = true;
  
@@ -40,7 +31,7 @@
          this.tabIndex = par1;
          this.tabLabel = par2Str;
          creativeTabArray[par1] = this;
-@@ -119,6 +135,10 @@
+@@ -122,6 +137,10 @@
       */
      public int getTabColumn()
      {
@@ -51,7 +42,7 @@
          return this.tabIndex % 6;
      }
  
-@@ -129,6 +149,10 @@
+@@ -132,6 +151,10 @@
       */
      public boolean isTabInFirstRow()
      {
@@ -62,17 +53,19 @@
          return this.tabIndex < 6;
      }
  
-@@ -146,10 +170,40 @@
+@@ -149,11 +172,41 @@
          {
              Item var5 = var2[var4];
  
 -            if (var5 != null && var5.getCreativeTab() == this)
-+            if (var5 == null)
-             {
+-            {
 -                var5.getSubItems(var5.shiftedIndex, this, par1List);
-+                continue;
-             }
+-            }
 -        }
++            if (var5 == null)
++            {
++                continue;
++            }
 +
 +            for(CreativeTabs tab : var5.getCreativeTabs())
 +            {
@@ -105,4 +98,5 @@
 +    {
 +        return new ItemStack(getTabIconItem());
      }
- }
+ 
+     @SideOnly(Side.CLIENT)

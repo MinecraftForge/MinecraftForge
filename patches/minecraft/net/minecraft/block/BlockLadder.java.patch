@@ -10,7 +10,7 @@
  
  public class BlockLadder extends Block
  {
-@@ -101,29 +104,32 @@
+@@ -104,29 +107,32 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -48,7 +48,7 @@
          {
              var10 = 5;
          }
-@@ -140,22 +146,22 @@
+@@ -143,22 +149,22 @@
          int var6 = par1World.getBlockMetadata(par2, par3, par4);
          boolean var7 = false;
  
@@ -75,7 +75,7 @@
          {
              var7 = true;
          }
-@@ -176,4 +182,10 @@
+@@ -179,4 +185,10 @@
      {
          return 1;
      }

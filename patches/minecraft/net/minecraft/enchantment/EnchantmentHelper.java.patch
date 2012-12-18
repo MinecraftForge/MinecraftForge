@@ -1,11 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src_work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -418,7 +418,7 @@
+@@ -463,7 +463,7 @@
          {
-             Enchantment var7 = var4[var6];
+             Enchantment var8 = var5[var7];
  
--            if (var7 != null && var7.type.canEnchantItem(var2))
-+            if (var7 != null && var7.canEnchantItem(par1ItemStack))
+-            if (var8 != null && (var8.type.canEnchantItem(var2) || var4))
++            if (var8 != null && (var8.func_92037_a(par1ItemStack) || var4))
              {
-                 for (int var8 = var7.getMinLevel(); var8 <= var7.getMaxLevel(); ++var8)
+                 for (int var9 = var8.getMinLevel(); var9 <= var8.getMaxLevel(); ++var9)
                  {

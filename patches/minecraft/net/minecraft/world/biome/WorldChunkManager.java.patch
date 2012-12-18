@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/world/biome/WorldChunkManager.java
 +++ ../src_work/minecraft/net/minecraft/world/biome/WorldChunkManager.java
 @@ -3,6 +3,7 @@
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.util.ArrayList;
 +import java.util.Arrays;
  import java.util.List;

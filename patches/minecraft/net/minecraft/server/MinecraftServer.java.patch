@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src_work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -13,6 +13,7 @@
+@@ -12,6 +12,7 @@
  import java.text.SimpleDateFormat;
  import java.util.ArrayList;
  import java.util.Date;
@@ -29,7 +29,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -237,8 +243,6 @@
+@@ -238,8 +244,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -38,7 +38,7 @@
          ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo var9 = var7.loadWorldInfo();
          WorldSettings var8;
-@@ -258,46 +262,23 @@
+@@ -259,46 +263,23 @@
              var8.enableBonusChest();
          }
  
@@ -96,7 +96,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -426,7 +407,14 @@
+@@ -427,7 +408,14 @@
              for (int var1 = 0; var1 < this.worldServers.length; ++var1)
              {
                  WorldServer var2 = this.worldServers[var1];
@@ -111,7 +111,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -649,13 +637,15 @@
+@@ -650,13 +638,15 @@
          this.theProfiler.startSection("levels");
          int var1;
  
@@ -132,7 +132,7 @@
                  this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  var4.getWorldVec3Pool().clear();
-@@ -702,9 +692,11 @@
+@@ -703,9 +693,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -147,7 +147,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -758,7 +750,13 @@
+@@ -759,7 +751,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -162,7 +162,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1129,6 +1127,7 @@
+@@ -1130,6 +1128,7 @@
  
              if (var2 != null)
              {

@@ -1,19 +1,21 @@
 --- ../src_base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -2,8 +2,10 @@
+@@ -2,8 +2,12 @@
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
 +import java.util.UUID;
++
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockFluid;
  import net.minecraft.block.StepSound;
-@@ -11,8 +13,13 @@
- import net.minecraft.crash.CrashReport;
+@@ -12,8 +16,13 @@
  import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.enchantment.EnchantmentProtection;
  import net.minecraft.entity.effect.EntityLightningBolt;
 +import net.minecraft.entity.item.EntityBoat;
  import net.minecraft.entity.item.EntityItem;
@@ -25,7 +27,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -23,6 +30,7 @@
+@@ -24,6 +33,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -33,7 +35,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
-@@ -221,6 +229,11 @@
+@@ -222,6 +232,11 @@
      protected int field_82152_aq;
      private boolean field_83001_bt;
      public EnumEntitySize myEntitySize;
@@ -45,7 +47,7 @@
  
      public Entity(World par1World)
      {
-@@ -543,7 +556,7 @@
+@@ -543,7 +558,7 @@
          if (!this.worldObj.isRemote)
          {
              this.setFlag(0, this.fire > 0);
@@ -54,7 +56,7 @@
          }
  
          this.firstUpdate = false;
-@@ -1513,6 +1526,15 @@
+@@ -1514,6 +1529,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.field_83001_bt);
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
@@ -70,7 +72,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
          }
          catch (Throwable var5)
-@@ -1567,6 +1589,14 @@
+@@ -1568,6 +1592,14 @@
              this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -85,7 +87,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable var5)
-@@ -1661,7 +1691,14 @@
+@@ -1662,7 +1694,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -101,7 +103,7 @@
          return var3;
      }
  
-@@ -2020,7 +2057,7 @@
+@@ -2021,7 +2060,7 @@
       */
      public boolean isRiding()
      {
@@ -110,7 +112,7 @@
      }
  
      /**
-@@ -2355,7 +2392,7 @@
+@@ -2356,7 +2395,7 @@
  
      public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
@@ -119,7 +121,7 @@
      }
  
      public int func_82143_as()
-@@ -2391,4 +2428,84 @@
+@@ -2396,4 +2435,84 @@
      {
          return this.isBurning();
      }

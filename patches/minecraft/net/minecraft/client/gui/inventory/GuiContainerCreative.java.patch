@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -49,6 +49,8 @@
+@@ -50,6 +50,8 @@
      private Slot field_74235_v = null;
      private boolean field_74234_w = false;
      private CreativeCrafting field_82324_x;
@@ -9,7 +9,7 @@
  
      public GuiContainerCreative(EntityPlayer par1EntityPlayer)
      {
-@@ -223,6 +225,13 @@
+@@ -224,6 +226,13 @@
              this.func_74227_b(CreativeTabs.creativeTabArray[var1]);
              this.field_82324_x = new CreativeCrafting(this.mc);
              this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_82324_x);
@@ -23,7 +23,7 @@
          }
          else
          {
-@@ -343,7 +352,7 @@
+@@ -358,7 +367,7 @@
      {
          CreativeTabs var3 = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -32,7 +32,7 @@
          {
              this.fontRenderer.drawString(var3.getTranslatedTabLabel(), 8, 6, 4210752);
          }
-@@ -365,7 +374,7 @@
+@@ -380,7 +389,7 @@
              {
                  CreativeTabs var9 = var6[var8];
  
@@ -41,7 +41,7 @@
                  {
                      this.func_74227_b(var9);
                      return;
-@@ -381,11 +390,17 @@
+@@ -396,11 +405,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -59,7 +59,7 @@
          int var2 = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative var3 = (ContainerCreative)this.inventorySlots;
-@@ -555,21 +570,42 @@
+@@ -570,21 +585,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] var11 = CreativeTabs.creativeTabArray;
@@ -107,7 +107,7 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -590,14 +626,32 @@
+@@ -605,14 +641,32 @@
          int var8 = var7.length;
          int var9;
  
@@ -142,7 +142,7 @@
              }
          }
  
-@@ -615,6 +669,14 @@
+@@ -630,6 +684,14 @@
              this.drawTexturedModalRect(var11, var8 + (int)((float)(var9 - var8 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -157,7 +157,7 @@
          this.renderCreativeTab(var5);
  
          if (var5 == CreativeTabs.tabInventory)
-@@ -625,6 +687,15 @@
+@@ -640,6 +702,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -173,7 +173,7 @@
          int var4 = par1CreativeTabs.getTabColumn();
          int var5 = 28 * var4;
          byte var6 = 0;
-@@ -739,7 +810,7 @@
+@@ -754,7 +825,7 @@
          var8 += 8 + (var3 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -182,7 +182,7 @@
          itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
          itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -761,6 +832,15 @@
+@@ -776,6 +847,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }

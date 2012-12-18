@@ -76,27 +76,27 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - var3, par1Packet10Flying.onGround);
-@@ -437,7 +464,10 @@
-                 double var12 = this.playerEntity.posZ - ((double)var7 + 0.5D);
-                 double var14 = var8 * var8 + var10 * var10 + var12 * var12;
+@@ -447,7 +474,10 @@
+                 double var13 = this.playerEntity.posZ - ((double)var8 + 0.5D);
+                 double var15 = var9 * var9 + var11 * var11 + var13 * var13;
  
--                if (var14 > 36.0D)
+-                if (var15 > 36.0D)
 +                double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
 +                dist *= dist;
 +
-+                if (var14 > dist)
++                if (var15 > dist)
                  {
                      return;
                  }
-@@ -461,6 +491,7 @@
+@@ -471,6 +501,7 @@
              {
-                 if (var20 <= this.mcServer.getSpawnProtectionSize() && !var3)
+                 if (var18 <= var3 && !var4)
                  {
-+                    ForgeEventFactory.onPlayerInteract(playerEntity, Action.LEFT_CLICK_BLOCK, var5, var6, var7, 0);
-                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var5, var6, var7, var2));
++                    ForgeEventFactory.onPlayerInteract(playerEntity, Action.LEFT_CLICK_BLOCK, var6, var7, var8, 0);
+                     this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var6, var7, var8, var2));
                  }
                  else
-@@ -519,7 +550,11 @@
+@@ -518,7 +549,11 @@
                  return;
              }
  
@@ -109,18 +109,18 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -537,7 +572,9 @@
-                 var12 = var11;
+@@ -536,7 +571,9 @@
+                 var13 = var12;
              }
  
--            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var12 > this.mcServer.getSpawnProtectionSize() || var9))
+-            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < 64.0D && (var13 > var9 || var10))
 +            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
 +            dist *= dist;
-+            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var12 > this.mcServer.getSpawnProtectionSize() || var9))
++            if (this.hasMoved && this.playerEntity.getDistanceSq((double)var5 + 0.5D, (double)var6 + 0.5D, (double)var7 + 0.5D) < dist && (var13 > var9 || var10))
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -704,8 +741,12 @@
+@@ -703,8 +740,12 @@
                          this.sendPacketToPlayer(new Packet3Chat("Cannot send chat message."));
                          return;
                      }
@@ -135,7 +135,7 @@
                      logger.info(var2);
                      this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(var2, false));
                  }
-@@ -836,7 +877,7 @@
+@@ -835,7 +876,7 @@
                      return;
                  }
  

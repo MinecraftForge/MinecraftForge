@@ -10,12 +10,19 @@
  
  public class ComponentScatteredFeatureDesertPyramid extends ComponentScatteredFeature
  {
-@@ -221,7 +224,7 @@
+@@ -215,13 +218,14 @@
+         this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 1, 10, -10, 13, par3StructureBoundingBox);
+         this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 2, 10, -11, 13, par3StructureBoundingBox);
+ 
++        ChestGenHooks info = ChestGenHooks.getInfo(PYRAMID_DESERT_CHEST);
+         for (var10 = 0; var10 < 4; ++var10)
+         {
+             if (!this.field_74940_h[var10])
              {
                  int var11 = Direction.offsetX[var10] * 2;
                  int var12 = Direction.offsetZ[var10] * 2;
--                this.field_74940_h[var10] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + var11, -11, 10 + var12, itemsToGenerateInTemple, 2 + par2Random.nextInt(5));
-+                this.field_74940_h[var10] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + var11, -11, 10 + var12, ChestGenHooks.getItems(PYRAMID_DESERT_CHEST), ChestGenHooks.getCount(PYRAMID_DESERT_CHEST, par2Random));
+-                this.field_74940_h[var10] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + var11, -11, 10 + var12, WeightedRandomChestContent.func_92029_a(itemsToGenerateInTemple, new WeightedRandomChestContent[] {Item.field_92053_bW.func_92059_b(par2Random)}), 2 + par2Random.nextInt(5));
++                this.field_74940_h[var10] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + var11, -11, 10 + var12, info.getItems(par2Random), info.getCount(par2Random));
              }
          }
  

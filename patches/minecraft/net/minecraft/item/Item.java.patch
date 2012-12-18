@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -14,6 +14,7 @@
+@@ -13,6 +13,7 @@
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.item.EntityPainting;
  import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +8,17 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -227,6 +228,9 @@
+@@ -21,7 +22,9 @@
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.util.StringTranslate;
+ import net.minecraft.util.Vec3;
++import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ChestGenHooks;
+ 
+ public class Item
+ {
+@@ -229,6 +232,9 @@
  
      /** full name of item from language file */
      private String itemName;
@@ -18,7 +28,7 @@
  
      public Item(int par1)
      {
-@@ -234,12 +238,17 @@
+@@ -236,12 +242,17 @@
  
          if (itemsList[256 + par1] != null)
          {
@@ -37,7 +47,7 @@
      }
  
      /**
-@@ -625,6 +634,10 @@
+@@ -627,6 +638,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;
          double var21 = 5.0D;
@@ -48,7 +58,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -699,4 +712,279 @@
+@@ -701,4 +716,299 @@
      {
          StatList.initStats();
      }
@@ -323,8 +333,28 @@
 +     * @param pass the multi-render pass
 +     * @return the icon index
 +     */
-+    public int getIconFromItemStackForMultiplePasses(ItemStack stack, int pass)
++    public int getIconIndex(ItemStack stack, int pass)
 +    {
 +    	return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
++    }
++
++    /**
++     * Generates the base Random item for a specific instance of the chest gen,
++     * Enchanted books use this to pick a random enchantment.
++     * 
++     * @param chest The chest category to generate for
++     * @param rnd World RNG
++     * @param original Original result registered with the chest gen hooks.
++     * @return New values to use as the random item, typically this will be original
++     */
++    public WeightedRandomChestContent getChestGenBase(ChestGenHooks chest, Random rnd, WeightedRandomChestContent original)
++    {
++        if (this instanceof ItemEnchantedBook)
++        {
++            return ((ItemEnchantedBook)this).func_92058_a(rnd, 
++                    original.theMinimumChanceToGenerateItem, 
++                    original.theMaximumChanceToGenerateItem, original.itemWeight);
++        }
++        return original;
 +    }
  }

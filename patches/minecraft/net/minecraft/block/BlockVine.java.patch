@@ -1,14 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockVine.java
-@@ -2,6 +2,7 @@
+@@ -2,6 +2,8 @@
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
  import java.util.Random;
  import net.minecraft.block.material.Material;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -15,7 +16,9 @@
+@@ -15,7 +17,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -19,7 +20,7 @@
  {
      public BlockVine(int par1)
      {
-@@ -436,14 +439,26 @@
+@@ -436,14 +440,26 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {

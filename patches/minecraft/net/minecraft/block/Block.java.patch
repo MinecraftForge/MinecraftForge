@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/block/Block.java
 +++ ../src_work/minecraft/net/minecraft/block/Block.java
-@@ -2,13 +2,16 @@
+@@ -2,13 +2,17 @@
  
- import cpw.mods.fml.common.Side;
- import cpw.mods.fml.common.asm.SideOnly;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
@@ -17,7 +18,7 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -24,17 +27,27 @@
+@@ -24,17 +28,27 @@
  import net.minecraft.item.ItemSlab;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
@@ -45,7 +46,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -319,6 +332,7 @@
+@@ -319,6 +333,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -53,7 +54,7 @@
      }
  
      /**
-@@ -457,9 +471,10 @@
+@@ -457,9 +472,10 @@
          return this.needsRandomTick;
      }
  
@@ -65,7 +66,7 @@
      }
  
      /**
-@@ -482,7 +497,7 @@
+@@ -482,7 +498,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -74,7 +75,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -492,7 +507,7 @@
+@@ -492,7 +508,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -83,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -637,7 +652,13 @@
+@@ -637,7 +653,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -98,7 +99,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -661,8 +682,7 @@
+@@ -661,8 +683,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -108,7 +109,7 @@
      }
  
      /**
-@@ -680,18 +700,13 @@
+@@ -680,18 +701,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -131,7 +132,7 @@
                  }
              }
          }
-@@ -1076,7 +1091,7 @@
+@@ -1076,7 +1092,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -140,7 +141,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1353,4 +1368,849 @@
+@@ -1356,4 +1372,849 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }

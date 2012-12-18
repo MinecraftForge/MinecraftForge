@@ -33,20 +33,21 @@
  
                  if (var8)
                  {
-@@ -334,6 +344,12 @@
-         float var11 = (float)par8Vec3.zCoord - (float)par6;
-         boolean var12 = false;
-         int var13 = par2World.getBlockId(par4, par5, par6);
+@@ -345,6 +355,13 @@
+             }
+         }
+ 
 +        if (par3ItemStack != null && 
 +            par3ItemStack.getItem() != null && 
 +            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
 +        {
 +                return true;
 +        }
- 
-         if (var13 > 0 && Block.blocksList[var13].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, var9, var10, var11))
++
+         if (!var12 && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
          {
-@@ -371,7 +387,15 @@
+             ItemBlock var16 = (ItemBlock)par3ItemStack.getItem();
+@@ -376,7 +393,15 @@
          }
          else
          {
@@ -63,7 +64,7 @@
          }
      }
  
-@@ -393,9 +417,10 @@
+@@ -398,9 +423,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
  
