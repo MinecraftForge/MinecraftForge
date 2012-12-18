@@ -231,7 +231,7 @@ public class ForgeHooksClient
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
         if (customRenderer == null)
         {
-                return false;
+            return false;
         }
 
         if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))

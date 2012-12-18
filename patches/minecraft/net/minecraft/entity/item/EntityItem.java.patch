@@ -32,7 +32,7 @@
      }
  
      /**
-@@ -135,7 +146,22 @@
+@@ -135,7 +146,29 @@
  
          ++this.age;
  
@@ -41,10 +41,17 @@
 +
 +        if (!this.worldObj.isRemote && this.age >= lifespan)
 +        {
-+            ItemExpireEvent event = new ItemExpireEvent(this, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, worldObj)));
-+            if (MinecraftForge.EVENT_BUS.post(event))
-+            {
-+                lifespan += event.extraLife;
++            if (item != null)
++            {   
++                ItemExpireEvent event = new ItemExpireEvent(this, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, worldObj)));
++                if (MinecraftForge.EVENT_BUS.post(event))
++                {
++                    lifespan += event.extraLife;
++                }
++                else
++                {
++                    this.setDead();
++                }
 +            }
 +            else
 +            {
@@ -52,11 +59,11 @@
 +            }
 +        }
 +
-+        if (item == null || item.stackSize <= 0)
++        if (item != null && item.stackSize <= 0)
          {
              this.setDead();
          }
-@@ -263,6 +289,7 @@
+@@ -263,6 +296,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -64,7 +71,7 @@
  
          if (this.func_92014_d() != null)
          {
-@@ -280,10 +307,17 @@
+@@ -280,10 +314,17 @@
          NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
          this.func_92013_a(ItemStack.loadItemStackFromNBT(var2));
  
@@ -83,7 +90,7 @@
      }
  
      /**
-@@ -293,10 +327,22 @@
+@@ -293,10 +334,22 @@
      {
          if (!this.worldObj.isRemote)
          {

@@ -36,8 +36,8 @@ public class ForgeInternalHandler
 
             if (stack == null)
             {
-                entity.setDead();
-                event.setCanceled(true);
+                //entity.setDead();
+                //event.setCanceled(true);
                 return;
             }
 
