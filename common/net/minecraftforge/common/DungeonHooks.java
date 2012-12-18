@@ -234,12 +234,12 @@ public class DungeonHooks
 
         public boolean equals(ItemStack item, int min, int max)
         {
-            return (min == minCount && max == maxCount && item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, itemStack));
+            return (min == minCount && max == maxCount && item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, this.itemStack));
         }
 
         public boolean equals(ItemStack item)
         {
-            return item.isItemEqual(this.itemStack);
+            return item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, this.itemStack);
         }
     }
 
