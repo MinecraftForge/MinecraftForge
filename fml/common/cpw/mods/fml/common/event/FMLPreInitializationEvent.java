@@ -96,8 +96,12 @@ public class FMLPreInitializationEvent extends FMLStateEvent
      * Retrieve the FML signing certificates, if any. Validate these against the
      * published FML certificates in your mod, if you wish.
      *
+     * Deprecated because mods should <b>NOT</b> trust this code. Rather
+     * they should copy this, or something like this, into their own mods.
+     *
      * @return Certificates used to sign FML and Forge
      */
+    @Deprecated
     public Certificate[] getFMLSigningCertificates()
     {
         CodeSource codeSource = getClass().getClassLoader().getParent().getClass().getProtectionDomain().getCodeSource();
