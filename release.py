@@ -249,6 +249,9 @@ def sign_jar(forge_dir, command, files, dest_zip):
     global zip
     zip_file = os.path.join(forge_dir, 'tmp.jar')
     
+    if os.path.isfile(zip_file):
+        os.remove(zip_file)
+    
     print '============== Creating tmp zip to sign ====================='
     zf = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
     zf.write(os.path.join(forge_dir, 'MANIFEST.MF'), 'META-INF/MANIFEST.MF')
@@ -261,9 +264,8 @@ def sign_jar(forge_dir, command, files, dest_zip):
         process = Popen([command, zip_file, "forge"], stdout=PIPE, stderr=STDOUT, bufsize=-1)
         out, _ = process.communicate()
         print out
-    except OSError:
-        print "Error creating signed tmp jar"
-        os.remove(zip_file)
+    except OSError as e:
+        print "Error creating signed tmp jar: %s" % e.strerror
         sys.exit(1)
     
     tmp_dir = os.path.join(forge_dir, 'tmp')
