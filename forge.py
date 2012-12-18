@@ -55,6 +55,7 @@ def inject_version(src_file, build=0):
     shutil.move(tmp_file, src_file)
     
 def zip_folder(path, key, zip):
+    import pprint
     files = os.listdir(path)
     for file in files:
         file_path = os.path.join(path, file)
@@ -62,8 +63,9 @@ def zip_folder(path, key, zip):
         if os.path.isdir(file_path):
             zip_folder(file_path, file_key, zip)
         else:
-            print file_key
-            zip.write(file_path, file_key)
+            if not file_key.replace(os.sep, '/') in zip.NameToInfo:
+                print file_key
+                zip.write(file_path, file_key)
             
 def zip_create(path, key, zip_name):
     zip = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)

@@ -21,6 +21,7 @@ def main():
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='MCP Path', default=None)
     parser.add_option('-b', '--build', action='store', dest='build', help='Build number', default=None)
     parser.add_option('-s', '--skipchangelog', action='store_true', dest='skip_changelog', help='Skip Changelog', default=False)
+    parser.add_option('-j', '--sign-jar', action='store', dest='sign_jar', help='Path to jar signer command', default=None)
     options, _ = parser.parse_args()
     
     build_num = 0
@@ -93,8 +94,12 @@ def main():
         fh.write('forge.revision.number=%d\n' % version['revision'])
         fh.write('forge.build.number=%d\n' % version['build'])
     
-    zip_start('minecraftforge-universal-%s.zip' % version_str)
-    zip_folder(client_dir, '', zip)
+    if not options.sign_jar is None:
+        sign_jar(forge_dir, options.sign_jar, client_dir, 'minecraftforge-universal-%s.zip' % version_str)
+    else:
+        zip_start('minecraftforge-universal-%s.zip' % version_str)
+        zip_folder(client_dir, '', zip)
+        zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_add('client/forge_logo.png')
     zip_add('install/MinecraftForge-Credits.txt')
     zip_add('install/MinecraftForge-License.txt')
@@ -112,7 +117,6 @@ def main():
     zip_add(version_file)
     if not options.skip_changelog:
         zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
-    zip_add('MANIFEST.MF','META-INF/MANIFEST.MF')
     zip_end()
     
     zips = glob.glob('fml/mcp*.zip')
@@ -239,6 +243,56 @@ def get_branch_name():
     branch = branch.replace('HEAD', '')
     print 'Detected Branch as \'%s\'' % branch
     return branch
+
+def sign_jar(forge_dir, command, files, dest_zip):
+    from subprocess import Popen, PIPE, STDOUT
+    global zip
+    zip_file = os.path.join(forge_dir, 'tmp.jar')
     
+    print '============== Creating tmp zip to sign ====================='
+    zf = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
+    zf.write(os.path.join(forge_dir, 'MANIFEST.MF'), 'META-INF/MANIFEST.MF')
+    zip_folder_filter(files, '', zf, 'cpw/mods/'.replace('/', os.sep))
+    zip_folder_filter(files, '', zf, 'net/minecraftforge/'.replace('/', os.sep))
+    zf.close()
+    print '================ End tmp zip to sign ========================'
+    
+    try:
+        process = Popen([command, zip_file, "forge"], stdout=PIPE, stderr=STDOUT, bufsize=-1)
+        out, _ = process.communicate()
+        print out
+    except OSError:
+        print "Error creating signed tmp jar"
+        os.remove(zip_file)
+        sys.exit(1)
+    
+    tmp_dir = os.path.join(forge_dir, 'tmp')
+    if os.path.isdir(tmp_dir):
+        shutil.rmtree(tmp_dir)
+        
+    zf = zipfile.ZipFile(zip_file)
+    zf.extractall(tmp_dir)
+    zf.close()
+    os.remove(zip_file)
+    
+    zip_start(dest_zip)
+    zip_folder(tmp_dir, '', zip)
+    zip_folder(files, '', zip)
+    
+    if os.path.isdir(tmp_dir):
+        shutil.rmtree(tmp_dir)
+
+def zip_folder_filter(path, key, zip, filter):
+    files = os.listdir(path)
+    for file in files:
+        file_path = os.path.join(path, file)
+        file_key  = os.path.join(key, file)
+        if os.path.isdir(file_path):
+            zip_folder_filter(file_path, file_key, zip, filter)
+        else:
+            if file_key.startswith(filter):
+                print file_key
+                zip.write(file_path, file_key)
+
 if __name__ == '__main__':
     main()
