@@ -84,7 +84,7 @@ public class GameData {
         if (idMap.containsKey(item.field_77779_bT))
         {
             ItemData id = idMap.get(item.field_77779_bT);
-            FMLLog.warning("[ItemTracker] The mod %s is attempting to overwrite existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
+            FMLLog.info("[ItemTracker] The mod %s is overwriting existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
         }
         idMap.put(item.field_77779_bT, itemData);
         FMLLog.fine("[ItemTracker] Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
