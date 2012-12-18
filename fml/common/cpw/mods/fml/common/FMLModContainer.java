@@ -430,6 +430,7 @@ public class FMLModContainer implements ModContainer
 
             String expectedFingerprint = (String) descriptor.get("certificateFingerprint");
 
+            fingerprintNotPresent = true;
             if (expectedFingerprint != "" &&  !sourceFingerprints.contains(expectedFingerprint))
             {
                 Level warnLevel = Level.SEVERE;
@@ -442,13 +443,14 @@ public class FMLModContainer implements ModContainer
             else
             {
                 certificate = certificates[certList.indexOf(expectedFingerprint)];
+                fingerprintNotPresent = false;
             }
             annotations = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = clazz.newInstance();
             if (fingerprintNotPresent)
             {
-                handleModStateEvent(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints)));
+                eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints)));
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
             processFieldAnnotations(event.getASMHarvestedData());

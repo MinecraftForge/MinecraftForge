@@ -4556,6 +4556,7 @@ net/minecraft/src/MerchantRecipeList.func_77203_a(Lnet/minecraft/src/ItemStack;L
 net/minecraft/src/MerchantRecipeList.func_77204_a(Ljava/io/DataInputStream;)Lnet/minecraft/src/MerchantRecipeList;=java/io/IOException|p_77204_0_
 net/minecraft/src/MerchantRecipeList.func_77205_a(Lnet/minecraft/src/MerchantRecipe;)V=|p_77205_1_
 net/minecraft/src/MinecraftAppletImpl.<init>(Lnet/minecraft/client/MinecraftApplet;Ljava/awt/Canvas;Lnet/minecraft/client/MinecraftApplet;IIZ)V=|p_i3013_1_,p_i3013_2_,p_i3013_3_,p_i3013_4_,p_i3013_5_,p_i3013_6_
+net/minecraft/src/MinecraftAppletImpl.func_71406_c(Lnet/minecraft/src/CrashReport;)V=|p_71406_1_
 net/minecraft/src/MinecraftAppletImpl.func_71384_a()V=org/lwjgl/LWJGLException|
 net/minecraft/src/MinecraftException.<init>(Ljava/lang/String;)V=|p_i3733_1_
 net/minecraft/src/MinecraftFakeLauncher.<init>(Ljava/util/Map;)V=|p_i3001_1_
