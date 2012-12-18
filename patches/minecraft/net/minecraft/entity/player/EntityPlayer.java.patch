@@ -8,7 +8,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Iterator;
-@@ -172,6 +174,7 @@
+@@ -173,6 +175,7 @@
  
      public void func_70071_h_()
      {
@@ -16,7 +16,7 @@
          if (this.field_71074_e != null)
          {
              ItemStack var1 = this.field_71071_by.func_70448_g();
-@@ -295,6 +298,7 @@
+@@ -296,6 +299,7 @@
          {
              this.field_71100_bB.func_75118_a(this);
          }
@@ -24,7 +24,7 @@
      }
  
      public int func_82145_z()
-@@ -1802,4 +1806,9 @@
+@@ -1822,4 +1826,9 @@
      {
          return this.func_82241_s(1);
      }

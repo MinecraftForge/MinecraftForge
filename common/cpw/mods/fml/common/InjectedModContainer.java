@@ -1,6 +1,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Set;
 
@@ -128,5 +129,11 @@ public class InjectedModContainer implements ModContainer
         {
             return null;
         }
+    }
+
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        return wrappedContainer.getSigningCertificate();
     }
 }

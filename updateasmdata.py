@@ -6,7 +6,7 @@ ctorsigre = re.compile('<init>\((.*)\)')
 ctorparamre = re.compile('(([ZBCSIJFD]|L([\w\/]+);))')
 
 def get_merged_info():
-    mcp_dir = os.path.join(os.getcwd(), '..')
+    mcp_dir = os.path.join(os.getcwd(), 'mcp')
     joined = os.path.join(mcp_dir, 'conf', 'joined.srg')
     values = {'PK:': {}, 'CL:': {}, 'FD:': {}, 'MD:': {}}
     
@@ -42,7 +42,9 @@ def process_file(file, srg):
             with open(file) as f:
                 for line in f:
                     parts = line.split('#')
-                    
+                    if len(parts) < 2:
+                        nf.write(line)
+                        continue
                     if len(parts[1]) < 4:
                         nf.write(line)
                         continue
@@ -79,10 +81,14 @@ def process_file(file, srg):
                         nf.write(newline)
                         
                     else:
-                        targ = srg[typ][name]
-                        args = targ.replace('/', '.', 1).replace(' ', '', 1)
-                        newline = ('%s %s #%s' % (action[0], args, '#'.join(parts[1:])))
-                        nf.write(newline)
+                        if name not in srg[typ]:
+                            nf.write("%s # -- MISSING MAPPING" %( line ))
+                            print("%s is missing a mapping"% name)
+                        else:
+                            targ = srg[typ][name]
+                            args = targ.replace('/', '.', 1).replace(' ', '', 1)
+                            newline = ('%s %s #%s' % (action[0], args, '#'.join(parts[1:])))
+                            nf.write(newline)
                     
 def main():
     srg = get_merged_info()

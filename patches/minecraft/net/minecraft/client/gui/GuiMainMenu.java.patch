@@ -8,7 +8,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.image.BufferedImage;
-@@ -10,6 +12,7 @@
+@@ -11,6 +13,7 @@
  import java.util.ArrayList;
  import java.util.Calendar;
  import java.util.Date;
@@ -17,16 +17,16 @@
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.Tessellator;
 @@ -22,6 +25,9 @@
+ import net.minecraft.world.storage.WorldInfo;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.util.glu.GLU;
- 
++
 +import com.google.common.base.Strings;
 +import com.google.common.collect.Lists;
-+
+ 
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
- {
-@@ -132,7 +138,8 @@
+@@ -140,7 +146,8 @@
              this.func_73969_a(var4, 24, var2);
          }
  
@@ -36,7 +36,7 @@
  
          if (this.field_73882_e.field_71448_m)
          {
-@@ -196,6 +203,11 @@
+@@ -224,6 +231,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -48,7 +48,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -414,7 +426,16 @@
+@@ -460,7 +472,16 @@
              var9 = var9 + " Demo";
          }
  
@@ -65,4 +65,4 @@
 +
          String var10 = "Copyright Mojang AB. Do not distribute!";
          this.func_73731_b(this.field_73886_k, var10, this.field_73880_f - this.field_73886_k.func_78256_a(var10) - 2, this.field_73881_g - 10, 16777215);
-         super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+ 

@@ -1,4 +1,17 @@
 class,package
+EntityFireworkOverlayFX,net/minecraft/client/particle
+EntityFireworkSparkFX,net/minecraft/client/particle
+EntityFireworkStarterFX,net/minecraft/client/particle
+ScheduledSound,net/minecraft/client/audio
+BehaviorDispenseFirework,net/minecraft/dispenser
+EnchantmentThorns,net/minecraft/enchantment
+EntityFireworkRocket,net/minecraft/entity/item
+ItemBook,net/minecraft/item
+ItemEnchantedBook,net/minecraft/item
+ItemFirework,net/minecraft/item
+ItemFireworkCharge,net/minecraft/item
+RecipeFireworks,net/minecraft/item/crafting
+TileEntityMobSpawnerSpawnData,net/minecraft/tileentity
 Block,net/minecraft/block
 BlockAnvil,net/minecraft/block
 BlockBeacon,net/minecraft/block

@@ -476,6 +476,11 @@ public class Loader
         }
         modController.transition(LoaderState.CONSTRUCTING);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
+        FMLLog.fine("Mod signature data:");
+        for (ModContainer mod : getActiveModList())
+        {
+            FMLLog.fine("\t%s(%s:%s): %s (%s)", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), CertificateHelper.getFingerprint(mod.getSigningCertificate()));
+        }
         modController.transition(LoaderState.PREINITIALIZATION);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION);
