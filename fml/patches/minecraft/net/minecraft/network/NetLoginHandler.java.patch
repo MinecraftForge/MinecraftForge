@@ -16,7 +16,7 @@
  import net.minecraft.network.packet.Packet252SharedKey;
  import net.minecraft.network.packet.Packet253ServerAuthData;
  import net.minecraft.network.packet.Packet254ServerPing;
-@@ -55,7 +59,7 @@
+@@ -56,7 +60,7 @@
              this.func_72529_d();
          }
  
@@ -25,7 +25,7 @@
          {
              this.func_72527_a("Took too long to log in");
          }
-@@ -141,11 +145,18 @@
+@@ -150,11 +154,18 @@
          }
      }
  
@@ -46,7 +46,7 @@
  
          if (var1 != null)
          {
-@@ -263,4 +274,21 @@
+@@ -272,4 +283,21 @@
      {
          return p_72531_0_.field_72544_i = p_72531_1_;
      }

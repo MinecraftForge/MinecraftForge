@@ -30,13 +30,16 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
@@ -97,6 +100,7 @@ public class FMLModContainer implements ModContainer
     private VersionRange minecraftAccepted;
     private boolean fingerprintNotPresent;
     private Set<String> sourceFingerprints;
+    private Certificate certificate;
 
 
     public FMLModContainer(String className, File modSource, Map<String,Object> modDescriptor)
@@ -415,13 +419,14 @@ public class FMLModContainer implements ModContainer
             {
                 len = certificates.length;
             }
-            Builder<String> certBuilder = ImmutableSet.<String>builder();
+            Builder<String> certBuilder = ImmutableList.<String>builder();
             for (int i = 0; i < len; i++)
             {
                 certBuilder.add(CertificateHelper.getFingerprint(certificates[i]));
             }
 
-            sourceFingerprints = certBuilder.build();
+            ImmutableList<String> certList = certBuilder.build();
+            sourceFingerprints = ImmutableSet.copyOf(certList);
 
             String expectedFingerprint = (String) descriptor.get("certificateFingerprint");
 
@@ -433,6 +438,10 @@ public class FMLModContainer implements ModContainer
                     warnLevel = Level.FINER;
                 }
                 FMLLog.log(warnLevel, "The mod %s is expecting signature %s for source %s, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
+            }
+            else
+            {
+                certificate = certificates[certList.indexOf(expectedFingerprint)];
             }
             annotations = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
@@ -505,5 +514,11 @@ public class FMLModContainer implements ModContainer
     public VersionRange acceptableMinecraftVersionRange()
     {
         return minecraftAccepted;
+    }
+
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        return certificate;
     }
 }

@@ -7,7 +7,7 @@
  
  public abstract class NetHandler
  {
-@@ -345,4 +347,8 @@
+@@ -340,4 +342,8 @@
      {
          return false;
      }

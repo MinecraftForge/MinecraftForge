@@ -10,6 +10,10 @@ public class CertificateHelper {
 
     public static String getFingerprint(Certificate certificate)
     {
+        if (certificate == null)
+        {
+            return "NO VALID CERTIFICATE FOUND";
+        }
         try
         {
             MessageDigest md = MessageDigest.getInstance("SHA-1");

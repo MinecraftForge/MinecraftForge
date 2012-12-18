@@ -9,7 +9,7 @@
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.boss.EntityWither;
  import net.minecraft.entity.item.EntityBoat;
-@@ -49,6 +51,11 @@
+@@ -50,6 +52,11 @@
  
      public void func_72786_a(Entity p_72786_1_)
      {

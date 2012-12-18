@@ -14,6 +14,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Set;
 
@@ -129,4 +130,6 @@ public interface ModContainer
     String getDisplayVersion();
 
     VersionRange acceptableMinecraftVersionRange();
+
+    Certificate getSigningCertificate();
 }

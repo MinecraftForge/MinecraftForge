@@ -325,7 +325,6 @@ field_70715_bh,targetTasks,2,
 field_70716_bi,newPosRotationIncrements,2,The number of updates over which the new position and rotation are to be applied to the entity.
 field_70717_bb,attackingPlayer,2,The most recent player that has attacked this entity
 field_70718_bc,recentlyHit,2,"Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity should drop items on death."
-field_70719_bd,arrowHitTempCounter,2,"Set to 60 when hit by the player or the player's wolf, then decrements. Used to determine whether the entity should drop items on death."
 field_70720_be,arrowHitTimer,2,
 field_70721_aZ,legYaw,2,
 field_70722_aY,prevLegYaw,2,
@@ -469,7 +468,6 @@ field_71088_bW,timeUntilPortal,2,
 field_71090_bL,xpCooldown,2,Used by EntityPlayer to prevent too many xp orbs from getting absorbed at once.
 field_71092_bJ,username,2,
 field_71093_bK,dimension,2,"Which dimension the player is in (-1 = the Nether, 0 = normal world)"
-field_71099_bE,score,2,
 field_71100_bB,foodStats,2,The player's food stats. (See class FoodStats)
 field_71101_bC,flyToggleTimer,2,"Used to tell if the player pressed jump twice. If this is at 0 and it's pressed (And they are allowed to fly, as defined in the player's movementInput) it sets this to 7. If it's pressed and it's greater than 0 enable fly."
 field_71102_ce,speedInAir,2,
@@ -581,6 +579,7 @@ field_71342_m,theRConThreadQuery,2,
 field_71345_q,lanServerPing,2,
 field_71346_p,isPublic,2,
 field_71347_n,theServerListeningThread,2,Instance of IntegratedServerListenThread.
+field_71348_o,isGamePaused,2,
 field_71349_l,mc,2,The Minecraft instance.
 field_71350_m,theWorldSettings,2,
 field_71412_D,mcDataDir,2,
@@ -1183,7 +1182,7 @@ field_73071_a,demoWorldSettings,2,
 field_73072_L,demoWorldSeed,2,
 field_73086_f,partiallyDestroyedBlockX,2,
 field_73087_g,partiallyDestroyedBlockY,2,
-field_73088_d,isPartiallyDestroyedBlockWhole,2,"set to true on first call of destroyBlockInWorldPartially, false before any further calls"
+field_73088_d,isDestroyingBlock,2,True if the player is destroying a block
 field_73089_e,initialDamage,2,
 field_73090_b,thisPlayerMP,2,The EntityPlayerMP object that this object is connected to.
 field_73091_c,gameType,2,
@@ -1191,6 +1190,7 @@ field_73092_a,theWorld,2,The world object that this object is connected to.
 field_73094_o,durabilityRemainingOnBlock,2,
 field_73095_l,posY,2,
 field_73096_m,posZ,2,
+field_73097_j,receivedFinishDiggingPacket,2,"Set to true when the ""finished destroying block"" packet is received but the block wasn't fully damaged yet. The block will not be destroyed while this is false."
 field_73098_k,posX,2,
 field_73099_h,partiallyDestroyedBlockZ,2,
 field_73100_i,curblockDamage,2,
@@ -1970,9 +1970,7 @@ field_74385_A,enumFloat,2,
 field_74386_B,enumBoolean,2,
 field_74387_C,enumString,2,
 field_74414_a,enumOptionsMappingHelperArray,2,
-field_74416_a,mc,2,Reference to the Minecraft object.
 field_74417_a,theTcpConnection,2,
-field_74419_a,mc,2,Reference to the Minecraft object.
 field_74421_a,mc,2,Reference to the Minecraft object.
 field_74422_a,mcApplet,2,Reference to the MinecraftApplet object.
 field_74438_f,shutdownReason,2,
@@ -2014,7 +2012,6 @@ field_74515_c,keyDescription,2,
 field_74516_a,keybindArray,2,
 field_74522_a,colorBuffer,2,Float buffer used to set OpenGL material colors
 field_74532_a,mc,2,A reference to the Minecraft object.
-field_74533_a,enumOSMappingHelperArray,2,
 field_74534_a,arguments,2,"Arguments that were passed to Minecraft.jar (username, sessionid etc)"
 field_74536_a,mc,2,Minecraft instance
 field_74537_a,logo,2,BufferedImage object containing the Majong logo.
@@ -2482,7 +2479,6 @@ field_75624_e,classToIDMapping,2,provides a mapping between an Entity Class and 
 field_75625_b,stringToClassMapping,2,Provides a mapping between entity classes and a string
 field_75626_c,classToStringMapping,2,Provides a mapping between a string and an entity classes
 field_75627_a,entityEggs,2,This is a HashMap of the Creative Entity Eggs/Spawners.
-field_75628_a,enumEntitySizeMappingHelperArray,2,
 field_75644_d,posZ,2,
 field_75645_e,speed,2,The speed at which the entity should move
 field_75646_b,posX,2,
@@ -4185,8 +4181,11 @@ field_82172_bs,canPickUpLoot,2,Whether this entity can pick up items from the gr
 field_82173_br,swingProgressInt,2,
 field_82174_bp,equipmentDropChances,2,Chances for each equipment piece from dropping when this entity dies.
 field_82175_bq,isSwingInProgress,2,Whether an arm swing is currently in progress.
+field_82176_d,armorProbability,2,Probability to get armor
 field_82177_b,enchantmentProbability,2,An array of probabilities that determines whether a random enchantment should be added to the held item. Indexed by difficulty.
+field_82178_c,armorEnchantmentProbability,2,Probability to get enchanted armor
 field_82179_bU,persistenceRequired,2,Whether this entity should NOT despawn.
+field_82181_as,pickUpLootProability,2,Probability to pick up loot
 field_82182_bS,equipment,2,Equipment (armor and held item) for this entity.
 field_82184_d,aiControlledByPlayer,2,AI task for player control.
 field_82189_bL,lastBuyingPlayer,2,"Last player to trade with this villager, used for aggressivity."
@@ -4231,6 +4230,7 @@ field_82322_p,beaconConfirmButton,2,
 field_82323_o,beacon,2,
 field_82332_a,hangingDirection,2,
 field_82337_e,itemDropChance,2,Chance for this item frame's item to drop from the frame.
+field_82339_as,particleAlpha,2,Particle alpha
 field_82346_a,theContainer,2,Container of this anvil's block.
 field_82354_a,command,2,The command this block will execute when powered.
 field_82365_a,difficulties,2,
@@ -4238,6 +4238,7 @@ field_82373_c,directions,2,
 field_82374_e,facings,2,
 field_82397_a,skullRenderer,2,
 field_82401_a,skeletonHeadModel,2,The Skeleton's head model.
+field_82405_a,renderBlocksInstance,2,
 field_82424_k,bipedArmorFilenamePrefix,2,List of armor texture filenames.
 field_82446_a,renderedBatSize,2,"not actually sure this is size, is not used as of now, but the model would be recreated if the value changed and it seems a good match for a bats size"
 field_82453_b,createFlatWorldGui,2,
@@ -4277,7 +4278,6 @@ field_82527_a,dispenseBehaviorRegistry,2,Registry for all dispense behaviors.
 field_82537_a,sensible,2,"Whether this button is sensible to arrows, used by wooden buttons."
 field_82539_a,types,2,The types of the wall.
 field_82548_a,theChunkCoordinates,2,
-field_82550_a,mcServer,2,
 field_82552_a,mcServer,2,
 field_82553_a,mcServer,2,
 field_82555_a,mcServer,2,
@@ -4354,6 +4354,7 @@ field_82809_c,soilId,2,Block ID of the soil this seed food should be planted on.
 field_82811_a,hangingEntityClass,2,
 field_82822_g,gameVersion,2,Game version for this server.
 field_82823_k,hideAddress,2,Whether to hide the IP address for this server.
+field_82826_b,statusBarLenght,2,
 field_82827_c,bossName,2,
 field_82828_a,healthScale,2,
 field_82843_f,itemFrame,2,"Item frame this stack is on, or null if not on an item frame."
@@ -4385,3 +4386,19 @@ field_82911_a,iconId,2,ID for the item used as icon for this preset.
 field_82915_S,theWorldGenerator,2,
 field_83004_a,theCrashReport,2,
 field_83016_L,theCalendar,2,
+field_83021_g,customMinX,2,Custom minimum X for rendering
+field_83022_l,customMaxZ,2,Custom maximum Z for rendering
+field_83023_m,useCustomBlockBounds,2,Use custom block bounds for the rendering
+field_83024_j,customMaxY,2,Custom maximum Y for rendering
+field_83025_k,customMinZ,2,Custom minimum Z for rendering
+field_83026_h,customMaxX,2,Custom maximum X for rendering
+field_83027_i,customMinY,2,Custom minimum Y for rendering
+field_85045_v,returningStack,2,Used when touchscreen is enabled
+field_85046_u,returningStackTime,2,
+field_85047_t,returningStackDestSlot,2,
+field_85050_q,draggedStack,2,Used when touchscreen is enabled
+field_85051_p,clickedSlot,2,Used when touchscreen is enabled
+field_85180_cf,recordWait,2,
+field_85185_A,touchscreen,2,
+field_90017_e,isMacOs,2,
+field_90044_b,records,2,List of all record items and their names.

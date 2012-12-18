@@ -48,7 +48,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -732,9 +746,11 @@
+@@ -738,9 +752,11 @@
  
              if (!this.field_71454_w)
              {
@@ -60,7 +60,7 @@
              }
  
              GL11.glFlush();
-@@ -1264,10 +1280,14 @@
+@@ -1270,10 +1286,14 @@
  
      public void func_71407_l()
      {
@@ -75,7 +75,7 @@
  
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
-@@ -1724,6 +1744,8 @@
+@@ -1730,6 +1750,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -84,7 +84,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1762,8 +1784,27 @@
+@@ -1768,8 +1790,27 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
@@ -112,7 +112,7 @@
          this.field_71455_al = true;
          this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
  
-@@ -1978,6 +2019,12 @@
+@@ -1984,6 +2025,12 @@
  
      public static void main(String[] p_main_0_)
      {

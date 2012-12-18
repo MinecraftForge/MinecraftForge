@@ -17,7 +17,7 @@ public class ModLoaderPickupNotifier implements IPickupNotifier
     @Override
     public void notifyPickup(EntityItem item, EntityPlayer player)
     {
-        mod.onItemPickup(player, item.field_70294_a);
+        mod.onItemPickup(player, item.func_92014_d());
     }
 
 }

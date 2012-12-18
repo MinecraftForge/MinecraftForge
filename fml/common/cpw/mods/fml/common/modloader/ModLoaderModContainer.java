@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -615,5 +616,10 @@ public class ModLoaderModContainer implements ModContainer
     public VersionRange acceptableMinecraftVersionRange()
     {
         return Loader.instance().getMinecraftModContainer().getStaticVersionRange();
+    }
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        return null;
     }
 }

@@ -1,9 +1,22 @@
 package cpw.mods.fml.common.asm;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream.GetField;
+import java.io.StringReader;
 import java.net.JarURLConnection;
+import java.nio.charset.Charset;
 import java.security.CodeSource;
+import java.security.cert.CertPath;
+import java.security.cert.CertPathValidator;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.PKIXCertPathValidatorResult;
+import java.security.cert.PKIXParameters;
+import java.security.cert.TrustAnchor;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
@@ -21,7 +34,7 @@ import cpw.mods.fml.relauncher.RelaunchClassLoader;
 public class FMLSanityChecker implements IFMLCallHook
 {
     private static final String FMLFINGERPRINT = "AE:F6:54:79:96:E9:1B:D1:59:70:6C:B4:6B:F5:4A:89:C5:CE:08:1D".toLowerCase().replace(":","");
-    private static final String FORGEFINGERPRINT = "".toLowerCase().replace(":", "");
+    private static final String FORGEFINGERPRINT = "DE:4C:F8:A3:F3:BC:15:63:58:10:04:4C:39:24:0B:F9:68:04:EA:7D".toLowerCase().replace(":", "");
     static class MLDetectorClassVisitor extends ClassVisitor
     {
         private boolean foundMarker = false;
@@ -51,23 +64,26 @@ public class FMLSanityChecker implements IFMLCallHook
         if (codeSource.getLocation().getProtocol().equals("jar"))
         {
             Certificate[] certificates = codeSource.getCertificates();
-            if (certificates!=null && certificates.length>0)
+            if (certificates!=null)
             {
-                Certificate certificate = certificates[0];
-                String fingerprint = CertificateHelper.getFingerprint(certificate);
-                if (fingerprint.equals(FMLFINGERPRINT))
+
+                for (Certificate cert : certificates)
                 {
-                    FMLLog.info("Found valid fingerprint for FML: %s", fingerprint);
-                    goodFML = true;
-                }
-                else if (fingerprint.equals(FORGEFINGERPRINT))
-                {
-                    FMLLog.info("Found valid fingerprint for Minecraft Forge: %s", fingerprint);
-                    goodFML = true;
-                }
-                else
-                {
-                    FMLLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
+                    String fingerprint = CertificateHelper.getFingerprint(cert);
+                    if (fingerprint.equals(FMLFINGERPRINT))
+                    {
+                        FMLLog.info("Found valid fingerprint for FML. Certificate fingerprint %s", fingerprint);
+                        goodFML = true;
+                    }
+                    else if (fingerprint.equals(FORGEFINGERPRINT))
+                    {
+                        FMLLog.info("Found valid fingerprint for Minecraft Forge. Certificate fingerprint %s", fingerprint);
+                        goodFML = true;
+                    }
+                    else
+                    {
+                        FMLLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
+                    }
                 }
             }
         }

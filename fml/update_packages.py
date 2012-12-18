@@ -79,7 +79,7 @@ def main():
     
     for cls in pkgs.keys():
         if not cls in classes:
-            print 'Removed Class: %s/%s' % (key, pkgs[key])
+            print 'Removed Class: %s/%s' % (pkgs[cls], cls)
         
     for cls in classes:
         if not cls in pkgs.keys():

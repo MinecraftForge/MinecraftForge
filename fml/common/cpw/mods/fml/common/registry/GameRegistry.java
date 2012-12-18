@@ -250,7 +250,7 @@ public class GameRegistry
 
     public static void addRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_77594_a().func_77595_a(output, params);
+        CraftingManager.func_77594_a().func_92051_a(output, params);
     }
 
     public static void addShapelessRecipe(ItemStack output, Object... params)

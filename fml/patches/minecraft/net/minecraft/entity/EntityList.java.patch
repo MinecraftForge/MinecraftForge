@@ -10,7 +10,7 @@
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.boss.EntityWither;
  import net.minecraft.entity.item.EntityBoat;
-@@ -102,9 +105,10 @@
+@@ -103,9 +106,10 @@
      {
          Entity var2 = null;
  
@@ -22,7 +22,7 @@
  
              if (var3 != null)
              {
-@@ -118,7 +122,17 @@
+@@ -119,7 +123,17 @@
  
          if (var2 != null)
          {

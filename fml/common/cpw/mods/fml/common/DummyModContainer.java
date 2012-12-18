@@ -1,6 +1,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -137,5 +138,11 @@ public class DummyModContainer implements ModContainer
     public VersionRange acceptableMinecraftVersionRange()
     {
         return Loader.instance().getMinecraftModContainer().getStaticVersionRange();
+    }
+
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        return null;
     }
 }
