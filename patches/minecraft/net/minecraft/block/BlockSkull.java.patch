@@ -21,7 +21,16 @@
       * Called when the block is attempted to be harvested
       */
      public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
-@@ -156,26 +153,32 @@
+@@ -148,6 +145,8 @@
+             par1World.setBlockMetadataWithNotify(par2, par3, par4, par5);
+         }
+ 
++        dropBlockAsItem(par1World, par2, par3, par4, par5, 0);
++
+         super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
+     }
+ 
+@@ -156,26 +155,31 @@
       */
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
@@ -45,7 +54,6 @@
 -        }
 -    }
 -
-+        dropBlockAsItem(par1World, par2, par3, par4, par5, par6);
 +        super.breakBlock(par1World, par2, par3, par4, par5, par6);
 +    }
 +
