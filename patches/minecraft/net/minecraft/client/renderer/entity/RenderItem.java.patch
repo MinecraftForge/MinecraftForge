@@ -83,7 +83,7 @@
                      GL11.glPopMatrix();
                  }
              }
-@@ -136,12 +122,11 @@
+@@ -136,12 +122,12 @@
                          GL11.glScalef(0.5F, 0.5F, 0.5F);
                      }
  
@@ -91,6 +91,7 @@
 -
 -                    for (var15 = 0; var15 <= 1; ++var15)
 -                    {
++
 +                    for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
 +                    {
 +                        this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
@@ -100,7 +101,7 @@
                          var17 = 1.0F;
  
                          if (this.field_77024_a)
-@@ -173,14 +158,7 @@
+@@ -173,14 +159,7 @@
  
                      var15 = var10.getIconIndex();
  
@@ -116,7 +117,7 @@
  
                      if (this.field_77024_a)
                      {
-@@ -232,39 +210,27 @@
+@@ -232,39 +211,27 @@
              var17 = 0.021875F;
              ItemStack var18 = par1EntityItem.func_92014_d();
              int var19 = var18.stackSize;
@@ -169,7 +170,7 @@
  
                  GL11.glColor4f(par5, par6, par7, 1.0F);
                  ItemRenderer.renderItemIn2D(var8, var10, var11, var9, var12, var16);
-@@ -348,10 +314,10 @@
+@@ -348,10 +315,10 @@
          float var13;
          float var16;
  
@@ -183,7 +184,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -382,11 +348,11 @@
+@@ -382,11 +349,11 @@
              if (Item.itemsList[var6].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -192,15 +193,15 @@
 -                for (var9 = 0; var9 <= 1; ++var9)
 -                {
 -                    var10 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var9);
++                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[var6].getTextureFile()));
 +
 +                for (var9 = 0; var9 < Item.itemsList[var6].getRenderPasses(var7); ++var9)
 +                {
-+                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[var6].getTextureFile()));
 +                    var10 = Item.itemsList[var6].getIconIndex(par3ItemStack, var9);
                      int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
                      var12 = (float)(var11 >> 16 & 255) / 255.0F;
                      var13 = (float)(var11 >> 8 & 255) / 255.0F;
-@@ -406,14 +372,7 @@
+@@ -406,14 +373,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
@@ -216,7 +217,7 @@
  
                  var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
                  float var17 = (float)(var9 >> 16 & 255) / 255.0F;
-@@ -440,7 +399,10 @@
+@@ -440,7 +400,10 @@
      {
          if (par3ItemStack != null)
          {
@@ -228,7 +229,7 @@
  
              if (par3ItemStack != null && par3ItemStack.hasEffect())
              {
-@@ -578,4 +540,77 @@
+@@ -578,4 +541,77 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

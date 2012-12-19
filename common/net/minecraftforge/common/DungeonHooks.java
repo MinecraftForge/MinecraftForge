@@ -199,7 +199,7 @@ public class DungeonHooks
         }
         return null;
     }
-    
+
     public static class DungeonLoot extends WeightedRandomItem
     {
         private ItemStack itemStack;
@@ -234,15 +234,15 @@ public class DungeonHooks
 
         public boolean equals(ItemStack item, int min, int max)
         {
-            return (min == minCount && max == maxCount && item.isItemEqual(this.itemStack));
+            return (min == minCount && max == maxCount && item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, this.itemStack));
         }
 
         public boolean equals(ItemStack item)
         {
-            return item.isItemEqual(this.itemStack);
+            return item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, this.itemStack);
         }
     }
-    
+
     public static class DungeonMob extends WeightedRandomItem
     {
         public String type;
@@ -251,7 +251,7 @@ public class DungeonHooks
             super(weight);
             this.type = type;
         }
-        
+
         @Override
         public boolean equals(Object target)
         {
