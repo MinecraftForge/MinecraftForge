@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityBrewingStand;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.container.ContainerInteractEvent;
+ 
+ public class ContainerBrewingStand extends Container
+ {
+@@ -75,7 +78,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
+-        return this.tileBrewingStand.isUseableByPlayer(par1EntityPlayer);
++        ContainerInteractEvent event = new ContainerInteractEvent(this, par1EntityPlayer);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        return event.interact == Event.Result.ALLOW ? true : event.interact == Event.Result.DEFAULT ? this.tileBrewingStand.isUseableByPlayer(par1EntityPlayer) : false;
+     }
+ 
+     /**

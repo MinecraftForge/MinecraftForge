@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerPlayer.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerPlayer.java
+@@ -5,6 +5,9 @@
+ import net.minecraft.item.ItemArmor;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.CraftingManager;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.container.ContainerInteractEvent;
+ 
+ public class ContainerPlayer extends Container
+ {
+@@ -83,9 +86,15 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
+-        return true;
++        ContainerInteractEvent event = new ContainerInteractEvent(this, par1EntityPlayer);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        return event.interact == Event.Result.ALLOW ? true : event.interact == Event.Result.DEFAULT ? true : false;
+     }
+-
++    
+     /**
+      * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
+      */

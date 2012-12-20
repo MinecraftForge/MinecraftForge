@@ -1,6 +1,31 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerFurnace.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerFurnace.java
-@@ -125,7 +125,7 @@
+@@ -7,6 +7,9 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.FurnaceRecipes;
+ import net.minecraft.tileentity.TileEntityFurnace;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.container.ContainerInteractEvent;
+ 
+ public class ContainerFurnace extends Container
+ {
+@@ -98,7 +101,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
+-        return this.furnace.isUseableByPlayer(par1EntityPlayer);
++        ContainerInteractEvent event = new ContainerInteractEvent(this, par1EntityPlayer);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        return event.interact == Event.Result.ALLOW ? true : event.interact == Event.Result.DEFAULT ? this.furnace.isUseableByPlayer(par1EntityPlayer) : false;
+     }
+ 
+     /**
+@@ -125,7 +134,7 @@
              }
              else if (par2 != 1 && par2 != 0)
              {

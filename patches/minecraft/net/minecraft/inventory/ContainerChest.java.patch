@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerChest.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerChest.java
+@@ -2,6 +2,9 @@
+ 
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.item.ItemStack;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.container.ContainerInteractEvent;
+ 
+ public class ContainerChest extends Container
+ {
+@@ -41,7 +44,13 @@
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
+-        return this.lowerChestInventory.isUseableByPlayer(par1EntityPlayer);
++        ContainerInteractEvent event = new ContainerInteractEvent(this, par1EntityPlayer);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return false;
++        }
++        return event.interact == Event.Result.ALLOW ? true : event.interact == Event.Result.DEFAULT ? this.lowerChestInventory.isUseableByPlayer(par1EntityPlayer) : false;
+     }
+ 
+     /**
