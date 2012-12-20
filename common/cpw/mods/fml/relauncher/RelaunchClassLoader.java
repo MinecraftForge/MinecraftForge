@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.Attributes.Name;
@@ -40,6 +41,8 @@ public class RelaunchClassLoader extends URLClassLoader
     private Map<Package,Manifest> packageManifests = new HashMap<Package,Manifest>();
 
     private static Manifest EMPTY = new Manifest();
+    
+    private static final String[] RESERVED = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
     public RelaunchClassLoader(URL[] sources)
     {
@@ -271,6 +274,21 @@ public class RelaunchClassLoader extends URLClassLoader
 
     public byte[] getClassBytes(String name) throws IOException
     {
+        if (name.indexOf('.') == -1)
+        {
+            for (String res : RESERVED)
+            {
+                if (name.toUpperCase(Locale.ENGLISH).startsWith(res))
+                {
+                    byte[] data = getClassBytes("_" + name);
+                    if (data != null)
+                    {
+                        return data;
+                    }
+                }
+            }
+        }
+
         InputStream classStream = null;
         try
         {
