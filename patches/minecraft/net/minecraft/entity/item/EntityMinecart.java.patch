@@ -23,7 +23,7 @@
      /** Array of item stacks stored in minecart (for storage minecarts). */
 @@ -52,6 +59,25 @@
      @SideOnly(Side.CLIENT)
-     public double velocityZ;
+     protected double velocityZ;
  
 +    /* Forge: Minecart Compatibility Layer Integration. */
 +    public static float defaultMaxSpeedRail = 0.4f;
