@@ -180,9 +180,9 @@
 +        Block block = Block.blocksList[var11];
 +        boolean result = false;
 +
-+        if (block != null)
++        if (block != null && (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null))
 +        {
-+            if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && event.useBlock != Event.Result.DENY)
++            if (event.useBlock != Event.Result.DENY)
 +            {
 +                result = block.onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
 +            }
