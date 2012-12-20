@@ -106,7 +106,25 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1594,6 +1605,9 @@
+@@ -1554,7 +1565,16 @@
+                 except KeyError:
+                     self.logger.error('* File %s not found for %s', out_class, in_class)
+                 except IOError:
+-                    self.logger.error('* File %s failed extracting for %s', out_class, in_class)
++                    if not '/' in out_class:
++                        try:
++                            f = open(os.path.join(outpathlk[side], '_' + out_class, 'wb'))
++                            f.write(zipjar.read(out_class))
++                            f.close()
++                            self.logger.info('> Outputted %s to %s as %s', in_class.ljust(35), outpathlk[side], '_' + out_class)
++                        except IOError:
++                            self.logger.error('* File %s failed extracting for %s', out_class, in_class)
++                    else:
++                        self.logger.error('* File %s failed extracting for %s', out_class, in_class)
+ 
+     def downloadupdates(self, force=False):
+         if not self.updateurl:
+@@ -1594,6 +1614,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -116,7 +134,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1614,6 +1628,9 @@
+@@ -1614,6 +1637,9 @@
          md5reoblk = {CLIENT: self.md5reobfclient, SERVER: self.md5reobfserver}
          outpathlk = {CLIENT: self.srcmodclient, SERVER: self.srcmodserver}
          src = {CLIENT: self.srcclient, SERVER: self.srcserver}
@@ -126,7 +144,7 @@
  
          # HINT: We need a table for the old md5 and the new ones
          md5table = {}
-@@ -1656,3 +1673,6 @@
+@@ -1656,3 +1682,6 @@
                  except IOError:
                      self.logger.error('* File %s copy failed', in_class)
  
