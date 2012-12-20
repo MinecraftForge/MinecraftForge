@@ -131,34 +131,30 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -338,35 +386,65 @@
+@@ -338,35 +386,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
 -        int var11;
+-
+-        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
+-        {
+-            var11 = par2World.getBlockId(par4, par5, par6);
+-
+-            if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
+-            {
+-                return true;
+-            }
+-        }
+-
+-        if (par3ItemStack == null)
+-        {
 +        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
 +        if (event.isCanceled())
 +        {
 +            thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
-+            return false;
-+        }
-+
-+        int var11 = par2World.getBlockId(par4, par5, par6);
- 
-         if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
-         {
--            var11 = par2World.getBlockId(par4, par5, par6);
--
-             if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
-             {
-                 return true;
-             }
+             return false;
          }
- 
--        if (par3ItemStack == null)
--        {
--            return false;
--        }
 -        else if (this.isCreative())
 -        {
 -            var11 = par3ItemStack.getItemDamage();
@@ -172,6 +168,7 @@
 -        {
 -            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
 -        }
++
 +        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
 +        if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
 +        {
@@ -179,12 +176,13 @@
 +            return true;
 +        }
 +
++        int var11 = par2World.getBlockId(par4, par5, par6);
 +        Block block = Block.blocksList[var11];
 +        boolean result = false;
 +
 +        if (block != null)
 +        {
-+            if (event.useBlock != Event.Result.DENY)
++            if ((!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null) && event.useBlock != Event.Result.DENY)
 +            {
 +                result = block.onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
 +            }
@@ -217,7 +215,7 @@
      }
  
      /**
-@@ -376,4 +454,13 @@
+@@ -376,4 +445,13 @@
      {
          this.theWorld = par1WorldServer;
      }
