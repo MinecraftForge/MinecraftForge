@@ -21,10 +21,10 @@
          this.disconnected = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -806,7 +811,11 @@
+@@ -807,7 +812,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
-         FMLNetworkHandler.onConnectionClosed(this.netManager, this.getPlayer());
+         par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
 -        this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
 +        ClientChatReceivedEvent event = new ClientChatReceivedEvent(par1Packet3Chat.message);
 +        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
@@ -34,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1188,6 +1197,10 @@
+@@ -1189,6 +1198,10 @@
                  {
                      var2.readFromNBT(par1Packet132TileEntityData.customParam1);
                  }
