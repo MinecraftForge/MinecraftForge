@@ -5,8 +5,7 @@ import net.minecraftforge.event.Event;
 
 public class ContainerEvent extends Event
 {
-    protected Container container;
-    
+    public final Container container;
     public ContainerEvent(Container container)
     {
         this.container = container;

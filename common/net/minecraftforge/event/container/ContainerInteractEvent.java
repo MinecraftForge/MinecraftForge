@@ -11,15 +11,14 @@ import net.minecraftforge.event.Event.Result;
 @Cancelable
 public class ContainerInteractEvent extends ContainerEvent
 {
-    protected World world;
-    protected EntityPlayer entityplayer;
+    public final EntityPlayer entityPlayer;
     
     public Result interact = DEFAULT;
 
     public ContainerInteractEvent(Container container, EntityPlayer entityplayer)
     {
         super(container);
-        this.entityplayer = entityplayer;
+        this.entityPlayer = entityplayer;
     }
     
     @Override
