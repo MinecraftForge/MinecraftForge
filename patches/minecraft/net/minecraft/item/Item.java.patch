@@ -18,17 +18,16 @@
  
  public class Item
  {
-@@ -229,6 +232,9 @@
- 
+@@ -230,18 +233,26 @@
      /** full name of item from language file */
      private String itemName;
-+    
+ 
 +    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;
- 
++
      public Item(int par1)
      {
-@@ -236,12 +242,17 @@
+         this.shiftedIndex = 256 + par1;
  
          if (itemsList[256 + par1] != null)
          {
@@ -39,7 +38,7 @@
          itemsList[256 + par1] = this;
  
          GameData.newItemAdded(this);
-+        
++
 +        if (!(this instanceof ItemBlock))
 +        {
 +            isDefaultTexture = "/gui/items.png".equals(getTextureFile());
@@ -58,7 +57,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +716,289 @@
+@@ -701,4 +716,304 @@
      {
          StatList.initStats();
      }
@@ -331,7 +330,7 @@
 +    /**
 +     * Generates the base Random item for a specific instance of the chest gen,
 +     * Enchanted books use this to pick a random enchantment.
-+     * 
++     *
 +     * @param chest The chest category to generate for
 +     * @param rnd World RNG
 +     * @param original Original result registered with the chest gen hooks.
@@ -341,10 +340,25 @@
 +    {
 +        if (this instanceof ItemEnchantedBook)
 +        {
-+            return ((ItemEnchantedBook)this).func_92058_a(rnd, 
-+                    original.theMinimumChanceToGenerateItem, 
++            return ((ItemEnchantedBook)this).func_92058_a(rnd,
++                    original.theMinimumChanceToGenerateItem,
 +                    original.theMaximumChanceToGenerateItem, original.itemWeight);
 +        }
 +        return original;
++    }
++
++    /**
++     *
++     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
++     *
++     * @param par2World
++     * @param par4
++     * @param par5
++     * @param par6
++     * @return
++     */
++    public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6)
++    {
++        return false;
 +    }
  }

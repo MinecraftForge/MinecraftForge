@@ -180,7 +180,7 @@
 +        Block block = Block.blocksList[var11];
 +        boolean result = false;
 +
-+        if (block != null && (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null))
++        if (block != null && (!par1EntityPlayer.isSneaking() || ( par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))))
 +        {
 +            if (event.useBlock != Event.Result.DENY)
 +            {
