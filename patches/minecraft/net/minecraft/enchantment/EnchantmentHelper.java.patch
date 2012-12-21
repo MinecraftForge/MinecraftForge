@@ -5,7 +5,7 @@
              Enchantment var8 = var5[var7];
  
 -            if (var8 != null && (var8.type.canEnchantItem(var2) || var4))
-+            if (var8 != null && (var8.func_92037_a(par1ItemStack) || var4))
++            if (var8 != null && (var8.canApplyAtEnchantingTable(par1ItemStack) || var4))
              {
                  for (int var9 = var8.getMinLevel(); var9 <= var8.getMaxLevel(); ++var9)
                  {
