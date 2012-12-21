@@ -1,0 +1,37 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSeedFood.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSeedFood.java
+@@ -2,8 +2,10 @@
+ 
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.IPlantable;
+ 
+-public class ItemSeedFood extends ItemFood
++public class ItemSeedFood extends ItemFood implements IPlantable
+ {
+     /** Block ID of the crop this seed food should place. */
+     private int cropId;
+@@ -48,4 +50,22 @@
+             return false;
+         }
+     }
++
++    @Override
++    public EnumPlantType getPlantType(World world, int x, int y, int z)
++    {
++        return EnumPlantType.Crop;
++    }
++
++    @Override
++    public int getPlantID(World world, int x, int y, int z)
++    {
++        return cropId;
++    }
++
++    @Override
++    public int getPlantMetadata(World world, int x, int y, int z)
++    {
++        return 0;
++    }
+ }
