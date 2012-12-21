@@ -33,20 +33,27 @@
  
                  if (var8)
                  {
-@@ -345,6 +355,13 @@
-             }
-         }
- 
-+        if (par3ItemStack != null && 
-+            par3ItemStack.getItem() != null && 
-+            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
+@@ -334,6 +344,12 @@
+         float var11 = (float)par8Vec3.zCoord - (float)par6;
+         boolean var12 = false;
+         int var13;
++        if (par3ItemStack != null &&
++                par3ItemStack.getItem() != null &&
++                par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, var9, var10, var11))
 +        {
 +                return true;
 +        }
+ 
+         if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
+         {
+@@ -344,6 +360,7 @@
+                 var12 = true;
+             }
+         }
 +
+ 
          if (!var12 && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
          {
-             ItemBlock var16 = (ItemBlock)par3ItemStack.getItem();
 @@ -376,7 +393,15 @@
          }
          else
