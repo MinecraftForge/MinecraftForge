@@ -33,7 +33,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -267,4 +274,277 @@
+@@ -267,4 +274,313 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
@@ -291,6 +291,42 @@
 +    public double getHorizon()
 +    {
 +        return worldObj.worldInfo.getTerrainType().getHorizon(worldObj);
++    }
++
++    public float getWeightedThunderStrength(float par1)
++    {
++        return (worldObj.prevThunderingStrength + (worldObj.thunderingStrength - worldObj.prevThunderingStrength) * par1) * worldObj.getRainStrength(par1);
++    }
++
++    /**
++     * Not sure about this actually. Reverting this one myself.
++     */
++    public float getRainStrength(float par1)
++    {
++        return worldObj.prevRainingStrength + (worldObj.rainingStrength - worldObj.prevRainingStrength) * par1;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setRainStrength(float par1)
++    {
++        worldObj.prevRainingStrength = par1;
++        worldObj.rainingStrength = par1;
++    }
++
++    /**
++     * Returns true if the current thunder strength (weighted with the rain strength) is greater than 0.9
++     */
++    public boolean isThundering()
++    {
++        return (double)this.getWeightedThunderStrength(1.0F) > 0.9D;
++    }
++
++    /**
++     * Returns true if the current rain strength is greater than 0.2
++     */
++    public boolean isRaining()
++    {
++        return (double)this.getRainStrength(1.0F) > 0.2D;
 +    }
 +
 +    public void resetRainAndThunder()
