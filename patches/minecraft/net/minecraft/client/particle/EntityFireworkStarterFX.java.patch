@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/client/particle/EntityFireworkStarterFX.java
++++ ../src_work/minecraft/net/minecraft/client/particle/EntityFireworkStarterFX.java
+@@ -30,11 +30,11 @@
+         {
+             this.field_92039_az = par15NBTTagCompound.getTagList("Explosions");
+ 
+-            if (this.field_92039_az.tagCount() == 0)
++            if (this.field_92039_az != null && this.field_92039_az.tagCount() == 0)
+             {
+                 this.field_92039_az = null;
+             }
+-            else
++            else if (this.field_92039_az != null)
+             {
+                 this.particleMaxAge = this.field_92039_az.tagCount() * 2 - 1;
+ 
