@@ -673,7 +673,51 @@
      {
          return true;
      }
-@@ -4077,8 +4204,7 @@
+@@ -4017,7 +4144,7 @@
+ 
+     public float getWeightedThunderStrength(float par1)
+     {
+-        return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * par1) * this.getRainStrength(par1);
++        return this.provider.getWeightedThunderStrength(par1);
+     }
+ 
+     /**
+@@ -4025,14 +4152,13 @@
+      */
+     public float getRainStrength(float par1)
+     {
+-        return this.prevRainingStrength + (this.rainingStrength - this.prevRainingStrength) * par1;
++        return this.provider.getRainStrength(par1);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public void setRainStrength(float par1)
+     {
+-        this.prevRainingStrength = par1;
+-        this.rainingStrength = par1;
++        this.provider.setRainStrength(par1);
+     }
+ 
+     /**
+@@ -4040,7 +4166,7 @@
+      */
+     public boolean isThundering()
+     {
+-        return (double)this.getWeightedThunderStrength(1.0F) > 0.9D;
++        return this.provider.isThundering();
+     }
+ 
+     /**
+@@ -4048,7 +4174,7 @@
+      */
+     public boolean isRaining()
+     {
+-        return (double)this.getRainStrength(1.0F) > 0.2D;
++        return this.provider.isRaining();
+     }
+ 
+     public boolean canLightningStrikeAt(int par1, int par2, int par3)
+@@ -4077,8 +4203,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -683,7 +727,7 @@
      }
  
      /**
-@@ -4153,7 +4279,7 @@
+@@ -4153,7 +4278,7 @@
       */
      public int getHeight()
      {
@@ -692,7 +736,7 @@
      }
  
      /**
-@@ -4161,7 +4287,7 @@
+@@ -4161,7 +4286,7 @@
       */
      public int getActualHeight()
      {
@@ -701,7 +745,7 @@
      }
  
      public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-@@ -4204,7 +4330,7 @@
+@@ -4204,7 +4329,7 @@
       */
      public double getHorizon()
      {
@@ -710,7 +754,7 @@
      }
  
      /**
-@@ -4265,4 +4391,75 @@
+@@ -4265,4 +4390,75 @@
  
      @SideOnly(Side.CLIENT)
      public void func_92088_a(double par1, double par3, double par5, double par7, double par9, double par11, NBTTagCompound par13NBTTagCompound) {}
