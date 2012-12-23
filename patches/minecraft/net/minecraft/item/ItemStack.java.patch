@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -238,7 +238,7 @@
+      */
+     public int getItemDamageForDisplay()
+     {
+-        return this.itemDamage;
++        return Item.itemsList[this.itemID].getItemDamageForDisplay(this);
+     }
+ 
+     /**

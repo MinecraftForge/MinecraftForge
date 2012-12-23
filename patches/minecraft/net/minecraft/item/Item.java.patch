@@ -57,7 +57,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +716,304 @@
+@@ -701,4 +716,326 @@
      {
          StatList.initStats();
      }
@@ -360,5 +360,27 @@
 +    public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6)
 +    {
 +        return false;
++    }
++
++    /**
++    *
++    * Meta sensitive version of getItemEnchantability
++    *
++    * @param metadata
++    * @return
++    */
++    public int getItemEnchantability(int itemDamage) {
++        return getItemEnchantability();
++    }
++
++    /**
++    *
++    * getItemDamageForDisplay that is changable. Should allow for meta sensitive items to keep a damage counter.
++    *
++    * @param the ItemStack that is getting asked
++    * @return
++    */
++    public int getItemDamageForDisplay(ItemStack itemStack) {
++        return itemStack.getItemDamage();
 +    }
  }
