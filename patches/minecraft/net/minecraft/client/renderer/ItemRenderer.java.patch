@@ -20,7 +20,7 @@
  
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
-@@ -54,27 +62,21 @@
+@@ -54,30 +62,24 @@
      {
          GL11.glPushMatrix();
  
@@ -56,10 +56,14 @@
 -            {
 -                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/items.png"));
 -            }
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
- 
+-
              Tessellator var5 = Tessellator.instance;
              int var6 = par1EntityLiving.getItemIcon(par2ItemStack, par3);
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
++            
+             float var7 = ((float)(var6 % 16 * 16) + 0.0F) / 256.0F;
+             float var8 = ((float)(var6 % 16 * 16) + 15.99F) / 256.0F;
+             float var9 = ((float)(var6 / 16 * 16) + 0.0F) / 256.0F;
 @@ -279,8 +281,9 @@
          Render var24;
          RenderPlayer var26;
