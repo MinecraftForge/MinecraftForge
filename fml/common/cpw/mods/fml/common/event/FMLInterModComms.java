@@ -17,8 +17,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PostInit;
@@ -46,6 +48,7 @@ public class FMLInterModComms {
         public void applyModContainer(ModContainer activeContainer)
         {
             currentList = ImmutableList.copyOf(modMessages.removeAll(activeContainer.getModId()));
+            FMLLog.finest("Attempting to deliver %d IMC messages to mod %s", currentList.size(), activeContainer.getModId());
         }
 
         private ImmutableList<IMCMessage> currentList;
@@ -112,6 +115,26 @@ public class FMLInterModComms {
         {
             return (ItemStack) value;
         }
+
+        public Class<?> getMessageType()
+        {
+            return value.getClass();
+        }
+
+        public boolean isStringMessage()
+        {
+            return String.class.isAssignableFrom(getMessageType());
+        }
+
+        public boolean isItemStackMessage()
+        {
+            return ItemStack.class.isAssignableFrom(getMessageType());
+        }
+
+        public boolean isNBTMessage()
+        {
+            return NBTTagCompound.class.isAssignableFrom(getMessageType());
+        }
     }
 
     public static boolean sendMessage(String modId, String key, NBTTagCompound value)
@@ -154,7 +177,14 @@ public class FMLInterModComms {
     }
     private static void enqueueMessage(Object sourceMod, String modTarget, IMCMessage message)
     {
-        ModContainer mc = FMLCommonHandler.instance().findContainerFor(sourceMod);
+        ModContainer mc;
+        if (sourceMod instanceof ModContainer) {
+            mc = (ModContainer) sourceMod;
+        }
+        else
+        {
+            mc = FMLCommonHandler.instance().findContainerFor(sourceMod);
+        }
         if (mc != null && Loader.isModLoaded(modTarget))
         {
             message.setSender(mc);
@@ -162,6 +192,11 @@ public class FMLInterModComms {
         }
     }
 
+    /**
+     * Retrieve any pending runtime messages for the mod
+     * @param forMod The {@link Instance} of the Mod to fetch messages for
+     * @return any messages - the collection will never be null
+     */
     public static ImmutableList<IMCMessage> fetchRuntimeMessages(Object forMod)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(forMod);
