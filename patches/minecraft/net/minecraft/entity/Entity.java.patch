@@ -56,7 +56,24 @@
          }
  
          this.firstUpdate = false;
-@@ -1514,6 +1529,15 @@
+@@ -847,6 +862,8 @@
+                     par5 = var27;
+                     this.boundingBox.setBB(var29);
+                 }
++                /* Fixes a vanilla bug where the player view would dip when stepping between certain blocks
++                 * https://mojang.atlassian.net/browse/MC-1594
+                 else
+                 {
+                     double var40 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
+@@ -856,6 +873,7 @@
+                         this.ySize = (float)((double)this.ySize + var40 + 0.01D);
+                     }
+                 }
++                */
+             }
+ 
+             this.worldObj.theProfiler.endSection();
+@@ -1514,6 +1532,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.field_83001_bt);
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
@@ -72,7 +89,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
          }
          catch (Throwable var5)
-@@ -1568,6 +1592,14 @@
+@@ -1568,6 +1595,14 @@
              this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -87,7 +104,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable var5)
-@@ -1662,7 +1694,14 @@
+@@ -1662,7 +1697,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -103,7 +120,7 @@
          return var3;
      }
  
-@@ -2021,7 +2060,7 @@
+@@ -2021,7 +2063,7 @@
       */
      public boolean isRiding()
      {
@@ -112,7 +129,7 @@
      }
  
      /**
-@@ -2356,7 +2395,7 @@
+@@ -2356,7 +2398,7 @@
  
      public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
@@ -121,7 +138,7 @@
      }
  
      public int func_82143_as()
-@@ -2396,4 +2435,84 @@
+@@ -2396,4 +2438,84 @@
      {
          return this.isBurning();
      }
