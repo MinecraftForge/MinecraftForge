@@ -87,7 +87,10 @@ public class GameData {
             FMLLog.info("[ItemTracker] The mod %s is overwriting existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
         }
         idMap.put(item.field_77779_bT, itemData);
-        FMLLog.fine("[ItemTracker] Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
+        if (!"Minecraft".equals(mc.getModId()))
+        {
+            FMLLog.fine("[ItemTracker] Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
+        }
     }
 
     public static void validateWorldSave(Set<ItemData> worldSaveItems)
