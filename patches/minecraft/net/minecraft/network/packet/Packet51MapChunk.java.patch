@@ -1,16 +1,56 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
-@@ -103,6 +103,13 @@
+@@ -57,16 +57,19 @@
+         this.zCh = par1Chunk.zPosition;
+         this.includeInitialize = par2;
+         Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
+-        Deflater var5 = new Deflater(-1);
+         this.yChMax = var4.field_74581_c;
+         this.yChMin = var4.field_74580_b;
+-
++        this.field_73596_g = var4.field_74582_a;
++    }
++
++    private void deflate()
++    {
++        Deflater var5 = new Deflater(-1);
+         try
+         {
+-            this.field_73596_g = var4.field_74582_a;
+-            var5.setInput(var4.field_74582_a, 0, var4.field_74582_a.length);
++            var5.setInput(field_73596_g, 0, field_73596_g.length);
+             var5.finish();
+-            this.chunkData = new byte[var4.field_74582_a.length];
++            this.chunkData = new byte[field_73596_g.length];
+             this.tempLength = var5.deflate(this.chunkData);
+         }
+         finally
+@@ -95,13 +98,16 @@
+         par1DataInputStream.readFully(temp, 0, this.tempLength);
+         int var2 = 0;
+         int var3;
++        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
+ 
+         for (var3 = 0; var3 < 16; ++var3)
+         {
+             var2 += this.yChMin >> var3 & 1;
++            msb  += this.yChMax >> var3 & 1;
+         }
  
          var3 = 12288 * var2;
++        var3 += 2048 * msb;
  
-+        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
-+        for (int x = 0; x < 16; x++)
-+        {
-+            msb += (yChMax >> x) & 1;
-+        }
-+        var3 += (2048 * msb);
-+
          if (this.includeInitialize)
          {
-             var3 += 256;
+@@ -131,6 +137,11 @@
+      */
+     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     {
++        if (chunkData == null)
++        {
++            deflate();
++        }
++
+         par1DataOutputStream.writeInt(this.xCh);
+         par1DataOutputStream.writeInt(this.zCh);
+         par1DataOutputStream.writeBoolean(this.includeInitialize);

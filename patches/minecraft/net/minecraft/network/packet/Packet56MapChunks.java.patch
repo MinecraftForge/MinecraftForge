@@ -1,0 +1,67 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet56MapChunks.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet56MapChunks.java
+@@ -22,6 +22,7 @@
+     private int field_73585_g;
+     private boolean field_92024_h;
+     private static byte[] field_73591_h = new byte[0];
++    private int maxLen = 0;
+ 
+     public Packet56MapChunks() {}
+ 
+@@ -40,15 +41,6 @@
+         {
+             Chunk var5 = (Chunk)par1List.get(var4);
+             Packet51MapChunkData var6 = Packet51MapChunk.getMapChunkData(var5, true, 65535);
+-
+-            if (field_73591_h.length < var3 + var6.field_74582_a.length)
+-            {
+-                byte[] var7 = new byte[var3 + var6.field_74582_a.length];
+-                System.arraycopy(field_73591_h, 0, var7, 0, field_73591_h.length);
+-                field_73591_h = var7;
+-            }
+-
+-            System.arraycopy(var6.field_74582_a, 0, field_73591_h, var3, var6.field_74582_a.length);
+             var3 += var6.field_74582_a.length;
+             this.field_73589_c[var4] = var5.xPosition;
+             this.field_73586_d[var4] = var5.zPosition;
+@@ -57,13 +49,26 @@
+             this.field_73584_f[var4] = var6.field_74582_a;
+         }
+ 
++        maxLen = var3;
++    }
++
++    private void deflate()
++    {
++        byte[] data = new byte[maxLen];
++        int offset = 0;
++        for (int x = 0; x < field_73584_f.length; x++)
++        {
++            System.arraycopy(field_73584_f[x], 0, data, offset, field_73584_f[x].length);
++            offset += field_73584_f[x].length;
++        }
++        
+         Deflater var11 = new Deflater(-1);
+ 
+         try
+         {
+-            var11.setInput(field_73591_h, 0, var3);
++            var11.setInput(data, 0, maxLen);
+             var11.finish();
+-            this.field_73587_e = new byte[var3];
++            this.field_73587_e = new byte[maxLen];
+             this.field_73585_g = var11.deflate(this.field_73587_e);
+         }
+         finally
+@@ -146,6 +151,11 @@
+      */
+     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     {
++        if (field_73587_e == null)
++        {
++            deflate();
++        }
++
+         par1DataOutputStream.writeShort(this.field_73589_c.length);
+         par1DataOutputStream.writeInt(this.field_73585_g);
+         par1DataOutputStream.writeBoolean(this.field_92024_h);
