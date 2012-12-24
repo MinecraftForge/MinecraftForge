@@ -1,16 +1,64 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
-@@ -103,6 +103,13 @@
+@@ -56,23 +56,17 @@
+         this.xCh = par1Chunk.xPosition;
+         this.zCh = par1Chunk.zPosition;
+         this.includeInitialize = par2;
+-        Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
+-        Deflater var5 = new Deflater(-1);
+-        this.yChMax = var4.field_74581_c;
+-        this.yChMin = var4.field_74580_b;
+-
+-        try
+-        {
+-            this.field_73596_g = var4.field_74582_a;
+-            var5.setInput(var4.field_74582_a, 0, var4.field_74582_a.length);
+-            var5.finish();
+-            this.chunkData = new byte[var4.field_74582_a.length];
+-            this.tempLength = var5.deflate(this.chunkData);
+-        }
+-        finally
+-        {
+-            var5.end();
+-        }
++        
++        Packet51MapChunkData newChunkData = getMapChunkData(par1Chunk, par2, par3);
++        
++        yChMax = newChunkData.field_74581_c;
++        yChMin = newChunkData.field_74580_b;
++        field_73596_g = newChunkData.field_74582_a;
++        
++        // copy the uncompressed data, the compression will be done in writePacketData in the network thread
++        chunkData = new byte[newChunkData.field_74582_a.length];
++        
++        System.arraycopy(newChunkData.field_74582_a, 0, chunkData, 0, newChunkData.field_74582_a.length);
+     }
  
-         var3 = 12288 * var2;
- 
-+        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
-+        for (int x = 0; x < 16; x++)
+     /**
+@@ -131,6 +125,26 @@
+      */
+     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     {
++        if (tempLength == 0) // just in case writePacketData gets called multiple times
 +        {
-+            msb += (yChMax >> x) & 1;
-+        }
-+        var3 += (2048 * msb);
++            Deflater deflater = new Deflater(Deflater.DEFAULT_COMPRESSION);
 +
-         if (this.includeInitialize)
-         {
-             var3 += 256;
++            try
++            {
++                deflater.setInput(chunkData, 0, chunkData.length);
++                deflater.finish();
++                
++                byte[] compressedChunkData = new byte[chunkData.length];
++                
++                tempLength = deflater.deflate(compressedChunkData);
++                chunkData = compressedChunkData;
++            }
++            finally
++            {
++                deflater.end();
++            }
++        }
++        
+         par1DataOutputStream.writeInt(this.xCh);
+         par1DataOutputStream.writeInt(this.zCh);
+         par1DataOutputStream.writeBoolean(this.includeInitialize);
