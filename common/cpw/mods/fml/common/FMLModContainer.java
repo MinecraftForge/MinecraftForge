@@ -431,7 +431,7 @@ public class FMLModContainer implements ModContainer
             String expectedFingerprint = (String) descriptor.get("certificateFingerprint");
 
             fingerprintNotPresent = true;
-            if (expectedFingerprint != "" &&  !sourceFingerprints.contains(expectedFingerprint))
+            if (expectedFingerprint!=null && expectedFingerprint != "" &&  !sourceFingerprints.contains(expectedFingerprint))
             {
                 Level warnLevel = Level.SEVERE;
                 if (source.isDirectory())

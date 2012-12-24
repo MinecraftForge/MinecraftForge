@@ -14,6 +14,7 @@
 
 package cpw.mods.fml.common;
 
+import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
@@ -116,4 +117,11 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
+
+    @Override
+    public Certificate getSigningCertificate()
+    {
+        Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();
+        return certificates != null ? certificates[0] : null;
+    }
 }
