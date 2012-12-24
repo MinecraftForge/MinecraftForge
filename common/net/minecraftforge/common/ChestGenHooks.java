@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.*;
@@ -20,6 +21,7 @@ public class ChestGenHooks
     public static final String STRONGHOLD_CROSSING      = "strongholdCrossing";
     public static final String VILLAGE_BLACKSMITH       = "villageBlacksmith";
     public static final String BONUS_CHEST              = "bonusChest";
+    public static final String DUNGEON_CHEST            = "dungeonChest";
 
     private static final HashMap<String, ChestGenHooks> chestInfo = new HashMap<String, ChestGenHooks>();
     private static boolean hasInit = false;
@@ -52,6 +54,30 @@ public class ChestGenHooks
         getInfo(STRONGHOLD_CORRIDOR ).addItem(tmp);
         getInfo(STRONGHOLD_LIBRARY  ).addItem(new WeightedRandomChestContent(book, 1, 5, 2));
         getInfo(STRONGHOLD_CROSSING ).addItem(tmp);
+
+        //Wish Dungeons would get on the same wave length as other world gen...
+        ChestGenHooks d = new ChestGenHooks(DUNGEON_CHEST);
+        d.countMin = 8;
+        d.countMax = 8;
+        chestInfo.put(DUNGEON_CHEST, d);
+        addDungeonLoot(d, new ItemStack(Item.saddle),          100, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.ingotIron),       100, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.bread),           100, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.wheat),           100, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.gunpowder),       100, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.silk),            100, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.bucketEmpty),     100, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.appleGold),       001, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.redstone),        050, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.record13),        005, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.recordCat),       005, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.dyePowder, 1, 3), 100, 1, 1);
+        addDungeonLoot(d, book,                                100, 1, 1);
+    }
+    
+    static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)
+    {
+        dungeon.addItem(new WeightedRandomChestContent(item, weight, max, max));
     }
 
     private static void addInfo(String category, WeightedRandomChestContent[] items, int min, int max)
@@ -117,11 +143,13 @@ public class ChestGenHooks
     public static int getCount(String category, Random rand){ return getInfo(category).getCount(rand); }
     public static void addItem(String category, WeightedRandomChestContent item){ getInfo(category).addItem(item); }
     public static void removeItem(String category, ItemStack item){ getInfo(category).removeItem(item); }
+    public static ItemStack getOneItem(String category, Random rand){ return getInfo(category).getOneItem(rand); }
 
     private String category;
     private int countMin = 0;
     private int countMax = 0;
-    private ArrayList<WeightedRandomChestContent> contents = new ArrayList<WeightedRandomChestContent>();
+    //TO-DO: Privatize this once again when we remove the Deprecated stuff in DungeonHooks
+    ArrayList<WeightedRandomChestContent> contents = new ArrayList<WeightedRandomChestContent>();
 
     public ChestGenHooks(String category)
     {
@@ -203,6 +231,21 @@ public class ChestGenHooks
     public int getCount(Random rand)
     {
         return countMin < countMax ? countMin + rand.nextInt(countMax - countMin) : countMin;
+    }
+    
+    /**
+     * Returns a single ItemStack from the possible items in this registry,
+     * Useful if you just want a quick and dirty random Item.
+     * 
+     * @param rand  A Random Number gen
+     * @return A single ItemStack, or null if it could not get one.
+     */
+    public ItemStack getOneItem(Random rand)
+    {
+        WeightedRandomChestContent[] items = getItems(rand);
+        WeightedRandomChestContent item = (WeightedRandomChestContent)WeightedRandom.getRandomItem(rand, items);
+        ItemStack[] stacks = ChestGenHooks.generateStacks(rand, item.theItemId, item.theMinimumChanceToGenerateItem, item.theMaximumChanceToGenerateItem);
+        return (stacks.length > 0 ? stacks[0] : null);
     }
 
     //Accessors

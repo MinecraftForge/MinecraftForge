@@ -6,30 +6,14 @@ import java.util.Random;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.util.WeightedRandomItem;
+
+import static net.minecraftforge.common.ChestGenHooks.DUNGEON_CHEST;
 
 public class DungeonHooks
 {
-    private static int dungeonLootAttempts = 8;
     private static ArrayList<DungeonMob> dungeonMobs = new ArrayList<DungeonMob>();
-    private static ArrayList<DungeonLoot> dungeonLoot = new ArrayList<DungeonLoot>();
-    /**
-     * Set the number of item stacks that will be attempted to be added to each Dungeon chest.
-     * Note: Due to random number generation, you will not always get this amount per chest.
-     * @param number The maximum number of item stacks to add to a chest.
-     */
-    public static void setDungeonLootTries(int number)
-    {
-        dungeonLootAttempts = number;
-    }
-
-    /**
-     * @return The max number of item stacks found in each dungeon chest.
-     */
-    public static int getDungeonLootTries()
-    {
-        return dungeonLootAttempts;
-    }
 
     /**
      * Adds a mob to the possible list of creatures the spawner will create.
@@ -98,150 +82,6 @@ public class DungeonHooks
         return mob.type;
     }
 
-    /**
-     * Adds a item stack to the dungeon loot list with a stack size
-     * of 1.
-     *
-     * @param item The ItemStack to be added to the loot list
-     * @param rarity The relative chance that this item will spawn, Vanilla has
-     *          most of its items set to 1. Like the saddle, bread, silk, wheat, etc..
-     *          Rarer items are set to lower values, EXA: Golden Apple 0.01
-     */
-    public static void addDungeonLoot(ItemStack item, int rarity)
-    {
-        addDungeonLoot(item, rarity, 1, 1);
-    }
-
-    /**
-     * Adds a item stack, with a range of sizes, to the dungeon loot list.
-     * If a stack matching the same item, and size range, is already in the list
-     * the rarities will be added together making the item more common.
-     *
-     * @param item The ItemStack to be added to the loot list
-     * @param rarity The relative chance that this item will spawn, Vanilla has
-     *          most of its items set to 1. Like the saddle, bread, silk, wheat, etc..
-     *          Rarer items are set to lower values, EXA: Golden Apple 0.01
-     * @param minCount When this item does generate, the minimum number that is in the stack
-     * @param maxCount When this item does generate, the maximum number that can bein the stack
-     * @return The new rarity of the loot.
-     */
-    public static float addDungeonLoot(ItemStack item, int rarity, int minCount, int maxCount)
-    {
-        for (DungeonLoot loot : dungeonLoot)
-        {
-            if (loot.equals(item, minCount, maxCount))
-            {
-                return loot.itemWeight += rarity;
-            }
-        }
-
-        dungeonLoot.add(new DungeonLoot(rarity, item, minCount, maxCount));
-        return rarity;
-    }
-    /**
-     * Removes a item stack from the dungeon loot list, this will remove all items
-     * as long as the item stack matches, it will not care about matching the stack
-     * size ranges perfectly.
-     *
-     * @param item The item stack to remove
-     */
-    public static void removeDungeonLoot(ItemStack item)
-    {
-        removeDungeonLoot(item, -1, 0);
-    }
-
-    /**
-     * Removes a item stack from the dungeon loot list. If 'minCount' parameter
-     * is greater then 0, it will only remove loot items that have the same exact
-     * stack size range as passed in by parameters.
-     *
-     * @param item The item stack to remove
-     * @param minCount The minimum count for the match check, if less then 0,
-     *          the size check is skipped
-     * @param maxCount The max count used in match check when 'minCount' is >= 0
-     */
-    public static void removeDungeonLoot(ItemStack item, int minCount, int maxCount)
-    {
-        ArrayList<DungeonLoot> lootTmp = (ArrayList<DungeonLoot>)dungeonLoot.clone();
-        if (minCount < 0)
-        {
-            for (DungeonLoot loot : lootTmp)
-            {
-                if (loot.equals(item))
-                {
-                    dungeonLoot.remove(loot);
-                }
-            }
-        }
-        else
-        {
-            for (DungeonLoot loot : lootTmp)
-            {
-                if (loot.equals(item, minCount, maxCount))
-                {
-                    dungeonLoot.remove(loot);
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets a random item stack to place in a dungeon chest during world generation
-     * @param rand World generation random number generator
-     * @return The item stack
-     */
-    public static ItemStack getRandomDungeonLoot(Random rand)
-    {
-        DungeonLoot ret = (DungeonLoot)WeightedRandom.getRandomItem(rand, dungeonLoot);
-        if (ret != null)
-        {
-            return ret.generateStack(rand);
-        }
-        return null;
-    }
-
-    public static class DungeonLoot extends WeightedRandomItem
-    {
-        private ItemStack itemStack;
-        private int minCount = 1;
-        private int maxCount = 1;
-
-        /**
-         * @param item A item stack
-         * @param min Minimum stack size when randomly generating
-         * @param max Maximum stack size when randomly generating
-         */
-        public DungeonLoot(int weight, ItemStack item, int min, int max)
-        {
-            super(weight);
-            this.itemStack = item;
-            minCount = min;
-            maxCount = max;
-        }
-
-        /**
-         * Grabs a ItemStack ready to be added to the dungeon chest,
-         * the stack size will be between minCount and maxCount
-         * @param rand World gen random number generator
-         * @return The ItemStack to be added to the chest
-         */
-        public ItemStack generateStack(Random rand)
-        {
-            ItemStack ret = this.itemStack.copy();
-            ret.stackSize = minCount + (rand.nextInt(maxCount - minCount + 1));
-            return ret;
-        }
-
-        public boolean equals(ItemStack item, int min, int max)
-        {
-            return (min == minCount && max == maxCount && item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, this.itemStack));
-        }
-
-        public boolean equals(ItemStack item)
-        {
-            return item.isItemEqual(this.itemStack) && ItemStack.areItemStackTagsEqual(item, this.itemStack);
-        }
-    }
 
     public static class DungeonMob extends WeightedRandomItem
     {
@@ -263,33 +103,67 @@ public class DungeonHooks
         }
     }
 
-    public void addDungeonLoot(DungeonLoot loot)
-    {
-        dungeonLoot.add(loot);
-    }
-
-    public boolean removeDungeonLoot(DungeonLoot loot)
-    {
-        return dungeonLoot.remove(loot);
-    }
-
     static
     {
         addDungeonMob("Skeleton", 100);
         addDungeonMob("Zombie",   200);
         addDungeonMob("Spider",   100);
+    }
 
-        addDungeonLoot(new ItemStack(Item.saddle),          100      );
-        addDungeonLoot(new ItemStack(Item.ingotIron),       100, 1, 4);
-        addDungeonLoot(new ItemStack(Item.bread),           100      );
-        addDungeonLoot(new ItemStack(Item.wheat),           100, 1, 4);
-        addDungeonLoot(new ItemStack(Item.gunpowder),       100, 1, 4);
-        addDungeonLoot(new ItemStack(Item.silk),            100, 1, 4);
-        addDungeonLoot(new ItemStack(Item.bucketEmpty),     100      );
-        addDungeonLoot(new ItemStack(Item.appleGold),       001      );
-        addDungeonLoot(new ItemStack(Item.redstone),        050, 1, 4);
-        addDungeonLoot(new ItemStack(Item.record13),        005      );
-        addDungeonLoot(new ItemStack(Item.recordCat),       005      );
-        addDungeonLoot(new ItemStack(Item.dyePowder, 1, 3), 100      );
+
+    @Deprecated //Moved to ChestGenHooks
+    public static void setDungeonLootTries(int number)
+    {
+        ChestGenHooks.getInfo(DUNGEON_CHEST).setMax(number);
+        ChestGenHooks.getInfo(DUNGEON_CHEST).setMin(number);
+    }
+    @Deprecated //Moved to ChestGenHooks
+    public static int getDungeonLootTries() { return ChestGenHooks.getInfo(DUNGEON_CHEST).getMax(); }
+    @Deprecated //Moved to ChestGenHooks
+    public void addDungeonLoot(DungeonLoot loot){ ChestGenHooks.getInfo(DUNGEON_CHEST).addItem(loot); }
+    @Deprecated //Moved to ChestGenHooks
+    public boolean removeDungeonLoot(DungeonLoot loot){ return ChestGenHooks.getInfo(DUNGEON_CHEST).contents.remove(loot); }
+    @Deprecated //Moved to ChestGenHooks
+    public static void addDungeonLoot(ItemStack item, int rarity){ addDungeonLoot(item, rarity, 1, 1); }
+    @Deprecated //Moved to ChestGenHooks
+    public static float addDungeonLoot(ItemStack item, int rarity, int minCount, int maxCount)
+    {
+        ChestGenHooks.addDungeonLoot(ChestGenHooks.getInfo(DUNGEON_CHEST), item, rarity, minCount, maxCount);
+        return rarity;
+    }
+    @Deprecated //Moved to ChestGenHooks
+    public static void removeDungeonLoot(ItemStack item){ ChestGenHooks.removeItem(DUNGEON_CHEST, item); }
+    @Deprecated //Moved to ChestGenHooks
+    public static void removeDungeonLoot(ItemStack item, int minCount, int maxCount){ ChestGenHooks.removeItem(DUNGEON_CHEST, item); }
+    @Deprecated //Moved to ChestGenHooks
+    public static ItemStack getRandomDungeonLoot(Random rand){ return ChestGenHooks.getOneItem(DUNGEON_CHEST, rand); }
+
+    @Deprecated //Moved to ChestGenHooks
+    public static class DungeonLoot extends WeightedRandomChestContent
+    {
+        @Deprecated
+        public DungeonLoot(int weight, ItemStack item, int min, int max)
+        {
+            super(item, weight, min, max);
+        }
+
+        @Deprecated
+        public ItemStack generateStack(Random rand)
+        {
+            int min = theMinimumChanceToGenerateItem;
+            int max = theMaximumChanceToGenerateItem;
+            
+            ItemStack ret = this.theItemId.copy();
+            ret.stackSize = min + (rand.nextInt(max - min + 1));
+            return ret;
+        }
+
+        public boolean equals(ItemStack item, int min, int max)
+        {
+            int minCount = theMinimumChanceToGenerateItem;
+            int maxCount = theMaximumChanceToGenerateItem;
+            return (min == minCount && max == maxCount && item.isItemEqual(theItemId) && ItemStack.areItemStackTagsEqual(item, theItemId));
+        }
+        public boolean equals(ItemStack item){ return item.isItemEqual(theItemId) && ItemStack.areItemStackTagsEqual(item, theItemId); }
     }
 }

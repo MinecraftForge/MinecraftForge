@@ -1,29 +1,48 @@
 --- ../src_base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src_work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -4,6 +4,7 @@
+@@ -1,9 +1,13 @@
+ package net.minecraft.util;
+ 
+ import java.util.Random;
++
++import cpw.mods.fml.common.FMLLog;
  import net.minecraft.item.ItemStack;
  import net.minecraft.tileentity.TileEntityChest;
  import net.minecraft.tileentity.TileEntityDispenser;
 +import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.DungeonHooks;
  
  public class WeightedRandomChestContent extends WeightedRandomItem
  {
-@@ -40,22 +41,11 @@
+@@ -35,27 +39,26 @@
+     /**
+      * Generates the Chest contents.
+      */
++    @SuppressWarnings("deprecation")
+     public static void generateChestContents(Random par0Random, WeightedRandomChestContent[] par1ArrayOfWeightedRandomChestContent, TileEntityChest par2TileEntityChest, int par3)
+     {
          for (int var4 = 0; var4 < par3; ++var4)
          {
              WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
 -            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.theItemId, var5.theMinimumChanceToGenerateItem, var5.theMaximumChanceToGenerateItem);
  
 -            if (var5.theItemId.getMaxStackSize() >= var6)
-+            for (ItemStack item : stacks)
++            if (var5 instanceof DungeonHooks.DungeonLoot)
              {
 -                ItemStack var7 = var5.theItemId.copy();
 -                var7.stackSize = var6;
 -                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), var7);
--            }
++                DungeonHooks.DungeonLoot loot = (DungeonHooks.DungeonLoot)var5;
++                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), loot.generateStack(par0Random));
++                FMLLog.warning("Some mod is still using DungeonHooks.DungonLoot, tell them to stop! %s", loot);
++                continue;
+             }
 -            else
--            {
++
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.theItemId, var5.theMinimumChanceToGenerateItem, var5.theMaximumChanceToGenerateItem);
++
++            for (ItemStack item : stacks)
+             {
 -                for (int var9 = 0; var9 < var6; ++var9)
 -                {
 -                    ItemStack var8 = var5.theItemId.copy();
@@ -34,7 +53,7 @@
              }
          }
      }
-@@ -68,22 +58,11 @@
+@@ -68,22 +71,11 @@
          for (int var4 = 0; var4 < par3; ++var4)
          {
              WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
