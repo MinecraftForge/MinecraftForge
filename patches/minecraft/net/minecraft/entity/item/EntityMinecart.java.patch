@@ -156,6 +156,15 @@
          {
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
+@@ -420,7 +425,7 @@
+             {
+                 this.fallDistance = 0.0F;
+                 Vec3 var9 = this.func_70489_a(this.posX, this.posY, this.posZ);
+-                int var10 = this.worldObj.getBlockMetadata(var45, var2, var47);
++                int var10 = ((BlockRail)Block.blocksList[var8]).getBasicRailMetadata(worldObj, this, var45, var2, var47);
+                 this.posY = (double)var2;
+                 boolean var11 = false;
+                 boolean var12 = false;
 @@ -441,25 +446,7 @@
                      this.posY = (double)(var2 + 1);
                  }
