@@ -193,7 +193,7 @@
 +            }
 +        }
 +
-+        if (par3ItemStack != null && !result)
++        if (par3ItemStack != null && !result && event.useItem != Event.Result.DENY)
 +        {
 +            int meta = par3ItemStack.getItemDamage();
 +            int size = par3ItemStack.stackSize;
