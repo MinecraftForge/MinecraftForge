@@ -1,6 +1,21 @@
 --- ../src_base/minecraft/net/minecraft/inventory/ContainerFurnace.java
 +++ ../src_work/minecraft/net/minecraft/inventory/ContainerFurnace.java
-@@ -125,7 +125,7 @@
+@@ -95,6 +95,14 @@
+             this.furnace.currentItemBurnTime = par2;
+         }
+     }
++    
++    /**
++     * Returns the Tile Entity behind this furnace inventory / container
++     */
++    public TileEntityFurnace getFurnace()
++    {
++        return this.furnace;
++    }
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+     {
+@@ -125,7 +133,7 @@
              }
              else if (par2 != 1 && par2 != 0)
              {
