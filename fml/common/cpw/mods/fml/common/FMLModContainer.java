@@ -431,26 +431,31 @@ public class FMLModContainer implements ModContainer
             String expectedFingerprint = (String) descriptor.get("certificateFingerprint");
 
             fingerprintNotPresent = true;
-            if (expectedFingerprint!=null && expectedFingerprint != "" &&  !sourceFingerprints.contains(expectedFingerprint))
+
+            if (expectedFingerprint != null && !expectedFingerprint.isEmpty())
             {
-                Level warnLevel = Level.SEVERE;
-                if (source.isDirectory())
+                if (!sourceFingerprints.contains(expectedFingerprint))
                 {
-                    warnLevel = Level.FINER;
+                    Level warnLevel = Level.SEVERE;
+                    if (source.isDirectory())
+                    {
+                        warnLevel = Level.FINER;
+                    }
+                    FMLLog.log(warnLevel, "The mod %s is expecting signature %s for source %s, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
                 }
-                FMLLog.log(warnLevel, "The mod %s is expecting signature %s for source %s, however there is no signature matching that description", getModId(), expectedFingerprint, source.getName());
+                else
+                {
+                    certificate = certificates[certList.indexOf(expectedFingerprint)];
+                    fingerprintNotPresent = false;
+                }
             }
-            else
-            {
-                certificate = certificates[certList.indexOf(expectedFingerprint)];
-                fingerprintNotPresent = false;
-            }
+
             annotations = gatherAnnotations(clazz);
             isNetworkMod = FMLNetworkHandler.instance().registerNetworkMod(this, clazz, event.getASMHarvestedData());
             modInstance = clazz.newInstance();
             if (fingerprintNotPresent)
             {
-                eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints)));
+                eventBus.post(new FMLFingerprintViolationEvent(source.isDirectory(), source, ImmutableSet.copyOf(this.sourceFingerprints), expectedFingerprint));
             }
             ProxyInjector.inject(this, event.getASMHarvestedData(), FMLCommonHandler.instance().getSide());
             processFieldAnnotations(event.getASMHarvestedData());
