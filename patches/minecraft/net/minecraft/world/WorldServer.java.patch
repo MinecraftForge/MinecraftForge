@@ -91,7 +91,7 @@
              this.theProfiler.endStartSection("tickChunk");
 -            var7.updateSkylight();
 +            //Limits and evenly distributes the lighting update time
-+            if (startTime - System.nanoTime() <= 4000000 && doneChunks.add(var4)) 
++            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(var4)) 
 +            { 
 +                var7.updateSkylight();
 +            }
