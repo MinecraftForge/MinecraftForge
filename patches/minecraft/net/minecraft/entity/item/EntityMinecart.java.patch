@@ -156,7 +156,12 @@
          {
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -420,7 +425,7 @@
+@@ -416,18 +421,18 @@
+             double var6 = 0.0078125D;
+             int var8 = this.worldObj.getBlockId(var45, var2, var47);
+ 
+-            if (BlockRail.isRailBlock(var8))
++            if (canUseRail() && BlockRail.isRailBlock(var8))
              {
                  this.fallDistance = 0.0F;
                  Vec3 var9 = this.func_70489_a(this.posX, this.posY, this.posZ);
@@ -165,6 +170,14 @@
                  this.posY = (double)var2;
                  boolean var11 = false;
                  boolean var12 = false;
+ 
+                 if (var8 == Block.railPowered.blockID)
+                 {
+-                    var11 = (var10 & 8) != 0;
++                    var11 = (worldObj.getBlockMetadata(var45, var2, var47) & 8) != 0;
+                     var12 = !var11;
+                 }
+ 
 @@ -441,25 +446,7 @@
                      this.posY = (double)(var2 + 1);
                  }
