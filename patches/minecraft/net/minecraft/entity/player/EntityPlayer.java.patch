@@ -145,7 +145,7 @@
              float var5 = (float)(var3 * var3 + 1);
 -
 -            if (!var4.canHarvestBlock(par1Block) && var2 <= 1.0F)
-+            boolean canHarvest = ForgeHooks.canHarvestBlock(par1Block, this, meta);
++            boolean canHarvest = ForgeHooks.canToolHarvestBlock(par1Block, meta, var4);
 +
 +            if (!canHarvest && var2 <= 1.0F)
              {
