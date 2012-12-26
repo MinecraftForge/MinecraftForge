@@ -81,16 +81,18 @@
 +            doneChunks.clear();
 +        }
 +
-+        final long time = -System.currentTimeMillis();
++        final long startTime = System.nanoTime();
  
          while (var3.hasNext())
          {
-@@ -308,14 +331,16 @@
+@@ -308,14 +331,18 @@
              Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
              this.moodSoundAndLightCheck(var5, var6, var7);
              this.theProfiler.endStartSection("tickChunk");
 -            var7.updateSkylight();
-+            if (System.currentTimeMillis() + time <= 4 && doneChunks.add(var4)) { //Limits and evenly distributes the lighting update time
++            //Limits and evenly distributes the lighting update time
++            if (startTime - System.nanoTime() <= 4000000 && doneChunks.add(var4)) 
++            { 
 +                var7.updateSkylight();
 +            }
              this.theProfiler.endStartSection("thunder");
@@ -104,7 +106,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -332,7 +357,7 @@
+@@ -332,7 +359,7 @@
              this.theProfiler.endStartSection("iceandsnow");
              int var13;
  
@@ -113,7 +115,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  var8 = this.updateLCG >> 2;
-@@ -411,7 +436,8 @@
+@@ -411,7 +438,8 @@
      public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          NextTickListEntry var7 = new NextTickListEntry(par1, par2, par3, par4);
@@ -123,7 +125,7 @@
  
          if (this.scheduledUpdatesAreImmediate && par4 > 0)
          {
-@@ -473,7 +499,7 @@
+@@ -473,7 +501,7 @@
       */
      public void updateEntities()
      {
@@ -132,7 +134,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -525,7 +551,8 @@
+@@ -525,7 +553,8 @@
  
                  this.pendingTickListEntries.remove(var4);
                  this.field_73064_N.remove(var4);
@@ -142,7 +144,7 @@
  
                  if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
                  {
-@@ -644,16 +671,28 @@
+@@ -644,16 +673,28 @@
      {
          ArrayList var7 = new ArrayList();
  
@@ -181,7 +183,7 @@
          return var7;
      }
  
-@@ -661,6 +700,11 @@
+@@ -661,6 +702,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -193,7 +195,7 @@
      {
          int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
          int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
-@@ -670,7 +714,7 @@
+@@ -670,7 +716,7 @@
              var6 = var5;
          }
  
@@ -202,7 +204,7 @@
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
-@@ -753,7 +797,7 @@
+@@ -753,7 +799,7 @@
       */
      protected void createBonusChest()
      {
@@ -211,7 +213,7 @@
  
          for (int var2 = 0; var2 < 10; ++var2)
          {
-@@ -796,6 +840,7 @@
+@@ -796,6 +842,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -219,7 +221,7 @@
          }
      }
  
-@@ -807,6 +852,7 @@
+@@ -807,6 +854,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getTagsFromLastWrite());
          this.mapStorage.saveAllData();
@@ -227,7 +229,7 @@
      }
  
      /**
-@@ -1029,4 +1075,9 @@
+@@ -1029,4 +1077,9 @@
      {
          return this.field_85177_Q;
      }
