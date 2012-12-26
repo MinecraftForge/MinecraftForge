@@ -1,6 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
 +++ ../src_work/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
-@@ -57,16 +57,19 @@
+@@ -5,6 +5,7 @@
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.IOException;
++import java.util.concurrent.Semaphore;
+ import java.util.zip.DataFormatException;
+ import java.util.zip.Deflater;
+ import java.util.zip.Inflater;
+@@ -45,6 +46,8 @@
+     /** A temporary storage for the compressed chunk data byte array. */
+     private static byte[] temp = new byte[196864];
+ 
++    private Semaphore deflateGate;
++
+     public Packet51MapChunk()
+     {
+         this.isChunkDataPacket = true;
+@@ -57,16 +60,20 @@
          this.zCh = par1Chunk.zPosition;
          this.includeInitialize = par2;
          Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
@@ -9,6 +26,7 @@
          this.yChMin = var4.field_74580_b;
 -
 +        this.field_73596_g = var4.field_74582_a;
++        this.deflateGate = new Semaphore(1);
 +    }
 +
 +    private void deflate()
@@ -25,7 +43,7 @@
              this.tempLength = var5.deflate(this.chunkData);
          }
          finally
-@@ -95,13 +98,16 @@
+@@ -95,13 +102,16 @@
          par1DataInputStream.readFully(temp, 0, this.tempLength);
          int var2 = 0;
          int var3;
@@ -42,13 +60,18 @@
  
          if (this.includeInitialize)
          {
-@@ -131,6 +137,11 @@
+@@ -131,6 +141,16 @@
       */
      public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
      {
 +        if (chunkData == null)
 +        {
-+            deflate();
++            deflateGate.acquireUninterruptibly();
++            if (chunkData == null)
++            {
++                deflate();
++            }
++            deflateGate.release();
 +        }
 +
          par1DataOutputStream.writeInt(this.xCh);
