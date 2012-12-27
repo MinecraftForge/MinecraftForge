@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemReed.java
++++ ../src_work/minecraft/net/minecraft/item/ItemReed.java
+@@ -84,7 +84,7 @@
+                         Block.blocksList[this.spawnID].func_85105_g(par3World, par4, par5, par6, var13);
+                     }
+ 
+-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
++                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.getStepSound(par3World, par4, par5, par6).getPlaceSound(), (var12.getStepSound(par3World, par4, par5, par6).getVolume() + 1.0F) / 2.0F, var12.getStepSound(par3World, par4, par5, par6).getPitch() * 0.8F);
+                     --par1ItemStack.stackSize;
+                 }
+             }

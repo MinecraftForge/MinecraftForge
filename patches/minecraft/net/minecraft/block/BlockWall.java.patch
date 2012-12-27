@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockWall.java
++++ ../src_work/minecraft/net/minecraft/block/BlockWall.java
+@@ -14,13 +14,15 @@
+ {
+     /** The types of the wall. */
+     public static final String[] types = new String[] {"normal", "mossy"};
++    private final Block _parentBlock;
+ 
+     public BlockWall(int par1, Block par2Block)
+     {
+         super(par1, par2Block.blockIndexInTexture, par2Block.blockMaterial);
++        _parentBlock = par2Block;
++        
+         this.setHardness(par2Block.blockHardness);
+         this.setResistance(par2Block.blockResistance / 3.0F);
+-        this.setStepSound(par2Block.stepSound);
+         this.setCreativeTab(CreativeTabs.tabBlock);
+     }
+ 
+@@ -171,4 +173,10 @@
+     {
+         return par5 == 0 ? super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5) : true;
+     }
++    
++    @Override
++    public StepSound getStepSound(World world, int x, int y, int z)
++    {
++        return _parentBlock.getStepSound(world, x, y, z);
++    }
+ }

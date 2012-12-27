@@ -1,0 +1,32 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockStairs.java
++++ ../src_work/minecraft/net/minecraft/block/BlockStairs.java
+@@ -26,15 +26,17 @@
+     private final int field_72158_c;
+     private boolean field_72156_cr = false;
+     private int field_72160_cs = 0;
++    private final Block _parentBlock;
+ 
+     protected BlockStairs(int par1, Block par2Block, int par3)
+     {
+         super(par1, par2Block.blockIndexInTexture, par2Block.blockMaterial);
++        _parentBlock = par2Block;
++        
+         this.modelBlock = par2Block;
+         this.field_72158_c = par3;
+         this.setHardness(par2Block.blockHardness);
+         this.setResistance(par2Block.blockResistance / 3.0F);
+-        this.setStepSound(par2Block.stepSound);
+         this.setLightOpacity(255);
+         this.setCreativeTab(CreativeTabs.tabBlock);
+     }
+@@ -642,4 +644,10 @@
+ 
+         return var23;
+     }
++    
++    @Override
++    public StepSound getStepSound(World world, int x, int y, int z)
++    {
++        return _parentBlock.getStepSound(world, x, y, z);
++    }
+ }
