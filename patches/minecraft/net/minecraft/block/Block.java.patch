@@ -141,7 +141,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1356,4 +1372,849 @@
+@@ -1356,4 +1372,835 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -511,25 +511,11 @@
 +        int meta = world.getBlockMetadata(x, y, z);
 +        if (this instanceof BlockStep)
 +        {
-+            if (MinecraftForge.SPAWNER_ALLOW_ON_INVERTED)
-+            {
-+                return (((meta & 8) == 8) || isOpaqueCube());   
-+            }
-+            else
-+            {
-+                return isNormalCube(this.blockID);
-+            }
++            return (((meta & 8) == 8) || isOpaqueCube());
 +        }
 +        else if (this instanceof BlockStairs)
 +        {
-+            if (MinecraftForge.SPAWNER_ALLOW_ON_INVERTED)
-+            {
-+                return ((meta & 4) != 0);
-+            }
-+            else
-+            {
-+                return isNormalCube(this.blockID);
-+            }
++            return ((meta & 4) != 0);
 +        }
 +        return isBlockSolidOnSide(world, x, y, z, UP);
 +    }
