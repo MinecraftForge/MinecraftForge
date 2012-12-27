@@ -141,7 +141,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1356,4 +1372,849 @@
+@@ -1356,4 +1372,864 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -938,6 +938,21 @@
 +        }
 +
 +        return false;
++    }
++    
++    /**
++     * Location aware and overrideable version of stepSound,
++     * return the step sound for the current block.
++     * 
++     * @param world The Current World
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @return The Step Sound for specified Block
++     */
++    public StepSound getStepSound(World world, int x, int y, int z)
++    {
++        return stepSound;
 +    }
 +    
 +    /**

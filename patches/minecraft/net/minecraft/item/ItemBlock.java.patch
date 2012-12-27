@@ -18,7 +18,7 @@
          {
              if (par7 == 0)
              {
-@@ -92,14 +94,8 @@
+@@ -92,15 +94,9 @@
              int var13 = this.getMetadata(par1ItemStack.getItemDamage());
              int var14 = Block.blocksList[this.blockID].func_85104_a(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
  
@@ -30,11 +30,13 @@
 -                    Block.blocksList[this.blockID].func_85105_g(par3World, par4, par5, par6, var14);
 -                }
 -
+-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
 +            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
 +            {
-                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
++                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.getStepSound(par3World, par4, par5, par6).getPlaceSound(), (var12.getStepSound(par3World, par4, par5, par6).getVolume() + 1.0F) / 2.0F, var12.getStepSound(par3World, par4, par5, par6).getPitch() * 0.8F);
                  --par1ItemStack.stackSize;
              }
+ 
 @@ -125,7 +121,8 @@
          {
              par5 = 1;

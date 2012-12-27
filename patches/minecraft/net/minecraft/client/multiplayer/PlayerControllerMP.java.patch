@@ -33,6 +33,15 @@
  
                  if (var8)
                  {
+@@ -264,7 +274,7 @@
+ 
+                 if (this.stepSoundTickCounter % 4.0F == 0.0F && var6 != null)
+                 {
+-                    this.mc.sndManager.playSound(var6.stepSound.getStepSound(), (float)par1 + 0.5F, (float)par2 + 0.5F, (float)par3 + 0.5F, (var6.stepSound.getVolume() + 1.0F) / 8.0F, var6.stepSound.getPitch() * 0.5F);
++                    this.mc.sndManager.playSound(var6.getStepSound(mc.thePlayer.worldObj, par1, par2, par3).getStepSound(), (float)par1 + 0.5F, (float)par2 + 0.5F, (float)par3 + 0.5F, (var6.getStepSound(mc.thePlayer.worldObj, par1, par2, par3).getVolume() + 1.0F) / 8.0F, var6.getStepSound(mc.thePlayer.worldObj, par1, par2, par3).getPitch() * 0.5F);
+                 }
+ 
+                 ++this.stepSoundTickCounter;
 @@ -334,6 +344,12 @@
          float var11 = (float)par8Vec3.zCoord - (float)par6;
          boolean var12 = false;
