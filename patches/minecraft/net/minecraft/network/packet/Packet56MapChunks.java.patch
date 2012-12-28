@@ -18,7 +18,7 @@
  
      public Packet56MapChunks() {}
  
-@@ -40,30 +44,35 @@
+@@ -40,31 +44,37 @@
          {
              Chunk var5 = (Chunk)par1List.get(var4);
              Packet51MapChunkData var6 = Packet51MapChunk.getMapChunkData(var5, true, 65535);
@@ -61,11 +61,14 @@
 +            var11.setInput(data, 0, maxLen);
              var11.finish();
 -            this.field_73587_e = new byte[var3];
-+            this.field_73587_e = new byte[maxLen];
-             this.field_73585_g = var11.deflate(this.field_73587_e);
+-            this.field_73585_g = var11.deflate(this.field_73587_e);
++            byte[] deflated = new byte[maxLen];
++            this.field_73585_g = var11.deflate(deflated);
++            this.field_73587_e = deflated;
          }
          finally
-@@ -146,6 +155,16 @@
+         {
+@@ -146,6 +156,16 @@
       */
      public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
      {

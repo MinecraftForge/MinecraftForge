@@ -17,7 +17,7 @@
      public Packet51MapChunk()
      {
          this.isChunkDataPacket = true;
-@@ -57,16 +60,20 @@
+@@ -57,17 +60,22 @@
          this.zCh = par1Chunk.zPosition;
          this.includeInitialize = par2;
          Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
@@ -39,11 +39,14 @@
 +            var5.setInput(field_73596_g, 0, field_73596_g.length);
              var5.finish();
 -            this.chunkData = new byte[var4.field_74582_a.length];
-+            this.chunkData = new byte[field_73596_g.length];
-             this.tempLength = var5.deflate(this.chunkData);
+-            this.tempLength = var5.deflate(this.chunkData);
++            byte[] deflated = new byte[field_73596_g.length];
++            this.tempLength = var5.deflate(deflated);
++            this.chunkData = deflated;
          }
          finally
-@@ -95,13 +102,16 @@
+         {
+@@ -95,13 +103,16 @@
          par1DataInputStream.readFully(temp, 0, this.tempLength);
          int var2 = 0;
          int var3;
@@ -60,7 +63,7 @@
  
          if (this.includeInitialize)
          {
-@@ -131,6 +141,16 @@
+@@ -131,6 +142,16 @@
       */
      public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
      {
