@@ -41,7 +41,7 @@ public class RelaunchClassLoader extends URLClassLoader
     private Map<Package,Manifest> packageManifests = new HashMap<Package,Manifest>();
 
     private static Manifest EMPTY = new Manifest();
-    
+
     private static final String[] RESERVED = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
     public RelaunchClassLoader(URL[] sources)
@@ -252,7 +252,7 @@ public class RelaunchClassLoader extends URLClassLoader
         }
         catch (Throwable t)
         {
-            /// HMMM
+            FMLLog.log(Level.WARNING, t, "Problem loading class");
             return new byte[0];
         }
     }
