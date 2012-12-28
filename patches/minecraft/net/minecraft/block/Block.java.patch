@@ -46,7 +46,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -319,6 +333,7 @@
+@@ -321,6 +335,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -54,7 +54,7 @@
      }
  
      /**
-@@ -457,9 +472,10 @@
+@@ -459,9 +474,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +66,7 @@
      }
  
      /**
-@@ -482,7 +498,7 @@
+@@ -484,7 +500,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +75,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -492,7 +508,7 @@
+@@ -494,7 +510,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -637,7 +653,13 @@
+@@ -639,7 +655,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -99,7 +99,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -661,8 +683,7 @@
+@@ -663,8 +685,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -109,7 +109,7 @@
      }
  
      /**
-@@ -680,18 +701,13 @@
+@@ -682,18 +703,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -132,7 +132,7 @@
                  }
              }
          }
-@@ -1076,7 +1092,7 @@
+@@ -1081,7 +1097,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -141,7 +141,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1356,4 +1372,835 @@
+@@ -1364,4 +1380,835 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -734,7 +734,7 @@
 +     * @param side The side that is trying to make the connection
 +     * @return True to make the connection
 +     */
-+    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
++    public boolean canMakeRedstoneConnectionOnSide(IBlockAccess world, int x, int y, int z, int side)
 +    {
 +        return Block.blocksList[blockID].canProvidePower() && side != -1;
 +    }

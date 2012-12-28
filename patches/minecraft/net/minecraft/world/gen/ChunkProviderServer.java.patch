@@ -14,17 +14,17 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
--        if (this.currentServer.provider.canRespawnHere())
-+        if (this.currentServer.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(currentServer.provider.dimensionId))
+-        if (this.worldObj.provider.canRespawnHere())
++        if (this.worldObj.provider.canRespawnHere() && DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId))
          {
-             ChunkCoordinates var3 = this.currentServer.getSpawnPoint();
+             ChunkCoordinates var3 = this.worldObj.getSpawnPoint();
              int var4 = par1 * 16 + 8 - var3.posX;
 @@ -109,7 +112,11 @@
  
          if (var5 == null)
          {
 -            var5 = this.safeLoadChunk(par1, par2);
-+            var5 = ForgeChunkManager.fetchDormantChunk(var3, currentServer);
++            var5 = ForgeChunkManager.fetchDormantChunk(var3, this.worldObj);
 +            if (var5 == null)
 +            {
 +                var5 = this.safeLoadChunk(par1, par2);
@@ -34,9 +34,9 @@
              {
 @@ -306,6 +313,11 @@
      {
-         if (!this.currentServer.canNotSave)
+         if (!this.worldObj.canNotSave)
          {
-+            for (ChunkCoordIntPair forced : currentServer.getPersistentChunks().keySet())
++            for (ChunkCoordIntPair forced : this.worldObj.getPersistentChunks().keySet())
 +            {
 +                this.chunksToUnload.remove(ChunkCoordIntPair.chunkXZ2Int(forced.chunkXPos, forced.chunkZPos));
 +            }
@@ -49,8 +49,8 @@
                      this.loadedChunkHashMap.remove(var2.longValue());
                      this.loadedChunks.remove(var3);
 +                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(var3.xPosition, var3.zPosition), var3);
-+                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(currentServer).size() == 0 && !DimensionManager.shouldLoadSpawn(currentServer.provider.dimensionId)) {
-+                        DimensionManager.unloadWorld(currentServer.provider.dimensionId);
++                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) {
++                        DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
 +                        return currentChunkProvider.unload100OldestChunks();
 +                    }
                  }

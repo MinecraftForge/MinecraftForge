@@ -58,7 +58,7 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float var5;
  
--            if (var4.getItem().shiftedIndex < 256)
+-            if (var4.getItem().itemID < 256)
 -            {
 -                if (RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
 +            if (var4 != null && var4.getItem() instanceof ItemBlock)

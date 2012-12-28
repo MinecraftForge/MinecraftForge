@@ -37,7 +37,7 @@
  import net.minecraft.util.Vec3;
 @@ -222,6 +232,11 @@
      protected int field_82152_aq;
-     private boolean field_83001_bt;
+     private boolean invulnerable;
      public EnumEntitySize myEntitySize;
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -75,7 +75,7 @@
              this.worldObj.theProfiler.endSection();
 @@ -1514,6 +1532,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
-             par1NBTTagCompound.setBoolean("Invulnerable", this.field_83001_bt);
+             par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
 +            if (persistentID != null)
 +            {
@@ -129,7 +129,7 @@
      }
  
      /**
-@@ -2356,7 +2398,7 @@
+@@ -2359,7 +2401,7 @@
  
      public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
@@ -138,7 +138,7 @@
      }
  
      public int func_82143_as()
-@@ -2396,4 +2438,84 @@
+@@ -2399,4 +2441,84 @@
      {
          return this.isBurning();
      }

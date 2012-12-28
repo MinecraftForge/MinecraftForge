@@ -64,7 +64,7 @@
          Render var24;
          RenderPlayer var26;
  
--        if (var17 != null && var17.itemID == Item.map.shiftedIndex)
+-        if (var17 != null && var17.itemID == Item.map.itemID)
 -        {
 +        if (var17 != null && var17.getItem() instanceof ItemMap)
 +        {

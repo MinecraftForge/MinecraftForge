@@ -17,7 +17,7 @@
                          }
                      }
                  }
-@@ -148,4 +143,16 @@
+@@ -151,4 +146,16 @@
      {
          return new ItemStack(this.blockID, 1, limitToValidMetadata(par1));
      }

@@ -8,38 +8,37 @@
  import java.util.zip.DataFormatException;
  import java.util.zip.Deflater;
  import java.util.zip.Inflater;
-@@ -22,6 +23,9 @@
-     private int field_73585_g;
+@@ -26,6 +27,9 @@
+     private int dataLength;
      private boolean field_92024_h;
-     private static byte[] field_73591_h = new byte[0];
+     private static byte[] chunkDataNotCompressed = new byte[0];
 +    private int maxLen = 0;
 +
 +    private Semaphore deflateGate;
  
      public Packet56MapChunks() {}
  
-@@ -40,31 +44,37 @@
+@@ -44,15 +48,6 @@
          {
              Chunk var5 = (Chunk)par1List.get(var4);
              Packet51MapChunkData var6 = Packet51MapChunk.getMapChunkData(var5, true, 65535);
 -
--            if (field_73591_h.length < var3 + var6.field_74582_a.length)
+-            if (chunkDataNotCompressed.length < var3 + var6.compressedData.length)
 -            {
--                byte[] var7 = new byte[var3 + var6.field_74582_a.length];
--                System.arraycopy(field_73591_h, 0, var7, 0, field_73591_h.length);
--                field_73591_h = var7;
+-                byte[] var7 = new byte[var3 + var6.compressedData.length];
+-                System.arraycopy(chunkDataNotCompressed, 0, var7, 0, chunkDataNotCompressed.length);
+-                chunkDataNotCompressed = var7;
 -            }
 -
--            System.arraycopy(var6.field_74582_a, 0, field_73591_h, var3, var6.field_74582_a.length);
-             var3 += var6.field_74582_a.length;
-             this.field_73589_c[var4] = var5.xPosition;
-             this.field_73586_d[var4] = var5.zPosition;
-             this.field_73590_a[var4] = var6.field_74580_b;
-             this.field_73588_b[var4] = var6.field_74581_c;
-             this.field_73584_f[var4] = var6.field_74582_a;
-+            deflateGate = new Semaphore(1);
-+        }
-+
+-            System.arraycopy(var6.compressedData, 0, chunkDataNotCompressed, var3, var6.compressedData.length);
+             var3 += var6.compressedData.length;
+             this.chunkPostX[var4] = var5.xPosition;
+             this.chunkPosZ[var4] = var5.zPosition;
+@@ -60,21 +55,35 @@
+             this.field_73588_b[var4] = var6.chunkHasAddSectionFlag;
+             this.field_73584_f[var4] = var6.compressedData;
+         }
++        deflateGate = new Semaphore(1);
 +        maxLen = var3;
 +    }
 +
@@ -51,37 +50,27 @@
 +        {
 +            System.arraycopy(field_73584_f[x], 0, data, offset, field_73584_f[x].length);
 +            offset += field_73584_f[x].length;
-         }
++        }
  
          Deflater var11 = new Deflater(-1);
- 
+-
          try
          {
--            var11.setInput(field_73591_h, 0, var3);
+-            var11.setInput(chunkDataNotCompressed, 0, var3);
 +            var11.setInput(data, 0, maxLen);
              var11.finish();
--            this.field_73587_e = new byte[var3];
--            this.field_73585_g = var11.deflate(this.field_73587_e);
+-            this.chunkDataBuffer = new byte[var3];
+-            this.dataLength = var11.deflate(this.chunkDataBuffer);
 +            byte[] deflated = new byte[maxLen];
-+            this.field_73585_g = var11.deflate(deflated);
-+            this.field_73587_e = deflated;
++            this.dataLength = var11.deflate(deflated);
++            this.chunkDataBuffer = deflated;
          }
          finally
          {
-@@ -146,6 +156,16 @@
-      */
-     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
-     {
-+        if (field_73587_e == null)
-+        {
-+            deflateGate.acquireUninterruptibly();
-+            if (field_73587_e == null)
-+            {
-+                deflate();
-+            }
-+            deflateGate.release();
-+        }
+             var11.end();
+         }
+     }
 +
-         par1DataOutputStream.writeShort(this.field_73589_c.length);
-         par1DataOutputStream.writeInt(this.field_73585_g);
-         par1DataOutputStream.writeBoolean(this.field_92024_h);
+ 
+     /**
+      * Abstract. Reads the raw packet data from the data stream.

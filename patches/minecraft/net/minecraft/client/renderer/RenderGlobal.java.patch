@@ -48,7 +48,7 @@
      {
          double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
-@@ -1870,6 +1890,7 @@
+@@ -1873,6 +1893,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -56,7 +56,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -2006,6 +2027,7 @@
+@@ -2009,6 +2030,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -64,7 +64,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -2022,6 +2044,7 @@
+@@ -2025,6 +2047,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -72,7 +72,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -2043,6 +2066,7 @@
+@@ -2046,6 +2069,7 @@
                      {
                          int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
@@ -80,10 +80,10 @@
                      }
                      else if (par1Str.startsWith("tilecrack_"))
                      {
-@@ -2050,11 +2074,12 @@
+@@ -2053,11 +2077,12 @@
                          int var25 = Integer.parseInt(var28[1]);
                          int var26 = Integer.parseInt(var28[2]);
-                         var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).func_90019_g(var26);
+                         var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).applyRenderColor(var26);
 +                        effectObject = Block.blocksList[var25];
                      }
  

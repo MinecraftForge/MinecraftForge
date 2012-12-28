@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -72,29 +79,32 @@
+@@ -72,7 +79,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -34,7 +34,8 @@
 +               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST );
      }
  
-     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
+     /**
+@@ -82,22 +92,22 @@
      {
          byte var10 = 0;
  
@@ -61,7 +62,7 @@
          {
              var10 = 3;
          }
-@@ -121,22 +131,22 @@
+@@ -127,22 +137,22 @@
                  int var7 = var6 & 3;
                  boolean var8 = false;
  
@@ -88,7 +89,7 @@
                  {
                      var8 = true;
                  }
-@@ -157,7 +167,7 @@
+@@ -163,7 +173,7 @@
          boolean var12 = (par6 & 8) == 8;
          boolean var13 = par5 == Block.tripWireSource.blockID;
          boolean var14 = false;

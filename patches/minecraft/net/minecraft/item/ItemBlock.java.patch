@@ -20,14 +20,14 @@
              {
 @@ -92,14 +94,8 @@
              int var13 = this.getMetadata(par1ItemStack.getItemDamage());
-             int var14 = Block.blocksList[this.blockID].func_85104_a(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
+             int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
  
 -            if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.blockID, var14))
 -            {
 -                if (par3World.getBlockId(par4, par5, par6) == this.blockID)
 -                {
 -                    Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer);
--                    Block.blocksList[this.blockID].func_85105_g(par3World, par4, par5, par6, var14);
+-                    Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, var14);
 -                }
 -
 +            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, var14))
@@ -68,7 +68,7 @@
 +       if (world.getBlockId(x, y, z) == this.blockID)
 +       {
 +           Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player);
-+           Block.blocksList[this.blockID].func_85105_g(world, x, y, z, metadata);
++           Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
 +       }
 +
 +       return true;

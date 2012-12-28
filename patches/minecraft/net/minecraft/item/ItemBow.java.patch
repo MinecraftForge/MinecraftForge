@@ -16,7 +16,7 @@
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
 +        int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
-+        
++
 +        ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, var6);
 +        MinecraftForge.EVENT_BUS.post(event);
 +        if (event.isCanceled())
@@ -24,10 +24,10 @@
 +            return;
 +        }
 +        var6 = event.charge;
-+        
++
          boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
  
-         if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
+         if (var5 || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
          {
 -            int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
              float var7 = (float)var6 / 20.0F;
@@ -43,7 +43,7 @@
 +        {
 +            return event.result;
 +        }
-+        
-         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.shiftedIndex))
++
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
          {
              par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

@@ -54,7 +54,7 @@
      /**
 @@ -119,4 +105,23 @@
      {
-         return Item.netherStalkSeeds.shiftedIndex;
+         return Item.netherStalkSeeds.itemID;
      }
 +
 +    @Override

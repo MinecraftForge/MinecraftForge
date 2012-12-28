@@ -19,7 +19,7 @@
          super.renderEquippedItems(par1EntitySnowman, par2);
          ItemStack var3 = new ItemStack(Block.pumpkin, 1);
  
--        if (var3 != null && var3.getItem().shiftedIndex < 256)
+-        if (var3 != null && var3.getItem().itemID < 256)
 +        if (var3 != null && var3.getItem() instanceof ItemBlock)
          {
              GL11.glPushMatrix();

@@ -14,15 +14,15 @@
       */
      public int getToolCraftingMaterial()
      {
--        return this == WOOD ? Block.planks.blockID : (this == STONE ? Block.cobblestone.blockID : (this == GOLD ? Item.ingotGold.shiftedIndex : (this == IRON ? Item.ingotIron.shiftedIndex : (this == EMERALD ? Item.diamond.shiftedIndex : 0))));
+-        return this == WOOD ? Block.planks.blockID : (this == STONE ? Block.cobblestone.blockID : (this == GOLD ? Item.ingotGold.itemID : (this == IRON ? Item.ingotIron.itemID : (this == EMERALD ? Item.diamond.itemID : 0))));
 +        switch (this)
 +        {
 +            case WOOD:    return Block.planks.blockID;
 +            case STONE:   return Block.cobblestone.blockID;
-+            case GOLD:    return Item.ingotGold.shiftedIndex;
-+            case IRON:    return Item.ingotIron.shiftedIndex;
-+            case EMERALD: return Item.diamond.shiftedIndex;
-+            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.shiftedIndex);
++            case GOLD:    return Item.ingotGold.itemID;
++            case IRON:    return Item.ingotIron.itemID;
++            case EMERALD: return Item.diamond.itemID;
++            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.itemID);
 +        }
      }
  }

@@ -100,7 +100,7 @@
 -
 -                if (this.objectMouseOver.entityHit instanceof EntityPainting)
 -                {
--                    var2 = Item.painting.shiftedIndex;
+-                    var2 = Item.painting.itemID;
 -                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
 -                {
@@ -108,7 +108,7 @@
 -
 -                    if (var10.getDisplayedItem() == null)
 -                    {
--                        var2 = Item.itemFrame.shiftedIndex;
+-                        var2 = Item.itemFrame.itemID;
 -                    }
 -                    else
 -                    {
@@ -123,24 +123,24 @@
 -
 -                    if (var11.minecartType == 2)
 -                    {
--                        var2 = Item.minecartPowered.shiftedIndex;
+-                        var2 = Item.minecartPowered.itemID;
 -                    }
 -                    else if (var11.minecartType == 1)
 -                    {
--                        var2 = Item.minecartCrate.shiftedIndex;
+-                        var2 = Item.minecartCrate.itemID;
 -                    }
 -                    else
 -                    {
--                        var2 = Item.minecartEmpty.shiftedIndex;
+-                        var2 = Item.minecartEmpty.itemID;
 -                    }
 -                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
 -                {
--                    var2 = Item.boat.shiftedIndex;
+-                    var2 = Item.boat.itemID;
 -                }
 -                else
 -                {
--                    var2 = Item.monsterPlacer.shiftedIndex;
+-                    var2 = Item.monsterPlacer.itemID;
 -                    var3 = EntityList.getEntityID(this.objectMouseOver.entityHit);
 -                    var4 = true;
 -

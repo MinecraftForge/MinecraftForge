@@ -10,7 +10,7 @@
  
  public class BlockLadder extends Block
  {
-@@ -104,29 +107,32 @@
+@@ -104,7 +107,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -21,7 +21,8 @@
 +               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH);
      }
  
-     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
+     /**
+@@ -114,22 +120,22 @@
      {
          int var10 = par9;
  
@@ -48,7 +49,7 @@
          {
              var10 = 5;
          }
-@@ -143,22 +149,22 @@
+@@ -146,22 +152,22 @@
          int var6 = par1World.getBlockMetadata(par2, par3, par4);
          boolean var7 = false;
  
@@ -75,7 +76,7 @@
          {
              var7 = true;
          }
-@@ -179,4 +185,10 @@
+@@ -182,4 +188,10 @@
      {
          return 1;
      }

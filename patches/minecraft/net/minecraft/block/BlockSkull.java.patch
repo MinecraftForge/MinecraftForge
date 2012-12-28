@@ -30,7 +30,7 @@
          super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
      }
  
-@@ -156,26 +155,31 @@
+@@ -156,24 +155,30 @@
       */
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
@@ -38,13 +38,13 @@
 -        {
 -            if ((par6 & 8) == 0)
 -            {
--                ItemStack var7 = new ItemStack(Item.skull.shiftedIndex, 1, this.getDamageValue(par1World, par2, par3, par4));
+-                ItemStack var7 = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
 -                TileEntitySkull var8 = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
 -
--                if (var8.func_82117_a() == 3 && var8.func_82120_c() != null && var8.func_82120_c().length() > 0)
+-                if (var8.getSkullType() == 3 && var8.getExtraType() != null && var8.getExtraType().length() > 0)
 -                {
 -                    var7.setTagCompound(new NBTTagCompound());
--                    var7.getTagCompound().setString("SkullOwner", var8.func_82120_c());
+-                    var7.getTagCompound().setString("SkullOwner", var8.getExtraType());
 -                }
 -
 -                this.dropBlockAsItem_do(par1World, par2, par3, par4, var7);
@@ -52,8 +52,6 @@
 -
 -            super.breakBlock(par1World, par2, par3, par4, par5, par6);
 -        }
--    }
--
 +        super.breakBlock(par1World, par2, par3, par4, par5, par6);
 +    }
 +
@@ -63,22 +61,21 @@
 +        ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
 +        if ((metadata & 8) == 0)
 +        {
-+            ItemStack var7 = new ItemStack(Item.skull.shiftedIndex, 1, this.getDamageValue(world, x, y, z));
++            ItemStack var7 = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(world, x, y, z));
 +            TileEntitySkull var8 = (TileEntitySkull)world.getBlockTileEntity(x, y, z);
 +
 +            if (var8 == null)
 +            {
 +                return drops;
 +            }
-+            if (var8.func_82117_a() == 3 && var8.func_82120_c() != null && var8.func_82120_c().length() > 0)
++            if (var8.getSkullType() == 3 && var8.getExtraType() != null && var8.getExtraType().length() > 0)
 +            {
 +                var7.setTagCompound(new NBTTagCompound());
-+                var7.getTagCompound().setString("SkullOwner", var8.func_82120_c());
++                var7.getTagCompound().setString("SkullOwner", var8.getExtraType());
 +            }
 +            drops.add(var7);
 +        }
 +        return drops;
-+    }
+     }
+ 
      /**
-      * Returns the ID of the items to drop on destruction.
-      */

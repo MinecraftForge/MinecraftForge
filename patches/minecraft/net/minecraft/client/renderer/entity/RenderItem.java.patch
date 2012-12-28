@@ -78,8 +78,8 @@
                      }
  
                      var24 = 1.0F;
--                    this.renderBlocks.renderBlockAsItem(var14, var10.getItemDamage(), var24);
-+                    this.renderBlocks.renderBlockAsItem(Block.blocksList[var10.itemID], var10.getItemDamage(), var24);
+-                    this.itemRenderBlocks.renderBlockAsItem(var14, var10.getItemDamage(), var24);
++                    this.itemRenderBlocks.renderBlockAsItem(Block.blocksList[var10.itemID], var10.getItemDamage(), var24);
                      GL11.glPopMatrix();
                  }
              }

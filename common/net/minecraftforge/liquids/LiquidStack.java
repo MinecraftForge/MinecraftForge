@@ -22,7 +22,7 @@ public class LiquidStack {
 	}
 
 	public LiquidStack(Item item, int amount) {
-		this(item.shiftedIndex, amount, 0);
+		this(item.itemID, amount, 0);
 	}
 
 	public LiquidStack(Block block, int amount) {
@@ -56,13 +56,13 @@ public class LiquidStack {
 	}
 
 	/**
-	 * @param other 
+	 * @param other
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
 	public boolean isLiquidEqual(LiquidStack other) {
 		if(other == null)
 			return false;
-		
+
 		return itemID == other.itemID && itemMeta == other.itemMeta;
 	}
 
@@ -73,21 +73,21 @@ public class LiquidStack {
 	public boolean containsLiquid(LiquidStack other) {
 		if(!isLiquidEqual(other))
 			return false;
-		
+
 		return amount >= other.amount;
 	}
-	
+
 	/**
-	 * @param other ItemStack containing liquids. 
+	 * @param other ItemStack containing liquids.
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
 	public boolean isLiquidEqual(ItemStack other) {
 		if(other == null)
 			return false;
-		
+
 		return itemID == other.itemID && itemMeta == other.getItemDamage();
 	}
-	
+
 	/**
 	 * @return ItemStack representation of this LiquidStack
 	 */
@@ -97,7 +97,7 @@ public class LiquidStack {
 
 	/**
 	 * Reads a liquid stack from the passed nbttagcompound and returns it.
-	 * 
+	 *
 	 * @param nbttagcompound
 	 * @return
 	 */

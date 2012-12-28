@@ -29,7 +29,7 @@
              GL11.glPushMatrix();
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
--            if (var5.getItem().shiftedIndex < 256)
+-            if (var5.getItem().itemID < 256)
 -            {
 -                if (RenderBlocks.renderItemIn3d(Block.blocksList[var5.itemID].getRenderType()))
 +            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var5, EQUIPPED);

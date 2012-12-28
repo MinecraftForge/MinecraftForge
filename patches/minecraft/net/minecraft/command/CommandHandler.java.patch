@@ -26,4 +26,4 @@
 +
                  if (var6 > -1)
                  {
-                     EntityPlayerMP[] var7 = PlayerSelector.func_82380_c(par1ICommandSender, var3[var6]);
+                     EntityPlayerMP[] var7 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);

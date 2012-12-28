@@ -31,8 +31,8 @@
 +               canPlaceTorchOn(par1World, par2, par3 - 1, par4);
      }
  
-     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
-@@ -86,22 +93,22 @@
+     /**
+@@ -89,22 +96,22 @@
              var10 = 5;
          }
  
@@ -59,7 +59,7 @@
          {
              var10 = 1;
          }
-@@ -129,19 +136,19 @@
+@@ -132,19 +139,19 @@
      {
          if (par1World.getBlockMetadata(par2, par3, par4) == 0)
          {
@@ -83,7 +83,7 @@
              {
                  par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
              }
-@@ -165,22 +172,22 @@
+@@ -168,22 +175,22 @@
              int var6 = par1World.getBlockMetadata(par2, par3, par4);
              boolean var7 = false;
  

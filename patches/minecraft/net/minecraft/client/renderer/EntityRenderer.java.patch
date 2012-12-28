@@ -94,7 +94,7 @@
              this.renderRainSnow(par1);
 @@ -1222,6 +1232,9 @@
              {
-                 this.func_82829_a(var5, par1);
+                 this.renderCloudsCheck(var5, par1);
              }
 +
 +            this.mc.mcProfiler.endStartSection("FRenderLast");

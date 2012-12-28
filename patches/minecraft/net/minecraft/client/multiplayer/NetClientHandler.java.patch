@@ -12,7 +12,7 @@
  @SideOnly(Side.CLIENT)
  public class NetClientHandler extends NetHandler
  {
-@@ -741,7 +746,7 @@
+@@ -744,7 +749,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
@@ -21,7 +21,7 @@
          this.disconnected = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -807,7 +812,11 @@
+@@ -810,7 +815,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
@@ -34,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1189,6 +1198,10 @@
+@@ -1192,6 +1201,10 @@
                  {
                      var2.readFromNBT(par1Packet132TileEntityData.customParam1);
                  }

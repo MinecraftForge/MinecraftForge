@@ -14,15 +14,15 @@
       */
      public int getArmorCraftingMaterial()
      {
--        return this == CLOTH ? Item.leather.shiftedIndex : (this == CHAIN ? Item.ingotIron.shiftedIndex : (this == GOLD ? Item.ingotGold.shiftedIndex : (this == IRON ? Item.ingotIron.shiftedIndex : (this == DIAMOND ? Item.diamond.shiftedIndex : 0))));
+-        return this == CLOTH ? Item.leather.itemID : (this == CHAIN ? Item.ingotIron.itemID : (this == GOLD ? Item.ingotGold.itemID : (this == IRON ? Item.ingotIron.itemID : (this == DIAMOND ? Item.diamond.itemID : 0))));
 +        switch (this)
 +        {
-+            case CLOTH:   return Item.leather.shiftedIndex;
-+            case CHAIN:   return Item.ingotIron.shiftedIndex;
-+            case GOLD:    return Item.ingotGold.shiftedIndex;
-+            case IRON:    return Item.ingotIron.shiftedIndex;
-+            case DIAMOND: return Item.diamond.shiftedIndex;
-+            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.shiftedIndex);
++            case CLOTH:   return Item.leather.itemID;
++            case CHAIN:   return Item.ingotIron.itemID;
++            case GOLD:    return Item.ingotGold.itemID;
++            case IRON:    return Item.ingotIron.itemID;
++            case DIAMOND: return Item.diamond.itemID;
++            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.itemID);
 +        }
      }
  }

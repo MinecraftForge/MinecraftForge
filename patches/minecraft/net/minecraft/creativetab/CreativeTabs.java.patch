@@ -59,7 +59,7 @@
  
 -            if (var5 != null && var5.getCreativeTab() == this)
 -            {
--                var5.getSubItems(var5.shiftedIndex, this, par1List);
+-                var5.getSubItems(var5.itemID, this, par1List);
 -            }
 -        }
 +            if (var5 == null)
@@ -71,7 +71,7 @@
 +            {
 +                if (tab == this)
 +                {
-+                    var5.getSubItems(var5.shiftedIndex, this, par1List);
++                    var5.getSubItems(var5.itemID, this, par1List);
 +                }
 +            }
 +        }

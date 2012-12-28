@@ -34,8 +34,8 @@
 +               (par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH));
      }
  
-     public int func_85104_a(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
-@@ -80,19 +90,22 @@
+     /**
+@@ -83,19 +93,22 @@
          int var11 = var10 & 8;
          var10 &= 7;
  
@@ -62,7 +62,7 @@
          {
              var10 = 1;
          }
-@@ -109,7 +122,11 @@
+@@ -112,7 +125,11 @@
       */
      private int getOrientation(World par1World, int par2, int par3, int par4)
      {
@@ -75,7 +75,7 @@
      }
  
      /**
-@@ -123,22 +140,22 @@
+@@ -126,22 +143,22 @@
              int var6 = par1World.getBlockMetadata(par2, par3, par4) & 7;
              boolean var7 = false;
  

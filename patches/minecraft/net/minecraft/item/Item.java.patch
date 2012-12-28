@@ -27,7 +27,7 @@
 +
      public Item(int par1)
      {
-         this.shiftedIndex = 256 + par1;
+         this.itemID = 256 + par1;
  
          if (itemsList[256 + par1] != null)
          {

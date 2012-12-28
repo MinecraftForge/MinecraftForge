@@ -8,7 +8,7 @@
  import java.util.zip.DataFormatException;
  import java.util.zip.Deflater;
  import java.util.zip.Inflater;
-@@ -45,6 +46,8 @@
+@@ -47,6 +48,8 @@
      /** A temporary storage for the compressed chunk data byte array. */
      private static byte[] temp = new byte[196864];
  
@@ -17,15 +17,15 @@
      public Packet51MapChunk()
      {
          this.isChunkDataPacket = true;
-@@ -57,17 +60,22 @@
+@@ -59,24 +62,29 @@
          this.zCh = par1Chunk.zPosition;
          this.includeInitialize = par2;
          Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
 -        Deflater var5 = new Deflater(-1);
-         this.yChMax = var4.field_74581_c;
-         this.yChMin = var4.field_74580_b;
+         this.yChMax = var4.chunkHasAddSectionFlag;
+         this.yChMin = var4.chunkExistFlag;
 -
-+        this.field_73596_g = var4.field_74582_a;
++        this.compressedChunkData = var4.compressedData;
 +        this.deflateGate = new Semaphore(1);
 +    }
 +
@@ -34,19 +34,28 @@
 +        Deflater var5 = new Deflater(-1);
          try
          {
--            this.field_73596_g = var4.field_74582_a;
--            var5.setInput(var4.field_74582_a, 0, var4.field_74582_a.length);
-+            var5.setInput(field_73596_g, 0, field_73596_g.length);
+-            this.compressedChunkData = var4.compressedData;
+-            var5.setInput(var4.compressedData, 0, var4.compressedData.length);
++            var5.setInput(compressedChunkData, 0, compressedChunkData.length);
              var5.finish();
--            this.chunkData = new byte[var4.field_74582_a.length];
+-            this.chunkData = new byte[var4.compressedData.length];
 -            this.tempLength = var5.deflate(this.chunkData);
-+            byte[] deflated = new byte[field_73596_g.length];
++            byte[] deflated = new byte[compressedChunkData.length];
 +            this.tempLength = var5.deflate(deflated);
 +            this.chunkData = deflated;
          }
          finally
          {
-@@ -95,13 +103,16 @@
+             var5.end();
+         }
+-    }
+-
++
++    }
+     /**
+      * Abstract. Reads the raw packet data from the data stream.
+      */
+@@ -97,13 +105,16 @@
          par1DataInputStream.readFully(temp, 0, this.tempLength);
          int var2 = 0;
          int var3;
@@ -63,7 +72,7 @@
  
          if (this.includeInitialize)
          {
-@@ -131,6 +142,16 @@
+@@ -133,6 +144,16 @@
       */
      public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
      {

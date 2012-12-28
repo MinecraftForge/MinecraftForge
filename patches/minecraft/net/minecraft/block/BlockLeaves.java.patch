@@ -53,7 +53,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.shiftedIndex)
+-        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.itemID)
 -        {
 -            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
 -            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.leaves.blockID, 1, par6 & 3));
@@ -70,15 +70,15 @@
      {
          return new ItemStack(this.blockID, 1, par1 & 3);
      }
-+    
++
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int x, int y, int z) 
++    public boolean isShearable(ItemStack item, World world, int x, int y, int z)
 +    {
 +        return true;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune) 
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune)
 +    {
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));

@@ -20,13 +20,13 @@
  {
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
  
-@@ -138,28 +142,6 @@
+@@ -139,28 +143,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
 -        ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
 -
--        if (var2 != null && var2.itemID == Item.shears.shiftedIndex && !this.getSheared() && !this.isChild())
+-        if (var2 != null && var2.itemID == Item.shears.itemID && !this.getSheared() && !this.isChild())
 -        {
 -            if (!this.worldObj.isRemote)
 -            {
@@ -43,13 +43,13 @@
 -            }
 -
 -            var2.damageItem(1, par1EntityPlayer);
--            this.func_85030_a("mob.sheep.shear", 1.0F, 1.0F);
+-            this.playSound("mob.sheep.shear", 1.0F, 1.0F);
 -        }
 -
          return super.interact(par1EntityPlayer);
      }
  
-@@ -348,4 +330,24 @@
+@@ -349,4 +331,24 @@
      {
          return this.func_90015_b(par1EntityAgeable);
      }

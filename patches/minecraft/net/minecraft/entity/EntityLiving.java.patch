@@ -57,12 +57,12 @@
 +            return false;
 +        }
 +
-         if (this.func_85032_ar())
+         if (this.isEntityInvulnerable())
          {
              return false;
 @@ -1188,6 +1206,11 @@
      {
-         if (!this.func_85032_ar())
+         if (!this.isEntityInvulnerable())
          {
 +            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
 +            if (par2 <= 0)
@@ -121,7 +121,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1333,6 +1375,12 @@
+@@ -1334,6 +1376,12 @@
       */
      protected void fall(float par1)
      {
@@ -134,7 +134,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1535,7 +1583,7 @@
+@@ -1536,7 +1584,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -143,7 +143,7 @@
      }
  
      /**
-@@ -1948,6 +1996,7 @@
+@@ -1949,6 +1997,7 @@
          }
  
          this.isAirBorne = true;
@@ -151,7 +151,7 @@
      }
  
      /**
-@@ -2485,8 +2534,6 @@
+@@ -2486,8 +2535,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -160,7 +160,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2943,4 +2990,42 @@
+@@ -2944,4 +2991,42 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }
@@ -191,10 +191,10 @@
 +        }
 +    }
 +
-+    /** 
++    /**
 +     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
 +     * currently only used in vanilla code by pigs.
-+     * 
++     *
 +     * @param player The player who is riding the entity.
 +     * @return If the player should orient the same direction as this entity.
 +     */

@@ -17,7 +17,7 @@
              }
          }
  
--        if (var2 != null && var2.itemID == Item.shears.shiftedIndex && this.getGrowingAge() >= 0)
+-        if (var2 != null && var2.itemID == Item.shears.itemID && this.getGrowingAge() >= 0)
 -        {
 -            this.setDead();
 -            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
@@ -50,15 +50,15 @@
      {
          return this.spawnBabyAnimal(par1EntityAgeable);
      }
-+    
++
 +    @Override
-+    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z) 
++    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
 +    {
 +        return getGrowingAge() >= 0;
 +    }
 +
 +    @Override
-+    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune) 
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
 +    {
 +        setDead();
 +        EntityCow entitycow = new EntityCow(worldObj);
@@ -67,7 +67,7 @@
 +        entitycow.renderYawOffset = renderYawOffset;
 +        worldObj.spawnEntityInWorld(entitycow);
 +        worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
-+        
++
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +        for (int x = 0; x < 5; x++)
 +        {

@@ -21,7 +21,7 @@
  public class EntityMinecart extends Entity implements IInventory
  {
      /** Array of item stacks stored in minecart (for storage minecarts). */
-@@ -52,6 +59,25 @@
+@@ -54,6 +61,25 @@
      @SideOnly(Side.CLIENT)
      protected double velocityZ;
  
@@ -47,7 +47,7 @@
      public EntityMinecart(World par1World)
      {
          super(par1World);
-@@ -63,6 +89,18 @@
+@@ -65,6 +91,18 @@
          this.setSize(0.98F, 0.7F);
          this.yOffset = this.height / 2.0F;
          this.field_82344_g = par1World != null ? par1World.func_82735_a(this) : null;
@@ -66,7 +66,7 @@
      }
  
      /**
-@@ -88,6 +126,10 @@
+@@ -90,6 +128,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
      {
@@ -77,7 +77,7 @@
          return par1Entity.canBePushed() ? par1Entity.boundingBox : null;
      }
  
-@@ -96,6 +138,10 @@
+@@ -98,6 +140,10 @@
       */
      public AxisAlignedBB getBoundingBox()
      {
@@ -88,7 +88,7 @@
          return null;
      }
  
-@@ -104,7 +150,7 @@
+@@ -106,7 +152,7 @@
       */
      public boolean canBePushed()
      {
@@ -97,11 +97,11 @@
      }
  
      public EntityMinecart(World par1World, double par2, double par4, double par6, int par8)
-@@ -159,48 +205,7 @@
+@@ -161,48 +207,7 @@
                      }
  
                      this.setDead();
--                    this.dropItemWithOffset(Item.minecartEmpty.shiftedIndex, 1, 0.0F);
+-                    this.dropItemWithOffset(Item.minecartEmpty.itemID, 1, 0.0F);
 -
 -                    if (this.minecartType == 1)
 -                    {
@@ -147,7 +147,7 @@
                  }
  
                  return true;
-@@ -318,7 +323,7 @@
+@@ -320,7 +325,7 @@
              this.kill();
          }
  
@@ -156,7 +156,7 @@
          {
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
-@@ -416,18 +421,18 @@
+@@ -418,18 +423,18 @@
              double var6 = 0.0078125D;
              int var8 = this.worldObj.getBlockId(var45, var2, var47);
  
@@ -178,7 +178,7 @@
                      var12 = !var11;
                  }
  
-@@ -441,25 +446,7 @@
+@@ -443,25 +448,7 @@
                      this.posY = (double)(var2 + 1);
                  }
  
@@ -203,9 +203,9 @@
 -                }
 +                adjustSlopeVelocities(var10);
  
-                 int[][] var13 = field_70500_g[var10];
+                 int[][] var13 = matrix[var10];
                  double var14 = (double)(var13[1][0] - var13[0][0]);
-@@ -492,7 +479,7 @@
+@@ -494,7 +481,7 @@
                      }
                  }
  
@@ -214,7 +214,7 @@
                  {
                      var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -540,36 +527,8 @@
+@@ -542,36 +529,8 @@
                  this.posX = var26 + var14 * var24;
                  this.posZ = var28 + var16 * var24;
                  this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -253,7 +253,7 @@
  
                  if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var45 == var13[0][0] && MathHelper.floor_double(this.posZ) - var47 == var13[0][2])
                  {
-@@ -580,42 +539,7 @@
+@@ -582,42 +541,7 @@
                      this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
                  }
  
@@ -297,7 +297,7 @@
  
                  Vec3 var54 = this.func_70489_a(this.posX, this.posY, this.posZ);
  
-@@ -645,30 +569,14 @@
+@@ -647,30 +571,14 @@
  
                  double var41;
  
@@ -336,7 +336,7 @@
                  {
                      var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -704,41 +612,7 @@
+@@ -706,41 +614,7 @@
              }
              else
              {
@@ -379,7 +379,7 @@
              }
  
              this.doBlockCollisions();
-@@ -765,7 +639,18 @@
+@@ -767,7 +641,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -399,7 +399,7 @@
  
              if (var15 != null && !var15.isEmpty())
              {
-@@ -790,17 +675,8 @@
+@@ -792,17 +677,8 @@
                  this.riddenByEntity = null;
              }
  
@@ -419,7 +419,7 @@
          }
      }
  
-@@ -824,12 +700,7 @@
+@@ -826,12 +702,7 @@
          }
          else
          {
@@ -433,7 +433,7 @@
  
              par3 = (double)var10;
  
-@@ -875,13 +746,8 @@
+@@ -877,13 +748,8 @@
  
          if (BlockRail.isRailBlock(var10))
          {
@@ -448,7 +448,7 @@
  
              if (var11 >= 2 && var11 <= 5)
              {
-@@ -946,13 +812,14 @@
+@@ -948,13 +814,14 @@
      {
          par1NBTTagCompound.setInteger("Type", this.minecartType);
  
@@ -467,7 +467,7 @@
          {
              NBTTagList var2 = new NBTTagList();
  
-@@ -978,13 +845,21 @@
+@@ -980,13 +847,21 @@
      {
          this.minecartType = par1NBTTagCompound.getInteger("Type");
  
@@ -493,7 +493,7 @@
          {
              NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -1013,11 +888,17 @@
+@@ -1015,11 +890,17 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -512,7 +512,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -1063,7 +944,7 @@
+@@ -1065,7 +946,7 @@
                          double var18 = par1Entity.motionX + this.motionX;
                          double var20 = par1Entity.motionZ + this.motionZ;
  
@@ -521,7 +521,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -1071,7 +952,7 @@
+@@ -1073,7 +954,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -530,7 +530,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1106,7 +987,7 @@
+@@ -1108,7 +989,7 @@
       */
      public int getSizeInventory()
      {
@@ -539,7 +539,7 @@
      }
  
      /**
-@@ -1209,7 +1090,12 @@
+@@ -1211,7 +1092,12 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -553,7 +553,7 @@
          {
              if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
              {
-@@ -1221,14 +1107,14 @@
+@@ -1223,14 +1109,14 @@
                  par1EntityPlayer.mountEntity(this);
              }
          }
@@ -570,7 +570,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1352,4 +1238,375 @@
+@@ -1354,4 +1240,375 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }
