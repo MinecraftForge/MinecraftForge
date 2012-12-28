@@ -20,8 +20,10 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
@@ -60,7 +62,8 @@ public class ModLoaderHelper
 {
     public static IModLoaderSidedHelper sidedHelper;
 
-    private static Map<Integer, ModLoaderGuiHelper> guiHelpers = Maps.newHashMap();
+    private static Map<BaseModProxy, ModLoaderGuiHelper> guiHelpers = Maps.newHashMap();
+    private static Map<Integer, ModLoaderGuiHelper> guiIDs = Maps.newHashMap();
 
     public static void updateStandardTicks(BaseModProxy mod, boolean enable, boolean useClock)
     {
@@ -161,15 +164,21 @@ public class ModLoaderHelper
 
     public static void buildGuiHelper(BaseModProxy mod, int id)
     {
-        ModLoaderGuiHelper handler = new ModLoaderGuiHelper(mod, id);
-        guiHelpers.put(id, handler);
-        NetworkRegistry.instance().registerGuiHandler(mod, handler);
+        ModLoaderGuiHelper handler = guiHelpers.get(mod);
+        if (handler == null)
+        {
+            handler = new ModLoaderGuiHelper(mod);
+            guiHelpers.put(mod,handler);
+            NetworkRegistry.instance().registerGuiHandler(mod, handler);
+        }
+        handler.associateId(id);
+        guiIDs.put(id, handler);
     }
 
     public static void openGui(int id, EntityPlayer player, Container container, int x, int y, int z)
     {
-        ModLoaderGuiHelper helper = guiHelpers.get(id);
-        helper.injectContainer(container);
+        ModLoaderGuiHelper helper = guiIDs.get(id);
+        helper.injectContainerAndID(container, id);
         player.openGui(helper.getMod(), id, player.field_70170_p, x, y, z);
     }
 

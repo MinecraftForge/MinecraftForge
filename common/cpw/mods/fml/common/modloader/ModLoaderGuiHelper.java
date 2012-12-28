@@ -1,21 +1,27 @@
 package cpw.mods.fml.common.modloader;
 
+import java.util.Set;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
+
+import com.google.common.collect.Sets;
+
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class ModLoaderGuiHelper implements IGuiHandler
 {
 
     private BaseModProxy mod;
-    private int id;
+    private Set<Integer> ids;
     private Container container;
+    private int currentID;
 
-    ModLoaderGuiHelper(BaseModProxy mod, int id)
+    ModLoaderGuiHelper(BaseModProxy mod)
     {
         this.mod = mod;
-        this.id = id;
+        this.ids = Sets.newHashSet();
     }
 
     @Override
@@ -30,14 +36,20 @@ public class ModLoaderGuiHelper implements IGuiHandler
         return ModLoaderHelper.getClientSideGui(mod, player, ID, x, y, z);
     }
 
-    public void injectContainer(Container container)
+    public void injectContainerAndID(Container container, int ID)
     {
         this.container = container;
+        this.currentID = ID;
     }
 
     public Object getMod()
     {
         return mod;
+    }
+
+    public void associateId(int additionalID)
+    {
+        this.ids.add(additionalID);
     }
 
 }
