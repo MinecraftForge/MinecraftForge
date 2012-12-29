@@ -929,7 +929,7 @@ func_72169_f,isPoweredOrRepeater,2,"Returns true if the block coordinate passed 
 func_72170_e,getMaxCurrentStrength,2,"Returns the current strength at the specified block if it is greater than the passed value, or the passed value otherwise. Signature: (world, x, y, z, strength)"
 func_72171_a,calculateCurrentChanges,2,
 func_72172_n,notifyWireNeighborsOfNeighborChange,2,"Calls World.notifyBlocksOfNeighborChange() for all neighboring blocks, but only if the given block is a redstone wire."
-func_72173_e,canConnectRedstone,2,"Returns true if redstone wire can connect to the specified block. Params: World, X, Y, Z, side (not a normal notch-side, this can be 0, 1, 2, 3 or -1)"
+func_72173_e,isPowerProviderOrWire,2,"Returns true if redstone wire can connect to the specified block. Params: World, X, Y, Z, side (not a normal notch-side, this can be 0, 1, 2, 3 or -1)"
 func_72176_l,glow,2,The redstone ore glows.
 func_72177_n,sparkle,2,The redstone ore sparkles.
 func_72179_a,isPoweredBlockRail,2,Return true if the blocks passed is a power related rail.
