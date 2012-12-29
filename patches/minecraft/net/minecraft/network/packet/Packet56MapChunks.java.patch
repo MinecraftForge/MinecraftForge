@@ -34,7 +34,7 @@
              var3 += var6.compressedData.length;
              this.chunkPostX[var4] = var5.xPosition;
              this.chunkPosZ[var4] = var5.zPosition;
-@@ -60,21 +55,35 @@
+@@ -60,15 +55,29 @@
              this.field_73588_b[var4] = var6.chunkHasAddSectionFlag;
              this.field_73584_f[var4] = var6.compressedData;
          }
@@ -53,7 +53,7 @@
 +        }
  
          Deflater var11 = new Deflater(-1);
--
+ 
          try
          {
 -            var11.setInput(chunkDataNotCompressed, 0, var3);
@@ -67,10 +67,20 @@
          }
          finally
          {
-             var11.end();
-         }
-     }
+@@ -150,6 +159,16 @@
+      */
+     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     {
++        if (this.chunkDataBuffer == null)
++        {
++            deflateGate.acquireUninterruptibly();
++            if (this.chunkDataBuffer == null)
++            {
++                deflate();
++            }
++            deflateGate.release();
++        }
 +
- 
-     /**
-      * Abstract. Reads the raw packet data from the data stream.
+         par1DataOutputStream.writeShort(this.chunkPostX.length);
+         par1DataOutputStream.writeInt(this.dataLength);
+         par1DataOutputStream.writeBoolean(this.field_92024_h);

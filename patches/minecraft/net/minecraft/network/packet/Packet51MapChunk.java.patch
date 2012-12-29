@@ -17,7 +17,7 @@
      public Packet51MapChunk()
      {
          this.isChunkDataPacket = true;
-@@ -59,24 +62,29 @@
+@@ -59,17 +62,22 @@
          this.zCh = par1Chunk.zPosition;
          this.includeInitialize = par2;
          Packet51MapChunkData var4 = getMapChunkData(par1Chunk, par2, par3);
@@ -46,15 +46,6 @@
          }
          finally
          {
-             var5.end();
-         }
--    }
--
-+
-+    }
-     /**
-      * Abstract. Reads the raw packet data from the data stream.
-      */
 @@ -97,13 +105,16 @@
          par1DataInputStream.readFully(temp, 0, this.tempLength);
          int var2 = 0;
