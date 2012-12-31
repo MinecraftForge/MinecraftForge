@@ -60,6 +60,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 import cpw.mods.fml.common.network.FMLNetworkHandler;
@@ -92,6 +93,7 @@ public class FMLModContainer implements ModContainer
         .put(FMLServerStartingEvent.class, Mod.ServerStarting.class)
         .put(FMLServerStartedEvent.class, Mod.ServerStarted.class)
         .put(FMLServerStoppingEvent.class, Mod.ServerStopping.class)
+        .put(FMLServerStoppedEvent.class, Mod.ServerStopped.class)
         .put(IMCEvent.class,Mod.IMCCallback.class)
         .put(FMLFingerprintViolationEvent.class, Mod.FingerprintWarning.class)
         .build();

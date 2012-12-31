@@ -169,6 +169,14 @@ public @interface Mod
     @Target(ElementType.METHOD)
     public @interface ServerStopping {}
     /**
+     * Mark the designated method as being called at the "server-stopped" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface ServerStopped {}
+    /**
      * Mark the designated method as the receiver for {@link FMLInterModComms} messages
      * Called between {@link Init} and {@link PostInit}
      * @author cpw
