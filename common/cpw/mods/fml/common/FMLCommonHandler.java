@@ -453,4 +453,9 @@ public class FMLCommonHandler
     {
         sidedDelegate.disconnectIDMismatch(serverDifference, toKill, network);
     }
+
+    public void handleServerStopped()
+    {
+        Loader.instance().serverStopped();
+    }
 }

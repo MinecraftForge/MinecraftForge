@@ -10,6 +10,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.event.FMLStateEvent;
 
@@ -30,6 +31,7 @@ public enum LoaderState
     SERVER_STARTING("Server starting", FMLServerStartingEvent.class),
     SERVER_STARTED("Server started", FMLServerStartedEvent.class),
     SERVER_STOPPING("Server stopping", FMLServerStoppingEvent.class),
+    SERVER_STOPPED("Server stopped", FMLServerStoppedEvent.class),
     ERRORED("Mod Loading errored",null);
 
 
@@ -49,7 +51,7 @@ public enum LoaderState
             return ERRORED;
         }
         // stopping -> available
-        if (this == SERVER_STOPPING)
+        if (this == SERVER_STOPPED)
         {
             return AVAILABLE;
         }

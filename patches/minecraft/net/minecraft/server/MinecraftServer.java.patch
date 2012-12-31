@@ -40,8 +40,11 @@
              var48.printStackTrace();
              field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + var48.getClass().getSimpleName(), var48);
              CrashReport var2 = null;
-@@ -455,6 +467,10 @@
+@@ -453,8 +465,13 @@
+         }
+         finally
          {
++            FMLCommonHandler.instance().handleServerStopped();
              try
              {
 +                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
@@ -51,7 +54,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -480,8 +496,10 @@
+@@ -480,8 +497,10 @@
  
      public void func_71217_p()
      {
@@ -62,7 +65,7 @@
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -527,6 +545,7 @@
+@@ -527,6 +546,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -70,7 +73,7 @@
      }
  
      public void func_71190_q()
-@@ -554,6 +573,7 @@
+@@ -554,6 +574,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
@@ -78,7 +81,7 @@
                  CrashReport var6;
  
                  try
-@@ -578,6 +598,7 @@
+@@ -578,6 +599,7 @@
                      throw new ReportedException(var6);
                  }
  
@@ -86,7 +89,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  var4.func_73039_n().func_72788_a();
-@@ -705,7 +726,7 @@
+@@ -705,7 +727,7 @@
  
      public String getServerModName()
      {
@@ -95,7 +98,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1146,6 +1167,13 @@
+@@ -1146,6 +1168,13 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {

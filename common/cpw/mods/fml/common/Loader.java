@@ -27,6 +27,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.crash.CallableMinecraftVersion;
+import net.minecraft.server.MinecraftServer;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
@@ -710,8 +711,6 @@ public class Loader
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPING);
         modController.transition(LoaderState.SERVER_STOPPING);
-        modController.transition(LoaderState.AVAILABLE);
-
     }
 
     public BiMap<ModContainer, Object> getModObjectList()
@@ -746,4 +745,11 @@ public class Loader
 	public String getMCPVersionString() {
 		return String.format("MCP v%s", mcpversion);
 	}
+
+    public void serverStopped()
+    {
+        modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
+        modController.transition(LoaderState.SERVER_STOPPED);
+        modController.transition(LoaderState.AVAILABLE);
+    }
 }
