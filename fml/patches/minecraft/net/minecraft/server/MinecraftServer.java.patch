@@ -40,11 +40,8 @@
              var48.printStackTrace();
              field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + var48.getClass().getSimpleName(), var48);
              CrashReport var2 = null;
-@@ -453,8 +465,13 @@
-         }
-         finally
+@@ -455,6 +467,10 @@
          {
-+            FMLCommonHandler.instance().handleServerStopped();
              try
              {
 +                if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
@@ -54,6 +51,14 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
+@@ -464,6 +480,7 @@
+             }
+             finally
+             {
++                FMLCommonHandler.instance().handleServerStopped();
+                 this.func_71240_o();
+             }
+         }
 @@ -480,8 +497,10 @@
  
      public void func_71217_p()
