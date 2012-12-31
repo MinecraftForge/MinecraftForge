@@ -40,6 +40,10 @@ public class EventTransformer implements IClassTransformer
             }
             return bytes;
         }
+        catch (ClassNotFoundException ex)
+        {
+            // Discard silently- it's just noise
+        }
         catch (Exception e)
         {
             e.printStackTrace();
