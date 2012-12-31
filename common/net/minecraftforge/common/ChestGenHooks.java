@@ -67,12 +67,13 @@ public class ChestGenHooks
         addDungeonLoot(d, new ItemStack(Item.gunpowder),       100, 1, 4);
         addDungeonLoot(d, new ItemStack(Item.silk),            100, 1, 4);
         addDungeonLoot(d, new ItemStack(Item.bucketEmpty),     100, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.appleGold),       001, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.redstone),        050, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.record13),        005, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.recordCat),       005, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.appleGold),         1, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.redstone),         50, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.record13),          5, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.recordCat),         5, 1, 1);
         addDungeonLoot(d, new ItemStack(Item.dyePowder, 1, 3), 100, 1, 1);
         addDungeonLoot(d, book,                                100, 1, 1);
+        hasInit = true;
     }
     
     static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)
@@ -159,10 +160,7 @@ public class ChestGenHooks
     public ChestGenHooks(String category, WeightedRandomChestContent[] items, int min, int max)
     {
         this(category);
-        for (WeightedRandomChestContent item : items)
-        {
-            contents.add(item);
-        }
+        Collections.addAll(contents, items);
         countMin = min;
         countMax = max;
     }

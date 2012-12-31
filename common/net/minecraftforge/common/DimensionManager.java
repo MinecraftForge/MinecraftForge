@@ -3,6 +3,7 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,7 +47,7 @@ public class DimensionManager
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
-        if (providers.containsValue(id))
+        if (providers.contains(id))
         {
             return false;
         }
@@ -67,6 +68,7 @@ public class DimensionManager
         registerDimension( 0,  0);
         registerDimension(-1, -1);
         registerDimension( 1,  1);
+        hasInit = true;
     }
 
     public static void registerDimension(int id, int providerType)
@@ -147,7 +149,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[0]);
+        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim) {
@@ -183,7 +185,8 @@ public class DimensionManager
 
     public static WorldServer[] getWorlds()
     {
-        return worlds.values().toArray(new WorldServer[0]);
+        Collection<WorldServer> var = worlds.values();
+        return var.toArray(new WorldServer[var.size()]);
     }
 
     public static boolean shouldLoadSpawn(int dim)

@@ -63,7 +63,7 @@ public class ChunkProviderEvent extends Event
             this.posY = posY;
             this.posZ = posZ;
             this.sizeX = sizeX;
-            this.sizeY = sizeX;
+            this.sizeY = sizeY;
             this.sizeZ = sizeZ;
         }
        

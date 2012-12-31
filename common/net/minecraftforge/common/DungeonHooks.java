@@ -95,11 +95,7 @@ public class DungeonHooks
         @Override
         public boolean equals(Object target)
         {
-            if (target instanceof DungeonMob)
-            {
-                return this.type.equals(((DungeonMob)target).type);
-            }
-            return false;
+            return target instanceof DungeonMob && this.type.equals(((DungeonMob) target).type);
         }
     }
 

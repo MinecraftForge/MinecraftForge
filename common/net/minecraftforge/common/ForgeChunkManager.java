@@ -391,7 +391,7 @@ public class ForgeChunkManager
 
     static void loadWorld(World world)
     {
-        ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.<String, Ticket>create();
+        ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.create();
         tickets.put(world, newTickets);
 
         forcedChunks.put(world, ImmutableSetMultimap.<ChunkCoordIntPair,Ticket>of());
@@ -408,7 +408,7 @@ public class ForgeChunkManager
 
         if (chunkLoaderData.exists() && chunkLoaderData.isFile())
         {
-            ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.<String, Ticket>create();
+            ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
             try

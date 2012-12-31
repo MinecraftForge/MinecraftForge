@@ -87,7 +87,6 @@ public class ShapedOreRecipe implements IRecipe
         {
             Character chr = (Character)recipe[idx];
             Object in = recipe[idx + 1];
-            Object val = null;
 
             if (in instanceof ItemStack)
             {

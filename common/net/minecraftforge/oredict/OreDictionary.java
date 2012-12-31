@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -81,7 +82,8 @@ public class OreDictionary
         }
         hasInit = true;
 
-        ItemStack[] replaceStacks = replacements.keySet().toArray(new ItemStack[0]);
+        Set<ItemStack> var = replacements.keySet();
+        ItemStack[] replaceStacks = var.toArray(new ItemStack[var.size()]);
 
         // Ignore recipes for the following items
         ItemStack[] exclusions = new ItemStack[]
@@ -121,7 +123,7 @@ public class OreDictionary
                     continue;
                 }
 
-                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[0]), replaceStacks))
+                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
                 {
                     recipesToRemove.add((IRecipe)obj);
                     IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
@@ -217,7 +219,8 @@ public class OreDictionary
      */
     public static String[] getOreNames()
     {
-        return oreIDs.keySet().toArray(new String[0]);
+        Set<String> var = oreIDs.keySet();
+        return var.toArray(new String[var.size()]);
     }
     
     /**
