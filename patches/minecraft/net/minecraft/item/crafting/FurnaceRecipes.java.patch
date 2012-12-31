@@ -28,9 +28,18 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -65,8 +71,58 @@
+@@ -65,8 +71,67 @@
          return this.smeltingList;
      }
++
++    /**
++     * Returns the list of meta-sensitive smelting recipies
++     */
++    public Map getMetaSmeltingList()
++    {
++        return this.metaSmeltingList;
++    }
++
  
 +    @Deprecated //In favor of ItemStack sensitive version
      public float getExperience(int par1)
