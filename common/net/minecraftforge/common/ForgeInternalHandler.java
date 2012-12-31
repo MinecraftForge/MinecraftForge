@@ -32,7 +32,7 @@ public class ForgeInternalHandler
         Entity entity = event.entity;
         if (entity.getClass().equals(EntityItem.class))
         {
-            ItemStack stack = ((EntityItem)entity).getDataWatcher().getWatchableObjectItemStack(10);
+            ItemStack stack = entity.getDataWatcher().getWatchableObjectItemStack(10);
 
             if (stack == null)
             {

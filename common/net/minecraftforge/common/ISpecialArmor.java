@@ -124,7 +124,7 @@ public interface ISpecialArmor
             }
             if (dmgVals.size() > 0)
             {
-                ArmorProperties[] props = dmgVals.toArray(new ArmorProperties[0]);
+                ArmorProperties[] props = dmgVals.toArray(new ArmorProperties[dmgVals.size()]);
                 StandardizeList(props, damage);
                 int level = props[0].Priority;
                 double ratio = 0;
@@ -262,7 +262,7 @@ public interface ISpecialArmor
                             total -= armor[y].AbsorbRatio;
                             if (damage * armor[y].AbsorbRatio > armor[y].AbsorbMax)
                             {
-                                armor[y].AbsorbRatio = (double)armor[y].AbsorbMax / (double)damage;
+                                armor[y].AbsorbRatio = (double)armor[y].AbsorbMax / damage;
                             }
                             total += armor[y].AbsorbRatio;
                         }

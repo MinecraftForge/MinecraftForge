@@ -402,7 +402,7 @@ public class ForgeHooksClient
             System.out.println(msg);
             if (Tessellator.class.getPackage() != null)
             {
-                if (Tessellator.class.getPackage().equals("net.minecraft.src"))
+                if (Tessellator.class.getPackage().getName().equals("net.minecraft.src"))
                 {
                     Minecraft mc = FMLClientHandler.instance().getClient();
                     if (mc.ingameGUI != null)

@@ -60,10 +60,7 @@ public class LiquidStack {
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
 	public boolean isLiquidEqual(LiquidStack other) {
-		if(other == null)
-			return false;
-
-		return itemID == other.itemID && itemMeta == other.itemMeta;
+		return other != null && itemID == other.itemID && itemMeta == other.itemMeta;
 	}
 
 	/**
@@ -71,10 +68,7 @@ public class LiquidStack {
 	 * @return true if this LiquidStack contains the other liquid (liquids are equal and amount >= other.amount).
 	 */
 	public boolean containsLiquid(LiquidStack other) {
-		if(!isLiquidEqual(other))
-			return false;
-
-		return amount >= other.amount;
+		return isLiquidEqual(other) && amount >= other.amount;
 	}
 
 	/**
@@ -82,10 +76,7 @@ public class LiquidStack {
 	 * @return true if this LiquidStack contains the same liquid as the one passed in.
 	 */
 	public boolean isLiquidEqual(ItemStack other) {
-		if(other == null)
-			return false;
-
-		return itemID == other.itemID && itemMeta == other.getItemDamage();
+		return other != null && itemID == other.itemID && itemMeta == other.getItemDamage();
 	}
 
 	/**
