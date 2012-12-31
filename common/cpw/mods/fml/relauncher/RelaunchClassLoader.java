@@ -44,6 +44,8 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private static final String[] RESERVED = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
+    private static final boolean DEBUG_CLASSLOADING = Boolean.parseBoolean(System.getProperty("fml.debugClassLoading", "false"));
+
     public RelaunchClassLoader(URL[] sources)
     {
         super(sources, null);
@@ -176,6 +178,10 @@ public class RelaunchClassLoader extends URLClassLoader
         catch (Throwable e)
         {
             invalidClasses.add(name);
+            if (DEBUG_CLASSLOADING)
+            {
+                FMLLog.log(Level.FINEST, e, "Exception encountered attempting classloading of %s", name);
+            }
             throw new ClassNotFoundException(name, e);
         }
     }
@@ -295,9 +301,17 @@ public class RelaunchClassLoader extends URLClassLoader
             URL classResource = findResource(name.replace('.', '/').concat(".class"));
             if (classResource == null)
             {
+                if (DEBUG_CLASSLOADING)
+                {
+                    FMLLog.finest("Failed to find class resource %s", name.replace('.', '/').concat(".class"));
+                }
                 return null;
             }
             classStream = classResource.openStream();
+            if (DEBUG_CLASSLOADING)
+            {
+                FMLLog.finest("Loading class %s from resource %s", name, classResource.toString());
+            }
             return readFully(classStream);
         }
         finally
