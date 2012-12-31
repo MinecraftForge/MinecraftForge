@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerDispenser.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerDispenser.java
+@@ -34,6 +34,14 @@
+         {
+             this.addSlotToContainer(new Slot(par1IInventory, var3, 8 + var3 * 18, 142));
+         }
++    }
++    
++    /**
++     * Returns the Tile Entity behind this dispenser inventory / container
++     */
++    public TileEntityDispenser getDispenser()
++    {
++        return this.tileEntityDispenser;
+     }
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)

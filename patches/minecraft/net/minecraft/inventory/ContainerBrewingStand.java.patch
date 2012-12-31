@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerBrewingStand.java
+@@ -71,6 +71,14 @@
+         {
+             this.tileBrewingStand.setBrewTime(par2);
+         }
++    }
++    
++    /**
++     * Returns the Tile Entity behind this brewing stand inventory / container
++     */
++    public TileEntityBrewingStand getBrewingStand()
++    {
++        return this.tileBrewingStand;
+     }
+ 
+     public boolean canInteractWith(EntityPlayer par1EntityPlayer)

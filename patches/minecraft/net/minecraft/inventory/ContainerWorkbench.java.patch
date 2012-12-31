@@ -1,0 +1,33 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -58,7 +58,30 @@
+     {
+         this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
+     }
++    
++    /**
++     * Returns the world in which the workbench resides
++     */
++    public World getWorldObj()
++    {
++        return this.worldObj;
++    }
+ 
++    public int getPosX()
++    {
++        return this.posX;
++    }
++
++    public int getPosY()
++    {
++        return this.posY;
++    }
++
++    public int getPosZ()
++    {
++        return this.posZ;
++    }
++    
+     /**
+      * Callback for when the crafting gui is closed.
+      */

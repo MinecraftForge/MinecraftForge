@@ -1,13 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -55,8 +55,21 @@
+@@ -55,8 +55,23 @@
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.IChunkProvider;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
 +import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.container.ContainerInteractEvent;
 +import net.minecraftforge.event.entity.living.LivingHurtEvent;
 +import net.minecraftforge.event.entity.player.AttackEntityEvent;
 +import net.minecraftforge.event.entity.player.EntityInteractEvent;
@@ -22,7 +24,7 @@
      /** Inventory of the player */
      public InventoryPlayer inventory = new InventoryPlayer(this);
      private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
-@@ -259,6 +272,7 @@
+@@ -259,6 +274,7 @@
  
              if (var1 == this.itemInUse)
              {
@@ -30,7 +32,40 @@
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
                      this.updateItemUse(var1, 5);
-@@ -497,11 +511,11 @@
+@@ -313,10 +329,28 @@
+ 
+         super.onUpdate();
+ 
+-        if (!this.worldObj.isRemote && this.openContainer != null && !this.openContainer.canInteractWith(this))
+-        {
+-            this.closeScreen();
+-            this.openContainer = this.inventoryContainer;
++        if (!this.worldObj.isRemote && this.openContainer != null)
++        {
++            ContainerInteractEvent event = new ContainerInteractEvent(this.openContainer, this);
++            MinecraftForge.EVENT_BUS.post(event);
++            boolean canInteractWithContainer = false;
++            if (event.isCanceled() || event.getResult() == Event.Result.DENY)
++            {
++                canInteractWithContainer = false;
++            }
++            else if (event.getResult() == Event.Result.DEFAULT)
++            {
++                canInteractWithContainer = this.openContainer.canInteractWith(this);
++            }
++            else
++            {
++                canInteractWithContainer = true;
++            }
++            if (!canInteractWithContainer)
++            {
++                this.closeScreen();
++                this.openContainer = this.inventoryContainer;
++            }
+         }
+ 
+         if (this.isBurning() && this.capabilities.disableDamage)
+@@ -497,11 +531,11 @@
          this.cameraYaw = 0.0F;
          this.addMountedMovementStat(this.posX - var1, this.posY - var3, this.posZ - var5);
  
@@ -44,7 +79,7 @@
          }
      }
  
-@@ -624,6 +638,9 @@
+@@ -624,6 +658,9 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
  
@@ -54,7 +89,7 @@
          if (this.username.equals("Notch"))
          {
              this.dropPlayerItemWithRandomChoice(new ItemStack(Item.appleRed, 1), true);
-@@ -632,6 +649,20 @@
+@@ -632,6 +669,20 @@
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
              this.inventory.dropAllItems();
@@ -75,7 +110,7 @@
          }
  
          if (par1DamageSource != null)
-@@ -671,7 +702,20 @@
+@@ -671,7 +722,20 @@
       */
      public EntityItem dropOneItem(boolean par1)
      {
@@ -97,7 +132,7 @@
      }
  
      /**
-@@ -680,7 +724,7 @@
+@@ -680,7 +744,7 @@
       */
      public EntityItem dropPlayerItem(ItemStack par1ItemStack)
      {
@@ -106,7 +141,7 @@
      }
  
      /**
-@@ -732,23 +776,39 @@
+@@ -732,23 +796,39 @@
       */
      public void joinEntityItemWithWorld(EntityItem par1EntityItem)
      {
@@ -151,7 +186,7 @@
              {
                  var2 += var5 * 0.08F;
              }
-@@ -778,7 +838,8 @@
+@@ -778,7 +858,8 @@
              var2 /= 5.0F;
          }
  
@@ -161,7 +196,7 @@
      }
  
      /**
-@@ -786,7 +847,7 @@
+@@ -786,7 +867,7 @@
       */
      public boolean canHarvestBlock(Block par1Block)
      {
@@ -170,7 +205,7 @@
      }
  
      /**
-@@ -1073,12 +1134,22 @@
+@@ -1073,12 +1154,22 @@
      {
          if (!this.func_85032_ar())
          {
@@ -194,7 +229,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.addExhaustion(par1DamageSource.getHungerDamage());
              this.health -= par2;
-@@ -1119,6 +1190,10 @@
+@@ -1119,6 +1210,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -205,7 +240,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1162,7 +1237,9 @@
+@@ -1162,7 +1257,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -215,7 +250,7 @@
      }
  
      /**
-@@ -1179,6 +1256,15 @@
+@@ -1179,6 +1276,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -231,7 +266,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.func_85031_j(this))
-@@ -1342,6 +1428,12 @@
+@@ -1342,6 +1448,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -244,7 +279,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1381,6 +1473,11 @@
+@@ -1381,6 +1493,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -256,7 +291,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1451,10 +1548,12 @@
+@@ -1451,10 +1568,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -273,7 +308,7 @@
  
              if (var5 == null)
              {
-@@ -1491,7 +1590,9 @@
+@@ -1491,7 +1610,9 @@
       */
      private boolean isInBed()
      {
@@ -284,7 +319,7 @@
      }
  
      /**
-@@ -1506,9 +1607,12 @@
+@@ -1506,9 +1627,12 @@
          var3.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var3.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -300,7 +335,7 @@
              return var8;
          }
          else
-@@ -1530,8 +1634,11 @@
+@@ -1530,8 +1654,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -314,7 +349,7 @@
  
              switch (var2)
              {
-@@ -1840,7 +1947,7 @@
+@@ -1840,7 +1967,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -323,7 +358,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.shiftedIndex)
-@@ -1862,6 +1969,7 @@
+@@ -1862,6 +1989,7 @@
                      return 101;
                  }
              }
@@ -331,7 +366,7 @@
          }
  
          return var3;
-@@ -2082,6 +2190,14 @@
+@@ -2082,6 +2210,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
