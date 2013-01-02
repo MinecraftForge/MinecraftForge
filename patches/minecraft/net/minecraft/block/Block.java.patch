@@ -141,14 +141,14 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1364,4 +1380,835 @@
+@@ -1364,4 +1380,840 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
 +
 +    /* =================================================== FORGE START =====================================*/
 +    /**
-+     * Get a light value for this block, normal ranges are between 0 and 15
++     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
 +     *
 +     * @param world The current world
 +     * @param x X Position
@@ -158,6 +158,11 @@
 +     */
 +    public int getLightValue(IBlockAccess world, int x, int y, int z)
 +    {
++        Block block = blocksList[world.getBlockId(x, y, z)];
++        if (block != null && block != this)
++        {
++            return block.getLightValue(world, x, y, z);
++        }
 +        return lightValue[blockID];
 +    }
 +
