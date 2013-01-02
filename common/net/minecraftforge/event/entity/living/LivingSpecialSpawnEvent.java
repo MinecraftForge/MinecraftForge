@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 import net.minecraftforge.event.Cancelable;
 
+@Deprecated //Remove next MC Version
 @Cancelable
 public class LivingSpecialSpawnEvent extends LivingEvent
 {
