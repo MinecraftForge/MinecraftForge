@@ -36,6 +36,9 @@ public class ChestGenHooks
         {
             return;
         }
+
+        hasInit = true;
+
         addInfo(MINESHAFT_CORRIDOR,       StructureMineshaftPieces.mineshaftChestContents,                         3,  7);
         addInfo(PYRAMID_DESERT_CHEST,     ComponentScatteredFeatureDesertPyramid.itemsToGenerateInTemple,          2,  7);
         addInfo(PYRAMID_JUNGLE_CHEST,     ComponentScatteredFeatureJunglePyramid.junglePyramidsChestContents,      2,  7);
@@ -67,10 +70,10 @@ public class ChestGenHooks
         addDungeonLoot(d, new ItemStack(Item.gunpowder),       100, 1, 4);
         addDungeonLoot(d, new ItemStack(Item.silk),            100, 1, 4);
         addDungeonLoot(d, new ItemStack(Item.bucketEmpty),     100, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.appleGold),       001, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.redstone),        050, 1, 4);
-        addDungeonLoot(d, new ItemStack(Item.record13),        005, 1, 1);
-        addDungeonLoot(d, new ItemStack(Item.recordCat),       005, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.appleGold),         1, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.redstone),         50, 1, 4);
+        addDungeonLoot(d, new ItemStack(Item.record13),          5, 1, 1);
+        addDungeonLoot(d, new ItemStack(Item.recordCat),         5, 1, 1);
         addDungeonLoot(d, new ItemStack(Item.dyePowder, 1, 3), 100, 1, 1);
         addDungeonLoot(d, book,                                100, 1, 1);
     }
