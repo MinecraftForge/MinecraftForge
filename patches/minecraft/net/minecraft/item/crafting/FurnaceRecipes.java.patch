@@ -28,7 +28,7 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -65,8 +71,58 @@
+@@ -65,8 +71,63 @@
          return this.smeltingList;
      }
  
@@ -85,5 +85,10 @@
 +            ret = ((Float)experienceList.get(item.itemID)).floatValue();
 +        }
 +        return (ret < 0 ? 0 : ret);
++    }
++
++    public Map<List<Integer>, ItemStack> getMetaSmeltingList()
++    {
++        return metaSmeltingList;
 +    }
  }
