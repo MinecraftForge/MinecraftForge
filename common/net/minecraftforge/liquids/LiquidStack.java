@@ -9,101 +9,93 @@ import net.minecraft.nbt.NBTTagCompound;
  * ItemStack substitute for liquids
  * @author SirSengir
  */
-public class LiquidStack {
-	public int itemID;
-	public int amount;
-	public int itemMeta;
+public class LiquidStack
+{
+    public int itemID;
+    public int amount;
+    public int itemMeta;
 
-	private LiquidStack() {
-	}
+    private LiquidStack(){}
 
-	public LiquidStack(int itemID, int amount) {
-		this(itemID, amount, 0);
-	}
+    public LiquidStack(int itemID,  int amount) { this(itemID,        amount, 0); }
+    public LiquidStack(Item item,   int amount) { this(item.itemID,   amount, 0); }
+    public LiquidStack(Block block, int amount) { this(block.blockID, amount, 0); }
 
-	public LiquidStack(Item item, int amount) {
-		this(item.itemID, amount, 0);
-	}
+    public LiquidStack(int itemID, int amount, int itemDamage)
+    {
+        this.itemID = itemID;
+        this.amount = amount;
+        this.itemMeta = itemDamage;
+    }
 
-	public LiquidStack(Block block, int amount) {
-		this(block.blockID, amount, 0);
-	}
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) 
+    {
+        nbt.setShort("Id", (short)itemID);
+        nbt.setInteger("Amount", amount);
+        nbt.setShort("Meta", (short)itemMeta);
+        return nbt;
+    }
 
-	public LiquidStack(int itemID, int amount, int itemDamage) {
-		this.itemID = itemID;
-		this.amount = amount;
-		this.itemMeta = itemDamage;
-	}
+    public void readFromNBT(NBTTagCompound nbt)
+    {
+        itemID = nbt.getShort("Id");
+        amount = nbt.getInteger("Amount");
+        itemMeta = nbt.getShort("Meta");
+    }
 
-	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setShort("Id", (short) itemID);
-		nbttagcompound.setInteger("Amount", amount);
-		nbttagcompound.setShort("Meta", (short) itemMeta);
-		return nbttagcompound;
-	}
+    /**
+     * @return A copy of this LiquidStack
+     */
+    public LiquidStack copy()
+    {
+        return new LiquidStack(itemID, amount, itemMeta);
+    }
 
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		itemID = nbttagcompound.getShort("Id");
-		amount = nbttagcompound.getInteger("Amount");
-		itemMeta = nbttagcompound.getShort("Meta");
-	}
+    /**
+     * @param other
+     * @return true if this LiquidStack contains the same liquid as the one passed in.
+     */
+    public boolean isLiquidEqual(LiquidStack other)
+    {
+        return other != null && itemID == other.itemID && itemMeta == other.itemMeta;
+    }
 
-	/**
-	 * @return A copy of this LiquidStack
-	 */
-	public LiquidStack copy() {
-		return new LiquidStack(itemID, amount, itemMeta);
-	}
+    /**
+     * @param other
+     * @return true if this LiquidStack contains the other liquid (liquids are equal and amount >= other.amount).
+     */
+    public boolean containsLiquid(LiquidStack other)
+    {
+        return isLiquidEqual(other) && amount >= other.amount;
+    }
 
-	/**
-	 * @param other
-	 * @return true if this LiquidStack contains the same liquid as the one passed in.
-	 */
-	public boolean isLiquidEqual(LiquidStack other) {
-		if(other == null)
-			return false;
+    /**
+     * @param other ItemStack containing liquids.
+     * @return true if this LiquidStack contains the same liquid as the one passed in.
+     */
+    public boolean isLiquidEqual(ItemStack other)
+    {
+        return other != null && itemID == other.itemID && itemMeta == other.getItemDamage();
+    }
 
-		return itemID == other.itemID && itemMeta == other.itemMeta;
-	}
+    /**
+     * @return ItemStack representation of this LiquidStack
+     */
+    public ItemStack asItemStack()
+    {
+        return new ItemStack(itemID, 1, itemMeta);
+    }
 
-	/**
-	 * @param other
-	 * @return true if this LiquidStack contains the other liquid (liquids are equal and amount >= other.amount).
-	 */
-	public boolean containsLiquid(LiquidStack other) {
-		if(!isLiquidEqual(other))
-			return false;
-
-		return amount >= other.amount;
-	}
-
-	/**
-	 * @param other ItemStack containing liquids.
-	 * @return true if this LiquidStack contains the same liquid as the one passed in.
-	 */
-	public boolean isLiquidEqual(ItemStack other) {
-		if(other == null)
-			return false;
-
-		return itemID == other.itemID && itemMeta == other.getItemDamage();
-	}
-
-	/**
-	 * @return ItemStack representation of this LiquidStack
-	 */
-	public ItemStack asItemStack() {
-		return new ItemStack(itemID, 1, itemMeta);
-	}
-
-	/**
-	 * Reads a liquid stack from the passed nbttagcompound and returns it.
-	 *
-	 * @param nbttagcompound
-	 * @return
-	 */
-	public static LiquidStack loadLiquidStackFromNBT(NBTTagCompound nbttagcompound) {
-		LiquidStack liquidstack = new LiquidStack();
-		liquidstack.readFromNBT(nbttagcompound);
-		return liquidstack.itemID == 0 ? null : liquidstack;
-	}
+    /**
+     * Reads a liquid stack from the passed nbttagcompound and returns it.
+     *
+     * @param nbt
+     * @return
+     */
+    public static LiquidStack loadLiquidStackFromNBT(NBTTagCompound nbt)
+    {
+        LiquidStack liquidstack = new LiquidStack();
+        liquidstack.readFromNBT(nbt);
+        return liquidstack.itemID == 0 ? null : liquidstack;
+    }
 }

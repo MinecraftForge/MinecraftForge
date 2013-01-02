@@ -195,7 +195,7 @@ public class ListenerList
             {
                 ret.addAll(getListeners(value));
             }
-            listeners = ret.toArray(new IEventListener[0]);
+            listeners = ret.toArray(new IEventListener[ret.size()]);
             rebuild = false;
         }
         

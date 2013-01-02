@@ -94,7 +94,7 @@ public class ForgeHooks
             return player.canHarvestBlock(block);
         }
 
-        List info = (List)toolClasses.get(stack.getItem());
+        List info = toolClasses.get(stack.getItem());
         if (info == null)
         {
             return player.canHarvestBlock(block);
@@ -104,7 +104,7 @@ public class ForgeHooks
         String toolClass = (String)tmp[0];
         int harvestLevel = (Integer)tmp[1];
 
-        Integer blockHarvestLevel = (Integer)toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
+        Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
         if (blockHarvestLevel == null)
         {
             return player.canHarvestBlock(block);
@@ -120,14 +120,14 @@ public class ForgeHooks
     public static boolean canToolHarvestBlock(Block block, int metadata, ItemStack stack)
     {
         if (stack == null) return false;
-        List info = (List)toolClasses.get(stack.getItem());
+        List info = toolClasses.get(stack.getItem());
         if (info == null) return false;
 
         Object[] tmp = info.toArray();
         String toolClass = (String)tmp[0];
         int harvestLevel = (Integer)tmp[1];
 
-        Integer blockHarvestLevel = (Integer)toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
+        Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
         return !(blockHarvestLevel == null || blockHarvestLevel > harvestLevel);
     }
 
@@ -153,12 +153,8 @@ public class ForgeHooks
 
     public static boolean isToolEffective(ItemStack stack, Block block, int metadata)
     {
-        List toolClass = (List)toolClasses.get(stack.getItem());
-        if (toolClass == null)
-        {
-            return false;
-        }
-        return toolEffectiveness.contains(Arrays.asList(block, metadata, (String)toolClass.get(0)));
+        List toolClass = toolClasses.get(stack.getItem());
+        return toolClass != null && toolEffectiveness.contains(Arrays.asList(block, metadata, toolClass.get(0)));
     }
 
     static void initTools()

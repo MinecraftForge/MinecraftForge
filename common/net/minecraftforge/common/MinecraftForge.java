@@ -150,12 +150,8 @@ public class MinecraftForge
    {
        ForgeHooks.initTools();
        List key = Arrays.asList(block, metadata, toolClass);
-       Integer harvestLevel = (Integer)ForgeHooks.toolHarvestLevels.get(key);
-       if(harvestLevel == null)
-       {
-           return -1;
-       }
-       return harvestLevel;
+       Integer harvestLevel = ForgeHooks.toolHarvestLevels.get(key);
+       return (harvestLevel == null ? -1 : harvestLevel);
    }
 
    /**
@@ -200,10 +196,7 @@ public class MinecraftForge
        }
 
        boolean[] temp = new boolean[4096];
-       for (int x = 0; x < EntityEnderman.carriableBlocks.length; x++)
-       {
-           temp[x] = EntityEnderman.carriableBlocks[x];
-       }
+       System.arraycopy(EntityEnderman.carriableBlocks, 0, temp, 0, EntityEnderman.carriableBlocks.length);
        EntityEnderman.carriableBlocks = temp;
 
        EVENT_BUS.register(INTERNAL_HANDLER);

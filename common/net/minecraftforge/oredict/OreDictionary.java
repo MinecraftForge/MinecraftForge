@@ -81,7 +81,7 @@ public class OreDictionary
         }
         hasInit = true;
 
-        ItemStack[] replaceStacks = replacements.keySet().toArray(new ItemStack[0]);
+        ItemStack[] replaceStacks = replacements.keySet().toArray(new ItemStack[replacements.keySet().size()]);
 
         // Ignore recipes for the following items
         ItemStack[] exclusions = new ItemStack[]
@@ -121,7 +121,7 @@ public class OreDictionary
                     continue;
                 }
 
-                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[0]), replaceStacks))
+                if(containsMatch(true, (ItemStack[])recipe.recipeItems.toArray(new ItemStack[recipe.recipeItems.size()]), replaceStacks))
                 {
                     recipesToRemove.add((IRecipe)obj);
                     IRecipe newRecipe = new ShapelessOreRecipe(recipe, replacements);
@@ -217,7 +217,7 @@ public class OreDictionary
      */
     public static String[] getOreNames()
     {
-        return oreIDs.keySet().toArray(new String[0]);
+        return oreIDs.keySet().toArray(new String[oreIDs.keySet().size()]);
     }
     
     /**

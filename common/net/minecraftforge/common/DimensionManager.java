@@ -46,7 +46,7 @@ public class DimensionManager
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
-        if (providers.containsValue(id))
+        if (providers.containsKey(id))
         {
             return false;
         }
@@ -61,6 +61,9 @@ public class DimensionManager
         {
             return;
         }
+
+        hasInit = true;
+
         registerProviderType( 0, WorldProviderSurface.class, true);
         registerProviderType(-1, WorldProviderHell.class,    true);
         registerProviderType( 1, WorldProviderEnd.class,     false);
@@ -147,7 +150,7 @@ public class DimensionManager
             tmp.add(entry.getValue());
         }
 
-        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[0]);
+        MinecraftServer.getServer().worldServers = tmp.toArray(new WorldServer[tmp.size()]);
     }
 
     public static void initDimension(int dim) {
@@ -183,7 +186,7 @@ public class DimensionManager
 
     public static WorldServer[] getWorlds()
     {
-        return worlds.values().toArray(new WorldServer[0]);
+        return worlds.values().toArray(new WorldServer[worlds.size()]);
     }
 
     public static boolean shouldLoadSpawn(int dim)
