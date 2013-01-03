@@ -57,7 +57,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +716,304 @@
+@@ -701,4 +716,311 @@
      {
          StatList.initStats();
      }
@@ -103,9 +103,16 @@
 +     * @param metadata The items current metadata
 +     * @return The damage strength
 +     */
++    @Deprecated
 +    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata)
 +    {
 +        return getStrVsBlock(itemstack, block);
++    }
++    
++    
++    public float getStrVsBlock(ItemStack itemstack, Block block, World world, int x, int y, int z, int metadata)
++    {
++        return getStrVsBlock(itemstack, block, metadata);
 +    }
 +
 +    /**

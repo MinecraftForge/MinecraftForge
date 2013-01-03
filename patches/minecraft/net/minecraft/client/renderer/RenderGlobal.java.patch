@@ -94,3 +94,13 @@
                      }
  
                      return (EntityFX)var21;
+@@ -2269,7 +2294,8 @@
+                 if (var20 > 0)
+                 {
+                     Block var40 = Block.blocksList[var20];
+-                    this.mc.sndManager.playSound(var40.stepSound.getBreakSound(), (float)par3 + 0.5F, (float)par4 + 0.5F, (float)par5 + 0.5F, (var40.stepSound.getVolume() + 1.0F) / 2.0F, var40.stepSound.getPitch() * 0.8F);
++                    int meta = this.theWorld.getBlockMetadata(par3, par4, par5);
++                    this.mc.sndManager.playSound(var40.getBlockStepSound(this.theWorld, par3, par4, par5, meta).getBreakSound(), (float)par3 + 0.5F, (float)par4 + 0.5F, (float)par5 + 0.5F, (var40.getBlockStepSound(this.theWorld, par3, par4, par5, meta).getVolume() + 1.0F) / 2.0F, var40.getBlockStepSound(this.theWorld, par3, par4, par5, meta).getPitch() * 0.8F);
+                 }
+ 
+                 this.mc.effectRenderer.addBlockDestroyEffects(par3, par4, par5, par6 & 4095, par6 >> 12 & 255);

@@ -1,0 +1,24 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockStairs.java
++++ ../src_work/minecraft/net/minecraft/block/BlockStairs.java
+@@ -34,7 +34,6 @@
+         this.field_72158_c = par3;
+         this.setHardness(par2Block.blockHardness);
+         this.setResistance(par2Block.blockResistance / 3.0F);
+-        this.setStepSound(par2Block.stepSound);
+         this.setLightOpacity(255);
+         this.setCreativeTab(CreativeTabs.tabBlock);
+     }
+@@ -648,4 +647,13 @@
+ 
+         return var23;
+     }
++    
++    /**
++     * Return the Block StepSound
++     */
++    @Override
++    public StepSound getBlockStepSound(World world, int x, int y, int z, int metadata)
++    {
++        return modelBlock.getBlockStepSound(world, x, y, z, metadata);
++    }
+ }

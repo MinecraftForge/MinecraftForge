@@ -142,12 +142,12 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            float speed = ForgeEventFactory.getBreakSpeed(player, block, metadata, 1.0f);
+            float speed = ForgeEventFactory.getBreakSpeed(player, block, world, x, y, z, metadata, 1.0f);
             return (speed < 0 ? 0 : speed) / hardness / 100F;
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, world, x, y, z, metadata) / hardness / 30F;
         }
     }
 

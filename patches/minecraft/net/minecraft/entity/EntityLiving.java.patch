@@ -134,7 +134,26 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1536,7 +1584,7 @@
+@@ -1349,11 +1397,16 @@
+             }
+ 
+             this.attackEntityFrom(DamageSource.fall, var2);
+-            int var3 = this.worldObj.getBlockId(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY - 0.20000000298023224D - (double)this.yOffset), MathHelper.floor_double(this.posZ));
++            
++            int blockX = MathHelper.floor_double(this.posX);
++            int blockY = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double)this.yOffset);
++            int blockZ = MathHelper.floor_double(this.posZ);
++            
++            int var3 = this.worldObj.getBlockId(blockX, blockY, blockZ);
+ 
+             if (var3 > 0)
+             {
+-                StepSound var4 = Block.blocksList[var3].stepSound;
++                StepSound var4 = Block.blocksList[var3].getBlockStepSound(this.worldObj, blockX, blockY, blockZ, this.worldObj.getBlockMetadata(blockX, blockY, blockZ));
+                 this.playSound(var4.getStepSound(), var4.getVolume() * 0.5F, var4.getPitch() * 0.75F);
+             }
+         }
+@@ -1536,7 +1589,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -143,7 +162,7 @@
      }
  
      /**
-@@ -1949,6 +1997,7 @@
+@@ -1949,6 +2002,7 @@
          }
  
          this.isAirBorne = true;
@@ -151,7 +170,7 @@
      }
  
      /**
-@@ -2486,8 +2535,6 @@
+@@ -2486,8 +2540,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -160,7 +179,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2944,4 +2991,42 @@
+@@ -2944,4 +2996,42 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }

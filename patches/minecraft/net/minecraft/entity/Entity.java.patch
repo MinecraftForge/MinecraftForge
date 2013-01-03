@@ -73,7 +73,22 @@
              }
  
              this.worldObj.theProfiler.endSection();
-@@ -1514,6 +1532,15 @@
+@@ -1003,11 +1021,12 @@
+      */
+     protected void playStepSound(int par1, int par2, int par3, int par4)
+     {
+-        StepSound var5 = Block.blocksList[par4].stepSound;
++        int meta = this.worldObj.getBlockMetadata(par1, par2, par3);
++        StepSound var5 = Block.blocksList[par4].getBlockStepSound(this.worldObj, par1, par2, par3, meta);
+ 
+         if (this.worldObj.getBlockId(par1, par2 + 1, par3) == Block.snow.blockID)
+         {
+-            var5 = Block.snow.stepSound;
++            var5 = Block.snow.getBlockStepSound(this.worldObj, par1, par2, par3, meta);
+             this.playSound(var5.getStepSound(), var5.getVolume() * 0.15F, var5.getPitch());
+         }
+         else if (!Block.blocksList[par4].blockMaterial.isLiquid())
+@@ -1514,6 +1533,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
@@ -89,7 +104,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
          }
          catch (Throwable var5)
-@@ -1568,6 +1595,14 @@
+@@ -1568,6 +1596,14 @@
              this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -104,7 +119,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable var5)
-@@ -1662,7 +1697,14 @@
+@@ -1662,7 +1698,14 @@
      {
          EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          var3.delayBeforeCanPickup = 10;
@@ -120,7 +135,7 @@
          return var3;
      }
  
-@@ -2021,7 +2063,7 @@
+@@ -2021,7 +2064,7 @@
       */
      public boolean isRiding()
      {
@@ -129,7 +144,7 @@
      }
  
      /**
-@@ -2359,7 +2401,7 @@
+@@ -2359,7 +2402,7 @@
  
      public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
      {
@@ -138,7 +153,7 @@
      }
  
      public int func_82143_as()
-@@ -2399,4 +2441,84 @@
+@@ -2399,4 +2442,84 @@
      {
          return this.isBurning();
      }
