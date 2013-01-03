@@ -4,7 +4,6 @@ import java.util.Random;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraftforge.event.world.*;
 
 public class PopulateChunkEvent extends ChunkProviderEvent
 {

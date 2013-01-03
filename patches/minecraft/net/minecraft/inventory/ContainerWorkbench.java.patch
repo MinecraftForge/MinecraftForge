@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -16,6 +16,7 @@
+     private int posX;
+     private int posY;
+     private int posZ;
++    private EntityPlayer player;
+ 
+     public ContainerWorkbench(InventoryPlayer par1InventoryPlayer, World par2World, int par3, int par4, int par5)
+     {
+@@ -23,6 +24,7 @@
+         this.posX = par3;
+         this.posY = par4;
+         this.posZ = par5;
++        this.player = par1InventoryPlayer.player;
+         this.addSlotToContainer(new SlotCrafting(par1InventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
+         int var6;
+         int var7;
+@@ -56,7 +58,7 @@
+      */
+     public void onCraftMatrixChanged(IInventory par1IInventory)
+     {
+-        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
++        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.player, this.craftMatrix, this.worldObj, (int)this.player.posX, (int)this.player.posY, (int)this.player.posZ));
+     }
+ 
+     /**

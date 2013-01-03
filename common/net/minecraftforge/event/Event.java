@@ -36,9 +36,9 @@ public class Event
         hasResult = hasAnnotation(HasResult.class);
     }
 
-    private boolean hasAnnotation(Class annotation)
+    private boolean hasAnnotation(Class<?> annotation)
     {
-        Class cls = this.getClass();
+        Class<?> cls = this.getClass();
         while (cls != Event.class)
         {
             if (cls.isAnnotationPresent(Cancelable.class))

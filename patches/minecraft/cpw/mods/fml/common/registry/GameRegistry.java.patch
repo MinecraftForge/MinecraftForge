@@ -1,0 +1,34 @@
+--- ../src_base/minecraft/cpw/mods/fml/common/registry/GameRegistry.java
++++ ../src_work/minecraft/cpw/mods/fml/common/registry/GameRegistry.java
+@@ -248,19 +248,20 @@
+         blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
+     }
+ 
+-    public static void addRecipe(ItemStack output, Object... params)
+-    {
+-        CraftingManager.getInstance().func_92051_a(output, params);
+-    }
+-
+-    public static void addShapelessRecipe(ItemStack output, Object... params)
+-    {
+-        CraftingManager.getInstance().addShapelessRecipe(output, params);
+-    }
+-
+-    public static void addRecipe(IRecipe recipe)
++    public static IRecipe addRecipe(ItemStack output, Object... params)
++    {
++        return CraftingManager.getInstance().func_92051_a(output, params);
++    }
++
++    public static IRecipe addShapelessRecipe(ItemStack output, Object... params)
++    {
++        return CraftingManager.getInstance().addShapelessRecipe(output, params);
++    }
++
++    public static IRecipe addRecipe(IRecipe recipe)
+     {
+         CraftingManager.getInstance().getRecipeList().add(recipe);
++        return recipe;
+     }
+ 
+     public static void addSmelting(int input, ItemStack output, float xp)

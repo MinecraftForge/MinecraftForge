@@ -5,26 +5,32 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 
 import net.minecraft.block.Block;
+import net.minecraft.dispenser.IRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
+import net.minecraftforge.craftcond.Condition;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -385,5 +391,17 @@ public class ForgeHooks
 
         player.joinEntityItemWithWorld(event.entityItem);
         return event.entityItem;
+    }
+    
+    private static Map<IRecipe, Condition> _recipeConditional = Maps.newHashMap();
+    
+    public static void setCraftCondition(IRecipe recipe, Condition condition)
+    {
+    	_recipeConditional.put(recipe, condition);
+    }
+    
+    public static boolean canCraft(IRecipe recipe, InventoryCrafting inventory, Entity crafter, World world, int x, int y, int z)
+    {
+    	return !_recipeConditional.containsKey(recipe) || _recipeConditional.get(recipe).isVerified(inventory, crafter, world, x, y, z);
     }
 }

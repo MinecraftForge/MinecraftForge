@@ -26,8 +26,6 @@ public class UseHoeEvent extends PlayerEvent
     public final int y;
     public final int z;
     
-    private boolean handeled = false;
-    
     public UseHoeEvent(EntityPlayer player, ItemStack current, World world, int x, int y, int z)
     {
         super(player);
