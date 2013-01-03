@@ -21,7 +21,7 @@
      public void onCraftMatrixChanged(IInventory par1IInventory)
      {
 -        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj));
-+        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.player, this.craftMatrix, this.worldObj, (int)this.player.posX, (int)this.player.posY, (int)this.player.posZ));
++        this.craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(this.player, this.craftMatrix, this.worldObj, this.posX, this.posY, this.posZ));
      }
  
      /**

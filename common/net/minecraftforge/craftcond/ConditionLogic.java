@@ -6,17 +6,17 @@ import net.minecraft.world.World;
 
 public class ConditionLogic extends Condition
 {
-	private enum LogicType
+	private enum LogicConditions
 	{
-		LOGIC_OR,
-		LOGIC_AND,
-		LOGIC_NOT
+		OR,
+		AND,
+		NOT
 	};
 	
-	private final LogicType _logicType;
+	private final LogicConditions _logicType;
 	private final Condition[] _args;
 	
-	private ConditionLogic(LogicType logicType, Condition[] args)
+	private ConditionLogic(LogicConditions logicType, Condition[] args)
 	{
 		_logicType = logicType;
 		_args = args;
@@ -24,17 +24,17 @@ public class ConditionLogic extends Condition
 	
 	public static ConditionLogic logicalOr(Condition... args)
 	{
-		return new ConditionLogic(LogicType.LOGIC_OR, args);
+		return new ConditionLogic(LogicConditions.OR, args);
 	}
 	
 	public static ConditionLogic logicalAnd(Condition... args)
 	{
-		return new ConditionLogic(LogicType.LOGIC_AND, args);
+		return new ConditionLogic(LogicConditions.AND, args);
 	}
 	
 	public static ConditionLogic logicalNot(Condition condition)
 	{
-		return new ConditionLogic(LogicType.LOGIC_NOT, new Condition[] { condition });
+		return new ConditionLogic(LogicConditions.NOT, new Condition[] { condition });
 	}
 
 	@Override
@@ -42,19 +42,19 @@ public class ConditionLogic extends Condition
 	{
 		switch (_logicType)
 		{
-			case LOGIC_OR:
+			case OR:
 				for (Condition cond : _args)
 					if (cond.isVerified(inventory, crafter, world, x, y, z))
 						return true;
 				return false;
-			case LOGIC_AND:
+			case AND:
 				if (_args.length < 2)
 					return _args[0].isVerified(inventory, crafter, world, x, y, z);
 				for (int i = 1; i < _args.length; i++)
 					if (!(_args[0].isVerified(inventory, crafter, world, x, y, z) && _args[i].isVerified(inventory, crafter, world, x, y, z)))
 						return false;
 				return true;
-			case LOGIC_NOT:
+			case NOT:
 				return !_args[0].isVerified(inventory, crafter, world, x, y, z);
 		}
 		

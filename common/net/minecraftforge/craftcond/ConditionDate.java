@@ -10,12 +10,12 @@ public class ConditionDate extends Condition
 {
 	public enum DateType
 	{
-		DATE_YEAR,
-		DATE_MONTH,
-		DATE_DAY,
-		DATE_WEEKDAY,
-		DATE_HOUR,
-		DATE_MINUTE
+		YEAR,
+		MONTH,
+		DAY,
+		WEEKDAY,
+		HOUR,
+		MINUTE
 	};
 
 	private final DateType _dateType;
@@ -50,17 +50,17 @@ public class ConditionDate extends Condition
 		{
 			switch (_dateType)
 			{
-				case DATE_YEAR:
+				case YEAR:
 					return calendar.get(Calendar.YEAR) == _dateValue;
-				case DATE_MONTH:
+				case MONTH:
 					return calendar.get(Calendar.MONTH) == _dateValue;
-				case DATE_DAY:
+				case DAY:
 					return calendar.get(Calendar.DAY_OF_MONTH) == _dateValue;
-				case DATE_WEEKDAY:
+				case WEEKDAY:
 					return calendar.get(Calendar.DAY_OF_WEEK) == _dateValue;
-				case DATE_HOUR:
+				case HOUR:
 					return calendar.get(Calendar.HOUR_OF_DAY) == _dateValue;
-				case DATE_MINUTE:
+				case MINUTE:
 					return calendar.get(Calendar.MINUTE) == _dateValue;
 			}
 		}
@@ -68,32 +68,32 @@ public class ConditionDate extends Condition
 		{
 			switch (_dateType)
 			{
-				case DATE_YEAR:
+				case YEAR:
 					if (_dateValue < _dateValueMax)
 						return calendar.get(Calendar.YEAR) >= _dateValue && _dateValueMax <= calendar.get(Calendar.YEAR);
 					else
 						return calendar.get(Calendar.YEAR) >= _dateValue || _dateValueMax <= calendar.get(Calendar.YEAR);
-				case DATE_MONTH:
+				case MONTH:
 					if (_dateValue < _dateValueMax)
 						return calendar.get(Calendar.MONTH) >= _dateValue && _dateValueMax <= calendar.get(Calendar.MONTH);
 					else
 						return calendar.get(Calendar.MONTH) >= _dateValue || _dateValueMax <= calendar.get(Calendar.MONTH);
-				case DATE_DAY:
+				case DAY:
 					if (_dateValue < _dateValueMax)
 						return calendar.get(Calendar.DAY_OF_MONTH) >= _dateValue && _dateValueMax <= calendar.get(Calendar.DAY_OF_MONTH);
 					else
 						return calendar.get(Calendar.DAY_OF_MONTH) >= _dateValue || _dateValueMax <= calendar.get(Calendar.DAY_OF_MONTH);
-				case DATE_WEEKDAY:
+				case WEEKDAY:
 					if (_dateValue < _dateValueMax)
 						return calendar.get(Calendar.DAY_OF_WEEK) >= _dateValue && _dateValueMax <= calendar.get(Calendar.DAY_OF_WEEK);
 					else
 						return calendar.get(Calendar.DAY_OF_WEEK) >= _dateValue || _dateValueMax <= calendar.get(Calendar.DAY_OF_WEEK);
-				case DATE_HOUR:
+				case HOUR:
 					if (_dateValue < _dateValueMax)
 						return calendar.get(Calendar.HOUR_OF_DAY) >= _dateValue && _dateValueMax <= calendar.get(Calendar.HOUR_OF_DAY);
 					else
 						return calendar.get(Calendar.HOUR_OF_DAY) >= _dateValue || _dateValueMax <= calendar.get(Calendar.HOUR_OF_DAY);
-				case DATE_MINUTE:
+				case MINUTE:
 					if (_dateValue < _dateValueMax)
 						return calendar.get(Calendar.MINUTE) >= _dateValue && _dateValueMax <= calendar.get(Calendar.MINUTE);
 					else

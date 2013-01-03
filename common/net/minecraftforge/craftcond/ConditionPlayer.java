@@ -7,11 +7,12 @@ import net.minecraft.world.World;
 
 public class ConditionPlayer extends Condition
 {
-	private enum PlayerCond
+	private enum PlayerConditions
 	{
 		HAVE_ITEM,
 		INSIDE_DIMENSION,
-		BETWEEN_COORDINATES
+		BETWEEN_COORDINATES,
+		INSIDE_BIOME
 	}
 	
 	public enum CoordinateType
@@ -21,10 +22,10 @@ public class ConditionPlayer extends Condition
 		COORD_Z
 	}
 	
-	private final PlayerCond _playerCond;
+	private final PlayerConditions _playerCond;
 	private final Object[] _args;
 	
-	private ConditionPlayer(PlayerCond playerCond, Object[] args)
+	private ConditionPlayer(PlayerConditions playerCond, Object[] args)
 	{
 		_playerCond = playerCond;
 		_args = args;
@@ -32,17 +33,22 @@ public class ConditionPlayer extends Condition
 	
 	public static ConditionPlayer haveInventoryItem(int itemId)
 	{
-		return new ConditionPlayer(PlayerCond.HAVE_ITEM, new Object[] { itemId });
+		return new ConditionPlayer(PlayerConditions.HAVE_ITEM, new Object[] { itemId });
 	}
 	
 	public static ConditionPlayer isInsideDimension(int dimensionId)
 	{
-		return new ConditionPlayer(PlayerCond.INSIDE_DIMENSION, new Object[] { dimensionId });
+		return new ConditionPlayer(PlayerConditions.INSIDE_DIMENSION, new Object[] { dimensionId });
 	}
 	
 	public static ConditionPlayer isBetweenCoordinates(CoordinateType typeCoord, int minCoord, int maxCoord)
 	{
-		return new ConditionPlayer(PlayerCond.BETWEEN_COORDINATES, new Object[] { typeCoord, minCoord, maxCoord });
+		return new ConditionPlayer(PlayerConditions.BETWEEN_COORDINATES, new Object[] { typeCoord, minCoord, maxCoord });
+	}
+	
+	public static ConditionPlayer isInsideBiome(String biomeName)
+	{
+		return new ConditionPlayer(PlayerConditions.INSIDE_BIOME, new Object[] { biomeName });
 	}
 	
 	@Override
@@ -70,6 +76,8 @@ public class ConditionPlayer extends Condition
 				}
 				return false;
 			}
+			case INSIDE_BIOME:
+				return crafter.worldObj.getBiomeGenForCoords((int)crafter.posX, (int)crafter.posZ).biomeName.equalsIgnoreCase((String)_args[0]);
 		}
 		return false;
 	}
