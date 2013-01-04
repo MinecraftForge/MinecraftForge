@@ -1,17 +1,10 @@
 package net.minecraftforge.common;
 
 import java.util.*;
-import java.util.Map.Entry;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-
 import net.minecraft.block.Block;
-import net.minecraft.dispenser.IRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -30,7 +23,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
-import net.minecraftforge.craftcond.Condition;
+import net.minecraftforge.craftcond.BaseCondition;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -393,9 +386,9 @@ public class ForgeHooks
         return event.entityItem;
     }
     
-    private static Map<IRecipe, Condition> _recipeConditional = Maps.newHashMap();
+    private static Map<IRecipe, BaseCondition> _recipeConditional = Maps.newHashMap();
     
-    public static void setCraftCondition(IRecipe recipe, Condition condition)
+    public static void setCraftCondition(IRecipe recipe, BaseCondition condition)
     {
     	_recipeConditional.put(recipe, condition);
     }
