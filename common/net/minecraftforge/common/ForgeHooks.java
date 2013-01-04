@@ -1,30 +1,29 @@
 package net.minecraftforge.common;
 
 import java.util.*;
-import java.util.Map.Entry;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomItem;
 import net.minecraft.world.World;
+import net.minecraftforge.craftcond.BaseCondition;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -142,12 +141,12 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            float speed = ForgeEventFactory.getBreakSpeed(player, block, metadata, 1.0f);
+            float speed = ForgeEventFactory.getBreakSpeed(player, block, world, x, y, z, metadata, 1.0f);
             return (speed < 0 ? 0 : speed) / hardness / 100F;
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, world, x, y, z, metadata) / hardness / 30F;
         }
     }
 
@@ -385,5 +384,17 @@ public class ForgeHooks
 
         player.joinEntityItemWithWorld(event.entityItem);
         return event.entityItem;
+    }
+    
+    private static Map<IRecipe, BaseCondition> _recipeConditional = Maps.newHashMap();
+    
+    public static void setCraftCondition(IRecipe recipe, BaseCondition condition)
+    {
+    	_recipeConditional.put(recipe, condition);
+    }
+    
+    public static boolean canCraft(IRecipe recipe, InventoryCrafting inventory, Entity crafter, World world, int x, int y, int z)
+    {
+    	return !_recipeConditional.containsKey(recipe) || _recipeConditional.get(recipe).isVerified(inventory, crafter, world, x, y, z);
     }
 }
