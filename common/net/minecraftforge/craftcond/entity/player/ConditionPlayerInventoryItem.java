@@ -1,4 +1,4 @@
-package net.minecraftforge.craftcond.player;
+package net.minecraftforge.craftcond.entity.player;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +8,7 @@ import net.minecraftforge.craftcond.BaseCondition;
 
 public class ConditionPlayerInventoryItem extends BaseCondition
 {
-	protected ConditionPlayerInventoryItem(Object[] args)
+	private ConditionPlayerInventoryItem(Object[] args)
 	{
 		super(args);
 	}

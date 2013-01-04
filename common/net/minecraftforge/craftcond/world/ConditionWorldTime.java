@@ -12,7 +12,7 @@ public class ConditionWorldTime extends BaseCondition
 	private static final int DUSK = 12000;
 	private static final int MIDNIGHT = 18000;
 	
-	protected ConditionWorldTime(Object[] args)
+	private ConditionWorldTime(Object[] args)
 	{
 		super(args);
 	}
