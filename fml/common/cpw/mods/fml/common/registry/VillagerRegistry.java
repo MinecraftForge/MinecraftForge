@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Collection;
+import java.util.Collections;
 
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.Item;
@@ -148,7 +150,16 @@ public class VillagerRegistry
         }
         return defaultSkin;
     }
-
+    
+    /**
+     * Returns a list of all added villager types
+     * 
+     * @return newVillagerIds
+     */
+    public static Collection<Integer> getRegisteredVillagers()
+    {
+        return Collections.unmodifiableCollection(instance().newVillagerIds);
+    }
     /**
      * Callback to handle trade setup for villagers
      *
