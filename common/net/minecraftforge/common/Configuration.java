@@ -194,7 +194,7 @@ public class Configuration
                 FMLLog.warning("Config \"%s\" Category: \"%s\" Key: \"%s\" Default: %d", fileName, category, key, defaultID);
             }
 
-            if (Item.itemsList[defaultShift] == null && !configMarkers[defaultShift] && defaultShift > Block.blocksList.length)
+            if (Item.itemsList[defaultShift] == null && !configMarkers[defaultShift] && defaultShift >= Block.blocksList.length)
             {
                 prop.value = Integer.toString(defaultID);
                 configMarkers[defaultShift] = true;
