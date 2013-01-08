@@ -2,10 +2,13 @@ package cpw.mods.fml.common.registry;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import com.google.common.base.Charsets;
 
 import cpw.mods.fml.common.FMLLog;
 
@@ -133,7 +136,7 @@ public class LanguageRegistry
                 langPack.loadFromXML(langStream);
             }
             else {
-                langPack.load(langStream);
+                langPack.load(new InputStreamReader(langStream,Charsets.UTF_8));
             }
 
             addStringLocalization(langPack, lang);
