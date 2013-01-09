@@ -138,5 +138,9 @@ public class LiquidTank implements ILiquidTank {
     {
         this.tankPressure = pressure;
     }
+    
+    public boolean isLiquidEqual(LiquidStack other) {
+        return this.liquid.isLiquidEqual(other);
+    }
 
 }
