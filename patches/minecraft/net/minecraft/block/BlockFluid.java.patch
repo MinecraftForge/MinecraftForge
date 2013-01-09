@@ -9,3 +9,53 @@
                      var5 += (var10 & 16711680) >> 16;
                      var6 += (var10 & 65280) >> 8;
                      var7 += var10 & 255;
+
+@@ -70,7 +167,7 @@
+    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    {
+    	//Begin!
+        int[] var6;
+        int var7;
+        int var8;
+        int var9;
+
+        if (mod_xray.on) //that was hard
+        {
+            var6 = mod_xray.blackList;
+            var7 = var6.length;
+
+            for (var8 = 0; var8 < var7; ++var8)
+            {
+                var9 = var6[var8];
+
+                if (var9 == this.blockID)
+                {
+                    return false;
+                }
+            }
+
+            if (mod_xray.blackList.length != 0)
+            {
+                return true;
+            }
+        }
+        else if (mod_xray.cavefinder)
+        {
+            var6 = mod_xray.blackList;
+            var7 = var6.length;
+
+            for (var8 = 0; var8 < var7; ++var8)
+            {
+                var9 = var6[var8];
+
+                if (var9 != 1 && var9 == this.blockID)
+                {
+                    return false;
+                }
+            }
+        }
+        //end :D
+
+        Material var10 = par1IBlockAccess.getBlockMaterial(par2, par3, par4);
+        return var10 == this.blockMaterial ? false : (par5 == 1 ? true : (var10 == Material.ice ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5)));
+    }
