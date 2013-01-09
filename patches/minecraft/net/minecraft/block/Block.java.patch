@@ -70,6 +70,11 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
+	 
++	     	if (Loader.isModLoaded("Julialy's X-ray MOD")) {
++     			return !mod_xray.on && !mod_xray.cavefinder && mod_xray.lightmode != 2 ? par1IBlockAccess.getBrightness(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4)) : 1.0F;
++     		}
+
 -        return par1IBlockAccess.getBrightness(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
 +        return par1IBlockAccess.getBrightness(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
      }
@@ -79,12 +84,89 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
+	 
++		if (Loader.isModLoaded("Julialy's X-ray MOD")) {
++        	return !mod_xray.on && !mod_xray.cavefinder && mod_xray.lightmode != 2 ? par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]) : 15728880;
++    	}	 
+	 
 -        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
 +        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, getLightValue(par1IBlockAccess, par2, par3, par4));
      }
+	 
+	 
+    
+    /**
+     * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
+     * coordinates.  Args: blockAccess, x, y, z, side
+     */
+    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+    {
+    	//MOD BEGINS HERE
+        int[] var6;
+        int var7;
+        int var8;
+        int var9;
+        
+        //Did you find me? :D
+		if (Loader.isModLoaded("Julialy's X-ray MOD")) {
+        if (mod_xray.on)
+        {
+            var6 = mod_xray.blackList;
+            var7 = var6.length;
+
+            for (var8 = 0; var8 < var7; ++var8)
+            {
+                var9 = var6[var8];
+
+                if (var9 == this.blockID)
+                {
+                    return false;
+                }
+            }
+
+            if (mod_xray.blackList.length != 0)
+            {
+                return true;
+            }
+        }
+        else if (mod_xray.cavefinder)
+        {
+            var6 = mod_xray.blackList;
+            var7 = var6.length;
+
+            for (var8 = 0; var8 < var7; ++var8)
+            {
+                var9 = var6[var8];
+
+                if (var9 != 1 && var9 == this.blockID)
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (mod_xray.cavefinder)
+        {
+            var6 = mod_xray.blackList;
+            var7 = mod_xray.blackList.length;
+
+            for (var8 = 0; var8 < var7; ++var8)
+            {
+                var9 = var6[var8];
+
+                if (var9 != 1 && var9 == this.blockID)
+                {
+                    return false;
+                }
+            }
+        }
+        //END OF MOD
+
+        return par5 == 0 && this.minY > 0.0D ? true : (par5 == 1 && this.maxY < 1.0D ? true : (par5 == 2 && this.minZ > 0.0D ? true : (par5 == 3 && this.maxZ < 1.0D ? true : (par5 == 4 && this.minX > 0.0D ? true : (par5 == 5 && this.maxX < 1.0D ? true : !par1IBlockAccess.isBlockOpaqueCube(par2, par3, par4))))));
+    }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +655,13 @@
+@@ -647,7 +655,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
