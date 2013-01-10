@@ -36,7 +36,7 @@
  
 -                                                            if (var39.getCanSpawnHere())
 +                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(var39, par0WorldServer, var24, var25, var26);
-+                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && var39.getCanSpawnHere()))
++                                                            if ((canSpawn == Result.ALLOW) || ((canSpawn == Result.DEFAULT) && var39.getCanSpawnHere()))
                                                              {
                                                                  ++var16;
                                                                  par0WorldServer.spawnEntityInWorld(var39);
