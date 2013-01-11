@@ -16,9 +16,10 @@ public class Property
         STRING,
         INTEGER,
         BOOLEAN,
-        DOUBLE;
+        DOUBLE,
+        FLOAT;
 
-        private static Type[] values = {STRING, INTEGER, BOOLEAN, DOUBLE};
+        private static Type[] values = {STRING, INTEGER, BOOLEAN, DOUBLE, FLOAT};
 
         public static Type tryParse(char id)
         {
@@ -196,6 +197,43 @@ public class Property
             return _default;
         }
     }
+    
+    /**
+     * Checks if the current value held by this property is a valid float value.
+     * @return True if the value can be converted to a float
+     */
+    public boolean isFloatValue()
+    {
+        try
+        {
+            Float.parseFloat(value);
+            return true;
+        }
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the value in this property as a float,
+     * if the value is not a valid float, it will return the
+     * provided default.
+     * 
+     * @param _default The default to provide if the current value is not a valid float
+     * @return The value
+     */
+    public float getFloat(float _default)
+    {
+        try
+        {
+            return Float.parseFloat(value);
+        }
+        catch (NumberFormatException e)
+        {
+            return _default;
+        }
+    }
 
     /**
      * Returns the integer value of all values that can
@@ -292,6 +330,27 @@ public class Property
     }
 
     /**
+     * Checks if all of the current values stored in this property can be converted to a double.
+     * @return True if the type of the Property is a double List
+     */
+    public boolean isDoubleList()
+    {
+        for (String value : valueList)
+        {
+            try
+            {
+                Double.parseDouble(value);
+            }
+            catch (NumberFormatException e)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    /**
      * Returns the double value of all values that can
      * be parsed in the list.
      * 
@@ -318,18 +377,19 @@ public class Property
 
         return primitives;
     }
+    
 
     /**
-     * Checks if all of the current values stored in this property can be converted to a double.
-     * @return True if the type of the Property is a double List
+     * Checks if all of the current values stored in this property can be converted to a float.
+     * @return True if the type of the Property is a float List
      */
-    public boolean isDoubleList()
+    public boolean isFloatList()
     {
         for (String value : valueList)
         {
             try
             {
-                Double.parseDouble(value);
+                Float.parseFloat(value);
             }
             catch (NumberFormatException e)
             {
@@ -338,6 +398,34 @@ public class Property
         }
 
         return true;
+    }
+    
+    /**
+     * Returns the float value of all values that can
+     * be parsed in the list.
+     * 
+     * @return Array of length 0 if none of the values could be parsed.
+     */
+    public float[] getFloatList()
+    {
+        ArrayList<Float> values = new ArrayList<Float>();
+        for (String value : valueList)
+        {
+            try
+            {
+                values.add(Float.parseFloat(value));
+            }
+            catch (NumberFormatException e) {}
+        }
+
+        float[] primitives = new float[values.size()];
+
+        for (int i = 0; i < values.size(); i++)
+        {
+            primitives[i] = values.get(i);
+        }
+
+        return primitives;
     }
 
     public String getName()
