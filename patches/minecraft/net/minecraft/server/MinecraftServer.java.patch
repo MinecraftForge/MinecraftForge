@@ -15,11 +15,11 @@
              {
 +                FMLCommonHandler.instance().handleServerStarted();
 +
-                 long var1 = System.currentTimeMillis();
+                 long i = System.currentTimeMillis();
 +
 +                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
  
-                 for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
+                 for (long k0 = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
 @@ -417,6 +424,7 @@
  
@@ -31,15 +31,15 @@
              {
 @@ -425,6 +433,10 @@
          }
-         catch (Throwable var48)
+         catch (Throwable throwable)
          {
 +            if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
 +            {
 +                return;
 +            }
-             var48.printStackTrace();
-             field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + var48.getClass().getSimpleName(), var48);
-             CrashReport var2 = null;
+             throwable.printStackTrace();
+             field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
+             CrashReport crashreport = null;
 @@ -455,6 +467,10 @@
          {
              try
@@ -64,7 +64,7 @@
      public void func_71217_p()
      {
 +        FMLCommonHandler.instance().rescheduleTicks(Side.SERVER);
-         long var1 = System.nanoTime();
+         long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
 +        FMLCommonHandler.instance().onPreServerTick();
          ++this.field_71315_w;
@@ -82,18 +82,18 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
-+                FMLCommonHandler.instance().onPreWorldTick(var4);
-                 CrashReport var6;
++                FMLCommonHandler.instance().onPreWorldTick(worldserver);
+                 CrashReport crashreport;
  
                  try
 @@ -578,6 +599,7 @@
-                     throw new ReportedException(var6);
+                     throw new ReportedException(crashreport);
                  }
  
-+                FMLCommonHandler.instance().onPostWorldTick(var4);
++                FMLCommonHandler.instance().onPostWorldTick(worldserver);
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
-                 var4.func_73039_n().func_72788_a();
+                 worldserver.func_73039_n().func_72788_a();
 @@ -705,7 +727,7 @@
  
      public String getServerModName()

@@ -16,8 +16,8 @@
      public NetClientHandler(Minecraft p_i3103_1_, String p_i3103_2_, int p_i3103_3_) throws IOException
      {
          this.field_72563_h = p_i3103_1_;
-         Socket var4 = new Socket(InetAddress.getByName(p_i3103_2_), p_i3103_3_);
-         this.field_72555_g = new TcpConnection(var4, "Client", this);
+         Socket socket = new Socket(InetAddress.getByName(p_i3103_2_), p_i3103_3_);
+         this.field_72555_g = new TcpConnection(socket, "Client", this);
 +        FMLNetworkHandler.onClientConnectionToRemoteServer(this, p_i3103_2_, p_i3103_3_, this.field_72555_g);
      }
  
@@ -85,7 +85,7 @@
 +    {
          if ("MC|TPack".equals(p_72501_1_.field_73630_a))
          {
-             String[] var2 = (new String(p_72501_1_.field_73629_c)).split("\u0000");
+             String[] astring = (new String(p_72501_1_.field_73629_c)).split("\u0000");
 @@ -1396,4 +1415,20 @@
      {
          return this.field_72555_g;

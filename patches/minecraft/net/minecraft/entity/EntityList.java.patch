@@ -12,31 +12,31 @@
  import net.minecraft.entity.item.EntityBoat;
 @@ -103,9 +106,10 @@
      {
-         Entity var2 = null;
+         Entity entity = null;
  
-+        Class var3 = null;
++        Class oclass = null;
          try
          {
--            Class var3 = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
-+            var3 = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
+-            Class oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
++            oclass = (Class)field_75625_b.get(p_75615_0_.func_74779_i("id"));
  
-             if (var3 != null)
+             if (oclass != null)
              {
 @@ -119,7 +123,17 @@
  
-         if (var2 != null)
+         if (entity != null)
          {
--            var2.func_70020_e(p_75615_0_);
+-            entity.func_70020_e(p_75615_0_);
 +            try
 +            {
-+                var2.func_70020_e(p_75615_0_);
++                entity.func_70020_e(p_75615_0_);
 +            }
 +            catch (Exception e)
 +            {
 +                FMLLog.log(Level.SEVERE, e,
 +                        "An Entity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                        p_75615_0_.func_74779_i("id"), var3.getName());
-+                var2 = null;
++                        p_75615_0_.func_74779_i("id"), oclass.getName());
++                entity = null;
 +            }
          }
          else

@@ -32,25 +32,25 @@
      {
          this.field_78366_k = p_i3192_1_;
 @@ -102,8 +110,9 @@
-                 this.field_78359_d.put(p_78346_1_, var7);
-                 return var7;
+                 this.field_78359_d.put(p_78346_1_, aint1);
+                 return aint1;
              }
--            catch (IOException var6)
+-            catch (IOException ioexception)
 -            {
-+            catch (Exception var6)
++            catch (Exception ioexception)
 +            {
-+                log.log(Level.INFO, String.format("An error occured reading texture file %s (getTexture)", p_78346_1_), var6);
-                 var6.printStackTrace();
-                 int[] var5 = this.func_78348_b(this.field_78364_l);
-                 this.field_78359_d.put(p_78346_1_, var5);
++                log.log(Level.INFO, String.format("An error occured reading texture file %s (getTexture)", p_78346_1_), ioexception);
+                 ioexception.printStackTrace();
+                 int[] aint2 = this.func_78348_b(this.field_78364_l);
+                 this.field_78359_d.put(p_78346_1_, aint2);
 @@ -250,6 +259,7 @@
  
-         int var3 = p_78351_1_.getWidth();
-         int var4 = p_78351_1_.getHeight();
-+        TextureFXManager.instance().setTextureDimensions(p_78351_2_, var3, var4, (List<TextureFX>)field_78367_h);
-         int[] var5 = new int[var3 * var4];
-         byte[] var6 = new byte[var3 * var4 * 4];
-         p_78351_1_.getRGB(0, 0, var3, var4, var5, 0, var3);
+         int j = p_78351_1_.getWidth();
+         int k = p_78351_1_.getHeight();
++        TextureFXManager.instance().setTextureDimensions(p_78351_2_, j, k, (List<TextureFX>)field_78367_h);
+         int[] aint = new int[j * k];
+         byte[] abyte = new byte[j * k * 4];
+         p_78351_1_.getRGB(0, 0, j, k, aint, 0, j);
 @@ -410,6 +420,7 @@
  
      public void func_78355_a(TextureFX p_78355_1_)
@@ -61,13 +61,13 @@
      }
 @@ -422,28 +433,44 @@
          {
-             TextureFX var3 = (TextureFX)this.field_78367_h.get(var2);
-             var3.field_76851_c = this.field_78365_j.field_74337_g;
--            var3.func_76846_a();
--            var1 = this.func_82772_a(var3, var1);
-+            if (TextureFXManager.instance().onUpdateTextureEffect(var3))
+             TextureFX texturefx = (TextureFX)this.field_78367_h.get(j);
+             texturefx.field_76851_c = this.field_78365_j.field_74337_g;
+-            texturefx.func_76846_a();
+-            i = this.func_82772_a(texturefx, i);
++            if (TextureFXManager.instance().onUpdateTextureEffect(texturefx))
 +            {
-+                var1 = this.func_82772_a(var3, var1);
++                i = this.func_82772_a(texturefx, i);
 +            }
          }
      }
@@ -102,13 +102,13 @@
 +            p_82772_2_ = p_82772_1_.field_76848_d;
          }
  
-         for (int var3 = 0; var3 < p_82772_1_.field_76849_e; ++var3)
+         for (int j = 0; j < p_82772_1_.field_76849_e; ++j)
          {
-+            int xOffset = p_82772_1_.field_76850_b % 16 * tWidth + var3 * tWidth;
-             for (int var4 = 0; var4 < p_82772_1_.field_76849_e; ++var4)
++            int xOffset = p_82772_1_.field_76850_b % 16 * tWidth + j * tWidth;
+             for (int k = 0; k < p_82772_1_.field_76849_e; ++k)
              {
--                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_82772_1_.field_76850_b % 16 * 16 + var3 * 16, p_82772_1_.field_76850_b / 16 * 16 + var4 * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
-+                int yOffset = p_82772_1_.field_76850_b / 16 * tHeight + var4 * tHeight;
+-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_82772_1_.field_76850_b % 16 * 16 + j * 16, p_82772_1_.field_76850_b / 16 * 16 + k * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
++                int yOffset = p_82772_1_.field_76850_b / 16 * tHeight + k * tHeight;
 +                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
              }
          }
@@ -117,23 +117,23 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
--            catch (IOException var7)
+-            catch (IOException ioexception)
 -            {
-+            catch (Exception var7)
++            catch (Exception ioexception)
 +            {
-+                log.log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", var9), var7);
-                 var7.printStackTrace();
++                log.log(Level.INFO,String.format("An error occured reading texture file %s (refreshTexture)", s), ioexception);
+                 ioexception.printStackTrace();
              }
          }
 @@ -546,8 +574,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
--            catch (IOException var6)
+-            catch (IOException ioexception1)
 -            {
-+            catch (Exception var6)
++            catch (Exception ioexception1)
 +            {
-+                log.log(Level.INFO,String.format("An error occured reading texture file data %s (refreshTexture)", var9), var6);
-                 var6.printStackTrace();
++                log.log(Level.INFO,String.format("An error occured reading texture file data %s (refreshTexture)", s), ioexception1);
+                 ioexception1.printStackTrace();
              }
          }

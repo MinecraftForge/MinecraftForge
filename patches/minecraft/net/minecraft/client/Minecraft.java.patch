@@ -122,6 +122,6 @@
 +    public static void fmlReentry(ArgsWrapper wrapper)
 +    {
 +        String[] p_main_0_ = wrapper.args;
-         HashMap var1 = new HashMap();
-         boolean var2 = false;
-         boolean var3 = true;
+         HashMap hashmap = new HashMap();
+         boolean flag = false;
+         boolean flag1 = true;

@@ -15,7 +15,7 @@
 +        FMLCommonHandler.instance().onPlayerPreTick(this);
          if (this.field_71074_e != null)
          {
-             ItemStack var1 = this.field_71071_by.func_70448_g();
+             ItemStack itemstack = this.field_71071_by.func_70448_g();
 @@ -296,6 +299,7 @@
          {
              this.field_71100_bB.func_75118_a(this);

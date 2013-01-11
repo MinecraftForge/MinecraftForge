@@ -29,47 +29,47 @@
 +    {
 +        super.setup();
 +        field_76854_h = new byte[32][tileSizeSquare << 4];
-         Random var1 = new Random(100L);
+         Random random = new Random(100L);
  
-         for (int var2 = 0; var2 < 32; ++var2)
+         for (int i = 0; i < 32; ++i)
          {
--            for (int var3 = 0; var3 < 16; ++var3)
-+            for (int var3 = 0; var3 < tileSizeBase; ++var3)
+-            for (int j = 0; j < 16; ++j)
++            for (int j = 0; j < tileSizeBase; ++j)
              {
--                for (int var4 = 0; var4 < 16; ++var4)
-+                for (int var4 = 0; var4 < tileSizeBase; ++var4)
+-                for (int k = 0; k < 16; ++k)
++                for (int k = 0; k < tileSizeBase; ++k)
                  {
-                     float var5 = 0.0F;
-                     int var6;
+                     float f = 0.0F;
+                     int l;
  
-                     for (var6 = 0; var6 < 2; ++var6)
+                     for (l = 0; l < 2; ++l)
                      {
--                        float var7 = (float)(var6 * 16) * 0.5F;
--                        float var8 = (float)(var6 * 16) * 0.5F;
--                        float var9 = ((float)var3 - var7) / 16.0F * 2.0F;
--                        float var10 = ((float)var4 - var8) / 16.0F * 2.0F;
-+                        float var7 = (float)(var6 * tileSizeBase) * 0.5F;
-+                        float var8 = (float)(var6 * tileSizeBase) * 0.5F;
-+                        float var9 = ((float)var3 - var7) / (float)tileSizeBase * 2.0F;
-+                        float var10 = ((float)var4 - var8) / (float)tileSizeBase * 2.0F;
+-                        float f1 = (float)(l * 16) * 0.5F;
+-                        float f2 = (float)(l * 16) * 0.5F;
+-                        float f3 = ((float)j - f1) / 16.0F * 2.0F;
+-                        float f4 = ((float)k - f2) / 16.0F * 2.0F;
++                        float f1 = (float)(l * tileSizeBase) * 0.5F;
++                        float f2 = (float)(l * tileSizeBase) * 0.5F;
++                        float f3 = ((float)j - f1) / (float)tileSizeBase * 2.0F;
++                        float f4 = ((float)k - f2) / (float)tileSizeBase * 2.0F;
  
-                         if (var9 < -1.0F)
+                         if (f3 < -1.0F)
                          {
 @@ -65,7 +74,7 @@
-                     int var13 = (int)(var5 * var5 * 200.0F + 55.0F);
-                     int var14 = (int)(var5 * var5 * var5 * var5 * 255.0F);
-                     int var15 = (int)(var5 * 100.0F + 155.0F);
--                    int var16 = var4 * 16 + var3;
-+                    int var16 = var4 * tileSizeBase + var3;
-                     this.field_76854_h[var2][var16 * 4 + 0] = (byte)var13;
-                     this.field_76854_h[var2][var16 * 4 + 1] = (byte)var14;
-                     this.field_76854_h[var2][var16 * 4 + 2] = (byte)var6;
+                     int i1 = (int)(f * f * 200.0F + 55.0F);
+                     int j1 = (int)(f * f * f * f * 255.0F);
+                     int k1 = (int)(f * 100.0F + 155.0F);
+-                    int l1 = k * 16 + j;
++                    int l1 = k * tileSizeBase + j;
+                     this.field_76854_h[i][l1 * 4 + 0] = (byte)i1;
+                     this.field_76854_h[i][l1 * 4 + 1] = (byte)j1;
+                     this.field_76854_h[i][l1 * 4 + 2] = (byte)l;
 @@ -80,7 +89,7 @@
          ++this.field_76853_g;
-         byte[] var1 = this.field_76854_h[this.field_76853_g & 31];
+         byte[] abyte = this.field_76854_h[this.field_76853_g & 31];
  
--        for (int var2 = 0; var2 < 256; ++var2)
-+        for (int var2 = 0; var2 < tileSizeSquare; ++var2)
+-        for (int i = 0; i < 256; ++i)
++        for (int i = 0; i < tileSizeSquare; ++i)
          {
-             int var3 = var1[var2 * 4 + 0] & 255;
-             int var4 = var1[var2 * 4 + 1] & 255;
+             int j = abyte[i * 4 + 0] & 255;
+             int k = abyte[i * 4 + 1] & 255;

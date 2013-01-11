@@ -35,61 +35,61 @@
  
      public void func_76846_a()
 @@ -31,9 +44,9 @@
-         int var8;
-         int var9;
+         int i1;
+         int j1;
  
--        for (int var1 = 0; var1 < 16; ++var1)
-+        for (int var1 = 0; var1 < tileSizeBase; ++var1)
+-        for (int k1 = 0; k1 < 16; ++k1)
++        for (int k1 = 0; k1 < tileSizeBase; ++k1)
          {
--            for (var2 = 0; var2 < 16; ++var2)
-+            for (var2 = 0; var2 < tileSizeBase; ++var2)
+-            for (i = 0; i < 16; ++i)
++            for (i = 0; i < tileSizeBase; ++i)
              {
-                 var3 = 0.0F;
-                 int var4 = (int)(MathHelper.func_76126_a((float)var2 * (float)Math.PI * 2.0F / 16.0F) * 1.2F);
+                 f = 0.0F;
+                 int l1 = (int)(MathHelper.func_76126_a((float)i * (float)Math.PI * 2.0F / 16.0F) * 1.2F);
 @@ -43,25 +56,25 @@
                  {
-                     for (var7 = var2 - 1; var7 <= var2 + 1; ++var7)
+                     for (l = i - 1; l <= i + 1; ++l)
                      {
--                        var8 = var6 + var4 & 15;
--                        var9 = var7 + var5 & 15;
--                        var3 += this.field_76871_g[var8 + var9 * 16];
-+                        var8 = var6 + var4 & tileSizeMask;
-+                        var9 = var7 + var5 & tileSizeMask;
-+                        var3 += this.field_76871_g[var8 + var9 * tileSizeBase];
+-                        i1 = k + l1 & 15;
+-                        j1 = l + j & 15;
+-                        f += this.field_76871_g[i1 + j1 * 16];
++                        i1 = k + l1 & tileSizeMask;
++                        j1 = l + j & tileSizeMask;
++                        f += this.field_76871_g[i1 + j1 * tileSizeBase];
                      }
                  }
  
--                this.field_76874_h[var1 + var2 * 16] = var3 / 10.0F + (this.field_76875_i[(var1 + 0 & 15) + (var2 + 0 & 15) * 16] + this.field_76875_i[(var1 + 1 & 15) + (var2 + 0 & 15) * 16] + this.field_76875_i[(var1 + 1 & 15) + (var2 + 1 & 15) * 16] + this.field_76875_i[(var1 + 0 & 15) + (var2 + 1 & 15) * 16]) / 4.0F * 0.8F;
--                this.field_76875_i[var1 + var2 * 16] += this.field_76872_j[var1 + var2 * 16] * 0.01F;
-+                this.field_76874_h[var1 + var2 * tileSizeBase] = var3 / 10.0F + (this.field_76875_i[(var1 + 0 & tileSizeMask) + (var2 + 0 & tileSizeMask) * tileSizeBase] + this.field_76875_i[(var1 + 1 & tileSizeMask) + (var2 + 0 & tileSizeMask) * tileSizeBase] + this.field_76875_i[(var1 + 1 & tileSizeMask) + (var2 + 1 & tileSizeMask) * tileSizeBase] + this.field_76875_i[(var1 + 0 & tileSizeMask) + (var2 + 1 & tileSizeMask) * tileSizeBase]) / 4.0F * 0.8F;
-+                this.field_76875_i[var1 + var2 * tileSizeBase] += this.field_76872_j[var1 + var2 * tileSizeBase] * 0.01F;
+-                this.field_76874_h[k1 + i * 16] = f / 10.0F + (this.field_76875_i[(k1 + 0 & 15) + (i + 0 & 15) * 16] + this.field_76875_i[(k1 + 1 & 15) + (i + 0 & 15) * 16] + this.field_76875_i[(k1 + 1 & 15) + (i + 1 & 15) * 16] + this.field_76875_i[(k1 + 0 & 15) + (i + 1 & 15) * 16]) / 4.0F * 0.8F;
+-                this.field_76875_i[k1 + i * 16] += this.field_76872_j[k1 + i * 16] * 0.01F;
++                this.field_76874_h[k1 + i * tileSizeBase] = f / 10.0F + (this.field_76875_i[(k1 + 0 & tileSizeMask) + (i + 0 & tileSizeMask) * tileSizeBase] + this.field_76875_i[(k1 + 1 & tileSizeMask) + (i + 0 & tileSizeMask) * tileSizeBase] + this.field_76875_i[(k1 + 1 & tileSizeMask) + (i + 1 & tileSizeMask) * tileSizeBase] + this.field_76875_i[(k1 + 0 & tileSizeMask) + (i + 1 & tileSizeMask) * tileSizeBase]) / 4.0F * 0.8F;
++                this.field_76875_i[k1 + i * tileSizeBase] += this.field_76872_j[k1 + i * tileSizeBase] * 0.01F;
  
--                if (this.field_76875_i[var1 + var2 * 16] < 0.0F)
-+                if (this.field_76875_i[var1 + var2 * tileSizeBase] < 0.0F)
+-                if (this.field_76875_i[k1 + i * 16] < 0.0F)
++                if (this.field_76875_i[k1 + i * tileSizeBase] < 0.0F)
                  {
--                    this.field_76875_i[var1 + var2 * 16] = 0.0F;
-+                    this.field_76875_i[var1 + var2 * tileSizeBase] = 0.0F;
+-                    this.field_76875_i[k1 + i * 16] = 0.0F;
++                    this.field_76875_i[k1 + i * tileSizeBase] = 0.0F;
                  }
  
--                this.field_76872_j[var1 + var2 * 16] -= 0.06F;
-+                this.field_76872_j[var1 + var2 * tileSizeBase] -= 0.06F;
+-                this.field_76872_j[k1 + i * 16] -= 0.06F;
++                this.field_76872_j[k1 + i * tileSizeBase] -= 0.06F;
  
                  if (Math.random() < 0.005D)
                  {
--                    this.field_76872_j[var1 + var2 * 16] = 1.5F;
-+                    this.field_76872_j[var1 + var2 * tileSizeBase] = 1.5F;
+-                    this.field_76872_j[k1 + i * 16] = 1.5F;
++                    this.field_76872_j[k1 + i * tileSizeBase] = 1.5F;
                  }
              }
          }
 @@ -70,9 +83,9 @@
          this.field_76874_h = this.field_76871_g;
-         this.field_76871_g = var11;
+         this.field_76871_g = afloat;
  
--        for (var2 = 0; var2 < 256; ++var2)
-+        for (var2 = 0; var2 < tileSizeSquare; ++var2)
+-        for (i = 0; i < 256; ++i)
++        for (i = 0; i < tileSizeSquare; ++i)
          {
--            var3 = this.field_76871_g[var2 - this.field_76873_k / 3 * 16 & 255] * 2.0F;
-+            var3 = this.field_76871_g[(var2 - this.field_76873_k / 3 * tileSizeBase) & tileSizeSquareMask] * 2.0F;
+-            f = this.field_76871_g[i - this.field_76873_k / 3 * 16 & 255] * 2.0F;
++            f = this.field_76871_g[(i - this.field_76873_k / 3 * tileSizeBase) & tileSizeSquareMask] * 2.0F;
  
-             if (var3 > 1.0F)
+             if (f > 1.0F)
              {

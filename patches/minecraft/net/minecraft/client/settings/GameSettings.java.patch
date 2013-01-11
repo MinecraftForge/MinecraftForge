@@ -14,4 +14,4 @@
 +        if (FMLClientHandler.instance().isLoading()) return;
          try
          {
-             PrintWriter var1 = new PrintWriter(new FileWriter(this.field_74354_ai));
+             PrintWriter printwriter = new PrintWriter(new FileWriter(this.field_74354_ai));

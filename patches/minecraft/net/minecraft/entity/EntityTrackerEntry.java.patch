@@ -22,7 +22,7 @@
 +                        FMLNetworkHandler.makeEntitySpawnAdjustment(this.field_73132_a.field_70157_k, p_73117_1_, this.field_73128_d, this.field_73129_e, this.field_73126_f);
 +                    }
  
-                     if (this.field_73143_t && !(var6 instanceof Packet24MobSpawn))
+                     if (this.field_73143_t && !(packet instanceof Packet24MobSpawn))
                      {
 @@ -424,6 +434,13 @@
          if (this.field_73132_a.field_70128_L)
