@@ -261,6 +261,21 @@ public class Configuration
         }
         return prop;
     }
+    
+    public Property get(String category, String key, float defaultValue)
+    {
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, float defaultValue, String comment)
+    {
+        Property prop = get(category, key, Float.toString(defaultValue), comment, FLOAT);
+        if (!prop.isFloatValue())
+        {
+            prop.value = Float.toString(defaultValue);
+        }
+        return prop;
+    }
 
     public Property get(String category, String key, String defaultValue)
     {
@@ -320,6 +335,29 @@ public class Configuration
         Property prop =  get(category, key, values, comment, DOUBLE);
         
         if (!prop.isDoubleList())
+        {
+            prop.valueList = values;
+        }
+
+        return prop;
+    }
+    
+    public Property get(String category, String key, float[] defaultValue)
+    {
+        return get(category, key, defaultValue, null);
+    }
+
+    public Property get(String category, String key, float[] defaultValue, String comment)
+    {
+        String[] values = new String[defaultValue.length];
+        for (int i = 0; i < defaultValue.length; i++)
+        {
+            values[i] = Float.toString(defaultValue[i]);
+        }
+
+        Property prop =  get(category, key, values, comment, FLOAT);
+        
+        if (!prop.isFloatList())
         {
             prop.valueList = values;
         }
