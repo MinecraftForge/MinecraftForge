@@ -6,8 +6,8 @@
      {
 -        if (this.field_76579_a.func_72912_H().func_76067_t() == WorldType.field_77138_c)
 -        {
--            FlatGeneratorInfo var1 = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
--            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76773_a[var1.func_82648_a()], 0.5F, 0.5F);
+-            FlatGeneratorInfo flatgeneratorinfo = FlatGeneratorInfo.func_82651_a(this.field_76579_a.func_72912_H().func_82571_y());
+-            this.field_76578_c = new WorldChunkManagerHell(BiomeGenBase.field_76773_a[flatgeneratorinfo.func_82648_a()], 0.5F, 0.5F);
 -        }
 -        else
 -        {

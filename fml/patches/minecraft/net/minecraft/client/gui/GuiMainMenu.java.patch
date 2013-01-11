@@ -27,12 +27,12 @@
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
 @@ -140,7 +146,8 @@
-             this.func_73969_a(var4, 24, var2);
+             this.func_73969_a(i, 24, stringtranslate);
          }
  
--        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, var2.func_74805_b("menu.mods")));
-+        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, 98, 20, var2.func_74805_b("menu.mods")));
-+        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 + 2, var4 + 48, 98, 20, "Mods"));
+-        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, i + 48, stringtranslate.func_74805_b("menu.mods")));
++        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, i + 48, 98, 20, stringtranslate.func_74805_b("menu.mods")));
++        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 + 2, i + 48, 98, 20, "Mods"));
  
          if (this.field_73882_e.field_71448_m)
          {
@@ -49,10 +49,10 @@
  
          if (p_73875_1_.field_73741_f == 11)
 @@ -460,7 +472,16 @@
-             var9 = var9 + " Demo";
+             s = s + " Demo";
          }
  
--        this.func_73731_b(this.field_73886_k, var9, 2, this.field_73881_g - 10, 16777215);
+-        this.func_73731_b(this.field_73886_k, s, 2, this.field_73881_g - 10, 16777215);
 +        List<String> brandings = Lists.reverse(FMLCommonHandler.instance().getBrandings());
 +        for (int i = 0; i < brandings.size(); i++)
 +        {
@@ -63,6 +63,6 @@
 +            }
 +        }
 +
-         String var10 = "Copyright Mojang AB. Do not distribute!";
-         this.func_73731_b(this.field_73886_k, var10, this.field_73880_f - this.field_73886_k.func_78256_a(var10) - 2, this.field_73881_g - 10, 16777215);
+         String s1 = "Copyright Mojang AB. Do not distribute!";
+         this.func_73731_b(this.field_73886_k, s1, this.field_73880_f - this.field_73886_k.func_78256_a(s1) - 2, this.field_73881_g - 10, 16777215);
  

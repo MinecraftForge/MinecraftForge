@@ -12,11 +12,11 @@
 @@ -12,10 +14,7 @@
      public static void func_73699_a()
      {
-         ConsoleLogFormatter var0 = new ConsoleLogFormatter();
+         ConsoleLogFormatter consolelogformatter = new ConsoleLogFormatter();
 -        field_73700_a.setUseParentHandlers(false);
--        ConsoleHandler var1 = new ConsoleHandler();
--        var1.setFormatter(var0);
--        field_73700_a.addHandler(var1);
+-        ConsoleHandler consolehandler = new ConsoleHandler();
+-        consolehandler.setFormatter(consolelogformatter);
+-        field_73700_a.addHandler(consolehandler);
 +        field_73700_a.setParent(FMLLog.getLogger());
  
          try

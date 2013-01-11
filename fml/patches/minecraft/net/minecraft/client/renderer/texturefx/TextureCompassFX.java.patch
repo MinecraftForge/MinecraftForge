@@ -45,58 +45,58 @@
 +
          try
          {
--            BufferedImage var2 = ImageIO.read(Minecraft.class.getResource("/gui/items.png"));
--            int var3 = this.field_76850_b % 16 * 16;
--            int var4 = this.field_76850_b / 16 * 16;
--            var2.getRGB(var3, var4, 16, 16, this.field_76867_h, 0, 16);
-+            BufferedImage var2 = ImageIO.read(field_76865_g.field_71418_C.func_77292_e().func_77532_a("/gui/items.png"));
-+            int var3 = this.field_76850_b % 16 * tileSizeBase;
-+            int var4 = this.field_76850_b / 16 * tileSizeBase;
-+            var2.getRGB(var3, var4, tileSizeBase, tileSizeBase, this.field_76867_h, 0, tileSizeBase);
+-            BufferedImage bufferedimage = ImageIO.read(Minecraft.class.getResource("/gui/items.png"));
+-            int i = this.field_76850_b % 16 * 16;
+-            int j = this.field_76850_b / 16 * 16;
+-            bufferedimage.getRGB(i, j, 16, 16, this.field_76867_h, 0, 16);
++            BufferedImage bufferedimage = ImageIO.read(field_76865_g.field_71418_C.func_77292_e().func_77532_a("/gui/items.png"));
++            int i = this.field_76850_b % 16 * tileSizeBase;
++            int j = this.field_76850_b / 16 * tileSizeBase;
++            bufferedimage.getRGB(i, j, tileSizeBase, tileSizeBase, this.field_76867_h, 0, tileSizeBase);
          }
-         catch (IOException var5)
+         catch (IOException ioexception)
          {
 @@ -58,7 +76,7 @@
-         int var17;
-         int var16;
+         int i;
+         int j;
  
--        for (int var10 = 0; var10 < 256; ++var10)
-+        for (int var10 = 0; var10 < stileSizeSquare; ++var10)
+-        for (int k = 0; k < 256; ++k)
++        for (int k = 0; k < stileSizeSquare; ++k)
          {
-             int var11 = var8[var10] >> 24 & 255;
-             int var12 = var8[var10] >> 16 & 255;
+             int l = aint[k] >> 24 & 255;
+             int i1 = aint[k] >> 16 & 255;
 @@ -141,11 +159,11 @@
-         int var24;
-         int var26;
+         int k3;
+         int l3;
  
--        for (var16 = -4; var16 <= 4; ++var16)
+-        for (j = -4; j <= 4; ++j)
 -        {
--            var17 = (int)(8.5D + var31 * (double)var16 * 0.3D);
--            var18 = (int)(7.5D - var30 * (double)var16 * 0.3D * 0.5D);
--            var19 = var18 * 16 + var17;
-+        for (var16 = -(stileSizeBase >> 2); var16 <= (stileSizeBase >> 2); ++var16)
+-            i = (int)(8.5D + d7 * (double)j * 0.3D);
+-            j2 = (int)(7.5D - d6 * (double)j * 0.3D * 0.5D);
+-            i2 = j2 * 16 + i;
++        for (j = -(stileSizeBase >> 2); j <= (stileSizeBase >> 2); ++j)
 +        {
-+            var17 = (int)((stileSizeBase >> 1) + 0.5D + var31 * (double)var16 * 0.3D);
-+            var18 = (int)((stileSizeBase >> 1) - 0.5D - var30 * (double)var16 * 0.3D * 0.5D);
-+            var19 = var18 * stileSizeBase + var17;
-             var20 = 100;
-             var21 = 100;
-             var22 = 100;
++            i = (int)((stileSizeBase >> 1) + 0.5D + d7 * (double)j * 0.3D);
++            j2 = (int)((stileSizeBase >> 1) - 0.5D - d6 * (double)j * 0.3D * 0.5D);
++            i2 = j2 * stileSizeBase + i;
+             l2 = 100;
+             k2 = 100;
+             i3 = 100;
 @@ -167,11 +185,12 @@
-             var9[var19 * 4 + 3] = (byte)var23;
+             abyte[i2 * 4 + 3] = (byte)short1;
          }
  
--        for (var16 = -8; var16 <= 16; ++var16)
+-        for (j = -8; j <= 16; ++j)
 -        {
--            var17 = (int)(8.5D + var30 * (double)var16 * 0.3D);
--            var18 = (int)(7.5D + var31 * (double)var16 * 0.3D * 0.5D);
--            var19 = var18 * 16 + var17;
+-            i = (int)(8.5D + d6 * (double)j * 0.3D);
+-            j2 = (int)(7.5D + d7 * (double)j * 0.3D * 0.5D);
+-            i2 = j2 * 16 + i;
 +
-+        for (var16 = -(stileSizeBase>>2); var16 <= stileSizeBase; ++var16)
++        for (j = -(stileSizeBase>>2); j <= stileSizeBase; ++j)
 +        {
-+            var17 = (int)((stileSizeBase >> 1) + 0.5D + var30 * (double)var16 * 0.3D);
-+            var18 = (int)((stileSizeBase >> 1) - 0.5D + var31 * (double)var16 * 0.3D * 0.5D);
-+            var19 = var18 * stileSizeBase + var17;
-             var20 = var16 >= 0 ? 255 : 100;
-             var21 = var16 >= 0 ? 20 : 100;
-             var22 = var16 >= 0 ? 20 : 100;
++            i = (int)((stileSizeBase >> 1) + 0.5D + d6 * (double)j * 0.3D);
++            j2 = (int)((stileSizeBase >> 1) - 0.5D + d7 * (double)j * 0.3D * 0.5D);
++            i2 = j2 * stileSizeBase + i;
+             l2 = j >= 0 ? 255 : 100;
+             k2 = j >= 0 ? 20 : 100;
+             i3 = j >= 0 ? 20 : 100;

@@ -35,8 +35,8 @@
 +
 +    public void handleVanilla250Packet(Packet250CustomPayload p_72501_1_)
      {
-         DataInputStream var2;
-         ItemStack var3;
+         DataInputStream datainputstream;
+         ItemStack itemstack;
 @@ -1156,4 +1165,18 @@
              }
          }
