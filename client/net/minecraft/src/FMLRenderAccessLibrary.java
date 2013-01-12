@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
-import net.minecraft.client.renderer.texturefx.TextureFX;
 import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.world.IBlockAccess;
 
@@ -52,31 +51,6 @@ public class FMLRenderAccessLibrary
     public static void log(Level level, String message, Throwable throwable)
     {
         FMLLog.log(level, throwable, message);
-    }
-
-    public static void setTextureDimensions(int textureId, int width, int height, List<TextureFX> textureFXList)
-    {
-        TextureFXManager.instance().setTextureDimensions(textureId, width, height, textureFXList);
-    }
-
-    public static void preRegisterEffect(TextureFX textureFX)
-    {
-        TextureFXManager.instance().onPreRegisterEffect(textureFX);
-    }
-
-    public static boolean onUpdateTextureEffect(TextureFX textureFX)
-    {
-        return TextureFXManager.instance().onUpdateTextureEffect(textureFX);
-    }
-
-    public static Dimension getTextureDimensions(TextureFX textureFX)
-    {
-        return TextureFXManager.instance().getTextureDimensions(textureFX);
-    }
-
-    public static void onTexturePackChange(RenderEngine engine, ITexturePack texturePack, List<TextureFX> textureFXList)
-    {
-        TextureFXManager.instance().onTexturePackChange(engine, texturePack, textureFXList);
     }
 
     @SuppressWarnings("deprecation")

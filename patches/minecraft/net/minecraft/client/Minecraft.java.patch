@@ -12,7 +12,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.BorderLayout;
-@@ -120,6 +126,8 @@
+@@ -114,6 +120,8 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
@@ -21,7 +21,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -302,6 +310,8 @@
+@@ -296,6 +304,8 @@
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
  
@@ -29,8 +29,8 @@
 +
          if (this.field_71474_y.field_74363_ab != null)
          {
-             StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab);
-@@ -346,6 +356,8 @@
+             StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab, false);
+@@ -332,6 +342,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -39,7 +39,7 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -374,6 +386,8 @@
+@@ -360,6 +372,8 @@
          {
              this.func_71352_k();
          }
@@ -48,7 +48,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -738,9 +752,11 @@
+@@ -724,9 +738,11 @@
  
              if (!this.field_71454_w)
              {
@@ -60,7 +60,7 @@
              }
  
              GL11.glFlush();
-@@ -1270,10 +1286,14 @@
+@@ -1256,10 +1272,14 @@
  
      public void func_71407_l()
      {
@@ -75,7 +75,7 @@
  
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
-@@ -1730,6 +1750,8 @@
+@@ -1717,6 +1737,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -84,7 +84,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1768,8 +1790,27 @@
+@@ -1755,8 +1777,27 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
@@ -112,7 +112,7 @@
          this.field_71455_al = true;
          this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
  
-@@ -1984,6 +2025,12 @@
+@@ -1978,6 +2019,12 @@
  
      public static void main(String[] p_main_0_)
      {

@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.List;
-@@ -207,6 +208,8 @@
+@@ -213,6 +214,8 @@
          }
  
          field_77698_e[256 + p_i3659_1_] = this;
@@ -15,4 +15,4 @@
 +        GameData.newItemAdded(this);
      }
  
-     public Item func_77665_c(int p_77665_1_)
+     public Item func_77625_d(int p_77625_1_)
