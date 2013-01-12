@@ -215,22 +215,6 @@ public class ForgeHooks
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
     }
 
-    public static String getTexture(String _default, Object obj)
-    {
-        if (obj instanceof Item)
-        {
-            return ((Item)obj).getTextureFile();
-        }
-        else if (obj instanceof Block)
-        {
-            return ((Block)obj).getTextureFile();
-        }
-        else
-        {
-            return _default;
-        }
-    }
-
     public static int getTotalArmorValue(EntityPlayer player)
     {
         int ret = 0;

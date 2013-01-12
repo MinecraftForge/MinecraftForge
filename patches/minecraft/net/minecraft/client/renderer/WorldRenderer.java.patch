@@ -37,7 +37,7 @@
                                          {
                                              TileEntity tileentity = chunkcache.getBlockTileEntity(k2, i2, j2);
  
-@@ -212,14 +215,17 @@
+@@ -212,14 +215,15 @@
  
                                          int i3 = block.getRenderBlockPass();
  
@@ -52,13 +52,11 @@
 -                                            flag1 |= renderblocks.renderBlockByRenderType(block, k2, i2, j2);
 +                                            continue;
                                          }
-+                                        ForgeHooksClient.beforeBlockRender(block, renderblocks);
 +                                        flag1 |= renderblocks.renderBlockByRenderType(block, k2, i2, j2);
-+                                        ForgeHooksClient.afterBlockRender(block, renderblocks);
                                      }
                                  }
                              }
-@@ -228,10 +234,11 @@
+@@ -228,10 +232,11 @@
  
                      if (flag2)
                      {

@@ -39,7 +39,7 @@
 +        
 +        if (customRenderer != null)
 +        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
++            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture((par2ItemStack.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png")));
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
 +        else if (block != null && par2ItemStack.func_94608_d() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))

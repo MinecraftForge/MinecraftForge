@@ -201,22 +201,6 @@ public class ForgeHooksClient
         Tessellator.instance = defaultTessellator;
     }
 
-    public static void beforeBlockRender(Block block, RenderBlocks render)
-    {
-        if (!block.isDefaultTexture && render.overrideBlockTexture == -1)
-        {
-            bindTexture(block.getTextureFile(), 0);
-        }
-    }
-
-    public static void afterBlockRender(Block block, RenderBlocks render)
-    {
-        if (!block.isDefaultTexture && render.overrideBlockTexture == -1)
-        {
-            unbindTexture();
-        }
-    }
-
     public static String getArmorTexture(ItemStack armor, String _default)
     {
         if (armor.getItem() instanceof IArmorTextureProvider)
@@ -246,7 +230,7 @@ public class ForgeHooksClient
 
         if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
-            engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
+            engine.bindTexture(engine.getTexture("/terrain.png"));
             int renderType = Block.blocksList[item.itemID].getRenderType();
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
@@ -271,7 +255,7 @@ public class ForgeHooksClient
         }
         else
         {
-                engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
+            engine.bindTexture(engine.getTexture("/gui/items.png"));
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -286,7 +270,7 @@ public class ForgeHooksClient
                 return false;
         }
 
-        engine.bindTexture(engine.getTexture(Item.itemsList[item.itemID].getTextureFile()));
+        engine.bindTexture(engine.getTexture("/gui/items.png"));
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();

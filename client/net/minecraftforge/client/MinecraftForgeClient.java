@@ -41,15 +41,6 @@ public class MinecraftForgeClient
         ForgeHooksClient.engine().getTexture(texture);
     }
 
-    /** Render a block.  Render a block which may have a custom texture.
-     */
-    public static void renderBlock(RenderBlocks render, Block block, int x, int y, int z)
-    {
-        ForgeHooksClient.beforeBlockRender(block, render);
-        render.renderBlockByRenderType(block, x, y, z);
-        ForgeHooksClient.afterBlockRender(block, render);
-    }
-
     /**
      * Get the current render pass.
      */

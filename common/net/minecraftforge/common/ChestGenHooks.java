@@ -49,7 +49,7 @@ public class ChestGenHooks
         addInfo(VILLAGE_BLACKSMITH,       ComponentVillageHouse2.villageBlacksmithChestContents,                   3,  9);
         addInfo(BONUS_CHEST,              WorldServer.bonusChestContent,                                          10, 10);
 
-        ItemStack book = new ItemStack(Item.field_92053_bW, 1, 0);
+        ItemStack book = new ItemStack(Item.enchantedBook, 1, 0);
         WeightedRandomChestContent tmp = new WeightedRandomChestContent(book, 1, 1, 1);
         getInfo(MINESHAFT_CORRIDOR  ).addItem(tmp);
         getInfo(PYRAMID_DESERT_CHEST).addItem(tmp);        
