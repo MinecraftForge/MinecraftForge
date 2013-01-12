@@ -106,7 +106,7 @@ public class RenderingRegistry
      */
     public static void addTextureOverride(String path, String overlayPath, int index)
     {
-        TextureFXManager.instance().addNewTextureOverride(path, overlayPath, index);
+//        TextureFXManager.instance().addNewTextureOverride(path, overlayPath, index);
     }
 
     /**

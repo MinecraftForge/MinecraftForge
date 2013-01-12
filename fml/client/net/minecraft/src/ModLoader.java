@@ -28,7 +28,6 @@ import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.texturefx.TextureFX;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.ICommand;
@@ -118,12 +117,6 @@ public class ModLoader
     @SideOnly(CLIENT)
     public static void addAllRenderers(Map<Class<? extends Entity>, Render> renderers)
     {
-    }
-
-    @SideOnly(CLIENT)
-    public static void addAnimation(TextureFX anim)
-    {
-        TextureFXManager.instance().addAnimation(anim);
     }
 
     /**
