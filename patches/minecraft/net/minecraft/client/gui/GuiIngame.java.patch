@@ -11,10 +11,10 @@
  {
 @@ -159,7 +161,7 @@
  
-                 var47 = var7 - 39;
-                 var22 = var47 - 10;
--                var23 = this.mc.thePlayer.getTotalArmorValue();
-+                var23 = ForgeHooks.getTotalArmorValue(mc.thePlayer);
-                 var24 = -1;
+                 j3 = l - 39;
+                 l2 = j3 - 10;
+-                k2 = this.mc.thePlayer.getTotalArmorValue();
++                k2 = ForgeHooks.getTotalArmorValue(mc.thePlayer);
+                 i3 = -1;
  
                  if (this.mc.thePlayer.isPotionActive(Potion.regeneration))

@@ -11,19 +11,19 @@
  
 @@ -398,7 +398,7 @@
          {
-             if (var8 < 13)
+             if (l1 < 13)
              {
--                if (var6 <= 0 || var6 >= 255)
-+                if (var6 <= 0 || var6 >= par0World.getHeight() - 1)
+-                if (j1 <= 0 || j1 >= 255)
++                if (j1 <= 0 || j1 >= par0World.getHeight() - 1)
                  {
                      return false;
                  }
 @@ -448,7 +448,7 @@
  
-             if (var9 < 13)
+             if (l1 < 13)
              {
--                if (var7 <= 0 || var7 >= 255)
-+                if (var7 <= 0 || var7 >= par1World.getHeight() - 1)
+-                if (j1 <= 0 || j1 >= 255)
++                if (j1 <= 0 || j1 >= par1World.getHeight() - 1)
                  {
                      return false;
                  }

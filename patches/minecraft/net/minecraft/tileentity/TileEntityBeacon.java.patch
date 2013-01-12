@@ -1,14 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 @@ -114,8 +114,9 @@
-                     for (int var5 = this.zCoord - var1; var5 <= this.zCoord + var1; ++var5)
+                     for (int l = this.zCoord - i; l <= this.zCoord + i; ++l)
                      {
-                         int var6 = this.worldObj.getBlockId(var4, var2, var5);
+                         int i1 = this.worldObj.getBlockId(k, j, l);
 -
--                        if (var6 != Block.blockEmerald.blockID && var6 != Block.blockGold.blockID && var6 != Block.blockDiamond.blockID && var6 != Block.blockSteel.blockID)
-+                        Block block = Block.blocksList[var6];
+-                        if (i1 != Block.blockEmerald.blockID && i1 != Block.blockGold.blockID && i1 != Block.blockDiamond.blockID && i1 != Block.blockSteel.blockID)
++                        Block block = Block.blocksList[i1];
 +
-+                        if (block == null || !block.isBeaconBase(worldObj, var4, var2, var5, xCoord, yCoord, zCoord))
++                        if (block == null || !block.isBeaconBase(worldObj, k, j, l, xCoord, yCoord, zCoord))
                          {
-                             var3 = false;
+                             flag = false;
                              break;

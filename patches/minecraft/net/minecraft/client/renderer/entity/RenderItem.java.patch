@@ -16,70 +16,70 @@
  public class RenderItem extends Render
  {
 @@ -48,39 +51,22 @@
-         if (var10.getItem() != null)
+         if (itemstack.getItem() != null)
          {
              GL11.glPushMatrix();
--            float var11 = MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F;
-+            float var11 = shouldBob() ? MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F : 0F;
-             float var12 = (((float)par1EntityItem.age + par9) / 20.0F + par1EntityItem.hoverStart) * (180F / (float)Math.PI);
--            byte var13 = 1;
+-            float f2 = MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F;
++            float f2 = shouldBob() ? MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F : 0F;
+             float f3 = (((float)par1EntityItem.age + par9) / 20.0F + par1EntityItem.hoverStart) * (180F / (float)Math.PI);
+-            byte b0 = 1;
 -
 -            if (par1EntityItem.func_92014_d().stackSize > 1)
 -            {
--                var13 = 2;
+-                b0 = 2;
 -            }
 -
 -            if (par1EntityItem.func_92014_d().stackSize > 5)
 -            {
--                var13 = 3;
+-                b0 = 3;
 -            }
 -
 -            if (par1EntityItem.func_92014_d().stackSize > 20)
 -            {
--                var13 = 4;
+-                b0 = 4;
 -            }
 -
 -            if (par1EntityItem.func_92014_d().stackSize > 40)
 -            {
--                var13 = 5;
+-                b0 = 5;
 -            }
-+            byte var13 = getMiniBlockCountForItemStack(var10);
++            byte b0 = getMiniBlockCountForItemStack(itemstack);
  
-             GL11.glTranslatef((float)par2, (float)par4 + var11, (float)par6);
+             GL11.glTranslatef((float)par2, (float)par4 + f2, (float)par6);
              GL11.glEnable(GL12.GL_RESCALE_NORMAL);
--            Block var14 = Block.blocksList[var10.itemID];
-             int var16;
-             float var19;
-             float var20;
-             float var24;
+-            Block block = Block.blocksList[itemstack.itemID];
+             int i;
+             float f4;
+             float f5;
+             float f6;
  
--            if (var14 != null && RenderBlocks.renderItemIn3d(var14.getRenderType()))
-+            if (ForgeHooksClient.renderEntityItem(par1EntityItem, var10, var11, var12, random, renderManager.renderEngine, renderBlocks))
+-            if (block != null && RenderBlocks.renderItemIn3d(block.getRenderType()))
++            if (ForgeHooksClient.renderEntityItem(par1EntityItem, itemstack, f2, f3, random, renderManager.renderEngine, renderBlocks))
 +            {
 +                ;
 +            }
-+            else if (var10.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[var10.itemID].getRenderType()))
++            else if (itemstack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
              {
-                 GL11.glRotatef(var12, 0.0F, 1.0F, 0.0F);
+                 GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
  
 @@ -91,9 +77,9 @@
                      GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
                  }
  
 -                this.loadTexture("/terrain.png");
-+                this.loadTexture(Block.blocksList[var10.itemID].getTextureFile());
-                 float var22 = 0.25F;
--                var16 = var14.getRenderType();
-+                var16 = Block.blocksList[var10.itemID].getRenderType();
++                this.loadTexture(Block.blocksList[itemstack.itemID].getTextureFile());
+                 float f7 = 0.25F;
+-                i = block.getRenderType();
++                i = Block.blocksList[itemstack.itemID].getRenderType();
  
-                 if (var16 == 1 || var16 == 19 || var16 == 12 || var16 == 2)
+                 if (i == 1 || i == 19 || i == 12 || i == 2)
                  {
 @@ -115,7 +101,7 @@
                      }
  
-                     var24 = 1.0F;
--                    this.itemRenderBlocks.renderBlockAsItem(var14, var10.getItemDamage(), var24);
-+                    this.itemRenderBlocks.renderBlockAsItem(Block.blocksList[var10.itemID], var10.getItemDamage(), var24);
+                     f6 = 1.0F;
+-                    this.itemRenderBlocks.renderBlockAsItem(block, itemstack.getItemDamage(), f6);
++                    this.itemRenderBlocks.renderBlockAsItem(Block.blocksList[itemstack.itemID], itemstack.getItemDamage(), f6);
                      GL11.glPopMatrix();
                  }
              }
@@ -89,23 +89,23 @@
  
 -                    this.loadTexture("/gui/items.png");
 -
--                    for (var15 = 0; var15 <= 1; ++var15)
+-                    for (k = 0; k <= 1; ++k)
 -                    {
 +
-+                    for (var15 = 0; var15 <= var10.getItem().getRenderPasses(var10.getItemDamage()); ++var15)
++                    for (k = 0; k <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++k)
 +                    {
-+                        this.loadTexture(Item.itemsList[var10.itemID].getTextureFile());
++                        this.loadTexture(Item.itemsList[itemstack.itemID].getTextureFile());
                          this.random.setSeed(187L);
--                        var16 = var10.getItem().getIconFromDamageForRenderPass(var10.getItemDamage(), var15);
-+                        var16 = var10.getItem().getIconIndex(var10, var15);
-                         var17 = 1.0F;
+-                        i = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), k);
++                        i = itemstack.getItem().getIconIndex(itemstack, k);
+                         f8 = 1.0F;
  
                          if (this.field_77024_a)
 @@ -173,14 +159,7 @@
  
-                     var15 = var10.getIconIndex();
+                     k = itemstack.getIconIndex();
  
--                    if (var14 != null)
+-                    if (block != null)
 -                    {
 -                        this.loadTexture("/terrain.png");
 -                    }
@@ -113,99 +113,99 @@
 -                    {
 -                        this.loadTexture("/gui/items.png");
 -                    }
-+                    this.loadTexture(var10.getItem().getTextureFile());
++                    this.loadTexture(itemstack.getItem().getTextureFile());
  
                      if (this.field_77024_a)
                      {
 @@ -232,39 +211,27 @@
-             var17 = 0.021875F;
-             ItemStack var18 = par1EntityItem.func_92014_d();
-             int var19 = var18.stackSize;
--            byte var24;
+             f11 = 0.021875F;
+             ItemStack itemstack = par1EntityItem.func_92014_d();
+             int k = itemstack.stackSize;
+-            byte b0;
 -
--            if (var19 < 2)
+-            if (k < 2)
 -            {
--                var24 = 1;
+-                b0 = 1;
 -            }
--            else if (var19 < 16)
+-            else if (k < 16)
 -            {
--                var24 = 2;
+-                b0 = 2;
 -            }
--            else if (var19 < 32)
+-            else if (k < 32)
 -            {
--                var24 = 3;
+-                b0 = 3;
 -            }
 -            else
 -            {
--                var24 = 4;
+-                b0 = 4;
 -            }
-+            byte var24 = getMiniItemCountForItemStack(var18);
++            byte b0 = getMiniItemCountForItemStack(itemstack);
 +
  
-             GL11.glTranslatef(-var14, -var15, -((var16 + var17) * (float)var24 / 2.0F));
+             GL11.glTranslatef(-f9, -f10, -((f12 + f11) * (float)b0 / 2.0F));
  
-             for (int var20 = 0; var20 < var24; ++var20)
+             for (int l = 0; l < b0; ++l)
              {
--                GL11.glTranslatef(0.0F, 0.0F, var16 + var17);
+-                GL11.glTranslatef(0.0F, 0.0F, f12 + f11);
 -
--                if (Block.blocksList[var18.itemID] != null)
+-                if (Block.blocksList[itemstack.itemID] != null)
 -                {
 -                    this.loadTexture("/terrain.png");
 +                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
-+                if (var20 > 0 && shouldSpreadItems())
++                if (l > 0 && shouldSpreadItems())
 +                {
 +                    float x = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    float y = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 +                    float z = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
-+                    GL11.glTranslatef(x, y, var16 + var17);
++                    GL11.glTranslatef(x, y, f12 + f11);
                  }
                  else
                  {
 -                    this.loadTexture("/gui/items.png");
 -                }
-+                    GL11.glTranslatef(0f, 0f, var16 + var17);
++                    GL11.glTranslatef(0f, 0f, f12 + f11);
 +                }
 +
-+                this.loadTexture(Item.itemsList[var18.itemID].getTextureFile());
++                this.loadTexture(Item.itemsList[itemstack.itemID].getTextureFile());
  
                  GL11.glColor4f(par5, par6, par7, 1.0F);
-                 ItemRenderer.renderItemIn2D(var8, var10, var11, var9, var12, var16);
+                 ItemRenderer.renderItemIn2D(tessellator, f5, f6, f4, f7, f12);
 @@ -348,10 +315,10 @@
-         float var13;
-         float var16;
+         float f1;
+         float f2;
  
--        if (var6 < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var6].getRenderType()))
+-        if (k < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
 -        {
 -            par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
 +        if (par3ItemStack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par3ItemStack.itemID].getRenderType()))
 +        {
-             Block var15 = Block.blocksList[var6];
-+            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(var15.getTextureFile()));
+             Block block = Block.blocksList[k];
++            par2RenderEngine.bindTexture(par2RenderEngine.getTexture(block.getTextureFile()));
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
 @@ -382,11 +349,11 @@
-             if (Item.itemsList[var6].requiresMultipleRenderPasses())
+             if (Item.itemsList[k].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
 -                par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
 -
--                for (var9 = 0; var9 <= 1; ++var9)
+-                for (k1 = 0; k1 <= 1; ++k1)
 -                {
--                    var10 = Item.itemsList[var6].getIconFromDamageForRenderPass(var7, var9);
-+                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[var6].getTextureFile()));
+-                    j1 = Item.itemsList[k].getIconFromDamageForRenderPass(l, k1);
++                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(Item.itemsList[k].getTextureFile()));
 +
-+                for (var9 = 0; var9 < Item.itemsList[var6].getRenderPasses(var7); ++var9)
++                for (k1 = 0; k1 < Item.itemsList[k].getRenderPasses(l); ++k1)
 +                {
-+                    var10 = Item.itemsList[var6].getIconIndex(par3ItemStack, var9);
-                     int var11 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, var9);
-                     var12 = (float)(var11 >> 16 & 255) / 255.0F;
-                     var13 = (float)(var11 >> 8 & 255) / 255.0F;
++                    j1 = Item.itemsList[k].getIconIndex(par3ItemStack, k1);
+                     int l1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, k1);
+                     f = (float)(l1 >> 16 & 255) / 255.0F;
+                     f1 = (float)(l1 >> 8 & 255) / 255.0F;
 @@ -406,14 +373,7 @@
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
  
--                if (var6 < 256)
+-                if (k < 256)
 -                {
 -                    par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
 -                }
@@ -215,8 +215,8 @@
 -                }
 +                par2RenderEngine.bindTexture(par2RenderEngine.getTexture(par3ItemStack.getItem().getTextureFile()));
  
-                 var9 = Item.itemsList[var6].getColorFromItemStack(par3ItemStack, 0);
-                 float var17 = (float)(var9 >> 16 & 255) / 255.0F;
+                 k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, 0);
+                 float f4 = (float)(k1 >> 16 & 255) / 255.0F;
 @@ -440,7 +400,10 @@
      {
          if (par3ItemStack != null)
@@ -255,27 +255,27 @@
 +
 +    public byte getMiniBlockCountForItemStack(ItemStack stack)
 +    {
-+        byte var13 = 1;
++        byte b0 = 1;
 +        if (stack.stackSize > 1)
 +        {
-+            var13 = 2;
++            b0 = 2;
 +        }
 +
 +        if (stack.stackSize > 5)
 +        {
-+            var13 = 3;
++            b0 = 3;
 +        }
 +
 +        if (stack.stackSize > 20)
 +        {
-+            var13 = 4;
++            b0 = 4;
 +        }
 +
 +        if (stack.stackSize > 40)
 +        {
-+            var13 = 5;
++            b0 = 5;
 +        }
-+        return var13;
++        return b0;
 +    }
 +
 +    /**
@@ -286,24 +286,24 @@
 +     */
 +    public byte getMiniItemCountForItemStack(ItemStack stack)
 +    {
-+        byte var24;
-+        int var19 = stack.stackSize;
-+        if (var19 < 2)
++        byte b0;
++        int i = stack.stackSize;
++        if (i < 2)
 +        {
-+            var24 = 1;
++            b0 = 1;
 +        }
-+        else if (var19 < 16)
++        else if (i < 16)
 +        {
-+            var24 = 2;
++            b0 = 2;
 +        }
-+        else if (var19 < 32)
++        else if (i < 32)
 +        {
-+            var24 = 3;
++            b0 = 3;
 +        }
 +        else
 +        {
-+            var24 = 4;
++            b0 = 4;
 +        }
-+        return var24;
++        return b0;
 +    }
  }

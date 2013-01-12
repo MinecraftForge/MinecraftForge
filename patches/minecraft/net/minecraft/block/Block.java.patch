@@ -103,8 +103,8 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
--        float var6 = this.getBlockHardness(par2World, par3, par4, par5);
--        return var6 < 0.0F ? 0.0F : (!par1EntityPlayer.canHarvestBlock(this) ? 1.0F / var6 / 100.0F : par1EntityPlayer.getCurrentPlayerStrVsBlock(this) / var6 / 30.0F);
+-        float f = this.getBlockHardness(par2World, par3, par4, par5);
+-        return f < 0.0F ? 0.0F : (!par1EntityPlayer.canHarvestBlock(this) ? 1.0F / f / 100.0F : par1EntityPlayer.getCurrentPlayerStrVsBlock(this) / f / 30.0F);
 +        return ForgeHooks.blockStrength(this, par1EntityPlayer, par2World, par3, par4, par5);
      }
  
@@ -113,20 +113,20 @@
      {
          if (!par1World.isRemote)
          {
--            int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
+-            int j1 = this.quantityDroppedWithBonus(par7, par1World.rand);
 -
--            for (int var9 = 0; var9 < var8; ++var9)
+-            for (int k1 = 0; k1 < j1; ++k1)
 +            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
 +
 +            for (ItemStack item : items)
              {
                  if (par1World.rand.nextFloat() <= par6)
                  {
--                    int var10 = this.idDropped(par5, par1World.rand, par7);
+-                    int l1 = this.idDropped(par5, par1World.rand, par7);
 -
--                    if (var10 > 0)
+-                    if (l1 > 0)
 -                    {
--                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var10, 1, this.damageDropped(par5)));
+-                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(l1, 1, this.damageDropped(par5)));
 -                    }
 +                    this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
                  }
@@ -139,7 +139,7 @@
 -        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
 +        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
          {
-             ItemStack var8 = this.createStackedBlock(par6);
+             ItemStack itemstack = this.createStackedBlock(par6);
  
 @@ -1364,4 +1380,840 @@
          canBlockGrass[0] = true;

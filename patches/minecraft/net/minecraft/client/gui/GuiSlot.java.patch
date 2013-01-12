@@ -12,20 +12,20 @@
 @@ -332,16 +334,7 @@
          GL11.glDisable(GL11.GL_LIGHTING);
          GL11.glDisable(GL11.GL_FOG);
-         Tessellator var18 = Tessellator.instance;
+         Tessellator tessellator = Tessellator.instance;
 -        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/background.png"));
 -        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
--        float var17 = 32.0F;
--        var18.startDrawingQuads();
--        var18.setColorOpaque_I(2105376);
--        var18.addVertexWithUV((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / var17), (double)((float)(this.bottom + (int)this.amountScrolled) / var17));
--        var18.addVertexWithUV((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / var17), (double)((float)(this.bottom + (int)this.amountScrolled) / var17));
--        var18.addVertexWithUV((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / var17), (double)((float)(this.top + (int)this.amountScrolled) / var17));
--        var18.addVertexWithUV((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / var17), (double)((float)(this.top + (int)this.amountScrolled) / var17));
--        var18.draw();
-+        drawContainerBackground(var18);
-         var9 = this.width / 2 - 92 - 16;
-         var10 = this.top + 4 - (int)this.amountScrolled;
+-        float f1 = 32.0F;
+-        tessellator.startDrawingQuads();
+-        tessellator.setColorOpaque_I(2105376);
+-        tessellator.addVertexWithUV((double)this.left, (double)this.bottom, 0.0D, (double)((float)this.left / f1), (double)((float)(this.bottom + (int)this.amountScrolled) / f1));
+-        tessellator.addVertexWithUV((double)this.right, (double)this.bottom, 0.0D, (double)((float)this.right / f1), (double)((float)(this.bottom + (int)this.amountScrolled) / f1));
+-        tessellator.addVertexWithUV((double)this.right, (double)this.top, 0.0D, (double)((float)this.right / f1), (double)((float)(this.top + (int)this.amountScrolled) / f1));
+-        tessellator.addVertexWithUV((double)this.left, (double)this.top, 0.0D, (double)((float)this.left / f1), (double)((float)(this.top + (int)this.amountScrolled) / f1));
+-        tessellator.draw();
++        drawContainerBackground(tessellator);
+         j1 = this.width / 2 - 92 - 16;
+         k1 = this.top + 4 - (int)this.amountScrolled;
  
 @@ -470,10 +463,10 @@
      /**
@@ -34,15 +34,15 @@
 -    private void overlayBackground(int par1, int par2, int par3, int par4)
 +    protected void overlayBackground(int par1, int par2, int par3, int par4)
      {
-         Tessellator var5 = Tessellator.instance;
+         Tessellator tessellator = Tessellator.instance;
 -        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/background.png"));
 +        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(BACKGROUND_IMAGE));
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-         float var6 = 32.0F;
-         var5.startDrawingQuads();
+         float f = 32.0F;
+         tessellator.startDrawingQuads();
 @@ -485,4 +478,18 @@
-         var5.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / var6));
-         var5.draw();
+         tessellator.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / f));
+         tessellator.draw();
      }
 +
 +    protected void drawContainerBackground(Tessellator tess)

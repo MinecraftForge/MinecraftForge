@@ -105,34 +105,34 @@
 -
 -                    if (this.minecartType == 1)
 -                    {
--                        EntityMinecart var3 = this;
+-                        EntityMinecart entityminecart = this;
 -
--                        for (int var4 = 0; var4 < var3.getSizeInventory(); ++var4)
+-                        for (int j = 0; j < entityminecart.getSizeInventory(); ++j)
 -                        {
--                            ItemStack var5 = var3.getStackInSlot(var4);
+-                            ItemStack itemstack = entityminecart.getStackInSlot(j);
 -
--                            if (var5 != null)
+-                            if (itemstack != null)
 -                            {
--                                float var6 = this.rand.nextFloat() * 0.8F + 0.1F;
--                                float var7 = this.rand.nextFloat() * 0.8F + 0.1F;
--                                float var8 = this.rand.nextFloat() * 0.8F + 0.1F;
+-                                float f = this.rand.nextFloat() * 0.8F + 0.1F;
+-                                float f1 = this.rand.nextFloat() * 0.8F + 0.1F;
+-                                float f2 = this.rand.nextFloat() * 0.8F + 0.1F;
 -
--                                while (var5.stackSize > 0)
+-                                while (itemstack.stackSize > 0)
 -                                {
--                                    int var9 = this.rand.nextInt(21) + 10;
+-                                    int k = this.rand.nextInt(21) + 10;
 -
--                                    if (var9 > var5.stackSize)
+-                                    if (k > itemstack.stackSize)
 -                                    {
--                                        var9 = var5.stackSize;
+-                                        k = itemstack.stackSize;
 -                                    }
 -
--                                    var5.stackSize -= var9;
--                                    EntityItem var10 = new EntityItem(this.worldObj, this.posX + (double)var6, this.posY + (double)var7, this.posZ + (double)var8, new ItemStack(var5.itemID, var9, var5.getItemDamage()));
--                                    float var11 = 0.05F;
--                                    var10.motionX = (double)((float)this.rand.nextGaussian() * var11);
--                                    var10.motionY = (double)((float)this.rand.nextGaussian() * var11 + 0.2F);
--                                    var10.motionZ = (double)((float)this.rand.nextGaussian() * var11);
--                                    this.worldObj.spawnEntityInWorld(var10);
+-                                    itemstack.stackSize -= k;
+-                                    EntityItem entityitem = new EntityItem(this.worldObj, this.posX + (double)f, this.posY + (double)f1, this.posZ + (double)f2, new ItemStack(itemstack.itemID, k, itemstack.getItemDamage()));
+-                                    float f3 = 0.05F;
+-                                    entityitem.motionX = (double)((float)this.rand.nextGaussian() * f3);
+-                                    entityitem.motionY = (double)((float)this.rand.nextGaussian() * f3 + 0.2F);
+-                                    entityitem.motionZ = (double)((float)this.rand.nextGaussian() * f3);
+-                                    this.worldObj.spawnEntityInWorld(entityitem);
 -                                }
 -                            }
 -                        }
@@ -157,104 +157,104 @@
              this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
          }
 @@ -418,18 +423,18 @@
-             double var6 = 0.0078125D;
-             int var8 = this.worldObj.getBlockId(var45, var2, var47);
+             double d5 = 0.0078125D;
+             int l = this.worldObj.getBlockId(d45, i, d47);
  
--            if (BlockRail.isRailBlock(var8))
-+            if (canUseRail() && BlockRail.isRailBlock(var8))
+-            if (BlockRail.isRailBlock(l))
++            if (canUseRail() && BlockRail.isRailBlock(l))
              {
                  this.fallDistance = 0.0F;
-                 Vec3 var9 = this.func_70489_a(this.posX, this.posY, this.posZ);
--                int var10 = this.worldObj.getBlockMetadata(var45, var2, var47);
-+                int var10 = ((BlockRail)Block.blocksList[var8]).getBasicRailMetadata(worldObj, this, var45, var2, var47);
-                 this.posY = (double)var2;
-                 boolean var11 = false;
-                 boolean var12 = false;
+                 Vec3 vec3 = this.func_70489_a(this.posX, this.posY, this.posZ);
+-                int i1 = this.worldObj.getBlockMetadata(d45, i, d47);
++                int i1 = ((BlockRail)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, d45, i, d47);
+                 this.posY = (double)i;
+                 boolean flag = false;
+                 boolean flag1 = false;
  
-                 if (var8 == Block.railPowered.blockID)
+                 if (l == Block.railPowered.blockID)
                  {
--                    var11 = (var10 & 8) != 0;
-+                    var11 = (worldObj.getBlockMetadata(var45, var2, var47) & 8) != 0;
-                     var12 = !var11;
+-                    flag = (i1 & 8) != 0;
++                    flag = (worldObj.getBlockMetadata(d45, i, d47) & 8) != 0;
+                     flag1 = !flag;
                  }
  
 @@ -443,25 +448,7 @@
-                     this.posY = (double)(var2 + 1);
+                     this.posY = (double)(i + 1);
                  }
  
--                if (var10 == 2)
+-                if (i1 == 2)
 -                {
--                    this.motionX -= var6;
+-                    this.motionX -= d5;
 -                }
 -
--                if (var10 == 3)
+-                if (i1 == 3)
 -                {
--                    this.motionX += var6;
+-                    this.motionX += d5;
 -                }
 -
--                if (var10 == 4)
+-                if (i1 == 4)
 -                {
--                    this.motionZ += var6;
+-                    this.motionZ += d5;
 -                }
 -
--                if (var10 == 5)
+-                if (i1 == 5)
 -                {
--                    this.motionZ -= var6;
+-                    this.motionZ -= d5;
 -                }
-+                adjustSlopeVelocities(var10);
++                adjustSlopeVelocities(i1);
  
-                 int[][] var13 = matrix[var10];
-                 double var14 = (double)(var13[1][0] - var13[0][0]);
+                 int[][] aint = matrix[i1];
+                 double d6 = (double)(aint[1][0] - aint[0][0]);
 @@ -494,7 +481,7 @@
                      }
                  }
  
--                if (var12)
-+                if (var12 && shouldDoRailFunctions())
+-                if (flag1)
++                if (flag1 && shouldDoRailFunctions())
                  {
-                     var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+                     d11 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
 @@ -542,36 +529,8 @@
-                 this.posX = var26 + var14 * var24;
-                 this.posZ = var28 + var16 * var24;
+                 this.posX = d12 + d6 * d11;
+                 this.posZ = d13 + d7 * d11;
                  this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
--                var34 = this.motionX;
--                var36 = this.motionZ;
+-                d16 = this.motionX;
+-                d17 = this.motionZ;
 -
 -                if (this.riddenByEntity != null)
 -                {
--                    var34 *= 0.75D;
--                    var36 *= 0.75D;
+-                    d16 *= 0.75D;
+-                    d17 *= 0.75D;
 -                }
 -
--                if (var34 < -var4)
+-                if (d16 < -d4)
 -                {
--                    var34 = -var4;
+-                    d16 = -d4;
 -                }
 -
--                if (var34 > var4)
+-                if (d16 > d4)
 -                {
--                    var34 = var4;
+-                    d16 = d4;
 -                }
 -
--                if (var36 < -var4)
+-                if (d17 < -d4)
 -                {
--                    var36 = -var4;
+-                    d17 = -d4;
 -                }
 -
--                if (var36 > var4)
+-                if (d17 > d4)
 -                {
--                    var36 = var4;
+-                    d17 = d4;
 -                }
 -
--                this.moveEntity(var34, 0.0D, var36);
+-                this.moveEntity(d16, 0.0D, d17);
 +
-+                moveMinecartOnRail(var45, var2, var47);
++                moveMinecartOnRail(d45, i, d47);
  
-                 if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var45 == var13[0][0] && MathHelper.floor_double(this.posZ) - var47 == var13[0][2])
+                 if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - d45 == aint[0][0] && MathHelper.floor_double(this.posZ) - d47 == aint[0][2])
                  {
 @@ -582,42 +541,7 @@
-                     this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
+                     this.setPosition(this.posX, this.posY + (double)aint[1][1], this.posZ);
                  }
  
 -                if (this.riddenByEntity != null)
@@ -267,19 +267,19 @@
 -                {
 -                    if (this.minecartType == 2)
 -                    {
--                        double var38 = this.pushX * this.pushX + this.pushZ * this.pushZ;
+-                        double d18 = this.pushX * this.pushX + this.pushZ * this.pushZ;
 -
--                        if (var38 > 1.0E-4D)
+-                        if (d18 > 1.0E-4D)
 -                        {
--                            var38 = (double)MathHelper.sqrt_double(var38);
--                            this.pushX /= var38;
--                            this.pushZ /= var38;
--                            double var40 = 0.04D;
+-                            d18 = (double)MathHelper.sqrt_double(d18);
+-                            this.pushX /= d18;
+-                            this.pushZ /= d18;
+-                            double d19 = 0.04D;
 -                            this.motionX *= 0.800000011920929D;
 -                            this.motionY *= 0.0D;
 -                            this.motionZ *= 0.800000011920929D;
--                            this.motionX += this.pushX * var40;
--                            this.motionZ += this.pushZ * var40;
+-                            this.motionX += this.pushX * d19;
+-                            this.motionZ += this.pushZ * d19;
 -                        }
 -                        else
 -                        {
@@ -295,21 +295,21 @@
 -                }
 +                applyDragAndPushForces();
  
-                 Vec3 var54 = this.func_70489_a(this.posX, this.posY, this.posZ);
+                 Vec3 vec31 = this.func_70489_a(this.posX, this.posY, this.posZ);
  
 @@ -647,30 +571,14 @@
  
-                 double var41;
+                 double d21;
  
 -                if (this.minecartType == 2)
 -                {
--                    var41 = this.pushX * this.pushX + this.pushZ * this.pushZ;
+-                    d21 = this.pushX * this.pushX + this.pushZ * this.pushZ;
 -
--                    if (var41 > 1.0E-4D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.001D)
+-                    if (d21 > 1.0E-4D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.001D)
 -                    {
--                        var41 = (double)MathHelper.sqrt_double(var41);
--                        this.pushX /= var41;
--                        this.pushZ /= var41;
+-                        d21 = (double)MathHelper.sqrt_double(d21);
+-                        this.pushX /= d21;
+-                        this.pushZ /= d21;
 -
 -                        if (this.pushX * this.motionX + this.pushZ * this.motionZ < 0.0D)
 -                        {
@@ -324,40 +324,40 @@
 -                    }
 -                }
 -
--                if (var11)
+-                if (flag)
 +                updatePushForces();
 +
 +                if(shouldDoRailFunctions())
 +                {
-+                    ((BlockRail)Block.blocksList[var8]).onMinecartPass(worldObj, this, var45, var2, var47);
++                    ((BlockRail)Block.blocksList[l]).onMinecartPass(worldObj, this, d45, i, d47);
 +                }
 +
-+                if (var11 && shouldDoRailFunctions())
++                if (flag && shouldDoRailFunctions())
                  {
-                     var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+                     d21 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
 @@ -706,41 +614,7 @@
              }
              else
              {
--                if (this.motionX < -var4)
+-                if (this.motionX < -d4)
 -                {
--                    this.motionX = -var4;
+-                    this.motionX = -d4;
 -                }
 -
--                if (this.motionX > var4)
+-                if (this.motionX > d4)
 -                {
--                    this.motionX = var4;
+-                    this.motionX = d4;
 -                }
 -
--                if (this.motionZ < -var4)
+-                if (this.motionZ < -d4)
 -                {
--                    this.motionZ = -var4;
+-                    this.motionZ = -d4;
 -                }
 -
--                if (this.motionZ > var4)
+-                if (this.motionZ > d4)
 -                {
--                    this.motionZ = var4;
+-                    this.motionZ = d4;
 -                }
 -
 -                if (this.onGround)
@@ -375,7 +375,7 @@
 -                    this.motionY *= 0.949999988079071D;
 -                    this.motionZ *= 0.949999988079071D;
 -                }
-+                moveMinecartOffRail(var45, var2, var47);
++                moveMinecartOffRail(d45, i, d47);
              }
  
              this.doBlockCollisions();
@@ -383,7 +383,7 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
--            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
+-            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 +
 +            AxisAlignedBB box = null;
 +            if (getCollisionHandler() != null)
@@ -395,9 +395,9 @@
 +                box = boundingBox.expand(0.2D, 0.0D, 0.2D);
 +            }
 +
-+            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box);
++            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box);
  
-             if (var15 != null && !var15.isEmpty())
+             if (list != null && !list.isEmpty())
              {
 @@ -792,17 +677,8 @@
                  this.riddenByEntity = null;
@@ -415,7 +415,7 @@
 -
 -            this.setMinecartPowered(this.fuel > 0);
 +            updateFuel();
-+            MinecraftForge.EVENT_BUS.post(new MinecartUpdateEvent(this, var45, var2, var47));
++            MinecraftForge.EVENT_BUS.post(new MinecartUpdateEvent(this, d45, i, d47));
          }
      }
  
@@ -423,30 +423,30 @@
          }
          else
          {
--            int var13 = this.worldObj.getBlockMetadata(var9, var10, var11);
+-            int i1 = this.worldObj.getBlockMetadata(i, j, k);
 -
--            if (((BlockRail)Block.blocksList[var12]).isPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
--                var13 &= 7;
+-                i1 &= 7;
 -            }
-+            int var13 = ((BlockRail)Block.blocksList[var12]).getBasicRailMetadata(worldObj, this, var9, var10, var11);
++            int i1 = ((BlockRail)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
  
-             par3 = (double)var10;
+             par3 = (double)j;
  
 @@ -877,13 +748,8 @@
  
-         if (BlockRail.isRailBlock(var10))
+         if (BlockRail.isRailBlock(l))
          {
--            int var11 = this.worldObj.getBlockMetadata(var7, var8, var9);
-+            int var11 = ((BlockRail)Block.blocksList[var10]).getBasicRailMetadata(worldObj, this, var7, var8, var9);
-             par3 = (double)var8;
+-            int i1 = this.worldObj.getBlockMetadata(i, j, k);
++            int i1 = ((BlockRail)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
+             par3 = (double)j;
 -
--            if (((BlockRail)Block.blocksList[var10]).isPowered())
+-            if (((BlockRail)Block.blocksList[l]).isPowered())
 -            {
--                var11 &= 7;
+-                i1 &= 7;
 -            }
  
-             if (var11 >= 2 && var11 <= 5)
+             if (i1 >= 2 && i1 <= 5)
              {
 @@ -948,13 +814,14 @@
      {
@@ -465,7 +465,7 @@
 +
 +        if (getSizeInventory() > 0)
          {
-             NBTTagList var2 = new NBTTagList();
+             NBTTagList nbttaglist = new NBTTagList();
  
 @@ -980,13 +847,21 @@
      {
@@ -491,7 +491,7 @@
 +
 +        if (getSizeInventory() > 0)
          {
-             NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
+             NBTTagList nbttaglist = par1NBTTagCompound.getTagList("Items");
              this.cargoItems = new ItemStack[this.getSizeInventory()];
 @@ -1015,11 +890,17 @@
       */
@@ -513,8 +513,8 @@
                      par1Entity.mountEntity(this);
                  }
 @@ -1065,7 +946,7 @@
-                         double var18 = par1Entity.motionX + this.motionX;
-                         double var20 = par1Entity.motionZ + this.motionZ;
+                         double d7 = par1Entity.motionX + this.motionX;
+                         double d8 = par1Entity.motionZ + this.motionZ;
  
 -                        if (((EntityMinecart)par1Entity).minecartType == 2 && this.minecartType != 2)
 +                        if (((EntityMinecart)par1Entity).isPoweredCart() && !isPoweredCart())
@@ -568,7 +568,7 @@
 -        else if (this.minecartType == 2)
 +        else if (this.minecartType == 2 && getClass() == EntityMinecart.class)
          {
-             ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
+             ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
  
 @@ -1354,4 +1240,375 @@
      {

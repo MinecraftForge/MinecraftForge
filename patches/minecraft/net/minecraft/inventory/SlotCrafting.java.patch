@@ -13,19 +13,19 @@
  {
 @@ -124,9 +128,15 @@
  
-                 if (var4.getItem().hasContainerItem())
+                 if (itemstack1.getItem().hasContainerItem())
                  {
--                    ItemStack var5 = new ItemStack(var4.getItem().getContainerItem());
-+                    ItemStack var5 = var4.getItem().getContainerItemStack(var4);
+-                    ItemStack itemstack2 = new ItemStack(itemstack1.getItem().getContainerItem());
++                    ItemStack itemstack2 = itemstack1.getItem().getContainerItemStack(itemstack1);
 +                    
-+                    if (var5.isItemStackDamageable() && var5.getItemDamage() > var5.getMaxDamage())
++                    if (itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage())
 +                    {
-+                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, var5));
-+                        var5 = null;
++                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, itemstack2));
++                        itemstack2 = null;
 +                    }
  
--                    if (!var4.getItem().doesContainerItemLeaveCraftingGrid(var4) || !this.thePlayer.inventory.addItemStackToInventory(var5))
-+                    if (var5 != null && (!var4.getItem().doesContainerItemLeaveCraftingGrid(var4) || !this.thePlayer.inventory.addItemStackToInventory(var5)))
+-                    if (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2))
++                    if (itemstack2 != null && (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2)))
                      {
-                         if (this.craftMatrix.getStackInSlot(var3) == null)
+                         if (this.craftMatrix.getStackInSlot(i) == null)
                          {

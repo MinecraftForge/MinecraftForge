@@ -20,26 +20,26 @@
  
 @@ -44,15 +48,6 @@
          {
-             Chunk var5 = (Chunk)par1List.get(var4);
-             Packet51MapChunkData var6 = Packet51MapChunk.getMapChunkData(var5, true, 65535);
+             Chunk chunk = (Chunk)par1List.get(k);
+             Packet51MapChunkData packet51mapchunkdata = Packet51MapChunk.getMapChunkData(chunk, true, 65535);
 -
--            if (chunkDataNotCompressed.length < var3 + var6.compressedData.length)
+-            if (chunkDataNotCompressed.length < j + packet51mapchunkdata.compressedData.length)
 -            {
--                byte[] var7 = new byte[var3 + var6.compressedData.length];
--                System.arraycopy(chunkDataNotCompressed, 0, var7, 0, chunkDataNotCompressed.length);
--                chunkDataNotCompressed = var7;
+-                byte[] abyte = new byte[j + packet51mapchunkdata.compressedData.length];
+-                System.arraycopy(chunkDataNotCompressed, 0, abyte, 0, chunkDataNotCompressed.length);
+-                chunkDataNotCompressed = abyte;
 -            }
 -
--            System.arraycopy(var6.compressedData, 0, chunkDataNotCompressed, var3, var6.compressedData.length);
-             var3 += var6.compressedData.length;
-             this.chunkPostX[var4] = var5.xPosition;
-             this.chunkPosZ[var4] = var5.zPosition;
+-            System.arraycopy(packet51mapchunkdata.compressedData, 0, chunkDataNotCompressed, j, packet51mapchunkdata.compressedData.length);
+             j += packet51mapchunkdata.compressedData.length;
+             this.chunkPostX[k] = chunk.xPosition;
+             this.chunkPosZ[k] = chunk.zPosition;
 @@ -60,15 +55,29 @@
-             this.field_73588_b[var4] = var6.chunkHasAddSectionFlag;
-             this.field_73584_f[var4] = var6.compressedData;
+             this.field_73588_b[k] = packet51mapchunkdata.chunkHasAddSectionFlag;
+             this.field_73584_f[k] = packet51mapchunkdata.compressedData;
          }
 +        deflateGate = new Semaphore(1);
-+        maxLen = var3;
++        maxLen = j;
 +    }
 +
 +    private void deflate()
@@ -52,17 +52,17 @@
 +            offset += field_73584_f[x].length;
 +        }
  
-         Deflater var11 = new Deflater(-1);
+         Deflater deflater = new Deflater(-1);
  
          try
          {
--            var11.setInput(chunkDataNotCompressed, 0, var3);
-+            var11.setInput(data, 0, maxLen);
-             var11.finish();
--            this.chunkDataBuffer = new byte[var3];
--            this.dataLength = var11.deflate(this.chunkDataBuffer);
+-            deflater.setInput(chunkDataNotCompressed, 0, j);
++            deflater.setInput(data, 0, maxLen);
+             deflater.finish();
+-            this.chunkDataBuffer = new byte[j];
+-            this.dataLength = deflater.deflate(this.chunkDataBuffer);
 +            byte[] deflated = new byte[maxLen];
-+            this.dataLength = var11.deflate(deflated);
++            this.dataLength = deflater.deflate(deflated);
 +            this.chunkDataBuffer = deflated;
          }
          finally

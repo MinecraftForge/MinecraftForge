@@ -14,16 +14,16 @@
      private ItemStack[] brewingItemStacks = new ItemStack[4];
 @@ -166,7 +169,7 @@
  
-             if (Item.itemsList[var1.itemID].hasContainerItem())
+             if (Item.itemsList[itemstack.itemID].hasContainerItem())
              {
--                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[var1.itemID].getContainerItem());
-+                this.brewingItemStacks[3] = Item.itemsList[var1.itemID].getContainerItemStack(brewingItemStacks[3]);
+-                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[itemstack.itemID].getContainerItem());
++                this.brewingItemStacks[3] = Item.itemsList[itemstack.itemID].getContainerItemStack(brewingItemStacks[3]);
              }
              else
              {
 @@ -333,4 +336,16 @@
  
-         return var1;
+         return i;
      }
 +
 +    @Override

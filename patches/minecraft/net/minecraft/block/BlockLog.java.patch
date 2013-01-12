@@ -2,18 +2,18 @@
 +++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
 @@ -63,14 +63,9 @@
                      {
-                         int var12 = par1World.getBlockId(par2 + var9, par3 + var10, par4 + var11);
+                         int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
--                        if (var12 == Block.leaves.blockID)
-+                        if (Block.blocksList[var12] != null)
+-                        if (j2 == Block.leaves.blockID)
++                        if (Block.blocksList[j2] != null)
                          {
--                            int var13 = par1World.getBlockMetadata(par2 + var9, par3 + var10, par4 + var11);
+-                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
 -
--                            if ((var13 & 8) == 0)
+-                            if ((k2 & 8) == 0)
 -                            {
--                                par1World.setBlockMetadata(par2 + var9, par3 + var10, par4 + var11, var13 | 8);
+-                                par1World.setBlockMetadata(par2 + k1, par3 + l1, par4 + i2, k2 | 8);
 -                            }
-+                            Block.blocksList[var12].beginLeavesDecay(par1World, par2 + var9, par3 + var10, par4 + var11);
++                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
                          }
                      }
                  }

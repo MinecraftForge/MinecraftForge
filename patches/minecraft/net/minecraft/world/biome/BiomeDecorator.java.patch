@@ -20,101 +20,101 @@
 +        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
 +        
 +       this.generateOres();
-         int var1;
-         int var2;
-         int var3;
+         int i;
+         int j;
+         int k;
  
--        for (var1 = 0; var1 < this.sandPerChunk2; ++var1)
+-        for (i = 0; i < this.sandPerChunk2; ++i)
 +        boolean doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND);
-+        for (var1 = 0; doGen && var1 < this.sandPerChunk2; ++var1)
++        for (i = 0; doGen && i < this.sandPerChunk2; ++i)
          {
-             var2 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var3 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-             this.sandGen.generate(this.currentWorld, this.randomGenerator, var2, this.currentWorld.getTopSolidOrLiquidBlock(var2, var3), var3);
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             this.sandGen.generate(this.currentWorld, this.randomGenerator, j, this.currentWorld.getTopSolidOrLiquidBlock(j, k), k);
          }
  
--        for (var1 = 0; var1 < this.clayPerChunk; ++var1)
+-        for (i = 0; i < this.clayPerChunk; ++i)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, CLAY);
-+        for (var1 = 0; doGen && var1 < this.clayPerChunk; ++var1)
++        for (i = 0; doGen && i < this.clayPerChunk; ++i)
          {
-             var2 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var3 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
-             this.clayGen.generate(this.currentWorld, this.randomGenerator, var2, this.currentWorld.getTopSolidOrLiquidBlock(var2, var3), var3);
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             this.clayGen.generate(this.currentWorld, this.randomGenerator, j, this.currentWorld.getTopSolidOrLiquidBlock(j, k), k);
          }
  
--        for (var1 = 0; var1 < this.sandPerChunk; ++var1)
+-        for (i = 0; i < this.sandPerChunk; ++i)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND_PASS2);
-+        for (var1 = 0; doGen && var1 < this.sandPerChunk; ++var1)
++        for (i = 0; doGen && i < this.sandPerChunk; ++i)
          {
-             var2 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var3 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
 @@ -241,7 +251,8 @@
  
-         int var4;
+         int l;
  
--        for (var2 = 0; var2 < var1; ++var2)
+-        for (j = 0; j < i; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, TREE);
-+        for (var2 = 0; doGen && var2 < var1; ++var2)
++        for (j = 0; doGen && j < i; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
 @@ -250,7 +261,8 @@
-             var5.generate(this.currentWorld, this.randomGenerator, var3, this.currentWorld.getHeightValue(var3, var4), var4);
+             worldgenerator.generate(this.currentWorld, this.randomGenerator, k, this.currentWorld.getHeightValue(k, l), l);
          }
  
--        for (var2 = 0; var2 < this.bigMushroomsPerChunk; ++var2)
+-        for (j = 0; j < this.bigMushroomsPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, BIG_SHROOM);
-+        for (var2 = 0; doGen && var2 < this.bigMushroomsPerChunk; ++var2)
++        for (j = 0; doGen && j < this.bigMushroomsPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
 @@ -259,7 +271,8 @@
  
-         int var7;
+         int i1;
  
--        for (var2 = 0; var2 < this.flowersPerChunk; ++var2)
+-        for (j = 0; j < this.flowersPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, FLOWERS);
-+        for (var2 = 0; doGen && var2 < this.flowersPerChunk; ++var2)
++        for (j = 0; doGen && j < this.flowersPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.randomGenerator.nextInt(128);
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.randomGenerator.nextInt(128);
 @@ -275,7 +288,8 @@
              }
          }
  
--        for (var2 = 0; var2 < this.grassPerChunk; ++var2)
+-        for (j = 0; j < this.grassPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, GRASS);
-+        for (var2 = 0; doGen && var2 < this.grassPerChunk; ++var2)
++        for (j = 0; doGen && j < this.grassPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.randomGenerator.nextInt(128);
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.randomGenerator.nextInt(128);
 @@ -284,7 +298,8 @@
-             var6.generate(this.currentWorld, this.randomGenerator, var3, var4, var7);
+             worldgenerator1.generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
--        for (var2 = 0; var2 < this.deadBushPerChunk; ++var2)
+-        for (j = 0; j < this.deadBushPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, DEAD_BUSH);
-+        for (var2 = 0; doGen && var2 < this.deadBushPerChunk; ++var2)
++        for (j = 0; doGen && j < this.deadBushPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.randomGenerator.nextInt(128);
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.randomGenerator.nextInt(128);
 @@ -292,7 +307,8 @@
-             (new WorldGenDeadBush(Block.deadBush.blockID)).generate(this.currentWorld, this.randomGenerator, var3, var4, var7);
+             (new WorldGenDeadBush(Block.deadBush.blockID)).generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
--        for (var2 = 0; var2 < this.waterlilyPerChunk; ++var2)
+-        for (j = 0; j < this.waterlilyPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, LILYPAD);
-+        for (var2 = 0; doGen && var2 < this.waterlilyPerChunk; ++var2)
++        for (j = 0; doGen && j < this.waterlilyPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
 @@ -305,7 +321,8 @@
-             this.waterlilyGen.generate(this.currentWorld, this.randomGenerator, var3, var7, var4);
+             this.waterlilyGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
--        for (var2 = 0; var2 < this.mushroomsPerChunk; ++var2)
+-        for (j = 0; j < this.mushroomsPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SHROOM);
-+        for (var2 = 0; doGen && var2 < this.mushroomsPerChunk; ++var2)
++        for (j = 0; doGen && j < this.mushroomsPerChunk; ++j)
          {
              if (this.randomGenerator.nextInt(4) == 0)
              {
@@ -125,68 +125,68 @@
 -        if (this.randomGenerator.nextInt(4) == 0)
 +        if (doGen && this.randomGenerator.nextInt(4) == 0)
          {
-             var2 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var3 = this.randomGenerator.nextInt(128);
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.randomGenerator.nextInt(128);
 @@ -332,7 +349,7 @@
-             this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, var2, var3, var4);
+             this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, j, k, l);
          }
  
 -        if (this.randomGenerator.nextInt(8) == 0)
 +        if (doGen && this.randomGenerator.nextInt(8) == 0)
          {
-             var2 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var3 = this.randomGenerator.nextInt(128);
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.randomGenerator.nextInt(128);
 @@ -340,7 +357,8 @@
-             this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, var2, var3, var4);
+             this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, j, k, l);
          }
  
--        for (var2 = 0; var2 < this.reedsPerChunk; ++var2)
+-        for (j = 0; j < this.reedsPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, REED);
-+        for (var2 = 0; doGen && var2 < this.reedsPerChunk; ++var2)
++        for (j = 0; doGen && j < this.reedsPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
 @@ -348,7 +366,7 @@
-             this.reedGen.generate(this.currentWorld, this.randomGenerator, var3, var7, var4);
+             this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
--        for (var2 = 0; var2 < 10; ++var2)
-+        for (var2 = 0; doGen && var2 < 10; ++var2)
+-        for (j = 0; j < 10; ++j)
++        for (j = 0; doGen && j < 10; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.randomGenerator.nextInt(128);
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.randomGenerator.nextInt(128);
 @@ -356,7 +374,8 @@
-             this.reedGen.generate(this.currentWorld, this.randomGenerator, var3, var4, var7);
+             this.reedGen.generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
 -        if (this.randomGenerator.nextInt(32) == 0)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, PUMPKIN);
 +        if (doGen && this.randomGenerator.nextInt(32) == 0)
          {
-             var2 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var3 = this.randomGenerator.nextInt(128);
+             j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             k = this.randomGenerator.nextInt(128);
 @@ -364,7 +383,8 @@
-             (new WorldGenPumpkin()).generate(this.currentWorld, this.randomGenerator, var2, var3, var4);
+             (new WorldGenPumpkin()).generate(this.currentWorld, this.randomGenerator, j, k, l);
          }
  
--        for (var2 = 0; var2 < this.cactiPerChunk; ++var2)
+-        for (j = 0; j < this.cactiPerChunk; ++j)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, CACTUS);
-+        for (var2 = 0; doGen && var2 < this.cactiPerChunk; ++var2)
++        for (j = 0; doGen && j < this.cactiPerChunk; ++j)
          {
-             var3 = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
-             var4 = this.randomGenerator.nextInt(128);
+             k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
+             l = this.randomGenerator.nextInt(128);
 @@ -372,7 +392,8 @@
-             this.cactusGen.generate(this.currentWorld, this.randomGenerator, var3, var4, var7);
+             this.cactusGen.generate(this.currentWorld, this.randomGenerator, k, l, i1);
          }
  
 -        if (this.generateLakes)
 +        doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, LAKE);
 +        if (doGen && this.generateLakes)
          {
-             for (var2 = 0; var2 < 50; ++var2)
+             for (j = 0; j < 50; ++j)
              {
 @@ -390,6 +411,8 @@
-                 (new WorldGenLiquids(Block.lavaMoving.blockID)).generate(this.currentWorld, this.randomGenerator, var3, var4, var7);
+                 (new WorldGenLiquids(Block.lavaMoving.blockID)).generate(this.currentWorld, this.randomGenerator, k, l, i1);
              }
          }
 +

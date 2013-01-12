@@ -15,14 +15,14 @@
      {
          super(par1, par2Material);
 @@ -201,7 +206,7 @@
-                 --var7;
+                 --j1;
              }
  
--            if (!isValidSupportBlock(par1World.getBlockId(var7, par3, var8)))
-+            if (!(isValidSupportBlock(par1World.getBlockId(var7, par3, var8)) || par1World.isBlockSolidOnSide(var7, par3, var8, ForgeDirection.getOrientation((var6 & 3) + 2))))
+-            if (!isValidSupportBlock(par1World.getBlockId(j1, par3, k1)))
++            if (!(isValidSupportBlock(par1World.getBlockId(j1, par3, k1)) || par1World.isBlockSolidOnSide(j1, par3, k1, ForgeDirection.getOrientation((i1 & 3) + 2))))
              {
                  par1World.setBlockWithNotify(par2, par3, par4, 0);
-                 this.dropBlockAsItem(par1World, par2, par3, par4, var6, 0);
+                 this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
 @@ -266,6 +271,10 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)

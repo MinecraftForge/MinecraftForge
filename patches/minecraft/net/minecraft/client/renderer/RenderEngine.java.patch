@@ -16,12 +16,12 @@
 +                ForgeHooksClient.onTextureLoadPre(par1Str);
                  this.singleIntBuffer.clear();
                  GLAllocation.generateTextureNames(this.singleIntBuffer);
-                 int var3 = this.singleIntBuffer.get(0);
+                 int i = this.singleIntBuffer.get(0);
 @@ -215,6 +218,7 @@
                  }
  
-                 this.textureMap.put(par1Str, Integer.valueOf(var3));
-+                ForgeHooksClient.onTextureLoad(par1Str, var6);
-                 return var3;
+                 this.textureMap.put(par1Str, Integer.valueOf(i));
++                ForgeHooksClient.onTextureLoad(par1Str, itexturepack);
+                 return i;
              }
-             catch (Exception var5)
+             catch (Exception exception)

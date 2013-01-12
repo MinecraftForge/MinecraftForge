@@ -23,14 +23,14 @@
      public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
 @@ -60,9 +67,10 @@
                              {
-                                 double var45 = ((double)var44 + 0.5D - var24) / (var28 / 2.0D);
+                                 double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
  
--                                if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && par1World.getBlockId(var38, var41, var44) == Block.stone.blockID)
-+                                Block block = Block.blocksList[par1World.getBlockId(var38, var41, var44)];
-+                                if (var39 * var39 + var42 * var42 + var45 * var45 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, var38, var41, var44)))
+-                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlockId(k2, l2, i3) == Block.stone.blockID)
++                                Block block = Block.blocksList[par1World.getBlockId(k2, l2, i3)];
++                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, k2, l2, i3)))
                                  {
--                                    par1World.setBlock(var38, var41, var44, this.minableBlockId);
-+                                    par1World.setBlockAndMetadata(var38, var41, var44, this.minableBlockId, minableBlockMeta);
+-                                    par1World.setBlock(k2, l2, i3, this.minableBlockId);
++                                    par1World.setBlockAndMetadata(k2, l2, i3, this.minableBlockId, minableBlockMeta);
                                  }
                              }
                          }

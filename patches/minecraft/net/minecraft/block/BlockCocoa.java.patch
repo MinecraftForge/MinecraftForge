@@ -13,7 +13,7 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
--        int var8 = func_72219_c(par5);
+-        int j1 = func_72219_c(par5);
 +        super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
 +    }
 +
@@ -21,13 +21,13 @@
 +    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
 +    {
 +        ArrayList<ItemStack> dropped = super.getBlockDropped(world, x, y, z, metadata, fortune);
-+        int var8 = func_72219_c(metadata);
-         byte var9 = 1;
++        int j1 = func_72219_c(metadata);
+         byte b0 = 1;
  
-         if (var8 >= 2)
+         if (j1 >= 2)
 @@ -185,8 +194,9 @@
  
-         for (int var10 = 0; var10 < var9; ++var10)
+         for (int k1 = 0; k1 < b0; ++k1)
          {
 -            this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.dyePowder, 1, 3));
 -        }

@@ -36,21 +36,21 @@
      {
          if (par1World != null)
 @@ -59,12 +70,27 @@
-             for (int var2 = 0; var2 < this.fxLayers[var1].size(); ++var2)
+             for (int j = 0; j < this.fxLayers[i].size(); ++j)
              {
-                 EntityFX var3 = (EntityFX)this.fxLayers[var1].get(var2);
--                var3.onUpdate();
+                 EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
+-                entityfx.onUpdate();
 -
--                if (var3.isDead)
+-                if (entityfx.isDead)
 +
-+                if (var3 != null)
++                if (entityfx != null)
 +                {
-+                    var3.onUpdate();
++                    entityfx.onUpdate();
 +                }
 +
-+                if (var3 == null || var3.isDead)
++                if (entityfx == null || entityfx.isDead)
                  {
-                     this.fxLayers[var1].remove(var2--);
+                     this.fxLayers[i].remove(j--);
                  }
 +            }
 +        }
@@ -67,12 +67,12 @@
          }
      }
 @@ -115,6 +141,7 @@
-                 for (int var11 = 0; var11 < this.fxLayers[var8].size(); ++var11)
+                 for (int k = 0; k < this.fxLayers[i].size(); ++k)
                  {
-                     EntityFX var12 = (EntityFX)this.fxLayers[var8].get(var11);
-+                    if (var12 == null) continue;
-                     var10.setBrightness(var12.getBrightnessForRender(par2));
-                     var12.renderParticle(var10, par2, var3, var7, var4, var5, var6);
+                     EntityFX entityfx = (EntityFX)this.fxLayers[i].get(k);
++                    if (entityfx == null) continue;
+                     tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
+                     entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
                  }
 @@ -123,6 +150,27 @@
                  GL11.glDisable(GL11.GL_BLEND);
@@ -93,7 +93,7 @@
 +                if (entry.getFXLayer() != 3)
 +                {
 +                    tessallator.setBrightness(entry.getBrightnessForRender(par2));
-+                    entry.renderParticle(tessallator, par2, var3, var7, var4, var5, var6);
++                    entry.renderParticle(tessallator, par2, f1, f5, f2, f3, f4);
 +                }
 +
 +                tessallator.draw();
@@ -103,16 +103,16 @@
      }
  
 @@ -142,6 +190,7 @@
-             for (int var11 = 0; var11 < this.fxLayers[var9].size(); ++var11)
+             for (int i = 0; i < this.fxLayers[b0].size(); ++i)
              {
-                 EntityFX var12 = (EntityFX)this.fxLayers[var9].get(var11);
-+                if (var12 == null) continue;
-                 var10.setBrightness(var12.getBrightnessForRender(par2));
-                 var12.renderParticle(var10, par2, var4, var8, var5, var6, var7);
+                 EntityFX entityfx = (EntityFX)this.fxLayers[b0].get(i);
++                if (entityfx == null) continue;
+                 tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
+                 entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
              }
 @@ -156,13 +205,15 @@
          {
-             this.fxLayers[var2].clear();
+             this.fxLayers[i].clear();
          }
 +
 +        effectList.clear();
@@ -122,28 +122,28 @@
      {
 -        if (par4 != 0)
 -        {
--            Block var6 = Block.blocksList[par4];
-+        Block var6 = Block.blocksList[par4];
-+        if (var6 != null && !var6.addBlockDestroyEffects(worldObj, par1, par2, par3, par5, this))
+-            Block block = Block.blocksList[par4];
++        Block block = Block.blocksList[par4];
++        if (block != null && !block.addBlockDestroyEffects(worldObj, par1, par2, par3, par5, this))
 +        {
-             byte var7 = 4;
+             byte b0 = 4;
  
-             for (int var8 = 0; var8 < var7; ++var8)
+             for (int j1 = 0; j1 < b0; ++j1)
 @@ -175,7 +226,7 @@
-                         double var13 = (double)par2 + ((double)var9 + 0.5D) / (double)var7;
-                         double var15 = (double)par3 + ((double)var10 + 0.5D) / (double)var7;
-                         int var17 = this.rand.nextInt(6);
--                        this.addEffect((new EntityDiggingFX(this.worldObj, var11, var13, var15, var11 - (double)par1 - 0.5D, var13 - (double)par2 - 0.5D, var15 - (double)par3 - 0.5D, var6, var17, par5)).func_70596_a(par1, par2, par3));
-+                        this.addEffect((new EntityDiggingFX(this.worldObj, var11, var13, var15, var11 - (double)par1 - 0.5D, var13 - (double)par2 - 0.5D, var15 - (double)par3 - 0.5D, var6, var17, par5)).func_70596_a(par1, par2, par3), var6);
+                         double d1 = (double)par2 + ((double)k1 + 0.5D) / (double)b0;
+                         double d2 = (double)par3 + ((double)l1 + 0.5D) / (double)b0;
+                         int i2 = this.rand.nextInt(6);
+-                        this.addEffect((new EntityDiggingFX(this.worldObj, d0, d1, d2, d0 - (double)par1 - 0.5D, d1 - (double)par2 - 0.5D, d2 - (double)par3 - 0.5D, block, i2, par5)).func_70596_a(par1, par2, par3));
++                        this.addEffect((new EntityDiggingFX(this.worldObj, d0, d1, d2, d0 - (double)par1 - 0.5D, d1 - (double)par2 - 0.5D, d2 - (double)par3 - 0.5D, block, i2, par5)).func_70596_a(par1, par2, par3), block);
                      }
                  }
              }
 @@ -227,12 +278,60 @@
-                 var8 = (double)par1 + var6.getBlockBoundsMaxX() + (double)var7;
+                 d0 = (double)par1 + block.getBlockBoundsMaxX() + (double)f;
              }
  
--            this.addEffect((new EntityDiggingFX(this.worldObj, var8, var10, var12, 0.0D, 0.0D, 0.0D, var6, par4, this.worldObj.getBlockMetadata(par1, par2, par3))).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
-+            this.addEffect((new EntityDiggingFX(this.worldObj, var8, var10, var12, 0.0D, 0.0D, 0.0D, var6, par4, this.worldObj.getBlockMetadata(par1, par2, par3))).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F), var6);
+-            this.addEffect((new EntityDiggingFX(this.worldObj, d0, d1, d2, 0.0D, 0.0D, 0.0D, block, par4, this.worldObj.getBlockMetadata(par1, par2, par3))).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
++            this.addEffect((new EntityDiggingFX(this.worldObj, d0, d1, d2, 0.0D, 0.0D, 0.0D, block, par4, this.worldObj.getBlockMetadata(par1, par2, par3))).func_70596_a(par1, par2, par3).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F), block);
          }
      }
  

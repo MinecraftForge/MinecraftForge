@@ -20,9 +20,9 @@
 @@ -21,7 +25,7 @@
      public static final boolean isRailBlockAt(World par0World, int par1, int par2, int par3)
      {
-         int var4 = par0World.getBlockId(par1, par2, par3);
--        return var4 == Block.rail.blockID || var4 == Block.railPowered.blockID || var4 == Block.railDetector.blockID;
-+        return isRailBlock(var4);
+         int l = par0World.getBlockId(par1, par2, par3);
+-        return l == Block.rail.blockID || l == Block.railPowered.blockID || l == Block.railDetector.blockID;
++        return isRailBlock(l);
      }
  
      /**
@@ -55,36 +55,36 @@
      /**
 @@ -179,27 +183,27 @@
  
-             boolean var8 = false;
+             boolean flag = false;
  
 -            if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
 +            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP))
              {
-                 var8 = true;
+                 flag = true;
              }
  
--            if (var7 == 2 && !par1World.doesBlockHaveSolidTopSurface(par2 + 1, par3, par4))
-+            if (var7 == 2 && !par1World.isBlockSolidOnSide(par2 + 1, par3, par4, UP))
+-            if (j1 == 2 && !par1World.doesBlockHaveSolidTopSurface(par2 + 1, par3, par4))
++            if (j1 == 2 && !par1World.isBlockSolidOnSide(par2 + 1, par3, par4, UP))
              {
-                 var8 = true;
+                 flag = true;
              }
  
--            if (var7 == 3 && !par1World.doesBlockHaveSolidTopSurface(par2 - 1, par3, par4))
-+            if (var7 == 3 && !par1World.isBlockSolidOnSide(par2 - 1, par3, par4, UP))
+-            if (j1 == 3 && !par1World.doesBlockHaveSolidTopSurface(par2 - 1, par3, par4))
++            if (j1 == 3 && !par1World.isBlockSolidOnSide(par2 - 1, par3, par4, UP))
              {
-                 var8 = true;
+                 flag = true;
              }
  
--            if (var7 == 4 && !par1World.doesBlockHaveSolidTopSurface(par2, par3, par4 - 1))
-+            if (var7 == 4 && !par1World.isBlockSolidOnSide(par2, par3, par4 - 1, UP))
+-            if (j1 == 4 && !par1World.doesBlockHaveSolidTopSurface(par2, par3, par4 - 1))
++            if (j1 == 4 && !par1World.isBlockSolidOnSide(par2, par3, par4 - 1, UP))
              {
-                 var8 = true;
+                 flag = true;
              }
  
--            if (var7 == 5 && !par1World.doesBlockHaveSolidTopSurface(par2, par3, par4 + 1))
-+            if (var7 == 5 && !par1World.isBlockSolidOnSide(par2, par3, par4 + 1, UP))
+-            if (j1 == 5 && !par1World.doesBlockHaveSolidTopSurface(par2, par3, par4 + 1))
++            if (j1 == 5 && !par1World.isBlockSolidOnSide(par2, par3, par4 + 1, UP))
              {
-                 var8 = true;
+                 flag = true;
              }
 @@ -400,9 +404,135 @@
  

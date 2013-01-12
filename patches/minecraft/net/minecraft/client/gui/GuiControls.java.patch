@@ -23,27 +23,27 @@
      public void initGui()
      {
 +        scrollPane = new GuiControlsScrollPanel(this, options, mc);
-         StringTranslate var1 = StringTranslate.getInstance();
-         int var2 = this.func_73907_g();
+         StringTranslate stringtranslate = StringTranslate.getInstance();
+         int i = this.func_73907_g();
  
--        for (int var3 = 0; var3 < this.options.keyBindings.length; ++var3)
+-        for (int j = 0; j < this.options.keyBindings.length; ++j)
 -        {
--            this.controlList.add(new GuiSmallButton(var3, var2 + var3 % 2 * 160, this.height / 6 + 24 * (var3 >> 1), 70, 20, this.options.getOptionDisplayString(var3)));
+-            this.controlList.add(new GuiSmallButton(j, i + j % 2 * 160, this.height / 6 + 24 * (j >> 1), 70, 20, this.options.getOptionDisplayString(j)));
 -        }
 -
--        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, var1.translateKey("gui.done")));
-+        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, var1.translateKey("gui.done")));
+-        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, stringtranslate.translateKey("gui.done")));
++        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, stringtranslate.translateKey("gui.done")));
 +        scrollPane.registerScrollButtons(controlList, 7, 8);
-         this.screenTitle = var1.translateKey("controls.title");
+         this.screenTitle = stringtranslate.translateKey("controls.title");
      }
  
 @@ -56,19 +57,9 @@
       */
      protected void actionPerformed(GuiButton par1GuiButton)
      {
--        for (int var2 = 0; var2 < this.options.keyBindings.length; ++var2)
+-        for (int i = 0; i < this.options.keyBindings.length; ++i)
 -        {
--            ((GuiButton)this.controlList.get(var2)).displayString = this.options.getOptionDisplayString(var2);
+-            ((GuiButton)this.controlList.get(i)).displayString = this.options.getOptionDisplayString(i);
 -        }
 -
          if (par1GuiButton.id == 200)
@@ -97,42 +97,42 @@
      {
          this.drawDefaultBackground();
 -        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
--        int var4 = this.func_73907_g();
--        int var5 = 0;
+-        int k = this.func_73907_g();
+-        int l = 0;
 -
--        while (var5 < this.options.keyBindings.length)
+-        while (l < this.options.keyBindings.length)
 -        {
--            boolean var6 = false;
--            int var7 = 0;
+-            boolean flag = false;
+-            int i1 = 0;
 -
 -            while (true)
 -            {
--                if (var7 < this.options.keyBindings.length)
+-                if (i1 < this.options.keyBindings.length)
 -                {
--                    if (var7 == var5 || this.options.keyBindings[var5].keyCode != this.options.keyBindings[var7].keyCode)
+-                    if (i1 == l || this.options.keyBindings[l].keyCode != this.options.keyBindings[i1].keyCode)
 -                    {
--                        ++var7;
+-                        ++i1;
 -                        continue;
 -                    }
 -
--                    var6 = true;
+-                    flag = true;
 -                }
 -
--                if (this.buttonId == var5)
+-                if (this.buttonId == l)
 -                {
--                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
+-                    ((GuiButton)this.controlList.get(l)).displayString = "\u00a7f> \u00a7e??? \u00a7f<";
 -                }
--                else if (var6)
+-                else if (flag)
 -                {
--                    ((GuiButton)this.controlList.get(var5)).displayString = "\u00a7c" + this.options.getOptionDisplayString(var5);
+-                    ((GuiButton)this.controlList.get(l)).displayString = "\u00a7c" + this.options.getOptionDisplayString(l);
 -                }
 -                else
 -                {
--                    ((GuiButton)this.controlList.get(var5)).displayString = this.options.getOptionDisplayString(var5);
+-                    ((GuiButton)this.controlList.get(l)).displayString = this.options.getOptionDisplayString(l);
 -                }
 -
--                this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(var5), var4 + var5 % 2 * 160 + 70 + 6, this.height / 6 + 24 * (var5 >> 1) + 7, -1);
--                ++var5;
+-                this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(l), k + l % 2 * 160 + 70 + 6, this.height / 6 + 24 * (l >> 1) + 7, -1);
+-                ++l;
 -                break;
 -            }
 -        }

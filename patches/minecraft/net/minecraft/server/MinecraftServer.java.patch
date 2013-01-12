@@ -35,53 +35,53 @@
          this.setUserMessage("menu.loadingLevel");
 -        this.worldServers = new WorldServer[3];
 -        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
-         ISaveHandler var7 = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
-         WorldInfo var9 = var7.loadWorldInfo();
-         WorldSettings var8;
+         ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
+         WorldInfo worldinfo = isavehandler.loadWorldInfo();
+         WorldSettings worldsettings;
 @@ -259,46 +263,23 @@
-             var8.enableBonusChest();
+             worldsettings.enableBonusChest();
          }
  
--        for (int var10 = 0; var10 < this.worldServers.length; ++var10)
+-        for (int j = 0; j < this.worldServers.length; ++j)
 -        {
--            byte var11 = 0;
+-            byte b0 = 0;
 -
--            if (var10 == 1)
+-            if (j == 1)
 -            {
--                var11 = -1;
+-                b0 = -1;
 -            }
 -
--            if (var10 == 2)
+-            if (j == 2)
 -            {
--                var11 = 1;
+-                b0 = 1;
 -            }
 -
--            if (var10 == 0)
+-            if (j == 0)
 -            {
 -                if (this.isDemo())
 -                {
--                    this.worldServers[var10] = new DemoWorldServer(this, var7, par2Str, var11, this.theProfiler);
+-                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler);
 -                }
 -                else
 -                {
--                    this.worldServers[var10] = new WorldServer(this, var7, par2Str, var11, var8, this.theProfiler);
+-                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, worldsettings, this.theProfiler);
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[var10] = new WorldServerMulti(this, var7, par2Str, var11, var8, this.worldServers[0], this.theProfiler);
+-                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, worldsettings, this.worldServers[0], this.theProfiler);
 -            }
 -
--            this.worldServers[var10].addWorldAccess(new WorldManager(this, this.worldServers[var10]));
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, var7, par2Str, 0, theProfiler) : new WorldServer(this, var7, par2Str, 0, var8, theProfiler));
+-            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler) : new WorldServer(this, isavehandler, par2Str, 0, worldsettings, theProfiler));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, var7, par2Str, dim, var8, overWorld, theProfiler));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, worldsettings, overWorld, theProfiler));
 +            world.addWorldAccess(new WorldManager(this, world));
  
              if (!this.isSinglePlayer())
              {
--                this.worldServers[var10].getWorldInfo().setGameType(this.getGameType());
+-                this.worldServers[j].getWorldInfo().setGameType(this.getGameType());
 +                world.getWorldInfo().setGameType(this.getGameType());
              }
  
@@ -97,11 +97,11 @@
          this.initialWorldChunkLoad();
      }
 @@ -427,7 +408,14 @@
-             for (int var1 = 0; var1 < this.worldServers.length; ++var1)
+             for (int i = 0; i < this.worldServers.length; ++i)
              {
-                 WorldServer var2 = this.worldServers[var1];
-+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2));
-                 var2.flush();
+                 WorldServer worldserver = this.worldServers[i];
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
+                 worldserver.flush();
 +            }
 +
 +            WorldServer[] tmp = worldServers;
@@ -113,33 +113,33 @@
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
 @@ -651,13 +639,15 @@
          this.theProfiler.startSection("levels");
-         int var1;
+         int i;
  
--        for (var1 = 0; var1 < this.worldServers.length; ++var1)
+-        for (i = 0; i < this.worldServers.length; ++i)
 -        {
 +        Integer[] ids = DimensionManager.getIDs();
 +        for (int x = 0; x < ids.length; x++)
 +        {
 +            int id = ids[x];
-             long var2 = System.nanoTime();
+             long j = System.nanoTime();
  
--            if (var1 == 0 || this.getAllowNether())
+-            if (i == 0 || this.getAllowNether())
 -            {
--                WorldServer var4 = this.worldServers[var1];
+-                WorldServer worldserver = this.worldServers[i];
 +            if (id == 0 || this.getAllowNether())
 +            {
-+                WorldServer var4 = DimensionManager.getWorld(id);
-                 this.theProfiler.startSection(var4.getWorldInfo().getWorldName());
++                WorldServer worldserver = DimensionManager.getWorld(id);
+                 this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
-                 var4.getWorldVec3Pool().clear();
+                 worldserver.getWorldVec3Pool().clear();
 @@ -704,9 +694,11 @@
                  this.theProfiler.endSection();
              }
  
--            this.timeOfLastDimensionTick[var1][this.tickCounter % 100] = System.nanoTime() - var2;
+-            this.timeOfLastDimensionTick[i][this.tickCounter % 100] = System.nanoTime() - j;
 -        }
 -
-+            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - var2;
++            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
 +        }
 +
 +        this.theProfiler.endStartSection("dim_unloading");
@@ -164,9 +164,9 @@
      @SideOnly(Side.SERVER)
 @@ -1131,6 +1129,7 @@
  
-             if (var2 != null)
+             if (worldserver != null)
              {
-+                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(var2));
-                 var2.flush();
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
+                 worldserver.flush();
              }
          }

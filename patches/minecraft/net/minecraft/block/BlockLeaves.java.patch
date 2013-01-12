@@ -22,32 +22,32 @@
       * The base index in terrain.png corresponding to the fancy version of the leaf texture. This is stored so we can
 @@ -107,10 +111,9 @@
                      {
-                         int var12 = par1World.getBlockId(par2 + var9, par3 + var10, par4 + var11);
+                         int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
--                        if (var12 == Block.leaves.blockID)
-+                        if (Block.blocksList[var12] != null)
+-                        if (j2 == Block.leaves.blockID)
++                        if (Block.blocksList[j2] != null)
                          {
--                            int var13 = par1World.getBlockMetadata(par2 + var9, par3 + var10, par4 + var11);
--                            par1World.setBlockMetadata(par2 + var9, par3 + var10, par4 + var11, var13 | 8);
-+                            Block.blocksList[var12].beginLeavesDecay(par1World, par2 + var9, par3 + var10, par4 + var11);
+-                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
+-                            par1World.setBlockMetadata(par2 + k1, par3 + l1, par4 + i2, k2 | 8);
++                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
                          }
                      }
                  }
 @@ -156,11 +159,13 @@
                              {
-                                 var15 = par1World.getBlockId(par2 + var12, par3 + var13, par4 + var14);
+                                 k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
  
--                                if (var15 == Block.wood.blockID)
-+                                Block block = Block.blocksList[var15];
+-                                if (k2 == Block.wood.blockID)
++                                Block block = Block.blocksList[k2];
 +
-+                                if (block != null && block.canSustainLeaves(par1World, par2 + var12, par3 + var13, par4 + var14))
++                                if (block != null && block.canSustainLeaves(par1World, par2 + l1, par3 + i2, par4 + j2))
                                  {
-                                     this.adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = 0;
+                                     this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = 0;
                                  }
--                                else if (var15 == Block.leaves.blockID)
-+                                else if (block != null && block.isLeaves(par1World, par2 + var12, par3 + var13, par4 + var14))
+-                                else if (k2 == Block.leaves.blockID)
++                                else if (block != null && block.isLeaves(par1World, par2 + l1, par3 + i2, par4 + j2))
                                  {
-                                     this.adjacentTreeBlocks[(var12 + var11) * var10 + (var13 + var11) * var9 + var14 + var11] = -2;
+                                     this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
                                  }
 @@ -303,15 +308,7 @@
       */

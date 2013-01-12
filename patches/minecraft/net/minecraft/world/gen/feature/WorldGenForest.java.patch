@@ -2,35 +2,35 @@
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 @@ -45,7 +45,9 @@
                          {
-                             var12 = par1World.getBlockId(var10, var8, var11);
+                             l1 = par1World.getBlockId(j1, i1, k1);
  
--                            if (var12 != 0 && var12 != Block.leaves.blockID)
-+                            Block block = Block.blocksList[var12];
+-                            if (l1 != 0 && l1 != Block.leaves.blockID)
++                            Block block = Block.blocksList[l1];
 +
-+                            if (var12 != 0 && (block != null && !block.isLeaves(par1World, var10,  var8, var11)))
++                            if (l1 != 0 && (block != null && !block.isLeaves(par1World, j1,  i1, k1)))
                              {
-                                 var7 = false;
+                                 flag = false;
                              }
 @@ -84,7 +86,10 @@
                              {
-                                 int var15 = var14 - par5;
+                                 int l2 = k2 - par5;
  
--                                if ((Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var12, var16, var14)])
-+                                Block block = Block.blocksList[par1World.getBlockId(var12, var16, var14)];
+-                                if ((Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(l1, i2, k2)])
++                                Block block = Block.blocksList[par1World.getBlockId(l1, i2, k2)];
 +                                
-+                                if ((Math.abs(var13) != var11 || Math.abs(var15) != var11 || par2Random.nextInt(2) != 0 && var10 != 0) && 
-+                                    (block == null || block.canBeReplacedByLeaves(par1World, var12, var16, var14)))
++                                if ((Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && 
++                                    (block == null || block.canBeReplacedByLeaves(par1World, l1, i2, k2)))
                                  {
-                                     this.setBlockAndMetadata(par1World, var12, var16, var14, Block.leaves.blockID, 2);
+                                     this.setBlockAndMetadata(par1World, l1, i2, k2, Block.leaves.blockID, 2);
                                  }
 @@ -96,7 +101,9 @@
                      {
-                         var10 = par1World.getBlockId(par3, par4 + var16, par5);
+                         j1 = par1World.getBlockId(par3, par4 + i2, par5);
  
--                        if (var10 == 0 || var10 == Block.leaves.blockID)
-+                        Block block = Block.blocksList[var10];
+-                        if (j1 == 0 || j1 == Block.leaves.blockID)
++                        Block block = Block.blocksList[j1];
 +
-+                        if (var10 == 0 || block == null || block.isLeaves(par1World, par3, par4 + var16, par5))
++                        if (j1 == 0 || block == null || block.isLeaves(par1World, par3, par4 + i2, par5))
                          {
-                             this.setBlockAndMetadata(par1World, par3, par4 + var16, par5, Block.wood.blockID, 2);
+                             this.setBlockAndMetadata(par1World, par3, par4 + i2, par5, Block.wood.blockID, 2);
                          }

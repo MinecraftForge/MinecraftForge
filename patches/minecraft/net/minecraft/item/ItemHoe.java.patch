@@ -26,6 +26,6 @@
 +                return true;
 +            }
 +
-             int var11 = par3World.getBlockId(par4, par5, par6);
-             int var12 = par3World.getBlockId(par4, par5 + 1, par6);
+             int i1 = par3World.getBlockId(par4, par5, par6);
+             int j1 = par3World.getBlockId(par4, par5 + 1, par6);
  

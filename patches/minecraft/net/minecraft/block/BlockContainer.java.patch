@@ -12,7 +12,7 @@
 @@ -40,6 +40,12 @@
       * Returns a new instance of a block's tile entity class. Called on placing the block.
       */
-     public abstract TileEntity createNewTileEntity(World var1);
+     public abstract TileEntity createNewTileEntity(World world);
 +    
 +
 +    public TileEntity createNewTileEntity(World world, int metadata)

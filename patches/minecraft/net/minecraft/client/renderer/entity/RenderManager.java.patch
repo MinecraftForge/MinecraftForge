@@ -4,9 +4,9 @@
  
          if (par4EntityLiving.isPlayerSleeping())
          {
--            int var7 = par1World.getBlockId(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+-            int i = par1World.getBlockId(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
 -
--            if (var7 == Block.bed.blockID)
+-            if (i == Block.bed.blockID)
 +            int x = MathHelper.floor_double(par4EntityLiving.posX);
 +            int y = MathHelper.floor_double(par4EntityLiving.posY);
 +            int z = MathHelper.floor_double(par4EntityLiving.posZ);
@@ -14,9 +14,9 @@
 +
 +            if (block != null && block.isBed(par1World, x, y, z, par4EntityLiving))
              {
--                int var8 = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
--                int var9 = var8 & 3;
-+                int var9 = block.getBedDirection(par1World, x, y, z);;
-                 this.playerViewY = (float)(var9 * 90 + 180);
+-                int j = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+-                int k = j & 3;
++                int k = block.getBedDirection(par1World, x, y, z);;
+                 this.playerViewY = (float)(k * 90 + 180);
                  this.playerViewX = 0.0F;
              }

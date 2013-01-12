@@ -24,8 +24,8 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
                          {
--                            Item var3 = this.furnaceItemStacks[1].getItem().getContainerItem();
--                            this.furnaceItemStacks[1] = var3 != null ? new ItemStack(var3) : null;
+-                            Item item = this.furnaceItemStacks[1].getItem().getContainerItem();
+-                            this.furnaceItemStacks[1] = item != null ? new ItemStack(item) : null;
 +                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
                          }
                      }
@@ -34,14 +34,14 @@
          }
          else
          {
--            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
--            return var1 == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(var1) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < var1.getMaxStackSize())));
-+            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
-+            if (var1 == null) return false;
+-            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
+-            return itemstack == null ? false : (this.furnaceItemStacks[2] == null ? true : (!this.furnaceItemStacks[2].isItemEqual(itemstack) ? false : (this.furnaceItemStacks[2].stackSize < this.getInventoryStackLimit() && this.furnaceItemStacks[2].stackSize < this.furnaceItemStacks[2].getMaxStackSize() ? true : this.furnaceItemStacks[2].stackSize < itemstack.getMaxStackSize())));
++            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
++            if (itemstack == null) return false;
 +            if (this.furnaceItemStacks[2] == null) return true;
-+            if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
-+            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
-+            return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
++            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
++            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
++            return (result <= getInventoryStackLimit() && result <= itemstack.getMaxStackSize());
          }
      }
  
@@ -49,30 +49,30 @@
      {
          if (this.canSmelt())
          {
--            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
-+            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+-            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0].getItem().itemID);
++            ItemStack itemstack = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
  
              if (this.furnaceItemStacks[2] == null)
              {
-                 this.furnaceItemStacks[2] = var1.copy();
+                 this.furnaceItemStacks[2] = itemstack.copy();
              }
--            else if (this.furnaceItemStacks[2].itemID == var1.itemID)
+-            else if (this.furnaceItemStacks[2].itemID == itemstack.itemID)
 -            {
 -                ++this.furnaceItemStacks[2].stackSize;
-+            else if (this.furnaceItemStacks[2].isItemEqual(var1))
++            else if (this.furnaceItemStacks[2].isItemEqual(itemstack))
 +            {
-+                furnaceItemStacks[2].stackSize += var1.stackSize;
++                furnaceItemStacks[2].stackSize += itemstack.stackSize;
              }
  
              --this.furnaceItemStacks[0].stackSize;
 @@ -341,7 +348,7 @@
-             int var1 = par0ItemStack.getItem().itemID;
-             Item var2 = par0ItemStack.getItem();
+             int i = par0ItemStack.getItem().itemID;
+             Item item = par0ItemStack.getItem();
  
--            if (var1 < 256 && Block.blocksList[var1] != null)
-+            if (par0ItemStack.getItem() instanceof ItemBlock && Block.blocksList[var1] != null)
+-            if (i < 256 && Block.blocksList[i] != null)
++            if (par0ItemStack.getItem() instanceof ItemBlock && Block.blocksList[i] != null)
              {
-                 Block var3 = Block.blocksList[var1];
+                 Block block = Block.blocksList[i];
  
 @@ -387,4 +394,18 @@
      public void openChest() {}

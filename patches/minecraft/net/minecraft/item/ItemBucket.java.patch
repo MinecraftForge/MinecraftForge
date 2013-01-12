@@ -15,7 +15,7 @@
          }
          else
          {
-+            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, var12);
++            FillBucketEvent event = new FillBucketEvent(par3EntityPlayer, par1ItemStack, par2World, movingobjectposition);
 +            if (MinecraftForge.EVENT_BUS.post(event))
 +            {
 +                return par1ItemStack;
@@ -41,6 +41,6 @@
 +                return par1ItemStack;
 +            }
 +
-             if (var12.typeOfHit == EnumMovingObjectType.TILE)
+             if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
              {
-                 int var13 = var12.blockX;
+                 int i = movingobjectposition.blockX;

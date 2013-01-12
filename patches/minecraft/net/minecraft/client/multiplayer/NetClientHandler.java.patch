@@ -36,11 +36,11 @@
      public void handleAnimation(Packet18Animation par1Packet18Animation)
 @@ -1192,6 +1201,10 @@
                  {
-                     var2.readFromNBT(par1Packet132TileEntityData.customParam1);
+                     tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
                  }
 +                else
 +                {
-+                    var2.onDataPacket(netManager,  par1Packet132TileEntityData);
++                    tileentity.onDataPacket(netManager,  par1Packet132TileEntityData);
 +                }
              }
          }

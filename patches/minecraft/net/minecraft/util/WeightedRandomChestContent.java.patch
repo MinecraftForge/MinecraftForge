@@ -21,59 +21,59 @@
 +    @SuppressWarnings("deprecation")
      public static void generateChestContents(Random par0Random, WeightedRandomChestContent[] par1ArrayOfWeightedRandomChestContent, TileEntityChest par2TileEntityChest, int par3)
      {
-         for (int var4 = 0; var4 < par3; ++var4)
+         for (int j = 0; j < par3; ++j)
          {
-             WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
--            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+-            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
  
--            if (var5.theItemId.getMaxStackSize() >= var6)
-+            if (var5 instanceof DungeonHooks.DungeonLoot)
+-            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
++            if (weightedrandomchestcontent instanceof DungeonHooks.DungeonLoot)
              {
--                ItemStack var7 = var5.theItemId.copy();
--                var7.stackSize = var6;
--                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), var7);
-+                DungeonHooks.DungeonLoot loot = (DungeonHooks.DungeonLoot)var5;
+-                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                itemstack.stackSize = k;
+-                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), itemstack);
++                DungeonHooks.DungeonLoot loot = (DungeonHooks.DungeonLoot)weightedrandomchestcontent;
 +                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), loot.generateStack(par0Random));
 +                FMLLog.warning("Some mod is still using DungeonHooks.DungonLoot, tell them to stop! %s", loot);
 +                continue;
              }
 -            else
 +
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.theItemId, var5.theMinimumChanceToGenerateItem, var5.theMaximumChanceToGenerateItem);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
 +
 +            for (ItemStack item : stacks)
              {
--                for (int var9 = 0; var9 < var6; ++var9)
+-                for (int l = 0; l < k; ++l)
 -                {
--                    ItemStack var8 = var5.theItemId.copy();
--                    var8.stackSize = 1;
--                    par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), var8);
+-                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
+-                    itemstack1.stackSize = 1;
+-                    par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), itemstack1);
 -                }
 +                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), item);
              }
          }
      }
 @@ -68,22 +71,11 @@
-         for (int var4 = 0; var4 < par3; ++var4)
+         for (int j = 0; j < par3; ++j)
          {
-             WeightedRandomChestContent var5 = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
--            int var6 = var5.theMinimumChanceToGenerateItem + par0Random.nextInt(var5.theMaximumChanceToGenerateItem - var5.theMinimumChanceToGenerateItem + 1);
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, var5.theItemId, var5.theMinimumChanceToGenerateItem, var5.theMaximumChanceToGenerateItem);
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+-            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
  
--            if (var5.theItemId.getMaxStackSize() >= var6)
+-            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
 +            for (ItemStack item : stacks)
              {
--                ItemStack var7 = var5.theItemId.copy();
--                var7.stackSize = var6;
--                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), var7);
+-                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                itemstack.stackSize = k;
+-                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack);
 -            }
 -            else
 -            {
--                for (int var9 = 0; var9 < var6; ++var9)
+-                for (int l = 0; l < k; ++l)
 -                {
--                    ItemStack var8 = var5.theItemId.copy();
--                    var8.stackSize = 1;
--                    par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), var8);
+-                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
+-                    itemstack1.stackSize = 1;
+-                    par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack1);
 -                }
 +                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), item);
              }

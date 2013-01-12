@@ -21,32 +21,32 @@
  {
      /** The 17x17 area around the player where mobs can spawn */
 @@ -93,6 +100,9 @@
-                 if ((!var35.getPeacefulCreature() || par2) && (var35.getPeacefulCreature() || par1) && (!var35.getAnimal() || par3) && par0WorldServer.countEntities(var35.getCreatureClass()) <= var35.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
+                 if ((!enumcreaturetype.getPeacefulCreature() || par2) && (enumcreaturetype.getPeacefulCreature() || par1) && (!enumcreaturetype.getAnimal() || par3) && par0WorldServer.countEntities(enumcreaturetype.getCreatureClass()) <= enumcreaturetype.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
                  {
-                     Iterator var37 = eligibleChunksForSpawning.keySet().iterator();
+                     Iterator iterator = eligibleChunksForSpawning.keySet().iterator();
 +                    ArrayList<ChunkCoordIntPair> tmp = new ArrayList(eligibleChunksForSpawning.keySet());
 +                    Collections.shuffle(tmp);
-+                    var37 = tmp.iterator();
++                    iterator = tmp.iterator();
                      label110:
  
-                     while (var37.hasNext())
+                     while (iterator.hasNext())
 @@ -169,7 +179,8 @@
  
-                                                             var39.setLocationAndAngles((double)var24, (double)var25, (double)var26, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
+                                                             entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
  
--                                                            if (var39.getCanSpawnHere())
-+                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(var39, par0WorldServer, var24, var25, var26);
-+                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && var39.getCanSpawnHere()))
+-                                                            if (entityliving.getCanSpawnHere())
++                                                            Result canSpawn = ForgeEventFactory.canEntitySpawn(entityliving, par0WorldServer, f, f1, f2);
++                                                            if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                              {
-                                                                 ++var16;
-                                                                 par0WorldServer.spawnEntityInWorld(var39);
+                                                                 ++j2;
+                                                                 par0WorldServer.spawnEntityInWorld(entityliving);
 @@ -221,7 +232,8 @@
          else
          {
-             int var5 = par1World.getBlockId(par2, par3 - 1, par4);
--            return var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
-+            boolean spawnBlock = (Block.blocksList[var5] != null && Block.blocksList[var5].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4));
-+            return spawnBlock && var5 != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
+             int l = par1World.getBlockId(par2, par3 - 1, par4);
+-            return l != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
++            boolean spawnBlock = (Block.blocksList[l] != null && Block.blocksList[l].canCreatureSpawn(par0EnumCreatureType, par1World, par2, par3 - 1, par4));
++            return spawnBlock && l != Block.bedrock.blockID && !par1World.isBlockNormalCube(par2, par3, par4) && !par1World.getBlockMaterial(par2, par3, par4).isLiquid() && !par1World.isBlockNormalCube(par2, par3 + 1, par4);
          }
      }
  

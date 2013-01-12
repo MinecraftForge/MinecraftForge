@@ -57,16 +57,16 @@
  
          this.firstUpdate = false;
 @@ -847,6 +862,8 @@
-                     par5 = var27;
-                     this.boundingBox.setBB(var29);
+                     par5 = d11;
+                     this.boundingBox.setBB(axisalignedbb1);
                  }
 +                /* Fixes a vanilla bug where the player view would dip when stepping between certain blocks
 +                 * https://mojang.atlassian.net/browse/MC-1594
                  else
                  {
-                     double var40 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
+                     double d13 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
 @@ -856,6 +873,7 @@
-                         this.ySize = (float)((double)this.ySize + var40 + 0.01D);
+                         this.ySize = (float)((double)this.ySize + d13 + 0.01D);
                      }
                  }
 +                */
@@ -88,7 +88,7 @@
 +            }
              this.writeEntityToNBT(par1NBTTagCompound);
          }
-         catch (Throwable var5)
+         catch (Throwable throwable)
 @@ -1568,6 +1595,14 @@
              this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
              this.setPosition(this.posX, this.posY, this.posZ);
@@ -103,21 +103,21 @@
 +            }
              this.readEntityFromNBT(par1NBTTagCompound);
          }
-         catch (Throwable var5)
+         catch (Throwable throwable)
 @@ -1662,7 +1697,14 @@
      {
-         EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-         var3.delayBeforeCanPickup = 10;
--        this.worldObj.spawnEntityInWorld(var3);
+         EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
+         entityitem.delayBeforeCanPickup = 10;
+-        this.worldObj.spawnEntityInWorld(entityitem);
 +        if (captureDrops)
 +        {
-+            capturedDrops.add(var3);
++            capturedDrops.add(entityitem);
 +        }
 +        else
 +        {
-+            this.worldObj.spawnEntityInWorld(var3);
++            this.worldObj.spawnEntityInWorld(entityitem);
 +        }
-         return var3;
+         return entityitem;
      }
  
 @@ -2021,7 +2063,7 @@

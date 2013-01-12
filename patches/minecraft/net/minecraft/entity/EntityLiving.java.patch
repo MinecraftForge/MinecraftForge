@@ -81,17 +81,17 @@
 +            return;
 +        }
 +
-         Entity var2 = par1DamageSource.getEntity();
+         Entity entity = par1DamageSource.getEntity();
  
-         if (this.scoreValue >= 0 && var2 != null)
+         if (this.scoreValue >= 0 && entity != null)
 @@ -1274,6 +1302,10 @@
              {
-                 var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
+                 i = EnchantmentHelper.getLootingModifier((EntityLiving)entity);
              }
 +
 +            captureDrops = true;
 +            capturedDrops.clear();
-+            int var4 = 0;
++            int j = 0;
  
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
@@ -99,10 +99,10 @@
  
                  if (this.recentlyHit > 0)
                  {
--                    int var4 = this.rand.nextInt(200) - var3;
-+                    var4 = this.rand.nextInt(200) - var3;
+-                    int j = this.rand.nextInt(200) - i;
++                    j = this.rand.nextInt(200) - i;
  
-                     if (var4 < 5)
+                     if (j < 5)
                      {
 @@ -1290,6 +1322,16 @@
                      }
@@ -111,7 +111,7 @@
 +
 +            captureDrops = false;
 +
-+            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, var3, recentlyHit > 0, var4))
++            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, i, recentlyHit > 0, j))
 +            {
 +                for (EntityItem item : capturedDrops)
 +                {
@@ -132,14 +132,14 @@
 +        }
 +
          super.fall(par1);
-         int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
+         int i = MathHelper.ceiling_float_int(par1 - 3.0F);
  
 @@ -1536,7 +1584,7 @@
-         int var2 = MathHelper.floor_double(this.boundingBox.minY);
-         int var3 = MathHelper.floor_double(this.posZ);
-         int var4 = this.worldObj.getBlockId(var1, var2, var3);
--        return var4 == Block.ladder.blockID || var4 == Block.vine.blockID;
-+        return ForgeHooks.isLivingOnLadder(Block.blocksList[var4], worldObj, var1, var2, var3);
+         int j = MathHelper.floor_double(this.boundingBox.minY);
+         int k = MathHelper.floor_double(this.posZ);
+         int l = this.worldObj.getBlockId(i, j, k);
+-        return l == Block.ladder.blockID || l == Block.vine.blockID;
++        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k);
      }
  
      /**

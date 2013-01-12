@@ -37,4 +37,4 @@
 +
      static
      {
-         ArrayList var0 = new ArrayList();
+         ArrayList arraylist = new ArrayList();

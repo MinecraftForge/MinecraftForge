@@ -38,16 +38,16 @@
 -        {
 -            if ((par6 & 8) == 0)
 -            {
--                ItemStack var7 = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
--                TileEntitySkull var8 = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
+-                ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
+-                TileEntitySkull tileentityskull = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
 -
--                if (var8.getSkullType() == 3 && var8.getExtraType() != null && var8.getExtraType().length() > 0)
+-                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
 -                {
--                    var7.setTagCompound(new NBTTagCompound());
--                    var7.getTagCompound().setString("SkullOwner", var8.getExtraType());
+-                    itemstack.setTagCompound(new NBTTagCompound());
+-                    itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
 -                }
 -
--                this.dropBlockAsItem_do(par1World, par2, par3, par4, var7);
+-                this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
 -            }
 -
 -            super.breakBlock(par1World, par2, par3, par4, par5, par6);
@@ -61,19 +61,19 @@
 +        ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
 +        if ((metadata & 8) == 0)
 +        {
-+            ItemStack var7 = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(world, x, y, z));
-+            TileEntitySkull var8 = (TileEntitySkull)world.getBlockTileEntity(x, y, z);
++            ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(world, x, y, z));
++            TileEntitySkull tileentityskull = (TileEntitySkull)world.getBlockTileEntity(x, y, z);
 +
-+            if (var8 == null)
++            if (tileentityskull == null)
 +            {
 +                return drops;
 +            }
-+            if (var8.getSkullType() == 3 && var8.getExtraType() != null && var8.getExtraType().length() > 0)
++            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
 +            {
-+                var7.setTagCompound(new NBTTagCompound());
-+                var7.getTagCompound().setString("SkullOwner", var8.getExtraType());
++                itemstack.setTagCompound(new NBTTagCompound());
++                itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
 +            }
-+            drops.add(var7);
++            drops.add(itemstack);
 +        }
 +        return drops;
      }

@@ -47,15 +47,15 @@
  
      /**
 @@ -627,6 +638,10 @@
-         float var18 = var15 * var16;
-         float var20 = var14 * var16;
-         double var21 = 5.0D;
+         float f7 = f4 * f5;
+         float f8 = f3 * f5;
+         double d3 = 5.0D;
 +        if (par2EntityPlayer instanceof EntityPlayerMP)
 +        {
-+            var21 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
++            d3 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
 +        }
-         Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
-         return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+         Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
+         return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
 @@ -701,4 +716,304 @@
      {

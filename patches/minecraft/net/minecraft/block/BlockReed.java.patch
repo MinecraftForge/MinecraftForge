@@ -17,8 +17,8 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
--        int var5 = par1World.getBlockId(par2, par3 - 1, par4);
--        return var5 == this.blockID ? true : (var5 != Block.grass.blockID && var5 != Block.dirt.blockID && var5 != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
+-        int l = par1World.getBlockId(par2, par3 - 1, par4);
+-        return l == this.blockID ? true : (l != Block.grass.blockID && l != Block.dirt.blockID && l != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
 +        Block block = Block.blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
 +        return (block != null && block.canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this));
      }

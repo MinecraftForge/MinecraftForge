@@ -12,10 +12,10 @@
 @@ -96,7 +98,9 @@
          if (par3 >= 0 && par3 < 256)
          {
-             int var5 = par1World.getBlockId(par2, par3 - 1, par4);
--            return var5 == Block.mycelium.blockID || par1World.getFullBlockLightValue(par2, par3, par4) < 13 && this.canThisPlantGrowOnThisBlockID(var5);
-+            Block soil = Block.blocksList[var5];
-+            return (var5 == Block.mycelium.blockID || par1World.getFullBlockLightValue(par2, par3, par4) < 13) &&
+             int l = par1World.getBlockId(par2, par3 - 1, par4);
+-            return l == Block.mycelium.blockID || par1World.getFullBlockLightValue(par2, par3, par4) < 13 && this.canThisPlantGrowOnThisBlockID(l);
++            Block soil = Block.blocksList[l];
++            return (l == Block.mycelium.blockID || par1World.getFullBlockLightValue(par2, par3, par4) < 13) &&
 +                   (soil != null && soil.canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this));
          }
          else

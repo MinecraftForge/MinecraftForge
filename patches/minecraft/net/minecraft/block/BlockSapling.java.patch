@@ -15,6 +15,6 @@
      {
 +        if (!TerrainGen.saplingGrowTree(par1World, par5Random, par2, par3, par4)) return;
 +
-         int var6 = par1World.getBlockMetadata(par2, par3, par4) & 3;
-         Object var7 = null;
-         int var8 = 0;
+         int l = par1World.getBlockMetadata(par2, par3, par4) & 3;
+         Object object = null;
+         int i1 = 0;

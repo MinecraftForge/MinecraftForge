@@ -20,27 +20,27 @@
      /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
 @@ -101,7 +105,8 @@
  
-                     int var11 = par1World.getBlockId(var9, par3 - 1, var10);
+                     int l1 = par1World.getBlockId(j1, par3 - 1, k1);
  
--                    if (par1World.getBlockId(var9, par3, var10) == 0 && (var11 == Block.tilledField.blockID || var11 == Block.dirt.blockID || var11 == Block.grass.blockID))
-+                    boolean isSoil = (blocksList[var11] != null && blocksList[var11].canSustainPlant(par1World, var9, par3 - 1, var10, ForgeDirection.UP, this));
-+                    if (par1World.getBlockId(var9, par3, var10) == 0 && (isSoil || var11 == Block.dirt.blockID || var11 == Block.grass.blockID))
+-                    if (par1World.getBlockId(j1, par3, k1) == 0 && (l1 == Block.tilledField.blockID || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
++                    boolean isSoil = (blocksList[l1] != null && blocksList[l1].canSustainPlant(par1World, j1, par3 - 1, k1, ForgeDirection.UP, this));
++                    if (par1World.getBlockId(j1, par3, k1) == 0 && (isSoil || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
                      {
-                         par1World.setBlockWithNotify(var9, par3, var10, this.fruitType.blockID);
+                         par1World.setBlockWithNotify(j1, par3, k1, this.fruitType.blockID);
                      }
 @@ -137,11 +142,11 @@
-                 int var19 = par1World.getBlockId(var17, par3 - 1, var18);
-                 float var20 = 0.0F;
+                 int j3 = par1World.getBlockId(l2, par3 - 1, i3);
+                 float f1 = 0.0F;
  
--                if (var19 == Block.tilledField.blockID)
-+                if (blocksList[var19] != null && blocksList[var19].canSustainPlant(par1World, var17, par3 - 1, var18, ForgeDirection.UP, this))
+-                if (j3 == Block.tilledField.blockID)
++                if (blocksList[j3] != null && blocksList[j3].canSustainPlant(par1World, l2, par3 - 1, i3, ForgeDirection.UP, this))
                  {
-                     var20 = 1.0F;
+                     f1 = 1.0F;
  
--                    if (par1World.getBlockMetadata(var17, par3 - 1, var18) > 0)
-+                    if (blocksList[var19].isFertile(par1World, var17, par3 - 1, var18))
+-                    if (par1World.getBlockMetadata(l2, par3 - 1, i3) > 0)
++                    if (blocksList[j3].isFertile(par1World, l2, par3 - 1, i3))
                      {
-                         var20 = 3.0F;
+                         f1 = 3.0F;
                      }
 @@ -241,29 +246,22 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
@@ -49,7 +49,7 @@
 -
 -        if (!par1World.isRemote)
 -        {
--            Item var8 = null;
+-            Item item = null;
 -
 -            if (this.fruitType == Block.pumpkin)
 +    }
@@ -63,20 +63,20 @@
 +        {
 +            if (world.rand.nextInt(15) <= metadata)
              {
--                var8 = Item.pumpkinSeeds;
+-                item = Item.pumpkinSeeds;
 +                ret.add(new ItemStack(fruitType == pumpkin ? Item.pumpkinSeeds : Item.melonSeeds));
              }
 -
 -            if (this.fruitType == Block.melon)
 -            {
--                var8 = Item.melonSeeds;
+-                item = Item.melonSeeds;
 -            }
 -
--            for (int var9 = 0; var9 < 3; ++var9)
+-            for (int j1 = 0; j1 < 3; ++j1)
 -            {
 -                if (par1World.rand.nextInt(15) <= par5)
 -                {
--                    this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var8));
+-                    this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(item));
 -                }
 -            }
 -        }

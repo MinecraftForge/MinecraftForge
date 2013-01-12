@@ -46,12 +46,12 @@
 +
 +    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityPlayer, float par3)
      {
-         double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
-         double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
+         double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
+         double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
 @@ -1873,6 +1893,7 @@
-             double var17 = this.mc.renderViewEntity.posY - par4;
-             double var19 = this.mc.renderViewEntity.posZ - par6;
-             EntityFX var21 = null;
+             double d7 = this.mc.renderViewEntity.posY - par4;
+             double d8 = this.mc.renderViewEntity.posZ - par6;
+             EntityFX entityfx = null;
 +            Object effectObject = null;
  
              if (par1Str.equals("hugeexplosion"))
@@ -59,7 +59,7 @@
 @@ -2009,6 +2030,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
-                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
+                         entityfx = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
 +                        effectObject = Item.snowball;
                      }
                      else if (par1Str.equals("dripWater"))
@@ -67,30 +67,30 @@
 @@ -2025,6 +2047,7 @@
                      else if (par1Str.equals("slime"))
                      {
-                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
+                         entityfx = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
 +                        effectObject = Item.slimeBall;
                      }
                      else if (par1Str.equals("heart"))
                      {
 @@ -2046,6 +2069,7 @@
                      {
-                         int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
-                         var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
-+                        effectObject = Item.itemsList[var27];
+                         int j = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
+                         entityfx = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[j]);
++                        effectObject = Item.itemsList[j];
                      }
                      else if (par1Str.startsWith("tilecrack_"))
                      {
 @@ -2053,11 +2077,12 @@
-                         int var25 = Integer.parseInt(var28[1]);
-                         int var26 = Integer.parseInt(var28[2]);
-                         var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).applyRenderColor(var26);
-+                        effectObject = Block.blocksList[var25];
+                         int k = Integer.parseInt(astring[1]);
+                         int l = Integer.parseInt(astring[2]);
+                         entityfx = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[k], 0, l)).applyRenderColor(l);
++                        effectObject = Block.blocksList[k];
                      }
  
-                     if (var21 != null)
+                     if (entityfx != null)
                      {
--                        this.mc.effectRenderer.addEffect((EntityFX)var21);
-+                        this.mc.effectRenderer.addEffect((EntityFX)var21, effectObject);
+-                        this.mc.effectRenderer.addEffect((EntityFX)entityfx);
++                        this.mc.effectRenderer.addEffect((EntityFX)entityfx, effectObject);
                      }
  
-                     return (EntityFX)var21;
+                     return (EntityFX)entityfx;

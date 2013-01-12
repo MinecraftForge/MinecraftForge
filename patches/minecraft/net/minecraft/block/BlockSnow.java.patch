@@ -3,10 +3,10 @@
 @@ -67,7 +67,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
-         int var5 = par1World.getBlockId(par2, par3 - 1, par4);
--        return var5 != 0 && (var5 == Block.leaves.blockID || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
-+        Block block = Block.blocksList[var5];
-+        return block != null && (block.isLeaves(par1World, par2, par3 - 1, par4) || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
+         int l = par1World.getBlockId(par2, par3 - 1, par4);
+-        return l != 0 && (l == Block.leaves.blockID || Block.blocksList[l].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
++        Block block = Block.blocksList[l];
++        return block != null && (block.isLeaves(par1World, par2, par3 - 1, par4) || Block.blocksList[l].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
      }
  
      /**
@@ -22,8 +22,8 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        int var7 = Item.snowball.itemID;
--        this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(var7, 1, 0));
+-        int i1 = Item.snowball.itemID;
+-        this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(i1, 1, 0));
 +        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
          par1World.setBlockWithNotify(par3, par4, par5, 0);
 -        par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);

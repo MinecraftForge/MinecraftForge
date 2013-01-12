@@ -55,9 +55,9 @@
 +    @SideOnly(Side.CLIENT)
 +    protected void finishSetup()
 +    {
-         VillageCollection var6 = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
+         VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
  
-         if (var6 == null)
+         if (villagecollection == null)
 @@ -206,7 +239,7 @@
              this.villageCollectionObj.func_82566_a(this);
          }
@@ -80,7 +80,7 @@
              this.worldInfo.setServerInitialized(true);
          }
  
--        VillageCollection var6 = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
+-        VillageCollection villagecollection = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
 +        if (this instanceof WorldServer)
 +        {
 +            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, par1ISaveHandler));
@@ -89,9 +89,9 @@
 +        {
 +            this.perWorldStorage = new MapStorage((ISaveHandler)null);
 +        }
-+        VillageCollection var6 = (VillageCollection)perWorldStorage.loadData(VillageCollection.class, "villages");
++        VillageCollection villagecollection = (VillageCollection)perWorldStorage.loadData(VillageCollection.class, "villages");
  
-         if (var6 == null)
+         if (villagecollection == null)
          {
              this.villageCollectionObj = new VillageCollection(this);
 -            this.mapStorage.setData("villages", this.villageCollectionObj);
@@ -132,10 +132,10 @@
 @@ -385,7 +440,8 @@
      public boolean blockHasTileEntity(int par1, int par2, int par3)
      {
-         int var4 = this.getBlockId(par1, par2, par3);
--        return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity();
+         int l = this.getBlockId(par1, par2, par3);
+-        return Block.blocksList[l] != null && Block.blocksList[l].hasTileEntity();
 +        int meta = this.getBlockMetadata(par1, par2, par3);
-+        return Block.blocksList[var4] != null && Block.blocksList[var4].hasTileEntity(meta);
++        return Block.blocksList[l] != null && Block.blocksList[l].hasTileEntity(meta);
      }
  
      public int func_85175_e(int par1, int par2, int par3)
@@ -149,13 +149,13 @@
  
      /**
 @@ -1159,7 +1215,7 @@
-                 int var12 = this.getBlockMetadata(var8, var9, var10);
-                 Block var13 = Block.blocksList[var11];
+                 int l1 = this.getBlockMetadata(l, i1, j1);
+                 Block block = Block.blocksList[k1];
  
--                if ((!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) && var11 > 0 && var13.canCollideCheck(var12, par3))
-+                if (var13 != null && (!par4 || var13 == null || var13.getCollisionBoundingBoxFromPool(this, var8, var9, var10) != null) && var11 > 0 && var13.canCollideCheck(var12, par3))
+-                if ((!par4 || block == null || block.getCollisionBoundingBoxFromPool(this, l, i1, j1) != null) && k1 > 0 && block.canCollideCheck(l1, par3))
++                if (block != null && (!par4 || block == null || block.getCollisionBoundingBoxFromPool(this, l, i1, j1) != null) && k1 > 0 && block.canCollideCheck(l1, par3))
                  {
-                     MovingObjectPosition var14 = var13.collisionRayTrace(this, var8, var9, var10, par1Vec3, par2Vec3);
+                     MovingObjectPosition movingobjectposition = block.collisionRayTrace(this, l, i1, j1, par1Vec3, par2Vec3);
  
 @@ -1359,6 +1415,12 @@
       */
@@ -169,7 +169,7 @@
 +        par2Str = event.name;
          if (par1Entity != null && par2Str != null)
          {
-             for (int var5 = 0; var5 < this.worldAccesses.size(); ++var5)
+             for (int i = 0; i < this.worldAccesses.size(); ++i)
 @@ -1373,6 +1435,12 @@
       */
      public void playSoundToNearExcept(EntityPlayer par1EntityPlayer, String par2Str, float par3, float par4)
@@ -182,19 +182,19 @@
 +        par2Str = event.name;
          if (par1EntityPlayer != null && par2Str != null)
          {
-             for (int var5 = 0; var5 < this.worldAccesses.size(); ++var5)
+             for (int i = 0; i < this.worldAccesses.size(); ++i)
 @@ -1459,6 +1527,11 @@
-                 EntityPlayer var5 = (EntityPlayer)par1Entity;
-                 this.playerEntities.add(var5);
+                 EntityPlayer entityplayer = (EntityPlayer)par1Entity;
+                 this.playerEntities.add(entityplayer);
                  this.updateAllPlayersSleepingFlag();
 +            }
 +
-+            if (!var4 && MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(par1Entity, this)))
++            if (!flag && MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(par1Entity, this)))
 +            {
 +                return false;
              }
  
-             this.getChunkFromChunkCoords(var2, var3).addEntity(par1Entity);
+             this.getChunkFromChunkCoords(i, j).addEntity(par1Entity);
 @@ -1706,6 +1779,12 @@
       * Calculates the color for the skybox
       */
@@ -206,8 +206,8 @@
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 getSkyColorBody(Entity par1Entity, float par2)
      {
-         float var3 = this.getCelestialAngle(par2);
-         float var4 = MathHelper.cos(var3 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         float f1 = this.getCelestialAngle(par2);
+         float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
 @@ -1801,6 +1880,12 @@
      @SideOnly(Side.CLIENT)
      public Vec3 drawClouds(float par1)
@@ -218,17 +218,17 @@
 +    @SideOnly(Side.CLIENT)
 +    public Vec3 drawCloudsBody(float par1)
 +    {
-         float var2 = this.getCelestialAngle(par1);
-         float var3 = MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
+         float f1 = this.getCelestialAngle(par1);
+         float f2 = MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
  
 @@ -1879,7 +1964,7 @@
          {
-             int var5 = var3.getBlockID(par1, var4, par2);
+             int l = chunk.getBlockID(par1, k, par2);
  
--            if (var5 != 0 && Block.blocksList[var5].blockMaterial.blocksMovement() && Block.blocksList[var5].blockMaterial != Material.leaves)
-+            if (var5 != 0 && Block.blocksList[var5].blockMaterial.blocksMovement() && Block.blocksList[var5].blockMaterial != Material.leaves && !Block.blocksList[var5].isBlockFoliage(this, par1, var4, par2))
+-            if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement() && Block.blocksList[l].blockMaterial != Material.leaves)
++            if (l != 0 && Block.blocksList[l].blockMaterial.blocksMovement() && Block.blocksList[l].blockMaterial != Material.leaves && !Block.blocksList[l].isBlockFoliage(this, par1, k, par2))
              {
-                 return var4 + 1;
+                 return k + 1;
              }
 @@ -1894,6 +1979,12 @@
       * How bright are stars in the sky
@@ -241,33 +241,33 @@
 +    @SideOnly(Side.CLIENT)
 +    public float getStarBrightnessBody(float par1)
      {
-         float var2 = this.getCelestialAngle(par1);
-         float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
+         float f1 = this.getCelestialAngle(par1);
+         float f2 = 1.0F - (MathHelper.cos(f1 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
 @@ -2038,16 +2129,8 @@
  
-             if (var2.isDead)
+             if (entity.isDead)
              {
--                var3 = var2.chunkCoordX;
--                var13 = var2.chunkCoordZ;
+-                j = entity.chunkCoordX;
+-                k = entity.chunkCoordZ;
 -
--                if (var2.addedToChunk && this.chunkExists(var3, var13))
+-                if (entity.addedToChunk && this.chunkExists(j, k))
 -                {
--                    this.getChunkFromChunkCoords(var3, var13).removeEntity(var2);
+-                    this.getChunkFromChunkCoords(j, k).removeEntity(entity);
 -                }
 -
--                this.loadedEntityList.remove(var1--);
--                this.releaseEntitySkin(var2);
+-                this.loadedEntityList.remove(i--);
+-                this.releaseEntitySkin(entity);
 +                // If it's dead, move it to the unloaded list for removal on the next tick
-+                unloadedEntityList.add(var2);
++                unloadedEntityList.add(entity);
              }
  
              this.theProfiler.endSection();
 @@ -2095,7 +2178,7 @@
  
-                     if (var11 != null)
+                     if (chunk != null)
                      {
--                        var11.removeChunkBlockTileEntity(var9.xCoord & 15, var9.yCoord, var9.zCoord & 15);
-+                        var11.cleanChunkBlockTileEntity(var9.xCoord & 15, var9.yCoord, var9.zCoord & 15);
+-                        chunk.removeChunkBlockTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
++                        chunk.cleanChunkBlockTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
                      }
                  }
              }
@@ -284,24 +284,24 @@
          }
 @@ -2124,18 +2211,18 @@
                      {
-                         this.loadedTileEntityList.add(var12);
+                         this.loadedTileEntityList.add(tileentity1);
                      }
 -
 +                }
 +                else
 +                {
-                     if (this.chunkExists(var12.xCoord >> 4, var12.zCoord >> 4))
+                     if (this.chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4))
                      {
-                         Chunk var15 = this.getChunkFromChunkCoords(var12.xCoord >> 4, var12.zCoord >> 4);
+                         Chunk chunk1 = this.getChunkFromChunkCoords(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4);
  
-                         if (var15 != null)
+                         if (chunk1 != null)
                          {
--                            var15.setChunkBlockTileEntity(var12.xCoord & 15, var12.yCoord, var12.zCoord & 15, var12);
-+                            var15.cleanChunkBlockTileEntity(var12.xCoord & 15, var12.yCoord, var12.zCoord & 15);
+-                            chunk1.setChunkBlockTileEntity(tileentity1.xCoord & 15, tileentity1.yCoord, tileentity1.zCoord & 15, tileentity1);
++                            chunk1.cleanChunkBlockTileEntity(tileentity1.xCoord & 15, tileentity1.yCoord, tileentity1.zCoord & 15);
                          }
                      }
 -
--                    this.markBlockForUpdate(var12.xCoord, var12.yCoord, var12.zCoord);
+-                    this.markBlockForUpdate(tileentity1.xCoord, tileentity1.yCoord, tileentity1.zCoord);
                  }
              }
  
@@ -328,15 +328,15 @@
  
 @@ -2174,9 +2261,17 @@
      {
-         int var3 = MathHelper.floor_double(par1Entity.posX);
-         int var4 = MathHelper.floor_double(par1Entity.posZ);
--        byte var5 = 32;
+         int i = MathHelper.floor_double(par1Entity.posX);
+         int j = MathHelper.floor_double(par1Entity.posZ);
+-        byte b0 = 32;
 -
--        if (!par2 || this.checkChunksExist(var3 - var5, 0, var4 - var5, var3 + var5, 0, var4 + var5))
+-        if (!par2 || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0))
 +
-+        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var3 >> 4, var4 >> 4));
-+        byte var5 = isForced ? (byte)0 : 32;
-+        boolean canUpdate = !par2 || this.checkChunksExist(var3 - var5, 0, var4 - var5, var3 + var5, 0, var4 + var5);
++        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
++        byte b0 = isForced ? (byte)0 : 32;
++        boolean canUpdate = !par2 || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
 +        if (!canUpdate)
 +        {
 +            EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(par1Entity);
@@ -353,8 +353,8 @@
                          }
 +                        else
 +                        {
-+                            Block block = Block.blocksList[var11];
-+                            if (block != null && block.isBlockBurning(this, var8, var9, var10))
++                            Block block = Block.blocksList[j2];
++                            if (block != null && block.isBlockBurning(this, k1, l1, i2))
 +                            {
 +                                return true;
 +                            }
@@ -378,11 +378,11 @@
 -            else
 -            {
 -                this.loadedTileEntityList.add(par4TileEntity);
--                Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+-                Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
 -
--                if (var5 != null)
+-                if (chunk != null)
 -                {
--                    var5.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
+-                    chunk.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
 -                }
 -            }
 +        if (par4TileEntity == null || par4TileEntity.isInvalid())
@@ -407,26 +407,26 @@
       */
      public void removeBlockTileEntity(int par1, int par2, int par3)
      {
--        TileEntity var4 = this.getBlockTileEntity(par1, par2, par3);
+-        TileEntity tileentity = this.getBlockTileEntity(par1, par2, par3);
 -
--        if (var4 != null && this.scanningTileEntities)
+-        if (tileentity != null && this.scanningTileEntities)
 -        {
--            var4.invalidate();
--            this.addedTileEntityList.remove(var4);
+-            tileentity.invalidate();
+-            this.addedTileEntityList.remove(tileentity);
 -        }
 -        else
 -        {
--            if (var4 != null)
+-            if (tileentity != null)
 -            {
--                this.addedTileEntityList.remove(var4);
--                this.loadedTileEntityList.remove(var4);
+-                this.addedTileEntityList.remove(tileentity);
+-                this.loadedTileEntityList.remove(tileentity);
 -            }
 -
--            Chunk var5 = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
+-            Chunk chunk = this.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
 -
--            if (var5 != null)
+-            if (chunk != null)
 -            {
--                var5.removeChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
+-                chunk.removeChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
 -            }
 +        Chunk chunk = getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
 +        if (chunk != null)
@@ -449,18 +449,18 @@
       */
      public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
      {
--        Block var4 = Block.blocksList[this.getBlockId(par1, par2, par3)];
--        return var4 == null ? false : (var4.blockMaterial.isOpaque() && var4.renderAsNormalBlock() ? true : (var4 instanceof BlockStairs ? (this.getBlockMetadata(par1, par2, par3) & 4) == 4 : (var4 instanceof BlockHalfSlab ? (this.getBlockMetadata(par1, par2, par3) & 8) == 8 : false)));
+-        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return block == null ? false : (block.blockMaterial.isOpaque() && block.renderAsNormalBlock() ? true : (block instanceof BlockStairs ? (this.getBlockMetadata(par1, par2, par3) & 4) == 4 : (block instanceof BlockHalfSlab ? (this.getBlockMetadata(par1, par2, par3) & 8) == 8 : false)));
 +        return isBlockSolidOnSide(par1, par2, par3, ForgeDirection.UP);
      }
  
      /**
 @@ -2827,7 +2909,7 @@
-             if (var5 != null && !var5.isEmpty())
+             if (chunk != null && !chunk.isEmpty())
              {
-                 Block var6 = Block.blocksList[this.getBlockId(par1, par2, par3)];
--                return var6 == null ? false : var6.blockMaterial.isOpaque() && var6.renderAsNormalBlock();
-+                return var6 == null ? false : isBlockNormalCube(par1, par2, par3);
+                 Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-                return block == null ? false : block.blockMaterial.isOpaque() && block.renderAsNormalBlock();
++                return block == null ? false : isBlockNormalCube(par1, par2, par3);
              }
              else
              {
@@ -512,8 +512,8 @@
 +        this.activeChunkSet.addAll(getPersistentChunks().keySet());
 +
          this.theProfiler.startSection("buildList");
-         int var1;
-         EntityPlayer var2;
+         int i;
+         EntityPlayer entityplayer;
 @@ -3099,6 +3192,11 @@
       */
      public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
@@ -523,8 +523,8 @@
 +
 +    public boolean canBlockFreezeBody(int par1, int par2, int par3, boolean par4)
 +    {
-         BiomeGenBase var5 = this.getBiomeGenForCoords(par1, par3);
-         float var6 = var5.getFloatTemperature();
+         BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
+         float f = biomegenbase.getFloatTemperature();
  
 @@ -3156,6 +3254,11 @@
       * Tests whether or not snow can be placed at a given location
@@ -536,75 +536,75 @@
 +
 +    public boolean canSnowAtBody(int par1, int par2, int par3)
      {
-         BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
-         float var5 = var4.getFloatTemperature();
+         BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
+         float f = biomegenbase.getFloatTemperature();
 @@ -3249,7 +3352,7 @@
  
      private int computeBlockLightValue(int par1, int par2, int par3, int par4, int par5, int par6)
      {
--        int var7 = Block.lightValue[par5];
-+        int var7 = (par5 == 0 || Block.blocksList[par5] == null ? 0 : Block.blocksList[par5].getLightValue(this, par2, par3, par4));
-         int var8 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
-         int var9 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
-         int var10 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
+-        int k1 = Block.lightValue[par5];
++        int k1 = (par5 == 0 || Block.blocksList[par5] == null ? 0 : Block.blocksList[par5].getLightValue(this, par2, par3, par4));
+         int l1 = this.getSavedLightValue(EnumSkyBlock.Block, par2 - 1, par3, par4) - par6;
+         int i2 = this.getSavedLightValue(EnumSkyBlock.Block, par2 + 1, par3, par4) - par6;
+         int j2 = this.getSavedLightValue(EnumSkyBlock.Block, par2, par3 - 1, par4) - par6;
 @@ -3384,7 +3487,7 @@
-                                     int var21 = var24 + (var18 / 2 + 1) % 3 / 2 * var19;
-                                     int var22 = var12 + (var18 / 2 + 2) % 3 / 2 * var19;
-                                     var14 = this.getSavedLightValue(par1EnumSkyBlock, var20, var21, var22);
--                                    int var23 = Block.lightOpacity[this.getBlockId(var20, var21, var22)];
-+                                    int var23 = this.getBlockLightOpacity(var20, var21, var22);
+                                     int k4 = i2 + (i4 / 2 + 1) % 3 / 2 * l3;
+                                     int l4 = j2 + (i4 / 2 + 2) % 3 / 2 * l3;
+                                     l2 = this.getSavedLightValue(par1EnumSkyBlock, j4, k4, l4);
+-                                    int i5 = Block.lightOpacity[this.getBlockId(j4, k4, l4)];
++                                    int i5 = this.getBlockLightOpacity(j4, k4, l4);
  
-                                     if (var23 == 0)
+                                     if (i5 == 0)
                                      {
 @@ -3415,7 +3518,7 @@
-                 var12 = (var9 >> 12 & 63) - 32 + par4;
-                 var13 = this.getSavedLightValue(par1EnumSkyBlock, var10, var24, var12);
-                 var14 = this.getBlockId(var10, var24, var12);
--                var15 = Block.lightOpacity[var14];
-+                var15 = this.getBlockLightOpacity(var10, var24, var12);
+                 j2 = (k1 >> 12 & 63) - 32 + par4;
+                 k2 = this.getSavedLightValue(par1EnumSkyBlock, l1, i2, j2);
+                 l2 = this.getBlockId(l1, i2, j2);
+-                i3 = Block.lightOpacity[l2];
++                i3 = this.getBlockLightOpacity(l1, i2, j2);
  
-                 if (var15 == 0)
+                 if (i3 == 0)
                  {
 @@ -3517,10 +3620,10 @@
      public List getEntitiesWithinAABBExcludingEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB)
      {
          this.entitiesWithinAABBExcludingEntity.clear();
--        int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
--        int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
--        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
--        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
-+        int var3 = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
-+        int var4 = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-+        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-+        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
+-        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
+-        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
++        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
  
-         for (int var7 = var3; var7 <= var4; ++var7)
+         for (int i1 = i; i1 <= j; ++i1)
          {
 @@ -3546,10 +3649,10 @@
  
      public List selectEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
--        int var4 = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
--        int var5 = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
--        int var6 = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
--        int var7 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
-+        int var4 = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
-+        int var5 = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-+        int var6 = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-+        int var7 = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
-         ArrayList var8 = new ArrayList();
+-        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + 2.0D) / 16.0D);
+-        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - 2.0D) / 16.0D);
+-        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((par2AxisAlignedBB.minX - MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((par2AxisAlignedBB.maxX + MAX_ENTITY_RADIUS) / 16.0D);
++        int k = MathHelper.floor_double((par2AxisAlignedBB.minZ - MAX_ENTITY_RADIUS) / 16.0D);
++        int l = MathHelper.floor_double((par2AxisAlignedBB.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
+         ArrayList arraylist = new ArrayList();
  
-         for (int var9 = var4; var9 <= var5; ++var9)
+         for (int i1 = i; i1 <= j; ++i1)
 @@ -3642,11 +3745,14 @@
       */
      public void addLoadedEntities(List par1List)
      {
 -        this.loadedEntityList.addAll(par1List);
 -
-         for (int var2 = 0; var2 < par1List.size(); ++var2)
+         for (int i = 0; i < par1List.size(); ++i)
          {
--            this.obtainEntitySkin((Entity)par1List.get(var2));
-+            Entity entity = (Entity)par1List.get(var2);
+-            this.obtainEntitySkin((Entity)par1List.get(i));
++            Entity entity = (Entity)par1List.get(i);
 +            if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
 +            {
 +                loadedEntityList.add(entity);
@@ -616,14 +616,14 @@
 @@ -3680,6 +3786,11 @@
          else
          {
-             if (var9 != null && (var9 == Block.waterMoving || var9 == Block.waterStill || var9 == Block.lavaMoving || var9 == Block.lavaStill || var9 == Block.fire || var9.blockMaterial.isReplaceable()))
+             if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || block.blockMaterial.isReplaceable()))
 +            {
-+                var9 = null;
++                block = null;
 +            }
 +
-+            if (var9 != null && var9.isBlockReplaceable(this, par2, par3, par4))
++            if (block != null && block.isBlockReplaceable(this, par2, par3, par4))
              {
-                 var9 = null;
+                 block = null;
              }
 @@ -3897,7 +4008,7 @@
       */
@@ -696,8 +696,8 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
--        BiomeGenBase var4 = this.getBiomeGenForCoords(par1, par3);
--        return var4.isHighHumidity();
+-        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
+-        return biomegenbase.isHighHumidity();
 +        return provider.isBlockHighHumidity(par1, par2, par3);
      }
  
@@ -780,8 +780,8 @@
 +            return _default;
 +        }
 +
-+        Chunk var5 = this.chunkProvider.provideChunk(x >> 4, z >> 4);
-+        if (var5 == null || var5.isEmpty())
++        Chunk chunk = this.chunkProvider.provideChunk(x >> 4, z >> 4);
++        if (chunk == null || chunk.isEmpty())
 +        {
 +            return _default;
 +        }

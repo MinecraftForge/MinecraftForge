@@ -71,9 +71,9 @@
  
      public boolean areAllPlayersAsleep()
 @@ -298,6 +313,14 @@
-         int var1 = 0;
-         int var2 = 0;
-         Iterator var3 = this.activeChunkSet.iterator();
+         int i = 0;
+         int j = 0;
+         Iterator iterator = this.activeChunkSet.iterator();
 +
 +        doneChunks.retainAll(activeChunkSet);
 +        if (doneChunks.size() == activeChunkSet.size())
@@ -83,45 +83,45 @@
 +
 +        final long startTime = System.nanoTime();
  
-         while (var3.hasNext())
+         while (iterator.hasNext())
          {
 @@ -308,14 +331,18 @@
-             Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
-             this.moodSoundAndLightCheck(var5, var6, var7);
+             Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+             this.moodSoundAndLightCheck(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
--            var7.updateSkylight();
+-            chunk.updateSkylight();
 +            //Limits and evenly distributes the lighting update time
-+            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(var4)) 
++            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(chunkcoordintpair)) 
 +            { 
-+                var7.updateSkylight();
++                chunk.updateSkylight();
 +            }
              this.theProfiler.endStartSection("thunder");
-             int var8;
-             int var9;
-             int var10;
-             int var11;
+             int i1;
+             int j1;
+             int k1;
+             int l1;
  
 -            if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
-+            if (provider.canDoLightning(var7) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
++            if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
-                 var8 = this.updateLCG >> 2;
+                 i1 = this.updateLCG >> 2;
 @@ -332,7 +359,7 @@
              this.theProfiler.endStartSection("iceandsnow");
-             int var13;
+             int i2;
  
 -            if (this.rand.nextInt(16) == 0)
-+            if (provider.canDoRainSnowIce(var7) && this.rand.nextInt(16) == 0)
++            if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0)
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
-                 var8 = this.updateLCG >> 2;
+                 i1 = this.updateLCG >> 2;
 @@ -411,7 +438,8 @@
      public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
-         NextTickListEntry var7 = new NextTickListEntry(par1, par2, par3, par4);
--        byte var8 = 8;
-+        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var7.xCoord >> 4, var7.zCoord >> 4));
-+        byte var8 = isForced ? (byte)0 : 8;
+         NextTickListEntry nextticklistentry = new NextTickListEntry(par1, par2, par3, par4);
+-        byte b0 = 8;
++        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++        byte b0 = isForced ? (byte)0 : 8;
  
          if (this.scheduledUpdatesAreImmediate && par4 > 0)
          {
@@ -136,25 +136,25 @@
              {
 @@ -525,7 +553,8 @@
  
-                 this.pendingTickListEntries.remove(var4);
-                 this.field_73064_N.remove(var4);
--                byte var5 = 8;
-+                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var4.xCoord >> 4, var4.zCoord >> 4));
-+                byte var5 = isForced ? (byte)0 : 8;
+                 this.pendingTickListEntries.remove(nextticklistentry);
+                 this.field_73064_N.remove(nextticklistentry);
+-                byte b0 = 8;
++                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++                byte b0 = isForced ? (byte)0 : 8;
  
-                 if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
+                 if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
                  {
 @@ -644,16 +673,28 @@
      {
-         ArrayList var7 = new ArrayList();
+         ArrayList arraylist = new ArrayList();
  
--        for (int var8 = 0; var8 < this.loadedTileEntityList.size(); ++var8)
+-        for (int k1 = 0; k1 < this.loadedTileEntityList.size(); ++k1)
 -        {
--            TileEntity var9 = (TileEntity)this.loadedTileEntityList.get(var8);
+-            TileEntity tileentity = (TileEntity)this.loadedTileEntityList.get(k1);
 -
--            if (var9.xCoord >= par1 && var9.yCoord >= par2 && var9.zCoord >= par3 && var9.xCoord < par4 && var9.yCoord < par5 && var9.zCoord < par6)
+-            if (tileentity.xCoord >= par1 && tileentity.yCoord >= par2 && tileentity.zCoord >= par3 && tileentity.xCoord < par4 && tileentity.yCoord < par5 && tileentity.zCoord < par6)
 -            {
--                var7.add(var9);
+-                arraylist.add(tileentity);
 -            }
 -        }
 -
@@ -173,14 +173,14 @@
 +                            if (entity.xCoord >= par1 && entity.yCoord >= par2 && entity.zCoord >= par3 &&
 +                                entity.xCoord <= par4 && entity.yCoord <= par5 && entity.zCoord <= par6)
 +                            {
-+                                var7.add(entity);
++                                arraylist.add(entity);
 +                            }
 +                        }
 +                    }
 +                }
 +            }
 +        }
-         return var7;
+         return arraylist;
      }
  
 @@ -661,6 +702,11 @@
@@ -193,14 +193,14 @@
 +
 +    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
-         int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
-         int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
+         int l = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
+         int i1 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
 @@ -670,7 +716,7 @@
-             var6 = var5;
+             i1 = l;
          }
  
--        return var6 > 16 || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
-+        return var6 > mcServer.getSpawnProtectionSize() || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
+-        return i1 > 16 || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
++        return i1 > mcServer.getSpawnProtectionSize() || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
      }
  
      protected void initialize(WorldSettings par1WorldSettings)
@@ -208,10 +208,10 @@
       */
      protected void createBonusChest()
      {
--        WorldGeneratorBonusChest var1 = new WorldGeneratorBonusChest(bonusChestContent, 10);
-+        WorldGeneratorBonusChest var1 = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST, rand), ChestGenHooks.getCount(BONUS_CHEST, rand));
+-        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(bonusChestContent, 10);
++        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST, rand), ChestGenHooks.getCount(BONUS_CHEST, rand));
  
-         for (int var2 = 0; var2 < 10; ++var2)
+         for (int i = 0; i < 10; ++i)
          {
 @@ -796,6 +842,7 @@
              }

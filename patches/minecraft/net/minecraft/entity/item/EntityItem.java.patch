@@ -72,8 +72,8 @@
          if (this.func_92014_d() != null)
          {
 @@ -280,10 +314,17 @@
-         NBTTagCompound var2 = par1NBTTagCompound.getCompoundTag("Item");
-         this.func_92013_a(ItemStack.loadItemStackFromNBT(var2));
+         NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
+         this.func_92013_a(ItemStack.loadItemStackFromNBT(nbttagcompound1));
  
 -        if (this.func_92014_d() == null)
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
@@ -106,11 +106,11 @@
 +                return;
 +            }
 +
-             ItemStack var2 = this.func_92014_d();
-             int var3 = var2.stackSize;
+             ItemStack itemstack = this.func_92014_d();
+             int i = itemstack.stackSize;
  
--            if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(var2))
-+            if (this.delayBeforeCanPickup <= 0 && (event.getResult() == Result.ALLOW || var3 <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(var2)))
+-            if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(itemstack))
++            if (this.delayBeforeCanPickup <= 0 && (event.getResult() == Result.ALLOW || i <= 0 || par1EntityPlayer.inventory.addItemStackToInventory(itemstack)))
              {
-                 if (var2.itemID == Block.wood.blockID)
+                 if (itemstack.itemID == Block.wood.blockID)
                  {

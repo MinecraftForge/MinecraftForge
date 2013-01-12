@@ -24,21 +24,21 @@
      private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
 @@ -259,6 +272,7 @@
  
-             if (var1 == this.itemInUse)
+             if (itemstack == this.itemInUse)
              {
 +                itemInUse.getItem().onUsingItemTick(itemInUse, this, itemInUseCount);
                  if (this.itemInUseCount <= 25 && this.itemInUseCount % 4 == 0)
                  {
-                     this.updateItemUse(var1, 5);
+                     this.updateItemUse(itemstack, 5);
 @@ -497,11 +511,11 @@
          this.cameraYaw = 0.0F;
-         this.addMountedMovementStat(this.posX - var1, this.posY - var3, this.posZ - var5);
+         this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
  
 -        if (this.ridingEntity instanceof EntityPig)
 +        if (this.ridingEntity instanceof EntityLiving && ((EntityLiving)ridingEntity).shouldRiderFaceForward(this))
          {
-             this.rotationPitch = var8;
-             this.rotationYaw = var7;
+             this.rotationPitch = f1;
+             this.rotationYaw = f;
 -            this.renderYawOffset = ((EntityPig)this.ridingEntity).renderYawOffset;
 +            this.renderYawOffset = ((EntityLiving)this.ridingEntity).renderYawOffset;
          }
@@ -129,35 +129,35 @@
 +    @Deprecated
      public float getCurrentPlayerStrVsBlock(Block par1Block)
      {
--        float var2 = this.inventory.getStrVsBlock(par1Block);
+-        float f = this.inventory.getStrVsBlock(par1Block);
 +        return getCurrentPlayerStrVsBlock(par1Block, 0);
 +    }
 +
 +    public float getCurrentPlayerStrVsBlock(Block par1Block, int meta)
 +    {
 +        ItemStack stack = inventory.getCurrentItem();
-+        float var2 = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
-         int var3 = EnchantmentHelper.getEfficiencyModifier(this);
-         ItemStack var4 = this.inventory.getCurrentItem();
++        float f = (stack == null ? 1.0F : stack.getItem().getStrVsBlock(stack, par1Block, meta));
+         int i = EnchantmentHelper.getEfficiencyModifier(this);
+         ItemStack itemstack = this.inventory.getCurrentItem();
  
-         if (var3 > 0 && var4 != null)
+         if (i > 0 && itemstack != null)
          {
-             float var5 = (float)(var3 * var3 + 1);
+             float f1 = (float)(i * i + 1);
 -
--            if (!var4.canHarvestBlock(par1Block) && var2 <= 1.0F)
-+            boolean canHarvest = ForgeHooks.canToolHarvestBlock(par1Block, meta, var4);
+-            if (!itemstack.canHarvestBlock(par1Block) && f <= 1.0F)
++            boolean canHarvest = ForgeHooks.canToolHarvestBlock(par1Block, meta, itemstack);
 +
-+            if (!canHarvest && var2 <= 1.0F)
++            if (!canHarvest && f <= 1.0F)
              {
-                 var2 += var5 * 0.08F;
+                 f += f1 * 0.08F;
              }
 @@ -784,7 +844,8 @@
-             var2 /= 5.0F;
+             f /= 5.0F;
          }
  
--        return var2;
-+        var2 = ForgeEventFactory.getBreakSpeed(this, par1Block, meta, var2);
-+        return (var2 < 0 ? 0 : var2);
+-        return f;
++        f = ForgeEventFactory.getBreakSpeed(this, par1Block, meta, f);
++        return (f < 0 ? 0 : f);
      }
  
      /**
@@ -246,32 +246,32 @@
              if (this.isPlayerSleeping() || !this.isEntityAlive())
 @@ -1387,6 +1479,11 @@
          {
-             int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
-             int var5 = BlockBed.getDirection(var9);
+             int l = this.worldObj.getBlockMetadata(par1, par2, par3);
+             int i1 = BlockBed.getDirection(l);
 +            Block block = Block.blocksList[worldObj.getBlockId(par1, par2, par3)];
 +            if (block != null)
 +            {
-+                var5 = block.getBedDirection(worldObj, par1, par2, par3);
++                i1 = block.getBedDirection(worldObj, par1, par2, par3);
 +            }
-             float var10 = 0.5F;
-             float var7 = 0.5F;
+             float f = 0.5F;
+             float f1 = 0.5F;
  
 @@ -1457,10 +1554,12 @@
-         ChunkCoordinates var4 = this.playerLocation;
-         ChunkCoordinates var5 = this.playerLocation;
+         ChunkCoordinates chunkcoordinates = this.playerLocation;
+         ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
--        if (var4 != null && this.worldObj.getBlockId(var4.posX, var4.posY, var4.posZ) == Block.bed.blockID)
+-        if (chunkcoordinates != null && this.worldObj.getBlockId(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ) == Block.bed.blockID)
 -        {
--            BlockBed.setBedOccupied(this.worldObj, var4.posX, var4.posY, var4.posZ, false);
--            var5 = BlockBed.getNearestEmptyChunkCoordinates(this.worldObj, var4.posX, var4.posY, var4.posZ, 0);
-+        Block block = (var4 == null ? null : Block.blocksList[worldObj.getBlockId(var4.posX, var4.posY, var4.posZ)]);
+-            BlockBed.setBedOccupied(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, false);
+-            chunkcoordinates1 = BlockBed.getNearestEmptyChunkCoordinates(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, 0);
++        Block block = (chunkcoordinates == null ? null : Block.blocksList[worldObj.getBlockId(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ)]);
 +
-+        if (var4 != null && block != null && block.isBed(worldObj, var4.posX, var4.posY, var4.posZ, this))
++        if (chunkcoordinates != null && block != null && block.isBed(worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this))
 +        {
-+            block.setBedOccupied(this.worldObj, var4.posX, var4.posY, var4.posZ, this, false);
-+            var5 = block.getBedSpawnPosition(worldObj, var4.posX, var4.posY, var4.posZ, this);
++            block.setBedOccupied(this.worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this, false);
++            chunkcoordinates1 = block.getBedSpawnPosition(worldObj, chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ, this);
  
-             if (var5 == null)
+             if (chunkcoordinates1 == null)
              {
 @@ -1497,7 +1596,9 @@
       */
@@ -285,35 +285,39 @@
  
      /**
 @@ -1512,9 +1613,12 @@
-         var3.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
-         var3.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
+         ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
+         ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
 -        if (par0World.getBlockId(par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ) == Block.bed.blockID)
 -        {
--            ChunkCoordinates var8 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
+-            ChunkCoordinates chunkcoordinates1 = BlockBed.getNearestEmptyChunkCoordinates(par0World, par1ChunkCoordinates.posX, par1ChunkCoordinates.posY, par1ChunkCoordinates.posZ, 0);
 +        ChunkCoordinates c = par1ChunkCoordinates;
 +        Block block = Block.blocksList[par0World.getBlockId(c.posX, c.posY, c.posZ)];
 +
 +        if (block != null && block.isBed(par0World, c.posX, c.posY, c.posZ, null))
 +        {
-+            ChunkCoordinates var8 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
-             return var8;
++            ChunkCoordinates chunkcoordinates1 = block.getBedSpawnPosition(par0World, c.posX, c.posY, c.posZ, null);
+             return chunkcoordinates1;
          }
          else
-@@ -1536,8 +1640,11 @@
+@@ -1536,10 +1640,13 @@
      {
          if (this.playerLocation != null)
          {
--            int var1 = this.worldObj.getBlockMetadata(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ);
--            int var2 = BlockBed.getDirection(var1);
+-            int i = this.worldObj.getBlockMetadata(this.playerLocation.posX, this.playerLocation.posY, this.playerLocation.posZ);
+-            int j = BlockBed.getDirection(i);
+-
+-            switch (j)
 +            int x = playerLocation.posX;
 +            int y = playerLocation.posY;
 +            int z = playerLocation.posZ;
 +            Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
-+            int var2 = (block == null ? 0 : block.getBedDirection(worldObj, x, y, z));
- 
-             switch (var2)
++            int i = (block == null ? 0 : block.getBedDirection(worldObj, x, y, z));
++
++            switch (i)
              {
+                 case 0:
+                     return 90.0F;
 @@ -1846,7 +1953,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
@@ -327,10 +331,10 @@
                      return 101;
                  }
              }
-+            var3 = par1ItemStack.getItem().getIconIndex(par1ItemStack, par2, this, itemInUse, itemInUseCount);
++            j = par1ItemStack.getItem().getIconIndex(par1ItemStack, par2, this, itemInUse, itemInUseCount);
          }
  
-         return var3;
+         return j;
 @@ -2088,6 +2196,14 @@
          }
  

@@ -24,39 +24,39 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
--        ChunkCoordinates var5 = par2World.getSpawnPoint();
-+        ChunkCoordinates var5 = par2World.provider.getRandomizedSpawnPoint();
-         int var6 = var5.posX;
-         int var7 = var5.posZ;
-         int var8 = var5.posY;
+-        ChunkCoordinates chunkcoordinates = par2World.getSpawnPoint();
++        ChunkCoordinates chunkcoordinates = par2World.provider.getRandomizedSpawnPoint();
+         int i = chunkcoordinates.posX;
+         int j = chunkcoordinates.posZ;
+         int k = chunkcoordinates.posY;
 -
 -        if (!par2World.provider.hasNoSky && par2World.getWorldInfo().getGameType() != EnumGameType.ADVENTURE)
 -        {
--            int var9 = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
--            var6 += this.rand.nextInt(var9 * 2) - var9;
--            var7 += this.rand.nextInt(var9 * 2) - var9;
--            var8 = par2World.getTopSolidOrLiquidBlock(var6, var7);
+-            int l = Math.max(5, par1MinecraftServer.getSpawnProtectionSize() - 6);
+-            i += this.rand.nextInt(l * 2) - l;
+-            j += this.rand.nextInt(l * 2) - l;
+-            k = par2World.getTopSolidOrLiquidBlock(i, j);
 -        }
  
-         this.setLocationAndAngles((double)var6 + 0.5D, (double)var8, (double)var7 + 0.5D, 0.0F, 0.0F);
+         this.setLocationAndAngles((double)i + 0.5D, (double)k, (double)j + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
 @@ -253,7 +251,10 @@
-                 if (var9 != null && this.worldObj.blockExists(var9.chunkXPos << 4, 0, var9.chunkZPos << 4))
+                 if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
-                     var6.add(this.worldObj.getChunkFromChunkCoords(var9.chunkXPos, var9.chunkZPos));
--                    var8.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var9.chunkXPos * 16, 0, var9.chunkZPos * 16, var9.chunkXPos * 16 + 16, 256, var9.chunkZPos * 16 + 16));
+                     arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
+-                    arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
 +                    //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
 +                    //ToDo: Find a way to efficiently clean abandoned chunks.
-+                    //var8.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var9.chunkXPos * 16, 0, var9.chunkZPos * 16, var9.chunkXPos * 16 + 16, 256, var9.chunkZPos * 16 + 16));
-+                    var8.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(var9.chunkXPos * 16, 0, var9.chunkZPos * 16, var9.chunkXPos * 16 + 15, 256, var9.chunkZPos * 16 + 15));
++                    //arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 16, 256, chunkcoordintpair.chunkZPos * 16 + 16));
++                    arraylist1.addAll(((WorldServer)this.worldObj).getAllTileEntityInBox(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
                  }
              }
  
 @@ -274,6 +275,7 @@
                  {
-                     Chunk var10 = (Chunk)var11.next();
-                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, var10);
-+                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(var10.getChunkCoordIntPair(), this));
+                     Chunk chunk = (Chunk)iterator2.next();
+                     this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
++                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
                  }
              }
          }
