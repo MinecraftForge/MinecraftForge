@@ -238,6 +238,7 @@ field_70482_c,inventoryContents,2,
 field_70483_a,inventoryTitle,2,
 field_70484_a,container,2,The brewing stand this slot belongs to.
 field_70488_a,associatedChest,2,
+field_70499_f,isInReverse,2,
 field_70500_g,matrix,2,Minecart rotational logic matrix
 field_70501_d,cargoItems,2,Array of item stacks stored in minecart (for storage minecarts).
 field_70502_e,fuel,2,
@@ -686,6 +687,154 @@ field_71585_d,offsetsZForSide,2,gives the offset required for this axis to get t
 field_71586_b,offsetsXForSide,2,gives the offset required for this axis to get the block at that side.
 field_71587_c,offsetsYForSide,2,gives the offset required for this axis to get the block at that side.
 field_71588_a,faceToSide,2,Converts a face to a side.
+field_71589_f,bc_pbe_sha512,2,
+field_71590_g,bc_pbe_sha224,2,
+field_71591_d,bc_pbe_sha256,2,
+field_71592_e,bc_pbe_sha384,2,
+field_71593_b,bc_pbe,2,
+field_71594_c,bc_pbe_sha1,2,
+field_71595_a,bc,2,
+field_71596_n,bc_pbe_sha1_pkcs12_aes256_cbc,2,
+field_71597_o,bc_pbe_sha256_pkcs12_aes128_cbc,2,
+field_71598_l,bc_pbe_sha1_pkcs12_aes128_cbc,2,
+field_71599_m,bc_pbe_sha1_pkcs12_aes192_cbc,2,
+field_71600_j,bc_pbe_sha256_pkcs5,2,
+field_71601_k,bc_pbe_sha256_pkcs12,2,
+field_71602_h,bc_pbe_sha1_pkcs5,2,
+field_71603_i,bc_pbe_sha1_pkcs12,2,
+field_71604_q,bc_pbe_sha256_pkcs12_aes256_cbc,2,
+field_71605_p,bc_pbe_sha256_pkcs12_aes192_cbc,2,
+field_71610_b,cache,2,
+field_71611_a,identifier,2,
+field_71613_D,digestAlgorithm,2,
+field_71614_E,md2,2,
+field_71615_F,md4,2,
+field_71616_G,md5,2,
+field_71617_A,encryptionAlgorithm,2,
+field_71618_B,des_EDE3_CBC,2,
+field_71619_C,RC2_CBC,2,
+field_71620_L,id_hmacWithSHA512,2,
+field_71621_M,data,2,
+field_71622_N,signedData,2,
+field_71623_O,envelopedData,2,
+field_71624_H,id_hmacWithSHA1,2,
+field_71625_I,id_hmacWithSHA224,2,
+field_71626_J,id_hmacWithSHA256,2,
+field_71627_K,id_hmacWithSHA384,2,
+field_71628_U,pkcs_9_at_unstructuredName,2,
+field_71629_T,pkcs_9_at_emailAddress,2,
+field_71630_W,pkcs_9_at_messageDigest,2,
+field_71631_V,pkcs_9_at_contentType,2,
+field_71632_Q,digestedData,2,
+field_71633_P,signedAndEnvelopedData,2,
+field_71634_S,pkcs_9,2,
+field_71635_R,encryptedData,2,
+field_71636_Y,pkcs_9_at_counterSignature,2,
+field_71637_X,pkcs_9_at_signingTime,2,
+field_71638_Z,pkcs_9_at_challengePassword,2,
+field_71639_f,sha1WithRSAEncryption,2,
+field_71640_g,srsaOAEPEncryptionSET,2,
+field_71641_d,md4WithRSAEncryption,2,
+field_71642_e,md5WithRSAEncryption,2,
+field_71643_b,rsaEncryption,2,
+field_71644_c,md2WithRSAEncryption,2,
+field_71645_a,pkcs_1,2,
+field_71646_n,sha512WithRSAEncryption,2,
+field_71647_o,sha224WithRSAEncryption,2,
+field_71648_l,sha256WithRSAEncryption,2,
+field_71649_m,sha384WithRSAEncryption,2,
+field_71650_j,id_pSpecified,2,
+field_71651_k,id_RSASSA_PSS,2,
+field_71652_h,id_RSAES_OAEP,2,
+field_71653_i,id_mgf1,2,
+field_71654_w,pbeWithSHA1AndDES_CBC,2,
+field_71655_v,pbeWithMD5AndRC2_CBC,2,
+field_71656_u,pbeWithMD5AndDES_CBC,2,
+field_71657_t,pbeWithMD2AndRC2_CBC,2,
+field_71658_s,pbeWithMD2AndDES_CBC,2,
+field_71659_r,pkcs_5,2,
+field_71660_q,dhKeyAgreement,2,
+field_71661_p,pkcs_3,2,
+field_71662_z,id_PBKDF2,2,
+field_71663_y,id_PBES2,2,
+field_71664_x,pbeWithSHA1AndRC2_CBC,2,
+field_71665_bw,pbewithSHAAnd40BitRC2_CBC,2,
+field_71666_bv,pbeWithSHAAnd40BitRC2_CBC,2,
+field_71667_by,id_alg_CMSRC2wrap,2,
+field_71668_bx,id_alg_CMS3DESwrap,2,
+field_71669_bs,pbeWithSHAAnd3_KeyTripleDES_CBC,2,
+field_71670_br,pbeWithSHAAnd40BitRC4,2,
+field_71671_bu,pbeWithSHAAnd128BitRC2_CBC,2,
+field_71672_bt,pbeWithSHAAnd2_KeyTripleDES_CBC,2,
+field_71673_bn,secretBag,2,
+field_71674_bo,safeContentsBag,2,
+field_71675_bp,pkcs_12PbeIds,2,
+field_71676_bq,pbeWithSHAAnd128BitRC4,2,
+field_71677_bj,keyBag,2,
+field_71678_bk,pkcs8ShroudedKeyBag,2,
+field_71679_bl,certBag,2,
+field_71680_bm,crlBag,2,
+field_71681_bf,id_spq_ets_uri,2,
+field_71682_bg,id_spq_ets_unotice,2,
+field_71683_bh,pkcs_12,2,
+field_71684_bi,bagtypes,2,
+field_71685_bb,id_aa_sigPolicyId,2,
+field_71686_bc,id_aa_commitmentType,2,
+field_71687_bd,id_aa_signerLocation,2,
+field_71688_be,id_aa_otherSigCert,2,
+field_71689_aZ,id_aa_ets_certCRLTimestamp,2,
+field_71690_aY,id_aa_ets_escTimeStamp,2,
+field_71691_aR,id_aa_ets_signerAttr,2,
+field_71692_aQ,id_aa_ets_signerLocation,2,
+field_71693_aT,id_aa_ets_contentTimestamp,2,
+field_71694_aS,id_aa_ets_otherSigCert,2,
+field_71695_aV,id_aa_ets_revocationRefs,2,
+field_71696_aU,id_aa_ets_certificateRefs,2,
+field_71697_aX,id_aa_ets_revocationValues,2,
+field_71698_aW,id_aa_ets_certValues,2,
+field_71699_aI,id_aa_contentReference,2,
+field_71700_aJ,id_aa_encrypKeyPref,2,
+field_71701_aK,id_aa_signingCertificate,2,
+field_71702_aL,id_aa_signingCertificateV2,2,
+field_71703_aM,id_aa_contentIdentifier,2,
+field_71704_aN,id_aa_signatureTimeStampToken,2,
+field_71705_aO,id_aa_ets_sigPolicyId,2,
+field_71706_aP,id_aa_ets_commitmentType,2,
+field_71707_aA,id_cti_ets_proofOfDelivery,2,
+field_71708_aB,id_cti_ets_proofOfSender,2,
+field_71709_aC,id_cti_ets_proofOfApproval,2,
+field_71710_aD,id_cti_ets_proofOfCreation,2,
+field_71711_aE,id_aa,2,
+field_71712_aF,id_aa_receiptRequest,2,
+field_71713_aG,id_aa_contentHint,2,
+field_71714_aH,id_aa_msgSigDigest,2,
+field_71715_az,id_cti_ets_proofOfReceipt,2,
+field_71716_ay,id_cti_ets_proofOfOrigin,2,
+field_71717_ba,id_aa_ets_archiveTimestamp,2,
+field_71718_at,id_ct_TSTInfo,2,
+field_71719_as,id_ct_authData,2,
+field_71720_ar,id_ct,2,
+field_71721_aq,sMIMECapabilitiesVersions,2,
+field_71722_ax,id_cti,2,
+field_71723_aw,id_ct_timestampedData,2,
+field_71724_av,id_ct_authEnvelopedData,2,
+field_71725_au,id_ct_compressedData,2,
+field_71726_ak,sdsiCertificate,2,
+field_71727_al,crlTypes,2,
+field_71728_ai,certTypes,2,
+field_71729_aj,x509Certificate,2,
+field_71730_ao,preferSignedData,2,
+field_71731_ap,canNotDecryptAny,2,
+field_71732_am,x509Crl,2,
+field_71733_an,id_alg_PWRI_KEK,2,
+field_71734_ac,pkcs_9_at_signingDescription,2,
+field_71735_ad,pkcs_9_at_extensionRequest,2,
+field_71736_aa,pkcs_9_at_unstructuredAddress,2,
+field_71737_ab,pkcs_9_at_extendedCertificateAttributes,2,
+field_71738_ag,pkcs_9_at_localKeyId,2,
+field_71739_ah,x509certType,2,
+field_71740_ae,pkcs_9_at_smimeCapabilities,2,
+field_71741_af,pkcs_9_at_friendlyName,2,
 field_71743_a,theDecitatedServer,2,Reference to the DecitatedServer object.
 field_71748_d,connections,2,
 field_71749_b,isListening,2,Whether the network listener object is listening.
@@ -708,6 +857,36 @@ field_71782_a,iv,2,
 field_71784_a,key,2,
 field_71787_b,strength,2,
 field_71788_a,random,2,
+field_71796_f,pgpCFB,2,
+field_71797_d,cipher,2,
+field_71798_e,partialBlockOkay,2,
+field_71799_b,bufOff,2,
+field_71800_c,forEncryption,2,
+field_71801_a,buf,2,
+field_71809_f,encrypting,2,
+field_71810_d,blockSize,2,
+field_71811_e,cipher,2,
+field_71812_b,cfbV,2,
+field_71813_c,cfbOutV,2,
+field_71814_a,IV,2,
+field_71824_f,T2,2,
+field_71825_g,T3,2,
+field_71826_d,T0,2,
+field_71827_e,T1,2,
+field_71828_b,Si,2,
+field_71829_c,rcon,2,
+field_71830_a,S,2,
+field_71831_n,C0,2,
+field_71832_o,C1,2,
+field_71833_l,ROUNDS,2,
+field_71834_m,WorkingKey,2,
+field_71835_j,Tinv2,2,
+field_71836_k,Tinv3,2,
+field_71837_h,Tinv0,2,
+field_71838_i,Tinv1,2,
+field_71839_r,forEncryption,2,
+field_71840_q,C3,2,
+field_71841_p,C2,2,
 field_71844_b,strength,2,
 field_71845_a,random,2,
 field_71938_D,lavaStill,2,Stationary lava source block
@@ -1637,6 +1816,7 @@ field_73812_e,height,2,
 field_73813_b,xPos,2,
 field_73814_c,yPos,2,
 field_73815_a,fontRenderer,2,Have the font renderer from GuiScreen to render the textbox text into the screen.
+field_73816_n,lineScrollOffset,2,The current character index that should be used as start of the rendered text.
 field_73817_o,cursorPosition,2,
 field_73818_l,isFocused,2,"If this value is true along isEnabled, keyTyped will process the keys."
 field_73819_m,isEnabled,2,"If this value is true along isFocused, keyTyped will process the keys."
@@ -1886,7 +2066,7 @@ field_74263_b,workingMessage,2,
 field_74264_c,currentProgress,2,
 field_74265_a,progressMessage,2,
 field_74267_a,mcServer,2,Reference to the MinecraftServer object.
-field_74268_a,simpleDateFormatLogFormatter,2,Date Formatter of Log/Console.
+field_74268_a,dateFormat,2,The date format to use in the console log.
 field_74270_a,mcServer,2,Reference to the MinecraftServer object.
 field_74272_a,mcServer,2,Reference to the MinecraftServer object.
 field_74274_a,mcServer,2,Reference to the MinecraftServer object.
@@ -2092,15 +2272,20 @@ field_74756_a,data,2,The byte value for the tag.
 field_74784_a,tagMap,2,"The key-value pairs for the tag. Each key is a UTF string, each value is a tag."
 field_74790_a,enumJsonNodeTypeMappingArray,2,A mapping helper array for EnumJsonNodeType's values.
 field_74791_a,escapedString,2,
+field_74801_a,theBouncyCastleProvider,2,
 field_74813_d,currentLanguage,2,
 field_74814_e,isUnicode,2,
 field_74815_b,translateTable,2,Contains all key/value pairs to be translated - is loaded from '/lang/en_US.lang' when the StringTranslate is created.
 field_74816_c,languageList,2,
 field_74817_a,instance,2,Is the private singleton instance of StringTranslate.
+field_74822_f,ASYMMETRIC_GENERIC,2,
+field_74823_g,ASYMMETRIC_CIPHERS,2,
 field_74824_d,keyInfoConverters,2,
+field_74825_e,SYMMETRIC_CIPHERS,2,
 field_74826_b,CONFIGURATION,2,
 field_74827_c,info,2,
 field_74828_a,PROVIDER_NAME,2,
+field_74829_h,DIGESTS,2,
 field_74831_f,dhThreadSpec,2,
 field_74832_d,BC_DH_PERMISSION,2,
 field_74833_e,ecThreadSpec,2,
@@ -2111,6 +2296,17 @@ field_74839_a,localizedName,2,
 field_74842_b,permissionMask,2,
 field_74843_a,actions,2,
 field_74845_a,errorObjects,2,
+field_74846_d,buf,2,
+field_74847_b,theStreamCipher,2,
+field_74848_c,oneByte,2,
+field_74849_a,theBufferedBlockCipher,2,
+field_74853_f,maxBuf,2,
+field_74854_g,finalized,2,
+field_74855_d,inBuf,2,
+field_74856_e,bufOff,2,
+field_74857_b,theStreamCipher,2,
+field_74858_c,buf,2,
+field_74859_a,theBufferedBlockCipher,2,
 field_74885_f,coordBaseMode,2,switches the Coordinate System base off the Bounding Box
 field_74886_g,componentType,2,The type ID of this component.
 field_74887_e,boundingBox,2,
@@ -2486,6 +2682,7 @@ field_75624_e,classToIDMapping,2,provides a mapping between an Entity Class and 
 field_75625_b,stringToClassMapping,2,Provides a mapping between entity classes and a string
 field_75626_c,classToStringMapping,2,Provides a mapping between a string and an entity classes
 field_75627_a,entityEggs,2,This is a HashMap of the Creative Entity Eggs/Spawners.
+field_75643_f,update,2,
 field_75644_d,posZ,2,
 field_75645_e,speed,2,The speed at which the entity should move
 field_75646_b,posX,2,
@@ -2505,6 +2702,7 @@ field_75675_d,watched,2,
 field_75676_b,dataValueId,2,id of max 31
 field_75677_c,watchedObject,2,
 field_75678_a,objectType,2,
+field_75694_d,lock,2,
 field_75695_b,watchedObjects,2,
 field_75696_c,objectChanged,2,true if one or more object was changed
 field_75697_a,dataTypes,2,
@@ -4186,6 +4384,7 @@ field_82134_g,secondaryEffect,2,Secondary potion effect given by this beacon.
 field_82136_e,levels,2,Level of this beacon's pyramid.
 field_82139_a,effectsList,2,List of effects that Beacon can apply
 field_82140_h,payment,2,Item given to this beacon as payment.
+field_82153_h,timeInPortal,2,
 field_82155_f,isAnvil,2,
 field_82156_g,fallHurtMax,2,Maximum amount of damage dealt to entities hit by falling block
 field_82157_e,isBreakingAnvil,2,
@@ -4257,6 +4456,7 @@ field_82374_e,facings,2,
 field_82387_b,intListPattern,2,"This matches things like ""-1,,4"", and is used for getting x,y,z,range from the token's argument list."
 field_82388_c,keyValueListPattern,2,"This matches things like ""rm=4,c=2"" and is used for handling named token arguments."
 field_82389_a,tokenPattern,2,"This matches the at-tokens introduced for command blocks, including their arguments, if any."
+field_82391_c,instance,2,
 field_82397_a,skullRenderer,2,
 field_82401_a,skeletonHeadModel,2,The Skeleton's head model.
 field_82405_a,renderBlocksInstance,2,
@@ -4265,9 +4465,17 @@ field_82446_a,renderedBatSize,2,"not actually sure this is size, is not used as 
 field_82453_b,createFlatWorldGui,2,
 field_82458_b,flatPresetsGui,2,
 field_82470_g,playingSounds,2,Identifiers of all currently playing sounds. Type: HashSet<String>
+field_82471_f,minecartIsMoving,2,
+field_82472_g,silent,2,
+field_82473_d,playerSPRidingMinecart,2,
+field_82474_e,minecartIsDead,2,
 field_82475_b,theMinecart,2,Minecart which sound is being updated.
 field_82476_c,thePlayer,2,The player that is getting the minecart sound updates.
 field_82477_a,theSoundManager,2,
+field_82478_j,minecartRideSoundVolume,2,
+field_82479_k,minecartSpeed,2,
+field_82480_h,minecartSoundPitch,2,
+field_82481_i,minecartMoveSoundVolume,2,
 field_82483_a,itemDispenseBehaviorProvider,2,
 field_82484_c,defaultItemDispenseBehavior,2,Reference to the BehaviorDefaultDispenseItem object.
 field_82490_b,mcServer,2,
@@ -4311,10 +4519,16 @@ field_82587_b,theNBTTagCompound,2,
 field_82592_a,vec3dPool,2,
 field_82596_a,registryObjects,2,Objects registered on this registry.
 field_82597_b,defaultObject,2,"Default object for this registry, returned when an object is not found."
+field_82611_j,frontOffsetY,2,
+field_82612_k,frontOffsetZ,2,
+field_82614_i,frontOffsetX,2,
 field_82624_d,zPos,2,
 field_82625_b,xPos,2,
 field_82626_c,yPos,2,
 field_82627_a,worldObj,2,
+field_82628_b,y,2,
+field_82629_c,z,2,
+field_82630_a,x,2,
 field_82635_f,maxSpeedBoostTime,2,Maximum time the entity's speed should be boosted for.
 field_82636_d,speedBoosted,2,Whether the entity's speed is boosted.
 field_82637_e,speedBoostTime,2,"Counter for speed boosting, upon reaching maxSpeedBoostTime the speed boost will be disabled"
@@ -4338,6 +4552,9 @@ field_82681_h,cropTypeD,2,Fourth crop type for this field.
 field_82682_h,hasWitch,2,Whether this swamp hut has a witch.
 field_82693_j,playerReputation,2,List of player reputations with this village
 field_82694_i,noBreedTicks,2,Timestamp of tick count when villager last bred
+field_82696_f,structureGenerators,2,
+field_82701_j,lavaLakeGenerator,2,
+field_82703_i,waterLakeGenerator,2,
 field_82707_i,isAnimal,2,Whether this creature type is an animal.
 field_82717_g,anvil,2,
 field_82723_d,isSplashPotion,2,Whether the potion is a splash potion
@@ -4390,7 +4607,10 @@ field_82860_h,theWorld,2,
 field_82862_h,thePlayer,2,
 field_82864_f,beaconSlot,2,"This beacon's slot where you put in Emerald, Diamond, Gold or Iron Ingot."
 field_82866_e,theBeacon,2,
+field_82871_d,blockPosZ,2,
 field_82872_e,anvil,2,The anvil this slot belongs to.
+field_82873_b,blockPosX,2,
+field_82874_c,blockPosY,2,
 field_82875_a,theWorld,2,
 field_82876_a,beacon,2,The beacon this slot belongs to.
 field_82880_z,showCape,2,Whether to show your cape
@@ -4418,14 +4638,40 @@ field_83024_j,renderMaxY,2,The maximum Y value for rendering (default 1.0).
 field_83025_k,renderMinZ,2,The minimum Z value for rendering (default 0.0).
 field_83026_h,renderMaxX,2,The maximum X value for rendering (default 1.0).
 field_83027_i,renderMinY,2,The minimum Y value for rendering (default 0.0).
+field_85037_d,aiArrowAttack,2,
+field_85038_e,aiAttackOnCollide,2,
 field_85045_v,returningStack,2,Used when touchscreen is enabled
 field_85046_u,returningStackTime,2,
 field_85047_t,returningStackDestSlot,2,
 field_85050_q,draggedStack,2,Used when touchscreen is enabled
 field_85051_p,clickedSlot,2,Used when touchscreen is enabled
 field_85053_h,throwerName,2,
+field_85075_d,stackTrace,2,
+field_85109_a,worldInfoInstance,2,
+field_85111_a,worldInfoInstance,2,
+field_85113_a,worldInfoInstance,2,
+field_85115_a,worldInfoInstance,2,
+field_85135_a,worldInfoInstance,2,
+field_85137_a,worldInfoInstance,2,
+field_85139_a,worldInfoInstance,2,
+field_85141_a,worldInfoInstance,2,
+field_85143_a,worldInfoInstance,2,
 field_85180_cf,recordWait,2,
 field_85185_A,touchscreen,2,
+field_85192_a,worldServerInstance,2,
 field_90017_e,isMacOs,2,
 field_90018_r,isRightMouseClick,2,Used when touchscreen is enabled
 field_90044_b,records,2,List of all record items and their names.
+field_92009_j,explosionStrength,2,The explosion radius of spawned fireballs.
+field_92010_b,lifetime,2,The lifetime of the firework in ticks. When the age reaches the lifetime the firework explodes.
+field_92011_a,fireworkAge,2,The age of the firework in ticks.
+field_92014_j,explosionStrength,2,The explosion radius of spawned fireballs.
+field_92017_j,spawnedMob,2,
+field_92052_bU,firework,2,
+field_92053_bW,enchantedBook,2,
+field_92054_bV,fireworkCharge,2,
+field_92055_b,lifetime,2,The lifetime of the firework in ticks. When the age reaches the lifetime the firework explodes.
+field_92056_a,fireworkAge,2,The age of the firework in ticks.
+field_92104_bU,firework,2,
+field_92105_bW,enchantedBook,2,
+field_92106_bV,fireworkCharge,2,
