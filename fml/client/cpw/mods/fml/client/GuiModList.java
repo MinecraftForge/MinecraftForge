@@ -24,8 +24,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.Texture;
-import net.minecraft.client.renderer.TextureManager;
+import net.minecraft.client.renderer.texture.Texture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
