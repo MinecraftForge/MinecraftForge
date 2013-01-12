@@ -17,14 +17,14 @@
                  {
 -                    ItemStack itemstack2 = new ItemStack(itemstack1.getItem().getContainerItem());
 +                    ItemStack itemstack2 = itemstack1.getItem().getContainerItemStack(itemstack1);
-+                    
+ 
+-                    if (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2))
 +                    if (itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage())
 +                    {
 +                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, itemstack2));
 +                        itemstack2 = null;
 +                    }
- 
--                    if (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2))
++
 +                    if (itemstack2 != null && (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2)))
                      {
                          if (this.craftMatrix.getStackInSlot(i) == null)

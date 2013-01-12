@@ -8,8 +8,8 @@
 +import java.util.ArrayList;
  import java.util.Random;
  import net.minecraft.block.material.Material;
- import net.minecraft.entity.EntityLiving;
-@@ -175,7 +177,14 @@
+ import net.minecraft.client.renderer.texture.IconRegister;
+@@ -197,7 +199,14 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
@@ -25,7 +25,7 @@
          byte b0 = 1;
  
          if (j1 >= 2)
-@@ -185,8 +194,9 @@
+@@ -207,8 +216,9 @@
  
          for (int k1 = 0; k1 < b0; ++k1)
          {
@@ -37,9 +37,9 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -206,4 +216,10 @@
-     {
-         return 3;
+@@ -239,4 +249,10 @@
+             this.field_94469_b[i] = par1IconRegister.func_94245_a(field_94470_a[i]);
+         }
      }
 +
 +    @Override

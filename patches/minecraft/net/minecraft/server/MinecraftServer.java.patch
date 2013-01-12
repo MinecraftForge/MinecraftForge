@@ -29,7 +29,7 @@
      private KeyPair serverKeyPair;
  
      /** Username of the server owner (for integrated servers) */
-@@ -238,8 +244,6 @@
+@@ -239,8 +245,6 @@
      {
          this.convertMapIfNeeded(par1Str);
          this.setUserMessage("menu.loadingLevel");
@@ -38,7 +38,7 @@
          ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
          WorldSettings worldsettings;
-@@ -259,46 +263,23 @@
+@@ -260,46 +264,23 @@
              worldsettings.enableBonusChest();
          }
  
@@ -96,7 +96,7 @@
          this.setDifficultyForAllWorlds(this.getDifficulty());
          this.initialWorldChunkLoad();
      }
-@@ -427,7 +408,14 @@
+@@ -428,7 +409,14 @@
              for (int i = 0; i < this.worldServers.length; ++i)
              {
                  WorldServer worldserver = this.worldServers[i];
@@ -111,7 +111,7 @@
              }
  
              if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
-@@ -651,13 +639,15 @@
+@@ -652,13 +640,15 @@
          this.theProfiler.startSection("levels");
          int i;
  
@@ -132,7 +132,7 @@
                  this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
                  this.theProfiler.startSection("pools");
                  worldserver.getWorldVec3Pool().clear();
-@@ -704,9 +694,11 @@
+@@ -705,9 +695,11 @@
                  this.theProfiler.endSection();
              }
  
@@ -147,7 +147,7 @@
          this.theProfiler.endStartSection("connection");
          this.getNetworkThread().networkTick();
          this.theProfiler.endStartSection("players");
-@@ -760,7 +752,13 @@
+@@ -761,7 +753,13 @@
       */
      public WorldServer worldServerForDimension(int par1)
      {
@@ -162,7 +162,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1131,6 +1129,7 @@
+@@ -1132,6 +1130,7 @@
  
              if (worldserver != null)
              {

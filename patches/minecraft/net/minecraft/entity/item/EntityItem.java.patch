@@ -12,22 +12,22 @@
  
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.block.Block;
-@@ -29,6 +34,11 @@
- 
+@@ -30,6 +35,11 @@
      /** The EntityItem's random initial float height. */
      public float hoverStart;
-+    
+ 
 +    /**
 +     * The maximum age of this EntityItem.  The item is expired once this is reached.
 +     */
 +    public int lifespan = 6000;
- 
++
      public EntityItem(World par1World, double par2, double par4, double par6)
      {
+         super(par1World);
 @@ -49,6 +59,7 @@
      {
          this(par1World, par2, par4, par6);
-         this.func_92013_a(par8ItemStack);
+         this.func_92058_a(par8ItemStack);
 +        this.lifespan = (par8ItemStack.getItem() == null ? 6000 : par8ItemStack.getItem().getEntityLifespan(par8ItemStack, par1World));
      }
  
@@ -69,13 +69,13 @@
          par1NBTTagCompound.setShort("Age", (short)this.age);
 +        par1NBTTagCompound.setInteger("Lifespan", lifespan);
  
-         if (this.func_92014_d() != null)
+         if (this.getEntityItem() != null)
          {
 @@ -280,10 +314,17 @@
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
-         this.func_92013_a(ItemStack.loadItemStackFromNBT(nbttagcompound1));
+         this.func_92058_a(ItemStack.loadItemStackFromNBT(nbttagcompound1));
  
--        if (this.func_92014_d() == null)
+-        if (this.getEntityItem() == null)
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
 +
 +        if (item == null || item.stackSize <= 0)
@@ -106,7 +106,7 @@
 +                return;
 +            }
 +
-             ItemStack itemstack = this.func_92014_d();
+             ItemStack itemstack = this.getEntityItem();
              int i = itemstack.stackSize;
  
 -            if (this.delayBeforeCanPickup == 0 && par1EntityPlayer.inventory.addItemStackToInventory(itemstack))

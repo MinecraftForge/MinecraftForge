@@ -11,9 +11,9 @@
 +
 +public class BlockReed extends Block implements IPlantable
  {
-     protected BlockReed(int par1, int par2)
+     protected BlockReed(int par1)
      {
-@@ -55,8 +59,8 @@
+@@ -54,8 +58,8 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -24,7 +24,7 @@
      }
  
      /**
-@@ -139,4 +143,22 @@
+@@ -138,4 +142,22 @@
      {
          return Item.reed.itemID;
      }

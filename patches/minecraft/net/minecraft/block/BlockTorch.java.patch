@@ -9,7 +9,7 @@
 +
  public class BlockTorch extends Block
  {
-     protected BlockTorch(int par1, int par2)
+     protected BlockTorch(int par1)
 @@ -65,7 +68,7 @@
          else
          {
@@ -66,24 +66,24 @@
 -            if (par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
 +            if (par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 1);
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 1, 2);
              }
 -            else if (par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
 +            else if (par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 2, 2);
              }
 -            else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
 +            else if (par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 3);
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
              }
 -            else if (par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
 +            else if (par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
              {
-                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
+                 par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
              }
-@@ -168,22 +175,22 @@
+@@ -173,22 +180,22 @@
              int i1 = par1World.getBlockMetadata(par2, par3, par4);
              boolean flag = false;
  

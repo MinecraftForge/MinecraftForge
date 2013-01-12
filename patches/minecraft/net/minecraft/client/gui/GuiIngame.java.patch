@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/GuiIngame.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/GuiIngame.java
-@@ -26,6 +26,8 @@
+@@ -27,6 +27,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -9,7 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class GuiIngame extends Gui
  {
-@@ -159,7 +161,7 @@
+@@ -160,7 +162,7 @@
  
                  j3 = l - 39;
                  l2 = j3 - 10;

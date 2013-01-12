@@ -18,7 +18,7 @@
  
      /**
       * Used to call methods addSmelting and getSmeltingResult.
-@@ -54,7 +58,9 @@
+@@ -56,7 +60,9 @@
  
      /**
       * Returns the smelting result of an item.
@@ -28,7 +28,7 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -65,8 +71,63 @@
+@@ -67,8 +73,63 @@
          return this.smeltingList;
      }
  

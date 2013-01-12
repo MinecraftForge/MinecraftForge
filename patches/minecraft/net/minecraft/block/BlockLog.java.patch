@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockLog.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
-@@ -63,14 +63,9 @@
+@@ -69,14 +69,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
  
@@ -11,15 +11,15 @@
 -
 -                            if ((k2 & 8) == 0)
 -                            {
--                                par1World.setBlockMetadata(par2 + k1, par3 + l1, par4 + i2, k2 | 8);
+-                                par1World.setBlockMetadataWithNotify(par2 + k1, par3 + l1, par4 + i2, k2 | 8, 4);
 -                            }
 +                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
                          }
                      }
                  }
-@@ -151,4 +146,16 @@
-     {
-         return new ItemStack(this.blockID, 1, limitToValidMetadata(par1));
+@@ -171,4 +166,16 @@
+             this.field_94390_c[i] = par1IconRegister.func_94245_a(field_94389_b[i]);
+         }
      }
 +
 +    @Override

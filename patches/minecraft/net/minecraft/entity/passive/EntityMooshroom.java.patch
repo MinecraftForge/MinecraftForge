@@ -45,10 +45,10 @@
 +        return super.interact(par1EntityPlayer);
      }
  
-     /**
-@@ -78,4 +58,29 @@
+     public EntityMooshroom func_94900_c(EntityAgeable par1EntityAgeable)
+@@ -83,4 +63,29 @@
      {
-         return this.spawnBabyAnimal(par1EntityAgeable);
+         return this.func_94900_c(par1EntityAgeable);
      }
 +
 +    @Override

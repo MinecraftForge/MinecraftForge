@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -67,7 +67,8 @@
+@@ -74,7 +74,8 @@
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
          int l = par1World.getBlockId(par2, par3 - 1, par4);
@@ -10,27 +10,27 @@
      }
  
      /**
-@@ -86,7 +87,6 @@
+@@ -93,7 +94,6 @@
      {
          if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
          {
 -            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-             par1World.setBlockWithNotify(par2, par3, par4, 0);
+             par1World.func_94571_i(par2, par3, par4);
              return false;
          }
-@@ -102,10 +102,8 @@
+@@ -109,10 +109,8 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
 -        int i1 = Item.snowball.itemID;
 -        this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(i1, 1, 0));
 +        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
-         par1World.setBlockWithNotify(par3, par4, par5, 0);
+         par1World.func_94571_i(par3, par4, par5);
 -        par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
      }
  
      /**
-@@ -121,7 +119,7 @@
+@@ -128,7 +126,7 @@
       */
      public int quantityDropped(Random par1Random)
      {
@@ -39,11 +39,11 @@
      }
  
      /**
-@@ -131,7 +129,6 @@
+@@ -138,7 +136,6 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {
 -            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-             par1World.setBlockWithNotify(par2, par3, par4, 0);
+             par1World.func_94571_i(par2, par3, par4);
          }
      }

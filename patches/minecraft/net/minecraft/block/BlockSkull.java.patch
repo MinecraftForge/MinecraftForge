@@ -8,8 +8,8 @@
 +import java.util.ArrayList;
  import java.util.Random;
  import net.minecraft.block.material.Material;
- import net.minecraft.entity.EntityLiving;
-@@ -133,11 +135,6 @@
+ import net.minecraft.client.renderer.texture.IconRegister;
+@@ -134,11 +136,6 @@
      }
  
      /**
@@ -21,8 +21,8 @@
       * Called when the block is attempted to be harvested
       */
      public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
-@@ -148,6 +145,8 @@
-             par1World.setBlockMetadataWithNotify(par2, par3, par4, par5);
+@@ -149,6 +146,8 @@
+             par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
          }
  
 +        dropBlockAsItem(par1World, par2, par3, par4, par5, 0);
@@ -30,28 +30,13 @@
          super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
      }
  
-@@ -156,24 +155,30 @@
+@@ -157,24 +156,30 @@
       */
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {
 -        if (!par1World.isRemote)
 -        {
 -            if ((par6 & 8) == 0)
--            {
--                ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
--                TileEntitySkull tileentityskull = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
--
--                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
--                {
--                    itemstack.setTagCompound(new NBTTagCompound());
--                    itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
--                }
--
--                this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
--            }
--
--            super.breakBlock(par1World, par2, par3, par4, par5, par6);
--        }
 +        super.breakBlock(par1World, par2, par3, par4, par5, par6);
 +    }
 +
@@ -65,9 +50,22 @@
 +            TileEntitySkull tileentityskull = (TileEntitySkull)world.getBlockTileEntity(x, y, z);
 +
 +            if (tileentityskull == null)
-+            {
+             {
+-                ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
+-                TileEntitySkull tileentityskull = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
+-
+-                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
+-                {
+-                    itemstack.setTagCompound(new NBTTagCompound());
+-                    itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
+-                }
+-
+-                this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
 +                return drops;
-+            }
+             }
+-
+-            super.breakBlock(par1World, par2, par3, par4, par5, par6);
+-        }
 +            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
 +            {
 +                itemstack.setTagCompound(new NBTTagCompound());

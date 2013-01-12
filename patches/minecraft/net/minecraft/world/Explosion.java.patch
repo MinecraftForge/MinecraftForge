@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src_work/minecraft/net/minecraft/world/Explosion.java
-@@ -90,7 +90,7 @@
+@@ -92,7 +92,7 @@
                              if (k1 > 0)
                              {
                                  Block block = Block.blocksList[k1];

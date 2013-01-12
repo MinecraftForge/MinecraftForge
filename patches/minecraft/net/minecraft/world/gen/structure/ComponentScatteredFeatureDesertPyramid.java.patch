@@ -21,7 +21,7 @@
              {
                  int j1 = Direction.offsetX[i1] * 2;
                  int k1 = Direction.offsetZ[i1] * 2;
--                this.field_74940_h[i1] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + j1, -11, 10 + k1, WeightedRandomChestContent.func_92029_a(itemsToGenerateInTemple, new WeightedRandomChestContent[] {Item.field_92053_bW.func_92059_b(par2Random)}), 2 + par2Random.nextInt(5));
+-                this.field_74940_h[i1] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + j1, -11, 10 + k1, WeightedRandomChestContent.func_92080_a(itemsToGenerateInTemple, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 2 + par2Random.nextInt(5));
 +                this.field_74940_h[i1] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + j1, -11, 10 + k1, info.getItems(par2Random), info.getCount(par2Random));
              }
          }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
-@@ -37,6 +37,8 @@
+@@ -43,6 +43,8 @@
  import net.minecraft.world.World;
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
@@ -9,7 +9,7 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderBlocks
-@@ -620,9 +622,8 @@
+@@ -629,9 +631,8 @@
      public boolean renderBlockBed(Block par1Block, int par2, int par3, int par4)
      {
          Tessellator tessellator = Tessellator.instance;
@@ -21,23 +21,23 @@
          float f = 0.5F;
          float f1 = 1.0F;
          float f2 = 0.8F;
-@@ -631,6 +632,7 @@
+@@ -640,6 +641,7 @@
          tessellator.setBrightness(j1);
          tessellator.setColorOpaque_F(f, f, f);
-         int k1 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 0);
-+        if (overrideBlockTexture >= 0) k1 = overrideBlockTexture; //BugFix Proper breaking texture on underside
-         int l1 = (k1 & 15) << 4;
-         int i2 = k1 & 240;
-         double d0 = (double)((float)l1 / 256.0F);
-@@ -649,6 +651,7 @@
+         Icon icon = this.func_94170_a(par1Block, this.blockAccess, par2, par3, par4, 0);
++        if (func_94167_b()) icon = overrideBlockTexture; //BugFix Proper breaking texture on underside
+         double d0 = (double)icon.func_94209_e();
+         double d1 = (double)icon.func_94212_f();
+         double d2 = (double)icon.func_94206_g();
+@@ -656,6 +658,7 @@
          tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4));
          tessellator.setColorOpaque_F(f1, f1, f1);
-         k1 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 1);
-+        if (overrideBlockTexture >= 0) k1 = overrideBlockTexture; //BugFix Proper breaking texture on top
-         l1 = (k1 & 15) << 4;
-         i2 = k1 & 240;
-         d0 = (double)((float)l1 / 256.0F);
-@@ -2387,7 +2390,7 @@
+         icon = this.func_94170_a(par1Block, this.blockAccess, par2, par3, par4, 1);
++        if (func_94167_b()) icon = overrideBlockTexture; //BugFix Proper breaking texture on underside
+         d0 = (double)icon.func_94209_e();
+         d1 = (double)icon.func_94212_f();
+         d2 = (double)icon.func_94206_g();
+@@ -2444,7 +2447,7 @@
          double d9;
          double d10;
  
@@ -46,44 +46,44 @@
          {
              float f1 = 0.2F;
              float f2 = 0.0625F;
-@@ -2407,7 +2410,7 @@
+@@ -2464,7 +2467,7 @@
                  d0 = d5;
              }
  
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4))
 +            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4, EAST))
              {
-                 tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d1, d2);
-                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 1), d1, d3);
-@@ -2419,7 +2422,7 @@
-                 tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d1, d2);
+                 tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d2, d1);
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 1), d2, d3);
+@@ -2476,7 +2479,7 @@
+                 tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d2, d1);
              }
  
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 + 1, par3, par4))
 +            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 + 1, par3, par4, WEST))
              {
-                 tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d2);
+                 tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d1);
                  tessellator.addVertexWithUV((double)(par2 + 1 - 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d0, d3);
-@@ -2431,7 +2434,7 @@
-                 tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d2);
+@@ -2488,7 +2491,7 @@
+                 tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d1);
              }
  
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 - 1))
 +            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 - 1, SOUTH))
              {
-                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d1, d2);
-                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d1, d3);
-@@ -2443,7 +2446,7 @@
-                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d1, d2);
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d2, d1);
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d2, d3);
+@@ -2500,7 +2503,7 @@
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d2, d1);
              }
  
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 + 1))
 +            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 + 1, NORTH))
              {
-                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d2);
+                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d1);
                  tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)(par3 + 0) + f2), (double)(par4 + 1 - 0), d0, d3);
-@@ -2455,7 +2458,7 @@
-                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d2);
+@@ -2512,7 +2515,7 @@
+                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d1);
              }
  
 -            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4))
@@ -91,75 +91,3 @@
              {
                  d5 = (double)par2 + 0.5D + 0.5D;
                  d6 = (double)par2 + 0.5D - 0.5D;
-@@ -4654,7 +4657,7 @@
-             k2 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
-             this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, k2);
- 
--            if (fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-             {
-                 this.colorRedTopLeft *= par5;
-                 this.colorRedBottomLeft *= par5;
-@@ -4777,7 +4780,7 @@
-             k2 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
-             this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3));
- 
--            if (fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-             {
-                 this.colorRedTopLeft *= par5;
-                 this.colorRedBottomLeft *= par5;
-@@ -4900,7 +4903,7 @@
-             k2 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
-             this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, k2);
- 
--            if (fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-             {
-                 this.colorRedTopLeft *= par5;
-                 this.colorRedBottomLeft *= par5;
-@@ -5023,7 +5026,7 @@
-             k2 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
-             this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, k2);
- 
--            if (fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && k2 == 3 && this.overrideBlockTexture < 0)
-             {
-                 this.colorRedTopLeft *= par5;
-                 this.colorRedBottomLeft *= par5;
-@@ -5135,7 +5138,7 @@
-             i1 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
-             this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, i1);
- 
--            if (fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f11 * par5, f14 * par6, f17 * par7);
-                 this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -5151,7 +5154,7 @@
-             i1 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 3);
-             this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, i1);
- 
--            if (fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f11 * par5, f14 * par6, f17 * par7);
-                 this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -5167,7 +5170,7 @@
-             i1 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 4);
-             this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, i1);
- 
--            if (fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f12 * par5, f15 * par6, f18 * par7);
-                 this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, 38);
-@@ -5183,7 +5186,7 @@
-             i1 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 5);
-             this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, i1);
- 
--            if (fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-+            if (Tessellator.instance.defaultTexture && fancyGrass && i1 == 3 && this.overrideBlockTexture < 0)
-             {
-                 tessellator.setColorOpaque_F(f12 * par5, f15 * par6, f18 * par7);
-                 this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, 38);

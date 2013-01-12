@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemDye.java
-@@ -18,6 +18,11 @@
+@@ -20,6 +20,11 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
@@ -12,7 +12,7 @@
  public class ItemDye extends Item
  {
      /** List of dye color names */
-@@ -68,6 +73,21 @@
+@@ -73,6 +78,21 @@
              if (par1ItemStack.getItemDamage() == 15)
              {
                  i1 = par3World.getBlockId(par4, par5, par6);
@@ -34,8 +34,8 @@
  
                  if (i1 == Block.sapling.blockID)
                  {
-@@ -167,16 +187,9 @@
-                                         par3World.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1);
+@@ -172,16 +192,9 @@
+                                         par3World.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1, 3);
                                      }
                                  }
 -                                else if (itemRand.nextInt(3) != 0)
@@ -43,12 +43,12 @@
                                  {
 -                                    if (Block.plantYellow.canBlockStay(par3World, k1, l1, i2))
 -                                    {
--                                        par3World.setBlockWithNotify(k1, l1, i2, Block.plantYellow.blockID);
+-                                        par3World.func_94575_c(k1, l1, i2, Block.plantYellow.blockID);
 -                                    }
 -                                }
 -                                else if (Block.plantRed.canBlockStay(par3World, k1, l1, i2))
 -                                {
--                                    par3World.setBlockWithNotify(k1, l1, i2, Block.plantRed.blockID);
+-                                    par3World.func_94575_c(k1, l1, i2, Block.plantRed.blockID);
 +                                    ForgeHooks.plantGrass(par3World, k1, l1, i2);
                                  }
                              }

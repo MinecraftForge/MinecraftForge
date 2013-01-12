@@ -1,15 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/block/Block.java
 +++ ../src_work/minecraft/net/minecraft/block/Block.java
-@@ -2,13 +2,17 @@
+@@ -1,15 +1,20 @@
+ package net.minecraft.block;
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
++import static net.minecraftforge.common.ForgeDirection.DOWN;
++import static net.minecraftforge.common.ForgeDirection.UP;
 +
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
++
  import net.minecraft.block.material.Material;
 +import net.minecraft.client.particle.EffectRenderer;
+ import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
@@ -18,7 +23,7 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -24,17 +28,27 @@
+@@ -25,8 +30,10 @@
  import net.minecraft.item.ItemSlab;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
@@ -26,16 +31,20 @@
  import net.minecraft.tileentity.TileEntitySign;
  import net.minecraft.util.AxisAlignedBB;
 +import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
- import net.minecraft.util.Vec3;
+@@ -34,9 +41,20 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +import net.minecraft.world.WorldProviderEnd;
-+
-+import net.minecraftforge.common.*;
-+import static net.minecraftforge.common.ForgeDirection.*;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.IPlantable;
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
  
  public class Block
  {
@@ -46,7 +55,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -321,6 +335,7 @@
+@@ -328,6 +346,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -54,7 +63,7 @@
      }
  
      /**
-@@ -459,9 +474,10 @@
+@@ -450,9 +469,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +75,7 @@
      }
  
      /**
-@@ -484,7 +500,7 @@
+@@ -475,7 +495,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -494,7 +510,7 @@
+@@ -485,7 +505,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +93,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +655,13 @@
+@@ -623,7 +643,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -99,7 +108,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -663,8 +685,7 @@
+@@ -647,8 +673,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -109,7 +118,7 @@
      }
  
      /**
-@@ -682,18 +703,13 @@
+@@ -666,18 +691,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -132,7 +141,7 @@
                  }
              }
          }
-@@ -1081,7 +1097,7 @@
+@@ -1067,7 +1087,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -141,7 +150,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1364,4 +1380,840 @@
+@@ -1384,4 +1404,846 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -221,6 +230,10 @@
 +        {
 +            boolean flipped = ((meta & 4) != 0);
 +            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped);
++        }
++        else if (this instanceof BlockHopper && side == UP)
++        {
++            return true;
 +        }
 +        return isBlockNormalCube(world, x, y, z);
 +    }
@@ -304,7 +317,7 @@
 +     */
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
-+        return world.setBlockWithNotify(x, y, z, 0);
++        return world.func_94571_i(x, y, z);
 +    }
 +
 +    /**
@@ -674,9 +687,11 @@
 +     * @param x X Position
 +     * @param y Y Position
 +     * @param z Z Position
++     * @param target The generic target block the gen is looking for, Standards define stone 
++     *      for overworld generation, and neatherack for the nether.
 +     * @return True to allow this block to be replaced by a ore
 +     */
-+    public boolean isGenMineableReplaceable(World world, int x, int y, int z)
++    public boolean isGenMineableReplaceable(World world, int x, int y, int z, int target)
 +    {
 +        return blockID == stone.blockID;
 +    }

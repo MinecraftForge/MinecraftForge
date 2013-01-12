@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -62,6 +62,8 @@
+@@ -64,6 +64,8 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
@@ -9,7 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -929,6 +931,12 @@
+@@ -932,6 +934,12 @@
       */
      public void renderSky(float par1)
      {
@@ -22,7 +22,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1167,6 +1175,13 @@
+@@ -1170,6 +1178,13 @@
  
      public void renderClouds(float par1)
      {
@@ -36,7 +36,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1596,6 +1611,11 @@
+@@ -1599,6 +1614,11 @@
      }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
@@ -48,49 +48,3 @@
      {
          double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
-@@ -1873,6 +1893,7 @@
-             double d7 = this.mc.renderViewEntity.posY - par4;
-             double d8 = this.mc.renderViewEntity.posZ - par6;
-             EntityFX entityfx = null;
-+            Object effectObject = null;
- 
-             if (par1Str.equals("hugeexplosion"))
-             {
-@@ -2009,6 +2030,7 @@
-                     else if (par1Str.equals("snowballpoof"))
-                     {
-                         entityfx = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
-+                        effectObject = Item.snowball;
-                     }
-                     else if (par1Str.equals("dripWater"))
-                     {
-@@ -2025,6 +2047,7 @@
-                     else if (par1Str.equals("slime"))
-                     {
-                         entityfx = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
-+                        effectObject = Item.slimeBall;
-                     }
-                     else if (par1Str.equals("heart"))
-                     {
-@@ -2046,6 +2069,7 @@
-                     {
-                         int j = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
-                         entityfx = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[j]);
-+                        effectObject = Item.itemsList[j];
-                     }
-                     else if (par1Str.startsWith("tilecrack_"))
-                     {
-@@ -2053,11 +2077,12 @@
-                         int k = Integer.parseInt(astring[1]);
-                         int l = Integer.parseInt(astring[2]);
-                         entityfx = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[k], 0, l)).applyRenderColor(l);
-+                        effectObject = Block.blocksList[k];
-                     }
- 
-                     if (entityfx != null)
-                     {
--                        this.mc.effectRenderer.addEffect((EntityFX)entityfx);
-+                        this.mc.effectRenderer.addEffect((EntityFX)entityfx, effectObject);
-                     }
- 
-                     return (EntityFX)entityfx;

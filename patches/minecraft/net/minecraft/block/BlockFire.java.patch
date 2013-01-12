@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFire.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFire.java
-@@ -9,6 +9,9 @@
+@@ -11,6 +11,9 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldProviderEnd;
  
@@ -10,7 +10,7 @@
  public class BlockFire extends Block
  {
      /** The chance this block will encourage nearby blocks to catch on fire */
-@@ -32,6 +35,8 @@
+@@ -36,6 +39,8 @@
       */
      public void initializeBlock()
      {
@@ -19,7 +19,7 @@
          this.setBurnRate(Block.planks.blockID, 5, 20);
          this.setBurnRate(Block.woodDoubleSlab.blockID, 5, 20);
          this.setBurnRate(Block.woodSingleSlab.blockID, 5, 20);
-@@ -56,8 +61,7 @@
+@@ -60,8 +65,7 @@
       */
      private void setBurnRate(int par1, int par2, int par3)
      {
@@ -29,7 +29,7 @@
      }
  
      /**
-@@ -117,12 +121,8 @@
+@@ -118,12 +122,8 @@
      {
          if (par1World.getGameRules().getGameRuleBooleanValue("doFireTick"))
          {
@@ -44,16 +44,16 @@
  
              if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
              {
-@@ -151,7 +151,7 @@
-                         par1World.setBlockWithNotify(par2, par3, par4, 0);
+@@ -152,7 +152,7 @@
+                         par1World.func_94571_i(par2, par3, par4);
                      }
                  }
 -                else if (!flag && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4) && l == 15 && par5Random.nextInt(4) == 0)
 +                else if (!flag && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4, UP) && l == 15 && par5Random.nextInt(4) == 0)
                  {
-                     par1World.setBlockWithNotify(par2, par3, par4, 0);
+                     par1World.func_94571_i(par2, par3, par4);
                  }
-@@ -165,12 +165,12 @@
+@@ -166,12 +166,12 @@
                          b0 = -50;
                      }
  
@@ -72,7 +72,7 @@
  
                      for (int i1 = par2 - 1; i1 <= par2 + 1; ++i1)
                      {
-@@ -224,9 +224,20 @@
+@@ -225,9 +225,20 @@
          return false;
      }
  
@@ -94,7 +94,7 @@
  
          if (par6Random.nextInt(par5) < j1)
          {
-@@ -260,7 +271,12 @@
+@@ -261,7 +272,12 @@
       */
      private boolean canNeighborBurn(World par1World, int par2, int par3, int par4)
      {
@@ -108,7 +108,7 @@
      }
  
      /**
-@@ -276,12 +292,12 @@
+@@ -277,12 +293,12 @@
          }
          else
          {
@@ -127,7 +127,7 @@
              return l;
          }
      }
-@@ -296,21 +312,24 @@
+@@ -297,21 +313,24 @@
  
      /**
       * Checks the specified block coordinate to see if it can catch fire.  Args: blockAccess, x, y, z
@@ -157,7 +157,7 @@
      }
  
      /**
-@@ -368,9 +387,9 @@
+@@ -369,9 +388,9 @@
          float f1;
          float f2;
  
@@ -170,7 +170,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -381,7 +400,7 @@
+@@ -382,7 +401,7 @@
                  }
              }
  
@@ -179,7 +179,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -392,7 +411,7 @@
+@@ -393,7 +412,7 @@
                  }
              }
  
@@ -188,7 +188,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -403,7 +422,7 @@
+@@ -404,7 +423,7 @@
                  }
              }
  
@@ -197,7 +197,7 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -414,7 +433,7 @@
+@@ -415,7 +434,7 @@
                  }
              }
  
@@ -206,9 +206,9 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -436,4 +455,46 @@
-             }
-         }
+@@ -459,4 +478,46 @@
+     {
+         return this.field_94439_c[0];
      }
 +    
 +    /**

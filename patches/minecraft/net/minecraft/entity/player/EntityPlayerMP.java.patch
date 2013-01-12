@@ -8,7 +8,7 @@
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.inventory.Container;
  import net.minecraft.inventory.ContainerBeacon;
-@@ -74,6 +75,11 @@
+@@ -76,6 +77,11 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.chunk.Chunk;
  
@@ -20,7 +20,7 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private StringTranslate translator = new StringTranslate("en_US");
-@@ -145,18 +151,10 @@
+@@ -147,18 +153,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -40,7 +40,7 @@
  
          this.setLocationAndAngles((double)i + 0.5D, (double)k, (double)j + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
-@@ -253,7 +251,10 @@
+@@ -255,7 +253,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -52,7 +52,7 @@
                  }
              }
  
-@@ -274,6 +275,7 @@
+@@ -276,6 +277,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -60,7 +60,7 @@
                  }
              }
          }
-@@ -318,11 +320,29 @@
+@@ -320,11 +322,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -69,7 +69,7 @@
 +            return;
 +        }
 +
-         this.mcServer.getConfigurationManager().func_92027_k(par1DamageSource.getDeathMessage(this));
+         this.mcServer.getConfigurationManager().sendChatMsg(this.field_94063_bt.func_94546_b());
  
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {

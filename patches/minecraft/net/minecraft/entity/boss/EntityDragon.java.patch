@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -530,10 +530,11 @@
+@@ -531,10 +531,11 @@
                  for (int i2 = k; i2 <= j1; ++i2)
                  {
                      int j2 = this.worldObj.getBlockId(k1, l1, i2);
@@ -13,5 +13,5 @@
 -                        if (j2 != Block.obsidian.blockID && j2 != Block.whiteStone.blockID && j2 != Block.bedrock.blockID)
 +                        if (block.canDragonDestroy(worldObj, k1, l1, i2))
                          {
-                             flag1 = true;
-                             this.worldObj.setBlockWithNotify(k1, l1, i2, 0);
+                             flag1 = this.worldObj.func_94571_i(k1, l1, i2) || flag1;
+                         }

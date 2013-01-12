@@ -1,21 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockCrops.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockCrops.java
-@@ -2,11 +2,14 @@
+@@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
 +import java.util.ArrayList;
  import java.util.Random;
+ import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.item.Item;
+@@ -9,6 +10,7 @@
  import net.minecraft.item.ItemStack;
+ import net.minecraft.util.Icon;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeDirection;
  
  public class BlockCrops extends BlockFlower
  {
-@@ -92,11 +95,11 @@
+@@ -95,11 +97,11 @@
                  int j3 = par1World.getBlockId(l2, par3 - 1, i3);
                  float f1 = 0.0F;
  
@@ -29,7 +30,7 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -162,22 +165,25 @@
+@@ -167,22 +169,25 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);

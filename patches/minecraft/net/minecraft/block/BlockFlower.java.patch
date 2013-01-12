@@ -12,9 +12,9 @@
 +
 +public class BlockFlower extends Block implements IPlantable
  {
-     protected BlockFlower(int par1, int par2, Material par3Material)
+     protected BlockFlower(int par1, Material par2Material)
      {
-@@ -28,7 +33,7 @@
+@@ -27,7 +32,7 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -72,7 +77,9 @@
+@@ -71,7 +76,9 @@
       */
      public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {
@@ -34,7 +34,7 @@
      }
  
      /**
-@@ -108,4 +115,32 @@
+@@ -107,4 +114,32 @@
      {
          return 1;
      }

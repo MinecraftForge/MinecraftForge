@@ -9,7 +9,7 @@
  import java.util.List;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -14,7 +16,9 @@
+@@ -16,7 +18,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -18,8 +18,8 @@
 +
 +public class BlockLeaves extends BlockLeavesBase implements IShearable
  {
-     /**
-      * The base index in terrain.png corresponding to the fancy version of the leaf texture. This is stored so we can
+     public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
+     public static final String[][] field_94396_b = new String[][] {{"leaves", "leaves_spruce", "leaves", "leaves_jungle"}, {"leaves_opaque", "leaves_spruce_opaque", "leaves_opaque", "leaves_jungle_opaque"}};
 @@ -107,10 +111,9 @@
                      {
                          int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
@@ -28,7 +28,7 @@
 +                        if (Block.blocksList[j2] != null)
                          {
 -                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
--                            par1World.setBlockMetadata(par2 + k1, par3 + l1, par4 + i2, k2 | 8);
+-                            par1World.setBlockMetadataWithNotify(par2 + k1, par3 + l1, par4 + i2, k2 | 8, 4);
 +                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
                          }
                      }
@@ -66,9 +66,9 @@
      }
  
      /**
-@@ -371,4 +368,30 @@
-     {
-         return new ItemStack(this.blockID, 1, par1 & 3);
+@@ -387,4 +384,30 @@
+             }
+         }
      }
 +
 +    @Override
@@ -88,7 +88,7 @@
 +    @Override
 +    public void beginLeavesDecay(World world, int x, int y, int z)
 +    {
-+        world.setBlockMetadata(x, y, z, world.getBlockMetadata(x, y, z) | 8);
++        world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) | 8, 4);
 +    }
 +
 +    @Override

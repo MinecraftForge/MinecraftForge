@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFluid.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFluid.java
-@@ -54,7 +54,7 @@
+@@ -59,7 +59,7 @@
              {
                  for (int l1 = -1; l1 <= 1; ++l1)
                  {

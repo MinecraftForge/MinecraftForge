@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockLever.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockLever.java
-@@ -7,6 +7,9 @@
+@@ -10,6 +10,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -9,8 +9,8 @@
 +
  public class BlockLever extends Block
  {
-     protected BlockLever(int par1, int par2)
-@@ -54,7 +57,13 @@
+     protected BlockLever(int par1)
+@@ -57,7 +60,13 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -25,7 +25,7 @@
      }
  
      /**
-@@ -62,7 +71,12 @@
+@@ -65,7 +74,12 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -39,46 +39,46 @@
      }
  
      /**
-@@ -74,32 +88,32 @@
+@@ -77,32 +91,32 @@
          int k1 = par9 & 7;
-         k1 = -1;
+         byte b0 = -1;
  
 -        if (par5 == 0 && par1World.isBlockNormalCube(par2, par3 + 1, par4))
 +        if (par5 == 0 && par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN))
          {
-             k1 = par1World.rand.nextBoolean() ? 0 : 7;
+             b0 = 0;
          }
  
 -        if (par5 == 1 && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
 +        if (par5 == 1 && par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP))
          {
-             k1 = 5 + par1World.rand.nextInt(2);
+             b0 = 5;
          }
  
 -        if (par5 == 2 && par1World.isBlockNormalCube(par2, par3, par4 + 1))
 +        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
          {
-             k1 = 4;
+             b0 = 4;
          }
  
 -        if (par5 == 3 && par1World.isBlockNormalCube(par2, par3, par4 - 1))
 +        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
          {
-             k1 = 3;
+             b0 = 3;
          }
  
 -        if (par5 == 4 && par1World.isBlockNormalCube(par2 + 1, par3, par4))
 +        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
          {
-             k1 = 2;
+             b0 = 2;
          }
  
 -        if (par5 == 5 && par1World.isBlockNormalCube(par2 - 1, par3, par4))
 +        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
          {
-             k1 = 1;
+             b0 = 1;
          }
-@@ -142,42 +156,42 @@
+@@ -178,42 +192,42 @@
              int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
              boolean flag = false;
  

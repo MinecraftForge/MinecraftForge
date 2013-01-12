@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -380,7 +380,7 @@
+@@ -406,7 +406,7 @@
                  return false;
              }
  
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -398,7 +398,7 @@
+@@ -424,7 +424,7 @@
          {
              if (l1 < 13)
              {
@@ -18,7 +18,7 @@
                  {
                      return false;
                  }
-@@ -448,7 +448,7 @@
+@@ -474,7 +474,7 @@
  
              if (l1 < 13)
              {

@@ -10,7 +10,7 @@
  import java.util.zip.Inflater;
 @@ -26,6 +27,9 @@
      private int dataLength;
-     private boolean field_92024_h;
+     private boolean field_92076_h;
      private static byte[] chunkDataNotCompressed = new byte[0];
 +    private int maxLen = 0;
 +
@@ -83,4 +83,4 @@
 +
          par1DataOutputStream.writeShort(this.chunkPostX.length);
          par1DataOutputStream.writeInt(this.dataLength);
-         par1DataOutputStream.writeBoolean(this.field_92024_h);
+         par1DataOutputStream.writeBoolean(this.field_92076_h);

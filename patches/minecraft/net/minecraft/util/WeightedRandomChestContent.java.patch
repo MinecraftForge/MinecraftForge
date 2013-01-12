@@ -1,59 +1,41 @@
 --- ../src_base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src_work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -1,9 +1,13 @@
- package net.minecraft.util;
- 
- import java.util.Random;
-+
-+import cpw.mods.fml.common.FMLLog;
+@@ -4,6 +4,9 @@
+ import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemStack;
- import net.minecraft.tileentity.TileEntityChest;
  import net.minecraft.tileentity.TileEntityDispenser;
 +import net.minecraftforge.common.ChestGenHooks;
 +import net.minecraftforge.common.DungeonHooks;
++import cpw.mods.fml.common.FMLLog;
  
  public class WeightedRandomChestContent extends WeightedRandomItem
  {
-@@ -35,27 +39,26 @@
-     /**
-      * Generates the Chest contents.
-      */
-+    @SuppressWarnings("deprecation")
-     public static void generateChestContents(Random par0Random, WeightedRandomChestContent[] par1ArrayOfWeightedRandomChestContent, TileEntityChest par2TileEntityChest, int par3)
-     {
-         for (int j = 0; j < par3; ++j)
-         {
+@@ -42,20 +45,11 @@
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
--            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
+             int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
  
 -            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
-+            if (weightedrandomchestcontent instanceof DungeonHooks.DungeonLoot)
-             {
--                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
--                itemstack.stackSize = k;
--                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), itemstack);
-+                DungeonHooks.DungeonLoot loot = (DungeonHooks.DungeonLoot)weightedrandomchestcontent;
-+                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), loot.generateStack(par0Random));
-+                FMLLog.warning("Some mod is still using DungeonHooks.DungonLoot, tell them to stop! %s", loot);
-+                continue;
-             }
--            else
-+
 +            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
 +
 +            for (ItemStack item : stacks)
              {
+-                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                itemstack.stackSize = k;
+-                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack);
+-            }
+-            else
+-            {
 -                for (int l = 0; l < k; ++l)
 -                {
 -                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
 -                    itemstack1.stackSize = 1;
--                    par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), itemstack1);
+-                    par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack1);
 -                }
-+                par2TileEntityChest.setInventorySlotContents(par0Random.nextInt(par2TileEntityChest.getSizeInventory()), item);
++                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), item);
              }
          }
      }
-@@ -68,22 +71,11 @@
+@@ -68,22 +62,11 @@
          for (int j = 0; j < par3; ++j)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);

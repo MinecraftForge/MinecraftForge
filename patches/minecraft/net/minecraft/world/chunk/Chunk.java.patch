@@ -152,7 +152,7 @@
          {
              return 0;
          }
-@@ -592,6 +685,11 @@
+@@ -584,6 +677,11 @@
          }
          else
          {
@@ -164,7 +164,7 @@
              ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
              boolean flag = false;
  
-@@ -622,9 +720,13 @@
+@@ -614,9 +712,13 @@
                  {
                      Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
@@ -181,7 +181,7 @@
                  }
              }
  
-@@ -642,7 +744,7 @@
+@@ -634,7 +736,7 @@
                  }
                  else
                  {
@@ -190,7 +190,7 @@
                      {
                          if (par2 >= k1)
                          {
-@@ -666,29 +768,21 @@
+@@ -658,29 +760,21 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, j2, par2, k2);
                      }
  
@@ -223,7 +223,7 @@
                      }
                  }
  
-@@ -703,7 +797,7 @@
+@@ -695,7 +789,7 @@
       */
      public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
      {
@@ -232,7 +232,7 @@
  
          if (extendedblockstorage == null)
          {
-@@ -723,7 +817,7 @@
+@@ -715,7 +809,7 @@
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
  
@@ -241,7 +241,7 @@
                  {
                      TileEntity tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -744,7 +838,7 @@
+@@ -736,7 +830,7 @@
       */
      public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
      {
@@ -250,7 +250,7 @@
          return extendedblockstorage == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : extendedblockstorage.getExtSkylightValue(par2, par3 & 15, par4)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? extendedblockstorage.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
      }
  
-@@ -754,6 +848,11 @@
+@@ -746,6 +840,11 @@
       */
      public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
      {
@@ -262,7 +262,7 @@
          ExtendedBlockStorage extendedblockstorage = this.storageArrays[par3 >> 4];
  
          if (extendedblockstorage == null)
-@@ -782,7 +881,7 @@
+@@ -774,7 +873,7 @@
       */
      public int getBlockLightValue(int par1, int par2, int par3, int par4)
      {
@@ -271,7 +271,7 @@
  
          if (extendedblockstorage == null)
          {
-@@ -835,7 +934,7 @@
+@@ -827,7 +926,7 @@
          {
              k = this.entityLists.length - 1;
          }
@@ -280,7 +280,7 @@
          par1Entity.addedToChunk = true;
          par1Entity.chunkCoordX = this.xPosition;
          par1Entity.chunkCoordY = k;
-@@ -885,33 +984,33 @@
+@@ -877,33 +976,33 @@
          ChunkPosition chunkposition = new ChunkPosition(par1, par2, par3);
          TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
  
@@ -325,7 +325,7 @@
      }
  
      /**
-@@ -926,7 +1025,7 @@
+@@ -918,7 +1017,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -334,7 +334,7 @@
          }
      }
  
-@@ -941,8 +1040,14 @@
+@@ -933,8 +1032,14 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -351,7 +351,7 @@
              par4TileEntity.validate();
              this.chunkTileEntityMap.put(chunkposition, par4TileEntity);
          }
-@@ -978,6 +1083,7 @@
+@@ -970,6 +1075,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -359,7 +359,7 @@
      }
  
      /**
-@@ -998,6 +1104,7 @@
+@@ -990,6 +1096,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
@@ -367,9 +367,9 @@
      }
  
      /**
-@@ -1014,8 +1121,8 @@
+@@ -1006,8 +1113,8 @@
       */
-     public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
+     public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
 -        int i = MathHelper.floor_double((par2AxisAlignedBB.minY - 2.0D) / 16.0D);
 -        int j = MathHelper.floor_double((par2AxisAlignedBB.maxY + 2.0D) / 16.0D);
@@ -378,7 +378,7 @@
  
          if (i < 0)
          {
-@@ -1062,8 +1169,8 @@
+@@ -1054,8 +1161,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -389,7 +389,7 @@
  
          if (i < 0)
          {
-@@ -1246,6 +1353,15 @@
+@@ -1238,6 +1345,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -405,7 +405,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1346,12 +1462,26 @@
+@@ -1338,12 +1454,26 @@
          }
  
          this.generateHeightMap();
@@ -436,7 +436,7 @@
          }
      }
  
-@@ -1460,4 +1590,18 @@
+@@ -1452,4 +1582,18 @@
              }
          }
      }

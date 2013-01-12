@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockMushroom.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockMushroom.java
-@@ -3,6 +3,8 @@
- import java.util.Random;
+@@ -6,6 +6,8 @@
+ import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.world.World;
  import net.minecraft.world.gen.feature.WorldGenBigMushroom;
 +
@@ -9,7 +9,7 @@
  
  public class BlockMushroom extends BlockFlower
  {
-@@ -96,7 +98,9 @@
+@@ -102,7 +104,9 @@
          if (par3 >= 0 && par3 < 256)
          {
              int l = par1World.getBlockId(par2, par3 - 1, par4);

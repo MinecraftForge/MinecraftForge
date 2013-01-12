@@ -1,14 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -19,6 +19,7 @@
-         super(par1);
-         this.blockID = par1 + 256;
-         this.setIconIndex(Block.blocksList[par1 + 256].getBlockTextureFromSide(2));
-+        isDefaultTexture = Block.blocksList[par1 + 256].isDefaultTexture;
-     }
- 
-     /**
-@@ -41,7 +42,8 @@
+@@ -60,7 +60,8 @@
          {
              par7 = 1;
          }
@@ -18,15 +10,15 @@
          {
              if (par7 == 0)
              {
-@@ -92,14 +94,8 @@
+@@ -111,14 +112,8 @@
              int j1 = this.getMetadata(par1ItemStack.getItemDamage());
              int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
  
--            if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.blockID, k1))
+-            if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.blockID, k1, 3))
 -            {
 -                if (par3World.getBlockId(par4, par5, par6) == this.blockID)
 -                {
--                    Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer);
+-                    Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
 -                    Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, k1);
 -                }
 -
@@ -35,7 +27,7 @@
                  par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
                  --par1ItemStack.stackSize;
              }
-@@ -125,7 +121,8 @@
+@@ -144,7 +139,8 @@
          {
              par5 = 1;
          }
@@ -45,9 +37,9 @@
          {
              if (par5 == 0)
              {
-@@ -190,4 +187,28 @@
-     {
-         Block.blocksList[this.blockID].getSubBlocks(par1, par2CreativeTabs, par3List);
+@@ -220,4 +216,28 @@
+             this.field_94588_b = par1IconRegister.func_94245_a(s);
+         }
      }
 +
 +    /**
@@ -60,14 +52,14 @@
 +     */
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
 +    {
-+       if (!world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata))
++       if (!world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata, 3))
 +       {
-+               return false;
++           return false;
 +       }
 +
 +       if (world.getBlockId(x, y, z) == this.blockID)
 +       {
-+           Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player);
++           Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
 +           Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
 +       }
 +

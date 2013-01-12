@@ -9,7 +9,7 @@
  import java.util.List;
  import java.util.Random;
  import net.minecraft.block.material.Material;
-@@ -15,7 +17,10 @@
+@@ -17,7 +19,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -19,9 +19,9 @@
 +
 +public class BlockTallGrass extends BlockFlower implements IShearable
  {
-     protected BlockTallGrass(int par1, int par2)
-     {
-@@ -37,7 +42,7 @@
+     private static final String[] field_94367_a = new String[] {"deadbush", "tallgrass", "fern"};
+     @SideOnly(Side.CLIENT)
+@@ -50,7 +55,7 @@
       */
      public int idDropped(int par1, Random par2Random, int par3)
      {
@@ -30,7 +30,7 @@
      }
  
      /**
-@@ -54,15 +59,7 @@
+@@ -67,15 +72,7 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
@@ -47,8 +47,8 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -115,4 +112,35 @@
-             par3List.add(new ItemStack(par1, 1, j));
+@@ -139,4 +136,35 @@
+             this.field_94366_b[i] = par1IconRegister.func_94245_a(field_94367_a[i]);
          }
      }
 +

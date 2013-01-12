@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -121,6 +125,12 @@
+@@ -118,6 +122,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -24,16 +24,16 @@
          if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
          {
              return false;
-@@ -138,7 +148,7 @@
+@@ -135,7 +145,7 @@
              {
                  worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
--                boolean flag = worldclient.setBlockWithNotify(par1, par2, par3, 0);
+-                boolean flag = worldclient.func_94571_i(par1, par2, par3);
 +                boolean flag = block.removeBlockByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
  
                  if (flag)
                  {
-@@ -334,6 +344,12 @@
+@@ -328,6 +338,12 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -46,15 +46,7 @@
  
          if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
          {
-@@ -344,6 +360,7 @@
-                 flag = true;
-             }
-         }
-+
- 
-         if (!flag && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
-         {
-@@ -376,7 +393,15 @@
+@@ -370,7 +386,15 @@
          }
          else
          {
@@ -71,7 +63,7 @@
          }
      }
  
-@@ -398,9 +423,10 @@
+@@ -392,9 +416,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

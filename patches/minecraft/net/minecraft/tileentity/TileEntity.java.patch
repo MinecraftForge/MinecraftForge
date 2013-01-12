@@ -10,9 +10,9 @@
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -296,4 +298,52 @@
-         addMapping(TileEntityBeacon.class, "Beacon");
-         addMapping(TileEntitySkull.class, "Skull");
+@@ -300,4 +302,52 @@
+         addMapping(TileEntityDaylightDetector.class, "DLDetector");
+         addMapping(TileEntityHopper.class, "Hopper");
      }
 +
 +    /**

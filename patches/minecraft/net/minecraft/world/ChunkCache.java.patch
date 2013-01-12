@@ -17,7 +17,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -247,7 +255,12 @@
+@@ -150,7 +158,12 @@
          {
              int l = (par1 >> 4) - this.chunkX;
              int i1 = (par3 >> 4) - this.chunkZ;

@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFarmland.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFarmland.java
-@@ -8,6 +8,9 @@
- import net.minecraft.entity.player.EntityPlayer;
+@@ -10,6 +10,9 @@
  import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.Icon;
  import net.minecraft.world.World;
 +
 +import net.minecraftforge.common.ForgeDirection;
@@ -10,7 +10,7 @@
  
  public class BlockFarmland extends Block
  {
-@@ -107,7 +110,8 @@
+@@ -115,7 +118,8 @@
              {
                  int j1 = par1World.getBlockId(l, par3 + 1, i1);
  

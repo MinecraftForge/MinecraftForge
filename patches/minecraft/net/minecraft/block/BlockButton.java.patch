@@ -1,13 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockButton.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockButton.java
-@@ -11,6 +11,9 @@
+@@ -14,6 +14,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import net.minecraftforge.common.ForgeDirection;
 +import static net.minecraftforge.common.ForgeDirection.*;
 +
- public class BlockButton extends Block
+ public abstract class BlockButton extends Block
  {
      /** Whether this button is sensible to arrows, used by wooden buttons. */
 @@ -63,7 +66,11 @@

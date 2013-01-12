@@ -10,7 +10,7 @@
  import java.util.Random;
  import net.minecraft.block.Block;
  import net.minecraft.client.Minecraft;
-@@ -19,6 +22,8 @@
+@@ -20,6 +23,8 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -19,7 +19,7 @@
  @SideOnly(Side.CLIENT)
  public class GuiAchievements extends GuiScreen
  {
-@@ -55,6 +60,10 @@
+@@ -56,6 +61,10 @@
      /** Whether the Mouse Button is down or not */
      private int isMouseButtonDown = 0;
      private StatFileWriter statFileWriter;
@@ -30,7 +30,7 @@
  
      public GuiAchievements(StatFileWriter par1StatFileWriter)
      {
-@@ -63,6 +72,14 @@
+@@ -64,6 +73,14 @@
          short short2 = 141;
          this.field_74117_m = this.guiMapX = this.field_74124_q = (double)(AchievementList.openInventory.displayColumn * 24 - short1 / 2 - 12);
          this.field_74115_n = this.guiMapY = this.field_74123_r = (double)(AchievementList.openInventory.displayRow * 24 - short2 / 2);
@@ -45,7 +45,7 @@
      }
  
      /**
-@@ -72,6 +89,7 @@
+@@ -73,6 +90,7 @@
      {
          this.controlList.clear();
          this.controlList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
@@ -53,7 +53,7 @@
      }
  
      /**
-@@ -83,6 +101,16 @@
+@@ -84,6 +102,16 @@
          {
              this.mc.displayGuiScreen((GuiScreen)null);
              this.mc.setIngameFocus();
@@ -70,7 +70,7 @@
          }
  
          super.actionPerformed(par1GuiButton);
-@@ -307,11 +335,12 @@
+@@ -308,11 +336,12 @@
          int k4;
          int l4;
  
@@ -88,7 +88,7 @@
              {
                  i4 = achievement.displayColumn * 24 - k + 11 + i2;
                  l3 = achievement.displayRow * 24 - l + 11 + j2;
-@@ -345,9 +374,9 @@
+@@ -346,9 +375,9 @@
          int j5;
          int k5;
  
@@ -97,7 +97,7 @@
 -            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(i4);
 +        for (i4 = 0; i4 < achievementList.size(); ++i4)
 +        {
-+            Achievement achievement2 = achievementList.get(i4);
-             j4 = achievement2.displayColumn * 24 - k;
-             k4 = achievement2.displayRow * 24 - l;
++            Achievement achievement2 = (Achievement)achievementList.get(i4);
+             l4 = achievement2.displayColumn * 24 - k;
+             j4 = achievement2.displayRow * 24 - l;
  

@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemBow.java
-@@ -6,6 +6,10 @@
- import net.minecraft.entity.player.EntityPlayer;
+@@ -10,6 +10,10 @@
  import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.util.Icon;
  import net.minecraft.world.World;
 +
 +import net.minecraftforge.common.MinecraftForge;
@@ -11,7 +11,7 @@
  
  public class ItemBow extends Item
  {
-@@ -22,11 +26,20 @@
+@@ -30,11 +34,20 @@
       */
      public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
      {
@@ -33,7 +33,7 @@
              float f = (float)j / 20.0F;
              f = (f * f + f * 2.0F) / 3.0F;
  
-@@ -111,6 +124,13 @@
+@@ -119,6 +132,13 @@
       */
      public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
      {

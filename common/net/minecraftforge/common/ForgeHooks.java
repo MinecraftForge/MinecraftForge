@@ -63,7 +63,7 @@ public class ForgeHooks
         {
             return;
         }
-        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata);
+        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata, 3);
     }
 
     public static ItemStack getGrassSeed(World world)

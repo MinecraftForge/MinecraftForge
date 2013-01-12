@@ -2,7 +2,7 @@
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityFurnace.java
 @@ -9,6 +9,7 @@
  import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.ContainerWorldly;
  import net.minecraft.item.Item;
 +import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemHoe;
@@ -12,15 +12,15 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
  
--public class TileEntityFurnace extends TileEntity implements IInventory
+-public class TileEntityFurnace extends TileEntity implements ContainerWorldly
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ISidedInventory;
 +
-+public class TileEntityFurnace extends TileEntity implements IInventory, ISidedInventory
++public class TileEntityFurnace extends TileEntity implements ContainerWorldly, ISidedInventory
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -247,8 +251,7 @@
+@@ -268,8 +272,7 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
                          {
@@ -30,7 +30,7 @@
                          }
                      }
                  }
-@@ -294,8 +297,12 @@
+@@ -315,8 +318,12 @@
          }
          else
          {
@@ -45,7 +45,7 @@
          }
      }
  
-@@ -306,15 +313,15 @@
+@@ -327,15 +334,15 @@
      {
          if (this.canSmelt())
          {
@@ -65,7 +65,7 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -341,7 +348,7 @@
+@@ -362,7 +369,7 @@
              int i = par0ItemStack.getItem().itemID;
              Item item = par0ItemStack.getItem();
  
@@ -74,10 +74,33 @@
              {
                  Block block = Block.blocksList[i];
  
-@@ -387,4 +394,18 @@
-     public void openChest() {}
- 
-     public void closeChest() {}
+@@ -423,4 +430,41 @@
+     {
+         return 1;
+     }
++
++    /***********************************************************************************
++     * This function is here for compatibilities sake, Modders should Check for 
++     * Sided before ContainerWorldly, Vanilla Minecraft does not follow the sided standard
++     * that Modding has for a while.
++     * 
++     * In vanilla:
++     * 
++     *   Top: Ores
++     *   Sides: Fuel
++     *   Bottom: Output
++     *   
++     * Standard Modding:
++     *   Top: Ores
++     *   Sides: Output
++     *   Bottom: Fuel 
++     *   
++     * The Modding one is designed after the GUI, the vanilla one is designed because its 
++     * intended use is for the hopper, which logically would take things in from the top.
++     * 
++     * This will possibly be removed in future updates, and make vanilla the definitive
++     * standard.
++     */
 +
 +    @Override
 +    public int getStartInventorySide(ForgeDirection side)
