@@ -12,26 +12,26 @@
  import java.awt.Graphics;
  import java.awt.image.BufferedImage;
  import java.awt.image.ImageObserver;
-@@ -15,6 +18,9 @@
+@@ -13,6 +16,9 @@
+ import java.util.HashMap;
  import java.util.Iterator;
- import java.util.List;
  import java.util.Map;
 +import java.util.logging.Level;
 +import java.util.logging.Logger;
 +
  import javax.imageio.ImageIO;
- import net.minecraft.client.renderer.texturefx.TextureFX;
  import net.minecraft.client.settings.GameSettings;
-@@ -39,6 +45,8 @@
-     public TexturePackList field_78366_k;
-     private BufferedImage field_78364_l = new BufferedImage(64, 64, 2);
+ import net.minecraft.client.texturepacks.ITexturePack;
+@@ -38,6 +44,8 @@
+     private final TextureMap field_94155_m;
+     private int field_94153_n;
  
 +    public static Logger log = FMLLog.getLogger();
 +
      public RenderEngine(TexturePackList p_i3192_1_, GameSettings p_i3192_2_)
      {
          this.field_78366_k = p_i3192_1_;
-@@ -102,8 +110,9 @@
+@@ -116,8 +124,9 @@
                  this.field_78359_d.put(p_78346_1_, aint1);
                  return aint1;
              }
@@ -43,77 +43,7 @@
                  ioexception.printStackTrace();
                  int[] aint2 = this.func_78348_b(this.field_78364_l);
                  this.field_78359_d.put(p_78346_1_, aint2);
-@@ -250,6 +259,7 @@
- 
-         int j = p_78351_1_.getWidth();
-         int k = p_78351_1_.getHeight();
-+        TextureFXManager.instance().setTextureDimensions(p_78351_2_, j, k, (List<TextureFX>)field_78367_h);
-         int[] aint = new int[j * k];
-         byte[] abyte = new byte[j * k * 4];
-         p_78351_1_.getRGB(0, 0, j, k, aint, 0, j);
-@@ -410,6 +420,7 @@
- 
-     public void func_78355_a(TextureFX p_78355_1_)
-     {
-+        TextureFXManager.instance().onPreRegisterEffect(p_78355_1_);
-         this.field_78367_h.add(p_78355_1_);
-         p_78355_1_.func_76846_a();
-     }
-@@ -422,28 +433,44 @@
-         {
-             TextureFX texturefx = (TextureFX)this.field_78367_h.get(j);
-             texturefx.field_76851_c = this.field_78365_j.field_74337_g;
--            texturefx.func_76846_a();
--            i = this.func_82772_a(texturefx, i);
-+            if (TextureFXManager.instance().onUpdateTextureEffect(texturefx))
-+            {
-+                i = this.func_82772_a(texturefx, i);
-+            }
-         }
-     }
- 
-     public int func_82772_a(TextureFX p_82772_1_, int p_82772_2_)
-     {
--        this.field_78358_g.clear();
--        this.field_78358_g.put(p_82772_1_.field_76852_a);
--        this.field_78358_g.position(0).limit(p_82772_1_.field_76852_a.length);
--
--        if (p_82772_1_.field_76850_b != p_82772_2_)
-+        Dimension dim = TextureFXManager.instance().getTextureDimensions(p_82772_1_);
-+        int tWidth  = dim.width >> 4;
-+        int tHeight = dim.height >> 4;
-+        int tLen = tWidth * tHeight << 2;
-+
-+        if (p_82772_1_.field_76852_a.length == tLen)
-+        {
-+            this.field_78358_g.clear();
-+            this.field_78358_g.put(p_82772_1_.field_76852_a);
-+            this.field_78358_g.position(0).limit(p_82772_1_.field_76852_a.length);
-+        }
-+        else
-+        {
-+            TextureFXManager.instance().scaleTextureFXData(p_82772_1_.field_76852_a, field_78358_g, tWidth, tLen);
-+        }
-+
-+        if (p_82772_1_.field_76848_d != p_82772_2_)
-         {
-             p_82772_1_.func_76845_a(this);
--            p_82772_2_ = p_82772_1_.field_76850_b;
-+            p_82772_2_ = p_82772_1_.field_76848_d;
-         }
- 
-         for (int j = 0; j < p_82772_1_.field_76849_e; ++j)
-         {
-+            int xOffset = p_82772_1_.field_76850_b % 16 * tWidth + j * tWidth;
-             for (int k = 0; k < p_82772_1_.field_76849_e; ++k)
-             {
--                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_82772_1_.field_76850_b % 16 * 16 + j * 16, p_82772_1_.field_76850_b / 16 * 16 + k * 16, 16, 16, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
-+                int yOffset = p_82772_1_.field_76850_b / 16 * tHeight + k * tHeight;
-+                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset, tWidth, tHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.field_78358_g);
-             }
-         }
- 
-@@ -509,8 +536,9 @@
+@@ -504,8 +513,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
@@ -125,7 +55,7 @@
                  ioexception.printStackTrace();
              }
          }
-@@ -546,8 +574,9 @@
+@@ -541,8 +551,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
