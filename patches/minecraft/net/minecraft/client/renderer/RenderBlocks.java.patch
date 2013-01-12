@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
-@@ -35,6 +35,7 @@
+@@ -34,6 +34,7 @@
+ import net.minecraft.block.BlockWall;
  import net.minecraft.block.material.Material;
  import net.minecraft.client.Minecraft;
- import net.minecraft.item.Icon;
 +import net.minecraft.src.FMLRenderAccessLibrary;
  import net.minecraft.util.Direction;
+ import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
- import net.minecraft.util.Vec3;
 @@ -231,7 +232,84 @@
          int l = p_78612_1_.func_71857_b();
          p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);

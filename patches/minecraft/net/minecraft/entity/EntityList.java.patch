@@ -10,7 +10,7 @@
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.boss.EntityWither;
  import net.minecraft.entity.item.EntityBoat;
-@@ -123,9 +126,10 @@
+@@ -119,9 +122,10 @@
              p_75615_0_.func_82580_o("Type");
          }
  
@@ -22,7 +22,7 @@
  
              if (oclass != null)
              {
-@@ -139,7 +143,17 @@
+@@ -135,7 +139,17 @@
  
          if (entity != null)
          {
