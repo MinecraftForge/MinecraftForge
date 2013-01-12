@@ -16,6 +16,7 @@ package cpw.mods.fml.client;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -23,6 +24,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.Texture;
+import net.minecraft.client.renderer.TextureManager;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
@@ -118,17 +121,16 @@ public class GuiModList extends GuiScreen
                 int shifty = 35;
                 if (!selectedMod.getMetadata().logoFile.isEmpty())
                 {
-                    int texture = this.field_73882_e.field_71446_o.func_78341_b(selectedMod.getMetadata().logoFile);
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    this.field_73882_e.field_71446_o.func_78342_b(texture);
-                    Dimension dim = TextureFXManager.instance().getTextureDimensions(texture);
+                    List<Texture> texList = TextureManager.func_94267_b().func_94266_e(selectedMod.getMetadata().logoFile);
+                    Texture texture = texList.get(0);
+                    texture.func_94277_a(0);
                     int top = 32;
                     Tessellator tess = Tessellator.field_78398_a;
                     tess.func_78382_b();
-                    tess.func_78374_a(offset,             top + dim.height, field_73735_i, 0, 1);
-                    tess.func_78374_a(offset + dim.width, top + dim.height, field_73735_i, 1, 1);
-                    tess.func_78374_a(offset + dim.width, top,              field_73735_i, 1, 0);
-                    tess.func_78374_a(offset,             top,              field_73735_i, 0, 0);
+                    tess.func_78374_a(offset,                          top + texture.func_94284_b(), field_73735_i, 0, 1);
+                    tess.func_78374_a(offset + texture.func_94282_c(), top + texture.func_94284_b(), field_73735_i, 1, 1);
+                    tess.func_78374_a(offset + texture.func_94282_c(), top,                          field_73735_i, 1, 0);
+                    tess.func_78374_a(offset,                          top,                          field_73735_i, 0, 0);
                     tess.func_78381_a();
 
                     shifty += 65;
