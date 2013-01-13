@@ -15,7 +15,7 @@
 +
 +    /** FORGE: Overridden to allow custom tool effectiveness */
 +    @Override
-+    public float getStrVsBlock(ItemStack stack, Block block, int meta) 
++    public float getStrVsBlock(ItemStack stack, Block block, World world, int x, int y, int z, int meta) 
 +    {
 +        if (ForgeHooks.isToolEffective(stack, block, meta))
 +        {
