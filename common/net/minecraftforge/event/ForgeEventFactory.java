@@ -22,9 +22,16 @@ public class ForgeEventFactory
         return event.success;
     }
 
+    @Deprecated
     public static float getBreakSpeed(EntityPlayer player, Block block, int metadata, float original)
     {
         PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, block, metadata, original);
+        return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.newSpeed);
+    }
+
+    public static float getBreakSpeed(EntityPlayer player, Block block, World world, int x, int y, int z, int metadata, float original)
+    {
+        PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, block, world, x, y, z, metadata, original);
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.newSpeed);
     }
 
