@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.InventoryChangedEvent;
 
 public class InventoryPlayer implements IInventory
 {
@@ -490,7 +491,9 @@ public class InventoryPlayer implements IInventory
      */
     public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
-    	
+    	InventoryChangedEvent event = new InventoryChangedEvent(this.player, par1, par2ItemStack);
+    	MinecraftForge.EVENT_BUS.post(event);
+
         ItemStack[] var3 = this.mainInventory;
 
         if (par1 >= var3.length)
