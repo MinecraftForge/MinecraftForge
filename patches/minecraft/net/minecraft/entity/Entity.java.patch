@@ -138,7 +138,7 @@
      }
  
      public int func_82143_as()
-@@ -2399,4 +2441,84 @@
+@@ -2399,4 +2441,89 @@
      {
          return this.isBurning();
      }
@@ -221,5 +221,10 @@
 +        {
 +            persistentID = UUID.randomUUID();
 +        }
++    }
++
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
 +    }
  }
