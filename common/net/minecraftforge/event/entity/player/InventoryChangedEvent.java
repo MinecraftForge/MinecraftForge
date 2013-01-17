@@ -7,7 +7,6 @@ public class InventoryChangedEvent extends PlayerEvent {
 	
 	public final int slot;
 	public final ItemStack itemstack;
-	public final EntityPlayer entityplayer;
 	public final Boolean isArmor;
 	
 	public InventoryChangedEvent(EntityPlayer par1entityplayer, int par2, ItemStack par3ItemStack) {
