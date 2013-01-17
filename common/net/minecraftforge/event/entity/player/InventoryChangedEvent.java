@@ -11,7 +11,6 @@ public class InventoryChangedEvent extends PlayerEvent {
 	
 	public InventoryChangedEvent(EntityPlayer par1entityplayer, int par2, ItemStack par3ItemStack) {
 		super(par1entityplayer);
-		this.entityplayer = par1entityplayer;
 		this.slot = par2;
 		this.itemstack = par3ItemStack;
 		this.isArmor = (par2 > 35 && par2 < 40);
