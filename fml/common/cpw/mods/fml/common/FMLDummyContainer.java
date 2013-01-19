@@ -51,8 +51,8 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
                     "to cooperate and provide a good modding environment. " +
                     "The mod loading system is compatible with ModLoader, all your ModLoader " +
                     "mods should work.";
-        meta.url="https://github.com/cpw/FML/wiki";
-        meta.updateUrl="https://github.com/cpw/FML/wiki";
+        meta.url="https://github.com/MinecraftForge/FML/wiki";
+        meta.updateUrl="https://github.com/MinecraftForge/FML/wiki";
         meta.screenshots=new String[0];
         meta.logoFile="";
     }
