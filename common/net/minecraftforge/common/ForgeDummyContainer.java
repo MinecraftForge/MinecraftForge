@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.management.PlayerInstance;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
@@ -24,6 +25,8 @@ import static net.minecraftforge.common.ForgeVersion.*;
 
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
+    public static int clumpingThreshold;
+
     public ForgeDummyContainer()
     {
         super(new ModMetadata());
@@ -40,7 +43,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         meta.updateUrl   = "http://MinecraftForge.net/forum/index.php/topic,5.0.html";
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
-        
+
         Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forge.cfg"));
         if (!config.isChild)
         {
@@ -50,8 +53,16 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             {
                 Configuration.enableGlobalConfig();
             }
-            config.save();
         }
+        Property clumpingThresholdProperty = config.get(Configuration.CATEGORY_GENERAL, "clumpingThreshold", 64);
+        clumpingThresholdProperty.comment = "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024";
+        clumpingThreshold = clumpingThresholdProperty.getInt(64);
+        if (clumpingThreshold > 1024 || clumpingThreshold < 64)
+        {
+            clumpingThreshold = 64;
+            clumpingThresholdProperty.value = "64";
+        }
+        config.save();
     }
 
     @Override

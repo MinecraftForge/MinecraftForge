@@ -1,37 +1,132 @@
 --- ../src_base/minecraft/net/minecraft/server/management/PlayerInstance.java
 +++ ../src_work/minecraft/net/minecraft/server/management/PlayerInstance.java
-@@ -10,9 +10,12 @@
+@@ -1,7 +1,11 @@
+ package net.minecraft.server.management;
+ 
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.List;
++
++import com.google.common.collect.ObjectArrays;
++
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.network.packet.Packet;
+ import net.minecraft.network.packet.Packet51MapChunk;
+@@ -10,9 +14,15 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.world.ChunkCoordIntPair;
  
++import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.ChunkWatchEvent;
 +
  public class PlayerInstance
  {
 -    private final List playersInChunk;
++    public static int clumpingThreshold;
++
 +    public final List playersInChunk;
  
      /** note: this is final */
      private final ChunkCoordIntPair chunkLocation;
-@@ -55,6 +58,8 @@
-             par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), true, 0));
+@@ -56,6 +66,8 @@
              this.playersInChunk.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
-+            
-+            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(chunkLocation, par1EntityPlayerMP));
  
++            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(chunkLocation, par1EntityPlayerMP));
++
              if (this.playersInChunk.isEmpty())
              {
-@@ -144,7 +149,10 @@
-                         if ((this.field_73260_f & 1 << var3) != 0)
-                         {
-                             var4 = var3 << 4;
--                            List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 16, var4 + 16, var2 + 16);
-+                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
-+                            //ToDo: Find a way to efficiently clean abandoned chunks.
-+                            //List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 16, var4 + 16, var2 + 16);
-+                            List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 15, var4 + 16, var2 + 15);
+                 long var2 = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
+@@ -80,20 +92,21 @@
  
-                             for (int var6 = 0; var6 < var5.size(); ++var6)
-                             {
+         this.field_73260_f |= 1 << (par2 >> 4);
+ 
+-        if (this.numberOfTilesToUpdate < 64)
+-        {
+-            short var4 = (short)(par1 << 12 | par3 << 8 | par2);
+-
+-            for (int var5 = 0; var5 < this.numberOfTilesToUpdate; ++var5)
+-            {
+-                if (this.locationOfBlockChange[var5] == var4)
+-                {
+-                    return;
+-                }
+-            }
+-
+-            this.locationOfBlockChange[this.numberOfTilesToUpdate++] = var4;
+-        }
++        short var4 = (short)(par1 << 12 | par3 << 8 | par2);
++
++        for (int var5 = 0; var5 < this.numberOfTilesToUpdate; ++var5)
++        {
++            if (this.locationOfBlockChange[var5] == var4)
++            {
++                return;
++            }
++        }
++
++        if (this.numberOfTilesToUpdate == locationOfBlockChange.length)
++        {
++            this.locationOfBlockChange = Arrays.copyOf(this.locationOfBlockChange, locationOfBlockChange.length << 1);
++        }
++        this.locationOfBlockChange[this.numberOfTilesToUpdate++] = var4;
+     }
+ 
+     public void sendToAllPlayersWatchingChunk(Packet par1Packet)
+@@ -133,40 +146,26 @@
+             {
+                 int var4;
+ 
+-                if (this.numberOfTilesToUpdate == 64)
++                if (this.numberOfTilesToUpdate >= MinecraftForge.clumpingThreshold)
+                 {
+                     var1 = this.chunkLocation.chunkXPos * 16;
+                     var2 = this.chunkLocation.chunkZPos * 16;
+                     this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.field_73260_f));
+-
+-                    for (var3 = 0; var3 < 16; ++var3)
++                }
++                else
++                {
++                    this.sendToAllPlayersWatchingChunk(new Packet52MultiBlockChange(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos, this.locationOfBlockChange, this.numberOfTilesToUpdate, PlayerManager.getWorldServer(this.myManager)));
++                }
++
++                for (var1 = 0; var1 < this.numberOfTilesToUpdate; ++var1)
++                {
++                    var2 = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[var1] >> 12 & 15);
++                    var3 = this.locationOfBlockChange[var1] & 255;
++                    var4 = this.chunkLocation.chunkZPos * 16 + (this.locationOfBlockChange[var1] >> 8 & 15);
++
++                    if (PlayerManager.getWorldServer(this.myManager).blockHasTileEntity(var2, var3, var4))
+                     {
+-                        if ((this.field_73260_f & 1 << var3) != 0)
+-                        {
+-                            var4 = var3 << 4;
+-                            List var5 = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(var1, var4, var2, var1 + 16, var4 + 16, var2 + 16);
+-
+-                            for (int var6 = 0; var6 < var5.size(); ++var6)
+-                            {
+-                                this.sendTileToAllPlayersWatchingChunk((TileEntity)var5.get(var6));
+-                            }
+-                        }
+-                    }
+-                }
+-                else
+-                {
+-                    this.sendToAllPlayersWatchingChunk(new Packet52MultiBlockChange(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos, this.locationOfBlockChange, this.numberOfTilesToUpdate, PlayerManager.getWorldServer(this.myManager)));
+-
+-                    for (var1 = 0; var1 < this.numberOfTilesToUpdate; ++var1)
+-                    {
+-                        var2 = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[var1] >> 12 & 15);
+-                        var3 = this.locationOfBlockChange[var1] & 255;
+-                        var4 = this.chunkLocation.chunkZPos * 16 + (this.locationOfBlockChange[var1] >> 8 & 15);
+-
+-                        if (PlayerManager.getWorldServer(this.myManager).blockHasTileEntity(var2, var3, var4))
+-                        {
+-                            this.sendTileToAllPlayersWatchingChunk(PlayerManager.getWorldServer(this.myManager).getBlockTileEntity(var2, var3, var4));
+-                        }
++                        this.sendTileToAllPlayersWatchingChunk(PlayerManager.getWorldServer(this.myManager).getBlockTileEntity(var2, var3, var4));
+                     }
+                 }
+             }
