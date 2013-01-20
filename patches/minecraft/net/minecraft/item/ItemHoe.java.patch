@@ -29,3 +29,15 @@
              int var11 = par3World.getBlockId(par4, par5, par6);
              int var12 = par3World.getBlockId(par4, par5 + 1, par6);
  
+@@ -42,7 +57,10 @@
+             else
+             {
+                 Block var13 = Block.tilledField;
+-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var13.stepSound.getStepSound(), (var13.stepSound.getVolume() + 1.0F) / 2.0F, var13.stepSound.getPitch() * 0.8F);
++                
++                net.minecraft.block.StepSound stepSound = var13.getBlockStepSound(par2EntityPlayer, par3World, par4, par5, par6, par3World.getBlockMetadata(par4, par5, par6));
++                
++                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), stepSound.getStepSound(), (stepSound.getVolume() + 1.0F) / 2.0F, stepSound.getPitch() * 0.8F);
+ 
+                 if (par3World.isRemote)
+                 {

@@ -1,0 +1,24 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSlab.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSlab.java
+@@ -79,7 +79,9 @@
+             {
+                 if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var13))
+                 {
+-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
++                    net.minecraft.block.StepSound stepSound = this.theHalfSlab2.getBlockStepSound(par2EntityPlayer, par3World, par4, par5, par6, var12);
++                    
++                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), stepSound.getPlaceSound(), (stepSound.getVolume() + 1.0F) / 2.0F, stepSound.getPitch() * 0.8F);
+                     --par1ItemStack.stackSize;
+                 }
+ 
+@@ -191,7 +193,9 @@
+         {
+             if (par3World.checkIfAABBIsClear(this.theHalfSlab2.getCollisionBoundingBoxFromPool(par3World, par4, par5, par6)) && par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.theHalfSlab2.blockID, var10))
+             {
+-                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), this.theHalfSlab2.stepSound.getPlaceSound(), (this.theHalfSlab2.stepSound.getVolume() + 1.0F) / 2.0F, this.theHalfSlab2.stepSound.getPitch() * 0.8F);
++                net.minecraft.block.StepSound stepSound = this.theHalfSlab2.getBlockStepSound(par2EntityPlayer, par3World, par4, par5, par6, var9);
++                
++                par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), stepSound.getPlaceSound(), (stepSound.getVolume() + 1.0F) / 2.0F, stepSound.getPitch() * 0.8F);
+                 --par1ItemStack.stackSize;
+             }
+ 

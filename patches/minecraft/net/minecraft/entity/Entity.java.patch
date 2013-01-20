@@ -73,6 +73,20 @@
              }
  
              this.worldObj.theProfiler.endSection();
+@@ -1003,11 +1021,11 @@
+      */
+     protected void playStepSound(int par1, int par2, int par3, int par4)
+     {
+-        StepSound var5 = Block.blocksList[par4].stepSound;
++        StepSound var5 = Block.blocksList[par4].getBlockStepSound(this, this.worldObj, par1, par2, par3, this.worldObj.getBlockMetadata(par1, par2, par3));
+ 
+         if (this.worldObj.getBlockId(par1, par2 + 1, par3) == Block.snow.blockID)
+         {
+-            var5 = Block.snow.stepSound;
++            var5 = Block.snow.getBlockStepSound(this, this.worldObj, par1, par2, par3, this.worldObj.getBlockMetadata(par1, par2, par3));
+             this.playSound(var5.getStepSound(), var5.getVolume() * 0.15F, var5.getPitch());
+         }
+         else if (!Block.blocksList[par4].blockMaterial.isLiquid())
 @@ -1514,6 +1532,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);
