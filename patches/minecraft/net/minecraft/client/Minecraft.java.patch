@@ -38,7 +38,7 @@
 +                boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
 +                if (result && var9 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, var9))
                  {
-                     this.entityRenderer.itemRenderer.func_78445_c();
+                     this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
 @@ -2041,6 +2047,18 @@
              if (this.theIntegratedServer != null)

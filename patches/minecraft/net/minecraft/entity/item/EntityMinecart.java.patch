@@ -570,7 +570,7 @@
          {
              ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
  
-@@ -1354,4 +1240,375 @@
+@@ -1366,4 +1252,375 @@
      {
          return this.dataWatcher.getWatchableObjectInt(18);
      }

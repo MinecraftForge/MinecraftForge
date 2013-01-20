@@ -340,7 +340,7 @@
 +    {
 +        if (this instanceof ItemEnchantedBook)
 +        {
-+            return ((ItemEnchantedBook)this).func_92058_a(rnd,
++            return ((ItemEnchantedBook)this).func_92112_a(rnd,
 +                    original.theMinimumChanceToGenerateItem,
 +                    original.theMaximumChanceToGenerateItem, original.itemWeight);
 +        }

@@ -32,7 +32,7 @@
 +     */
 +    public static void addToBookList(Enchantment enchantment)
 +    {
-+        ObjectArrays.concat(field_92038_c, enchantment);
++        ObjectArrays.concat(field_92090_c, enchantment);
 +    }
 +
      static

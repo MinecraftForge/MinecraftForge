@@ -69,7 +69,7 @@
 +            return;
 +        }
 +
-         this.mcServer.getConfigurationManager().func_92027_k(par1DamageSource.getDeathMessage(this));
+         this.mcServer.getConfigurationManager().sendChatMsg(par1DamageSource.getDeathMessage(this));
  
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {

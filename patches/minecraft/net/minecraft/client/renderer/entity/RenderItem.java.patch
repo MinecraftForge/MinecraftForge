@@ -24,22 +24,22 @@
              float var12 = (((float)par1EntityItem.age + par9) / 20.0F + par1EntityItem.hoverStart) * (180F / (float)Math.PI);
 -            byte var13 = 1;
 -
--            if (par1EntityItem.func_92014_d().stackSize > 1)
+-            if (par1EntityItem.getEntityItem().stackSize > 1)
 -            {
 -                var13 = 2;
 -            }
 -
--            if (par1EntityItem.func_92014_d().stackSize > 5)
+-            if (par1EntityItem.getEntityItem().stackSize > 5)
 -            {
 -                var13 = 3;
 -            }
 -
--            if (par1EntityItem.func_92014_d().stackSize > 20)
+-            if (par1EntityItem.getEntityItem().stackSize > 20)
 -            {
 -                var13 = 4;
 -            }
 -
--            if (par1EntityItem.func_92014_d().stackSize > 40)
+-            if (par1EntityItem.getEntityItem().stackSize > 40)
 -            {
 -                var13 = 5;
 -            }
@@ -119,7 +119,7 @@
                      {
 @@ -232,39 +211,27 @@
              var17 = 0.021875F;
-             ItemStack var18 = par1EntityItem.func_92014_d();
+             ItemStack var18 = par1EntityItem.getEntityItem();
              int var19 = var18.stackSize;
 -            byte var24;
 -

@@ -25,7 +25,7 @@ public class ChestGenHooks
 
     private static final HashMap<String, ChestGenHooks> chestInfo = new HashMap<String, ChestGenHooks>();
     private static boolean hasInit = false;
-    static 
+    static
     {
         init();
     }
@@ -49,10 +49,10 @@ public class ChestGenHooks
         addInfo(VILLAGE_BLACKSMITH,       ComponentVillageHouse2.villageBlacksmithChestContents,                   3,  9);
         addInfo(BONUS_CHEST,              WorldServer.bonusChestContent,                                          10, 10);
 
-        ItemStack book = new ItemStack(Item.field_92053_bW, 1, 0);
+        ItemStack book = new ItemStack(Item.enchantedBook, 1, 0);
         WeightedRandomChestContent tmp = new WeightedRandomChestContent(book, 1, 1, 1);
         getInfo(MINESHAFT_CORRIDOR  ).addItem(tmp);
-        getInfo(PYRAMID_DESERT_CHEST).addItem(tmp);        
+        getInfo(PYRAMID_DESERT_CHEST).addItem(tmp);
         getInfo(PYRAMID_JUNGLE_CHEST).addItem(tmp);
         getInfo(STRONGHOLD_CORRIDOR ).addItem(tmp);
         getInfo(STRONGHOLD_LIBRARY  ).addItem(new WeightedRandomChestContent(book, 1, 5, 2));
@@ -77,7 +77,7 @@ public class ChestGenHooks
         addDungeonLoot(d, new ItemStack(Item.dyePowder, 1, 3), 100, 1, 1);
         addDungeonLoot(d, book,                                100, 1, 1);
     }
-    
+
     static void addDungeonLoot(ChestGenHooks dungeon, ItemStack item, int weight, int min, int max)
     {
         dungeon.addItem(new WeightedRandomChestContent(item, min, max, weight));
@@ -90,7 +90,7 @@ public class ChestGenHooks
 
     /**
      * Retrieves, or creates the info class for the specified category.
-     * 
+     *
      * @param category The category name
      * @return A instance of ChestGenHooks for the specified category.
      */
@@ -105,14 +105,14 @@ public class ChestGenHooks
 
     /**
      * Generates an array of items based on the input min/max count.
-     * If the stack can not hold the total amount, it will be split into 
+     * If the stack can not hold the total amount, it will be split into
      * stacks of size 1.
-     * 
+     *
      * @param rand A random number generator
      * @param source Source item stack
      * @param min Minimum number of items
      * @param max Maximum number of items
-     * @return An array containing the generated item stacks 
+     * @return An array containing the generated item stacks
      */
     public static ItemStack[] generateStacks(Random rand, ItemStack source, int min, int max)
     {
@@ -158,7 +158,7 @@ public class ChestGenHooks
     {
         this.category = category;
     }
-    
+
     public ChestGenHooks(String category, WeightedRandomChestContent[] items, int min, int max)
     {
         this(category);
@@ -169,21 +169,21 @@ public class ChestGenHooks
         countMin = min;
         countMax = max;
     }
-    
+
     /**
      * Adds a new entry into the possible items to generate.
-     * 
+     *
      * @param item The item to add.
      */
     public void addItem(WeightedRandomChestContent item)
     {
         contents.add(item);
     }
-    
+
     /**
      * Removes all items that match the input item stack, Only metadata and item ID are checked.
      * If the input item has a metadata of -1, all metadatas will match.
-     * 
+     *
      * @param item The item to check
      */
     public void removeItem(ItemStack item)
@@ -201,13 +201,13 @@ public class ChestGenHooks
 
     /**
      * Gets an array of all random objects that are associated with this category.
-     * 
+     *
      * @return The random objects
      */
     public WeightedRandomChestContent[] getItems(Random rnd)
     {
         ArrayList<WeightedRandomChestContent> ret = new ArrayList<WeightedRandomChestContent>();
-        
+
         for (WeightedRandomChestContent orig : contents)
         {
             Item item = orig.theItemId.getItem();
@@ -227,7 +227,7 @@ public class ChestGenHooks
 
     /**
      * Gets a random number between countMin and countMax.
-     * 
+     *
      * @param rand A RNG
      * @return A random number where countMin <= num <= countMax
      */
@@ -235,11 +235,11 @@ public class ChestGenHooks
     {
         return countMin < countMax ? countMin + rand.nextInt(countMax - countMin) : countMin;
     }
-    
+
     /**
      * Returns a single ItemStack from the possible items in this registry,
      * Useful if you just want a quick and dirty random Item.
-     * 
+     *
      * @param rand  A Random Number gen
      * @return A single ItemStack, or null if it could not get one.
      */
