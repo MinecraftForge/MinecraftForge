@@ -81,13 +81,13 @@ public interface ModContainer
 
     /**
      * A list of modids that should be loaded prior to this one. The special
-     * value <strong>*</strong> indicates to load <em>before</em> any other mod.
+     * value <strong>*</strong> indicates to load <em>after</em> any other mod.
      */
     List<ArtifactVersion> getDependencies();
 
     /**
      * A list of modids that should be loaded <em>after</em> this one. The
-     * special value <strong>*</strong> indicates to load <em>after</em> any
+     * special value <strong>*</strong> indicates to load <em>before</em> any
      * other mod.
      */
     List<ArtifactVersion> getDependants();
