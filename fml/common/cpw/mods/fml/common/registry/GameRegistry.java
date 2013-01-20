@@ -248,9 +248,9 @@ public class GameRegistry
         blockRegistry.put(Loader.instance().activeModContainer(), (BlockProxy) block);
     }
 
-    public static void addRecipe(ItemStack output, Object... params)
+    public static IRecipe addRecipe(ItemStack output, Object... params)
     {
-        CraftingManager.func_77594_a().func_92051_a(output, params);
+        return CraftingManager.func_77594_a().func_92103_a(output, params);
     }
 
     public static void addShapelessRecipe(ItemStack output, Object... params)
