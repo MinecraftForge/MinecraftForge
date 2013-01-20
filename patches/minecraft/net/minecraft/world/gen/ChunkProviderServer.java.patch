@@ -1,6 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -6,6 +6,9 @@
+@@ -2,10 +2,14 @@
+ 
+ import java.io.IOException;
+ import java.util.ArrayList;
++import java.util.HashMap;
+ import java.util.HashSet;
  import java.util.Iterator;
  import java.util.List;
  import java.util.Set;
@@ -10,7 +15,25 @@
  
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.crash.CrashReport;
-@@ -66,7 +69,7 @@
+@@ -40,7 +44,7 @@
+      * if this is false, the defaultEmptyChunk will be returned by the provider
+      */
+     public boolean loadChunkOnProvideRequest = true;
+-    private LongHashMap loadedChunkHashMap = new LongHashMap();
++    private HashMap<Long, Chunk> loadedChunkHashMap = new HashMap<Long, Chunk>();
+     private List loadedChunks = new ArrayList();
+     private WorldServer worldObj;
+ 
+@@ -57,7 +61,7 @@
+      */
+     public boolean chunkExists(int par1, int par2)
+     {
+-        return this.loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
++        return this.loadedChunkHashMap.containsKey(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
+     }
+ 
+     /**
+@@ -66,7 +70,7 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
@@ -19,7 +42,12 @@
          {
              ChunkCoordinates var3 = this.worldObj.getSpawnPoint();
              int var4 = par1 * 16 + 8 - var3.posX;
-@@ -109,7 +112,11 @@
+@@ -105,11 +109,15 @@
+     {
+         long var3 = ChunkCoordIntPair.chunkXZ2Int(par1, par2);
+         this.chunksToUnload.remove(Long.valueOf(var3));
+-        Chunk var5 = (Chunk)this.loadedChunkHashMap.getValueByKey(var3);
++        Chunk var5 = (Chunk)this.loadedChunkHashMap.get(var3);
  
          if (var5 == null)
          {
@@ -32,7 +60,25 @@
  
              if (var5 == null)
              {
-@@ -306,6 +313,11 @@
+@@ -135,7 +143,7 @@
+                 }
+             }
+ 
+-            this.loadedChunkHashMap.add(var3, var5);
++            this.loadedChunkHashMap.put(var3, var5);
+             this.loadedChunks.add(var5);
+ 
+             if (var5 != null)
+@@ -155,7 +163,7 @@
+      */
+     public Chunk provideChunk(int par1, int par2)
+     {
+-        Chunk var3 = (Chunk)this.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
++        Chunk var3 = (Chunk)this.loadedChunkHashMap.get(ChunkCoordIntPair.chunkXZ2Int(par1, par2));
+         return var3 == null ? (!this.worldObj.findingSpawnPoint && !this.loadChunkOnProvideRequest ? this.defaultEmptyChunk : this.loadChunk(par1, par2)) : var3;
+     }
+ 
+@@ -306,18 +314,28 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -44,7 +90,13 @@
              for (int var1 = 0; var1 < 100; ++var1)
              {
                  if (!this.chunksToUnload.isEmpty())
-@@ -318,6 +330,11 @@
+                 {
+                     Long var2 = (Long)this.chunksToUnload.iterator().next();
+-                    Chunk var3 = (Chunk)this.loadedChunkHashMap.getValueByKey(var2.longValue());
++                    Chunk var3 = (Chunk)this.loadedChunkHashMap.get(var2.longValue());
+                     var3.onChunkUnload();
+                     this.safeSaveChunk(var3);
+                     this.safeSaveExtraChunkData(var3);
                      this.chunksToUnload.remove(var2);
                      this.loadedChunkHashMap.remove(var2.longValue());
                      this.loadedChunks.remove(var3);
@@ -56,3 +108,21 @@
                  }
              }
  
+@@ -343,7 +361,7 @@
+      */
+     public String makeString()
+     {
+-        return "ServerChunkCache: " + this.loadedChunkHashMap.getNumHashElements() + " Drop: " + this.chunksToUnload.size();
++        return "ServerChunkCache: " + this.loadedChunkHashMap.size() + " Drop: " + this.chunksToUnload.size();
+     }
+ 
+     /**
+@@ -364,7 +382,7 @@
+ 
+     public int getLoadedChunkCount()
+     {
+-        return this.loadedChunkHashMap.getNumHashElements();
++        return this.loadedChunkHashMap.size();
+     }
+ 
+     public void recreateStructures(int par1, int par2) {}
