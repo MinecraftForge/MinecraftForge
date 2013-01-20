@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src_work/minecraft/net/minecraft/world/WorldType.java
-@@ -224,4 +224,14 @@
+@@ -224,4 +224,28 @@
       * Called when 'Create New World' button is pressed before starting game
       */
      public void onGUICreateWorldPress() { }
@@ -13,5 +13,19 @@
 +    public int getSpawnFuzz()
 +    {
 +        return 20;
++    }
++
++    /**
++     * Called when the 'Customize' button is pressed on world creation GUI
++     */
++    public void onCustomizeButton() { }
++
++    /*
++     * Should world creation GUI show 'Customize' button for this world type?
++     * (vanilla FLAT wWorldType is hard coded to show the button in GuiCreateWorld)
++     */
++    public boolean isCustomizable()
++    {
++        return false;
 +    }
  }
