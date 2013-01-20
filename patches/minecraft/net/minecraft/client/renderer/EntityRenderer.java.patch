@@ -80,20 +80,20 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1193,6 +1202,13 @@
-             {
+@@ -1194,6 +1203,13 @@
                  this.mc.mcProfiler.endStartSection("water");
                  var5.sortAndRender(var4, 1, (double)par1);
-+                
-+                RenderHelper.enableStandardItemLighting();
-+                this.mc.mcProfiler.endStartSection("entities");
-+                ForgeHooksClient.setRenderPass(1);
-+                var5.renderEntities(var4.getPosition(par1), var14, par1);
-+                ForgeHooksClient.setRenderPass(-1);
-+                RenderHelper.disableStandardItemLighting();
              }
++            
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            ForgeHooksClient.setRenderPass(1);
++            var5.renderEntities(var4.getPosition(par1), var14, par1);
++            ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
  
              GL11.glDepthMask(true);
+             GL11.glEnable(GL11.GL_CULL_FACE);
 @@ -1204,15 +1220,18 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
