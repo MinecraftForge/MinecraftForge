@@ -3,7 +3,7 @@
   "modid": "mcp",
   "name": "Minecraft Coder Pack",
   "description": "Modding toolkit to decompile and deobfuscate the Minecraft client and server files.",
-  "version": "7.26",
+  "version": "7.26a",
   "mcversion": "1.4.7",
   "logoFile": "/mcp.png",
   "url": "http://mcp.ocean-labs.de/",
