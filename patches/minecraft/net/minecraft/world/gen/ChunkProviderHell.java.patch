@@ -144,3 +144,17 @@
          BlockSand.fallInstantly = false;
      }
  
+@@ -572,4 +613,13 @@
+     {
+         this.genNetherBridge.generate(this, this.worldObj, par1, par2, (byte[])null);
+     }
++
++    /**
++     * Returns whether the IChunkProvider allows mods to generate there using the IWorldGenerator interface.
++     */
++    @Override
++    public boolean allowModGeneration()
++    {
++        return true;
++    }
+ }

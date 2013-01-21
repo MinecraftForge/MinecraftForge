@@ -32,7 +32,19 @@
  
              if (var5 == null)
              {
-@@ -306,6 +313,11 @@
+@@ -249,7 +256,10 @@
+             if (this.currentChunkProvider != null)
+             {
+                 this.currentChunkProvider.populate(par1IChunkProvider, par2, par3);
+-                GameRegistry.generateWorld(par2, par3, worldObj, currentChunkProvider, par1IChunkProvider);
++                if (this.currentChunkProvider.allowModGeneration())
++                {
++                    GameRegistry.generateWorld(par2, par3, worldObj, currentChunkProvider, par1IChunkProvider);
++                }
+                 var4.setChunkModified();
+             }
+         }
+@@ -306,6 +316,11 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -44,7 +56,7 @@
              for (int var1 = 0; var1 < 100; ++var1)
              {
                  if (!this.chunksToUnload.isEmpty())
-@@ -318,6 +330,11 @@
+@@ -318,6 +333,11 @@
                      this.chunksToUnload.remove(var2);
                      this.loadedChunkHashMap.remove(var2.longValue());
                      this.loadedChunks.remove(var3);
