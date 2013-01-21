@@ -1,0 +1,78 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerRepair.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerRepair.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory;
+ 
++import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Iterator;
+@@ -107,10 +108,11 @@
+             int var14;
+             Iterator var21;
+             Enchantment var22;
++            Object mapResult;
+ 
+             if (var6 != null)
+             {
+-                var8 = var6.itemID == Item.enchantedBook.itemID && Item.enchantedBook.func_92110_g(var6).tagCount() > 0;
++                var8 = var6.itemID == Item.enchantedBook.itemID && (Item.enchantedBook.func_92110_g(var6).tagCount() > 0 || Item.enchantedBook.getForgeEnchantTag(var6).tagCount() > 0);
+ 
+                 if (var5.isItemStackDamageable() && Item.itemsList[var5.itemID].getIsRepairable(var1, var6))
+                 {
+@@ -162,15 +164,15 @@
+                         }
+                     }
+ 
+-                    Map var20 = EnchantmentHelper.getEnchantments(var6);
++                    Map var20 = EnchantmentHelper.getEnchantments(var6); FMLLog.warning("ENCHANT SIZE: " + var20.size());
+                     var21 = var20.keySet().iterator();
+ 
+                     while (var21.hasNext())
+                     {
+-                        var11 = ((Integer)var21.next()).intValue();
+-                        var22 = Enchantment.enchantmentsList[var11];
+-                        var13 = var7.containsKey(Integer.valueOf(var11)) ? ((Integer)var7.get(Integer.valueOf(var11))).intValue() : 0;
+-                        var14 = ((Integer)var20.get(Integer.valueOf(var11))).intValue();
++                        mapResult = var21.next();
++                        var22 = Enchantment.getEnchantmentFromObject(mapResult);
++                        var13 = (Integer) (var7.containsKey(mapResult) ? var7.get(mapResult) : 0);
++                        var14 = ((Integer)var20.get(mapResult)).intValue();
+                         int var10000;
+ 
+                         if (var13 == var14)
+@@ -196,9 +198,9 @@
+ 
+                         while (var17.hasNext())
+                         {
+-                            int var18 = ((Integer)var17.next()).intValue();
+-
+-                            if (var18 != var11 && !var22.canApplyTogether(Enchantment.enchantmentsList[var18]))
++                            Object var18 = var17.next();
++
++                            if (var18 != mapResult && !var22.canApplyTogether(Enchantment.getEnchantmentFromObject(var18)))
+                             {
+                                 var16 = false;
+                                 var2 += var15;
+@@ -212,7 +214,7 @@
+                                 var14 = var22.getMaxLevel();
+                             }
+ 
+-                            var7.put(Integer.valueOf(var11), Integer.valueOf(var14));
++                            var7.put(mapResult, Integer.valueOf(var14));
+                             int var23 = 0;
+ 
+                             switch (var22.getWeight())
+@@ -265,9 +267,9 @@
+ 
+             for (var21 = var7.keySet().iterator(); var21.hasNext(); var19 += var9 + var13 * var14)
+             {
+-                var11 = ((Integer)var21.next()).intValue();
+-                var22 = Enchantment.enchantmentsList[var11];
+-                var13 = ((Integer)var7.get(Integer.valueOf(var11))).intValue();
++                mapResult = var21.next();
++                var22 = Enchantment.getEnchantmentFromObject(mapResult);
++                var13 = (Integer)var7.get(mapResult);
+                 var14 = 0;
+                 ++var9;
+ 

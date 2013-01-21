@@ -100,3 +100,19 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -184,5 +237,15 @@
+                 }
+             }
+         }
++        
++        for (Enchantment enchant : Enchantment.forgeEnchants.values()) {
++            for (int i=0; i<par2ArrayOfEnumEnchantmentType.length; ++i) {
++                if (enchant != null && enchant.type != null) 
++                    if (enchant.type == par2ArrayOfEnumEnchantmentType[i]) {
++                        par1List.add(Item.enchantedBook.func_92111_a(new EnchantmentData(enchant, enchant.getMaxLevel())));
++                        break; //Why the hell are they using a variable when you can just break the inner loop?!
++                    }
++            }
++        }
+     }
+ }
