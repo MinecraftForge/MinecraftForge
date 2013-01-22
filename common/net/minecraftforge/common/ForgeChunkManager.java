@@ -291,7 +291,7 @@ public class ForgeChunkManager
 
         /**
          * Get the entity associated with this {@link Type#ENTITY} type ticket
-         * @return
+         * @return the entity
          */
         public Entity getEntity()
         {
@@ -789,7 +789,7 @@ public class ForgeChunkManager
     /**
      * The list of persistent chunks in the world. This set is immutable.
      * @param world
-     * @return
+     * @return the list of persistent chunks in the world
      */
     public static ImmutableSetMultimap<ChunkCoordIntPair, Ticket> getPersistentChunksFor(World world)
     {

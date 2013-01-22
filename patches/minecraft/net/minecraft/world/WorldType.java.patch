@@ -1,6 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src_work/minecraft/net/minecraft/world/WorldType.java
-@@ -224,4 +224,14 @@
+@@ -10,6 +10,9 @@
+ import com.google.common.collect.ObjectArrays;
+ import com.google.common.collect.Sets;
+ 
++import net.minecraft.client.Minecraft;
++import net.minecraft.client.gui.GuiCreateFlatWorld;
++import net.minecraft.client.gui.GuiCreateWorld;
+ import net.minecraft.world.*;
+ import net.minecraft.world.gen.*;
+ import net.minecraft.world.biome.*;
+@@ -224,4 +227,36 @@
       * Called when 'Create New World' button is pressed before starting game
       */
      public void onGUICreateWorldPress() { }
@@ -13,5 +23,27 @@
 +    public int getSpawnFuzz()
 +    {
 +        return 20;
++    }
++
++    /**
++     * Called when the 'Customize' button is pressed on world creation GUI
++     * @param instance The minecraft instance
++     * @param guiCreateWorld the createworld GUI
++     */
++    @SideOnly(Side.CLIENT)
++    public void onCustomizeButton(Minecraft instance, GuiCreateWorld guiCreateWorld) {
++        if (this == FLAT)
++        {
++            instance.displayGuiScreen(new GuiCreateFlatWorld(guiCreateWorld, guiCreateWorld.field_82290_a));
++        }
++    }
++
++    /*
++     * Should world creation GUI show 'Customize' button for this world type?
++     * @return if this world type has customization parameters
++     */
++    public boolean isCustomizable()
++    {
++        return this == FLAT;
 +    }
  }

@@ -35,6 +35,8 @@ public class MinecraftForge
     public static final EventBus ORE_GEN_BUS = new EventBus();
     @Deprecated //Vanilla feature now
     public static boolean SPAWNER_ALLOW_ON_INVERTED = false;
+    public static final int clumpingThreshold = ForgeDummyContainer.clumpingThreshold;
+
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
 

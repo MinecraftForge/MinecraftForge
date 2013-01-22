@@ -203,7 +203,6 @@ public class DimensionManager
     /**
      * Not public API: used internally to get dimensions that should load at
      * server startup
-     * @return
      */
     public static Integer[] getStaticDimensionIDs()
     {
@@ -256,7 +255,7 @@ public class DimensionManager
     /**
      * Return the next free dimension ID. Note: you are not guaranteed a contiguous
      * block of free ids. Always call for each individual ID you wish to get.
-     * @return
+     * @return the next free dimension ID
      */
     public static int getNextFreeDimId() {
         int next = 0;
@@ -318,14 +317,20 @@ public class DimensionManager
     }
 
     /**
-     * Return the current root directory for the world save. Accesses getSaveHandler from the
-     * @return
+     * Return the current root directory for the world save. Accesses getSaveHandler from the overworld
+     * @return the root directory of the save
      */
     public static File getCurrentSaveRootDirectory()
     {
         if (DimensionManager.getWorld(0) != null)
         {
             return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getSaveDirectory();
+        }
+        else if (MinecraftServer.getServer() != null)
+        {
+            MinecraftServer srv = MinecraftServer.getServer();
+            SaveHandler saveHandler = (SaveHandler) srv.getActiveAnvilConverter().getSaveLoader(srv.getFolderName(), false);
+            return saveHandler.getSaveDirectory();
         }
         else
         {

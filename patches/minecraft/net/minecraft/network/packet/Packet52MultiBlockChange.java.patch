@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet52MultiBlockChange.java
+@@ -6,6 +6,7 @@
+ import java.io.IOException;
+ import net.minecraft.world.World;
+ import net.minecraft.world.chunk.Chunk;
++import net.minecraftforge.common.MinecraftForge;
+ 
+ public class Packet52MultiBlockChange extends Packet
+ {
+@@ -38,7 +39,7 @@
+ 
+         try
+         {
+-            if (par4 >= 64)
++            if (par4 >= MinecraftForge.clumpingThreshold)
+             {
+                 System.out.println("ChunkTilesUpdatePacket compress " + par4);
+ 

@@ -15,21 +15,21 @@ package net.minecraftforge.liquids;
  */
 public interface ILiquid {
 
-	/**
-	 * The itemId of the liquid item
-	 * @return
-	 */
-	public int stillLiquidId();
+    /**
+     * The itemId of the liquid item
+     * @return the itemId
+     */
+    public int stillLiquidId();
 
-	/**
-	 * Is this liquid a metadata based liquid
-	 * @return
-	 */
-	public boolean isMetaSensitive();
+    /**
+     * Is this liquid a metadata based liquid
+     * @return if this is a metadata liquid
+     */
+    public boolean isMetaSensitive();
 
-	/**
-	 * The item metadata of the liquid
-	 * @return
-	 */
-	public int stillLiquidMeta();
+    /**
+     * The item metadata of the liquid
+     * @return the metadata of the liquid
+     */
+    public int stillLiquidMeta();
 }

@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
++++ ../src_work/minecraft/net/minecraft/client/multiplayer/ChunkProviderClient.java
+@@ -13,6 +13,8 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.EmptyChunk;
+ import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.ChunkEvent;
+ 
+ @SideOnly(Side.CLIENT)
+ public class ChunkProviderClient implements IChunkProvider
+@@ -75,6 +77,7 @@
+     {
+         Chunk chunk = new Chunk(this.worldObj, par1, par2);
+         this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(par1, par2), chunk);
++        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk));
+         chunk.isChunkLoaded = true;
+         return chunk;
+     }
