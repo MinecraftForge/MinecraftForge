@@ -1,17 +1,4 @@
 class,package
-EntityFireworkOverlayFX,net/minecraft/client/particle
-EntityFireworkSparkFX,net/minecraft/client/particle
-EntityFireworkStarterFX,net/minecraft/client/particle
-ScheduledSound,net/minecraft/client/audio
-BehaviorDispenseFirework,net/minecraft/dispenser
-EnchantmentThorns,net/minecraft/enchantment
-EntityFireworkRocket,net/minecraft/entity/item
-ItemBook,net/minecraft/item
-ItemEnchantedBook,net/minecraft/item
-ItemFirework,net/minecraft/item
-ItemFireworkCharge,net/minecraft/item
-RecipeFireworks,net/minecraft/item/crafting
-TileEntityMobSpawnerSpawnData,net/minecraft/tileentity
 Block,net/minecraft/block
 BlockAnvil,net/minecraft/block
 BlockBeacon,net/minecraft/block
@@ -158,6 +145,7 @@ ThreadClientSleep,net/minecraft/client
 ThreadShutdown,net/minecraft/client
 CodecMus,net/minecraft/client/audio
 MusInputStream,net/minecraft/client/audio
+ScheduledSound,net/minecraft/client/audio
 SoundManager,net/minecraft/client/audio
 SoundPool,net/minecraft/client/audio
 SoundPoolEntry,net/minecraft/client/audio
@@ -325,6 +313,9 @@ EntityDropParticleFX,net/minecraft/client/particle
 EntityEnchantmentTableParticleFX,net/minecraft/client/particle
 EntityExplodeFX,net/minecraft/client/particle
 EntityFX,net/minecraft/client/particle
+EntityFireworkOverlayFX,net/minecraft/client/particle
+EntityFireworkSparkFX,net/minecraft/client/particle
+EntityFireworkStarterFX,net/minecraft/client/particle
 EntityFlameFX,net/minecraft/client/particle
 EntityFootStepFX,net/minecraft/client/particle
 EntityHeartFX,net/minecraft/client/particle
@@ -538,6 +529,7 @@ BehaviorBucketFullDispense,net/minecraft/dispenser
 BehaviorDefaultDispenseItem,net/minecraft/dispenser
 BehaviorDispenseBoat,net/minecraft/dispenser
 BehaviorDispenseFireball,net/minecraft/dispenser
+BehaviorDispenseFirework,net/minecraft/dispenser
 BehaviorDispenseItemProvider,net/minecraft/dispenser
 BehaviorDispenseMinecart,net/minecraft/dispenser
 BehaviorEggDispense,net/minecraft/dispenser
@@ -574,6 +566,7 @@ EnchantmentModifierDamage,net/minecraft/enchantment
 EnchantmentModifierLiving,net/minecraft/enchantment
 EnchantmentOxygen,net/minecraft/enchantment
 EnchantmentProtection,net/minecraft/enchantment
+EnchantmentThorns,net/minecraft/enchantment
 EnchantmentUntouching,net/minecraft/enchantment
 EnchantmentWaterWorker,net/minecraft/enchantment
 EnumEnchantmentType,net/minecraft/enchantment
@@ -669,6 +662,7 @@ EntityEnderEye,net/minecraft/entity/item
 EntityEnderPearl,net/minecraft/entity/item
 EntityExpBottle,net/minecraft/entity/item
 EntityFallingSand,net/minecraft/entity/item
+EntityFireworkRocket,net/minecraft/entity/item
 EntityItem,net/minecraft/entity/item
 EntityItemFrame,net/minecraft/entity/item
 EntityMinecart,net/minecraft/entity/item
@@ -771,6 +765,7 @@ ItemAxe,net/minecraft/item
 ItemBed,net/minecraft/item
 ItemBlock,net/minecraft/item
 ItemBoat,net/minecraft/item
+ItemBook,net/minecraft/item
 ItemBow,net/minecraft/item
 ItemBucket,net/minecraft/item
 ItemBucketMilk,net/minecraft/item
@@ -783,10 +778,13 @@ ItemDye,net/minecraft/item
 ItemEditableBook,net/minecraft/item
 ItemEgg,net/minecraft/item
 ItemEmptyMap,net/minecraft/item
+ItemEnchantedBook,net/minecraft/item
 ItemEnderEye,net/minecraft/item
 ItemEnderPearl,net/minecraft/item
 ItemExpBottle,net/minecraft/item
 ItemFireball,net/minecraft/item
+ItemFirework,net/minecraft/item
+ItemFireworkCharge,net/minecraft/item
 ItemFishingRod,net/minecraft/item
 ItemFlintAndSteel,net/minecraft/item
 ItemFood,net/minecraft/item
@@ -825,6 +823,7 @@ ItemWritableBook,net/minecraft/item
 CraftingManager,net/minecraft/item/crafting
 FurnaceRecipes,net/minecraft/item/crafting
 IRecipe,net/minecraft/item/crafting
+RecipeFireworks,net/minecraft/item/crafting
 RecipeSorter,net/minecraft/item/crafting
 RecipesArmor,net/minecraft/item/crafting
 RecipesArmorDyes,net/minecraft/item/crafting
@@ -1034,6 +1033,7 @@ TileEntityEndPortal,net/minecraft/tileentity
 TileEntityEnderChest,net/minecraft/tileentity
 TileEntityFurnace,net/minecraft/tileentity
 TileEntityMobSpawner,net/minecraft/tileentity
+TileEntityMobSpawnerSpawnData,net/minecraft/tileentity
 TileEntityNote,net/minecraft/tileentity
 TileEntityPiston,net/minecraft/tileentity
 TileEntitySign,net/minecraft/tileentity
