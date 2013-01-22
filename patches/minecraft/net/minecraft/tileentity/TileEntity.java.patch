@@ -10,7 +10,7 @@
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -296,4 +298,52 @@
+@@ -296,4 +298,57 @@
          addMapping(TileEntityBeacon.class, "Beacon");
          addMapping(TileEntitySkull.class, "Skull");
      }
@@ -61,5 +61,10 @@
 +    public boolean shouldRefresh(int oldID, int newID, int oldMeta, int newMeta, World world, int x, int y, int z)
 +    {
 +        return true;
++    }
++
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
 +    }
  }
