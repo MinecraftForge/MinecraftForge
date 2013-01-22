@@ -326,6 +326,12 @@ public class DimensionManager
         {
             return ((SaveHandler)DimensionManager.getWorld(0).getSaveHandler()).getSaveDirectory();
         }
+        else if (MinecraftServer.getServer() != null)
+        {
+            MinecraftServer srv = MinecraftServer.getServer();
+            SaveHandler saveHandler = (SaveHandler) srv.getActiveAnvilConverter().getSaveLoader(srv.getFolderName(), false);
+            return saveHandler.getSaveDirectory();
+        }
         else
         {
             return null;
