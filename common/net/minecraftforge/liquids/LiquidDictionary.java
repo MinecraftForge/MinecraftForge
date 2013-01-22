@@ -29,7 +29,7 @@ public abstract class LiquidDictionary
      *
      * @param name the name of the liquid
      * @param liquid the liquid to use if one doesn't exist
-     * @return
+     * @return the matching liquid stack
      */
     public static LiquidStack getOrCreateLiquid(String name, LiquidStack liquid)
     {
@@ -50,7 +50,7 @@ public abstract class LiquidDictionary
      *
      * @param name the name of the liquid
      * @param amount the amout of liquid
-     * @return
+     * @return a liquidstack for the requested liquid
      */
     public static LiquidStack getLiquid(String name, int amount)
     {
@@ -74,8 +74,6 @@ public abstract class LiquidDictionary
     }
     /**
      * Fired when a new liquid is created
-     *
-     * @author cpw
      *
      */
     public static class LiquidRegisterEvent extends Event

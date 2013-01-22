@@ -28,7 +28,7 @@ public class LiquidStack
         this.itemMeta = itemDamage;
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) 
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         nbt.setShort("Id", (short)itemID);
         nbt.setInteger("Amount", amount);
@@ -90,7 +90,7 @@ public class LiquidStack
      * Reads a liquid stack from the passed nbttagcompound and returns it.
      *
      * @param nbt
-     * @return
+     * @return the liquid stack
      */
     public static LiquidStack loadLiquidStackFromNBT(NBTTagCompound nbt)
     {
