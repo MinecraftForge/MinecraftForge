@@ -145,7 +145,7 @@ public class GameRegistry
     /**
      * Private and not yet working properly
      *
-     * @return
+     * @return a block id
      */
     private static int findSpareBlockId()
     {

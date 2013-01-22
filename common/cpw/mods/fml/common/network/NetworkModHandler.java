@@ -193,7 +193,7 @@ public class NetworkModHandler
         }
     }
     /**
-     * @return
+     * @return the default {@link NetworkMod#connectionHandler()} annotation value
      */
     private Object getConnectionHandlerDefaultValue()
     {
@@ -211,7 +211,7 @@ public class NetworkModHandler
     }
 
     /**
-     * @return
+     * @return the default {@link NetworkMod#packetHandler()} annotation value
      */
     private Object getPacketHandlerDefaultValue()
     {
@@ -228,6 +228,9 @@ public class NetworkModHandler
         }
     }
 
+    /**
+     * @return the default {@link NetworkMod#tinyPacketHandler()} annotation value
+     */
     private Object getTinyPacketHandlerDefaultValue()
     {
         try {
@@ -243,7 +246,7 @@ public class NetworkModHandler
         }
     }
     /**
-     * @return
+     * @return the {@link NetworkMod#clientPacketHandlerSpec()} default annotation value
      */
     private Object getClientHandlerSpecDefaultValue()
     {
@@ -260,7 +263,7 @@ public class NetworkModHandler
         }
     }
     /**
-     * @return
+     * @return the default {@link NetworkMod#serverPacketHandlerSpec()} annotation value
      */
     private Object getServerHandlerSpecDefaultValue()
     {
