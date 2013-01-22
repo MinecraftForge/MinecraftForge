@@ -35,7 +35,7 @@ public @interface NetworkMod
     Class<? extends IPacketHandler> packetHandler() default NULL.class;
 
     /**
-     * A tiny packet handler implementation based on {@link Packet131MapData} for "small"
+     * A tiny packet handler implementation based on {@link net.minecraft.network.packet.Packet131MapData} for "small"
      * data packet loads.
      */
     Class<? extends ITinyPacketHandler> tinyPacketHandler() default NULL.class;

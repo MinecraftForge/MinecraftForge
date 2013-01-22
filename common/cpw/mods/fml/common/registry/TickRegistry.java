@@ -58,8 +58,8 @@ public class TickRegistry
     }
 
     /**
-     * @param side
-     * @return
+     * @param side the side to get the tick queue for
+     * @return the queue for the effective side
      */
     private static PriorityQueue<TickQueueElement> getQueue(Side side)
     {

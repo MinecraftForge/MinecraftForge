@@ -1,13 +1,19 @@
-This minecraft mod, Forge Mod Loader, including all parts herein, is licensed
-under the GNU LGPL v2.1 or later.
+This minecraft mod, Forge Mod Loader, including all parts herein except as noted below,
+is licensed under the GNU LGPL v2.1 or later.
 
-Homepage: https://github.com/cpw/FML
+Homepage: https://github.com/MinecraftForge/FML
 
 This software includes portions from the Apache Maven project at
 http://maven.apache.org/ specifically the ComparableVersion.java code. It is
 included based on guidelines at
 http://www.softwarefreedom.org/resources/2007/gpl-non-gpl-collaboration.html
 with notices intact. The only change is a non-functional change of package name.
+
+=== MCP Data ===
+This software includes data from the Minecraft Coder Pack (MCP), with kind permission
+from them. The license to MCP data is not transitive - distribution of this data by
+third parties requires independent licensing from the MCP team. This data is not
+redistributable without permission from the MCP team.
 
 ========
 
