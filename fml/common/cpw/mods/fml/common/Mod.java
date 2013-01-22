@@ -145,6 +145,14 @@ public @interface Mod
     @Target(ElementType.METHOD)
     public @interface PostInit {}
     /**
+     * Mark the designated method as being called at the "server-about-to-start" phase
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface ServerAboutToStart {}
+    /**
      * Mark the designated method as being called at the "server-starting" phase
      * @author cpw
      *

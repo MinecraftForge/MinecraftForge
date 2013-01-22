@@ -377,7 +377,7 @@ public class Loader
     }
 
     /**
-     * @return
+     *
      */
     private void initializeLoader()
     {
@@ -695,10 +695,19 @@ public class Loader
         return "Minecraft " + mccversion;
     }
 
-    public void serverStarting(Object server)
+    public boolean serverStarting(Object server)
     {
-        modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
-        modController.transition(LoaderState.SERVER_STARTING);
+        try
+        {
+            modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
+            modController.transition(LoaderState.SERVER_STARTING);
+        }
+        catch (Throwable t)
+        {
+            FMLLog.log(Level.SEVERE, t, "A fatal exception occurred during the server starting event");
+            return false;
+        }
+        return true;
     }
 
     public void serverStarted()
@@ -751,5 +760,20 @@ public class Loader
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.SERVER_STOPPED);
         modController.transition(LoaderState.AVAILABLE);
+    }
+
+    public boolean serverAboutToStart(MinecraftServer server)
+    {
+        try
+        {
+            modController.distributeStateMessage(LoaderState.SERVER_ABOUT_TO_START, server);
+            modController.transition(LoaderState.SERVER_ABOUT_TO_START);
+        }
+        catch (Throwable t)
+        {
+            FMLLog.log(Level.SEVERE, t, "A fatal exception occurred during the server about to start event");
+            return false;
+        }
+        return true;
     }
 }

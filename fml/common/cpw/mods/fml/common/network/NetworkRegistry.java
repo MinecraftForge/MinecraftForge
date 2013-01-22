@@ -64,7 +64,7 @@ public class NetworkRegistry
     }
     /**
      * Get the packet 250 channel registration string
-     * @return
+     * @return the {@link Packet250CustomPayload} channel registration string
      */
     byte[] getPacketRegistry(Side side)
     {
@@ -81,8 +81,8 @@ public class NetworkRegistry
     }
     /**
      * register a channel to a mod
-     * @param container
-     * @param channelName
+     * @param handler the packet handler
+     * @param channelName the channel name to register it with
      */
     public void registerChannel(IPacketHandler handler, String channelName)
     {
