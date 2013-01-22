@@ -10,7 +10,7 @@
  public abstract class BlockButton extends Block
  {
      /** Whether this button is sensible to arrows, used by wooden buttons. */
-@@ -63,7 +66,11 @@
+@@ -66,7 +69,11 @@
       */
      public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
      {
@@ -23,7 +23,7 @@
      }
  
      /**
-@@ -71,7 +78,10 @@
+@@ -74,7 +81,10 @@
       */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
@@ -35,7 +35,7 @@
      }
  
      /**
-@@ -83,19 +93,22 @@
+@@ -86,19 +96,22 @@
          int k1 = j1 & 8;
          j1 &= 7;
  
@@ -62,7 +62,7 @@
          {
              j1 = 1;
          }
-@@ -112,7 +125,11 @@
+@@ -115,7 +128,11 @@
       */
      private int getOrientation(World par1World, int par2, int par3, int par4)
      {
@@ -75,7 +75,7 @@
      }
  
      /**
-@@ -126,22 +143,22 @@
+@@ -129,22 +146,22 @@
              int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
              boolean flag = false;
  

@@ -613,7 +613,7 @@
          }
      }
  
-@@ -3619,6 +3725,11 @@
+@@ -3622,6 +3728,11 @@
          else
          {
              if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || block.blockMaterial.isReplaceable()))
@@ -625,7 +625,7 @@
              {
                  block = null;
              }
-@@ -3907,7 +4018,7 @@
+@@ -3910,7 +4021,7 @@
       */
      public long getSeed()
      {
@@ -634,7 +634,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3917,7 +4028,7 @@
+@@ -3920,7 +4031,7 @@
  
      public long getWorldTime()
      {
@@ -643,7 +643,7 @@
      }
  
      /**
-@@ -3925,7 +4036,7 @@
+@@ -3928,7 +4039,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -652,7 +652,7 @@
      }
  
      /**
-@@ -3933,13 +4044,13 @@
+@@ -3936,13 +4047,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -668,7 +668,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3963,7 +4074,10 @@
+@@ -3966,7 +4077,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -680,7 +680,7 @@
          }
      }
  
-@@ -3971,6 +4085,11 @@
+@@ -3974,6 +4088,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -692,7 +692,7 @@
      {
          return true;
      }
-@@ -4091,8 +4210,7 @@
+@@ -4094,8 +4213,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -702,7 +702,7 @@
      }
  
      /**
-@@ -4167,7 +4285,7 @@
+@@ -4170,7 +4288,7 @@
       */
      public int getHeight()
      {
@@ -711,7 +711,7 @@
      }
  
      /**
-@@ -4175,7 +4293,7 @@
+@@ -4178,7 +4296,7 @@
       */
      public int getActualHeight()
      {
@@ -720,7 +720,7 @@
      }
  
      public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-@@ -4218,7 +4336,7 @@
+@@ -4221,7 +4339,7 @@
       */
      public double getHorizon()
      {
@@ -729,7 +729,7 @@
      }
  
      /**
-@@ -4279,4 +4397,75 @@
+@@ -4282,4 +4400,75 @@
  
      @SideOnly(Side.CLIENT)
      public void func_92088_a(double par1, double par3, double par5, double par7, double par9, double par11, NBTTagCompound par13NBTTagCompound) {}
