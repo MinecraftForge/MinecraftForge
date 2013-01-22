@@ -304,9 +304,14 @@ public class FMLCommonHandler
         }
     }
 
-    public void handleServerStarting(MinecraftServer server)
+    public boolean handleServerAboutToStart(MinecraftServer server)
     {
-        Loader.instance().serverStarting(server);
+        return Loader.instance().serverAboutToStart(server);
+    }
+
+    public boolean handleServerStarting(MinecraftServer server)
+    {
+        return Loader.instance().serverStarting(server);
     }
 
     public void handleServerStarted()
