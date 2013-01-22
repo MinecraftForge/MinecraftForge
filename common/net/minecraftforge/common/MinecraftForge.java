@@ -10,6 +10,7 @@ import cpw.mods.fml.common.ModContainer;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -208,5 +209,12 @@ public class MinecraftForge
    public static String getBrandingVersion()
    {
        return "Minecraft Forge "+ ForgeVersion.getVersion();
+   }
+   
+   /**
+    * Used Internally in the Forge enchantment system only
+    */
+   public static Enchantment getEnchantmentFromObject(Object input) {
+       return input instanceof Integer ? Enchantment.enchantmentsList[(Integer)input] : ForgeHooks.forgeEnchants.get((String)input);
    }
 }

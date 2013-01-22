@@ -1,14 +1,16 @@
 --- ../src_base/minecraft/net/minecraft/creativetab/CreativeTabs.java
 +++ ../src_work/minecraft/net/minecraft/creativetab/CreativeTabs.java
-@@ -7,6 +7,7 @@
+@@ -7,7 +7,9 @@
  import net.minecraft.enchantment.EnchantmentData;
  import net.minecraft.enchantment.EnumEnchantmentType;
  import net.minecraft.item.Item;
 +import net.minecraft.item.ItemStack;
  import net.minecraft.util.StringTranslate;
++import net.minecraftforge.common.ForgeHooks;
  
  public class CreativeTabs
-@@ -34,8 +35,22 @@
+ {
+@@ -34,8 +36,22 @@
      /** Whether to draw the title in the foreground of the creative GUI */
      private boolean drawTitle = true;
  
@@ -31,7 +33,7 @@
          this.tabIndex = par1;
          this.tabLabel = par2Str;
          creativeTabArray[par1] = this;
-@@ -122,6 +137,10 @@
+@@ -122,6 +138,10 @@
       */
      public int getTabColumn()
      {
@@ -42,7 +44,7 @@
          return this.tabIndex % 6;
      }
  
-@@ -132,6 +151,10 @@
+@@ -132,6 +152,10 @@
       */
      public boolean isTabInFirstRow()
      {
@@ -53,7 +55,7 @@
          return this.tabIndex < 6;
      }
  
-@@ -149,11 +172,41 @@
+@@ -149,11 +173,41 @@
          {
              Item var5 = var2[var4];
  
@@ -100,12 +102,12 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -184,5 +237,15 @@
+@@ -184,5 +238,15 @@
                  }
              }
          }
 +        
-+        for (Enchantment enchant : Enchantment.forgeEnchants.values()) {
++        for (Enchantment enchant : ForgeHooks.forgeEnchants.values()) {
 +            for (int i=0; i<par2ArrayOfEnumEnchantmentType.length; ++i) {
 +                if (enchant != null && enchant.type != null) 
 +                    if (enchant.type == par2ArrayOfEnumEnchantmentType[i]) {

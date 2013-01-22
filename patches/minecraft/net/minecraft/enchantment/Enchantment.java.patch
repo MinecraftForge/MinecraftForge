@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/enchantment/Enchantment.java
 +++ ../src_work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -1,10 +1,20 @@
+@@ -1,10 +1,21 @@
  package net.minecraft.enchantment;
  
 +import java.awt.List;
@@ -17,11 +17,12 @@
 +import net.minecraft.nbt.NBTTagList;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.StatCollector;
++import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.ForgeVersion;
  
  public abstract class Enchantment
  {
-@@ -205,6 +215,27 @@
+@@ -205,6 +216,27 @@
          return this.type.canEnchantItem(par1ItemStack.getItem());
      }
  
@@ -49,15 +50,13 @@
      static
      {
          ArrayList var0 = new ArrayList();
-@@ -223,4 +254,30 @@
+@@ -223,4 +255,24 @@
  
          field_92090_c = (Enchantment[])var0.toArray(new Enchantment[0]);
      }
 +    
 +    /* =========================================================== FORGE START ===============================================================*/
-+    
-+    public static HashMap<String, Enchantment> forgeEnchants = new HashMap();
-+    
++ 
 +    protected Enchantment(String enchantName, int enchantWeight, EnumEnchantmentType enchantType)
 +    {
 +        this.effectId = -1;
@@ -65,18 +64,14 @@
 +        this.type = enchantType;
 +        this.name = enchantName;
 +
-+        if (forgeEnchants.containsKey(name))
++        if (ForgeHooks.forgeEnchants.containsKey(name))
 +            throw new IllegalArgumentException("Enchantment " + name + " already exists!");
 +        FMLLog.info("Added Enchantment %s", name);
-+        forgeEnchants.put(name, this);
++        ForgeHooks.forgeEnchants.put(name, this);
 +    }
 +    
 +    public String getInternalName() {
 +        return name;
-+    }
-+    
-+    public static Enchantment getEnchantmentFromObject(Object input) {
-+        return input instanceof Integer ? Enchantment.enchantmentsList[(Integer)input] : Enchantment.forgeEnchants.get((String)input);
 +    }
 +    
  }
