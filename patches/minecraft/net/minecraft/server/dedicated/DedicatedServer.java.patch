@@ -25,12 +25,20 @@
  
          this.func_71210_a(new DedicatedPlayerList(this));
          long var4 = System.nanoTime();
-@@ -187,6 +192,8 @@
+@@ -167,6 +172,7 @@
+         this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
+         this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
+         this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
++        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
+         field_71306_a.info("Preparing level \"" + this.func_71270_I() + "\"");
+         this.func_71247_a(this.func_71270_I(), this.func_71270_I(), var9, var17, var8);
+         long var12 = System.nanoTime() - var4;
+@@ -187,7 +193,7 @@
              this.field_71339_n.func_72602_a();
          }
  
-+        FMLCommonHandler.instance().handleServerStarting(this);
-+
-         return true;
+-        return true;
++        return FMLCommonHandler.instance().handleServerStarting(this);
      }
  
+     public boolean func_71225_e()
