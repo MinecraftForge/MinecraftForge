@@ -377,7 +377,7 @@ public class Loader
     }
 
     /**
-     * @return
+     *
      */
     private void initializeLoader()
     {

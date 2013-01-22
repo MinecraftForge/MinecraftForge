@@ -401,8 +401,8 @@ public class RelaunchLibraryManager
     }
 
     /**
-     * @param mcDir
-     * @return
+     * @param mcDir the minecraft home directory
+     * @return the lib directory
      */
     private static File setupLibDir(File mcDir)
     {
@@ -427,8 +427,8 @@ public class RelaunchLibraryManager
     }
 
     /**
-     * @param mcDir
-     * @return
+     * @param mcDir the minecraft home directory
+     * @return the coremod directory
      */
     private static File setupCoreModDir(File mcDir)
     {

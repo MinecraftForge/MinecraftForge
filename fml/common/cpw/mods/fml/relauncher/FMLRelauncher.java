@@ -177,7 +177,7 @@ public class FMLRelauncher
     }
 
     /**
-     * @return
+     * @return the location of the client home
      */
     private File computeExistingClientHome()
     {
