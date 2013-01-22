@@ -131,6 +131,39 @@ diff -r -U 3 minecraft\net\minecraft\src\IntegratedServer.java minecraft_patched
        boolean var1 = this.field_71348_o;
        this.field_71348_o = this.field_71347_n.func_71752_f();
        if(!var1 && this.field_71348_o) {
+diff -r -U 3 minecraft\net\minecraft\src\RenderBlocks.java minecraft_patched\net\minecraft\src\RenderBlocks.java
+--- minecraft\net\minecraft\src\RenderBlocks.java	Sat Jan 12 02:17:59 2013
++++ minecraft_patched\net\minecraft\src\RenderBlocks.java	Sun Jan 13 14:47:53 2013
+@@ -1960,16 +1960,16 @@
+       float var25 = (float)(p_78589_2_ + 1);
+       float var26 = (float)(p_78589_4_ + 0);
+       float var27 = (float)(p_78589_4_ + 1);
+-      boolean var28 = false;
++      int var28 = 0;
+       if((var20 || var21) && !var22 && !var23) {
+-         var28 = true;
++         var28 = 1;
+       }
+ 
+       if((var22 || var23) && !var21 && !var20) {
+-         var28 = true;
++         var28 = 2;
+       }
+ 
+-      if(!var28) {
++      if(var28 == 0) {
+          int var29 = 0;
+          int var30 = 0;
+          int var31 = 16;
+@@ -2015,7 +2015,7 @@
+          var5.func_78374_a((double)var25, (double)p_78589_3_ + 0.015625D, (double)var26, (double)var9.func_94214_a((double)var31), (double)var9.func_94207_b((double)var30));
+          var5.func_78374_a((double)var24, (double)p_78589_3_ + 0.015625D, (double)var26, (double)var9.func_94214_a((double)var29), (double)var9.func_94207_b((double)var30));
+          var5.func_78374_a((double)var24, (double)p_78589_3_ + 0.015625D, (double)var27, (double)var9.func_94214_a((double)var29), (double)var9.func_94207_b((double)var32));
+-      } else if(var28) {
++      } else if(var28 == 1) {
+          var5.func_78374_a((double)var25, (double)p_78589_3_ + 0.015625D, (double)var27, (double)var8.func_94212_f(), (double)var8.func_94210_h());
+          var5.func_78374_a((double)var25, (double)p_78589_3_ + 0.015625D, (double)var26, (double)var8.func_94212_f(), (double)var8.func_94206_g());
+          var5.func_78374_a((double)var24, (double)p_78589_3_ + 0.015625D, (double)var26, (double)var8.func_94209_e(), (double)var8.func_94206_g());
 diff -r -U 3 minecraft\net\minecraft\src\RenderGlobal.java minecraft_patched\net\minecraft\src\RenderGlobal.java
 --- minecraft\net\minecraft\src\RenderGlobal.java	Sat Jan 12 02:17:59 2013
 +++ minecraft_patched\net\minecraft\src\RenderGlobal.java	Sat Jan 12 02:24:09 2013

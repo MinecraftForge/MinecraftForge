@@ -224,7 +224,7 @@ CL: ajh net/minecraft/src/ThreadedFileIOBase
 CL: aji net/minecraft/src/IThreadedFileIO
 CL: ajk net/minecraft/src/BlockAnvil
 CL: ajl net/minecraft/src/BlockBasePressurePlate
-CL: ajm net/minecraft/src/BlockBaseRail
+CL: ajm net/minecraft/src/BlockRailBase
 CL: ajn net/minecraft/src/BlockBaseRailLogic
 CL: ajo net/minecraft/src/BlockBeacon
 CL: ajp net/minecraft/src/BlockBed
@@ -247,7 +247,7 @@ CL: akf net/minecraft/src/BlockCrops
 CL: akg net/minecraft/src/BlockDaylightDetector
 CL: akh net/minecraft/src/BlockDeadBush
 CL: aki net/minecraft/src/BlockDetectorRail
-CL: akj net/minecraft/src/BlockRedstoneRepeater
+CL: akj net/minecraft/src/BlockRedstoneLogic
 CL: akk net/minecraft/src/BlockDirectional
 CL: akl net/minecraft/src/BlockDirt
 CL: akm net/minecraft/src/BlockDispenser
@@ -295,8 +295,8 @@ CL: amb net/minecraft/src/BlockObsidian
 CL: amc net/minecraft/src/BlockOre
 CL: amd net/minecraft/src/BlockPortal
 CL: ame net/minecraft/src/BlockPotato
-CL: amf net/minecraft/src/BlockPoweredMetal
-CL: amg net/minecraft/src/BlockPoweredRail
+CL: amf net/minecraft/src/BlockPoweredOre
+CL: amg net/minecraft/src/BlockRailPowered
 CL: amh net/minecraft/src/BlockPressurePlate
 CL: ami net/minecraft/src/EnumMobType
 CL: amj net/minecraft/src/BlockPumpkin
@@ -308,7 +308,7 @@ CL: amo net/minecraft/src/BlockRedstoneWire
 CL: amp net/minecraft/src/BlockRedstoneOre
 CL: amq net/minecraft/src/BlockRedstoneLight
 CL: amr net/minecraft/src/BlockReed
-CL: ams net/minecraft/src/BlockRepeater
+CL: ams net/minecraft/src/BlockRedstoneRepeater
 CL: amt net/minecraft/src/BlockSandStone
 CL: amu net/minecraft/src/BlockSapling
 CL: amv net/minecraft/src/BlockSign
@@ -319,7 +319,7 @@ CL: amz net/minecraft/src/BlockSponge
 CL: an net/minecraft/src/CommandTime
 CL: ana net/minecraft/src/BlockStairs
 CL: anb net/minecraft/src/BlockStem
-CL: anc net/minecraft/src/BlockStoneButton
+CL: anc net/minecraft/src/BlockButtonStone
 CL: and net/minecraft/src/BlockSilverfish
 CL: ane net/minecraft/src/BlockStep
 CL: anf net/minecraft/src/BlockStone
@@ -345,8 +345,8 @@ CL: any net/minecraft/src/BlockWall
 CL: anz net/minecraft/src/BlockLilyPad
 CL: ao net/minecraft/src/CommandToggleDownfall
 CL: aoa net/minecraft/src/BlockWeb
-CL: aob net/minecraft/src/BlockWeightedPressurePlate
-CL: aoc net/minecraft/src/BlockWoodButton
+CL: aob net/minecraft/src/BlockPressurePlateWeighted
+CL: aoc net/minecraft/src/BlockButtonWood
 CL: aod net/minecraft/src/BlockWoodSlab
 CL: aoe net/minecraft/src/BlockWood
 CL: aof net/minecraft/src/BlockWorkbench
@@ -360,7 +360,7 @@ CL: aom net/minecraft/src/TileEntityEnchantmentTable
 CL: aon net/minecraft/src/TileEntityEnderChest
 CL: aoo net/minecraft/src/TileEntityFurnace
 CL: aop net/minecraft/src/TileEntityHopper
-CL: aoq net/minecraft/src/EntitySelectorHopperInventory
+CL: aoq net/minecraft/src/EntitySelectorHasInventory
 CL: aor net/minecraft/src/TileEntityMobSpawner
 CL: aos net/minecraft/src/TileEntityMobSpawnerSpawnData
 CL: aot net/minecraft/src/TileEntityNote
@@ -581,7 +581,7 @@ CL: awx net/minecraft/src/EnchantmentNameParts
 CL: awy net/minecraft/src/GuiEnchantment
 CL: awz net/minecraft/src/GuiFurnace
 CL: ax net/minecraft/src/IBlockSource
-CL: axa net/minecraft/src/ScreenHopper
+CL: axa net/minecraft/src/GuiHopper
 CL: axb net/minecraft/src/GuiInventory
 CL: axc net/minecraft/src/GuiMerchant
 CL: axd net/minecraft/src/GuiButtonMerchant
@@ -1073,7 +1073,7 @@ CL: lf net/minecraft/src/InventoryBasic
 CL: lg net/minecraft/src/PlayerUsageSnooper
 CL: lh net/minecraft/src/PlayerUsageSnooperThread
 CL: li net/minecraft/src/IPlayerUsage
-CL: lj net/minecraft/src/ContainerWorldly
+CL: lj net/minecraft/src/ISidedInventory
 CL: lk net/minecraft/src/CombatEntry
 CL: ll net/minecraft/src/CombatTracker
 CL: lm net/minecraft/src/DamageSource
@@ -1203,10 +1203,10 @@ CL: qb net/minecraft/src/EntityBoat
 CL: qc net/minecraft/src/EntityFallingSand
 CL: qd net/minecraft/src/EntityItem
 CL: qe net/minecraft/src/EntityMinecart
-CL: qf net/minecraft/src/ItemChestMinecart
-CL: qg net/minecraft/src/ItemFurnaceMinecart
-CL: qh net/minecraft/src/ItemRideableMinecart
-CL: qi net/minecraft/src/ItemTntMinecart
+CL: qf net/minecraft/src/EntityMinecartChest
+CL: qg net/minecraft/src/EntityMinecartFurnace
+CL: qh net/minecraft/src/EntityMinecartEmpty
+CL: qi net/minecraft/src/EntityMinecartTNT
 CL: qj net/minecraft/src/EntityTNTPrimed
 CL: qk net/minecraft/src/EntityBlaze
 CL: ql net/minecraft/src/EntityCaveSpider
@@ -1266,7 +1266,7 @@ CL: sl net/minecraft/src/SlotEnchantmentTable
 CL: sm net/minecraft/src/SlotEnchantment
 CL: sn net/minecraft/src/ContainerFurnace
 CL: so net/minecraft/src/SlotFurnace
-CL: sp net/minecraft/src/MenuHopper
+CL: sp net/minecraft/src/ContainerHopper
 CL: sq net/minecraft/src/ContainerPlayer
 CL: sr net/minecraft/src/SlotArmor
 CL: st net/minecraft/src/InventoryMerchant
@@ -2001,7 +2001,7 @@ FD: ajk/b net/minecraft/src/BlockAnvil/field_82521_b
 FD: ajk/cO net/minecraft/src/BlockAnvil/field_94431_cO
 FD: ajk/cP net/minecraft/src/BlockAnvil/field_94432_cP
 FD: ajl/a net/minecraft/src/BlockBasePressurePlate/field_94356_a
-FD: ajm/a net/minecraft/src/BlockBaseRail/field_72186_a
+FD: ajm/a net/minecraft/src/BlockRailBase/field_72186_a
 FD: ajn/a net/minecraft/src/BlockBaseRailLogic/field_94518_a
 FD: ajn/b net/minecraft/src/BlockBaseRailLogic/field_94516_b
 FD: ajn/c net/minecraft/src/BlockBaseRailLogic/field_94517_c
@@ -2034,7 +2034,7 @@ FD: akb/b net/minecraft/src/BlockCocoa/field_94469_b
 FD: akd/b net/minecraft/src/BlockComparator/field_94493_b
 FD: akf/a net/minecraft/src/BlockCrops/field_94363_a
 FD: akg/a net/minecraft/src/BlockDaylightDetector/field_94445_a
-FD: akj/a net/minecraft/src/BlockRedstoneRepeater/field_72222_c
+FD: akj/a net/minecraft/src/BlockRedstoneLogic/field_72222_c
 FD: akm/a net/minecraft/src/BlockDispenser/field_82527_a
 FD: akm/b net/minecraft/src/BlockDispenser/field_72284_a
 FD: akm/c net/minecraft/src/BlockDispenser/field_94463_c
@@ -2093,7 +2093,7 @@ FD: ama/b net/minecraft/src/RedstoneUpdateInfo/field_73662_b
 FD: ama/c net/minecraft/src/RedstoneUpdateInfo/field_73663_c
 FD: ama/d net/minecraft/src/RedstoneUpdateInfo/field_73661_d
 FD: ame/a net/minecraft/src/BlockPotato/field_94365_a
-FD: amg/b net/minecraft/src/BlockPoweredRail/field_94362_b
+FD: amg/b net/minecraft/src/BlockRailPowered/field_94362_b
 FD: amh/a net/minecraft/src/BlockPressurePlate/field_72194_a
 FD: ami/a net/minecraft/src/EnumMobType/everything
 FD: ami/b net/minecraft/src/EnumMobType/mobs
@@ -2120,8 +2120,8 @@ FD: amo/cP net/minecraft/src/BlockRedstoneWire/field_94411_cP
 FD: amo/cQ net/minecraft/src/BlockRedstoneWire/field_94412_cQ
 FD: amp/a net/minecraft/src/BlockRedstoneOre/field_72178_a
 FD: amq/a net/minecraft/src/BlockRedstoneLight/field_72166_a
-FD: ams/b net/minecraft/src/BlockRepeater/field_94494_b
-FD: ams/c net/minecraft/src/BlockRepeater/field_94495_c
+FD: ams/b net/minecraft/src/BlockRedstoneRepeater/field_72223_a
+FD: ams/c net/minecraft/src/BlockRedstoneRepeater/field_72221_b
 FD: amt/a net/minecraft/src/BlockSandStone/field_72189_a
 FD: amt/b net/minecraft/src/BlockSandStone/field_94405_b
 FD: amt/c net/minecraft/src/BlockSandStone/field_94406_c
@@ -2360,7 +2360,7 @@ FD: anu/b net/minecraft/src/BlockLog/field_94389_b
 FD: anu/c net/minecraft/src/BlockLog/field_94390_c
 FD: anu/cO net/minecraft/src/BlockLog/field_94388_cO
 FD: any/a net/minecraft/src/BlockWall/field_82539_a
-FD: aob/a net/minecraft/src/BlockWeightedPressurePlate/field_94357_a
+FD: aob/a net/minecraft/src/BlockPressurePlateWeighted/field_94357_a
 FD: aod/a net/minecraft/src/BlockWoodSlab/field_72243_a
 FD: aoe/a net/minecraft/src/BlockWood/field_72152_a
 FD: aoe/b net/minecraft/src/BlockWood/field_94386_b
@@ -3376,8 +3376,8 @@ FD: awy/x net/minecraft/src/GuiEnchantment/field_74208_u
 FD: awy/y net/minecraft/src/GuiEnchantment/field_74207_v
 FD: awy/z net/minecraft/src/GuiEnchantment/field_74206_w
 FD: awz/r net/minecraft/src/GuiFurnace/field_74204_o
-FD: axa/r net/minecraft/src/ScreenHopper/field_94081_r
-FD: axa/s net/minecraft/src/ScreenHopper/field_94080_s
+FD: axa/r net/minecraft/src/GuiHopper/field_94081_r
+FD: axa/s net/minecraft/src/GuiHopper/field_94080_s
 FD: axb/r net/minecraft/src/GuiInventory/field_74225_o
 FD: axb/s net/minecraft/src/GuiInventory/field_74224_p
 FD: axc/r net/minecraft/src/GuiMerchant/field_74203_o
@@ -6141,12 +6141,12 @@ FD: qe/g net/minecraft/src/EntityMinecart/field_70509_j
 FD: qe/h net/minecraft/src/EntityMinecart/field_70514_an
 FD: qe/i net/minecraft/src/EntityMinecart/field_70512_ao
 FD: qe/j net/minecraft/src/EntityMinecart/field_70513_ap
-FD: qf/a net/minecraft/src/ItemChestMinecart/field_94113_a
-FD: qf/b net/minecraft/src/ItemChestMinecart/field_94112_b
-FD: qg/a net/minecraft/src/ItemFurnaceMinecart/field_94111_a
-FD: qg/b net/minecraft/src/ItemFurnaceMinecart/field_94109_b
-FD: qg/c net/minecraft/src/ItemFurnaceMinecart/field_94110_c
-FD: qi/a net/minecraft/src/ItemTntMinecart/field_94106_a
+FD: qf/a net/minecraft/src/EntityMinecartChest/field_94113_a
+FD: qf/b net/minecraft/src/EntityMinecartChest/field_94112_b
+FD: qg/a net/minecraft/src/EntityMinecartFurnace/field_94111_a
+FD: qg/b net/minecraft/src/EntityMinecartFurnace/field_94109_b
+FD: qg/c net/minecraft/src/EntityMinecartFurnace/field_94110_c
+FD: qi/a net/minecraft/src/EntityMinecartTNT/field_94106_a
 FD: qj/a net/minecraft/src/EntityTNTPrimed/field_70516_a
 FD: qj/b net/minecraft/src/EntityTNTPrimed/field_94084_b
 FD: qk/d net/minecraft/src/EntityBlaze/field_70847_d
@@ -6380,7 +6380,7 @@ FD: sn/g net/minecraft/src/ContainerFurnace/field_75157_g
 FD: sn/h net/minecraft/src/ContainerFurnace/field_75159_h
 FD: so/a net/minecraft/src/SlotFurnace/field_75229_a
 FD: so/b net/minecraft/src/SlotFurnace/field_75228_b
-FD: sp/a net/minecraft/src/MenuHopper/field_94538_a
+FD: sp/a net/minecraft/src/ContainerHopper/field_94538_a
 FD: sq/a net/minecraft/src/ContainerPlayer/field_75181_e
 FD: sq/f net/minecraft/src/ContainerPlayer/field_75179_f
 FD: sq/g net/minecraft/src/ContainerPlayer/field_75180_g
@@ -8071,7 +8071,7 @@ MD: ajk/c ()Z net/minecraft/src/BlockAnvil/func_71926_d ()Z
 MD: ajk/d ()I net/minecraft/src/BlockAnvil/func_71857_b ()I
 MD: ajl/a (III)Lapf; net/minecraft/src/BlockBasePressurePlate/func_94352_a (III)Lnet/minecraft/src/AxisAlignedBB;
 MD: ajl/a (Lle;)V net/minecraft/src/BlockBasePressurePlate/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: ajl/a (Lyn;)I net/minecraft/src/BlockBasePressurePlate/func_94326_a (Lnet/minecraft/src/World;)I
+MD: ajl/a (Lyn;)I net/minecraft/src/BlockBasePressurePlate/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: ajl/a (Lyn;III)Lapf; net/minecraft/src/BlockBasePressurePlate/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: ajl/a (Lyn;IIII)V net/minecraft/src/BlockBasePressurePlate/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: ajl/a (Lyn;IIIII)V net/minecraft/src/BlockBasePressurePlate/func_71852_a (Lnet/minecraft/src/World;IIIII)V
@@ -8093,22 +8093,22 @@ MD: ajl/d (Lyn;III)I net/minecraft/src/BlockBasePressurePlate/func_94351_d (Lnet
 MD: ajl/f ()Z net/minecraft/src/BlockBasePressurePlate/func_71853_i ()Z
 MD: ajl/g ()V net/minecraft/src/BlockBasePressurePlate/func_71919_f ()V
 MD: ajl/h ()I net/minecraft/src/BlockBasePressurePlate/func_71915_e ()I
-MD: ajm/a (Ljava/util/Random;)I net/minecraft/src/BlockBaseRail/func_71925_a (Ljava/util/Random;)I
-MD: ajm/a (Lyn;III)Lapf; net/minecraft/src/BlockBaseRail/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
-MD: ajm/a (Lyn;IIII)V net/minecraft/src/BlockBaseRail/func_71863_a (Lnet/minecraft/src/World;IIII)V
-MD: ajm/a (Lyn;IIIIII)V net/minecraft/src/BlockBaseRail/func_94358_a (Lnet/minecraft/src/World;IIIIII)V
-MD: ajm/a (Lyn;IIILapk;Lapk;)Lapi; net/minecraft/src/BlockBaseRail/func_71878_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Vec3;Lnet/minecraft/src/Vec3;)Lnet/minecraft/src/MovingObjectPosition;
-MD: ajm/a (Lyn;IIIZ)V net/minecraft/src/BlockBaseRail/func_72181_a (Lnet/minecraft/src/World;IIIZ)V
-MD: ajm/a (Lyw;III)V net/minecraft/src/BlockBaseRail/func_71902_a (Lnet/minecraft/src/IBlockAccess;III)V
-MD: ajm/b ()Z net/minecraft/src/BlockBaseRail/func_71886_c ()Z
-MD: ajm/b (Lyn;III)Z net/minecraft/src/BlockBaseRail/func_71930_b (Lnet/minecraft/src/World;III)Z
-MD: ajm/c ()Z net/minecraft/src/BlockBaseRail/func_71926_d ()Z
-MD: ajm/c_ (Lyn;III)V net/minecraft/src/BlockBaseRail/func_71861_g (Lnet/minecraft/src/World;III)V
-MD: ajm/d ()I net/minecraft/src/BlockBaseRail/func_71857_b ()I
-MD: ajm/d_ (Lyn;III)Z net/minecraft/src/BlockBaseRail/func_72180_d_ (Lnet/minecraft/src/World;III)Z
-MD: ajm/e ()Z net/minecraft/src/BlockBaseRail/func_72183_n ()Z
-MD: ajm/e_ (I)Z net/minecraft/src/BlockBaseRail/func_72184_d (I)Z
-MD: ajm/h ()I net/minecraft/src/BlockBaseRail/func_71915_e ()I
+MD: ajm/a (Ljava/util/Random;)I net/minecraft/src/BlockRailBase/func_71925_a (Ljava/util/Random;)I
+MD: ajm/a (Lyn;III)Lapf; net/minecraft/src/BlockRailBase/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
+MD: ajm/a (Lyn;IIII)V net/minecraft/src/BlockRailBase/func_71863_a (Lnet/minecraft/src/World;IIII)V
+MD: ajm/a (Lyn;IIIIII)V net/minecraft/src/BlockRailBase/func_94358_a (Lnet/minecraft/src/World;IIIIII)V
+MD: ajm/a (Lyn;IIILapk;Lapk;)Lapi; net/minecraft/src/BlockRailBase/func_71878_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Vec3;Lnet/minecraft/src/Vec3;)Lnet/minecraft/src/MovingObjectPosition;
+MD: ajm/a (Lyn;IIIZ)V net/minecraft/src/BlockRailBase/func_72181_a (Lnet/minecraft/src/World;IIIZ)V
+MD: ajm/a (Lyw;III)V net/minecraft/src/BlockRailBase/func_71902_a (Lnet/minecraft/src/IBlockAccess;III)V
+MD: ajm/b ()Z net/minecraft/src/BlockRailBase/func_71886_c ()Z
+MD: ajm/b (Lyn;III)Z net/minecraft/src/BlockRailBase/func_71930_b (Lnet/minecraft/src/World;III)Z
+MD: ajm/c ()Z net/minecraft/src/BlockRailBase/func_71926_d ()Z
+MD: ajm/c_ (Lyn;III)V net/minecraft/src/BlockRailBase/func_71861_g (Lnet/minecraft/src/World;III)V
+MD: ajm/d ()I net/minecraft/src/BlockRailBase/func_71857_b ()I
+MD: ajm/d_ (Lyn;III)Z net/minecraft/src/BlockRailBase/func_72180_d_ (Lnet/minecraft/src/World;III)Z
+MD: ajm/e ()Z net/minecraft/src/BlockRailBase/func_72183_n ()Z
+MD: ajm/e_ (I)Z net/minecraft/src/BlockRailBase/func_72184_d (I)Z
+MD: ajm/h ()I net/minecraft/src/BlockRailBase/func_71915_e ()I
 MD: ajn/a ()I net/minecraft/src/BlockBaseRailLogic/func_94505_a ()I
 MD: ajn/a (I)V net/minecraft/src/BlockBaseRailLogic/func_94504_a (I)V
 MD: ajn/a (III)Z net/minecraft/src/BlockBaseRailLogic/func_94502_a (III)Z
@@ -8175,7 +8175,7 @@ MD: ajs/e (Lyn;III)V net/minecraft/src/BlockFlower/func_72262_c (Lnet/minecraft/
 MD: ajs/f (Lyn;III)Z net/minecraft/src/BlockFlower/func_71854_d (Lnet/minecraft/src/World;III)Z
 MD: ajs/g_ (I)Z net/minecraft/src/BlockFlower/func_72263_d_ (I)Z
 MD: ajt/a (Lle;)V net/minecraft/src/BlockButton/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: ajt/a (Lyn;)I net/minecraft/src/BlockButton/func_94326_a (Lnet/minecraft/src/World;)I
+MD: ajt/a (Lyn;)I net/minecraft/src/BlockButton/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: ajt/a (Lyn;III)Lapf; net/minecraft/src/BlockButton/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: ajt/a (Lyn;IIII)V net/minecraft/src/BlockButton/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: ajt/a (Lyn;IIIIFFFI)I net/minecraft/src/BlockButton/func_85104_a (Lnet/minecraft/src/World;IIIIFFFI)I
@@ -8292,7 +8292,7 @@ MD: akb/e_ (Lyn;III)Lapf; net/minecraft/src/BlockCocoa/func_71911_a_ (Lnet/minec
 MD: akb/f (Lyn;III)Z net/minecraft/src/BlockCocoa/func_71854_d (Lnet/minecraft/src/World;III)Z
 MD: akb/h (Lyn;III)I net/minecraft/src/BlockCocoa/func_71873_h (Lnet/minecraft/src/World;III)I
 MD: akb/i_ (I)Lld; net/minecraft/src/BlockCocoa/func_94468_i_ (I)Lnet/minecraft/src/Icon;
-MD: akc/a (Lyn;)I net/minecraft/src/BlockCommandBlock/func_94326_a (Lnet/minecraft/src/World;)I
+MD: akc/a (Lyn;)I net/minecraft/src/BlockCommandBlock/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: akc/a (Lyn;IIII)V net/minecraft/src/BlockCommandBlock/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: akc/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockCommandBlock/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: akc/a (Lyn;IIILrh;IFFF)Z net/minecraft/src/BlockCommandBlock/func_71903_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;IFFF)Z
@@ -8308,10 +8308,10 @@ MD: akd/c (Lyn;III)I net/minecraft/src/BlockComparator/func_71922_a (Lnet/minecr
 MD: akd/d ()I net/minecraft/src/BlockComparator/func_71857_b ()I
 MD: akd/d (Lyn;IIII)Z net/minecraft/src/BlockComparator/func_94478_d (Lnet/minecraft/src/World;IIII)Z
 MD: akd/d (Lyw;IIII)I net/minecraft/src/BlockComparator/func_94480_d (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: akd/e ()Lakj; net/minecraft/src/BlockComparator/func_94485_e ()Lnet/minecraft/src/BlockRedstoneRepeater;
+MD: akd/e ()Lakj; net/minecraft/src/BlockComparator/func_94485_e ()Lnet/minecraft/src/BlockRedstoneLogic;
 MD: akd/e (Lyn;IIII)I net/minecraft/src/BlockComparator/func_72220_e (Lnet/minecraft/src/World;IIII)I
 MD: akd/f (Lyn;IIII)V net/minecraft/src/BlockComparator/func_94479_f (Lnet/minecraft/src/World;IIII)V
-MD: akd/i ()Lakj; net/minecraft/src/BlockComparator/func_94484_i ()Lnet/minecraft/src/BlockRedstoneRepeater;
+MD: akd/i ()Lakj; net/minecraft/src/BlockComparator/func_94484_i ()Lnet/minecraft/src/BlockRedstoneLogic;
 MD: akd/j_ (I)I net/minecraft/src/BlockComparator/func_94481_j_ (I)I
 MD: akd/k (Lyn;III)I net/minecraft/src/BlockComparator/func_94492_k (Lnet/minecraft/src/World;III)I
 MD: akd/m (Lyn;IIII)I net/minecraft/src/BlockComparator/func_94491_m (Lnet/minecraft/src/World;IIII)I
@@ -8344,52 +8344,52 @@ MD: akg/j_ (Lyn;III)V net/minecraft/src/BlockDaylightDetector/func_94444_j_ (Lne
 MD: akh/a (ILjava/util/Random;I)I net/minecraft/src/BlockDeadBush/func_71885_a (ILjava/util/Random;I)I
 MD: akh/a (Lyn;Lrh;IIII)V net/minecraft/src/BlockDeadBush/func_71893_a (Lnet/minecraft/src/World;Lnet/minecraft/src/EntityPlayer;IIII)V
 MD: akh/g_ (I)Z net/minecraft/src/BlockDeadBush/func_72263_d_ (I)Z
-MD: aki/a (Lyn;)I net/minecraft/src/BlockDetectorRail/func_94326_a (Lnet/minecraft/src/World;)I
+MD: aki/a (Lyn;)I net/minecraft/src/BlockDetectorRail/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: aki/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockDetectorRail/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: aki/a (Lyn;IIILlv;)V net/minecraft/src/BlockDetectorRail/func_71869_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Entity;)V
 MD: aki/b (Lyw;IIII)I net/minecraft/src/BlockDetectorRail/func_71865_a (Lnet/minecraft/src/IBlockAccess;IIII)I
 MD: aki/c (Lyw;IIII)I net/minecraft/src/BlockDetectorRail/func_71855_c (Lnet/minecraft/src/IBlockAccess;IIII)I
 MD: aki/d (Lyn;IIII)V net/minecraft/src/BlockDetectorRail/func_72187_e (Lnet/minecraft/src/World;IIII)V
 MD: aki/f ()Z net/minecraft/src/BlockDetectorRail/func_71853_i ()Z
-MD: akj/a (II)Lld; net/minecraft/src/BlockRedstoneRepeater/func_71858_a (II)Lnet/minecraft/src/Icon;
-MD: akj/a (Lle;)V net/minecraft/src/BlockRedstoneRepeater/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: akj/a (Lyn;IIII)V net/minecraft/src/BlockRedstoneRepeater/func_71863_a (Lnet/minecraft/src/World;IIII)V
-MD: akj/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockRedstoneRepeater/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
-MD: akj/a (Lyn;IIILmj;Lvc;)V net/minecraft/src/BlockRedstoneRepeater/func_71860_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityLiving;Lnet/minecraft/src/ItemStack;)V
-MD: akj/a (Lyw;IIII)Z net/minecraft/src/BlockRedstoneRepeater/func_71877_c (Lnet/minecraft/src/IBlockAccess;IIII)Z
-MD: akj/b ()Z net/minecraft/src/BlockRedstoneRepeater/func_71886_c ()Z
-MD: akj/b (Lyn;III)Z net/minecraft/src/BlockRedstoneRepeater/func_71930_b (Lnet/minecraft/src/World;III)Z
-MD: akj/b (Lyw;IIII)I net/minecraft/src/BlockRedstoneRepeater/func_71865_a (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: akj/c ()Z net/minecraft/src/BlockRedstoneRepeater/func_71926_d ()Z
-MD: akj/c (Lyw;IIII)I net/minecraft/src/BlockRedstoneRepeater/func_71855_c (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: akj/c_ (Lyn;III)V net/minecraft/src/BlockRedstoneRepeater/func_71861_g (Lnet/minecraft/src/World;III)V
-MD: akj/d ()I net/minecraft/src/BlockRedstoneRepeater/func_71857_b ()I
-MD: akj/d (I)Z net/minecraft/src/BlockRedstoneRepeater/func_94477_d (I)Z
-MD: akj/d (Lyn;IIII)Z net/minecraft/src/BlockRedstoneRepeater/func_94478_d (Lnet/minecraft/src/World;IIII)Z
-MD: akj/d (Lyw;IIII)I net/minecraft/src/BlockRedstoneRepeater/func_94480_d (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: akj/e ()Lakj; net/minecraft/src/BlockRedstoneRepeater/func_94485_e ()Lnet/minecraft/src/BlockRedstoneRepeater;
-MD: akj/e (I)Z net/minecraft/src/BlockRedstoneRepeater/func_82524_c (I)Z
-MD: akj/e (Lyn;IIII)I net/minecraft/src/BlockRedstoneRepeater/func_72220_e (Lnet/minecraft/src/World;IIII)I
-MD: akj/e (Lyw;IIII)Z net/minecraft/src/BlockRedstoneRepeater/func_94476_e (Lnet/minecraft/src/IBlockAccess;IIII)Z
-MD: akj/f ()Z net/minecraft/src/BlockRedstoneRepeater/func_71853_i ()Z
-MD: akj/f (I)Z net/minecraft/src/BlockRedstoneRepeater/func_94487_f (I)Z
-MD: akj/f (Lyn;III)Z net/minecraft/src/BlockRedstoneRepeater/func_71854_d (Lnet/minecraft/src/World;III)Z
-MD: akj/f (Lyn;IIII)V net/minecraft/src/BlockRedstoneRepeater/func_94479_f (Lnet/minecraft/src/World;IIII)V
-MD: akj/f (Lyw;IIII)I net/minecraft/src/BlockRedstoneRepeater/func_94482_f (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: akj/g (I)I net/minecraft/src/BlockRedstoneRepeater/func_94486_g (I)I
-MD: akj/g (Lyn;IIII)V net/minecraft/src/BlockRedstoneRepeater/func_71898_d (Lnet/minecraft/src/World;IIII)V
-MD: akj/g (Lyw;IIII)I net/minecraft/src/BlockRedstoneRepeater/func_94488_g (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: akj/h (I)Z net/minecraft/src/BlockRedstoneRepeater/func_94334_h (I)Z
-MD: akj/h (Lyn;IIII)Z net/minecraft/src/BlockRedstoneRepeater/func_83011_d (Lnet/minecraft/src/World;IIII)Z
-MD: akj/i ()Lakj; net/minecraft/src/BlockRedstoneRepeater/func_94484_i ()Lnet/minecraft/src/BlockRedstoneRepeater;
-MD: akj/i_ (Lyn;III)V net/minecraft/src/BlockRedstoneRepeater/func_94483_i_ (Lnet/minecraft/src/World;III)V
-MD: akj/j_ (I)I net/minecraft/src/BlockRedstoneRepeater/func_94481_j_ (I)I
+MD: akj/a (II)Lld; net/minecraft/src/BlockRedstoneLogic/func_71858_a (II)Lnet/minecraft/src/Icon;
+MD: akj/a (Lle;)V net/minecraft/src/BlockRedstoneLogic/func_94332_a (Lnet/minecraft/src/IconRegister;)V
+MD: akj/a (Lyn;IIII)V net/minecraft/src/BlockRedstoneLogic/func_71863_a (Lnet/minecraft/src/World;IIII)V
+MD: akj/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockRedstoneLogic/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
+MD: akj/a (Lyn;IIILmj;Lvc;)V net/minecraft/src/BlockRedstoneLogic/func_71860_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityLiving;Lnet/minecraft/src/ItemStack;)V
+MD: akj/a (Lyw;IIII)Z net/minecraft/src/BlockRedstoneLogic/func_71877_c (Lnet/minecraft/src/IBlockAccess;IIII)Z
+MD: akj/b ()Z net/minecraft/src/BlockRedstoneLogic/func_71886_c ()Z
+MD: akj/b (Lyn;III)Z net/minecraft/src/BlockRedstoneLogic/func_71930_b (Lnet/minecraft/src/World;III)Z
+MD: akj/b (Lyw;IIII)I net/minecraft/src/BlockRedstoneLogic/func_71865_a (Lnet/minecraft/src/IBlockAccess;IIII)I
+MD: akj/c ()Z net/minecraft/src/BlockRedstoneLogic/func_71926_d ()Z
+MD: akj/c (Lyw;IIII)I net/minecraft/src/BlockRedstoneLogic/func_71855_c (Lnet/minecraft/src/IBlockAccess;IIII)I
+MD: akj/c_ (Lyn;III)V net/minecraft/src/BlockRedstoneLogic/func_71861_g (Lnet/minecraft/src/World;III)V
+MD: akj/d ()I net/minecraft/src/BlockRedstoneLogic/func_71857_b ()I
+MD: akj/d (I)Z net/minecraft/src/BlockRedstoneLogic/func_94477_d (I)Z
+MD: akj/d (Lyn;IIII)Z net/minecraft/src/BlockRedstoneLogic/func_94478_d (Lnet/minecraft/src/World;IIII)Z
+MD: akj/d (Lyw;IIII)I net/minecraft/src/BlockRedstoneLogic/func_94480_d (Lnet/minecraft/src/IBlockAccess;IIII)I
+MD: akj/e ()Lakj; net/minecraft/src/BlockRedstoneLogic/func_94485_e ()Lnet/minecraft/src/BlockRedstoneLogic;
+MD: akj/e (I)Z net/minecraft/src/BlockRedstoneLogic/func_82524_c (I)Z
+MD: akj/e (Lyn;IIII)I net/minecraft/src/BlockRedstoneLogic/func_72220_e (Lnet/minecraft/src/World;IIII)I
+MD: akj/e (Lyw;IIII)Z net/minecraft/src/BlockRedstoneLogic/func_94476_e (Lnet/minecraft/src/IBlockAccess;IIII)Z
+MD: akj/f ()Z net/minecraft/src/BlockRedstoneLogic/func_71853_i ()Z
+MD: akj/f (I)Z net/minecraft/src/BlockRedstoneLogic/func_94487_f (I)Z
+MD: akj/f (Lyn;III)Z net/minecraft/src/BlockRedstoneLogic/func_71854_d (Lnet/minecraft/src/World;III)Z
+MD: akj/f (Lyn;IIII)V net/minecraft/src/BlockRedstoneLogic/func_94479_f (Lnet/minecraft/src/World;IIII)V
+MD: akj/f (Lyw;IIII)I net/minecraft/src/BlockRedstoneLogic/func_94482_f (Lnet/minecraft/src/IBlockAccess;IIII)I
+MD: akj/g (I)I net/minecraft/src/BlockRedstoneLogic/func_94486_g (I)I
+MD: akj/g (Lyn;IIII)V net/minecraft/src/BlockRedstoneLogic/func_71898_d (Lnet/minecraft/src/World;IIII)V
+MD: akj/g (Lyw;IIII)I net/minecraft/src/BlockRedstoneLogic/func_94488_g (Lnet/minecraft/src/IBlockAccess;IIII)I
+MD: akj/h (I)Z net/minecraft/src/BlockRedstoneLogic/func_94334_h (I)Z
+MD: akj/h (Lyn;IIII)Z net/minecraft/src/BlockRedstoneLogic/func_83011_d (Lnet/minecraft/src/World;IIII)Z
+MD: akj/i ()Lakj; net/minecraft/src/BlockRedstoneLogic/func_94484_i ()Lnet/minecraft/src/BlockRedstoneLogic;
+MD: akj/i_ (Lyn;III)V net/minecraft/src/BlockRedstoneLogic/func_94483_i_ (Lnet/minecraft/src/World;III)V
+MD: akj/j_ (I)I net/minecraft/src/BlockRedstoneLogic/func_94481_j_ (I)I
 MD: akk/i (I)I net/minecraft/src/BlockDirectional/func_72217_d (I)I
 MD: akm/a (II)Lld; net/minecraft/src/BlockDispenser/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: akm/a (ILjava/util/Random;I)I net/minecraft/src/BlockDispenser/func_71885_a (ILjava/util/Random;I)I
 MD: akm/a (Lax;)Lbg; net/minecraft/src/BlockDispenser/func_82525_a (Lnet/minecraft/src/IBlockSource;)Lnet/minecraft/src/IPosition;
 MD: akm/a (Lle;)V net/minecraft/src/BlockDispenser/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: akm/a (Lyn;)I net/minecraft/src/BlockDispenser/func_94326_a (Lnet/minecraft/src/World;)I
+MD: akm/a (Lyn;)I net/minecraft/src/BlockDispenser/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: akm/a (Lyn;IIII)V net/minecraft/src/BlockDispenser/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: akm/a (Lyn;IIIII)V net/minecraft/src/BlockDispenser/func_71852_a (Lnet/minecraft/src/World;IIIII)V
 MD: akm/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockDispenser/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
@@ -8415,7 +8415,7 @@ MD: akn/b ()Z net/minecraft/src/BlockDoor/func_71886_c ()Z
 MD: akn/b (Lyn;III)Z net/minecraft/src/BlockDoor/func_71930_b (Lnet/minecraft/src/World;III)Z
 MD: akn/b (Lyw;III)Z net/minecraft/src/BlockDoor/func_71918_c (Lnet/minecraft/src/IBlockAccess;III)Z
 MD: akn/b_ (Lyw;III)I net/minecraft/src/BlockDoor/func_72234_b_ (Lnet/minecraft/src/IBlockAccess;III)I
-MD: akn/b_ (Lyw;IIII)Lld; net/minecraft/src/BlockDoor/func_94333_b_ (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
+MD: akn/b_ (Lyw;IIII)Lld; net/minecraft/src/BlockDoor/func_71895_b (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
 MD: akn/c ()Z net/minecraft/src/BlockDoor/func_71926_d ()Z
 MD: akn/c (Lyn;III)I net/minecraft/src/BlockDoor/func_71922_a (Lnet/minecraft/src/World;III)I
 MD: akn/d ()I net/minecraft/src/BlockDoor/func_71857_b ()I
@@ -8423,7 +8423,7 @@ MD: akn/d (I)V net/minecraft/src/BlockDoor/func_72232_e (I)V
 MD: akn/d (Lyw;III)I net/minecraft/src/BlockDoor/func_72235_d (Lnet/minecraft/src/IBlockAccess;III)I
 MD: akn/e_ (Lyn;III)Lapf; net/minecraft/src/BlockDoor/func_71911_a_ (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: akn/h ()I net/minecraft/src/BlockDoor/func_71915_e ()I
-MD: ako/a (Lyn;)I net/minecraft/src/BlockDragonEgg/func_94326_a (Lnet/minecraft/src/World;)I
+MD: ako/a (Lyn;)I net/minecraft/src/BlockDragonEgg/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: ako/a (Lyn;IIII)V net/minecraft/src/BlockDragonEgg/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: ako/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockDragonEgg/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: ako/a (Lyn;IIILrh;)V net/minecraft/src/BlockDragonEgg/func_71921_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;)V
@@ -8499,7 +8499,7 @@ MD: akv/a (II)Lld; net/minecraft/src/BlockFire/func_71858_a (II)Lnet/minecraft/s
 MD: akv/a (III)V net/minecraft/src/BlockFire/func_72253_a (III)V
 MD: akv/a (Ljava/util/Random;)I net/minecraft/src/BlockFire/func_71925_a (Ljava/util/Random;)I
 MD: akv/a (Lle;)V net/minecraft/src/BlockFire/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: akv/a (Lyn;)I net/minecraft/src/BlockFire/func_94326_a (Lnet/minecraft/src/World;)I
+MD: akv/a (Lyn;)I net/minecraft/src/BlockFire/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: akv/a (Lyn;III)Lapf; net/minecraft/src/BlockFire/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: akv/a (Lyn;IIII)V net/minecraft/src/BlockFire/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: akv/a (Lyn;IIIILjava/util/Random;I)V net/minecraft/src/BlockFire/func_72255_a (Lnet/minecraft/src/World;IIIILjava/util/Random;I)V
@@ -8554,7 +8554,7 @@ MD: akz/a (ILjava/util/Random;I)I net/minecraft/src/BlockGrass/func_71885_a (ILj
 MD: akz/a (Lle;)V net/minecraft/src/BlockGrass/func_94332_a (Lnet/minecraft/src/IconRegister;)V
 MD: akz/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockGrass/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: akz/b (I)I net/minecraft/src/BlockGrass/func_71889_f_ (I)I
-MD: akz/b_ (Lyw;IIII)Lld; net/minecraft/src/BlockGrass/func_94333_b_ (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
+MD: akz/b_ (Lyw;IIII)Lld; net/minecraft/src/BlockGrass/func_71895_b (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
 MD: akz/c (Lyw;III)I net/minecraft/src/BlockGrass/func_71920_b (Lnet/minecraft/src/IBlockAccess;III)I
 MD: akz/n ()I net/minecraft/src/BlockGrass/func_71933_m ()I
 MD: akz/o ()Lld; net/minecraft/src/BlockGrass/func_94434_o ()Lnet/minecraft/src/Icon;
@@ -8580,7 +8580,7 @@ MD: alc/a (Lle;)V net/minecraft/src/BlockBreakable/func_94332_a (Lnet/minecraft/
 MD: alc/a (Lyw;IIII)Z net/minecraft/src/BlockBreakable/func_71877_c (Lnet/minecraft/src/IBlockAccess;IIII)Z
 MD: alc/c ()Z net/minecraft/src/BlockBreakable/func_71926_d ()Z
 MD: ald/a (Lqc;)V net/minecraft/src/BlockSand/func_82520_a (Lnet/minecraft/src/EntityFallingSand;)V
-MD: ald/a (Lyn;)I net/minecraft/src/BlockSand/func_94326_a (Lnet/minecraft/src/World;)I
+MD: ald/a (Lyn;)I net/minecraft/src/BlockSand/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: ald/a (Lyn;IIII)V net/minecraft/src/BlockSand/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: ald/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockSand/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: ald/a_ (Lyn;III)Z net/minecraft/src/BlockSand/func_72191_e_ (Lnet/minecraft/src/World;III)Z
@@ -8673,7 +8673,7 @@ MD: alo/a (ILjava/util/Random;I)I net/minecraft/src/BlockFluid/func_71885_a (ILj
 MD: alo/a (IZ)Z net/minecraft/src/BlockFluid/func_71913_a (IZ)Z
 MD: alo/a (Ljava/util/Random;)I net/minecraft/src/BlockFluid/func_71925_a (Ljava/util/Random;)I
 MD: alo/a (Lle;)V net/minecraft/src/BlockFluid/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: alo/a (Lyn;)I net/minecraft/src/BlockFluid/func_94326_a (Lnet/minecraft/src/World;)I
+MD: alo/a (Lyn;)I net/minecraft/src/BlockFluid/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: alo/a (Lyn;III)Lapf; net/minecraft/src/BlockFluid/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: alo/a (Lyn;IIII)V net/minecraft/src/BlockFluid/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: alo/a (Lyn;IIILlv;Lapk;)V net/minecraft/src/BlockFluid/func_71901_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Entity;Lnet/minecraft/src/Vec3;)V
@@ -8744,7 +8744,7 @@ MD: alx/a (ILjava/util/Random;I)I net/minecraft/src/BlockMycelium/func_71885_a (
 MD: alx/a (Lle;)V net/minecraft/src/BlockMycelium/func_94332_a (Lnet/minecraft/src/IconRegister;)V
 MD: alx/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockMycelium/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: alx/b (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockMycelium/func_71862_a (Lnet/minecraft/src/World;IIILjava/util/Random;)V
-MD: alx/b_ (Lyw;IIII)Lld; net/minecraft/src/BlockMycelium/func_94333_b_ (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
+MD: alx/b_ (Lyw;IIII)Lld; net/minecraft/src/BlockMycelium/func_71895_b (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
 MD: aly/a (II)Lld; net/minecraft/src/BlockNetherStalk/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: aly/a (ILjava/util/Random;I)I net/minecraft/src/BlockNetherStalk/func_71885_a (ILjava/util/Random;I)I
 MD: aly/a (Ljava/util/Random;)I net/minecraft/src/BlockNetherStalk/func_71925_a (Ljava/util/Random;)I
@@ -8757,7 +8757,7 @@ MD: aly/f (Lyn;III)Z net/minecraft/src/BlockNetherStalk/func_71854_d (Lnet/minec
 MD: aly/g_ (I)Z net/minecraft/src/BlockNetherStalk/func_72263_d_ (I)Z
 MD: alz/a (ILjava/util/Random;I)I net/minecraft/src/BlockRedstoneTorch/func_71885_a (ILjava/util/Random;I)I
 MD: alz/a (Lle;)V net/minecraft/src/BlockRedstoneTorch/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: alz/a (Lyn;)I net/minecraft/src/BlockRedstoneTorch/func_94326_a (Lnet/minecraft/src/World;)I
+MD: alz/a (Lyn;)I net/minecraft/src/BlockRedstoneTorch/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: alz/a (Lyn;IIII)V net/minecraft/src/BlockRedstoneTorch/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: alz/a (Lyn;IIIII)V net/minecraft/src/BlockRedstoneTorch/func_71852_a (Lnet/minecraft/src/World;IIIII)V
 MD: alz/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockRedstoneTorch/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
@@ -8795,13 +8795,13 @@ MD: ame/a (Lle;)V net/minecraft/src/BlockPotato/func_94332_a (Lnet/minecraft/src
 MD: ame/a (Lyn;IIIIFI)V net/minecraft/src/BlockPotato/func_71914_a (Lnet/minecraft/src/World;IIIIFI)V
 MD: ame/i ()I net/minecraft/src/BlockPotato/func_82532_h ()I
 MD: ame/j ()I net/minecraft/src/BlockPotato/func_82533_j ()I
-MD: amf/b (Lyw;IIII)I net/minecraft/src/BlockPoweredMetal/func_71865_a (Lnet/minecraft/src/IBlockAccess;IIII)I
-MD: amf/f ()Z net/minecraft/src/BlockPoweredMetal/func_71853_i ()Z
-MD: amg/a (II)Lld; net/minecraft/src/BlockPoweredRail/func_71858_a (II)Lnet/minecraft/src/Icon;
-MD: amg/a (Lle;)V net/minecraft/src/BlockPoweredRail/func_94332_a (Lnet/minecraft/src/IconRegister;)V
-MD: amg/a (Lyn;IIIIII)V net/minecraft/src/BlockPoweredRail/func_94358_a (Lnet/minecraft/src/World;IIIIII)V
-MD: amg/a (Lyn;IIIIZI)Z net/minecraft/src/BlockPoweredRail/func_94360_a (Lnet/minecraft/src/World;IIIIZI)Z
-MD: amg/a (Lyn;IIIZII)Z net/minecraft/src/BlockPoweredRail/func_94361_a (Lnet/minecraft/src/World;IIIZII)Z
+MD: amf/b (Lyw;IIII)I net/minecraft/src/BlockPoweredOre/func_71865_a (Lnet/minecraft/src/IBlockAccess;IIII)I
+MD: amf/f ()Z net/minecraft/src/BlockPoweredOre/func_71853_i ()Z
+MD: amg/a (II)Lld; net/minecraft/src/BlockRailPowered/func_71858_a (II)Lnet/minecraft/src/Icon;
+MD: amg/a (Lle;)V net/minecraft/src/BlockRailPowered/func_94332_a (Lnet/minecraft/src/IconRegister;)V
+MD: amg/a (Lyn;IIIIII)V net/minecraft/src/BlockRailPowered/func_94358_a (Lnet/minecraft/src/World;IIIIII)V
+MD: amg/a (Lyn;IIIIZI)Z net/minecraft/src/BlockRailPowered/func_94360_a (Lnet/minecraft/src/World;IIIIZI)Z
+MD: amg/a (Lyn;IIIZII)Z net/minecraft/src/BlockRailPowered/func_94361_a (Lnet/minecraft/src/World;IIIZII)Z
 MD: amh/c (I)I net/minecraft/src/BlockPressurePlate/func_94350_c (I)I
 MD: amh/d (I)I net/minecraft/src/BlockPressurePlate/func_94355_d (I)I
 MD: amh/d (Lyn;III)I net/minecraft/src/BlockPressurePlate/func_94351_d (Lnet/minecraft/src/World;III)I
@@ -8855,7 +8855,7 @@ MD: amo/m (Lyn;III)V net/minecraft/src/BlockRedstoneWire/func_72172_n (Lnet/mine
 MD: amp/a (ILjava/util/Random;)I net/minecraft/src/BlockRedstoneOre/func_71910_a (ILjava/util/Random;)I
 MD: amp/a (ILjava/util/Random;I)I net/minecraft/src/BlockRedstoneOre/func_71885_a (ILjava/util/Random;I)I
 MD: amp/a (Ljava/util/Random;)I net/minecraft/src/BlockRedstoneOre/func_71925_a (Ljava/util/Random;)I
-MD: amp/a (Lyn;)I net/minecraft/src/BlockRedstoneOre/func_94326_a (Lnet/minecraft/src/World;)I
+MD: amp/a (Lyn;)I net/minecraft/src/BlockRedstoneOre/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: amp/a (Lyn;IIIIFI)V net/minecraft/src/BlockRedstoneOre/func_71914_a (Lnet/minecraft/src/World;IIIIFI)V
 MD: amp/a (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockRedstoneOre/func_71847_b (Lnet/minecraft/src/World;IIILjava/util/Random;)V
 MD: amp/a (Lyn;IIILrh;)V net/minecraft/src/BlockRedstoneOre/func_71921_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;)V
@@ -8882,16 +8882,16 @@ MD: amr/c (Lyn;III)I net/minecraft/src/BlockReed/func_71922_a (Lnet/minecraft/sr
 MD: amr/d ()I net/minecraft/src/BlockReed/func_71857_b ()I
 MD: amr/f (Lyn;III)Z net/minecraft/src/BlockReed/func_71854_d (Lnet/minecraft/src/World;III)Z
 MD: amr/p_ (Lyn;III)V net/minecraft/src/BlockReed/func_72167_k_ (Lnet/minecraft/src/World;III)V
-MD: ams/a (ILjava/util/Random;I)I net/minecraft/src/BlockRepeater/func_71885_a (ILjava/util/Random;I)I
-MD: ams/a (Lyn;IIILrh;IFFF)Z net/minecraft/src/BlockRepeater/func_71903_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;IFFF)Z
-MD: ams/b (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockRepeater/func_71862_a (Lnet/minecraft/src/World;IIILjava/util/Random;)V
-MD: ams/c (Lyn;III)I net/minecraft/src/BlockRepeater/func_71922_a (Lnet/minecraft/src/World;III)I
-MD: ams/d ()I net/minecraft/src/BlockRepeater/func_71857_b ()I
-MD: ams/d (I)Z net/minecraft/src/BlockRepeater/func_94477_d (I)Z
-MD: ams/e ()Lakj; net/minecraft/src/BlockRepeater/func_94485_e ()Lnet/minecraft/src/BlockRedstoneRepeater;
-MD: ams/e (Lyw;IIII)Z net/minecraft/src/BlockRepeater/func_94476_e (Lnet/minecraft/src/IBlockAccess;IIII)Z
-MD: ams/i ()Lakj; net/minecraft/src/BlockRepeater/func_94484_i ()Lnet/minecraft/src/BlockRedstoneRepeater;
-MD: ams/j_ (I)I net/minecraft/src/BlockRepeater/func_94481_j_ (I)I
+MD: ams/a (ILjava/util/Random;I)I net/minecraft/src/BlockRedstoneRepeater/func_71885_a (ILjava/util/Random;I)I
+MD: ams/a (Lyn;IIILrh;IFFF)Z net/minecraft/src/BlockRedstoneRepeater/func_71903_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;IFFF)Z
+MD: ams/b (Lyn;IIILjava/util/Random;)V net/minecraft/src/BlockRedstoneRepeater/func_71862_a (Lnet/minecraft/src/World;IIILjava/util/Random;)V
+MD: ams/c (Lyn;III)I net/minecraft/src/BlockRedstoneRepeater/func_71922_a (Lnet/minecraft/src/World;III)I
+MD: ams/d ()I net/minecraft/src/BlockRedstoneRepeater/func_71857_b ()I
+MD: ams/d (I)Z net/minecraft/src/BlockRedstoneRepeater/func_94477_d (I)Z
+MD: ams/e ()Lakj; net/minecraft/src/BlockRedstoneRepeater/func_94485_e ()Lnet/minecraft/src/BlockRedstoneLogic;
+MD: ams/e (Lyw;IIII)Z net/minecraft/src/BlockRedstoneRepeater/func_94476_e (Lnet/minecraft/src/IBlockAccess;IIII)Z
+MD: ams/i ()Lakj; net/minecraft/src/BlockRedstoneRepeater/func_94484_i ()Lnet/minecraft/src/BlockRedstoneLogic;
+MD: ams/j_ (I)I net/minecraft/src/BlockRedstoneRepeater/func_94481_j_ (I)I
 MD: amt/a (I)I net/minecraft/src/BlockSandStone/func_71899_b (I)I
 MD: amt/a (II)Lld; net/minecraft/src/BlockSandStone/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: amt/a (ILtu;Ljava/util/List;)V net/minecraft/src/BlockSandStone/func_71879_a (ILnet/minecraft/src/CreativeTabs;Ljava/util/List;)V
@@ -8952,7 +8952,7 @@ MD: ana/a (II)Lld; net/minecraft/src/BlockStairs/func_71858_a (II)Lnet/minecraft
 MD: ana/a (IZ)Z net/minecraft/src/BlockStairs/func_71913_a (IZ)Z
 MD: ana/a (Lle;)V net/minecraft/src/BlockStairs/func_94332_a (Lnet/minecraft/src/IconRegister;)V
 MD: ana/a (Llv;)F net/minecraft/src/BlockStairs/func_71904_a (Lnet/minecraft/src/Entity;)F
-MD: ana/a (Lyn;)I net/minecraft/src/BlockStairs/func_94326_a (Lnet/minecraft/src/World;)I
+MD: ana/a (Lyn;)I net/minecraft/src/BlockStairs/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: ana/a (Lyn;IIIIFFFI)I net/minecraft/src/BlockStairs/func_85104_a (Lnet/minecraft/src/World;IIIIFFFI)I
 MD: ana/a (Lyn;IIIII)V net/minecraft/src/BlockStairs/func_71852_a (Lnet/minecraft/src/World;IIIII)V
 MD: ana/a (Lyn;IIILapf;Ljava/util/List;Llv;)V net/minecraft/src/BlockStairs/func_71871_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/AxisAlignedBB;Ljava/util/List;Lnet/minecraft/src/Entity;)V
@@ -8962,7 +8962,7 @@ MD: ana/a (Lyn;IIILlv;Lapk;)V net/minecraft/src/BlockStairs/func_71901_a (Lnet/m
 MD: ana/a (Lyn;IIILmj;Lvc;)V net/minecraft/src/BlockStairs/func_71860_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityLiving;Lnet/minecraft/src/ItemStack;)V
 MD: ana/a (Lyn;IIILrh;)V net/minecraft/src/BlockStairs/func_71921_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;)V
 MD: ana/a (Lyn;IIILrh;IFFF)Z net/minecraft/src/BlockStairs/func_71903_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;IFFF)Z
-MD: ana/a (Lyn;IIILyi;)V net/minecraft/src/BlockStairs/func_94325_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Explosion;)V
+MD: ana/a (Lyn;IIILyi;)V net/minecraft/src/BlockStairs/func_71867_k (Lnet/minecraft/src/World;IIILnet/minecraft/src/Explosion;)V
 MD: ana/a (Lyw;III)V net/minecraft/src/BlockStairs/func_71902_a (Lnet/minecraft/src/IBlockAccess;III)V
 MD: ana/b ()Z net/minecraft/src/BlockStairs/func_71886_c ()Z
 MD: ana/b (Lyn;III)Z net/minecraft/src/BlockStairs/func_71930_b (Lnet/minecraft/src/World;III)Z
@@ -8998,7 +8998,7 @@ MD: anb/g_ (I)Z net/minecraft/src/BlockStem/func_72263_d_ (I)Z
 MD: anb/k (Lyn;III)V net/minecraft/src/BlockStem/func_72264_l (Lnet/minecraft/src/World;III)V
 MD: anb/m (Lyn;III)F net/minecraft/src/BlockStem/func_72266_n (Lnet/minecraft/src/World;III)F
 MD: anb/p ()Lld; net/minecraft/src/BlockStem/func_94368_p ()Lnet/minecraft/src/Icon;
-MD: anc/a (II)Lld; net/minecraft/src/BlockStoneButton/func_71858_a (II)Lnet/minecraft/src/Icon;
+MD: anc/a (II)Lld; net/minecraft/src/BlockButtonStone/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: and/a (II)Lld; net/minecraft/src/BlockSilverfish/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: and/a (ILtu;Ljava/util/List;)V net/minecraft/src/BlockSilverfish/func_71879_a (ILnet/minecraft/src/CreativeTabs;Ljava/util/List;)V
 MD: and/a (Ljava/util/Random;)I net/minecraft/src/BlockSilverfish/func_71925_a (Ljava/util/Random;)I
@@ -9082,7 +9082,7 @@ MD: ank/a (Llv;)F net/minecraft/src/Block/func_71904_a (Lnet/minecraft/src/Entit
 MD: ank/a (Lrh;Lyn;III)F net/minecraft/src/Block/func_71908_a (Lnet/minecraft/src/EntityPlayer;Lnet/minecraft/src/World;III)F
 MD: ank/a (Ltu;)Lank; net/minecraft/src/Block/func_71849_a (Lnet/minecraft/src/CreativeTabs;)Lnet/minecraft/src/Block;
 MD: ank/a (Lyi;)Z net/minecraft/src/Block/func_85103_a (Lnet/minecraft/src/Explosion;)Z
-MD: ank/a (Lyn;)I net/minecraft/src/Block/func_94326_a (Lnet/minecraft/src/World;)I
+MD: ank/a (Lyn;)I net/minecraft/src/Block/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: ank/a (Lyn;III)Lapf; net/minecraft/src/Block/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: ank/a (Lyn;IIII)V net/minecraft/src/Block/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: ank/a (Lyn;IIIIFFFI)I net/minecraft/src/Block/func_85104_a (Lnet/minecraft/src/World;IIIIFFFI)I
@@ -9099,7 +9099,7 @@ MD: ank/a (Lyn;IIILlv;Lapk;)V net/minecraft/src/Block/func_71901_a (Lnet/minecra
 MD: ank/a (Lyn;IIILmj;Lvc;)V net/minecraft/src/Block/func_71860_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityLiving;Lnet/minecraft/src/ItemStack;)V
 MD: ank/a (Lyn;IIILrh;)V net/minecraft/src/Block/func_71921_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;)V
 MD: ank/a (Lyn;IIILrh;IFFF)Z net/minecraft/src/Block/func_71903_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;IFFF)Z
-MD: ank/a (Lyn;IIILyi;)V net/minecraft/src/Block/func_94325_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Explosion;)V
+MD: ank/a (Lyn;IIILyi;)V net/minecraft/src/Block/func_71867_k (Lnet/minecraft/src/World;IIILnet/minecraft/src/Explosion;)V
 MD: ank/a (Lyn;Lrh;IIII)V net/minecraft/src/Block/func_71893_a (Lnet/minecraft/src/World;Lnet/minecraft/src/EntityPlayer;IIII)V
 MD: ank/a (Lyw;III)V net/minecraft/src/Block/func_71902_a (Lnet/minecraft/src/IBlockAccess;III)V
 MD: ank/a (Lyw;IIII)Z net/minecraft/src/Block/func_71877_c (Lnet/minecraft/src/IBlockAccess;IIII)Z
@@ -9118,7 +9118,7 @@ MD: ank/b (Lyw;III)Z net/minecraft/src/Block/func_71918_c (Lnet/minecraft/src/IB
 MD: ank/b (Lyw;IIII)I net/minecraft/src/Block/func_71865_a (Lnet/minecraft/src/IBlockAccess;IIII)I
 MD: ank/b (Z)Lank; net/minecraft/src/Block/func_71907_b (Z)Lnet/minecraft/src/Block;
 MD: ank/b_ (Lyn;IIII)I net/minecraft/src/Block/func_94328_b_ (Lnet/minecraft/src/World;IIII)I
-MD: ank/b_ (Lyw;IIII)Lld; net/minecraft/src/Block/func_94333_b_ (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
+MD: ank/b_ (Lyw;IIII)Lld; net/minecraft/src/Block/func_71895_b (Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
 MD: ank/c ()Z net/minecraft/src/Block/func_71926_d ()Z
 MD: ank/c (F)Lank; net/minecraft/src/Block/func_71848_c (F)Lnet/minecraft/src/Block;
 MD: ank/c (Lapk;)Z net/minecraft/src/Block/func_71890_c (Lnet/minecraft/src/Vec3;)Z
@@ -9149,7 +9149,7 @@ MD: ank/k ()Z net/minecraft/src/Block/func_82506_l ()Z
 MD: ank/k (I)Z net/minecraft/src/Block/func_71932_i (I)Z
 MD: ank/k (Lyn;IIII)V net/minecraft/src/Block/func_85105_g (Lnet/minecraft/src/World;IIII)V
 MD: ank/l ()Z net/minecraft/src/Block/func_71935_l ()Z
-MD: ank/l (I)Lld; net/minecraft/src/Block/func_94335_l (I)Lnet/minecraft/src/Icon;
+MD: ank/l (I)Lld; net/minecraft/src/Block/func_71851_a (I)Lnet/minecraft/src/Icon;
 MD: ank/l (Lyn;III)F net/minecraft/src/Block/func_71934_m (Lnet/minecraft/src/World;III)F
 MD: ank/l (Lyn;IIII)V net/minecraft/src/Block/func_71927_h (Lnet/minecraft/src/World;IIII)V
 MD: ank/m ()I net/minecraft/src/Block/func_71856_s_ ()I
@@ -9186,7 +9186,7 @@ MD: anp/a (Lyn;IIII)V net/minecraft/src/BlockTNT/func_71863_a (Lnet/minecraft/sr
 MD: anp/a (Lyn;IIIILmj;)V net/minecraft/src/BlockTNT/func_94391_a (Lnet/minecraft/src/World;IIIILnet/minecraft/src/EntityLiving;)V
 MD: anp/a (Lyn;IIILlv;)V net/minecraft/src/BlockTNT/func_71869_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Entity;)V
 MD: anp/a (Lyn;IIILrh;IFFF)Z net/minecraft/src/BlockTNT/func_71903_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/EntityPlayer;IFFF)Z
-MD: anp/a (Lyn;IIILyi;)V net/minecraft/src/BlockTNT/func_94325_a (Lnet/minecraft/src/World;IIILnet/minecraft/src/Explosion;)V
+MD: anp/a (Lyn;IIILyi;)V net/minecraft/src/BlockTNT/func_71867_k (Lnet/minecraft/src/World;IIILnet/minecraft/src/Explosion;)V
 MD: anp/c_ (Lyn;III)V net/minecraft/src/BlockTNT/func_71861_g (Lnet/minecraft/src/World;III)V
 MD: anp/g (Lyn;IIII)V net/minecraft/src/BlockTNT/func_71898_d (Lnet/minecraft/src/World;IIII)V
 MD: anq/a (ILjava/util/Random;I)I net/minecraft/src/BlockSnow/func_71885_a (ILjava/util/Random;I)I
@@ -9247,7 +9247,7 @@ MD: anu/a (Lyn;IIIII)V net/minecraft/src/BlockLog/func_71852_a (Lnet/minecraft/s
 MD: anu/d ()I net/minecraft/src/BlockLog/func_71857_b ()I
 MD: anu/d (I)I net/minecraft/src/BlockLog/func_72141_e (I)I
 MD: anu/d_ (I)Lvc; net/minecraft/src/BlockLog/func_71880_c_ (I)Lnet/minecraft/src/ItemStack;
-MD: anv/a (Lyn;)I net/minecraft/src/BlockTripWireSource/func_94326_a (Lnet/minecraft/src/World;)I
+MD: anv/a (Lyn;)I net/minecraft/src/BlockTripWireSource/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: anv/a (Lyn;III)Lapf; net/minecraft/src/BlockTripWireSource/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: anv/a (Lyn;IIII)V net/minecraft/src/BlockTripWireSource/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: anv/a (Lyn;IIIIFFFI)I net/minecraft/src/BlockTripWireSource/func_85104_a (Lnet/minecraft/src/World;IIIIFFFI)I
@@ -9268,7 +9268,7 @@ MD: anv/f ()Z net/minecraft/src/BlockTripWireSource/func_71853_i ()Z
 MD: anv/k (Lyn;III)Z net/minecraft/src/BlockTripWireSource/func_72144_l (Lnet/minecraft/src/World;III)Z
 MD: anv/k (Lyn;IIII)V net/minecraft/src/BlockTripWireSource/func_85105_g (Lnet/minecraft/src/World;IIII)V
 MD: anw/a (ILjava/util/Random;I)I net/minecraft/src/BlockTripWire/func_71885_a (ILjava/util/Random;I)I
-MD: anw/a (Lyn;)I net/minecraft/src/BlockTripWire/func_94326_a (Lnet/minecraft/src/World;)I
+MD: anw/a (Lyn;)I net/minecraft/src/BlockTripWire/func_71859_p_ (Lnet/minecraft/src/World;)I
 MD: anw/a (Lyn;III)Lapf; net/minecraft/src/BlockTripWire/func_71872_e (Lnet/minecraft/src/World;III)Lnet/minecraft/src/AxisAlignedBB;
 MD: anw/a (Lyn;IIII)V net/minecraft/src/BlockTripWire/func_71863_a (Lnet/minecraft/src/World;IIII)V
 MD: anw/a (Lyn;IIIII)V net/minecraft/src/BlockTripWire/func_71852_a (Lnet/minecraft/src/World;IIIII)V
@@ -9334,11 +9334,11 @@ MD: aoa/b ()Z net/minecraft/src/BlockWeb/func_71886_c ()Z
 MD: aoa/c ()Z net/minecraft/src/BlockWeb/func_71926_d ()Z
 MD: aoa/d ()I net/minecraft/src/BlockWeb/func_71857_b ()I
 MD: aoa/q_ ()Z net/minecraft/src/BlockWeb/func_71906_q_ ()Z
-MD: aob/a (Lyn;)I net/minecraft/src/BlockWeightedPressurePlate/func_94326_a (Lnet/minecraft/src/World;)I
-MD: aob/c (I)I net/minecraft/src/BlockWeightedPressurePlate/func_94350_c (I)I
-MD: aob/d (I)I net/minecraft/src/BlockWeightedPressurePlate/func_94355_d (I)I
-MD: aob/d (Lyn;III)I net/minecraft/src/BlockWeightedPressurePlate/func_94351_d (Lnet/minecraft/src/World;III)I
-MD: aoc/a (II)Lld; net/minecraft/src/BlockWoodButton/func_71858_a (II)Lnet/minecraft/src/Icon;
+MD: aob/a (Lyn;)I net/minecraft/src/BlockPressurePlateWeighted/func_71859_p_ (Lnet/minecraft/src/World;)I
+MD: aob/c (I)I net/minecraft/src/BlockPressurePlateWeighted/func_94350_c (I)I
+MD: aob/d (I)I net/minecraft/src/BlockPressurePlateWeighted/func_94355_d (I)I
+MD: aob/d (Lyn;III)I net/minecraft/src/BlockPressurePlateWeighted/func_94351_d (Lnet/minecraft/src/World;III)I
+MD: aoc/a (II)Lld; net/minecraft/src/BlockButtonWood/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: aod/a (II)Lld; net/minecraft/src/BlockWoodSlab/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: aod/a (ILjava/util/Random;I)I net/minecraft/src/BlockWoodSlab/func_71885_a (ILjava/util/Random;I)I
 MD: aod/a (ILtu;Ljava/util/List;)V net/minecraft/src/BlockWoodSlab/func_71879_a (ILnet/minecraft/src/CreativeTabs;Ljava/util/List;)V
@@ -9515,11 +9515,11 @@ MD: aop/j_ ()I net/minecraft/src/TileEntityHopper/func_70302_i_ ()I
 MD: aop/l ()Z net/minecraft/src/TileEntityHopper/func_94121_l ()Z
 MD: aop/v ()Lla; net/minecraft/src/TileEntityHopper/func_94119_v ()Lnet/minecraft/src/IInventory;
 MD: aop/w ()Lla; net/minecraft/src/TileEntityHopper/func_94120_w ()Lnet/minecraft/src/IInventory;
-MD: aoq/a (Llv;)Z net/minecraft/src/EntitySelectorHopperInventory/func_82704_a (Lnet/minecraft/src/Entity;)Z
+MD: aoq/a (Llv;)Z net/minecraft/src/EntitySelectorHasInventory/func_82704_a (Lnet/minecraft/src/Entity;)Z
 MD: aor/a ()Ljava/lang/String; net/minecraft/src/TileEntityMobSpawner/func_70384_a ()Ljava/lang/String;
 MD: aor/a (Lbq;)V net/minecraft/src/TileEntityMobSpawner/func_70307_a (Lnet/minecraft/src/NBTTagCompound;)V
 MD: aor/a (Ljava/lang/String;)V net/minecraft/src/TileEntityMobSpawner/func_70385_a (Ljava/lang/String;)V
-MD: aor/a (Llv;)Llv; net/minecraft/src/TileEntityMobSpawner/func_94137_a (Lnet/minecraft/src/Entity;)Lnet/minecraft/src/Entity;
+MD: aor/a (Llv;)Llv; net/minecraft/src/TileEntityMobSpawner/func_70383_a (Lnet/minecraft/src/Entity;)Lnet/minecraft/src/Entity;
 MD: aor/b ()Z net/minecraft/src/TileEntityMobSpawner/func_70386_b ()Z
 MD: aor/b (II)V net/minecraft/src/TileEntityMobSpawner/func_70315_b (II)V
 MD: aor/b (Lbq;)V net/minecraft/src/TileEntityMobSpawner/func_70310_b (Lnet/minecraft/src/NBTTagCompound;)V
@@ -10672,8 +10672,8 @@ MD: ax/e ()I net/minecraft/src/IBlockSource/func_82622_e ()I
 MD: ax/f ()I net/minecraft/src/IBlockSource/func_82621_f ()I
 MD: ax/h ()I net/minecraft/src/IBlockSource/func_82620_h ()I
 MD: ax/j ()Laox; net/minecraft/src/IBlockSource/func_82619_j ()Lnet/minecraft/src/TileEntity;
-MD: axa/a (FII)V net/minecraft/src/ScreenHopper/func_74185_a (FII)V
-MD: axa/b (II)V net/minecraft/src/ScreenHopper/func_74189_g (II)V
+MD: axa/a (FII)V net/minecraft/src/GuiHopper/func_74185_a (FII)V
+MD: axa/b (II)V net/minecraft/src/GuiHopper/func_74189_g (II)V
 MD: axb/a (FII)V net/minecraft/src/GuiInventory/func_74185_a (FII)V
 MD: axb/a (IIF)V net/minecraft/src/GuiInventory/func_73863_a (IIF)V
 MD: axb/a (Lauc;)V net/minecraft/src/GuiInventory/func_73875_a (Lnet/minecraft/src/GuiButton;)V
@@ -11242,7 +11242,7 @@ MD: bbu/run ()V net/minecraft/src/ThreadDownloadImage/run ()V
 MD: bbv/a (Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage; net/minecraft/src/IImageBuffer/func_78432_a (Ljava/awt/image/BufferedImage;)Ljava/awt/image/BufferedImage;
 MD: bbw/a ()V net/minecraft/src/ItemRenderer/func_78441_a ()V
 MD: bbw/a (F)V net/minecraft/src/ItemRenderer/func_78440_a (F)V
-MD: bbw/a (FLld;)V net/minecraft/src/ItemRenderer/func_94142_a (FLnet/minecraft/src/Icon;)V
+MD: bbw/a (FLld;)V net/minecraft/src/ItemRenderer/func_78446_a (FLnet/minecraft/src/Icon;)V
 MD: bbw/a (Lbcc;FFFFIIF)V net/minecraft/src/ItemRenderer/func_78439_a (Lnet/minecraft/src/Tessellator;FFFFIIF)V
 MD: bbw/a (Lmj;Lvc;I)V net/minecraft/src/ItemRenderer/func_78443_a (Lnet/minecraft/src/EntityLiving;Lnet/minecraft/src/ItemStack;I)V
 MD: bbw/b ()V net/minecraft/src/ItemRenderer/func_78444_b ()V
@@ -11351,24 +11351,24 @@ MD: bce/a (Lajk;III)Z net/minecraft/src/RenderBlocks/func_82775_a (Lnet/minecraf
 MD: bce/a (Lajk;IIII)Z net/minecraft/src/RenderBlocks/func_85096_a (Lnet/minecraft/src/BlockAnvil;IIII)Z
 MD: bce/a (Lajk;IIIIFFFFZZI)F net/minecraft/src/RenderBlocks/func_82777_a (Lnet/minecraft/src/BlockAnvil;IIIIFFFFZZI)F
 MD: bce/a (Lajk;IIIIZ)Z net/minecraft/src/RenderBlocks/func_82776_a (Lnet/minecraft/src/BlockAnvil;IIIIZ)Z
-MD: bce/a (Lajm;III)Z net/minecraft/src/RenderBlocks/func_78586_a (Lnet/minecraft/src/BlockBaseRail;III)Z
+MD: bce/a (Lajm;III)Z net/minecraft/src/RenderBlocks/func_78586_a (Lnet/minecraft/src/BlockRailBase;III)Z
 MD: bce/a (Lajo;III)Z net/minecraft/src/RenderBlocks/func_82778_a (Lnet/minecraft/src/BlockBeacon;III)Z
 MD: bce/a (Lajr;III)Z net/minecraft/src/RenderBlocks/func_78585_a (Lnet/minecraft/src/BlockBrewingStand;III)Z
 MD: bce/a (Lajx;III)Z net/minecraft/src/RenderBlocks/func_78615_a (Lnet/minecraft/src/BlockCauldron;III)Z
 MD: bce/a (Lakb;III)Z net/minecraft/src/RenderBlocks/func_78616_a (Lnet/minecraft/src/BlockCocoa;III)Z
 MD: bce/a (Lakd;III)Z net/minecraft/src/RenderBlocks/func_94171_a (Lnet/minecraft/src/BlockComparator;III)Z
-MD: bce/a (Lakj;III)Z net/minecraft/src/RenderBlocks/func_78610_x (Lnet/minecraft/src/BlockRedstoneRepeater;III)Z
-MD: bce/a (Lakj;IIII)V net/minecraft/src/RenderBlocks/func_94174_a (Lnet/minecraft/src/BlockRedstoneRepeater;IIII)V
+MD: bce/a (Lakj;III)Z net/minecraft/src/RenderBlocks/func_94176_a (Lnet/minecraft/src/BlockRedstoneLogic;III)Z
+MD: bce/a (Lakj;IIII)V net/minecraft/src/RenderBlocks/func_94174_a (Lnet/minecraft/src/BlockRedstoneLogic;IIII)V
 MD: bce/a (Lako;III)Z net/minecraft/src/RenderBlocks/func_78618_a (Lnet/minecraft/src/BlockDragonEgg;III)Z
 MD: bce/a (Lakt;III)Z net/minecraft/src/RenderBlocks/func_78580_a (Lnet/minecraft/src/BlockFenceGate;III)Z
 MD: bce/a (Laku;III)Z net/minecraft/src/RenderBlocks/func_78582_a (Lnet/minecraft/src/BlockFence;III)Z
 MD: bce/a (Lakv;III)Z net/minecraft/src/RenderBlocks/func_78590_h (Lnet/minecraft/src/BlockFire;III)Z
 MD: bce/a (Lakw;III)Z net/minecraft/src/RenderBlocks/func_82780_a (Lnet/minecraft/src/BlockFlowerPot;III)Z
 MD: bce/a (Lalg;III)Z net/minecraft/src/RenderBlocks/func_94172_a (Lnet/minecraft/src/BlockHopper;III)Z
-MD: bce/a (Lams;III)Z net/minecraft/src/RenderBlocks/func_94176_a (Lnet/minecraft/src/BlockRepeater;III)Z
+MD: bce/a (Lams;III)Z net/minecraft/src/RenderBlocks/func_78610_x (Lnet/minecraft/src/BlockRedstoneRepeater;III)Z
 MD: bce/a (Lana;III)Z net/minecraft/src/RenderBlocks/func_78565_t (Lnet/minecraft/src/BlockStairs;III)Z
 MD: bce/a (Lanb;IIDDDD)V net/minecraft/src/RenderBlocks/func_78606_a (Lnet/minecraft/src/BlockStem;IIDDDD)V
-MD: bce/a (Lani;III)Z net/minecraft/src/RenderBlocks/func_94168_a (Lnet/minecraft/src/BlockEndPortalFrame;III)Z
+MD: bce/a (Lani;III)Z net/minecraft/src/RenderBlocks/func_78567_v (Lnet/minecraft/src/BlockEndPortalFrame;III)Z
 MD: bce/a (Lanj;III)Z net/minecraft/src/RenderBlocks/func_78592_a (Lnet/minecraft/src/BlockPane;III)Z
 MD: bce/a (Lank;)V net/minecraft/src/RenderBlocks/func_83018_a (Lnet/minecraft/src/Block;)V
 MD: bce/a (Lank;DDDDD)V net/minecraft/src/RenderBlocks/func_78623_a (Lnet/minecraft/src/Block;DDDDD)V
@@ -11381,12 +11381,12 @@ MD: bce/a (Lank;IF)V net/minecraft/src/RenderBlocks/func_78600_a (Lnet/minecraft
 MD: bce/a (Lank;II)Lld; net/minecraft/src/RenderBlocks/func_94165_a (Lnet/minecraft/src/Block;II)Lnet/minecraft/src/Icon;
 MD: bce/a (Lank;III)V net/minecraft/src/RenderBlocks/func_78583_a (Lnet/minecraft/src/Block;III)V
 MD: bce/a (Lank;IIIFFF)Z net/minecraft/src/RenderBlocks/func_78578_a (Lnet/minecraft/src/Block;IIIFFF)Z
-MD: bce/a (Lank;IIILld;)V net/minecraft/src/RenderBlocks/func_94166_a (Lnet/minecraft/src/Block;IIILnet/minecraft/src/Icon;)V
+MD: bce/a (Lank;IIILld;)V net/minecraft/src/RenderBlocks/func_78604_a (Lnet/minecraft/src/Block;IIILnet/minecraft/src/Icon;)V
 MD: bce/a (Lank;IIIZ)V net/minecraft/src/RenderBlocks/func_78587_a (Lnet/minecraft/src/Block;IIIZ)V
 MD: bce/a (Lank;Lyn;IIII)V net/minecraft/src/RenderBlocks/func_78588_a (Lnet/minecraft/src/Block;Lnet/minecraft/src/World;IIII)V
 MD: bce/a (Lank;Lyw;IIII)Lld; net/minecraft/src/RenderBlocks/func_94170_a (Lnet/minecraft/src/Block;Lnet/minecraft/src/IBlockAccess;IIII)Lnet/minecraft/src/Icon;
 MD: bce/a (Lany;III)Z net/minecraft/src/RenderBlocks/func_82779_a (Lnet/minecraft/src/BlockWall;III)Z
-MD: bce/a (Lld;)V net/minecraft/src/RenderBlocks/func_94169_a (Lnet/minecraft/src/Icon;)V
+MD: bce/a (Lld;)V net/minecraft/src/RenderBlocks/func_82774_a (Lnet/minecraft/src/Icon;)V
 MD: bce/b ()Z net/minecraft/src/RenderBlocks/func_94167_b ()Z
 MD: bce/b (DDDDDD)V net/minecraft/src/RenderBlocks/func_83019_b (DDDDDD)V
 MD: bce/b (DDDDDDFD)V net/minecraft/src/RenderBlocks/func_78607_b (DDDDDDFD)V
@@ -11643,7 +11643,7 @@ MD: bdy/a (Lpn;F)F net/minecraft/src/RenderSquid/func_77121_a (Lnet/minecraft/sr
 MD: bdy/a (Lpn;FFF)V net/minecraft/src/RenderSquid/func_77122_a (Lnet/minecraft/src/EntitySquid;FFF)V
 MD: bdy/b (Lmj;F)F net/minecraft/src/RenderSquid/func_77044_a (Lnet/minecraft/src/EntityLiving;F)F
 MD: bdz/a (Lqe;FLank;I)V net/minecraft/src/RenderTntMinecart/func_94144_a (Lnet/minecraft/src/EntityMinecart;FLnet/minecraft/src/Block;I)V
-MD: bdz/a (Lqi;FLank;I)V net/minecraft/src/RenderTntMinecart/func_94146_a (Lnet/minecraft/src/ItemTntMinecart;FLnet/minecraft/src/Block;I)V
+MD: bdz/a (Lqi;FLank;I)V net/minecraft/src/RenderTntMinecart/func_94146_a (Lnet/minecraft/src/EntityMinecartTNT;FLnet/minecraft/src/Block;I)V
 MD: bea/a (Llv;DDDFF)V net/minecraft/src/RenderTNTPrimed/func_76986_a (Lnet/minecraft/src/Entity;DDDFF)V
 MD: bea/a (Lqj;DDDFF)V net/minecraft/src/RenderTNTPrimed/func_76992_a (Lnet/minecraft/src/EntityTNTPrimed;DDDFF)V
 MD: beb/a (Llv;DDDFF)V net/minecraft/src/RenderIronGolem/func_76986_a (Lnet/minecraft/src/Entity;DDDFF)V
@@ -13637,8 +13637,8 @@ MD: lh/run ()V net/minecraft/src/PlayerUsageSnooperThread/run ()V
 MD: li/R ()Z net/minecraft/src/IPlayerUsage/func_70002_Q ()Z
 MD: li/a (Llg;)V net/minecraft/src/IPlayerUsage/func_70000_a (Lnet/minecraft/src/PlayerUsageSnooper;)V
 MD: li/b (Llg;)V net/minecraft/src/IPlayerUsage/func_70001_b (Lnet/minecraft/src/PlayerUsageSnooper;)V
-MD: lj/c (I)I net/minecraft/src/ContainerWorldly/func_94127_c (I)I
-MD: lj/d (I)I net/minecraft/src/ContainerWorldly/func_94128_d (I)I
+MD: lj/c (I)I net/minecraft/src/ISidedInventory/func_94127_c (I)I
+MD: lj/d (I)I net/minecraft/src/ISidedInventory/func_94128_d (I)I
 MD: lk/a ()Llm; net/minecraft/src/CombatEntry/func_94560_a ()Lnet/minecraft/src/DamageSource;
 MD: lk/c ()I net/minecraft/src/CombatEntry/func_94563_c ()I
 MD: lk/f ()Z net/minecraft/src/CombatEntry/func_94559_f ()Z
@@ -15047,52 +15047,52 @@ MD: qe/q ()I net/minecraft/src/EntityMinecart/func_94099_q ()I
 MD: qe/r ()I net/minecraft/src/EntityMinecart/func_94085_r ()I
 MD: qe/s ()Z net/minecraft/src/EntityMinecart/func_94100_s ()Z
 MD: qe/x ()V net/minecraft/src/EntityMinecart/func_70106_y ()V
-MD: qf/a (I)Lvc; net/minecraft/src/ItemChestMinecart/func_70301_a (I)Lnet/minecraft/src/ItemStack;
-MD: qf/a (II)Lvc; net/minecraft/src/ItemChestMinecart/func_70298_a (II)Lnet/minecraft/src/ItemStack;
-MD: qf/a (ILvc;)V net/minecraft/src/ItemChestMinecart/func_70299_a (ILnet/minecraft/src/ItemStack;)V
-MD: qf/a (Lbq;)V net/minecraft/src/ItemChestMinecart/func_70037_a (Lnet/minecraft/src/NBTTagCompound;)V
-MD: qf/a (Llm;)V net/minecraft/src/ItemChestMinecart/func_94095_a (Lnet/minecraft/src/DamageSource;)V
-MD: qf/a (Lrh;)Z net/minecraft/src/ItemChestMinecart/func_70085_c (Lnet/minecraft/src/EntityPlayer;)Z
-MD: qf/a_ (I)Lvc; net/minecraft/src/ItemChestMinecart/func_70304_b (I)Lnet/minecraft/src/ItemStack;
-MD: qf/a_ (Lrh;)Z net/minecraft/src/ItemChestMinecart/func_70300_a (Lnet/minecraft/src/EntityPlayer;)Z
-MD: qf/b ()Ljava/lang/String; net/minecraft/src/ItemChestMinecart/func_70303_b ()Ljava/lang/String;
-MD: qf/b (I)V net/minecraft/src/ItemChestMinecart/func_71027_c (I)V
-MD: qf/b (ILvc;)Z net/minecraft/src/ItemChestMinecart/func_94041_b (ILnet/minecraft/src/ItemStack;)Z
-MD: qf/b (Lbq;)V net/minecraft/src/ItemChestMinecart/func_70014_b (Lnet/minecraft/src/NBTTagCompound;)V
-MD: qf/c ()Z net/minecraft/src/ItemChestMinecart/func_94042_c ()Z
-MD: qf/d ()I net/minecraft/src/ItemChestMinecart/func_70297_j_ ()I
-MD: qf/f ()V net/minecraft/src/ItemChestMinecart/func_70295_k_ ()V
-MD: qf/g ()V net/minecraft/src/ItemChestMinecart/func_70305_f ()V
-MD: qf/j_ ()I net/minecraft/src/ItemChestMinecart/func_70302_i_ ()I
-MD: qf/k_ ()V net/minecraft/src/ItemChestMinecart/func_70296_d ()V
-MD: qf/l ()I net/minecraft/src/ItemChestMinecart/func_94087_l ()I
-MD: qf/n ()Lank; net/minecraft/src/ItemChestMinecart/func_94093_n ()Lnet/minecraft/src/Block;
-MD: qf/r ()I net/minecraft/src/ItemChestMinecart/func_94085_r ()I
-MD: qf/x ()V net/minecraft/src/ItemChestMinecart/func_70106_y ()V
-MD: qg/a ()V net/minecraft/src/ItemFurnaceMinecart/func_70088_a ()V
-MD: qg/a (IIIDDII)V net/minecraft/src/ItemFurnaceMinecart/func_94091_a (IIIDDII)V
-MD: qg/a (Lbq;)V net/minecraft/src/ItemFurnaceMinecart/func_70037_a (Lnet/minecraft/src/NBTTagCompound;)V
-MD: qg/a (Lrh;)Z net/minecraft/src/ItemFurnaceMinecart/func_70085_c (Lnet/minecraft/src/EntityPlayer;)Z
-MD: qg/b (Lbq;)V net/minecraft/src/ItemFurnaceMinecart/func_70014_b (Lnet/minecraft/src/NBTTagCompound;)V
-MD: qg/c ()Z net/minecraft/src/ItemFurnaceMinecart/func_94108_c ()Z
-MD: qg/f (Z)V net/minecraft/src/ItemFurnaceMinecart/func_94107_f (Z)V
-MD: qg/h ()V net/minecraft/src/ItemFurnaceMinecart/func_94101_h ()V
-MD: qg/l ()I net/minecraft/src/ItemFurnaceMinecart/func_94087_l ()I
-MD: qg/l_ ()V net/minecraft/src/ItemFurnaceMinecart/func_70071_h_ ()V
-MD: qg/n ()Lank; net/minecraft/src/ItemFurnaceMinecart/func_94093_n ()Lnet/minecraft/src/Block;
-MD: qg/p ()I net/minecraft/src/ItemFurnaceMinecart/func_94097_p ()I
-MD: qh/a (Lrh;)Z net/minecraft/src/ItemRideableMinecart/func_70085_c (Lnet/minecraft/src/EntityPlayer;)Z
-MD: qh/l ()I net/minecraft/src/ItemRideableMinecart/func_94087_l ()I
-MD: qi/a (B)V net/minecraft/src/ItemTntMinecart/func_70103_a (B)V
-MD: qi/a (IIIDDII)V net/minecraft/src/ItemTntMinecart/func_94091_a (IIIDDII)V
-MD: qi/a (Llm;)V net/minecraft/src/ItemTntMinecart/func_94095_a (Lnet/minecraft/src/DamageSource;)V
-MD: qi/b (D)V net/minecraft/src/ItemTntMinecart/func_94088_b (D)V
-MD: qi/c ()V net/minecraft/src/ItemTntMinecart/func_94105_c ()V
-MD: qi/c (D)V net/minecraft/src/ItemTntMinecart/func_94103_c (D)V
-MD: qi/d ()I net/minecraft/src/ItemTntMinecart/func_94104_d ()I
-MD: qi/l ()I net/minecraft/src/ItemTntMinecart/func_94087_l ()I
-MD: qi/l_ ()V net/minecraft/src/ItemTntMinecart/func_70071_h_ ()V
-MD: qi/n ()Lank; net/minecraft/src/ItemTntMinecart/func_94093_n ()Lnet/minecraft/src/Block;
+MD: qf/a (I)Lvc; net/minecraft/src/EntityMinecartChest/func_70301_a (I)Lnet/minecraft/src/ItemStack;
+MD: qf/a (II)Lvc; net/minecraft/src/EntityMinecartChest/func_70298_a (II)Lnet/minecraft/src/ItemStack;
+MD: qf/a (ILvc;)V net/minecraft/src/EntityMinecartChest/func_70299_a (ILnet/minecraft/src/ItemStack;)V
+MD: qf/a (Lbq;)V net/minecraft/src/EntityMinecartChest/func_70037_a (Lnet/minecraft/src/NBTTagCompound;)V
+MD: qf/a (Llm;)V net/minecraft/src/EntityMinecartChest/func_94095_a (Lnet/minecraft/src/DamageSource;)V
+MD: qf/a (Lrh;)Z net/minecraft/src/EntityMinecartChest/func_70085_c (Lnet/minecraft/src/EntityPlayer;)Z
+MD: qf/a_ (I)Lvc; net/minecraft/src/EntityMinecartChest/func_70304_b (I)Lnet/minecraft/src/ItemStack;
+MD: qf/a_ (Lrh;)Z net/minecraft/src/EntityMinecartChest/func_70300_a (Lnet/minecraft/src/EntityPlayer;)Z
+MD: qf/b ()Ljava/lang/String; net/minecraft/src/EntityMinecartChest/func_70303_b ()Ljava/lang/String;
+MD: qf/b (I)V net/minecraft/src/EntityMinecartChest/func_71027_c (I)V
+MD: qf/b (ILvc;)Z net/minecraft/src/EntityMinecartChest/func_94041_b (ILnet/minecraft/src/ItemStack;)Z
+MD: qf/b (Lbq;)V net/minecraft/src/EntityMinecartChest/func_70014_b (Lnet/minecraft/src/NBTTagCompound;)V
+MD: qf/c ()Z net/minecraft/src/EntityMinecartChest/func_94042_c ()Z
+MD: qf/d ()I net/minecraft/src/EntityMinecartChest/func_70297_j_ ()I
+MD: qf/f ()V net/minecraft/src/EntityMinecartChest/func_70295_k_ ()V
+MD: qf/g ()V net/minecraft/src/EntityMinecartChest/func_70305_f ()V
+MD: qf/j_ ()I net/minecraft/src/EntityMinecartChest/func_70302_i_ ()I
+MD: qf/k_ ()V net/minecraft/src/EntityMinecartChest/func_70296_d ()V
+MD: qf/l ()I net/minecraft/src/EntityMinecartChest/func_94087_l ()I
+MD: qf/n ()Lank; net/minecraft/src/EntityMinecartChest/func_94093_n ()Lnet/minecraft/src/Block;
+MD: qf/r ()I net/minecraft/src/EntityMinecartChest/func_94085_r ()I
+MD: qf/x ()V net/minecraft/src/EntityMinecartChest/func_70106_y ()V
+MD: qg/a ()V net/minecraft/src/EntityMinecartFurnace/func_70088_a ()V
+MD: qg/a (IIIDDII)V net/minecraft/src/EntityMinecartFurnace/func_94091_a (IIIDDII)V
+MD: qg/a (Lbq;)V net/minecraft/src/EntityMinecartFurnace/func_70037_a (Lnet/minecraft/src/NBTTagCompound;)V
+MD: qg/a (Lrh;)Z net/minecraft/src/EntityMinecartFurnace/func_70085_c (Lnet/minecraft/src/EntityPlayer;)Z
+MD: qg/b (Lbq;)V net/minecraft/src/EntityMinecartFurnace/func_70014_b (Lnet/minecraft/src/NBTTagCompound;)V
+MD: qg/c ()Z net/minecraft/src/EntityMinecartFurnace/func_94108_c ()Z
+MD: qg/f (Z)V net/minecraft/src/EntityMinecartFurnace/func_94107_f (Z)V
+MD: qg/h ()V net/minecraft/src/EntityMinecartFurnace/func_94101_h ()V
+MD: qg/l ()I net/minecraft/src/EntityMinecartFurnace/func_94087_l ()I
+MD: qg/l_ ()V net/minecraft/src/EntityMinecartFurnace/func_70071_h_ ()V
+MD: qg/n ()Lank; net/minecraft/src/EntityMinecartFurnace/func_94093_n ()Lnet/minecraft/src/Block;
+MD: qg/p ()I net/minecraft/src/EntityMinecartFurnace/func_94097_p ()I
+MD: qh/a (Lrh;)Z net/minecraft/src/EntityMinecartEmpty/func_70085_c (Lnet/minecraft/src/EntityPlayer;)Z
+MD: qh/l ()I net/minecraft/src/EntityMinecartEmpty/func_94087_l ()I
+MD: qi/a (B)V net/minecraft/src/EntityMinecartTNT/func_70103_a (B)V
+MD: qi/a (IIIDDII)V net/minecraft/src/EntityMinecartTNT/func_94091_a (IIIDDII)V
+MD: qi/a (Llm;)V net/minecraft/src/EntityMinecartTNT/func_94095_a (Lnet/minecraft/src/DamageSource;)V
+MD: qi/b (D)V net/minecraft/src/EntityMinecartTNT/func_94088_b (D)V
+MD: qi/c ()V net/minecraft/src/EntityMinecartTNT/func_94105_c ()V
+MD: qi/c (D)V net/minecraft/src/EntityMinecartTNT/func_94103_c (D)V
+MD: qi/d ()I net/minecraft/src/EntityMinecartTNT/func_94104_d ()I
+MD: qi/l ()I net/minecraft/src/EntityMinecartTNT/func_94087_l ()I
+MD: qi/l_ ()V net/minecraft/src/EntityMinecartTNT/func_70071_h_ ()V
+MD: qi/n ()Lank; net/minecraft/src/EntityMinecartTNT/func_94093_n ()Lnet/minecraft/src/Block;
 MD: qj/L ()Z net/minecraft/src/EntityTNTPrimed/func_70067_L ()Z
 MD: qj/R ()F net/minecraft/src/EntityTNTPrimed/func_70053_R ()F
 MD: qj/a ()V net/minecraft/src/EntityTNTPrimed/func_70088_a ()V
@@ -15807,9 +15807,9 @@ MD: so/a (Lrh;Lvc;)V net/minecraft/src/SlotFurnace/func_82870_a (Lnet/minecraft/
 MD: so/a (Lvc;)Z net/minecraft/src/SlotFurnace/func_75214_a (Lnet/minecraft/src/ItemStack;)Z
 MD: so/a (Lvc;I)V net/minecraft/src/SlotFurnace/func_75210_a (Lnet/minecraft/src/ItemStack;I)V
 MD: so/b (Lvc;)V net/minecraft/src/SlotFurnace/func_75208_c (Lnet/minecraft/src/ItemStack;)V
-MD: sp/a (Lrh;)Z net/minecraft/src/MenuHopper/func_75145_c (Lnet/minecraft/src/EntityPlayer;)Z
-MD: sp/b (Lrh;)V net/minecraft/src/MenuHopper/func_75134_a (Lnet/minecraft/src/EntityPlayer;)V
-MD: sp/b (Lrh;I)Lvc; net/minecraft/src/MenuHopper/func_82846_b (Lnet/minecraft/src/EntityPlayer;I)Lnet/minecraft/src/ItemStack;
+MD: sp/a (Lrh;)Z net/minecraft/src/ContainerHopper/func_75145_c (Lnet/minecraft/src/EntityPlayer;)Z
+MD: sp/b (Lrh;)V net/minecraft/src/ContainerHopper/func_75134_a (Lnet/minecraft/src/EntityPlayer;)V
+MD: sp/b (Lrh;I)Lvc; net/minecraft/src/ContainerHopper/func_82846_b (Lnet/minecraft/src/EntityPlayer;I)Lnet/minecraft/src/ItemStack;
 MD: sq/a (Lla;)V net/minecraft/src/ContainerPlayer/func_75130_a (Lnet/minecraft/src/IInventory;)V
 MD: sq/a (Lrh;)Z net/minecraft/src/ContainerPlayer/func_75145_c (Lnet/minecraft/src/EntityPlayer;)Z
 MD: sq/a (Lvc;Ltc;)Z net/minecraft/src/ContainerPlayer/func_94530_a (Lnet/minecraft/src/ItemStack;Lnet/minecraft/src/Slot;)Z
@@ -16104,7 +16104,7 @@ MD: va/e (I)Lva; net/minecraft/src/Item/func_77656_e (I)Lnet/minecraft/src/Item;
 MD: va/e (Lvc;)Z net/minecraft/src/Item/func_77636_d (Lnet/minecraft/src/ItemStack;)Z
 MD: va/f ()Z net/minecraft/src/Item/func_77643_m_ ()Z
 MD: va/f (Lvc;)Lvm; net/minecraft/src/Item/func_77613_e (Lnet/minecraft/src/ItemStack;)Lnet/minecraft/src/EnumRarity;
-MD: va/h (Lvc;)Lld; net/minecraft/src/Item/func_94580_h (Lnet/minecraft/src/ItemStack;)Lnet/minecraft/src/Icon;
+MD: va/h (Lvc;)Lld; net/minecraft/src/Item/func_77650_f (Lnet/minecraft/src/ItemStack;)Lnet/minecraft/src/Icon;
 MD: va/i (Lvc;)Ljava/lang/String; net/minecraft/src/Item/func_77657_g (Lnet/minecraft/src/ItemStack;)Ljava/lang/String;
 MD: va/j (Lvc;)Z net/minecraft/src/Item/func_77630_h (Lnet/minecraft/src/ItemStack;)Z
 MD: va/k ()I net/minecraft/src/Item/func_94901_k ()I
@@ -16162,7 +16162,7 @@ MD: vc/b (Lvc;)Lvc; net/minecraft/src/ItemStack/func_77944_b (Lnet/minecraft/src
 MD: vc/b (Lvc;Lvc;)Z net/minecraft/src/ItemStack/func_77989_b (Lnet/minecraft/src/ItemStack;Lnet/minecraft/src/ItemStack;)Z
 MD: vc/b (Lyn;Lrh;)Lvc; net/minecraft/src/ItemStack/func_77950_b (Lnet/minecraft/src/World;Lnet/minecraft/src/EntityPlayer;)Lnet/minecraft/src/ItemStack;
 MD: vc/b (Lyn;Lrh;I)V net/minecraft/src/ItemStack/func_77974_b (Lnet/minecraft/src/World;Lnet/minecraft/src/EntityPlayer;I)V
-MD: vc/c ()Lld; net/minecraft/src/ItemStack/func_94607_c ()Lnet/minecraft/src/Icon;
+MD: vc/c ()Lld; net/minecraft/src/ItemStack/func_77954_c ()Lnet/minecraft/src/Icon;
 MD: vc/c (I)V net/minecraft/src/ItemStack/func_82841_c (I)V
 MD: vc/c (Lbq;)V net/minecraft/src/ItemStack/func_77963_c (Lnet/minecraft/src/NBTTagCompound;)V
 MD: vc/c (Ljava/lang/String;)V net/minecraft/src/ItemStack/func_82834_c (Ljava/lang/String;)V
@@ -16607,7 +16607,7 @@ MD: yn/a (III)I net/minecraft/src/World/func_72798_a (III)I
 MD: yn/a (IIII)Z net/minecraft/src/World/func_94573_a (IIII)Z
 MD: yn/a (IIIII)V net/minecraft/src/World/func_72836_a (IIIII)V
 MD: yn/a (IIIIII)V net/minecraft/src/World/func_82740_a (IIIIII)V
-MD: yn/a (IIIIZILlv;Lvc;)Z net/minecraft/src/World/func_94570_a (IIIIZILnet/minecraft/src/Entity;Lnet/minecraft/src/ItemStack;)Z
+MD: yn/a (IIIIZILlv;Lvc;)Z net/minecraft/src/World/func_72931_a (IIIIZILnet/minecraft/src/Entity;Lnet/minecraft/src/ItemStack;)Z
 MD: yn/a (IIILaox;)V net/minecraft/src/World/func_72837_a (IIILnet/minecraft/src/TileEntity;)V
 MD: yn/a (IIIZ)Z net/minecraft/src/World/func_94578_a (IIIZ)Z
 MD: yn/a (IILaaj;)V net/minecraft/src/World/func_72941_a (IILnet/minecraft/src/Chunk;)V

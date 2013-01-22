@@ -24,7 +24,7 @@ public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private int nextRenderId = 36;
+    private int nextRenderId = 39;
 
     private Map<Integer, ISimpleBlockRenderingHandler> blockRenderers = Maps.newHashMap();
 
