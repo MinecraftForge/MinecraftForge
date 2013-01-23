@@ -100,6 +100,18 @@ public class DimensionManager
         }
         dimensions.remove(id);
     }
+    
+    /**
+     * For unregistering a provider if the provider for a dimension needs to be overwritten
+     */
+    public static void unregisterProvider(int id)
+    {
+        if (!providers.containsKey(id))
+        {
+            throw new IllegalArgumentException(String.format("Failed to unregister provider for id %d; No provider registered", id));
+        }
+        providers.remove(id);
+    }
 
     public static int getProviderType(int dim)
     {
