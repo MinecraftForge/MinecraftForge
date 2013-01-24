@@ -27,7 +27,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.crash.CallableMinecraftVersion;
-import net.minecraft.server.MinecraftServer;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
@@ -762,7 +761,7 @@ public class Loader
         modController.transition(LoaderState.AVAILABLE);
     }
 
-    public boolean serverAboutToStart(MinecraftServer server)
+    public boolean serverAboutToStart(Object server)
     {
         try
         {
