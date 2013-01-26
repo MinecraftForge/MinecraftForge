@@ -880,7 +880,18 @@ public class ForgeChunkManager
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
-        return cache == null ? null : cache.getIfPresent(coords);
+        Chunk chunk = cache.getIfPresent(coords);
+        if (chunk != null)
+        {
+            for (List<Entity> eList : chunk.entityLists)
+            {
+                for (Entity e: eList)
+                {
+                    e.resetEntityId();
+                }
+            }
+        }
+        return chunk;
     }
 
     static void captureConfig(File configDir)
