@@ -9,7 +9,20 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -929,6 +931,12 @@
+@@ -494,7 +496,11 @@
+ 
+             for (var6 = 0; var6 < this.tileEntities.size(); ++var6)
+             {
+-                TileEntityRenderer.instance.renderTileEntity((TileEntity)this.tileEntities.get(var6), par3);
++                TileEntity te = (TileEntity)this.tileEntities.get(var6);
++                if (par2ICamera.isBoundingBoxInFrustum(te.getRenderBoundingBox()))
++                {
++                    TileEntityRenderer.instance.renderTileEntity(te, par3);
++                }
+             }
+ 
+             this.mc.entityRenderer.disableLightmap((double)par3);
+@@ -929,6 +935,12 @@
       */
      public void renderSky(float par1)
      {
@@ -22,7 +35,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1167,6 +1175,13 @@
+@@ -1167,6 +1179,13 @@
  
      public void renderClouds(float par1)
      {
@@ -36,7 +49,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1596,6 +1611,11 @@
+@@ -1596,6 +1615,11 @@
      }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
@@ -48,7 +61,7 @@
      {
          double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
-@@ -1873,6 +1893,7 @@
+@@ -1873,6 +1897,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -56,7 +69,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -2009,6 +2030,7 @@
+@@ -2009,6 +2034,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -64,7 +77,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -2025,6 +2047,7 @@
+@@ -2025,6 +2051,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -72,7 +85,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -2046,6 +2069,7 @@
+@@ -2046,6 +2073,7 @@
                      {
                          int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
@@ -80,7 +93,7 @@
                      }
                      else if (par1Str.startsWith("tilecrack_"))
                      {
-@@ -2053,11 +2077,12 @@
+@@ -2053,11 +2081,12 @@
                          int var25 = Integer.parseInt(var28[1]);
                          int var26 = Integer.parseInt(var28[2]);
                          var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).applyRenderColor(var26);
