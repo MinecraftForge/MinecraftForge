@@ -10,6 +10,7 @@ import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +33,8 @@ import net.minecraftforge.event.entity.living.LivingEvent.*;
 
 public class ForgeHooks
 {
+    public static HashMap<String, Enchantment> forgeEnchants = new HashMap();
+    
     static class GrassEntry extends WeightedRandomItem
     {
         public final Block block;

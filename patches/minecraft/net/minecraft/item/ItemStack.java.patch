@@ -1,0 +1,86 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.item;
+ 
++import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.ArrayList;
+@@ -19,6 +20,7 @@
+ import net.minecraft.stats.StatList;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public final class ItemStack
+ {
+@@ -599,6 +601,26 @@
+                     }
+                 }
+             }
++            
++            NBTTagList enchantNBT = this.getForgeEnchantmentTagList();
++            
++            if (enchantNBT != null)
++            {
++                for (int i=0; i<enchantNBT.tagCount(); ++i)
++                {
++                    String enchantName = ((NBTTagCompound)enchantNBT.tagAt(i)).getString("name");
++                    short enchantLevel = ((NBTTagCompound)enchantNBT.tagAt(i)).getShort("lvl");
++
++                    if (ForgeHooks.forgeEnchants.get(enchantName) != null)
++                    {
++                        var3.add(ForgeHooks.forgeEnchants.get(enchantName).getTranslatedName(enchantLevel));
++                    } else {
++                        FMLLog.warning("Enchantment %s is missing!", enchantName);
++                    }
++                }
++            }
++
++            
+ 
+             if (this.stackTagCompound.hasKey("display"))
+             {
+@@ -673,6 +695,19 @@
+         {
+             this.stackTagCompound.setTag("ench", new NBTTagList("ench"));
+         }
++        
++        if (par1Enchantment.effectId == -1) {
++            if (!stackTagCompound.hasKey("ForgeEnchantments"))
++                stackTagCompound.setTag("ForgeEnchantments", new NBTTagList("ForgeEnchantments"));
++            
++            NBTTagList enchantNBT = (NBTTagList)this.stackTagCompound.getTag("ForgeEnchantments");
++            NBTTagCompound newEnchant = new NBTTagCompound();
++            newEnchant.setString("name", par1Enchantment.getInternalName());
++            newEnchant.setShort("lvl", (short)((byte)par2));
++            enchantNBT.appendTag(newEnchant);
++            
++            return;
++        }
+ 
+         NBTTagList var3 = (NBTTagList)this.stackTagCompound.getTag("ench");
+         NBTTagCompound var4 = new NBTTagCompound();
+@@ -686,7 +721,7 @@
+      */
+     public boolean isItemEnchanted()
+     {
+-        return this.stackTagCompound != null && this.stackTagCompound.hasKey("ench");
++        return this.stackTagCompound != null && (this.stackTagCompound.hasKey("ench") || this.stackTagCompound.hasKey("ForgeEnchantments"));
+     }
+ 
+     public void setTagInfo(String par1Str, NBTBase par2NBTBase)
+@@ -748,4 +783,12 @@
+ 
+         this.stackTagCompound.setInteger("RepairCost", par1);
+     }
++    
++    /**
++     * Return Forge Enchants
++     */
++    public NBTTagList getForgeEnchantmentTagList()
++    {
++        return this.stackTagCompound == null ? null : (NBTTagList)this.stackTagCompound.getTag("ForgeEnchantments");
++    }
+ }

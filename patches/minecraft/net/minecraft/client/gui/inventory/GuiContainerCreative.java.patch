@@ -1,6 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ ../src_work/minecraft/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -55,6 +55,8 @@
+@@ -13,6 +13,7 @@
+ import net.minecraft.client.renderer.RenderHelper;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.enchantment.Enchantment;
++import net.minecraft.enchantment.EnchantmentData;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.inventory.Container;
+@@ -22,6 +23,8 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.AchievementList;
+ import net.minecraft.util.StringTranslate;
++import net.minecraftforge.common.ForgeHooks;
++
+ import org.lwjgl.input.Keyboard;
+ import org.lwjgl.input.Mouse;
+ import org.lwjgl.opengl.GL11;
+@@ -55,6 +58,8 @@
      private Slot field_74235_v = null;
      private boolean field_74234_w = false;
      private CreativeCrafting field_82324_x;
@@ -9,7 +26,7 @@
  
      public GuiContainerCreative(EntityPlayer par1EntityPlayer)
      {
-@@ -229,6 +231,13 @@
+@@ -229,6 +234,13 @@
              this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[var1]);
              this.field_82324_x = new CreativeCrafting(this.mc);
              this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_82324_x);
@@ -23,7 +40,20 @@
          }
          else
          {
-@@ -363,7 +372,7 @@
+@@ -319,6 +331,12 @@
+                 Item.enchantedBook.func_92113_a(var12, var1.itemList);
+             }
+         }
++        
++        for (Enchantment enchant : ForgeHooks.forgeEnchants.values()) {
++            if (enchant != null && enchant.type != null) {
++                Item.enchantedBook.func_92113_a(enchant, var1.itemList);
++            }
++        }
+ 
+         Iterator var9 = var1.itemList.iterator();
+         String var10 = this.searchField.getText().toLowerCase();
+@@ -363,7 +381,7 @@
      {
          CreativeTabs var3 = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -32,7 +62,7 @@
          {
              this.fontRenderer.drawString(var3.getTranslatedTabLabel(), 8, 6, 4210752);
          }
-@@ -385,7 +394,7 @@
+@@ -385,7 +403,7 @@
              {
                  CreativeTabs var9 = var6[var8];
  
@@ -41,7 +71,7 @@
                  {
                      this.setCurrentCreativeTab(var9);
                      return;
-@@ -401,11 +410,17 @@
+@@ -401,11 +419,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -59,7 +89,7 @@
          int var2 = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative var3 = (ContainerCreative)this.inventorySlots;
-@@ -575,21 +590,42 @@
+@@ -575,21 +599,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] var11 = CreativeTabs.creativeTabArray;
@@ -107,7 +137,7 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -610,14 +646,32 @@
+@@ -610,14 +655,32 @@
          int var8 = var7.length;
          int var9;
  
@@ -142,7 +172,7 @@
              }
          }
  
-@@ -635,6 +689,14 @@
+@@ -635,6 +698,14 @@
              this.drawTexturedModalRect(var11, var8 + (int)((float)(var9 - var8 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
@@ -157,7 +187,7 @@
          this.renderCreativeTab(var5);
  
          if (var5 == CreativeTabs.tabInventory)
-@@ -645,6 +707,15 @@
+@@ -645,6 +716,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -173,7 +203,7 @@
          int var4 = par1CreativeTabs.getTabColumn();
          int var5 = 28 * var4;
          byte var6 = 0;
-@@ -759,7 +830,7 @@
+@@ -759,7 +839,7 @@
          var8 += 8 + (var3 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -182,7 +212,7 @@
          itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
          itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, var10, var7, var8);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -781,6 +852,15 @@
+@@ -781,6 +861,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }

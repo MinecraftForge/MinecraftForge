@@ -1,0 +1,78 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemEnchantedBook.java
++++ ../src_work/minecraft/net/minecraft/item/ItemEnchantedBook.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.item;
+ 
++import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
+@@ -40,7 +41,7 @@
+      */
+     public EnumRarity getRarity(ItemStack par1ItemStack)
+     {
+-        return this.func_92110_g(par1ItemStack).tagCount() > 0 ? EnumRarity.uncommon : super.getRarity(par1ItemStack);
++        return this.func_92110_g(par1ItemStack).tagCount() > 0 || par1ItemStack.stackTagCompound.hasKey("ForgeEnchantments") ? EnumRarity.uncommon : super.getRarity(par1ItemStack);
+     }
+ 
+     public NBTTagList func_92110_g(ItemStack par1ItemStack)
+@@ -71,10 +72,49 @@
+                 }
+             }
+         }
++
+     }
+ 
+     public void func_92115_a(ItemStack par1ItemStack, EnchantmentData par2EnchantmentData)
+     {
++        
++        if (par2EnchantmentData.enchantmentobj.effectId == -1) { //Forge Enchantment
++            NBTTagList enchantNBT = par1ItemStack.getForgeEnchantmentTagList();
++            boolean needsSet = true;
++            if (enchantNBT != null)
++            {
++                for (int i=0; i<enchantNBT.tagCount(); ++i)
++                {
++                    String enchantName = ((NBTTagCompound)enchantNBT.tagAt(i)).getString("name");
++                    short enchantLevel = ((NBTTagCompound)enchantNBT.tagAt(i)).getShort("lvl");
++                    if (par2EnchantmentData.enchantmentobj.getInternalName().equals(enchantName)) {
++                        if (enchantLevel < par2EnchantmentData.enchantmentLevel)
++                            ((NBTTagCompound)enchantNBT.tagAt(i)).setShort("lvl", (short)par2EnchantmentData.enchantmentLevel);
++                        
++                        needsSet = false;
++                        break;
++                    }
++                }
++                
++            } else {
++                enchantNBT = new NBTTagList("ForgeEnchantments");
++            }
++            if (needsSet) {
++                NBTTagCompound newEnchant = new NBTTagCompound();
++                newEnchant.setString("name", par2EnchantmentData.enchantmentobj.getInternalName());
++                newEnchant.setShort("lvl", (short)par2EnchantmentData.enchantmentLevel);
++                enchantNBT.appendTag(newEnchant);
++            }
++            
++            if (!par1ItemStack.hasTagCompound())
++            {
++                par1ItemStack.setTagCompound(new NBTTagCompound());
++            }
++
++            par1ItemStack.getTagCompound().setTag("ForgeEnchantments", enchantNBT);
++            return;
++        }
++        
+         NBTTagList var3 = this.func_92110_g(par1ItemStack);
+         boolean var4 = true;
+ 
+@@ -148,4 +188,9 @@
+         this.func_92115_a(var6, new EnchantmentData(var5, var7));
+         return new WeightedRandomChestContent(var6, par2, par3, par4);
+     }
++    
++    public NBTTagList getForgeEnchantTag(ItemStack par1ItemStack)
++    {
++        return par1ItemStack.stackTagCompound != null && par1ItemStack.stackTagCompound.hasKey("ForgeEnchantments") ? (NBTTagList)par1ItemStack.stackTagCompound.getTag("ForgeEnchantments") : new NBTTagList();
++    }
+ }

@@ -1,6 +1,145 @@
 --- ../src_base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
 +++ ../src_work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
-@@ -463,7 +463,7 @@
+@@ -7,6 +7,8 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
++
++import cpw.mods.fml.common.FMLLog;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+@@ -14,6 +16,7 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.WeightedRandom;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class EnchantmentHelper
+ {
+@@ -82,6 +85,20 @@
+                 var1.put(Integer.valueOf(var4), Integer.valueOf(var5));
+             }
+         }
++        
++        NBTTagList enchantNBT = par0ItemStack.getForgeEnchantmentTagList();
++        
++        if (enchantNBT != null)
++        {
++            for (int i=0; i<enchantNBT.tagCount(); ++i)
++            {
++                String enchantName = ((NBTTagCompound)enchantNBT.tagAt(i)).getString("name");
++                short enchantLevel = ((NBTTagCompound)enchantNBT.tagAt(i)).getShort("lvl");
++                var1.put(enchantName, Integer.valueOf(enchantLevel));
++            }
++        }
++        
++        
+ 
+         return var1;
+     }
+@@ -93,10 +110,25 @@
+     {
+         NBTTagList var2 = new NBTTagList();
+         Iterator var3 = par0Map.keySet().iterator();
++        
++        NBTTagList forgeEnchants = new NBTTagList();
+ 
+         while (var3.hasNext())
+         {
+-            int var4 = ((Integer)var3.next()).intValue();
++            Object curValue = var3.next();
++            if (curValue instanceof String) {
++                NBTTagCompound newEnchant = new NBTTagCompound();
++                newEnchant.setString("name", (String)curValue);
++                newEnchant.setShort("lvl", (short)((Integer)par0Map.get(curValue)).intValue());
++                forgeEnchants.appendTag(newEnchant);
++
++                if (par1ItemStack.itemID == Item.enchantedBook.itemID)
++                    Item.enchantedBook.func_92115_a(par1ItemStack, new EnchantmentData(ForgeHooks.forgeEnchants.get(curValue), (Integer)par0Map.get(curValue)));
++              
++                continue;
++            }
++            
++            int var4 = ((Integer)curValue).intValue();
+             NBTTagCompound var5 = new NBTTagCompound();
+             var5.setShort("id", (short)var4);
+             var5.setShort("lvl", (short)((Integer)par0Map.get(Integer.valueOf(var4))).intValue());
+@@ -119,6 +151,12 @@
+         {
+             par1ItemStack.getTagCompound().removeTag("ench");
+         }
++        
++        if (forgeEnchants.tagCount() > 0)
++            if (par1ItemStack.itemID != Item.enchantedBook.itemID)
++                par1ItemStack.setTagInfo("ForgeEnchantments", forgeEnchants);
++        else if (par1ItemStack.hasTagCompound())
++            par1ItemStack.getTagCompound().removeTag("ForgeEnchantments");
+     }
+ 
+     /**
+@@ -173,6 +211,22 @@
+                     }
+                 }
+             }
++            
++            NBTTagList enchantNBT = par1ItemStack.getForgeEnchantmentTagList();
++            
++            if (enchantNBT != null)
++            {
++                for (int i=0; i<enchantNBT.tagCount(); ++i)
++                {
++                    String enchantName = ((NBTTagCompound)enchantNBT.tagAt(i)).getString("name");
++                    short enchantLevel = ((NBTTagCompound)enchantNBT.tagAt(i)).getShort("lvl");
++
++                    if (ForgeHooks.forgeEnchants.get(enchantName) != null)
++                    {
++                        par0IEnchantmentModifier.calculateModifier(ForgeHooks.forgeEnchants.get(enchantName), enchantLevel);
++                    }
++                }
++            }
+         }
+     }
+ 
+@@ -310,7 +364,7 @@
+     public static int calcItemStackEnchantability(Random par0Random, int par1, int par2, ItemStack par3ItemStack)
+     {
+         Item var4 = par3ItemStack.getItem();
+-        int var5 = var4.getItemEnchantability();
++        int var5 = var4.getItemEnchantability(par3ItemStack);
+ 
+         if (var5 <= 0)
+         {
+@@ -370,7 +424,7 @@
+     public static List buildEnchantmentList(Random par0Random, ItemStack par1ItemStack, int par2)
+     {
+         Item var3 = par1ItemStack.getItem();
+-        int var4 = var3.getItemEnchantability();
++        int var4 = var3.getItemEnchantability(par1ItemStack);
+ 
+         if (var4 <= 0)
+         {
+@@ -407,7 +461,7 @@
+ 
+                         while (var12.hasNext())
+                         {
+-                            Integer var13 = (Integer)var12.next();
++                            Object var13 = var12.next();
+                             boolean var14 = true;
+                             Iterator var15 = var8.iterator();
+ 
+@@ -416,8 +470,8 @@
+                                 if (var15.hasNext())
+                                 {
+                                     EnchantmentData var16 = (EnchantmentData)var15.next();
+-
+-                                    if (var16.enchantmentobj.canApplyTogether(Enchantment.enchantmentsList[var13.intValue()]))
++                                    Enchantment compEnchant = (var13 instanceof Integer ? Enchantment.enchantmentsList[(Integer)var13] : ForgeHooks.forgeEnchants.get((String)var13));
++                                    if (var16.enchantmentobj.canApplyTogether(compEnchant))
+                                     {
+                                         continue;
+                                     }
+@@ -463,7 +517,7 @@
          {
              Enchantment var8 = var5[var7];
  
@@ -9,3 +148,27 @@
              {
                  for (int var9 = var8.getMinLevel(); var9 <= var8.getMaxLevel(); ++var9)
                  {
+@@ -479,7 +533,23 @@
+                 }
+             }
+         }
++        
++        if (var3 == null)
++            var3 = new HashMap();
++        
++        for (Enchantment enchant : ForgeHooks.forgeEnchants.values()) {         
++            if (enchant != null && (enchant.canApplyAtEnchantingTable(par1ItemStack) || var4))
++                for (int i = enchant.getMinLevel(); i<= enchant.getMaxLevel(); ++i) {
++                    if (par0 >= enchant.getMinEnchantability(i) && par0 <= enchant.getMaxEnchantability(i)) {
++                        var3.put(enchant.getInternalName(), new EnchantmentData(enchant, i));
++                    }
++                }
++        }
+ 
+         return var3;
+     }
++    
+ }
++
++
++
