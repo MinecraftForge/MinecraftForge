@@ -880,6 +880,10 @@ public class ForgeChunkManager
     public static Chunk fetchDormantChunk(long coords, World world)
     {
         Cache<Long, Chunk> cache = dormantChunkCache.get(world);
+        if (cache == null)
+        {
+            return null;
+        }
         Chunk chunk = cache.getIfPresent(coords);
         if (chunk != null)
         {
