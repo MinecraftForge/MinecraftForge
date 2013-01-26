@@ -413,4 +413,9 @@ public class ForgeHooksClient
             }
         }
     }
+
+    public static void setRenderPass(int pass)
+    {
+        renderPass = pass;
+    }
 }

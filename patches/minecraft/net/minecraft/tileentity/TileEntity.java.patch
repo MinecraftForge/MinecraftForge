@@ -1,25 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -9,9 +9,14 @@
- 
- import net.minecraft.block.Block;
+@@ -11,7 +11,10 @@
  import net.minecraft.block.TileEntityRecordPlayer;
-+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.NBTTagCompound;
 +import net.minecraft.network.INetworkManager;
  import net.minecraft.network.packet.Packet;
 +import net.minecraft.network.packet.Packet132TileEntityData;
-+import net.minecraft.util.AABBPool;
 +import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -296,4 +301,75 @@
+@@ -296,4 +299,80 @@
          addMapping(TileEntityBeacon.class, "Beacon");
          addMapping(TileEntitySkull.class, "Skull");
      }
 +
++    // -- BEGIN FORGE PATCHES --
 +    /**
 +     * Determines if this TileEntity requires update calls.
 +     * @return True if you want updateEntity() to be called, false if not
@@ -68,6 +65,10 @@
 +        return true;
 +    }
 +
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
++    }
 +    /**
 +     * Default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
 +     */
