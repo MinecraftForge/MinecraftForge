@@ -1,6 +1,7 @@
 package cpw.mods.fml.common.asm;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream.GetField;
 import java.io.StringReader;
@@ -28,6 +29,7 @@ import org.objectweb.asm.Opcodes;
 
 import cpw.mods.fml.common.CertificateHelper;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
@@ -124,6 +126,7 @@ public class FMLSanityChecker implements IFMLCallHook
     public void injectData(Map<String, Object> data)
     {
         cl = (RelaunchClassLoader) data.get("classLoader");
+        FMLDeobfuscatingRemapper.INSTANCE.setup((File)data.get("mcLocation"));
     }
 
 }
