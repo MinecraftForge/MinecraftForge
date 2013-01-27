@@ -21,7 +21,7 @@ public class SideTransformer implements IClassTransformer
     private static final boolean DEBUG = false;
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String transformedName, byte[] bytes)
     {
     	if (bytes == null) { return null; }
 
@@ -69,7 +69,7 @@ public class SideTransformer implements IClassTransformer
         classNode.accept(writer);
         return writer.toByteArray();
     }
-    
+
     private boolean remove(List<AnnotationNode> anns, String side)
     {
         if (anns == null)

@@ -12,7 +12,7 @@ import cpw.mods.fml.relauncher.IClassTransformer;
 public class ASMTransformer implements IClassTransformer
 {
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name,String transformedName, byte[] bytes)
     {
         if ("net.minecraft.src.Block".equals(name))
         {
@@ -24,7 +24,7 @@ public class ASMTransformer implements IClassTransformer
             cn.accept(cw);
             return cw.toByteArray();
         }
-        
+
         return bytes;
     }
 
