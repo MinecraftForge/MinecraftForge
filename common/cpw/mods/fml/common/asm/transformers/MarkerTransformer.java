@@ -87,7 +87,7 @@ public class MarkerTransformer implements IClassTransformer
 
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String transformedName, byte[] bytes)
     {
     	if (bytes == null) { return null; }
         if (!markers.containsKey(name)) { return bytes; }
@@ -240,7 +240,7 @@ public class MarkerTransformer implements IClassTransformer
 
                     for (MarkerTransformer trans : transformers)
                     {
-                        entryData = trans.transform(name, entryData);
+                        entryData = trans.transform(name, name, entryData);
                     }
                 }
 
