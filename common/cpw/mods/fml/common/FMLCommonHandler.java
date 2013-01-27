@@ -451,6 +451,10 @@ public class FMLCommonHandler
 
     public boolean shouldServerBeKilledQuietly()
     {
+        if (sidedDelegate == null)
+        {
+            return false;
+        }
         return sidedDelegate.shouldServerShouldBeKilledQuietly();
     }
 
