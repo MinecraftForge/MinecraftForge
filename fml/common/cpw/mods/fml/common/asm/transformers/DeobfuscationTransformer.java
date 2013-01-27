@@ -6,6 +6,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.tree.ClassNode;
 
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.relauncher.IClassNameTransformer;
 import cpw.mods.fml.relauncher.IClassTransformer;
 
@@ -15,6 +16,10 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
         System.out.println("***" + name + ":"+transformedName);
+        if (bytes == null)
+        {
+            return null;
+        }
         ClassReader classReader = new ClassReader(bytes);
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         RemappingClassAdapter remapAdapter = new RemappingClassAdapter(classWriter, FMLDeobfuscatingRemapper.INSTANCE);
@@ -31,14 +36,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     @Override
     public String unmapClassName(String name)
     {
-        if (name.startsWith("hello.world."))
-        {
-            return name.replace("hello.world.","").replace("LexManos", "");
-        }
-        else
-        {
-            return name;
-        }
+        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/','.');
     }
 
 }
