@@ -67,6 +67,7 @@ public class RelaunchClassLoader extends URLClassLoader
 
         // standard transformer exclusions
         addTransformerExclusion("javax.");
+        addTransformerExclusion("argo.");
         addTransformerExclusion("org.objectweb.asm.");
         addTransformerExclusion("com.google.common.");
         addTransformerExclusion("org.bouncycastle.");
