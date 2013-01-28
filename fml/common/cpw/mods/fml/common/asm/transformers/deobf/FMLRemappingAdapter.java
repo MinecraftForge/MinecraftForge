@@ -13,7 +13,11 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
     {
-        FMLDeobfuscatingRemapper.INSTANCE.mergeSuperMaps(name, superName);
+        if (interfaces == null)
+        {
+            interfaces = new String[0];
+        }
+        FMLDeobfuscatingRemapper.INSTANCE.mergeSuperMaps(name, superName, interfaces);
         super.visit(version, access, name, signature, superName, interfaces);
     }
 }

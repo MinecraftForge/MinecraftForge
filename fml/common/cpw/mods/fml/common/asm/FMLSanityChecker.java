@@ -28,8 +28,8 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
 import cpw.mods.fml.common.CertificateHelper;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
@@ -74,17 +74,17 @@ public class FMLSanityChecker implements IFMLCallHook
                     String fingerprint = CertificateHelper.getFingerprint(cert);
                     if (fingerprint.equals(FMLFINGERPRINT))
                     {
-                        FMLLog.info("Found valid fingerprint for FML. Certificate fingerprint %s", fingerprint);
+                        FMLRelaunchLog.info("Found valid fingerprint for FML. Certificate fingerprint %s", fingerprint);
                         goodFML = true;
                     }
                     else if (fingerprint.equals(FORGEFINGERPRINT))
                     {
-                        FMLLog.info("Found valid fingerprint for Minecraft Forge. Certificate fingerprint %s", fingerprint);
+                        FMLRelaunchLog.info("Found valid fingerprint for Minecraft Forge. Certificate fingerprint %s", fingerprint);
                         goodFML = true;
                     }
                     else
                     {
-                        FMLLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
+                        FMLRelaunchLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
                     }
                 }
             }
@@ -95,7 +95,7 @@ public class FMLSanityChecker implements IFMLCallHook
         }
         if (!goodFML)
         {
-            FMLLog.severe("FML appears to be missing any signature data. This is not a good thing");
+            FMLRelaunchLog.severe("FML appears to be missing any signature data. This is not a good thing");
         }
         byte[] mlClass = cl.getClassBytes("ModLoader");
         // Only care in obfuscated env
