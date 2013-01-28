@@ -7,6 +7,7 @@ import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.tree.ClassNode;
 
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import cpw.mods.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
 import cpw.mods.fml.relauncher.IClassNameTransformer;
 import cpw.mods.fml.relauncher.IClassTransformer;
 
@@ -22,7 +23,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
         }
         ClassReader classReader = new ClassReader(bytes);
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        RemappingClassAdapter remapAdapter = new RemappingClassAdapter(classWriter, FMLDeobfuscatingRemapper.INSTANCE);
+        RemappingClassAdapter remapAdapter = new FMLRemappingAdapter(classWriter);
         classReader.accept(remapAdapter, ClassReader.EXPAND_FRAMES);
         return classWriter.toByteArray();
     }
