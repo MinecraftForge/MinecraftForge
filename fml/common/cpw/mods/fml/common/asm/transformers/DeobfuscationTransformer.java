@@ -16,7 +16,6 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
-        System.out.println("***" + name + ":"+transformedName);
         if (bytes == null)
         {
             return null;

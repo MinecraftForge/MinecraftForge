@@ -145,7 +145,6 @@ public class AccessTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
-        System.out.printf("AT transforming %s : %s\n",name,transformedName);
     	if (bytes == null) { return null; }
         if (!modifiers.containsKey(name)) { return bytes; }
 

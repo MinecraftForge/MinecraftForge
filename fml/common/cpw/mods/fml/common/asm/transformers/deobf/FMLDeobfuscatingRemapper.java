@@ -73,7 +73,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             {
                 String[] parts = Iterables.toArray(splitter.split(line),String.class);
                 String typ = parts[0];
-                System.out.printf("PARTS: %s\n", Arrays.asList(parts));
                 if ("CL".equals(typ))
                 {
                     parseClass(builder, parts);
@@ -95,10 +94,22 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             FMLRelaunchLog.log(Level.SEVERE, ioe, "An error occurred loading the deobfuscation map data");
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
+        fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
     }
     private void parseField(String[] parts)
     {
-        //
+        String oldSrg = parts[1];
+        int lastOld = oldSrg.lastIndexOf('/');
+        String cl = oldSrg.substring(0,lastOld);
+        String oldName = oldSrg.substring(lastOld+1);
+        String newSrg = parts[2];
+        int lastNew = newSrg.lastIndexOf('/');
+        String newName = newSrg.substring(lastNew+1);
+        if (!rawFieldMaps.containsKey(cl))
+        {
+            rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
+        }
+        rawFieldMaps.get(cl).put(oldName, newName);
     }
 
     private void parseClass(Builder<String, String> builder, String[] parts)
@@ -126,7 +137,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     @Override
     public String mapFieldName(String owner, String name, String desc)
     {
-        return name;
+        if (classNameBiMap == null)
+        {
+            return name;
+        }
+        Map<String, String> fieldMap = getFieldMap(owner);
+        return fieldMap!=null && fieldMap.containsKey(name) ? fieldMap.get(name) : name;
     }
 
     @Override
@@ -161,6 +177,15 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         Map<String, String> methodMap = getMethodMap(owner);
         String methodDescriptor = name+desc;
         return methodMap!=null && methodMap.containsKey(methodDescriptor) ? methodMap.get(methodDescriptor) : name;
+    }
+
+    private Map<String,String> getFieldMap(String className)
+    {
+        if (!fieldNameMaps.containsKey(className))
+        {
+            findAndMergeSuperMaps(className);
+        }
+        return fieldNameMaps.get(className);
     }
 
     private Map<String,String> getMethodMap(String className)
@@ -209,19 +234,28 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 findAndMergeSuperMaps(superName);
             }
         }
-        System.out.printf("Merging maps for %s (%s , %s)\n", name, superName, Arrays.asList(interfaces));
         Map<String, String> methodMap = Maps.<String,String>newHashMap();
+        Map<String, String> fieldMap = Maps.<String,String>newHashMap();
         for (String parentThing : allParents)
         {
             if (methodNameMaps.containsKey(parentThing))
             {
                 methodMap.putAll(methodNameMaps.get(parentThing));
             }
+            if (fieldNameMaps.containsKey(parentThing))
+            {
+                fieldMap.putAll(fieldNameMaps.get(parentThing));
+            }
         }
         if (rawMethodMaps.containsKey(name))
         {
             methodMap.putAll(rawMethodMaps.get(name));
         }
+        if (rawFieldMaps.containsKey(name))
+        {
+            fieldMap.putAll(rawFieldMaps.get(name));
+        }
         methodNameMaps.put(name, ImmutableMap.copyOf(methodMap));
+        fieldNameMaps.put(name, ImmutableMap.copyOf(fieldMap));
     }
 }
