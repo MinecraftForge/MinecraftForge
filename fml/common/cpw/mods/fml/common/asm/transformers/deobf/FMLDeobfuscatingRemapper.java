@@ -17,12 +17,15 @@ import java.util.zip.ZipFile;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.commons.Remapper;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -58,40 +61,34 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             File libDir = new File(mcDir, "lib");
             File mapData = new File(libDir, "deobfuscation_data.zip");
             ZipFile mapZip = new ZipFile(mapData);
-            ZipEntry classData = mapZip.getEntry("class_data.csv");
+            ZipEntry classData = mapZip.getEntry("joined.srg");
             ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);
-            InputSupplier<InputStreamReader> classNameSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
-            List<String> classList = CharStreams.readLines(classNameSupplier);
+            InputSupplier<InputStreamReader> srgSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
+            List<String> srgList = CharStreams.readLines(srgSupplier);
+            rawMethodMaps = Maps.newHashMap();
+            rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
-            for (String line : classList)
+            Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
+            for (String line : srgList)
             {
-                String[] parts = line.split(",");
-                builder.put(parts[0],parts[1]);
+                String[] parts = Iterables.toArray(splitter.split(line),String.class);
+                String typ = parts[0];
+                System.out.printf("PARTS: %s\n", Arrays.asList(parts));
+                if ("CL".equals(typ))
+                {
+                    parseClass(builder, parts);
+                }
+                else if ("MD".equals(typ))
+                {
+                    parseMethod(parts);
+                }
+                else if ("FD".equals(typ))
+                {
+                    parseField(parts);
+                }
             }
             classNameBiMap = builder.build();
 
-            ZipEntry methodData = mapZip.getEntry("method_data.csv");
-            zis = new ZipInputSupplier(mapZip, methodData);
-            InputSupplier<InputStreamReader> methodNameSupplier = CharStreams.newReaderSupplier(zis,Charsets.UTF_8);
-            List<String> methodList = CharStreams.readLines(methodNameSupplier);
-            rawMethodMaps = Maps.newHashMap();
-            for (String line : methodList)
-            {
-                String[] parts = line.split(",");
-                String oldSrg = parts[0];
-                int lastOld = oldSrg.lastIndexOf('/');
-                String cl = oldSrg.substring(0,lastOld);
-                String oldName = oldSrg.substring(lastOld+1);
-                String sig = parts[1];
-                String newSrg = parts[2];
-                int lastNew = newSrg.lastIndexOf('/');
-                String newName = newSrg.substring(lastNew+1);
-                if (!rawMethodMaps.containsKey(cl))
-                {
-                    rawMethodMaps.put(cl, Maps.<String,String>newHashMap());
-                }
-                rawMethodMaps.get(cl).put(oldName+sig, newName);
-            }
         }
         catch (IOException ioe)
         {
@@ -99,6 +96,33 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
     }
+    private void parseField(String[] parts)
+    {
+        //
+    }
+
+    private void parseClass(Builder<String, String> builder, String[] parts)
+    {
+        builder.put(parts[1],parts[2]);
+    }
+
+    private void parseMethod(String[] parts)
+    {
+        String oldSrg = parts[1];
+        int lastOld = oldSrg.lastIndexOf('/');
+        String cl = oldSrg.substring(0,lastOld);
+        String oldName = oldSrg.substring(lastOld+1);
+        String sig = parts[2];
+        String newSrg = parts[3];
+        int lastNew = newSrg.lastIndexOf('/');
+        String newName = newSrg.substring(lastNew+1);
+        if (!rawMethodMaps.containsKey(cl))
+        {
+            rawMethodMaps.put(cl, Maps.<String,String>newHashMap());
+        }
+        rawMethodMaps.get(cl).put(oldName+sig, newName);
+    }
+
     @Override
     public String mapFieldName(String owner, String name, String desc)
     {
