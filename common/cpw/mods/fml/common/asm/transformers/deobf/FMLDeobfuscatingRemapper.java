@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,9 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableBiMap.Builder;
@@ -127,13 +130,13 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     @Override
     public String mapMethodName(String owner, String name, String desc)
     {
-        if (classNameBiMap==null || !classNameBiMap.containsKey(owner))
+        if (classNameBiMap==null)
         {
             return name;
         }
         Map<String, String> methodMap = getMethodMap(owner);
         String methodDescriptor = name+desc;
-        return methodMap.containsKey(methodDescriptor) ? methodMap.get(methodDescriptor) : name;
+        return methodMap!=null && methodMap.containsKey(methodDescriptor) ? methodMap.get(methodDescriptor) : name;
     }
 
     private Map<String,String> getMethodMap(String className)
@@ -150,27 +153,47 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         try
         {
             byte[] classBytes = classLoader.getClassBytes(name);
+            if (classBytes == null)
+            {
+                return;
+            }
             ClassReader cr = new ClassReader(classBytes);
             String superName = cr.getSuperName();
-            mergeSuperMaps(name, superName);
+            String[] interfaces = cr.getInterfaces();
+            if (interfaces == null)
+            {
+                interfaces = new String[0];
+            }
+            mergeSuperMaps(name, superName, interfaces);
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
     }
-    public void mergeSuperMaps(String name, String superName)
+    public void mergeSuperMaps(String name, String superName, String[] interfaces)
     {
-        if (classNameBiMap == null || !classNameBiMap.containsKey(name))
+        if (classNameBiMap == null)
         {
             return;
         }
-        if (superName != null && classNameBiMap.containsKey(superName) && !methodNameMaps.containsKey(superName))
+        List<String> allParents = ImmutableList.<String>builder().add(superName).addAll(Arrays.asList(interfaces)).build();
+        for (String parentThing : allParents)
         {
-            findAndMergeSuperMaps(superName);
+            if (superName != null && classNameBiMap.containsKey(superName) && !methodNameMaps.containsKey(superName))
+            {
+                findAndMergeSuperMaps(superName);
+            }
         }
-        FMLLog.info("Merging maps for %s (%s)", name, superName);
-        Map<String, String> methodMap = methodNameMaps.containsKey(superName) ? Maps.newHashMap(methodNameMaps.get(superName)) : Maps.<String, String>newHashMap();
+        System.out.printf("Merging maps for %s (%s , %s)\n", name, superName, Arrays.asList(interfaces));
+        Map<String, String> methodMap = Maps.<String,String>newHashMap();
+        for (String parentThing : allParents)
+        {
+            if (methodNameMaps.containsKey(parentThing))
+            {
+                methodMap.putAll(methodNameMaps.get(parentThing));
+            }
+        }
         if (rawMethodMaps.containsKey(name))
         {
             methodMap.putAll(rawMethodMaps.get(name));
