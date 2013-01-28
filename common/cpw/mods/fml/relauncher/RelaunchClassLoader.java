@@ -69,6 +69,8 @@ public class RelaunchClassLoader extends URLClassLoader
         addTransformerExclusion("javax.");
         addTransformerExclusion("org.objectweb.asm.");
         addTransformerExclusion("com.google.common.");
+        addTransformerExclusion("org.bouncycastle.");
+        addTransformerExclusion("cpw.mods.fml.common.asm.transformers.deobf.");
     }
 
     public void registerTransformer(String transformerClassName)
