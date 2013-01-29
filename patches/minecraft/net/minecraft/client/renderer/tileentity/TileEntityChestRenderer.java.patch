@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityChestRenderer.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityChestRenderer.java
+@@ -50,7 +50,11 @@
+ 
+             if (var10 != null && var9 == 0)
+             {
+-                ((BlockChest)var10).unifyAdjacentChests(par1TileEntityChest.getWorldObj(), par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
++                try
++                {
++                    ((BlockChest)var10).unifyAdjacentChests(par1TileEntityChest.getWorldObj(), par1TileEntityChest.xCoord, par1TileEntityChest.yCoord, par1TileEntityChest.zCoord);
++                }
++                catch (ClassCastException e) {}
+                 var9 = par1TileEntityChest.getBlockMetadata();
+             }
+ 
