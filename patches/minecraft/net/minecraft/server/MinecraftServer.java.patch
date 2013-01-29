@@ -117,7 +117,7 @@
  
 -        for (var1 = 0; var1 < this.worldServers.length; ++var1)
 -        {
-+        Integer[] ids = DimensionManager.getIDs();
++        Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
 +        for (int x = 0; x < ids.length; x++)
 +        {
 +            int id = ids[x];

@@ -25,7 +25,7 @@ import static net.minecraftforge.common.ForgeVersion.*;
 
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
-    public static int clumpingThreshold;
+    public static int clumpingThreshold = 64;
 
     public ForgeDummyContainer()
     {

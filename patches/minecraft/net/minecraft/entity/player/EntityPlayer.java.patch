@@ -314,7 +314,15 @@
  
              switch (var2)
              {
-@@ -1846,7 +1953,7 @@
+@@ -1571,7 +1678,6 @@
+         return this.sleeping && this.sleepTimer >= 100;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public int getSleepTimer()
+     {
+         return this.sleepTimer;
+@@ -1846,7 +1952,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -323,7 +331,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1868,6 +1975,7 @@
+@@ -1868,6 +1974,7 @@
                      return 101;
                  }
              }
@@ -331,7 +339,7 @@
          }
  
          return var3;
-@@ -2088,6 +2196,14 @@
+@@ -2088,6 +2195,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;

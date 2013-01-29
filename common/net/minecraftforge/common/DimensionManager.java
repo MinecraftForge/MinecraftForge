@@ -2,16 +2,25 @@ package net.minecraftforge.common;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -40,9 +49,10 @@ public class DimensionManager
     private static Hashtable<Integer, WorldServer> worlds = new Hashtable<Integer, WorldServer>();
     private static boolean hasInit = false;
     private static Hashtable<Integer, Integer> dimensions = new Hashtable<Integer, Integer>();
-    private static Map<World, ListMultimap<ChunkCoordIntPair, String>> persistentChunkStore = Maps.newHashMap(); //FIXME: Unused?
     private static ArrayList<Integer> unloadQueue = new ArrayList<Integer>();
     private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
+    private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
+    private static Set<Integer> leakedWorlds = Sets.newHashSet();
 
     public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
     {
@@ -53,6 +63,38 @@ public class DimensionManager
         providers.put(id, provider);
         spawnSettings.put(id, keepLoaded);
         return true;
+    }
+
+    /**
+     * Unregisters a Provider type, and returns a array of all dimensions that are 
+     * registered to this provider type.
+     * If the return size is greater then 0, it is required that the caller either 
+     * change those dimensions's registered type, or replace this type before the 
+     * world is attempted to load, else the loader will throw an exception.
+     * 
+     * @param id The provider type ID to unreigster
+     * @return An array containing all dimension IDs still registered to this provider type.
+     */
+    public static int[] unregisterProviderType(int id)
+    {
+        if (!providers.containsKey(id))
+        {
+            return new int[0];
+        }
+        providers.remove(id);
+        spawnSettings.remove(id);
+
+        int[] ret = new int[dimensions.size()];
+        int x = 0;
+        for (Map.Entry<Integer, Integer> ent : dimensions.entrySet())
+        {
+            if (ent.getValue() == id)
+            {
+                ret[x++] = ent.getKey();
+            }
+        }
+
+        return Arrays.copyOf(ret, x);
     }
 
     public static void init()
@@ -115,6 +157,34 @@ public class DimensionManager
         return getWorld(dim).provider;
     }
 
+    public static Integer[] getIDs(boolean check)
+    {
+        if (check)
+        {
+            List<World> allWorlds = Lists.newArrayList(weakWorldMap.keySet());
+            allWorlds.removeAll(worlds.values());
+            Set<Integer> newLeaks = Sets.newHashSet();
+            for (ListIterator<World> li = allWorlds.listIterator(); li.hasNext(); )
+            {
+                World w = li.next();
+                if (leakedWorlds.contains(System.identityHashCode(w)))
+                {
+                    li.remove();
+                }
+                newLeaks.add(System.identityHashCode(w));
+            }
+            leakedWorlds = newLeaks;
+            if (allWorlds.size() > 0)
+            {
+                FMLLog.severe("Detected leaking worlds in memory. There are %d worlds that appear to be persisting. A mod is likely caching the world incorrectly\n", allWorlds.size() + leakedWorlds.size());
+                for (World w : allWorlds)
+                {
+                    FMLLog.severe("The world %x (%s) has leaked.\n", System.identityHashCode(w), w.getWorldInfo().getWorldName());
+                }
+            }
+        }
+        return getIDs();
+    }
     public static Integer[] getIDs()
     {
         return worlds.keySet().toArray(new Integer[worlds.size()]); //Only loaded dims, since usually used to cycle through loaded worlds
@@ -124,6 +194,7 @@ public class DimensionManager
     {
         if (world != null) {
             worlds.put(id, world);
+            weakWorldMap.put(world, world);
             MinecraftServer.getServer().worldTickTimes.put(id, new long[100]);
             FMLLog.info("Loading dimension %d (%s) (%s)", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         } else {
