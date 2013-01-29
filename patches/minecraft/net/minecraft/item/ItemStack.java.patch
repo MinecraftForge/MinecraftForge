@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.stats.StatList;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public final class ItemStack
+ {
+@@ -132,6 +133,7 @@
+ 
+     public boolean tryPlaceItemIntoWorld(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5, int par6, float par7, float par8, float par9)
+     {
++        if(!ForgeEventFactory.onBlockPlace(this, par1EntityPlayer, par2World, par3, par4, par5, par6, par7, par8, par9)) return false;
+         boolean var10 = this.getItem().onItemUse(this, par1EntityPlayer, par2World, par3, par4, par5, par6, par7, par8, par9);
+ 
+         if (var10)
