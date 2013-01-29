@@ -653,10 +653,13 @@ public class ForgeChunkManager
 
         int allowedCount = ticketConstraints.containsKey(modId) ? ticketConstraints.get(modId) : defaultMaxCount;
 
-        if (tickets.get(world).get(modId).size() >= allowedCount && !warnedMods.contains(modId))
+        if (tickets.get(world).get(modId).size() >= allowedCount)
         {
-            FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
-            warnedMods.add(modId);
+            if (!warnedMods.contains(modId))
+            {
+                FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
+                warnedMods.add(modId);
+            }
             return null;
         }
         Ticket ticket = new Ticket(modId, type, world);
