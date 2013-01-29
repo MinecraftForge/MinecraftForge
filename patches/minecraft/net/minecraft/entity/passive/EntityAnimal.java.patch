@@ -1,0 +1,15 @@
+18,21d17
+<     /**
+<      * This value is the Max Value to add to the experience Value per Random inside getExperiencePoints()
+<      */
+<     public int experienceValueAddition;
+32,33d27
+<         this.experienceValue = 1;
+<         this.experienceValueAddition = 3;
+324,327c318
+< 		 if(this.experienceValueAddition<=0)
+< 			return this.experienceValue;
+< 		 else
+<    	 	return this.experienceValue + this.worldObj.rand.nextInt(this.experienceValueAddition);
+---
+>         return 1 + this.worldObj.rand.nextInt(3);
