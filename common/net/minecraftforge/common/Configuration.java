@@ -440,6 +440,7 @@ public class Configuration
         }
 
         BufferedReader buffer = null;
+        UnicodeInputStreamReader input = null;
         try
         {
             if (file.getParentFile() != null)
@@ -454,7 +455,7 @@ public class Configuration
 
             if (file.canRead())
             {
-                UnicodeInputStreamReader input = new UnicodeInputStreamReader(new FileInputStream(file), defaultEncoding);
+                input = new UnicodeInputStreamReader(new FileInputStream(file), defaultEncoding);
                 defaultEncoding = input.getEncoding();
                 buffer = new BufferedReader(input);
 
@@ -636,6 +637,13 @@ public class Configuration
                 try
                 {
                     buffer.close();
+                } catch (IOException e){}
+            }
+            if (input != null)
+            {
+                try
+                {
+                    input.close();
                 } catch (IOException e){}
             }
         }
