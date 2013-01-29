@@ -2,6 +2,7 @@ package net.minecraftforge.common;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -62,6 +63,38 @@ public class DimensionManager
         providers.put(id, provider);
         spawnSettings.put(id, keepLoaded);
         return true;
+    }
+
+    /**
+     * Unregisters a Provider type, and returns a array of all dimensions that are 
+     * registered to this provider type.
+     * If the return size is greater then 0, it is required that the caller either 
+     * change those dimensions's registered type, or replace this type before the 
+     * world is attempted to load, else the loader will throw an exception.
+     * 
+     * @param id The provider type ID to unreigster
+     * @return An array containing all dimension IDs still registered to this provider type.
+     */
+    public static int[] unregisterProviderType(int id)
+    {
+        if (!providers.containsKey(id))
+        {
+            return new int[0];
+        }
+        providers.remove(id);
+        spawnSettings.remove(id);
+
+        int[] ret = new int[dimensions.size()];
+        int x = 0;
+        for (Map.Entry<Integer, Integer> ent : dimensions.entrySet())
+        {
+            if (ent.getValue() == id)
+            {
+                ret[x++] = ent.getKey();
+            }
+        }
+
+        return Arrays.copyOf(ret, x);
     }
 
     public static void init()
