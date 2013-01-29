@@ -33,7 +33,17 @@
  
                  if (var8)
                  {
-@@ -334,6 +344,12 @@
+@@ -264,7 +274,8 @@
+ 
+                 if (this.stepSoundTickCounter % 4.0F == 0.0F && var6 != null)
+                 {
+-                    this.mc.sndManager.playSound(var6.stepSound.getStepSound(), (float)par1 + 0.5F, (float)par2 + 0.5F, (float)par3 + 0.5F, (var6.stepSound.getVolume() + 1.0F) / 8.0F, var6.stepSound.getPitch() * 0.5F);
++                    net.minecraft.block.StepSound stepSound = var6.getBlockStepSound(this.mc.thePlayer, this.mc.theWorld, par1, par2, par3, this.mc.theWorld.getBlockMetadata(par1, par2, par3));
++                    this.mc.sndManager.playSound(stepSound.getStepSound(), (float)par1 + 0.5F, (float)par2 + 0.5F, (float)par3 + 0.5F, (stepSound.getVolume() + 1.0F) / 8.0F, stepSound.getPitch() * 0.5F);
+                 }
+ 
+                 ++this.stepSoundTickCounter;
+@@ -334,6 +345,12 @@
          float var11 = (float)par8Vec3.zCoord - (float)par6;
          boolean var12 = false;
          int var13;
@@ -46,7 +56,7 @@
  
          if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
          {
-@@ -344,6 +360,7 @@
+@@ -344,6 +361,7 @@
                  var12 = true;
              }
          }
@@ -54,7 +64,7 @@
  
          if (!var12 && par3ItemStack != null && par3ItemStack.getItem() instanceof ItemBlock)
          {
-@@ -376,7 +393,15 @@
+@@ -376,7 +394,15 @@
          }
          else
          {
@@ -71,7 +81,7 @@
          }
      }
  
-@@ -398,9 +423,10 @@
+@@ -398,9 +424,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = var5;
  

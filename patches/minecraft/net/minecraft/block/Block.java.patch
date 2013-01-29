@@ -141,7 +141,7 @@
          {
              ItemStack var8 = this.createStackedBlock(par6);
  
-@@ -1364,4 +1380,840 @@
+@@ -1364,4 +1380,856 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -980,5 +980,21 @@
 +    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
 +        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
++    }
++    
++    /**
++     * Get Block StepSound
++     * 
++     * @param entity The Entity
++     * @param world The World
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Position
++     * @param metadata Block Metadata
++     * @return Block {@link StepSound}
++     */
++    public StepSound getBlockStepSound(Entity entity, World world, int x, int y, int z, int metadata)
++    {
++        return stepSound;
 +    }
  }
