@@ -95,18 +95,28 @@ public class LoadController
             StringBuilder sb = new StringBuilder();
             printModStates(sb);
             FMLLog.getLogger().severe(sb.toString());
-            FMLLog.severe("The following problems were captured during this phase");
-            for (Entry<String, Throwable> error : errors.entries())
+            if (errors.size()>0)
             {
-                FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
-                if (error.getValue() instanceof IFMLHandledException)
+                FMLLog.severe("The following problems were captured during this phase");
+                for (Entry<String, Throwable> error : errors.entries())
                 {
-                    toThrow = error.getValue();
+                    FMLLog.log(Level.SEVERE, error.getValue(), "Caught exception from %s", error.getKey());
+                    if (error.getValue() instanceof IFMLHandledException)
+                    {
+                        toThrow = error.getValue();
+                    }
+                    else if (toThrow == null)
+                    {
+                        toThrow = error.getValue();
+                    }
                 }
-                else if (toThrow == null)
-                {
-                    toThrow = error.getValue();
-                }
+            }
+            else
+            {
+                FMLLog.severe("The ForgeModLoader state engine has become corrupted. Probably, a state was missed by and invalid modification to a base class" +
+                		"ForgeModLoader depends on. This is a critical error and not recoverable. Investigate any modifications to base classes outside of" +
+                		"ForgeModLoader, especially Optifine, to see if there are fixes available.");
+                throw new RuntimeException("The ForgeModLoader state engine is invalid");
             }
             if (toThrow != null && toThrow instanceof RuntimeException)
             {
@@ -136,9 +146,9 @@ public class LoadController
             activeContainer = mc;
             String modId = mc.getModId();
             stateEvent.applyModContainer(activeContainer());
-            FMLLog.finer("Sending event %s to mod %s", stateEvent.getEventType(), modId);
+            FMLLog.log(modId, Level.FINEST, "Sending event %s to mod %s", stateEvent.getEventType(), modId);
             eventChannels.get(modId).post(stateEvent);
-            FMLLog.finer("Sent event %s to mod %s", stateEvent.getEventType(), modId);
+            FMLLog.log(modId, Level.FINEST, "Sent event %s to mod %s", stateEvent.getEventType(), modId);
             activeContainer = null;
             if (stateEvent instanceof FMLStateEvent)
             {

@@ -7,9 +7,19 @@ public class FMLLog
 {
     private static cpw.mods.fml.relauncher.FMLRelaunchLog coreLog = cpw.mods.fml.relauncher.FMLRelaunchLog.log;
 
+    public static void log(String logChannel, Level level, String format, Object... data)
+    {
+        coreLog.log(logChannel, level, format, data);
+    }
+
     public static void log(Level level, String format, Object... data)
     {
         coreLog.log(level, format, data);
+    }
+
+    public static void log(String logChannel, Level level, Throwable ex, String format, Object... data)
+    {
+        coreLog.log(logChannel, level, ex, format, data);
     }
 
     public static void log(Level level, Throwable ex, String format, Object... data)
@@ -49,5 +59,10 @@ public class FMLLog
     public static Logger getLogger()
     {
         return coreLog.getLogger();
+    }
+
+    public static void makeLog(String logChannel)
+    {
+        coreLog.makeLog(logChannel);
     }
 }

@@ -50,13 +50,13 @@ public class GameData {
                     ignoredMods = Maps.fromProperties(p);
                     if (ignoredMods.size()>0)
                     {
-                        FMLLog.warning("Using non-empty ignored mods configuration file %s", ignoredMods.keySet());
+                        FMLLog.log("fml.ItemTracker", Level.WARNING, "Using non-empty ignored mods configuration file %s", ignoredMods.keySet());
                     }
                 }
                 catch (Exception e)
                 {
                     Throwables.propagateIfPossible(e);
-                    FMLLog.log(Level.SEVERE, e, "Failed to read ignored ID checker mods properties file");
+                    FMLLog.log("fml.ItemTracker", Level.SEVERE, e, "Failed to read ignored ID checker mods properties file");
                     ignoredMods = ImmutableMap.<String, String>of();
                 }
             }
@@ -84,12 +84,12 @@ public class GameData {
         if (idMap.containsKey(item.field_77779_bT))
         {
             ItemData id = idMap.get(item.field_77779_bT);
-            FMLLog.info("[ItemTracker] The mod %s is overwriting existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
+            FMLLog.log("fml.ItemTracker", Level.INFO, "The mod %s is overwriting existing item at %d (%s from %s) with %s", mc.getModId(), id.getItemId(), id.getItemType(), id.getModId(), itemType);
         }
         idMap.put(item.field_77779_bT, itemData);
         if (!"Minecraft".equals(mc.getModId()))
         {
-            FMLLog.fine("[ItemTracker] Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
+            FMLLog.log("fml.ItemTracker",Level.FINE, "Adding item %s(%d) owned by %s", item.getClass().getName(), item.field_77779_bT, mc.getModId());
         }
     }
 
@@ -119,12 +119,12 @@ public class GameData {
 
         Map<Integer,ItemData> worldMap = Maps.uniqueIndex(worldSaveItems,idMapFunction);
         difference = Maps.difference(worldMap, idMap);
-        FMLLog.fine("The difference set is %s", difference);
+        FMLLog.log("fml.ItemTracker", Level.FINE, "The difference set is %s", difference);
         if (!difference.entriesDiffering().isEmpty() || !difference.entriesOnlyOnLeft().isEmpty())
         {
-            FMLLog.severe("FML has detected item discrepancies");
-            FMLLog.severe("Missing items : %s", difference.entriesOnlyOnLeft());
-            FMLLog.severe("Mismatched items : %s", difference.entriesDiffering());
+            FMLLog.log("fml.ItemTracker", Level.SEVERE, "FML has detected item discrepancies");
+            FMLLog.log("fml.ItemTracker", Level.SEVERE, "Missing items : %s", difference.entriesOnlyOnLeft());
+            FMLLog.log("fml.ItemTracker", Level.SEVERE, "Mismatched items : %s", difference.entriesDiffering());
             boolean foundNonIgnored = false;
             for (ItemData diff : difference.entriesOnlyOnLeft().values())
             {
@@ -142,7 +142,7 @@ public class GameData {
             }
             if (!foundNonIgnored)
             {
-                FMLLog.severe("FML is ignoring these ID discrepancies because of configuration. YOUR GAME WILL NOW PROBABLY CRASH. HOPEFULLY YOU WON'T HAVE CORRUPTED YOUR WORLD. BLAME %s", ignoredMods.keySet());
+                FMLLog.log("fml.ItemTracker", Level.SEVERE, "FML is ignoring these ID discrepancies because of configuration. YOUR GAME WILL NOW PROBABLY CRASH. HOPEFULLY YOU WON'T HAVE CORRUPTED YOUR WORLD. BLAME %s", ignoredMods.keySet());
             }
             isSaveValid = !foundNonIgnored;
             serverValidationLatch.countDown();
