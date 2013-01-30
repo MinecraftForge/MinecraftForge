@@ -18,6 +18,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -96,12 +97,12 @@ public class FMLDummyContainer extends DummyModContainer implements WorldAccessC
                 ModContainer container = Loader.instance().getIndexedModList().get(modId);
                 if (container == null)
                 {
-                    FMLLog.severe("This world was saved with mod %s which appears to be missing, things may not work well", modId);
+                    FMLLog.log("fml.ModTracker", Level.SEVERE, "This world was saved with mod %s which appears to be missing, things may not work well", modId);
                     continue;
                 }
                 if (!modVersion.equals(container.getVersion()))
                 {
-                    FMLLog.info("This world was saved with mod %s version %s and it is now at version %s, things may not work well", modId, modVersion, container.getVersion());
+                    FMLLog.log("fml.ModTracker", Level.INFO, "This world was saved with mod %s version %s and it is now at version %s, things may not work well", modId, modVersion, container.getVersion());
                 }
             }
         }

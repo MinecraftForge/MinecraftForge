@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import com.google.common.base.Charsets;
 
@@ -142,8 +143,7 @@ public class LanguageRegistry
             addStringLocalization(langPack, lang);
         }
         catch (IOException e) {
-            FMLLog.getLogger().severe("Unable to load localization from file: " + localizationFile);
-            e.printStackTrace();
+            FMLLog.log(Level.SEVERE, e, "Unable to load localization from file %s", localizationFile);
         }
         finally    {
             try    {
@@ -152,7 +152,7 @@ public class LanguageRegistry
                 }
             }
             catch (IOException ex) {
-                ex.printStackTrace();
+                // HUSH
             }
         }
     }
