@@ -497,6 +497,10 @@ public class Loader
         {
             FMLLog.fine("\t%s(%s:%s): %s (%s)", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), CertificateHelper.getFingerprint(mod.getSigningCertificate()));
         }
+        if (getActiveModList().isEmpty())
+        {
+            FMLLog.fine("No user mod signature data found");
+        }
         modController.transition(LoaderState.PREINITIALIZATION);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
         modController.transition(LoaderState.INITIALIZATION);
