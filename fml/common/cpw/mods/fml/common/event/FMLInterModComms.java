@@ -44,17 +44,23 @@ public class FMLInterModComms {
      *
      */
     public static class IMCEvent extends FMLEvent {
+        private ModContainer activeContainer;
+
         @Override
         public void applyModContainer(ModContainer activeContainer)
         {
-            currentList = ImmutableList.copyOf(modMessages.removeAll(activeContainer.getModId()));
-            FMLLog.finest("Attempting to deliver %d IMC messages to mod %s", currentList.size(), activeContainer.getModId());
+            this.activeContainer = activeContainer;
+            FMLLog.finest("Attempting to deliver %d IMC messages to mod %s", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
         }
 
         private ImmutableList<IMCMessage> currentList;
 
         public ImmutableList<IMCMessage> getMessages()
         {
+            if (currentList == null)
+            {
+                currentList = ImmutableList.copyOf(modMessages.removeAll(activeContainer.getModId()));
+            }
             return currentList;
         }
     }
@@ -202,7 +208,7 @@ public class FMLInterModComms {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(forMod);
         if (mc != null)
         {
-            return ImmutableList.copyOf(modMessages.removeAll(mc));
+            return ImmutableList.copyOf(modMessages.removeAll(mc.getModId()));
         }
         else
         {
