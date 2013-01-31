@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ArrayListMultimap;
@@ -60,14 +61,16 @@ public class LoadController
             boolean isActive = mod.registerBus(bus, this);
             if (isActive)
             {
-                FMLLog.fine("Activating mod %s", mod.getModId());
+                Level level = Logger.getLogger(mod.getModId()).getLevel();
+                FMLLog.log(mod.getModId(), Level.FINE, "Mod Logging channel %s configured at %s level.", level == null ? "default" : level);
+                FMLLog.log(mod.getModId(), Level.INFO, "Activating mod %s", mod.getModId());
                 activeModList.add(mod);
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 eventBus.put(mod.getModId(), bus);
             }
             else
             {
-                FMLLog.warning("Mod %s has been disabled through configuration", mod.getModId());
+                FMLLog.log(mod.getModId(), Level.WARNING, "Mod %s has been disabled through configuration", mod.getModId());
                 modStates.put(mod.getModId(), ModState.UNLOADED);
                 modStates.put(mod.getModId(), ModState.DISABLED);
             }
