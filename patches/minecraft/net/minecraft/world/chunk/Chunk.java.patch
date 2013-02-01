@@ -367,7 +367,7 @@
      }
  
      /**
-@@ -1014,8 +1121,8 @@
+@@ -1014,17 +1121,19 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
      {
@@ -378,7 +378,18 @@
  
          if (var4 < 0)
          {
-@@ -1062,8 +1169,8 @@
+             var4 = 0;
++            var5 = Math.max(var4, var5); // FORGE: Fixes entity collisions below world
+         }
+ 
+         if (var5 >= this.entityLists.length)
+         {
+             var5 = this.entityLists.length - 1;
++            var4 = Math.min(var4, var5); // FORGE: Fixes entity collisions above world
+         }
+ 
+         for (int var6 = var4; var6 <= var5; ++var6)
+@@ -1062,8 +1171,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -389,7 +400,7 @@
  
          if (var5 < 0)
          {
-@@ -1246,6 +1353,15 @@
+@@ -1246,6 +1355,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -405,7 +416,7 @@
          int var5 = 0;
          boolean var6 = !this.worldObj.provider.hasNoSky;
          int var7;
-@@ -1346,12 +1462,26 @@
+@@ -1346,12 +1464,26 @@
          }
  
          this.generateHeightMap();
@@ -438,7 +449,7 @@
          }
      }
  
-@@ -1460,4 +1590,18 @@
+@@ -1460,4 +1592,18 @@
              }
          }
      }
