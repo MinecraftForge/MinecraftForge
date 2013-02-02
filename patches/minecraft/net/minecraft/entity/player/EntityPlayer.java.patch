@@ -7,8 +7,8 @@
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import java.util.Iterator;
-@@ -175,6 +177,7 @@
+ import java.util.Collection;
+@@ -182,6 +184,7 @@
  
      public void func_70071_h_()
      {
@@ -16,7 +16,7 @@
          if (this.field_71074_e != null)
          {
              ItemStack itemstack = this.field_71071_by.func_70448_g();
-@@ -298,6 +301,7 @@
+@@ -305,6 +308,7 @@
          {
              this.field_71100_bB.func_75118_a(this);
          }
@@ -24,9 +24,9 @@
      }
  
      public int func_82145_z()
-@@ -1839,4 +1843,9 @@
+@@ -1852,4 +1856,9 @@
      {
-         return this.func_82241_s(1);
+         return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.field_71092_bJ);
      }
 +
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

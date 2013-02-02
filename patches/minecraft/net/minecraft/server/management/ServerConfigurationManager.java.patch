@@ -8,7 +8,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -109,6 +111,8 @@
+@@ -119,6 +121,8 @@
          }
  
          p_72355_2_.func_71116_b();
@@ -16,8 +16,8 @@
 +        FMLNetworkHandler.handlePlayerLogin(p_72355_2_, netserverhandler, p_72355_1_);
      }
  
-     public void func_72364_a(WorldServer[] p_72364_1_)
-@@ -175,6 +179,7 @@
+     protected void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_)
+@@ -216,6 +220,7 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
@@ -25,15 +25,15 @@
          this.func_72391_b(p_72367_1_);
          WorldServer worldserver = p_72367_1_.func_71121_q();
          worldserver.func_72900_e(p_72367_1_);
-@@ -324,6 +329,7 @@
-         worldserver.func_72838_d(entityplayermp1);
+@@ -366,6 +371,7 @@
          this.field_72404_b.add(entityplayermp1);
          entityplayermp1.func_71116_b();
+         entityplayermp1.func_70606_j(entityplayermp1.func_70630_aN());
 +        GameRegistry.onPlayerRespawn(entityplayermp1);
          return entityplayermp1;
      }
  
-@@ -349,6 +355,8 @@
+@@ -391,6 +397,8 @@
              PotionEffect potioneffect = (PotionEffect)iterator.next();
              p_72356_1_.field_71135_a.func_72567_b(new Packet41EntityEffect(p_72356_1_.field_70157_k, potioneffect));
          }

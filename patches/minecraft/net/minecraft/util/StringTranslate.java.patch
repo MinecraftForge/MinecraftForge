@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
-@@ -93,6 +94,7 @@
+@@ -92,6 +93,7 @@
                  }
              }
          }
@@ -15,7 +15,7 @@
      }
  
      public synchronized void func_74810_a(String p_74810_1_, boolean p_74810_2_)
-@@ -170,7 +172,6 @@
+@@ -169,7 +171,6 @@
          }
      }
  

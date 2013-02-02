@@ -8,16 +8,17 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -231,7 +232,49 @@
+@@ -231,7 +232,50 @@
          int l = p_78612_1_.func_71857_b();
          p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);
          this.func_83018_a(p_78612_1_);
--        return l == 0 ? this.func_78570_q(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 31 ? this.func_78581_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 4 ? this.func_78621_p(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 13 ? this.func_78584_s(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 1 ? this.func_78620_l(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 19 ? this.func_78603_m(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 23 ? this.func_78566_o(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 6 ? this.func_78614_n(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 2 ? this.func_78572_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 3 ? this.func_78590_h((BlockFire)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 5 ? this.func_78589_i(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 8 ? this.func_78576_j(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 7 ? this.func_78601_u(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 9 ? this.func_78586_a((BlockRailBase)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 10 ? this.func_78565_t((BlockStairs)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 27 ? this.func_78618_a((BlockDragonEgg)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 11 ? this.func_78582_a((BlockFence)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 32 ? this.func_82779_a((BlockWall)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 12 ? this.func_78594_e(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 29 ? this.func_78577_f(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 30 ? this.func_78619_g(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 14 ? this.func_78574_w(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 15 ? this.func_78610_x((BlockRedstoneRepeater)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 36 ? this.func_94176_a((BlockRedstoneLogic)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 37 ? this.func_94171_a((BlockComparator)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 16 ? this.func_78593_b(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, false) : (l == 17 ? this.func_78608_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, true) : (l == 18 ? this.func_78592_a((BlockPane)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 20 ? this.func_78598_k(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 21 ? this.func_78580_a((BlockFenceGate)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 24 ? this.func_78615_a((BlockCauldron)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 33 ? this.func_82780_a((BlockFlowerPot)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 35 ? this.func_82775_a((BlockAnvil)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 25 ? this.func_78585_a((BlockBrewingStand)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 26 ? this.func_78567_v((BlockEndPortalFrame)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 28 ? this.func_78616_a((BlockCocoa)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 34 ? this.func_82778_a((BlockBeacon)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 38 ? this.func_94172_a((BlockHopper)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : false)))))))))))))))))))))))))))))))))))));
+-        return l == 0 ? this.func_78570_q(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 31 ? this.func_78581_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 39 ? this.func_96445_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 4 ? this.func_78621_p(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 13 ? this.func_78584_s(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 1 ? this.func_78620_l(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 19 ? this.func_78603_m(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 23 ? this.func_78566_o(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 6 ? this.func_78614_n(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 2 ? this.func_78572_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 3 ? this.func_78590_h((BlockFire)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 5 ? this.func_78589_i(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 8 ? this.func_78576_j(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 7 ? this.func_78601_u(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 9 ? this.func_78586_a((BlockRailBase)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 10 ? this.func_78565_t((BlockStairs)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 27 ? this.func_78618_a((BlockDragonEgg)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 11 ? this.func_78582_a((BlockFence)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 32 ? this.func_82779_a((BlockWall)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 12 ? this.func_78594_e(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 29 ? this.func_78577_f(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 30 ? this.func_78619_g(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 14 ? this.func_78574_w(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 15 ? this.func_78610_x((BlockRedstoneRepeater)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 36 ? this.func_94176_a((BlockRedstoneLogic)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 37 ? this.func_94171_a((BlockComparator)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 16 ? this.func_78593_b(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, false) : (l == 17 ? this.func_78608_c(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_, true) : (l == 18 ? this.func_78592_a((BlockPane)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 20 ? this.func_78598_k(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 21 ? this.func_78580_a((BlockFenceGate)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 24 ? this.func_78615_a((BlockCauldron)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 33 ? this.func_82780_a((BlockFlowerPot)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 35 ? this.func_82775_a((BlockAnvil)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 25 ? this.func_78585_a((BlockBrewingStand)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 26 ? this.func_78567_v((BlockEndPortalFrame)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 28 ? this.func_78616_a((BlockCocoa)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 34 ? this.func_82778_a((BlockBeacon)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : (l == 38 ? this.func_94172_a((BlockHopper)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) : false))))))))))))))))))))))))))))))))))))));
 +        switch (l)
 +        {
 +        // regex: \(l == ([\d]+) \? (.*) replace: case \1: return \2;
-+        case 0: return this.func_78570_q(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) ;
++        case 0 : this.func_78570_q(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
 +        case 31: return this.func_78581_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) ;
++        case 39: return this.func_96445_r(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) ;
 +        case 4: return this.func_78621_p(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) ;
 +        case 13: return this.func_78584_s(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) ;
 +        case 1: return this.func_78620_l(p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_) ;
@@ -59,9 +60,9 @@
      }
  
      public boolean func_78567_v(BlockEndPortalFrame p_78567_1_, int p_78567_2_, int p_78567_3_, int p_78567_4_)
-@@ -6623,6 +6666,10 @@
-                 this.func_83020_a(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
-                 this.func_78595_a();
+@@ -6805,6 +6849,10 @@
+                 this.func_96447_a((BlockHopper)p_78600_1_, 0, 0, 0, 0, true);
+                 GL11.glTranslatef(0.5F, 0.5F, 0.5F);
              }
 +            else
 +            {
@@ -70,42 +71,30 @@
          }
          else
          {
-@@ -6681,7 +6728,37 @@
+@@ -6863,7 +6911,25 @@
  
      public static boolean func_78597_b(int p_78597_0_)
      {
--        return p_78597_0_ == 0 ? true : (p_78597_0_ == 31 ? true : (p_78597_0_ == 13 ? true : (p_78597_0_ == 10 ? true : (p_78597_0_ == 11 ? true : (p_78597_0_ == 27 ? true : (p_78597_0_ == 22 ? true : (p_78597_0_ == 21 ? true : (p_78597_0_ == 16 ? true : (p_78597_0_ == 26 ? true : (p_78597_0_ == 32 ? true : (p_78597_0_ == 34 ? true : p_78597_0_ == 35)))))))))));
+-        return p_78597_0_ == 0 ? true : (p_78597_0_ == 31 ? true : (p_78597_0_ == 39 ? true : (p_78597_0_ == 13 ? true : (p_78597_0_ == 10 ? true : (p_78597_0_ == 11 ? true : (p_78597_0_ == 27 ? true : (p_78597_0_ == 22 ? true : (p_78597_0_ == 21 ? true : (p_78597_0_ == 16 ? true : (p_78597_0_ == 26 ? true : (p_78597_0_ == 32 ? true : (p_78597_0_ == 34 ? true : p_78597_0_ == 35))))))))))));
 +        switch (p_78597_0_)
 +        {
-+            case 0:
-+                return true;
-+            case 31:
-+                return true;
-+            case 13:
-+                return true;
-+            case 10:
-+                return true;
-+            case 11:
-+                return true;
-+            case 27:
-+                return true;
-+            case 22:
-+                return true;
-+            case 21:
-+                return true;
-+            case 16:
-+                return true;
-+            case 26:
-+                return true;
-+            case 32:
-+                return true;
-+            case 34:
-+                return true;
-+            case 35:
-+                return true;
-+            default:
-+                return FMLRenderAccessLibrary.renderItemAsFull3DBlock(p_78597_0_);
++        case 0: return true;
++        case 31: return true ;
++        case 39: return true ;
++        case 13: return true ;
++        case 10: return true ;
++        case 11: return true ;
++        case 27: return true ;
++        case 22: return true ;
++        case 21: return true ;
++        case 16: return true ;
++        case 26: return true ;
++        case 32: return true ;
++        case 34: return true ;
++        case 35: return true ;
++        default: return FMLRenderAccessLibrary.renderItemAsFull3DBlock(p_78597_0_);
 +        }
++
      }
  
      public Icon func_94170_a(Block p_94170_1_, IBlockAccess p_94170_2_, int p_94170_3_, int p_94170_4_, int p_94170_5_, int p_94170_6_)

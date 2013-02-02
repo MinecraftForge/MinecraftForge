@@ -7,9 +7,9 @@
  
  public abstract class NetHandler
  {
-@@ -340,4 +342,8 @@
+@@ -360,4 +362,8 @@
      {
-         return false;
+         this.func_72509_a(p_96435_1_);
      }
 +
 +    public abstract void handleVanilla250Packet(Packet250CustomPayload payload);

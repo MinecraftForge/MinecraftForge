@@ -22,7 +22,7 @@
  import javax.imageio.ImageIO;
  import net.minecraft.client.renderer.texture.TextureMap;
  import net.minecraft.client.settings.GameSettings;
-@@ -39,6 +45,8 @@
+@@ -40,6 +46,8 @@
      private final TextureMap field_94155_m;
      private int field_94153_n;
  
@@ -31,7 +31,7 @@
      public RenderEngine(TexturePackList p_i3192_1_, GameSettings p_i3192_2_)
      {
          this.field_78366_k = p_i3192_1_;
-@@ -117,8 +125,9 @@
+@@ -118,8 +126,9 @@
                  this.field_78359_d.put(p_78346_1_, aint1);
                  return aint1;
              }
@@ -43,7 +43,7 @@
                  ioexception.printStackTrace();
                  int[] aint2 = this.func_78348_b(this.field_78364_l);
                  this.field_78359_d.put(p_78346_1_, aint2);
-@@ -505,8 +514,9 @@
+@@ -506,8 +515,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
@@ -55,7 +55,7 @@
                  ioexception.printStackTrace();
              }
          }
-@@ -542,8 +552,9 @@
+@@ -543,8 +553,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }

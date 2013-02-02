@@ -13,7 +13,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.TileEntityRecordPlayer;
  import net.minecraft.crash.CrashReportCategory;
-@@ -82,9 +85,11 @@
+@@ -81,9 +84,11 @@
      {
          TileEntity tileentity = null;
  
@@ -26,7 +26,7 @@
  
              if (oclass != null)
              {
-@@ -98,7 +103,17 @@
+@@ -97,7 +102,17 @@
  
          if (tileentity != null)
          {
