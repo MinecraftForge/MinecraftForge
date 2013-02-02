@@ -130,13 +130,13 @@ BlockWoodButton,net/minecraft/block
 BlockWoodSlab,net/minecraft/block
 BlockWorkbench,net/minecraft/block
 EnumMobType,net/minecraft/block
+ITileEntityProvider,net/minecraft/block
 RailLogic,net/minecraft/block
 RedstoneUpdateInfo,net/minecraft/block
 StepSound,net/minecraft/block
 StepSoundAnvil,net/minecraft/block
 StepSoundSand,net/minecraft/block
 StepSoundStone,net/minecraft/block
-TileEntityRecordPlayer,net/minecraft/block
 MapColor,net/minecraft/block/material
 Material,net/minecraft/block/material
 MaterialLiquid,net/minecraft/block/material
@@ -1175,6 +1175,7 @@ TileEntityMobSpawner,net/minecraft/tileentity
 TileEntityMobSpawnerSpawnData,net/minecraft/tileentity
 TileEntityNote,net/minecraft/tileentity
 TileEntityPiston,net/minecraft/tileentity
+TileEntityRecordPlayer,net/minecraft/tileentity
 TileEntitySign,net/minecraft/tileentity
 TileEntitySkull,net/minecraft/tileentity
 AABBLocalPool,net/minecraft/util

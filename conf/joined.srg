@@ -247,7 +247,7 @@ CL: akd net/minecraft/src/MapStorage
 CL: ake net/minecraft/src/ThreadedFileIOBase
 CL: akf net/minecraft/src/IThreadedFileIO
 CL: akh net/minecraft/src/BlockAnvil
-CL: aki net/minecraft/src/TileEntityBase
+CL: aki net/minecraft/src/BlockContainer
 CL: akj net/minecraft/src/BlockBasePressurePlate
 CL: akk net/minecraft/src/BlockRailBase
 CL: akl net/minecraft/src/BlockBaseRailLogic
@@ -281,7 +281,7 @@ CL: alm net/minecraft/src/BlockDropper
 CL: aln net/minecraft/src/BlockDragonEgg
 CL: alo net/minecraft/src/BlockEnchantmentTable
 CL: alp net/minecraft/src/BlockEnderChest
-CL: alq net/minecraft/src/BlockContainer
+CL: alq net/minecraft/src/ITileEntityProvider
 CL: alr net/minecraft/src/BlockFarmland
 CL: als net/minecraft/src/BlockFenceGate
 CL: alt net/minecraft/src/BlockFence
@@ -1030,12 +1030,12 @@ CL: gj net/minecraft/src/DispenserBehaviorFireball
 CL: gk net/minecraft/src/DispenserBehaviorBoat
 CL: gl net/minecraft/src/ConsoleLogManager
 CL: gm net/minecraft/src/ConsoleLogFormatter
-CL: gn net/minecraft/src/BehaviorArrowDispense
-CL: go net/minecraft/src/BehaviorEggDispense
-CL: gp net/minecraft/src/BehaviorSnowballDispense
-CL: gq net/minecraft/src/BehaviorExpBottleDispense
-CL: gr net/minecraft/src/BehaviorPotionDispense
-CL: gs net/minecraft/src/BehaviorMobEggDispense
+CL: gn net/minecraft/src/ConvertingProgressUpdate
+CL: go net/minecraft/src/ThreadDedicatedServer
+CL: gp net/minecraft/src/ThreadMinecraftServer
+CL: gq net/minecraft/src/CallableIsServerModded
+CL: gr net/minecraft/src/CallableServerProfiler
+CL: gs net/minecraft/src/CallableServerMemoryStats
 CL: gt net/minecraft/src/PlayerPositionComparator
 CL: gu net/minecraft/src/ServerConfigurationManager
 CL: gv net/minecraft/src/IServer
@@ -5286,13 +5286,13 @@ FD: gg/c net/minecraft/src/DispenserBehaviorPotionProjectile/field_96463_c
 FD: gk/b net/minecraft/src/DispenserBehaviorBoat/field_96464_b
 FD: gl/a net/minecraft/src/ConsoleLogManager/field_73700_a
 FD: gm/a net/minecraft/src/ConsoleLogFormatter/field_74268_a
-FD: gn/a net/minecraft/src/BehaviorArrowDispense/field_74267_a
-FD: gn/b net/minecraft/src/BehaviorArrowDispense/field_96245_b
-FD: go/a net/minecraft/src/BehaviorEggDispense/field_96244_a
-FD: gp/a net/minecraft/src/BehaviorSnowballDispense/field_73716_a
-FD: gq/a net/minecraft/src/BehaviorExpBottleDispense/field_74274_a
-FD: gr/a net/minecraft/src/BehaviorPotionDispense/field_74272_a
-FD: gs/a net/minecraft/src/BehaviorMobEggDispense/field_74270_a
+FD: gn/a net/minecraft/src/ConvertingProgressUpdate/field_74267_a
+FD: gn/b net/minecraft/src/ConvertingProgressUpdate/field_96245_b
+FD: go/a net/minecraft/src/ThreadDedicatedServer/field_96244_a
+FD: gp/a net/minecraft/src/ThreadMinecraftServer/field_73716_a
+FD: gq/a net/minecraft/src/CallableIsServerModded/field_74274_a
+FD: gr/a net/minecraft/src/CallableServerProfiler/field_74272_a
+FD: gs/a net/minecraft/src/CallableServerMemoryStats/field_74270_a
 FD: gt/a net/minecraft/src/PlayerPositionComparator/field_82548_a
 FD: gu/a net/minecraft/src/ServerConfigurationManager/field_72406_a
 FD: gu/b net/minecraft/src/ServerConfigurationManager/field_72404_b
@@ -8474,9 +8474,9 @@ MD: akh/a_ (Lzk;IIII)V net/minecraft/src/BlockAnvil/func_82519_a_ (Lnet/minecraf
 MD: akh/b ()Z net/minecraft/src/BlockAnvil/func_71886_c ()Z
 MD: akh/c ()Z net/minecraft/src/BlockAnvil/func_71926_d ()Z
 MD: akh/d ()I net/minecraft/src/BlockAnvil/func_71857_b ()I
-MD: aki/a (Lzk;III)V net/minecraft/src/TileEntityBase/func_71861_g (Lnet/minecraft/src/World;III)V
-MD: aki/a (Lzk;IIIII)V net/minecraft/src/TileEntityBase/func_71852_a (Lnet/minecraft/src/World;IIIII)V
-MD: aki/b (Lzk;IIIII)V net/minecraft/src/TileEntityBase/func_71883_b (Lnet/minecraft/src/World;IIIII)V
+MD: aki/a (Lzk;III)V net/minecraft/src/BlockContainer/func_71861_g (Lnet/minecraft/src/World;III)V
+MD: aki/a (Lzk;IIIII)V net/minecraft/src/BlockContainer/func_71852_a (Lnet/minecraft/src/World;IIIII)V
+MD: aki/b (Lzk;IIIII)V net/minecraft/src/BlockContainer/func_71883_b (Lnet/minecraft/src/World;IIIII)V
 MD: akj/a (III)Laqg; net/minecraft/src/BlockBasePressurePlate/func_94352_a (III)Lnet/minecraft/src/AxisAlignedBB;
 MD: akj/a (Lls;)V net/minecraft/src/BlockBasePressurePlate/func_94332_a (Lnet/minecraft/src/IconRegister;)V
 MD: akj/a (Lzk;)I net/minecraft/src/BlockBasePressurePlate/func_71859_p_ (Lnet/minecraft/src/World;)I
@@ -8882,7 +8882,7 @@ MD: alp/b (Lzk;IIILjava/util/Random;)V net/minecraft/src/BlockEnderChest/func_71
 MD: alp/c ()Z net/minecraft/src/BlockEnderChest/func_71926_d ()Z
 MD: alp/d ()I net/minecraft/src/BlockEnderChest/func_71857_b ()I
 MD: alp/r_ ()Z net/minecraft/src/BlockEnderChest/func_71906_q_ ()Z
-MD: alq/b (Lzk;)Lapy; net/minecraft/src/BlockContainer/func_72274_a (Lnet/minecraft/src/World;)Lnet/minecraft/src/TileEntity;
+MD: alq/b (Lzk;)Lapy; net/minecraft/src/ITileEntityProvider/func_72274_a (Lnet/minecraft/src/World;)Lnet/minecraft/src/TileEntity;
 MD: alr/a (II)Llr; net/minecraft/src/BlockFarmland/func_71858_a (II)Lnet/minecraft/src/Icon;
 MD: alr/a (ILjava/util/Random;I)I net/minecraft/src/BlockFarmland/func_71885_a (ILjava/util/Random;I)I
 MD: alr/a (Lls;)V net/minecraft/src/BlockFarmland/func_94332_a (Lnet/minecraft/src/IconRegister;)V
@@ -13603,19 +13603,19 @@ MD: gk/a (Lay;)V net/minecraft/src/DispenserBehaviorBoat/func_82485_a (Lnet/mine
 MD: gk/b (Lay;Lvx;)Lvx; net/minecraft/src/DispenserBehaviorBoat/func_82487_b (Lnet/minecraft/src/IBlockSource;Lnet/minecraft/src/ItemStack;)Lnet/minecraft/src/ItemStack;
 MD: gl/a ()V net/minecraft/src/ConsoleLogManager/func_73699_a ()V
 MD: gm/format (Ljava/util/logging/LogRecord;)Ljava/lang/String; net/minecraft/src/ConsoleLogFormatter/format (Ljava/util/logging/LogRecord;)Ljava/lang/String;
-MD: gn/a ()V net/minecraft/src/BehaviorArrowDispense/func_73717_a ()V
-MD: gn/a (I)V net/minecraft/src/BehaviorArrowDispense/func_73718_a (I)V
-MD: gn/a (Ljava/lang/String;)V net/minecraft/src/BehaviorArrowDispense/func_73720_a (Ljava/lang/String;)V
-MD: gn/b (Ljava/lang/String;)V net/minecraft/src/BehaviorArrowDispense/func_73721_b (Ljava/lang/String;)V
-MD: gn/c (Ljava/lang/String;)V net/minecraft/src/BehaviorArrowDispense/func_73719_c (Ljava/lang/String;)V
-MD: go/run ()V net/minecraft/src/BehaviorEggDispense/run ()V
-MD: gp/run ()V net/minecraft/src/BehaviorSnowballDispense/run ()V
-MD: gq/a ()Ljava/lang/String; net/minecraft/src/BehaviorExpBottleDispense/func_96558_a ()Ljava/lang/String;
-MD: gq/call ()Ljava/lang/Object; net/minecraft/src/BehaviorExpBottleDispense/call ()Ljava/lang/Object;
-MD: gr/a ()Ljava/lang/String; net/minecraft/src/BehaviorPotionDispense/func_96557_a ()Ljava/lang/String;
-MD: gr/call ()Ljava/lang/Object; net/minecraft/src/BehaviorPotionDispense/call ()Ljava/lang/Object;
-MD: gs/a ()Ljava/lang/String; net/minecraft/src/BehaviorMobEggDispense/func_96556_a ()Ljava/lang/String;
-MD: gs/call ()Ljava/lang/Object; net/minecraft/src/BehaviorMobEggDispense/call ()Ljava/lang/Object;
+MD: gn/a ()V net/minecraft/src/ConvertingProgressUpdate/func_73717_a ()V
+MD: gn/a (I)V net/minecraft/src/ConvertingProgressUpdate/func_73718_a (I)V
+MD: gn/a (Ljava/lang/String;)V net/minecraft/src/ConvertingProgressUpdate/func_73720_a (Ljava/lang/String;)V
+MD: gn/b (Ljava/lang/String;)V net/minecraft/src/ConvertingProgressUpdate/func_73721_b (Ljava/lang/String;)V
+MD: gn/c (Ljava/lang/String;)V net/minecraft/src/ConvertingProgressUpdate/func_73719_c (Ljava/lang/String;)V
+MD: go/run ()V net/minecraft/src/ThreadDedicatedServer/run ()V
+MD: gp/run ()V net/minecraft/src/ThreadMinecraftServer/run ()V
+MD: gq/a ()Ljava/lang/String; net/minecraft/src/CallableIsServerModded/func_96558_a ()Ljava/lang/String;
+MD: gq/call ()Ljava/lang/Object; net/minecraft/src/CallableIsServerModded/call ()Ljava/lang/Object;
+MD: gr/a ()Ljava/lang/String; net/minecraft/src/CallableServerProfiler/func_96557_a ()Ljava/lang/String;
+MD: gr/call ()Ljava/lang/Object; net/minecraft/src/CallableServerProfiler/call ()Ljava/lang/Object;
+MD: gs/a ()Ljava/lang/String; net/minecraft/src/CallableServerMemoryStats/func_96556_a ()Ljava/lang/String;
+MD: gs/call ()Ljava/lang/Object; net/minecraft/src/CallableServerMemoryStats/call ()Ljava/lang/Object;
 MD: gt/a (Ljc;Ljc;)I net/minecraft/src/PlayerPositionComparator/func_82547_a (Lnet/minecraft/src/EntityPlayerMP;Lnet/minecraft/src/EntityPlayerMP;)I
 MD: gt/compare (Ljava/lang/Object;Ljava/lang/Object;)I net/minecraft/src/PlayerPositionComparator/compare (Ljava/lang/Object;Ljava/lang/Object;)I
 MD: gu/a ()I net/minecraft/src/ServerConfigurationManager/func_72372_a ()I
