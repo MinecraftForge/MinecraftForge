@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.dispenser.BehaviorSnowballDispense;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -177,7 +178,8 @@ public class FMLCommonHandler
     public Side getEffectiveSide()
     {
         Thread thr = Thread.currentThread();
-        if ((thr instanceof ThreadMinecraftServer) || (thr instanceof ServerListenThread))
+        // totally temporary!
+        if ((thr instanceof BehaviorSnowballDispense) || (thr instanceof ServerListenThread))
         {
             return Side.SERVER;
         }

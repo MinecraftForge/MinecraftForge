@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.List;
-@@ -214,6 +215,8 @@
+@@ -215,6 +216,8 @@
          }
  
          field_77698_e[256 + p_i3659_1_] = this;
