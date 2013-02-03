@@ -1,2 +1,6 @@
 #!/bin/bash
-python setup.py "$@"
+PYTHON=python2
+if ! which "$PYTHON" >/dev/null; then
+	PYTHON=python
+fi
+$PYTHON setup.py "$@"
