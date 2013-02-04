@@ -62,7 +62,7 @@ public class LoadController
             if (isActive)
             {
                 Level level = Logger.getLogger(mod.getModId()).getLevel();
-                FMLLog.log(mod.getModId(), Level.FINE, "Mod Logging channel %s configured at %s level.", level == null ? "default" : level);
+                FMLLog.log(mod.getModId(), Level.FINE, "Mod Logging channel %s configured at %s level.", mod.getModId(), level == null ? "default" : level);
                 FMLLog.log(mod.getModId(), Level.INFO, "Activating mod %s", mod.getModId());
                 activeModList.add(mod);
                 modStates.put(mod.getModId(), ModState.UNLOADED);
