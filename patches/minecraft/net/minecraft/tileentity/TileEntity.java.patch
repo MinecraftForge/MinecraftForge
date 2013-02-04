@@ -11,7 +11,7 @@
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -296,4 +299,79 @@
+@@ -296,4 +299,84 @@
          addMapping(TileEntityBeacon.class, "Beacon");
          addMapping(TileEntitySkull.class, "Skull");
      }
@@ -84,10 +84,15 @@
 +    @SideOnly(Side.CLIENT)
 +    public AxisAlignedBB getRenderBoundingBox()
 +    {
++        AxisAlignedBB bb = INFINITE_EXTENT_AABB;
 +        if (getBlockType()!=null && getBlockType() != Block.chest)
 +        {
-+            return getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
++            AxisAlignedBB cbb = getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
++            if (cbb != null)
++            {
++                bb = cbb;
++            }
 +        }
-+        return INFINITE_EXTENT_AABB;
++        return bb;
 +    }
  }
