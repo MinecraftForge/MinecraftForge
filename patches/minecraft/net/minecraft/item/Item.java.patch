@@ -57,7 +57,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +716,304 @@
+@@ -701,4 +716,318 @@
      {
          StatList.initStats();
      }
@@ -361,4 +361,18 @@
 +    {
 +        return false;
 +    }
++
++
++    /**
++     * Called to tick armor in the armor slot. Override to do something
++     *
++     * @param world
++     * @param player
++     * @param itemStack
++     */
++    public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack)
++    {
++
++    }
++
  }
