@@ -56,7 +56,17 @@
                  GL11.glRotatef(var2.prevRotationYaw + (var2.rotationYaw - var2.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(var2.prevRotationPitch + (var2.rotationPitch - var2.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1139,8 +1143,11 @@
+@@ -1124,7 +1128,9 @@
+             {
+                 RenderHelper.enableStandardItemLighting();
+                 this.mc.mcProfiler.endStartSection("entities");
++                ForgeHooksClient.setRenderPass(0);
+                 var5.renderEntities(var4.getPosition(par1), var14, par1);
++                ForgeHooksClient.setRenderPass(-1);
+                 this.enableLightmap((double)par1);
+                 this.mc.mcProfiler.endStartSection("litParticles");
+                 var6.renderLitParticles(var4, par1);
+@@ -1139,8 +1145,11 @@
                      var17 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -70,7 +80,21 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1204,15 +1211,18 @@
+@@ -1194,6 +1203,13 @@
+                 this.mc.mcProfiler.endStartSection("water");
+                 var5.sortAndRender(var4, 1, (double)par1);
+             }
++            
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            ForgeHooksClient.setRenderPass(1);
++            var5.renderEntities(var4.getPosition(par1), var14, par1);
++            ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
+ 
+             GL11.glDepthMask(true);
+             GL11.glEnable(GL11.GL_CULL_FACE);
+@@ -1204,15 +1220,18 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -92,7 +116,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1222,6 +1232,9 @@
+@@ -1222,6 +1241,9 @@
              {
                  this.renderCloudsCheck(var5, par1);
              }

@@ -1,15 +1,120 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -62,6 +62,8 @@
+@@ -62,6 +62,9 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
 +import net.minecraftforge.client.IRenderHandler;
++import net.minecraftforge.client.MinecraftForgeClient;
 +
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -929,6 +931,12 @@
+@@ -439,62 +442,72 @@
+      */
+     public void renderEntities(Vec3 par1Vec3, ICamera par2ICamera, float par3)
+     {
++        int pass = MinecraftForgeClient.getRenderPass();
+         if (this.renderEntitiesStartupCounter > 0)
+         {
++            if(pass > 0)
++                return;
++
+             --this.renderEntitiesStartupCounter;
+         }
+         else
+         {
+-            this.theWorld.theProfiler.startSection("prepare");
+-            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
+-            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.gameSettings, par3);
+-            this.countEntitiesTotal = 0;
+-            this.countEntitiesRendered = 0;
+-            this.countEntitiesHidden = 0;
+-            EntityLiving var4 = this.mc.renderViewEntity;
+-            RenderManager.renderPosX = var4.lastTickPosX + (var4.posX - var4.lastTickPosX) * (double)par3;
+-            RenderManager.renderPosY = var4.lastTickPosY + (var4.posY - var4.lastTickPosY) * (double)par3;
+-            RenderManager.renderPosZ = var4.lastTickPosZ + (var4.posZ - var4.lastTickPosZ) * (double)par3;
+-            TileEntityRenderer.staticPlayerX = var4.lastTickPosX + (var4.posX - var4.lastTickPosX) * (double)par3;
+-            TileEntityRenderer.staticPlayerY = var4.lastTickPosY + (var4.posY - var4.lastTickPosY) * (double)par3;
+-            TileEntityRenderer.staticPlayerZ = var4.lastTickPosZ + (var4.posZ - var4.lastTickPosZ) * (double)par3;
++            List var5 = this.theWorld.getLoadedEntityList();
++            if(pass == 0)
++            {
++                this.theWorld.theProfiler.startSection("prepare");
++                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
++                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.gameSettings, par3);
++                this.countEntitiesTotal = 0;
++                this.countEntitiesRendered = 0;
++                this.countEntitiesHidden = 0;
++                EntityLiving var4 = this.mc.renderViewEntity;
++                RenderManager.renderPosX = var4.lastTickPosX + (var4.posX - var4.lastTickPosX) * (double)par3;
++                RenderManager.renderPosY = var4.lastTickPosY + (var4.posY - var4.lastTickPosY) * (double)par3;
++                RenderManager.renderPosZ = var4.lastTickPosZ + (var4.posZ - var4.lastTickPosZ) * (double)par3;
++                TileEntityRenderer.staticPlayerX = var4.lastTickPosX + (var4.posX - var4.lastTickPosX) * (double)par3;
++                TileEntityRenderer.staticPlayerY = var4.lastTickPosY + (var4.posY - var4.lastTickPosY) * (double)par3;
++                TileEntityRenderer.staticPlayerZ = var4.lastTickPosZ + (var4.posZ - var4.lastTickPosZ) * (double)par3;
++                this.countEntitiesTotal = var5.size();
++            }
+             this.mc.entityRenderer.enableLightmap((double)par3);
+             this.theWorld.theProfiler.endStartSection("global");
+-            List var5 = this.theWorld.getLoadedEntityList();
+-            this.countEntitiesTotal = var5.size();
+             int var6;
+             Entity var7;
+ 
+             for (var6 = 0; var6 < this.theWorld.weatherEffects.size(); ++var6)
+             {
+                 var7 = (Entity)this.theWorld.weatherEffects.get(var6);
+-                ++this.countEntitiesRendered;
+-
+-                if (var7.isInRangeToRenderVec3D(par1Vec3))
+-                {
+-                    RenderManager.instance.renderEntity(var7, par3);
+-                }
+-            }
+-
+-            this.theWorld.theProfiler.endStartSection("entities");
+-
+-            for (var6 = 0; var6 < var5.size(); ++var6)
+-            {
+-                var7 = (Entity)var5.get(var6);
+-
+-                if (var7.isInRangeToRenderVec3D(par1Vec3) && (var7.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(var7.boundingBox) || var7.riddenByEntity == this.mc.thePlayer) && (var7 != this.mc.renderViewEntity || this.mc.gameSettings.thirdPersonView != 0 || this.mc.renderViewEntity.isPlayerSleeping()) && this.theWorld.blockExists(MathHelper.floor_double(var7.posX), 0, MathHelper.floor_double(var7.posZ)))
++
++                if (var7.shouldRenderInPass(pass) && var7.isInRangeToRenderVec3D(par1Vec3))
+                 {
+                     ++this.countEntitiesRendered;
+                     RenderManager.instance.renderEntity(var7, par3);
+                 }
+             }
+ 
++            this.theWorld.theProfiler.endStartSection("entities");
++
++            for (var6 = 0; var6 < var5.size(); ++var6)
++            {
++                var7 = (Entity)var5.get(var6);
++
++                if (var7.shouldRenderInPass(pass) && var7.isInRangeToRenderVec3D(par1Vec3) && (var7.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(var7.boundingBox) || var7.riddenByEntity == this.mc.thePlayer) && (var7 != this.mc.renderViewEntity || this.mc.gameSettings.thirdPersonView != 0 || this.mc.renderViewEntity.isPlayerSleeping()) && this.theWorld.blockExists(MathHelper.floor_double(var7.posX), 0, MathHelper.floor_double(var7.posZ)))
++                {
++                    ++this.countEntitiesRendered;
++                    RenderManager.instance.renderEntity(var7, par3);
++                }
++            }
++
+             this.theWorld.theProfiler.endStartSection("tileentities");
+             RenderHelper.enableStandardItemLighting();
+ 
++            TileEntity te;
+             for (var6 = 0; var6 < this.tileEntities.size(); ++var6)
+             {
+-                TileEntityRenderer.instance.renderTileEntity((TileEntity)this.tileEntities.get(var6), par3);
++                te = (TileEntity)this.tileEntities.get(var6);
++                if(par2ICamera.isBoundingBoxInFrustum(te.getRenderBoundingBox()) && te.shouldRenderInPass(pass))
++                    TileEntityRenderer.instance.renderTileEntity(te, par3);
+             }
+ 
+             this.mc.entityRenderer.disableLightmap((double)par3);
+@@ -929,6 +942,12 @@
       */
      public void renderSky(float par1)
      {
@@ -22,7 +127,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1167,6 +1175,13 @@
+@@ -1167,6 +1186,13 @@
  
      public void renderClouds(float par1)
      {
@@ -36,7 +141,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1596,6 +1611,11 @@
+@@ -1596,6 +1622,11 @@
      }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
@@ -48,7 +153,7 @@
      {
          double var4 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
          double var6 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;
-@@ -1873,6 +1893,7 @@
+@@ -1873,6 +1904,7 @@
              double var17 = this.mc.renderViewEntity.posY - par4;
              double var19 = this.mc.renderViewEntity.posZ - par6;
              EntityFX var21 = null;
@@ -56,7 +161,7 @@
  
              if (par1Str.equals("hugeexplosion"))
              {
-@@ -2009,6 +2030,7 @@
+@@ -2009,6 +2041,7 @@
                      else if (par1Str.equals("snowballpoof"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.snowball);
@@ -64,7 +169,7 @@
                      }
                      else if (par1Str.equals("dripWater"))
                      {
-@@ -2025,6 +2047,7 @@
+@@ -2025,6 +2058,7 @@
                      else if (par1Str.equals("slime"))
                      {
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, Item.slimeBall);
@@ -72,7 +177,7 @@
                      }
                      else if (par1Str.equals("heart"))
                      {
-@@ -2046,6 +2069,7 @@
+@@ -2046,6 +2080,7 @@
                      {
                          int var27 = Integer.parseInt(par1Str.substring(par1Str.indexOf("_") + 1));
                          var21 = new EntityBreakingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Item.itemsList[var27]);
@@ -80,7 +185,7 @@
                      }
                      else if (par1Str.startsWith("tilecrack_"))
                      {
-@@ -2053,11 +2077,12 @@
+@@ -2053,11 +2088,12 @@
                          int var25 = Integer.parseInt(var28[1]);
                          int var26 = Integer.parseInt(var28[2]);
                          var21 = (new EntityDiggingFX(this.theWorld, par2, par4, par6, par8, par10, par12, Block.blocksList[var25], 0, var26)).applyRenderColor(var26);
