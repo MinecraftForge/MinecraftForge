@@ -84,7 +84,7 @@
 +    @SideOnly(Side.CLIENT)
 +    public AxisAlignedBB getRenderBoundingBox()
 +    {
-+        if (getBlockType()!=null)
++        if (getBlockType()!=null && getBlockType() != Block.chest)
 +        {
 +            return getBlockType().getCollisionBoundingBoxFromPool(worldObj, xCoord, yCoord, zCoord);
 +        }
