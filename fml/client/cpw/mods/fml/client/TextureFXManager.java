@@ -317,4 +317,19 @@ public class TextureFXManager
         return INSTANCE;
     }
 
+    public void fixTransparency(BufferedImage loadedImage, String textureName)
+    {
+        if (textureName.matches("^/mob/.*_eyes.*.png$"))
+        {
+            for (int x = 0; x < loadedImage.getWidth(); x++) {
+                for (int y = 0; y < loadedImage.getHeight(); y++) {
+                    int argb = loadedImage.getRGB(x, y);
+                    if ((argb & 0xff000000) == 0 && argb != 0) {
+                        loadedImage.setRGB(x, y, 0);
+                    }
+                }
+            }
+        }
+    }
+
 }
