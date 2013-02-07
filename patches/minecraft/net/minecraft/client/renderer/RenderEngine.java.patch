@@ -17,7 +17,7 @@
                  this.singleIntBuffer.clear();
                  GLAllocation.generateTextureNames(this.singleIntBuffer);
                  int var3 = this.singleIntBuffer.get(0);
-@@ -215,6 +218,7 @@
+@@ -217,6 +220,7 @@
                  }
  
                  this.textureMap.put(par1Str, Integer.valueOf(var3));
