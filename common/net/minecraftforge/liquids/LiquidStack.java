@@ -75,7 +75,11 @@ public class LiquidStack
      */
     public boolean isLiquidEqual(ItemStack other)
     {
-        return other != null && itemID == other.itemID && itemMeta == other.getItemDamage();
+        return other != null &&
+            ((itemID == other.itemID &&
+                itemMeta == other.getItemDamage()) ||
+            (LiquidContainerRegsitry.isFilledContainer(other) &&
+                this == LiquidContainerData.getLiquidFromFilledItem(other)));
     }
 
     /**
