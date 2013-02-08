@@ -429,15 +429,16 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
         shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
 
-def finish_setup_fml(fml_dir, mcp_dir, enable_server=False, disable_client=False):
+def finish_setup_fml(fml_dir, mcp_dir, enable_server=False, disable_client=False, disable_rename=False):
     sys.path.append(mcp_dir)
     from runtime.updatenames import updatenames
     from runtime.updatemd5 import updatemd5
     from runtime.updatemcp import updatemcp
     
     os.chdir(mcp_dir)
-    updatenames(None, True, not disable_client, enable_server)
-    reset_logger()
+    if not disable_rename:
+        updatenames(None, True, not disable_client, enable_server)
+        reset_logger()
     updatemd5(None, True, not disable_client, enable_server)
     reset_logger()
     os.chdir(fml_dir)
