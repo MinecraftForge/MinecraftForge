@@ -8,19 +8,20 @@
  import net.minecraft.entity.passive.EntityWolf;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.projectile.EntityArrow;
-@@ -45,6 +46,11 @@
+@@ -45,6 +46,12 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.living.*;
 +import static net.minecraftforge.event.entity.living.LivingEvent.*;
 +
  public abstract class EntityLiving extends Entity
  {
      /**
-@@ -387,6 +393,7 @@
+@@ -387,6 +394,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
          this.attackTarget = par1EntityLiving;
@@ -28,7 +29,7 @@
      }
  
      /**
-@@ -483,6 +490,7 @@
+@@ -483,6 +491,7 @@
      {
          this.entityLivingToAttack = par1EntityLiving;
          this.revengeTimer = this.entityLivingToAttack != null ? 60 : 0;
@@ -36,7 +37,7 @@
      }
  
      protected void entityInit()
-@@ -792,6 +800,11 @@
+@@ -792,6 +801,11 @@
       */
      public void onUpdate()
      {
@@ -48,7 +49,19 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -977,6 +990,11 @@
+@@ -944,6 +958,11 @@
+     {
+         if (this.health > 0)
+         {
++            par1 = ForgeEventFactory.onEntityHeal(this, par1);
++            if (par1 < 0)
++            {
++                return;
++            }
+             this.health += par1;
+ 
+             if (this.health > this.getMaxHealth())
+@@ -977,6 +996,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -60,7 +73,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -1188,6 +1206,11 @@
+@@ -1188,6 +1212,11 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -72,7 +85,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.health -= par2;
-@@ -1252,6 +1275,11 @@
+@@ -1252,6 +1281,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -84,7 +97,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1274,6 +1302,10 @@
+@@ -1274,6 +1308,10 @@
              {
                  var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
              }
@@ -95,7 +108,7 @@
  
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
-@@ -1282,7 +1314,7 @@
+@@ -1282,7 +1320,7 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -104,7 +117,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1290,6 +1322,16 @@
+@@ -1290,6 +1328,16 @@
                      }
                  }
              }
@@ -121,7 +134,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1334,6 +1376,12 @@
+@@ -1334,6 +1382,12 @@
       */
      protected void fall(float par1)
      {
@@ -134,7 +147,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1536,7 +1584,7 @@
+@@ -1536,7 +1590,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -143,7 +156,7 @@
      }
  
      /**
-@@ -1949,6 +1997,7 @@
+@@ -1949,6 +2003,7 @@
          }
  
          this.isAirBorne = true;
@@ -151,7 +164,7 @@
      }
  
      /**
-@@ -2486,8 +2535,6 @@
+@@ -2486,8 +2541,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -160,7 +173,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2944,4 +2991,42 @@
+@@ -2944,4 +2997,42 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }
