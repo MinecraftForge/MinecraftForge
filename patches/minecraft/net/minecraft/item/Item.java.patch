@@ -57,7 +57,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +716,318 @@
+@@ -701,4 +716,329 @@
      {
          StatList.initStats();
      }
@@ -373,6 +373,17 @@
 +    public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack)
 +    {
 +
++    }
++    
++    /**
++     * called to check if this Item can fit in an armor slot of the given type
++     * @param item the ItemStack to be inserted in the armor slot
++     * @param armorType the armor type the slot accepts; 0: helmet, 1: chestplate, 2: legs, 3: boots
++     * @return true if the given ItemStack can be inserted in the slot
++     */
++    public boolean isArmorType(ItemStack item, int armorType)
++    {
++        return (this instanceof ItemArmor ? ((ItemArmor)this).armorType == armorType : (this.itemID != Block.pumpkin.blockID && this.itemID != Item.skull.itemID ? false : armorType == 0));
 +    }
 +
  }
