@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/OpenGlHelper.java
+@@ -25,6 +25,8 @@
+      * True if the renderer supports multitextures and the OpenGL version != 1.3
+      */
+     private static boolean useMultitextureARB = false;
++    
++    public static int lastBrightness;
+ 
+     /**
+      * Initializes the texture constants to be used when rendering lightmap values
+@@ -88,5 +90,8 @@
+         {
+             GL13.glMultiTexCoord2f(par0, par1, par2);
+         }
++        
++        if(par0 == lightmapTexUnit)
++            lastBrightness = (int)par2 << 16 | (int)par1;
+     }
+ }
