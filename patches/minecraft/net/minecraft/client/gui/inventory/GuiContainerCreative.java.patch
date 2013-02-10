@@ -9,6 +9,15 @@
  
      public GuiContainerCreative(EntityPlayer par1EntityPlayer)
      {
+@@ -137,7 +139,7 @@
+                     return;
+                 }
+ 
+-                if (var7 != null && var8 != null && var7.isItemEqual(var8))
++                if (var7 != null && var8 != null && var7.isItemEqual(var8) && ItemStack.areItemStackTagsEqual(var7, var8))
+                 {
+                     if (par3 == 0)
+                     {
 @@ -229,6 +231,13 @@
              this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[var1]);
              this.field_82324_x = new CreativeCrafting(this.mc);
