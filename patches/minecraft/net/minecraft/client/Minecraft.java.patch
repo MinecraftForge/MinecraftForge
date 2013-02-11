@@ -42,16 +42,17 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2026,6 +2034,8 @@
+@@ -2026,6 +2034,9 @@
  
          if (par1WorldClient == null)
          {
-+            MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(par1WorldClient));
++            if(theWorld != null)
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(theWorld));
 +            
              NetClientHandler var3 = this.getSendQueue();
  
              if (var3 != null)
-@@ -2041,6 +2051,18 @@
+@@ -2041,6 +2052,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -70,7 +71,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2350,95 +2372,12 @@
+@@ -2350,95 +2373,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;
