@@ -22,7 +22,7 @@ public class EventTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, byte[] bytes)
     {
-        if (name.equals("net.minecraftforge.event.Event") || name.startsWith("net.minecraft.") || name.indexOf('.') == -1)
+        if (bytes == null || name.equals("net.minecraftforge.event.Event") || name.startsWith("net.minecraft.") || name.indexOf('.') == -1)
         {
             return bytes;
         }
