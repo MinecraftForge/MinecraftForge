@@ -78,7 +78,7 @@ public class LiquidStack
         return other != null &&
             ((itemID == other.itemID &&
                 itemMeta == other.getItemDamage()) ||
-            (LiquidContainerRegsitry.isFilledContainer(other) &&
+            (LiquidContainerRegistry.isFilledContainer(other) &&
                 this == LiquidContainerData.getLiquidFromFilledItem(other)));
     }
 
