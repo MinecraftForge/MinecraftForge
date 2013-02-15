@@ -674,8 +674,7 @@ public class Configuration
                 FileOutputStream fos = new FileOutputStream(file);
                 BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, defaultEncoding));
 
-                buffer.write("# Configuration file" + NEW_LINE);
-                buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + NEW_LINE + NEW_LINE);
+                buffer.write("# Configuration file" + NEW_LINE + NEW_LINE);
 
                 if (children.isEmpty())
                 {
