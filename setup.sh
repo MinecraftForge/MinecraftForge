@@ -1,2 +1,2 @@
 #!/bin/bash
-python setup.py "$@"
+$(which python2 || which python || echo python) setup.py "$@"

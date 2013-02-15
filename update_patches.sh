@@ -1,2 +1,2 @@
 #!/bin/bash
-python update_patches.py "$@"
+$(which python2 || which python || echo python) update_patches.py "$@"
