@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderFlat.java
++++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderFlat.java
+@@ -314,4 +314,13 @@
+             var4.generate(this, this.worldObj, par1, par2, (byte[])null);
+         }
+     }
++
++    /**
++     * Returns whether the IChunkProvider allows mods to generate there using the IWorldGenerator interface.
++     */
++    @Override
++    public boolean allowModGeneration()
++    {
++        return true;
++    }
+ }

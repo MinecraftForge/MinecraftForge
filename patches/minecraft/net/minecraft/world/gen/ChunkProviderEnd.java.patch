@@ -67,3 +67,17 @@
          BlockSand.fallInstantly = false;
      }
  
+@@ -412,4 +438,13 @@
+     }
+ 
+     public void recreateStructures(int par1, int par2) {}
++
++    /**
++     * Returns whether the IChunkProvider allows mods to generate there using the IWorldGenerator interface.
++     */
++    @Override
++    public boolean allowModGeneration()
++    {
++        return true;
++    }
+ }

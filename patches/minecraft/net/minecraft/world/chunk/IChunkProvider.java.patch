@@ -1,0 +1,12 @@
+--- ../src_base/minecraft/net/minecraft/world/chunk/IChunkProvider.java
++++ ../src_work/minecraft/net/minecraft/world/chunk/IChunkProvider.java
+@@ -64,4 +64,9 @@
+     int getLoadedChunkCount();
+ 
+     void recreateStructures(int var1, int var2);
++
++    /**
++     * Returns whether the IChunkProvider allows mods to generate there using the IWorldGenerator interface.
++     */
++    boolean allowModGeneration();
+ }
