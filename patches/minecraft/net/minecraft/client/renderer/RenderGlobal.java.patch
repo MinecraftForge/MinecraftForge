@@ -38,9 +38,9 @@
 -            TileEntityRenderer.staticPlayerY = var4.lastTickPosY + (var4.posY - var4.lastTickPosY) * (double)par3;
 -            TileEntityRenderer.staticPlayerZ = var4.lastTickPosZ + (var4.posZ - var4.lastTickPosZ) * (double)par3;
 +            List var5 = this.theWorld.getLoadedEntityList();
++            this.theWorld.theProfiler.startSection("prepare");
 +            if(pass == 0)
 +            {
-+                this.theWorld.theProfiler.startSection("prepare");
 +                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
 +                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.gameSettings, par3);
 +                this.countEntitiesTotal = 0;
