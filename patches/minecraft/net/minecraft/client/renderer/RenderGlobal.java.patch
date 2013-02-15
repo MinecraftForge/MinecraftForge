@@ -24,7 +24,7 @@
          }
          else
          {
--            this.theWorld.theProfiler.startSection("prepare");
+             this.theWorld.theProfiler.startSection("prepare");
 -            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
 -            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.gameSettings, par3);
 -            this.countEntitiesTotal = 0;
@@ -40,7 +40,6 @@
 +            List var5 = this.theWorld.getLoadedEntityList();
 +            if(pass == 0)
 +            {
-+                this.theWorld.theProfiler.startSection("prepare");
 +                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
 +                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.gameSettings, par3);
 +                this.countEntitiesTotal = 0;
