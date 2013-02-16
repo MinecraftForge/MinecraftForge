@@ -15,6 +15,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 
@@ -77,7 +78,7 @@ public class TextureFXManager
         }
         catch (Exception e)
         {
-            FMLLog.warning("Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name);
+            FMLLog.log("fml.TextureManager", Level.WARNING, "Texture FX %s has failed to animate. Likely caused by a texture pack change that they did not respond correctly to", name);
             if (ifx != null)
             {
                 ifx.setErrored(true);
@@ -93,7 +94,7 @@ public class TextureFXManager
             int target = ((dim.width >> 4) * (dim.height >> 4)) << 2;
             if (effect.field_76852_a.length != target)
             {
-                FMLLog.warning("Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_76852_a.length, target);
+                FMLLog.log("fml.TextureManager", Level.WARNING, "Detected a texture FX sizing discrepancy in %s (%d, %d)", name, effect.field_76852_a.length, target);
                 ifx.setErrored(true);
                 return false;
             }
@@ -232,7 +233,7 @@ public class TextureFXManager
         for (OverrideInfo animationOverride : animationSet) {
             renderer.func_78355_a(animationOverride.textureFX);
             addedTextureFX.add(animationOverride.textureFX);
-            FMLCommonHandler.instance().getFMLLogger().finer(String.format("Registered texture override %d (%d) on %s (%d)", animationOverride.index, animationOverride.textureFX.field_76850_b, animationOverride.textureFX.getClass().getSimpleName(), animationOverride.textureFX.field_76847_f));
+            FMLLog.log("fml.TextureManager", Level.FINE, "Registered texture override %d (%d) on %s (%d)", animationOverride.index, animationOverride.textureFX.field_76850_b, animationOverride.textureFX.getClass().getSimpleName(), animationOverride.textureFX.field_76847_f);
         }
 
         for (String fileToOverride : overrideInfo.keySet()) {
@@ -243,11 +244,11 @@ public class TextureFXManager
                     ModTextureStatic mts=new ModTextureStatic(override.index, 1, override.texture, image);
                     renderer.func_78355_a(mts);
                     addedTextureFX.add(mts);
-                    FMLCommonHandler.instance().getFMLLogger().finer(String.format("Registered texture override %d (%d) on %s (%d)", override.index, mts.field_76850_b, override.texture, mts.field_76847_f));
+                    FMLLog.log("fml.TextureManager", Level.FINE, "Registered texture override %d (%d) on %s (%d)", override.index, mts.field_76850_b, override.texture, mts.field_76847_f);
                 }
                 catch (IOException e)
                 {
-                    FMLCommonHandler.instance().getFMLLogger().throwing("FMLClientHandler", "registerTextureOverrides", e);
+                    FMLLog.log("fml.TextureManager", Level.WARNING, e, "Exception occurred registering texture override for %s", fileToOverride);
                 }
             }
         }
@@ -294,7 +295,7 @@ public class TextureFXManager
         info.override = overridingTexturePath;
         info.texture = textureToOverride;
         overrideInfo.put(textureToOverride, info);
-        FMLLog.fine("Overriding %s @ %d with %s. %d slots remaining",textureToOverride, location, overridingTexturePath, SpriteHelper.freeSlotCount(textureToOverride));
+        FMLLog.log("fml.TextureManager", Level.FINE, "Overriding %s @ %d with %s. %d slots remaining",textureToOverride, location, overridingTexturePath, SpriteHelper.freeSlotCount(textureToOverride));
     }
 
     public BufferedImage loadImageFromTexturePack(RenderEngine renderEngine, String path) throws IOException
@@ -314,6 +315,21 @@ public class TextureFXManager
     public static TextureFXManager instance()
     {
         return INSTANCE;
+    }
+
+    public void fixTransparency(BufferedImage loadedImage, String textureName)
+    {
+        if (textureName.matches("^/mob/.*_eyes.*.png$"))
+        {
+            for (int x = 0; x < loadedImage.getWidth(); x++) {
+                for (int y = 0; y < loadedImage.getHeight(); y++) {
+                    int argb = loadedImage.getRGB(x, y);
+                    if ((argb & 0xff000000) == 0 && argb != 0) {
+                        loadedImage.setRGB(x, y, 0);
+                    }
+                }
+            }
+        }
     }
 
 }

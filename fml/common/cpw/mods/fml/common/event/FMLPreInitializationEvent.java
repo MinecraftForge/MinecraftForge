@@ -81,6 +81,8 @@ public class FMLPreInitializationEvent extends FMLStateEvent
 
     /**
      * Get a logger instance configured to write to the FML Log as a parent, identified by modid. Handy for mod logging!
+     * Configurations can be applied through the <code>config/logging.properties</code> file, specifying logging levels
+     * for your ModID. Use this!
      *
      * @return A logger
      */

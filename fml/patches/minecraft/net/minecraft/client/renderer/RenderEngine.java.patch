@@ -43,7 +43,18 @@
                  var6.printStackTrace();
                  int[] var5 = this.func_78348_b(this.field_78364_l);
                  this.field_78359_d.put(p_78346_1_, var5);
-@@ -250,6 +259,7 @@
+@@ -181,7 +190,9 @@
+                     }
+                     else
+                     {
+-                        this.func_78351_a(this.func_78345_a(var7), var3);
++                        BufferedImage loadedImage = this.func_78345_a(var7);
++                        TextureFXManager.instance().fixTransparency(loadedImage, p_78341_1_);
++                        this.func_78351_a(loadedImage, var3);
+                     }
+                 }
+ 
+@@ -250,6 +261,7 @@
  
          int var3 = p_78351_1_.getWidth();
          int var4 = p_78351_1_.getHeight();
@@ -51,7 +62,7 @@
          int[] var5 = new int[var3 * var4];
          byte[] var6 = new byte[var3 * var4 * 4];
          p_78351_1_.getRGB(0, 0, var3, var4, var5, 0, var3);
-@@ -410,6 +420,7 @@
+@@ -410,6 +422,7 @@
  
      public void func_78355_a(TextureFX p_78355_1_)
      {
@@ -59,7 +70,7 @@
          this.field_78367_h.add(p_78355_1_);
          p_78355_1_.func_76846_a();
      }
-@@ -422,28 +433,44 @@
+@@ -422,28 +435,44 @@
          {
              TextureFX var3 = (TextureFX)this.field_78367_h.get(var2);
              var3.field_76851_c = this.field_78365_j.field_74337_g;
@@ -113,7 +124,7 @@
              }
          }
  
-@@ -509,8 +536,9 @@
+@@ -509,8 +538,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
@@ -125,7 +136,7 @@
                  var7.printStackTrace();
              }
          }
-@@ -546,8 +574,9 @@
+@@ -546,8 +576,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }

@@ -41,12 +41,14 @@ public class FMLRenderAccessLibrary
 {
     public static Logger getLogger()
     {
-        return FMLLog.getLogger();
+        Logger l = Logger.getLogger("FMLRenderAccessLibrary");
+        l.setParent(FMLLog.getLogger());
+        return l;
     }
 
     public static void log(Level level, String message)
     {
-        FMLLog.log(level, message);
+        FMLLog.log("FMLRenderAccessLibrary", level, message);
     }
 
     public static void log(Level level, String message, Throwable throwable)

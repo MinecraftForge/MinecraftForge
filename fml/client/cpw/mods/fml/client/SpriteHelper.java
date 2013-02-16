@@ -80,7 +80,7 @@ public class SpriteHelper
             initMCSpriteMaps();
         }
         if (spriteInfo.containsKey(file)) {
-            FMLCommonHandler.instance().getFMLLogger().finer(String.format("Duplicate attempt to register a sprite file %s for overriding -- ignoring",file));
+            FMLLog.log("fml.TextureManager", Level.FINE, "Duplicate attempt to register a sprite file %s for overriding -- ignoring",file);
             return;
         }
         spriteInfo.put(file, toBitSet(spriteMap));
@@ -98,7 +98,7 @@ public class SpriteHelper
         if (slots == null)
         {
             Exception ex = new Exception(String.format("Invalid getUniqueSpriteIndex call for texture: %s", path));
-            FMLLog.log(Level.SEVERE, ex, "A critical error has been detected with sprite overrides");
+            FMLLog.log("fml.TextureManager", Level.SEVERE, ex, "A critical error has been detected with sprite overrides");
             FMLCommonHandler.instance().raiseException(ex,"Invalid request to getUniqueSpriteIndex",true);
         }
 
@@ -107,7 +107,7 @@ public class SpriteHelper
         if (ret == -1)
         {
             Exception ex = new Exception(String.format("No more sprite indicies left for: %s", path));
-            FMLLog.log(Level.SEVERE, ex, "There are no sprite indicies left for %s", path);
+            FMLLog.log("fml.TextureManager", Level.SEVERE, ex, "There are no sprite indicies left for %s", path);
             FMLCommonHandler.instance().raiseException(ex,"No more sprite indicies left", true);
         }
         return ret;
