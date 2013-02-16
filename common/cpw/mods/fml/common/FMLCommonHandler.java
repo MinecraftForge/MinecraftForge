@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.crash.CrashReport;
@@ -92,10 +93,10 @@ public class FMLCommonHandler
     public void beginLoading(IFMLSidedHandler handler)
     {
         sidedDelegate = handler;
-        FMLLog.info("Attempting early MinecraftForge initialization");
+        FMLLog.log("MinecraftForge", Level.INFO, "Attempting early MinecraftForge initialization");
         callForgeMethod("initialize");
         callForgeMethod("registerCrashCallable");
-        FMLLog.info("Completed early MinecraftForge initialization");
+        FMLLog.log("MinecraftForge", Level.INFO, "Completed early MinecraftForge initialization");
     }
 
     public void rescheduleTicks(Side side)
@@ -189,7 +190,7 @@ public class FMLCommonHandler
      */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
-        FMLCommonHandler.instance().getFMLLogger().throwing("FMLHandler", "raiseException", exception);
+        FMLLog.log(Level.SEVERE, exception, "Something raised an exception. The message was '%s'. 'stopGame' is %b", message, stopGame);
         if (stopGame)
         {
             getSidedDelegate().haltGame(message,exception);
