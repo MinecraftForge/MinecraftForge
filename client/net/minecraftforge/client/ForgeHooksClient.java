@@ -226,6 +226,15 @@ public class ForgeHooksClient
         }
         return _default;
     }
+	
+    public static ModelBiped getArmorModel(ItemStack armor, int slotID)
+    {
+        if (armor.getItem() instanceof IArmorModelProvider)
+        {
+            return ((IArmorModelProvider) armor.getItem()).provideArmorModel(slotID);
+        }
+        return null;
+    }
 
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
     {
