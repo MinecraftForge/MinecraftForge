@@ -41,6 +41,12 @@ public abstract class LiquidDictionary
         MinecraftForge.EVENT_BUS.post(new LiquidRegisterEvent(name, liquid));
         return liquid;
     }
+    
+    //Default Registrations
+    static{
+        getOrCreateLiquid("Water", new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME));
+        getOrCreateLiquid("Lava", new LiquidStack(Block.lavaStill, LiquidContainerRegistry.BUCKET_VOLUME));
+    }
 
     /**
      * Returns the liquid matching the name,
