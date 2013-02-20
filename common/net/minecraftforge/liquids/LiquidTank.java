@@ -1,5 +1,7 @@
 package net.minecraftforge.liquids;
 
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 /**
@@ -139,4 +141,22 @@ public class LiquidTank implements ILiquidTank {
         this.tankPressure = pressure;
     }
 
+    public void writeToNBT(NBTTagCompound data) 
+    {
+        if (liquid != null && liquid.amount > 0)
+        {
+            liquid.writeToNBT(data);
+        }
+    }
+
+    public void readFromNBT(NBTTagCompound data) 
+    {
+        liquid = new LiquidStack(0, 0, 0);
+        liquid.readFromNBT(data);
+        if (Item.itemsList[liquid.itemID] == null || liquid.amount <= 0) 
+        {
+            liquid = null;
+        }
+    }
+    
 }
