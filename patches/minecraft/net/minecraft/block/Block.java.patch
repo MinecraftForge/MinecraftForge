@@ -319,7 +319,7 @@
 +     */
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
-+        return world.setBlockWithNotify(x, y, z, 0);
++        return world.setBlockWithNotify(x, y, z, 0, player);
 +    }
 +
 +    /**

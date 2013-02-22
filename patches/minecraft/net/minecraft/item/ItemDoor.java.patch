@@ -1,0 +1,55 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemDoor.java
++++ ../src_work/minecraft/net/minecraft/item/ItemDoor.java
+@@ -52,7 +52,7 @@
+                 else
+                 {
+                     int var12 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
+-                    placeDoorBlock(par3World, par4, par5, par6, var12, var11);
++                    placeDoorBlock(par3World, par4, par5, par6, var12, var11, par2EntityPlayer);
+                     --par1ItemStack.stackSize;
+                     return true;
+                 }
+@@ -65,6 +65,11 @@
+     }
+ 
+     public static void placeDoorBlock(World par0World, int par1, int par2, int par3, int par4, Block par5Block)
++    {
++        placeDoorBlock(par0World, par1, par2, par3, par4, par5Block, null);
++    }
++    
++    public static void placeDoorBlock(World par0World, int par1, int par2, int par3, int par4, Block par5Block, EntityPlayer player)
+     {
+         byte var6 = 0;
+         byte var7 = 0;
+@@ -104,11 +109,27 @@
+             var12 = true;
+         }
+ 
++        if (player == null)
++        {
++            par0World.editingBlocks = true;
++            par0World.setBlockAndMetadataWithNotify(par1, par2, par3, par5Block.blockID, par4);
++            par0World.setBlockAndMetadataWithNotify(par1, par2 + 1, par3, par5Block.blockID, 8 | (var12 ? 1 : 0));
++            par0World.editingBlocks = false;
++            par0World.notifyBlocksOfNeighborChange(par1, par2, par3, par5Block.blockID);
++            par0World.notifyBlocksOfNeighborChange(par1, par2 + 1, par3, par5Block.blockID);
++            return;
++        }
+         par0World.editingBlocks = true;
+-        par0World.setBlockAndMetadataWithNotify(par1, par2, par3, par5Block.blockID, par4);
+-        par0World.setBlockAndMetadataWithNotify(par1, par2 + 1, par3, par5Block.blockID, 8 | (var12 ? 1 : 0));
++        par0World.setBlockAndMetadataWithNotify(par1, par2, par3, par5Block.blockID, par4, player);
++        par0World.setBlockAndMetadataWithNotify(par1, par2 + 1, par3, par5Block.blockID, 8 | (var12 ? 1 : 0), player);
+         par0World.editingBlocks = false;
+-        par0World.notifyBlocksOfNeighborChange(par1, par2, par3, par5Block.blockID);
+-        par0World.notifyBlocksOfNeighborChange(par1, par2 + 1, par3, par5Block.blockID);
++        if (par0World.getBlockId(par1, par2, par3) == par5Block.blockID)
++        {
++            par0World.notifyBlocksOfNeighborChange(par1, par2, par3, par5Block.blockID);
++        }
++        if (par0World.getBlockId(par1, par2 + 1, par3) == par5Block.blockID)
++        {
++            par0World.notifyBlocksOfNeighborChange(par1, par2 + 1, par3, par5Block.blockID);
++        }
+     }
+ }

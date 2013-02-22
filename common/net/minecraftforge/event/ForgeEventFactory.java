@@ -59,4 +59,33 @@ public class ForgeEventFactory
 
         return MinecraftForge.EVENT_BUS.post(nEvent);
     }
+    
+    public static PlayerBlockChangeEvent onPlayerBlockChangePre(EntityPlayer player, World world, int x, int y, int z, int blockId, int blockMeta)
+    {
+        PlayerBlockChangeEvent event;
+        if (blockId == 0)
+        {
+            event = new PlayerBlockBreakEvent.Pre(player, world, x, y, z);
+        }
+        else
+        {
+            event = new PlayerBlockSetEvent.Pre(player, world, x, y, z, blockId, blockMeta);
+        }
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+    
+    public static void onPlayerBlockChangePost(EntityPlayer player, World world, int x, int y, int z, int blockId, int blockMeta)
+    {
+        PlayerBlockChangeEvent event;
+        if (blockId == 0)
+        {
+            event = new PlayerBlockBreakEvent.Post(player, world, x, y, z);
+        }
+        else
+        {
+            event = new PlayerBlockSetEvent.Post(player, world, x, y, z, blockId, blockMeta);
+        }
+        MinecraftForge.EVENT_BUS.post(event);
+    }
 }

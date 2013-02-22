@@ -34,8 +34,12 @@
  
                  if (var11 == Block.sapling.blockID)
                  {
-@@ -167,16 +187,9 @@
-                                         par3World.setBlockAndMetadataWithNotify(var13, var14, var15, Block.tallGrass.blockID, 1);
+@@ -164,19 +184,12 @@
+                                 {
+                                     if (Block.tallGrass.canBlockStay(par3World, var13, var14, var15))
+                                     {
+-                                        par3World.setBlockAndMetadataWithNotify(var13, var14, var15, Block.tallGrass.blockID, 1);
++                                        par3World.setBlockAndMetadataWithNotify(var13, var14, var15, Block.tallGrass.blockID, 1, par2EntityPlayer);
                                      }
                                  }
 -                                else if (itemRand.nextInt(3) != 0)
@@ -49,7 +53,16 @@
 -                                else if (Block.plantRed.canBlockStay(par3World, var13, var14, var15))
 -                                {
 -                                    par3World.setBlockWithNotify(var13, var14, var15, Block.plantRed.blockID);
-+                                    ForgeHooks.plantGrass(par3World, var13, var14, var15);
++                                    ForgeHooks.plantGrass(par3World, var13, var14, var15, par2EntityPlayer);
                                  }
                              }
                          }
+@@ -225,7 +238,7 @@
+                     if (par3World.isAirBlock(par4, par5, par6))
+                     {
+                         var13 = Block.blocksList[Block.cocoaPlant.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
+-                        par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.cocoaPlant.blockID, var13);
++                        par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.cocoaPlant.blockID, var13, par2EntityPlayer);
+ 
+                         if (!par2EntityPlayer.capabilities.isCreativeMode)
+                         {

@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -77,7 +77,7 @@
+             }
+             else
+             {
+-                par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.skull.blockID, par7);
++                par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.skull.blockID, par7, par2EntityPlayer);
+                 int var11 = 0;
+ 
+                 if (par7 == 1)

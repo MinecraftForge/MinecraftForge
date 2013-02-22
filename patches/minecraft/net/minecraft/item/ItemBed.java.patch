@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemBed.java
++++ ../src_work/minecraft/net/minecraft/item/ItemBed.java
+@@ -61,11 +61,11 @@
+             {
+                 if (par3World.isAirBlock(par4, par5, par6) && par3World.isAirBlock(par4 + var13, par5, par6 + var14) && par3World.doesBlockHaveSolidTopSurface(par4, par5 - 1, par6) && par3World.doesBlockHaveSolidTopSurface(par4 + var13, par5 - 1, par6 + var14))
+                 {
+-                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, var11.blockID, var12);
++                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, var11.blockID, var12, par2EntityPlayer);
+ 
+                     if (par3World.getBlockId(par4, par5, par6) == var11.blockID)
+                     {
+-                        par3World.setBlockAndMetadataWithNotify(par4 + var13, par5, par6 + var14, var11.blockID, var12 + 8);
++                        par3World.setBlockAndMetadataWithNotify(par4 + var13, par5, par6 + var14, var11.blockID, var12 + 8, par2EntityPlayer);
+                     }
+ 
+                     --par1ItemStack.stackSize;
