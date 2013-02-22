@@ -81,7 +81,7 @@
 +                }
 +                else
 +                {
-+                    par1World.setBlockAndMetadataWithNotify(par8, par9, par10, this.isFull, 0, player);
++                    par1World.setBlockAndMetadataWithNotify(par8, par9, par10, this.isFull, 0);
 +                }
              }
  
