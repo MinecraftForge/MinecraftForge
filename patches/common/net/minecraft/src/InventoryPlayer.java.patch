@@ -1,0 +1,21 @@
+--- ../src_base/common/net/minecraft/src/InventoryPlayer.java
++++ ../src_work/common/net/minecraft/src/InventoryPlayer.java
+@@ -1,5 +1,9 @@
+ package net.minecraft.src;
+ 
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.ItemEquipEvent;
++import net.minecraftforge.event.entity.player.ItemUnequipEvent;
++import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+ import cpw.mods.fml.common.Side;
+ import cpw.mods.fml.common.asm.SideOnly;
+ 
+@@ -453,6 +457,8 @@
+         {
+             par1 -= var3.length;
+             var3 = this.armorInventory;
++            if(par2ItemStack!=null) MinecraftForge.EVENT_BUS.post(new ItemEquipEvent(this, par1, par2ItemStack));
++            else MinecraftForge.EVENT_BUS.post(new ItemUnequipEvent(this, par1, par2ItemStack));
+         }
+ 
+         var3[par1] = par2ItemStack;
