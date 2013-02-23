@@ -54,7 +54,9 @@ public class LiquidContainerRegistry
         {
             return null;
         }
-
+        if (filledContainer.getItem() instanceof ILiquidContainer) {
+        	return ((ILiquidContainer)filledContainer.getItem()).getLiquid(filledContainer);
+        }
         LiquidContainerData ret = mapLiquidFromFilledItem.get(Arrays.asList(filledContainer.itemID, filledContainer.getItemDamage()));
         return ret == null ? null : ret.stillLiquid.copy();
     }
@@ -65,7 +67,12 @@ public class LiquidContainerRegistry
         {
             return null;
         }
-
+        if (emptyContainer.getItem() instanceof ILiquidContainer) {
+        	ILiquidContainer containerItem = ((ILiquidContainer)emptyContainer.getItem());
+        	if (containerItem.fill(emptyContainer, liquid, false) < liquid.amount) return null;
+        	containerItem.fill(emptyContainer, liquid, true);
+        	return emptyContainer;
+        }
         LiquidContainerData ret = mapFilledItemFromLiquid.get(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage(), liquid.itemID, liquid.itemMeta));
 
         if (ret != null && liquid.amount >= ret.stillLiquid.amount)
@@ -76,13 +83,37 @@ public class LiquidContainerRegistry
         return null;
     }
 
+    public static ItemStack drainLiquidContainer(LiquidStack liquid, ItemStack filledContainer) {
+        if (filledContainer == null) {
+            return null;
+        }
+        if (filledContainer.getItem() instanceof ILiquidContainer) {
+        	ILiquidContainer containerItem = ((ILiquidContainer)filledContainer.getItem());
+        	LiquidStack drained = containerItem.drain(filledContainer, liquid.amount, false);
+        	if (!drained.isLiquidEqual(liquid) || drained.amount != liquid.amount) return null;
+        	containerItem.drain(filledContainer, liquid.amount, true);
+        	return filledContainer;
+        }
+        LiquidContainerData ret = mapLiquidFromFilledItem.get(Arrays.asList(filledContainer.itemID, filledContainer.getItemDamage()));
+        if (ret != null) {
+            if (liquid.amount == ret.stillLiquid.amount && liquid.isLiquidEqual(ret.stillLiquid)) {
+                return ret.container.copy();
+            }
+        }
+        return null;
+    }
+
     public static boolean containsLiquid(ItemStack filledContainer, LiquidStack liquid)
     {
         if (filledContainer == null || liquid == null)
         {
             return false;
         }
-
+        if (filledContainer.getItem() instanceof ILiquidContainer) {
+        	ILiquidContainer containerItem = ((ILiquidContainer)filledContainer.getItem());
+        	LiquidStack containedLiquid = containerItem.getLiquid(filledContainer);
+        	return containedLiquid.isLiquidEqual(liquid);
+        }
         LiquidContainerData ret = mapLiquidFromFilledItem.get(Arrays.asList(filledContainer.itemID, filledContainer.getItemDamage()));
 
         return ret != null && ret.stillLiquid.isLiquidEqual(liquid);
@@ -106,17 +137,31 @@ public class LiquidContainerRegistry
 
     public static boolean isContainer(ItemStack container)
     {
-        return isEmptyContainer(container) || isFilledContainer(container);
+        return isEmptyContainer(container) || isFilledContainer(container) || container.getItem() instanceof ILiquidContainer;
     }
 
     public static boolean isEmptyContainer(ItemStack emptyContainer)
     {
-        return emptyContainer != null && setContainerValidation.contains(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage()));
+        if (emptyContainer == null) {
+            return false;
+        }
+        if (emptyContainer.getItem() instanceof ILiquidContainer) {
+        	ILiquidContainer containerItem = ((ILiquidContainer)emptyContainer.getItem());
+        	return containerItem.getLiquid(emptyContainer) == null;
+        }
+        return setContainerValidation.contains(Arrays.asList(emptyContainer.itemID, emptyContainer.getItemDamage()));
     }
 
     public static boolean isFilledContainer(ItemStack filledContainer)
     {
-        return filledContainer != null && getLiquidForFilledItem(filledContainer) != null;
+        if (filledContainer == null) {
+            return false;
+        }
+        if (filledContainer.getItem() instanceof ILiquidContainer) {
+        	ILiquidContainer containerItem = ((ILiquidContainer)filledContainer.getItem());
+        	return containerItem.getLiquid(filledContainer) != null;
+        }
+        return getLiquidForFilledItem(filledContainer) != null;
     }
 
     public static boolean isLiquid(ItemStack item)
