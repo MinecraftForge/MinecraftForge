@@ -1,17 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -128,6 +128,10 @@
+@@ -128,6 +128,12 @@
  
  import com.google.common.collect.MapDifference;
  
 +import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
++import net.minecraftforge.event.world.WorldEvent;
 +
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -1253,7 +1257,7 @@
+@@ -1253,7 +1259,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(var3, var4, var5))
                  {
@@ -20,7 +22,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1319,7 +1323,8 @@
+@@ -1319,7 +1325,8 @@
                  {
                      int var8 = var3 != null ? var3.stackSize : 0;
  
@@ -30,7 +32,7 @@
                      {
                          var2 = false;
                          this.thePlayer.swingItem();
-@@ -1345,7 +1350,8 @@
+@@ -1345,7 +1352,8 @@
              {
                  ItemStack var9 = this.thePlayer.inventory.getCurrentItem();
  
@@ -40,7 +42,20 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2041,6 +2047,18 @@
+@@ -2026,6 +2034,12 @@
+ 
+         if (par1WorldClient == null)
+         {
++            
++            if (theWorld != null)
++            {
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(theWorld));
++            }
++            
+             NetClientHandler var3 = this.getSendQueue();
+ 
+             if (var3 != null)
+@@ -2041,6 +2055,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -59,7 +74,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2350,95 +2368,12 @@
+@@ -2350,95 +2376,12 @@
          if (this.objectMouseOver != null)
          {
              boolean var1 = this.thePlayer.capabilities.isCreativeMode;
