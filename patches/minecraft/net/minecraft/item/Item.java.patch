@@ -46,7 +46,23 @@
      }
  
      /**
-@@ -627,6 +638,10 @@
+@@ -561,6 +572,7 @@
+ 
+     /**
+      * Returns a string representing what this item does to a potion.
++     * @Deprecated In favor of ItemStack sensitive version
+      */
+     public String getPotionEffect()
+     {
+@@ -569,6 +581,7 @@
+ 
+     /**
+      * Returns true if this item serves as a potion ingredient (its ingredient information is not null).
++     * @Deprecated In favor of ItemStack sensitive version
+      */
+     public boolean isPotionIngredient()
+     {
+@@ -627,6 +640,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;
          double var21 = 5.0D;
@@ -57,7 +73,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +716,340 @@
+@@ -701,4 +718,362 @@
      {
          StatList.initStats();
      }
@@ -395,6 +411,28 @@
 +        }
 +
 +        return false;
++    }
++    
++    /**
++     * ItemStack sensitive version of isPotionIngredient
++     * 
++     * @param stack The item stack
++     * @return True if this stack can be used as a potion ingredient
++     */
++    public boolean isPotionIngredient(ItemStack stack)
++    {
++        return isPotionIngredient();
++    }
++
++    /**
++     * ItemStack sensitive version of getPotionEffect
++     * 
++     * @param stack The item stack
++     * @return A string containing the bit manipulation to apply the the potion.
++     */
++    public String getPotionEffect(ItemStack stack)
++    {
++        return getPotionEffect();
 +    }
 +
  }

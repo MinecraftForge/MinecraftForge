@@ -12,6 +12,15 @@
  {
      /** The itemstacks currently placed in the slots of the brewing stand */
      private ItemStack[] brewingItemStacks = new ItemStack[4];
+@@ -94,7 +97,7 @@
+         {
+             ItemStack var1 = this.brewingItemStacks[3];
+ 
+-            if (!Item.itemsList[var1.itemID].isPotionIngredient())
++            if (!Item.itemsList[var1.itemID].isPotionIngredient(var1))
+             {
+                 return false;
+             }
 @@ -166,7 +169,7 @@
  
              if (Item.itemsList[var1.itemID].hasContainerItem())
@@ -21,6 +30,15 @@
              }
              else
              {
+@@ -185,7 +188,7 @@
+      */
+     private int getPotionResult(int par1, ItemStack par2ItemStack)
+     {
+-        return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient() ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect()) : par1);
++        return par2ItemStack == null ? par1 : (Item.itemsList[par2ItemStack.itemID].isPotionIngredient(par2ItemStack) ? PotionHelper.applyIngredient(par1, Item.itemsList[par2ItemStack.itemID].getPotionEffect(par2ItemStack)) : par1);
+     }
+ 
+     /**
 @@ -333,4 +336,16 @@
  
          return var1;
