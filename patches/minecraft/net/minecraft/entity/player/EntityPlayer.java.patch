@@ -170,7 +170,18 @@
      }
  
      /**
-@@ -1079,12 +1140,22 @@
+@@ -831,6 +892,10 @@
+             NBTTagList var3 = par1NBTTagCompound.getTagList("EnderItems");
+             this.theInventoryEnderChest.loadInventoryFromNBT(var3);
+         }
++        
++        //Disable vanilla mob armor/item pickup, players can already pickup items 
++        //and it causes issues with overwriting items, dropping items, etc..
++        this.canPickUpLoot = false;
+     }
+ 
+     /**
+@@ -1079,12 +1144,22 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -194,7 +205,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.addExhaustion(par1DamageSource.getHungerDamage());
              this.health -= par2;
-@@ -1125,6 +1196,10 @@
+@@ -1125,6 +1200,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -205,7 +216,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1168,7 +1243,9 @@
+@@ -1168,7 +1247,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -215,7 +226,7 @@
      }
  
      /**
-@@ -1185,6 +1262,15 @@
+@@ -1185,6 +1266,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -231,7 +242,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.func_85031_j(this))
-@@ -1348,6 +1434,12 @@
+@@ -1348,6 +1438,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -244,7 +255,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1387,6 +1479,11 @@
+@@ -1387,6 +1483,11 @@
          {
              int var9 = this.worldObj.getBlockMetadata(par1, par2, par3);
              int var5 = BlockBed.getDirection(var9);
@@ -256,7 +267,7 @@
              float var10 = 0.5F;
              float var7 = 0.5F;
  
-@@ -1457,10 +1554,12 @@
+@@ -1457,10 +1558,12 @@
          ChunkCoordinates var4 = this.playerLocation;
          ChunkCoordinates var5 = this.playerLocation;
  
@@ -273,7 +284,7 @@
  
              if (var5 == null)
              {
-@@ -1497,7 +1596,9 @@
+@@ -1497,7 +1600,9 @@
       */
      private boolean isInBed()
      {
@@ -284,7 +295,7 @@
      }
  
      /**
-@@ -1512,9 +1613,12 @@
+@@ -1512,9 +1617,12 @@
          var3.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          var3.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -300,7 +311,7 @@
              return var8;
          }
          else
-@@ -1536,8 +1640,11 @@
+@@ -1536,8 +1644,11 @@
      {
          if (this.playerLocation != null)
          {
@@ -314,7 +325,7 @@
  
              switch (var2)
              {
-@@ -1571,7 +1678,6 @@
+@@ -1571,7 +1682,6 @@
          return this.sleeping && this.sleepTimer >= 100;
      }
  
@@ -322,7 +333,7 @@
      public int getSleepTimer()
      {
          return this.sleepTimer;
-@@ -1846,7 +1952,7 @@
+@@ -1846,7 +1956,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -331,7 +342,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1868,6 +1974,7 @@
+@@ -1868,6 +1978,7 @@
                      return 101;
                  }
              }
@@ -339,7 +350,7 @@
          }
  
          return var3;
-@@ -2088,6 +2195,14 @@
+@@ -2088,6 +2199,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -354,3 +365,19 @@
      }
  
      /**
+@@ -2159,7 +2278,14 @@
+      */
+     public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
+     {
+-        this.inventory.armorInventory[par1] = par2ItemStack;
++        if (par1 == 0)
++        {
++            this.inventory.mainInventory[this.inventory.currentItem] = par2ItemStack;
++        }
++        else
++        {
++            this.inventory.armorInventory[par1 - 1] = par2ItemStack;
++        }
+     }
+ 
+     public ItemStack[] getLastActiveItems()
