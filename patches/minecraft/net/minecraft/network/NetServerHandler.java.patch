@@ -26,19 +26,33 @@
                      }
  
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-@@ -327,6 +339,11 @@
-                     this.playerEntity.addExhaustion(0.2F);
-                 }
+@@ -307,9 +319,10 @@
+                 var13 = var5 - this.playerEntity.posX;
+                 double var15 = var7 - this.playerEntity.posY;
+                 double var17 = var9 - this.playerEntity.posZ;
+-                double var19 = Math.min(Math.abs(var13), Math.abs(this.playerEntity.motionX));
+-                double var21 = Math.min(Math.abs(var15), Math.abs(this.playerEntity.motionY));
+-                double var23 = Math.min(Math.abs(var17), Math.abs(this.playerEntity.motionZ));
++                //Change min->max, fixes movement speed check 
++                double var19 = Math.max(Math.abs(var13), Math.abs(this.playerEntity.motionX));
++                double var21 = Math.max(Math.abs(var15), Math.abs(this.playerEntity.motionY));
++                double var23 = Math.max(Math.abs(var17), Math.abs(this.playerEntity.motionZ));
+                 double var25 = var19 * var19 + var21 * var21 + var23 * var23;
  
+                 if (var25 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))
+@@ -325,6 +338,11 @@
+                 if (this.playerEntity.onGround && !par1Packet10Flying.onGround && var15 > 0.0D)
+                 {
+                     this.playerEntity.addExhaustion(0.2F);
++                }
++
 +                if (!this.hasMoved) //Fixes "Moved Too Fast" kick when being teleported while moving
 +                {
 +                    return;
-+                }
-+
+                 }
+ 
                  this.playerEntity.moveEntity(var13, var15, var17);
-                 this.playerEntity.onGround = par1Packet10Flying.onGround;
-                 this.playerEntity.addMovementStat(var13, var15, var17);
-@@ -349,10 +366,15 @@
+@@ -349,10 +367,15 @@
                      logger.warning(this.playerEntity.username + " moved wrongly!");
                  }
  
@@ -55,7 +69,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, var11, var12);
                      return;
-@@ -360,7 +382,7 @@
+@@ -360,7 +383,7 @@
  
                  AxisAlignedBB var33 = this.playerEntity.boundingBox.copy().expand((double)var27, (double)var27, (double)var27).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -64,7 +78,7 @@
                  {
                      if (var29 >= -0.03125D)
                      {
-@@ -379,6 +401,11 @@
+@@ -379,6 +402,11 @@
                      this.ticksForFloatKick = 0;
                  }
  
@@ -76,7 +90,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - var3, par1Packet10Flying.onGround);
-@@ -447,7 +474,10 @@
+@@ -447,7 +475,10 @@
                  double var13 = this.playerEntity.posZ - ((double)var8 + 0.5D);
                  double var15 = var9 * var9 + var11 * var11 + var13 * var13;
  
@@ -88,7 +102,7 @@
                  {
                      return;
                  }
-@@ -471,6 +501,7 @@
+@@ -471,6 +502,7 @@
              {
                  if (var18 <= var3 && !var4)
                  {
@@ -96,7 +110,7 @@
                      this.playerEntity.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(var6, var7, var8, var2));
                  }
                  else
-@@ -518,7 +549,11 @@
+@@ -518,7 +550,11 @@
                  return;
              }
  
@@ -109,7 +123,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -536,7 +571,9 @@
+@@ -536,7 +572,9 @@
                  var13 = var12;
              }
  
@@ -120,7 +134,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, var2, var3, var5, var6, var7, var8, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -703,8 +740,12 @@
+@@ -703,8 +741,12 @@
                          this.sendPacketToPlayer(new Packet3Chat("Cannot send chat message."));
                          return;
                      }
@@ -135,7 +149,7 @@
                      logger.info(var2);
                      this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(var2, false));
                  }
-@@ -835,7 +876,7 @@
+@@ -835,7 +877,7 @@
                      return;
                  }
  
