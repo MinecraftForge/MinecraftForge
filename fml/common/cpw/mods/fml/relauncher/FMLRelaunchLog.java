@@ -151,6 +151,7 @@ public class FMLRelaunchLog
         log.myLog.setLevel(Level.ALL);
         log.myLog.setUseParentHandlers(false);
         consoleLogThread = new Thread(new ConsoleLogThread());
+        consoleLogThread.setDaemon(true);
         consoleLogThread.start();
         formatter = new FMLLogFormatter();
         try
