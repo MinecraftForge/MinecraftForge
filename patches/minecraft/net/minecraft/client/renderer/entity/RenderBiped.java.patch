@@ -16,16 +16,36 @@
  
  @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
-@@ -59,7 +65,7 @@
+@@ -59,15 +65,19 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
 -                this.loadTexture("/armor/" + bipedArmorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
+-                ModelBiped var7 = par2 == 2 ? this.field_82425_h : this.field_82423_g;
+-                var7.bipedHead.showModel = par2 == 0;
+-                var7.bipedHeadwear.showModel = par2 == 0;
+-                var7.bipedBody.showModel = par2 == 1 || par2 == 2;
+-                var7.bipedRightArm.showModel = par2 == 1;
+-                var7.bipedLeftArm.showModel = par2 == 1;
+-                var7.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
+-                var7.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
 +                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + bipedArmorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
-                 ModelBiped var7 = par2 == 2 ? this.field_82425_h : this.field_82423_g;
-                 var7.bipedHead.showModel = par2 == 0;
-                 var7.bipedHeadwear.showModel = par2 == 0;
-@@ -174,9 +180,12 @@
++                ModelBiped var7 = ForgeHooksClient.getArmorModel(var4, par2);
++                if (var7 == null)
++                {
++	                var7 = par2 == 2 ? this.field_82425_h : this.field_82423_g;
++	                var7.bipedHead.showModel = par2 == 0;
++	                var7.bipedHeadwear.showModel = par2 == 0;
++	                var7.bipedBody.showModel = par2 == 1 || par2 == 2;
++	                var7.bipedRightArm.showModel = par2 == 1;
++	                var7.bipedLeftArm.showModel = par2 == 1;
++	                var7.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
++	                var7.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
++                }
+                 this.setRenderPassModel(var7);
+ 
+                 if (var7 != null)
+@@ -174,9 +184,12 @@
              GL11.glPushMatrix();
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
@@ -41,7 +61,7 @@
                  {
                      var6 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -218,7 +227,10 @@
+@@ -218,7 +231,10 @@
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
@@ -53,7 +73,7 @@
              {
                  var6 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -265,7 +277,10 @@
+@@ -265,7 +281,10 @@
  
              if (var4.getItem().requiresMultipleRenderPasses())
              {
