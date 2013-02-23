@@ -28,6 +28,8 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.UpdateChunksEvent;
+import net.minecraftforge.client.event.UpdateFogColorEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -426,4 +428,14 @@ public class ForgeHooksClient
     {
         renderPass = pass;
     }
+    
+    public static boolean updateChunks()
+    {
+        return !MinecraftForge.EVENT_BUS.post(new UpdateChunksEvent());
+    }
+
+    public static boolean updateFogColor()
+    {
+        return !MinecraftForge.EVENT_BUS.post(new UpdateFogColorEvent());
+    } 
 }
