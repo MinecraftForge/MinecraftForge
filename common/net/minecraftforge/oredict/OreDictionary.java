@@ -22,7 +22,7 @@ public class OreDictionary
     private static boolean hasInit = false;
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
-    private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
+    private static ArrayList<ArrayList<ItemStack>> oreStacks = new ArrayList<ArrayList<ItemStack>>();
     
     static {
         initVanillaEntries();
@@ -152,7 +152,10 @@ public class OreDictionary
         {
             val = maxID++;
             oreIDs.put(name, val);
-            oreStacks.put(val, new ArrayList<ItemStack>());
+            oreStacks.ensureCapacity(val); // double the size of the array if needed; way less expensive than rebuilding the hashmap as it fills
+            while(oreStacks.size()<val) // trivially cheap operation, as we know that it is within the capacity of the array.
+                oreStacks.add(null);
+            oreStacks.set(val, new ArrayList<ItemStack>());
         }
         return val;
     }
@@ -187,8 +190,9 @@ public class OreDictionary
         if( itemStack == null )
             return -1;
 
-        for(int oreID : oreStacks.keySet())
+        for(int oreID = 0;oreID < oreStacks.size();oreID++)
         {
+        	if(oreStacks.get(oreID) != null) // never true because we start the ID at 0 and increment it each time; and things are never un-registered.
             for(ItemStack target : oreStacks.get(oreID))
             {
                 if(itemStack.itemID == target.itemID && (target.getItemDamage() == -1 || itemStack.getItemDamage() == target.getItemDamage()))
@@ -233,7 +237,7 @@ public class OreDictionary
         if (val == null)
         {
             val = new ArrayList<ItemStack>();
-            oreStacks.put(id, val);
+            oreStacks.set(id, val);
         }
         return val;
     }
