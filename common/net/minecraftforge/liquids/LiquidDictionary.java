@@ -3,10 +3,9 @@ package net.minecraftforge.liquids;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
-import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -86,5 +85,11 @@ public abstract class LiquidDictionary
             this.Name = name;
             this.Liquid = liquid.copy();
         }
+    }
+    
+    static
+    {
+        getOrCreateLiquid("Water", new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME));
+        getOrCreateLiquid("Lava", new LiquidStack(Block.lavaStill, LiquidContainerRegistry.BUCKET_VOLUME));
     }
 }
