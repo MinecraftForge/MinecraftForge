@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
@@ -58,5 +59,19 @@ public class ForgeEventFactory
         }
 
         return MinecraftForge.EVENT_BUS.post(nEvent);
+    }
+    
+    public static int onEntityHeal(EntityLiving entity, int amount)
+    {
+        LivingHealEvent event = new LivingHealEvent(entity, amount);
+        boolean result = MinecraftForge.EVENT_BUS.post(event);
+        if (!result)
+        {
+            return event.amount;
+        }
+        else
+        {
+            return -1;
+        }
     }
 }

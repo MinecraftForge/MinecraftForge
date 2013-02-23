@@ -1,6 +1,27 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -530,10 +530,11 @@
+@@ -17,6 +17,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public class EntityDragon extends EntityLiving implements IBossDisplayData, IEntityMultiPart
+ {
+@@ -401,7 +402,11 @@
+             }
+             else if (this.ticksExisted % 10 == 0 && this.health < this.getMaxHealth())
+             {
+-                ++this.health;
++                int amount = ForgeEventFactory.onEntityHeal(this, 1);
++                if (amount > 0)
++                {
++                    this.health += amount;
++                }
+             }
+         }
+ 
+@@ -530,10 +535,11 @@
                  for (int var12 = var4; var12 <= var7; ++var12)
                  {
                      int var13 = this.worldObj.getBlockId(var10, var11, var12);
