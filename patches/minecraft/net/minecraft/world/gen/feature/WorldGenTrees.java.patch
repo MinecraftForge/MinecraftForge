@@ -1,21 +1,48 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
-@@ -67,7 +67,13 @@
+@@ -2,8 +2,10 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.util.Direction;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class WorldGenTrees extends WorldGenerator
+ {
+@@ -67,7 +69,12 @@
                          {
                              var12 = par1World.getBlockId(var10, var8, var11);
  
 -                            if (var12 != 0 && var12 != Block.leaves.blockID && var12 != Block.grass.blockID && var12 != Block.dirt.blockID && var12 != Block.wood.blockID)
 +                            Block block = Block.blocksList[var12];
 +
-+                            if (var12 != 0 &&
++                            if (block != null &&
 +                               !block.isLeaves(par1World, var10, var8, var11) &&
-+                                var12 != Block.grass.blockID &&
-+                                var12 != Block.dirt.blockID &&
++                               !block.canSustainPlant(par1World, var10, var8, var11, ForgeDirection.UP, (BlockSapling)Block.sapling) &&
 +                               !block.isWood(par1World, var10, var8, var11))
                              {
                                  var7 = false;
                              }
-@@ -110,7 +116,10 @@
+@@ -87,10 +94,12 @@
+             else
+             {
+                 var8 = par1World.getBlockId(par3, par4 - 1, par5);
+-
+-                if ((var8 == Block.grass.blockID || var8 == Block.dirt.blockID) && par4 < 256 - var6 - 1)
+-                {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                Block soil = Block.blocksList[var8];
++                boolean isSoil = (soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling));
++
++                if (isSoil && par4 < 256 - var6 - 1)
++                {
++                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+                     var9 = 3;
+                     byte var18 = 0;
+                     int var13;
+@@ -110,7 +119,10 @@
                              {
                                  int var17 = var16 - par5;
  
@@ -27,7 +54,7 @@
                                  {
                                      this.setBlockAndMetadata(par1World, var14, var11, var16, Block.leaves.blockID, this.metaLeaves);
                                  }
-@@ -122,7 +131,9 @@
+@@ -122,7 +134,9 @@
                      {
                          var12 = par1World.getBlockId(par3, par4 + var11, par5);
  
@@ -38,7 +65,7 @@
                          {
                              this.setBlockAndMetadata(par1World, par3, par4 + var11, par5, Block.wood.blockID, this.metaWood);
  
-@@ -162,7 +173,8 @@
+@@ -162,7 +176,8 @@
                              {
                                  for (var15 = par5 - var13; var15 <= par5 + var13; ++var15)
                                  {

@@ -1,6 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
-@@ -45,7 +45,9 @@
+@@ -1,8 +1,11 @@
+ package net.minecraft.world.gen.feature;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class WorldGenForest extends WorldGenerator
+ {
+@@ -45,7 +48,9 @@
                          {
                              var12 = par1World.getBlockId(var10, var8, var11);
  
@@ -11,7 +23,22 @@
                              {
                                  var7 = false;
                              }
-@@ -84,7 +86,10 @@
+@@ -65,10 +70,12 @@
+             else
+             {
+                 var8 = par1World.getBlockId(par3, par4 - 1, par5);
++                Block soil = Block.blocksList[var8];
++                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
+ 
+-                if ((var8 == Block.grass.blockID || var8 == Block.dirt.blockID) && par4 < 256 - var6 - 1)
++                if (isValidSoil && par4 < 256 - var6 - 1)
+                 {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+                     int var16;
+ 
+                     for (var16 = par4 - 3 + var6; var16 <= par4 + var6; ++var16)
+@@ -84,7 +91,10 @@
                              {
                                  int var15 = var14 - par5;
  
@@ -23,7 +50,7 @@
                                  {
                                      this.setBlockAndMetadata(par1World, var12, var16, var14, Block.leaves.blockID, 2);
                                  }
-@@ -96,7 +101,9 @@
+@@ -96,7 +106,9 @@
                      {
                          var10 = par1World.getBlockId(par3, par4 + var16, par5);
  

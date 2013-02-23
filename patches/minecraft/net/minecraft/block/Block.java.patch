@@ -156,7 +156,7 @@
      }
  
      /**
-@@ -1364,4 +1381,839 @@
+@@ -1364,4 +1381,864 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -922,6 +922,31 @@
 +        }
 +
 +        return false;
++    }
++
++    /**
++     * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
++     * Modder may implement this for custom plants.
++     * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction, 
++     * so the source location is specified.
++     * Currently this just changes the block to dirt if it was grass.
++     * 
++     * Note: This happens DURING the generation, the generation may not be complete when this is called.
++     * 
++     * @param world Current world
++     * @param x Soil X
++     * @param y Soil Y
++     * @param z Soil Z
++     * @param sourceX Plant growth location X
++     * @param sourceY Plant growth location Y
++     * @param sourceZ Plant growth location Z
++     */
++    public void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
++    {
++        if (blockID == grass.blockID)
++        {
++            world.setBlock(x, y, z, dirt.blockID);
++        }
 +    }
 +
 +    /**
