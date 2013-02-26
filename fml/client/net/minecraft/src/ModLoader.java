@@ -55,7 +55,6 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.modloader.ModLoaderKeyBindingHandler;
@@ -518,10 +517,11 @@ public class ModLoader
         return EntityRegistry.findGlobalUniqueEntityId();
     }
 
+    @Deprecated
     @SideOnly(CLIENT)
     public static int getUniqueSpriteIndex(String path)
     {
-        return SpriteHelper.getUniqueSpriteIndex(path);
+        return -1;
     }
 
     /**
