@@ -2,6 +2,8 @@ package cpw.mods.fml.relauncher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.Executors;
@@ -112,7 +114,7 @@ public class FMLRelaunchLog
     }
     /**
      * Our special logger for logging issues to. We copy various assets from the
-     * Minecraft logger to acheive a similar appearance.
+     * Minecraft logger to achieve a similar appearance.
      */
     public static FMLRelaunchLog log = new FMLRelaunchLog();
 
@@ -123,6 +125,10 @@ public class FMLRelaunchLog
 
     private static PrintStream errCache;
     private Logger myLog;
+
+    private static FileHandler fileHandler;
+
+    private static FMLLogFormatter formatter;
 
     private FMLRelaunchLog()
     {
@@ -142,27 +148,26 @@ public class FMLRelaunchLog
         stdOut.setParent(log.myLog);
         Logger stdErr = Logger.getLogger("STDERR");
         stdErr.setParent(log.myLog);
-        FMLLogFormatter formatter = new FMLLogFormatter();
-
-        // Console handler captures the normal stderr before it gets replaced
+        log.myLog.setLevel(Level.ALL);
         log.myLog.setUseParentHandlers(false);
-        log.myLog.addHandler(new ConsoleLogWrapper());
         consoleLogThread = new Thread(new ConsoleLogThread());
         consoleLogThread.start();
-        ConsoleLogThread.wrappedHandler.setLevel(Level.parse(System.getProperty("fml.log.level","INFO")));
-        ConsoleLogThread.wrappedHandler.setFormatter(formatter);
-        log.myLog.setLevel(Level.ALL);
+        formatter = new FMLLogFormatter();
         try
         {
             File logPath = new File(minecraftHome, FMLRelauncher.logFileNamePattern);
-            FileHandler fileHandler = new FileHandler(logPath.getPath(), 0, 3);
-            fileHandler.setFormatter(formatter);
-            fileHandler.setLevel(Level.ALL);
-            log.myLog.addHandler(fileHandler);
+            fileHandler = new FileHandler(logPath.getPath(), 0, 3)
+            {
+                public synchronized void close() throws SecurityException {
+                    // We don't want this handler to reset
+                }
+            };
         }
         catch (Exception e)
         {
         }
+
+        resetLoggingHandlers();
 
         // Set system out to a log stream
         errCache = System.err;
@@ -170,8 +175,38 @@ public class FMLRelaunchLog
         System.setOut(new PrintStream(new LoggingOutStream(stdOut), true));
         System.setErr(new PrintStream(new LoggingOutStream(stdErr), true));
 
-        // Reset global logging to shut up other logging sources (thanks guava!)
         configured = true;
+    }
+    private static void resetLoggingHandlers()
+    {
+        ConsoleLogThread.wrappedHandler.setLevel(Level.parse(System.getProperty("fml.log.level","INFO")));
+        // Console handler captures the normal stderr before it gets replaced
+        log.myLog.addHandler(new ConsoleLogWrapper());
+        ConsoleLogThread.wrappedHandler.setFormatter(formatter);
+        fileHandler.setLevel(Level.ALL);
+        fileHandler.setFormatter(formatter);
+        log.myLog.addHandler(fileHandler);
+    }
+
+    public static void loadLogConfiguration(File logConfigFile)
+    {
+        if (logConfigFile!=null && logConfigFile.exists() && logConfigFile.canRead())
+        {
+            try
+            {
+                LogManager.getLogManager().readConfiguration(new FileInputStream(logConfigFile));
+                resetLoggingHandlers();
+            }
+            catch (Exception e)
+            {
+                log(Level.SEVERE, e, "Error reading logging configuration file %s", logConfigFile.getName());
+            }
+        }
+    }
+    public static void log(String logChannel, Level level, String format, Object... data)
+    {
+        makeLog(logChannel);
+        Logger.getLogger(logChannel).log(level, String.format(format, data));
     }
 
     public static void log(Level level, String format, Object... data)
@@ -181,6 +216,12 @@ public class FMLRelaunchLog
             configureLogging();
         }
         log.myLog.log(level, String.format(format, data));
+    }
+
+    public static void log(String logChannel, Level level, Throwable ex, String format, Object... data)
+    {
+        makeLog(logChannel);
+        Logger.getLogger(logChannel).log(level, String.format(format, data), ex);
     }
 
     public static void log(Level level, Throwable ex, String format, Object... data)
@@ -224,5 +265,10 @@ public class FMLRelaunchLog
     public Logger getLogger()
     {
         return myLog;
+    }
+    public static void makeLog(String logChannel)
+    {
+        Logger l = Logger.getLogger(logChannel);
+        l.setParent(log.myLog);
     }
 }

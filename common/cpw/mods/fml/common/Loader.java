@@ -27,7 +27,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.crash.CallableMinecraftVersion;
-import net.minecraft.server.MinecraftServer;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
@@ -62,6 +61,7 @@ import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.TopologicalSort;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
 import cpw.mods.fml.common.versioning.VersionParser;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 /**
  * The loader class performs the actual loading of the mod code from disk.
@@ -143,6 +143,7 @@ public class Loader
 
     private static File minecraftDir;
     private static List<String> injectedContainers;
+    private File loggingProperties;
 
     public static Loader instance()
     {
@@ -187,7 +188,7 @@ public class Loader
      */
     private void sortModList()
     {
-        FMLLog.fine("Verifying mod requirements are satisfied");
+        FMLLog.finer("Verifying mod requirements are satisfied");
         try
         {
             BiMap<String, ArtifactVersion> modVersions = HashBiMap.create();
@@ -239,13 +240,13 @@ public class Loader
                 }
             }
 
-            FMLLog.fine("All mod requirements are satisfied");
+            FMLLog.finer("All mod requirements are satisfied");
 
             ModSorter sorter = new ModSorter(getActiveModList(), namedMods);
 
             try
             {
-                FMLLog.fine("Sorting mods into an ordered list");
+                FMLLog.finer("Sorting mods into an ordered list");
                 List<ModContainer> sortedMods = sorter.sort();
                 // Reset active list to the sorted list
                 modController.getActiveModList().clear();
@@ -254,7 +255,7 @@ public class Loader
                 mods.removeAll(sortedMods);
                 sortedMods.addAll(mods);
                 mods = sortedMods;
-                FMLLog.fine("Mod sorting completed successfully");
+                FMLLog.finer("Mod sorting completed successfully");
             }
             catch (ModSortingException sortException)
             {
@@ -267,17 +268,19 @@ public class Loader
         }
         finally
         {
-            FMLLog.fine("Mod sorting data:");
+            FMLLog.fine("Mod sorting data");
+            int unprintedMods = mods.size();
             for (ModContainer mod : getActiveModList())
             {
                 if (!mod.isImmutable())
                 {
                     FMLLog.fine("\t%s(%s:%s): %s (%s)", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), mod.getSortingRules());
+                    unprintedMods--;
                 }
             }
-            if (mods.size()==0)
+            if (unprintedMods == mods.size())
             {
-                FMLLog.fine("No mods found to sort");
+                FMLLog.fine("No user mods found to sort");
             }
         }
 
@@ -336,6 +339,10 @@ public class Loader
         identifyDuplicates(mods);
         namedMods = Maps.uniqueIndex(mods, new ModIdFunction());
         FMLLog.info("Forge Mod Loader has identified %d mod%s to load", mods.size(), mods.size() != 1 ? "s" : "");
+        for (String modId: namedMods.keySet())
+        {
+            FMLLog.makeLog(modId);
+        }
         return discoverer;
     }
 
@@ -436,6 +443,11 @@ public class Loader
             FMLLog.severe("Attempting to load configuration from %s, which is not a directory", canonicalConfigPath);
             throw new LoaderException();
         }
+
+        loggingProperties = new File(canonicalConfigDir, "logging.properties");
+        FMLLog.info("Reading custom logging properties from %s", loggingProperties.getPath());
+        FMLRelaunchLog.loadLogConfiguration(loggingProperties);
+        FMLLog.log(Level.OFF,"Logging level for ForgeModLoader logging is set to %s", FMLRelaunchLog.log.getLogger().getLevel());
     }
 
     public List<ModContainer> getModList()
@@ -457,6 +469,9 @@ public class Loader
         modController.transition(LoaderState.LOADING);
         ModDiscoverer disc = identifyMods();
         disableRequestedMods();
+        FMLLog.fine("Reloading logging properties from %s", loggingProperties.getPath());
+        FMLRelaunchLog.loadLogConfiguration(loggingProperties);
+        FMLLog.fine("Reloaded logging properties");
         modController.distributeStateMessage(FMLLoadEvent.class);
         sortModList();
         mods = ImmutableList.copyOf(mods);
@@ -477,10 +492,14 @@ public class Loader
         }
         modController.transition(LoaderState.CONSTRUCTING);
         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, disc.getASMTable());
-        FMLLog.fine("Mod signature data:");
+        FMLLog.fine("Mod signature data");
         for (ModContainer mod : getActiveModList())
         {
             FMLLog.fine("\t%s(%s:%s): %s (%s)", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), CertificateHelper.getFingerprint(mod.getSigningCertificate()));
+        }
+        if (getActiveModList().isEmpty())
+        {
+            FMLLog.fine("No user mod signature data found");
         }
         modController.transition(LoaderState.PREINITIALIZATION);
         modController.distributeStateMessage(LoaderState.PREINITIALIZATION, disc.getASMTable(), canonicalConfigDir);
@@ -490,22 +509,22 @@ public class Loader
     private void disableRequestedMods()
     {
         String forcedModList = System.getProperty("fml.modStates", "");
-        FMLLog.fine("Received a system property request \'%s\'",forcedModList);
+        FMLLog.finer("Received a system property request \'%s\'",forcedModList);
         Map<String, String> sysPropertyStateList = Splitter.on(CharMatcher.anyOf(";:"))
                 .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
                 .split(forcedModList);
-        FMLLog.fine("System property request managing the state of %d mods", sysPropertyStateList.size());
+        FMLLog.finer("System property request managing the state of %d mods", sysPropertyStateList.size());
         Map<String, String> modStates = Maps.newHashMap();
 
         File forcedModFile = new File(canonicalConfigDir, "fmlModState.properties");
         Properties forcedModListProperties = new Properties();
         if (forcedModFile.exists() && forcedModFile.isFile())
         {
-            FMLLog.fine("Found a mod state file %s", forcedModFile.getName());
+            FMLLog.finer("Found a mod state file %s", forcedModFile.getName());
             try
             {
                 forcedModListProperties.load(new FileReader(forcedModFile));
-                FMLLog.fine("Loaded states for %d mods from file", forcedModListProperties.size());
+                FMLLog.finer("Loaded states for %d mods from file", forcedModListProperties.size());
             }
             catch (Exception e)
             {
@@ -762,7 +781,7 @@ public class Loader
         modController.transition(LoaderState.AVAILABLE);
     }
 
-    public boolean serverAboutToStart(MinecraftServer server)
+    public boolean serverAboutToStart(Object server)
     {
         try
         {

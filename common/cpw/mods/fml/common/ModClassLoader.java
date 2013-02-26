@@ -70,7 +70,7 @@ public class ModClassLoader extends URLClassLoader
         }
         catch (URISyntaxException e)
         {
-            FMLLog.log(Level.SEVERE, "Unable to process our input to locate the minecraft code", e);
+            FMLLog.log(Level.SEVERE, e, "Unable to process our input to locate the minecraft code");
             throw new LoaderException(e);
         }
     }
