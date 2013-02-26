@@ -13,7 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 
-import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
 
 /**
@@ -90,11 +89,10 @@ public class RenderingRegistry
      * @param fileToOverride
      * @param fileToAdd
      */
+    @Deprecated
     public static int addTextureOverride(String fileToOverride, String fileToAdd)
     {
-        int idx = SpriteHelper.getUniqueSpriteIndex(fileToOverride);
-        addTextureOverride(fileToOverride, fileToAdd, idx);
-        return idx;
+        return -1;
     }
 
     /**
@@ -114,9 +112,10 @@ public class RenderingRegistry
      *
      * @param path
      */
+    @Deprecated
     public static int getUniqueTextureIndex(String path)
     {
-        return SpriteHelper.getUniqueSpriteIndex(path);
+        return -1;
     }
 
     @Deprecated public static RenderingRegistry instance()
