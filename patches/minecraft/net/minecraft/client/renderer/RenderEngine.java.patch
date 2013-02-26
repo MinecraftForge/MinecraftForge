@@ -31,7 +31,17 @@
      public RenderEngine(TexturePackList p_i3192_1_, GameSettings p_i3192_2_)
      {
          this.field_78366_k = p_i3192_1_;
-@@ -118,8 +126,9 @@
+@@ -111,15 +119,18 @@
+                     }
+                     else
+                     {
+-                        aint1 = this.func_78348_b(this.func_78345_a(inputstream));
++                        BufferedImage bufferedimage = this.func_78345_a(inputstream);
++                        TextureFXManager.instance().fixTransparency(bufferedimage, p_78346_1_);
++                        aint1 = this.func_78348_b(bufferedimage);
+                     }
+                 }
+ 
                  this.field_78359_d.put(p_78346_1_, aint1);
                  return aint1;
              }
@@ -43,18 +53,28 @@
                  ioexception.printStackTrace();
                  int[] aint2 = this.func_78348_b(this.field_78364_l);
                  this.field_78359_d.put(p_78346_1_, aint2);
-@@ -181,7 +190,9 @@
+@@ -209,7 +220,9 @@
+                         }
+                         else
+                         {
+-                            this.func_78351_a(this.func_78345_a(inputstream), i);
++                            BufferedImage bufferedimage = this.func_78345_a(inputstream);
++                            TextureFXManager.instance().fixTransparency(bufferedimage, p_78341_1_);
++                            this.func_78351_a(bufferedimage, i);
+                         }
                      }
-                     else
-                     {
--                        this.func_78351_a(this.func_78345_a(var7), var3);
-+                        BufferedImage loadedImage = this.func_78345_a(var7);
-+                        TextureFXManager.instance().fixTransparency(loadedImage, p_78341_1_);
-+                        this.func_78351_a(loadedImage, var3);
-                     }
+ 
+@@ -498,7 +511,9 @@
+                 }
+                 else
+                 {
++                    String textureName = s;
+                     bufferedimage = this.func_78345_a(itexturepack.func_77532_a(s));
++                    TextureFXManager.instance().fixTransparency(bufferedimage, textureName);
                  }
  
-@@ -506,8 +515,9 @@
+                 int j = ((Integer)this.field_78362_c.get(s)).intValue();
+@@ -506,8 +521,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
@@ -66,7 +86,16 @@
                  ioexception.printStackTrace();
              }
          }
-@@ -543,8 +553,9 @@
+@@ -536,15 +552,18 @@
+                 }
+                 else
+                 {
++                    String textureName = s;
+                     bufferedimage = this.func_78345_a(itexturepack.func_77532_a(s));
++                    TextureFXManager.instance().fixTransparency(bufferedimage, textureName);
+                 }
+ 
+                 this.func_78340_a(bufferedimage, (int[])this.field_78359_d.get(s));
                  this.field_78361_b = false;
                  this.field_78363_a = false;
              }
