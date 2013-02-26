@@ -143,7 +143,7 @@ public class AccessTransformer implements IClassTransformer
 
     @SuppressWarnings("unchecked")
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String transformedName, byte[] bytes)
     {
     	if (bytes == null) { return null; }
         if (!modifiers.containsKey(name)) { return bytes; }
@@ -375,7 +375,7 @@ public class AccessTransformer implements IClassTransformer
 
                     for (AccessTransformer trans : transformers)
                     {
-                        entryData = trans.transform(name, entryData);
+                        entryData = trans.transform(name, name, entryData);
                     }
                 }
 

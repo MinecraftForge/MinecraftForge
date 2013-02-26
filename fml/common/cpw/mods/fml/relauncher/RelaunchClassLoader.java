@@ -39,6 +39,7 @@ public class RelaunchClassLoader extends URLClassLoader
     private Set<String> classLoaderExceptions = new HashSet<String>();
     private Set<String> transformerExceptions = new HashSet<String>();
     private Map<Package,Manifest> packageManifests = new HashMap<Package,Manifest>();
+    private IClassNameTransformer renameTransformer;
 
     private static Manifest EMPTY = new Manifest();
 
@@ -68,15 +69,23 @@ public class RelaunchClassLoader extends URLClassLoader
 
         // standard transformer exclusions
         addTransformerExclusion("javax.");
+        addTransformerExclusion("argo.");
         addTransformerExclusion("org.objectweb.asm.");
         addTransformerExclusion("com.google.common.");
+        addTransformerExclusion("org.bouncycastle.");
+        addTransformerExclusion("cpw.mods.fml.common.asm.transformers.deobf.");
     }
 
     public void registerTransformer(String transformerClassName)
     {
         try
         {
-            transformers.add((IClassTransformer) loadClass(transformerClassName).newInstance());
+            IClassTransformer transformer = (IClassTransformer) loadClass(transformerClassName).newInstance();
+            transformers.add(transformer);
+            if (transformer instanceof IClassNameTransformer && renameTransformer == null)
+            {
+                renameTransformer = (IClassNameTransformer) transformer;
+            }
         }
         catch (Exception e)
         {
@@ -124,9 +133,11 @@ public class RelaunchClassLoader extends URLClassLoader
         try
         {
             CodeSigner[] signers = null;
-            int lastDot = name.lastIndexOf('.');
-            String pkgname = lastDot == -1 ? "" : name.substring(0, lastDot);
-            String fName = name.replace('.', '/').concat(".class");
+            String transformedName = transformName(name);
+            String untransformedName = untransformName(name);
+            int lastDot = untransformedName.lastIndexOf('.');
+            String pkgname = lastDot == -1 ? "" : untransformedName.substring(0, lastDot);
+            String fName = untransformedName.replace('.', '/').concat(".class");
             String pkgPath = pkgname.replace('.', '/');
             URLConnection urlConnection = findCodeSourceConnectionFor(fName);
             if (urlConnection instanceof JarURLConnection && lastDot > -1)
@@ -138,7 +149,7 @@ public class RelaunchClassLoader extends URLClassLoader
                     Manifest mf = jf.getManifest();
                     JarEntry ent = jf.getJarEntry(fName);
                     Package pkg = getPackage(pkgname);
-                    getClassBytes(name);
+                    getClassBytes(untransformedName);
                     signers = ent.getCodeSigners();
                     if (pkg == null)
                     {
@@ -171,10 +182,10 @@ public class RelaunchClassLoader extends URLClassLoader
                     FMLLog.severe("The URL %s is defining elements for sealed path %s", urlConnection.getURL(), pkgname);
                 }
             }
-            byte[] basicClass = getClassBytes(name);
-            byte[] transformedClass = runTransformers(name, basicClass);
-            Class<?> cl = defineClass(name, transformedClass, 0, transformedClass.length, new CodeSource(urlConnection.getURL(), signers));
-            cachedClasses.put(name, cl);
+            byte[] basicClass = getClassBytes(untransformedName);
+            byte[] transformedClass = runTransformers(untransformedName, transformedName, basicClass);
+            Class<?> cl = defineClass(transformedName, transformedClass, 0, transformedClass.length, new CodeSource(urlConnection.getURL(), signers));
+            cachedClasses.put(transformedName, cl);
             return cl;
         }
         catch (Throwable e)
@@ -185,6 +196,30 @@ public class RelaunchClassLoader extends URLClassLoader
                 FMLLog.log(Level.FINEST, e, "Exception encountered attempting classloading of %s", name);
             }
             throw new ClassNotFoundException(name, e);
+        }
+    }
+
+    private String untransformName(String name)
+    {
+        if (renameTransformer != null)
+        {
+            return renameTransformer.unmapClassName(name);
+        }
+        else
+        {
+            return name;
+        }
+    }
+
+    private String transformName(String name)
+    {
+        if (renameTransformer != null)
+        {
+            return renameTransformer.remapClassName(name);
+        }
+        else
+        {
+            return name;
         }
     }
 
@@ -223,11 +258,11 @@ public class RelaunchClassLoader extends URLClassLoader
         }
     }
 
-    private byte[] runTransformers(String name, byte[] basicClass)
+    private byte[] runTransformers(String name, String transformedName, byte[] basicClass)
     {
         for (IClassTransformer transformer : transformers)
         {
-            basicClass = transformer.transform(name, basicClass);
+            basicClass = transformer.transform(name, transformedName, basicClass);
         }
         return basicClass;
     }
