@@ -13,7 +13,7 @@
          binlk = {CLIENT: self.binclient, SERVER: self.binserver}
          testlk = {CLIENT: self.testclient, SERVER: self.testserver}
  
-+        if side == SERVER:
++        if side == SERVER and not os.path.exists(os.path.join(binlk[side], os.path.normpath(testlk[side] + '.class'))):
 +            return self.checkbins(CLIENT)
          if not os.path.exists(os.path.join(binlk[side], os.path.normpath(testlk[side] + '.class'))):
              return False
@@ -22,7 +22,7 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
          pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
  
-+        if side == SERVER: #Disable server because FML recombines it into client
++        if side == SERVER and not os.path.exists(pathbinlk[side]): #Disable server because FML recombines it into client
 +            self.logger.info('Server side recompiling skipped, this is normal')
 +            return
 +        
