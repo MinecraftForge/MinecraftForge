@@ -42,6 +42,8 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private static Manifest EMPTY = new Manifest();
 
+    private ThreadLocal<byte[]> loadBuffer = new ThreadLocal<byte[]>();
+
     private static final String[] RESERVED = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
     private static final boolean DEBUG_CLASSLOADING = Boolean.parseBoolean(System.getProperty("fml.debugClassLoading", "false"));
@@ -247,18 +249,32 @@ public class RelaunchClassLoader extends URLClassLoader
     {
         try
         {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(stream.available());
-            int r;
-            while ((r = stream.read()) != -1)
+            byte[] buf = loadBuffer.get();
+            if (buf == null)
             {
-                bos.write(r);
+                loadBuffer.set(new byte[1 << 12]);
+                buf = loadBuffer.get();
             }
 
-            return bos.toByteArray();
+            int r, totalLength = 0;
+            while ((r = stream.read(buf, totalLength, buf.length - totalLength)) != -1)
+            {
+                totalLength += r;
+                if (totalLength >= buf.length - 1)
+                {
+                    byte[] oldbuf = buf;
+                    buf = new byte[ oldbuf.length + (1 << 12 )];
+                    System.arraycopy(oldbuf, 0, buf, 0, oldbuf.length);
+                }
+            }
+
+            byte[] result = new byte[totalLength];
+            System.arraycopy(buf, 0, result, 0, totalLength);
+            return result;
         }
         catch (Throwable t)
         {
-            FMLLog.log(Level.WARNING, t, "Problem loading class");
+            FMLRelaunchLog.log(Level.WARNING, t, "Problem loading class");
             return new byte[0];
         }
     }
