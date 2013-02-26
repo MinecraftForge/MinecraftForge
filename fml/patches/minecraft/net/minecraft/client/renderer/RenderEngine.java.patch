@@ -43,6 +43,17 @@
                  ioexception.printStackTrace();
                  int[] aint2 = this.func_78348_b(this.field_78364_l);
                  this.field_78359_d.put(p_78346_1_, aint2);
+@@ -181,7 +190,9 @@
+                     }
+                     else
+                     {
+-                        this.func_78351_a(this.func_78345_a(var7), var3);
++                        BufferedImage loadedImage = this.func_78345_a(var7);
++                        TextureFXManager.instance().fixTransparency(loadedImage, p_78341_1_);
++                        this.func_78351_a(loadedImage, var3);
+                     }
+                 }
+ 
 @@ -506,8 +515,9 @@
                  this.field_78361_b = false;
                  this.field_78363_a = false;
