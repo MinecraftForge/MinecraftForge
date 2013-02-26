@@ -1,11 +1,12 @@
 --- ../src_base/minecraft/net/minecraft/world/World.java
 +++ ../src_work/minecraft/net/minecraft/world/World.java
-@@ -44,8 +44,30 @@
+@@ -44,8 +44,31 @@
  import net.minecraft.world.storage.MapStorage;
  import net.minecraft.world.storage.WorldInfo;
  
 +import com.google.common.collect.ImmutableSetMultimap;
 +
++import cpw.mods.fml.common.FMLLog;
 +import net.minecraftforge.common.ForgeChunkManager;
 +import net.minecraftforge.common.ForgeChunkManager.Ticket;
 +import net.minecraftforge.common.ForgeHooks;
@@ -243,6 +244,45 @@
      {
          float var2 = this.getCelestialAngle(par1);
          float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
+@@ -2017,13 +2156,8 @@
+                catch (Throwable var6)
+                {
+-                    var4 = CrashReport.makeCrashReport(var6, "Ticking tile entity");
+-                    var5 = var4.makeCategory("Tile entity being ticked");
+-
+-                    if (var9 == null)
+-                    {
+-                        var5.addCrashSection("Tile entity", "~~NULL~~");
+-                    }
+-                    else
+-                    {
+-                        var9.func_85027_a(var5);
+-                    }
+-
+-                    throw new ReportedException(var4);
++                    
++                    //Instead of crashing the server, lets throw a stack trace 
++                    //and remove the entity and block
++                    
++                    var14.remove();
++                    FMLLog.warning("Ticking Entity crash at:");
++                    FMLLog.warning(var8.getStackTrace());
++                    this.setBlock(var9.xCoord,  var9.yCoord,  var9.zCoord, 0);
+                }
+            }
+@@ -2035,0 +2169,7 @@
+            if (var9.isInvalid())
+            {
++                try{
+                    var14.remove();
++                } catch(Exception ex){
++                
++                    //Incase the entity was removed above
++                    
++                    FMLLog.warning("Ticking Entity already removed.");
++                }
+                if (this.chunkExists(var9.xCoord >> 4, var9.zCoord >> 4))
+                {
 @@ -2040,16 +2131,8 @@
  
              if (var2.isDead)
@@ -325,7 +365,8 @@
 +            }
          }
      }
- 
+
+
 @@ -2176,9 +2263,17 @@
      {
          int var3 = MathHelper.floor_double(par1Entity.posX);
