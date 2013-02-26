@@ -8,12 +8,13 @@ public interface IASMHook {
      * attributes or other artifacts in your mod class
      *
      * @param modClassNode The mod class
-     * @return optionally a code generated class that will be injected into the classloader
+     * @return optionally some code generated classes that will be injected into the classloader
      */
-    ClassNode inject(ClassNode modClassNode);
+    ClassNode[] inject(ClassNode modClassNode);
     /**
      * Allow mods to manipulate classes loaded from this {@link Mod}'s jar file. The {@link Mod}
-     * class is always guaranteed to be called first
+     * class is always guaranteed to be called first.
+     * The node state should be changed in place.
      *
      * @param node The class being loaded
      */
