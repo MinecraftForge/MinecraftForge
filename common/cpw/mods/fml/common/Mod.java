@@ -111,6 +111,21 @@ public @interface Mod
      * @return A certificate fingerprint that is expected for this mod.
      */
     String certificateFingerprint() default "";
+
+    /**
+     * The language the mod is authored in. This will be used to control certain libraries being downloaded.
+     * Valid values are currently "java", "scala"
+     *
+     * @return The language the mod is authored in
+     */
+    String modLanguage() default "java";
+    /**
+     * An optional ASM hook class, that can be used to apply ASM to classes loaded from this mod. It is also given
+     * the ASM tree of the class declaring {@link Mod} to with what it will.
+     *
+     * @return The name of a class to be loaded and executed. Must implement {@link IASMHook}.
+     */
+    String asmHookClass() default "";
     /**
      * Mark the designated method as to be called at if there is something wrong with the certificate fingerprint of
      * the mod's jar, or it is missing, or otherwise a problem.
