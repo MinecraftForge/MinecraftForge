@@ -31,17 +31,14 @@ public enum TickType {
      */
     RENDER,
     /**
-     * client side
-     * Fired during the render processing phase if a GUI is open
-     * arg 0 : float "partial render time"
-     * arg 1 : the open gui or null if no gui is open
+     * Not fired
      */
+    @Deprecated
     GUI,
     /**
-     * client side
-     * Fired during the client evaluation loop
-     * arg 0 : The open gui or null if no gui is open
+     * Not fired
      */
+    @Deprecated
     CLIENTGUI,
     /**
      * server side

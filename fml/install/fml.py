@@ -223,7 +223,9 @@ def cleanup_source(path):
             src_file = os.path.normpath(os.path.join(path, cur_file))
             updatefile(src_file)
 
-def setup_fml(fml_dir, mcp_dir):
+compile_tools = True
+def setup_fml(fml_dir, mcp_dir, disable_at=False, disable_merge=False, enable_server=False, disable_client=False):
+    global compile_tools
     sys.path.append(mcp_dir)
     from runtime.decompile import decompile
     from runtime.cleanup import cleanup
@@ -245,7 +247,10 @@ def setup_fml(fml_dir, mcp_dir):
     if not download_deps(mcp_dir):
         sys.exit(1)
     
+    compile_tools = True
+    
     def applyrg_shunt(self, side, reobf=False, applyrg_real = Commands.applyrg):
+        global compile_tools
         if not self.has_wine and not self.has_astyle:
                 self.logger.error('!! Please install either wine or astyle for source cleanup !!')
                 self.logger.error('!! This is REQUIRED by FML/Forge Cannot proceed !!')
@@ -262,7 +267,7 @@ def setup_fml(fml_dir, mcp_dir):
         cmd_compile = '"%s" -Xlint:-options -deprecation -g -source 1.6 -target 1.6 -classpath "{classpath}" -sourcepath "{sourcepath}" -d "{outpath}" "{target}"' % self.cmdjavac
         cmd_compile = cmd_compile.format(classpath=class_path, sourcepath=dir_common, outpath=dir_bin, target="{target}")
         
-        if (side == CLIENT):
+        if compile_tools:
             self.logger.info('> Compiling AccessTransformer')
             if not runcmd(self, cmd_compile.format(target=os.path.join(dir_trans, 'AccessTransformer.java')), echo=False):
                 sys.exit(1)
@@ -270,32 +275,41 @@ def setup_fml(fml_dir, mcp_dir):
             self.logger.info('> Compiling MCPMerger')
             if not runcmd(self, cmd_compile.format(target=os.path.join(dir_trans, 'MCPMerger.java')), echo=False):
                 sys.exit(1)
-            
-            self.logger.info('> Running MCPMerger')
-            forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
-                classpath=class_path, mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
                 
+            compile_tools = False
+            
+        if side == CLIENT:
+            if not disable_merge:
+                self.logger.info('> Running MCPMerger')
+                forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.MCPMerger "{mergecfg}" "{client}" "{server}"' % self.cmdjava).format(
+                    classpath=class_path, mergecfg=os.path.join(fml_dir, 'mcp_merge.cfg'), client=jars[CLIENT], server=jars[SERVER])
+                    
+                if not runcmd(self, forkcmd):
+                    sys.exit(1)
+            else:
+                self.logger.info('> MCPMerge disabled')
+        
+        if not disable_at:
+            self.logger.info('> Running AccessTransformer')
+            forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
+                classpath=class_path, jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
+                
+            forge_cfg = os.path.join(fml_dir, '..', 'common', 'forge_at.cfg')
+            if os.path.isfile(forge_cfg):
+                self.logger.info('   Forge config detected')
+                forkcmd += ' "%s"' % forge_cfg
+
+            for dirname, dirnames, filenames in os.walk(os.path.join(fml_dir, '..', 'accesstransformers')):
+                for filename in filenames:
+                    accesstransformer = os.path.join(dirname, filename)
+                    if os.path.isfile(accesstransformer):              
+                        self.logger.info('   Access Transformer "%s" detected' % filename)
+                        forkcmd += ' "%s"' % accesstransformer
+            
             if not runcmd(self, forkcmd):
                 sys.exit(1)
-        
-        self.logger.info('> Running AccessTransformer')
-        forkcmd = ('"%s" -classpath "{classpath}" cpw.mods.fml.common.asm.transformers.AccessTransformer "{jar}" "{fmlconfig}"' % self.cmdjava).format(
-            classpath=class_path, jar=jars[side], fmlconfig=os.path.join(fml_dir, 'common', 'fml_at.cfg'))
-            
-        forge_cfg = os.path.join(fml_dir, '..', 'common', 'forge_at.cfg')
-        if os.path.isfile(forge_cfg):
-            self.logger.info('   Forge config detected')
-            forkcmd += ' "%s"' % forge_cfg
-
-        for dirname, dirnames, filenames in os.walk(os.path.join(fml_dir, '..', 'accesstransformers')):
-            for filename in filenames:
-                accesstransformer = os.path.join(dirname, filename)
-                if os.path.isfile(accesstransformer):              
-                    self.logger.info('   Access Transformer "%s" detected' % filename)
-                    forkcmd += ' "%s"' % accesstransformer
-        
-        if not runcmd(self, forkcmd):
-            sys.exit(1)
+        else:
+            self.logger.info('> Access Transformer disabled')
         
         self.logger.info('> Really Applying Retroguard')
         applyrg_real(self, side, reobf)
@@ -318,8 +332,8 @@ def setup_fml(fml_dir, mcp_dir):
         Commands.applyrg = applyrg_shunt
         Commands.checkjars = checkjars_shunt
         #decompile -d -n -r
-        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c     -s
-        decompile(None, False, False, True, True, False, True, False, False, False, False, True, False)
+        #         Conf  JAD    CSV    -r    -d    -a     -n    -p     -o     -l     -g     -c                 -s
+        decompile(None, False, False, True, True, False, True, False, False, False, False, not disable_client, enable_server)
         reset_logger()
         os.chdir(fml_dir)
         
@@ -338,8 +352,14 @@ def setup_fml(fml_dir, mcp_dir):
     
     os.chdir(mcp_dir)
     commands = Commands(verify=True)
-    updatemd5_side(mcp_dir, commands, CLIENT)
-    reset_logger()
+    
+    if not disable_client:
+        updatemd5_side(mcp_dir, commands, CLIENT)
+        reset_logger()
+    
+    if enable_server:
+        updatemd5_side(mcp_dir, commands, CLIENT)
+        reset_logger()
     
     os.chdir(fml_dir)
     
@@ -413,16 +433,16 @@ def apply_fml_patches(fml_dir, mcp_dir, src_dir, copy_files=True):
     if os.path.isdir(os.path.join(src_dir, 'minecraft', 'argo')):
         shutil.rmtree(os.path.join(src_dir, 'minecraft', 'argo'))
 
-def finish_setup_fml(fml_dir, mcp_dir):
+def finish_setup_fml(fml_dir, mcp_dir, enable_server=False, disable_client=False):
     sys.path.append(mcp_dir)
     from runtime.updatenames import updatenames
     from runtime.updatemd5 import updatemd5
     from runtime.updatemcp import updatemcp
     
     os.chdir(mcp_dir)
-    updatenames(None, True, True, False)
+    updatenames(None, True, not disable_client, enable_server)
     reset_logger()
-    updatemd5(None, True, True, False)
+    updatemd5(None, True, not disable_client, enable_server)
     reset_logger()
     os.chdir(fml_dir)
 
@@ -944,18 +964,21 @@ def gen_renamed_conf(mcp_dir, fml_dir):
                 cls = repackage_class(pkgs, cls)
                 outf.write('%s.%s%s=%s\n' % (cls, func, sig, named))
     
-    print 'Creating re-packaged MCP patch'
-    patch_in = os.path.join(mcp_dir, 'conf', 'patches', 'minecraft_ff.patch')
-    patch_tmp = os.path.join(mcp_dir, 'conf', 'patches', 'minecraft_ff.patch.tmp')
+    print 'Creating re-packaged MCP patches'
     
-    regnms = re.compile(r'net\\minecraft\\src\\(\w+)')
-    with open(patch_in, 'r') as fh:
-        buf = fh.read()
-        def mapname(match):
-            return repackage_class(pkgs, match.group(0).replace('\\', '/')).replace('/', '\\')
-        buf = regnms.sub(mapname, buf)
-        
-    with open(patch_tmp, 'w') as fh:
-        fh.write(buf)
-                    
-    shutil.move(patch_tmp, patch_in)
+    def fix_patches(patch_in, patch_tmp):        
+        regnms = re.compile(r'net\\minecraft\\src\\(\w+)')
+        with open(patch_in, 'r') as fh:
+            buf = fh.read()
+            def mapname(match):
+                return repackage_class(pkgs, match.group(0).replace('\\', '/')).replace('/', '\\')
+            buf = regnms.sub(mapname, buf)
+            
+        with open(patch_tmp, 'w') as fh:
+            fh.write(buf)
+                        
+        shutil.move(patch_tmp, patch_in)
+
+    patch_dir = os.path.join(mcp_dir, 'conf', 'patches')
+    fix_patches(os.path.join(patch_dir, 'minecraft_ff.patch'       ), os.path.join(patch_dir, 'tmp.patch'))
+    fix_patches(os.path.join(patch_dir, 'minecraft_server_ff.patch'), os.path.join(patch_dir, 'tmp.patch'))
