@@ -1,6 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -13,6 +13,7 @@
+@@ -1,18 +1,18 @@
+ package net.minecraft.item;
+ 
+-import cpw.mods.fml.common.registry.GameData;
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.List;
+ import java.util.Random;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
++import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.item.EntityPainting;
  import net.minecraft.entity.player.EntityPlayer;
@@ -8,17 +22,20 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -21,7 +22,9 @@
+@@ -21,7 +21,12 @@
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.StringTranslate;
  import net.minecraft.util.Vec3;
 +import net.minecraft.util.WeightedRandomChestContent;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
++import cpw.mods.fml.common.registry.GameData;
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
  
  public class Item
  {
-@@ -230,18 +233,26 @@
+@@ -230,18 +235,26 @@
      /** full name of item from language file */
      private String itemName;
  
@@ -46,7 +63,7 @@
      }
  
      /**
-@@ -561,6 +572,7 @@
+@@ -561,6 +574,7 @@
  
      /**
       * Returns a string representing what this item does to a potion.
@@ -54,7 +71,7 @@
       */
      public String getPotionEffect()
      {
-@@ -569,6 +581,7 @@
+@@ -569,6 +583,7 @@
  
      /**
       * Returns true if this item serves as a potion ingredient (its ingredient information is not null).
@@ -62,7 +79,7 @@
       */
      public boolean isPotionIngredient()
      {
-@@ -627,6 +640,10 @@
+@@ -627,6 +642,10 @@
          float var18 = var15 * var16;
          float var20 = var14 * var16;
          double var21 = 5.0D;
@@ -73,7 +90,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +718,362 @@
+@@ -701,4 +720,373 @@
      {
          StatList.initStats();
      }
@@ -392,6 +409,17 @@
 +    }
 +
 +    /**
++     * Called to tick EntityItem for items on the ground. Override to do something
++     * 
++     * @param entityItem
++     */
++    public void onEntityItemUpdate(EntityItem entityItem)
++    {
++     
++        
++    }
++
++    /**
 +     * Determines if the specific ItemStack can be placed in the specified armor slot.
 +     * 
 +     * @param stack The ItemStack
@@ -434,5 +462,5 @@
 +    {
 +        return getPotionEffect();
 +    }
-+
++  
  }
