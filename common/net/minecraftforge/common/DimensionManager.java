@@ -240,14 +240,28 @@ public class DimensionManager
     */
     public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
         for (int id : unloadQueue) {
+            WorldServer w = worlds.get(id);
             try {
-                worlds.get(id).saveAllChunks(true, null);
+                if (w != null)
+                {
+                    w.saveAllChunks(true, null);
+                }
+                else
+                {
+                    FMLLog.warning("Unexpected world unload - world %d is already unloaded", id);
+                }
             } catch (MinecraftException e) {
                 e.printStackTrace();
             }
-            MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worlds.get(id)));
-            ((WorldServer)worlds.get(id)).flush();
-            setWorld(id, null);
+            finally
+            {
+                if (w != null)
+                {
+                    MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
+                    w.flush();
+                    setWorld(id, null);
+                }
+            }
         }
         unloadQueue.clear();
     }
