@@ -1,6 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenForest.java
-@@ -45,7 +45,9 @@
+@@ -1,8 +1,11 @@
+ package net.minecraft.world.gen.feature;
+ 
+ import java.util.Random;
++
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class WorldGenForest extends WorldGenerator
+ {
+@@ -45,7 +48,9 @@
                          {
                              l1 = par1World.getBlockId(j1, i1, k1);
  
@@ -11,19 +23,34 @@
                              {
                                  flag = false;
                              }
-@@ -84,7 +86,10 @@
+@@ -65,10 +70,12 @@
+             else
+             {
+                 i1 = par1World.getBlockId(par3, par4 - 1, par5);
++                Block soil = Block.blocksList[i1];
++                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
+ 
+-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
++                if (isValidSoil && par4 < 256 - l - 1)
+                 {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+                     int i2;
+ 
+                     for (i2 = par4 - 3 + l; i2 <= par4 + l; ++i2)
+@@ -84,7 +91,10 @@
                              {
                                  int l2 = k2 - par5;
  
 -                                if ((Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(l1, i2, k2)])
 +                                Block block = Block.blocksList[par1World.getBlockId(l1, i2, k2)];
-+                                
-+                                if ((Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && 
++
++                                if ((Math.abs(j2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) &&
 +                                    (block == null || block.canBeReplacedByLeaves(par1World, l1, i2, k2)))
                                  {
                                      this.setBlockAndMetadata(par1World, l1, i2, k2, Block.leaves.blockID, 2);
                                  }
-@@ -96,7 +101,9 @@
+@@ -96,7 +106,9 @@
                      {
                          j1 = par1World.getBlockId(par3, par4 + i2, par5);
  

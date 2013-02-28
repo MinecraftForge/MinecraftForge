@@ -3,7 +3,8 @@ package net.minecraftforge.event;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 @Cancelable
-public class ServerChatEvent extends Event {
+public class ServerChatEvent extends Event
+{
     public final String message, username;
     public final EntityPlayerMP player;
     public String line;
@@ -13,6 +14,6 @@ public class ServerChatEvent extends Event {
         this.message = message;
         this.player = player;
         this.username = player.username;
-        this.line = "<" + username + "> " + message;
+        this.line = line;
     }
 }

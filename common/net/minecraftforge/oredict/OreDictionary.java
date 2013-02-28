@@ -184,15 +184,19 @@ public class OreDictionary
      */
     public static int getOreID(ItemStack itemStack)
     {
-        if( itemStack == null )
-            return -1;
-
-        for(int oreID : oreStacks.keySet())
+        if (itemStack == null)
         {
-            for(ItemStack target : oreStacks.get(oreID))
+            return -1;
+        }
+
+        for(Entry<Integer, ArrayList<ItemStack>> ore : oreStacks.entrySet())
+        {
+            for(ItemStack target : ore.getValue())
             {
                 if(itemStack.itemID == target.itemID && (target.getItemDamage() == -1 || itemStack.getItemDamage() == target.getItemDamage()))
-                    return oreID;
+                {
+                    return ore.getKey();
+                }
             }
         }
         return -1; // didn't find it.

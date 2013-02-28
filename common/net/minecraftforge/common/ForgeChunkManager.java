@@ -653,10 +653,13 @@ public class ForgeChunkManager
 
         int allowedCount = ticketConstraints.containsKey(modId) ? ticketConstraints.get(modId) : defaultMaxCount;
 
-        if (tickets.get(world).get(modId).size() >= allowedCount && !warnedMods.contains(modId))
+        if (tickets.get(world).get(modId).size() >= allowedCount)
         {
-            FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
-            warnedMods.add(modId);
+            if (!warnedMods.contains(modId))
+            {
+                FMLLog.info("The mod %s has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum : %d", modId, allowedCount);
+                warnedMods.add(modId);
+            }
             return null;
         }
         Ticket ticket = new Ticket(modId, type, world);
@@ -933,7 +936,7 @@ public class ForgeChunkManager
 
         Property dormantChunkCacheSizeProperty = config.get("defaults", "dormantChunkCacheSize", 0);
         dormantChunkCacheSizeProperty.comment = "Unloaded chunks can first be kept in a dormant cache for quicker\n" +
-                    "loading times. Specify the size of that cache here";
+                    "loading times. Specify the size (in chunks) of that cache here";
         dormantChunkCacheSize = dormantChunkCacheSizeProperty.getInt(0);
         FMLLog.info("Configured a dormant chunk cache size of %d", dormantChunkCacheSizeProperty.getInt(0));
 

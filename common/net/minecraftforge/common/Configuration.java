@@ -440,6 +440,7 @@ public class Configuration
         }
 
         BufferedReader buffer = null;
+        UnicodeInputStreamReader input = null;
         try
         {
             if (file.getParentFile() != null)
@@ -454,7 +455,7 @@ public class Configuration
 
             if (file.canRead())
             {
-                UnicodeInputStreamReader input = new UnicodeInputStreamReader(new FileInputStream(file), defaultEncoding);
+                input = new UnicodeInputStreamReader(new FileInputStream(file), defaultEncoding);
                 defaultEncoding = input.getEncoding();
                 buffer = new BufferedReader(input);
 
@@ -638,6 +639,13 @@ public class Configuration
                     buffer.close();
                 } catch (IOException e){}
             }
+            if (input != null)
+            {
+                try
+                {
+                    input.close();
+                } catch (IOException e){}
+            }
         }
     }
 
@@ -666,8 +674,7 @@ public class Configuration
                 FileOutputStream fos = new FileOutputStream(file);
                 BufferedWriter buffer = new BufferedWriter(new OutputStreamWriter(fos, defaultEncoding));
 
-                buffer.write("# Configuration file" + NEW_LINE);
-                buffer.write("# Generated on " + DateFormat.getInstance().format(new Date()) + NEW_LINE + NEW_LINE);
+                buffer.write("# Configuration file" + NEW_LINE + NEW_LINE);
 
                 if (children.isEmpty())
                 {

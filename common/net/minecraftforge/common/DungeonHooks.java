@@ -3,6 +3,9 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Random;
 
+import cpw.mods.fml.common.FMLLog;
+
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
@@ -148,12 +151,18 @@ public class DungeonHooks
         {
             int min = theMinimumChanceToGenerateItem;
             int max = theMaximumChanceToGenerateItem;
-            
+
             ItemStack ret = this.theItemId.copy();
             ret.stackSize = min + (rand.nextInt(max - min + 1));
             return ret;
         }
 
+        @Override
+        protected final ItemStack[] generateChestContent(Random random, IInventory newInventory)
+        {
+            FMLLog.warning("Some mod is still using DungeonHooks.DungonLoot, tell them to stop! %s", this);
+            return new ItemStack[] { generateStack(random) };
+        }
         public boolean equals(ItemStack item, int min, int max)
         {
             int minCount = theMinimumChanceToGenerateItem;

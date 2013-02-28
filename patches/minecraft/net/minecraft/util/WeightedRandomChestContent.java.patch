@@ -61,3 +61,22 @@
              }
          }
      }
+@@ -109,4 +92,18 @@
+ 
+         return aweightedrandomchestcontent1;
+     }
++
++    // -- Forge hooks
++    /**
++     * Allow a mod to submit a custom implementation that can delegate item stack generation beyond simple stack lookup
++     *
++     * @param random The current random for generation
++     * @param newInventory The inventory being generated (do not populate it, but you can refer to it)
++     * @return An array of {@link ItemStack} to put into the chest
++     */
++    protected ItemStack[] generateChestContent(Random random, IInventory newInventory)
++    {
++        return ChestGenHooks.generateStacks(random, theItemId, theMinimumChanceToGenerateItem, theMaximumChanceToGenerateItem);
++    }
++
+ }

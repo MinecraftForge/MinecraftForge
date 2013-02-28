@@ -1,6 +1,17 @@
 --- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
 +++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenTrees.java
-@@ -67,7 +67,13 @@
+@@ -2,8 +2,10 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.util.Direction;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class WorldGenTrees extends WorldGenerator
+ {
+@@ -67,7 +69,13 @@
                          {
                              k1 = par1World.getBlockId(l1, i1, j1);
  
@@ -15,7 +26,24 @@
                              {
                                  flag = false;
                              }
-@@ -110,7 +116,10 @@
+@@ -87,10 +95,12 @@
+             else
+             {
+                 i1 = par1World.getBlockId(par3, par4 - 1, par5);
+-
+-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
+-                {
+-                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
++                Block soil = Block.blocksList[i1];
++                boolean isSoil = (soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling));
++
++                if (isSoil && par4 < 256 - l - 1)
++                {
++                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
+                     b0 = 3;
+                     byte b1 = 0;
+                     int i2;
+@@ -110,7 +120,10 @@
                              {
                                  int i3 = l2 - par5;
  
@@ -27,7 +55,7 @@
                                  {
                                      this.setBlockAndMetadata(par1World, j2, j1, l2, Block.leaves.blockID, this.metaLeaves);
                                  }
-@@ -122,7 +131,9 @@
+@@ -122,7 +135,9 @@
                      {
                          k1 = par1World.getBlockId(par3, par4 + j1, par5);
  
@@ -38,7 +66,7 @@
                          {
                              this.setBlockAndMetadata(par1World, par3, par4 + j1, par5, Block.wood.blockID, this.metaWood);
  
-@@ -162,7 +173,8 @@
+@@ -162,7 +177,8 @@
                              {
                                  for (k2 = par5 - i2; k2 <= par5 + i2; ++k2)
                                  {

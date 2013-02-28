@@ -8,10 +8,11 @@
  import java.util.List;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.network.packet.Packet;
-@@ -10,9 +11,12 @@
+@@ -10,9 +11,13 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.world.ChunkCoordIntPair;
  
++import net.minecraftforge.common.ForgeDummyContainer;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.ChunkWatchEvent;
 +
@@ -22,7 +23,7 @@
  
      /** note: this is final */
      private final ChunkCoordIntPair chunkLocation;
-@@ -56,6 +60,8 @@
+@@ -56,6 +61,8 @@
              this.playersInChunk.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
  
@@ -31,7 +32,7 @@
              if (this.playersInChunk.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
-@@ -80,20 +86,21 @@
+@@ -80,20 +87,21 @@
  
          this.field_73260_f |= 1 << (par2 >> 4);
  
@@ -64,12 +65,12 @@
      }
  
      public void sendToAllPlayersWatchingChunk(Packet par1Packet)
-@@ -133,40 +140,26 @@
+@@ -133,40 +141,26 @@
              {
                  int l;
  
 -                if (this.numberOfTilesToUpdate == 64)
-+                if (this.numberOfTilesToUpdate >= MinecraftForge.clumpingThreshold)
++                if (this.numberOfTilesToUpdate >= ForgeDummyContainer.clumpingThreshold)
                  {
                      i = this.chunkLocation.chunkXPos * 16;
                      j = this.chunkLocation.chunkZPos * 16;
