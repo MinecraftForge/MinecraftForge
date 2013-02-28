@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderEngine.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderEngine.java
-@@ -27,6 +27,8 @@
+@@ -28,6 +28,8 @@
  import net.minecraft.util.IntHashMap;
  import org.lwjgl.opengl.GL11;
  
@@ -9,7 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class RenderEngine
  {
-@@ -199,6 +201,7 @@
+@@ -202,6 +204,7 @@
  
                  try
                  {
@@ -17,7 +17,7 @@
                      this.singleIntBuffer.clear();
                      GLAllocation.generateTextureNames(this.singleIntBuffer);
                      int i = this.singleIntBuffer.get(0);
-@@ -242,6 +245,7 @@
+@@ -247,6 +250,7 @@
                      }
  
                      this.textureMap.put(par1Str, Integer.valueOf(i));

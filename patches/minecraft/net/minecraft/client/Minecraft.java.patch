@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -1239,7 +1243,7 @@
+@@ -1240,7 +1244,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
                  {
@@ -20,7 +20,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1305,7 +1309,8 @@
+@@ -1306,7 +1310,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -30,7 +30,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1331,7 +1336,8 @@
+@@ -1332,7 +1337,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -40,7 +40,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2028,6 +2034,18 @@
+@@ -2029,6 +2035,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -59,7 +59,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2339,95 +2357,12 @@
+@@ -2340,103 +2358,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -128,6 +128,14 @@
 -                    else if (entityminecart.func_94087_l() == 1)
 -                    {
 -                        j = Item.minecartCrate.itemID;
+-                    }
+-                    else if (entityminecart.func_94087_l() == 3)
+-                    {
+-                        j = Item.field_94582_cb.itemID;
+-                    }
+-                    else if (entityminecart.func_94087_l() == 5)
+-                    {
+-                        j = Item.field_96600_cc.itemID;
 -                    }
 -                    else
 -                    {

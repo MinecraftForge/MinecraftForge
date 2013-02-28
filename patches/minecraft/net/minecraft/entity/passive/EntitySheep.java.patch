@@ -20,7 +20,7 @@
  {
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
  
-@@ -139,28 +143,6 @@
+@@ -159,28 +163,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {

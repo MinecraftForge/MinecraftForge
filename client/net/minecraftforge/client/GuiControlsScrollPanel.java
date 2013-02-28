@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.EnumChatFormatting;
 
 public class GuiControlsScrollPanel extends GuiSlot
 {
@@ -105,8 +106,9 @@ public class GuiControlsScrollPanel extends GuiSlot
                 break;
             }
         }
-        String str = (conflict ? "\247c" : "") + options.getOptionDisplayString(index);
-        str = (index == selected ? "\247f> \247e??? \247f<" : str);
+
+        String str = (conflict ? EnumChatFormatting.RED : "") + options.getOptionDisplayString(index);
+        str = (index == selected ? EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + "??? " + EnumChatFormatting.WHITE + "<" : str);
         controls.drawCenteredString(mc.fontRenderer, str, xPosition + (width / 2), yPosition + (height - 8) / 2, 0xFFFFFFFF);
     }
 

@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -406,7 +406,7 @@
+@@ -413,7 +413,7 @@
                  return false;
              }
  
--            return !(Block.blocksList[par0] instanceof BlockContainer);
+-            return !(Block.blocksList[par0] instanceof ITileEntityProvider);
 +            return !par1World.blockHasTileEntity(par2, par3, par4);
          }
      }
  
-@@ -424,7 +424,7 @@
+@@ -431,7 +431,7 @@
          {
              if (l1 < 13)
              {
@@ -18,7 +18,7 @@
                  {
                      return false;
                  }
-@@ -474,7 +474,7 @@
+@@ -481,7 +481,7 @@
  
              if (l1 < 13)
              {

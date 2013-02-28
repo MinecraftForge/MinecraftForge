@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -15,6 +15,8 @@
+@@ -14,6 +14,8 @@
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.item.EnumAction;
  import net.minecraft.item.Item;
@@ -9,7 +9,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -22,6 +24,12 @@
+@@ -21,6 +23,12 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
  
@@ -22,7 +22,7 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -54,8 +62,21 @@
+@@ -53,8 +61,21 @@
      public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
@@ -46,7 +46,7 @@
          {
              GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-@@ -274,7 +295,7 @@
+@@ -272,7 +293,7 @@
          Render render;
          RenderPlayer renderplayer;
  
@@ -55,7 +55,7 @@
          {
              GL11.glPushMatrix();
              f4 = 0.8F;
-@@ -341,11 +362,20 @@
+@@ -339,11 +360,20 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
@@ -81,7 +81,7 @@
              }
  
              GL11.glPopMatrix();
-@@ -448,12 +478,15 @@
+@@ -446,12 +476,15 @@
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(entityclientplayermp, itemstack, 0);

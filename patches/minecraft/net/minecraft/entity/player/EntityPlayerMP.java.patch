@@ -1,14 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -9,6 +9,7 @@
- import java.util.List;
- import net.minecraft.entity.Entity;
+@@ -15,6 +15,7 @@
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityMinecartHopper;
  import net.minecraft.entity.IMerchant;
 +import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.inventory.Container;
  import net.minecraft.inventory.ContainerBeacon;
-@@ -76,6 +77,11 @@
+@@ -87,6 +88,11 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.chunk.Chunk;
  
@@ -20,7 +20,7 @@
  public class EntityPlayerMP extends EntityPlayer implements ICrafting
  {
      private StringTranslate translator = new StringTranslate("en_US");
-@@ -147,18 +153,10 @@
+@@ -158,18 +164,10 @@
          par4ItemInWorldManager.thisPlayerMP = this;
          this.theItemInWorldManager = par4ItemInWorldManager;
          this.renderDistance = par1MinecraftServer.getConfigurationManager().getViewDistance();
@@ -38,9 +38,9 @@
 -            k = par2World.getTopSolidOrLiquidBlock(i, j);
 -        }
  
-         this.setLocationAndAngles((double)i + 0.5D, (double)k, (double)j + 0.5D, 0.0F, 0.0F);
          this.mcServer = par1MinecraftServer;
-@@ -255,7 +253,10 @@
+         this.stepHeight = 0.0F;
+@@ -271,7 +269,10 @@
                  if (chunkcoordintpair != null && this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
                  {
                      arraylist.add(this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos));
@@ -52,7 +52,7 @@
                  }
              }
  
-@@ -276,6 +277,7 @@
+@@ -292,6 +293,7 @@
                  {
                      Chunk chunk = (Chunk)iterator2.next();
                      this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
@@ -60,7 +60,7 @@
                  }
              }
          }
-@@ -320,11 +322,29 @@
+@@ -359,11 +361,29 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -88,5 +88,5 @@
 +                }
 +            }
          }
-     }
  
+         Collection collection = this.worldObj.func_96441_U().func_96520_a(ScoreObjectiveCriteria.field_96642_c);

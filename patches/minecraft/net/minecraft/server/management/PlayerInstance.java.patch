@@ -8,111 +8,79 @@
  import java.util.List;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.network.packet.Packet;
-@@ -10,9 +11,13 @@
+@@ -9,11 +10,14 @@
+ import net.minecraft.network.packet.Packet53BlockChange;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.world.ChunkCoordIntPair;
- 
 +import net.minecraftforge.common.ForgeDummyContainer;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.world.ChunkWatchEvent;
-+
+ 
  public class PlayerInstance
  {
--    private final List playersInChunk;
-+    public final List playersInChunk;
+     /** the list of all players in this instance (chunk) */
+-    private final List players;
++    public final List players;
  
      /** note: this is final */
      private final ChunkCoordIntPair chunkLocation;
-@@ -56,6 +61,8 @@
-             this.playersInChunk.remove(par1EntityPlayerMP);
+@@ -64,6 +68,8 @@
+             this.players.remove(par1EntityPlayerMP);
              par1EntityPlayerMP.loadedChunks.remove(this.chunkLocation);
  
 +            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(chunkLocation, par1EntityPlayerMP));
 +
-             if (this.playersInChunk.isEmpty())
+             if (this.players.isEmpty())
              {
                  long i = (long)this.chunkLocation.chunkXPos + 2147483647L | (long)this.chunkLocation.chunkZPos + 2147483647L << 32;
-@@ -80,20 +87,21 @@
+@@ -91,7 +97,7 @@
  
          this.field_73260_f |= 1 << (par2 >> 4);
  
--        if (this.numberOfTilesToUpdate < 64)
-+        short var4 = (short)(par1 << 12 | par3 << 8 | par2);
-+
-+        for (int var5 = 0; var5 < this.numberOfTilesToUpdate; ++var5)
+-        if (this.numBlocksToUpdate < 64)
++        //if (this.numBlocksToUpdate < 64) //Forge; Cache everything, so always run
          {
--            short short1 = (short)(par1 << 12 | par3 << 8 | par2);
-+            if (this.locationOfBlockChange[var5] == var4)
+             short short1 = (short)(par1 << 12 | par3 << 8 | par2);
+ 
+@@ -103,6 +109,10 @@
+                 }
+             }
+ 
++            if (this.numBlocksToUpdate == blocksToUpdate.length)
 +            {
-+                return;
++                this.blocksToUpdate = Arrays.copyOf(this.blocksToUpdate, blocksToUpdate.length << 1);
 +            }
-+        }
- 
--            for (int l = 0; l < this.numberOfTilesToUpdate; ++l)
--            {
--                if (this.locationOfBlockChange[l] == short1)
--                {
--                    return;
--                }
--            }
--
--            this.locationOfBlockChange[this.numberOfTilesToUpdate++] = short1;
-+        if (this.numberOfTilesToUpdate == locationOfBlockChange.length)
-+        {
-+            this.locationOfBlockChange = Arrays.copyOf(this.locationOfBlockChange, locationOfBlockChange.length << 1);
+             this.blocksToUpdate[this.numBlocksToUpdate++] = short1;
          }
-+        this.locationOfBlockChange[this.numberOfTilesToUpdate++] = var4;
      }
- 
-     public void sendToAllPlayersWatchingChunk(Packet par1Packet)
-@@ -133,40 +141,26 @@
+@@ -147,12 +157,13 @@
              {
                  int l;
  
--                if (this.numberOfTilesToUpdate == 64)
-+                if (this.numberOfTilesToUpdate >= ForgeDummyContainer.clumpingThreshold)
+-                if (this.numBlocksToUpdate == 64)
++                if (this.numBlocksToUpdate >= ForgeDummyContainer.clumpingThreshold)
                  {
                      i = this.chunkLocation.chunkXPos * 16;
                      j = this.chunkLocation.chunkZPos * 16;
-                     this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.field_73260_f));
--
--                    for (k = 0; k < 16; ++k)
--                    {
--                        if ((this.field_73260_f & 1 << k) != 0)
--                        {
--                            l = k << 4;
--                            List list = PlayerManager.getWorldServer(this.myManager).getAllTileEntityInBox(i, l, j, i + 16, l + 16, j + 16);
--
--                            for (int i1 = 0; i1 < list.size(); ++i1)
--                            {
--                                this.sendTileToAllPlayersWatchingChunk((TileEntity)list.get(i1));
--                            }
--                        }
--                    }
+                     this.sendPacketToPlayersInInstance(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.field_73260_f));
+ 
++                    /* Forge: Grabings ALL tile entities is costly on a modded server, only send needed ones
+                     for (k = 0; k < 16; ++k)
+                     {
+                         if ((this.field_73260_f & 1 << k) != 0)
+@@ -166,11 +177,14 @@
+                             }
+                         }
+                     }
++                    */
                  }
                  else
                  {
-                     this.sendToAllPlayersWatchingChunk(new Packet52MultiBlockChange(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos, this.locationOfBlockChange, this.numberOfTilesToUpdate, PlayerManager.getWorldServer(this.myManager)));
-+                }
- 
--                    for (i = 0; i < this.numberOfTilesToUpdate; ++i)
-+                for (i = 0; i < this.numberOfTilesToUpdate; ++i)
-+                {
-+                    j = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[i] >> 12 & 15);
-+                    k = this.locationOfBlockChange[i] & 255;
-+                    l = this.chunkLocation.chunkZPos * 16 + (this.locationOfBlockChange[i] >> 8 & 15);
-+
-+                    if (PlayerManager.getWorldServer(this.myManager).blockHasTileEntity(j, k, l))
-                     {
--                        j = this.chunkLocation.chunkXPos * 16 + (this.locationOfBlockChange[i] >> 12 & 15);
--                        k = this.locationOfBlockChange[i] & 255;
--                        l = this.chunkLocation.chunkZPos * 16 + (this.locationOfBlockChange[i] >> 8 & 15);
+                     this.sendPacketToPlayersInInstance(new Packet52MultiBlockChange(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos, this.blocksToUpdate, this.numBlocksToUpdate, PlayerManager.getWorldServer(this.myManager)));
 -
--                        if (PlayerManager.getWorldServer(this.myManager).blockHasTileEntity(j, k, l))
--                        {
--                            this.sendTileToAllPlayersWatchingChunk(PlayerManager.getWorldServer(this.myManager).getBlockTileEntity(j, k, l));
--                        }
-+                        this.sendTileToAllPlayersWatchingChunk(PlayerManager.getWorldServer(this.myManager).getBlockTileEntity(j, k, l));
-                     }
-                 }
-             }
++                }
++
++                { //Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
+                     for (i = 0; i < this.numBlocksToUpdate; ++i)
+                     {
+                         j = this.chunkLocation.chunkXPos * 16 + (this.blocksToUpdate[i] >> 12 & 15);

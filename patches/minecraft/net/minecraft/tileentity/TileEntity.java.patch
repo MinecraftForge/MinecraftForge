@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -11,7 +11,10 @@
- import net.minecraft.block.TileEntityRecordPlayer;
+@@ -10,7 +10,10 @@
+ import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.NBTTagCompound;
 +import net.minecraft.network.INetworkManager;
@@ -11,9 +11,9 @@
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -300,4 +303,93 @@
-         addMapping(TileEntityDaylightDetector.class, "DLDetector");
+@@ -304,4 +307,93 @@
          addMapping(TileEntityHopper.class, "Hopper");
+         addMapping(TileEntityComparator.class, "Comparator");
      }
 +
 +    // -- BEGIN FORGE PATCHES --

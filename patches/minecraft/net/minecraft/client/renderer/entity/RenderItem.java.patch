@@ -76,7 +76,7 @@
                          f8 = 1.0F;
  
                          if (this.field_77024_a)
-@@ -232,32 +223,26 @@
+@@ -238,32 +229,26 @@
              f11 = 0.021875F;
              ItemStack itemstack = par1EntityItem.getEntityItem();
              int j = itemstack.stackSize;
@@ -124,7 +124,7 @@
                  {
                      this.loadTexture("/terrain.png");
                  }
-@@ -346,11 +331,12 @@
+@@ -352,11 +337,12 @@
          float f;
          float f1;
          float f2;
@@ -140,7 +140,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -383,9 +369,9 @@
+@@ -389,9 +375,9 @@
                  GL11.glDisable(GL11.GL_LIGHTING);
                  par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
  
@@ -153,7 +153,7 @@
                      int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                      f = (float)(k1 >> 16 & 255) / 255.0F;
                      f1 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -439,7 +425,10 @@
+@@ -450,7 +436,10 @@
      {
          if (par3ItemStack != null)
          {
@@ -163,9 +163,9 @@
 +                this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
 +            }
  
-             if (par3ItemStack != null && par3ItemStack.hasEffect())
+             if (par3ItemStack.hasEffect())
              {
-@@ -576,4 +565,47 @@
+@@ -587,4 +576,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

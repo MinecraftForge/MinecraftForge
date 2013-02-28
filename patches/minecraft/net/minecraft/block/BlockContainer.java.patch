@@ -9,16 +9,3 @@
      }
  
      /**
-@@ -34,6 +34,12 @@
-      * Returns a new instance of a block's tile entity class. Called on placing the block.
-      */
-     public abstract TileEntity createNewTileEntity(World world);
-+    
-+
-+    public TileEntity createNewTileEntity(World world, int metadata)
-+    {
-+        return createNewTileEntity(world);
-+    }
- 
-     /**
-      * Called when the block receives a BlockEvent - see World.addBlockEvent. By default, passes it on to the tile

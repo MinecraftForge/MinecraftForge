@@ -9,7 +9,7 @@
  import java.util.Random;
  import net.minecraft.block.material.Material;
  import net.minecraft.client.renderer.texture.IconRegister;
-@@ -134,11 +136,6 @@
+@@ -135,11 +137,6 @@
      }
  
      /**
@@ -21,7 +21,7 @@
       * Called when the block is attempted to be harvested
       */
      public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
-@@ -149,6 +146,8 @@
+@@ -150,6 +147,8 @@
              par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
          }
  
@@ -30,7 +30,7 @@
          super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
      }
  
-@@ -157,24 +156,30 @@
+@@ -158,24 +157,30 @@
       */
      public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
      {

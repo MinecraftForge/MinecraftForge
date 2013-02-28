@@ -9,7 +9,7 @@
  import java.util.Random;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -11,6 +13,8 @@
+@@ -12,6 +14,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -18,7 +18,7 @@
  public class BlockStem extends BlockFlower
  {
      /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
-@@ -105,7 +109,8 @@
+@@ -106,7 +110,8 @@
  
                      int l1 = par1World.getBlockId(j1, par3 - 1, k1);
  
@@ -28,7 +28,7 @@
                      {
                          par1World.func_94575_c(j1, par3, k1, this.fruitType.blockID);
                      }
-@@ -141,11 +146,11 @@
+@@ -149,11 +154,11 @@
                  int j3 = par1World.getBlockId(l2, par3 - 1, i3);
                  float f1 = 0.0F;
  
@@ -42,12 +42,16 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -237,29 +242,22 @@
+@@ -245,29 +250,22 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
 -
 -        if (!par1World.isRemote)
+-        {
+-            Item item = null;
+-
+-            if (this.fruitType == Block.pumpkin)
 +    }
 +
 +    @Override 
@@ -56,14 +60,12 @@
 +        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 +
 +        for (int i = 0; i < 3; i++)
-         {
--            Item item = null;
--
--            if (this.fruitType == Block.pumpkin)
++        {
 +            if (world.rand.nextInt(15) <= metadata)
              {
 -                item = Item.pumpkinSeeds;
--            }
++                ret.add(new ItemStack(fruitType == pumpkin ? Item.pumpkinSeeds : Item.melonSeeds));
+             }
 -
 -            if (this.fruitType == Block.melon)
 -            {
@@ -76,9 +78,9 @@
 -                {
 -                    this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(item));
 -                }
-+                ret.add(new ItemStack(fruitType == pumpkin ? Item.pumpkinSeeds : Item.melonSeeds));
-             }
-         }
+-            }
+-        }
++        }
 +
 +        return ret;
      }

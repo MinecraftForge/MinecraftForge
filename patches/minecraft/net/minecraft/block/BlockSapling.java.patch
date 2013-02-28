@@ -1,15 +1,15 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockSapling.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockSapling.java
-@@ -15,6 +15,8 @@
- import net.minecraft.world.gen.feature.WorldGenTaiga2;
+@@ -16,6 +16,8 @@
  import net.minecraft.world.gen.feature.WorldGenTrees;
  import net.minecraft.world.gen.feature.WorldGenerator;
-+
-+import net.minecraftforge.event.terraingen.TerrainGen;
  
++import net.minecraftforge.event.terraingen.TerrainGen;
++
  public class BlockSapling extends BlockFlower
  {
-@@ -72,6 +74,8 @@
+     public static final String[] WOOD_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
+@@ -77,6 +79,8 @@
       */
      public void growTree(World par1World, int par2, int par3, int par4, Random par5Random)
      {

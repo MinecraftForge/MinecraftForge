@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
-@@ -64,6 +64,8 @@
+@@ -65,6 +65,8 @@
  import org.lwjgl.opengl.ARBOcclusionQuery;
  import org.lwjgl.opengl.GL11;
  
@@ -9,7 +9,33 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -932,6 +934,12 @@
+@@ -677,8 +679,8 @@
+                 this.sortedWorldRenderers[i1].isVisible = true;
+             }
+ 
+-            
+             this.theWorld.theProfiler.endStartSection("render");
++            System.out.println("1"+this.theWorld.theProfiler.getNameOfLastSection());
+             k = b0 + this.renderSortedRenderers(b1, l, par2, par3);
+ 
+             do
+@@ -776,6 +778,7 @@
+                 GL11.glEnable(GL11.GL_ALPHA_TEST);
+                 GL11.glEnable(GL11.GL_FOG);
+                 this.theWorld.theProfiler.endStartSection("render");
++                System.out.println("2"+this.theWorld.theProfiler.getNameOfLastSection());
+                 k += this.renderSortedRenderers(j1, l, par2, par3);
+             }
+             while (l < this.sortedWorldRenderers.length);
+@@ -783,6 +786,7 @@
+         else
+         {
+             this.theWorld.theProfiler.endStartSection("render");
++            System.out.println("3"+this.theWorld.theProfiler.getNameOfLastSection());
+             k = b0 + this.renderSortedRenderers(0, this.sortedWorldRenderers.length, par2, par3);
+         }
+ 
+@@ -934,6 +938,12 @@
       */
      public void renderSky(float par1)
      {
@@ -22,7 +48,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1170,6 +1178,13 @@
+@@ -1172,6 +1182,13 @@
  
      public void renderClouds(float par1)
      {
@@ -36,7 +62,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1599,6 +1614,11 @@
+@@ -1601,6 +1618,11 @@
      }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)

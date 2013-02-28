@@ -1,9 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemDye.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemDye.java
-@@ -20,6 +20,11 @@
+@@ -21,6 +21,12 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
++import net.minecraftforge.common.FakePlayerFactory;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event.Result;
@@ -12,44 +13,50 @@
  public class ItemDye extends Item
  {
      /** List of dye color names */
-@@ -73,6 +78,21 @@
-             if (par1ItemStack.getItemDamage() == 15)
-             {
-                 i1 = par3World.getBlockId(par4, par5, par6);
-+
-+                BonemealEvent event = new BonemealEvent(par2EntityPlayer, par3World, i1, par4, par5, par6);
-+                if (MinecraftForge.EVENT_BUS.post(event))
-+                {
-+                    return false;
-+                }
-+
-+                if (event.getResult() == Result.ALLOW)
-+                {
-+                    if (!par3World.isRemote)
-+                    {
-+                        par1ItemStack.stackSize--;
-+                    }
-+                    return true;
-+                }
+@@ -137,7 +143,27 @@
  
-                 if (i1 == Block.sapling.blockID)
-                 {
-@@ -172,16 +192,9 @@
-                                         par3World.setBlockAndMetadataWithNotify(k1, l1, i2, Block.tallGrass.blockID, 1, 3);
+     public static boolean func_96604_a(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4)
+     {
++        return applyBonemeal(par0ItemStack, par1World, par2, par3, par4, FakePlayerFactory.getMinecraft(par1World));
++    }
++
++    public static boolean applyBonemeal(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4, EntityPlayer player)
++    {
+         int l = par1World.getBlockId(par2, par3, par4);
++
++        BonemealEvent event = new BonemealEvent(player, par1World, l, par2, par3, par4);
++        if (MinecraftForge.EVENT_BUS.post(event))
++        {
++            return false;
++        }
++
++        if (event.getResult() == Result.ALLOW)
++        {
++            if (!par1World.isRemote)
++            {
++                par0ItemStack.stackSize--;
++            }
++            return true;
++        }
+ 
+         if (l == Block.sapling.blockID)
+         {
+@@ -240,16 +266,9 @@
+                                             par1World.setBlockAndMetadataWithNotify(j1, k1, l1, Block.tallGrass.blockID, 1, 3);
+                                         }
+                                     }
+-                                    else if (itemRand.nextInt(3) != 0)
++                                    else
+                                     {
+-                                        if (Block.plantYellow.canBlockStay(par1World, j1, k1, l1))
+-                                        {
+-                                            par1World.func_94575_c(j1, k1, l1, Block.plantYellow.blockID);
+-                                        }
+-                                    }
+-                                    else if (Block.plantRed.canBlockStay(par1World, j1, k1, l1))
+-                                    {
+-                                        par1World.func_94575_c(j1, k1, l1, Block.plantRed.blockID);
++                                        ForgeHooks.plantGrass(par1World, j1, k1, l1);
                                      }
                                  }
--                                else if (itemRand.nextInt(3) != 0)
-+                                else
-                                 {
--                                    if (Block.plantYellow.canBlockStay(par3World, k1, l1, i2))
--                                    {
--                                        par3World.func_94575_c(k1, l1, i2, Block.plantYellow.blockID);
--                                    }
--                                }
--                                else if (Block.plantRed.canBlockStay(par3World, k1, l1, i2))
--                                {
--                                    par3World.func_94575_c(k1, l1, i2, Block.plantRed.blockID);
-+                                    ForgeHooks.plantGrass(par3World, k1, l1, i2);
-                                 }
                              }
-                         }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
 +++ ../src_work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
-@@ -161,6 +161,11 @@
+@@ -172,6 +172,11 @@
  import net.minecraft.world.storage.MapStorage;
  import org.lwjgl.input.Keyboard;
  
@@ -12,7 +12,7 @@
  @SideOnly(Side.CLIENT)
  public class NetClientHandler extends NetHandler
  {
-@@ -737,7 +742,7 @@
+@@ -748,7 +753,7 @@
  
      public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
      {
@@ -21,7 +21,7 @@
          this.disconnected = true;
          this.mc.loadWorld((WorldClient)null);
          this.mc.displayGuiScreen(new GuiDisconnected("disconnect.disconnected", "disconnect.genericReason", new Object[] {par1Packet255KickDisconnect.reason}));
-@@ -803,7 +808,11 @@
+@@ -814,7 +819,11 @@
      public void handleChat(Packet3Chat par1Packet3Chat)
      {
          par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
@@ -34,7 +34,7 @@
      }
  
      public void handleAnimation(Packet18Animation par1Packet18Animation)
-@@ -1217,6 +1226,10 @@
+@@ -1248,6 +1257,10 @@
                  {
                      tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
                  }

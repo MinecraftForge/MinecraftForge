@@ -33,7 +33,7 @@
  
                  if (flag)
                  {
-@@ -328,6 +338,12 @@
+@@ -336,6 +346,12 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -46,7 +46,7 @@
  
          if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
          {
-@@ -370,7 +386,15 @@
+@@ -378,7 +394,15 @@
          }
          else
          {
@@ -63,7 +63,7 @@
          }
      }
  
-@@ -392,9 +416,10 @@
+@@ -400,9 +424,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

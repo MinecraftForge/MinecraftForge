@@ -8,15 +8,15 @@
  import java.util.Random;
  import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -9,6 +10,7 @@
- import net.minecraft.item.ItemStack;
+@@ -10,6 +11,7 @@
  import net.minecraft.util.Icon;
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeDirection;
  
  public class BlockCrops extends BlockFlower
  {
-@@ -95,11 +97,11 @@
+@@ -103,11 +105,11 @@
                  int j3 = par1World.getBlockId(l2, par3 - 1, i3);
                  float f1 = 0.0F;
  
@@ -30,7 +30,7 @@
                      {
                          f1 = 3.0F;
                      }
-@@ -167,22 +169,25 @@
+@@ -175,22 +177,25 @@
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
          super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);

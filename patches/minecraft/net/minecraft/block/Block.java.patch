@@ -23,8 +23,8 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -25,8 +30,10 @@
- import net.minecraft.item.ItemSlab;
+@@ -26,8 +31,10 @@
+ import net.minecraft.item.ItemSnow;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
 +import net.minecraft.tileentity.TileEntity;
@@ -34,7 +34,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -34,9 +41,20 @@
+@@ -35,9 +42,20 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -55,7 +55,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -328,6 +346,7 @@
+@@ -330,6 +348,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -63,7 +63,7 @@
      }
  
      /**
-@@ -450,9 +469,10 @@
+@@ -452,9 +471,10 @@
          return this.needsRandomTick;
      }
  
@@ -75,7 +75,7 @@
      }
  
      /**
-@@ -475,7 +495,7 @@
+@@ -477,7 +497,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -485,7 +505,7 @@
+@@ -487,7 +507,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -93,7 +93,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -634,7 +654,13 @@
+@@ -636,7 +656,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -108,7 +108,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -658,8 +684,7 @@
+@@ -660,8 +686,7 @@
       */
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
@@ -118,7 +118,7 @@
      }
  
      /**
-@@ -677,18 +702,13 @@
+@@ -679,18 +704,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -141,7 +141,7 @@
                  }
              }
          }
-@@ -1081,7 +1101,7 @@
+@@ -1083,7 +1103,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -150,7 +150,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1097,12 +1117,13 @@
+@@ -1099,12 +1119,13 @@
          }
      }
  
@@ -165,7 +165,7 @@
      }
  
      /**
-@@ -1398,4 +1419,870 @@
+@@ -1406,4 +1427,871 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -435,6 +435,7 @@
 +        blockFlammability[id] = flammability;
 +    }
 +
++    private boolean isTileProvider = this instanceof ITileEntityProvider;
 +    /**
 +     * Called throughout the code as a replacement for block instanceof BlockContainer
 +     * Moving this to the Block base class allows for mods that wish to extend vinella
@@ -447,22 +448,22 @@
 +     */
 +    public boolean hasTileEntity(int metadata)
 +    {
-+        return isBlockContainer;
++        return isTileProvider;
 +    }
 +
 +    /**
-+     * Called throughout the code as a replacement for BlockContainer.getBlockEntity
++     * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
 +     * Return the same thing you would from that function.
-+     * This will fall back to BlockContainer.getBlockEntity if this block is a BlockContainer.
++     * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
 +     *
 +     * @param metadata The Metadata of the current block
 +     * @return A instance of a class extending TileEntity
 +     */
 +    public TileEntity createTileEntity(World world, int metadata)
 +    {
-+        if (this instanceof BlockContainer)
++        if (isTileProvider)
 +        {
-+            return ((BlockContainer)this).createNewTileEntity(world, metadata);
++            return ((ITileEntityProvider)this).createNewTileEntity(world);
 +        }
 +        return null;
 +    }
@@ -960,7 +961,7 @@
 +    {
 +        if (blockID == grass.blockID)
 +        {
-+            world.func_94575_c(x, y, z, dirt.blockID);
++            world.setBlockAndMetadataWithNotify(x, y, z, dirt.blockID, 0, 2);
 +        }
 +    }
 +
