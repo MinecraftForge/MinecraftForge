@@ -122,18 +122,21 @@ public class GuiModList extends GuiScreen
                 if (!selectedMod.getMetadata().logoFile.isEmpty())
                 {
                     List<Texture> texList = TextureManager.func_94267_b().func_94266_e(selectedMod.getMetadata().logoFile);
-                    Texture texture = texList.get(0);
-                    texture.func_94277_a(0);
-                    int top = 32;
-                    Tessellator tess = Tessellator.field_78398_a;
-                    tess.func_78382_b();
-                    tess.func_78374_a(offset,                          top + texture.func_94284_b(), field_73735_i, 0, 1);
-                    tess.func_78374_a(offset + texture.func_94282_c(), top + texture.func_94284_b(), field_73735_i, 1, 1);
-                    tess.func_78374_a(offset + texture.func_94282_c(), top,                          field_73735_i, 1, 0);
-                    tess.func_78374_a(offset,                          top,                          field_73735_i, 0, 0);
-                    tess.func_78381_a();
-
-                    shifty += 65;
+                    if (texList != null)// Potentially could not find the texture
+                    {
+                        Texture texture = texList.get(0);
+                        texture.func_94277_a(0);
+                        int top = 32;
+                        Tessellator tess = Tessellator.field_78398_a;
+                        tess.func_78382_b();
+                        tess.func_78374_a(offset,                          top + texture.func_94284_b(), field_73735_i, 0, 1);
+                        tess.func_78374_a(offset + texture.func_94282_c(), top + texture.func_94284_b(), field_73735_i, 1, 1);
+                        tess.func_78374_a(offset + texture.func_94282_c(), top,                          field_73735_i, 1, 0);
+                        tess.func_78374_a(offset,                          top,                          field_73735_i, 0, 0);
+                        tess.func_78381_a();
+    
+                        shifty += 65;
+                    }
                 }
                 this.field_73886_k.func_78261_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
                 shifty += 12;
