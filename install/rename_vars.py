@@ -124,13 +124,16 @@ def rename_class(data, indent='3', MCP=False):
             if method:
                 namer = VarNamer()
                 todo = map(lambda x: [x, namer.get_name(x.split(' ')[0], x)], method_variables)
-     
-                todo.reverse()
+                
+                replace = {}
                 for mapping in todo:
                     if not ' ' in mapping[0]:
                         continue
-                    original = mapping[0].split(' ')[1]
-                    to = mapping[1]
+                    replace[mapping[0].split(' ')[1]] = mapping[1]
+                    
+                for k in sorted(replace, key=len, reverse=True):
+                    original = k
+                    to = replace[k]
                     
                     #Don't rename already renamed things.
                     if not re.match('var\d+', original):

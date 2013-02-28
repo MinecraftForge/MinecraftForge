@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-+++ ../src-work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -1,5 +1,6 @@
- package net.minecraft.client.renderer;
- 
-+import cpw.mods.fml.client.TextureFXManager;
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
- import net.minecraft.block.Block;
