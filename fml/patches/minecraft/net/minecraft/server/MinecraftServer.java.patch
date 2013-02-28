@@ -19,7 +19,7 @@
 +
 +                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
  
-                 for (long k0 = 0L; this.field_71317_u; this.field_71296_Q = true)
+                 for (long j = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
 @@ -390,6 +397,7 @@
  
