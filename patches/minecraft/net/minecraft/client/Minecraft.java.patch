@@ -11,6 +11,15 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
+@@ -369,7 +373,7 @@
+ 
+         try
+         {
+-            Display.create((new PixelFormat()).withDepthBits(24));
++            Display.create((new PixelFormat()).withDepthBits(24).withStencilBits(8));
+         }
+         catch (LWJGLException lwjglexception)
+         {
 @@ -1239,7 +1243,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
