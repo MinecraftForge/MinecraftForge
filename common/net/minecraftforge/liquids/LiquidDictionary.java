@@ -8,6 +8,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * When creating liquids you should register them with this class.
@@ -18,6 +20,7 @@ public abstract class LiquidDictionary
 {
 
     private static Map<String, LiquidStack> liquids = new HashMap<String, LiquidStack>();
+    private static Map<List<Integer>, String> tags = new HashMap<List<Integer>, String>();
 
     /**
      * When creating liquids you should call this function.
@@ -37,6 +40,7 @@ public abstract class LiquidDictionary
             return existing.copy();
         }
         liquids.put(name, liquid.copy());
+        tags.put(Arrays.asList(liquid.itemID, liquid.itemMeta), name);
         MinecraftForge.EVENT_BUS.post(new LiquidRegisterEvent(name, liquid));
         return liquid;
     }
@@ -60,6 +64,20 @@ public abstract class LiquidDictionary
         liquid = liquid.copy();
         liquid.amount = amount;
         return liquid;
+    }
+    
+    /**
+     * Returns the name matching the liquid,
+     * if such a liquid exists.
+     *
+     * Can return null.
+     *
+     * @param liquid the LiquidStack
+     * @return String a unique tag for the liquid
+     */
+    public static String getLiquidName(LiquidStack liquid)
+    {
+        return tags.get(Arrays.asList(liquid.itemID, liquid.itemMeta));
     }
 
     /**
