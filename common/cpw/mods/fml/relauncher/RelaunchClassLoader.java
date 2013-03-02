@@ -140,7 +140,7 @@ public class RelaunchClassLoader extends URLClassLoader
             String fName = untransformedName.replace('.', '/').concat(".class");
             String pkgPath = pkgname.replace('.', '/');
             URLConnection urlConnection = findCodeSourceConnectionFor(fName);
-            if (urlConnection instanceof JarURLConnection && lastDot > -1)
+            if (urlConnection instanceof JarURLConnection && lastDot > -1 && !untransformedName.startsWith("net.minecraft."))
             {
                 JarURLConnection jarUrlConn = (JarURLConnection)urlConnection;
                 JarFile jf = jarUrlConn.getJarFile();
@@ -169,7 +169,7 @@ public class RelaunchClassLoader extends URLClassLoader
                     }
                 }
             }
-            else if (lastDot > -1)
+            else if (lastDot > -1 && !untransformedName.startsWith("net.minecraft."))
             {
                 Package pkg = getPackage(pkgname);
                 if (pkg == null)
