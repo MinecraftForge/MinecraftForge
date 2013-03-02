@@ -24,7 +24,7 @@
      }
  
      public int func_82145_z()
-@@ -1852,4 +1856,9 @@
+@@ -1905,4 +1909,9 @@
      {
          return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.field_71092_bJ);
      }

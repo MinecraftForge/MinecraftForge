@@ -12,7 +12,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.BorderLayout;
-@@ -114,6 +120,8 @@
+@@ -115,6 +121,8 @@
  import org.lwjgl.opengl.PixelFormat;
  import org.lwjgl.util.glu.GLU;
  
@@ -21,7 +21,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -297,6 +305,8 @@
+@@ -298,6 +306,8 @@
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
  
@@ -48,7 +48,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -725,9 +739,11 @@
+@@ -722,9 +736,11 @@
  
              if (!this.field_71454_w)
              {
@@ -60,7 +60,7 @@
              }
  
              GL11.glFlush();
-@@ -1257,10 +1273,14 @@
+@@ -1254,10 +1270,14 @@
  
      public void func_71407_l()
      {
@@ -75,7 +75,7 @@
  
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
-@@ -1718,6 +1738,8 @@
+@@ -1715,6 +1735,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -84,7 +84,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1756,8 +1778,27 @@
+@@ -1753,8 +1775,27 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
@@ -112,7 +112,7 @@
          this.field_71455_al = true;
          this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
  
-@@ -1979,6 +2020,12 @@
+@@ -1976,6 +2017,12 @@
  
      public static void main(String[] p_main_0_)
      {

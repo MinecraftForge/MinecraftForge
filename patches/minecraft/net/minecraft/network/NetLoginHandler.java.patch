@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/network/NetLoginHandler.java
 +++ ../src-work/minecraft/net/minecraft/network/NetLoginHandler.java
-@@ -12,11 +12,15 @@
+@@ -11,11 +11,15 @@
+ import java.util.List;
  import java.util.Random;
- import java.util.logging.Logger;
  import javax.crypto.SecretKey;
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
@@ -16,7 +16,7 @@
  import net.minecraft.network.packet.Packet252SharedKey;
  import net.minecraft.network.packet.Packet253ServerAuthData;
  import net.minecraft.network.packet.Packet254ServerPing;
-@@ -56,7 +60,7 @@
+@@ -54,7 +58,7 @@
              this.func_72529_d();
          }
  
@@ -25,7 +25,7 @@
          {
              this.func_72527_a("Took too long to log in");
          }
-@@ -150,11 +154,18 @@
+@@ -148,11 +152,18 @@
          }
      }
  
@@ -46,7 +46,7 @@
  
          if (s != null)
          {
-@@ -272,4 +283,22 @@
+@@ -270,4 +281,22 @@
      {
          return p_72531_0_.field_72544_i = p_72531_1_;
      }

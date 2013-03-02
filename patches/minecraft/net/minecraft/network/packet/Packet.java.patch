@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/packet/Packet.java
 +++ ../src-work/minecraft/net/minecraft/network/packet/Packet.java
-@@ -352,7 +352,7 @@
+@@ -357,7 +357,7 @@
          func_73285_a(107, true, true, Packet107CreativeSetSlot.class);
          func_73285_a(108, false, true, Packet108EnchantItem.class);
          func_73285_a(130, true, true, Packet130UpdateSign.class);
