@@ -10,7 +10,7 @@
  import net.minecraft.entity.ai.EntityMinecartMobSpawner;
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.boss.EntityWither;
-@@ -120,9 +123,10 @@
+@@ -125,9 +128,10 @@
              p_75615_0_.func_82580_o("Type");
          }
  
@@ -22,7 +22,7 @@
  
              if (oclass != null)
              {
-@@ -136,7 +140,17 @@
+@@ -141,7 +145,17 @@
  
          if (entity != null)
          {
