@@ -42,16 +42,21 @@ public class RelaunchLibraryManager
         try
         {
             // Are we in a 'decompiled' environment?
-            actualClassLoader.getClassBytes("net.minecraft.world.World");
-            FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
-            deobfuscatedEnvironment = true;
+            byte[] bs = actualClassLoader.getClassBytes("net.minecraft.world.World");
+            if (bs != null)
+            {
+                FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
+                deobfuscatedEnvironment = true;
+            }
         }
         catch (IOException e1)
         {
-            FMLRelaunchLog.fine("Enabling runtime deobfuscation");
-            deobfuscatedEnvironment = false;
         }
 
+        if (!deobfuscatedEnvironment)
+        {
+            FMLRelaunchLog.fine("Enabling runtime deobfuscation");
+        }
         pluginLocations = new HashMap<IFMLLoadingPlugin, File>();
         loadPlugins = new ArrayList<IFMLLoadingPlugin>();
         libraries = new ArrayList<ILibrarySet>();

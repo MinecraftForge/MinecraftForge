@@ -215,7 +215,7 @@
     <antcall target="writeversion"/>
   </target>
 
-  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack,build-deobf-data" />
+  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-deobf-data,build-universal,build-source-pack" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
 
