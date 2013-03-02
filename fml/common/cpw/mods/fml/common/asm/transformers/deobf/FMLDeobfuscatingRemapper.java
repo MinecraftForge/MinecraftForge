@@ -96,6 +96,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         methodNameMaps = Maps.newHashMapWithExpectedSize(rawMethodMaps.size());
         fieldNameMaps = Maps.newHashMapWithExpectedSize(rawFieldMaps.size());
     }
+
+    public boolean isRemappedClass(String className)
+    {
+        return classNameBiMap.containsKey(className);
+    }
+
     private void parseField(String[] parts)
     {
         String oldSrg = parts[1];
