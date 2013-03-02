@@ -35,6 +35,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.io.LineProcessor;
 import com.google.common.io.Resources;
 
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.relauncher.IClassTransformer;
 
 public class AccessTransformer implements IClassTransformer
@@ -145,12 +146,34 @@ public class AccessTransformer implements IClassTransformer
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
-    	if (bytes == null) { return null; }
-        if (!modifiers.containsKey(name)) { return bytes; }
+        if (bytes == null) { return null; }
+        boolean makeAllPublic = FMLDeobfuscatingRemapper.INSTANCE.isRemappedClass(name);
+
+        if (!makeAllPublic && !modifiers.containsKey(name)) { return bytes; }
 
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
+
+        if (makeAllPublic)
+        {
+            // class
+            Modifier m = new Modifier();
+            m.targetAccess = ACC_PUBLIC;
+            m.modifyClassVisibility = true;
+            modifiers.put(name,m);
+            // fields
+            m = new Modifier();
+            m.targetAccess = ACC_PUBLIC;
+            m.name = "*";
+            modifiers.put(name,m);
+            // methods
+            m = new Modifier();
+            m.targetAccess = ACC_PUBLIC;
+            m.name = "*";
+            m.desc = "";
+            modifiers.put(name,m);
+        }
 
         Collection<Modifier> mods = modifiers.get(name);
         for (Modifier m : mods)
