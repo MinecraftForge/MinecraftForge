@@ -203,7 +203,16 @@
     </zip>
   </target>
 
-  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack" />
+  <target name="build-deobf-data" depends="makeversion">
+    <zip file="deobfuscation_data_${version.minecraft}.zip">
+      <mappedresources>
+        <fileset dir="${mcp.home}/conf" includes="packaged.srg"/>
+        <globmapper from="packaged.srg" to="joined.srg"/>
+      </mappedresources>
+    </zip>
+  </target>
+
+  <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack,build-deobf-data" />
 
   <target name="jenkinsbuild" depends="buildenvsetup,jenkinsfmldecompile,patch,build"/>
 

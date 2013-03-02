@@ -7,7 +7,7 @@ func_70004_a,translateString,2,Translates and formats the given string key with 
 func_70005_c_,getCommandSenderName,2,"Gets the name of this command sender (usually username, but possibly ""Rcon"")"
 func_70006_a,sendChatToPlayer,2,
 func_70007_b,resetLog,2,Clears the RCon log
-func_70008_c,getChatBuffer,2,
+func_70008_c,getLogContents,2,Gets the contents of the RCon log
 func_70011_f,getDistance,2,"Gets the distance to the position. Args: x, y, z"
 func_70012_b,setLocationAndAngles,2,Sets the location and Yaw/Pitch of an entity in the world
 func_70013_c,getBrightness,2,Gets how bright this entity is.
@@ -32,7 +32,7 @@ func_70031_b,setSprinting,2,Set sprinting switch for Entity.
 func_70032_d,getDistanceToEntity,2,Returns the distance to the entity. Args: entity
 func_70033_W,getYOffset,2,Returns the Y Offset of this entity.
 func_70034_d,setRotationYawHead,2,Sets the head's yaw rotation of the entity.
-func_70035_c,getLastActiveItems,2,
+func_70035_c,getInventory,2,returns the inventory of this entity (only used in EntityPlayerMP it seems)
 func_70036_a,playStepSound,2,"Plays step sound at given x, y, z for the entity"
 func_70037_a,readEntityFromNBT,2,(abstract) Protected helper method to read subclass entity data from NBT.
 func_70038_c,isOffsetPositionInLiquid,2,"Checks if the offset position from the entity's current position is inside of liquid. Args: x, y, z"
@@ -528,14 +528,14 @@ func_71062_b,canHarvestBlock,2,Checks if the player has the ability to harvest a
 func_71063_a,setSpawnChunk,2,Defines a spawn coordinate to player spawn. Used by bed after the player sleep on it.
 func_71064_a,addStat,2,Adds a value to a statistic field.
 func_71065_l,isInBed,2,Checks if the player is currently in a bed
-func_71110_a,sendContainerAndContentsToPlayer,2,
+func_71110_a,updateCraftingInventory,2,update the crafting window inventory with the items in the list
 func_71111_a,sendSlotContents,2,"Sends the contents of an inventory slot to the client-side Container. This doesn't have to match the actual contents of that slot. Args: Container, slot number, slot contents"
 func_71112_a,sendProgressBarUpdate,2,"Sends two ints to the client-side Container. Used for furnace burning time, smelting progress, brewing progress, and enchanting level. Normally the first int identifies which variable to update, and the second contains the new value. Both are truncated to shorts in non-local SMP."
 func_71113_k,updateHeldItem,2,updates item held by mouse
 func_71114_r,getPlayerIP,2,Gets the player's IP address. Used in /banip.
 func_71115_a,requestTexturePackLoad,2,on recieving this message the client (if permission is given) will download the requested textures
 func_71116_b,addSelfToInternalCraftingInventory,2,
-func_71117_bO,incrementWindowID,2,
+func_71117_bO,getNextWindowId,2,get the next window id to use
 func_71118_n,setPlayerHealthUpdated,2,"this function is called when a players inventory is sent to him, lastHealth is updated on any dimension transitions, then reset."
 func_71119_a,sendTileEntityToPlayer,2,called from onUpdate for all tileEntity in specific chunks
 func_71120_a,sendContainerToPlayer,2,
@@ -546,7 +546,7 @@ func_71124_b,getCurrentItemOrArmor,2,"0 = item, 1-n is armor"
 func_71125_a,updateClientInfo,2,
 func_71126_v,getChatVisibility,2,
 func_71127_g,onUpdateEntity,2,
-func_71128_l,closeInventory,2,
+func_71128_l,closeCraftingGui,2,close the current crafting gui
 func_71150_b,setHealth,2,Updates health locally.
 func_71151_f,getFOVMultiplier,2,Gets the player's field of view multiplier. (ex. when flying)
 func_71152_a,setXPStats,2,"Sets the current XP, total XP, and level number."
@@ -619,7 +619,7 @@ func_71248_a,getPossibleCompletions,2,"If par2Str begins with /, then it searche
 func_71249_w,getMinecraftVersion,2,Returns the server's Minecraft version as string.
 func_71250_E,getKeyPair,2,Gets KeyPair instanced in MinecraftServer.
 func_71251_e,setCanSpawnAnimals,2,
-func_71252_i,executeCommand,2,
+func_71252_i,handleRConCommand,2,Handle a command received by an RCon instance
 func_71253_a,setKeyPair,2,
 func_71254_M,getActiveAnvilConverter,2,
 func_71255_r,getAllowNether,2,
@@ -1077,12 +1077,12 @@ func_72352_l,getMaxPlayers,2,Returns the maximum number of players allowed on th
 func_72353_e,areCommandsAllowed,2,Returns true if the specific player is allowed to use commands.
 func_72354_b,updateTimeAndWeatherForPlayer,2,Updates the time and weather for the given player to those of the given world
 func_72355_a,initializeConnectionToPlayer,2,
-func_72356_a,transferPlayerToDimension,2,
+func_72356_a,transferPlayerToDimension,2,moves provided player from overworld to nether or vice versa
 func_72357_a,setGameType,2,
 func_72358_d,serverUpdateMountedMovingPlayer,2,"using player's dimension, update their movement when in a vehicle (e.g. cart, boat)"
 func_72359_h,addToWhiteList,2,Add the specified player to the white list.
 func_72360_c,removeOp,2,"This removes a username from the ops list, then saves the op list"
-func_72361_f,getPlayerForUsername,2,
+func_72361_f,getPlayerEntity,2,gets the player entity for the player with the name specified
 func_72362_j,loadWhiteList,2,"Either does nothing, or calls readWhiteList."
 func_72363_f,getBannedIPs,2,
 func_72364_a,setPlayerManager,2,Sets the NBT manager to the one for the WorldServer given.
@@ -1216,7 +1216,7 @@ func_72523_a,handleWindowClick,2,
 func_72524_a,handleAnimation,2,
 func_72525_c,getSharedKey,2,Return the secret AES sharedKey
 func_72526_a,getServerId,2,Returns the server Id randomly generated by this login handler.
-func_72527_a,raiseErrorAndDisconnect,2,
+func_72527_a,kickUser,2,Disconnects the user with the given reason.
 func_72528_e,getUsernameAndAddress,2,
 func_72529_d,initializePlayerConnection,2,"on success the specified username is connected to the minecraftInstance, otherwise they are packet255'd"
 func_72530_b,getLoginMinecraftServer,2,Returns the reference to Minecraft Server.
@@ -1231,7 +1231,7 @@ func_72550_a,sendSessionRequest,2,Send request to http://session.minecraft.net w
 func_72551_d,processReadPackets,2,Processes the packets that have been read since the last call to this function.
 func_72552_c,addToSendQueue,2,Adds the packet to the send queue
 func_72553_e,disconnect,2,Disconnects the network connection.
-func_72565_c,kickPlayerFromServer,2,
+func_72565_c,kickPlayer,2,Kick the offending player and give a reason why
 func_72566_d,handleSlashCommand,2,Processes a / command
 func_72567_b,sendPacketToPlayer,2,"addToSendQueue. if it is a chat packet, check before sending it"
 func_72568_e,packetSize,2,returns 0 for memoryMapped connections
@@ -1289,9 +1289,9 @@ func_72683_a,addPlayer,2,Adds an EntityPlayerMP to the PlayerManager.
 func_72685_d,updateMountedMovingPlayer,2,"update chunks around a player being moved by server logic (e.g. cart, boat)"
 func_72686_a,getFurthestViewableBlock,2,Get the furthest viewable block given player's view distance
 func_72687_a,flagChunkForUpdate,2,"the ""PlayerInstance""/ chunkWatcher will send this chunk to all players who are in line of sight"
-func_72688_a,getWorldServer,2,
+func_72688_a,getMinecraftServer,2,Returns the MinecraftServer associated with the PlayerManager.
 func_72689_b,getChunkWatchers,2,
-func_72690_a,getOrCreateChunkWatcher,2,
+func_72690_a,getPlayerInstance,2,passi n the chunk x and y and a flag as to whether or not the instance should be made if it doesnt exist
 func_72691_b,filterChunkLoadQueue,2,Removes all chunks from the given player's chunk load queue that are not in viewing range of the player.
 func_72692_a,getWorldServer,2,
 func_72693_b,updatePlayerInstances,2,updates all the player instances that need to be updated
@@ -1452,7 +1452,7 @@ func_72909_d,markBlockRangeForRenderUpdate,2,"On the client, re-renders all bloc
 func_72910_y,getLoadedEntityList,2,Accessor for world Loaded Entity List
 func_72911_I,isThundering,2,Returns true if the current thunder strength (weighted with the rain strength) is greater than 0.9
 func_72912_H,getWorldInfo,2,Gets the World's WorldInfo instance
-func_72913_w,toggleRain,2,
+func_72913_w,commandToggleDownfall,2,start precipitation in this world (2 ticks after command posted)
 func_72914_a,addWorldInfoToCrashReport,2,Adds some basic stats of the world to the given crash report.
 func_72915_b,setLightValue,2,"Sets the light value either into the sky map or block map depending on if enumSkyBlock is set to sky or block. Args: enumSkyBlock, x, y, z, lightValue"
 func_72916_c,chunkExists,2,"Returns whether a chunk exists at chunk coordinates x, y"
@@ -1572,7 +1572,7 @@ func_73119_a,informAllAssociatedPlayersOfItemDestruction,2,
 func_73120_a,sendPacketToAllTrackingPlayers,2,"if this is a player, then it is not informed"
 func_73121_d,isPlayerWatchingThisChunk,2,
 func_73122_a,sendLocationToAllClients,2,"also sends velocity, rotation, and riding info."
-func_73123_c,removePlayerFromTracker,2,
+func_73123_c,removeTrackedPlayerSymmetric,2,Remove a tracked player from our list and tell the tracked player to destroy us from their world.
 func_73124_b,getPacketForThisEntity,2,
 func_73125_b,sendEventsToPlayers,2,
 func_73148_d,makeString,2,Converts the instance data to a readable string.
@@ -1601,14 +1601,14 @@ func_73240_a,unloadAllChunks,2,"marks all chunks for unload, ignoring those near
 func_73241_b,unloadChunksIfNotNearSpawn,2,"marks chunk for unload by ""unload100OldestChunks""  if there is no spawn point, or if the center of the chunk is outside 200 blocks (x or z) of the spawn"
 func_73242_b,safeSaveChunk,2,"used by saveChunks, but catches any exceptions if the save fails."
 func_73243_a,safeSaveExtraChunkData,2,"used by saveChunks, but catches any exceptions if the save fails."
-func_73252_b,sendThisChunkToPlayer,2,
+func_73252_b,removePlayer,2,remove player from this instance
 func_73253_a,getChunkLocation,2,
 func_73254_a,sendChunkUpdate,2,
 func_73255_a,addPlayerToChunkWatchingList,2,called for all chunks within the visible radius of the player
-func_73256_a,sendToAllPlayersWatchingChunk,2,
-func_73257_a,sendTileToAllPlayersWatchingChunk,2,
+func_73256_a,sendPacketToPlayersInInstance,2,sends the packet to all players in the current instance
+func_73257_a,updateTileEntity,2,sends players update packet about the given entity
 func_73258_b,getPlayersInChunk,2,
-func_73259_a,flagChunkForUpdate,2,
+func_73259_a,markBlockNeedsUpdate,2,mark the block as changed so that it will update clients who need to know about it
 func_73266_a,writePacket,2,"Writes a packet, prefixed by its ID, to the data stream."
 func_73267_a,readPacketData,2,Abstract. Reads the raw packet data from the data stream.
 func_73268_a,containsSameEntityIDAs,2,eg return packet30entity.entityId == entityId; WARNING : will throw if you compare a packet to a different packet class
@@ -2466,7 +2466,7 @@ func_75680_a,writeObjectsInListToStream,2,"writes every object in passed list to
 func_75681_e,getWatchableObjectString,2,gets a watchable object and returns it as a String
 func_75682_a,addObject,2,"adds a new object to dataWatcher to watch, to update an already existing object see updateObject. Arguments: data Value Id, Object to add"
 func_75683_a,getWatchableObjectByte,2,gets the bytevalue of a watchable object
-func_75684_a,hasChanges,2,
+func_75684_a,hasObjectChanged,2,true if one or more object was changed
 func_75685_c,getAllWatched,2,
 func_75686_a,readWatchableObjects,2,
 func_75687_a,updateWatchedObjectsFromList,2,
@@ -2575,7 +2575,7 @@ func_75887_a,decryptSharedKey,2,Decrypt shared secret AES key using RSA private 
 func_75888_a,decryptInputStream,2,
 func_75889_b,decryptData,2,Decrypt byte[] data with RSA private key
 func_75890_a,createNewSharedKey,2,Generate a new shared secret AES key from a secure random source
-func_75891_b,createNewKeyPair,2,
+func_75891_b,generateKeyPair,2,Generates RSA KeyPair
 func_75892_a,createBufferedBlockCipher,2,Create a new BufferedBlockCipher instance
 func_75893_a,digestOperation,2,Compute a message digest on arbitrary byte[] data
 func_75894_a,encryptData,2,Encrypt byte[] data with RSA public key
@@ -2680,7 +2680,7 @@ func_76126_a,sin,2,sin looked up in a table
 func_76127_a,average,2,
 func_76128_c,floor_double,2,Returns the greatest integer less than or equal to the double argument
 func_76129_c,sqrt_float,2,
-func_76130_a,abs_int,2,
+func_76130_a,abs,2,Returns the unsigned value of an int.
 func_76131_a,clamp_float,2,"Returns the value of the first parameter, clamped to be within the lower and upper limits given by the second and third parameters"
 func_76132_a,abs_max,2,Maximum of the absolute value of two numbers.
 func_76133_a,sqrt_double,2,
