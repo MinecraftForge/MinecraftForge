@@ -205,14 +205,20 @@
   </target>
 
   <target name="build-deobf-data" depends="makeversion">
-    <zip file="deobfuscation_data_${version.minecraft}.zip">
+    <mkdir dir="build-tmp-deobf"/>
+    <copy todir="build-tmp-deobf">
       <mappedresources>
         <fileset dir="${mcp.home}/conf" includes="packaged.srg"/>
         <globmapper from="packaged.srg" to="joined.srg"/>
       </mappedresources>
+    </copy>
+    <touch millis="0" file="build-tmp-deobf/joined.srg"/>
+    <zip file="deobfuscation_data_${version.minecraft}.zip">
+      <fileset dir="build-tmp-deobf" includes="joined.srg"/>
     </zip>
     <checksum algorithm="SHA1" property="deobf.checksum" file="deobfuscation_data_${version.minecraft}.zip"/>
     <antcall target="writeversion"/>
+    <delete dir="build-tmp-deobf" />
   </target>
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-deobf-data,build-universal,build-source-pack" />
