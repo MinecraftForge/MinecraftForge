@@ -144,7 +144,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     @Override
     public String mapFieldName(String owner, String name, String desc)
     {
-        if (classNameBiMap == null)
+        if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return name;
         }
@@ -155,7 +155,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     @Override
     public String map(String typeName)
     {
-        if (classNameBiMap == null)
+        if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return typeName;
         }
@@ -177,7 +177,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     @Override
     public String mapMethodName(String owner, String name, String desc)
     {
-        if (classNameBiMap==null)
+        if (classNameBiMap==null || classNameBiMap.isEmpty())
         {
             return name;
         }
@@ -229,7 +229,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     }
     public void mergeSuperMaps(String name, String superName, String[] interfaces)
     {
-        if (classNameBiMap == null)
+        if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return;
         }
