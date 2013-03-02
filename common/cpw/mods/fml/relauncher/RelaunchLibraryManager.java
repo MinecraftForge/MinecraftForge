@@ -239,6 +239,8 @@ public class RelaunchLibraryManager
                 }
             }
         }
+        // Deobfuscation transformer, always last
+        actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
 
         downloadMonitor.updateProgressString("Running coremod plugins");
         Map<String,Object> data = new HashMap<String,Object>();
