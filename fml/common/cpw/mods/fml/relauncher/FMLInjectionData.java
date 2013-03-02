@@ -17,6 +17,8 @@ public class FMLInjectionData
     static String build;
     static String mccversion;
     static String mcpversion;
+    static String deobfuscationDataHash;
+
     public static List<String> containers = new ArrayList<String>();
 
     static void build(File mcHome, RelaunchClassLoader classLoader)
@@ -43,10 +45,13 @@ public class FMLInjectionData
         build = properties.getProperty("fmlbuild.build.number", "missing");
         mccversion = properties.getProperty("fmlbuild.mcversion", "missing");
         mcpversion = properties.getProperty("fmlbuild.mcpversion", "missing");
-
-
+        deobfuscationDataHash = properties.getProperty("fmlbuild.deobfuscation.hash","deadbeef");
     }
 
+    static String debfuscationDataName()
+    {
+        return "deobfuscation_data_"+mccversion+".zip";
+    }
     public static Object[] data()
     {
         return new Object[] { major, minor, rev, build, mccversion, mcpversion, minecraftHome, containers };

@@ -16,6 +16,7 @@
     </exec>
     <propertyfile file="fmlversion.properties">
       <entry key="fmlbuild.build.number" type="int" value="${version.build}"/>
+      <entry key="fmlbuild.deobfuscation.hash" type="string" value="${deobf.checksum}"/>
     </propertyfile>
   </target>
 
@@ -210,6 +211,8 @@
         <globmapper from="packaged.srg" to="joined.srg"/>
       </mappedresources>
     </zip>
+    <checksum algorithm="SHA1" property="deobf.checksum" file="deobfuscation_data_${version.minecraft}.zip"/>
+    <antcall target="writeversion"/>
   </target>
 
   <target name="build" depends="buildenvsetup,merge-client,merge-common,build-universal,build-source-pack,build-deobf-data" />

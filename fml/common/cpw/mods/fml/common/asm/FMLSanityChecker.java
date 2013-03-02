@@ -126,7 +126,7 @@ public class FMLSanityChecker implements IFMLCallHook
     public void injectData(Map<String, Object> data)
     {
         cl = (RelaunchClassLoader) data.get("classLoader");
-        FMLDeobfuscatingRemapper.INSTANCE.setup((File)data.get("mcLocation"), cl);
+        FMLDeobfuscatingRemapper.INSTANCE.setup((File)data.get("mcLocation"), cl, (String) data.get("deobfuscationFileName"));
     }
 
 }

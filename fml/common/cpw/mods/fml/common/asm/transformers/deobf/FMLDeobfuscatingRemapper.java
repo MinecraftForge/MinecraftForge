@@ -51,15 +51,16 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     private FMLDeobfuscatingRemapper()
     {
+        classNameBiMap=ImmutableBiMap.of();
     }
 
-    public void setup(File mcDir, RelaunchClassLoader classLoader)
+    public void setup(File mcDir, RelaunchClassLoader classLoader, String deobfFileName)
     {
         this.classLoader = classLoader;
         try
         {
             File libDir = new File(mcDir, "lib");
-            File mapData = new File(libDir, "deobfuscation_data.zip");
+            File mapData = new File(libDir, deobfFileName);
             ZipFile mapZip = new ZipFile(mapData);
             ZipEntry classData = mapZip.getEntry("joined.srg");
             ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);
