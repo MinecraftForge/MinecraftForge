@@ -83,21 +83,19 @@
                              {
                                  this.setBlockAndMetadata(par1World, par3, par4 + j1, par5 + 1, Block.wood.blockID, this.woodMetadata);
  
-@@ -219,7 +229,12 @@
-                 {
-                     int k2 = j2 - par3;
- 
--                    if ((i2 >= 0 || k2 >= 0 || i2 * i2 + k2 * k2 <= k1 * k1) && (i2 <= 0 && k2 <= 0 || i2 * i2 + k2 * k2 <= (k1 + 1) * (k1 + 1)) && (par6Random.nextInt(4) != 0 || i2 * i2 + k2 * k2 <= (k1 - 1) * (k1 - 1)) && !Block.opaqueCubeLookup[par1World.getBlockId(l1, i1, j2)])
-+                    Block block = Block.blocksList[par1World.getBlockId(l1, i1, j2)];
-+
-+                    if ((i2 >= 0 || k2 >= 0 || i2 * i2 + k2 * k2 <= k1 * k1) &&
-+                        (i2 <= 0 && k2 <= 0 || i2 * i2 + k2 * k2 <= (k1 + 1) * (k1 + 1)) &&
-+                        (par6Random.nextInt(4) != 0 || i2 * i2 + k2 * k2 <= (k1 - 1) * (k1 - 1)) &&
-+                        (block == null || block.canBeReplacedByLeaves(par1World, l1, i1, j2)))
+@@ -222,8 +232,9 @@
+                     if ((i2 >= 0 || k2 >= 0 || i2 * i2 + k2 * k2 <= k1 * k1) && (i2 <= 0 && k2 <= 0 || i2 * i2 + k2 * k2 <= (k1 + 1) * (k1 + 1)) && (par6Random.nextInt(4) != 0 || i2 * i2 + k2 * k2 <= (k1 - 1) * (k1 - 1)))
                      {
-                         this.setBlockAndMetadata(par1World, l1, i1, j2, Block.leaves.blockID, this.leavesMetadata);
-                     }
-@@ -227,4 +242,13 @@
+                         int l2 = par1World.getBlockId(l1, i1, j2);
+-
+-                        if (l2 == 0 || l2 == Block.leaves.blockID)
++                        Block block = Block.blocksList[l2];
++
++                        if (block == null || block.canBeReplacedByLeaves(par1World, l1, i1, j2))
+                         {
+                             this.setBlockAndMetadata(par1World, l1, i1, j2, Block.leaves.blockID, this.leavesMetadata);
+                         }
+@@ -232,4 +243,13 @@
              }
          }
      }

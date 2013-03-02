@@ -27,7 +27,7 @@
 @@ -49,6 +59,7 @@
      {
          this(par1World, par2, par4, par6);
-         this.func_92058_a(par8ItemStack);
+         this.setEntityItemStack(par8ItemStack);
 +        this.lifespan = (par8ItemStack.getItem() == null ? 6000 : par8ItemStack.getItem().getEntityLifespan(par8ItemStack, par1World));
      }
  
@@ -63,7 +63,7 @@
          {
              this.setDead();
          }
-@@ -263,6 +296,7 @@
+@@ -270,6 +303,7 @@
      {
          par1NBTTagCompound.setShort("Health", (short)((byte)this.health));
          par1NBTTagCompound.setShort("Age", (short)this.age);
@@ -71,9 +71,9 @@
  
          if (this.getEntityItem() != null)
          {
-@@ -280,10 +314,17 @@
+@@ -287,10 +321,17 @@
          NBTTagCompound nbttagcompound1 = par1NBTTagCompound.getCompoundTag("Item");
-         this.func_92058_a(ItemStack.loadItemStackFromNBT(nbttagcompound1));
+         this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound1));
  
 -        if (this.getEntityItem() == null)
 +        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
@@ -90,7 +90,7 @@
      }
  
      /**
-@@ -293,10 +334,22 @@
+@@ -300,10 +341,22 @@
      {
          if (!this.worldObj.isRemote)
          {

@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public class PlayerControllerMP
  {
-@@ -118,6 +122,12 @@
+@@ -124,6 +128,12 @@
       */
      public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
      {
@@ -24,7 +24,7 @@
          if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
          {
              return false;
-@@ -135,7 +145,7 @@
+@@ -141,7 +151,7 @@
              {
                  worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
@@ -33,7 +33,7 @@
  
                  if (flag)
                  {
-@@ -336,6 +346,12 @@
+@@ -342,6 +352,12 @@
          float f2 = (float)par8Vec3.zCoord - (float)par6;
          boolean flag = false;
          int i1;
@@ -46,7 +46,7 @@
  
          if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
          {
-@@ -378,7 +394,15 @@
+@@ -384,7 +400,15 @@
          }
          else
          {
@@ -63,7 +63,7 @@
          }
      }
  
-@@ -400,9 +424,10 @@
+@@ -406,9 +430,10 @@
          {
              par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
  

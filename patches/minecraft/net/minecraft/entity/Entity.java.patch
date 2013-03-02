@@ -30,7 +30,7 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
-@@ -224,6 +231,11 @@
+@@ -225,6 +232,11 @@
      private boolean invulnerable;
      private UUID field_96093_i;
      public EnumEntitySize myEntitySize;
@@ -42,7 +42,7 @@
  
      public Entity(World par1World)
      {
-@@ -546,7 +558,7 @@
+@@ -547,7 +559,7 @@
          if (!this.worldObj.isRemote)
          {
              this.setFlag(0, this.fire > 0);
@@ -51,7 +51,7 @@
          }
  
          this.firstUpdate = false;
-@@ -1510,6 +1522,10 @@
+@@ -1527,6 +1539,10 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.field_96093_i.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.field_96093_i.getLeastSignificantBits());
@@ -60,9 +60,9 @@
 +                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
 +            }
              this.writeEntityToNBT(par1NBTTagCompound);
-         }
-         catch (Throwable throwable)
-@@ -1570,6 +1586,15 @@
+ 
+             if (this.ridingEntity != null)
+@@ -1597,6 +1613,15 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -78,7 +78,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable throwable)
-@@ -1664,7 +1689,14 @@
+@@ -1691,7 +1716,14 @@
      {
          EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          entityitem.delayBeforeCanPickup = 10;
@@ -94,7 +94,7 @@
          return entityitem;
      }
  
-@@ -2026,7 +2058,7 @@
+@@ -2046,7 +2078,7 @@
       */
      public boolean isRiding()
      {
@@ -103,7 +103,7 @@
      }
  
      /**
-@@ -2364,7 +2396,7 @@
+@@ -2390,7 +2422,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -112,7 +112,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2419,4 +2451,84 @@
+@@ -2445,4 +2477,84 @@
      {
          return this.getEntityName();
      }

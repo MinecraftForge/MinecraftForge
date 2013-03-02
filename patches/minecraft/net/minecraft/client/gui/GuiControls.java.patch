@@ -18,34 +18,36 @@
      public GuiControls(GuiScreen par1GuiScreen, GameSettings par2GameSettings)
      {
          this.parentScreen = par1GuiScreen;
-@@ -40,15 +44,12 @@
+@@ -40,15 +44,10 @@
       */
      public void initGui()
      {
 +        scrollPane = new GuiControlsScrollPanel(this, options, mc);
          StringTranslate stringtranslate = StringTranslate.getInstance();
-         int i = this.func_73907_g();
- 
+-        int i = this.func_73907_g();
+-
 -        for (int j = 0; j < this.options.keyBindings.length; ++j)
 -        {
--            this.controlList.add(new GuiSmallButton(j, i + j % 2 * 160, this.height / 6 + 24 * (j >> 1), 70, 20, this.options.getOptionDisplayString(j)));
+-            this.buttonList.add(new GuiSmallButton(j, i + j % 2 * 160, this.height / 6 + 24 * (j >> 1), 70, 20, this.options.getOptionDisplayString(j)));
 -        }
 -
--        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, stringtranslate.translateKey("gui.done")));
-+        this.controlList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, stringtranslate.translateKey("gui.done")));
-+        scrollPane.registerScrollButtons(controlList, 7, 8);
+-        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, stringtranslate.translateKey("gui.done")));
++        this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 28, stringtranslate.translateKey("gui.done")));
++        scrollPane.registerScrollButtons(buttonList, 7, 8);
          this.screenTitle = stringtranslate.translateKey("controls.title");
      }
  
-@@ -57,19 +58,9 @@
+@@ -56,20 +55,10 @@
+      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
       */
      protected void actionPerformed(GuiButton par1GuiButton)
-     {
+-    {
 -        for (int i = 0; i < this.options.keyBindings.length; ++i)
 -        {
--            ((GuiButton)this.controlList.get(i)).displayString = this.options.getOptionDisplayString(i);
+-            ((GuiButton)this.buttonList.get(i)).displayString = this.options.getOptionDisplayString(i);
 -        }
 -
++    {        
          if (par1GuiButton.id == 200)
          {
              this.mc.displayGuiScreen(this.parentScreen);
@@ -57,14 +59,14 @@
          }
      }
  
-@@ -78,17 +69,7 @@
+@@ -78,17 +67,7 @@
       */
      protected void mouseClicked(int par1, int par2, int par3)
      {
 -        if (this.buttonId >= 0)
 -        {
 -            this.options.setKeyBinding(this.buttonId, -100 + par3);
--            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+-            ((GuiButton)this.buttonList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
 -            this.buttonId = -1;
 -            KeyBinding.resetKeyBindingArrayAndHash();
 -        }
@@ -76,14 +78,14 @@
      }
  
      /**
-@@ -96,14 +77,7 @@
+@@ -96,14 +75,7 @@
       */
      protected void keyTyped(char par1, int par2)
      {
 -        if (this.buttonId >= 0)
 -        {
 -            this.options.setKeyBinding(this.buttonId, par2);
--            ((GuiButton)this.controlList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
+-            ((GuiButton)this.buttonList.get(this.buttonId)).displayString = this.options.getOptionDisplayString(this.buttonId);
 -            this.buttonId = -1;
 -            KeyBinding.resetKeyBindingArrayAndHash();
 -        }
@@ -92,53 +94,22 @@
          {
              super.keyTyped(par1, par2);
          }
-@@ -115,47 +89,8 @@
+@@ -115,6 +87,7 @@
      public void drawScreen(int par1, int par2, float par3)
      {
          this.drawDefaultBackground();
--        this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
--        int k = this.func_73907_g();
--        int l = 0;
--
--        while (l < this.options.keyBindings.length)
--        {
--            boolean flag = false;
--            int i1 = 0;
--
--            while (true)
--            {
--                if (i1 < this.options.keyBindings.length)
--                {
--                    if (i1 == l || this.options.keyBindings[l].keyCode != this.options.keyBindings[i1].keyCode)
--                    {
--                        ++i1;
--                        continue;
--                    }
--
--                    flag = true;
--                }
--
--                if (this.buttonId == l)
--                {
--                    ((GuiButton)this.controlList.get(l)).displayString = "" + EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + "??? " + EnumChatFormatting.WHITE + "<";
--                }
--                else if (flag)
--                {
--                    ((GuiButton)this.controlList.get(l)).displayString = EnumChatFormatting.RED + this.options.getOptionDisplayString(l);
--                }
--                else
--                {
--                    ((GuiButton)this.controlList.get(l)).displayString = this.options.getOptionDisplayString(l);
--                }
--
--                this.drawString(this.fontRenderer, this.options.getKeyBindingDescription(l), k + l % 2 * 160 + 70 + 6, this.height / 6 + 24 * (l >> 1) + 7, -1);
--                ++l;
--                break;
--            }
--        }
--
++        /* Forge Start: Moved all rendering to GuiControlsScrollPanel
+         this.drawCenteredString(this.fontRenderer, this.screenTitle, this.width / 2, 20, 16777215);
+         int k = this.func_73907_g();
+         int l = 0;
+@@ -155,6 +128,10 @@
+                 break;
+             }
+         }
++        */
 +        scrollPane.drawScreen(par1, par2, par3);
 +        drawCenteredString(fontRenderer, screenTitle, width / 2, 4, 0xffffff);
++        //Forge End
+ 
          super.drawScreen(par1, par2, par3);
      }
- }

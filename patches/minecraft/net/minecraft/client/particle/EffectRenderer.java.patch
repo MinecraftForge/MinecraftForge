@@ -25,15 +25,15 @@
                  {
                      this.fxLayers[i].remove(j--);
                  }
-@@ -115,6 +120,7 @@
-                 for (int k = 0; k < this.fxLayers[i].size(); ++k)
+@@ -111,6 +116,7 @@
+                 for (int j = 0; j < this.fxLayers[i].size(); ++j)
                  {
-                     EntityFX entityfx = (EntityFX)this.fxLayers[i].get(k);
+                     EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
 +                    if (entityfx == null) continue;
                      tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
                      entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
                  }
-@@ -142,6 +148,7 @@
+@@ -139,6 +145,7 @@
              for (int i = 0; i < this.fxLayers[b0].size(); ++i)
              {
                  EntityFX entityfx = (EntityFX)this.fxLayers[b0].get(i);
@@ -41,7 +41,7 @@
                  tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
                  entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
              }
-@@ -160,9 +167,9 @@
+@@ -157,9 +164,9 @@
  
      public void addBlockDestroyEffects(int par1, int par2, int par3, int par4, int par5)
      {
@@ -54,7 +54,7 @@
              byte b0 = 4;
  
              for (int j1 = 0; j1 < b0; ++j1)
-@@ -235,4 +242,13 @@
+@@ -232,4 +239,13 @@
      {
          return "" + (this.fxLayers[0].size() + this.fxLayers[1].size() + this.fxLayers[2].size());
      }

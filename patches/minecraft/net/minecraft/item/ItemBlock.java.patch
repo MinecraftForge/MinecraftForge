@@ -37,7 +37,7 @@
          {
              if (par5 == 0)
              {
-@@ -220,4 +216,28 @@
+@@ -227,4 +223,28 @@
              this.field_94588_b = par1IconRegister.func_94245_a(s);
          }
      }

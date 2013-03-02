@@ -147,7 +147,7 @@ public class ForgeHooks
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
         }
     }
 

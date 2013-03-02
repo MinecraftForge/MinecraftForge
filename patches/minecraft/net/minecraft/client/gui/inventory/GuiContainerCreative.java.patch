@@ -9,21 +9,21 @@
  
      public GuiContainerCreative(EntityPlayer par1EntityPlayer)
      {
-@@ -266,6 +268,13 @@
+@@ -273,6 +275,13 @@
              this.setCurrentCreativeTab(CreativeTabs.creativeTabArray[i]);
              this.field_82324_x = new CreativeCrafting(this.mc);
              this.mc.thePlayer.inventoryContainer.addCraftingToCrafters(this.field_82324_x);
 +            int tabCount = CreativeTabs.creativeTabArray.length;
 +            if (tabCount > 12)
 +            {
-+                controlList.add(new GuiButton(101, guiLeft,              guiTop - 50, 20, 20, "<"));
-+                controlList.add(new GuiButton(102, guiLeft + xSize - 20, guiTop - 50, 20, 20, ">"));
++                buttonList.add(new GuiButton(101, guiLeft,              guiTop - 50, 20, 20, "<"));
++                buttonList.add(new GuiButton(102, guiLeft + xSize - 20, guiTop - 50, 20, 20, ">"));
 +                maxPages = ((tabCount - 12) / 10) + 1;
 +            }
          }
          else
          {
-@@ -400,7 +409,7 @@
+@@ -407,7 +416,7 @@
      {
          CreativeTabs creativetabs = CreativeTabs.creativeTabArray[selectedTabIndex];
  
@@ -32,7 +32,7 @@
          {
              this.fontRenderer.drawString(creativetabs.getTranslatedTabLabel(), 8, 6, 4210752);
          }
-@@ -449,7 +458,7 @@
+@@ -456,7 +465,7 @@
              {
                  CreativeTabs creativetabs = acreativetabs[k1];
  
@@ -41,7 +41,7 @@
                  {
                      this.setCurrentCreativeTab(creativetabs);
                      return;
-@@ -465,11 +474,17 @@
+@@ -472,11 +481,17 @@
       */
      private boolean needsScrollBars()
      {
@@ -59,7 +59,7 @@
          int i = selectedTabIndex;
          selectedTabIndex = par1CreativeTabs.getTabIndex();
          ContainerCreative containercreative = (ContainerCreative)this.inventorySlots;
-@@ -640,21 +655,42 @@
+@@ -647,21 +662,42 @@
  
          super.drawScreen(par1, par2, par3);
          CreativeTabs[] acreativetabs = CreativeTabs.creativeTabArray;
@@ -107,19 +107,19 @@
          }
  
          GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -675,14 +711,32 @@
-         int i1 = acreativetabs.length;
-         int j1;
+@@ -680,14 +716,32 @@
+         int k = acreativetabs.length;
+         int l;
  
--        for (j1 = 0; j1 < i1; ++j1)
+-        for (l = 0; l < k; ++l)
 +        int start = tabPage * 10;
-+        i1 = Math.min(acreativetabs.length, ((tabPage + 1) * 10 + 2));
++        k = Math.min(acreativetabs.length, ((tabPage + 1) * 10 + 2));
 +        if (tabPage != 0) start += 2;
 +
-+        for (j1 = start; j1 < i1; ++j1)
++        for (l = start; l < k; ++l)
          {
-             CreativeTabs creativetabs1 = acreativetabs[j1];
-             this.mc.renderEngine.bindTexture(k);
+             CreativeTabs creativetabs1 = acreativetabs[l];
+             this.mc.renderEngine.func_98187_b("/gui/allitems.png");
  
 -            if (creativetabs1.getTabIndex() != selectedTabIndex)
 +            if (creativetabs1 != null && creativetabs1.getTabIndex() != selectedTabIndex)
@@ -132,18 +132,18 @@
 +        {
 +            if (creativetabs != CreativeTabs.tabAllSearch)
 +            {
-+                mc.renderEngine.bindTexture(k);
++                mc.renderEngine.func_98187_b("/gui/allitems.png");
 +                renderCreativeTab(CreativeTabs.tabAllSearch);
 +            }
 +            if (creativetabs != CreativeTabs.tabInventory)
 +            {
-+                mc.renderEngine.bindTexture(k);
++                mc.renderEngine.func_98187_b("/gui/allitems.png");
 +                renderCreativeTab(CreativeTabs.tabInventory);
              }
          }
  
-@@ -700,6 +754,14 @@
-             this.drawTexturedModalRect(k1, i1 + (int)((float)(j1 - i1 - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
+@@ -705,6 +759,14 @@
+             this.drawTexturedModalRect(i1, k + (int)((float)(l - k - 17) * this.currentScroll), 232 + (this.needsScrollBars() ? 0 : 12), 0, 12, 15);
          }
  
 +        if (creativetabs == null || creativetabs.getTabPage() != tabPage)
@@ -157,7 +157,7 @@
          this.renderCreativeTab(creativetabs);
  
          if (creativetabs == CreativeTabs.tabInventory)
-@@ -710,6 +772,15 @@
+@@ -715,6 +777,15 @@
  
      protected boolean func_74232_a(CreativeTabs par1CreativeTabs, int par2, int par3)
      {
@@ -173,7 +173,7 @@
          int k = par1CreativeTabs.getTabColumn();
          int l = 28 * k;
          byte b0 = 0;
-@@ -824,7 +895,7 @@
+@@ -829,7 +900,7 @@
          i1 += 8 + (flag1 ? 1 : -1);
          GL11.glEnable(GL11.GL_LIGHTING);
          GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -182,7 +182,7 @@
          itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, itemstack, l, i1);
          itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, itemstack, l, i1);
          GL11.glDisable(GL11.GL_LIGHTING);
-@@ -846,6 +917,15 @@
+@@ -851,6 +922,15 @@
          {
              this.mc.displayGuiScreen(new GuiStats(this, this.mc.statFileWriter));
          }

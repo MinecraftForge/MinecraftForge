@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 +++ ../src_work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-@@ -21,6 +21,10 @@
+@@ -23,6 +23,10 @@
  import net.minecraft.world.demo.DemoWorldServer;
  import net.minecraft.world.storage.ISaveHandler;
  
@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public class IntegratedServer extends MinecraftServer
  {
-@@ -60,44 +64,22 @@
+@@ -63,44 +67,23 @@
      protected void loadAllWorlds(String par1Str, String par2Str, long par3, WorldType par5WorldType, String par6Str)
      {
          this.convertMapIfNeeded(par1Str);
@@ -24,11 +24,12 @@
 -            byte b0 = 0;
 -
 -            if (j == 1)
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, func_98033_al()) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler, func_98033_al()));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler, func_98033_al()));
 +            world.addWorldAccess(new WorldManager(this, world));
++
 +            if (!this.isSinglePlayer())
              {
 -                b0 = -1;
@@ -44,16 +45,16 @@
 -            {
 -                if (this.isDemo())
 -                {
--                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler);
+-                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler, this.func_98033_al());
 -                }
 -                else
 -                {
--                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, this.theWorldSettings, this.theProfiler);
+-                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, this.theWorldSettings, this.theProfiler, this.func_98033_al());
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, this.theWorldSettings, this.worldServers[0], this.theProfiler);
+-                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, this.theWorldSettings, this.worldServers[0], this.theProfiler, this.func_98033_al());
 -            }
 -
 -            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));

@@ -76,7 +76,7 @@
                          f8 = 1.0F;
  
                          if (this.field_77024_a)
-@@ -238,32 +229,26 @@
+@@ -241,32 +232,26 @@
              f11 = 0.021875F;
              ItemStack itemstack = par1EntityItem.getEntityItem();
              int j = itemstack.stackSize;
@@ -124,25 +124,23 @@
                  {
                      this.loadTexture("/terrain.png");
                  }
-@@ -352,11 +337,12 @@
-         float f;
+@@ -356,10 +341,11 @@
          float f1;
          float f2;
--
+ 
 -        if (par3ItemStack.func_94608_d() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
-+        
 +        Block block = (k < Block.blocksList.length ? Block.blocksList[k] : null);
 +
 +        if (par3ItemStack.func_94608_d() == 0 && block != null && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
          {
-             par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/terrain.png"));
+             par2RenderEngine.func_98187_b("/terrain.png");
 -            Block block = Block.blocksList[k];
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -389,9 +375,9 @@
+@@ -392,9 +378,9 @@
                  GL11.glDisable(GL11.GL_LIGHTING);
-                 par2RenderEngine.bindTexture(par2RenderEngine.getTexture("/gui/items.png"));
+                 par2RenderEngine.func_98187_b("/gui/items.png");
  
 -                for (j1 = 0; j1 <= 1; ++j1)
 -                {
@@ -153,7 +151,7 @@
                      int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                      f = (float)(k1 >> 16 & 255) / 255.0F;
                      f1 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -450,7 +436,10 @@
+@@ -453,7 +439,10 @@
      {
          if (par3ItemStack != null)
          {
@@ -165,7 +163,7 @@
  
              if (par3ItemStack.hasEffect())
              {
-@@ -587,4 +576,47 @@
+@@ -590,4 +579,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }

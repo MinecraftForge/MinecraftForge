@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecart.java
 +++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecart.java
-@@ -25,6 +25,10 @@
+@@ -21,6 +21,10 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -11,7 +11,7 @@
  
  public abstract class EntityMinecart extends Entity
  {
-@@ -49,6 +53,20 @@
+@@ -45,6 +49,20 @@
      @SideOnly(Side.CLIENT)
      protected double velocityZ;
  
@@ -32,7 +32,7 @@
      public EntityMinecart(World par1World)
      {
          super(par1World);
-@@ -102,6 +120,10 @@
+@@ -99,6 +117,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
      {
@@ -43,7 +43,7 @@
          return par1Entity.canBePushed() ? par1Entity.boundingBox : null;
      }
  
-@@ -110,6 +132,10 @@
+@@ -107,6 +129,10 @@
       */
      public AxisAlignedBB getBoundingBox()
      {
@@ -54,7 +54,7 @@
          return null;
      }
  
-@@ -118,7 +144,7 @@
+@@ -115,7 +141,7 @@
       */
      public boolean canBePushed()
      {
@@ -63,7 +63,7 @@
      }
  
      public EntityMinecart(World par1World, double par2, double par4, double par6)
-@@ -350,10 +376,13 @@
+@@ -347,10 +373,13 @@
              double d5 = 0.0078125D;
              int l = this.worldObj.getBlockId(j, i, k);
  
@@ -81,7 +81,7 @@
  
                  if (l == Block.field_94337_cv.blockID)
                  {
-@@ -362,7 +391,7 @@
+@@ -359,7 +388,7 @@
              }
              else
              {
@@ -90,7 +90,7 @@
              }
  
              this.doBlockCollisions();
-@@ -389,7 +418,18 @@
+@@ -386,7 +415,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -110,7 +110,7 @@
  
              if (list != null && !list.isEmpty())
              {
-@@ -413,6 +453,8 @@
+@@ -410,6 +450,8 @@
  
                  this.riddenByEntity = null;
              }
@@ -119,7 +119,7 @@
          }
      }
  
-@@ -438,6 +480,17 @@
+@@ -435,6 +477,17 @@
          if (this.motionZ > par1)
          {
              this.motionZ = par1;
@@ -137,7 +137,7 @@
          }
  
          if (this.onGround)
-@@ -447,13 +500,13 @@
+@@ -444,13 +497,13 @@
              this.motionZ *= 0.5D;
          }
  
@@ -155,7 +155,7 @@
          }
      }
  
-@@ -467,7 +520,7 @@
+@@ -464,7 +517,7 @@
  
          if (par8 == Block.railPowered.blockID)
          {
@@ -164,7 +164,7 @@
              flag1 = !flag;
          }
  
-@@ -532,7 +585,7 @@
+@@ -535,7 +588,7 @@
              }
          }
  
@@ -173,7 +173,7 @@
          {
              d7 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -580,36 +633,8 @@
+@@ -583,36 +636,8 @@
          this.posX = d8 + d2 * d7;
          this.posZ = d9 + d3 * d7;
          this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
@@ -212,7 +212,7 @@
  
          if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - par1 == aint[0][0] && MathHelper.floor_double(this.posZ) - par3 == aint[0][2])
          {
-@@ -647,7 +672,12 @@
+@@ -650,7 +675,12 @@
              this.motionZ = d6 * (double)(k1 - par3);
          }
  
@@ -226,7 +226,7 @@
          {
              double d15 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
-@@ -718,12 +748,7 @@
+@@ -721,12 +751,7 @@
          }
          else
          {
@@ -240,7 +240,7 @@
  
              par3 = (double)j;
  
-@@ -769,13 +794,8 @@
+@@ -772,13 +797,8 @@
  
          if (BlockRailBase.isRailBlock(l))
          {
@@ -255,7 +255,7 @@
  
              if (i1 >= 2 && i1 <= 5)
              {
-@@ -881,11 +901,17 @@
+@@ -884,11 +904,17 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -274,7 +274,7 @@
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -931,7 +957,7 @@
+@@ -934,7 +960,7 @@
                          double d7 = par1Entity.motionX + this.motionX;
                          double d8 = par1Entity.motionZ + this.motionZ;
  
@@ -283,7 +283,7 @@
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -939,7 +965,7 @@
+@@ -942,7 +968,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
@@ -292,7 +292,7 @@
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1142,4 +1168,211 @@
+@@ -1145,4 +1171,211 @@
      {
          return this.field_94102_c;
      }

@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -122,6 +122,10 @@
+@@ -123,6 +123,10 @@
  
  import com.google.common.collect.MapDifference;
  
@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -1240,7 +1244,7 @@
+@@ -1237,7 +1241,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
                  {
@@ -20,7 +20,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1306,7 +1310,8 @@
+@@ -1303,7 +1307,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -30,7 +30,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1332,7 +1337,8 @@
+@@ -1329,7 +1334,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -40,7 +40,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2029,6 +2035,18 @@
+@@ -2026,6 +2032,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -59,7 +59,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2340,103 +2358,12 @@
+@@ -2353,103 +2371,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;

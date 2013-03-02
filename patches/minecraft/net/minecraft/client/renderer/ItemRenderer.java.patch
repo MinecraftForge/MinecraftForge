@@ -39,12 +39,12 @@
 +        
 +        if (customRenderer != null)
 +        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture((par2ItemStack.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png")));
++            this.mc.renderEngine.func_98187_b(par2ItemStack.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
 +        else if (block != null && par2ItemStack.func_94608_d() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
-             GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
+             this.mc.renderEngine.func_98187_b("/terrain.png");
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
 @@ -272,7 +293,7 @@
          Render render;
@@ -55,7 +55,7 @@
          {
              GL11.glPushMatrix();
              f4 = 0.8F;
-@@ -339,11 +360,20 @@
+@@ -340,11 +361,20 @@
              tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
              tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
              tessellator.draw();
@@ -81,7 +81,7 @@
              }
  
              GL11.glPopMatrix();
-@@ -446,12 +476,15 @@
+@@ -447,12 +477,15 @@
              if (itemstack.getItem().requiresMultipleRenderPasses())
              {
                  this.renderItem(entityclientplayermp, itemstack, 0);

@@ -19,17 +19,17 @@
  @SideOnly(Side.CLIENT)
  public class GuiAchievements extends GuiScreen
  {
-@@ -56,6 +61,10 @@
-     /** Whether the Mouse Button is down or not */
+@@ -57,6 +62,10 @@
      private int isMouseButtonDown = 0;
      private StatFileWriter statFileWriter;
-+    
+ 
 +    private int currentPage = -1;
 +    private GuiSmallButton button;
 +    private LinkedList<Achievement> minecraftAchievements = new LinkedList<Achievement>();
- 
++
      public GuiAchievements(StatFileWriter par1StatFileWriter)
      {
+         this.statFileWriter = par1StatFileWriter;
 @@ -64,6 +73,14 @@
          short short2 = 141;
          this.field_74117_m = this.guiMapX = this.field_74124_q = (double)(AchievementList.openInventory.displayColumn * 24 - short1 / 2 - 12);
@@ -47,9 +47,9 @@
      /**
 @@ -73,6 +90,7 @@
      {
-         this.controlList.clear();
-         this.controlList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
-+        this.controlList.add(button = new GuiSmallButton(2, (width - achievementsPaneWidth) / 2 + 24, height / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
+         this.buttonList.clear();
+         this.buttonList.add(new GuiSmallButton(1, this.width / 2 + 24, this.height / 2 + 74, 80, 20, StatCollector.translateToLocal("gui.done")));
++        this.buttonList.add(button = new GuiSmallButton(2, (width - achievementsPaneWidth) / 2 + 24, height / 2 + 74, 125, 20, AchievementPage.getTitle(currentPage)));
      }
  
      /**
@@ -70,34 +70,34 @@
          }
  
          super.actionPerformed(par1GuiButton);
-@@ -308,11 +336,12 @@
-         int k4;
-         int l4;
+@@ -306,11 +334,12 @@
+         int i4;
+         int j4;
  
--        for (k3 = 0; k3 < AchievementList.achievementList.size(); ++k3)
+-        for (i3 = 0; i3 < AchievementList.achievementList.size(); ++i3)
 -        {
--            Achievement achievement = (Achievement)AchievementList.achievementList.get(k3);
+-            Achievement achievement = (Achievement)AchievementList.achievementList.get(i3);
 -
 -            if (achievement.parentAchievement != null)
 +        List<Achievement> achievementList = (currentPage == -1 ? minecraftAchievements : AchievementPage.getAchievementPage(currentPage).getAchievements());
-+        for (k3 = 0; k3 < achievementList.size(); ++k3)
++        for (i3 = 0; i3 < achievementList.size(); ++i3)
 +        {
-+            Achievement achievement = achievementList.get(k3);
++            Achievement achievement = achievementList.get(i3);
 +
 +            if (achievement.parentAchievement != null && achievementList.contains(achievement.parentAchievement))
              {
-                 i4 = achievement.displayColumn * 24 - k + 11 + i2;
-                 l3 = achievement.displayRow * 24 - l + 11 + j2;
-@@ -346,9 +375,9 @@
-         int j5;
-         int k5;
+                 k3 = achievement.displayColumn * 24 - k + 11 + k1;
+                 j3 = achievement.displayRow * 24 - l + 11 + l1;
+@@ -344,9 +373,9 @@
+         int l4;
+         int i5;
  
--        for (i4 = 0; i4 < AchievementList.achievementList.size(); ++i4)
+-        for (k3 = 0; k3 < AchievementList.achievementList.size(); ++k3)
 -        {
--            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(i4);
-+        for (i4 = 0; i4 < achievementList.size(); ++i4)
+-            Achievement achievement2 = (Achievement)AchievementList.achievementList.get(k3);
++        for (k3 = 0; k3 < achievementList.size(); ++k3)
 +        {
-+            Achievement achievement2 = (Achievement)achievementList.get(i4);
-             l4 = achievement2.displayColumn * 24 - k;
-             j4 = achievement2.displayRow * 24 - l;
++            Achievement achievement2 = (Achievement)achievementList.get(k3);
+             j4 = achievement2.displayColumn * 24 - k;
+             l3 = achievement2.displayRow * 24 - l;
  

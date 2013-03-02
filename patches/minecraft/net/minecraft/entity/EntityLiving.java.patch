@@ -160,9 +160,9 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -3044,4 +3091,42 @@
+@@ -3054,4 +3101,42 @@
      {
-         this.equipmentDropChances[par1] = par2;
+         this.canPickUpLoot = par1;
      }
 +
 +    /***

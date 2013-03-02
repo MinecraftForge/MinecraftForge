@@ -34,15 +34,15 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,15 +172,32 @@
+@@ -154,15 +172,33 @@
              }
              else
              {
--                this.theWorld.extinguishFire(this.thisPlayerMP, par1, par2, par3, par4);
+-                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
                  this.initialDamage = this.curblockDamage;
                  float f = 1.0F;
                  int i1 = this.theWorld.getBlockId(par1, par2, par3);
--
+ 
 -                if (i1 > 0)
 -                {
 -                    Block.blocksList[i1].onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
@@ -73,7 +73,7 @@
                  }
  
                  if (i1 > 0 && f >= 1.0F)
-@@ -236,7 +271,7 @@
+@@ -236,7 +272,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
@@ -82,7 +82,7 @@
  
          if (block != null && flag)
          {
-@@ -257,19 +292,30 @@
+@@ -257,19 +293,30 @@
          }
          else
          {
@@ -115,7 +115,7 @@
  
                  if (itemstack != null)
                  {
-@@ -281,6 +327,7 @@
+@@ -281,6 +328,7 @@
                      }
                  }
  
@@ -123,7 +123,7 @@
                  if (flag && flag1)
                  {
                      Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
-@@ -321,6 +368,7 @@
+@@ -321,6 +369,7 @@
              if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
@@ -131,7 +131,7 @@
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -338,35 +386,56 @@
+@@ -338,35 +387,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
@@ -215,7 +215,7 @@
      }
  
      /**
-@@ -376,4 +445,13 @@
+@@ -376,4 +446,13 @@
      {
          this.theWorld = par1WorldServer;
      }

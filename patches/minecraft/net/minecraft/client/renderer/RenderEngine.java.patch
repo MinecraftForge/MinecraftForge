@@ -1,27 +1,27 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/RenderEngine.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/RenderEngine.java
 @@ -28,6 +28,8 @@
- import net.minecraft.util.IntHashMap;
  import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
  
 +import net.minecraftforge.client.ForgeHooksClient;
 +
  @SideOnly(Side.CLIENT)
  public class RenderEngine
  {
-@@ -202,6 +204,7 @@
+@@ -186,6 +188,7 @@
  
                  try
                  {
 +                    ForgeHooksClient.onTextureLoadPre(par1Str);
-                     this.singleIntBuffer.clear();
-                     GLAllocation.generateTextureNames(this.singleIntBuffer);
-                     int i = this.singleIntBuffer.get(0);
-@@ -247,6 +250,7 @@
+                     int i = GLAllocation.generateTextureNames();
+                     boolean flag = par1Str.startsWith("%blur%");
+ 
+@@ -215,6 +218,7 @@
                      }
  
-                     this.textureMap.put(par1Str, Integer.valueOf(i));
-+                    ForgeHooksClient.onTextureLoad(par1Str, itexturepack);
+                     this.textureMap.put(s1, Integer.valueOf(i));
++                    ForgeHooksClient.onTextureLoad(par1Str, texturePack.getSelectedTexturePack());
                      return i;
                  }
                  catch (Exception exception)

@@ -9,15 +9,7 @@
  @SideOnly(Side.CLIENT)
  public class RenderGlobal implements IWorldAccess
  {
-@@ -677,7 +679,6 @@
-                 this.sortedWorldRenderers[i1].isVisible = true;
-             }
- 
--            
-             this.theWorld.theProfiler.endStartSection("render");
-             k = b0 + this.renderSortedRenderers(b1, l, par2, par3);
- 
-@@ -934,6 +935,12 @@
+@@ -933,6 +935,12 @@
       */
      public void renderSky(float par1)
      {
@@ -30,7 +22,7 @@
          if (this.mc.theWorld.provider.dimensionId == 1)
          {
              GL11.glDisable(GL11.GL_FOG);
-@@ -1172,6 +1179,13 @@
+@@ -1171,6 +1179,13 @@
  
      public void renderClouds(float par1)
      {
@@ -44,7 +36,7 @@
          if (this.mc.theWorld.provider.isSurfaceWorld())
          {
              if (this.mc.gameSettings.fancyGraphics)
-@@ -1601,6 +1615,11 @@
+@@ -1599,6 +1614,11 @@
      }
  
      public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)

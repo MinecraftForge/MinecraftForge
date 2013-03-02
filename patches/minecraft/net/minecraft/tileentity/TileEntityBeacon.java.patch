@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -117,8 +117,9 @@
+@@ -120,8 +120,9 @@
                      for (int l = this.zCoord - i; l <= this.zCoord + i; ++l)
                      {
                          int i1 = this.worldObj.getBlockId(k, j, l);

@@ -23,7 +23,7 @@
                                          GL11.glTranslatef(8.0F, 8.0F, 8.0F);
 -                                        tessellator.startDrawingQuads();
 -                                        tessellator.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
-+                                        ForgeHooksClient.beforeRenderPass(l1);
++                                        //ForgeHooksClient.beforeRenderPass(l1); Noop fo now, TODO: Event if anyone needs
 +                                        Tessellator.instance.startDrawingQuads();
 +                                        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
                                      }
@@ -61,7 +61,7 @@
                      if (flag2)
                      {
 -                        this.bytesDrawn += tessellator.draw();
-+                        ForgeHooksClient.afterRenderPass(l1);
++                        //ForgeHooksClient.afterRenderPass(l1); Noop fo now, TODO: Event if anyone needs
 +                        this.bytesDrawn += Tessellator.instance.draw();
                          GL11.glPopMatrix();
                          GL11.glEndList();

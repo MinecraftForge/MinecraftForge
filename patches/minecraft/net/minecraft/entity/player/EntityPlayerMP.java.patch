@@ -1,17 +1,10 @@
 --- ../src_base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src_work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -15,6 +15,7 @@
- import net.minecraft.entity.EntityLiving;
- import net.minecraft.entity.EntityMinecartHopper;
- import net.minecraft.entity.IMerchant;
-+import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.projectile.EntityArrow;
- import net.minecraft.inventory.Container;
- import net.minecraft.inventory.ContainerBeacon;
-@@ -87,6 +88,11 @@
+@@ -87,6 +87,12 @@
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.chunk.Chunk;
  
++import net.minecraft.entity.item.EntityItem;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.entity.player.PlayerDropsEvent;
