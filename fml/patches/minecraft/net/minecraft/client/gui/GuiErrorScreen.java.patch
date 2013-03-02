@@ -1,8 +1,8 @@
 --- ../src-base/minecraft/net/minecraft/client/gui/GuiErrorScreen.java
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiErrorScreen.java
-@@ -9,6 +9,8 @@
-     private String field_74001_a;
-     private String field_74000_b;
+@@ -22,6 +22,8 @@
+         this.field_73887_h.add(new GuiButton(0, this.field_73880_f / 2 - 100, 140, StatCollector.func_74838_a("gui.cancel")));
+     }
  
 +    public GuiErrorScreen(){}
 +

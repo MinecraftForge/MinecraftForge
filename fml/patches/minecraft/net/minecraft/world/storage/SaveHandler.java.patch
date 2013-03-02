@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
-@@ -7,6 +7,8 @@
+@@ -6,6 +6,8 @@
+ import java.io.FileInputStream;
  import java.io.FileOutputStream;
  import java.io.IOException;
- import java.util.logging.Logger;
 +
 +import cpw.mods.fml.common.FMLCommonHandler;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTTagCompound;
-@@ -104,16 +106,24 @@
+@@ -103,16 +105,24 @@
          NBTTagCompound nbttagcompound;
          NBTTagCompound nbttagcompound1;
  
@@ -35,7 +35,7 @@
                  exception.printStackTrace();
              }
          }
-@@ -126,7 +136,9 @@
+@@ -125,7 +135,9 @@
              {
                  nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
                  nbttagcompound1 = nbttagcompound.func_74775_l("Data");
@@ -46,7 +46,7 @@
              }
              catch (Exception exception1)
              {
-@@ -142,6 +154,8 @@
+@@ -141,6 +153,8 @@
          NBTTagCompound nbttagcompound1 = p_75755_1_.func_76082_a(p_75755_2_);
          NBTTagCompound nbttagcompound2 = new NBTTagCompound();
          nbttagcompound2.func_74782_a("Data", nbttagcompound1);
@@ -55,7 +55,7 @@
  
          try
          {
-@@ -180,6 +194,8 @@
+@@ -179,6 +193,8 @@
          NBTTagCompound nbttagcompound = p_75761_1_.func_76066_a();
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
          nbttagcompound1.func_74782_a("Data", nbttagcompound);

@@ -7,9 +7,9 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -108,9 +109,10 @@
+@@ -111,9 +112,10 @@
          this.func_71245_h(true);
-         field_71306_a.info("Generating keypair");
+         this.field_98130_m.func_98233_a("Generating keypair");
          this.func_71253_a(CryptManager.func_75891_b());
 +        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
          this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());

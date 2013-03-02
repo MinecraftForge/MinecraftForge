@@ -11,19 +11,19 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityList;
  import net.minecraft.nbt.CompressedStreamTools;
-@@ -247,10 +251,20 @@
-                 p_75820_1_.field_76644_m = true;
+@@ -246,10 +250,19 @@
+                 Entity entity = (Entity)iterator.next();
                  nbttagcompound1 = new NBTTagCompound();
  
 -                if (entity.func_70039_c(nbttagcompound1))
 -                {
+-                    p_75820_1_.field_76644_m = true;
 -                    nbttaglist1.func_74742_a(nbttagcompound1);
--                }
-+
 +                try
 +                {
 +                    if (entity.func_70039_c(nbttagcompound1))
 +                    {
++                        p_75820_1_.field_76644_m = true;
 +                        nbttaglist1.func_74742_a(nbttagcompound1);
 +                    }
 +                }
@@ -32,11 +32,10 @@
 +                    FMLLog.log(Level.SEVERE, e,
 +                            "An Entity type %s has thrown an exception trying to write state. It will not persist. Report this to the mod author",
 +                            entity.getClass().getName());
-+                 }
+                 }
              }
          }
- 
-@@ -262,8 +276,17 @@
+@@ -262,8 +275,17 @@
          {
              TileEntity tileentity = (TileEntity)iterator.next();
              nbttagcompound1 = new NBTTagCompound();

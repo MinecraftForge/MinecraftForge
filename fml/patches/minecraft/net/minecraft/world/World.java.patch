@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -1810,13 +1810,14 @@
+@@ -1806,13 +1806,14 @@
              }
          }
  
@@ -16,7 +16,7 @@
  
          this.field_72984_F.func_76318_c("pendingTileEntities");
  
-@@ -3729,7 +3730,7 @@
+@@ -3605,7 +3606,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {

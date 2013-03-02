@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -44,6 +45,7 @@
+@@ -43,6 +44,7 @@
          this.field_85061_c.func_71500_a("AABB Pool Size", new CallableCrashMemoryReport(this));
          this.field_85061_c.func_71500_a("Suspicious classes", new CallableSuspiciousClasses(this));
          this.field_85061_c.func_71500_a("IntCache", new CallableIntCache(this));

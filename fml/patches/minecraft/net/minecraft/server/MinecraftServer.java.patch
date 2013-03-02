@@ -38,7 +38,7 @@
 +                return;
 +            }
              throwable.printStackTrace();
-             field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
+             this.func_98033_al().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
              CrashReport crashreport = null;
 @@ -428,6 +440,10 @@
          {
@@ -103,7 +103,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1124,6 +1146,13 @@
+@@ -1126,6 +1148,13 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {
@@ -115,5 +115,5 @@
 +    {
 +        String[] p_main_0_ = wrap.args;
          StatList.func_75919_a();
+         ILogAgent ilogagent = null;
  
-         try

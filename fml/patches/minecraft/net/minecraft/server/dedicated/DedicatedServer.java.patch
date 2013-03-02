@@ -7,33 +7,33 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
-@@ -60,6 +61,8 @@
-             field_71306_a.warning("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+@@ -62,6 +63,8 @@
+             this.func_98033_al().func_98236_b("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
 +        FMLCommonHandler.instance().onServerStart(this);
 +
-         field_71306_a.info("Loading properties");
-         this.field_71340_o = new PropertyManager(new File("server.properties"));
+         this.func_98033_al().func_98233_a("Loading properties");
+         this.field_71340_o = new PropertyManager(new File("server.properties"), this.func_98033_al());
  
-@@ -128,6 +131,8 @@
-             field_71306_a.warning("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
-             field_71306_a.warning("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+@@ -130,6 +133,8 @@
+             this.func_98033_al().func_98236_b("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
+             this.func_98033_al().func_98236_b("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
          }
 +
 +        FMLCommonHandler.instance().onServerStarted();
  
          this.func_71210_a(new DedicatedPlayerList(this));
          long j = System.nanoTime();
-@@ -170,6 +175,7 @@
+@@ -172,6 +177,7 @@
          this.func_71191_d((this.func_71207_Z() + 8) / 16 * 16);
          this.func_71191_d(MathHelper.func_76125_a(this.func_71207_Z(), 64, 256));
          this.field_71340_o.func_73667_a("max-build-height", Integer.valueOf(this.func_71207_Z()));
 +        if (!FMLCommonHandler.instance().handleServerAboutToStart(this)) { return false; }
-         field_71306_a.info("Preparing level \"" + this.func_71270_I() + "\"");
+         this.func_98033_al().func_98233_a("Preparing level \"" + this.func_71270_I() + "\"");
          this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
          long i1 = System.nanoTime() - j;
-@@ -190,7 +196,7 @@
+@@ -192,7 +198,7 @@
              this.field_71339_n.func_72602_a();
          }
  

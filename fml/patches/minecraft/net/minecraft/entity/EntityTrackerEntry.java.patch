@@ -9,11 +9,10 @@
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.item.EntityBoat;
  import net.minecraft.entity.item.EntityEnderCrystal;
-@@ -351,6 +353,14 @@
-                     this.field_73137_j = this.field_73132_a.field_70159_w;
+@@ -352,6 +354,14 @@
                      this.field_73138_k = this.field_73132_a.field_70181_x;
                      this.field_73135_l = this.field_73132_a.field_70179_y;
-+                    
+ 
 +                    int posX = MathHelper.func_76128_c(this.field_73132_a.field_70165_t * 32.0D);
 +                    int posY = MathHelper.func_76128_c(this.field_73132_a.field_70163_u * 32.0D);
 +                    int posZ = MathHelper.func_76128_c(this.field_73132_a.field_70161_v * 32.0D);
@@ -21,13 +20,14 @@
 +                    {
 +                        FMLNetworkHandler.makeEntitySpawnAdjustment(this.field_73132_a.field_70157_k, p_73117_1_, this.field_73128_d, this.field_73129_e, this.field_73126_f);
 +                    }
- 
++
                      if (this.field_73143_t && !(packet instanceof Packet24MobSpawn))
                      {
+                         p_73117_1_.field_71135_a.func_72567_b(new Packet28EntityVelocity(this.field_73132_a.field_70157_k, this.field_73132_a.field_70159_w, this.field_73132_a.field_70181_x, this.field_73132_a.field_70179_y));
 @@ -424,6 +434,13 @@
          if (this.field_73132_a.field_70128_L)
          {
-             System.out.println("Fetching addPacket for removed entity");
+             this.field_73132_a.field_70170_p.func_98180_V().func_98236_b("Fetching addPacket for removed entity");
 +        }
 +
 +        Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.field_73132_a);

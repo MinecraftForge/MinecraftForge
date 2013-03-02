@@ -1,15 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/network/NetServerHandler.java
 +++ ../src-work/minecraft/net/minecraft/network/NetServerHandler.java
-@@ -7,6 +7,8 @@
+@@ -6,6 +6,8 @@
+ import java.util.ArrayList;
  import java.util.Iterator;
  import java.util.Random;
- import java.util.logging.Logger;
 +
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
- import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.player.EntityPlayerMP;
-@@ -32,6 +34,7 @@
+@@ -33,6 +35,7 @@
  import net.minecraft.network.packet.Packet108EnchantItem;
  import net.minecraft.network.packet.Packet10Flying;
  import net.minecraft.network.packet.Packet130UpdateSign;
@@ -17,7 +17,7 @@
  import net.minecraft.network.packet.Packet13PlayerLookMove;
  import net.minecraft.network.packet.Packet14BlockDig;
  import net.minecraft.network.packet.Packet15Place;
-@@ -604,6 +607,7 @@
+@@ -616,6 +619,7 @@
  
      public void func_72481_a(Packet3Chat p_72481_1_)
      {
@@ -25,7 +25,7 @@
          if (this.field_72574_e.func_71126_v() == 2)
          {
              this.func_72567_b(new Packet3Chat("Cannot send chat message."));
-@@ -969,6 +973,11 @@
+@@ -981,6 +985,11 @@
      }
  
      public void func_72501_a(Packet250CustomPayload p_72501_1_)
@@ -37,7 +37,7 @@
      {
          DataInputStream datainputstream;
          ItemStack itemstack;
-@@ -1133,4 +1142,18 @@
+@@ -1145,4 +1154,18 @@
              }
          }
      }

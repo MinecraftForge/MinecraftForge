@@ -134,7 +134,7 @@ public class GuiModList extends GuiScreen
                         tess.func_78374_a(offset + texture.func_94282_c(), top,                          field_73735_i, 1, 0);
                         tess.func_78374_a(offset,                          top,                          field_73735_i, 0, 0);
                         tess.func_78381_a();
-    
+
                         shifty += 65;
                     }
                 }

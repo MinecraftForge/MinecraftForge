@@ -8,7 +8,7 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
-@@ -231,7 +232,50 @@
+@@ -235,7 +236,50 @@
          int l = p_78612_1_.func_71857_b();
          p_78612_1_.func_71902_a(this.field_78669_a, p_78612_2_, p_78612_3_, p_78612_4_);
          this.func_83018_a(p_78612_1_);
@@ -60,7 +60,7 @@
      }
  
      public boolean func_78567_v(BlockEndPortalFrame p_78567_1_, int p_78567_2_, int p_78567_3_, int p_78567_4_)
-@@ -6805,6 +6849,10 @@
+@@ -6904,6 +6948,10 @@
                  this.func_96447_a((BlockHopper)p_78600_1_, 0, 0, 0, 0, true);
                  GL11.glTranslatef(0.5F, 0.5F, 0.5F);
              }
@@ -71,7 +71,7 @@
          }
          else
          {
-@@ -6863,7 +6911,25 @@
+@@ -6962,7 +7010,25 @@
  
      public static boolean func_78597_b(int p_78597_0_)
      {
