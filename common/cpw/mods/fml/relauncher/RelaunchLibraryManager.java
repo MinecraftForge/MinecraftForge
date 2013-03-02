@@ -35,8 +35,23 @@ public class RelaunchLibraryManager
     private static Map<IFMLLoadingPlugin, File> pluginLocations;
     private static List<IFMLLoadingPlugin> loadPlugins;
     private static List<ILibrarySet> libraries;
+    private static boolean deobfuscatedEnvironment;
+
     public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
     {
+        try
+        {
+            // Are we in a 'decompiled' environment?
+            actualClassLoader.getClassBytes("net.minecraft.world.World");
+            FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
+            deobfuscatedEnvironment = true;
+        }
+        catch (IOException e1)
+        {
+            FMLRelaunchLog.fine("Enabling runtime deobfuscation");
+            deobfuscatedEnvironment = false;
+        }
+
         pluginLocations = new HashMap<IFMLLoadingPlugin, File>();
         loadPlugins = new ArrayList<IFMLLoadingPlugin>();
         libraries = new ArrayList<ILibrarySet>();
@@ -240,8 +255,10 @@ public class RelaunchLibraryManager
             }
         }
         // Deobfuscation transformer, always last
-        actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
-
+        if (!deobfuscatedEnvironment)
+        {
+            actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
+        }
         downloadMonitor.updateProgressString("Running coremod plugins");
         Map<String,Object> data = new HashMap<String,Object>();
         data.put("mcLocation", mcDir);
@@ -259,6 +276,7 @@ public class RelaunchLibraryManager
                     IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, actualClassLoader).newInstance();
                     Map<String,Object> callData = new HashMap<String, Object>();
                     callData.put("classLoader", actualClassLoader);
+                    callData.put("deobfuscationFileName", FMLInjectionData.debfuscationDataName());
                     call.injectData(callData);
                     call.call();
                 }
