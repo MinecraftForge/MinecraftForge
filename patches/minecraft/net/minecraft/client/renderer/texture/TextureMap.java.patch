@@ -1,0 +1,23 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
+@@ -95,8 +95,18 @@
+         while (iterator.hasNext())
+         {
+             String s = (String)iterator.next();
+-            String s1 = this.field_94254_c + s + this.field_94251_d;
+-            List list = TextureManager.func_94267_b().func_94266_e(s1);
++            String s1;
++            if (s.indexOf(':')==-1)
++            {
++                s1 = this.field_94254_c + s + this.field_94251_d;
++            }
++            else
++            {
++                String domain = s.substring(0,s.indexOf(':'));
++                String file = s.substring(s.indexOf(':')+1);
++                s1 = "mods/"+domain +"/" + this.field_94254_c + file + this.field_94251_d;
++            }
++            List list = TextureManager.func_94267_b().createNewTexture(s, s1);
+ 
+             if (!list.isEmpty())
+             {

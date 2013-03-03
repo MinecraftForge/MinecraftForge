@@ -1,0 +1,25 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -66,15 +66,20 @@
+ 
+     public List func_94266_e(String par1Str)
+     {
++        return createNewTexture(par1Str, par1Str);
++    }
++    public List createNewTexture(String textureName, String textureFile)
++    {
++        String par1Str = textureFile;
+         ArrayList arraylist = new ArrayList();
+         ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
+ 
+         try
+         {
+-            BufferedImage bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + par1Str));
++            BufferedImage bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + textureFile));
+             int i = bufferedimage.getHeight();
+             int j = bufferedimage.getWidth();
+-            String s1 = this.func_98146_d(par1Str);
++            String s1 = textureName;
+ 
+             if (this.func_98147_a(par1Str, itexturepack))
+             {
