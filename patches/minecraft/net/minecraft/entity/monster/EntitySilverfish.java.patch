@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
+@@ -26,11 +26,6 @@
+         this.moveSpeed = 0.6F;
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 8;
+-    }
+-
+     /**
+      * returns if this entity triggers Block.onEntityWalking on the blocks they walk on. used for spiders and wolves to
+      * prevent them from trampling crops

@@ -1,6 +1,18 @@
 --- ../src_base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src_work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
-@@ -355,8 +355,9 @@
+@@ -127,11 +127,6 @@
+         return true;
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 10;
+-    }
+-
+     /**
+      * Called when the mob is falling. Calculates and applies fall damage.
+      */
+@@ -355,8 +350,9 @@
                  }
  
                  int var4 = this.worldObj.getBlockId(var1, var2 - 1, var3);

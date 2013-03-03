@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityCow.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityCow.java
+@@ -38,11 +38,6 @@
+     public boolean isAIEnabled()
+     {
+         return true;
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 10;
+     }
+ 
+     /**

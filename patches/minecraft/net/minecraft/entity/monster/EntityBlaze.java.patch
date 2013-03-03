@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityBlaze.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityBlaze.java
+@@ -27,11 +27,6 @@
+         this.experienceValue = 10;
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 20;
+-    }
+-
+     protected void entityInit()
+     {
+         super.entityInit();

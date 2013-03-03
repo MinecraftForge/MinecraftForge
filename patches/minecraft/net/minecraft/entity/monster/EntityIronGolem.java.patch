@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityIronGolem.java
+@@ -90,11 +90,6 @@
+         super.updateAITick();
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 100;
+-    }
+-
+     /**
+      * Decrements the entity's air supply when underwater
+      */

@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
+@@ -29,11 +29,6 @@
+         this.moveSpeed = 0.2F;
+         this.setSize(0.6F, 2.9F);
+         this.stepHeight = 1.0F;
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 40;
+     }
+ 
+     protected void entityInit()

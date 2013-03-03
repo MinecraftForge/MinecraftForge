@@ -20,7 +20,19 @@
  {
      private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
  
-@@ -139,28 +143,6 @@
+@@ -90,11 +94,6 @@
+         super.onLivingUpdate();
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 8;
+-    }
+-
+     protected void entityInit()
+     {
+         super.entityInit();
+@@ -139,28 +138,6 @@
       */
      public boolean interact(EntityPlayer par1EntityPlayer)
      {
@@ -49,7 +61,7 @@
          return super.interact(par1EntityPlayer);
      }
  
-@@ -349,4 +331,24 @@
+@@ -349,4 +326,24 @@
      {
          return this.func_90015_b(par1EntityAgeable);
      }

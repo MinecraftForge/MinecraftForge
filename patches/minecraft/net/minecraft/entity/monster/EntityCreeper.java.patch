@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityCreeper.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityCreeper.java
+@@ -79,11 +79,6 @@
+         }
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 20;
+-    }
+-
+     protected void entityInit()
+     {
+         super.entityInit();

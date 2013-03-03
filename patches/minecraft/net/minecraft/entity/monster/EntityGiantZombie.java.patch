@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityGiantZombie.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityGiantZombie.java
+@@ -12,11 +12,6 @@
+         this.moveSpeed = 0.5F;
+         this.yOffset *= 6.0F;
+         this.setSize(this.width * 6.0F, this.height * 6.0F);
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 100;
+     }
+ 
+     /**

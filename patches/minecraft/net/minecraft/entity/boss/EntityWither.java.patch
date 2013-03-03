@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/boss/EntityWither.java
++++ ../src_work/minecraft/net/minecraft/entity/boss/EntityWither.java
+@@ -614,11 +614,6 @@
+         return true;
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 300;
+-    }
+-
+     @SideOnly(Side.CLIENT)
+     public float func_82207_a(int par1)
+     {

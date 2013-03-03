@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntitySpider.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySpider.java
+@@ -37,11 +37,6 @@
+         {
+             this.setBesideClimbableBlock(this.isCollidedHorizontally);
+         }
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 16;
+     }
+ 
+     /**

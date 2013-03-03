@@ -32,6 +32,65 @@ import net.minecraftforge.event.entity.living.LivingEvent.*;
 
 public class ForgeHooks
 {
+	static Map<String, Integer> entityHealthMap = new HashMap<String, Integer>();
+
+	/**
+	 * Set the max health for a entity
+	 *
+	 * @param entity Class name without "Entity" and ".class", example: EntityMooshroom.class --> Mooshroom
+	 * @param health The amount of health
+	 */	
+	public static void setEntityHealth(String entity, int health) {
+		if(entity != null && !entity.equalsIgnoreCase("") && !(health <= 0)) {
+			entityHealthMap.put(entity, health);
+		}
+	}
+
+	/**
+	 * Get the max health for a entity
+	 * 
+	 * @param entity Class name without "Entity" and ".class", example: EntityMooshroom.class --> Mooshroom
+	 * @return The amount of health
+	 */
+	public static int getEntityHealth(String entity) {
+		return entityHealthMap.get(entity);
+	}
+	
+	static void initEntityHealth() {
+		setEntityHealth("Bat", 6);
+		setEntityHealth("Blaze", 20);
+		setEntityHealth("CaveSpider", 12);
+		setEntityHealth("Chicken", 4);
+		setEntityHealth("Cow", 10);
+		setEntityHealth("Creeper", 20);
+		setEntityHealth("Dragon", 200);
+		setEntityHealth("Enderman", 40);
+		setEntityHealth("Ghast", 10);
+		setEntityHealth("GiantZombie", 100);
+		setEntityHealth("IronGolem", 100);
+		setEntityHealth("Mooshroom", 10);
+		setEntityHealth("Ocelot", 10);
+		setEntityHealth("Pig", 10);
+		setEntityHealth("PigZombie", 20);
+		setEntityHealth("Player", 20);
+		setEntityHealth("Sheep", 8);
+		setEntityHealth("Silverfish", 8);
+		setEntityHealth("Skeleton", 20);
+		setEntityHealth("Snowman", 4);
+		setEntityHealth("Spider", 16);
+		setEntityHealth("Squid", 10);
+		setEntityHealth("Villager", 20);
+		setEntityHealth("Witch", 26);
+		setEntityHealth("Wither", 300);
+		setEntityHealth("Wolf", 8);
+		setEntityHealth("WolfTamed", 20);
+		setEntityHealth("Zombie", 20);
+		
+		//for slimes it's a multiplier
+		setEntityHealth("MagmaCube", 1);
+		setEntityHealth("Slime", 1);
+	}
+
     static class GrassEntry extends WeightedRandomItem
     {
         public final Block block;
@@ -255,6 +314,7 @@ public class ForgeHooks
         grassList.add(new GrassEntry(Block.plantRed,    0, 10));
         seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
         initTools();
+		initEntityHealth();
     }
 
     /**

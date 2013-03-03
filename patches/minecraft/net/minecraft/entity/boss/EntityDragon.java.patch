@@ -1,6 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -530,10 +530,11 @@
+@@ -81,12 +81,7 @@
+         this.targetY = 100.0D;
+         this.ignoreFrustumCheck = true;
+     }
+-
+-    public int getMaxHealth()
+-    {
+-        return 200;
+-    }
+-
++	
+     protected void entityInit()
+     {
+         super.entityInit();
+@@ -530,10 +525,11 @@
                  for (int var12 = var4; var12 <= var7; ++var12)
                  {
                      int var13 = this.worldObj.getBlockId(var10, var11, var12);

@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityPig.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityPig.java
+@@ -51,11 +51,6 @@
+         return true;
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 10;
+-    }
+-
+     protected void updateAITasks()
+     {
+         super.updateAITasks();

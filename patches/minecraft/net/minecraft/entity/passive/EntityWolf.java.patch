@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityWolf.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityWolf.java
+@@ -29,6 +29,7 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class EntityWolf extends EntityTameable
+ {
+@@ -99,7 +100,7 @@
+ 
+     public int getMaxHealth()
+     {
+-        return this.isTamed() ? 20 : 8;
++        return this.isTamed() ? ForgeHooks.getEntityHealth("WolfTamed") : ForgeHooks.getEntityHealth("Wolf");
+     }
+ 
+     protected void entityInit()

@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityVillager.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityVillager.java
+@@ -221,11 +221,6 @@
+     {
+         super.entityInit();
+         this.dataWatcher.addObject(16, Integer.valueOf(0));
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 20;
+     }
+ 
+     /**

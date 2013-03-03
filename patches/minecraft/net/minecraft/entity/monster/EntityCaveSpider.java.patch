@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityCaveSpider.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityCaveSpider.java
+@@ -15,11 +15,6 @@
+         super(par1World);
+         this.texture = "/mob/cavespider.png";
+         this.setSize(0.7F, 0.5F);
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 12;
+     }
+ 
+     @SideOnly(Side.CLIENT)

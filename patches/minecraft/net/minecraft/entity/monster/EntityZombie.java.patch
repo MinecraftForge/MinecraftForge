@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityZombie.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityZombie.java
+@@ -80,12 +80,7 @@
+     {
+         return this.isVillager() ? "/mob/zombie_villager.png" : "/mob/zombie.png";
+     }
+-
+-    public int getMaxHealth()
+-    {
+-        return 20;
+-    }
+-
++	
+     /**
+      * Returns the current armor value as determined by a call to InventoryPlayer.getTotalArmorValue
+      */

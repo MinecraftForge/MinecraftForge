@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityGhast.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityGhast.java
+@@ -63,11 +63,6 @@
+     {
+         super.entityInit();
+         this.dataWatcher.addObject(16, Byte.valueOf((byte)0));
+-    }
+-
+-    public int getMaxHealth()
+-    {
+-        return 10;
+     }
+ 
+     /**

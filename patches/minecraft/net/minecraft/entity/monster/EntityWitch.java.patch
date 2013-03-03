@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityWitch.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityWitch.java
+@@ -94,11 +94,6 @@
+         return this.getDataWatcher().getWatchableObjectByte(21) == 1;
+     }
+ 
+-    public int getMaxHealth()
+-    {
+-        return 26;
+-    }
+-
+     /**
+      * Returns true if the newer Entity AI code should be run
+      */
