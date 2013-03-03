@@ -47,7 +47,8 @@ def main():
     
 def setup_fml(mcp_dir, fml_dir, dont_extract=False):        
     print 'Setting up Forge ModLoader'
-    sys.path.append(os.path.join(fml_dir,'install')os.path.join(forge_dir, 'fml'))
+    sys.path.append(os.path.join(fml_dir,'install'))
+    sys.path.append(os.path.join(forge_dir, 'fml'))
     from install import fml_main
     fml_main(fml_dir, mcp_dir, True)
 
