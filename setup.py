@@ -47,25 +47,7 @@ def main():
     
 def setup_fml(mcp_dir, fml_dir, dont_extract=False):        
     print 'Setting up Forge ModLoader'
-    if not dont_extract:
-        fml = glob.glob(os.path.join(forge_dir, 'fml-src-*.zip'))
-        if not len(fml) == 1:
-            if len(fml) == 0:
-                print 'Missing FML source zip, should be named fml-src-*.zip inside your forge folder, obtain it from the repo'
-            else:
-                print 'To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported'
-            sys.exit(1)
-        
-        if os.path.isdir(fml_dir):
-            shutil.rmtree(fml_dir)
-            
-        print 'Extracting: %s' % os.path.basename(fml[0]) 
-        
-        zf = zipfile.ZipFile(fml[0])
-        zf.extractall(forge_dir)
-        zf.close()
-    
-    sys.path.append(fml_dir)
+    sys.path.append(os.path.join(fml_dir,'install')os.path.join(forge_dir, 'fml'))
     from install import fml_main
     fml_main(fml_dir, mcp_dir, True)
 

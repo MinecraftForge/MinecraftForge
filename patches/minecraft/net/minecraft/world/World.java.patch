@@ -499,9 +499,9 @@
      {
          if (!this.provider.hasNoSky)
          {
-@@ -2971,12 +3062,14 @@
- 
-     public void toggleRain()
+@@ -2974,12 +3065,14 @@
+      */
+     public void commandToggleDownfall()
      {
 -        this.worldInfo.setRainTime(1);
 +        provider.toggleRain();
@@ -515,7 +515,7 @@
          this.theProfiler.startSection("buildList");
          int i;
          EntityPlayer entityplayer;
-@@ -3083,6 +3176,11 @@
+@@ -3086,6 +3179,11 @@
       */
      public boolean canBlockFreeze(int par1, int par2, int par3, boolean par4)
      {
@@ -527,7 +527,7 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
          float f = biomegenbase.getFloatTemperature();
  
-@@ -3141,6 +3239,11 @@
+@@ -3144,6 +3242,11 @@
       */
      public boolean canSnowAt(int par1, int par2, int par3)
      {
@@ -539,7 +539,7 @@
          BiomeGenBase biomegenbase = this.getBiomeGenForCoords(par1, par3);
          float f = biomegenbase.getFloatTemperature();
  
-@@ -3184,10 +3287,12 @@
+@@ -3187,10 +3290,12 @@
          else
          {
              int l = this.getBlockId(par1, par2, par3);
@@ -556,7 +556,7 @@
              {
                  j1 = 1;
              }
-@@ -3283,7 +3388,9 @@
+@@ -3286,7 +3391,9 @@
                                      int j4 = i2 + Facing.offsetsXForSide[i4];
                                      int k4 = j2 + Facing.offsetsYForSide[i4];
                                      int l4 = k2 + Facing.offsetsZForSide[i4];
@@ -567,7 +567,7 @@
                                      i3 = this.getSavedLightValue(par1EnumSkyBlock, j4, k4, l4);
  
                                      if (i3 == l2 - i5 && i1 < this.lightUpdateBlockList.length)
-@@ -3386,10 +3493,10 @@
+@@ -3389,10 +3496,10 @@
      public List func_94576_a(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
          ArrayList arraylist = new ArrayList();
@@ -582,7 +582,7 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -3415,10 +3522,10 @@
+@@ -3418,10 +3525,10 @@
  
      public List selectEntitiesWithinAABB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, IEntitySelector par3IEntitySelector)
      {
@@ -597,7 +597,7 @@
          ArrayList arraylist = new ArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -3511,11 +3618,14 @@
+@@ -3514,11 +3621,14 @@
       */
      public void addLoadedEntities(List par1List)
      {
@@ -615,7 +615,7 @@
          }
      }
  
-@@ -3549,6 +3659,11 @@
+@@ -3552,6 +3662,11 @@
          else
          {
              if (block != null && (block == Block.waterMoving || block == Block.waterStill || block == Block.lavaMoving || block == Block.lavaStill || block == Block.fire || block.blockMaterial.isReplaceable()))
@@ -627,7 +627,7 @@
              {
                  block = null;
              }
-@@ -3837,7 +3952,7 @@
+@@ -3840,7 +3955,7 @@
       */
      public long getSeed()
      {
@@ -636,7 +636,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3847,7 +3962,7 @@
+@@ -3850,7 +3965,7 @@
  
      public long getWorldTime()
      {
@@ -645,7 +645,7 @@
      }
  
      /**
-@@ -3855,7 +3970,7 @@
+@@ -3858,7 +3973,7 @@
       */
      public void setWorldTime(long par1)
      {
@@ -654,7 +654,7 @@
      }
  
      /**
-@@ -3863,13 +3978,13 @@
+@@ -3866,13 +3981,13 @@
       */
      public ChunkCoordinates getSpawnPoint()
      {
@@ -670,7 +670,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3893,7 +4008,10 @@
+@@ -3896,7 +4011,10 @@
  
          if (!this.loadedEntityList.contains(par1Entity))
          {
@@ -682,7 +682,7 @@
          }
      }
  
-@@ -3901,6 +4019,11 @@
+@@ -3904,6 +4022,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -694,7 +694,7 @@
      {
          return true;
      }
-@@ -4021,8 +4144,7 @@
+@@ -4024,8 +4147,7 @@
       */
      public boolean isBlockHighHumidity(int par1, int par2, int par3)
      {
@@ -704,7 +704,7 @@
      }
  
      /**
-@@ -4097,7 +4219,7 @@
+@@ -4100,7 +4222,7 @@
       */
      public int getHeight()
      {
@@ -713,7 +713,7 @@
      }
  
      /**
-@@ -4105,7 +4227,7 @@
+@@ -4108,7 +4230,7 @@
       */
      public int getActualHeight()
      {
@@ -722,7 +722,7 @@
      }
  
      public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
-@@ -4148,7 +4270,7 @@
+@@ -4151,7 +4273,7 @@
       */
      public double getHorizon()
      {
@@ -731,7 +731,7 @@
      }
  
      /**
-@@ -4251,4 +4373,98 @@
+@@ -4254,4 +4376,98 @@
      {
          return this.field_98181_L;
      }

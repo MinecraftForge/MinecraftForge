@@ -162,7 +162,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1102,6 +1100,7 @@
+@@ -1105,6 +1103,7 @@
  
              if (worldserver != null)
              {
