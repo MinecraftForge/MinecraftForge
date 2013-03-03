@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.world.LightningGeneratedEvent;
 
 @SuppressWarnings("deprecation")
 public class ForgeEventFactory
@@ -59,4 +60,10 @@ public class ForgeEventFactory
 
         return MinecraftForge.EVENT_BUS.post(nEvent);
     }
+    
+	public static boolean onLightningGenerated(World world, int x, int y, int z) {
+		LightningGeneratedEvent event = new LightningGeneratedEvent(world, x, y, z);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getResult() != Result.DENY;
+	}
 }
