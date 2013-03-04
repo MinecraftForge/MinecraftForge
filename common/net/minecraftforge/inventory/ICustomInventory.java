@@ -8,9 +8,9 @@ import net.minecraft.inventory.IInventory;
  */
 public interface ICustomInventory extends IInventory {
 
-	/**
-	 * Gets the IInventoryHandler that will do the inventory manipulations for this ICustomInventory.
-	 */
-	public IInventoryHandler getInventoryHandler();
+    /**
+     * Gets the IInventoryHandler that will do the inventory manipulations for this ICustomInventory.
+     */
+    public IInventoryHandler getInventoryHandler();
 
 }
