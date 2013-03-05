@@ -213,7 +213,7 @@
       </mappedresources>
     </copy>
     <touch millis="0" file="build-tmp-deobf/joined.srg"/>
-    <zip file="deobfuscation_data_${version.minecraft}.zip">
+    <zip file="deobfuscation_data_${version.minecraft}.zip" encoding="UTF-8">
       <fileset dir="build-tmp-deobf" includes="joined.srg"/>
     </zip>
     <checksum algorithm="SHA1" property="deobf.checksum" file="deobfuscation_data_${version.minecraft}.zip"/>
