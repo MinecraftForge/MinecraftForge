@@ -21,3 +21,22 @@
  
              if (!list.isEmpty())
              {
+@@ -150,7 +160,17 @@
+             if (list1.size() > 1)
+             {
+                 this.field_94258_i.add(texturestitched);
+-                String s3 = this.field_94254_c + s2 + ".txt";
++                String s3;
++                if (s2.indexOf(':') == -1)
++                {
++                    s3 = field_94254_c + s2 + ".txt";
++                }
++                else
++                {
++                    String domain = s2.substring(0, s2.indexOf(':'));
++                    String file = s2.substring(s2.indexOf(':') + 1);
++                    s3 = "mods/" + domain + "/" + field_94254_c + file + ".txt";
++                }
+                 ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
+                 boolean flag1 = !itexturepack.func_98138_b("/" + this.field_94254_c + s2 + ".png", false);
+ 
