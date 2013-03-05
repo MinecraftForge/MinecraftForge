@@ -68,7 +68,24 @@ def setup_fml(mcp_dir, fml_dir, build_num=0):
     sys.path.append(os.path.join(fml_dir, 'install'))
     from fml import finish_setup_fml
     finish_setup_fml(fml_dir, mcp_dir)
+    
+    print('Copy resources:')
+    for file in os.listdir(os.path.join(fml_dir, 'client')):
+        if os.path.isfile(file) and not os.path.splitext(file)[1] == '.java':
+            base = os.path.basename(file)
+            print('    fml/client/' + base)
+            shutil.copy(file, os.path.join(mcp_dir, 'src', base))
+    
+    for file in os.listdir(os.path.join(fml_dir, 'common')):
+        if os.path.isfile(file) and not os.path.splitext(file)[1] == '.java':
+            base = os.path.basename(file)
+            print('    fml/common/' + base)
+            shutil.copy(file, os.path.join(mcp_dir, 'src', base))
 
+    name = 'fmlversion.properties'
+    print('    ' + name)
+    shutil.copy(os.path.join(fml_dir, name), os.path.join(mcp_dir, 'src', name))
+            
 def run_command(command, cwd='.', verbose=True):
     print('Running command: ')
     print(pformat(command))
