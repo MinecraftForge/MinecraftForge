@@ -44,7 +44,22 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
 
-        Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forge.cfg"));
+        Configuration config = null;
+        File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
+        try
+        {
+            config = new Configuration(cfgFile);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error loading forge.cfg, deleting file and resetting: ");
+            e.printStackTrace();
+
+            if (cfgFile.exists())
+                cfgFile.delete();
+
+            config = new Configuration(cfgFile);
+        }
         if (!config.isChild)
         {
             config.load();
@@ -60,9 +75,13 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         if (clumpingThreshold > 1024 || clumpingThreshold < 64)
         {
             clumpingThreshold = 64;
-            clumpingThresholdProperty.value = "64";
+            clumpingThresholdProperty.set(64);
         }
-        config.save();
+
+        if (config.hasChanged())
+        {
+            config.save();
+        }
     }
 
     @Override

@@ -775,7 +775,7 @@ public class ForgeChunkManager
 
     static void loadConfiguration()
     {
-        for (String mod : config.categories.keySet())
+        for (String mod : config.getCategoryNames())
         {
             if (mod.equals("Forge") || mod.equals("defaults"))
             {
@@ -786,7 +786,10 @@ public class ForgeChunkManager
             ticketConstraints.put(mod, modTC.getInt(200));
             chunkConstraints.put(mod, modCPT.getInt(25));
         }
-        config.save();
+        if (config.hasChanged())
+        {
+            config.save();
+        }
     }
 
     /**
@@ -953,7 +956,7 @@ public class ForgeChunkManager
         sampleTC.comment = "Maximum ticket count for the mod. Zero disables chunkloading capabilities.";
         sampleTC = config.get("Forge", "maximumChunksPerTicket", 25);
         sampleTC.comment = "Maximum chunks per ticket for the mod.";
-        for (String mod : config.categories.keySet())
+        for (String mod : config.getCategoryNames())
         {
             if (mod.equals("Forge") || mod.equals("defaults"))
             {
@@ -965,12 +968,12 @@ public class ForgeChunkManager
     }
 
 
-    public static Map<String,Property> getConfigMapFor(Object mod)
+    public static ConfigCategory getConfigFor(Object mod)
     {
         ModContainer container = getContainer(mod);
         if (container != null)
         {
-            return config.getCategory(container.getModId()).getValues();
+            return config.getCategory(container.getModId());
         }
 
         return null;
@@ -981,8 +984,8 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container != null)
         {
-            Map<String, Property> props = config.getCategory(container.getModId()).getValues();
-            props.put(propertyName, new Property(propertyName, value, type));
+            ConfigCategory cat = config.getCategory(container.getModId());
+            cat.put(propertyName, new Property(propertyName, value, type));
         }
     }
 }

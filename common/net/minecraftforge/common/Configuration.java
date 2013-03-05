@@ -5,30 +5,40 @@
 
 package net.minecraftforge.common;
 
-import java.io.*;
-import java.text.DateFormat;
+import static net.minecraftforge.common.Property.Type.BOOLEAN;
+import static net.minecraftforge.common.Property.Type.DOUBLE;
+import static net.minecraftforge.common.Property.Type.INTEGER;
+import static net.minecraftforge.common.Property.Type.STRING;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PushbackInputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import com.google.common.base.CharMatcher;
+import com.google.common.collect.ImmutableSet;
+
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import static net.minecraftforge.common.Property.Type.*;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -54,13 +64,14 @@ public class Configuration
 
     File file;
 
-    public Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
+    private Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
     private Map<String, Configuration> children = new TreeMap<String, Configuration>();
 
     private boolean caseSensitiveCustomCategories;
     public String defaultEncoding = DEFAULT_ENCODING;
     private String fileName = null;
     public boolean isChild = false;
+    private boolean changed = false;
 
     static
     {
@@ -148,7 +159,7 @@ public class Configuration
 
             if (Block.blocksList[defaultID] == null && !configMarkers[defaultID])
             {
-                prop.value = Integer.toString(defaultID);
+                prop.set(defaultID);
                 configMarkers[defaultID] = true;
                 return prop;
             }
@@ -158,7 +169,7 @@ public class Configuration
                 {
                     if (Block.blocksList[j] == null && !configMarkers[j])
                     {
-                        prop.value = Integer.toString(j);
+                        prop.set(j);
                         configMarkers[j] = true;
                         return prop;
                     }
@@ -196,7 +207,7 @@ public class Configuration
 
             if (Item.itemsList[defaultShift] == null && !configMarkers[defaultShift] && defaultShift >= Block.blocksList.length)
             {
-                prop.value = Integer.toString(defaultID);
+                prop.set(defaultID);
                 configMarkers[defaultShift] = true;
                 return prop;
             }
@@ -206,7 +217,7 @@ public class Configuration
                 {
                     if (Item.itemsList[x] == null && !configMarkers[x])
                     {
-                        prop.value = Integer.toString(x - ITEM_SHIFT);
+                        prop.set(x - ITEM_SHIFT);
                         configMarkers[x] = true;
                         return prop;
                     }
@@ -227,7 +238,7 @@ public class Configuration
         Property prop = get(category, key, Integer.toString(defaultValue), comment, INTEGER);
         if (!prop.isIntValue())
         {
-            prop.value = Integer.toString(defaultValue);
+            prop.set(defaultValue);
         }
         return prop;
     }
@@ -242,7 +253,7 @@ public class Configuration
         Property prop = get(category, key, Boolean.toString(defaultValue), comment, BOOLEAN);
         if (!prop.isBooleanValue())
         {
-            prop.value = Boolean.toString(defaultValue);
+            prop.set(defaultValue);
         }
         return prop;
     }
@@ -257,7 +268,7 @@ public class Configuration
         Property prop = get(category, key, Double.toString(defaultValue), comment, DOUBLE);
         if (!prop.isDoubleValue())
         {
-            prop.value = Double.toString(defaultValue);
+            prop.set(defaultValue);
         }
         return prop;
     }
@@ -298,7 +309,7 @@ public class Configuration
         Property prop =  get(category, key, values, comment, INTEGER);
         if (!prop.isIntList())
         {
-            prop.valueList = values;
+            prop.set(values);
         }
 
         return prop;
@@ -321,7 +332,7 @@ public class Configuration
         
         if (!prop.isDoubleList())
         {
-            prop.valueList = values;
+            prop.set(values);
         }
 
         return prop;
@@ -344,7 +355,7 @@ public class Configuration
         
         if (!prop.isBooleanList())
         {
-            prop.valueList = values;
+            prop.set(values);
         }
 
         return prop;
@@ -365,8 +376,8 @@ public class Configuration
 
             if (prop.getType() == null)
             {
-                prop = new Property(prop.getName(), prop.value, type);
-                cat.set(key, prop);
+                prop = new Property(prop.getName(), prop.getString(), type);
+                cat.put(key, prop);
             }
 
             prop.comment = comment;
@@ -375,7 +386,8 @@ public class Configuration
         else if (defaultValue != null)
         {
             Property prop = new Property(key, defaultValue, type);
-            cat.set(key, prop);
+            prop.set(defaultValue); //Set and mark as dirty to signify it should save 
+            cat.put(key, prop);
             prop.comment = comment;
             return prop;
         }
@@ -400,8 +412,8 @@ public class Configuration
 
             if (prop.getType() == null)
             {
-                prop = new Property(prop.getName(), prop.value, type);
-                cat.set(key, prop);
+                prop = new Property(prop.getName(), prop.getString(), type);
+                cat.put(key, prop);
             }
 
             prop.comment = comment;
@@ -412,7 +424,7 @@ public class Configuration
         {
             Property prop = new Property(key, defaultValue, type);
             prop.comment = comment;
-            cat.set(key, prop);
+            cat.put(key, prop);
             return prop;
         }
         else
@@ -569,7 +581,7 @@ public class Configuration
                                     Property prop = new Property(name, line.substring(i + 1), type, true);
                                     i = line.length();
 
-                                    currentCat.set(name, prop);
+                                    currentCat.put(name, prop);
 
                                     break;
 
@@ -603,7 +615,7 @@ public class Configuration
                                         throw new RuntimeException(String.format("Malformed list property \"%s:%d\"", fileName, lineNum));
                                     }
 
-                                    currentCat.set(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
+                                    currentCat.put(name, new Property(name, tmpList.toArray(new String[tmpList.size()]), type));
                                     name = null;
                                     tmpList = null;
                                     type = null;
@@ -647,6 +659,8 @@ public class Configuration
                 } catch (IOException e){}
             }
         }
+
+        resetChangedState();
     }
 
     public void save()
@@ -701,29 +715,7 @@ public class Configuration
     }
 
     private void save(BufferedWriter out) throws IOException
-    {
-        //For compatiblitties sake just in case, Thanks Atomic, to be removed next MC version
-        //TO-DO: Remove next MC version
-        Object[] categoryArray = categories.values().toArray();
-        for (Object o : categoryArray)
-        {
-            if (o instanceof TreeMap)
-            {
-                TreeMap treeMap = (TreeMap)o;
-                ConfigCategory converted = new ConfigCategory(file.getName());
-                FMLLog.warning("Forge found a Treemap saved for Configuration file " + file.getName() + ", this is deprecated behaviour!");
-                
-                for (Object key : treeMap.keySet())
-                {
-                    FMLLog.warning("Converting Treemap to ConfigCategory, key: " + key + ", property value: " + ((Property)treeMap.get(key)).value);
-                    converted.set((String)key, (Property)treeMap.get(key));
-                }
-                
-                categories.values().remove(o);
-                categories.put(file.getName(), converted);
-            }
-        }
-        
+    {        
         for (ConfigCategory cat : categories.values())
         {
             if (!cat.isChild())
@@ -749,6 +741,7 @@ public class Configuration
                 {
                     parent = new ConfigCategory(hierarchy[0]);
                     categories.put(parent.getQualifiedName(), parent);
+                    changed = true;
                 }
 
                 for (int i = 1; i < hierarchy.length; i++)
@@ -760,6 +753,7 @@ public class Configuration
                     {
                         child = new ConfigCategory(hierarchy[i], parent);
                         categories.put(name, child);
+                        changed = true;
                     }
 
                     ret = child;
@@ -770,6 +764,7 @@ public class Configuration
             {
                 ret = new ConfigCategory(category);
                 categories.put(category, ret);
+                changed = true;
             }
         }
 
@@ -788,12 +783,14 @@ public class Configuration
         if (!children.containsKey(name))
         {
             children.put(name, child);
+            changed = true;
         }
         else
         {
             Configuration old = children.get(name);
             child.categories = old.categories;
             child.fileName = old.fileName;
+            old.changed = true;
         }
     }
 
@@ -872,5 +869,41 @@ public class Configuration
         {
             input.close();
         }
+    }
+
+    public boolean hasChanged()
+    {
+        if (changed) return true;
+        
+        for (ConfigCategory cat : categories.values())
+        {
+            if (cat.hasChanged()) return true;
+        }
+
+        for (Configuration child : children.values())
+        {
+            if (child.hasChanged()) return true;
+        }
+
+        return false;
+    }
+
+    private void resetChangedState()
+    {
+        changed = false;
+        for (ConfigCategory cat : categories.values())
+        {
+            cat.resetChangedState();
+        }
+
+        for (Configuration child : children.values())
+        {
+            child.resetChangedState();
+        }
+    }
+
+    public Set<String> getCategoryNames()
+    {
+        return ImmutableSet.copyOf(categories.keySet());
     }
 }
