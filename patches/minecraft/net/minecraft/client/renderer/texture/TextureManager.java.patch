@@ -1,12 +1,13 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -66,15 +66,20 @@
+@@ -66,17 +66,27 @@
  
      public List func_94266_e(String par1Str)
      {
-+        return createNewTexture(par1Str, par1Str);
++        return createNewTexture(par1Str, par1Str, null);
 +    }
-+    public List createNewTexture(String textureName, String textureFile)
++
++    public List createNewTexture(String textureName, String textureFile, TextureStitched stitched)
 +    {
 +        String par1Str = textureFile;
          ArrayList arraylist = new ArrayList();
@@ -21,5 +22,12 @@
 -            String s1 = this.func_98146_d(par1Str);
 +            String s1 = textureName;
  
-             if (this.func_98147_a(par1Str, itexturepack))
+-            if (this.func_98147_a(par1Str, itexturepack))
++            if (stitched != null && stitched.loadTexture(this, itexturepack, textureName, textureFile, bufferedimage, arraylist))
++            {
++                ;
++            }
++            else if (this.func_98147_a(par1Str, itexturepack))
              {
+                 int k = j;
+                 int l = j;

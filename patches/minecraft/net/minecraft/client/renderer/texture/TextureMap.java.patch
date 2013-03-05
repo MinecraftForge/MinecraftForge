@@ -1,27 +1,45 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -95,8 +95,18 @@
-         while (iterator.hasNext())
-         {
-             String s = (String)iterator.next();
+@@ -90,13 +90,22 @@
+         StitchHolder stitchholder = new StitchHolder(texture);
+         stitcher.func_94312_a(stitchholder);
+         hashmap.put(stitchholder, Arrays.asList(new Texture[] {texture}));
+-        Iterator iterator = this.field_94256_j.keySet().iterator();
+-
+-        while (iterator.hasNext())
+-        {
+-            String s = (String)iterator.next();
 -            String s1 = this.field_94254_c + s + this.field_94251_d;
 -            List list = TextureManager.func_94267_b().func_94266_e(s1);
-+            String s1;
-+            if (s.indexOf(':') == -1)
++
++        for (Map.Entry<String, TextureStitched> entry : ((Map<String, TextureStitched>)field_94256_j).entrySet())
++        {
++            String name = entry.getKey();
++            String path;
++            if (name.indexOf(':') == -1)
 +            {
-+                s1 = this.field_94254_c + s + this.field_94251_d;
++                path = this.field_94254_c + name + this.field_94251_d;
 +            }
 +            else
 +            {
-+                String domain = s.substring(0,s.indexOf(':'));
-+                String file = s.substring(s.indexOf(':')+1);
-+                s1 = "mods/" + domain +"/" + field_94254_c + file + field_94251_d;
++                String domain = name.substring(0,name.indexOf(':'));
++                String file = name.substring(name.indexOf(':')+1);
++                path = "mods/" + domain +"/" + field_94254_c + file + field_94251_d;
 +            }
-+            List list = TextureManager.func_94267_b().createNewTexture(s, s1);
++            List list = TextureManager.func_94267_b().createNewTexture(name, path, entry.getValue());
  
              if (!list.isEmpty())
              {
-@@ -150,7 +160,17 @@
+@@ -116,7 +125,7 @@
+         }
+ 
+         this.field_94257_h = stitcher.func_94306_e();
+-        iterator = stitcher.func_94309_g().iterator();
++        Iterator iterator = stitcher.func_94309_g().iterator();
+ 
+         while (iterator.hasNext())
+         {
+@@ -150,7 +159,17 @@
              if (list1.size() > 1)
              {
                  this.field_94258_i.add(texturestitched);
@@ -40,7 +58,7 @@
                  ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
                  boolean flag1 = !itexturepack.func_98138_b("/" + this.field_94254_c + s2 + ".png", false);
  
-@@ -218,4 +238,37 @@
+@@ -218,4 +237,37 @@
      {
          return this.field_94250_g;
      }
