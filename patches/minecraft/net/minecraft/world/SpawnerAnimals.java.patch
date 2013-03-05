@@ -8,19 +8,18 @@
  import java.util.HashMap;
  import java.util.Iterator;
  import java.util.List;
-@@ -19,6 +21,11 @@
+@@ -19,6 +21,10 @@
  import net.minecraft.world.biome.SpawnListEntry;
  import net.minecraft.world.chunk.Chunk;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.Event.Result;
 +import net.minecraftforge.event.ForgeEventFactory;
-+import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
 +
  public final class SpawnerAnimals
  {
      /** The 17x17 area around the player where mobs can spawn */
-@@ -93,6 +100,9 @@
+@@ -93,6 +99,9 @@
                  if ((!enumcreaturetype.getPeacefulCreature() || par2) && (enumcreaturetype.getPeacefulCreature() || par1) && (!enumcreaturetype.getAnimal() || par3) && par0WorldServer.countEntities(enumcreaturetype.getCreatureClass()) <= enumcreaturetype.getMaxNumberOfCreature() * eligibleChunksForSpawning.size() / 256)
                  {
                      Iterator iterator = eligibleChunksForSpawning.keySet().iterator();
@@ -30,7 +29,7 @@
                      label110:
  
                      while (iterator.hasNext())
-@@ -169,7 +179,8 @@
+@@ -169,7 +178,8 @@
  
                                                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
  
@@ -40,7 +39,7 @@
                                                              {
                                                                  ++j2;
                                                                  par0WorldServer.spawnEntityInWorld(entityliving);
-@@ -221,7 +232,8 @@
+@@ -221,7 +231,8 @@
          else
          {
              int l = par1World.getBlockId(par2, par3 - 1, par4);
@@ -50,7 +49,7 @@
          }
      }
  
-@@ -230,6 +242,11 @@
+@@ -230,6 +241,11 @@
       */
      private static void creatureSpecificInit(EntityLiving par0EntityLiving, World par1World, float par2, float par3, float par4)
      {

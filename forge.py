@@ -116,11 +116,18 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     error_level = 0
     try:
         sys.path.append(mcp_dir)
-        from runtime.recompile import recompile
+        from runtime.commands import Commands, CLIENT, SERVER, CalledProcessError
+        from runtime.mcp import recompile_side
         
         os.chdir(mcp_dir)
         reset_logger()
-        recompile(None, True, False)
+        
+        commands = Commands(None, verify=True)
+        try:
+            recompile_side(commands, CLIENT)
+        except CalledProcessError as e:
+            error_level = 1
+            pass
         reset_logger()
         os.chdir(forge_dir)
     except SystemExit, e:
