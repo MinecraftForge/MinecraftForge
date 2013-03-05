@@ -70,21 +70,19 @@ def setup_fml(mcp_dir, fml_dir, build_num=0):
     finish_setup_fml(fml_dir, mcp_dir)
     
     print('Copy resources:')
-    for file in os.listdir(os.path.join(fml_dir, 'client')):
-        if os.path.isfile(file) and not os.path.splitext(file)[1] == '.java':
-            base = os.path.basename(file)
-            print('    fml/client/' + base)
-            shutil.copy(file, os.path.join(mcp_dir, 'src', base))
-    
-    for file in os.listdir(os.path.join(fml_dir, 'common')):
-        if os.path.isfile(file) and not os.path.splitext(file)[1] == '.java':
-            base = os.path.basename(file)
-            print('    fml/common/' + base)
-            shutil.copy(file, os.path.join(mcp_dir, 'src', base))
+    copy_files(os.path.join(fml_dir, 'client'), os.path.join(mcp_dir, 'src', 'minecraft'))
+    copy_files(os.path.join(fml_dir, 'common'), os.path.join(mcp_dir, 'src', 'minecraft'))
 
     name = 'fmlversion.properties'
     print('    ' + name)
-    shutil.copy(os.path.join(fml_dir, name), os.path.join(mcp_dir, 'src', name))
+    shutil.copy(os.path.join(fml_dir, name), os.path.join(mcp_dir, 'src', 'minecraft', name))
+    
+def copy_files(src_dir, dest_dir):
+    for file in glob.glob(os.path.join(src_dir, '*')):
+        if not os.path.isfile(file) or file.lower().endswith('.java'):
+            continue
+        print('    ' + file)
+        shutil.copy(file, os.path.join(dest_dir, os.path.basename(file)))
             
 def run_command(command, cwd='.', verbose=True):
     print('Running command: ')
