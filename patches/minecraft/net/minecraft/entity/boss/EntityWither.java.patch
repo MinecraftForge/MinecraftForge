@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/boss/EntityWither.java
++++ ../src_work/minecraft/net/minecraft/entity/boss/EntityWither.java
+@@ -372,8 +372,9 @@
+                                 int k2 = i + i2;
+                                 int l2 = j1 + l1;
+                                 int i3 = this.worldObj.getBlockId(j2, k2, l2);
+-
+-                                if (i3 > 0 && i3 != Block.bedrock.blockID && i3 != Block.endPortal.blockID && i3 != Block.endPortalFrame.blockID)
++                                Block block = Block.blocksList[i3];
++
++                                if (block != null && block.canWitherDestroy(worldObj, j2, k2, l2))
+                                 {
+                                     flag = this.worldObj.func_94578_a(j2, k2, l2, true) || flag;
+                                 }
