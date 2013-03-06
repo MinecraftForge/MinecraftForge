@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -66,17 +66,27 @@
+@@ -6,6 +6,7 @@
+ import java.io.File;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
++import java.io.InputStream;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+@@ -66,17 +67,38 @@
  
      public List func_94266_e(String par1Str)
      {
@@ -16,16 +24,29 @@
          try
          {
 -            BufferedImage bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + par1Str));
-+            BufferedImage bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + textureFile));
-             int i = bufferedimage.getHeight();
-             int j = bufferedimage.getWidth();
+-            int i = bufferedimage.getHeight();
+-            int j = bufferedimage.getWidth();
 -            String s1 = this.func_98146_d(par1Str);
++            InputStream textureInputStream = itexturepack.getResourceAsStream("/" + textureFile);
++            BufferedImage bufferedimage = null;
++            int i = 0;
++            int j = 0;
++            if (textureInputStream!=null)
++            {
++                bufferedimage = ImageIO.read(textureInputStream);
++                i = bufferedimage.getHeight();
++                j = bufferedimage.getWidth();
++            }
 +            String s1 = textureName;
  
 -            if (this.func_98147_a(par1Str, itexturepack))
 +            if (stitched != null && stitched.loadTexture(this, itexturepack, textureName, textureFile, bufferedimage, arraylist))
 +            {
 +                ;
++            }
++            else if (textureInputStream == null)
++            {
++                throw new FileNotFoundException();
 +            }
 +            else if (this.func_98147_a(par1Str, itexturepack))
              {
