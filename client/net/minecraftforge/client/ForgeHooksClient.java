@@ -1,37 +1,47 @@
 package net.minecraftforge.client;
 
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.ENTITY;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED;
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.INVENTORY;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3D;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.ENTITY_BOBBING;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.ENTITY_ROTATION;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.EQUIPPED_BLOCK;
+import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.INVENTORY_BLOCK;
+
 import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import cpw.mods.fml.client.FMLClientHandler;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.client.texturepacks.ITexturePack;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.texturepacks.ITexturePack;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.entity.player.RenderPlayerPostEvent;
+import net.minecraftforge.client.event.entity.player.RenderPlayerPreEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
-import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
-import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class ForgeHooksClient
 {
@@ -396,6 +406,16 @@ public class ForgeHooksClient
     public static void onTextureLoad(String texture, ITexturePack pack)
     {
         MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+    
+    public static boolean onRenderPlayerPre(EntityPlayer player, RenderPlayer renderer)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderPlayerPreEvent(player, renderer));
+    }
+    
+    public static boolean onRenderPlayerPost(EntityPlayer player, RenderPlayer renderer)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderPlayerPostEvent(player, renderer));
     }
 
     /**

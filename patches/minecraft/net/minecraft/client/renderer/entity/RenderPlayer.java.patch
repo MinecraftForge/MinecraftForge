@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderPlayer.java
-@@ -16,10 +16,17 @@
+@@ -16,29 +16,38 @@
  import net.minecraft.item.EnumAction;
  import net.minecraft.item.EnumArmorMaterial;
  import net.minecraft.item.Item;
@@ -9,52 +9,141 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.MathHelper;
  import org.lwjgl.opengl.GL11;
-+
+ 
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 +import net.minecraftforge.client.IItemRenderer;
 +import net.minecraftforge.client.MinecraftForgeClient;
 +import net.minecraftforge.client.ForgeHooksClient;
- 
++
  @SideOnly(Side.CLIENT)
- public class RenderPlayer extends RenderLiving
-@@ -28,6 +35,8 @@
+-public class RenderPlayer extends RenderLiving
+-{
++public class RenderPlayer extends RenderLiving {
+     private ModelBiped modelBipedMain;
      private ModelBiped modelArmorChestplate;
      private ModelBiped modelArmor;
-     public static String[] armorFilenamePrefix = new String[] {"cloth", "chain", "iron", "diamond", "gold"};
+-    public static String[] armorFilenamePrefix = new String[] {"cloth", "chain", "iron", "diamond", "gold"};
++    public static String[] armorFilenamePrefix = new String[] { "cloth", "chain", "iron", "diamond", "gold" };
 +    public static float NAME_TAG_RANGE = 64.0f;
 +    public static float NAME_TAG_RANGE_SNEAK = 32.0f;
  
      public RenderPlayer()
      {
-@@ -51,7 +60,7 @@
+         super(new ModelBiped(0.0F), 0.5F);
+-        this.modelBipedMain = (ModelBiped)this.mainModel;
++        this.modelBipedMain = (ModelBiped) this.mainModel;
+         this.modelArmorChestplate = new ModelBiped(1.0F);
+         this.modelArmor = new ModelBiped(0.5F);
+     }
+ 
+     /**
+-     * Set the specified armor model as the player model. Args: player, armorSlot, partialTick
++     * Set the specified armor model as the player model. Args: player,
++     * armorSlot, partialTick
+      */
+     protected int setArmorModel(EntityPlayer par1EntityPlayer, int par2, float par3)
+     {
+@@ -50,8 +59,8 @@
+ 
              if (var5 instanceof ItemArmor)
              {
-                 ItemArmor var6 = (ItemArmor)var5;
+-                ItemArmor var6 = (ItemArmor)var5;
 -                this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
++                ItemArmor var6 = (ItemArmor) var5;
 +                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
                  ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  var7.bipedHead.showModel = par2 == 0;
                  var7.bipedHeadwear.showModel = par2 == 0;
-@@ -120,7 +129,7 @@
+@@ -82,9 +91,9 @@
+                 if (var6.getArmorMaterial() == EnumArmorMaterial.CLOTH)
+                 {
+                     int var9 = var6.getColor(var4);
+-                    float var10 = (float)(var9 >> 16 & 255) / 255.0F;
+-                    float var11 = (float)(var9 >> 8 & 255) / 255.0F;
+-                    float var12 = (float)(var9 & 255) / 255.0F;
++                    float var10 = (float) (var9 >> 16 & 255) / 255.0F;
++                    float var11 = (float) (var9 >> 8 & 255) / 255.0F;
++                    float var12 = (float) (var9 & 255) / 255.0F;
+                     GL11.glColor3f(var8 * var10, var8 * var11, var8 * var12);
+ 
+                     if (var4.isItemEnchanted())
+@@ -119,8 +128,9 @@
+ 
              if (var5 instanceof ItemArmor)
              {
-                 ItemArmor var6 = (ItemArmor)var5;
+-                ItemArmor var6 = (ItemArmor)var5;
 -                this.loadTexture("/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png");
-+                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png"));
++                ItemArmor var6 = (ItemArmor) var5;
++                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + armorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1)
++                        + "_b.png"));
                  float var7 = 1.0F;
                  GL11.glColor3f(var7, var7, var7);
              }
-@@ -172,7 +181,7 @@
+@@ -129,6 +139,8 @@
+ 
+     public void renderPlayer(EntityPlayer par1EntityPlayer, double par2, double par4, double par6, float par8, float par9)
+     {
++        if (ForgeHooksClient.onRenderPlayerPre(par1EntityPlayer, this)) return;
++
+         float var10 = 1.0F;
+         GL11.glColor3f(var10, var10, var10);
+         ItemStack var11 = par1EntityPlayer.inventory.getCurrentItem();
+@@ -149,7 +161,7 @@
+         }
+ 
+         this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = par1EntityPlayer.isSneaking();
+-        double var14 = par4 - (double)par1EntityPlayer.yOffset;
++        double var14 = par4 - (double) par1EntityPlayer.yOffset;
+ 
+         if (par1EntityPlayer.isSneaking() && !(par1EntityPlayer instanceof EntityPlayerSP))
+         {
+@@ -160,6 +172,7 @@
+         this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
+         this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
+         this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
++        ForgeHooksClient.onRenderPlayerPost(par1EntityPlayer, this);
+     }
+ 
+     /**
+@@ -172,9 +185,9 @@
              float var8 = 1.6F;
              float var9 = 0.016666668F * var8;
              double var10 = par1EntityPlayer.getDistanceSqToEntity(this.renderManager.livingPlayer);
 -            float var12 = par1EntityPlayer.isSneaking() ? 32.0F : 64.0F;
+-
+-            if (var10 < (double)(var12 * var12))
 +            float var12 = par1EntityPlayer.isSneaking() ? NAME_TAG_RANGE_SNEAK : NAME_TAG_RANGE;
- 
-             if (var10 < (double)(var12 * var12))
++
++            if (var10 < (double) (var12 * var12))
              {
-@@ -239,9 +248,12 @@
+                 String var13 = par1EntityPlayer.username;
+ 
+@@ -182,7 +195,7 @@
+                 {
+                     FontRenderer var14 = this.getFontRendererFromRenderManager();
+                     GL11.glPushMatrix();
+-                    GL11.glTranslatef((float)par2 + 0.0F, (float)par4 + 2.3F, (float)par6);
++                    GL11.glTranslatef((float) par2 + 0.0F, (float) par4 + 2.3F, (float) par6);
+                     GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+                     GL11.glRotatef(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+                     GL11.glRotatef(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+@@ -197,10 +210,10 @@
+                     var15.startDrawingQuads();
+                     int var16 = var14.getStringWidth(var13) / 2;
+                     var15.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
+-                    var15.addVertex((double)(-var16 - 1), -1.0D, 0.0D);
+-                    var15.addVertex((double)(-var16 - 1), 8.0D, 0.0D);
+-                    var15.addVertex((double)(var16 + 1), 8.0D, 0.0D);
+-                    var15.addVertex((double)(var16 + 1), -1.0D, 0.0D);
++                    var15.addVertex((double) (-var16 - 1), -1.0D, 0.0D);
++                    var15.addVertex((double) (-var16 - 1), 8.0D, 0.0D);
++                    var15.addVertex((double) (var16 + 1), 8.0D, 0.0D);
++                    var15.addVertex((double) (var16 + 1), -1.0D, 0.0D);
+                     var15.draw();
+                     GL11.glEnable(GL11.GL_TEXTURE_2D);
+                     GL11.glDepthMask(true);
+@@ -239,9 +252,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float var5;
  
@@ -70,7 +159,80 @@
                  {
                      var5 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -359,7 +371,10 @@
+@@ -271,16 +287,17 @@
+         float var7;
+         float var8;
+ 
+-        if (par1EntityPlayer.username.equals("deadmau5") && this.loadDownloadableImageTexture(par1EntityPlayer.skinUrl, (String)null))
++        if (par1EntityPlayer.username.equals("deadmau5") && this.loadDownloadableImageTexture(par1EntityPlayer.skinUrl, (String) null))
+         {
+             for (int var20 = 0; var20 < 2; ++var20)
+             {
+-                float var25 = par1EntityPlayer.prevRotationYaw + (par1EntityPlayer.rotationYaw - par1EntityPlayer.prevRotationYaw) * par2 - (par1EntityPlayer.prevRenderYawOffset + (par1EntityPlayer.renderYawOffset - par1EntityPlayer.prevRenderYawOffset) * par2);
++                float var25 = par1EntityPlayer.prevRotationYaw + (par1EntityPlayer.rotationYaw - par1EntityPlayer.prevRotationYaw) * par2
++                        - (par1EntityPlayer.prevRenderYawOffset + (par1EntityPlayer.renderYawOffset - par1EntityPlayer.prevRenderYawOffset) * par2);
+                 var7 = par1EntityPlayer.prevRotationPitch + (par1EntityPlayer.rotationPitch - par1EntityPlayer.prevRotationPitch) * par2;
+                 GL11.glPushMatrix();
+                 GL11.glRotatef(var25, 0.0F, 1.0F, 0.0F);
+                 GL11.glRotatef(var7, 1.0F, 0.0F, 0.0F);
+-                GL11.glTranslatef(0.375F * (float)(var20 * 2 - 1), 0.0F, 0.0F);
++                GL11.glTranslatef(0.375F * (float) (var20 * 2 - 1), 0.0F, 0.0F);
+                 GL11.glTranslatef(0.0F, -0.375F, 0.0F);
+                 GL11.glRotatef(-var7, 1.0F, 0.0F, 0.0F);
+                 GL11.glRotatef(-var25, 0.0F, 1.0F, 0.0F);
+@@ -293,17 +310,21 @@
+ 
+         float var11;
+ 
+-        if (this.loadDownloadableImageTexture(par1EntityPlayer.playerCloakUrl, (String)null) && !par1EntityPlayer.getHasActivePotion() && !par1EntityPlayer.getHideCape())
++        if (this.loadDownloadableImageTexture(par1EntityPlayer.playerCloakUrl, (String) null) && !par1EntityPlayer.getHasActivePotion()
++                && !par1EntityPlayer.getHideCape())
+         {
+             GL11.glPushMatrix();
+             GL11.glTranslatef(0.0F, 0.0F, 0.125F);
+-            double var22 = par1EntityPlayer.field_71091_bM + (par1EntityPlayer.field_71094_bP - par1EntityPlayer.field_71091_bM) * (double)par2 - (par1EntityPlayer.prevPosX + (par1EntityPlayer.posX - par1EntityPlayer.prevPosX) * (double)par2);
+-            double var24 = par1EntityPlayer.field_71096_bN + (par1EntityPlayer.field_71095_bQ - par1EntityPlayer.field_71096_bN) * (double)par2 - (par1EntityPlayer.prevPosY + (par1EntityPlayer.posY - par1EntityPlayer.prevPosY) * (double)par2);
+-            double var9 = par1EntityPlayer.field_71097_bO + (par1EntityPlayer.field_71085_bR - par1EntityPlayer.field_71097_bO) * (double)par2 - (par1EntityPlayer.prevPosZ + (par1EntityPlayer.posZ - par1EntityPlayer.prevPosZ) * (double)par2);
++            double var22 = par1EntityPlayer.field_71091_bM + (par1EntityPlayer.field_71094_bP - par1EntityPlayer.field_71091_bM) * (double) par2
++                    - (par1EntityPlayer.prevPosX + (par1EntityPlayer.posX - par1EntityPlayer.prevPosX) * (double) par2);
++            double var24 = par1EntityPlayer.field_71096_bN + (par1EntityPlayer.field_71095_bQ - par1EntityPlayer.field_71096_bN) * (double) par2
++                    - (par1EntityPlayer.prevPosY + (par1EntityPlayer.posY - par1EntityPlayer.prevPosY) * (double) par2);
++            double var9 = par1EntityPlayer.field_71097_bO + (par1EntityPlayer.field_71085_bR - par1EntityPlayer.field_71097_bO) * (double) par2
++                    - (par1EntityPlayer.prevPosZ + (par1EntityPlayer.posZ - par1EntityPlayer.prevPosZ) * (double) par2);
+             var11 = par1EntityPlayer.prevRenderYawOffset + (par1EntityPlayer.renderYawOffset - par1EntityPlayer.prevRenderYawOffset) * par2;
+-            double var12 = (double)MathHelper.sin(var11 * (float)Math.PI / 180.0F);
+-            double var14 = (double)(-MathHelper.cos(var11 * (float)Math.PI / 180.0F));
+-            float var16 = (float)var24 * 10.0F;
++            double var12 = (double) MathHelper.sin(var11 * (float) Math.PI / 180.0F);
++            double var14 = (double) (-MathHelper.cos(var11 * (float) Math.PI / 180.0F));
++            float var16 = (float) var24 * 10.0F;
+ 
+             if (var16 < -6.0F)
+             {
+@@ -315,8 +336,8 @@
+                 var16 = 32.0F;
+             }
+ 
+-            float var17 = (float)(var22 * var12 + var9 * var14) * 100.0F;
+-            float var18 = (float)(var22 * var14 - var9 * var12) * 100.0F;
++            float var17 = (float) (var22 * var12 + var9 * var14) * 100.0F;
++            float var18 = (float) (var22 * var14 - var9 * var12) * 100.0F;
+ 
+             if (var17 < 0.0F)
+             {
+@@ -324,7 +345,10 @@
+             }
+ 
+             float var19 = par1EntityPlayer.prevCameraYaw + (par1EntityPlayer.cameraYaw - par1EntityPlayer.prevCameraYaw) * par2;
+-            var16 += MathHelper.sin((par1EntityPlayer.prevDistanceWalkedModified + (par1EntityPlayer.distanceWalkedModified - par1EntityPlayer.prevDistanceWalkedModified) * par2) * 6.0F) * 32.0F * var19;
++            var16 += MathHelper
++                    .sin((par1EntityPlayer.prevDistanceWalkedModified + (par1EntityPlayer.distanceWalkedModified - par1EntityPlayer.prevDistanceWalkedModified)
++                            * par2) * 6.0F)
++                    * 32.0F * var19;
+ 
+             if (par1EntityPlayer.isSneaking())
+             {
+@@ -359,7 +383,10 @@
                  var23 = var21.getItemUseAction();
              }
  
@@ -82,7 +244,7 @@
              {
                  var7 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -416,7 +431,7 @@
+@@ -416,12 +443,12 @@
  
              if (var21.getItem().requiresMultipleRenderPasses())
              {
@@ -90,4 +252,131 @@
 +                for (var27 = 0; var27 < var21.getItem().getRenderPasses(var21.getItemDamage()); ++var27)
                  {
                      int var26 = var21.getItem().getColorFromItemStack(var21, var27);
-                     var28 = (float)(var26 >> 16 & 255) / 255.0F;
+-                    var28 = (float)(var26 >> 16 & 255) / 255.0F;
+-                    var10 = (float)(var26 >> 8 & 255) / 255.0F;
+-                    var11 = (float)(var26 & 255) / 255.0F;
++                    var28 = (float) (var26 >> 16 & 255) / 255.0F;
++                    var10 = (float) (var26 >> 8 & 255) / 255.0F;
++                    var11 = (float) (var26 & 255) / 255.0F;
+                     GL11.glColor4f(var28, var10, var11, 1.0F);
+                     this.renderManager.itemRenderer.renderItem(par1EntityPlayer, var21, var27);
+                 }
+@@ -429,9 +456,9 @@
+             else
+             {
+                 var27 = var21.getItem().getColorFromItemStack(var21, 0);
+-                var8 = (float)(var27 >> 16 & 255) / 255.0F;
+-                var28 = (float)(var27 >> 8 & 255) / 255.0F;
+-                var10 = (float)(var27 & 255) / 255.0F;
++                var8 = (float) (var27 >> 16 & 255) / 255.0F;
++                var28 = (float) (var27 >> 8 & 255) / 255.0F;
++                var10 = (float) (var27 & 255) / 255.0F;
+                 GL11.glColor4f(var8, var28, var10, 1.0F);
+                 this.renderManager.itemRenderer.renderItem(par1EntityPlayer, var21, 0);
+             }
+@@ -462,7 +489,8 @@
+     {
+         if (par1EntityPlayer.isEntityAlive() && par1EntityPlayer.isPlayerSleeping())
+         {
+-            super.renderLivingAt(par1EntityPlayer, par2 + (double)par1EntityPlayer.field_71079_bU, par4 + (double)par1EntityPlayer.field_71082_cx, par6 + (double)par1EntityPlayer.field_71089_bV);
++            super.renderLivingAt(par1EntityPlayer, par2 + (double) par1EntityPlayer.field_71079_bU, par4 + (double) par1EntityPlayer.field_71082_cx, par6
++                    + (double) par1EntityPlayer.field_71089_bV);
+         }
+         else
+         {
+@@ -471,7 +499,8 @@
+     }
+ 
+     /**
+-     * Rotates the player if the player is sleeping. This method is called in rotateCorpse.
++     * Rotates the player if the player is sleeping. This method is called in
++     * rotateCorpse.
+      */
+     protected void rotatePlayer(EntityPlayer par1EntityPlayer, float par2, float par3, float par4)
+     {
+@@ -492,21 +521,21 @@
+      */
+     protected void passSpecialRender(EntityLiving par1EntityLiving, double par2, double par4, double par6)
+     {
+-        this.renderName((EntityPlayer)par1EntityLiving, par2, par4, par6);
+-    }
+-
+-    /**
+-     * Allows the render to do any OpenGL state modifications necessary before the model is rendered. Args:
+-     * entityLiving, partialTickTime
++        this.renderName((EntityPlayer) par1EntityLiving, par2, par4, par6);
++    }
++
++    /**
++     * Allows the render to do any OpenGL state modifications necessary before
++     * the model is rendered. Args: entityLiving, partialTickTime
+      */
+     protected void preRenderCallback(EntityLiving par1EntityLiving, float par2)
+     {
+-        this.renderPlayerScale((EntityPlayer)par1EntityLiving, par2);
++        this.renderPlayerScale((EntityPlayer) par1EntityLiving, par2);
+     }
+ 
+     protected void func_82408_c(EntityLiving par1EntityLiving, int par2, float par3)
+     {
+-        this.func_82439_b((EntityPlayer)par1EntityLiving, par2, par3);
++        this.func_82439_b((EntityPlayer) par1EntityLiving, par2, par3);
+     }
+ 
+     /**
+@@ -514,17 +543,17 @@
+      */
+     protected int shouldRenderPass(EntityLiving par1EntityLiving, int par2, float par3)
+     {
+-        return this.setArmorModel((EntityPlayer)par1EntityLiving, par2, par3);
++        return this.setArmorModel((EntityPlayer) par1EntityLiving, par2, par3);
+     }
+ 
+     protected void renderEquippedItems(EntityLiving par1EntityLiving, float par2)
+     {
+-        this.renderSpecials((EntityPlayer)par1EntityLiving, par2);
++        this.renderSpecials((EntityPlayer) par1EntityLiving, par2);
+     }
+ 
+     protected void rotateCorpse(EntityLiving par1EntityLiving, float par2, float par3, float par4)
+     {
+-        this.rotatePlayer((EntityPlayer)par1EntityLiving, par2, par3, par4);
++        this.rotatePlayer((EntityPlayer) par1EntityLiving, par2, par3, par4);
+     }
+ 
+     /**
+@@ -532,22 +561,24 @@
+      */
+     protected void renderLivingAt(EntityLiving par1EntityLiving, double par2, double par4, double par6)
+     {
+-        this.renderPlayerSleep((EntityPlayer)par1EntityLiving, par2, par4, par6);
++        this.renderPlayerSleep((EntityPlayer) par1EntityLiving, par2, par4, par6);
+     }
+ 
+     public void doRenderLiving(EntityLiving par1EntityLiving, double par2, double par4, double par6, float par8, float par9)
+     {
+-        this.renderPlayer((EntityPlayer)par1EntityLiving, par2, par4, par6, par8, par9);
+-    }
+-
+-    /**
+-     * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
+-     * handing it off to a worker function which does the actual work. In all probabilty, the class Render is generic
+-     * (Render<T extends Entity) and this method has signature public void doRender(T entity, double d, double d1,
+-     * double d2, float f, float f1). But JAD is pre 1.5 so doesn't do that.
++        this.renderPlayer((EntityPlayer) par1EntityLiving, par2, par4, par6, par8, par9);
++    }
++
++    /**
++     * Actually renders the given argument. This is a synthetic bridge method,
++     * always casting down its argument and then handing it off to a worker
++     * function which does the actual work. In all probabilty, the class Render
++     * is generic (Render<T extends Entity) and this method has signature public
++     * void doRender(T entity, double d, double d1, double d2, float f, float
++     * f1). But JAD is pre 1.5 so doesn't do that.
+      */
+     public void doRender(Entity par1Entity, double par2, double par4, double par6, float par8, float par9)
+     {
+-        this.renderPlayer((EntityPlayer)par1Entity, par2, par4, par6, par8, par9);
++        this.renderPlayer((EntityPlayer) par1Entity, par2, par4, par6, par8, par9);
+     }
+ }
