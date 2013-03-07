@@ -25,9 +25,12 @@ import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.entity.player.RenderPlayerPostEvent;
+import net.minecraftforge.client.event.entity.player.RenderPlayerPreEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -396,6 +399,16 @@ public class ForgeHooksClient
     public static void onTextureLoad(String texture, ITexturePack pack)
     {
         MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+    
+    public static boolean onRenderPlayerPre(EntityPlayer player, RenderPlayer renderer)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderPlayerPreEvent(player, renderer));
+    }
+    
+    public static void onRenderPlayerPost(EntityPlayer player, RenderPlayer renderer)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderPlayerPostEvent(player, renderer));
     }
 
     /**

@@ -45,7 +45,23 @@
                  float var7 = 1.0F;
                  GL11.glColor3f(var7, var7, var7);
              }
-@@ -172,7 +181,7 @@
+@@ -129,6 +138,7 @@
+ 
+     public void renderPlayer(EntityPlayer par1EntityPlayer, double par2, double par4, double par6, float par8, float par9)
+     {
++        if (ForgeHooksClient.onRenderPlayerPre(par1EntityPlayer, this)) return;
+         float var10 = 1.0F;
+         GL11.glColor3f(var10, var10, var10);
+         ItemStack var11 = par1EntityPlayer.inventory.getCurrentItem();
+@@ -160,6 +170,7 @@
+         this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
+         this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
+         this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
++        ForgeHooksClient.onRenderPlayerPost(par1EntityPlayer, this);
+     }
+ 
+     /**
+@@ -172,7 +183,7 @@
              float var8 = 1.6F;
              float var9 = 0.016666668F * var8;
              double var10 = par1EntityPlayer.getDistanceSqToEntity(this.renderManager.livingPlayer);
@@ -54,7 +70,7 @@
  
              if (var10 < (double)(var12 * var12))
              {
-@@ -239,9 +248,12 @@
+@@ -239,9 +250,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float var5;
  
@@ -70,7 +86,7 @@
                  {
                      var5 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -359,7 +371,10 @@
+@@ -359,7 +373,10 @@
                  var23 = var21.getItemUseAction();
              }
  
@@ -82,7 +98,7 @@
              {
                  var7 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -416,7 +431,7 @@
+@@ -416,7 +433,7 @@
  
              if (var21.getItem().requiresMultipleRenderPasses())
              {
