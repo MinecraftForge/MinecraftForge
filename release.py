@@ -37,7 +37,7 @@ def main():
         
     ret = 0
     fml_dir = os.path.join(forge_dir, 'fml')
-    build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num)
+    ret = build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num)
     if ret != 0:
         sys.exit(ret)
     
