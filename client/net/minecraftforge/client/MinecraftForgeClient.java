@@ -52,7 +52,7 @@ public class MinecraftForgeClient
         return null;
     }
 
-    public int getRenderPass()
+    public static int getRenderPass()
     {
         return ForgeHooksClient.renderPass;
     }
