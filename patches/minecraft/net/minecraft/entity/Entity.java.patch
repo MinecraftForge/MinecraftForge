@@ -112,7 +112,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2448,4 +2480,84 @@
+@@ -2448,4 +2480,89 @@
      {
          return this.getEntityName();
      }
@@ -195,5 +195,10 @@
 +    public final void resetEntityId()
 +    {
 +        this.entityId = nextEntityID++;
++    }
++
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
 +    }
  }

@@ -51,4 +51,9 @@ public class MinecraftForgeClient
         }
         return null;
     }
+
+    public int getRenderPass()
+    {
+        return ForgeHooksClient.renderPass;
+    }
 }

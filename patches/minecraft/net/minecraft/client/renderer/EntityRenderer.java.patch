@@ -56,7 +56,17 @@
                  GL11.glRotatef(entityliving.prevRotationYaw + (entityliving.rotationYaw - entityliving.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(entityliving.prevRotationPitch + (entityliving.rotationPitch - entityliving.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1146,8 +1150,11 @@
+@@ -1131,7 +1135,9 @@
+             {
+                 RenderHelper.enableStandardItemLighting();
+                 this.mc.mcProfiler.endStartSection("entities");
++                ForgeHooksClient.setRenderPass(0);
+                 renderglobal.renderEntities(entityliving.getPosition(par1), frustrum, par1);
++                ForgeHooksClient.setRenderPass(-1);
+                 this.enableLightmap((double)par1);
+                 this.mc.mcProfiler.endStartSection("litParticles");
+                 effectrenderer.renderLitParticles(entityliving, par1);
+@@ -1146,8 +1152,11 @@
                      entityplayer = (EntityPlayer)entityliving;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -70,7 +80,21 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1211,15 +1218,18 @@
+@@ -1202,6 +1211,13 @@
+                 renderglobal.sortAndRender(entityliving, 1, (double)par1);
+             }
+ 
++            RenderHelper.enableStandardItemLighting();
++            this.mc.mcProfiler.endStartSection("entities");
++            ForgeHooksClient.setRenderPass(1);
++            renderglobal.renderEntities(entityliving.getPosition(par1), frustrum, par1);
++            ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.disableStandardItemLighting();
++
+             GL11.glDepthMask(true);
+             GL11.glEnable(GL11.GL_CULL_FACE);
+             GL11.glDisable(GL11.GL_BLEND);
+@@ -1211,15 +1227,18 @@
                  entityplayer = (EntityPlayer)entityliving;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -92,7 +116,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1232,6 +1242,9 @@
+@@ -1232,6 +1251,9 @@
                  GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
                  this.renderHand(par1, j);
              }
