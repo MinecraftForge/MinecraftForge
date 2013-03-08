@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockSand;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -29,10 +31,15 @@ import net.minecraft.nbt.NBTTagList;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.ImmutableTable.Builder;
 import com.google.common.collect.MapDifference;
+import com.google.common.collect.Tables;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -46,6 +53,7 @@ public class GameData {
     private static MapDifference<Integer, ItemData> difference;
     private static boolean shouldContinue = true;
     private static boolean isSaveValid = true;
+    private static ImmutableTable<String, String, Integer> modObjectTable;
     private static Map<String,String> ignoredMods;
 
     private static boolean isModIgnoredForIdValidation(String modId)
@@ -237,5 +245,51 @@ public class GameData {
         int id = item.field_77779_bT;
         ItemData itemData = idMap.get(id);
         itemData.setName(name,modId);
+    }
+
+    public static void buildModObjectTable()
+    {
+        if (modObjectTable != null)
+        {
+            throw new IllegalStateException("Illegal call to buildModObjectTable!");
+        }
+
+        Map<Integer, Cell<String, String, Integer>> map = Maps.transformValues(idMap, new Function<ItemData,Cell<String,String,Integer>>() {
+            public Cell<String,String,Integer> apply(ItemData data)
+            {
+                return Tables.immutableCell(data.getModId(), data.getItemType(), data.getItemId());
+            }
+        });
+
+        Builder<String, String, Integer> tBuilder = ImmutableTable.builder();
+        for (Cell<String, String, Integer> c : map.values())
+        {
+            tBuilder.put(c);
+        }
+        modObjectTable = tBuilder.build();
+    }
+    static Item findItem(String modId, String name)
+    {
+        if (modObjectTable == null)
+        {
+            return null;
+        }
+
+        return Item.field_77698_e[modObjectTable.get(modId, name)];
+    }
+
+    static Block findBlock(String modId, String name)
+    {
+        if (modObjectTable == null)
+        {
+            return null;
+        }
+
+        Integer blockId = modObjectTable.get(modId, name);
+        if (blockId >= Block.field_71973_m.length)
+        {
+            return null;
+        }
+        return Block.field_71973_m[blockId];
     }
 }

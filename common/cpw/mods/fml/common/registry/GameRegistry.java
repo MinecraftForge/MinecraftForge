@@ -12,6 +12,7 @@
 
 package cpw.mods.fml.common.registry;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -211,7 +212,16 @@ public class GameRegistry
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
             int blockItemId = block.field_71990_ca - 256;
-            Item i = itemclass.getConstructor(int.class).newInstance(blockItemId);
+            Constructor<? extends ItemBlock> itemCtor;
+            try
+            {
+                itemCtor = itemclass.getConstructor(int.class);
+            }
+            catch (NoSuchMethodException e)
+            {
+                itemCtor = itemclass.getConstructor(int.class, Block.class);
+            }
+            Item i = itemCtor.newInstance(blockItemId, block);
             GameRegistry.registerItem(i,name, modId);
         }
         catch (Exception e)
@@ -360,4 +370,26 @@ public class GameRegistry
 			tracker.onPlayerRespawn(player);
 	}
 
+
+	/**
+	 * Look up a mod block in the global "named item list"
+	 * @param modId The modid owning the block
+	 * @param name The name of the block itself
+	 * @return The block or null if not found
+	 */
+	public static net.minecraft.block.Block findBlock(String modId, String name)
+	{
+	    return GameData.findBlock(modId, name);
+	}
+
+	/**
+	 * Look up a mod item in the global "named item list"
+	 * @param modId The modid owning the item
+	 * @param name The name of the item itself
+	 * @return The item or null if not found
+	 */
+	public static net.minecraft.item.Item findItem(String modId, String name)
+    {
+        return GameData.findItem(modId, name);
+    }
 }
