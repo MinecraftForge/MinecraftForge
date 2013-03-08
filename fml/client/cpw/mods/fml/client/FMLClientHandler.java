@@ -244,6 +244,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
+            // Force renderengine to reload and re-initialize all textures
+            client.field_71446_o.func_78352_b();
 //            TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
         }
     }
