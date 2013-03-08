@@ -222,6 +222,7 @@ public class ModLoader
      * @param fileToAdd The new image
      * @return The 'icon index' in the main image that the new image will be applied to
      */
+    @Deprecated
     @SideOnly(CLIENT)
     public static int addOverride(String fileToOverride, String fileToAdd)
     {

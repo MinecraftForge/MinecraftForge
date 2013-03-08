@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -337,12 +337,6 @@ public class ModLoaderModContainer implements ModContainer
         return mod != null ? mod.getName() : modId;
     }
 
-    @Deprecated
-    public static ModContainer findContainerFor(BaseModProxy mod)
-    {
-        return FMLCommonHandler.instance().findContainerFor(mod);
-    }
-
     @Override
     public String getSortingRules()
     {
@@ -524,7 +518,6 @@ public class ModLoaderModContainer implements ModContainer
             GameRegistry.registerFuelHandler(ModLoaderHelper.buildFuelHelper(mod));
             GameRegistry.registerCraftingHandler(ModLoaderHelper.buildCraftingHelper(mod));
             GameRegistry.registerPickupHandler(ModLoaderHelper.buildPickupHelper(mod));
-            GameRegistry.registerDispenserHandler(ModLoaderHelper.buildDispenseHelper(mod));
             NetworkRegistry.instance().registerChatListener(ModLoaderHelper.buildChatListener(mod));
             NetworkRegistry.instance().registerConnectionHandler(ModLoaderHelper.buildConnectionHelper(mod));
         }

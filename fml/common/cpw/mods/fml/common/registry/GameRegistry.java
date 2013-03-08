@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -48,8 +48,6 @@ import com.google.common.collect.Sets.SetView;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
-import cpw.mods.fml.common.IDispenseHandler;
-import cpw.mods.fml.common.IDispenserHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
@@ -104,43 +102,6 @@ public class GameRegistry
         }
     }
 
-    /**
-     * Deprecated without replacement. Use vanilla DispenserRegistry code
-     *
-     * @param handler
-     */
-    @Deprecated
-    public static void registerDispenserHandler(IDispenserHandler handler)
-    {
-    }
-    /**
-     * Deprecated without replacement. Use vanilla DispenserRegistry code
-     *
-     * @param handler
-     */
-    @Deprecated
-    public static void registerDispenserHandler(final IDispenseHandler handler)
-    {
-    }
-
-
-    /**
-     *
-     * Deprecated without replacement, use vanilla DispenserRegistry code
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param xVelocity
-     * @param zVelocity
-     * @param item
-     */
-    @Deprecated
-    public static int tryDispense(World world, int x, int y, int z, int xVelocity, int zVelocity, ItemStack item, Random random, double entX, double entY, double entZ)
-    {
-        return -1;
-    }
     /**
      * Internal method for creating an @Block instance
      * @param container
