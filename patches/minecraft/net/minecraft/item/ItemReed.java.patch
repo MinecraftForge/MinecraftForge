@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemReed.java
++++ ../src_work/minecraft/net/minecraft/item/ItemReed.java
+@@ -76,7 +76,7 @@
+                 Block var12 = Block.blocksList[this.spawnID];
+                 int var13 = var12.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
+ 
+-                if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.spawnID, var13))
++                if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.spawnID, var13, par2EntityPlayer))
+                 {
+                     if (par3World.getBlockId(par4, par5, par6) == this.spawnID)
+                     {

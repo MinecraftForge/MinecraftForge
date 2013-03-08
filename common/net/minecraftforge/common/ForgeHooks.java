@@ -56,14 +56,14 @@ public class ForgeHooks
     static final List<GrassEntry> grassList = new ArrayList<GrassEntry>();
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
-    public static void plantGrass(World world, int x, int y, int z)
+    public static void plantGrass(World world, int x, int y, int z, EntityPlayer player)
     {
         GrassEntry grass = (GrassEntry)WeightedRandom.getRandomItem(world.rand, grassList);
         if (grass == null || grass.block == null || !grass.block.canBlockStay(world, x, y, z))
         {
             return;
         }
-        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata);
+        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata, player);
     }
 
     public static ItemStack getGrassSeed(World world)

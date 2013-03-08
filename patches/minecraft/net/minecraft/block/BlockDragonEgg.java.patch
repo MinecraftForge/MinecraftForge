@@ -1,0 +1,38 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDragonEgg.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDragonEgg.java
+@@ -78,7 +78,7 @@
+      */
+     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
+     {
+-        this.teleportNearby(par1World, par2, par3, par4);
++        this.teleportNearby(par1World, par2, par3, par4, par5EntityPlayer);
+         return true;
+     }
+ 
+@@ -87,13 +87,13 @@
+      */
+     public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
+     {
+-        this.teleportNearby(par1World, par2, par3, par4);
++        this.teleportNearby(par1World, par2, par3, par4, par5EntityPlayer);
+     }
+ 
+     /**
+      * Teleports the dragon egg somewhere else in a 31x19x31 area centered on the egg.
+      */
+-    private void teleportNearby(World par1World, int par2, int par3, int par4)
++    private void teleportNearby(World par1World, int par2, int par3, int par4, EntityPlayer player)
+     {
+         if (par1World.getBlockId(par2, par3, par4) == this.blockID)
+         {
+@@ -107,8 +107,8 @@
+                 {
+                     if (!par1World.isRemote)
+                     {
+-                        par1World.setBlockAndMetadataWithNotify(var6, var7, var8, this.blockID, par1World.getBlockMetadata(par2, par3, par4));
+-                        par1World.setBlockWithNotify(par2, par3, par4, 0);
++                        par1World.setBlockAndMetadataWithNotify(var6, var7, var8, this.blockID, par1World.getBlockMetadata(par2, par3, par4), player);
++                        par1World.setBlockWithNotify(par2, par3, par4, 0, player);
+                     }
+                     else
+                     {

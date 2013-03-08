@@ -1,0 +1,16 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSign.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSign.java
+@@ -70,11 +70,11 @@
+                 if (par7 == 1)
+                 {
+                     int var11 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 16.0F / 360.0F) + 0.5D) & 15;
+-                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signPost.blockID, var11);
++                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signPost.blockID, var11, par2EntityPlayer);
+                 }
+                 else
+                 {
+-                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signWall.blockID, par7);
++                    par3World.setBlockAndMetadataWithNotify(par4, par5, par6, Block.signWall.blockID, par7, par2EntityPlayer);
+                 }
+ 
+                 --par1ItemStack.stackSize;
