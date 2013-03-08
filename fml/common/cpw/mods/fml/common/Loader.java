@@ -55,6 +55,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.modloader.BaseModProxy;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.TopologicalSort;
@@ -674,6 +675,8 @@ public class Loader
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
         modController.transition(LoaderState.POSTINITIALIZATION);
+        // Construct the "mod object table" so mods can refer to it in IMC and postinit
+        GameData.buildModObjectTable();
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         modController.transition(LoaderState.AVAILABLE);
