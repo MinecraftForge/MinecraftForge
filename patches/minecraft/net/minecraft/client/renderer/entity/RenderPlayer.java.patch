@@ -27,7 +27,16 @@
  
      public RenderPlayer()
      {
-@@ -51,7 +60,7 @@
+@@ -42,6 +51,8 @@
+      */
+     protected int setArmorModel(EntityPlayer par1EntityPlayer, int par2, float par3)
+     {
++        if (ForgeHooksClient.onSetPlayerArmorModel(par1EntityPlayer, this)) return 1;
++        
+         ItemStack var4 = par1EntityPlayer.inventory.armorItemInSlot(3 - par2);
+ 
+         if (var4 != null)
+@@ -51,7 +62,7 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
@@ -36,7 +45,7 @@
                  ModelBiped var7 = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  var7.bipedHead.showModel = par2 == 0;
                  var7.bipedHeadwear.showModel = par2 == 0;
-@@ -120,7 +129,7 @@
+@@ -120,7 +131,7 @@
              if (var5 instanceof ItemArmor)
              {
                  ItemArmor var6 = (ItemArmor)var5;
@@ -45,7 +54,29 @@
                  float var7 = 1.0F;
                  GL11.glColor3f(var7, var7, var7);
              }
-@@ -172,7 +181,7 @@
+@@ -129,6 +140,7 @@
+ 
+     public void renderPlayer(EntityPlayer par1EntityPlayer, double par2, double par4, double par6, float par8, float par9)
+     {
++        if (ForgeHooksClient.onRenderPlayerPre(par1EntityPlayer, this)) return;
+         float var10 = 1.0F;
+         GL11.glColor3f(var10, var10, var10);
+         ItemStack var11 = par1EntityPlayer.inventory.getCurrentItem();
+@@ -160,6 +172,7 @@
+         this.modelArmorChestplate.aimedBow = this.modelArmor.aimedBow = this.modelBipedMain.aimedBow = false;
+         this.modelArmorChestplate.isSneak = this.modelArmor.isSneak = this.modelBipedMain.isSneak = false;
+         this.modelArmorChestplate.heldItemRight = this.modelArmor.heldItemRight = this.modelBipedMain.heldItemRight = 0;
++        ForgeHooksClient.onRenderPlayerPost(par1EntityPlayer, this);
+     }
+ 
+     /**
+@@ -167,12 +180,13 @@
+      */
+     protected void renderName(EntityPlayer par1EntityPlayer, double par2, double par4, double par6)
+     {
++        if (ForgeHooksClient.onRenderPlayerNamePre(par1EntityPlayer, this)) return;
+         if (Minecraft.isGuiEnabled() && par1EntityPlayer != this.renderManager.livingPlayer && !par1EntityPlayer.getHasActivePotion())
+         {
              float var8 = 1.6F;
              float var9 = 0.016666668F * var8;
              double var10 = par1EntityPlayer.getDistanceSqToEntity(this.renderManager.livingPlayer);
@@ -54,7 +85,15 @@
  
              if (var10 < (double)(var12 * var12))
              {
-@@ -239,9 +248,12 @@
+@@ -220,6 +234,7 @@
+                 }
+             }
+         }
++        ForgeHooksClient.onRenderPlayerNamePost(par1EntityPlayer, this);
+     }
+ 
+     /**
+@@ -239,9 +254,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float var5;
  
@@ -70,7 +109,7 @@
                  {
                      var5 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -359,7 +371,10 @@
+@@ -359,7 +377,10 @@
                  var23 = var21.getItemUseAction();
              }
  
@@ -82,7 +121,7 @@
              {
                  var7 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -416,7 +431,7 @@
+@@ -416,7 +437,7 @@
  
              if (var21.getItem().requiresMultipleRenderPasses())
              {
@@ -91,3 +130,11 @@
                  {
                      int var26 = var21.getItem().getColorFromItemStack(var21, var27);
                      var28 = (float)(var26 >> 16 & 255) / 255.0F;
+@@ -438,6 +459,7 @@
+ 
+             GL11.glPopMatrix();
+         }
++        ForgeHooksClient.onRenderPlayerSpecials(par1EntityPlayer, this);
+     }
+ 
+     protected void renderPlayerScale(EntityPlayer par1EntityPlayer, float par2)
