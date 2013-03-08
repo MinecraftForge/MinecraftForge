@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -776,7 +776,15 @@ public class Loader
     public void serverStopped()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
-        modController.transition(LoaderState.SERVER_STOPPED);
+        try
+        {
+            modController.transition(LoaderState.SERVER_STOPPED);
+        }
+        catch (LoaderException e)
+        {
+            modController.forceState(LoaderState.SERVER_STOPPED);
+            // Discard any exceptions here - they mask other, real, exceptions
+        }
         modController.transition(LoaderState.AVAILABLE);
     }
 
