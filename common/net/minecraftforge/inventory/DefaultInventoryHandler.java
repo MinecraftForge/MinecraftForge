@@ -7,16 +7,17 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
  * The default implementation of IInventoryHandler.
- * Designed to handler ISidedInventory, IDynamicInventory and the regular IInventory.
+ * Designed to handle ISidedInventory, IDynamicInventory and the regular IInventory.
  */
 public class DefaultInventoryHandler implements IInventoryHandler {
 
     @Override
-    public ArrayList<ItemStack> listItemsInInventory(IInventory inventory, ForgeDirection side) {
+    public Collection<ItemStack> listItemsInInventory(IInventory inventory, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
             iMin = ((ISidedInventory) inventory).getStartInventorySide(side);

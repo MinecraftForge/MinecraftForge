@@ -5,7 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * The handler interface for any inventory.
@@ -24,9 +24,9 @@ public interface IInventoryHandler {
      *
      * @param inventory the inventory that holds the items.
      * @param side      the side from which the inventory is accessed (only applies to ISidedInventory)
-     * @return the list that holds all the ingredients stored on this inventory.
+     * @return the colleciton that holds all the ingredients stored on this inventory.
      */
-    public ArrayList<ItemStack> listItemsInInventory(IInventory inventory, ForgeDirection side);
+    public Collection<ItemStack> listItemsInInventory(IInventory inventory, ForgeDirection side);
 
     /**
      * Whether if an ItemStack can be placed on the IInventory.
