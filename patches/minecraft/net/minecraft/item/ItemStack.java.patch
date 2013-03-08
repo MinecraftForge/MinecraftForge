@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -145,9 +145,9 @@
+     /**
+      * Returns the strength of the stack against a given block.
+      */
+-    public float getStrVsBlock(Block par1Block)
+-    {
+-        return this.getItem().getStrVsBlock(this, par1Block);
++    public float getStrVsBlock(Block par1Block, int metadata)
++    {
++        return this.getItem().getStrVsBlock(this, par1Block, metadata);
+     }
+ 
+     /**
+@@ -353,9 +353,9 @@
+     /**
+      * Checks if the itemStack object can harvest a specified block
+      */
+-    public boolean canHarvestBlock(Block par1Block)
+-    {
+-        return Item.itemsList[this.itemID].canHarvestBlock(par1Block);
++    public boolean canHarvestBlock(Block par1Block, int metadata)
++    {
++        return Item.itemsList[this.itemID].canHarvestBlock(par1Block, metadata);
+     }
+ 
+     public boolean interactWith(EntityLiving par1EntityLiving)

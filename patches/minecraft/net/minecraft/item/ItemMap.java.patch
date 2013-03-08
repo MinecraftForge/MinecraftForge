@@ -9,12 +9,75 @@
                              Chunk var25 = par1World.getChunkFromBlockCoords(var22, var23);
  
                              if (!var25.isEmpty())
-@@ -194,7 +194,7 @@
+@@ -136,6 +136,7 @@
+                                         {
+                                             var33 = var25.getHeightValue(var31 + var26, var32 + var27) + 1;
+                                             int var34 = 0;
++                                            int meta = 0;
+ 
+                                             if (var33 > 1)
+                                             {
+@@ -145,12 +146,13 @@
+                                                 {
+                                                     var35 = true;
+                                                     var34 = var25.getBlockID(var31 + var26, var33 - 1, var32 + var27);
++                                                    meta = var25.getBlockMetadata(var31 + var26, var33 - 1, var32 + var27);
+ 
+                                                     if (var34 == 0)
+                                                     {
+                                                         var35 = false;
+                                                     }
+-                                                    else if (var33 > 0 && var34 > 0 && Block.blocksList[var34].blockMaterial.materialMapColor == MapColor.airColor)
++                                                    else if (var33 > 0 && var34 > 0 && Block.blocksList[var34].getBlockMaterial(meta).materialMapColor == MapColor.airColor)
+                                                     {
+                                                         var35 = false;
+                                                     }
+@@ -165,22 +167,25 @@
+                                                         }
+ 
+                                                         var34 = var25.getBlockID(var31 + var26, var33 - 1, var32 + var27);
++                                                        meta = var25.getBlockMetadata(var31 + var26, var33 - 1, var32 + var27);
+                                                     }
+                                                 }
+                                                 while (var33 > 0 && !var35);
+ 
+-                                                if (var33 > 0 && var34 != 0 && Block.blocksList[var34].blockMaterial.isLiquid())
++                                                if (var33 > 0 && var34 != 0 && Block.blocksList[var34].getBlockMaterial(meta).isLiquid())
+                                                 {
+                                                     var36 = var33 - 1;
+                                                     boolean var37 = false;
+                                                     int var43;
++                                                    int meta2;
+ 
+                                                     do
+                                                     {
+                                                         var43 = var25.getBlockID(var31 + var26, var36--, var32 + var27);
++                                                        meta2 = var25.getBlockMetadata(var31 + var26, var36--, var32 + var27);
+                                                         ++var28;
+                                                     }
+-                                                    while (var36 > 0 && var43 != 0 && Block.blocksList[var43].blockMaterial.isLiquid());
++                                                    while (var36 > 0 && var43 != 0 && Block.blocksList[var43].getBlockMaterial(meta2).isLiquid());
+                                                 }
+                                             }
+ 
+@@ -193,8 +198,9 @@
+                                 var28 /= var6 * var6;
                                  var31 = 0;
                                  var32 = 0;
- 
+-
 -                                for (var33 = 0; var33 < 256; ++var33)
++                                var32 = 0;
++
 +                                for (var33 = 0; var33 < Block.blocksList.length; ++var33)
                                  {
                                      if (var24[var33] > var31)
+                                     {
+@@ -220,7 +226,7 @@
+ 
+                                 if (var32 > 0)
+                                 {
+-                                    MapColor var42 = Block.blocksList[var32].blockMaterial.materialMapColor;
++                                    MapColor var42 = Block.blocksList[var32].getBlockMaterial().materialMapColor;
+ 
+                                     if (var42 == MapColor.waterColor)
                                      {

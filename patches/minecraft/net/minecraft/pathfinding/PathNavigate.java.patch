@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/pathfinding/PathNavigate.java
++++ ../src_work/minecraft/net/minecraft/pathfinding/PathNavigate.java
+@@ -468,13 +468,14 @@
+                     if (var16 * par8 + var18 * par10 >= 0.0D)
+                     {
+                         int var20 = this.worldObj.getBlockId(var14, par2 - 1, var15);
++                        int meta = this.worldObj.getBlockMetadata(var14, par2 - 1, var15);
+ 
+                         if (var20 <= 0)
+                         {
+                             return false;
+                         }
+ 
+-                        Material var21 = Block.blocksList[var20].blockMaterial;
++                        Material var21 = Block.blocksList[var20].getBlockMaterial(meta);
+ 
+                         if (var21 == Material.water && !this.theEntity.isInWater())
+                         {

@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenLakes.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenLakes.java
+@@ -132,7 +132,7 @@
+                 }
+             }
+ 
+-            if (Block.blocksList[this.blockIndex].blockMaterial == Material.lava)
++            if (Block.blocksList[this.blockIndex].getBlockMaterial() == Material.lava)
+             {
+                 for (var8 = 0; var8 < 16; ++var8)
+                 {
+@@ -151,7 +151,7 @@
+                 }
+             }
+ 
+-            if (Block.blocksList[this.blockIndex].blockMaterial == Material.water)
++            if (Block.blocksList[this.blockIndex].getBlockMaterial() == Material.water)
+             {
+                 for (var8 = 0; var8 < 16; ++var8)
+                 {

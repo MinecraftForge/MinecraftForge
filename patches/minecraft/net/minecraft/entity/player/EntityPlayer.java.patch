@@ -151,7 +151,7 @@
              {
                  var2 += var5 * 0.08F;
              }
-@@ -784,7 +844,8 @@
+@@ -784,15 +844,16 @@
              var2 /= 5.0F;
          }
  
@@ -161,12 +161,14 @@
      }
  
      /**
-@@ -792,7 +853,7 @@
+      * Checks if the player has the ability to harvest a block (checks current inventory item for a tool if necessary)
       */
-     public boolean canHarvestBlock(Block par1Block)
-     {
+-    public boolean canHarvestBlock(Block par1Block)
+-    {
 -        return this.inventory.canHarvestBlock(par1Block);
-+        return ForgeEventFactory.doPlayerHarvestCheck(this, par1Block, inventory.canHarvestBlock(par1Block));
++    public boolean canHarvestBlock(Block par1Block, int metadata)
++    {
++        return ForgeEventFactory.doPlayerHarvestCheck(this, par1Block, inventory.canHarvestBlock(par1Block, metadata));
      }
  
      /**
@@ -350,7 +352,31 @@
          }
  
          return var3;
-@@ -2088,6 +2199,14 @@
+@@ -1999,12 +2110,13 @@
+         else
+         {
+             int var4 = this.worldObj.getBlockId(par1, par2, par3);
++            int meta = this.worldObj.getBlockMetadata(par1, par2, par3);
+ 
+             if (var4 > 0)
+             {
+                 Block var5 = Block.blocksList[var4];
+ 
+-                if (var5.blockMaterial.func_85157_q())
++                if (var5.getBlockMaterial(meta).func_85157_q())
+                 {
+                     return true;
+                 }
+@@ -2013,7 +2125,7 @@
+                 {
+                     ItemStack var6 = this.getCurrentEquippedItem();
+ 
+-                    if (var6.canHarvestBlock(var5) || var6.getStrVsBlock(var5) > 1.0F)
++                    if (var6.canHarvestBlock(var5, meta) || var6.getStrVsBlock(var5, meta) > 1.0F)
+                     {
+                         return true;
+                     }
+@@ -2088,6 +2200,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -365,7 +391,7 @@
      }
  
      /**
-@@ -2159,7 +2278,14 @@
+@@ -2159,7 +2279,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {

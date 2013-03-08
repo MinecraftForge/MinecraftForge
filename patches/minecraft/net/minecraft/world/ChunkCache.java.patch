@@ -31,3 +31,31 @@
          }
      }
  
+@@ -257,7 +270,8 @@
+     public Material getBlockMaterial(int par1, int par2, int par3)
+     {
+         int var4 = this.getBlockId(par1, par2, par3);
+-        return var4 == 0 ? Material.air : Block.blocksList[var4].blockMaterial;
++        int meta = this.getBlockMetadata(par1, par2, par3);
++        return var4 == 0 ? Material.air : Block.blocksList[var4].getBlockMaterial(meta);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -287,7 +301,7 @@
+     public boolean isBlockNormalCube(int par1, int par2, int par3)
+     {
+         Block var4 = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return var4 == null ? false : var4.blockMaterial.blocksMovement() && var4.renderAsNormalBlock();
++        return var4 == null ? false : var4.getBlockMaterial(this.getBlockMetadata(par1, par2, par3)).blocksMovement() && var4.renderAsNormalBlock();
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -298,7 +312,7 @@
+     public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
+     {
+         Block var4 = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return var4 == null ? false : (var4.blockMaterial.isOpaque() && var4.renderAsNormalBlock() ? true : (var4 instanceof BlockStairs ? (this.getBlockMetadata(par1, par2, par3) & 4) == 4 : (var4 instanceof BlockHalfSlab ? (this.getBlockMetadata(par1, par2, par3) & 8) == 8 : false)));
++        return var4 == null ? false : (var4.getBlockMaterial(this.getBlockMetadata(par1, par2, par3)).isOpaque() && var4.renderAsNormalBlock() ? true : (var4 instanceof BlockStairs ? (this.getBlockMetadata(par1, par2, par3) & 4) == 4 : (var4 instanceof BlockHalfSlab ? (this.getBlockMetadata(par1, par2, par3) & 8) == 8 : false)));
+     }
+ 
+     /**

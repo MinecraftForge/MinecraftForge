@@ -73,7 +73,7 @@
          Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
          return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
      }
-@@ -701,4 +718,362 @@
+@@ -701,4 +718,373 @@
      {
          StatList.initStats();
      }
@@ -435,4 +435,15 @@
 +        return getPotionEffect();
 +    }
 +
++    /**
++     * Metadata sensitive version of canHarvestBlock
++     * 
++     * @param par1Block the block in question
++     * @param metadata the metadata of the block in question
++     * @return whether or not block can be harvested
++     */
++    public boolean canHarvestBlock(Block par1Block, int metadata)
++    {
++        return this.canHarvestBlock(par1Block);
++    }
  }

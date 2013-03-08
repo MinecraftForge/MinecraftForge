@@ -39,7 +39,19 @@
              float var4 = 70.0F;
  
              if (par2)
-@@ -437,15 +449,7 @@
+@@ -366,8 +378,9 @@
+             }
+ 
+             int var6 = ActiveRenderInfo.getBlockIdAtEntityViewpoint(this.mc.theWorld, var3, par1);
+-
+-            if (var6 != 0 && Block.blocksList[var6].blockMaterial == Material.water)
++            int meta = ActiveRenderInfo.getBlockMetadataAtEntityViewpoint(this.mc.theWorld, var3, par1);
++
++            if (var6 != 0 && Block.blocksList[var6].getBlockMaterial(meta) == Material.water)
+             {
+                 var4 = var4 * 60.0F / 70.0F;
+             }
+@@ -437,15 +450,7 @@
  
              if (!this.mc.gameSettings.debugCamEnable)
              {
@@ -56,7 +68,7 @@
                  GL11.glRotatef(var2.prevRotationYaw + (var2.rotationYaw - var2.prevRotationYaw) * par1 + 180.0F, 0.0F, -1.0F, 0.0F);
                  GL11.glRotatef(var2.prevRotationPitch + (var2.rotationPitch - var2.prevRotationPitch) * par1, -1.0F, 0.0F, 0.0F);
              }
-@@ -1124,7 +1128,9 @@
+@@ -1124,7 +1129,9 @@
              {
                  RenderHelper.enableStandardItemLighting();
                  this.mc.mcProfiler.endStartSection("entities");
@@ -66,7 +78,7 @@
                  this.enableLightmap((double)par1);
                  this.mc.mcProfiler.endStartSection("litParticles");
                  var6.renderLitParticles(var4, par1);
-@@ -1139,8 +1145,11 @@
+@@ -1139,8 +1146,11 @@
                      var17 = (EntityPlayer)var4;
                      GL11.glDisable(GL11.GL_ALPHA_TEST);
                      this.mc.mcProfiler.endStartSection("outline");
@@ -80,7 +92,7 @@
                      GL11.glEnable(GL11.GL_ALPHA_TEST);
                  }
              }
-@@ -1194,6 +1203,13 @@
+@@ -1194,6 +1204,13 @@
                  this.mc.mcProfiler.endStartSection("water");
                  var5.sortAndRender(var4, 1, (double)par1);
              }
@@ -94,7 +106,7 @@
  
              GL11.glDepthMask(true);
              GL11.glEnable(GL11.GL_CULL_FACE);
-@@ -1204,15 +1220,18 @@
+@@ -1204,15 +1221,18 @@
                  var17 = (EntityPlayer)var4;
                  GL11.glDisable(GL11.GL_ALPHA_TEST);
                  this.mc.mcProfiler.endStartSection("outline");
@@ -116,7 +128,7 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1222,6 +1241,9 @@
+@@ -1222,6 +1242,9 @@
              {
                  this.renderCloudsCheck(var5, par1);
              }
@@ -126,3 +138,70 @@
  
              this.mc.mcProfiler.endStartSection("hand");
  
+@@ -1299,6 +1322,7 @@
+                 int var18 = var6 + this.random.nextInt(var7) - this.random.nextInt(var7);
+                 int var19 = var3.getPrecipitationHeight(var17, var18);
+                 int var20 = var3.getBlockId(var17, var19 - 1, var18);
++                int meta = var3.getBlockMetadata(var17, var19 - 1, var18);
+                 BiomeGenBase var21 = var3.getBiomeGenForCoords(var17, var18);
+ 
+                 if (var19 <= var5 + var7 && var19 >= var5 - var7 && var21.canSpawnLightningBolt() && var21.getFloatTemperature() >= 0.2F)
+@@ -1308,7 +1332,7 @@
+ 
+                     if (var20 > 0)
+                     {
+-                        if (Block.blocksList[var20].blockMaterial == Material.lava)
++                        if (Block.blocksList[var20].getBlockMaterial(meta) == Material.lava)
+                         {
+                             this.mc.effectRenderer.addEffect(new EntitySmokeFX(var3, (double)((float)var17 + var22), (double)((float)var19 + 0.1F) - Block.blocksList[var20].getBlockBoundsMinY(), (double)((float)var18 + var23), 0.0D, 0.0D, 0.0D));
+                         }
+@@ -1608,6 +1632,7 @@
+         }
+ 
+         int var21 = ActiveRenderInfo.getBlockIdAtEntityViewpoint(this.mc.theWorld, var3, par1);
++        int meta = ActiveRenderInfo.getBlockMetadataAtEntityViewpoint(this.mc.theWorld, var3, par1);
+ 
+         if (this.cloudFog)
+         {
+@@ -1616,13 +1641,13 @@
+             this.fogColorGreen = (float)var13.yCoord;
+             this.fogColorBlue = (float)var13.zCoord;
+         }
+-        else if (var21 != 0 && Block.blocksList[var21].blockMaterial == Material.water)
++        else if (var21 != 0 && Block.blocksList[var21].getBlockMaterial(meta) == Material.water)
+         {
+             this.fogColorRed = 0.02F;
+             this.fogColorGreen = 0.02F;
+             this.fogColorBlue = 0.2F;
+         }
+-        else if (var21 != 0 && Block.blocksList[var21].blockMaterial == Material.lava)
++        else if (var21 != 0 && Block.blocksList[var21].getBlockMaterial(meta) == Material.lava)
+         {
+             this.fogColorRed = 0.6F;
+             this.fogColorGreen = 0.1F;
+@@ -1741,6 +1766,7 @@
+             GL11.glNormal3f(0.0F, -1.0F, 0.0F);
+             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+             int var5 = ActiveRenderInfo.getBlockIdAtEntityViewpoint(this.mc.theWorld, var3, par2);
++            int meta = ActiveRenderInfo.getBlockMetadataAtEntityViewpoint(this.mc.theWorld, var3, par2);
+             float var6;
+ 
+             if (var3.isPotionActive(Potion.blindness))
+@@ -1794,7 +1820,7 @@
+                         var11 = (var6 * 30.0F + var8 * 70.0F) / 100.0F;
+                     }
+                 }
+-                else if (var5 > 0 && Block.blocksList[var5].blockMaterial == Material.water)
++                else if (var5 > 0 && Block.blocksList[var5].getBlockMaterial(meta) == Material.water)
+                 {
+                     GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
+ 
+@@ -1818,7 +1844,7 @@
+                         var11 = (var6 * 30.0F + var8 * 70.0F) / 100.0F;
+                     }
+                 }
+-                else if (var5 > 0 && Block.blocksList[var5].blockMaterial == Material.lava)
++                else if (var5 > 0 && Block.blocksList[var5].getBlockMaterial(meta) == Material.lava)
+                 {
+                     GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
+                     GL11.glFogf(GL11.GL_FOG_DENSITY, 2.0F);

@@ -46,6 +46,15 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
+@@ -291,7 +305,7 @@
+     public float blockParticleGravity;
+ 
+     /** Block material definition. */
+-    public final Material blockMaterial;
++    private final Material blockMaterial;
+ 
+     /**
+      * Determines how much velocity is maintained while moving on top of this block
 @@ -321,6 +335,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
@@ -156,7 +165,7 @@
      }
  
      /**
-@@ -1364,4 +1381,864 @@
+@@ -1364,4 +1381,885 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1019,5 +1028,26 @@
 +    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
 +        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
++    }
++
++    /**
++     * Returns Metadata-sensitive material
++     *
++     * @param meta The block's current metadata
++     * @return the material for the provided metadata block
++     */
++    public Material getBlockMaterial(int meta)
++    {
++        return this.blockMaterial;
++    }
++
++    /**
++     * Returns fallback material, if no way of getting metadata is available
++     *
++     * @return the material for this block
++     */
++    public Material getBlockMaterial()
++    {
++        return this.blockMaterial;
 +    }
  }

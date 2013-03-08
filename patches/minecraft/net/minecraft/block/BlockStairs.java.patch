@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockStairs.java
++++ ../src_work/minecraft/net/minecraft/block/BlockStairs.java
+@@ -29,7 +29,7 @@
+ 
+     protected BlockStairs(int par1, Block par2Block, int par3)
+     {
+-        super(par1, par2Block.blockIndexInTexture, par2Block.blockMaterial);
++        super(par1, par2Block.blockIndexInTexture, par2Block.getBlockMaterial());
+         this.modelBlock = par2Block;
+         this.field_72158_c = par3;
+         this.setHardness(par2Block.blockHardness);

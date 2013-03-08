@@ -1,0 +1,13 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemAxe.java
++++ ../src_work/minecraft/net/minecraft/item/ItemAxe.java
+@@ -17,8 +17,8 @@
+      * Returns the strength of the stack against a given block. 1.0F base, (Quality+1)*2 if correct blocktype, 1.5F if
+      * sword
+      */
+-    public float getStrVsBlock(ItemStack par1ItemStack, Block par2Block)
++    public float getStrVsBlock(ItemStack par1ItemStack, Block par2Block, int meta)
+     {
+-        return par2Block != null && (par2Block.blockMaterial == Material.wood || par2Block.blockMaterial == Material.plants || par2Block.blockMaterial == Material.vine) ? this.efficiencyOnProperMaterial : super.getStrVsBlock(par1ItemStack, par2Block);
++        return par2Block != null && (par2Block.getBlockMaterial(meta) == Material.wood || par2Block.getBlockMaterial(meta) == Material.plants || par2Block.getBlockMaterial(meta) == Material.vine) ? this.efficiencyOnProperMaterial : super.getStrVsBlock(par1ItemStack, par2Block);
+     }
+ }

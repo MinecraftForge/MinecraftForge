@@ -91,6 +91,15 @@
              {
                  var20 = (double)par2 + 0.5D + 0.5D;
                  var22 = (double)par2 + 0.5D - 0.5D;
+@@ -3915,7 +3918,7 @@
+             float var17 = 0.6F;
+             double var18 = 0.0D;
+             double var20 = 1.0D;
+-            Material var22 = par1Block.blockMaterial;
++            Material var22 = par1Block.getBlockMaterial(this.blockAccess.getBlockMetadata(par2, par3, par4));
+             int var23 = this.blockAccess.getBlockMetadata(par2, par3, par4);
+             double var24 = (double)this.getFluidHeight(par2, par3, par4, var22);
+             double var26 = (double)this.getFluidHeight(par2, par3, par4 + 1, var22);
 @@ -4654,7 +4657,7 @@
              var27 = par1Block.getBlockTexture(this.blockAccess, par2, par3, par4, 2);
              this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, var27);

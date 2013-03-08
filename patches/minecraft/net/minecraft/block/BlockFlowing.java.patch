@@ -1,0 +1,97 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockFlowing.java
++++ ../src_work/minecraft/net/minecraft/block/BlockFlowing.java
+@@ -42,7 +42,7 @@
+ 
+     public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        return this.blockMaterial != Material.lava;
++        return this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) != Material.lava;
+     }
+ 
+     /**
+@@ -53,7 +53,7 @@
+         int var6 = this.getFlowDecay(par1World, par2, par3, par4);
+         byte var7 = 1;
+ 
+-        if (this.blockMaterial == Material.lava && !par1World.provider.isHellWorld)
++        if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava && !par1World.provider.isHellWorld)
+         {
+             var7 = 2;
+         }
+@@ -90,19 +90,19 @@
+                 }
+             }
+ 
+-            if (this.numAdjacentSources >= 2 && this.blockMaterial == Material.water)
++            if (this.numAdjacentSources >= 2 && this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.water)
+             {
+                 if (par1World.getBlockMaterial(par2, par3 - 1, par4).isSolid())
+                 {
+                     var10 = 0;
+                 }
+-                else if (par1World.getBlockMaterial(par2, par3 - 1, par4) == this.blockMaterial && par1World.getBlockMetadata(par2, par3, par4) == 0)
++                else if (par1World.getBlockMaterial(par2, par3 - 1, par4) == this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) && par1World.getBlockMetadata(par2, par3, par4) == 0)
+                 {
+                     var10 = 0;
+                 }
+             }
+ 
+-            if (this.blockMaterial == Material.lava && var6 < 8 && var10 < 8 && var10 > var6 && par5Random.nextInt(4) != 0)
++            if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava && var6 < 8 && var10 < 8 && var10 > var6 && par5Random.nextInt(4) != 0)
+             {
+                 var10 = var6;
+                 var8 = false;
+@@ -138,7 +138,7 @@
+ 
+         if (this.liquidCanDisplaceBlock(par1World, par2, par3 - 1, par4))
+         {
+-            if (this.blockMaterial == Material.lava && par1World.getBlockMaterial(par2, par3 - 1, par4) == Material.water)
++            if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava && par1World.getBlockMaterial(par2, par3 - 1, par4) == Material.water)
+             {
+                 par1World.setBlockWithNotify(par2, par3 - 1, par4, Block.stone.blockID);
+                 this.triggerLavaMixEffects(par1World, par2, par3 - 1, par4);
+@@ -203,7 +203,7 @@
+ 
+             if (var6 > 0)
+             {
+-                if (this.blockMaterial == Material.lava)
++                if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava)
+                 {
+                     this.triggerLavaMixEffects(par1World, par2, par3, par4);
+                 }
+@@ -253,7 +253,7 @@
+                     ++var11;
+                 }
+ 
+-                if (!this.blockBlocksFlow(par1World, var9, par3, var11) && (par1World.getBlockMaterial(var9, par3, var11) != this.blockMaterial || par1World.getBlockMetadata(var9, par3, var11) != 0))
++                if (!this.blockBlocksFlow(par1World, var9, par3, var11) && (par1World.getBlockMaterial(var9, par3, var11) != this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) || par1World.getBlockMetadata(var9, par3, var11) != 0))
+                 {
+                     if (!this.blockBlocksFlow(par1World, var9, par3 - 1, var11))
+                     {
+@@ -312,7 +312,7 @@
+                 ++var8;
+             }
+ 
+-            if (!this.blockBlocksFlow(par1World, var6, par3, var8) && (par1World.getBlockMaterial(var6, par3, var8) != this.blockMaterial || par1World.getBlockMetadata(var6, par3, var8) != 0))
++            if (!this.blockBlocksFlow(par1World, var6, par3, var8) && (par1World.getBlockMaterial(var6, par3, var8) != this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) || par1World.getBlockMetadata(var6, par3, var8) != 0))
+             {
+                 if (this.blockBlocksFlow(par1World, var6, par3 - 1, var8))
+                 {
+@@ -358,7 +358,7 @@
+             }
+             else
+             {
+-                Material var6 = Block.blocksList[var5].blockMaterial;
++                Material var6 = Block.blocksList[var5].getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4));
+                 return var6 == Material.portal ? true : var6.blocksMovement();
+             }
+         }
+@@ -404,7 +404,7 @@
+     private boolean liquidCanDisplaceBlock(World par1World, int par2, int par3, int par4)
+     {
+         Material var5 = par1World.getBlockMaterial(par2, par3, par4);
+-        return var5 == this.blockMaterial ? false : (var5 == Material.lava ? false : !this.blockBlocksFlow(par1World, par2, par3, par4));
++        return var5 == this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) ? false : (var5 == Material.lava ? false : !this.blockBlocksFlow(par1World, par2, par3, par4));
+     }
+ 
+     /**

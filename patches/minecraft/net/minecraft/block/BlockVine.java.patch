@@ -20,7 +20,131 @@
  {
      public BlockVine(int par1)
      {
-@@ -439,14 +443,26 @@
+@@ -115,7 +119,7 @@
+             var13 = true;
+         }
+ 
+-        if (!var13 && this.canBePlacedOn(par1IBlockAccess.getBlockId(par2, par3 + 1, par4)))
++        if (!var13 && this.canBePlacedOn(par1IBlockAccess.getBlockId(par2, par3 + 1, par4), par1IBlockAccess.getBlockMetadata(par2, par3 + 1, par4)))
+         {
+             var8 = Math.min(var8, 0.9375F);
+             var11 = 1.0F;
+@@ -145,15 +149,15 @@
+         switch (par5)
+         {
+             case 1:
+-                return this.canBePlacedOn(par1World.getBlockId(par2, par3 + 1, par4));
++                return this.canBePlacedOn(par1World.getBlockId(par2, par3 + 1, par4), par1World.getBlockMetadata(par2, par3 + 1, par4));
+             case 2:
+-                return this.canBePlacedOn(par1World.getBlockId(par2, par3, par4 + 1));
++                return this.canBePlacedOn(par1World.getBlockId(par2, par3, par4 - 1), par1World.getBlockMetadata(par2, par3, par4 - 1));
+             case 3:
+-                return this.canBePlacedOn(par1World.getBlockId(par2, par3, par4 - 1));
++                return this.canBePlacedOn(par1World.getBlockId(par2, par3, par4 - 1), par1World.getBlockMetadata(par2, par3, par4 - 1));
+             case 4:
+-                return this.canBePlacedOn(par1World.getBlockId(par2 + 1, par3, par4));
++                return this.canBePlacedOn(par1World.getBlockId(par2 + 1, par3, par4), par1World.getBlockMetadata(par2 + 1, par3, par4));
+             case 5:
+-                return this.canBePlacedOn(par1World.getBlockId(par2 - 1, par3, par4));
++                return this.canBePlacedOn(par1World.getBlockId(par2 - 1, par3, par4), par1World.getBlockMetadata(par2 - 1, par3, par4));
+             default:
+                 return false;
+         }
+@@ -162,7 +166,7 @@
+     /**
+      * returns true if a vine can be placed on that block (checks for render as normal block and if it is solid)
+      */
+-    private boolean canBePlacedOn(int par1)
++    private boolean canBePlacedOn(int par1, int par2)
+     {
+         if (par1 == 0)
+         {
+@@ -171,7 +175,7 @@
+         else
+         {
+             Block var2 = Block.blocksList[par1];
+-            return var2.renderAsNormalBlock() && var2.blockMaterial.blocksMovement();
++            return var2.renderAsNormalBlock() && var2.getBlockMaterial(par2).blocksMovement();
+         }
+     }
+ 
+@@ -189,14 +193,14 @@
+             {
+                 int var8 = 1 << var7;
+ 
+-                if ((var5 & var8) != 0 && !this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var7], par3, par4 + Direction.offsetZ[var7])) && (par1World.getBlockId(par2, par3 + 1, par4) != this.blockID || (par1World.getBlockMetadata(par2, par3 + 1, par4) & var8) == 0))
++                if ((var5 & var8) != 0 && !this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var7], par3, par4 + Direction.offsetZ[var7]), par1World.getBlockMetadata(par2 + Direction.offsetX[var7], par3, par4 + Direction.offsetZ[var7])) && (par1World.getBlockId(par2, par3 + 1, par4) != this.blockID || (par1World.getBlockMetadata(par2, par3 + 1, par4) & var8) == 0))
+                 {
+                     var6 &= ~var8;
+                 }
+             }
+         }
+ 
+-        if (var6 == 0 && !this.canBePlacedOn(par1World.getBlockId(par2, par3 + 1, par4)))
++        if (var6 == 0 && !this.canBePlacedOn(par1World.getBlockId(par2, par3 + 1, par4), par1World.getBlockMetadata(par2, par3 + 1, par4)))
+         {
+             return false;
+         }
+@@ -290,6 +294,7 @@
+             var10 = par1World.rand.nextInt(6);
+             var11 = Direction.vineGrowth[var10];
+             int var12;
++            int meta;
+             int var13;
+ 
+             if (var10 == 1 && par3 < 255 && par1World.isAirBlock(par2, par3 + 1, par4))
+@@ -305,7 +310,7 @@
+                 {
+                     for (var13 = 0; var13 <= 3; ++var13)
+                     {
+-                        if (!this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3 + 1, par4 + Direction.offsetZ[var13])))
++                        if (!this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3 + 1, par4 + Direction.offsetZ[var13]), par1World.getBlockMetadata(par2 + Direction.offsetX[var13], par3 + 1, par4 + Direction.offsetZ[var13])))
+                         {
+                             var12 &= ~(1 << var13);
+                         }
+@@ -329,10 +334,11 @@
+                     }
+ 
+                     var12 = par1World.getBlockId(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11]);
++                    meta = par1World.getBlockId(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11]);
+ 
+                     if (var12 != 0 && Block.blocksList[var12] != null)
+                     {
+-                        if (Block.blocksList[var12].blockMaterial.isOpaque() && Block.blocksList[var12].renderAsNormalBlock())
++                        if (Block.blocksList[var12].getBlockMaterial(meta).isOpaque() && Block.blocksList[var12].renderAsNormalBlock())
+                         {
+                             par1World.setBlockMetadataWithNotify(par2, par3, par4, var9 | 1 << var11);
+                         }
+@@ -342,23 +348,23 @@
+                         var13 = var11 + 1 & 3;
+                         var14 = var11 + 3 & 3;
+ 
+-                        if ((var9 & 1 << var13) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13])))
++                        if ((var9 & 1 << var13) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13]), par1World.getBlockMetadata(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13])))
+                         {
+                             par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 1 << var13);
+                         }
+-                        else if ((var9 & 1 << var14) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14])))
++                        else if ((var9 & 1 << var14) != 0 && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14]), par1World.getBlockMetadata(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14])))
+                         {
+                             par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 1 << var14);
+                         }
+-                        else if ((var9 & 1 << var13) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var13])))
++                        else if ((var9 & 1 << var13) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var13]), par1World.getBlockMetadata(par2 + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var13])))
+                         {
+                             par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11] + Direction.offsetX[var13], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var13], this.blockID, 1 << (var11 + 2 & 3));
+                         }
+-                        else if ((var9 & 1 << var14) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var14])))
++                        else if ((var9 & 1 << var14) != 0 && par1World.isAirBlock(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14]) && this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var14]), par1World.getBlockMetadata(par2 + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var14])))
+                         {
+                             par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11] + Direction.offsetX[var14], par3, par4 + Direction.offsetZ[var11] + Direction.offsetZ[var14], this.blockID, 1 << (var11 + 2 & 3));
+                         }
+-                        else if (this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11], par3 + 1, par4 + Direction.offsetZ[var11])))
++                        else if (this.canBePlacedOn(par1World.getBlockId(par2 + Direction.offsetX[var11], par3 + 1, par4 + Direction.offsetZ[var11]), par1World.getBlockMetadata(par2 + Direction.offsetX[var11], par3 + 1, par4 + Direction.offsetZ[var11])))
+                         {
+                             par1World.setBlockAndMetadataWithNotify(par2 + Direction.offsetX[var11], par3, par4 + Direction.offsetZ[var11], this.blockID, 0);
+                         }
+@@ -439,14 +445,26 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {

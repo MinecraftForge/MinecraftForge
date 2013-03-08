@@ -1,0 +1,39 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/ActiveRenderInfo.java
+@@ -105,8 +105,9 @@
+         Vec3 var3 = projectViewFromEntity(par1EntityLiving, (double)par2);
+         ChunkPosition var4 = new ChunkPosition(var3);
+         int var5 = par0World.getBlockId(var4.x, var4.y, var4.z);
++        int meta = par0World.getBlockMetadata(var4.x, var4.y, var4.z);
+ 
+-        if (var5 != 0 && Block.blocksList[var5].blockMaterial.isLiquid())
++        if (var5 != 0 && Block.blocksList[var5].getBlockMaterial(meta).isLiquid())
+         {
+             float var6 = BlockFluid.getFluidHeightPercent(par0World.getBlockMetadata(var4.x, var4.y, var4.z)) - 0.11111111F;
+             float var7 = (float)(var4.y + 1) - var6;
+@@ -119,4 +120,25 @@
+ 
+         return var5;
+     }
++
++    public static int getBlockMetadataAtEntityViewpoint(World par0World, EntityLiving par1EntityLiving, float par2)
++    {
++        Vec3 var3 = projectViewFromEntity(par1EntityLiving, (double)par2);
++        ChunkPosition var4 = new ChunkPosition(var3);
++        int var5 = par0World.getBlockId(var4.x, var4.y, var4.z);
++        int meta = par0World.getBlockMetadata(var4.x, var4.y, var4.z);
++
++        if (var5 != 0 && Block.blocksList[var5].getBlockMaterial(meta).isLiquid())
++        {
++            float var6 = BlockFluid.getFluidHeightPercent(par0World.getBlockMetadata(var4.x, var4.y, var4.z)) - 0.11111111F;
++            float var7 = (float)(var4.y + 1) - var6;
++
++            if (var3.yCoord >= (double)var7)
++            {
++                var5 = par0World.getBlockMetadata(var4.x, var4.y + 1, var4.z);
++            }
++        }
++
++        return var5;
++    }
+ }

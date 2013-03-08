@@ -1,11 +1,33 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockDoor.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockDoor.java
-@@ -268,7 +268,7 @@
+@@ -266,9 +266,9 @@
+      */
+     public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
      {
-         if (this.blockMaterial == Material.iron)
-         {
+-        if (this.blockMaterial == Material.iron)
+-        {
 -            return true;
++        if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.iron)
++        {
 +            return false; //Allow items to interact with the door
          }
          else
          {
+@@ -385,7 +385,7 @@
+      */
+     public int idDropped(int par1, Random par2Random, int par3)
+     {
+-        return (par1 & 8) != 0 ? 0 : (this.blockMaterial == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID);
++        return (par1 & 8) != 0 ? 0 : (this.getBlockMaterial(par1) == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID);
+     }
+ 
+     /**
+@@ -447,7 +447,7 @@
+      */
+     public int idPicked(World par1World, int par2, int par3, int par4)
+     {
+-        return this.blockMaterial == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID;
++        return this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.iron ? Item.doorSteel.itemID : Item.doorWood.itemID;
+     }
+ 
+     /**

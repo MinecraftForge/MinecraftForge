@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockSand.java
++++ ../src_work/minecraft/net/minecraft/block/BlockSand.java
+@@ -115,7 +115,7 @@
+         }
+         else
+         {
+-            Material var5 = Block.blocksList[var4].blockMaterial;
++            Material var5 = Block.blocksList[var4].getBlockMaterial(par0World.getBlockMetadata(par1, par2, par3));
+             return var5 == Material.water ? true : var5 == Material.lava;
+         }
+     }
