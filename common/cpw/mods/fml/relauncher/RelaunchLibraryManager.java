@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -526,7 +526,7 @@ public class RelaunchLibraryManager
         return loadedLibraries;
     }
 
-    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 22);
+    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 23);
     static IDownloadDisplay downloadMonitor;
 
     private static void performDownload(InputStream is, int sizeGuess, String validationHash, File target)
