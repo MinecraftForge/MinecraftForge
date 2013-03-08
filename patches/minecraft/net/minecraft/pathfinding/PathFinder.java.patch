@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/pathfinding/PathFinder.java
++++ ../src_work/minecraft/net/minecraft/pathfinding/PathFinder.java
+@@ -303,6 +303,7 @@
+                 for (int var11 = par3; var11 < par3 + par4PathPoint.zCoord; ++var11)
+                 {
+                     int var12 = par0Entity.worldObj.getBlockId(var9, var10, var11);
++                    int meta = par0Entity.worldObj.getBlockMetadata(var9, var10, var11);
+ 
+                     if (var12 > 0)
+                     {
+@@ -343,7 +344,7 @@
+                                 return -4;
+                             }
+ 
+-                            Material var15 = var13.blockMaterial;
++                            Material var15 = var13.getBlockMaterial(meta);
+ 
+                             if (var15 != Material.lava)
+                             {

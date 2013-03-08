@@ -1,0 +1,75 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/StructureComponent.java
+@@ -95,21 +95,24 @@
+         int var9;
+         int var10;
+         int var11;
++        int meta;
+ 
+         for (var9 = var3; var9 <= var6; ++var9)
+         {
+             for (var10 = var5; var10 <= var8; ++var10)
+             {
+                 var11 = par1World.getBlockId(var9, var4, var10);
+-
+-                if (var11 > 0 && Block.blocksList[var11].blockMaterial.isLiquid())
++                meta = par1World.getBlockMetadata(var9, var4, var10);
++
++                if (var11 > 0 && Block.blocksList[var11].getBlockMaterial(meta).isLiquid())
+                 {
+                     return true;
+                 }
+ 
+                 var11 = par1World.getBlockId(var9, var7, var10);
+-
+-                if (var11 > 0 && Block.blocksList[var11].blockMaterial.isLiquid())
++                meta = par1World.getBlockMetadata(var9, var7, var10);
++
++                if (var11 > 0 && Block.blocksList[var11].getBlockMaterial(meta).isLiquid())
+                 {
+                     return true;
+                 }
+@@ -121,15 +124,17 @@
+             for (var10 = var4; var10 <= var7; ++var10)
+             {
+                 var11 = par1World.getBlockId(var9, var10, var5);
+-
+-                if (var11 > 0 && Block.blocksList[var11].blockMaterial.isLiquid())
++                meta = par1World.getBlockMetadata(var9, var10, var5);
++
++                if (var11 > 0 && Block.blocksList[var11].getBlockMaterial(meta).isLiquid())
+                 {
+                     return true;
+                 }
+ 
+                 var11 = par1World.getBlockId(var9, var10, var8);
+-
+-                if (var11 > 0 && Block.blocksList[var11].blockMaterial.isLiquid())
++                meta = par1World.getBlockMetadata(var9, var10, var8);
++
++                if (var11 > 0 && Block.blocksList[var11].getBlockMaterial(meta).isLiquid())
+                 {
+                     return true;
+                 }
+@@ -141,15 +146,17 @@
+             for (var10 = var4; var10 <= var7; ++var10)
+             {
+                 var11 = par1World.getBlockId(var3, var10, var9);
+-
+-                if (var11 > 0 && Block.blocksList[var11].blockMaterial.isLiquid())
++                meta = par1World.getBlockMetadata(var3, var10, var9);
++
++                if (var11 > 0 && Block.blocksList[var11].getBlockMaterial(meta).isLiquid())
+                 {
+                     return true;
+                 }
+ 
+                 var11 = par1World.getBlockId(var6, var10, var9);
+-
+-                if (var11 > 0 && Block.blocksList[var11].blockMaterial.isLiquid())
++                meta = par1World.getBlockMetadata(var6, var10, var9);
++
++                if (var11 > 0 && Block.blocksList[var11].getBlockMaterial(meta).isLiquid())
+                 {
+                     return true;
+                 }

@@ -1,5 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockFluid.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockFluid.java
+@@ -23,7 +23,7 @@
+ 
+     public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        return this.blockMaterial != Material.lava;
++        return this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) != Material.lava;
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -40,7 +40,7 @@
+      */
+     public int colorMultiplier(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        if (this.blockMaterial != Material.water)
++        if (this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) != Material.water)
+         {
+             return 16777215;
+         }
 @@ -54,7 +54,7 @@
              {
                  for (int var9 = -1; var9 <= 1; ++var9)
@@ -9,3 +27,102 @@
                      var5 += (var10 & 16711680) >> 16;
                      var6 += (var10 & 65280) >> 8;
                      var7 += var10 & 255;
+@@ -92,7 +92,7 @@
+      */
+     protected int getFlowDecay(World par1World, int par2, int par3, int par4)
+     {
+-        return par1World.getBlockMaterial(par2, par3, par4) == this.blockMaterial ? par1World.getBlockMetadata(par2, par3, par4) : -1;
++        return par1World.getBlockMaterial(par2, par3, par4) == this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) ? par1World.getBlockMetadata(par2, par3, par4) : -1;
+     }
+ 
+     /**
+@@ -101,7 +101,7 @@
+      */
+     protected int getEffectiveFlowDecay(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        if (par1IBlockAccess.getBlockMaterial(par2, par3, par4) != this.blockMaterial)
++        if (par1IBlockAccess.getBlockMaterial(par2, par3, par4) != this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)))
+         {
+             return -1;
+         }
+@@ -150,7 +150,7 @@
+     public boolean isBlockSolid(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+     {
+         Material var6 = par1IBlockAccess.getBlockMaterial(par2, par3, par4);
+-        return var6 == this.blockMaterial ? false : (par5 == 1 ? true : (var6 == Material.ice ? false : super.isBlockSolid(par1IBlockAccess, par2, par3, par4, par5)));
++        return var6 == this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) ? false : (par5 == 1 ? true : (var6 == Material.ice ? false : super.isBlockSolid(par1IBlockAccess, par2, par3, par4, par5)));
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -162,7 +162,7 @@
+     public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
+     {
+         Material var6 = par1IBlockAccess.getBlockMaterial(par2, par3, par4);
+-        return var6 == this.blockMaterial ? false : (par5 == 1 ? true : (var6 == Material.ice ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5)));
++        return var6 == this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) ? false : (par5 == 1 ? true : (var6 == Material.ice ? false : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5)));
+     }
+ 
+     /**
+@@ -324,7 +324,7 @@
+      */
+     public int tickRate()
+     {
+-        return this.blockMaterial == Material.water ? 5 : (this.blockMaterial == Material.lava ? 30 : 0);
++        return this.getBlockMaterial() == Material.water ? 5 : (this.getBlockMaterial() == Material.lava ? 30 : 0);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -362,7 +362,7 @@
+      */
+     public int getRenderBlockPass()
+     {
+-        return this.blockMaterial == Material.water ? 1 : 0;
++        return this.getBlockMaterial() == Material.water ? 1 : 0;
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -374,7 +374,7 @@
+     {
+         int var6;
+ 
+-        if (this.blockMaterial == Material.water)
++        if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.water)
+         {
+             if (par5Random.nextInt(10) == 0)
+             {
+@@ -467,7 +467,7 @@
+             }
+         }
+ 
+-        if (this.blockMaterial == Material.water && par5Random.nextInt(64) == 0)
++        if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.water && par5Random.nextInt(64) == 0)
+         {
+             var6 = par1World.getBlockMetadata(par2, par3, par4);
+ 
+@@ -481,7 +481,7 @@
+         double var23;
+         double var22;
+ 
+-        if (this.blockMaterial == Material.lava && par1World.getBlockMaterial(par2, par3 + 1, par4) == Material.air && !par1World.isBlockOpaqueCube(par2, par3 + 1, par4))
++        if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava && par1World.getBlockMaterial(par2, par3 + 1, par4) == Material.air && !par1World.isBlockOpaqueCube(par2, par3 + 1, par4))
+         {
+             if (par5Random.nextInt(100) == 0)
+             {
+@@ -504,7 +504,7 @@
+             var22 = (double)par3 - 1.05D;
+             var23 = (double)((float)par4 + par5Random.nextFloat());
+ 
+-            if (this.blockMaterial == Material.water)
++            if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.water)
+             {
+                 par1World.spawnParticle("dripWater", var21, var22, var23, 0.0D, 0.0D, 0.0D);
+             }
+@@ -561,7 +561,7 @@
+     {
+         if (par1World.getBlockId(par2, par3, par4) == this.blockID)
+         {
+-            if (this.blockMaterial == Material.lava)
++            if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava)
+             {
+                 boolean var5 = false;
+ 

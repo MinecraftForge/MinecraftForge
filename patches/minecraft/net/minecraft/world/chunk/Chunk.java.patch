@@ -406,6 +406,15 @@
  
          if (var5 < 0)
          {
+@@ -1168,7 +1283,7 @@
+             while (var5 > 0 && var4 == -1)
+             {
+                 int var6 = this.getBlockID(par1, var5, par2);
+-                Material var7 = var6 == 0 ? Material.air : Block.blocksList[var6].blockMaterial;
++                Material var7 = var6 == 0 ? Material.air : Block.blocksList[var6].getBlockMaterial(this.getBlockMetadata(par1, var5, par2));
+ 
+                 if (!var7.blocksMovement() && !var7.isLiquid())
+                 {
 @@ -1246,6 +1361,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)

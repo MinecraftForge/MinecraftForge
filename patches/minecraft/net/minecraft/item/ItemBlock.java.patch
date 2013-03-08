@@ -8,7 +8,13 @@
      }
  
      /**
-@@ -41,7 +42,8 @@
+@@ -36,12 +37,14 @@
+     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
+         int var11 = par3World.getBlockId(par4, par5, par6);
++        int meta = par3World.getBlockMetadata(par4, par5, par6);
+ 
+         if (var11 == Block.snow.blockID)
          {
              par7 = 1;
          }
@@ -18,7 +24,16 @@
          {
              if (par7 == 0)
              {
-@@ -92,14 +94,8 @@
+@@ -82,7 +85,7 @@
+         {
+             return false;
+         }
+-        else if (par5 == 255 && Block.blocksList[this.blockID].blockMaterial.isSolid())
++        else if (par5 == 255 && Block.blocksList[this.blockID].getBlockMaterial(meta).isSolid())
+         {
+             return false;
+         }
+@@ -92,14 +95,8 @@
              int var13 = this.getMetadata(par1ItemStack.getItemDamage());
              int var14 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, var13);
  
@@ -35,7 +50,7 @@
                  par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
                  --par1ItemStack.stackSize;
              }
-@@ -125,7 +121,8 @@
+@@ -125,7 +122,8 @@
          {
              par5 = 1;
          }
@@ -45,7 +60,7 @@
          {
              if (par5 == 0)
              {
-@@ -190,4 +187,28 @@
+@@ -190,4 +188,28 @@
      {
          Block.blocksList[this.blockID].getSubBlocks(par1, par2CreativeTabs, par3List);
      }

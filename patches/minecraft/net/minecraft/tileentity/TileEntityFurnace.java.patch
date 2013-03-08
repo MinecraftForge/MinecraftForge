@@ -65,8 +65,11 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -341,7 +348,7 @@
+@@ -339,9 +346,10 @@
+         else
+         {
              int var1 = par0ItemStack.getItem().itemID;
++            int meta = par0ItemStack.getItemDamage();
              Item var2 = par0ItemStack.getItem();
  
 -            if (var1 < 256 && Block.blocksList[var1] != null)
@@ -74,7 +77,16 @@
              {
                  Block var3 = Block.blocksList[var1];
  
-@@ -387,4 +394,18 @@
+@@ -350,7 +358,7 @@
+                     return 150;
+                 }
+ 
+-                if (var3.blockMaterial == Material.wood)
++                if (var3.getBlockMaterial(meta) == Material.wood)
+                 {
+                     return 300;
+                 }
+@@ -387,4 +395,18 @@
      public void openChest() {}
  
      public void closeChest() {}

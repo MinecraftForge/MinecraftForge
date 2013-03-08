@@ -15,3 +15,40 @@
      }
  
      /**
+@@ -506,13 +514,13 @@
+     /**
+      * Gets the strength of the current item (tool) against the specified block, 1.0f if not holding anything.
+      */
+-    public float getStrVsBlock(Block par1Block)
++    public float getStrVsBlock(Block par1Block, int metadata)
+     {
+         float var2 = 1.0F;
+ 
+         if (this.mainInventory[this.currentItem] != null)
+         {
+-            var2 *= this.mainInventory[this.currentItem].getStrVsBlock(par1Block);
++            var2 *= this.mainInventory[this.currentItem].getStrVsBlock(par1Block, metadata);
+         }
+ 
+         return var2;
+@@ -634,16 +642,16 @@
+     /**
+      * Returns whether the current item (tool) can harvest from the specified block (actually get a result).
+      */
+-    public boolean canHarvestBlock(Block par1Block)
+-    {
+-        if (par1Block.blockMaterial.isToolNotRequired())
++    public boolean canHarvestBlock(Block par1Block, int metadata)
++    {
++        if (par1Block.getBlockMaterial(metadata).isToolNotRequired())
+         {
+             return true;
+         }
+         else
+         {
+             ItemStack var2 = this.getStackInSlot(this.currentItem);
+-            return var2 != null ? var2.canHarvestBlock(par1Block) : false;
++            return var2 != null ? var2.canHarvestBlock(par1Block, metadata) : false;
+         }
+     }
+ 

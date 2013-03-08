@@ -73,6 +73,24 @@
              }
  
              this.worldObj.theProfiler.endSection();
+@@ -1010,7 +1028,7 @@
+             var5 = Block.snow.stepSound;
+             this.playSound(var5.getStepSound(), var5.getVolume() * 0.15F, var5.getPitch());
+         }
+-        else if (!Block.blocksList[par4].blockMaterial.isLiquid())
++        else if (!Block.blocksList[par4].getBlockMaterial(this.worldObj.getBlockMetadata(par1, par2, par3)).isLiquid())
+         {
+             this.playSound(var5.getStepSound(), var5.getVolume() * 0.15F, var5.getPitch());
+         }
+@@ -1163,7 +1181,7 @@
+         int var6 = MathHelper.floor_double(this.posZ);
+         int var7 = this.worldObj.getBlockId(var4, var5, var6);
+ 
+-        if (var7 != 0 && Block.blocksList[var7].blockMaterial == par1Material)
++        if (var7 != 0 && Block.blocksList[var7].getBlockMaterial(this.worldObj.getBlockMetadata(var4, var5, var6)) == par1Material)
+         {
+             float var8 = BlockFluid.getFluidHeightPercent(this.worldObj.getBlockMetadata(var4, var5, var6)) - 0.11111111F;
+             float var9 = (float)(var5 + 1) - var8;
 @@ -1514,6 +1532,15 @@
              par1NBTTagCompound.setInteger("Dimension", this.dimension);
              par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);

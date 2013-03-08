@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
+@@ -275,6 +275,7 @@
+         int var15 = MathHelper.floor_double(this.posY);
+         int var16 = MathHelper.floor_double(this.posZ);
+         int var18;
++        int meta;
+ 
+         if (this.worldObj.blockExists(var14, var15, var16))
+         {
+@@ -283,8 +284,9 @@
+             while (!var17 && var15 > 0)
+             {
+                 var18 = this.worldObj.getBlockId(var14, var15 - 1, var16);
+-
+-                if (var18 != 0 && Block.blocksList[var18].blockMaterial.blocksMovement())
++                meta = this.worldObj.getBlockMetadata(var14, var15 - 1, var16);
++
++                if (var18 != 0 && Block.blocksList[var18].getBlockMaterial(meta).blocksMovement())
+                 {
+                     var17 = true;
+                 }

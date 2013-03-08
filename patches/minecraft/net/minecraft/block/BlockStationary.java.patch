@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockStationary.java
++++ ../src_work/minecraft/net/minecraft/block/BlockStationary.java
+@@ -20,7 +20,7 @@
+ 
+     public boolean getBlocksMovement(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+     {
+-        return this.blockMaterial != Material.lava;
++        return this.getBlockMaterial(par1IBlockAccess.getBlockMetadata(par2, par3, par4)) != Material.lava;
+     }
+ 
+     /**
+@@ -55,7 +55,7 @@
+      */
+     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
+     {
+-        if (this.blockMaterial == Material.lava)
++        if (this.getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)) == Material.lava)
+         {
+             int var6 = par5Random.nextInt(3);
+             int var7;
+@@ -76,7 +76,7 @@
+                         return;
+                     }
+                 }
+-                else if (Block.blocksList[var8].blockMaterial.blocksMovement())
++                else if (Block.blocksList[var8].getBlockMaterial(par1World.getBlockMetadata(par2, par3, par4)).blocksMovement())
+                 {
+                     return;
+                 }
