@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -28,16 +28,6 @@ public enum TickType {
      * arg 0 : float "partial render time"
      */
     RENDER,
-    /**
-     * Not fired
-     */
-    @Deprecated
-    GUI,
-    /**
-     * Not fired
-     */
-    @Deprecated
-    CLIENTGUI,
     /**
      * server side
      * Fired once as the world loads from disk
@@ -69,8 +59,6 @@ public enum TickType {
     {
         if (this==CLIENT) return EnumSet.of(RENDER);
         if (this==RENDER) return EnumSet.of(CLIENT);
-        if (this==GUI) return EnumSet.of(CLIENTGUI);
-        if (this==CLIENTGUI) return EnumSet.of(GUI);
         return EnumSet.noneOf(TickType.class);
     }
 }
