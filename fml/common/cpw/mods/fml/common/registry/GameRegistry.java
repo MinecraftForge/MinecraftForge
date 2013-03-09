@@ -213,15 +213,17 @@ public class GameRegistry
             assert itemclass != null : "registerBlock: itemclass cannot be null";
             int blockItemId = block.field_71990_ca - 256;
             Constructor<? extends ItemBlock> itemCtor;
+            Item i;
             try
             {
                 itemCtor = itemclass.getConstructor(int.class);
+                i = itemCtor.newInstance(blockItemId);
             }
             catch (NoSuchMethodException e)
             {
                 itemCtor = itemclass.getConstructor(int.class, Block.class);
+                i = itemCtor.newInstance(blockItemId, block);
             }
-            Item i = itemCtor.newInstance(blockItemId, block);
             GameRegistry.registerItem(i,name, modId);
         }
         catch (Exception e)
