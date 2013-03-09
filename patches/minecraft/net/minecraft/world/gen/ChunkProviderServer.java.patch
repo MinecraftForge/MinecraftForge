@@ -51,7 +51,7 @@
 +                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
 +                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) {
 +                        DimensionManager.unloadWorld(this.worldObj.provider.dimensionId);
-+                        return serverChunkGenerator.unloadQueuedChunks();
++                        return currentChunkProvider.unloadQueuedChunks();
 +                    }
                  }
              }

@@ -52,13 +52,13 @@
                  int l;
  
 -                if (this.numberOfTilesToUpdate == 64)
-+                if (this.numberOfTilesToUpdate >= ForgeDummyContainer.clumpingThreshold))
++                if (this.numberOfTilesToUpdate >= ForgeDummyContainer.clumpingThreshold)
                  {
                      i = this.chunkLocation.chunkXPos * 16;
                      j = this.chunkLocation.chunkZPos * 16;
                      this.sendToAllPlayersWatchingChunk(new Packet51MapChunk(PlayerManager.getWorldServer(this.myManager).getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.field_73260_f));
  
-+                    /* Forge: Grabings ALL tile entities is costly on a modded server, only send needed ones
++                    /* Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
                      for (k = 0; k < 16; ++k)
                      {
                          if ((this.field_73260_f & 1 << k) != 0)
