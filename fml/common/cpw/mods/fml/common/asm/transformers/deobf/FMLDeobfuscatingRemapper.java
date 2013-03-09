@@ -76,6 +76,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             File libDir = new File(mcDir, "lib");
             File mapData = new File(libDir, deobfFileName);
+            mapData = mapData.getCanonicalFile();
             ZipFile mapZip = new ZipFile(mapData);
             ZipEntry classData = mapZip.getEntry("joined.srg");
             ZipInputSupplier zis = new ZipInputSupplier(mapZip, classData);

@@ -292,7 +292,9 @@ public class RelaunchLibraryManager
                 {
                     IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, actualClassLoader).newInstance();
                     Map<String,Object> callData = new HashMap<String, Object>();
+                    callData.put("mcLocation", mcDir);
                     callData.put("classLoader", actualClassLoader);
+                    callData.put("coremodLocation", pluginLocations.get(plugin));
                     callData.put("deobfuscationFileName", FMLInjectionData.debfuscationDataName());
                     call.injectData(callData);
                     call.call();

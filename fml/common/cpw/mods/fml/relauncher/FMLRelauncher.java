@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -230,7 +230,6 @@ public class FMLRelauncher
     {
         showWindow(true);
 
-        appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
         if (minecraftApplet.getClass().getClassLoader() == classLoader)
         {
             if (popupWindow != null)
@@ -241,6 +240,7 @@ public class FMLRelauncher
             try
             {
                 newApplet = minecraftApplet;
+                appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
                 ReflectionHelper.findMethod(appletClass, newApplet, new String[] { "fmlInitReentry" }).invoke(newApplet);
                 return;
             }
@@ -260,6 +260,7 @@ public class FMLRelauncher
 
         try
         {
+            appletClass = ReflectionHelper.getClass(classLoader, "net.minecraft.client.MinecraftApplet");
             newApplet = appletClass.newInstance();
             Object appletContainer = ReflectionHelper.getPrivateValue(ReflectionHelper.getClass(getClass().getClassLoader(), "java.awt.Component"),
                     minecraftApplet, "parent");
