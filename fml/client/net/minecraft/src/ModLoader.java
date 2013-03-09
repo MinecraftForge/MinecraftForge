@@ -28,7 +28,6 @@ import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.texturefx.TextureFX;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.ICommand;
@@ -56,7 +55,6 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.SpriteHelper;
 import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.client.modloader.ModLoaderClientHelper;
 import cpw.mods.fml.client.modloader.ModLoaderKeyBindingHandler;
@@ -118,12 +116,6 @@ public class ModLoader
     @SideOnly(CLIENT)
     public static void addAllRenderers(Map<Class<? extends Entity>, Render> renderers)
     {
-    }
-
-    @SideOnly(CLIENT)
-    public static void addAnimation(TextureFX anim)
-    {
-        TextureFXManager.instance().addAnimation(anim);
     }
 
     /**
@@ -230,6 +222,7 @@ public class ModLoader
      * @param fileToAdd The new image
      * @return The 'icon index' in the main image that the new image will be applied to
      */
+    @Deprecated
     @SideOnly(CLIENT)
     public static int addOverride(String fileToOverride, String fileToAdd)
     {
@@ -525,10 +518,11 @@ public class ModLoader
         return EntityRegistry.findGlobalUniqueEntityId();
     }
 
+    @Deprecated
     @SideOnly(CLIENT)
     public static int getUniqueSpriteIndex(String path)
     {
-        return SpriteHelper.getUniqueSpriteIndex(path);
+        return -1;
     }
 
     /**

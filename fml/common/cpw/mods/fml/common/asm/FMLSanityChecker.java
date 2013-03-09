@@ -1,6 +1,19 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.common.asm;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream.GetField;
 import java.io.StringReader;
@@ -27,7 +40,8 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
 import cpw.mods.fml.common.CertificateHelper;
-import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.RelaunchClassLoader;
 
@@ -72,17 +86,17 @@ public class FMLSanityChecker implements IFMLCallHook
                     String fingerprint = CertificateHelper.getFingerprint(cert);
                     if (fingerprint.equals(FMLFINGERPRINT))
                     {
-                        FMLLog.info("Found valid fingerprint for FML. Certificate fingerprint %s", fingerprint);
+                        FMLRelaunchLog.info("Found valid fingerprint for FML. Certificate fingerprint %s", fingerprint);
                         goodFML = true;
                     }
                     else if (fingerprint.equals(FORGEFINGERPRINT))
                     {
-                        FMLLog.info("Found valid fingerprint for Minecraft Forge. Certificate fingerprint %s", fingerprint);
+                        FMLRelaunchLog.info("Found valid fingerprint for Minecraft Forge. Certificate fingerprint %s", fingerprint);
                         goodFML = true;
                     }
                     else
                     {
-                        FMLLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
+                        FMLRelaunchLog.severe("Found invalid fingerprint for FML: %s", fingerprint);
                     }
                 }
             }
@@ -93,7 +107,7 @@ public class FMLSanityChecker implements IFMLCallHook
         }
         if (!goodFML)
         {
-            FMLLog.severe("FML appears to be missing any signature data. This is not a good thing");
+            FMLRelaunchLog.severe("FML appears to be missing any signature data. This is not a good thing");
         }
         byte[] mlClass = cl.getClassBytes("ModLoader");
         // Only care in obfuscated env
@@ -124,6 +138,7 @@ public class FMLSanityChecker implements IFMLCallHook
     public void injectData(Map<String, Object> data)
     {
         cl = (RelaunchClassLoader) data.get("classLoader");
+        FMLDeobfuscatingRemapper.INSTANCE.setup((File)data.get("mcLocation"), cl, (String) data.get("deobfuscationFileName"));
     }
 
 }

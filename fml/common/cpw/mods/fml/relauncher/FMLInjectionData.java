@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.relauncher;
 
 import java.io.File;
@@ -17,6 +29,8 @@ public class FMLInjectionData
     static String build;
     static String mccversion;
     static String mcpversion;
+    static String deobfuscationDataHash;
+
     public static List<String> containers = new ArrayList<String>();
 
     static void build(File mcHome, RelaunchClassLoader classLoader)
@@ -43,10 +57,13 @@ public class FMLInjectionData
         build = properties.getProperty("fmlbuild.build.number", "missing");
         mccversion = properties.getProperty("fmlbuild.mcversion", "missing");
         mcpversion = properties.getProperty("fmlbuild.mcpversion", "missing");
-
-
+        deobfuscationDataHash = properties.getProperty("fmlbuild.deobfuscation.hash","deadbeef");
     }
 
+    static String debfuscationDataName()
+    {
+        return "deobfuscation_data_"+mccversion+".zip";
+    }
     public static Object[] data()
     {
         return new Object[] { major, minor, rev, build, mccversion, mcpversion, minecraftHome, containers };

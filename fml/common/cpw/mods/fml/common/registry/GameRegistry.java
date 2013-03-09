@@ -1,5 +1,18 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.common.registry;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -36,8 +49,6 @@ import com.google.common.collect.Sets.SetView;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.ICraftingHandler;
-import cpw.mods.fml.common.IDispenseHandler;
-import cpw.mods.fml.common.IDispenserHandler;
 import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
@@ -92,43 +103,6 @@ public class GameRegistry
         }
     }
 
-    /**
-     * Deprecated without replacement. Use vanilla DispenserRegistry code
-     *
-     * @param handler
-     */
-    @Deprecated
-    public static void registerDispenserHandler(IDispenserHandler handler)
-    {
-    }
-    /**
-     * Deprecated without replacement. Use vanilla DispenserRegistry code
-     *
-     * @param handler
-     */
-    @Deprecated
-    public static void registerDispenserHandler(final IDispenseHandler handler)
-    {
-    }
-
-
-    /**
-     *
-     * Deprecated without replacement, use vanilla DispenserRegistry code
-     *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
-     * @param xVelocity
-     * @param zVelocity
-     * @param item
-     */
-    @Deprecated
-    public static int tryDispense(World world, int x, int y, int z, int xVelocity, int zVelocity, ItemStack item, Random random, double entX, double entY, double entZ)
-    {
-        return -1;
-    }
     /**
      * Internal method for creating an @Block instance
      * @param container
@@ -238,7 +212,18 @@ public class GameRegistry
             assert block != null : "registerBlock: block cannot be null";
             assert itemclass != null : "registerBlock: itemclass cannot be null";
             int blockItemId = block.field_71990_ca - 256;
-            Item i = itemclass.getConstructor(int.class).newInstance(blockItemId);
+            Constructor<? extends ItemBlock> itemCtor;
+            Item i;
+            try
+            {
+                itemCtor = itemclass.getConstructor(int.class);
+                i = itemCtor.newInstance(blockItemId);
+            }
+            catch (NoSuchMethodException e)
+            {
+                itemCtor = itemclass.getConstructor(int.class, Block.class);
+                i = itemCtor.newInstance(blockItemId, block);
+            }
             GameRegistry.registerItem(i,name, modId);
         }
         catch (Exception e)
@@ -387,4 +372,26 @@ public class GameRegistry
 			tracker.onPlayerRespawn(player);
 	}
 
+
+	/**
+	 * Look up a mod block in the global "named item list"
+	 * @param modId The modid owning the block
+	 * @param name The name of the block itself
+	 * @return The block or null if not found
+	 */
+	public static net.minecraft.block.Block findBlock(String modId, String name)
+	{
+	    return GameData.findBlock(modId, name);
+	}
+
+	/**
+	 * Look up a mod item in the global "named item list"
+	 * @param modId The modid owning the item
+	 * @param name The name of the item itself
+	 * @return The item or null if not found
+	 */
+	public static net.minecraft.item.Item findItem(String modId, String name)
+    {
+        return GameData.findItem(modId, name);
+    }
 }

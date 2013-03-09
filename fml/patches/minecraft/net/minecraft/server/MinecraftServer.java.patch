@@ -9,19 +9,19 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.awt.GraphicsEnvironment;
-@@ -378,7 +381,11 @@
+@@ -351,7 +354,11 @@
          {
              if (this.func_71197_b())
              {
 +                FMLCommonHandler.instance().handleServerStarted();
 +
-                 long var1 = System.currentTimeMillis();
+                 long i = System.currentTimeMillis();
 +
 +                FMLCommonHandler.instance().onWorldLoadTick(field_71305_c);
  
-                 for (long var50 = 0L; this.field_71317_u; this.field_71296_Q = true)
+                 for (long j = 0L; this.field_71317_u; this.field_71296_Q = true)
                  {
-@@ -417,6 +424,7 @@
+@@ -390,6 +397,7 @@
  
                      Thread.sleep(1L);
                  }
@@ -29,18 +29,18 @@
              }
              else
              {
-@@ -425,6 +433,10 @@
+@@ -398,6 +406,10 @@
          }
-         catch (Throwable var48)
+         catch (Throwable throwable)
          {
 +            if (FMLCommonHandler.instance().shouldServerBeKilledQuietly())
 +            {
 +                return;
 +            }
-             var48.printStackTrace();
-             field_71306_a.log(Level.SEVERE, "Encountered an unexpected exception " + var48.getClass().getSimpleName(), var48);
-             CrashReport var2 = null;
-@@ -455,6 +467,10 @@
+             throwable.printStackTrace();
+             this.func_98033_al().func_98234_c("Encountered an unexpected exception " + throwable.getClass().getSimpleName(), throwable);
+             CrashReport crashreport = null;
+@@ -428,6 +440,10 @@
          {
              try
              {
@@ -51,7 +51,7 @@
                  this.func_71260_j();
                  this.field_71316_v = true;
              }
-@@ -464,6 +480,7 @@
+@@ -437,6 +453,7 @@
              }
              finally
              {
@@ -59,18 +59,18 @@
                  this.func_71240_o();
              }
          }
-@@ -480,8 +497,10 @@
+@@ -453,8 +470,10 @@
  
      public void func_71217_p()
      {
 +        FMLCommonHandler.instance().rescheduleTicks(Side.SERVER);
-         long var1 = System.nanoTime();
+         long i = System.nanoTime();
          AxisAlignedBB.func_72332_a().func_72298_a();
 +        FMLCommonHandler.instance().onPreServerTick();
          ++this.field_71315_w;
  
          if (this.field_71295_T)
-@@ -527,6 +546,7 @@
+@@ -500,6 +519,7 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -78,23 +78,23 @@
      }
  
      public void func_71190_q()
-@@ -554,6 +574,7 @@
+@@ -527,6 +547,7 @@
                  }
  
                  this.field_71304_b.func_76320_a("tick");
-+                FMLCommonHandler.instance().onPreWorldTick(var4);
-                 CrashReport var6;
++                FMLCommonHandler.instance().onPreWorldTick(worldserver);
+                 CrashReport crashreport;
  
                  try
-@@ -578,6 +599,7 @@
-                     throw new ReportedException(var6);
+@@ -551,6 +572,7 @@
+                     throw new ReportedException(crashreport);
                  }
  
-+                FMLCommonHandler.instance().onPostWorldTick(var4);
++                FMLCommonHandler.instance().onPostWorldTick(worldserver);
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
-                 var4.func_73039_n().func_72788_a();
-@@ -705,7 +727,7 @@
+                 worldserver.func_73039_n().func_72788_a();
+@@ -678,7 +700,7 @@
  
      public String getServerModName()
      {
@@ -103,7 +103,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1146,6 +1168,13 @@
+@@ -1126,6 +1148,13 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {
@@ -115,5 +115,5 @@
 +    {
 +        String[] p_main_0_ = wrap.args;
          StatList.func_75919_a();
+         ILogAgent ilogagent = null;
  
-         try

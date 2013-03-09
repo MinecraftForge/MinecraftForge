@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Collections;
-@@ -241,7 +242,7 @@
+@@ -242,7 +243,7 @@
              case 4:
                  return "/mob/villager/butcher.png";
              default:
@@ -16,15 +16,15 @@
          }
      }
  
-@@ -422,6 +423,7 @@
+@@ -423,6 +424,7 @@
  
-         MerchantRecipeList var2;
-         var2 = new MerchantRecipeList();
-+        VillagerRegistry.manageVillagerTrades(var2, this, this.func_70946_n(), this.field_70146_Z);
-         int var6;
+         MerchantRecipeList merchantrecipelist;
+         merchantrecipelist = new MerchantRecipeList();
++        VillagerRegistry.manageVillagerTrades(merchantrecipelist, this, this.func_70946_n(), this.field_70146_Z);
+         int j;
          label50:
  
-@@ -637,7 +639,7 @@
+@@ -638,7 +640,7 @@
  
      public void func_82163_bD()
      {

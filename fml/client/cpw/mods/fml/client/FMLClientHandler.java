@@ -140,7 +140,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         loading = true;
         client = minecraft;
         ObfuscationReflectionHelper.detectObfuscation(World.class);
-        TextureFXManager.instance().setClient(client);
+//        TextureFXManager.instance().setClient(client);
         FMLCommonHandler.instance().beginLoading(this);
         new ModLoaderClientHelper(client);
         try
@@ -244,7 +244,9 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
         else
         {
-            TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
+            // Force renderengine to reload and re-initialize all textures
+            client.field_71446_o.func_78352_b();
+//            TextureFXManager.instance().loadTextures(client.field_71418_C.func_77292_e());
         }
     }
     /**

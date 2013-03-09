@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.common.registry;
 
 import java.io.IOException;
@@ -83,8 +95,7 @@ public class LanguageRegistry
     {
         // reload language table by forcing lang to null and reloading the properties file
         String lang = StringTranslate.func_74808_a().func_74811_c();
-        StringTranslate.func_74808_a().field_74813_d = null;
-        StringTranslate.func_74808_a().func_74810_a(lang);
+        StringTranslate.func_74808_a().func_74810_a(lang, true);
     }
 
 

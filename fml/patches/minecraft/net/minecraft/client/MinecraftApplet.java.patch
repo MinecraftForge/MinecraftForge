@@ -18,8 +18,8 @@
 +    public void fmlInitReentry()
      {
          this.field_71483_a = new CanvasMinecraftApplet(this);
-         boolean var1 = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
-@@ -62,6 +68,11 @@
+         boolean flag = "true".equalsIgnoreCase(this.getParameter("fullscreen"));
+@@ -63,6 +69,11 @@
  
      public void start()
      {

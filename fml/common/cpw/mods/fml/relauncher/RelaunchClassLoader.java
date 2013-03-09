@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.relauncher;
 
 import java.io.ByteArrayOutputStream;
@@ -39,8 +51,11 @@ public class RelaunchClassLoader extends URLClassLoader
     private Set<String> classLoaderExceptions = new HashSet<String>();
     private Set<String> transformerExceptions = new HashSet<String>();
     private Map<Package,Manifest> packageManifests = new HashMap<Package,Manifest>();
+    private IClassNameTransformer renameTransformer;
 
     private static Manifest EMPTY = new Manifest();
+
+    private ThreadLocal<byte[]> loadBuffer = new ThreadLocal<byte[]>();
 
     private static final String[] RESERVED = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
@@ -66,15 +81,23 @@ public class RelaunchClassLoader extends URLClassLoader
 
         // standard transformer exclusions
         addTransformerExclusion("javax.");
+        addTransformerExclusion("argo.");
         addTransformerExclusion("org.objectweb.asm.");
         addTransformerExclusion("com.google.common.");
+        addTransformerExclusion("org.bouncycastle.");
+        addTransformerExclusion("cpw.mods.fml.common.asm.transformers.deobf.");
     }
 
     public void registerTransformer(String transformerClassName)
     {
         try
         {
-            transformers.add((IClassTransformer) loadClass(transformerClassName).newInstance());
+            IClassTransformer transformer = (IClassTransformer) loadClass(transformerClassName).newInstance();
+            transformers.add(transformer);
+            if (transformer instanceof IClassNameTransformer && renameTransformer == null)
+            {
+                renameTransformer = (IClassNameTransformer) transformer;
+            }
         }
         catch (Exception e)
         {
@@ -122,12 +145,14 @@ public class RelaunchClassLoader extends URLClassLoader
         try
         {
             CodeSigner[] signers = null;
-            int lastDot = name.lastIndexOf('.');
-            String pkgname = lastDot == -1 ? "" : name.substring(0, lastDot);
-            String fName = name.replace('.', '/').concat(".class");
+            String transformedName = transformName(name);
+            String untransformedName = untransformName(name);
+            int lastDot = untransformedName.lastIndexOf('.');
+            String pkgname = lastDot == -1 ? "" : untransformedName.substring(0, lastDot);
+            String fName = untransformedName.replace('.', '/').concat(".class");
             String pkgPath = pkgname.replace('.', '/');
             URLConnection urlConnection = findCodeSourceConnectionFor(fName);
-            if (urlConnection instanceof JarURLConnection && lastDot > -1)
+            if (urlConnection instanceof JarURLConnection && lastDot > -1 && !untransformedName.startsWith("net.minecraft."))
             {
                 JarURLConnection jarUrlConn = (JarURLConnection)urlConnection;
                 JarFile jf = jarUrlConn.getJarFile();
@@ -136,7 +161,7 @@ public class RelaunchClassLoader extends URLClassLoader
                     Manifest mf = jf.getManifest();
                     JarEntry ent = jf.getJarEntry(fName);
                     Package pkg = getPackage(pkgname);
-                    getClassBytes(name);
+                    getClassBytes(untransformedName);
                     signers = ent.getCodeSigners();
                     if (pkg == null)
                     {
@@ -156,7 +181,7 @@ public class RelaunchClassLoader extends URLClassLoader
                     }
                 }
             }
-            else if (lastDot > -1)
+            else if (lastDot > -1 && !untransformedName.startsWith("net.minecraft."))
             {
                 Package pkg = getPackage(pkgname);
                 if (pkg == null)
@@ -169,10 +194,10 @@ public class RelaunchClassLoader extends URLClassLoader
                     FMLLog.severe("The URL %s is defining elements for sealed path %s", urlConnection.getURL(), pkgname);
                 }
             }
-            byte[] basicClass = getClassBytes(name);
-            byte[] transformedClass = runTransformers(name, basicClass);
-            Class<?> cl = defineClass(name, transformedClass, 0, transformedClass.length, new CodeSource(urlConnection.getURL(), signers));
-            cachedClasses.put(name, cl);
+            byte[] basicClass = getClassBytes(untransformedName);
+            byte[] transformedClass = runTransformers(untransformedName, transformedName, basicClass);
+            Class<?> cl = defineClass(transformedName, transformedClass, 0, transformedClass.length, new CodeSource(urlConnection.getURL(), signers));
+            cachedClasses.put(transformedName, cl);
             return cl;
         }
         catch (Throwable e)
@@ -183,6 +208,30 @@ public class RelaunchClassLoader extends URLClassLoader
                 FMLLog.log(Level.FINEST, e, "Exception encountered attempting classloading of %s", name);
             }
             throw new ClassNotFoundException(name, e);
+        }
+    }
+
+    private String untransformName(String name)
+    {
+        if (renameTransformer != null)
+        {
+            return renameTransformer.unmapClassName(name);
+        }
+        else
+        {
+            return name;
+        }
+    }
+
+    private String transformName(String name)
+    {
+        if (renameTransformer != null)
+        {
+            return renameTransformer.remapClassName(name);
+        }
+        else
+        {
+            return name;
         }
     }
 
@@ -221,11 +270,11 @@ public class RelaunchClassLoader extends URLClassLoader
         }
     }
 
-    private byte[] runTransformers(String name, byte[] basicClass)
+    private byte[] runTransformers(String name, String transformedName, byte[] basicClass)
     {
         for (IClassTransformer transformer : transformers)
         {
-            basicClass = transformer.transform(name, basicClass);
+            basicClass = transformer.transform(name, transformedName, basicClass);
         }
         return basicClass;
     }
@@ -247,18 +296,32 @@ public class RelaunchClassLoader extends URLClassLoader
     {
         try
         {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(stream.available());
-            int r;
-            while ((r = stream.read()) != -1)
+            byte[] buf = loadBuffer.get();
+            if (buf == null)
             {
-                bos.write(r);
+                loadBuffer.set(new byte[1 << 12]);
+                buf = loadBuffer.get();
             }
 
-            return bos.toByteArray();
+            int r, totalLength = 0;
+            while ((r = stream.read(buf, totalLength, buf.length - totalLength)) != -1)
+            {
+                totalLength += r;
+                if (totalLength >= buf.length - 1)
+                {
+                    byte[] oldbuf = buf;
+                    buf = new byte[ oldbuf.length + (1 << 12 )];
+                    System.arraycopy(oldbuf, 0, buf, 0, oldbuf.length);
+                }
+            }
+
+            byte[] result = new byte[totalLength];
+            System.arraycopy(buf, 0, result, 0, totalLength);
+            return result;
         }
         catch (Throwable t)
         {
-            FMLLog.log(Level.WARNING, t, "Problem loading class");
+            FMLRelaunchLog.log(Level.WARNING, t, "Problem loading class");
             return new byte[0];
         }
     }

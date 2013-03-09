@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.client.modloader;
 
 import java.util.Collection;
@@ -20,7 +32,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-import com.google.common.base.Equivalences;
+import com.google.common.base.Equivalence;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
@@ -73,7 +85,7 @@ public class ModLoaderClientHelper implements IModLoaderSidedHelper
             FMLLog.log(mc.getModId(), Level.SEVERE, e, "A severe problem was detected with the mod %s during the addRenderer call. Continuing, but expect odd results", mc.getModId());
         }
 
-        MapDifference<Class<? extends Entity>, Render> difference = Maps.difference(RenderManager.field_78727_a.field_78729_o, renderers, Equivalences.identity());
+        MapDifference<Class<? extends Entity>, Render> difference = Maps.difference(RenderManager.field_78727_a.field_78729_o, renderers, Equivalence.identity());
 
         for ( Entry<Class<? extends Entity>, Render> e : difference.entriesOnlyOnLeft().entrySet())
         {

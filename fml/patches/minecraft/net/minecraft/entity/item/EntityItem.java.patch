@@ -16,5 +16,5 @@
 +                GameRegistry.onPickupNotification(p_70100_1_, this);
 +
                  this.func_85030_a("random.pop", 0.2F, ((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-                 p_70100_1_.func_71001_a(this, var3);
+                 p_70100_1_.func_71001_a(this, i);
  

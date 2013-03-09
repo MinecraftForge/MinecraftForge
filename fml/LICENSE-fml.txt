@@ -15,6 +15,10 @@ from them. The license to MCP data is not transitive - distribution of this data
 third parties requires independent licensing from the MCP team. This data is not
 redistributable without permission from the MCP team.
 
+=== Sharing ===
+License is granted to redistribute the ASM transformer code (common/cpw/mods/fml/common/asm/ and subdirectories)
+under any alternative open source license as classified by the OSI (http://opensource.org/licenses)
+
 ========
 
                   GNU LESSER GENERAL PUBLIC LICENSE
