@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -53,6 +53,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();
 
     private BiMap<String, String> classNameBiMap;
+    private BiMap<String, String> mcpNameBiMap;
+
     private Map<String,Map<String,String>> rawFieldMaps;
     private Map<String,Map<String,String>> rawMethodMaps;
 
@@ -64,6 +66,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     private FMLDeobfuscatingRemapper()
     {
         classNameBiMap=ImmutableBiMap.of();
+        mcpNameBiMap=ImmutableBiMap.of();
     }
 
     public void setup(File mcDir, RelaunchClassLoader classLoader, String deobfFileName)
@@ -81,6 +84,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             rawMethodMaps = Maps.newHashMap();
             rawFieldMaps = Maps.newHashMap();
             Builder<String, String> builder = ImmutableBiMap.<String,String>builder();
+            Builder<String, String> mcpBuilder = ImmutableBiMap.<String,String>builder();
             Splitter splitter = Splitter.on(CharMatcher.anyOf(": ")).omitEmptyStrings().trimResults();
             for (String line : srgList)
             {
@@ -89,6 +93,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 if ("CL".equals(typ))
                 {
                     parseClass(builder, parts);
+                    parseMCPClass(mcpBuilder,parts);
                 }
                 else if ("MD".equals(typ))
                 {
@@ -100,7 +105,13 @@ public class FMLDeobfuscatingRemapper extends Remapper {
                 }
             }
             classNameBiMap = builder.build();
-
+            // Special case some mappings for modloader mods
+            mcpBuilder.put("BaseMod","net/minecraft/src/BaseMod");
+            mcpBuilder.put("ModLoader","net/minecraft/src/ModLoader");
+            mcpBuilder.put("EntityRendererProxy","net/minecraft/src/EntityRendererProxy");
+            mcpBuilder.put("MLProp","net/minecraft/src/MLProp");
+            mcpBuilder.put("TradeEntry","net/minecraft/src/TradeEntry");
+            mcpNameBiMap = mcpBuilder.build();
         }
         catch (IOException ioe)
         {
@@ -112,7 +123,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
 
     public boolean isRemappedClass(String className)
     {
-        return classNameBiMap.containsKey(className);
+        return classNameBiMap.containsKey(className) || mcpNameBiMap.containsKey(className);
     }
 
     private void parseField(String[] parts)
@@ -134,6 +145,12 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     private void parseClass(Builder<String, String> builder, String[] parts)
     {
         builder.put(parts[1],parts[2]);
+    }
+
+    private void parseMCPClass(Builder<String, String> builder, String[] parts)
+    {
+        int clIdx = parts[2].lastIndexOf('/');
+        builder.put("net/minecraft/src/"+parts[2].substring(clIdx+1),parts[2]);
     }
 
     private void parseMethod(String[] parts)
@@ -172,7 +189,8 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return typeName;
         }
 
-        String result = classNameBiMap.containsKey(typeName) ? classNameBiMap.get(typeName) : typeName;
+        String result = classNameBiMap.containsKey(typeName) ? classNameBiMap.get(typeName) : mcpNameBiMap.containsKey(typeName) ? mcpNameBiMap.get(typeName) : typeName;
+//        System.out.printf("Mapping %s=>%s\n",typeName,result);
         return result;
     }
 
@@ -182,7 +200,9 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             return typeName;
         }
-        return classNameBiMap.containsValue(typeName) ? classNameBiMap.inverse().get(typeName) : typeName;
+        String result = classNameBiMap.containsValue(typeName) ? classNameBiMap.inverse().get(typeName) : mcpNameBiMap.containsValue(typeName) ? mcpNameBiMap.inverse().get(typeName) : typeName;
+//        System.out.printf("Unmapping %s=>%s\n",typeName,result);
+        return result;
     }
 
 
