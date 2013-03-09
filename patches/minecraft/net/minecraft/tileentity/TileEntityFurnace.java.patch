@@ -8,19 +8,20 @@
  import net.minecraft.item.ItemHoe;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.ItemSword;
-@@ -16,8 +17,9 @@
+@@ -16,8 +17,10 @@
  import net.minecraft.item.crafting.FurnaceRecipes;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
 -
 -public class TileEntityFurnace extends TileEntity implements ISidedInventory
 +import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.ForgeDummyContainer;
 +
 +public class TileEntityFurnace extends TileEntity implements ISidedInventory, net.minecraftforge.common.ISidedInventory
  {
      /**
       * The ItemStacks that hold the items currently being used in the furnace
-@@ -268,8 +270,7 @@
+@@ -268,8 +271,7 @@
  
                          if (this.furnaceItemStacks[1].stackSize == 0)
                          {
@@ -30,7 +31,7 @@
                          }
                      }
                  }
-@@ -315,8 +316,12 @@
+@@ -315,8 +317,12 @@
          }
          else
          {
@@ -45,7 +46,7 @@
          }
      }
  
-@@ -327,15 +332,15 @@
+@@ -327,15 +333,15 @@
      {
          if (this.canSmelt())
          {
@@ -65,7 +66,7 @@
              }
  
              --this.furnaceItemStacks[0].stackSize;
-@@ -362,7 +367,7 @@
+@@ -362,7 +368,7 @@
              int i = par0ItemStack.getItem().itemID;
              Item item = par0ItemStack.getItem();
  
@@ -74,7 +75,7 @@
              {
                  Block block = Block.blocksList[i];
  
-@@ -423,4 +428,41 @@
+@@ -423,4 +429,50 @@
      {
          return 1;
      }
@@ -105,9 +106,18 @@
 +    @Override
 +    public int getStartInventorySide(ForgeDirection side)
 +    {
-+        if (side == ForgeDirection.DOWN) return 1;
-+        if (side == ForgeDirection.UP) return 0;
-+        return 2;
++        if (ForgeDummyContainer.legacyFurnaceSides)
++        {
++            if (side == ForgeDirection.DOWN) return 1;
++            if (side == ForgeDirection.UP) return 0;
++            return 2;
++        }
++        else
++        {
++            if (side == ForgeDirection.DOWN) return 2;
++            if (side == ForgeDirection.UP) return 0;
++            return 1;
++        }
 +    }
 +
 +    @Override

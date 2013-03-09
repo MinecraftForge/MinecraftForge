@@ -26,6 +26,7 @@ import static net.minecraftforge.common.ForgeVersion.*;
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
+    public static boolean legacyFurnaceSides = false;
 
     public ForgeDummyContainer()
     {
@@ -77,6 +78,10 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             clumpingThreshold = 64;
             clumpingThresholdProperty.set(64);
         }
+        
+        Property furnaceOutput = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnceOutput", false);
+        furnaceOutput.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventroy, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
+        legacyFurnaceSides = furnaceOutput.getBoolean(false);
 
         if (config.hasChanged())
         {
