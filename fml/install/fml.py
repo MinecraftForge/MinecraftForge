@@ -8,7 +8,7 @@ from pprint import pprint
 from zipfile import ZipFile
 from pprint import pprint
 
-mcp_version = '7.23'
+mcp_version = '7.42'
 
 def download_deps(mcp_path):
     ret = True
