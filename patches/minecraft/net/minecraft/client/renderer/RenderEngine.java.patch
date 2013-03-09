@@ -52,7 +52,15 @@
                  ioexception.printStackTrace();
                  int[] aint2 = this.func_78348_b(this.field_78364_l);
                  this.field_78359_d.put(p_78346_1_, aint2);
-@@ -184,7 +195,9 @@
+@@ -162,6 +173,7 @@
+                 try
+                 {
+                     int i = GLAllocation.func_74528_a();
++                    TextureFXManager.instance().bindTextureToName(p_78341_1_, i);
+                     boolean flag = p_78341_1_.startsWith("%blur%");
+ 
+                     if (flag)
+@@ -184,7 +196,9 @@
                      }
                      else
                      {
@@ -63,7 +71,15 @@
                      }
  
                      this.field_78362_c.put(s1, Integer.valueOf(i));
-@@ -412,10 +425,12 @@
+@@ -240,6 +254,7 @@
+ 
+         int j = p_98184_1_.getWidth();
+         int k = p_98184_1_.getHeight();
++        TextureFXManager.instance().setTextureDimensions(p_98184_2_, j, k);
+         int[] aint = new int[j * k];
+         p_98184_1_.getRGB(0, 0, j, k, aint, 0, j);
+ 
+@@ -412,10 +427,12 @@
                  }
  
                  BufferedImage bufferedimage1 = this.func_78345_a(itexturepack.func_77532_a(s));
@@ -78,7 +94,7 @@
                  ioexception.printStackTrace();
              }
          }
-@@ -429,10 +444,12 @@
+@@ -429,10 +446,12 @@
              try
              {
                  bufferedimage = this.func_78345_a(itexturepack.func_77532_a(s));
