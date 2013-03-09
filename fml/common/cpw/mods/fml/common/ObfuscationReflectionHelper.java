@@ -44,7 +44,7 @@ public class ObfuscationReflectionHelper
 
     public static String[] remapFieldNames(String className, String... fieldNames)
     {
-        String internalClassName = className.replace('.', '/');
+        String internalClassName = FMLDeobfuscatingRemapper.INSTANCE.unmap(className.replace('.', '/'));
         String[] mappedNames = new String[fieldNames.length];
         int i = 0;
         for (String fName : fieldNames)
