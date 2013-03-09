@@ -82,7 +82,6 @@ public class FMLServerHandler implements IFMLSidedHandler
     public void beginServerLoading(MinecraftServer minecraftServer)
     {
         server = minecraftServer;
-        ObfuscationReflectionHelper.detectObfuscation(World.class);
         Loader.instance().loadMods();
     }
 

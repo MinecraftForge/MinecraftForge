@@ -15,6 +15,7 @@ package cpw.mods.fml.common;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.ReflectionHelper.UnableToAccessFieldException;
 import cpw.mods.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
@@ -27,8 +28,6 @@ import cpw.mods.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
  */
 public class ObfuscationReflectionHelper
 {
-    public static boolean obfuscation;
-
     @SuppressWarnings("unchecked")
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
     {
@@ -43,12 +42,23 @@ public class ObfuscationReflectionHelper
         }
     }
 
+    public static String[] remapFieldNames(String className, String... fieldNames)
+    {
+        String internalClassName = className.replace('.', '/');
+        String[] mappedNames = new String[fieldNames.length];
+        int i = 0;
+        for (String fName : fieldNames)
+        {
+            mappedNames[i++] = FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(internalClassName, fName, null);
+        }
+        return mappedNames;
+    }
     @SuppressWarnings("unchecked")
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, String... fieldNames)
     {
         try
         {
-            return ReflectionHelper.getPrivateValue(classToAccess, instance, fieldNames);
+            return ReflectionHelper.getPrivateValue(classToAccess, instance, remapFieldNames(classToAccess.getName(),fieldNames));
         }
         catch (UnableToFindFieldException e)
         {
@@ -91,7 +101,7 @@ public class ObfuscationReflectionHelper
     {
         try
         {
-            ReflectionHelper.setPrivateValue(classToAccess, instance, value, fieldNames);
+            ReflectionHelper.setPrivateValue(classToAccess, instance, value, remapFieldNames(classToAccess.getName(), fieldNames));
         }
         catch (UnableToFindFieldException e)
         {
@@ -104,13 +114,4 @@ public class ObfuscationReflectionHelper
             throw e;
         }
     }
-
-    /**
-     *
-     */
-    public static void detectObfuscation(Class<?> clazz)
-    {
-        obfuscation = !clazz.getSimpleName().equals("World");
-    }
-
 }
