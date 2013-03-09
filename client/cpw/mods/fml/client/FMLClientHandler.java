@@ -341,6 +341,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             else
             {
                 entity = (Entity)(cls.getConstructor(World.class).newInstance(wc));
+                int offset = packet.entityId - entity.field_70157_k;
                 entity.field_70157_k = packet.entityId;
                 entity.func_70012_b(packet.scaledX, packet.scaledY, packet.scaledZ, packet.scaledYaw, packet.scaledPitch);
                 if (entity instanceof EntityLiving)
@@ -348,6 +349,14 @@ public class FMLClientHandler implements IFMLSidedHandler
                     ((EntityLiving)entity).field_70759_as = packet.scaledHeadYaw;
                 }
 
+                Entity parts[] = entity.func_70021_al();
+                if (parts != null)
+                {
+                    for (int j = 0; j < parts.length; j++)
+                    {
+                        parts[j].field_70157_k += offset;
+                    }
+                }
             }
 
             entity.field_70118_ct = packet.rawX;
@@ -359,18 +368,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                 Entity thrower = client.field_71439_g.field_70157_k == packet.throwerId ? client.field_71439_g : wc.func_73045_a(packet.throwerId);
                 ((IThrowableEntity)entity).setThrower(thrower);
             }
-
-
-            Entity parts[] = entity.func_70021_al();
-            if (parts != null)
-            {
-                int i = packet.entityId - entity.field_70157_k;
-                for (int j = 0; j < parts.length; j++)
-                {
-                    parts[j].field_70157_k += i;
-                }
-            }
-
 
             if (packet.metadata != null)
             {
