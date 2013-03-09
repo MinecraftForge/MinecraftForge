@@ -2,7 +2,7 @@ package net.minecraftforge.common;
 
 public enum BiomeType
 {
-  FOREST,
+  	FOREST,
 	PLAINS,
 	MOUNTAIN,
 	HILLS,
