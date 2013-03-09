@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/entity/boss/EntityWither.java
++++ ../src_work/minecraft/net/minecraft/entity/boss/EntityWither.java
+@@ -43,7 +43,7 @@
+     public EntityWither(World par1World)
+     {
+         super(par1World);
+-        this.setEntityHealth(this.getMaxHealth());
++        this.setEntityHealth(this.getEntityMaxHealth());
+         this.texture = "/mob/wither.png";
+         this.setSize(0.9F, 4.0F);
+         this.isImmuneToFire = true;
+@@ -402,7 +402,7 @@
+     public void func_82206_m()
+     {
+         this.func_82215_s(220);
+-        this.setEntityHealth(this.getMaxHealth() / 3);
++        this.setEntityHealth(this.getEntityMaxHealth() / 3);
+     }
+ 
+     /**
+@@ -660,7 +660,7 @@
+      */
+     public boolean isArmored()
+     {
+-        return this.getDragonHealth() <= this.getMaxHealth() / 2;
++        return this.getDragonHealth() <= this.getEntityMaxHealth() / 2;
+     }
+ 
+     /**

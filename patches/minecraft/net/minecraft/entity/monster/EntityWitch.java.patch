@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntityWitch.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntityWitch.java
+@@ -148,7 +148,7 @@
+                 {
+                     var5 = 16307;
+                 }
+-                else if (this.rand.nextFloat() < 0.05F && this.health < this.getMaxHealth())
++                else if (this.rand.nextFloat() < 0.05F && this.health < this.getEntityMaxHealth())
+                 {
+                     var5 = 16341;
+                 }
