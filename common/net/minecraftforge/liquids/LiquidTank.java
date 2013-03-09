@@ -139,4 +139,9 @@ public class LiquidTank implements ILiquidTank {
         this.tankPressure = pressure;
     }
 
+
+    public String getLiquidName()
+    {
+        return liquid!= null ? LiquidDictionary.findLiquidName(liquid) : null;
+    }
 }

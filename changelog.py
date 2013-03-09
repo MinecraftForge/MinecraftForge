@@ -33,6 +33,7 @@ def getBuildInfo(url):
 	data = ast.literal_eval(data)['builds']
 	data = sorted(data, key=lambda key: key['number'], reverse=True)
 	for build in data:
+		build['actions'] = filter(lambda act: act is not None, build['actions'])
 		build['actions'] = filter(lambda act: 'text' in act, build['actions'])
 		build['actions'] = filter(lambda act: not ' ' in act['text'], build['actions'])
 		if len(build['actions']) == 0:

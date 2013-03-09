@@ -28,7 +28,7 @@
              {
                  worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
                  int i1 = worldclient.getBlockMetadata(par1, par2, par3);
--                boolean flag = worldclient.func_94571_i(par1, par2, par3);
+-                boolean flag = worldclient.setBlockToAir(par1, par2, par3);
 +                boolean flag = block.removeBlockByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
  
                  if (flag)
@@ -38,8 +38,8 @@
          boolean flag = false;
          int i1;
 +        if (par3ItemStack != null &&
-+                par3ItemStack.getItem() != null &&
-+                par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
++            par3ItemStack.getItem() != null &&
++            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
 +        {
 +                return true;
 +        }

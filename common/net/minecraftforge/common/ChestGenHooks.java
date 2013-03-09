@@ -8,6 +8,7 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.*;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class ChestGenHooks
 {
@@ -192,7 +193,7 @@ public class ChestGenHooks
         while(itr.hasNext())
         {
             WeightedRandomChestContent cont = itr.next();
-            if (item.isItemEqual(cont.theItemId) || (item.getItemDamage() == -1 && item.itemID == cont.theItemId.itemID))
+            if (item.isItemEqual(cont.theItemId) || (item.getItemDamage() == OreDictionary.WILDCARD_VALUE && item.itemID == cont.theItemId.itemID))
             {
                 itr.remove();
             }

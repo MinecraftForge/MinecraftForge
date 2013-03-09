@@ -11,7 +11,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -1237,7 +1241,7 @@
+@@ -1238,7 +1242,7 @@
  
                  if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
                  {
@@ -20,7 +20,7 @@
                      this.thePlayer.swingItem();
                  }
              }
-@@ -1303,7 +1307,8 @@
+@@ -1304,7 +1308,8 @@
                  {
                      int j1 = itemstack != null ? itemstack.stackSize : 0;
  
@@ -30,7 +30,7 @@
                      {
                          flag = false;
                          this.thePlayer.swingItem();
-@@ -1329,7 +1334,8 @@
+@@ -1330,7 +1335,8 @@
              {
                  ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
  
@@ -40,7 +40,7 @@
                  {
                      this.entityRenderer.itemRenderer.resetEquippedProgress2();
                  }
-@@ -2026,6 +2032,18 @@
+@@ -2027,6 +2033,18 @@
              if (this.theIntegratedServer != null)
              {
                  this.theIntegratedServer.initiateShutdown();
@@ -59,7 +59,7 @@
              }
  
              this.theIntegratedServer = null;
-@@ -2353,103 +2371,12 @@
+@@ -2354,103 +2372,12 @@
          if (this.objectMouseOver != null)
          {
              boolean flag = this.thePlayer.capabilities.isCreativeMode;
@@ -131,11 +131,11 @@
 -                    }
 -                    else if (entityminecart.func_94087_l() == 3)
 -                    {
--                        j = Item.field_94582_cb.itemID;
+-                        j = Item.tntMinecart.itemID;
 -                    }
 -                    else if (entityminecart.func_94087_l() == 5)
 -                    {
--                        j = Item.field_96600_cc.itemID;
+-                        j = Item.hopperMinecart.itemID;
 -                    }
 -                    else
 -                    {

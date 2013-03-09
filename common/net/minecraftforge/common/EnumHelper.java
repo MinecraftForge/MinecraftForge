@@ -3,6 +3,9 @@ package net.minecraftforge.common;
 import java.lang.reflect.*;
 import java.util.*;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
+
 import net.minecraft.block.EnumMobType;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnumEnchantmentType;
@@ -17,6 +20,7 @@ import net.minecraft.util.EnumArt;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.EnumDoor;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 public class EnumHelper
 {
@@ -211,18 +215,44 @@ public class EnumHelper
 
         Field valuesField = null;
         Field[] fields = enumType.getDeclaredFields();
-        int flags = Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
-        String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
-
+        
         for (Field field : fields)
         {
-            if ((field.getModifiers() & flags) == flags &&
-                    field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
+            if (field.getName().equals("$VALUES"))
             {
                 valuesField = field;
                 break;
             }
         }
+
+        if (valuesField == null)
+        {
+            int flags = (FMLForgePlugin.RUNTIME_DEOBF ? Modifier.PUBLIC : Modifier.PRIVATE) | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
+            String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
+    
+            for (Field field : fields)
+            {
+                if ((field.getModifiers() & flags) == flags &&
+                        field.getType().getName().replace('.', '/').equals(valueType)) //Apparently some JVMs return .'s and some don't..
+                {
+                    valuesField = field;
+                    break;
+                }
+            }
+        }
+
+        if (valuesField == null)
+        {
+            FMLLog.severe("Could not find $VALUES field for enum: %s", enumType.getName());
+            FMLLog.severe("Runtime Deobf: %s", FMLForgePlugin.RUNTIME_DEOBF);
+            FMLLog.severe("Fields:");
+            for (Field field : fields)
+            {
+                FMLLog.severe("    %s: %s", field.getName(), field.getType().getName());
+            }
+            return null;
+        }
+
         valuesField.setAccessible(true);
 
         try

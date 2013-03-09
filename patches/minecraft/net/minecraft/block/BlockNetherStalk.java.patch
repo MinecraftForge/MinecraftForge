@@ -54,8 +54,8 @@
      }
  
      /**
-@@ -138,4 +124,23 @@
-             this.field_94372_b[i] = par1IconRegister.func_94245_a(field_94373_a[i]);
+@@ -143,4 +129,23 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(field_94373_a[i]);
          }
      }
 +

@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -382,7 +382,7 @@
+      */
+     public int getDamageVsEntity(Entity par1Entity)
+     {
+-        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity);
++        return Item.itemsList[this.itemID].getDamageVsEntity(par1Entity, this);
+     }
+ 
+     /**

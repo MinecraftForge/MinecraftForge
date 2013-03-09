@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src_work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -11,6 +11,7 @@
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.WorldType;
++import net.minecraftforge.event.ForgeEventFactory;
+ 
+ public class WorldInfo
+ {
+@@ -450,6 +451,7 @@
+     public void setThundering(boolean par1)
+     {
+         this.thundering = par1;
++        ForgeEventFactory.onThunderingChanged(this);
+     }
+ 
+     /**
+@@ -482,6 +484,7 @@
+     public void setRaining(boolean par1)
+     {
+         this.raining = par1;
++        ForgeEventFactory.onRainChanged(this);
+     }
+ 
+     /**

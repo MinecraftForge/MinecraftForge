@@ -26,7 +26,7 @@
 +                    boolean isSoil = (blocksList[l1] != null && blocksList[l1].canSustainPlant(par1World, j1, par3 - 1, k1, ForgeDirection.UP, this));
 +                    if (par1World.getBlockId(j1, par3, k1) == 0 && (isSoil || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
                      {
-                         par1World.func_94575_c(j1, par3, k1, this.fruitType.blockID);
+                         par1World.setBlock(j1, par3, k1, this.fruitType.blockID);
                      }
 @@ -149,11 +154,11 @@
                  int j3 = par1World.getBlockId(l2, par3 - 1, i3);

@@ -25,9 +25,11 @@ import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -69,11 +71,11 @@ public class ForgeHooksClient
 
         if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
-            engine.func_98187_b("/terrain.png");
+            engine.bindTexture("/terrain.png");
             int renderType = Block.blocksList[item.itemID].getRenderType();
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
-            if (RenderItem.field_82407_g)
+            if (RenderItem.renderInFrame)
             {
                 GL11.glScalef(1.25F, 1.25F, 1.25F);
                 GL11.glTranslatef(0.0F, 0.05F, 0.0F);
@@ -101,7 +103,7 @@ public class ForgeHooksClient
         }
         else
         {
-            engine.func_98187_b("/gui/items.png");
+            engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -113,10 +115,10 @@ public class ForgeHooksClient
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
         if (customRenderer == null)
         {
-                return false;
+            return false;
         }
 
-        engine.func_98187_b("/gui/items.png");
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();
@@ -218,6 +220,16 @@ public class ForgeHooksClient
     public static void onTextureLoad(String texture, ITexturePack pack)
     {
         MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+
+    public static void onTextureStitchedPre(TextureMap map)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
+    }
+
+    public static void onTextureStitchedPost(TextureMap map)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
     }
 
     /**

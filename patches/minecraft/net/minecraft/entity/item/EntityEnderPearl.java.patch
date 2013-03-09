@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
++++ ../src_work/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
+@@ -8,6 +8,8 @@
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+ 
+ public class EntityEnderPearl extends EntityThrowable
+ {
+@@ -50,9 +52,13 @@
+ 
+                 if (!entityplayermp.playerNetServerHandler.connectionClosed && entityplayermp.worldObj == this.worldObj)
+                 {
+-                    this.getThrower().setPositionAndUpdate(this.posX, this.posY, this.posZ);
+-                    this.getThrower().fallDistance = 0.0F;
+-                    this.getThrower().attackEntityFrom(DamageSource.fall, 5);
++                    EnderTeleportEvent event = new EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5);
++                    if (!MinecraftForge.EVENT_BUS.post(event)){
++                        this.getThrower().setPositionAndUpdate(event.targetX, event.targetY, event.targetZ);
++                        this.getThrower().fallDistance = 0.0F;
++                        this.getThrower().attackEntityFrom(DamageSource.fall, event.attackDamage);
++                    }
++
+                 }
+             }
+ 

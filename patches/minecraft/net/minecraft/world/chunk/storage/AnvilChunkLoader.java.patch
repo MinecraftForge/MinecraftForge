@@ -17,11 +17,11 @@
              return chunk;
          }
      }
-@@ -123,6 +126,7 @@
+@@ -122,6 +125,7 @@
+             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
              nbttagcompound.setTag("Level", nbttagcompound1);
              this.writeChunkToNBT(par2Chunk, par1World, nbttagcompound1);
-             this.func_75824_a(par2Chunk.getChunkCoordIntPair(), nbttagcompound);
 +            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Save(par2Chunk, nbttagcompound));
+             this.func_75824_a(par2Chunk.getChunkCoordIntPair(), nbttagcompound);
          }
          catch (Exception exception)
-         {

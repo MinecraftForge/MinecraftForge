@@ -2,7 +2,7 @@
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureManager.java
 @@ -66,17 +66,42 @@
  
-     public List func_94266_e(String par1Str)
+     public List createTexture(String par1Str)
      {
 +        return createNewTexture(par1Str, par1Str, null);
 +    }
@@ -18,7 +18,7 @@
 -            BufferedImage bufferedimage = ImageIO.read(itexturepack.getResourceAsStream("/" + par1Str));
 -            int i = bufferedimage.getHeight();
 -            int j = bufferedimage.getWidth();
--            String s1 = this.func_98146_d(par1Str);
+-            String s1 = this.getBasename(par1Str);
 +            BufferedImage bufferedimage = null;
 +            int i = 0;
 +            int j = 0;
@@ -35,7 +35,7 @@
 +            }
 +            String s1 = textureName;
  
--            if (this.func_98147_a(par1Str, itexturepack))
+-            if (this.hasAnimationTxt(par1Str, itexturepack))
 +            if (stitched != null && stitched.loadTexture(this, itexturepack, textureName, textureFile, bufferedimage, arraylist))
 +            {
 +                ;
@@ -44,7 +44,7 @@
 +            {
 +                throw fnfe;
 +            }
-+            else if (this.func_98147_a(par1Str, itexturepack))
++            else if (this.hasAnimationTxt(par1Str, itexturepack))
              {
                  int k = j;
                  int l = j;
