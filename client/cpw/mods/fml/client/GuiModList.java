@@ -1,20 +1,21 @@
 /*
- * Forge Mod Loader
- * Copyright (c) 2012-2013 cpw.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Lesser Public License v2.1
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
- * Contributors:
- *     cpw - implementation
+ * The FML Forge Mod Loader suite.
+ * Copyright (C) 2012 cpw
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 package cpw.mods.fml.client;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -22,8 +23,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSmallButton;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.StringTranslate;
 
 import org.lwjgl.opengl.GL11;
@@ -119,22 +118,20 @@ public class GuiModList extends GuiScreen
                 int shifty = 35;
                 if (!selectedMod.getMetadata().logoFile.isEmpty())
                 {
-                    List<Texture> texList = TextureManager.func_94267_b().func_94266_e(selectedMod.getMetadata().logoFile);
-                    if (texList != null)// Potentially could not find the texture
-                    {
-                        Texture texture = texList.get(0);
-                        texture.func_94277_a(0);
-                        int top = 32;
-                        Tessellator tess = Tessellator.field_78398_a;
-                        tess.func_78382_b();
-                        tess.func_78374_a(offset,                          top + texture.func_94284_b(), field_73735_i, 0, 1);
-                        tess.func_78374_a(offset + texture.func_94282_c(), top + texture.func_94284_b(), field_73735_i, 1, 1);
-                        tess.func_78374_a(offset + texture.func_94282_c(), top,                          field_73735_i, 1, 0);
-                        tess.func_78374_a(offset,                          top,                          field_73735_i, 0, 0);
-                        tess.func_78381_a();
+                    int texture = this.field_73882_e.field_71446_o.func_78341_b(selectedMod.getMetadata().logoFile);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    this.field_73882_e.field_71446_o.func_78342_b(texture);
+                    Dimension dim = TextureFXManager.instance().getTextureDimensions(texture);
+                    int top = 32;
+                    Tessellator tess = Tessellator.field_78398_a;
+                    tess.func_78382_b();
+                    tess.func_78374_a(offset,             top + dim.height, field_73735_i, 0, 1);
+                    tess.func_78374_a(offset + dim.width, top + dim.height, field_73735_i, 1, 1);
+                    tess.func_78374_a(offset + dim.width, top,              field_73735_i, 1, 0);
+                    tess.func_78374_a(offset,             top,              field_73735_i, 0, 0);
+                    tess.func_78381_a();
 
-                        shifty += 65;
-                    }
+                    shifty += 65;
                 }
                 this.field_73886_k.func_78261_a(selectedMod.getMetadata().name, offset, shifty, 0xFFFFFF);
                 shifty += 12;
