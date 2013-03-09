@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java
---- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Sat Mar 02 03:08:22 2013
-+++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Sat Mar 02 03:08:52 2013
+--- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Fri Mar 08 22:41:11 2013
++++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Fri Mar 08 22:41:30 2013
 @@ -21,9 +21,14 @@
  
     public String func_85085_a() {
@@ -20,8 +20,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java m
        boolean var5 = !CrashReport.class.getCanonicalName().equals("net.minecraft.CrashReport");
        HashMap var6 = new HashMap();
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
---- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Mar 02 03:08:22 2013
-+++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Sat Mar 02 03:08:52 2013
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Mar 08 22:41:11 2013
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Mar 08 22:41:30 2013
 @@ -11,6 +11,10 @@
  
  public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
@@ -34,8 +34,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.jav
        if(this.field_74885_f != 2 && this.field_74885_f != 3) {
           this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
---- minecraft_server\net\minecraft\src\DedicatedServer.java	Sat Mar 02 03:08:22 2013
-+++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Sat Mar 02 03:08:52 2013
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Fri Mar 08 22:41:11 2013
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Fri Mar 08 22:41:30 2013
 @@ -207,7 +207,7 @@
        System.exit(0);
     }
@@ -46,8 +46,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_s
        this.func_71333_ah();
     }
 diff -r -U 3 minecraft_server\net\minecraft\src\EnumChatFormatting.java minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java
---- minecraft_server\net\minecraft\src\EnumChatFormatting.java	Sat Mar 02 03:08:23 2013
-+++ minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java	Sat Mar 02 03:08:52 2013
+--- minecraft_server\net\minecraft\src\EnumChatFormatting.java	Fri Mar 08 22:41:12 2013
++++ minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java	Fri Mar 08 22:41:30 2013
 @@ -38,7 +38,7 @@
     private final String field_96304_B;
  
@@ -58,8 +58,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\EnumChatFormatting.java minecraf
  
     private EnumChatFormatting(char p_i10001_3_, boolean p_i10001_4_) {
 diff -r -U 3 minecraft_server\net\minecraft\src\MemoryConnection.java minecraft_server_patched\net\minecraft\src\MemoryConnection.java
---- minecraft_server\net\minecraft\src\MemoryConnection.java	Sat Mar 02 03:08:23 2013
-+++ minecraft_server_patched\net\minecraft\src\MemoryConnection.java	Sat Mar 02 03:11:02 2013
+--- minecraft_server\net\minecraft\src\MemoryConnection.java	Fri Mar 08 22:41:12 2013
++++ minecraft_server_patched\net\minecraft\src\MemoryConnection.java	Fri Mar 08 22:41:30 2013
 @@ -2,6 +2,8 @@
  
  import java.net.InetSocketAddress;
@@ -90,9 +90,51 @@ diff -r -U 3 minecraft_server\net\minecraft\src\MemoryConnection.java minecraft_
     public void func_74425_a(NetHandler p_74425_1_) {
        this.field_74440_d = p_74425_1_;
     }
+diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_server_patched\net\minecraft\src\RConThreadClient.java
+--- minecraft_server\net\minecraft\src\RConThreadClient.java	Fri Mar 08 22:41:13 2013
++++ minecraft_server_patched\net\minecraft\src\RConThreadClient.java	Fri Mar 08 22:44:07 2013
+@@ -32,8 +32,8 @@
+    }
+ 
+    public void run() {
+-      while(true) {
+-         try {
++      try {
++         while(true) {
+             if(!this.field_72619_a) {
+                break;
+             }
+@@ -84,20 +84,14 @@
+                   continue;
+                }
+             }
+-         } catch (SocketTimeoutException var17) {
+-            break;
+-         } catch (IOException var18) {
+-            break;
+-         } catch (Exception var19) {
+-            System.out.println(var19);
+-            break;
+-         } finally {
+-            this.func_72653_g();
+          }
+-
+-         return;
+-      }
+-
++     } catch (SocketTimeoutException var17) {
++     } catch (IOException var18) {
++     } catch (Exception var19) {
++        System.out.println(var19);
++     } finally {
++        this.func_72653_g();
++     }
+    }
+ 
+    private void func_72654_a(int p_72654_1_, int p_72654_2_, String p_72654_3_) throws IOException {
 diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
---- minecraft_server\net\minecraft\src\TcpMasterThread.java	Sat Mar 02 03:08:24 2013
-+++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Sat Mar 02 03:08:52 2013
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Fri Mar 08 22:41:13 2013
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Fri Mar 08 22:41:30 2013
 @@ -11,6 +11,7 @@
        this.field_74504_a = p_i3285_1_;
     }
@@ -102,8 +144,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_s
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Sat Mar 02 03:08:24 2013
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Sat Mar 02 03:08:52 2013
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 08 22:41:13 2013
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 08 22:41:30 2013
 @@ -20,7 +20,8 @@
     }
  

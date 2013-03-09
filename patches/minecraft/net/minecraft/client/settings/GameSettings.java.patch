@@ -7,7 +7,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
-@@ -685,6 +686,7 @@
+@@ -691,6 +692,7 @@
  
      public void func_74303_b()
      {

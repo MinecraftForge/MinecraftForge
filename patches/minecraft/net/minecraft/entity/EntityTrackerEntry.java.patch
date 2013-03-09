@@ -9,7 +9,7 @@
  import net.minecraft.entity.boss.EntityDragon;
  import net.minecraft.entity.item.EntityBoat;
  import net.minecraft.entity.item.EntityEnderCrystal;
-@@ -352,6 +354,14 @@
+@@ -354,6 +356,14 @@
                      this.field_73138_k = this.field_73132_a.field_70181_x;
                      this.field_73135_l = this.field_73132_a.field_70179_y;
  
@@ -24,7 +24,7 @@
                      if (this.field_73143_t && !(packet instanceof Packet24MobSpawn))
                      {
                          p_73117_1_.field_71135_a.func_72567_b(new Packet28EntityVelocity(this.field_73132_a.field_70157_k, this.field_73132_a.field_70159_w, this.field_73132_a.field_70181_x, this.field_73132_a.field_70179_y));
-@@ -424,6 +434,13 @@
+@@ -426,6 +436,13 @@
          if (this.field_73132_a.field_70128_L)
          {
              this.field_73132_a.field_70170_p.func_98180_V().func_98236_b("Fetching addPacket for removed entity");

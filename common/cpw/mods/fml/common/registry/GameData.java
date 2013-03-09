@@ -257,6 +257,10 @@ public class GameData {
         Map<Integer, Cell<String, String, Integer>> map = Maps.transformValues(idMap, new Function<ItemData,Cell<String,String,Integer>>() {
             public Cell<String,String,Integer> apply(ItemData data)
             {
+                if ("Minecraft".equals(data.getModId()) || !data.isOveridden())
+                {
+                    return null;
+                }
                 return Tables.immutableCell(data.getModId(), data.getItemType(), data.getItemId());
             }
         });
@@ -264,7 +268,10 @@ public class GameData {
         Builder<String, String, Integer> tBuilder = ImmutableTable.builder();
         for (Cell<String, String, Integer> c : map.values())
         {
-            tBuilder.put(c);
+            if (c!=null)
+            {
+                tBuilder.put(c);
+            }
         }
         modObjectTable = tBuilder.build();
     }
