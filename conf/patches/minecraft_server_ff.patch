@@ -1,6 +1,6 @@
 diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java
---- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Mon Dec 17 22:50:59 2012
-+++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Mon Dec 17 22:52:18 2012
+--- minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java	Fri Mar 08 22:41:11 2013
++++ minecraft_server_patched\net\minecraft\src\CallableSuspiciousClasses.java	Fri Mar 08 22:41:30 2013
 @@ -21,9 +21,14 @@
  
     public String func_85085_a() {
@@ -20,8 +20,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\CallableSuspiciousClasses.java m
        boolean var5 = !CrashReport.class.getCanonicalName().equals("net.minecraft.CrashReport");
        HashMap var6 = new HashMap();
 diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java
---- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Mon Dec 17 22:50:59 2012
-+++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Mon Dec 17 22:52:18 2012
+--- minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Mar 08 22:41:11 2013
++++ minecraft_server_patched\net\minecraft\src\ComponentStrongholdRightTurn.java	Fri Mar 08 22:41:30 2013
 @@ -11,6 +11,10 @@
  
  public class ComponentStrongholdRightTurn extends ComponentStrongholdLeftTurn {
@@ -34,9 +34,9 @@ diff -r -U 3 minecraft_server\net\minecraft\src\ComponentStrongholdRightTurn.jav
        if(this.field_74885_f != 2 && this.field_74885_f != 3) {
           this.func_74989_b((ComponentStrongholdStairs2)p_74861_1_, p_74861_2_, p_74861_3_, 1, 1);
 diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_server_patched\net\minecraft\src\DedicatedServer.java
---- minecraft_server\net\minecraft\src\DedicatedServer.java	Mon Dec 17 22:50:59 2012
-+++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Mon Dec 17 22:52:18 2012
-@@ -203,7 +203,7 @@
+--- minecraft_server\net\minecraft\src\DedicatedServer.java	Fri Mar 08 22:41:11 2013
++++ minecraft_server_patched\net\minecraft\src\DedicatedServer.java	Fri Mar 08 22:41:30 2013
+@@ -207,7 +207,7 @@
        System.exit(0);
     }
  
@@ -45,27 +45,96 @@ diff -r -U 3 minecraft_server\net\minecraft\src\DedicatedServer.java minecraft_s
        super.func_71190_q();
        this.func_71333_ah();
     }
-diff -r -U 3 minecraft_server\net\minecraft\src\EntityMooshroom.java minecraft_server_patched\net\minecraft\src\EntityMooshroom.java
---- minecraft_server\net\minecraft\src\EntityMooshroom.java	Mon Dec 17 22:51:00 2012
-+++ minecraft_server_patched\net\minecraft\src\EntityMooshroom.java	Mon Dec 17 22:52:18 2012
-@@ -56,10 +56,10 @@
-       return new EntityMooshroom(this.field_70170_p);
+diff -r -U 3 minecraft_server\net\minecraft\src\EnumChatFormatting.java minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java
+--- minecraft_server\net\minecraft\src\EnumChatFormatting.java	Fri Mar 08 22:41:12 2013
++++ minecraft_server_patched\net\minecraft\src\EnumChatFormatting.java	Fri Mar 08 22:41:30 2013
+@@ -38,7 +38,7 @@
+    private final String field_96304_B;
+ 
+    private EnumChatFormatting(char p_i10000_3_) {
+-      this(p_i10000_1_, p_i10000_2_, p_i10000_3_, false);
++      this(p_i10000_3_, false);
     }
  
--   // $FF: synthetic method
--   public EntityCow func_70879_a(EntityAgeable p_70879_1_) {
--      return this.func_70879_a(p_70879_1_);
--   }
-+//   // $FF: synthetic method
-+//   public EntityCow func_70879_a(EntityAgeable p_70879_1_) {
-+//      return this.func_70879_a(p_70879_1_);
-+//   }
+    private EnumChatFormatting(char p_i10001_3_, boolean p_i10001_4_) {
+diff -r -U 3 minecraft_server\net\minecraft\src\MemoryConnection.java minecraft_server_patched\net\minecraft\src\MemoryConnection.java
+--- minecraft_server\net\minecraft\src\MemoryConnection.java	Fri Mar 08 22:41:12 2013
++++ minecraft_server_patched\net\minecraft\src\MemoryConnection.java	Fri Mar 08 22:41:30 2013
+@@ -2,6 +2,8 @@
  
-    // $FF: synthetic method
-    public EntityAgeable func_90011_a(EntityAgeable p_90011_1_) {
+ import java.net.InetSocketAddress;
+ import java.net.SocketAddress;
++import java.util.ArrayList;
++import java.util.Collections;
+ import java.util.List;
+ import net.minecraft.src.ILogAgent;
+ import net.minecraft.src.INetworkManager;
+@@ -11,7 +13,7 @@
+ public class MemoryConnection implements INetworkManager {
+ 
+    private static final SocketAddress field_74444_a = new InetSocketAddress("127.0.0.1", 0);
+-   private final List field_74442_b;
++   private final List field_74442_b = Collections.synchronizedList(new ArrayList());
+    private final ILogAgent field_98214_c;
+    private MemoryConnection field_74443_c;
+    private NetHandler field_74440_d;
+@@ -19,6 +21,11 @@
+    private String field_74438_f;
+    private Object[] field_74439_g;
+ 
++   public MemoryConnection(ILogAgent p_i11025_1_, NetHandler p_i11025_2_) {
++      this.field_74440_d = p_i11025_2_;
++      this.field_98214_c = p_i11025_1_;
++   }
++   
+    public void func_74425_a(NetHandler p_74425_1_) {
+       this.field_74440_d = p_74425_1_;
+    }
+diff -r -U 3 minecraft_server\net\minecraft\src\RConThreadClient.java minecraft_server_patched\net\minecraft\src\RConThreadClient.java
+--- minecraft_server\net\minecraft\src\RConThreadClient.java	Fri Mar 08 22:41:13 2013
++++ minecraft_server_patched\net\minecraft\src\RConThreadClient.java	Fri Mar 08 22:44:07 2013
+@@ -32,8 +32,8 @@
+    }
+ 
+    public void run() {
+-      while(true) {
+-         try {
++      try {
++         while(true) {
+             if(!this.field_72619_a) {
+                break;
+             }
+@@ -84,20 +84,14 @@
+                   continue;
+                }
+             }
+-         } catch (SocketTimeoutException var17) {
+-            break;
+-         } catch (IOException var18) {
+-            break;
+-         } catch (Exception var19) {
+-            System.out.println(var19);
+-            break;
+-         } finally {
+-            this.func_72653_g();
+          }
+-
+-         return;
+-      }
+-
++     } catch (SocketTimeoutException var17) {
++     } catch (IOException var18) {
++     } catch (Exception var19) {
++        System.out.println(var19);
++     } finally {
++        this.func_72653_g();
++     }
+    }
+ 
+    private void func_72654_a(int p_72654_1_, int p_72654_2_, String p_72654_3_) throws IOException {
 diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_server_patched\net\minecraft\src\TcpMasterThread.java
---- minecraft_server\net\minecraft\src\TcpMasterThread.java	Mon Dec 17 22:51:01 2012
-+++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Mon Dec 17 22:52:18 2012
+--- minecraft_server\net\minecraft\src\TcpMasterThread.java	Fri Mar 08 22:41:13 2013
++++ minecraft_server_patched\net\minecraft\src\TcpMasterThread.java	Fri Mar 08 22:41:30 2013
 @@ -11,6 +11,7 @@
        this.field_74504_a = p_i3285_1_;
     }
@@ -75,8 +144,8 @@ diff -r -U 3 minecraft_server\net\minecraft\src\TcpMasterThread.java minecraft_s
        try {
           Thread.sleep(5000L);
 diff -r -U 3 minecraft_server\net\minecraft\src\ThreadedFileIOBase.java minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java
---- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Mon Dec 17 22:51:01 2012
-+++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Mon Dec 17 22:52:18 2012
+--- minecraft_server\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 08 22:41:13 2013
++++ minecraft_server_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 08 22:41:30 2013
 @@ -20,7 +20,8 @@
     }
  

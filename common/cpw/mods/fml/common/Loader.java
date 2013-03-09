@@ -1,16 +1,15 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Contributors:
+ *     cpw - implementation
  */
+
 package cpw.mods.fml.common;
 
 import java.io.File;
@@ -56,6 +55,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLLoadEvent;
 import cpw.mods.fml.common.functions.ModIdFunction;
 import cpw.mods.fml.common.modloader.BaseModProxy;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.toposort.ModSorter;
 import cpw.mods.fml.common.toposort.ModSortingException;
 import cpw.mods.fml.common.toposort.TopologicalSort;
@@ -675,6 +675,8 @@ public class Loader
         // Mod controller should be in the initialization state here
         modController.distributeStateMessage(LoaderState.INITIALIZATION);
         modController.transition(LoaderState.POSTINITIALIZATION);
+        // Construct the "mod object table" so mods can refer to it in IMC and postinit
+        GameData.buildModObjectTable();
         modController.distributeStateMessage(FMLInterModComms.IMCEvent.class);
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         modController.transition(LoaderState.AVAILABLE);
@@ -777,7 +779,15 @@ public class Loader
     public void serverStopped()
     {
         modController.distributeStateMessage(LoaderState.SERVER_STOPPED);
-        modController.transition(LoaderState.SERVER_STOPPED);
+        try
+        {
+            modController.transition(LoaderState.SERVER_STOPPED);
+        }
+        catch (LoaderException e)
+        {
+            modController.forceState(LoaderState.SERVER_STOPPED);
+            // Discard any exceptions here - they mask other, real, exceptions
+        }
         modController.transition(LoaderState.AVAILABLE);
     }
 

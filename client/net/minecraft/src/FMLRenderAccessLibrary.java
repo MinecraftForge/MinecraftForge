@@ -1,15 +1,13 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
  */
 
 package net.minecraft.src;
@@ -22,7 +20,6 @@ import java.util.logging.Logger;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
-import net.minecraft.client.renderer.texturefx.TextureFX;
 import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.world.IBlockAccess;
 
@@ -54,31 +51,6 @@ public class FMLRenderAccessLibrary
     public static void log(Level level, String message, Throwable throwable)
     {
         FMLLog.log(level, throwable, message);
-    }
-
-    public static void setTextureDimensions(int textureId, int width, int height, List<TextureFX> textureFXList)
-    {
-        TextureFXManager.instance().setTextureDimensions(textureId, width, height, textureFXList);
-    }
-
-    public static void preRegisterEffect(TextureFX textureFX)
-    {
-        TextureFXManager.instance().onPreRegisterEffect(textureFX);
-    }
-
-    public static boolean onUpdateTextureEffect(TextureFX textureFX)
-    {
-        return TextureFXManager.instance().onUpdateTextureEffect(textureFX);
-    }
-
-    public static Dimension getTextureDimensions(TextureFX textureFX)
-    {
-        return TextureFXManager.instance().getTextureDimensions(textureFX);
-    }
-
-    public static void onTexturePackChange(RenderEngine engine, ITexturePack texturePack, List<TextureFX> textureFXList)
-    {
-        TextureFXManager.instance().onTexturePackChange(engine, texturePack, textureFXList);
     }
 
     @SuppressWarnings("deprecation")

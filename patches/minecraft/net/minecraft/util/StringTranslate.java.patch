@@ -7,15 +7,15 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
-@@ -80,6 +81,7 @@
+@@ -92,6 +93,7 @@
                  }
              }
          }
 +        LanguageRegistry.instance().loadLanguageTable(p_74812_1_, p_74812_2_);
      }
  
-     public void func_74810_a(String p_74810_1_)
-@@ -138,7 +140,6 @@
+     public synchronized void func_74810_a(String p_74810_1_, boolean p_74810_2_)
+@@ -169,7 +171,6 @@
          }
      }
  

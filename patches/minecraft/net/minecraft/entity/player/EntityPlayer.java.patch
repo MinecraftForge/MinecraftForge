@@ -7,16 +7,16 @@
 +import cpw.mods.fml.common.network.FMLNetworkHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
- import java.util.Iterator;
-@@ -173,6 +175,7 @@
+ import java.util.Collection;
+@@ -182,6 +184,7 @@
  
      public void func_70071_h_()
      {
 +        FMLCommonHandler.instance().onPlayerPreTick(this);
          if (this.field_71074_e != null)
          {
-             ItemStack var1 = this.field_71071_by.func_70448_g();
-@@ -296,6 +299,7 @@
+             ItemStack itemstack = this.field_71071_by.func_70448_g();
+@@ -305,6 +308,7 @@
          {
              this.field_71100_bB.func_75118_a(this);
          }
@@ -24,9 +24,9 @@
      }
  
      public int func_82145_z()
-@@ -1822,4 +1826,9 @@
+@@ -1905,4 +1909,9 @@
      {
-         return this.func_82241_s(1);
+         return ScorePlayerTeam.func_96667_a(this.func_96124_cp(), this.field_71092_bJ);
      }
 +
 +    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)

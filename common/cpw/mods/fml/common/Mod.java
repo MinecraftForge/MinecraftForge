@@ -1,16 +1,15 @@
 /*
- * The FML Forge Mod Loader suite.
- * Copyright (C) 2012 cpw
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * 
+ * Contributors:
+ *     cpw - implementation
  */
+
 package cpw.mods.fml.common;
 
 import java.lang.annotation.ElementType;
@@ -111,6 +110,21 @@ public @interface Mod
      * @return A certificate fingerprint that is expected for this mod.
      */
     String certificateFingerprint() default "";
+
+    /**
+     * The language the mod is authored in. This will be used to control certain libraries being downloaded.
+     * Valid values are currently "java", "scala"
+     *
+     * @return The language the mod is authored in
+     */
+    String modLanguage() default "java";
+    /**
+     * An optional ASM hook class, that can be used to apply ASM to classes loaded from this mod. It is also given
+     * the ASM tree of the class declaring {@link Mod} to with what it will.
+     *
+     * @return The name of a class to be loaded and executed. Must implement {@link IASMHook}.
+     */
+    String asmHookClass() default "";
     /**
      * Mark the designated method as to be called at if there is something wrong with the certificate fingerprint of
      * the mod's jar, or it is missing, or otherwise a problem.

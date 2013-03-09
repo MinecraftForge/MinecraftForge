@@ -26,17 +26,16 @@
  
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
-@@ -140,7 +146,8 @@
-             this.func_73969_a(var4, 24, var2);
-         }
+@@ -146,6 +152,8 @@
  
--        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, var2.func_74805_b("menu.mods")));
-+        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, var4 + 48, 98, 20, var2.func_74805_b("menu.mods")));
-+        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 + 2, var4 + 48, 98, 20, "Mods"));
+         this.func_96137_a(stringtranslate, i, 24);
  
++        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 - 100, i + 49, "Mods"));
++
          if (this.field_73882_e.field_71448_m)
          {
-@@ -224,6 +231,11 @@
+             this.field_73887_h.add(new GuiButton(0, this.field_73880_f / 2 - 100, i + 72, stringtranslate.func_74805_b("menu.options")));
+@@ -249,6 +257,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -48,11 +47,11 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -460,7 +472,16 @@
-             var9 = var9 + " Demo";
+@@ -487,7 +500,16 @@
+             s = s + " Demo";
          }
  
--        this.func_73731_b(this.field_73886_k, var9, 2, this.field_73881_g - 10, 16777215);
+-        this.func_73731_b(this.field_73886_k, s, 2, this.field_73881_g - 10, 16777215);
 +        List<String> brandings = Lists.reverse(FMLCommonHandler.instance().getBrandings());
 +        for (int i = 0; i < brandings.size(); i++)
 +        {
@@ -63,6 +62,6 @@
 +            }
 +        }
 +
-         String var10 = "Copyright Mojang AB. Do not distribute!";
-         this.func_73731_b(this.field_73886_k, var10, this.field_73880_f - this.field_73886_k.func_78256_a(var10) - 2, this.field_73881_g - 10, 16777215);
+         String s1 = "Copyright Mojang AB. Do not distribute!";
+         this.func_73731_b(this.field_73886_k, s1, this.field_73880_f - this.field_73886_k.func_78256_a(s1) - 2, this.field_73881_g - 10, 16777215);
  

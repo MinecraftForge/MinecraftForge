@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/logging/LogAgent.java
++++ ../src-work/minecraft/net/minecraft/logging/LogAgent.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.logging;
+ 
++import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.logging.ConsoleHandler;
+@@ -26,7 +27,7 @@
+ 
+     private void func_98238_b()
+     {
+-        this.field_98242_a.setUseParentHandlers(false);
++        this.field_98242_a.setParent(FMLLog.getLogger());
+         Handler[] ahandler = this.field_98242_a.getHandlers();
+         int i = ahandler.length;
+ 
+@@ -37,10 +38,6 @@
+         }
+ 
+         LogFormatter logformatter = new LogFormatter(this, (LogAgentINNER1)null);
+-        ConsoleHandler consolehandler = new ConsoleHandler();
+-        consolehandler.setFormatter(logformatter);
+-        this.field_98242_a.addHandler(consolehandler);
+-
+         try
+         {
+             FileHandler filehandler = new FileHandler(this.field_98240_b, true);

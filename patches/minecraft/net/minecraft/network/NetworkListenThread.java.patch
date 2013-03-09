@@ -1,19 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkListenThread.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkListenThread.java
-@@ -6,6 +6,8 @@
+@@ -4,6 +4,9 @@
+ import java.util.ArrayList;
+ import java.util.Collections;
  import java.util.List;
- import java.util.logging.Level;
- import java.util.logging.Logger;
++import java.util.logging.Level;
 +
 +import cpw.mods.fml.common.FMLLog;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.ReportedException;
-@@ -51,6 +53,7 @@
-                     throw new ReportedException(var4);
+@@ -48,6 +51,7 @@
+                     throw new ReportedException(crashreport);
                  }
  
-+                FMLLog.log(Level.SEVERE, var5, "A critical server error occured handling a packet, kicking %s", var2.getPlayer().field_70157_k);
-                 field_71751_a.log(Level.WARNING, "Failed to handle packet for " + var2.field_72574_e.func_70023_ak() + "/" + var2.field_72574_e.func_71114_r() + ": " + var5, var5);
-                 var2.func_72565_c("Internal server error");
++                FMLLog.log(Level.SEVERE, exception, "A critical server error occured handling a packet, kicking %s", netserverhandler.getPlayer().field_70157_k);
+                 this.field_71750_c.func_98033_al().func_98235_b("Failed to handle packet for " + netserverhandler.field_72574_e.func_70023_ak() + "/" + netserverhandler.field_72574_e.func_71114_r() + ": " + exception, exception);
+                 netserverhandler.func_72565_c("Internal server error");
              }

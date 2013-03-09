@@ -7,11 +7,11 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.BufferedReader;
-@@ -625,6 +626,7 @@
+@@ -691,6 +692,7 @@
  
      public void func_74303_b()
      {
 +        if (FMLClientHandler.instance().isLoading()) return;
          try
          {
-             PrintWriter var1 = new PrintWriter(new FileWriter(this.field_74354_ai));
+             PrintWriter printwriter = new PrintWriter(new FileWriter(this.field_74354_ai));

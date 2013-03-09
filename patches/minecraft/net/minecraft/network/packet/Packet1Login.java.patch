@@ -32,9 +32,9 @@
  
      public void func_73267_a(DataInputStream p_73267_1_) throws IOException
 @@ -46,7 +54,16 @@
-         this.field_73560_c = (var3 & 8) == 8;
-         int var4 = var3 & -9;
-         this.field_73557_d = EnumGameType.func_77146_a(var4);
+         this.field_73560_c = (b0 & 8) == 8;
+         int i = b0 & -9;
+         this.field_73557_d = EnumGameType.func_77146_a(i);
 -        this.field_73558_e = p_73267_1_.readByte();
 +
 +        if (vanillaCompatible)
@@ -52,7 +52,7 @@
 @@ -64,7 +81,16 @@
          }
  
-         p_73273_1_.writeByte(var2);
+         p_73273_1_.writeByte(i);
 -        p_73273_1_.writeByte(this.field_73558_e);
 +
 +        if (vanillaCompatible)
@@ -68,10 +68,10 @@
          p_73273_1_.writeByte(this.field_73556_g);
          p_73273_1_.writeByte(this.field_73562_h);
 @@ -84,6 +110,6 @@
-             var1 = this.field_73559_b.func_77127_a().length();
+             i = this.field_73559_b.func_77127_a().length();
          }
  
--        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1;
-+        return 6 + 2 * var1 + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 3);
+-        return 6 + 2 * i + 4 + 4 + 1 + 1 + 1;
++        return 6 + 2 * i + 4 + 4 + 1 + 1 + 1 + (vanillaCompatible ? 0 : 3);
      }
  }

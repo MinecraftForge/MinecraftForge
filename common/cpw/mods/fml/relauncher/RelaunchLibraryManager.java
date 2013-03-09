@@ -1,3 +1,15 @@
+/*
+ * Forge Mod Loader
+ * Copyright (c) 2012-2013 cpw.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser Public License v2.1
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ * Contributors:
+ *     cpw - implementation
+ */
+
 package cpw.mods.fml.relauncher;
 
 import java.io.File;
@@ -35,8 +47,28 @@ public class RelaunchLibraryManager
     private static Map<IFMLLoadingPlugin, File> pluginLocations;
     private static List<IFMLLoadingPlugin> loadPlugins;
     private static List<ILibrarySet> libraries;
+    private static boolean deobfuscatedEnvironment;
+
     public static void handleLaunch(File mcDir, RelaunchClassLoader actualClassLoader)
     {
+        try
+        {
+            // Are we in a 'decompiled' environment?
+            byte[] bs = actualClassLoader.getClassBytes("net.minecraft.world.World");
+            if (bs != null)
+            {
+                FMLRelaunchLog.info("Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation");
+                deobfuscatedEnvironment = true;
+            }
+        }
+        catch (IOException e1)
+        {
+        }
+
+        if (!deobfuscatedEnvironment)
+        {
+            FMLRelaunchLog.fine("Enabling runtime deobfuscation");
+        }
         pluginLocations = new HashMap<IFMLLoadingPlugin, File>();
         loadPlugins = new ArrayList<IFMLLoadingPlugin>();
         libraries = new ArrayList<ILibrarySet>();
@@ -239,7 +271,11 @@ public class RelaunchLibraryManager
                 }
             }
         }
-
+        // Deobfuscation transformer, always last
+        if (!deobfuscatedEnvironment)
+        {
+            actualClassLoader.registerTransformer("cpw.mods.fml.common.asm.transformers.DeobfuscationTransformer");
+        }
         downloadMonitor.updateProgressString("Running coremod plugins");
         Map<String,Object> data = new HashMap<String,Object>();
         data.put("mcLocation", mcDir);
@@ -257,6 +293,7 @@ public class RelaunchLibraryManager
                     IFMLCallHook call = (IFMLCallHook) Class.forName(setupClass, true, actualClassLoader).newInstance();
                     Map<String,Object> callData = new HashMap<String, Object>();
                     callData.put("classLoader", actualClassLoader);
+                    callData.put("deobfuscationFileName", FMLInjectionData.debfuscationDataName());
                     call.injectData(callData);
                     call.call();
                 }
@@ -489,7 +526,7 @@ public class RelaunchLibraryManager
         return loadedLibraries;
     }
 
-    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 22);
+    private static ByteBuffer downloadBuffer = ByteBuffer.allocateDirect(1 << 23);
     static IDownloadDisplay downloadMonitor;
 
     private static void performDownload(InputStream is, int sizeGuess, String validationHash, File target)

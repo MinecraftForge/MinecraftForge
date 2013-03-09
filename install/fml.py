@@ -12,7 +12,7 @@ mcp_version = '7.23'
 
 def download_deps(mcp_path):
     ret = True
-    for lib in ['argo-2.25.jar', 'guava-12.0.1.jar', 'guava-12.0.1-sources.jar', 'asm-all-4.0.jar', 'asm-all-4.0-source.jar', 'bcprov-jdk15on-147.jar']:
+    for lib in ['argo-3.2-src.jar','guava-14.0-rc3.jar','asm-4.1.tar.gz','asm-debug-all-4.1.jar','bcprov-debug-jdk15on-148.jar','bcprov-jdk15on-148-src.zip','guava-14.0-rc3-sources.jar']:
         libF = os.path.join(mcp_path, 'lib')
         if not os.path.isdir(libF):
             os.makedirs(libF)
@@ -24,7 +24,7 @@ def download_deps(mcp_path):
                 urllib.urlretrieve('http://files.minecraftforge.net/fmllibs/' + lib, target)
                 print 'Downloaded %s' % lib
             except:
-                print 'Download %s failed, download manually from http://files.minecraftforge.net/fmllibs/%s or http://files.minecraftforge.net/fmllibs/fml_libs_dev.zip and place in MCP/lib' % (lib, lib)
+                print 'Download %s failed, download manually from http://files.minecraftforge.net/fmllibs/%s or http://files.minecraftforge.net/fmllibs/fml_libs_dev15.zip and place in mcp/lib' % (lib, lib)
                 ret = False
     
     return ret
@@ -190,6 +190,7 @@ def reset_logger():
 
 count = 0
 def cleanup_source(path):
+    from rename_vars import rename_class
     path = os.path.normpath(path)
     regex_cases_before = re.compile(r'((case|default).+\r?\n)\r?\n', re.MULTILINE) #Fixes newline after case before case body
     regex_cases_after = re.compile(r'\r?\n(\r?\n[ \t]+(case|default))', re.MULTILINE) #Fixes newline after case body before new case
@@ -205,10 +206,13 @@ def cleanup_source(path):
             global count
             count += 1
             return match.group(1)
-            
+
         buf = regex_cases_before.sub(fix_cases, buf)
         buf = regex_cases_after.sub(fix_cases, buf)
-        if count > 0:
+        old = buf.replace('\r', '')
+        buf = rename_class(old, MCP=True)
+
+        if count > 0 or buf != old:
             with open(tmp_file, 'w') as fh:
                 fh.write(buf)
             shutil.move(tmp_file, src_file)
