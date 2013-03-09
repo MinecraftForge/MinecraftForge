@@ -20,6 +20,15 @@
  public abstract class EntityLiving extends Entity
  {
      /**
+@@ -105,7 +111,7 @@
+     public float jumpMovementFactor = 0.02F;
+     public float prevSwingProgress;
+     public float swingProgress;
+-    protected int health = this.getMaxHealth();
++    protected int health = this.getEntityMaxHealth();
+     public int prevHealth;
+ 
+     /**
 @@ -387,6 +393,7 @@
      public void setAttackTarget(EntityLiving par1EntityLiving)
      {
@@ -48,7 +57,48 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -977,6 +990,11 @@
+@@ -946,9 +959,9 @@
+         {
+             this.health += par1;
+ 
+-            if (this.health > this.getMaxHealth())
+-            {
+-                this.health = this.getMaxHealth();
++            if (this.health > this.getEntityMaxHealth())
++            {
++                this.health = this.getEntityMaxHealth();
+             }
+ 
+             this.hurtResistantTime = this.maxHurtResistantTime / 2;
+@@ -956,6 +969,14 @@
+     }
+ 
+     public abstract int getMaxHealth();
++    
++    public int getEntityMaxHealth() {
++    	if(this instanceof EntityWolf) {
++    		EntityWolf w = (EntityWolf) this;
++    		return ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", "") + (w.isTamed() ? "Tamed" : ""));
++    	}
++    	return ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", ""));
++    }
+ 
+     public int getHealth()
+     {
+@@ -966,9 +987,9 @@
+     {
+         this.health = par1;
+ 
+-        if (par1 > this.getMaxHealth())
+-        {
+-            par1 = this.getMaxHealth();
++        if (par1 > this.getEntityMaxHealth())
++        {
++            par1 = this.getEntityMaxHealth();
+         }
+     }
+ 
+@@ -977,6 +998,11 @@
       */
      public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
      {
@@ -60,7 +110,7 @@
          if (this.isEntityInvulnerable())
          {
              return false;
-@@ -1188,6 +1206,11 @@
+@@ -1188,6 +1214,11 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -72,7 +122,7 @@
              par2 = this.applyArmorCalculations(par1DamageSource, par2);
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.health -= par2;
-@@ -1252,6 +1275,11 @@
+@@ -1252,6 +1283,11 @@
       */
      public void onDeath(DamageSource par1DamageSource)
      {
@@ -84,7 +134,7 @@
          Entity var2 = par1DamageSource.getEntity();
  
          if (this.scoreValue >= 0 && var2 != null)
-@@ -1274,6 +1302,10 @@
+@@ -1274,6 +1310,10 @@
              {
                  var3 = EnchantmentHelper.getLootingModifier((EntityLiving)var2);
              }
@@ -95,7 +145,7 @@
  
              if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
              {
-@@ -1282,7 +1314,7 @@
+@@ -1282,7 +1322,7 @@
  
                  if (this.recentlyHit > 0)
                  {
@@ -104,7 +154,7 @@
  
                      if (var4 < 5)
                      {
-@@ -1290,6 +1322,16 @@
+@@ -1290,6 +1330,16 @@
                      }
                  }
              }
@@ -121,7 +171,7 @@
          }
  
          this.worldObj.setEntityState(this, (byte)3);
-@@ -1334,6 +1376,12 @@
+@@ -1334,6 +1384,12 @@
       */
      protected void fall(float par1)
      {
@@ -134,7 +184,7 @@
          super.fall(par1);
          int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1536,7 +1584,7 @@
+@@ -1536,7 +1592,7 @@
          int var2 = MathHelper.floor_double(this.boundingBox.minY);
          int var3 = MathHelper.floor_double(this.posZ);
          int var4 = this.worldObj.getBlockId(var1, var2, var3);
@@ -143,7 +193,16 @@
      }
  
      /**
-@@ -1949,6 +1997,7 @@
+@@ -1605,7 +1661,7 @@
+ 
+         if (!par1NBTTagCompound.hasKey("Health"))
+         {
+-            this.health = this.getMaxHealth();
++            this.health = this.getEntityMaxHealth();
+         }
+ 
+         this.hurtTime = par1NBTTagCompound.getShort("HurtTime");
+@@ -1949,6 +2005,7 @@
          }
  
          this.isAirBorne = true;
@@ -151,7 +210,7 @@
      }
  
      /**
-@@ -2486,8 +2535,6 @@
+@@ -2486,8 +2543,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -160,7 +219,16 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -2944,4 +2991,42 @@
+@@ -2597,7 +2652,7 @@
+         }
+         else
+         {
+-            int var1 = (int)((float)this.health - (float)this.getMaxHealth() * 0.33F);
++            int var1 = (int)((float)this.health - (float)this.getEntityMaxHealth() * 0.33F);
+             var1 -= (3 - this.worldObj.difficultySetting) * 4;
+ 
+             if (var1 < 0)
+@@ -2944,4 +2999,42 @@
      {
          this.dataWatcher.updateObject(10, Byte.valueOf((byte)par1));
      }

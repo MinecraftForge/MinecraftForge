@@ -1,5 +1,32 @@
 --- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
+@@ -73,7 +73,7 @@
+     {
+         super(par1World);
+         this.dragonPartArray = new EntityDragonPart[] {this.dragonPartHead = new EntityDragonPart(this, "head", 6.0F, 6.0F), this.dragonPartBody = new EntityDragonPart(this, "body", 8.0F, 8.0F), this.dragonPartTail1 = new EntityDragonPart(this, "tail", 4.0F, 4.0F), this.dragonPartTail2 = new EntityDragonPart(this, "tail", 4.0F, 4.0F), this.dragonPartTail3 = new EntityDragonPart(this, "tail", 4.0F, 4.0F), this.dragonPartWing1 = new EntityDragonPart(this, "wing", 4.0F, 4.0F), this.dragonPartWing2 = new EntityDragonPart(this, "wing", 4.0F, 4.0F)};
+-        this.setEntityHealth(this.getMaxHealth());
++        this.setEntityHealth(this.getEntityMaxHealth());
+         this.texture = "/mob/enderdragon/ender.png";
+         this.setSize(16.0F, 8.0F);
+         this.noClip = true;
+@@ -90,7 +90,7 @@
+     protected void entityInit()
+     {
+         super.entityInit();
+-        this.dataWatcher.addObject(16, new Integer(this.getMaxHealth()));
++        this.dataWatcher.addObject(16, new Integer(this.getEntityMaxHealth()));
+     }
+ 
+     /**
+@@ -399,7 +399,7 @@
+ 
+                 this.healingEnderCrystal = null;
+             }
+-            else if (this.ticksExisted % 10 == 0 && this.health < this.getMaxHealth())
++            else if (this.ticksExisted % 10 == 0 && this.health < this.getEntityMaxHealth())
+             {
+                 ++this.health;
+             }
 @@ -530,10 +530,11 @@
                  for (int var12 = var4; var12 <= var7; ++var12)
                  {

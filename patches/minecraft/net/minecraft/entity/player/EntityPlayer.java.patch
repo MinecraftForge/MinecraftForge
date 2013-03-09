@@ -44,6 +44,24 @@
          }
      }
  
+@@ -516,7 +530,7 @@
+         this.yOffset = 1.62F;
+         this.setSize(0.6F, 1.8F);
+         super.preparePlayerToSpawn();
+-        this.setEntityHealth(this.getMaxHealth());
++        this.setEntityHealth(this.getEntityMaxHealth());
+         this.deathTime = 0;
+     }
+ 
+@@ -536,7 +550,7 @@
+             --this.flyToggleTimer;
+         }
+ 
+-        if (this.worldObj.difficultySetting == 0 && this.getHealth() < this.getMaxHealth() && this.ticksExisted % 20 * 12 == 0)
++        if (this.worldObj.difficultySetting == 0 && this.getHealth() < this.getEntityMaxHealth() && this.ticksExisted % 20 * 12 == 0)
+         {
+             this.heal(1);
+         }
 @@ -630,6 +644,9 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.motionY = 0.10000000149011612D;
@@ -350,6 +368,15 @@
          }
  
          return var3;
+@@ -1967,7 +2078,7 @@
+      */
+     public boolean shouldHeal()
+     {
+-        return this.getHealth() > 0 && this.getHealth() < this.getMaxHealth();
++        return this.getHealth() > 0 && this.getHealth() < this.getEntityMaxHealth();
+     }
+ 
+     /**
 @@ -2088,6 +2199,14 @@
          }
  

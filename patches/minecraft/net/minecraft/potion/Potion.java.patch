@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/potion/Potion.java
++++ ../src_work/minecraft/net/minecraft/potion/Potion.java
+@@ -122,7 +122,7 @@
+     {
+         if (this.id == regeneration.id)
+         {
+-            if (par1EntityLiving.getHealth() < par1EntityLiving.getMaxHealth())
++            if (par1EntityLiving.getHealth() < par1EntityLiving.getEntityMaxHealth())
+             {
+                 par1EntityLiving.heal(1);
+             }

@@ -1,0 +1,19 @@
+--- ../src_base/minecraft/net/minecraft/entity/monster/EntitySlime.java
++++ ../src_work/minecraft/net/minecraft/entity/monster/EntitySlime.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.world.WorldType;
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.chunk.Chunk;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class EntitySlime extends EntityLiving implements IMob
+ {
+@@ -41,7 +42,7 @@
+         this.dataWatcher.updateObject(16, new Byte((byte)par1));
+         this.setSize(0.6F * (float)par1, 0.6F * (float)par1);
+         this.setPosition(this.posX, this.posY, this.posZ);
+-        this.setEntityHealth(this.getMaxHealth());
++        this.setEntityHealth(ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", "") + Integer.toString(getSlimeSize())));
+         this.experienceValue = par1;
+     }
+ 
