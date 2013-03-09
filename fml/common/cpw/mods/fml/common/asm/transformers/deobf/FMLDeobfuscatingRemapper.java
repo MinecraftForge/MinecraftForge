@@ -189,18 +189,29 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return typeName;
         }
 
-        String result = classNameBiMap.containsKey(typeName) ? classNameBiMap.get(typeName) : mcpNameBiMap.containsKey(typeName) ? mcpNameBiMap.get(typeName) : typeName;
+        int dollarIdx = typeName.indexOf('$');
+        String realType = dollarIdx > -1 ? typeName.substring(0, dollarIdx) : typeName;
+        String subType = dollarIdx > -1 ? typeName.substring(dollarIdx+1) : "";
+
+        String result = classNameBiMap.containsKey(realType) ? classNameBiMap.get(realType) : mcpNameBiMap.containsKey(realType) ? mcpNameBiMap.get(realType) : realType;
+        result = dollarIdx > -1 ? result+"$"+subType : result;
 //        System.out.printf("Mapping %s=>%s\n",typeName,result);
         return result;
     }
 
     public String unmap(String typeName)
     {
-        if (classNameBiMap == null)
+        if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return typeName;
         }
-        String result = classNameBiMap.containsValue(typeName) ? classNameBiMap.inverse().get(typeName) : mcpNameBiMap.containsValue(typeName) ? mcpNameBiMap.inverse().get(typeName) : typeName;
+        int dollarIdx = typeName.indexOf('$');
+        String realType = dollarIdx > -1 ? typeName.substring(0, dollarIdx) : typeName;
+        String subType = dollarIdx > -1 ? typeName.substring(dollarIdx+1) : "";
+
+
+        String result = classNameBiMap.containsValue(realType) ? classNameBiMap.inverse().get(realType) : mcpNameBiMap.containsValue(realType) ? mcpNameBiMap.inverse().get(realType) : realType;
+        result = dollarIdx > -1 ? result+"$"+subType : result;
 //        System.out.printf("Unmapping %s=>%s\n",typeName,result);
         return result;
     }
