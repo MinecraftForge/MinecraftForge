@@ -334,24 +334,17 @@
          }
      }
  
-@@ -938,8 +1036,14 @@
+@@ -938,7 +1036,8 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
 -        if (this.getBlockID(par1, par2, par3) != 0 && Block.blocksList[this.getBlockID(par1, par2, par3)] instanceof ITileEntityProvider)
--        {
 +        Block block = Block.blocksList[getBlockID(par1, par2, par3)];
 +        if (block != null && block.hasTileEntity(getBlockMetadata(par1, par2, par3)))
-+        {
-+            TileEntity old = (TileEntity)chunkTileEntityMap.get(chunkposition);
-+            if (old != null)
-+            {
-+                old.invalidate();
-+            }
-             par4TileEntity.validate();
-             this.chunkTileEntityMap.put(chunkposition, par4TileEntity);
-         }
-@@ -975,6 +1079,7 @@
+         {
+             if (this.chunkTileEntityMap.containsKey(chunkposition))
+             {
+@@ -980,6 +1079,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -359,7 +352,7 @@
      }
  
      /**
-@@ -995,6 +1100,7 @@
+@@ -1000,6 +1100,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
@@ -367,7 +360,7 @@
      }
  
      /**
-@@ -1011,8 +1117,8 @@
+@@ -1016,8 +1117,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -378,7 +371,7 @@
  
          if (i < 0)
          {
-@@ -1061,8 +1167,8 @@
+@@ -1066,8 +1167,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -389,7 +382,7 @@
  
          if (i < 0)
          {
-@@ -1245,6 +1351,15 @@
+@@ -1250,6 +1351,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -405,7 +398,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1345,12 +1460,26 @@
+@@ -1350,12 +1460,26 @@
          }
  
          this.generateHeightMap();
@@ -436,7 +429,7 @@
          }
      }
  
-@@ -1459,4 +1588,18 @@
+@@ -1464,4 +1588,18 @@
              }
          }
      }

@@ -124,17 +124,17 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -430,7 +459,8 @@
+@@ -430,6 +459,9 @@
      public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(par1, par2, par3, par4);
--        byte b0 = 8;
-+        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
-+        byte b0 = isForced ? (byte)0 : 8;
++        //Keeping here as a note for future when it may be restored.
++        //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++        //byte b0 = isForced ? 0 : 8;
+         byte b0 = 0;
  
          if (this.scheduledUpdatesAreImmediate && par4 > 0)
-         {
-@@ -493,7 +523,7 @@
+@@ -493,7 +525,7 @@
       */
      public void updateEntities()
      {
@@ -143,17 +143,17 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -559,7 +589,8 @@
+@@ -559,6 +591,9 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
--                byte b0 = 8;
-+                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
-+                byte b0 = isForced ? (byte)0 : 8;
++                //Keeping here as a note for future when it may be restored.
++                //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++                //byte b0 = isForced ? 0 : 8;
+                 byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-                 {
-@@ -698,16 +729,28 @@
+@@ -702,16 +737,28 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -192,7 +192,7 @@
          return arraylist;
      }
  
-@@ -715,6 +758,11 @@
+@@ -719,6 +766,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -204,7 +204,7 @@
      {
          return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
-@@ -799,7 +847,7 @@
+@@ -803,7 +855,7 @@
       */
      protected void createBonusChest()
      {
@@ -213,7 +213,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -842,6 +890,7 @@
+@@ -846,6 +898,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -221,7 +221,7 @@
          }
      }
  
-@@ -853,6 +902,7 @@
+@@ -857,6 +910,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -229,7 +229,7 @@
      }
  
      /**
-@@ -1066,4 +1116,9 @@
+@@ -1070,4 +1124,9 @@
      {
          return this.field_85177_Q;
      }

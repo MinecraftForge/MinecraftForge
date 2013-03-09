@@ -160,7 +160,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -3057,4 +3104,42 @@
+@@ -3059,4 +3106,42 @@
      {
          this.canPickUpLoot = par1;
      }

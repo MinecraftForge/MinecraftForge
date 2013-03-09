@@ -1,20 +1,22 @@
 --- ../src_base/minecraft/net/minecraft/potion/PotionEffect.java
 +++ ../src_work/minecraft/net/minecraft/potion/PotionEffect.java
-@@ -1,6 +1,11 @@
+@@ -1,8 +1,13 @@
  package net.minecraft.potion;
- 
++
 +import java.util.ArrayList;
 +import java.util.List;
-+
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.entity.EntityLiving;
 +import net.minecraft.item.Item;
 +import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  
  public class PotionEffect
-@@ -20,6 +25,9 @@
-     /** Whether the potion effect came from a beacon */
-     private boolean isAmbient;
+@@ -24,6 +29,9 @@
+     @SideOnly(Side.CLIENT)
+     private boolean field_100013_f;
  
 +    /** List of ItemStack that can cure the potion effect **/
 +    private List<ItemStack> curativeItems;
@@ -22,7 +24,7 @@
      public PotionEffect(int par1, int par2)
      {
          this(par1, par2, 0);
-@@ -36,6 +44,8 @@
+@@ -40,6 +48,8 @@
          this.duration = par2;
          this.amplifier = par3;
          this.isAmbient = par4;
@@ -31,7 +33,7 @@
      }
  
      public PotionEffect(PotionEffect par1PotionEffect)
-@@ -43,6 +53,7 @@
+@@ -47,6 +57,7 @@
          this.potionID = par1PotionEffect.potionID;
          this.duration = par1PotionEffect.duration;
          this.amplifier = par1PotionEffect.amplifier;
@@ -39,7 +41,7 @@
      }
  
      /**
-@@ -87,6 +98,63 @@
+@@ -91,6 +102,63 @@
      public int getAmplifier()
      {
          return this.amplifier;

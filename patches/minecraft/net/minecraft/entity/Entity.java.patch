@@ -42,7 +42,7 @@
  
      public Entity(World par1World)
      {
-@@ -547,7 +559,7 @@
+@@ -554,7 +566,7 @@
          if (!this.worldObj.isRemote)
          {
              this.setFlag(0, this.fire > 0);
@@ -51,7 +51,7 @@
          }
  
          this.firstUpdate = false;
-@@ -1527,6 +1539,10 @@
+@@ -1534,6 +1546,10 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.field_96093_i.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.field_96093_i.getLeastSignificantBits());
@@ -62,7 +62,7 @@
              this.writeEntityToNBT(par1NBTTagCompound);
  
              if (this.ridingEntity != null)
-@@ -1597,6 +1613,15 @@
+@@ -1604,6 +1620,15 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -78,7 +78,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable throwable)
-@@ -1691,7 +1716,14 @@
+@@ -1698,7 +1723,14 @@
      {
          EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          entityitem.delayBeforeCanPickup = 10;
@@ -94,7 +94,7 @@
          return entityitem;
      }
  
-@@ -2049,7 +2081,7 @@
+@@ -2056,7 +2088,7 @@
       */
      public boolean isRiding()
      {
@@ -103,7 +103,7 @@
      }
  
      /**
-@@ -2393,7 +2425,7 @@
+@@ -2400,7 +2432,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -112,7 +112,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2448,4 +2480,89 @@
+@@ -2455,4 +2487,89 @@
      {
          return this.getEntityName();
      }

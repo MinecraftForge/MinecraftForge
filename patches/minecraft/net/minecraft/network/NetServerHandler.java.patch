@@ -14,7 +14,7 @@
  public class NetServerHandler extends NetHandler
  {
      /** The underlying network manager for this server handler. */
-@@ -238,6 +245,11 @@
+@@ -233,6 +240,11 @@
                      if (this.playerEntity.ridingEntity != null)
                      {
                          this.playerEntity.ridingEntity.updateRiderPosition();
@@ -26,7 +26,7 @@
                      }
  
                      this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
-@@ -310,9 +322,9 @@
+@@ -305,9 +317,9 @@
                  d4 = d1 - this.playerEntity.posX;
                  double d6 = d2 - this.playerEntity.posY;
                  double d7 = d3 - this.playerEntity.posZ;
@@ -39,7 +39,7 @@
                  double d11 = d8 * d8 + d9 * d9 + d10 * d10;
  
                  if (d11 > 100.0D && (!this.mcServer.isSinglePlayer() || !this.mcServer.getServerOwner().equals(this.playerEntity.username)))
-@@ -328,6 +340,11 @@
+@@ -323,6 +335,11 @@
                  if (this.playerEntity.onGround && !par1Packet10Flying.onGround && d6 > 0.0D)
                  {
                      this.playerEntity.addExhaustion(0.2F);
@@ -51,7 +51,7 @@
                  }
  
                  this.playerEntity.moveEntity(d4, d6, d7);
-@@ -352,10 +369,15 @@
+@@ -347,10 +364,15 @@
                      this.mcServer.func_98033_al().func_98236_b(this.playerEntity.username + " moved wrongly!");
                  }
  
@@ -68,7 +68,7 @@
                  {
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, f2, f3);
                      return;
-@@ -363,7 +385,7 @@
+@@ -358,7 +380,7 @@
  
                  AxisAlignedBB axisalignedbb = this.playerEntity.boundingBox.copy().expand((double)f4, (double)f4, (double)f4).addCoord(0.0D, -0.55D, 0.0D);
  
@@ -77,7 +77,7 @@
                  {
                      if (d12 >= -0.03125D)
                      {
-@@ -382,6 +404,11 @@
+@@ -377,6 +399,11 @@
                      this.ticksForFloatKick = 0;
                  }
  
@@ -89,7 +89,7 @@
                  this.playerEntity.onGround = par1Packet10Flying.onGround;
                  this.mcServer.getConfigurationManager().serverUpdateMountedMovingPlayer(this.playerEntity);
                  this.playerEntity.updateFlyingState(this.playerEntity.posY - d0, par1Packet10Flying.onGround);
-@@ -448,7 +475,10 @@
+@@ -443,7 +470,10 @@
                  double d2 = this.playerEntity.posZ - ((double)k + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -101,7 +101,7 @@
                  {
                      return;
                  }
-@@ -508,7 +538,11 @@
+@@ -503,7 +533,11 @@
                  return;
              }
  
@@ -114,7 +114,7 @@
          }
          else if (par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit() - 1 && (par1Packet15Place.getDirection() == 1 || par1Packet15Place.getYPosition() >= this.mcServer.getBuildLimit()))
          {
-@@ -517,7 +551,9 @@
+@@ -512,7 +546,9 @@
          }
          else
          {
@@ -125,7 +125,7 @@
              {
                  this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, par1Packet15Place.getXOffset(), par1Packet15Place.getYOffset(), par1Packet15Place.getZOffset());
              }
-@@ -696,7 +732,14 @@
+@@ -691,7 +727,14 @@
                          return;
                      }
  
@@ -140,7 +140,7 @@
                      this.mcServer.func_98033_al().func_98233_a(s);
                      this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(s, false));
                  }
-@@ -827,7 +870,7 @@
+@@ -822,7 +865,7 @@
                      return;
                  }
  
@@ -149,7 +149,7 @@
              }
          }
      }
-@@ -1225,7 +1268,6 @@
+@@ -1220,7 +1263,6 @@
              }
          }
      }

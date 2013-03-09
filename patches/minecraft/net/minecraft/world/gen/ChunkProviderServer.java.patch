@@ -10,7 +10,7 @@
  
  import cpw.mods.fml.common.registry.GameRegistry;
  import net.minecraft.crash.CrashReport;
-@@ -74,7 +77,7 @@
+@@ -66,7 +69,7 @@
       */
      public void unloadChunksIfNotNearSpawn(int par1, int par2)
      {
@@ -19,7 +19,7 @@
          {
              ChunkCoordinates chunkcoordinates = this.worldObj.getSpawnPoint();
              int k = par1 * 16 + 8 - chunkcoordinates.posX;
-@@ -117,7 +120,11 @@
+@@ -109,7 +112,11 @@
  
          if (chunk == null)
          {
@@ -32,7 +32,7 @@
  
              if (chunk == null)
              {
-@@ -313,6 +320,11 @@
+@@ -305,6 +312,11 @@
      {
          if (!this.worldObj.canNotSave)
          {
@@ -44,9 +44,9 @@
              for (int i = 0; i < 100; ++i)
              {
                  if (!this.chunksToUnload.isEmpty())
-@@ -325,6 +337,11 @@
+@@ -317,6 +329,11 @@
                      this.chunksToUnload.remove(olong);
-                     this.id2ChunkMap.remove(olong.longValue());
+                     this.loadedChunkHashMap.remove(olong.longValue());
                      this.loadedChunks.remove(chunk);
 +                    ForgeChunkManager.putDormantChunk(ChunkCoordIntPair.chunkXZ2Int(chunk.xPosition, chunk.zPosition), chunk);
 +                    if(loadedChunks.size() == 0 && ForgeChunkManager.getPersistentChunksFor(this.worldObj).size() == 0 && !DimensionManager.shouldLoadSpawn(this.worldObj.provider.dimensionId)) {

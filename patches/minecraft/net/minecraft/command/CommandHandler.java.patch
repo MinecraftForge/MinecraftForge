@@ -10,7 +10,7 @@
  public class CommandHandler implements ICommandManager
  {
      /** Map of Strings to the ICommand objects they represent */
-@@ -42,6 +45,16 @@
+@@ -44,6 +47,16 @@
  
              if (icommand.canCommandSenderUseCommand(par1ICommandSender))
              {
