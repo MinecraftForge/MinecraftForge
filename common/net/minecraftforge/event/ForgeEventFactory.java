@@ -1,7 +1,5 @@
 package net.minecraftforge.event;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
@@ -16,7 +14,10 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.world.LightningGeneratedEvent;
 import net.minecraftforge.event.world.WorldEvent;
+
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class ForgeEventFactory
@@ -66,5 +67,11 @@ public class ForgeEventFactory
             return null;
         }
         return event.list;
+    }
+
+    public static boolean onLightningGenerated(World world, int x, int y, int z) {
+        LightningGeneratedEvent event = new LightningGeneratedEvent(world, x, y, z);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() != Result.DENY;
     }
 }
