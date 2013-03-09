@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -128,7 +128,7 @@ public class ASMModParser
 
     public boolean isBaseMod(List<String> rememberedTypes)
     {
-        return getASMSuperType().equals(Type.getType(BaseMod.class)) || rememberedTypes.contains(getASMSuperType().getClassName());
+        return getASMSuperType().equals(Type.getType("LBaseMod;")) || getASMSuperType().equals(Type.getType("Lnet/minecraft/src/BaseMod;"))|| rememberedTypes.contains(getASMSuperType().getClassName());
     }
 
     public void setBaseModProperties(String foundProperties)
