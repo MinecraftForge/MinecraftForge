@@ -13,6 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -207,6 +208,9 @@ public class MinecraftForge
 
        EVENT_BUS.register(INTERNAL_HANDLER);
        OreDictionary.getOreName(0);
+
+       //Force these classes to be defined, Should prevent derp error hiding.
+       new CrashReport("ThisIsFake", new Exception("Not real"));
    }
 
    public static String getBrandingVersion()
