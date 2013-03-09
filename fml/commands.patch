@@ -4,21 +4,12 @@
  
  
  def reallyrmtree(path):
-+    if os.path.isfile(os.path.join(path, 'asm-4.1.tar.gz')): #Check if asm exists, indicating the libs folder, if so, don't delete it
++    if os.path.isfile(os.path.join(path, 'asm-all-4.0.jar')): #Check if asm exists, indicating the libs folder, if so, don't delete it
 +        return
      if not sys.platform.startswith('win'):
          if os.path.exists(path):
              shutil.rmtree(path)
-@@ -139,6 +141,8 @@
-             fieldnames = csvreader.fieldnames
-     return set(fieldnames)
- 
-+def commands_sanity_check():
-+    print 'Commands patch applied successfully'
- 
- class Commands(object):
-     """Contains the commands and initialisation for a full mcp run"""
-@@ -796,6 +800,8 @@
+@@ -788,6 +790,8 @@
          binlk = {CLIENT: self.binclient, SERVER: self.binserver}
          testlk = {CLIENT: self.testclient, SERVER: self.testserver}
  
@@ -27,7 +18,7 @@
          if not os.path.exists(os.path.join(binlk[side], os.path.normpath(testlk[side] + '.class'))):
              return False
          return True
-@@ -1037,6 +1043,10 @@
+@@ -1029,6 +1033,10 @@
          pathsrclk = {CLIENT: self.srcclient, SERVER: self.srcserver}
          pathlog = {CLIENT: self.clientrecomplog, SERVER: self.serverrecomplog}
  
@@ -38,7 +29,7 @@
          if not os.path.exists(pathbinlk[side]):
              os.makedirs(pathbinlk[side])
  
-@@ -1070,7 +1080,7 @@
+@@ -1062,7 +1070,7 @@
              raise
  
      def startserver(self):
@@ -47,7 +38,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          os.chdir(self.dirjars)
-@@ -1078,7 +1088,7 @@
+@@ -1070,7 +1078,7 @@
          self.runmc(forkcmd)
  
      def startclient(self):
@@ -56,7 +47,7 @@
          classpath = [os.path.join('..', p) for p in classpath]
          classpath = os.pathsep.join(classpath)
          natives = os.path.join('..', self.dirnatives)
-@@ -1205,20 +1215,20 @@
+@@ -1197,20 +1205,20 @@
          with open(self.csvmethods, 'rb') as fh:
              methodsreader = csv.DictReader(fh)
              for row in methodsreader:
@@ -80,7 +71,7 @@
                          names['params'][row['param']] = row['name']
  
          regexps = {
-@@ -1352,13 +1362,13 @@
+@@ -1344,13 +1352,13 @@
          methods = {}
          for row in methodsreader:
              #HINT: Only include methods that have a non-empty description
@@ -96,7 +87,7 @@
                  fields[row['searge']] = row['desc'].replace('*/', '* /')
  
          regexps = {
-@@ -1435,7 +1445,7 @@
+@@ -1427,7 +1435,7 @@
          self.runcmd(forkcmd)
          return True
  
@@ -105,7 +96,7 @@
          if not reobf:
              md5lk = {CLIENT: self.md5client, SERVER: self.md5server}
          else:
-@@ -1450,6 +1460,9 @@
+@@ -1442,6 +1450,9 @@
                      class_path = ''
                  else:
                      class_path += '/'
@@ -115,7 +106,7 @@
                  for class_file in fnmatch.filter(filelist, '*.class'):
                      class_name = class_path + os.path.splitext(class_file)[0]
                      bin_file = os.path.normpath(os.path.join(path, class_file))
-@@ -1546,6 +1559,8 @@
+@@ -1535,6 +1546,8 @@
          if not os.path.exists(outpathlk[side]):
              os.makedirs(outpathlk[side])
  
@@ -124,7 +115,7 @@
          # HINT: We extract the modified class files
          with closing(zipfile.ZipFile(jarlk[side])) as zipjar:
              for in_class in trgclasses:
-@@ -1559,6 +1574,23 @@
+@@ -1548,6 +1561,23 @@
                      out_class = out_class.replace(self.nullpkg, '')
                      if out_class[0] == '/':
                          out_class = out_class[1:]
@@ -148,7 +139,7 @@
                  try:
                      zipjar.extract(out_class, outpathlk[side])
                      self.logger.info('> Outputted %s to %s as %s', in_class.ljust(35), outpathlk[side], out_class)
-@@ -1605,6 +1637,9 @@
+@@ -1594,6 +1624,9 @@
                  sys.exit(1)
  
          for entry in newfiles:
@@ -158,7 +149,7 @@
              if entry[3] == 'U':
                  self.logger.info('Retrieving file from server : %s', entry[0])
                  cur_file = os.path.normpath(entry[0])
-@@ -1625,6 +1660,9 @@
+@@ -1614,6 +1647,9 @@
          md5reoblk = {CLIENT: self.md5reobfclient, SERVER: self.md5reobfserver}
          outpathlk = {CLIENT: self.srcmodclient, SERVER: self.srcmodserver}
          src = {CLIENT: self.srcclient, SERVER: self.srcserver}
@@ -168,3 +159,10 @@
  
          # HINT: We need a table for the old md5 and the new ones
          md5table = {}
+@@ -1656,3 +1692,6 @@
+                 except IOError:
+                     self.logger.error('* File %s copy failed', in_class)
+ 
++def commands_sanity_check():
++    print 'Commands patch applied successfully'
++    

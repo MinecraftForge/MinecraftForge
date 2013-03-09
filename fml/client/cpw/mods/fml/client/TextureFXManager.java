@@ -5,18 +5,22 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
 
 package cpw.mods.fml.client;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderEngine;
@@ -26,6 +30,9 @@ public class TextureFXManager
     private static final TextureFXManager INSTANCE = new TextureFXManager();
 
     private Minecraft client;
+
+    private Map<Integer,TextureHolder> texturesById = Maps.newHashMap();
+    private Map<String, TextureHolder> texturesByName = Maps.newHashMap();
 
     void setClient(Minecraft client)
     {
@@ -64,5 +71,35 @@ public class TextureFXManager
             }
         }
     }
+    public void bindTextureToName(String name, int index)
+    {
+        TextureHolder holder = new TextureHolder();
+        holder.textureId = index;
+        holder.textureName = name;
+        texturesById.put(index,holder);
+        texturesByName.put(name,holder);
+    }
 
+    public void setTextureDimensions(int index, int j, int k)
+    {
+        TextureHolder holder = texturesById.get(index);
+        if (holder == null)
+        {
+            return;
+        }
+        holder.x = j;
+        holder.y = k;
+    }
+
+    private class TextureHolder {
+        private int textureId;
+        private String textureName;
+        private int x;
+        private int y;
+    }
+
+    public Dimension getTextureDimensions(String texture)
+    {
+        return texturesByName.containsKey(texture) ? new Dimension(texturesByName.get(texture).x, texturesByName.get(texture).y) : new Dimension(1,1);
+    }
 }
