@@ -14,8 +14,6 @@ package cpw.mods.fml.relauncher;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 /**
  * Some reflection helper code.
  *
@@ -75,10 +73,9 @@ public class ReflectionHelper
         Exception failed = null;
         for (String fieldName : fieldNames)
         {
-            String remappedField = FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(clazz.getName().replace('.', '/'), fieldName, null);
             try
             {
-                Field f = clazz.getDeclaredField(remappedField);
+                Field f = clazz.getDeclaredField(fieldName);
                 f.setAccessible(true);
                 return f;
             }
