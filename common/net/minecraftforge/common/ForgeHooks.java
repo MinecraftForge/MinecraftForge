@@ -38,7 +38,7 @@ public class ForgeHooks
 		if(entity.length() > 0 && entityHealthMap.containsKey(entity)) {
 			return entityHealthMap.get(entity);
 		}
-		return 0;
+		return getMaxHealth();
 	}
 	
 	public static void setEntityHealth(String entity, int health) {
