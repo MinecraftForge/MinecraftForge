@@ -1,21 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockNetherStalk.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockNetherStalk.java
-@@ -2,11 +2,14 @@
+@@ -2,6 +2,8 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +
 +import java.util.ArrayList;
  import java.util.Random;
+ import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.item.Item;
+@@ -9,6 +11,7 @@
  import net.minecraft.item.ItemStack;
+ import net.minecraft.util.Icon;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.ForgeDirection;
  
  public class BlockNetherStalk extends BlockFlower
  {
-@@ -33,7 +36,8 @@
+@@ -39,7 +42,8 @@
       */
      public boolean canBlockStay(World par1World, int par2, int par3, int par4)
      {
@@ -25,25 +27,25 @@
      }
  
      /**
-@@ -73,25 +77,7 @@
+@@ -81,25 +85,7 @@
       */
      public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
      {
 -        if (!par1World.isRemote)
 -        {
--            int var8 = 1;
+-            int j1 = 1;
 -
 -            if (par5 >= 3)
 -            {
--                var8 = 2 + par1World.rand.nextInt(3);
+-                j1 = 2 + par1World.rand.nextInt(3);
 -
 -                if (par7 > 0)
 -                {
--                    var8 += par1World.rand.nextInt(par7 + 1);
+-                    j1 += par1World.rand.nextInt(par7 + 1);
 -                }
 -            }
 -
--            for (int var9 = 0; var9 < var8; ++var9)
+-            for (int k1 = 0; k1 < j1; ++k1)
 -            {
 -                this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.netherStalkSeeds));
 -            }
@@ -52,9 +54,9 @@
      }
  
      /**
-@@ -119,4 +105,23 @@
-     {
-         return Item.netherStalkSeeds.itemID;
+@@ -138,4 +124,23 @@
+             this.field_94372_b[i] = par1IconRegister.func_94245_a(field_94373_a[i]);
+         }
      }
 +
 +    @Override

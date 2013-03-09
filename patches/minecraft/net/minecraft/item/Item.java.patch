@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -13,6 +13,7 @@
+@@ -14,6 +14,7 @@
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.item.EntityPainting;
  import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +8,7 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -21,7 +22,9 @@
+@@ -23,7 +24,9 @@
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.StringTranslate;
  import net.minecraft.util.Vec3;
@@ -18,9 +18,9 @@
  
  public class Item
  {
-@@ -230,18 +233,26 @@
-     /** full name of item from language file */
-     private String itemName;
+@@ -238,13 +241,16 @@
+     /** Icon index in the icons table. */
+     protected Icon iconIndex;
  
 +    /** FORGE: To disable repair recipes. */
 +    protected boolean canRepair = true;
@@ -36,52 +36,23 @@
          }
  
          itemsList[256 + par1] = this;
- 
-         GameData.newItemAdded(this);
-+
-+        if (!(this instanceof ItemBlock))
-+        {
-+            isDefaultTexture = "/gui/items.png".equals(getTextureFile());
-+        }
-     }
- 
-     /**
-@@ -561,6 +572,7 @@
- 
-     /**
-      * Returns a string representing what this item does to a potion.
-+     * @Deprecated In favor of ItemStack sensitive version
-      */
-     public String getPotionEffect()
-     {
-@@ -569,6 +581,7 @@
- 
-     /**
-      * Returns true if this item serves as a potion ingredient (its ingredient information is not null).
-+     * @Deprecated In favor of ItemStack sensitive version
-      */
-     public boolean isPotionIngredient()
-     {
-@@ -627,6 +640,10 @@
-         float var18 = var15 * var16;
-         float var20 = var14 * var16;
-         double var21 = 5.0D;
+@@ -636,6 +642,10 @@
+         float f7 = f4 * f5;
+         float f8 = f3 * f5;
+         double d3 = 5.0D;
 +        if (par2EntityPlayer instanceof EntityPlayerMP)
 +        {
-+            var21 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
++            d3 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
 +        }
-         Vec3 var23 = var13.addVector((double)var18 * var21, (double)var17 * var21, (double)var20 * var21);
-         return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+         Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
+         return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -701,4 +718,362 @@
+@@ -716,4 +726,324 @@
      {
          StatList.initStats();
      }
 +
 +    /* =========================================================== FORGE START ===============================================================*/
-+    public boolean isDefaultTexture = true;
-+    private String currentTexture = "/gui/items.png";
-+
 +    /**
 +     * Called when a player drops the item into the world,
 +     * returning false from this will prevent the item from
@@ -195,19 +166,9 @@
 +     * @param useRemaining The ticks remaining for the active item.
 +     * @return The icon index
 +     */
-+    public int getIconIndex(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
++    public Icon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
 +    {
-+        /*
-+         * Here is an example usage for Vanilla bows.
-+        if (usingItem != null && usingItem.getItem().shiftedIndex == Item.bow.shiftedIndex)
-+        {
-+            int k = usingItem.getMaxItemUseDuration() - useRemaining;
-+            if (k >= 18) return 133;
-+            if (k >  13) return 117;
-+            if (k >   0) return 101;
-+        }
-+         */
-+        return getIconIndex(stack);
++        return getIcon(stack, renderPass);
 +    }
 +
 +    /**
@@ -221,31 +182,6 @@
 +    public int getRenderPasses(int metadata)
 +    {
 +        return requiresMultipleRenderPasses() ? 2 : 1;
-+    }
-+
-+    /**
-+     * Grabs the current texture file used for this block
-+     */
-+    public String getTextureFile()
-+    {
-+        if (this instanceof ItemBlock)
-+        {
-+            return Block.blocksList[((ItemBlock)this).getBlockID()].getTextureFile();
-+        }
-+        return currentTexture;
-+    }
-+
-+    /**
-+     * Sets the current texture file for this item, used when rendering.
-+     * Default is "/gui/items.png"
-+     *
-+     * @param texture The texture file
-+     */
-+    public Item setTextureFile(String texture)
-+    {
-+        currentTexture = texture;
-+        isDefaultTexture = false;
-+        return this;
 +    }
 +
 +    /**
@@ -336,9 +272,9 @@
 +     * Defers to {@link #getIconFromDamageForRenderPass(int, int)}
 +     * @param stack to render for
 +     * @param pass the multi-render pass
-+     * @return the icon index
++     * @return the icon
 +     */
-+    public int getIconIndex(ItemStack stack, int pass)
++    public Icon getIcon(ItemStack stack, int pass)
 +    {
 +    	return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
 +    }

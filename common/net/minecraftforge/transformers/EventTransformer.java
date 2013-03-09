@@ -20,7 +20,7 @@ public class EventTransformer implements IClassTransformer
     }
 
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String transformedName, byte[] bytes)
     {
         if (bytes == null || name.equals("net.minecraftforge.event.Event") || name.startsWith("net.minecraft.") || name.indexOf('.') == -1)
         {
@@ -162,5 +162,4 @@ public class EventTransformer implements IClassTransformer
         classNode.methods.add(method);
         return true;
     }
-
 }

@@ -1,0 +1,98 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
+@@ -90,13 +90,22 @@
+         StitchHolder stitchholder = new StitchHolder(texture);
+         stitcher.func_94312_a(stitchholder);
+         hashmap.put(stitchholder, Arrays.asList(new Texture[] {texture}));
+-        Iterator iterator = this.field_94256_j.keySet().iterator();
+-
+-        while (iterator.hasNext())
+-        {
+-            String s = (String)iterator.next();
+-            String s1 = this.field_94254_c + s + this.field_94251_d;
+-            List list = TextureManager.func_94267_b().func_94266_e(s1);
++
++        for (Map.Entry<String, TextureStitched> entry : ((Map<String, TextureStitched>)field_94256_j).entrySet())
++        {
++            String name = entry.getKey();
++            String path;
++            if (name.indexOf(':') == -1)
++            {
++                path = this.field_94254_c + name + this.field_94251_d;
++            }
++            else
++            {
++                String domain = name.substring(0,name.indexOf(':'));
++                String file = name.substring(name.indexOf(':')+1);
++                path = "mods/" + domain +"/" + field_94254_c + file + field_94251_d;
++            }
++            List list = TextureManager.func_94267_b().createNewTexture(name, path, entry.getValue());
+ 
+             if (!list.isEmpty())
+             {
+@@ -116,7 +125,7 @@
+         }
+ 
+         this.field_94257_h = stitcher.func_94306_e();
+-        iterator = stitcher.func_94309_g().iterator();
++        Iterator iterator = stitcher.func_94309_g().iterator();
+ 
+         while (iterator.hasNext())
+         {
+@@ -150,7 +159,17 @@
+             if (list1.size() > 1)
+             {
+                 this.field_94258_i.add(texturestitched);
+-                String s3 = this.field_94254_c + s2 + ".txt";
++                String s3;
++                if (s2.indexOf(':') == -1)
++                {
++                    s3 = field_94254_c + s2 + ".txt";
++                }
++                else
++                {
++                    String domain = s2.substring(0, s2.indexOf(':'));
++                    String file = s2.substring(s2.indexOf(':') + 1);
++                    s3 = "mods/" + domain + "/" + field_94254_c + file + ".txt";
++                }
+                 ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
+                 boolean flag1 = !itexturepack.func_98138_b("/" + this.field_94254_c + s2 + ".png", false);
+ 
+@@ -218,4 +237,37 @@
+     {
+         return this.field_94250_g;
+     }
++
++    //===================================================================================================
++    //                                           Forge Start
++    //===================================================================================================
++    /**
++     * Grabs the registered entry for the specified name, returning null if there was not a entry. 
++     * Opposed to func_94245_a, this will not instantiate the entry, useful to test if a maping exists.
++     * 
++     * @param name The name of the entry to find
++     * @return The registered entry, null if nothing was registered.
++     */
++    public TextureStitched getTextureExtry(String name)
++    {
++        return (TextureStitched)field_94256_j.get(name);
++    }
++
++    /**
++     * Adds a texture registry entry to this map for the specified name if one does not already exist.
++     * Returns false if the map already contains a entry for the specified name. 
++     * 
++     * @param name Entry name
++     * @param entry Entry instance
++     * @return True if the entry was added to the map, false otherwise.
++     */
++    public boolean setTextureEntry(String name, TextureStitched entry)
++    {
++        if (!field_94256_j.containsKey(name))
++        {
++            field_94256_j.put(name, entry);
++            return true;
++        }
++        return false;
++    }
+ }

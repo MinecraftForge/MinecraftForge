@@ -34,39 +34,56 @@ def main():
     mcp_dir = os.path.join(forge_dir, 'mcp')
     if not options.mcp_dir is None:
         mcp_dir = os.path.abspath(options.mcp_dir)
-    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
-        mcp_dir = os.path.abspath('..')
         
     ret = 0
     fml_dir = os.path.join(forge_dir, 'fml')
-    build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num)
+    ret = build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num)
     if ret != 0:
         sys.exit(ret)
     
+    
+    temp_dir = os.path.join(forge_dir, 'temp')
+    src_dir = os.path.join(mcp_dir, 'src')
+    reobf_dir = os.path.join(mcp_dir, 'reobf')
+    client_dir = os.path.join(reobf_dir, 'minecraft')
+    fml_dir = os.path.join(temp_dir, 'fml')
 
     print '=================================== Release Start ================================='
+    
+    fml = glob.glob(os.path.join(forge_dir, 'fml', 'target', 'fml-src-*.%d-*.zip' % build_num))
+    if not len(fml) == 1:
+        if len(fml) == 0:
+            print 'Missing FML source zip, should be named fml-src-*.zip inside ./fml/target/ created when running setup'
+        else:
+            print 'To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported'
+        sys.exit(1)
+    
+    if os.path.isdir(fml_dir):
+        shutil.rmtree(fml_dir)
+        
+    print 'Extracting: %s' % os.path.basename(fml[0])
+    zf = zipfile.ZipFile(fml[0])
+    zf.extractall(temp_dir)
+    zf.close()
+    
     error_level = 0
     try:
         sys.path.append(mcp_dir)
         from runtime.reobfuscate import reobfuscate
         os.chdir(mcp_dir)
         reset_logger()
-        reobfuscate(None, False, True, True, True, False)
+        reobfuscate(None, False, True, True, True, False, False)
         reset_logger()
         os.chdir(forge_dir)
     except SystemExit, e:
         print 'Reobfusicate Exception: %d ' % e.code
         error_level = e.code
     
-    src_dir = os.path.join(mcp_dir, 'src')
-    reobf_dir = os.path.join(mcp_dir, 'reobf')
-    client_dir = os.path.join(reobf_dir, 'minecraft')
-    
-    extract_fml_obfed(mcp_dir, reobf_dir, client_dir)
+    extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir)
     extract_paulscode(mcp_dir, client_dir)
     version = load_version(build_num)
     version_forge = '%d.%d.%d.%d' % (version['major'], version['minor'], version['revision'], version['build'])
-    version_mc = load_mc_version(forge_dir)
+    version_mc = load_mc_version(fml_dir)
     branch = get_branch_name()
     
     version_str = '%s-%s' % (version_mc, version_forge)
@@ -103,33 +120,35 @@ def main():
     zip_add('client/forge_logo.png')
     zip_add('install/MinecraftForge-Credits.txt')
     zip_add('install/MinecraftForge-License.txt')
-    zip_add('fml/CREDITS-fml.txt')
-    zip_add('fml/LICENSE-fml.txt')
-    zip_add('fml/README-fml.txt')
-    zip_add('fml/common/fml_at.cfg')
-    zip_add('fml/common/fml_marker.cfg')
-    zip_add('fml/common/fmlversion.properties')
-    zip_add('fml/common/mcpmod.info')
-    zip_add('fml/client/mcp.png')
     zip_add('install/Paulscode IBXM Library License.txt')
     zip_add('install/Paulscode SoundSystem CodecIBXM License.txt')
     zip_add('common/forge_at.cfg')
     zip_add(version_file)
     if not options.skip_changelog:
         zip_add(changelog_file, 'MinecraftForge-Changelog.txt')
-    zip_end()
     
-    zips = glob.glob('fml/mcp*.zip')
-    for i in zips:
-        print 'Removing MCP Zip: %s' % os.path.basename(i)
-        os.remove(i)
+    #Add dependancy and licenses from FML
+    FML_FILES = [
+        'CREDITS-fml.txt',
+        'LICENSE-fml.txt',
+        'README-fml.txt',
+        'common/fml_at.cfg',
+        'common/fml_marker.cfg',
+        'common/fmlversion.properties',
+        'common/mcpmod.info',
+        'client/mcp.png'
+    ]
+    for file in FML_FILES:
+        zip_add(os.path.join(fml_dir, file))
+    
+    zip_end()
     
     inject_version(os.path.join(forge_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     zip_start('minecraftforge-src-%s.zip' % version_str, 'forge')
     zip_add('client',  'client')
     zip_add('common',  'common')
     zip_add('patches', 'patches')
-    zip_add('fml',     'fml')
+    zip_add(fml_dir,    'fml')
     zip_add('install', '')
     zip_add('forge.py')
     zip_add(version_file)
@@ -140,6 +159,7 @@ def main():
     
     if os.path.exists(version_file):
         os.remove(version_file)
+    shutil.rmtree(temp_dir)
     
     print '=================================== Release Finished %d =================================' % error_level
     sys.exit(error_level)
@@ -156,7 +176,7 @@ def zip_add(file, key=None):
         zip_folder(file, key, zip)
     else:
         if os.path.isfile(file):
-            print key
+            print '    ' + key
             zip.write(file, key)
     
 def zip_start(name, base=None):
@@ -175,8 +195,8 @@ def zip_end():
     zip_name = None
     zip_base = None
     
-def load_mc_version(forge_dir):
-    props = os.path.join(forge_dir, 'fml', 'common', 'fmlversion.properties')
+def load_mc_version(fml_dir):
+    props = os.path.join(fml_dir, 'common', 'fmlversion.properties')
     
     if not os.path.isfile(props):
         print 'Could not load fmlversion.properties, build failed'
@@ -191,8 +211,8 @@ def load_mc_version(forge_dir):
     print 'Could not load fmlversion.properties, build failed'
     sys.exit(1)
 
-def extract_fml_obfed(mcp_dir, reobf_dir, client_dir):
-    fml_file = os.path.join(forge_dir, 'fml', 'difflist.txt')
+def extract_fml_obfed(fml_dir, mcp_dir, reobf_dir, client_dir):
+    fml_file = os.path.join(fml_dir, 'difflist.txt')
     if not os.path.isfile(fml_file):
         print 'Could not find Forge ModLoader\'s DiffList, looking for it at: %s' % fml_file
         sys.exit(1)

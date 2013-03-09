@@ -1,19 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -2,8 +2,12 @@
+@@ -2,6 +2,7 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
-+import java.util.UUID;
-+
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockFluid;
- import net.minecraft.block.StepSound;
-@@ -12,8 +16,13 @@
+ import java.util.UUID;
+@@ -13,8 +14,13 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.enchantment.EnchantmentProtection;
  import net.minecraft.entity.effect.EntityLightningBolt;
@@ -27,7 +22,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -24,6 +33,7 @@
+@@ -25,6 +31,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -35,9 +30,9 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
-@@ -222,6 +232,11 @@
-     protected int field_82152_aq;
+@@ -225,6 +232,11 @@
      private boolean invulnerable;
+     private UUID field_96093_i;
      public EnumEntitySize myEntitySize;
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -47,7 +42,7 @@
  
      public Entity(World par1World)
      {
-@@ -543,7 +558,7 @@
+@@ -554,7 +566,7 @@
          if (!this.worldObj.isRemote)
          {
              this.setFlag(0, this.fire > 0);
@@ -56,71 +51,50 @@
          }
  
          this.firstUpdate = false;
-@@ -847,6 +862,8 @@
-                     par5 = var27;
-                     this.boundingBox.setBB(var29);
-                 }
-+                /* Fixes a vanilla bug where the player view would dip when stepping between certain blocks
-+                 * https://mojang.atlassian.net/browse/MC-1594
-                 else
-                 {
-                     double var40 = this.boundingBox.minY - (double)((int)this.boundingBox.minY);
-@@ -856,6 +873,7 @@
-                         this.ySize = (float)((double)this.ySize + var40 + 0.01D);
-                     }
-                 }
-+                */
-             }
- 
-             this.worldObj.theProfiler.endSection();
-@@ -1514,6 +1532,15 @@
-             par1NBTTagCompound.setInteger("Dimension", this.dimension);
-             par1NBTTagCompound.setBoolean("Invulnerable", this.invulnerable);
+@@ -1534,6 +1546,10 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
-+            if (persistentID != null)
-+            {
-+                par1NBTTagCompound.setLong("PersistentIDMSB", persistentID.getMostSignificantBits());
-+                par1NBTTagCompound.setLong("PersistentIDLSB", persistentID.getLeastSignificantBits());
-+            }
+             par1NBTTagCompound.setLong("UUIDMost", this.field_96093_i.getMostSignificantBits());
+             par1NBTTagCompound.setLong("UUIDLeast", this.field_96093_i.getLeastSignificantBits());
 +            if (customEntityData != null)
 +            {
 +                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
 +            }
              this.writeEntityToNBT(par1NBTTagCompound);
-         }
-         catch (Throwable var5)
-@@ -1568,6 +1595,14 @@
-             this.timeUntilPortal = par1NBTTagCompound.getInteger("PortalCooldown");
+ 
+             if (this.ridingEntity != null)
+@@ -1604,6 +1620,15 @@
+ 
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
 +            if (par1NBTTagCompound.hasKey("ForgeData"))
 +            {
 +                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
 +            }
++            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
 +            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
 +            {
-+                persistentID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
++                this.field_96093_i = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
 +            }
              this.readEntityFromNBT(par1NBTTagCompound);
          }
-         catch (Throwable var5)
-@@ -1662,7 +1697,14 @@
+         catch (Throwable throwable)
+@@ -1698,7 +1723,14 @@
      {
-         EntityItem var3 = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
-         var3.delayBeforeCanPickup = 10;
--        this.worldObj.spawnEntityInWorld(var3);
+         EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
+         entityitem.delayBeforeCanPickup = 10;
+-        this.worldObj.spawnEntityInWorld(entityitem);
 +        if (captureDrops)
 +        {
-+            capturedDrops.add(var3);
++            capturedDrops.add(entityitem);
 +        }
 +        else
 +        {
-+            this.worldObj.spawnEntityInWorld(var3);
++            this.worldObj.spawnEntityInWorld(entityitem);
 +        }
-         return var3;
+         return entityitem;
      }
  
-@@ -2021,7 +2063,7 @@
+@@ -2056,7 +2088,7 @@
       */
      public boolean isRiding()
      {
@@ -129,18 +103,18 @@
      }
  
      /**
-@@ -2359,7 +2401,7 @@
+@@ -2400,7 +2432,7 @@
  
-     public float func_82146_a(Explosion par1Explosion, Block par2Block, int par3, int par4, int par5)
+     public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
--        return par2Block.getExplosionResistance(this);
-+        return par2Block.getExplosionResistance(this, worldObj, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
+-        return par6Block.getExplosionResistance(this);
++        return par6Block.getExplosionResistance(this, par2World, par3, par4, par5, posX, posY + (double)getEyeHeight(), posZ);
      }
  
-     public int func_82143_as()
-@@ -2399,4 +2441,97 @@
+     public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
+@@ -2455,4 +2487,89 @@
      {
-         return this.isBurning();
+         return this.getEntityName();
      }
 +
 +    /* ================================== Forge Start =====================================*/
@@ -212,15 +186,7 @@
 +
 +    public UUID getPersistentID()
 +    {
-+        return persistentID;
-+    }
-+
-+    public synchronized void generatePersistentID()
-+    {
-+        if (persistentID == null)
-+        {
-+            persistentID = UUID.randomUUID();
-+        }
++        return field_96093_i;
 +    }
 +
 +    /**

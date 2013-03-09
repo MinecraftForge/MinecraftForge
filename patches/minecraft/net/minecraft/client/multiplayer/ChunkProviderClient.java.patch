@@ -11,9 +11,9 @@
  public class ChunkProviderClient implements IChunkProvider
 @@ -75,6 +77,7 @@
      {
-         Chunk var3 = new Chunk(this.worldObj, par1, par2);
-         this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(par1, par2), var3);
-+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(var3));
-         var3.isChunkLoaded = true;
-         return var3;
+         Chunk chunk = new Chunk(this.worldObj, par1, par2);
+         this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(par1, par2), chunk);
++        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk));
+         chunk.isChunkLoaded = true;
+         return chunk;
      }

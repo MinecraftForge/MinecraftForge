@@ -1,8 +1,8 @@
 --- ../src_base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src_work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -10,6 +10,9 @@
- import java.util.Map.Entry;
+@@ -11,6 +11,9 @@
  import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.util.EnumChatFormatting;
  
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.CommandEvent;
@@ -10,20 +10,20 @@
  public class CommandHandler implements ICommandManager
  {
      /** Map of Strings to the ICommand objects they represent */
-@@ -40,6 +43,16 @@
+@@ -44,6 +47,16 @@
  
-             if (var5.canCommandSenderUseCommand(par1ICommandSender))
+             if (icommand.canCommandSenderUseCommand(par1ICommandSender))
              {
-+                CommandEvent event = new CommandEvent(var5, par1ICommandSender, var3);
++                CommandEvent event = new CommandEvent(icommand, par1ICommandSender, astring);
 +                if (MinecraftForge.EVENT_BUS.post(event))
 +                {
 +                    if (event.exception != null)
 +                    {
 +                        throw event.exception;
 +                    }
-+                    return;
++                    return 1;
 +                }
 +
-                 if (var6 > -1)
+                 if (i > -1)
                  {
-                     EntityPlayerMP[] var7 = PlayerSelector.matchPlayers(par1ICommandSender, var3[var6]);
+                     EntityPlayerMP[] aentityplayermp = PlayerSelector.matchPlayers(par1ICommandSender, astring[i]);

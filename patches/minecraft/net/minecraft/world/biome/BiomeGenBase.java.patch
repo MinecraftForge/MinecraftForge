@@ -23,19 +23,19 @@
      /**
 @@ -372,7 +375,7 @@
      {
-         double var1 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
-         double var3 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
--        return ColorizerGrass.getGrassColor(var1, var3);
-+        return getModdedBiomeGrassColor(ColorizerGrass.getGrassColor(var1, var3));
+         double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
+         double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
+-        return ColorizerGrass.getGrassColor(d0, d1);
++        return getModdedBiomeGrassColor(ColorizerGrass.getGrassColor(d0, d1));
      }
  
      @SideOnly(Side.CLIENT)
 @@ -384,6 +387,38 @@
      {
-         double var1 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
-         double var3 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
--        return ColorizerFoliage.getFoliageColor(var1, var3);
-+        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(var1, var3));
+         double d0 = (double)MathHelper.clamp_float(this.getFloatTemperature(), 0.0F, 1.0F);
+         double d1 = (double)MathHelper.clamp_float(this.getFloatRainfall(), 0.0F, 1.0F);
+-        return ColorizerFoliage.getFoliageColor(d0, d1);
++        return getModdedBiomeFoliageColor(ColorizerFoliage.getFoliageColor(d0, d1));
 +    }
 +
 +    public BiomeDecorator getModdedBiomeDecorator(BiomeDecorator original)

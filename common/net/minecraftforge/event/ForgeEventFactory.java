@@ -1,16 +1,22 @@
 package net.minecraftforge.event;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.entity.living.LivingSpecialSpawnEvent;
-import net.minecraftforge.event.entity.player.*;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.world.WorldEvent;
 
 @SuppressWarnings("deprecation")
 public class ForgeEventFactory
@@ -49,14 +55,16 @@ public class ForgeEventFactory
 
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
     {
-        boolean result = MinecraftForge.EVENT_BUS.post(new LivingSpecialSpawnEvent(entity, world, x, y, z));
-        LivingSpawnEvent.SpecialSpawn nEvent = new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z);
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z));
+    }
 
-        if (result) //For the time being, copy the canceled state from the old legacy event
-        {           // Remove when we remove LivingSpecialSpawnEvent.
-            nEvent.setCanceled(true);
+    public static List getPotentialSpawns(WorldServer world, EnumCreatureType type, int x, int y, int z, List oldList)
+    {
+        WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, x, y, z, oldList);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return null;
         }
-
-        return MinecraftForge.EVENT_BUS.post(nEvent);
+        return event.list;
     }
 }

@@ -26,6 +26,7 @@ import static net.minecraftforge.common.ForgeVersion.*;
 public class ForgeDummyContainer extends DummyModContainer implements WorldAccessContainer
 {
     public static int clumpingThreshold = 64;
+    public static boolean legacyFurnaceSides = false;
 
     public ForgeDummyContainer()
     {
@@ -44,7 +45,22 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         meta.screenshots = new String[0];
         meta.logoFile    = "/forge_logo.png";
 
-        Configuration config = new Configuration(new File(Loader.instance().getConfigDir(), "forge.cfg"));
+        Configuration config = null;
+        File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
+        try
+        {
+            config = new Configuration(cfgFile);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error loading forge.cfg, deleting file and resetting: ");
+            e.printStackTrace();
+
+            if (cfgFile.exists())
+                cfgFile.delete();
+
+            config = new Configuration(cfgFile);
+        }
         if (!config.isChild)
         {
             config.load();
@@ -60,9 +76,17 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         if (clumpingThreshold > 1024 || clumpingThreshold < 64)
         {
             clumpingThreshold = 64;
-            clumpingThresholdProperty.value = "64";
+            clumpingThresholdProperty.set(64);
         }
-        config.save();
+        
+        Property furnaceOutput = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnceOutput", false);
+        furnaceOutput.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventroy, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
+        legacyFurnaceSides = furnaceOutput.getBoolean(false);
+
+        if (config.hasChanged())
+        {
+            config.save();
+        }
     }
 
     @Override

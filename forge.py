@@ -64,7 +64,7 @@ def zip_folder(path, key, zip):
             zip_folder(file_path, file_key, zip)
         else:
             if not file_key.replace(os.sep, '/') in zip.NameToInfo:
-                print file_key
+                print '    ' + file_key
                 zip.write(file_path, file_key)
             
 def zip_create(path, key, zip_name):
@@ -77,6 +77,7 @@ def zip_create(path, key, zip_name):
 
 def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
     sys.path.append(fml_dir)
+    sys.path.append(os.path.join(fml_dir, 'install'))
     from fml import copytree, apply_patches
     
     #patch files
@@ -100,6 +101,7 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
         shutil.rmtree(src_dir)
     
     sys.path.append(fml_dir)
+    sys.path.append(os.path.join(fml_dir, 'install'))
     from fml import copytree
         
     print 'src_work -> src'
@@ -114,11 +116,18 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     error_level = 0
     try:
         sys.path.append(mcp_dir)
-        from runtime.recompile import recompile
+        from runtime.commands import Commands, CLIENT, SERVER, CalledProcessError
+        from runtime.mcp import recompile_side
         
         os.chdir(mcp_dir)
         reset_logger()
-        recompile(None, True, False)
+        
+        commands = Commands(None, verify=True)
+        try:
+            recompile_side(commands, CLIENT)
+        except CalledProcessError as e:
+            error_level = 1
+            pass
         reset_logger()
         os.chdir(forge_dir)
     except SystemExit, e:

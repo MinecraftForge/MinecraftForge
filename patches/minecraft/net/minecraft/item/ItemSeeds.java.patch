@@ -20,13 +20,13 @@
 @@ -35,8 +40,9 @@
          else if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))
          {
-             int var11 = par3World.getBlockId(par4, par5, par6);
-+            Block soil = Block.blocksList[var11];
+             int i1 = par3World.getBlockId(par4, par5, par6);
++            Block soil = Block.blocksList[i1];
  
--            if (var11 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
+-            if (i1 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
 +            if (soil != null && soil.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))
              {
-                 par3World.setBlockWithNotify(par4, par5 + 1, par6, this.blockType);
+                 par3World.func_94575_c(par4, par5 + 1, par6, this.blockType);
                  --par1ItemStack.stackSize;
 @@ -52,4 +58,22 @@
              return false;

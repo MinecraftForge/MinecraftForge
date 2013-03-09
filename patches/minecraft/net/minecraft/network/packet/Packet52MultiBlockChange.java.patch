@@ -16,8 +16,8 @@
 -            if (par4 >= 64)
 +            if (par4 >= ForgeDummyContainer.clumpingThreshold)
              {
--                System.out.println("ChunkTilesUpdatePacket compress " + par4);
+-                this.field_98193_m.func_98233_a("ChunkTilesUpdatePacket compress " + par4);
 -
-                 if (field_73449_e.length < var6)
+                 if (field_73449_e.length < l)
                  {
-                     field_73449_e = new byte[var6];
+                     field_73449_e = new byte[l];

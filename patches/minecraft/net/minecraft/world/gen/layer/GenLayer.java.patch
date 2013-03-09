@@ -12,16 +12,16 @@
  {
 @@ -42,6 +45,7 @@
          {
-             var4 = 6;
+             b0 = 6;
          }
-+        var4 = getModdedBiomeSize(par2WorldType, var4);
++        b0 = getModdedBiomeSize(par2WorldType, b0);
  
-         GenLayer var5 = GenLayerZoom.func_75915_a(1000L, var16, 0);
-         GenLayerRiverInit var13 = new GenLayerRiverInit(100L, var5);
+         GenLayer genlayer = GenLayerZoom.func_75915_a(1000L, genlayeraddmushroomisland, 0);
+         GenLayerRiverInit genlayerriverinit = new GenLayerRiverInit(100L, genlayer);
 @@ -151,4 +155,11 @@
       * amounts, or biomeList[] indices based on the particular GenLayer subclass.
       */
-     public abstract int[] getInts(int var1, int var2, int var3, int var4);
+     public abstract int[] getInts(int i, int j, int k, int l);
 +
 +    public static byte getModdedBiomeSize(WorldType worldType, byte original)
 +    {

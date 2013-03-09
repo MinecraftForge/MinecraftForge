@@ -1,11 +1,11 @@
 --- ../src_base/minecraft/net/minecraft/world/Explosion.java
 +++ ../src_work/minecraft/net/minecraft/world/Explosion.java
-@@ -90,7 +90,7 @@
-                             if (var25 > 0)
+@@ -92,7 +92,7 @@
+                             if (k1 > 0)
                              {
-                                 Block var26 = Block.blocksList[var25];
--                                float var27 = this.exploder != null ? this.exploder.func_82146_a(this, var26, var22, var23, var24) : var26.getExplosionResistance(this.exploder);
-+                                float var27 = this.exploder != null ? this.exploder.func_82146_a(this, var26, var22, var23, var24) : var26.getExplosionResistance(this.exploder, worldObj, var22, var23, var24, explosionX, explosionY, explosionZ);
-                                 var14 -= (var27 + 0.3F) * var21;
+                                 Block block = Block.blocksList[k1];
+-                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, this.worldObj, l, i1, j1, block) : block.getExplosionResistance(this.exploder);
++                                float f3 = this.exploder != null ? this.exploder.func_82146_a(this, this.worldObj, l, i1, j1, block) : block.getExplosionResistance(this.exploder, worldObj, l, i1, j1, explosionX, explosionY, explosionZ);
+                                 f1 -= (f3 + 0.3F) * f2;
                              }
  

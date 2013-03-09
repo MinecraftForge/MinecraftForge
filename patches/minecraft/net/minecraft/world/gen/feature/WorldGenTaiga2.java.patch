@@ -12,50 +12,50 @@
  {
 @@ -47,7 +49,9 @@
                          {
-                             var15 = par1World.getBlockId(var13, var11, var14);
+                             j2 = par1World.getBlockId(i2, l1, l2);
  
--                            if (var15 != 0 && var15 != Block.leaves.blockID)
-+                            Block block = Block.blocksList[var15];
+-                            if (j2 != 0 && j2 != Block.leaves.blockID)
++                            Block block = Block.blocksList[j2];
 +
-+                            if (var15 != 0 && block != null && !block.isLeaves(par1World, var13, var11, var14))
++                            if (j2 != 0 && block != null && !block.isLeaves(par1World, i2, l1, l2))
                              {
-                                 var10 = false;
+                                 flag = false;
                              }
 @@ -67,10 +71,12 @@
              else
              {
-                 var11 = par1World.getBlockId(par3, par4 - 1, par5);
-+                Block soil = Block.blocksList[var11];
+                 l1 = par1World.getBlockId(par3, par4 - 1, par5);
++                Block soil = Block.blocksList[l1];
 +                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
  
--                if ((var11 == Block.grass.blockID || var11 == Block.dirt.blockID) && par4 < 256 - var6 - 1)
-+                if (isValidSoil && par4 < 256 - var6 - 1)
+-                if ((l1 == Block.grass.blockID || l1 == Block.dirt.blockID) && par4 < 256 - l - 1)
++                if (isValidSoil && par4 < 256 - l - 1)
                  {
 -                    this.setBlock(par1World, par3, par4 - 1, par5, Block.dirt.blockID);
 +                    soil.onPlantGrow(par1World, par3, par4 - 1, par5, par3, par4, par5);
-                     var21 = par2Random.nextInt(2);
-                     var13 = 1;
-                     byte var22 = 0;
+                     k2 = par2Random.nextInt(2);
+                     i2 = 1;
+                     byte b0 = 0;
 @@ -89,7 +95,10 @@
                              {
-                                 int var20 = var19 - par5;
+                                 int i4 = l3 - par5;
  
--                                if ((Math.abs(var18) != var21 || Math.abs(var20) != var21 || var21 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(var17, var16, var19)])
-+                                Block block = Block.blocksList[par1World.getBlockId(var17, var16, var19)];
+-                                if ((Math.abs(k3) != k2 || Math.abs(i4) != k2 || k2 <= 0) && !Block.opaqueCubeLookup[par1World.getBlockId(i3, j3, l3)])
++                                Block block = Block.blocksList[par1World.getBlockId(i3, j3, l3)];
 +
-+                                if ((Math.abs(var18) != var21 || Math.abs(var20) != var21 || var21 <= 0) && 
-+                                    (block == null || block.canBeReplacedByLeaves(par1World, var17, var16, var19)))
++                                if ((Math.abs(k3) != k2 || Math.abs(i4) != k2 || k2 <= 0) &&
++                                    (block == null || block.canBeReplacedByLeaves(par1World, i3, j3, l3)))
                                  {
-                                     this.setBlockAndMetadata(par1World, var17, var16, var19, Block.leaves.blockID, 1);
+                                     this.setBlockAndMetadata(par1World, i3, j3, l3, Block.leaves.blockID, 1);
                                  }
 @@ -119,7 +128,9 @@
                      {
-                         var17 = par1World.getBlockId(par3, par4 + var16, par5);
+                         i3 = par1World.getBlockId(par3, par4 + j3, par5);
  
--                        if (var17 == 0 || var17 == Block.leaves.blockID)
-+                        Block block = Block.blocksList[var17];
+-                        if (i3 == 0 || i3 == Block.leaves.blockID)
++                        Block block = Block.blocksList[i3];
 +
-+                        if (var17 == 0 || block == null || block.isLeaves(par1World, par3, par4 + var16, par5))
++                        if (i3 == 0 || block == null || block.isLeaves(par1World, par3, par4 + j3, par5))
                          {
-                             this.setBlockAndMetadata(par1World, par3, par4 + var16, par5, Block.wood.blockID, 1);
+                             this.setBlockAndMetadata(par1World, par3, par4 + j3, par5, Block.wood.blockID, 1);
                          }

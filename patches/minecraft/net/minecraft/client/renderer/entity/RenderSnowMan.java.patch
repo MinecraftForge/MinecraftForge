@@ -17,19 +17,19 @@
  public class RenderSnowMan extends RenderLiving
 @@ -31,12 +37,15 @@
          super.renderEquippedItems(par1EntitySnowman, par2);
-         ItemStack var3 = new ItemStack(Block.pumpkin, 1);
+         ItemStack itemstack = new ItemStack(Block.pumpkin, 1);
  
--        if (var3 != null && var3.getItem().itemID < 256)
-+        if (var3 != null && var3.getItem() instanceof ItemBlock)
+-        if (itemstack != null && itemstack.getItem().itemID < 256)
++        if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
          {
              GL11.glPushMatrix();
              this.snowmanModel.head.postRender(0.0625F);
  
--            if (RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var3, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var3, BLOCK_3D));
+-            if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var3.itemID].getRenderType()))
++            if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
              {
-                 float var4 = 0.625F;
+                 float f1 = 0.625F;
                  GL11.glTranslatef(0.0F, -0.34375F, 0.0F);

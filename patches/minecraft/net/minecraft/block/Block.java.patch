@@ -1,15 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/block/Block.java
 +++ ../src_work/minecraft/net/minecraft/block/Block.java
-@@ -2,13 +2,17 @@
+@@ -1,15 +1,20 @@
+ package net.minecraft.block;
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
++import static net.minecraftforge.common.ForgeDirection.DOWN;
++import static net.minecraftforge.common.ForgeDirection.UP;
 +
 +import java.util.ArrayList;
  import java.util.List;
  import java.util.Random;
++
  import net.minecraft.block.material.Material;
 +import net.minecraft.client.particle.EffectRenderer;
+ import net.minecraft.client.renderer.texture.IconRegister;
  import net.minecraft.creativetab.CreativeTabs;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
@@ -18,24 +23,28 @@
  import net.minecraft.entity.item.EntityItem;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -24,17 +28,27 @@
- import net.minecraft.item.ItemSlab;
+@@ -26,8 +31,10 @@
+ import net.minecraft.item.ItemSnow;
  import net.minecraft.item.ItemStack;
  import net.minecraft.stats.StatList;
 +import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntitySign;
  import net.minecraft.util.AxisAlignedBB;
 +import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
- import net.minecraft.util.Vec3;
+@@ -35,9 +42,20 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
 +import net.minecraft.world.WorldProviderEnd;
-+
-+import net.minecraftforge.common.*;
-+import static net.minecraftforge.common.ForgeDirection.*;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.IPlantable;
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
  
  public class Block
  {
@@ -46,7 +55,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -321,6 +335,7 @@
+@@ -332,6 +350,7 @@
              lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
              canBlockGrass[par1] = !par2Material.getCanBlockGrass();
          }
@@ -54,7 +63,7 @@
      }
  
      /**
-@@ -459,9 +474,10 @@
+@@ -454,9 +473,10 @@
          return this.needsRandomTick;
      }
  
@@ -66,7 +75,7 @@
      }
  
      /**
-@@ -484,7 +500,7 @@
+@@ -479,7 +499,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -75,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -494,7 +510,7 @@
+@@ -489,7 +509,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +93,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +655,13 @@
+@@ -639,7 +659,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -99,49 +108,48 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -663,8 +685,7 @@
-      */
+@@ -664,7 +690,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
--        float var6 = this.getBlockHardness(par2World, par3, par4, par5);
--        return var6 < 0.0F ? 0.0F : (!par1EntityPlayer.canHarvestBlock(this) ? 1.0F / var6 / 100.0F : par1EntityPlayer.getCurrentPlayerStrVsBlock(this) / var6 / 30.0F);
+         float f = this.getBlockHardness(par2World, par3, par4, par5);
+-        return f < 0.0F ? 0.0F : (!par1EntityPlayer.canHarvestBlock(this) ? par1EntityPlayer.getCurrentPlayerStrVsBlock(this, false) / f / 100.0F : par1EntityPlayer.getCurrentPlayerStrVsBlock(this, true) / f / 30.0F);
 +        return ForgeHooks.blockStrength(this, par1EntityPlayer, par2World, par3, par4, par5);
      }
  
      /**
-@@ -682,18 +703,13 @@
+@@ -682,18 +708,13 @@
      {
          if (!par1World.isRemote)
          {
--            int var8 = this.quantityDroppedWithBonus(par7, par1World.rand);
+-            int j1 = this.quantityDroppedWithBonus(par7, par1World.rand);
 -
--            for (int var9 = 0; var9 < var8; ++var9)
+-            for (int k1 = 0; k1 < j1; ++k1)
 +            ArrayList<ItemStack> items = getBlockDropped(par1World, par2, par3, par4, par5, par7);
 +
 +            for (ItemStack item : items)
              {
                  if (par1World.rand.nextFloat() <= par6)
                  {
--                    int var10 = this.idDropped(par5, par1World.rand, par7);
+-                    int l1 = this.idDropped(par5, par1World.rand, par7);
 -
--                    if (var10 > 0)
+-                    if (l1 > 0)
 -                    {
--                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(var10, 1, this.damageDropped(par5)));
+-                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(l1, 1, this.damageDropped(par5)));
 -                    }
 +                    this.dropBlockAsItem_do(par1World, par2, par3, par4, item);
                  }
              }
          }
-@@ -1081,7 +1097,7 @@
+@@ -1086,7 +1107,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
 -        if (this.canSilkHarvest() && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
 +        if (this.canSilkHarvest(par1World, par2EntityPlayer, par3, par4, par5, par6) && EnchantmentHelper.getSilkTouchModifier(par2EntityPlayer))
          {
-             ItemStack var8 = this.createStackedBlock(par6);
+             ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1097,12 +1113,13 @@
+@@ -1102,12 +1123,13 @@
          }
      }
  
@@ -156,7 +164,7 @@
      }
  
      /**
-@@ -1364,4 +1381,864 @@
+@@ -1414,4 +1436,871 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -236,6 +244,10 @@
 +        {
 +            boolean flipped = ((meta & 4) != 0);
 +            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped);
++        }
++        else if (this instanceof BlockHopper && side == UP)
++        {
++            return true;
 +        }
 +        return isBlockNormalCube(world, x, y, z);
 +    }
@@ -319,7 +331,7 @@
 +     */
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
-+        return world.setBlockWithNotify(x, y, z, 0);
++        return world.func_94571_i(x, y, z);
 +    }
 +
 +    /**
@@ -422,6 +434,7 @@
 +        blockFlammability[id] = flammability;
 +    }
 +
++    private boolean isTileProvider = this instanceof ITileEntityProvider;
 +    /**
 +     * Called throughout the code as a replacement for block instanceof BlockContainer
 +     * Moving this to the Block base class allows for mods that wish to extend vinella
@@ -434,22 +447,22 @@
 +     */
 +    public boolean hasTileEntity(int metadata)
 +    {
-+        return isBlockContainer;
++        return isTileProvider;
 +    }
 +
 +    /**
-+     * Called throughout the code as a replacement for BlockContainer.getBlockEntity
++     * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
 +     * Return the same thing you would from that function.
-+     * This will fall back to BlockContainer.getBlockEntity if this block is a BlockContainer.
++     * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
 +     *
 +     * @param metadata The Metadata of the current block
 +     * @return A instance of a class extending TileEntity
 +     */
 +    public TileEntity createTileEntity(World world, int metadata)
 +    {
-+        if (this instanceof BlockContainer)
++        if (isTileProvider)
 +        {
-+            return ((BlockContainer)this).createNewTileEntity(world, metadata);
++            return ((ITileEntityProvider)this).createNewTileEntity(world);
 +        }
 +        return null;
 +    }
@@ -688,9 +701,11 @@
 +     * @param x X Position
 +     * @param y Y Position
 +     * @param z Z Position
++     * @param target The generic target block the gen is looking for, Standards define stone
++     *      for overworld generation, and neatherack for the nether.
 +     * @return True to allow this block to be replaced by a ore
 +     */
-+    public boolean isGenMineableReplaceable(World world, int x, int y, int z)
++    public boolean isGenMineableReplaceable(World world, int x, int y, int z, int target)
 +    {
 +        return blockID == stone.blockID;
 +    }
@@ -927,12 +942,12 @@
 +    /**
 +     * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
 +     * Modder may implement this for custom plants.
-+     * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction, 
++     * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,
 +     * so the source location is specified.
 +     * Currently this just changes the block to dirt if it was grass.
-+     * 
++     *
 +     * Note: This happens DURING the generation, the generation may not be complete when this is called.
-+     * 
++     *
 +     * @param world Current world
 +     * @param x Soil X
 +     * @param y Soil Y
@@ -945,7 +960,7 @@
 +    {
 +        if (blockID == grass.blockID)
 +        {
-+            world.setBlock(x, y, z, dirt.blockID);
++            world.setBlockAndMetadataWithNotify(x, y, z, dirt.blockID, 0, 2);
 +        }
 +    }
 +

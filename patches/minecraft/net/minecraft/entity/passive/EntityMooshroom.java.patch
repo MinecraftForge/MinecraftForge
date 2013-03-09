@@ -17,20 +17,20 @@
              }
          }
  
--        if (var2 != null && var2.itemID == Item.shears.itemID && this.getGrowingAge() >= 0)
+-        if (itemstack != null && itemstack.itemID == Item.shears.itemID && this.getGrowingAge() >= 0)
 -        {
 -            this.setDead();
 -            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
 -
 -            if (!this.worldObj.isRemote)
 -            {
--                EntityCow var3 = new EntityCow(this.worldObj);
--                var3.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
--                var3.setEntityHealth(this.getHealth());
--                var3.renderYawOffset = this.renderYawOffset;
--                this.worldObj.spawnEntityInWorld(var3);
+-                EntityCow entitycow = new EntityCow(this.worldObj);
+-                entitycow.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+-                entitycow.setEntityHealth(this.getHealth());
+-                entitycow.renderYawOffset = this.renderYawOffset;
+-                this.worldObj.spawnEntityInWorld(entitycow);
 -
--                for (int var4 = 0; var4 < 5; ++var4)
+-                for (int i = 0; i < 5; ++i)
 -                {
 -                    this.worldObj.spawnEntityInWorld(new EntityItem(this.worldObj, this.posX, this.posY + (double)this.height, this.posZ, new ItemStack(Block.mushroomRed)));
 -                }
@@ -45,10 +45,10 @@
 +        return super.interact(par1EntityPlayer);
      }
  
-     /**
-@@ -78,4 +58,29 @@
+     public EntityMooshroom func_94900_c(EntityAgeable par1EntityAgeable)
+@@ -83,4 +63,29 @@
      {
-         return this.spawnBabyAnimal(par1EntityAgeable);
+         return this.func_94900_c(par1EntityAgeable);
      }
 +
 +    @Override

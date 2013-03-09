@@ -33,7 +33,6 @@
 -        {
 -            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 -        }
--    }
 +        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
 +    }
 +
@@ -55,5 +54,5 @@
 +    public boolean isLadder(World world, int x, int y, int z)
 +    {
 +        return true;
-+     }
+     }
  }

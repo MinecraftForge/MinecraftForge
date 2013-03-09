@@ -1,9 +1,13 @@
 package net.minecraftforge.liquids;
 
+import static cpw.mods.fml.relauncher.Side.CLIENT;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Icon;
 
 /**
  * ItemStack substitute for liquids
@@ -84,7 +88,7 @@ public class LiquidStack
         {
             return true;
         }
-        
+
         return isLiquidEqual(LiquidContainerRegistry.getLiquidForFilledItem(other));
     }
 
@@ -107,5 +111,20 @@ public class LiquidStack
         LiquidStack liquidstack = new LiquidStack();
         liquidstack.readFromNBT(nbt);
         return liquidstack.itemID == 0 ? null : liquidstack;
+    }
+
+    @SideOnly(CLIENT)
+    private Icon renderingIcon;
+
+    @SideOnly(CLIENT)
+    public Icon getRenderingIcon()
+    {
+        return renderingIcon;
+    }
+
+    @SideOnly(CLIENT)
+    public void setRenderingIcon(Icon icon)
+    {
+        this.renderingIcon = icon;
     }
 }

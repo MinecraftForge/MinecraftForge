@@ -9,7 +9,7 @@
  import java.util.ArrayList;
  import java.util.HashSet;
  import java.util.Iterator;
-@@ -45,11 +47,18 @@
+@@ -47,11 +49,19 @@
  import net.minecraft.world.biome.WorldChunkManager;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -24,11 +24,12 @@
 +import static net.minecraftforge.common.ChestGenHooks.*;
 +import net.minecraftforge.common.DimensionManager;
 +import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
 +import net.minecraftforge.event.world.WorldEvent;
  
  public class WorldServer extends World
  {
-@@ -85,6 +94,10 @@
+@@ -88,6 +98,10 @@
      /** An IntHashMap of entity IDs (integers) to their Entity objects. */
      private IntHashMap entityIdMap;
  
@@ -36,18 +37,18 @@
 +    protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
 +    public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
 +
-     public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler)
+     public WorldServer(MinecraftServer par1MinecraftServer, ISaveHandler par2ISaveHandler, String par3Str, int par4, WorldSettings par5WorldSettings, Profiler par6Profiler, ILogAgent par7ILogAgent)
      {
-         super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler);
-@@ -108,6 +121,7 @@
-         }
+         super(par2ISaveHandler, par3Str, par5WorldSettings, WorldProvider.getProviderForDimension(par4), par6Profiler, par7ILogAgent);
+@@ -122,6 +136,7 @@
  
-         this.field_85177_Q = new Teleporter(this);
+         scoreboardsavedata.func_96499_a(this.field_96442_D);
+         ((ServerScoreboard)this.field_96442_D).func_96547_a(scoreboardsavedata);
 +        DimensionManager.setWorld(par4, this);
      }
  
      /**
-@@ -171,6 +185,10 @@
+@@ -184,6 +199,10 @@
          this.villageSiegeObj.tick();
          this.theProfiler.endStartSection("portalForcer");
          this.field_85177_Q.func_85189_a(this.getTotalWorldTime());
@@ -58,7 +59,15 @@
          this.theProfiler.endSection();
          this.sendAndApplyBlockEvents();
      }
-@@ -224,10 +242,7 @@
+@@ -194,6 +213,7 @@
+     public SpawnListEntry spawnRandomCreature(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
+     {
+         List list = this.getChunkProvider().getPossibleCreatures(par1EnumCreatureType, par2, par3, par4);
++        list = ForgeEventFactory.getPotentialSpawns(this, par1EnumCreatureType, par2, par3, par4, list);
+         return list != null && !list.isEmpty() ? (SpawnListEntry)WeightedRandom.getRandomItem(this.rand, list) : null;
+     }
+ 
+@@ -237,10 +257,7 @@
  
      private void resetRainAndThunder()
      {
@@ -70,10 +79,10 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -298,6 +313,14 @@
-         int var1 = 0;
-         int var2 = 0;
-         Iterator var3 = this.activeChunkSet.iterator();
+@@ -311,6 +328,14 @@
+         int i = 0;
+         int j = 0;
+         Iterator iterator = this.activeChunkSet.iterator();
 +
 +        doneChunks.retainAll(activeChunkSet);
 +        if (doneChunks.size() == activeChunkSet.size())
@@ -83,49 +92,49 @@
 +
 +        final long startTime = System.nanoTime();
  
-         while (var3.hasNext())
+         while (iterator.hasNext())
          {
-@@ -308,14 +331,18 @@
-             Chunk var7 = this.getChunkFromChunkCoords(var4.chunkXPos, var4.chunkZPos);
-             this.moodSoundAndLightCheck(var5, var6, var7);
+@@ -321,14 +346,18 @@
+             Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+             this.moodSoundAndLightCheck(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
--            var7.updateSkylight();
+-            chunk.updateSkylight();
 +            //Limits and evenly distributes the lighting update time
-+            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(var4)) 
++            if (System.nanoTime() - startTime <= 4000000 && doneChunks.add(chunkcoordintpair)) 
 +            { 
-+                var7.updateSkylight();
++                chunk.updateSkylight();
 +            }
              this.theProfiler.endStartSection("thunder");
-             int var8;
-             int var9;
-             int var10;
-             int var11;
+             int i1;
+             int j1;
+             int k1;
+             int l1;
  
 -            if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
-+            if (provider.canDoLightning(var7) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
++            if (provider.canDoLightning(chunk) && this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering())
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
-                 var8 = this.updateLCG >> 2;
-@@ -332,7 +359,7 @@
+                 i1 = this.updateLCG >> 2;
+@@ -345,7 +374,7 @@
              this.theProfiler.endStartSection("iceandsnow");
-             int var13;
+             int i2;
  
 -            if (this.rand.nextInt(16) == 0)
-+            if (provider.canDoRainSnowIce(var7) && this.rand.nextInt(16) == 0)
++            if (provider.canDoRainSnowIce(chunk) && this.rand.nextInt(16) == 0)
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
-                 var8 = this.updateLCG >> 2;
-@@ -411,7 +438,8 @@
+                 i1 = this.updateLCG >> 2;
+@@ -430,6 +459,9 @@
      public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
-         NextTickListEntry var7 = new NextTickListEntry(par1, par2, par3, par4);
--        byte var8 = 8;
-+        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var7.xCoord >> 4, var7.zCoord >> 4));
-+        byte var8 = isForced ? (byte)0 : 8;
+         NextTickListEntry nextticklistentry = new NextTickListEntry(par1, par2, par3, par4);
++        //Keeping here as a note for future when it may be restored.
++        //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++        //byte b0 = isForced ? 0 : 8;
+         byte b0 = 0;
  
          if (this.scheduledUpdatesAreImmediate && par4 > 0)
-         {
-@@ -473,7 +501,7 @@
+@@ -493,7 +525,7 @@
       */
      public void updateEntities()
      {
@@ -134,27 +143,27 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -525,7 +553,8 @@
+@@ -559,6 +591,9 @@
+             {
+                 nextticklistentry = (NextTickListEntry)iterator.next();
+                 iterator.remove();
++                //Keeping here as a note for future when it may be restored.
++                //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
++                //byte b0 = isForced ? 0 : 8;
+                 byte b0 = 0;
  
-                 this.pendingTickListEntries.remove(var4);
-                 this.field_73064_N.remove(var4);
--                byte var5 = 8;
-+                boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(var4.xCoord >> 4, var4.zCoord >> 4));
-+                byte var5 = isForced ? (byte)0 : 8;
- 
-                 if (this.checkChunksExist(var4.xCoord - var5, var4.yCoord - var5, var4.zCoord - var5, var4.xCoord + var5, var4.yCoord + var5, var4.zCoord + var5))
-                 {
-@@ -644,16 +673,28 @@
+                 if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
+@@ -702,16 +737,28 @@
      {
-         ArrayList var7 = new ArrayList();
+         ArrayList arraylist = new ArrayList();
  
--        for (int var8 = 0; var8 < this.loadedTileEntityList.size(); ++var8)
+-        for (int k1 = 0; k1 < this.loadedTileEntityList.size(); ++k1)
 -        {
--            TileEntity var9 = (TileEntity)this.loadedTileEntityList.get(var8);
+-            TileEntity tileentity = (TileEntity)this.loadedTileEntityList.get(k1);
 -
--            if (var9.xCoord >= par1 && var9.yCoord >= par2 && var9.zCoord >= par3 && var9.xCoord < par4 && var9.yCoord < par5 && var9.zCoord < par6)
+-            if (tileentity.xCoord >= par1 && tileentity.yCoord >= par2 && tileentity.zCoord >= par3 && tileentity.xCoord < par4 && tileentity.yCoord < par5 && tileentity.zCoord < par6)
 -            {
--                var7.add(var9);
+-                arraylist.add(tileentity);
 -            }
 -        }
 -
@@ -173,17 +182,17 @@
 +                            if (entity.xCoord >= par1 && entity.yCoord >= par2 && entity.zCoord >= par3 &&
 +                                entity.xCoord <= par4 && entity.yCoord <= par5 && entity.zCoord <= par6)
 +                            {
-+                                var7.add(entity);
++                                arraylist.add(entity);
 +                            }
 +                        }
 +                    }
 +                }
 +            }
 +        }
-         return var7;
+         return arraylist;
      }
  
-@@ -661,6 +702,11 @@
+@@ -719,6 +766,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -193,27 +202,18 @@
 +
 +    public boolean canMineBlockBody(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
      {
-         int var5 = MathHelper.abs_int(par2 - this.worldInfo.getSpawnX());
-         int var6 = MathHelper.abs_int(par4 - this.worldInfo.getSpawnZ());
-@@ -670,7 +716,7 @@
-             var6 = var5;
-         }
- 
--        return var6 > 16 || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
-+        return var6 > mcServer.getSpawnProtectionSize() || this.mcServer.getConfigurationManager().areCommandsAllowed(par1EntityPlayer.username) || this.mcServer.isSinglePlayer();
+         return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
- 
-     protected void initialize(WorldSettings par1WorldSettings)
-@@ -753,7 +799,7 @@
+@@ -803,7 +855,7 @@
       */
      protected void createBonusChest()
      {
--        WorldGeneratorBonusChest var1 = new WorldGeneratorBonusChest(bonusChestContent, 10);
-+        WorldGeneratorBonusChest var1 = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST, rand), ChestGenHooks.getCount(BONUS_CHEST, rand));
+-        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(bonusChestContent, 10);
++        WorldGeneratorBonusChest worldgeneratorbonuschest = new WorldGeneratorBonusChest(ChestGenHooks.getItems(BONUS_CHEST, rand), ChestGenHooks.getCount(BONUS_CHEST, rand));
  
-         for (int var2 = 0; var2 < 10; ++var2)
+         for (int i = 0; i < 10; ++i)
          {
-@@ -796,6 +842,7 @@
+@@ -846,6 +898,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -221,15 +221,15 @@
          }
      }
  
-@@ -807,6 +854,7 @@
+@@ -857,6 +910,7 @@
          this.checkSessionLock();
-         this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getTagsFromLastWrite());
+         this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
 +        this.perWorldStorage.saveAllData();
      }
  
      /**
-@@ -1029,4 +1077,9 @@
+@@ -1070,4 +1124,9 @@
      {
          return this.field_85177_Q;
      }

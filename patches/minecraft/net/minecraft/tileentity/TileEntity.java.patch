@@ -1,19 +1,20 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -11,7 +11,10 @@
- import net.minecraft.block.TileEntityRecordPlayer;
+@@ -10,8 +10,11 @@
+ import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.nbt.NBTTagCompound;
 +import net.minecraft.network.INetworkManager;
  import net.minecraft.network.packet.Packet;
 +import net.minecraft.network.packet.Packet132TileEntityData;
+ import net.minecraft.server.MinecraftServer;
 +import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;
  
  public class TileEntity
-@@ -296,4 +299,93 @@
-         addMapping(TileEntityBeacon.class, "Beacon");
-         addMapping(TileEntitySkull.class, "Skull");
+@@ -308,4 +311,93 @@
+         addMapping(TileEntityHopper.class, "Hopper");
+         addMapping(TileEntityComparator.class, "Comparator");
      }
 +
 +    // -- BEGIN FORGE PATCHES --
@@ -88,11 +89,11 @@
 +        Block type = getBlockType();
 +        if (type == Block.enchantmentTable)
 +        {
-+            bb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
++            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
 +        }
 +        else if (type == Block.chest)
 +        {
-+            bb = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 1, zCoord + 2);
++            bb = AxisAlignedBB.getAABBPool().getAABB(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
 +        }
 +        else if (type != null && type != Block.beacon)
 +        {

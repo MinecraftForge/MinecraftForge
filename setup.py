@@ -1,5 +1,6 @@
 import os, os.path, sys, zipfile
-import shutil, glob, fnmatch
+import shutil, glob, fnmatch, subprocess
+from pprint import pformat
 from optparse import OptionParser
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,20 +12,25 @@ def main():
     
     parser = OptionParser()
     parser.add_option('-m', '--mcp-dir', action='store', dest='mcp_dir', help='Path to download/extract MCP to', default=None)
-    parser.add_option('-n', '--no-extract', action='store_true', dest='no_extract', help='Do not attempt to extract FML zip files', default=False)
+    parser.add_option('-b', '--build',   action='store', dest='build',   help='Build number',                    default=None)
     options, _ = parser.parse_args()
+    
+    build_num = 0
+    if not options.build is None:
+        try:
+            build_num = int(options.build)
+        except:
+            pass
     
     fml_dir = os.path.join(forge_dir, 'fml')
     mcp_dir = os.path.join(forge_dir, 'mcp')
 
     if not options.mcp_dir is None:
         mcp_dir = os.path.abspath(options.mcp_dir)
-    elif os.path.isfile(os.path.join('..', 'runtime', 'commands.py')):
-        mcp_dir = os.path.abspath('..')
         
     src_dir = os.path.join(mcp_dir, 'src')
     
-    setup_fml(mcp_dir, fml_dir, options.no_extract)
+    setup_fml(mcp_dir, fml_dir, build_num)
     
     base_dir = os.path.join(mcp_dir, 'src_base')
     work_dir = os.path.join(mcp_dir, 'src_work')
@@ -39,35 +45,59 @@ def main():
     shutil.copytree(src_dir, work_dir)
     
     print 'Applying forge patches'
-    apply_forge_patches(os.path.join(forge_dir, 'fml'), mcp_dir, forge_dir, work_dir, False)
+    apply_forge_patches(fml_dir, mcp_dir, forge_dir, work_dir, False)
     
     setup_eclipse(forge_dir)
     
     print '=================================== Setup Finished ================================='
     
-def setup_fml(mcp_dir, fml_dir, dont_extract=False):        
+def setup_fml(mcp_dir, fml_dir, build_num=0):
     print 'Setting up Forge ModLoader'
-    if not dont_extract:
-        fml = glob.glob(os.path.join(forge_dir, 'fml-src-*.zip'))
-        if not len(fml) == 1:
-            if len(fml) == 0:
-                print 'Missing FML source zip, should be named fml-src-*.zip inside your forge folder, obtain it from the repo'
-            else:
-                print 'To many FML source zips found, we should only have one. Check the Forge Git for the latest FML version supported'
-            sys.exit(1)
-        
-        if os.path.isdir(fml_dir):
-            shutil.rmtree(fml_dir)
-            
-        print 'Extracting: %s' % os.path.basename(fml[0]) 
-        
-        zf = zipfile.ZipFile(fml[0])
-        zf.extractall(forge_dir)
-        zf.close()
+    os.environ['WORKSPACE'] = os.path.join(mcp_dir, '..')
+    os.environ['BUILD_NUMBER'] = str(build_num)
+
+    BUILD = ['ant', 'jenkinsbuild']
+    if sys.platform.startswith('win'):
+        BUILD = ['cmd', '/C'] + BUILD
+    
+    if not run_command(BUILD, cwd=fml_dir):
+        print('Could not setup FML')
+        sys.exit(1)
     
     sys.path.append(fml_dir)
-    from install import fml_main
-    fml_main(fml_dir, mcp_dir, True)
+    sys.path.append(os.path.join(fml_dir, 'install'))
+    from fml import finish_setup_fml
+    finish_setup_fml(fml_dir, mcp_dir)
+    
+    print('Copy resources:')
+    copy_files(os.path.join(fml_dir, 'client'), os.path.join(mcp_dir, 'src', 'minecraft'))
+    copy_files(os.path.join(fml_dir, 'common'), os.path.join(mcp_dir, 'src', 'minecraft'))
+
+    name = 'fmlversion.properties'
+    print('    ' + name)
+    shutil.copy(os.path.join(fml_dir, name), os.path.join(mcp_dir, 'src', 'minecraft', name))
+    
+def copy_files(src_dir, dest_dir):
+    for file in glob.glob(os.path.join(src_dir, '*')):
+        if not os.path.isfile(file) or file.lower().endswith('.java'):
+            continue
+        print('    ' + file)
+        shutil.copy(file, os.path.join(dest_dir, os.path.basename(file)))
+            
+def run_command(command, cwd='.', verbose=True):
+    print('Running command: ')
+    print(pformat(command))
+        
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, cwd=cwd)
+    while process.poll() is None:
+        line = process.stdout.readline()
+        if line:
+            line = line.rstrip()
+            print(line)
+    if process.returncode:
+        self.logger.error("failed: %d", process.returncode)
+        return False
+    return True    
 
 def setup_eclipse(forge_dir):
     eclipse_dir = os.path.join(forge_dir, 'eclipse')

@@ -11,18 +11,18 @@
  public class Chunk
  {
      /**
-@@ -139,7 +143,9 @@
+@@ -144,7 +148,9 @@
              {
-                 for (int var8 = 0; var8 < var5; ++var8)
+                 for (int j1 = 0; j1 < k; ++j1)
                  {
--                    byte var9 = par2ArrayOfByte[var6 << 11 | var7 << 7 | var8];
+-                    byte b0 = par2ArrayOfByte[l << 11 | i1 << 7 | j1];
 +                    /* FORGE: The following change, a cast from unsigned byte to int,
 +                     * fixes a vanilla bug when generating new chunks that contain a block ID > 127 */
-+                    int var9 = par2ArrayOfByte[var6 << 11 | var7 << 7 | var8] & 0xFF;
++                    int b0 = par2ArrayOfByte[l << 11 | i1 << 7 | j1] & 0xFF;
  
-                     if (var9 != 0)
+                     if (b0 != 0)
                      {
-@@ -158,6 +164,90 @@
+@@ -163,6 +169,90 @@
      }
  
      /**
@@ -38,13 +38,13 @@
 +    public Chunk(World world, byte[] ids, byte[] metadata, int chunkX, int chunkZ)
 +    {
 +        this(world, chunkX, chunkZ);
-+        int var5 = ids.length / 256;
++        int k = ids.length / 256;
 +
 +        for (int x = 0; x < 16; ++x)
 +        {
 +            for (int z = 0; z < 16; ++z)
 +            {
-+                for (int y = 0; y < var5; ++y)
++                for (int y = 0; y < k; ++y)
 +                {
 +                    int idx = x << 11 | z << 7 | y;
 +                   int id = ids[idx] & 0xFF;
@@ -52,15 +52,15 @@
 +
 +                    if (id != 0)
 +                    {
-+                        int var10 = y >> 4;
++                        int l = y >> 4;
 +
-+                        if (this.storageArrays[var10] == null)
++                        if (this.storageArrays[l] == null)
 +                        {
-+                            this.storageArrays[var10] = new ExtendedBlockStorage(var10 << 4, !world.provider.hasNoSky);
++                            this.storageArrays[l] = new ExtendedBlockStorage(l << 4, !world.provider.hasNoSky);
 +                        }
 +
-+                        this.storageArrays[var10].setExtBlockID(x, y & 15, z, id);
-+                        this.storageArrays[var10].setExtBlockMetadata(x, y & 15, z, meta);
++                        this.storageArrays[l].setExtBlockID(x, y & 15, z, id);
++                        this.storageArrays[l].setExtBlockMetadata(x, y & 15, z, meta);
 +                    }
 +                }
 +            }
@@ -113,16 +113,16 @@
       * Checks whether the chunk is at the X/Z location specified
       */
      public boolean isAtLocation(int par1, int par2)
-@@ -221,7 +311,7 @@
+@@ -226,7 +316,7 @@
                      {
-                         int var5 = this.getBlockID(var2, var4 - 1, var3);
+                         int i1 = this.getBlockID(j, l - 1, k);
  
--                        if (Block.lightOpacity[var5] == 0)
-+                        if (getBlockLightOpacity(var2, var4 - 1, var3) == 0)
+-                        if (Block.lightOpacity[i1] == 0)
++                        if (getBlockLightOpacity(j, l - 1, k) == 0)
                          {
-                             --var4;
+                             --l;
                              continue;
-@@ -527,7 +617,10 @@
+@@ -532,7 +622,10 @@
  
      public int getBlockLightOpacity(int par1, int par2, int par3)
      {
@@ -134,7 +134,7 @@
      }
  
      /**
-@@ -535,7 +628,7 @@
+@@ -540,7 +633,7 @@
       */
      public int getBlockID(int par1, int par2, int par3)
      {
@@ -143,7 +143,7 @@
          {
              return 0;
          }
-@@ -551,7 +644,7 @@
+@@ -556,7 +649,7 @@
       */
      public int getBlockMetadata(int par1, int par2, int par3)
      {
@@ -152,7 +152,7 @@
          {
              return 0;
          }
-@@ -592,6 +685,11 @@
+@@ -589,6 +682,11 @@
          }
          else
          {
@@ -161,96 +161,96 @@
 +                return false;
 +            }
 +
-             ExtendedBlockStorage var10 = this.storageArrays[par2 >> 4];
-             boolean var11 = false;
+             ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
+             boolean flag = false;
  
-@@ -622,9 +720,13 @@
+@@ -619,9 +717,13 @@
                  {
-                     Block.blocksList[var8].breakBlock(this.worldObj, var12, par2, var13, var8, var9);
+                     Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
--                else if (Block.blocksList[var8] instanceof BlockContainer && var8 != par4)
+-                else if (Block.blocksList[l1] instanceof ITileEntityProvider && l1 != par4)
 -                {
--                    this.worldObj.removeBlockTileEntity(var12, par2, var13);
-+                else if (Block.blocksList[var8] != null && Block.blocksList[var8].hasTileEntity(var9))
+-                    this.worldObj.removeBlockTileEntity(j2, par2, k2);
++                else if (Block.blocksList[l1] != null && Block.blocksList[l1].hasTileEntity(i2))
 +                {
-+                    TileEntity te = worldObj.getBlockTileEntity(var12, par2, var13);
-+                    if (te != null && te.shouldRefresh(var8, par4, var9, par5, worldObj, var12, par2, var13))
++                    TileEntity te = worldObj.getBlockTileEntity(j2, par2, k2);
++                    if (te != null && te.shouldRefresh(l1, par4, i2, par5, worldObj, j2, par2, k2))
 +                    {
-+                        this.worldObj.removeBlockTileEntity(var12, par2, var13);
++                        this.worldObj.removeBlockTileEntity(j2, par2, k2);
 +                    }
                  }
              }
  
-@@ -642,7 +744,7 @@
+@@ -639,7 +741,7 @@
                  }
                  else
                  {
 -                    if (Block.lightOpacity[par4 & 4095] > 0)
 +                    if (getBlockLightOpacity(par1, par2, par3) > 0)
                      {
-                         if (par2 >= var7)
+                         if (par2 >= k1)
                          {
-@@ -666,29 +768,21 @@
-                         Block.blocksList[par4].onBlockAdded(this.worldObj, var12, par2, var13);
+@@ -663,29 +765,21 @@
+                         Block.blocksList[par4].onBlockAdded(this.worldObj, j2, par2, k2);
                      }
  
--                    if (Block.blocksList[par4] instanceof BlockContainer)
+-                    if (Block.blocksList[par4] instanceof ITileEntityProvider)
 +                    if (Block.blocksList[par4] != null && Block.blocksList[par4].hasTileEntity(par5))
                      {
-                         var14 = this.getChunkBlockTileEntity(par1, par2, par3);
+                         tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-                         if (var14 == null)
+                         if (tileentity == null)
                          {
--                            var14 = ((BlockContainer)Block.blocksList[par4]).createNewTileEntity(this.worldObj);
-+                            var14 = Block.blocksList[par4].createTileEntity(this.worldObj, par5);
-                             this.worldObj.setBlockTileEntity(var12, par2, var13, var14);
+-                            tileentity = ((ITileEntityProvider)Block.blocksList[par4]).createNewTileEntity(this.worldObj);
++                            tileentity = Block.blocksList[par4].createTileEntity(this.worldObj, par5);
+                             this.worldObj.setBlockTileEntity(j2, par2, k2, tileentity);
                          }
  
-                         if (var14 != null)
+                         if (tileentity != null)
                          {
-                             var14.updateContainingBlockInfo();
-+                            var14.blockMetadata = par5;
+                             tileentity.updateContainingBlockInfo();
++                            tileentity.blockMetadata = par5;
                          }
 -                    }
 -                }
--                else if (var8 > 0 && Block.blocksList[var8] instanceof BlockContainer)
+-                else if (l1 > 0 && Block.blocksList[l1] instanceof ITileEntityProvider)
 -                {
--                    var14 = this.getChunkBlockTileEntity(par1, par2, par3);
+-                    tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
 -
--                    if (var14 != null)
+-                    if (tileentity != null)
 -                    {
--                        var14.updateContainingBlockInfo();
+-                        tileentity.updateContainingBlockInfo();
                      }
                  }
  
-@@ -703,7 +797,7 @@
+@@ -700,7 +794,7 @@
       */
      public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
      {
--        ExtendedBlockStorage var5 = this.storageArrays[par2 >> 4];
-+        ExtendedBlockStorage var5 = (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0 ? null : storageArrays[par2 >> 4]);
+-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
++        ExtendedBlockStorage extendedblockstorage = (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0 ? null : storageArrays[par2 >> 4]);
  
-         if (var5 == null)
+         if (extendedblockstorage == null)
          {
-@@ -723,7 +817,7 @@
-                 var5.setExtBlockMetadata(par1, par2 & 15, par3, par4);
-                 int var7 = var5.getExtBlockID(par1, par2 & 15, par3);
+@@ -720,7 +814,7 @@
+                 extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
+                 int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
  
--                if (var7 > 0 && Block.blocksList[var7] instanceof BlockContainer)
-+                if (var7 > 0 && Block.blocksList[var7] != null && Block.blocksList[var7].hasTileEntity(par4))
+-                if (j1 > 0 && Block.blocksList[j1] instanceof ITileEntityProvider)
++                if (j1 > 0 && Block.blocksList[j1] != null && Block.blocksList[j1].hasTileEntity(par4))
                  {
-                     TileEntity var8 = this.getChunkBlockTileEntity(par1, par2, par3);
+                     TileEntity tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -744,7 +838,7 @@
+@@ -741,7 +835,7 @@
       */
      public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
      {
--        ExtendedBlockStorage var5 = this.storageArrays[par3 >> 4];
-+        ExtendedBlockStorage var5 = (par3 >> 4 >= storageArrays.length || par3 >> 4 < 0 ? null : storageArrays[par3 >> 4]);
-         return var5 == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : var5.getExtSkylightValue(par2, par3 & 15, par4)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? var5.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
+-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[par3 >> 4];
++        ExtendedBlockStorage extendedblockstorage = (par3 >> 4 >= storageArrays.length || par3 >> 4 < 0 ? null : storageArrays[par3 >> 4]);
+         return extendedblockstorage == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : extendedblockstorage.getExtSkylightValue(par2, par3 & 15, par4)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? extendedblockstorage.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
      }
  
-@@ -754,6 +848,11 @@
+@@ -751,6 +845,11 @@
       */
      public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
      {
@@ -259,73 +259,73 @@
 +            return;
 +        }
 +
-         ExtendedBlockStorage var6 = this.storageArrays[par3 >> 4];
+         ExtendedBlockStorage extendedblockstorage = this.storageArrays[par3 >> 4];
  
-         if (var6 == null)
-@@ -782,7 +881,7 @@
+         if (extendedblockstorage == null)
+@@ -779,7 +878,7 @@
       */
      public int getBlockLightValue(int par1, int par2, int par3, int par4)
      {
--        ExtendedBlockStorage var5 = this.storageArrays[par2 >> 4];
-+        ExtendedBlockStorage var5 = (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0 ? null : storageArrays[par2 >> 4]);
+-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
++        ExtendedBlockStorage extendedblockstorage = (par2 >> 4 >= storageArrays.length || par2 >> 4 < 0 ? null : storageArrays[par2 >> 4]);
  
-         if (var5 == null)
+         if (extendedblockstorage == null)
          {
-@@ -835,7 +934,7 @@
+@@ -832,7 +931,7 @@
          {
-             var4 = this.entityLists.length - 1;
+             k = this.entityLists.length - 1;
          }
 -
 +        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(par1Entity, this.xPosition, this.zPosition, par1Entity.chunkCoordX, par1Entity.chunkCoordZ));
          par1Entity.addedToChunk = true;
          par1Entity.chunkCoordX = this.xPosition;
-         par1Entity.chunkCoordY = var4;
-@@ -885,33 +984,33 @@
-         ChunkPosition var4 = new ChunkPosition(par1, par2, par3);
-         TileEntity var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
+         par1Entity.chunkCoordY = k;
+@@ -882,33 +981,32 @@
+         ChunkPosition chunkposition = new ChunkPosition(par1, par2, par3);
+         TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
  
-+        if (var5 != null && var5.isInvalid())
++        if (tileentity != null && tileentity.isInvalid())
 +        {
-+            chunkTileEntityMap.remove(var4);
-+            var5 = null;
++            chunkTileEntityMap.remove(chunkposition);
++            tileentity = null;
 +        }
 +
-         if (var5 == null)
+         if (tileentity == null)
          {
-             int var6 = this.getBlockID(par1, par2, par3);
- 
--            if (var6 <= 0 || !Block.blocksList[var6].hasTileEntity())
+             int l = this.getBlockID(par1, par2, par3);
+-
+-            if (l <= 0 || !Block.blocksList[l].hasTileEntity())
 +            int meta = this.getBlockMetadata(par1, par2, par3);
 +
-+            if (var6 <= 0 || !Block.blocksList[var6].hasTileEntity(meta))
++            if (l <= 0 || !Block.blocksList[l].hasTileEntity(meta))
              {
                  return null;
              }
  
-             if (var5 == null)
+             if (tileentity == null)
              {
--                var5 = ((BlockContainer)Block.blocksList[var6]).createNewTileEntity(this.worldObj);
-+                var5 = Block.blocksList[var6].createTileEntity(this.worldObj, meta);
-                 this.worldObj.setBlockTileEntity(this.xPosition * 16 + par1, par2, this.zPosition * 16 + par3, var5);
+-                tileentity = ((ITileEntityProvider)Block.blocksList[l]).createNewTileEntity(this.worldObj);
++                tileentity = Block.blocksList[l].createTileEntity(this.worldObj, meta);
+                 this.worldObj.setBlockTileEntity(this.xPosition * 16 + par1, par2, this.zPosition * 16 + par3, tileentity);
              }
  
-             var5 = (TileEntity)this.chunkTileEntityMap.get(var4);
+             tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
          }
  
--        if (var5 != null && var5.isInvalid())
+-        if (tileentity != null && tileentity.isInvalid())
 -        {
--            this.chunkTileEntityMap.remove(var4);
+-            this.chunkTileEntityMap.remove(chunkposition);
 -            return null;
 -        }
 -        else
 -        {
--            return var5;
+-            return tileentity;
 -        }
-+        return var5;
++        return tileentity;
      }
  
      /**
-@@ -926,7 +1025,7 @@
+@@ -923,7 +1021,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -334,79 +334,55 @@
          }
      }
  
-@@ -941,8 +1040,14 @@
+@@ -938,7 +1036,8 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
--        if (this.getBlockID(par1, par2, par3) != 0 && Block.blocksList[this.getBlockID(par1, par2, par3)] instanceof BlockContainer)
--        {
+-        if (this.getBlockID(par1, par2, par3) != 0 && Block.blocksList[this.getBlockID(par1, par2, par3)] instanceof ITileEntityProvider)
 +        Block block = Block.blocksList[getBlockID(par1, par2, par3)];
 +        if (block != null && block.hasTileEntity(getBlockMetadata(par1, par2, par3)))
-+        {
-+            TileEntity old = (TileEntity)chunkTileEntityMap.get(var5);
-+            if (old != null)
-+            {
-+                old.invalidate();
-+            }
-             par4TileEntity.validate();
-             this.chunkTileEntityMap.put(var5, par4TileEntity);
-         }
-@@ -978,6 +1083,7 @@
          {
-             this.worldObj.addLoadedEntities(this.entityLists[var1]);
+             if (this.chunkTileEntityMap.containsKey(chunkposition))
+             {
+@@ -980,6 +1079,7 @@
+         {
+             this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
 +        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(this));
      }
  
      /**
-@@ -998,6 +1104,7 @@
+@@ -1000,6 +1100,7 @@
          {
-             this.worldObj.unloadEntities(this.entityLists[var3]);
+             this.worldObj.unloadEntities(this.entityLists[i]);
          }
 +        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
      }
  
      /**
-@@ -1014,17 +1121,25 @@
+@@ -1016,8 +1117,8 @@
       */
-     public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List)
+     public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
--        int var4 = MathHelper.floor_double((par2AxisAlignedBB.minY - 2.0D) / 16.0D);
--        int var5 = MathHelper.floor_double((par2AxisAlignedBB.maxY + 2.0D) / 16.0D);
-+        int var4 = MathHelper.floor_double((par2AxisAlignedBB.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
-+        int var5 = MathHelper.floor_double((par2AxisAlignedBB.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.floor_double((par2AxisAlignedBB.minY - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((par2AxisAlignedBB.maxY + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((par2AxisAlignedBB.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((par2AxisAlignedBB.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
  
-         if (var4 < 0)
+         if (i < 0)
          {
-             var4 = 0;
-         }
-+        else if (var4 >= this.entityLists.length) //BugFix: Collision above the world
-+        {
-+            var4 = this.entityLists.length - 1;
-+        }
- 
-         if (var5 >= this.entityLists.length)
-         {
-             var5 = this.entityLists.length - 1;
-+        }
-+        else if (var5 < 0) //BugFix: Collision below the world
-+        {
-+            var5 = 0;
-         }
- 
-         for (int var6 = var4; var6 <= var5; ++var6)
-@@ -1062,8 +1177,8 @@
+@@ -1066,8 +1167,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
--        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minY - 2.0D) / 16.0D);
--        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxY + 2.0D) / 16.0D);
-+        int var5 = MathHelper.floor_double((par2AxisAlignedBB.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
-+        int var6 = MathHelper.floor_double((par2AxisAlignedBB.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+-        int i = MathHelper.floor_double((par2AxisAlignedBB.minY - 2.0D) / 16.0D);
+-        int j = MathHelper.floor_double((par2AxisAlignedBB.maxY + 2.0D) / 16.0D);
++        int i = MathHelper.floor_double((par2AxisAlignedBB.minY - World.MAX_ENTITY_RADIUS) / 16.0D);
++        int j = MathHelper.floor_double((par2AxisAlignedBB.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
  
-         if (var5 < 0)
+         if (i < 0)
          {
-@@ -1246,6 +1361,15 @@
+@@ -1250,6 +1351,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -419,24 +395,22 @@
 +            tileEntity.getBlockType();
 +        }
 +
-         int var5 = 0;
-         boolean var6 = !this.worldObj.provider.hasNoSky;
-         int var7;
-@@ -1346,12 +1470,26 @@
+         int k = 0;
+         boolean flag1 = !this.worldObj.provider.hasNoSky;
+         int l;
+@@ -1350,12 +1460,26 @@
          }
  
          this.generateHeightMap();
--        Iterator var10 = this.chunkTileEntityMap.values().iterator();
+-        Iterator iterator = this.chunkTileEntityMap.values().iterator();
 -
--        while (var10.hasNext())
--        {
--            TileEntity var11 = (TileEntity)var10.next();
--            var11.updateContainingBlockInfo();
 +
 +        List<TileEntity> invalidList = new ArrayList<TileEntity>();
 +        iterator = chunkTileEntityMap.values().iterator();
-+        while (iterator.hasNext())
-+        {
+         while (iterator.hasNext())
+         {
+-            TileEntity tileentity = (TileEntity)iterator.next();
+-            tileentity.updateContainingBlockInfo();
 +            TileEntity tileEntity = (TileEntity)iterator.next();
 +            int x = tileEntity.xCoord & 15;
 +            int y = tileEntity.yCoord;
@@ -455,7 +429,7 @@
          }
      }
  
-@@ -1460,4 +1598,18 @@
+@@ -1464,4 +1588,18 @@
              }
          }
      }

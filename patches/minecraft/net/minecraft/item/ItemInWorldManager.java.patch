@@ -34,20 +34,20 @@
              if (this.isCreative())
              {
                  if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
-@@ -154,15 +172,32 @@
+@@ -154,15 +172,33 @@
              }
              else
              {
--                this.theWorld.extinguishFire(this.thisPlayerMP, par1, par2, par3, par4);
+-                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
                  this.initialDamage = this.curblockDamage;
-                 float var5 = 1.0F;
-                 int var6 = this.theWorld.getBlockId(par1, par2, par3);
--
--                if (var6 > 0)
+                 float f = 1.0F;
+                 int i1 = this.theWorld.getBlockId(par1, par2, par3);
+ 
+-                if (i1 > 0)
 -                {
--                    Block.blocksList[var6].onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
--                    var5 = Block.blocksList[var6].getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
-+                Block block = Block.blocksList[var6];
+-                    Block.blocksList[i1].onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
+-                    f = Block.blocksList[i1].getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
++                Block block = Block.blocksList[i1];
 +
 +                if (block != null)
 +                {
@@ -60,29 +60,29 @@
 +                    {
 +                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
 +                    }
-+                    var5 = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
++                    f = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
 +                }
 +
 +                if (event.useItem == Event.Result.DENY)
 +                {
-+                    if (var5 >= 1.0f)
++                    if (f >= 1.0f)
 +                    {
 +                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
 +                    }
 +                    return;
                  }
  
-                 if (var6 > 0 && var5 >= 1.0F)
-@@ -236,7 +271,7 @@
-             var4.onBlockHarvested(this.theWorld, par1, par2, par3, var5, this.thisPlayerMP);
+                 if (i1 > 0 && f >= 1.0F)
+@@ -236,7 +272,7 @@
+             block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
--        boolean var6 = this.theWorld.setBlockWithNotify(par1, par2, par3, 0);
-+        boolean var6 = (var4 != null && var4.removeBlockByPlayer(theWorld, thisPlayerMP, par1, par2, par3));
+-        boolean flag = this.theWorld.func_94571_i(par1, par2, par3);
++        boolean flag = (block != null && block.removeBlockByPlayer(theWorld, thisPlayerMP, par1, par2, par3));
  
-         if (var4 != null && var6)
+         if (block != null && flag)
          {
-@@ -257,19 +292,30 @@
+@@ -257,19 +293,30 @@
          }
          else
          {
@@ -91,57 +91,57 @@
 +            {
 +                return false;
 +            }
-             int var4 = this.theWorld.getBlockId(par1, par2, par3);
-             int var5 = this.theWorld.getBlockMetadata(par1, par2, par3);
-             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, var4 + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
--            boolean var6 = this.removeBlock(par1, par2, par3);
-+            boolean var6 = false;
+             int l = this.theWorld.getBlockId(par1, par2, par3);
+             int i1 = this.theWorld.getBlockMetadata(par1, par2, par3);
+             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, l + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
+-            boolean flag = this.removeBlock(par1, par2, par3);
++            boolean flag = false;
  
              if (this.isCreative())
              {
-+                var6 = this.removeBlock(par1, par2, par3);
++                flag = this.removeBlock(par1, par2, par3);
                  this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
              }
              else
              {
-                 ItemStack var7 = this.thisPlayerMP.getCurrentEquippedItem();
--                boolean var8 = this.thisPlayerMP.canHarvestBlock(Block.blocksList[var4]);
-+                boolean var8 = false;
-+                Block block = Block.blocksList[var4];
+                 ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
+-                boolean flag1 = this.thisPlayerMP.canHarvestBlock(Block.blocksList[l]);
++                boolean flag1 = false;
++                Block block = Block.blocksList[l];
 +                if (block != null)
 +                {
-+                    var8 = block.canHarvestBlock(thisPlayerMP, var5);
++                    flag1 = block.canHarvestBlock(thisPlayerMP, i1);
 +                }
  
-                 if (var7 != null)
+                 if (itemstack != null)
                  {
-@@ -281,6 +327,7 @@
+@@ -281,6 +328,7 @@
                      }
                  }
  
-+                var6 = this.removeBlock(par1, par2, par3);
-                 if (var6 && var8)
++                flag = this.removeBlock(par1, par2, par3);
+                 if (flag && flag1)
                  {
-                     Block.blocksList[var4].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, var5);
-@@ -321,6 +368,7 @@
-             if (var6.stackSize == 0)
+                     Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
+@@ -321,6 +369,7 @@
+             if (itemstack1.stackSize == 0)
              {
                  par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
-+                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thisPlayerMP, var6));
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thisPlayerMP, itemstack1));
              }
  
              if (!par1EntityPlayer.isUsingItem())
-@@ -338,35 +386,56 @@
+@@ -338,35 +387,56 @@
       */
      public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
      {
--        int var11;
+-        int i1;
 -
 -        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
 -        {
--            var11 = par2World.getBlockId(par4, par5, par6);
+-            i1 = par2World.getBlockId(par4, par5, par6);
 -
--            if (var11 > 0 && Block.blocksList[var11].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
+-            if (i1 > 0 && Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
 -            {
 -                return true;
 -            }
@@ -157,12 +157,12 @@
          }
 -        else if (this.isCreative())
 -        {
--            var11 = par3ItemStack.getItemDamage();
--            int var12 = par3ItemStack.stackSize;
--            boolean var13 = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
--            par3ItemStack.setItemDamage(var11);
--            par3ItemStack.stackSize = var12;
--            return var13;
+-            i1 = par3ItemStack.getItemDamage();
+-            int j1 = par3ItemStack.stackSize;
+-            boolean flag = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
+-            par3ItemStack.setItemDamage(i1);
+-            par3ItemStack.stackSize = j1;
+-            return flag;
 -        }
 -        else
 -        {
@@ -176,8 +176,8 @@
 +            return true;
 +        }
 +
-+        int var11 = par2World.getBlockId(par4, par5, par6);
-+        Block block = Block.blocksList[var11];
++        int i1 = par2World.getBlockId(par4, par5, par6);
++        Block block = Block.blocksList[i1];
 +        boolean result = false;
 +
 +        if (block != null && (!par1EntityPlayer.isSneaking() || ( par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))))
@@ -215,7 +215,7 @@
      }
  
      /**
-@@ -376,4 +445,13 @@
+@@ -376,4 +446,13 @@
      {
          this.theWorld = par1WorldServer;
      }

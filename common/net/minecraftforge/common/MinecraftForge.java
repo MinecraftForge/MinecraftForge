@@ -7,9 +7,13 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,8 +37,6 @@ public class MinecraftForge
     public static final EventBus EVENT_BUS = new EventBus();
     public static final EventBus TERRAIN_GEN_BUS = new EventBus();
     public static final EventBus ORE_GEN_BUS = new EventBus();
-    @Deprecated //Vanilla feature now
-    public static boolean SPAWNER_ALLOW_ON_INVERTED = false;
 
     private static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
 
@@ -183,10 +185,14 @@ public class MinecraftForge
        System.out.printf("MinecraftForge v%s Initialized\n", ForgeVersion.getVersion());
        FMLLog.info("MinecraftForge v%s Initialized", ForgeVersion.getVersion());
 
-       Block filler = new Block(0, Material.air);
+       Block filler = new Block(0, Material.air)
+       {
+           @SideOnly(Side.CLIENT) public void func_94332_a(IconRegister register){}
+       };
        Block.blocksList[0] = null;
        Block.opaqueCubeLookup[0] = false;
        Block.lightOpacity[0] = 0;
+       filler.setUnlocalizedName("ForgeFiller");
 
        for (int x = 256; x < 4096; x++)
        {
@@ -202,6 +208,9 @@ public class MinecraftForge
 
        EVENT_BUS.register(INTERNAL_HANDLER);
        OreDictionary.getOreName(0);
+
+       //Force these classes to be defined, Should prevent derp error hiding.
+       new CrashReport("ThisIsFake", new Exception("Not real"));
    }
 
    public static String getBrandingVersion()

@@ -63,7 +63,7 @@ public class ForgeHooks
         {
             return;
         }
-        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata);
+        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata, 3);
     }
 
     public static ItemStack getGrassSeed(World world)
@@ -147,7 +147,7 @@ public class ForgeHooks
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
         }
     }
 
@@ -213,22 +213,6 @@ public class ForgeHooks
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
-    }
-
-    public static String getTexture(String _default, Object obj)
-    {
-        if (obj instanceof Item)
-        {
-            return ((Item)obj).getTextureFile();
-        }
-        else if (obj instanceof Block)
-        {
-            return ((Block)obj).getTextureFile();
-        }
-        else
-        {
-            return _default;
-        }
     }
 
     public static int getTotalArmorValue(EntityPlayer player)

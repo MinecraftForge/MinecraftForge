@@ -7,7 +7,7 @@
 -    @SideOnly(Side.CLIENT)
      public static void write(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
      {
-         DataOutputStream var2 = new DataOutputStream(new FileOutputStream(par1File));
+         DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(par1File));
 @@ -155,7 +154,6 @@
          }
      }

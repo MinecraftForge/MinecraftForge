@@ -1,72 +1,38 @@
 --- ../src_base/minecraft/net/minecraft/entity/item/EntityMinecart.java
 +++ ../src_work/minecraft/net/minecraft/entity/item/EntityMinecart.java
-@@ -2,6 +2,8 @@
- 
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+
-+import java.util.ArrayList;
- import java.util.List;
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockRail;
-@@ -23,6 +25,11 @@
+@@ -21,6 +21,10 @@
+ import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
- 
 +import net.minecraftforge.common.IMinecartCollisionHandler;
-+import net.minecraftforge.common.MinecartRegistry;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.minecart.*;
-+
- public class EntityMinecart extends Entity implements IInventory
++import net.minecraftforge.event.entity.minecart.MinecartCollisionEvent;
++import net.minecraftforge.event.entity.minecart.MinecartUpdateEvent;
+ 
+ public abstract class EntityMinecart extends Entity
  {
-     /** Array of item stacks stored in minecart (for storage minecarts). */
-@@ -54,6 +61,25 @@
+@@ -45,6 +49,20 @@
      @SideOnly(Side.CLIENT)
      protected double velocityZ;
  
 +    /* Forge: Minecart Compatibility Layer Integration. */
-+    public static float defaultMaxSpeedRail = 0.4f;
-+    public static float defaultMaxSpeedGround = 0.4f;
 +    public static float defaultMaxSpeedAirLateral = 0.4f;
 +    public static float defaultMaxSpeedAirVertical = -1f;
-+    public static double defaultDragRidden = 0.996999979019165D;
-+    public static double defaultDragEmpty = 0.9599999785423279D;
 +    public static double defaultDragAir = 0.94999998807907104D;
 +    protected boolean canUseRail = true;
 +    protected boolean canBePushed = true;
 +    private static IMinecartCollisionHandler collisionHandler = null;
 +
 +    /* Instance versions of the above physics properties */
-+    protected float maxSpeedRail;
-+    protected float maxSpeedGround;
-+    protected float maxSpeedAirLateral;
-+    protected float maxSpeedAirVertical;
-+    protected double dragAir;
++    private float currentSpeedRail = getMaxCartSpeedOnRail();
++    protected float maxSpeedAirLateral = defaultMaxSpeedAirLateral;
++    protected float maxSpeedAirVertical = defaultMaxSpeedAirVertical;
++    protected double dragAir = defaultDragAir;
 +
      public EntityMinecart(World par1World)
      {
          super(par1World);
-@@ -65,6 +91,18 @@
-         this.setSize(0.98F, 0.7F);
-         this.yOffset = this.height / 2.0F;
-         this.field_82344_g = par1World != null ? par1World.func_82735_a(this) : null;
-+
-+        maxSpeedRail = defaultMaxSpeedRail;
-+        maxSpeedGround = defaultMaxSpeedGround;
-+        maxSpeedAirLateral = defaultMaxSpeedAirLateral;
-+        maxSpeedAirVertical = defaultMaxSpeedAirVertical;
-+        dragAir = defaultDragAir;
-+    }
-+
-+    public EntityMinecart(World world, int type)
-+    {
-+        this(world);
-+        minecartType = type;
-     }
- 
-     /**
-@@ -90,6 +128,10 @@
+@@ -99,6 +117,10 @@
       */
      public AxisAlignedBB getCollisionBox(Entity par1Entity)
      {
@@ -77,7 +43,7 @@
          return par1Entity.canBePushed() ? par1Entity.boundingBox : null;
      }
  
-@@ -98,6 +140,10 @@
+@@ -107,6 +129,10 @@
       */
      public AxisAlignedBB getBoundingBox()
      {
@@ -88,7 +54,7 @@
          return null;
      }
  
-@@ -106,7 +152,7 @@
+@@ -115,7 +141,7 @@
       */
      public boolean canBePushed()
      {
@@ -96,296 +62,41 @@
 +        return canBePushed;
      }
  
-     public EntityMinecart(World par1World, double par2, double par4, double par6, int par8)
-@@ -161,48 +207,7 @@
-                     }
+     public EntityMinecart(World par1World, double par2, double par4, double par6)
+@@ -347,10 +373,13 @@
+             double d5 = 0.0078125D;
+             int l = this.worldObj.getBlockId(j, i, k);
  
-                     this.setDead();
--                    this.dropItemWithOffset(Item.minecartEmpty.itemID, 1, 0.0F);
--
--                    if (this.minecartType == 1)
--                    {
--                        EntityMinecart var3 = this;
--
--                        for (int var4 = 0; var4 < var3.getSizeInventory(); ++var4)
--                        {
--                            ItemStack var5 = var3.getStackInSlot(var4);
--
--                            if (var5 != null)
--                            {
--                                float var6 = this.rand.nextFloat() * 0.8F + 0.1F;
--                                float var7 = this.rand.nextFloat() * 0.8F + 0.1F;
--                                float var8 = this.rand.nextFloat() * 0.8F + 0.1F;
--
--                                while (var5.stackSize > 0)
--                                {
--                                    int var9 = this.rand.nextInt(21) + 10;
--
--                                    if (var9 > var5.stackSize)
--                                    {
--                                        var9 = var5.stackSize;
--                                    }
--
--                                    var5.stackSize -= var9;
--                                    EntityItem var10 = new EntityItem(this.worldObj, this.posX + (double)var6, this.posY + (double)var7, this.posZ + (double)var8, new ItemStack(var5.itemID, var9, var5.getItemDamage()));
--                                    float var11 = 0.05F;
--                                    var10.motionX = (double)((float)this.rand.nextGaussian() * var11);
--                                    var10.motionY = (double)((float)this.rand.nextGaussian() * var11 + 0.2F);
--                                    var10.motionZ = (double)((float)this.rand.nextGaussian() * var11);
--                                    this.worldObj.spawnEntityInWorld(var10);
--                                }
--                            }
--                        }
--
--                        this.dropItemWithOffset(Block.chest.blockID, 1, 0.0F);
--                    }
--                    else if (this.minecartType == 2)
--                    {
--                        this.dropItemWithOffset(Block.stoneOvenIdle.blockID, 1, 0.0F);
--                    }
-+                    dropCartAsItem();
-                 }
+-            if (BlockRailBase.isRailBlock(l))
+-            {
+-                int i1 = this.worldObj.getBlockMetadata(j, i, k);
+-                this.func_94091_a(j, i, k, d4, d5, l, i1);
++            if (canUseRail() && BlockRailBase.isRailBlock(l))
++            {
++                BlockRailBase rail = (BlockRailBase)Block.blocksList[l];
++                float railMaxSpeed = rail.getRailMaxSpeed(worldObj, this, j, i, k);
++                double maxSpeed = Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
++                int i1 = rail.getBasicRailMetadata(worldObj, this, j, i, k);
++                this.func_94091_a(j, i, k, maxSpeed, getSlopeAdjustment(), l, i1);
  
-                 return true;
-@@ -320,7 +325,7 @@
-             this.kill();
-         }
- 
--        if (this.isMinecartPowered() && this.rand.nextInt(4) == 0)
-+        if (this.isMinecartPowered() && this.rand.nextInt(4) == 0 && minecartType == 2 && getClass() == EntityMinecart.class)
-         {
-             this.worldObj.spawnParticle("largesmoke", this.posX, this.posY + 0.8D, this.posZ, 0.0D, 0.0D, 0.0D);
-         }
-@@ -418,18 +423,18 @@
-             double var6 = 0.0078125D;
-             int var8 = this.worldObj.getBlockId(var45, var2, var47);
- 
--            if (BlockRail.isRailBlock(var8))
-+            if (canUseRail() && BlockRail.isRailBlock(var8))
-             {
-                 this.fallDistance = 0.0F;
-                 Vec3 var9 = this.func_70489_a(this.posX, this.posY, this.posZ);
--                int var10 = this.worldObj.getBlockMetadata(var45, var2, var47);
-+                int var10 = ((BlockRail)Block.blocksList[var8]).getBasicRailMetadata(worldObj, this, var45, var2, var47);
-                 this.posY = (double)var2;
-                 boolean var11 = false;
-                 boolean var12 = false;
- 
-                 if (var8 == Block.railPowered.blockID)
+                 if (l == Block.field_94337_cv.blockID)
                  {
--                    var11 = (var10 & 8) != 0;
-+                    var11 = (worldObj.getBlockMetadata(var45, var2, var47) & 8) != 0;
-                     var12 = !var11;
-                 }
- 
-@@ -443,25 +448,7 @@
-                     this.posY = (double)(var2 + 1);
-                 }
- 
--                if (var10 == 2)
--                {
--                    this.motionX -= var6;
--                }
--
--                if (var10 == 3)
--                {
--                    this.motionX += var6;
--                }
--
--                if (var10 == 4)
--                {
--                    this.motionZ += var6;
--                }
--
--                if (var10 == 5)
--                {
--                    this.motionZ -= var6;
--                }
-+                adjustSlopeVelocities(var10);
- 
-                 int[][] var13 = matrix[var10];
-                 double var14 = (double)(var13[1][0] - var13[0][0]);
-@@ -494,7 +481,7 @@
-                     }
-                 }
- 
--                if (var12)
-+                if (var12 && shouldDoRailFunctions())
-                 {
-                     var24 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
- 
-@@ -542,36 +529,8 @@
-                 this.posX = var26 + var14 * var24;
-                 this.posZ = var28 + var16 * var24;
-                 this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
--                var34 = this.motionX;
--                var36 = this.motionZ;
--
--                if (this.riddenByEntity != null)
--                {
--                    var34 *= 0.75D;
--                    var36 *= 0.75D;
--                }
--
--                if (var34 < -var4)
--                {
--                    var34 = -var4;
--                }
--
--                if (var34 > var4)
--                {
--                    var34 = var4;
--                }
--
--                if (var36 < -var4)
--                {
--                    var36 = -var4;
--                }
--
--                if (var36 > var4)
--                {
--                    var36 = var4;
--                }
--
--                this.moveEntity(var34, 0.0D, var36);
-+
-+                moveMinecartOnRail(var45, var2, var47);
- 
-                 if (var13[0][1] != 0 && MathHelper.floor_double(this.posX) - var45 == var13[0][0] && MathHelper.floor_double(this.posZ) - var47 == var13[0][2])
-                 {
-@@ -582,42 +541,7 @@
-                     this.setPosition(this.posX, this.posY + (double)var13[1][1], this.posZ);
-                 }
- 
--                if (this.riddenByEntity != null)
--                {
--                    this.motionX *= 0.996999979019165D;
--                    this.motionY *= 0.0D;
--                    this.motionZ *= 0.996999979019165D;
--                }
--                else
--                {
--                    if (this.minecartType == 2)
--                    {
--                        double var38 = this.pushX * this.pushX + this.pushZ * this.pushZ;
--
--                        if (var38 > 1.0E-4D)
--                        {
--                            var38 = (double)MathHelper.sqrt_double(var38);
--                            this.pushX /= var38;
--                            this.pushZ /= var38;
--                            double var40 = 0.04D;
--                            this.motionX *= 0.800000011920929D;
--                            this.motionY *= 0.0D;
--                            this.motionZ *= 0.800000011920929D;
--                            this.motionX += this.pushX * var40;
--                            this.motionZ += this.pushZ * var40;
--                        }
--                        else
--                        {
--                            this.motionX *= 0.8999999761581421D;
--                            this.motionY *= 0.0D;
--                            this.motionZ *= 0.8999999761581421D;
--                        }
--                    }
--
--                    this.motionX *= 0.9599999785423279D;
--                    this.motionY *= 0.0D;
--                    this.motionZ *= 0.9599999785423279D;
--                }
-+                applyDragAndPushForces();
- 
-                 Vec3 var54 = this.func_70489_a(this.posX, this.posY, this.posZ);
- 
-@@ -647,30 +571,14 @@
- 
-                 double var41;
- 
--                if (this.minecartType == 2)
--                {
--                    var41 = this.pushX * this.pushX + this.pushZ * this.pushZ;
--
--                    if (var41 > 1.0E-4D && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.001D)
--                    {
--                        var41 = (double)MathHelper.sqrt_double(var41);
--                        this.pushX /= var41;
--                        this.pushZ /= var41;
--
--                        if (this.pushX * this.motionX + this.pushZ * this.motionZ < 0.0D)
--                        {
--                            this.pushX = 0.0D;
--                            this.pushZ = 0.0D;
--                        }
--                        else
--                        {
--                            this.pushX = this.motionX;
--                            this.pushZ = this.motionZ;
--                        }
--                    }
--                }
--
--                if (var11)
-+                updatePushForces();
-+
-+                if(shouldDoRailFunctions())
-+                {
-+                    ((BlockRail)Block.blocksList[var8]).onMinecartPass(worldObj, this, var45, var2, var47);
-+                }
-+
-+                if (var11 && shouldDoRailFunctions())
-                 {
-                     var41 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
- 
-@@ -706,41 +614,7 @@
+@@ -359,7 +388,7 @@
              }
              else
              {
--                if (this.motionX < -var4)
--                {
--                    this.motionX = -var4;
--                }
--
--                if (this.motionX > var4)
--                {
--                    this.motionX = var4;
--                }
--
--                if (this.motionZ < -var4)
--                {
--                    this.motionZ = -var4;
--                }
--
--                if (this.motionZ > var4)
--                {
--                    this.motionZ = var4;
--                }
--
--                if (this.onGround)
--                {
--                    this.motionX *= 0.5D;
--                    this.motionY *= 0.5D;
--                    this.motionZ *= 0.5D;
--                }
--
--                this.moveEntity(this.motionX, this.motionY, this.motionZ);
--
--                if (!this.onGround)
--                {
--                    this.motionX *= 0.949999988079071D;
--                    this.motionY *= 0.949999988079071D;
--                    this.motionZ *= 0.949999988079071D;
--                }
-+                moveMinecartOffRail(var45, var2, var47);
+-                this.func_94088_b(d4);
++                this.func_94088_b(onGround ? d4 : getMaxSpeedAirLateral());
              }
  
              this.doBlockCollisions();
-@@ -767,7 +641,18 @@
+@@ -386,7 +415,18 @@
              }
  
              this.setRotation(this.rotationYaw, this.rotationPitch);
--            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
+-            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
 +
-+            AxisAlignedBB box = null;
++            AxisAlignedBB box;
 +            if (getCollisionHandler() != null)
 +            {
 +                box = getCollisionHandler().getMinecartCollisionBox(this);
@@ -395,105 +106,156 @@
 +                box = boundingBox.expand(0.2D, 0.0D, 0.2D);
 +            }
 +
-+            List var15 = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box);
++            List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, box);
  
-             if (var15 != null && !var15.isEmpty())
+             if (list != null && !list.isEmpty())
              {
-@@ -792,17 +677,8 @@
+@@ -410,6 +450,8 @@
+ 
                  this.riddenByEntity = null;
              }
- 
--            if (this.fuel > 0)
--            {
--                --this.fuel;
--            }
--
--            if (this.fuel <= 0)
--            {
--                this.pushX = this.pushZ = 0.0D;
--            }
--
--            this.setMinecartPowered(this.fuel > 0);
-+            updateFuel();
-+            MinecraftForge.EVENT_BUS.post(new MinecartUpdateEvent(this, var45, var2, var47));
++
++            MinecraftForge.EVENT_BUS.post(new MinecartUpdateEvent(this, j, i, k));
          }
      }
  
-@@ -826,12 +702,7 @@
+@@ -435,6 +477,17 @@
+         if (this.motionZ > par1)
+         {
+             this.motionZ = par1;
++        }
++
++        double moveY = motionY;
++        if(getMaxSpeedAirVertical() > 0 && motionY > getMaxSpeedAirVertical())
++        {
++            moveY = getMaxSpeedAirVertical();
++            if(Math.abs(motionX) < 0.3f && Math.abs(motionZ) < 0.3f)
++            {
++                moveY = 0.15f;
++                motionY = moveY;
++            }
+         }
+ 
+         if (this.onGround)
+@@ -444,13 +497,13 @@
+             this.motionZ *= 0.5D;
+         }
+ 
+-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
++        this.moveEntity(this.motionX, moveY, this.motionZ);
+ 
+         if (!this.onGround)
+         {
+-            this.motionX *= 0.949999988079071D;
+-            this.motionY *= 0.949999988079071D;
+-            this.motionZ *= 0.949999988079071D;
++            this.motionX *= getDragAir();
++            this.motionY *= getDragAir();
++            this.motionZ *= getDragAir();
+         }
+     }
+ 
+@@ -464,7 +517,7 @@
+ 
+         if (par8 == Block.railPowered.blockID)
+         {
+-            flag = (par9 & 8) != 0;
++            flag = (worldObj.getBlockMetadata(par1, par2, par3) & 8) != 0;
+             flag1 = !flag;
+         }
+ 
+@@ -535,7 +588,7 @@
+             }
+         }
+ 
+-        if (flag1)
++        if (flag1 && shouldDoRailFunctions())
+         {
+             d7 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+ 
+@@ -583,36 +636,8 @@
+         this.posX = d8 + d2 * d7;
+         this.posZ = d9 + d3 * d7;
+         this.setPosition(this.posX, this.posY + (double)this.yOffset, this.posZ);
+-        d12 = this.motionX;
+-        d13 = this.motionZ;
+-
+-        if (this.riddenByEntity != null)
+-        {
+-            d12 *= 0.75D;
+-            d13 *= 0.75D;
+-        }
+-
+-        if (d12 < -par4)
+-        {
+-            d12 = -par4;
+-        }
+-
+-        if (d12 > par4)
+-        {
+-            d12 = par4;
+-        }
+-
+-        if (d13 < -par4)
+-        {
+-            d13 = -par4;
+-        }
+-
+-        if (d13 > par4)
+-        {
+-            d13 = par4;
+-        }
+-
+-        this.moveEntity(d12, 0.0D, d13);
++
++        moveMinecartOnRail(par1, par2, par3, par4);
+ 
+         if (aint[0][1] != 0 && MathHelper.floor_double(this.posX) - par1 == aint[0][0] && MathHelper.floor_double(this.posZ) - par3 == aint[0][2])
+         {
+@@ -650,7 +675,12 @@
+             this.motionZ = d6 * (double)(k1 - par3);
+         }
+ 
+-        if (flag)
++        if(shouldDoRailFunctions())
++        {
++            ((BlockRailBase)Block.blocksList[par8]).onMinecartPass(worldObj, this, par1, par2, par3);
++        }
++
++        if (flag && shouldDoRailFunctions())
+         {
+             double d15 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+ 
+@@ -721,12 +751,7 @@
          }
          else
          {
--            int var13 = this.worldObj.getBlockMetadata(var9, var10, var11);
+-            int i1 = this.worldObj.getBlockMetadata(i, j, k);
 -
--            if (((BlockRail)Block.blocksList[var12]).isPowered())
+-            if (((BlockRailBase)Block.blocksList[l]).isPowered())
 -            {
--                var13 &= 7;
+-                i1 &= 7;
 -            }
-+            int var13 = ((BlockRail)Block.blocksList[var12]).getBasicRailMetadata(worldObj, this, var9, var10, var11);
++            int i1 = ((BlockRailBase)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
  
-             par3 = (double)var10;
+             par3 = (double)j;
  
-@@ -877,13 +748,8 @@
+@@ -772,13 +797,8 @@
  
-         if (BlockRail.isRailBlock(var10))
+         if (BlockRailBase.isRailBlock(l))
          {
--            int var11 = this.worldObj.getBlockMetadata(var7, var8, var9);
-+            int var11 = ((BlockRail)Block.blocksList[var10]).getBasicRailMetadata(worldObj, this, var7, var8, var9);
-             par3 = (double)var8;
+-            int i1 = this.worldObj.getBlockMetadata(i, j, k);
++            int i1 = ((BlockRailBase)Block.blocksList[l]).getBasicRailMetadata(worldObj, this, i, j, k);
+             par3 = (double)j;
 -
--            if (((BlockRail)Block.blocksList[var10]).isPowered())
+-            if (((BlockRailBase)Block.blocksList[l]).isPowered())
 -            {
--                var11 &= 7;
+-                i1 &= 7;
 -            }
  
-             if (var11 >= 2 && var11 <= 5)
+             if (i1 >= 2 && i1 <= 5)
              {
-@@ -948,13 +814,14 @@
-     {
-         par1NBTTagCompound.setInteger("Type", this.minecartType);
- 
--        if (this.minecartType == 2)
-+        if (isPoweredCart())
-         {
-             par1NBTTagCompound.setDouble("PushX", this.pushX);
-             par1NBTTagCompound.setDouble("PushZ", this.pushZ);
--            par1NBTTagCompound.setShort("Fuel", (short)this.fuel);
--        }
--        else if (this.minecartType == 1)
-+            par1NBTTagCompound.setInteger("Fuel", this.fuel);
-+        }
-+
-+        if (getSizeInventory() > 0)
-         {
-             NBTTagList var2 = new NBTTagList();
- 
-@@ -980,13 +847,21 @@
-     {
-         this.minecartType = par1NBTTagCompound.getInteger("Type");
- 
--        if (this.minecartType == 2)
-+        if (isPoweredCart())
-         {
-             this.pushX = par1NBTTagCompound.getDouble("PushX");
-             this.pushZ = par1NBTTagCompound.getDouble("PushZ");
--            this.fuel = par1NBTTagCompound.getShort("Fuel");
--        }
--        else if (this.minecartType == 1)
-+            try
-+            {
-+                this.fuel = par1NBTTagCompound.getInteger("Fuel");
-+            }
-+            catch (ClassCastException e)
-+            {
-+                this.fuel = par1NBTTagCompound.getShort("Fuel");
-+            }
-+        }
-+
-+        if (getSizeInventory() > 0)
-         {
-             NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
-             this.cargoItems = new ItemStack[this.getSizeInventory()];
-@@ -1015,11 +890,17 @@
+@@ -884,11 +904,17 @@
       */
      public void applyEntityCollision(Entity par1Entity)
      {
@@ -507,189 +269,69 @@
          {
              if (par1Entity != this.riddenByEntity)
              {
--                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && this.minecartType == 0 && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
+-                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && this.func_94087_l() == 0 && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
 +                if (par1Entity instanceof EntityLiving && !(par1Entity instanceof EntityPlayer) && !(par1Entity instanceof EntityIronGolem) && canBeRidden() && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D && this.riddenByEntity == null && par1Entity.ridingEntity == null)
                  {
                      par1Entity.mountEntity(this);
                  }
-@@ -1065,7 +946,7 @@
-                         double var18 = par1Entity.motionX + this.motionX;
-                         double var20 = par1Entity.motionZ + this.motionZ;
+@@ -934,7 +960,7 @@
+                         double d7 = par1Entity.motionX + this.motionX;
+                         double d8 = par1Entity.motionZ + this.motionZ;
  
--                        if (((EntityMinecart)par1Entity).minecartType == 2 && this.minecartType != 2)
+-                        if (((EntityMinecart)par1Entity).func_94087_l() == 2 && this.func_94087_l() != 2)
 +                        if (((EntityMinecart)par1Entity).isPoweredCart() && !isPoweredCart())
                          {
                              this.motionX *= 0.20000000298023224D;
                              this.motionZ *= 0.20000000298023224D;
-@@ -1073,7 +954,7 @@
+@@ -942,7 +968,7 @@
                              par1Entity.motionX *= 0.949999988079071D;
                              par1Entity.motionZ *= 0.949999988079071D;
                          }
--                        else if (((EntityMinecart)par1Entity).minecartType != 2 && this.minecartType == 2)
+-                        else if (((EntityMinecart)par1Entity).func_94087_l() != 2 && this.func_94087_l() == 2)
 +                        else if (!((EntityMinecart)par1Entity).isPoweredCart() && isPoweredCart())
                          {
                              par1Entity.motionX *= 0.20000000298023224D;
                              par1Entity.motionZ *= 0.20000000298023224D;
-@@ -1108,7 +989,7 @@
-      */
-     public int getSizeInventory()
+@@ -1145,4 +1171,211 @@
      {
--        return 27;
-+        return (minecartType == 1 && getClass() == EntityMinecart.class ? 27 : 0);
-     }
- 
-     /**
-@@ -1211,7 +1092,12 @@
-      */
-     public boolean interact(EntityPlayer par1EntityPlayer)
-     {
--        if (this.minecartType == 0)
-+        if (MinecraftForge.EVENT_BUS.post(new MinecartInteractEvent(this, par1EntityPlayer)))
-+        {
-+            return true;
-+        }
-+
-+        if (canBeRidden())
-         {
-             if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer && this.riddenByEntity != par1EntityPlayer)
-             {
-@@ -1223,14 +1109,14 @@
-                 par1EntityPlayer.mountEntity(this);
-             }
-         }
--        else if (this.minecartType == 1)
-+        else if (getSizeInventory() > 0)
-         {
-             if (!this.worldObj.isRemote)
-             {
-                 par1EntityPlayer.displayGUIChest(this);
-             }
-         }
--        else if (this.minecartType == 2)
-+        else if (this.minecartType == 2 && getClass() == EntityMinecart.class)
-         {
-             ItemStack var2 = par1EntityPlayer.inventory.getCurrentItem();
- 
-@@ -1366,4 +1252,375 @@
-     {
-         return this.dataWatcher.getWatchableObjectInt(18);
+         return this.field_94102_c;
      }
 +
 +    /**
-+     * Drops the cart as a item. The exact item dropped is defined by getItemDropped().
++     * Moved to allow overrides.
++     * This code handles minecart movement and speed capping when on a rail.
 +     */
-+    public void dropCartAsItem()
-+    {
-+        for(ItemStack item : getItemsDropped())
++    public void moveMinecartOnRail(int x, int y, int z, double par4){
++        double d12 = this.motionX;
++        double d13 = this.motionZ;
++
++        if (this.riddenByEntity != null)
 +        {
-+            entityDropItem(item, 0);
++            d12 *= 0.75D;
++            d13 *= 0.75D;
 +        }
-+    }
 +
-+    /**
-+     * Override this to define which items your cart drops when broken.
-+     * This does not include items contained in the inventory,
-+     * that is handled elsewhere.
-+     * @return A list of items dropped.
-+     */
-+    public List<ItemStack> getItemsDropped()
-+    {
-+        List<ItemStack> items = new ArrayList<ItemStack>();
-+        items.add(new ItemStack(Item.minecartEmpty));
-+
-+        switch(minecartType)
++        if (d12 < -par4)
 +        {
-+            case 1:
-+                items.add(new ItemStack(Block.chest));
-+                break;
-+            case 2:
-+                items.add(new ItemStack(Block.stoneOvenIdle));
-+                break;
++            d12 = -par4;
 +        }
-+        return items;
-+    }
 +
-+    /**
-+     * This function returns an ItemStack that represents this cart.
-+     * This should be an ItemStack that can be used by the player to place the cart.
-+     * This is the item that was registered with the cart via the registerMinecart function,
-+     * but is not necessary the item the cart drops when destroyed.
-+     * @return An ItemStack that can be used to place the cart.
-+     */
-+    public ItemStack getCartItem()
-+    {
-+        return MinecartRegistry.getItemForCart(this);
-+    }
-+
-+    /**
-+     * Returns true if this cart is self propelled.
-+     * @return True if powered.
-+     */
-+    public boolean isPoweredCart()
-+    {
-+        return minecartType == 2 && getClass() == EntityMinecart.class;
-+    }
-+
-+    /**
-+     * Returns true if this cart is a storage cart
-+     * Some carts may have inventories but not be storage carts
-+     * and some carts without inventories may be storage carts.
-+     * @return True if this cart should be classified as a storage cart.
-+     */
-+    public boolean isStorageCart()
-+    {
-+        return minecartType == 1 && getClass() == EntityMinecart.class;
-+    }
-+
-+    /**
-+     * Returns true if this cart can be ridden by an Entity.
-+     * @return True if this cart can be ridden.
-+     */
-+    public boolean canBeRidden()
-+    {
-+        if(minecartType == 0 && getClass() == EntityMinecart.class)
++        if (d12 > par4)
 +        {
-+            return true;
++            d12 = par4;
 +        }
-+        return false;
-+    }
 +
-+    /**
-+     * Returns true if this cart can currently use rails.
-+     * This function is mainly used to gracefully detach a minecart from a rail.
-+     * @return True if the minecart can use rails.
-+     */
-+    public boolean canUseRail()
-+    {
-+        return canUseRail;
-+    }
++        if (d13 < -par4)
++        {
++            d13 = -par4;
++        }
 +
-+    /**
-+     * Set whether the minecart can use rails.
-+     * This function is mainly used to gracefully detach a minecart from a rail.
-+     * @param use Whether the minecart can currently use rails.
-+     */
-+    public void setCanUseRail(boolean use)
-+    {
-+        canUseRail = use;
-+    }
++        if (d13 > par4)
++        {
++            d13 = par4;
++        }
 +
-+    /**
-+     * Return false if this cart should not call IRail.onMinecartPass() and should ignore Powered Rails.
-+     * @return True if this cart should call IRail.onMinecartPass().
-+     */
-+    public boolean shouldDoRailFunctions()
-+    {
-+        return true;
-+    }
-+
-+    /**
-+     * Simply returns the minecartType variable.
-+     * @return minecartType
-+     */
-+    public int getMinecartType()
-+    {
-+        return minecartType;
++        this.moveEntity(d12, 0.0D, d13);
 +    }
 +
 +    /**
@@ -713,175 +355,81 @@
 +    }
 +
 +    /**
-+     * Carts should return their drag factor here
-+     * @return The drag rate.
++     * This function returns an ItemStack that represents this cart.
++     * This should be an ItemStack that can be used by the player to place the cart,
++     * but is not necessary the item the cart drops when destroyed.
++     * @return An ItemStack that can be used to place the cart.
 +     */
-+    protected double getDrag()
++    public ItemStack getCartItem()
 +    {
-+        return riddenByEntity != null ? defaultDragRidden : defaultDragEmpty;
++        if (this instanceof EntityMinecartChest)
++        {
++            return new ItemStack(Item.minecartCrate);
++        }
++        else if (this instanceof EntityMinecartTNT)
++        {
++            return new ItemStack(Item.field_94582_cb);
++        }
++        else if (this instanceof EntityMinecartFurnace)
++        {
++            return new ItemStack(Item.minecartPowered);
++        }
++        else if (this instanceof EntityMinecartHopper)
++        {
++            return new ItemStack(Item.field_96600_cc);
++        }
++        return new ItemStack(Item.minecartEmpty);
 +    }
 +
 +    /**
-+     * Moved to allow overrides.
-+     * This code applies drag and updates push forces.
++     * Returns true if this cart can currently use rails.
++     * This function is mainly used to gracefully detach a minecart from a rail.
++     * @return True if the minecart can use rails.
 +     */
-+    protected void applyDragAndPushForces()
++    public boolean canUseRail()
 +    {
-+        if(isPoweredCart())
-+        {
-+            double d27 = MathHelper.sqrt_double(pushX * pushX + pushZ * pushZ);
-+            if(d27 > 0.01D)
-+            {
-+                pushX /= d27;
-+                pushZ /= d27;
-+                double d29 = 0.04;
-+                motionX *= 0.8D;
-+                motionY *= 0.0D;
-+                motionZ *= 0.8D;
-+                motionX += pushX * d29;
-+                motionZ += pushZ * d29;
-+            }
-+            else
-+            {
-+                motionX *= 0.9D;
-+                motionY *= 0.0D;
-+                motionZ *= 0.9D;
-+            }
-+        }
-+        motionX *= getDrag();
-+        motionY *= 0.0D;
-+        motionZ *= getDrag();
++        return canUseRail;
 +    }
 +
 +    /**
-+     * Moved to allow overrides.
-+     * This code updates push forces.
++     * Set whether the minecart can use rails.
++     * This function is mainly used to gracefully detach a minecart from a rail.
++     * @param use Whether the minecart can currently use rails.
 +     */
-+    protected void updatePushForces()
++    public void setCanUseRail(boolean use)
 +    {
-+        if(isPoweredCart())
-+        {
-+            double push = MathHelper.sqrt_double(pushX * pushX + pushZ * pushZ);
-+            if(push > 0.01D && motionX * motionX + motionZ * motionZ > 0.001D)
-+            {
-+                pushX /= push;
-+                pushZ /= push;
-+                if(pushX * motionX + pushZ * motionZ < 0.0D)
-+                {
-+                    pushX = 0.0D;
-+                    pushZ = 0.0D;
-+                }
-+                else
-+                {
-+                    pushX = motionX;
-+                    pushZ = motionZ;
-+                }
-+            }
-+        }
++        canUseRail = use;
 +    }
 +
 +    /**
-+     * Moved to allow overrides.
-+     * This code handles minecart movement and speed capping when on a rail.
++     * Return false if this cart should not call onMinecartPass() and should ignore Powered Rails.
++     * @return True if this cart should call onMinecartPass().
 +     */
-+    protected void moveMinecartOnRail(int i, int j, int k)
++    public boolean shouldDoRailFunctions()
 +    {
-+        int id = worldObj.getBlockId(i, j, k);
-+        if (!BlockRail.isRailBlock(id))
-+        {
-+                return;
-+        }
-+        float railMaxSpeed = ((BlockRail)Block.blocksList[id]).getRailMaxSpeed(worldObj, this, i, j, k);
-+
-+        double maxSpeed = Math.min(railMaxSpeed, getMaxSpeedRail());
-+        double mX = motionX;
-+        double mZ = motionZ;
-+        if(riddenByEntity != null)
-+        {
-+            mX *= 0.75D;
-+            mZ *= 0.75D;
-+        }
-+        if(mX < -maxSpeed) mX = -maxSpeed;
-+        if(mX >  maxSpeed) mX =  maxSpeed;
-+        if(mZ < -maxSpeed) mZ = -maxSpeed;
-+        if(mZ >  maxSpeed) mZ =  maxSpeed;
-+        moveEntity(mX, 0.0D, mZ);
++        return true;
 +    }
 +
 +    /**
-+     * Moved to allow overrides.
-+     * This code handles minecart movement and speed capping when not on a rail.
++     * Returns true if this cart is self propelled.
++     * @return True if powered.
 +     */
-+    protected void moveMinecartOffRail(int i, int j, int k)
++    public boolean isPoweredCart()
 +    {
-+        double d2 = getMaxSpeedGround();
-+        if(!onGround)
-+        {
-+            d2 = getMaxSpeedAirLateral();
-+        }
-+        if(motionX < -d2) motionX = -d2;
-+        if(motionX >  d2) motionX =  d2;
-+        if(motionZ < -d2) motionZ = -d2;
-+        if(motionZ >  d2) motionZ =  d2;
-+        double moveY = motionY;
-+        if(getMaxSpeedAirVertical() > 0 && motionY > getMaxSpeedAirVertical())
-+        {
-+            moveY = getMaxSpeedAirVertical();
-+            if(Math.abs(motionX) < 0.3f && Math.abs(motionZ) < 0.3f)
-+            {
-+                moveY = 0.15f;
-+                motionY = moveY;
-+            }
-+        }
-+        if(onGround)
-+        {
-+            motionX *= 0.5D;
-+            motionY *= 0.5D;
-+            motionZ *= 0.5D;
-+        }
-+        moveEntity(motionX, moveY, motionZ);
-+        if(!onGround)
-+        {
-+            motionX *= getDragAir();
-+            motionY *= getDragAir();
-+            motionZ *= getDragAir();
-+        }
++        return func_94087_l() == 2;
 +    }
 +
 +    /**
-+     * Moved to allow overrides.
-+     * This code applies fuel consumption.
++     * Returns true if this cart can be ridden by an Entity.
++     * @return True if this cart can be ridden.
 +     */
-+    protected void updateFuel()
++    public boolean canBeRidden()
 +    {
-+        if (fuel > 0) fuel--;
-+        if (fuel <= 0) pushX = pushZ = 0.0D;
-+        setMinecartPowered(fuel > 0);
-+    }
-+
-+    /**
-+     * Moved to allow overrides, This code handle slopes affecting velocity.
-+     * @param metadata The blocks position metadata
-+     */
-+    protected void adjustSlopeVelocities(int metadata)
-+    {
-+        double acceleration = 0.0078125D;
-+        if (metadata == 2)
++        if(this instanceof EntityMinecartEmpty)
 +        {
-+            motionX -= acceleration;
++            return true;
 +        }
-+        else if (metadata == 3)
-+        {
-+            motionX += acceleration;
-+        }
-+        else if (metadata == 4)
-+        {
-+            motionZ += acceleration;
-+        }
-+        else if (metadata == 5)
-+        {
-+            motionZ -= acceleration;
-+        }
++        return false;
 +    }
 +
 +    /**
@@ -889,31 +437,36 @@
 +     */
 +
 +    /**
-+     * Returns the carts max speed.
-+     * Carts going faster than 1.1 cause issues with chunk loading.
-+     * Carts cant traverse slopes or corners at greater than 0.5 - 0.6.
-+     * This value is compared with the rails max speed to determine
-+     * the carts current max speed. A normal rails max speed is 0.4.
++     * Returns the carts max speed when traveling on rails. Carts going faster
++     * than 1.1 cause issues with chunk loading. Carts cant traverse slopes or
++     * corners at greater than 0.5 - 0.6. This value is compared with the rails
++     * max speed and the carts current speed cap to determine the carts current
++     * max speed. A normal rail's max speed is 0.4.
++     *
 +     * @return Carts max speed.
 +     */
-+    public float getMaxSpeedRail()
++    public float getMaxCartSpeedOnRail()
 +    {
-+        return maxSpeedRail;
++        return 1.2f;
 +    }
 +
-+    public void setMaxSpeedRail(float value)
++    /**
++     * Returns the current speed cap for the cart when traveling on rails. This
++     * functions differs from getMaxCartSpeedOnRail() in that it controls
++     * current movement and cannot be overridden. The value however can never be
++     * higher than getMaxCartSpeedOnRail().
++     *
++     * @return
++     */
++    public final float getCurrentCartSpeedCapOnRail()
 +    {
-+        maxSpeedRail = value;
++        return currentSpeedRail;
 +    }
 +
-+    public float getMaxSpeedGround()
++    public final void setCurrentCartSpeedCapOnRail(float value)
 +    {
-+        return maxSpeedGround;
-+    }
-+
-+    public void setMaxSpeedGround(float value)
-+    {
-+        maxSpeedGround = value;
++        value = Math.min(value, getMaxCartSpeedOnRail());
++        currentSpeedRail = value;
 +    }
 +
 +    public float getMaxSpeedAirLateral()
@@ -944,5 +497,10 @@
 +    public void setDragAir(double value)
 +    {
 +        dragAir = value;
++    }
++
++    public double getSlopeAdjustment()
++    {
++        return 0.0078125D;
 +    }
  }

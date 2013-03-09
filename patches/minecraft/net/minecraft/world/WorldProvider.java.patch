@@ -24,7 +24,7 @@
  
  public abstract class WorldProvider
  {
-@@ -198,7 +205,7 @@
+@@ -197,7 +204,7 @@
  
      public static WorldProvider getProviderForDimension(int par0)
      {
@@ -33,7 +33,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -267,4 +274,277 @@
+@@ -266,4 +273,277 @@
       * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
       */
      public abstract String getDimensionName();
@@ -140,7 +140,7 @@
 +
 +    public ChunkCoordinates getRandomizedSpawnPoint()
 +    {
-+        ChunkCoordinates var5 = new ChunkCoordinates(this.worldObj.getSpawnPoint());
++        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.worldObj.getSpawnPoint());
 +
 +        boolean isAdventure = worldObj.getWorldInfo().getGameType() == EnumGameType.ADVENTURE;
 +        int spawnFuzz = terrainType.getSpawnFuzz();
@@ -148,12 +148,12 @@
 +
 +        if (!hasNoSky && !isAdventure)
 +        {
-+            var5.posX += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
-+            var5.posZ += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
-+            var5.posY = this.worldObj.getTopSolidOrLiquidBlock(var5.posX, var5.posZ);
++            chunkcoordinates.posX += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.posZ += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.posY = this.worldObj.getTopSolidOrLiquidBlock(chunkcoordinates.posX, chunkcoordinates.posZ);
 +        }
 +
-+        return var5;
++        return chunkcoordinates;
 +    }
 +    
 +    /**

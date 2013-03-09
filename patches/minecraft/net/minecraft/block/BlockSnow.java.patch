@@ -1,36 +1,42 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockSnow.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockSnow.java
-@@ -67,7 +67,8 @@
+@@ -88,8 +88,12 @@
+      */
      public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
      {
-         int var5 = par1World.getBlockId(par2, par3 - 1, par4);
--        return var5 != 0 && (var5 == Block.leaves.blockID || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
-+        Block block = Block.blocksList[var5];
-+        return block != null && (block.isLeaves(par1World, par2, par3 - 1, par4) || Block.blocksList[var5].isOpaqueCube()) ? par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement() : false;
+-        int l = par1World.getBlockId(par2, par3 - 1, par4);
+-        return l == 0 ? false : (l == this.blockID && (par1World.getBlockMetadata(par2, par3 - 1, par4) & 7) == 7 ? true : (l != Block.leaves.blockID && !Block.blocksList[l].isOpaqueCube() ? false : par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement()));
++        int l = par1World.getBlockId(par2, par3 - 1, par4);        
++        Block block = Block.blocksList[l];
++        if (block == null) return false;
++        if (block == this && (par1World.getBlockMetadata(par2, par3 - 1, par4) & 7) == 7) return true;
++        if (block.isLeaves(par1World, par2, par3 - 1, par4) && Block.blocksList[l].isOpaqueCube()) return false;
++        return par1World.getBlockMaterial(par2, par3 - 1, par4).blocksMovement();
      }
  
      /**
-@@ -86,7 +87,6 @@
+@@ -108,7 +112,6 @@
      {
          if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
          {
 -            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-             par1World.setBlockWithNotify(par2, par3, par4, 0);
+             par1World.func_94571_i(par2, par3, par4);
              return false;
          }
-@@ -102,10 +102,8 @@
+@@ -124,11 +127,8 @@
       */
      public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
      {
--        int var7 = Item.snowball.itemID;
--        this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(var7, 1, 0));
+-        int i1 = Item.snowball.itemID;
+-        int j1 = par6 & 7;
+-        this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(i1, j1 + 1, 0));
 +        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
-         par1World.setBlockWithNotify(par3, par4, par5, 0);
+         par1World.func_94571_i(par3, par4, par5);
 -        par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
      }
  
      /**
-@@ -121,7 +119,7 @@
+@@ -144,7 +144,7 @@
       */
      public int quantityDropped(Random par1Random)
      {
@@ -39,11 +45,22 @@
      }
  
      /**
-@@ -131,7 +129,6 @@
+@@ -154,7 +154,6 @@
      {
          if (par1World.getSavedLightValue(EnumSkyBlock.Block, par2, par3, par4) > 11)
          {
 -            this.dropBlockAsItem(par1World, par2, par3, par4, par1World.getBlockMetadata(par2, par3, par4), 0);
-             par1World.setBlockWithNotify(par2, par3, par4, 0);
+             par1World.func_94571_i(par2, par3, par4);
          }
      }
+@@ -169,4 +168,10 @@
+     {
+         return par5 == 1 ? true : super.shouldSideBeRendered(par1IBlockAccess, par2, par3, par4, par5);
+     }
++
++    @Override
++    public int quantityDropped(int meta, int fortune, Random random)
++    {
++        return (meta & 7) + 1;
++    }
+ }

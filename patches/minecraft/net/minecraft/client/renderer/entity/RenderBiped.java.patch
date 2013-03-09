@@ -17,50 +17,50 @@
  @SideOnly(Side.CLIENT)
  public class RenderBiped extends RenderLiving
 @@ -59,7 +65,7 @@
-             if (var5 instanceof ItemArmor)
+             if (item instanceof ItemArmor)
              {
-                 ItemArmor var6 = (ItemArmor)var5;
--                this.loadTexture("/armor/" + bipedArmorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
-+                this.loadTexture(ForgeHooksClient.getArmorTexture(var4, "/armor/" + bipedArmorFilenamePrefix[var6.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
-                 ModelBiped var7 = par2 == 2 ? this.field_82425_h : this.field_82423_g;
-                 var7.bipedHead.showModel = par2 == 0;
-                 var7.bipedHeadwear.showModel = par2 == 0;
+                 ItemArmor itemarmor = (ItemArmor)item;
+-                this.loadTexture("/armor/" + bipedArmorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
++                this.loadTexture(ForgeHooksClient.getArmorTexture(itemstack, "/armor/" + bipedArmorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
+                 ModelBiped modelbiped = par2 == 2 ? this.field_82425_h : this.field_82423_g;
+                 modelbiped.bipedHead.showModel = par2 == 0;
+                 modelbiped.bipedHeadwear.showModel = par2 == 0;
 @@ -174,9 +180,12 @@
              GL11.glPushMatrix();
              this.modelBipedMain.bipedHead.postRender(0.0625F);
  
--            if (var5.getItem().itemID < 256)
+-            if (itemstack1.getItem().itemID < 256)
 -            {
--                if (RenderBlocks.renderItemIn3d(Block.blocksList[var5.itemID].getRenderType()))
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var5, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var5, BLOCK_3D));
+-                if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack1, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack1, BLOCK_3D));
 +
-+            if (var5.getItem() instanceof ItemBlock)
++            if (itemstack1.getItem() instanceof ItemBlock)
 +            {
-+                if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var5.itemID].getRenderType()))
++                if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack1.itemID].getRenderType()))
                  {
-                     var6 = 0.625F;
+                     f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
 @@ -218,7 +227,10 @@
              this.modelBipedMain.bipedRightArm.postRender(0.0625F);
              GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
  
--            if (var4.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType()))
-+            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(var4, EQUIPPED);
-+            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, var4, BLOCK_3D));
+-            if (itemstack.itemID < 256 && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
 +
-+            if (var4.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[var4.itemID].getRenderType())))
++            if (itemstack.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType())))
              {
-                 var6 = 0.5F;
+                 f2 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
 @@ -265,7 +277,10 @@
  
-             if (var4.getItem().requiresMultipleRenderPasses())
+             if (itemstack.getItem().requiresMultipleRenderPasses())
              {
--                this.renderManager.itemRenderer.renderItem(par1EntityLiving, var4, 1);
-+                for (int x = 1; x < var4.getItem().getRenderPasses(var4.getItemDamage()); x++)
+-                this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, 1);
++                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
 +                {
-+                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, var4, x);
++                    this.renderManager.itemRenderer.renderItem(par1EntityLiving, itemstack, x);
 +                }
              }
  

@@ -1,118 +1,104 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/ItemRenderer.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/ItemRenderer.java
-@@ -15,11 +15,19 @@
+@@ -14,6 +14,8 @@
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.item.EnumAction;
  import net.minecraft.item.Item;
 +import net.minecraft.item.ItemBlock;
 +import net.minecraft.item.ItemMap;
  import net.minecraft.item.ItemStack;
+ import net.minecraft.util.Icon;
  import net.minecraft.util.MathHelper;
- import net.minecraft.world.storage.MapData;
+@@ -21,6 +23,12 @@
  import org.lwjgl.opengl.GL11;
  import org.lwjgl.opengl.GL12;
-+
+ 
 +import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.client.IItemRenderer;
 +import net.minecraftforge.client.MinecraftForgeClient;
 +import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
 +import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
- 
++
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
-@@ -54,27 +62,21 @@
+ {
+@@ -53,8 +61,21 @@
+     public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
      {
          GL11.glPushMatrix();
- 
--        Block var4 = null;
--        if (par2ItemStack.itemID < Block.blocksList.length)
--        {
--            var4 = Block.blocksList[par2ItemStack.itemID];
--        }
 -
--        if (var4 != null && RenderBlocks.renderItemIn3d(var4.getRenderType()))
--        {
--            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
--            this.renderBlocksInstance.renderBlockAsItem(var4, par2ItemStack.getItemDamage(), 1.0F);
-+        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, EQUIPPED);
+-        if (par2ItemStack.func_94608_d() == 0 && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
++        
++        Block block = null;
++        if (par2ItemStack.getItem() instanceof ItemBlock && par2ItemStack.itemID < Block.blocksList.length)
++        {
++            block = Block.blocksList[par2ItemStack.itemID];
++        }
 +
++        IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(par2ItemStack, EQUIPPED);
++        
 +        if (customRenderer != null)
 +        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
++            this.mc.renderEngine.func_98187_b(par2ItemStack.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
-+        else if (par2ItemStack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
-+        {
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
-+            this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
-         }
-         else
++        else if (block != null && par2ItemStack.func_94608_d() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
--            if (var4 != null)
--            {
--                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
--            }
--            else
--            {
--                GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/items.png"));
--            }
-+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture(par2ItemStack.getItem().getTextureFile()));
+             this.mc.renderEngine.func_98187_b("/terrain.png");
+             this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
+@@ -272,7 +293,7 @@
+         Render render;
+         RenderPlayer renderplayer;
  
-             Tessellator var5 = Tessellator.instance;
-             int var6 = par1EntityLiving.getItemIcon(par2ItemStack, par3);
-@@ -279,8 +281,9 @@
-         Render var24;
-         RenderPlayer var26;
- 
--        if (var17 != null && var17.itemID == Item.map.itemID)
--        {
-+        if (var17 != null && var17.getItem() instanceof ItemMap)
-+        {
-+            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(var17, FIRST_PERSON_MAP);
+-        if (itemstack != null && itemstack.itemID == Item.map.itemID)
++        if (itemstack != null && itemstack.getItem() instanceof ItemMap)
+         {
              GL11.glPushMatrix();
-             var7 = 0.8F;
-             var20 = var3.getSwingProgress(par1);
-@@ -346,11 +349,17 @@
-             var28.addVertexWithUV((double)(128 + var27), (double)(0 - var27), 0.0D, 1.0D, 0.0D);
-             var28.addVertexWithUV((double)(0 - var27), (double)(0 - var27), 0.0D, 0.0D, 0.0D);
-             var28.draw();
--            MapData var16 = Item.map.getMapData(var17, this.mc.theWorld);
+             f4 = 0.8F;
+@@ -340,11 +361,20 @@
+             tessellator.addVertexWithUV((double)(128 + b0), (double)(0 - b0), 0.0D, 1.0D, 0.0D);
+             tessellator.addVertexWithUV((double)(0 - b0), (double)(0 - b0), 0.0D, 0.0D, 0.0D);
+             tessellator.draw();
+-            MapData mapdata = Item.map.getMapData(itemstack, this.mc.theWorld);
 -
--            if (var16 != null)
+-            if (mapdata != null)
 -            {
--                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var16);
-+            MapData var16 = ((ItemMap)var17.getItem()).getMapData(var17, this.mc.theWorld);
+-                this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, mapdata);
++
++            IItemRenderer custom = MinecraftForgeClient.getItemRenderer(itemstack, FIRST_PERSON_MAP);
++            MapData mapdata = ((ItemMap)itemstack.getItem()).getMapData(itemstack, this.mc.theWorld);
++
 +            if (custom == null)
 +            {
-+                if (var16 != null)
++                if (mapdata != null)
 +                {
-+                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, var16);
++                    this.mapItemRenderer.renderMap(this.mc.thePlayer, this.mc.renderEngine, mapdata);
 +                }
 +            }
 +            else
 +            {
-+                custom.renderItem(FIRST_PERSON_MAP, var17, mc.thePlayer, mc.renderEngine, var16);
++                custom.renderItem(FIRST_PERSON_MAP, itemstack, mc.thePlayer, mc.renderEngine, mapdata);
              }
  
              GL11.glPopMatrix();
-@@ -453,12 +462,15 @@
-             if (var17.getItem().requiresMultipleRenderPasses())
+@@ -447,12 +477,15 @@
+             if (itemstack.getItem().requiresMultipleRenderPasses())
              {
-                 this.renderItem(var3, var17, 0);
--                int var25 = Item.itemsList[var17.itemID].getColorFromItemStack(var17, 1);
--                var13 = (float)(var25 >> 16 & 255) / 255.0F;
--                var14 = (float)(var25 >> 8 & 255) / 255.0F;
--                var15 = (float)(var25 & 255) / 255.0F;
--                GL11.glColor4f(var6 * var13, var6 * var14, var6 * var15, 1.0F);
--                this.renderItem(var3, var17, 1);
-+                for (int x = 1; x < var17.getItem().getRenderPasses(var17.getItemDamage()); x++)
+                 this.renderItem(entityclientplayermp, itemstack, 0);
+-                int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, 1);
+-                f10 = (float)(i1 >> 16 & 255) / 255.0F;
+-                f11 = (float)(i1 >> 8 & 255) / 255.0F;
+-                f12 = (float)(i1 & 255) / 255.0F;
+-                GL11.glColor4f(f3 * f10, f3 * f11, f3 * f12, 1.0F);
+-                this.renderItem(entityclientplayermp, itemstack, 1);
++                for (int x = 1; x < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); x++)
 +                {
-+                    int var25 = Item.itemsList[var17.itemID].getColorFromItemStack(var17, x);
-+                    var13 = (float)(var25 >> 16 & 255) / 255.0F;
-+                    var14 = (float)(var25 >> 8 & 255) / 255.0F;
-+                    var15 = (float)(var25 & 255) / 255.0F;
-+                    GL11.glColor4f(var6 * var13, var6 * var14, var6 * var15, 1.0F);
-+                    this.renderItem(var3, var17, x);
++                    int i1 = Item.itemsList[itemstack.itemID].getColorFromItemStack(itemstack, x);
++                    f10 = (float)(i1 >> 16 & 255) / 255.0F;
++                    f11 = (float)(i1 >> 8 & 255) / 255.0F;
++                    f12 = (float)(i1 & 255) / 255.0F;
++                    GL11.glColor4f(f3 * f10, f3 * f11, f3 * f12, 1.0F);
++                    this.renderItem(entityclientplayermp, itemstack, x);
 +                }
              }
              else

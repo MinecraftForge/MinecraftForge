@@ -14,11 +14,11 @@
  public class WorldGenBigTree extends WorldGenerator
  {
 @@ -442,7 +445,9 @@
-         int[] var2 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
-         int var3 = this.worldObj.getBlockId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
+         int[] aint1 = new int[] {this.basePos[0], this.basePos[1] + this.heightLimit - 1, this.basePos[2]};
+         int i = this.worldObj.getBlockId(this.basePos[0], this.basePos[1] - 1, this.basePos[2]);
  
--        if (var3 != 2 && var3 != 3)
-+        Block soil = Block.blocksList[var3];
+-        if (i != 2 && i != 3)
++        Block soil = Block.blocksList[i];
 +        boolean isValidSoil = (soil != null && soil.canSustainPlant(worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Block.sapling));
 +        if (!isValidSoil)
          {

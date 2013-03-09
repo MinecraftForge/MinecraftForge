@@ -34,20 +34,20 @@
 +    {
          try
          {
-             String var3 = par1Str;
+             String s1 = par1Str;
 @@ -56,13 +77,13 @@
                  this.nameToSoundPoolEntriesMapping.put(par1Str, new ArrayList());
              }
  
--            SoundPoolEntry var4 = new SoundPoolEntry(var3, par2File.toURI().toURL());
-+            SoundPoolEntry var4 = new SoundPoolEntry(var3, url);
-             ((List)this.nameToSoundPoolEntriesMapping.get(par1Str)).add(var4);
-             this.allSoundPoolEntries.add(var4);
+-            SoundPoolEntry soundpoolentry = new SoundPoolEntry(s1, par2File.toURI().toURL());
++            SoundPoolEntry soundpoolentry = new SoundPoolEntry(s1, url);
+             ((List)this.nameToSoundPoolEntriesMapping.get(par1Str)).add(soundpoolentry);
+             this.allSoundPoolEntries.add(soundpoolentry);
              ++this.numberOfSoundPoolEntries;
-             return var4;
+             return soundpoolentry;
          }
--        catch (MalformedURLException var5)
-+        catch (Exception var5)
+-        catch (MalformedURLException malformedurlexception)
++        catch (Exception malformedurlexception)
          {
-             var5.printStackTrace();
-             throw new RuntimeException(var5);
+             malformedurlexception.printStackTrace();
+             throw new RuntimeException(malformedurlexception);
