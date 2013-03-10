@@ -571,6 +571,11 @@ public class Loader
 
     public String getCrashInformation()
     {
+        // Handle being called before we've begun setup
+        if (modController == null)
+        {
+            return "";
+        }
         StringBuilder ret = new StringBuilder();
         List<String> branding = FMLCommonHandler.instance().getBrandings();
 
