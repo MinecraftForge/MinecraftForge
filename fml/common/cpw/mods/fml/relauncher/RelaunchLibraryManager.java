@@ -354,6 +354,11 @@ public class RelaunchLibraryManager
             try
             {
                 jar = new JarFile(coreMod);
+                if (jar.getManifest() == null)
+                {
+                    FMLRelaunchLog.warning("Found an un-manifested jar file in the coremods folder : %s, it will be ignored.", coreMod.getName());
+                    continue;
+                }
                 mfAttributes = jar.getManifest().getMainAttributes();
             }
             catch (IOException ioe)
