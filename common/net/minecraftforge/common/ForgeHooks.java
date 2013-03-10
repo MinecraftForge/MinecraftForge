@@ -47,43 +47,6 @@ public class ForgeHooks
 		}
 	}
 	
-	static void initEntityHealth() {
-		setEntityHealth("Bat", 6);
-		setEntityHealth("Blaze", 20);
-		setEntityHealth("CaveSpider", 12);
-		setEntityHealth("Chicken", 4);
-		setEntityHealth("Cow", 10);
-		setEntityHealth("Creeper", 20);
-		setEntityHealth("Dragon", 200);
-		setEntityHealth("Enderman", 40);
-		setEntityHealth("Ghast", 10);
-		setEntityHealth("IromGolem", 100);
-		setEntityHealth("MagmaCube1", 1);
-		setEntityHealth("MagmaCube2", 4);
-		setEntityHealth("MagmaCube4", 16);
-		setEntityHealth("Mooshroom", 10);
-		setEntityHealth("Ocelot", 10);
-		setEntityHealth("Pig", 10);
-		setEntityHealth("PigZombie", 20);
-		setEntityHealth("Cow", 10);
-		setEntityHealth("Player", 20);
-		setEntityHealth("Sheep", 8);
-		setEntityHealth("Silverfish", 8);
-		setEntityHealth("Skeleton", 20);
-		setEntityHealth("Slime1", 1);
-		setEntityHealth("Slime2", 4);
-		setEntityHealth("Slime4", 16);
-		setEntityHealth("Snowman", 6);
-		setEntityHealth("Spider", 16);
-		setEntityHealth("Squid", 10);
-		setEntityHealth("Villager", 20);
-		setEntityHealth("Witch", 26);
-		setEntityHealth("Wither", 300);
-		setEntityHealth("Wolf", 8);
-		setEntityHealth("WolfTamed", 20);
-		setEntityHealth("Zombie", 20);
-	}
-	
     static class GrassEntry extends WeightedRandomItem
     {
         public final Block block;
@@ -307,7 +270,6 @@ public class ForgeHooks
         grassList.add(new GrassEntry(Block.plantRed,    0, 10));
         seedList.add(new SeedEntry(new ItemStack(Item.seeds), 10));
         initTools();
-        initEntityHealth();
     }
 
     /**
