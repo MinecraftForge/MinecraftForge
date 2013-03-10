@@ -78,9 +78,19 @@
 +    public int getEntityMaxHealth() {
 +    	if(this instanceof EntityWolf) {
 +    		EntityWolf w = (EntityWolf) this;
-+    		return ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", "") + (w.isTamed() ? "Tamed" : ""));
-+    	}
-+    	return ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", ""));
++    		int i = ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", "") + (w.isTamed() ? "Tamed" : ""));
++    	 if(i == 0) {
++        return getMaxHealth();
++      } else {
++       return i;
++      } 
++     }
++     int i = ForgeHooks.getEntityHealth(this.getClass().getName().replaceAll("Entity", ""));
++     if(i == 0) {
++       return getMaxHealth();
++     } else {
++      return i;
++     } 
 +    }
  
      public int getHealth()
