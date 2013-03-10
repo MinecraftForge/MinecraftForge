@@ -25,6 +25,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLLog;
@@ -64,7 +65,7 @@ public class ASMModParser
     {
         this.asmType = Type.getObjectType(typeQName);
         this.classVersion = classVersion;
-        this.asmSuperType = Type.getObjectType(superClassQName);
+        this.asmSuperType = !Strings.isNullOrEmpty(superClassQName) ? Type.getObjectType(superClassQName) : null;
     }
 
     public void startClassAnnotation(String annotationName)
