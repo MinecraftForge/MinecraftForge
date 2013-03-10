@@ -115,7 +115,7 @@ public class FMLCommonHandler
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
-            ticksToRun.removeAll(EnumSet.complementOf(ticks));
+            ticksToRun.retainAll(ticks);
             if (!ticksToRun.isEmpty())
             {
                 ticker.tickStart(ticksToRun, data);
@@ -134,7 +134,7 @@ public class FMLCommonHandler
         for (IScheduledTickHandler ticker : scheduledTicks)
         {
             EnumSet<TickType> ticksToRun = EnumSet.copyOf(Objects.firstNonNull(ticker.ticks(), EnumSet.noneOf(TickType.class)));
-            ticksToRun.removeAll(EnumSet.complementOf(ticks));
+            ticksToRun.retainAll(ticks);
             if (!ticksToRun.isEmpty())
             {
                 ticker.tickEnd(ticksToRun, data);
