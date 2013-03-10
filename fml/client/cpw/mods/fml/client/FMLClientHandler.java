@@ -130,6 +130,7 @@ public class FMLClientHandler implements IFMLSidedHandler
      */
     public void beginMinecraftLoading(Minecraft minecraft)
     {
+        client = minecraft;
         if (minecraft.func_71355_q())
         {
             FMLLog.severe("DEMO MODE DETECTED, FML will not work. Finishing now.");
@@ -138,7 +139,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         }
 
         loading = true;
-        client = minecraft;
 //        TextureFXManager.instance().setClient(client);
         FMLCommonHandler.instance().beginLoading(this);
         new ModLoaderClientHelper(client);
