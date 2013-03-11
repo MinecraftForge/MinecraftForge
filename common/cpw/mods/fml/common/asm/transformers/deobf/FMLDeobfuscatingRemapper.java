@@ -273,6 +273,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
     }
     public void mergeSuperMaps(String name, String superName, String[] interfaces)
     {
+//        System.out.printf("Computing super maps for %s: %s %s\n", name, superName, Arrays.asList(interfaces));
         if (classNameBiMap == null || classNameBiMap.isEmpty())
         {
             return;
@@ -308,5 +309,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         }
         methodNameMaps.put(name, ImmutableMap.copyOf(methodMap));
         fieldNameMaps.put(name, ImmutableMap.copyOf(fieldMap));
+//        System.out.printf("Maps: %s %s\n", name, methodMap);
     }
 }
