@@ -241,45 +241,6 @@ diff -r -U 3 minecraft\net\minecraft\src\TcpMasterThread.java minecraft_patched\
     public void run() {
        try {
           Thread.sleep(5000L);
-diff -r -U 3 minecraft\net\minecraft\src\TexturePackCustom.java minecraft_patched\net\minecraft\src\TexturePackCustom.java
---- minecraft\net\minecraft\src\TexturePackCustom.java	Fri Mar 08 22:40:00 2013
-+++ minecraft_patched\net\minecraft\src\TexturePackCustom.java	Fri Mar 08 22:41:28 2013
-@@ -77,4 +77,9 @@
-       boolean var4 = this.func_98140_c("terrain.png") || this.func_98140_c("gui/items.png");
-       return !var4;
-    }
-+
-+	@Override
-+	public boolean func_94179_g() {
-+		return true;
-+	}
- }
-diff -r -U 3 minecraft\net\minecraft\src\TexturePackDefault.java minecraft_patched\net\minecraft\src\TexturePackDefault.java
---- minecraft\net\minecraft\src\TexturePackDefault.java	Fri Mar 08 22:40:00 2013
-+++ minecraft_patched\net\minecraft\src\TexturePackDefault.java	Fri Mar 08 22:41:28 2013
-@@ -33,4 +33,9 @@
-          return var2;
-       }
-    }
-+
-+	@Override
-+	public boolean func_94179_g() {
-+		return true;
-+	}
- }
-diff -r -U 3 minecraft\net\minecraft\src\TexturePackFolder.java minecraft_patched\net\minecraft\src\TexturePackFolder.java
---- minecraft\net\minecraft\src\TexturePackFolder.java	Fri Mar 08 22:40:00 2013
-+++ minecraft_patched\net\minecraft\src\TexturePackFolder.java	Fri Mar 08 22:41:28 2013
-@@ -35,4 +35,9 @@
-       boolean var3 = this.func_98140_c("terrain.png") || this.func_98140_c("gui/items.png");
-       return var2 || !var3;
-    }
-+
-+	@Override
-+	public boolean func_94179_g() {
-+		return true;
-+	}
- }
 diff -r -U 3 minecraft\net\minecraft\src\ThreadedFileIOBase.java minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java
 --- minecraft\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 08 22:40:00 2013
 +++ minecraft_patched\net\minecraft\src\ThreadedFileIOBase.java	Fri Mar 08 22:41:28 2013
