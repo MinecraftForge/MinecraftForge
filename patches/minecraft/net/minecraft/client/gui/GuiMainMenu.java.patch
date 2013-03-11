@@ -26,16 +26,42 @@
  
  @SideOnly(Side.CLIENT)
  public class GuiMainMenu extends GuiScreen
-@@ -146,6 +152,8 @@
+@@ -45,6 +51,8 @@
+     private int field_92020_v;
+     private int field_92019_w;
+ 
++    private GuiButton fmlModButton = null;
++
+     public GuiMainMenu()
+     {
+         BufferedReader bufferedreader = null;
+@@ -143,6 +151,9 @@
+         {
+             this.func_73969_a(i, 24, stringtranslate);
+         }
++
++        fmlModButton = new GuiButton(6, this.field_73880_f / 2 - 100, i + 48, "Mods");
++        this.field_73887_h.add(fmlModButton);
  
          this.func_96137_a(stringtranslate, i, 24);
  
-+        this.field_73887_h.add(new GuiButton(6, this.field_73880_f / 2 - 100, i + 49, "Mods"));
+@@ -197,7 +208,14 @@
+ 
+     private void func_98060_b(StringTranslate p_98060_1_, int p_98060_2_, int p_98060_3_)
+     {
+-        this.field_73887_h.add(new GuiButton(3, this.field_73880_f / 2 - 100, p_98060_2_ + p_98060_3_ * 2, p_98060_1_.func_74805_b("menu.online")));
++        //If Minecraft Realms is enabled, halve the size of both buttons and set them next to eachother.
++        fmlModButton.field_73747_a = 98;
++        fmlModButton.field_73746_c = this.field_73880_f / 2 + 2;
 +
-         if (this.field_73882_e.field_71448_m)
-         {
-             this.field_73887_h.add(new GuiButton(0, this.field_73880_f / 2 - 100, i + 72, stringtranslate.func_74805_b("menu.options")));
-@@ -249,6 +257,11 @@
++        GuiButton realmButton = new GuiButton(3, this.field_73880_f / 2 - 100, p_98060_2_ + p_98060_3_ * 2, p_98060_1_.func_74805_b("menu.online"));
++        realmButton.field_73747_a = 98;
++        realmButton.field_73746_c = this.field_73880_f / 2 - 100;
++        this.field_73887_h.add(realmButton);
+     }
+ 
+     private void func_73969_a(int p_73969_1_, int p_73969_2_, StringTranslate p_73969_3_)
+@@ -249,6 +267,11 @@
          if (p_73875_1_.field_73741_f == 4)
          {
              this.field_73882_e.func_71400_g();
@@ -47,7 +73,7 @@
          }
  
          if (p_73875_1_.field_73741_f == 11)
-@@ -487,7 +500,16 @@
+@@ -487,7 +510,16 @@
              s = s + " Demo";
          }
  
