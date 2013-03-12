@@ -7,6 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -17,7 +19,7 @@ import com.google.common.collect.ImmutableMap;
 public abstract class LiquidDictionary
 {
 
-    private static Map<String, LiquidStack> liquids = new HashMap<String, LiquidStack>();
+    private static BiMap<String, LiquidStack> liquids = HashBiMap.create();
 
     /**
      * When creating liquids you should call this function.
@@ -37,6 +39,7 @@ public abstract class LiquidDictionary
             return existing.copy();
         }
         liquids.put(name, liquid.copy());
+
         MinecraftForge.EVENT_BUS.post(new LiquidRegisterEvent(name, liquid));
         return liquid;
     }
@@ -62,6 +65,10 @@ public abstract class LiquidDictionary
         return liquid;
     }
 
+    public static LiquidStack getCanonicalLiquid(String name)
+    {
+        return liquids.get(name);
+    }
     /**
      * Get an immutable list of the liquids defined
      *
@@ -86,10 +93,15 @@ public abstract class LiquidDictionary
             this.Liquid = liquid.copy();
         }
     }
-    
+
     static
     {
         getOrCreateLiquid("Water", new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME));
         getOrCreateLiquid("Lava", new LiquidStack(Block.lavaStill, LiquidContainerRegistry.BUCKET_VOLUME));
+    }
+
+    public static String findLiquidName(LiquidStack reference)
+    {
+        return liquids.inverse().get(reference);
     }
 }

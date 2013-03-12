@@ -1,8 +1,12 @@
 package net.minecraftforge.liquids;
 
 import static cpw.mods.fml.relauncher.Side.CLIENT;
+
+import com.google.common.base.Objects;
+
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -119,6 +123,14 @@ public class LiquidStack
     @SideOnly(CLIENT)
     public Icon getRenderingIcon()
     {
+        if (itemID == Block.waterStill.blockID)
+        {
+            return BlockFluid.func_94424_b("water");
+        }
+        else if (itemID == Block.lavaStill.blockID)
+        {
+            return BlockFluid.func_94424_b("lava");
+        }
         return renderingIcon;
     }
 
@@ -126,5 +138,17 @@ public class LiquidStack
     public void setRenderingIcon(Icon icon)
     {
         this.renderingIcon = icon;
+    }
+
+    @Override
+    public final int hashCode()
+    {
+        return Objects.hashCode(itemID, itemMeta);
+    }
+
+    @Override
+    public final boolean equals(Object ob)
+    {
+        return ob instanceof LiquidStack && Objects.equal(((LiquidStack)ob).itemID, itemID) && Objects.equal(((LiquidStack)ob).itemMeta, itemMeta);
     }
 }
