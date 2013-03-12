@@ -34,7 +34,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +42,20 @@
+@@ -35,9 +42,18 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -50,20 +50,10 @@
  {
 +    protected static int[] blockFireSpreadSpeed = new int[4096];
 +    protected static int[] blockFlammability = new int[4096];
-+    protected String currentTexture = "/terrain.png";
-+    public boolean isDefaultTexture = true;
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -332,6 +350,7 @@
-             lightOpacity[par1] = this.isOpaqueCube() ? 255 : 0;
-             canBlockGrass[par1] = !par2Material.getCanBlockGrass();
-         }
-+        isDefaultTexture = (getTextureFile() != null && getTextureFile().equalsIgnoreCase("/terrain.png"));
-     }
- 
-     /**
-@@ -454,9 +473,10 @@
+@@ -454,9 +470,10 @@
          return this.needsRandomTick;
      }
  
@@ -75,7 +65,7 @@
      }
  
      /**
-@@ -479,7 +499,7 @@
+@@ -479,7 +496,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -84,7 +74,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -489,7 +509,7 @@
+@@ -489,7 +506,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -93,7 +83,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +659,13 @@
+@@ -639,7 +656,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -108,7 +98,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -664,7 +690,7 @@
+@@ -664,7 +687,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -117,7 +107,7 @@
      }
  
      /**
-@@ -682,18 +708,13 @@
+@@ -682,18 +705,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -140,7 +130,7 @@
                  }
              }
          }
-@@ -1086,7 +1107,7 @@
+@@ -1086,7 +1104,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -149,7 +139,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1123,13 @@
+@@ -1102,12 +1120,13 @@
          }
      }
  
@@ -164,7 +154,7 @@
      }
  
      /**
-@@ -1414,4 +1436,871 @@
+@@ -1414,4 +1433,849 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -709,28 +699,6 @@
 +    {
 +        return blockID == stone.blockID;
 +    }
-+
-+    /**
-+     * Grabs the current texture file used for this block
-+     */
-+    public String getTextureFile()
-+    {
-+        return currentTexture;
-+    }
-+
-+    /**
-+     * Sets the current texture file for this block, used when rendering.
-+     * Default is "/terrain.png"
-+     *
-+     * @param texture The texture file
-+     */
-+    public Block setTextureFile(String texture)
-+    {
-+        currentTexture = texture;
-+        isDefaultTexture = false;
-+        return this;
-+    }
-+
 +
 +    /**
 +     * Location sensitive version of getExplosionRestance
