@@ -3762,8 +3762,9 @@ FD: azp/c net/minecraft/src/GuiScreenInvite/field_96224_c
 FD: azp/d net/minecraft/src/GuiScreenInvite/field_96222_d
 FD: azp/n net/minecraft/src/GuiScreenInvite/field_96228_n
 FD: azp/o net/minecraft/src/GuiScreenInvite/field_96229_o
-FD: azp/p net/minecraft/src/GuiScreenInvite/field_96226_p
-FD: azp/q net/minecraft/src/GuiScreenInvite/field_96225_q
+FD: azp/p net/minecraft/src/GuiScreenInvite/field_101016_p
+FD: azp/q net/minecraft/src/GuiScreenInvite/field_96226_p
+FD: azp/r net/minecraft/src/GuiScreenInvite/field_96225_q
 FD: azq/a net/minecraft/src/GuiScreenSelectLocation/field_96242_a
 FD: azq/b net/minecraft/src/GuiScreenSelectLocation/field_96238_b
 FD: azq/c net/minecraft/src/GuiScreenSelectLocation/field_96239_c
@@ -11536,9 +11537,9 @@ MD: azp/a (CI)V net/minecraft/src/GuiScreenInvite/func_73869_a (CI)V
 MD: azp/a (IIF)V net/minecraft/src/GuiScreenInvite/func_73863_a (IIF)V
 MD: azp/a (III)V net/minecraft/src/GuiScreenInvite/func_73864_a (III)V
 MD: azp/a (Lawa;)V net/minecraft/src/GuiScreenInvite/func_73875_a (Lnet/minecraft/src/GuiButton;)V
+MD: azp/a (Ljava/lang/String;)V net/minecraft/src/GuiScreenInvite/func_101015_a (Ljava/lang/String;)V
 MD: azp/b ()V net/minecraft/src/GuiScreenInvite/func_73874_b ()V
 MD: azp/c ()V net/minecraft/src/GuiScreenInvite/func_73876_c ()V
-MD: azp/g ()V net/minecraft/src/GuiScreenInvite/func_96221_a ()V
 MD: azq/A_ ()V net/minecraft/src/GuiScreenSelectLocation/func_73866_w_ ()V
 MD: azq/a (IIF)V net/minecraft/src/GuiScreenSelectLocation/func_73863_a (IIF)V
 MD: azq/a (Lawa;)V net/minecraft/src/GuiScreenSelectLocation/func_73875_a (Lnet/minecraft/src/GuiButton;)V
@@ -11585,6 +11586,7 @@ MD: azv/b (Lazv;)Z net/minecraft/src/McoServerList/func_98249_b (Lnet/minecraft/
 MD: azv/c ()Ljava/util/List; net/minecraft/src/McoServerList/func_98252_c ()Ljava/util/List;
 MD: azv/d ()V net/minecraft/src/McoServerList/func_98248_d ()V
 MD: azx/a ()V net/minecraft/src/TimerTaskMcoServerListUpdate/func_98260_a ()V
+MD: azx/a (Ljava/util/List;)V net/minecraft/src/TimerTaskMcoServerListUpdate/func_101018_a (Ljava/util/List;)V
 MD: azx/run ()V net/minecraft/src/TimerTaskMcoServerListUpdate/run ()V
 MD: azy/a ()I net/minecraft/src/SelectionListBase/func_96608_a ()I
 MD: azy/a (I)Z net/minecraft/src/SelectionListBase/func_96609_a (I)Z
@@ -11635,38 +11637,39 @@ MD: bab/a (J)Lbay; net/minecraft/src/GuiScreenOnlineServers/func_98086_a (J)Lnet
 MD: bab/a (Lawa;)V net/minecraft/src/GuiScreenOnlineServers/func_73875_a (Lnet/minecraft/src/GuiButton;)V
 MD: bab/a (Lbab;)Lnet/minecraft/client/Minecraft; net/minecraft/src/GuiScreenOnlineServers/func_96177_a (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/client/Minecraft;
 MD: bab/a (Lbab;I)I net/minecraft/src/GuiScreenOnlineServers/func_98081_a (Lnet/minecraft/src/GuiScreenOnlineServers;I)I
-MD: bab/a (Lbab;II)V net/minecraft/src/GuiScreenOnlineServers/func_98070_a (Lnet/minecraft/src/GuiScreenOnlineServers;II)V
-MD: bab/a (Lbab;Lbay;)V net/minecraft/src/GuiScreenOnlineServers/func_96179_a (Lnet/minecraft/src/GuiScreenOnlineServers;Lnet/minecraft/src/McoServer;)V
-MD: bab/a (Lbab;Ljava/lang/String;)Ljava/lang/String; net/minecraft/src/GuiScreenOnlineServers/func_98085_a (Lnet/minecraft/src/GuiScreenOnlineServers;Ljava/lang/String;)Ljava/lang/String;
+MD: bab/a (Lbab;IIII)V net/minecraft/src/GuiScreenOnlineServers/func_101003_a (Lnet/minecraft/src/GuiScreenOnlineServers;IIII)V
+MD: bab/a (Lbab;Lbay;)V net/minecraft/src/GuiScreenOnlineServers/func_101002_a (Lnet/minecraft/src/GuiScreenOnlineServers;Lnet/minecraft/src/McoServer;)V
+MD: bab/a (Lbab;Ljava/lang/String;)Ljava/lang/String; net/minecraft/src/GuiScreenOnlineServers/func_101011_a (Lnet/minecraft/src/GuiScreenOnlineServers;Ljava/lang/String;)Ljava/lang/String;
 MD: bab/a (Lbay;)V net/minecraft/src/GuiScreenOnlineServers/func_96174_a (Lnet/minecraft/src/McoServer;)V
 MD: bab/a (Ljava/lang/String;II)V net/minecraft/src/GuiScreenOnlineServers/func_96165_a (Ljava/lang/String;II)V
 MD: bab/b ()V net/minecraft/src/GuiScreenOnlineServers/func_73874_b ()V
-MD: bab/b (II)V net/minecraft/src/GuiScreenOnlineServers/func_98088_b (II)V
 MD: bab/b (Lbab;)Lnet/minecraft/client/Minecraft; net/minecraft/src/GuiScreenOnlineServers/func_98075_b (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/client/Minecraft;
 MD: bab/b (Lbab;I)I net/minecraft/src/GuiScreenOnlineServers/func_98089_b (Lnet/minecraft/src/GuiScreenOnlineServers;I)I
-MD: bab/b (Lbab;II)V net/minecraft/src/GuiScreenOnlineServers/func_98083_b (Lnet/minecraft/src/GuiScreenOnlineServers;II)V
+MD: bab/b (Lbab;IIII)V net/minecraft/src/GuiScreenOnlineServers/func_101012_b (Lnet/minecraft/src/GuiScreenOnlineServers;IIII)V
 MD: bab/c ()V net/minecraft/src/GuiScreenOnlineServers/func_73876_c ()V
-MD: bab/c (II)V net/minecraft/src/GuiScreenOnlineServers/func_96175_b (II)V
+MD: bab/c (IIII)V net/minecraft/src/GuiScreenOnlineServers/func_101008_c (IIII)V
 MD: bab/c (Lbab;)Ljava/util/List; net/minecraft/src/GuiScreenOnlineServers/func_98094_c (Lnet/minecraft/src/GuiScreenOnlineServers;)Ljava/util/List;
 MD: bab/c (Lbab;I)V net/minecraft/src/GuiScreenOnlineServers/func_98078_c (Lnet/minecraft/src/GuiScreenOnlineServers;I)V
-MD: bab/c (Lbab;II)V net/minecraft/src/GuiScreenOnlineServers/func_98077_c (Lnet/minecraft/src/GuiScreenOnlineServers;II)V
-MD: bab/d (II)V net/minecraft/src/GuiScreenOnlineServers/func_96168_c (II)V
+MD: bab/c (Lbab;IIII)V net/minecraft/src/GuiScreenOnlineServers/func_101009_c (Lnet/minecraft/src/GuiScreenOnlineServers;IIII)V
+MD: bab/d (IIII)V net/minecraft/src/GuiScreenOnlineServers/func_101006_d (IIII)V
 MD: bab/d (Lbab;)I net/minecraft/src/GuiScreenOnlineServers/func_98072_d (Lnet/minecraft/src/GuiScreenOnlineServers;)I
+MD: bab/e (IIII)V net/minecraft/src/GuiScreenOnlineServers/func_101001_e (IIII)V
 MD: bab/e (Lbab;)Lawa; net/minecraft/src/GuiScreenOnlineServers/func_96161_f (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/GuiButton;
 MD: bab/f (Lbab;)Lnet/minecraft/client/Minecraft; net/minecraft/src/GuiScreenOnlineServers/func_98076_f (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/client/Minecraft;
 MD: bab/g ()V net/minecraft/src/GuiScreenOnlineServers/func_96178_g ()V
 MD: bab/g (Lbab;)Lawa; net/minecraft/src/GuiScreenOnlineServers/func_98092_g (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/GuiButton;
-MD: bab/h ()Ljava/lang/Object; net/minecraft/src/GuiScreenOnlineServers/func_96170_h ()Ljava/lang/Object;
+MD: bab/h ()Ljava/lang/Object; net/minecraft/src/GuiScreenOnlineServers/func_101007_h ()Ljava/lang/Object;
 MD: bab/h (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_98091_h (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
-MD: bab/i ()I net/minecraft/src/GuiScreenOnlineServers/func_98082_i ()I
+MD: bab/i ()I net/minecraft/src/GuiScreenOnlineServers/func_101010_i ()I
 MD: bab/i (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_98084_i (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
-MD: bab/j ()I net/minecraft/src/GuiScreenOnlineServers/func_98093_j ()I
-MD: bab/j (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_96182_l (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
-MD: bab/k ()I net/minecraft/src/GuiScreenOnlineServers/func_96181_k ()I
+MD: bab/j ()I net/minecraft/src/GuiScreenOnlineServers/func_101014_j ()I
+MD: bab/j (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_101005_j (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
+MD: bab/k ()I net/minecraft/src/GuiScreenOnlineServers/func_101013_k ()I
 MD: bab/k (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_98079_k (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
 MD: bab/l (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_98087_l (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
 MD: bab/m (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_98074_m (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
-MD: bab/n (Lbab;)Lnet/minecraft/client/Minecraft; net/minecraft/src/GuiScreenOnlineServers/func_98071_n (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/client/Minecraft;
+MD: bab/n (Lbab;)Lawp; net/minecraft/src/GuiScreenOnlineServers/func_101000_n (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/src/FontRenderer;
+MD: bab/o (Lbab;)Lnet/minecraft/client/Minecraft; net/minecraft/src/GuiScreenOnlineServers/func_101004_o (Lnet/minecraft/src/GuiScreenOnlineServers;)Lnet/minecraft/client/Minecraft;
 MD: bac/run ()V net/minecraft/src/ThreadOnlineScreen/run ()V
 MD: bad/a ()I net/minecraft/src/GuiSlotOnlineServerList/func_77217_a ()I
 MD: bad/a (I)Z net/minecraft/src/GuiSlotOnlineServerList/func_77218_a (I)Z
@@ -11754,8 +11757,10 @@ MD: bay/a (Lbay;)V net/minecraft/src/McoServer/func_96401_a (Lnet/minecraft/src/
 MD: bay/a (Ljava/lang/String;)V net/minecraft/src/McoServer/func_96399_a (Ljava/lang/String;)V
 MD: bay/a (Ljava/util/List;)Ljava/util/List; net/minecraft/src/McoServer/func_98164_a (Ljava/util/List;)Ljava/util/List;
 MD: bay/b ()Ljava/lang/String; net/minecraft/src/McoServer/func_96398_b ()Ljava/lang/String;
+MD: bay/b (Lbay;)I net/minecraft/src/McoServer/func_101017_b (Lnet/minecraft/src/McoServer;)I
 MD: bay/b (Ljava/lang/String;)V net/minecraft/src/McoServer/func_96400_b (Ljava/lang/String;)V
 MD: bay/c (Ljava/lang/String;)Lbay; net/minecraft/src/McoServer/func_98165_c (Ljava/lang/String;)Lnet/minecraft/src/McoServer;
+MD: bay/compareTo (Ljava/lang/Object;)I net/minecraft/src/McoServer/compareTo (Ljava/lang/Object;)I
 MD: baz/a (Ljava/lang/String;)Lbaz; net/minecraft/src/McoServerAddress/func_98162_a (Ljava/lang/String;)Lnet/minecraft/src/McoServerAddress;
 MD: bb/a (Laz;)V net/minecraft/src/BehaviorDefaultDispenseItem/func_82485_a (Lnet/minecraft/src/IBlockSource;)V
 MD: bb/a (Laz;Lbf;)V net/minecraft/src/BehaviorDefaultDispenseItem/func_82489_a (Lnet/minecraft/src/IBlockSource;Lnet/minecraft/src/EnumFacing;)V
