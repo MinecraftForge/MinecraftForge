@@ -630,7 +630,10 @@ def download_mcp(mcp_dir, fml_dir, version=None):
         
     print 'Extracting MCP to \'%s\'' % mcp_dir
     zf = ZipFile(mcp_zip)
-    zf.extractall(mcp_dir)
+    #OS X's python 2.6.1 extractall has a bug in zipfile that makes it unzip directories as regular files.
+    for path in zf.namelist():
+        if not path.endswith('/'):
+            zf.extract(path, mcp_dir)
     zf.close()
     
     eclipse_dir = os.path.join(mcp_dir, 'eclipse')
