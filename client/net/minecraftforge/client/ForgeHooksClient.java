@@ -101,7 +101,7 @@ public class ForgeHooksClient
         }
         else
         {
-            engine.func_98187_b("/gui/items.png");
+            engine.func_98187_b(item.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -116,7 +116,7 @@ public class ForgeHooksClient
                 return false;
         }
 
-        engine.func_98187_b("/gui/items.png");
+        engine.func_98187_b(item.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();
