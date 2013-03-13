@@ -160,7 +160,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -3059,4 +3106,42 @@
+@@ -3059,4 +3106,52 @@
      {
          this.canPickUpLoot = par1;
      }
@@ -201,5 +201,15 @@
 +    public boolean shouldRiderFaceForward(EntityPlayer player)
 +    {
 +        return this instanceof EntityPig;
++    }
++    
++    /**
++     * Returns true if the entity is of the @link{EnumCreatureType} provided
++     * @param type The EnumCreatureType type this entity is evaluating
++     * @return If the creature is of the type provided
++     */
++    public boolean isCreatureOfType(EnumCreatureType type)
++    {
++        return type.getCreatureClass().isAssignableFrom(this.getClass());
 +    }
  }
