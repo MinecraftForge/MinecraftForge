@@ -68,7 +68,7 @@
                      this.loadTexture("/gui/items.png");
  
 -                    for (int k = 0; k <= 1; ++k)
-+                    for (int k = 0; k <= itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++k)
++                    for (int k = 0; k < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++k)
                      {
                          this.random.setSeed(187L);
 -                        Icon icon = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), k);
