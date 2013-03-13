@@ -71,7 +71,7 @@ public class BiomeDictionary
     {   
         if(BiomeGenBase.biomeList[biome.biomeID] != null)
         {
-        	for(Type type : types)
+            for(Type type : types)
             {
                 if(typeInfoList[type.ordinal()] == null)
                 {
