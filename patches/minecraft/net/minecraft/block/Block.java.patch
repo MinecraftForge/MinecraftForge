@@ -697,7 +697,7 @@
 +     */
 +    public boolean isGenMineableReplaceable(World world, int x, int y, int z, int target)
 +    {
-+        return blockID == stone.blockID;
++        return blockID == stone.blockID || blockID == netherrack.blockID;
 +    }
 +
 +    /**
