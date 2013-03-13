@@ -32,6 +32,7 @@ import org.objectweb.asm.commons.Remapper;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -278,12 +279,19 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         {
             return;
         }
+        // Skip Object
+        if (Strings.isNullOrEmpty(superName))
+        {
+            return;
+        }
+
         List<String> allParents = ImmutableList.<String>builder().add(superName).addAll(Arrays.asList(interfaces)).build();
+        // generate maps for all parent objects
         for (String parentThing : allParents)
         {
-            if (superName != null && classNameBiMap.containsKey(superName) && !methodNameMaps.containsKey(superName))
+            if (!methodNameMaps.containsKey(parentThing))
             {
-                findAndMergeSuperMaps(superName);
+                findAndMergeSuperMaps(parentThing);
             }
         }
         Map<String, String> methodMap = Maps.<String,String>newHashMap();
