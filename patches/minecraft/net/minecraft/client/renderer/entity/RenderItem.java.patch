@@ -120,7 +120,7 @@
 +                    GL11.glTranslatef(0f, 0f, f12 + f11);
 +                }
 +
-+                if (itemstack.func_94608_d() == 0 && itemstack.itemID < Block.blocksList.length && Block.blocksList[itemstack.itemID] != null)
++                if (itemstack.func_94608_d() == 0)
                  {
                      this.loadTexture("/terrain.png");
                  }
