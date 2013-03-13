@@ -2,9 +2,9 @@ package net.minecraftforge.inventory;
 
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,8 +20,8 @@ public class DefaultInventoryHandler implements IInventoryHandler {
     public Collection<ItemStack> listItemsInInventory(IInventory inventory, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
-            iMin = ((ISidedInventory) inventory).getStartInventorySide(side);
-            iMax = iMin + ((ISidedInventory) inventory).getSizeInventorySide(side);
+            iMin = ((ISidedInventory) inventory).func_94127_c(side.ordinal());
+            iMax = iMin + ((ISidedInventory) inventory).func_94128_d(side.ordinal());
         } else {
             iMax = inventory.getSizeInventory();
         }
@@ -46,8 +46,8 @@ public class DefaultInventoryHandler implements IInventoryHandler {
     public int addItemToInventory(IInventory inventory, ItemStack itemStack, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
-            iMin = ((ISidedInventory) inventory).getStartInventorySide(side);
-            iMax = iMin + ((ISidedInventory) inventory).getSizeInventorySide(side);
+            iMin = ((ISidedInventory) inventory).func_94127_c(side.ordinal());
+            iMax = iMin + ((ISidedInventory) inventory).func_94128_d(side.ordinal());
         } else {
             iMax = inventory.getSizeInventory();
         }
@@ -104,8 +104,8 @@ public class DefaultInventoryHandler implements IInventoryHandler {
     public int getSpaceInInventoryForItem(IInventory inventory, ItemStack itemStack, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
-            iMin = ((ISidedInventory) inventory).getStartInventorySide(side);
-            iMax = iMin + ((ISidedInventory) inventory).getSizeInventorySide(side);
+            iMin = ((ISidedInventory) inventory).func_94127_c(side.ordinal());
+            iMax = iMin + ((ISidedInventory) inventory).func_94128_d(side.ordinal());
         } else {
             iMax = inventory.getSizeInventory();
         }
@@ -124,6 +124,9 @@ public class DefaultInventoryHandler implements IInventoryHandler {
         ItemStack stackInSlot = inventory.getStackInSlot(slotIndex);
 
         if (stackInSlot == null || InventoryUtils.areItemStacksSimilar(stackInSlot, itemStack)) {
+
+            if (! inventory.func_94041_b(slotIndex, itemStack))
+                return 0; // Vanilla check; used to determine what kind of items are allowed into the slot.
 
             if (inventory instanceof IDynamicInventory)
                 return ((IDynamicInventory) inventory).getSlotCapacityForItem(itemStack, slotIndex);
@@ -148,8 +151,8 @@ public class DefaultInventoryHandler implements IInventoryHandler {
     public ItemStack takeItemFromInventory(IInventory inventory, ItemStack item, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
-            iMin = ((ISidedInventory) inventory).getStartInventorySide(side);
-            iMax = iMin + ((ISidedInventory) inventory).getSizeInventorySide(side);
+            iMin = ((ISidedInventory) inventory).func_94127_c(side.ordinal());
+            iMax = iMin + ((ISidedInventory) inventory).func_94128_d(side.ordinal());
         } else {
             iMax = inventory.getSizeInventory();
         }
@@ -170,8 +173,8 @@ public class DefaultInventoryHandler implements IInventoryHandler {
     public ItemStack takeItemFromInventory(IInventory inventory, ItemStack item, int quantity, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
-            iMin = ((ISidedInventory) inventory).getStartInventorySide(side);
-            iMax = iMin + ((ISidedInventory) inventory).getSizeInventorySide(side);
+            iMin = ((ISidedInventory) inventory).func_94127_c(side.ordinal());
+            iMax = iMin + ((ISidedInventory) inventory).func_94128_d(side.ordinal());
         } else {
             iMax = inventory.getSizeInventory();
         }
@@ -251,8 +254,8 @@ public class DefaultInventoryHandler implements IInventoryHandler {
     public int getItemCountInInventory(IInventory inventory, ItemStack itemStack, ForgeDirection side) {
         int iMin = 0, iMax;
         if (inventory instanceof ISidedInventory) {
-            iMin = ((ISidedInventory) inventory).getStartInventorySide(side);
-            iMax = iMin + ((ISidedInventory) inventory).getSizeInventorySide(side);
+            iMin = ((ISidedInventory) inventory).func_94127_c(side.ordinal());
+            iMax = iMin + ((ISidedInventory) inventory).func_94128_d(side.ordinal());
         } else {
             iMax = inventory.getSizeInventory();
         }
