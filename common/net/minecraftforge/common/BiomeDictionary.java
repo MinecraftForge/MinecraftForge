@@ -84,7 +84,6 @@ public class BiomeDictionary
             if(biomeList[biome.biomeID] == null)
             {
                 biomeList[biome.biomeID] = new BiomeInfo(types);
-                return true;
             }
             else
             {
@@ -92,8 +91,9 @@ public class BiomeDictionary
                 {
                     biomeList[biome.biomeID].typeList.add(type);
                 }
-                return true;
             }
+            
+            return true;
         }
         
         return false;
