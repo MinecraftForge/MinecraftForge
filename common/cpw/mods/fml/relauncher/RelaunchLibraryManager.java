@@ -280,6 +280,7 @@ public class RelaunchLibraryManager
         Map<String,Object> data = new HashMap<String,Object>();
         data.put("mcLocation", mcDir);
         data.put("coremodList", loadPlugins);
+        data.put("runtimeDeobfuscationEnabled", !deobfuscatedEnvironment);
         for (IFMLLoadingPlugin plugin : loadPlugins)
         {
             downloadMonitor.updateProgressString("Running coremod plugin %s", plugin.getClass().getSimpleName());
