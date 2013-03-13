@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -62,6 +62,7 @@ public class FMLInterModComms {
         public void applyModContainer(ModContainer activeContainer)
         {
             this.activeContainer = activeContainer;
+            this.currentList = null;
             FMLLog.finest("Attempting to deliver %d IMC messages to mod %s", modMessages.get(activeContainer.getModId()).size(), activeContainer.getModId());
         }
 
