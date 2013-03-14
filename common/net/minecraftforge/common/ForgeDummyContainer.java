@@ -83,7 +83,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
             prop.set(64);
         }
         
-        prop = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnceOutput", false);
+        prop = config.get(Configuration.CATEGORY_GENERAL, "legacyFurnaceOutput", false);
         prop.comment = "Controls the sides of vanilla furnaces for Forge's ISidedInventroy, Vanilla defines the output as the bottom, but mods/Forge define it as the sides. Settings this to true will restore the old side relations.";
         legacyFurnaceSides = prop.getBoolean(false);
 
