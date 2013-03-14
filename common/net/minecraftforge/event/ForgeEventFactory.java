@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -14,7 +15,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
-import net.minecraftforge.event.world.LightningGeneratedEvent;
+import net.minecraftforge.event.world.WeatherEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import java.util.List;
@@ -69,9 +70,35 @@ public class ForgeEventFactory
         return event.list;
     }
 
-    public static boolean onLightningGenerated(World world, int x, int y, int z) {
-        LightningGeneratedEvent event = new LightningGeneratedEvent(world, x, y, z);
+    public static boolean onLightningGenerated(World world, int x, int y, int z, WorldInfo info) {
+        WeatherEvent.LightningGeneratedEvent event = new WeatherEvent.LightningGeneratedEvent(world, x, y, z, info);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() != Result.DENY;
+    }
+
+    public static void onRainChanged(World world, WorldInfo info) {
+        MinecraftForge.EVENT_BUS.post(new WeatherEvent.RainChangedEvent(world, info));
+        MinecraftForge.EVENT_BUS.post(info.isRaining() ?
+                new WeatherEvent.RainStartedEvent(world, info) : new WeatherEvent.RainStoppedEvent(world, info));
+
+        if (info.isThundering()) {
+            stormChanged(world, info, info.isRaining());
+        }
+    }
+
+    public static void onThunderingChanged(World world, WorldInfo info) {
+        MinecraftForge.EVENT_BUS.post(new WeatherEvent.ThunderingChangedEvent(world, info));
+        MinecraftForge.EVENT_BUS.post(info.isThundering() ?
+                new WeatherEvent.ThunderingStartedEvent(world, info) : new WeatherEvent.ThunderingStoppedEvent(world, info));
+
+        if (info.isRaining()) {
+            stormChanged(world, info, info.isThundering());
+        }
+    }
+
+    private static void stormChanged(World world, WorldInfo info, boolean started) {
+        MinecraftForge.EVENT_BUS.post(new WeatherEvent.StormChangedEvent(world, info));
+        MinecraftForge.EVENT_BUS.post(started ?
+                new WeatherEvent.StormStartedEvent(world, info) : new WeatherEvent.StormStoppedEvent(world, info));
     }
 }

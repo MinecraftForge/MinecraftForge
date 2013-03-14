@@ -120,7 +120,7 @@
                  if (this.canLightningStrikeAt(j1, l1, k1))
                  {
 -                    this.addWeatherEffect(new EntityLightningBolt(this, (double)j1, (double)l1, (double)k1));
-+                    if(ForgeEventFactory.onLightningGenerated(this, j1, l1, k1)){
++                    if(ForgeEventFactory.onLightningGenerated(this, j1, l1, k1, this.worldInfo)){
 +                        this.addWeatherEffect(new EntityLightningBolt(this, (double)j1, (double)l1, (double)k1));
 +                    }
                  }
