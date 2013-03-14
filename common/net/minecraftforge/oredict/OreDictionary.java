@@ -23,7 +23,14 @@ public class OreDictionary
     private static int maxID = 0;
     private static HashMap<String, Integer> oreIDs = new HashMap<String, Integer>();
     private static HashMap<Integer, ArrayList<ItemStack>> oreStacks = new HashMap<Integer, ArrayList<ItemStack>>();
-    
+
+
+    /**
+     * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
+     * changes again.
+     */
+    public static final int WILDCARD_VALUE = Short.MAX_VALUE;
+
     static {
         initVanillaEntries();
     }
@@ -32,25 +39,25 @@ public class OreDictionary
     {
         if (!hasInit)
         {
-            registerOre("logWood",     new ItemStack(Block.wood, 1, -1));
-            registerOre("plankWood",   new ItemStack(Block.planks, 1, -1));
-            registerOre("slabWood",    new ItemStack(Block.woodSingleSlab, 1, -1));
+            registerOre("logWood",     new ItemStack(Block.wood, 1, WILDCARD_VALUE));
+            registerOre("plankWood",   new ItemStack(Block.planks, 1, WILDCARD_VALUE));
+            registerOre("slabWood",    new ItemStack(Block.woodSingleSlab, 1, WILDCARD_VALUE));
             registerOre("stairWood",   Block.stairCompactPlanks);
             registerOre("stairWood",   Block.stairsWoodBirch);
             registerOre("stairWood",   Block.stairsWoodJungle);
             registerOre("stairWood",   Block.stairsWoodSpruce);
             registerOre("stickWood",   Item.stick);
-            registerOre("treeSapling", new ItemStack(Block.sapling, 1, -1));
-            registerOre("treeLeaves",  new ItemStack(Block.leaves, 1, -1));
+            registerOre("treeSapling", new ItemStack(Block.sapling, 1, WILDCARD_VALUE));
+            registerOre("treeLeaves",  new ItemStack(Block.leaves, 1, WILDCARD_VALUE));
         }
 
         // Build our list of items to replace with ore tags
         Map<ItemStack, String> replacements = new HashMap<ItemStack, String>();
-        replacements.put(new ItemStack(Block.planks, 1, -1), "plankWood");
+        replacements.put(new ItemStack(Block.planks, 1, WILDCARD_VALUE), "plankWood");
         replacements.put(new ItemStack(Item.stick), "stickWood");
 
         // Register dyes
-        String[] dyes = 
+        String[] dyes =
         {
             "dyeBlack",
             "dyeRed",
@@ -139,9 +146,9 @@ public class OreDictionary
     }
 
     /**
-     * Gets the integer ID for the specified ore name. 
+     * Gets the integer ID for the specified ore name.
      * If the name does not have a ID it assigns it a new one.
-     * 
+     *
      * @param name The unique name for this ore 'oreIron', 'ingotIron', etc..
      * @return A number representing the ID for this ore type
      */
@@ -156,10 +163,10 @@ public class OreDictionary
         }
         return val;
     }
-    
+
     /**
      * Reverse of getOreID, will not create new entries.
-     * 
+     *
      * @param id The ID to translate to a string
      * @return The String name, or "Unknown" if not found.
      */
@@ -174,7 +181,7 @@ public class OreDictionary
         }
         return "Unknown";
     }
-    
+
     /**
      * Gets the integer ID for the specified item stack.
      * If the item stack is not linked to any ore, this will return -1 and no new entry will be created.
@@ -193,7 +200,7 @@ public class OreDictionary
         {
             for(ItemStack target : ore.getValue())
             {
-                if(itemStack.itemID == target.itemID && (target.getItemDamage() == -1 || itemStack.getItemDamage() == target.getItemDamage()))
+                if(itemStack.itemID == target.itemID && (target.getItemDamage() == WILDCARD_VALUE || itemStack.getItemDamage() == target.getItemDamage()))
                 {
                     return ore.getKey();
                 }
@@ -201,11 +208,11 @@ public class OreDictionary
         }
         return -1; // didn't find it.
     }
-    
+
     /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
-     *  
+     *
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
@@ -213,21 +220,21 @@ public class OreDictionary
     {
         return getOres(getOreID(name));
     }
-    
+
     /**
      * Retrieves a list of all unique ore names that are already registered.
-     * 
+     *
      * @return All unique ore names that are currently registered.
      */
     public static String[] getOreNames()
     {
         return oreIDs.keySet().toArray(new String[oreIDs.keySet().size()]);
     }
-    
+
     /**
      * Retrieves the ArrayList of items that are registered to this ore type.
      * Creates the list as empty if it did not exist.
-     *  
+     *
      * @param id The ore ID, see getOreID
      * @return An arrayList containing ItemStacks registered for this ore
      */
@@ -263,7 +270,7 @@ public class OreDictionary
         {
             return false;
         }
-        return (target.itemID == input.itemID && ((target.getItemDamage() == -1 && !strict) || target.getItemDamage() == input.getItemDamage()));
+        return (target.itemID == input.itemID && ((target.getItemDamage() == WILDCARD_VALUE && !strict) || target.getItemDamage() == input.getItemDamage()));
     }
 
     //Convenience functions that make for cleaner code mod side. They all drill down to registerOre(String, int, ItemStack)
@@ -273,11 +280,11 @@ public class OreDictionary
     public static void registerOre(int    id,   Item      ore){ registerOre(id,   new ItemStack(ore));  }
     public static void registerOre(int    id,   Block     ore){ registerOre(id,   new ItemStack(ore));  }
     public static void registerOre(int    id,   ItemStack ore){ registerOre(getOreName(id), id, ore);   }
-    
+
     /**
      * Registers a ore item into the dictionary.
      * Raises the registerOre function in all registered handlers.
-     * 
+     *
      * @param name The name of the ore
      * @param id The ID of the ore
      * @param ore The ore's ItemStack
@@ -289,12 +296,12 @@ public class OreDictionary
         ores.add(ore);
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
     }
-    
+
     public static class OreRegisterEvent extends Event
     {
         public final String Name;
         public final ItemStack Ore;
-        
+
         public OreRegisterEvent(String name, ItemStack ore)
         {
             this.Name = name;

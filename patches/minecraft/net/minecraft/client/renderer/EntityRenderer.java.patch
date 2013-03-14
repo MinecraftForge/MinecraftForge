@@ -116,13 +116,13 @@
              GL11.glDisable(GL11.GL_BLEND);
              this.mc.mcProfiler.endStartSection("weather");
              this.renderRainSnow(par1);
-@@ -1248,6 +1267,9 @@
-                 GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-                 this.renderHand(par1, j);
+@@ -1240,6 +1259,9 @@
+             {
+                 this.renderCloudsCheck(renderglobal, par1);
              }
 +
 +            this.mc.mcProfiler.endStartSection("FRenderLast");
 +            ForgeHooksClient.dispatchRenderLast(renderglobal, par1);
  
-             if (!this.mc.gameSettings.anaglyph)
-             {
+             this.mc.mcProfiler.endStartSection("hand");
+ 

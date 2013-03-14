@@ -115,7 +115,17 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -345,7 +374,7 @@
+@@ -338,14 +367,16 @@
+ 
+                 if (this.canLightningStrikeAt(j1, l1, k1))
+                 {
+-                    this.addWeatherEffect(new EntityLightningBolt(this, (double)j1, (double)l1, (double)k1));
++                    if(ForgeEventFactory.onLightningGenerated(this, j1, l1, k1, this.worldInfo)){
++                        this.addWeatherEffect(new EntityLightningBolt(this, (double)j1, (double)l1, (double)k1));
++                    }
+                 }
+             }
+ 
              this.theProfiler.endStartSection("iceandsnow");
              int i2;
  
@@ -124,7 +134,7 @@
              {
                  this.updateLCG = this.updateLCG * 3 + 1013904223;
                  i1 = this.updateLCG >> 2;
-@@ -430,6 +459,9 @@
+@@ -430,6 +461,9 @@
      public void func_82740_a(int par1, int par2, int par3, int par4, int par5, int par6)
      {
          NextTickListEntry nextticklistentry = new NextTickListEntry(par1, par2, par3, par4);
@@ -134,7 +144,7 @@
          byte b0 = 0;
  
          if (this.scheduledUpdatesAreImmediate && par4 > 0)
-@@ -493,7 +525,7 @@
+@@ -493,7 +527,7 @@
       */
      public void updateEntities()
      {
@@ -143,7 +153,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -559,6 +591,9 @@
+@@ -559,6 +593,9 @@
              {
                  nextticklistentry = (NextTickListEntry)iterator.next();
                  iterator.remove();
@@ -153,7 +163,7 @@
                  byte b0 = 0;
  
                  if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
-@@ -702,16 +737,28 @@
+@@ -702,16 +739,28 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -192,7 +202,7 @@
          return arraylist;
      }
  
-@@ -719,6 +766,11 @@
+@@ -719,6 +768,11 @@
       * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
       */
      public boolean canMineBlock(EntityPlayer par1EntityPlayer, int par2, int par3, int par4)
@@ -204,7 +214,7 @@
      {
          return !this.mcServer.func_96290_a(this, par2, par3, par4, par1EntityPlayer);
      }
-@@ -803,7 +855,7 @@
+@@ -803,7 +857,7 @@
       */
      protected void createBonusChest()
      {
@@ -213,7 +223,7 @@
  
          for (int i = 0; i < 10; ++i)
          {
-@@ -846,6 +898,7 @@
+@@ -846,6 +900,7 @@
              }
  
              this.chunkProvider.saveChunks(par1, par2IProgressUpdate);
@@ -221,7 +231,7 @@
          }
      }
  
-@@ -857,6 +910,7 @@
+@@ -857,6 +912,7 @@
          this.checkSessionLock();
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getConfigurationManager().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -229,7 +239,7 @@
      }
  
      /**
-@@ -1070,4 +1124,9 @@
+@@ -1070,4 +1126,9 @@
      {
          return this.field_85177_Q;
      }
