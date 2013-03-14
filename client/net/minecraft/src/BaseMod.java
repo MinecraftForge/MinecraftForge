@@ -330,6 +330,8 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     }
     /**
      * Called client side to receive a custom payload for this mod
+     * 
+     * NOTE: this method is not provided in Risugami's implementation of BaseMod!
      *
      * @param packet
      */
@@ -356,7 +358,9 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
         return false;
 
     }
-
+    /*
+     * NOTE: this method is not provided in Risugami's implementation of BaseMod!
+     */
     @Override
     public void serverConnect(NetHandler handler) {
 
@@ -368,6 +372,9 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     }
 
+    /*
+     * NOTE: this method is not provided in Risugami's implementation of BaseMod!
+     */
     @Override
     public void serverDisconnect() {
 
@@ -411,6 +418,8 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
     }
     /**
      * Called when a new client logs in.
+     * 
+     * NOTE: this method is not provided in Risugami's implementation of BaseMod!
      *
      * @param player
      */
@@ -421,6 +430,8 @@ public abstract class BaseMod implements cpw.mods.fml.common.modloader.BaseModPr
 
     /**
      * Called when a client logs out of the server.
+     * 
+     * NOTE: this method is not provided in Risugami's implementation of BaseMod!
      */
     @Override
     public void onClientLogout(INetworkManager mgr)
