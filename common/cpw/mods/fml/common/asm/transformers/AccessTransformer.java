@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -161,6 +161,10 @@ public class AccessTransformer implements IClassTransformer
         if (bytes == null) { return null; }
         boolean makeAllPublic = FMLDeobfuscatingRemapper.INSTANCE.isRemappedClass(name);
 
+        if (DEBUG)
+        {
+            System.out.printf("Considering all methods and fields on %s (%s): %b\n", name, transformedName, makeAllPublic);
+        }
         if (!makeAllPublic && !modifiers.containsKey(name)) { return bytes; }
 
         ClassNode classNode = new ClassNode();
@@ -183,8 +187,12 @@ public class AccessTransformer implements IClassTransformer
             m = new Modifier();
             m.targetAccess = ACC_PUBLIC;
             m.name = "*";
-            m.desc = "";
+            m.desc = "<dummy>";
             modifiers.put(name,m);
+            if (DEBUG)
+            {
+                System.out.printf("Injected all public modifiers for %s (%s)\n", name, transformedName);
+            }
         }
 
         Collection<Modifier> mods = modifiers.get(name);
