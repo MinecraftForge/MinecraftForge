@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -110,15 +110,17 @@ public class FMLRelaunchLog
                 super.reset();
 
                 currentMessage.append(record.replace(FMLLogFormatter.LINE_SEPARATOR, "\n"));
-                if (currentMessage.lastIndexOf("\n")>=0)
+                // Are we longer than just the line separator?
+                int lastIdx = -1;
+                int idx = currentMessage.indexOf("\n",lastIdx+1);
+                while (idx > 0)
                 {
-                    // Are we longer than just the line separator?
-                    if (currentMessage.length()>1)
-                    {
-                        // Trim the line separator
-                        currentMessage.setLength(currentMessage.length()-1);
-                        log.log(Level.INFO, currentMessage.toString());
-                    }
+                    log.log(Level.INFO, currentMessage.substring(lastIdx+1,idx));
+                    lastIdx = idx;
+                    idx = currentMessage.indexOf("\n",lastIdx+1);
+                }
+                if (lastIdx >= 0)
+                {
                     currentMessage.setLength(0);
                 }
             }
