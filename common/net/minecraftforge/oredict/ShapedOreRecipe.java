@@ -167,12 +167,12 @@ public class ShapedOreRecipe implements IRecipe
         {
             for (int y = 0; y <= MAX_CRAFT_GRID_HEIGHT - height; ++y)
             {
-                if (checkMatch(inv, x, y, true))
+                if (checkMatch(inv, x, y, false))
                 {
                     return true;
                 }
 
-                if (mirrored && checkMatch(inv, x, y, false))
+                if (mirrored && checkMatch(inv, x, y, true))
                 {
                     return true;
                 }
