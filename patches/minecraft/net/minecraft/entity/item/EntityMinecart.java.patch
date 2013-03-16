@@ -63,7 +63,7 @@
      }
  
      public EntityMinecart(World par1World, double par2, double par4, double par6)
-@@ -347,10 +373,13 @@
+@@ -347,19 +373,22 @@
              double d5 = 0.0078125D;
              int l = this.worldObj.getBlockId(j, i, k);
  
@@ -81,7 +81,9 @@
  
                  if (l == Block.field_94337_cv.blockID)
                  {
-@@ -359,7 +388,7 @@
+-                    this.func_96095_a(j, i, k, (i1 & 8) != 0);
++                    this.func_96095_a(j, i, k, (worldObj.getBlockMetadata(j, i, k) & 8) != 0);
+                 }
              }
              else
              {
