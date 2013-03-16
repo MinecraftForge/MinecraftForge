@@ -1,28 +1,75 @@
 --- ../src_base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
 +++ ../src_work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
-@@ -4,6 +4,9 @@
+@@ -1,9 +1,18 @@
+ package net.minecraft.util;
+ 
++import java.util.HashSet;
++import java.util.Iterator;
+ import java.util.Random;
++import java.util.Set;
++
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemStack;
  import net.minecraft.tileentity.TileEntityDispenser;
++import net.minecraft.world.World;
 +import net.minecraftforge.common.ChestGenHooks;
 +import net.minecraftforge.common.DungeonHooks;
++import net.minecraftforge.common.IChestGenExtraWorldgen;
 +import cpw.mods.fml.common.FMLLog;
  
  public class WeightedRandomChestContent extends WeightedRandomItem
  {
-@@ -42,20 +45,11 @@
-             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
-             int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
+@@ -31,32 +40,65 @@
+         this.theMinimumChanceToGenerateItem = par2;
+         this.theMaximumChanceToGenerateItem = par3;
+     }
++    
++    private IChestGenExtraWorldgen extraWorldgen;
++    
++    /**
++     * Sets the extra worldgen associated with this item
++     * 
++     * Must be supported by worldgen that adds the chest
++     */
++    public void setExtraWorldgen(IChestGenExtraWorldgen worldgen) {
++        extraWorldgen = worldgen;
++    }
+ 
+     /**
+      * Generates the Chest contents.
+      */
+     public static void generateChestContents(Random par0Random, WeightedRandomChestContent[] par1ArrayOfWeightedRandomChestContent, IInventory par2IInventory, int par3)
+     {
+-        for (int j = 0; j < par3; ++j)
++
++    }
++    
++    /**
++     * Generates the Chest contents with extra worldgen associated with items.
++     * 
++     * If <code>makeRunnable</code> is true, then a <code>Runnable</code> instance will be created that generates the extra worldgen instead of actually doing it within the method.
++     */
++    public static Runnable generateChestContentsWithExtraWorldgen(Random random, WeightedRandomChestContent[] contents, IInventory inventory, int count, final World world, final int x, final int y, final int z, final boolean makeRunnable) {
++        final Set<IChestGenExtraWorldgen> extraWorldgenSet = new HashSet<IChestGenExtraWorldgen>();
++        
++        for (int j = 0; j < count; ++j)
+         {
+-            WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+-            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
++            WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(random, contents);
++            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
  
 -            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
-+            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
 +
 +            for (ItemStack item : stacks)
              {
 -                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
 -                itemstack.stackSize = k;
 -                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack);
--            }
++                extraWorldgenSet.add(weightedrandomchestcontent.extraWorldgen);
++                inventory.setInventorySlotContents(random.nextInt(inventory.getSizeInventory()), item);
+             }
 -            else
 -            {
 -                for (int l = 0; l < k; ++l)
@@ -30,12 +77,29 @@
 -                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
 -                    itemstack1.stackSize = 1;
 -                    par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack1);
--                }
-+                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), item);
++        }
++        
++        Runnable runnable = new Runnable() {
++            public void run(){
++                Iterator<IChestGenExtraWorldgen> iterator = extraWorldgenSet.iterator();
++        
++                while (iterator.hasNext()) {
++                    IChestGenExtraWorldgen worldgen = iterator.next();
++                    iterator.remove();
++            
++                    worldgen.generateExtra(x, y, z, world, extraWorldgenSet);
+                 }
              }
++        };
++        
++        if (makeRunnable) return runnable;
++        else {
++            runnable.run();
++            return null;
          }
      }
-@@ -68,22 +62,11 @@
+ 
+@@ -68,22 +110,11 @@
          for (int j = 0; j < par3; ++j)
          {
              WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
@@ -61,7 +125,7 @@
              }
          }
      }
-@@ -109,4 +92,18 @@
+@@ -109,4 +140,18 @@
  
          return aweightedrandomchestcontent1;
      }
