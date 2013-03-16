@@ -138,20 +138,31 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -392,9 +378,9 @@
+@@ -390,11 +376,18 @@
+             if (Item.itemsList[k].requiresMultipleRenderPasses())
+             {
                  GL11.glDisable(GL11.GL_LIGHTING);
-                 par2RenderEngine.func_98187_b("/gui/items.png");
- 
+-                par2RenderEngine.func_98187_b("/gui/items.png");
+-
 -                for (j1 = 0; j1 <= 1; ++j1)
 -                {
 -                    Icon icon1 = Item.itemsList[k].getIconFromDamageForRenderPass(l, j1);
++                if (par3ItemStack.func_94608_d() == 0)
++                {
++                    par2RenderEngine.func_98187_b("/terrain.png");
++                }
++                else
++                {
++                    par2RenderEngine.func_98187_b("/gui/items.png");
++                }
++
 +                for (j1 = 0; j1 < Item.itemsList[k].getRenderPasses(l); ++j1)
 +                {
 +                    Icon icon1 = Item.itemsList[k].getIcon(par3ItemStack, j1);
                      int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                      f = (float)(k1 >> 16 & 255) / 255.0F;
                      f1 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -453,7 +439,10 @@
+@@ -453,7 +446,10 @@
      {
          if (par3ItemStack != null)
          {
@@ -163,7 +174,7 @@
  
              if (par3ItemStack.hasEffect())
              {
-@@ -590,4 +579,47 @@
+@@ -590,4 +586,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }
