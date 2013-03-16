@@ -27,3 +27,14 @@
                  {
                      return false;
                  }
+@@ -522,7 +522,9 @@
+                         continue;
+                     }
+ 
+-                    Block.blocksList[i2].dropBlockAsItem(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), 0);
++                    //With our change to how snowballs are dropped this needs to dissallow to mimic vanilla behavior.
++                    float chance = (Block.blocksList[i2] instanceof BlockSnow ? -1.0f : 1.0f);
++                    Block.blocksList[i2].dropBlockAsItemWithChance(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), chance, 0);
+                     par1World.func_94571_i(i1, j1, k1);
+                 }
+             }
