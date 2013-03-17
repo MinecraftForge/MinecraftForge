@@ -60,6 +60,7 @@ public class RelaunchClassLoader extends URLClassLoader
     private static final String[] RESERVED = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
     private static final boolean DEBUG_CLASSLOADING = Boolean.parseBoolean(System.getProperty("fml.debugClassLoading", "false"));
+    private static final boolean DEBUG_CLASSLOADING_FINER = DEBUG_CLASSLOADING && Boolean.parseBoolean(System.getProperty("fml.debugClassLoadingFiner", "false"));
 
     public RelaunchClassLoader(URL[] sources)
     {
@@ -196,7 +197,7 @@ public class RelaunchClassLoader extends URLClassLoader
             }
             byte[] basicClass = getClassBytes(untransformedName);
             byte[] transformedClass = runTransformers(untransformedName, transformedName, basicClass);
-            Class<?> cl = defineClass(transformedName, transformedClass, 0, transformedClass.length, new CodeSource(urlConnection.getURL(), signers));
+            Class<?> cl = defineClass(transformedName, transformedClass, 0, transformedClass.length, (urlConnection == null ? null : new CodeSource(urlConnection.getURL(), signers)));
             cachedClasses.put(transformedName, cl);
             return cl;
         }
@@ -272,9 +273,24 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private byte[] runTransformers(String name, String transformedName, byte[] basicClass)
     {
-        for (IClassTransformer transformer : transformers)
+        if (DEBUG_CLASSLOADING_FINER)
         {
-            basicClass = transformer.transform(name, transformedName, basicClass);
+            FMLLog.finest("Beginning transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
+            for (IClassTransformer transformer : transformers)
+            {
+                String transName = transformer.getClass().getName();
+                FMLLog.finest("Before Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
+                basicClass = transformer.transform(name, transformedName, basicClass);
+                FMLLog.finest("After  Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
+            }
+            FMLLog.finest("Ending transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
+        }
+        else
+        {
+            for (IClassTransformer transformer : transformers)
+            {
+                basicClass = transformer.transform(name, transformedName, basicClass);
+            }
         }
         return basicClass;
     }
