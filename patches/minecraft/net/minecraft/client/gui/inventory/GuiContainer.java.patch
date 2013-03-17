@@ -1,0 +1,48 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
++++ ../src_work/minecraft/net/minecraft/client/gui/inventory/GuiContainer.java
+@@ -7,6 +7,7 @@
+ import java.util.List;
+ import java.util.Set;
+ import net.minecraft.client.Minecraft;
++import net.minecraft.client.gui.FontRenderer;
+ import net.minecraft.client.gui.GuiScreen;
+ import net.minecraft.client.renderer.OpenGlHelper;
+ import net.minecraft.client.renderer.RenderHelper;
+@@ -201,8 +202,8 @@
+         GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+         this.zLevel = 200.0F;
+         itemRenderer.zLevel = 200.0F;
+-        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
+-        itemRenderer.func_94148_a(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
++        itemRenderer.renderItemAndEffectIntoGUI(par1ItemStack.getItem().renderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
++        itemRenderer.func_94148_a(par1ItemStack.getItem().renderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
+         this.zLevel = 0.0F;
+         itemRenderer.zLevel = 0.0F;
+     }
+@@ -214,6 +215,8 @@
+         GL11.glDisable(GL11.GL_LIGHTING);
+         GL11.glDisable(GL11.GL_DEPTH_TEST);
+         List list = par1ItemStack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
++        
++        FontRenderer fontRenderer1 = par1ItemStack.getItem().renderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer;
+ 
+         if (!list.isEmpty())
+         {
+@@ -223,7 +226,7 @@
+ 
+             for (l = 0; l < list.size(); ++l)
+             {
+-                i1 = this.fontRenderer.getStringWidth((String)list.get(l));
++                i1 = fontRenderer1.getStringWidth((String)list.get(l));
+ 
+                 if (i1 > k)
+                 {
+@@ -273,7 +276,7 @@
+                     s = EnumChatFormatting.GRAY + s;
+                 }
+ 
+-                this.fontRenderer.drawStringWithShadow(s, l, i1, -1);
++                fontRenderer1.drawStringWithShadow(s, l, i1, -1);
+ 
+                 if (j2 == 0)
+                 {
