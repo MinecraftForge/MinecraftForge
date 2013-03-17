@@ -154,7 +154,7 @@
      }
  
      /**
-@@ -1414,4 +1433,849 @@
+@@ -1414,4 +1433,853 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -236,6 +236,10 @@
 +            return ((meta & 3) + side.ordinal() == 5) || (side == UP && flipped);
 +        }
 +        else if (this instanceof BlockHopper && side == UP)
++        {
++            return true;
++        }
++        else if (this instanceof BlockPoweredOre)
 +        {
 +            return true;
 +        }
