@@ -132,8 +132,8 @@ public class FMLRelauncher
     private Class<? super Object> setupNewClientHome(File minecraftHome)
     {
         Class<? super Object> client = ReflectionHelper.getClass(classLoader, "net.minecraft.client.Minecraft");
-        ReflectionHelper.setPrivateValue(client, null, minecraftHome, 
-                "field_" + "71463_am" /*Separate that so that MCP's updatenames does not replace it*/, 
+        ReflectionHelper.setPrivateValue(client, null, minecraftHome,
+                "field_" + "71463_am" /*Separate that so that MCP's updatenames does not replace it*/,
                 "an", "minecraftDir");
         return client;
     }
@@ -163,6 +163,9 @@ public class FMLRelauncher
         FMLRelaunchLog.minecraftHome = minecraftHome;
         FMLRelaunchLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", FMLInjectionData.major, FMLInjectionData.minor,
                 FMLInjectionData.rev, FMLInjectionData.build, FMLInjectionData.mccversion, FMLInjectionData.mcpversion);
+        FMLRelaunchLog.info("Java is %s, version %s, running on %s:%s:%s, installed at %s", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"), System.getProperty("java.home"));
+        FMLRelaunchLog.fine("Java classpath at launch is %s", System.getProperty("java.class.path"));
+        FMLRelaunchLog.fine("Java library path at launch is %s", System.getProperty("java.library.path"));
 
         try
         {

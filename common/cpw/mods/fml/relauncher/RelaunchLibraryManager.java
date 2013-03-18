@@ -38,6 +38,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import cpw.mods.fml.common.CertificateHelper;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 public class RelaunchLibraryManager
@@ -406,6 +407,17 @@ public class RelaunchLibraryManager
                 downloadMonitor.updateProgressString("Loading coremod %s", coreMod.getName());
                 classLoader.addTransformerExclusion(fmlCorePlugin);
                 Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
+                MCVersion requiredMCVersion = coreModClass.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
+                String version = requiredMCVersion.value();
+                if (!"".equals(version) && !FMLInjectionData.mccversion.equals(version))
+                {
+                    FMLRelaunchLog.log(Level.SEVERE, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", fmlCorePlugin, version, FMLInjectionData.mccversion);
+                    continue;
+                }
+                else if (!"".equals(version))
+                {
+                    FMLRelaunchLog.log(Level.FINE, "The coremod %s requested minecraft version %s and minecraft is %s. It will be loaded.", fmlCorePlugin, version, FMLInjectionData.mccversion);
+                }
                 TransformerExclusions trExclusions = coreModClass.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
                 if (trExclusions!=null)
                 {
