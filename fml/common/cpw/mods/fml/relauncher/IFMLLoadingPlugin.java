@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -86,5 +86,19 @@ public interface IFMLLoadingPlugin
     public @interface TransformerExclusions
     {
         public String[] value() default "";
+    }
+
+    /**
+     * Use this to target a specific minecraft version for your coremod. It will refuse to load with an error if
+     * minecraft is not this exact version.
+     *
+     * @author cpw
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface MCVersion
+    {
+        public String value() default "";
     }
 }
