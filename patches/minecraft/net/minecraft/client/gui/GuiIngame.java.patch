@@ -24,7 +24,7 @@
                      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 -                    fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
 +                    
-+                    if(this.field_92016_l.getItem().renderInStandardGalactic()){
++                    if(this.field_92016_l.getRenderInStandardGalactic()){
 +                        this.mc.standardGalacticFontRenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));
 +                    } else {
 +                        fontrenderer.drawStringWithShadow(s1, i1, j1, 16777215 + (j5 << 24));

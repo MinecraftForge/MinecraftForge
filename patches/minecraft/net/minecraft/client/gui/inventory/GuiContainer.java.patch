@@ -14,8 +14,8 @@
          itemRenderer.zLevel = 200.0F;
 -        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
 -        itemRenderer.func_94148_a(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
-+        itemRenderer.renderItemAndEffectIntoGUI(par1ItemStack.getItem().renderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
-+        itemRenderer.func_94148_a(par1ItemStack.getItem().renderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
++        itemRenderer.renderItemAndEffectIntoGUI(par1ItemStack.getRenderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
++        itemRenderer.func_94148_a(par1ItemStack.getRenderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3 - (this.draggedStack == null ? 0 : 8), par4Str);
          this.zLevel = 0.0F;
          itemRenderer.zLevel = 0.0F;
      }
@@ -24,7 +24,7 @@
          GL11.glDisable(GL11.GL_DEPTH_TEST);
          List list = par1ItemStack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
 +        
-+        FontRenderer fontRenderer1 = par1ItemStack.getItem().renderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer;
++        FontRenderer fontRenderer1 = par1ItemStack.getRenderInStandardGalactic() ? this.mc.standardGalacticFontRenderer : this.fontRenderer;
  
          if (!list.isEmpty())
          {

@@ -375,10 +375,10 @@
 +    /**
 +     * Should item's name and tooltip be rendered in the Standard Galactic Alphabet.
 +     * 
-+     * @return Boolean true to render in SGA
++     * @param stack The stack in question
++     * @return true if to render in SGA
 +     */
-+    
-+    public boolean renderInStandardGalactic()
++    public boolean shouldToolTipUseSGA(ItemStack stack)
 +    {
 +        return false;
 +    }
