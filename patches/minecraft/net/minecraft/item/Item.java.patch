@@ -47,7 +47,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -716,4 +726,324 @@
+@@ -716,4 +726,336 @@
      {
          StatList.initStats();
      }
@@ -369,6 +369,18 @@
 +    public String getPotionEffect(ItemStack stack)
 +    {
 +        return getPotionEffect();
++    }
++
++    
++    /**
++     * Should item's name and tooltip be rendered in the Standard Galactic Alphabet.
++     * 
++     * @param stack The stack in question
++     * @return true if to render in SGA
++     */
++    public boolean shouldToolTipUseSGA(ItemStack stack)
++    {
++        return false;
 +    }
 +
  }

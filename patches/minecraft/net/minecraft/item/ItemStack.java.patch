@@ -1,0 +1,30 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src_work/minecraft/net/minecraft/item/ItemStack.java
+@@ -46,7 +46,7 @@
+ 
+     /** Item frame this stack is on, or null if not on an item frame. */
+     private EntityItemFrame itemFrame;
+-
++    
+     public ItemStack(Block par1Block)
+     {
+         this(par1Block, 1);
+@@ -783,4 +783,18 @@
+ 
+         this.stackTagCompound.setInteger("RepairCost", par1);
+     }
++    
++
++    
++    /**
++     * Should item's name and tooltip be rendered in the Standard Galactic Alphabet.
++     * 
++     * @return true if to render in SGA
++     */
++    @SideOnly(Side.CLIENT)
++    public boolean getRenderInStandardGalactic()
++    {
++        return getItem().shouldToolTipUseSGA(this);
++    }
++
+ }
