@@ -37,7 +37,36 @@
          d0 = (double)icon.func_94209_e();
          d1 = (double)icon.func_94212_f();
          d2 = (double)icon.func_94206_g();
-@@ -2426,7 +2429,7 @@
+@@ -2410,8 +2413,26 @@
+         {
+             icon2 = this.overrideBlockTexture;
+         }
+-
+-        tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
++        //Forge colourizer fix
++        {
++	        int i1 = par1BlockFire.colorMultiplier(this.blockAccess, par2, par3, par4);
++	        float f1 = (float)(i1 >> 16 & 255) / 255.0F;
++	        float f2 = (float)(i1 >> 8 & 255) / 255.0F;
++	        float f3 = (float)(i1 & 255) / 255.0F;
++	        
++	        if (EntityRenderer.anaglyphEnable)
++	        {
++	            float f4 = (f1 * 30.0F + f2 * 59.0F + f3 * 11.0F) / 100.0F;
++	            float f5 = (f1 * 30.0F + f2 * 70.0F) / 100.0F;
++	            float f6 = (f1 * 30.0F + f3 * 70.0F) / 100.0F;
++	            f1 = f4;
++	            f2 = f5;
++	            f3 = f6;
++	        }
++	        
++	        tessellator.setColorOpaque_F(f1, f2, f3);
++        }
++
+         tessellator.setBrightness(par1BlockFire.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4));
+         double d0 = (double)icon2.func_94209_e();
+         double d1 = (double)icon2.func_94206_g();
+@@ -2426,7 +2447,7 @@
          double d9;
          double d10;
  
