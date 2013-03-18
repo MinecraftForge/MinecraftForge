@@ -30,6 +30,7 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
     public static boolean legacyFurnaceSides = false;
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
+    public static boolean disableStitchedFileSaving = false;
 
     public ForgeDummyContainer()
     {
@@ -104,6 +105,10 @@ public class ForgeDummyContainer extends DummyModContainer implements WorldAcces
         {
             FMLLog.warning("Enableing removal of erroring Tile Entities USE AT YOUR OWN RISK");
         }
+
+        prop = config.get(Configuration.CATEGORY_GENERAL, "disableStitchedFileSaving", true);
+        prop.comment = "Set this to just disable the texture stitcher from writing the 'debug.stitched_{name}.png file to disc. Just a small performance tweak. Default: true";
+        disableStitchedFileSaving = prop.getBoolean(true);
 
         if (config.hasChanged())
         {

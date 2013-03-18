@@ -1,6 +1,23 @@
 --- ../src_base/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
 +++ ../src_work/minecraft/net/minecraft/client/renderer/texture/TextureMap.java
-@@ -90,13 +90,22 @@
+@@ -20,6 +20,8 @@
+ import net.minecraft.client.texturepacks.ITexturePack;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.Icon;
++import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.common.ForgeDummyContainer;
+ 
+ @SideOnly(Side.CLIENT)
+ public class TextureMap implements IconRegister
+@@ -47,6 +49,7 @@
+     public void func_94247_b()
+     {
+         this.field_94256_j.clear();
++        ForgeHooksClient.onTextureStitchedPre(this);
+         int i;
+         int j;
+ 
+@@ -90,13 +93,22 @@
          StitchHolder stitchholder = new StitchHolder(texture);
          stitcher.func_94312_a(stitchholder);
          hashmap.put(stitchholder, Arrays.asList(new Texture[] {texture}));
@@ -30,7 +47,7 @@
  
              if (!list.isEmpty())
              {
-@@ -116,7 +125,7 @@
+@@ -116,7 +128,7 @@
          }
  
          this.field_94257_h = stitcher.func_94306_e();
@@ -39,7 +56,7 @@
  
          while (iterator.hasNext())
          {
-@@ -150,7 +159,17 @@
+@@ -150,7 +162,17 @@
              if (list1.size() > 1)
              {
                  this.field_94258_i.add(texturestitched);
@@ -58,7 +75,20 @@
                  ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
                  boolean flag1 = !itexturepack.func_98138_b("/" + this.field_94254_c + s2 + ".png", false);
  
-@@ -218,4 +237,37 @@
+@@ -176,7 +198,11 @@
+             texturestitched1.func_94217_a(this.field_94250_g);
+         }
+ 
+-        this.field_94257_h.func_94279_c("debug.stitched_" + this.field_94253_b + ".png");
++        if (!ForgeDummyContainer.disableStitchedFileSaving)
++        {
++            this.field_94257_h.func_94279_c("debug.stitched_" + this.field_94253_b + ".png");
++        }
++        ForgeHooksClient.onTextureStitchedPost(this);
+         this.field_94257_h.func_94285_g();
+     }
+ 
+@@ -218,4 +244,37 @@
      {
          return this.field_94250_g;
      }

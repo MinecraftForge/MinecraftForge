@@ -25,9 +25,11 @@ import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -218,6 +220,16 @@ public class ForgeHooksClient
     public static void onTextureLoad(String texture, ITexturePack pack)
     {
         MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+
+    public static void onTextureStitchedPre(TextureMap map)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
+    }
+
+    public static void onTextureStitchedPost(TextureMap map)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
     }
 
     /**
