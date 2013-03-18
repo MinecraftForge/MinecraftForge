@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -275,15 +275,15 @@ public class RelaunchClassLoader extends URLClassLoader
     {
         if (DEBUG_CLASSLOADING_FINER)
         {
-            FMLLog.finest("Beginning transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
+            FMLRelaunchLog.finest("Beginning transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
             for (IClassTransformer transformer : transformers)
             {
                 String transName = transformer.getClass().getName();
-                FMLLog.finest("Before Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
+                FMLRelaunchLog.finest("Before Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
                 basicClass = transformer.transform(name, transformedName, basicClass);
-                FMLLog.finest("After  Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
+                FMLRelaunchLog.finest("After  Transformer %s: %d", transName, (basicClass == null ? 0 : basicClass.length));
             }
-            FMLLog.finest("Ending transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
+            FMLRelaunchLog.finest("Ending transform of %s (%s) Start Length: %d", name, transformedName, (basicClass == null ? 0 : basicClass.length));
         }
         else
         {
