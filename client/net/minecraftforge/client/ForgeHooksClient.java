@@ -115,7 +115,7 @@ public class ForgeHooksClient
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
         if (customRenderer == null)
         {
-                return false;
+            return false;
         }
 
         engine.func_98187_b(item.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
