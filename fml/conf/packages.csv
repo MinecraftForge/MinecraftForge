@@ -302,6 +302,7 @@ RequestGet,net/minecraft/client/mco
 RequestPost,net/minecraft/client/mco
 RequestPut,net/minecraft/client/mco
 TimerTaskMcoServerListUpdate,net/minecraft/client/mco
+TimerTaskMcoServerListUpdateComparator,net/minecraft/client/mco
 ValueObjectList,net/minecraft/client/mco
 ValueObjectSubscription,net/minecraft/client/mco
 ModelBase,net/minecraft/client/model
@@ -644,6 +645,12 @@ EnchantmentUntouching,net/minecraft/enchantment
 EnchantmentWaterWorker,net/minecraft/enchantment
 EnumEnchantmentType,net/minecraft/enchantment
 IEnchantmentModifier,net/minecraft/enchantment
+CallableEffectAmplifier,net/minecraft/entity
+CallableEffectDuration,net/minecraft/entity
+CallableEffectID,net/minecraft/entity
+CallableEffectIsAmbient,net/minecraft/entity
+CallableEffectIsSplash,net/minecraft/entity
+CallableEffectName,net/minecraft/entity
 CallableEntityName,net/minecraft/entity
 CallableEntityTracker,net/minecraft/entity
 CallableEntityType,net/minecraft/entity
