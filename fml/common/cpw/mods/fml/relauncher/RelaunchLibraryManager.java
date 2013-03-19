@@ -408,7 +408,15 @@ public class RelaunchLibraryManager
                 classLoader.addTransformerExclusion(fmlCorePlugin);
                 Class<?> coreModClass = Class.forName(fmlCorePlugin, true, classLoader);
                 MCVersion requiredMCVersion = coreModClass.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
-                String version = requiredMCVersion.value();
+                String version = "";
+                if (requiredMCVersion == null)
+                {
+                    FMLRelaunchLog.log(Level.WARNING, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft", fmlCorePlugin);
+                }
+                else
+                {
+                    version = requiredMCVersion.value();
+                }
                 if (!"".equals(version) && !FMLInjectionData.mccversion.equals(version))
                 {
                     FMLRelaunchLog.log(Level.SEVERE, "The coremod %s is requesting minecraft version %s and minecraft is %s. It will be ignored.", fmlCorePlugin, version, FMLInjectionData.mccversion);
