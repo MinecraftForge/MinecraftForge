@@ -21,7 +21,7 @@
  @SideOnly(Side.CLIENT)
  public abstract class Minecraft implements Runnable, IPlayerUsage
  {
-@@ -298,6 +306,8 @@
+@@ -299,6 +307,8 @@
          this.field_71466_p = new FontRenderer(this.field_71474_y, "/font/default.png", this.field_71446_o, false);
          this.field_71464_q = new FontRenderer(this.field_71474_y, "/font/alternate.png", this.field_71446_o, false);
  
@@ -30,7 +30,7 @@
          if (this.field_71474_y.field_74363_ab != null)
          {
              StringTranslate.func_74808_a().func_74810_a(this.field_71474_y.field_74363_ab, false);
-@@ -333,6 +343,8 @@
+@@ -334,6 +344,8 @@
          GL11.glViewport(0, 0, this.field_71443_c, this.field_71440_d);
          this.field_71452_i = new EffectRenderer(this.field_71441_e, this.field_71446_o);
  
@@ -39,7 +39,7 @@
          try
          {
              this.field_71430_V = new ThreadDownloadResources(this.field_71412_D, this);
-@@ -361,6 +373,8 @@
+@@ -362,6 +374,8 @@
          {
              this.func_71352_k();
          }
@@ -48,7 +48,7 @@
      }
  
      private void func_71357_I() throws LWJGLException
-@@ -722,9 +736,11 @@
+@@ -723,9 +737,11 @@
  
              if (!this.field_71454_w)
              {
@@ -60,7 +60,7 @@
              }
  
              GL11.glFlush();
-@@ -1254,10 +1270,14 @@
+@@ -1255,10 +1271,14 @@
  
      public void func_71407_l()
      {
@@ -75,7 +75,7 @@
  
          this.field_71424_I.func_76320_a("stats");
          this.field_71413_E.func_77449_e();
-@@ -1715,6 +1735,8 @@
+@@ -1716,6 +1736,8 @@
              this.field_71453_ak.func_74428_b();
          }
  
@@ -84,7 +84,7 @@
          this.field_71424_I.func_76319_b();
          this.field_71423_H = func_71386_F();
      }
-@@ -1753,8 +1775,27 @@
+@@ -1754,8 +1776,27 @@
          }
  
          this.field_71413_E.func_77450_a(StatList.field_75936_f, 1);
@@ -112,7 +112,7 @@
          this.field_71455_al = true;
          this.field_71461_s.func_73720_a(StatCollector.func_74838_a("menu.loadingLevel"));
  
-@@ -1976,6 +2017,12 @@
+@@ -1977,6 +2018,12 @@
  
      public static void main(String[] p_main_0_)
      {
