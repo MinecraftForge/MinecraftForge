@@ -17,7 +17,7 @@ def fml_main(fml_dir, mcp_dir, dont_gen_conf=True, disable_patches=False, disabl
     
 if __name__ == '__main__':
     parser = OptionParser()
-    parser.add_option('-m', '--mcp-dir',   action='store_true', dest='mcp_dir',       help='Path to download/extract MCP to',         default=None )
+    parser.add_option('-m', '--mcp-dir',   action='store',      dest='mcp_dir',       help='Path to download/extract MCP to',         default=None )
     parser.add_option('-p', '--no-patch',  action="store_true", dest='no_patch',      help='Disable application of FML patches',      default=False)
     parser.add_option('-a', '--no-access', action="store_true", dest='no_access',     help='Disable access transformers',             default=False)
     parser.add_option('-s', '--server',    action="store_true", dest='enable_server', help='Enable decompilation of server',          default=False)
