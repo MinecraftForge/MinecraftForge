@@ -12,7 +12,7 @@
       */
      public static final boolean isRailBlock(int par0)
      {
--        return par0 == Block.rail.blockID || par0 == Block.railPowered.blockID || par0 == Block.railDetector.blockID || par0 == Block.field_94337_cv.blockID;
+-        return par0 == Block.rail.blockID || par0 == Block.railPowered.blockID || par0 == Block.railDetector.blockID || par0 == Block.railActivator.blockID;
 +        return Block.blocksList[par0] instanceof BlockRailBase;
      }
  

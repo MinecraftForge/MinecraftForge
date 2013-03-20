@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -426,7 +426,7 @@
+@@ -431,7 +431,7 @@
                  return false;
              }
  
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -444,7 +444,7 @@
+@@ -449,7 +449,7 @@
          {
              if (l1 < 13)
              {
@@ -18,7 +18,7 @@
                  {
                      return false;
                  }
-@@ -494,7 +494,7 @@
+@@ -499,7 +499,7 @@
  
              if (l1 < 13)
              {
@@ -27,7 +27,7 @@
                  {
                      return false;
                  }
-@@ -522,7 +522,9 @@
+@@ -527,7 +527,9 @@
                          continue;
                      }
  
@@ -35,6 +35,6 @@
 +                    //With our change to how snowballs are dropped this needs to dissallow to mimic vanilla behavior.
 +                    float chance = (Block.blocksList[i2] instanceof BlockSnow ? -1.0f : 1.0f);
 +                    Block.blocksList[i2].dropBlockAsItemWithChance(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), chance, 0);
-                     par1World.func_94571_i(i1, j1, k1);
+                     par1World.setBlockToAir(i1, j1, k1);
                  }
              }

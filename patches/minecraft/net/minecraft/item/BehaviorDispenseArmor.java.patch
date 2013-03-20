@@ -1,7 +1,7 @@
 --- ../src_base/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
 +++ ../src_work/minecraft/net/minecraft/item/BehaviorDispenseArmor.java
 @@ -31,7 +31,7 @@
-             int i1 = EntityLiving.func_82159_b(par2ItemStack);
+             int i1 = EntityLiving.getArmorPosition(par2ItemStack);
              ItemStack itemstack1 = par2ItemStack.copy();
              itemstack1.stackSize = 1;
 -            entityliving.setCurrentItemOrArmor(i1 - l, itemstack1);

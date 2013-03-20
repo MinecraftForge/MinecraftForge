@@ -11,7 +11,7 @@
  public class Chunk
  {
      /**
-@@ -144,7 +148,9 @@
+@@ -146,7 +150,9 @@
              {
                  for (int j1 = 0; j1 < k; ++j1)
                  {
@@ -22,7 +22,7 @@
  
                      if (b0 != 0)
                      {
-@@ -163,6 +169,90 @@
+@@ -165,6 +171,90 @@
      }
  
      /**
@@ -113,7 +113,7 @@
       * Checks whether the chunk is at the X/Z location specified
       */
      public boolean isAtLocation(int par1, int par2)
-@@ -226,7 +316,7 @@
+@@ -228,7 +318,7 @@
                      {
                          int i1 = this.getBlockID(j, l - 1, k);
  
@@ -122,7 +122,7 @@
                          {
                              --l;
                              continue;
-@@ -532,7 +622,10 @@
+@@ -534,7 +624,10 @@
  
      public int getBlockLightOpacity(int par1, int par2, int par3)
      {
@@ -134,7 +134,7 @@
      }
  
      /**
-@@ -540,7 +633,7 @@
+@@ -542,7 +635,7 @@
       */
      public int getBlockID(int par1, int par2, int par3)
      {
@@ -143,7 +143,7 @@
          {
              return 0;
          }
-@@ -556,7 +649,7 @@
+@@ -558,7 +651,7 @@
       */
      public int getBlockMetadata(int par1, int par2, int par3)
      {
@@ -152,7 +152,7 @@
          {
              return 0;
          }
-@@ -589,6 +682,11 @@
+@@ -591,6 +684,11 @@
          }
          else
          {
@@ -164,7 +164,7 @@
              ExtendedBlockStorage extendedblockstorage = this.storageArrays[par2 >> 4];
              boolean flag = false;
  
-@@ -619,9 +717,13 @@
+@@ -621,9 +719,13 @@
                  {
                      Block.blocksList[l1].breakBlock(this.worldObj, j2, par2, k2, l1, i2);
                  }
@@ -181,7 +181,7 @@
                  }
              }
  
-@@ -639,7 +741,7 @@
+@@ -641,7 +743,7 @@
                  }
                  else
                  {
@@ -190,7 +190,7 @@
                      {
                          if (par2 >= k1)
                          {
-@@ -663,29 +765,21 @@
+@@ -665,29 +767,21 @@
                          Block.blocksList[par4].onBlockAdded(this.worldObj, j2, par2, k2);
                      }
  
@@ -223,7 +223,7 @@
                      }
                  }
  
-@@ -700,7 +794,7 @@
+@@ -702,7 +796,7 @@
       */
      public boolean setBlockMetadata(int par1, int par2, int par3, int par4)
      {
@@ -232,7 +232,7 @@
  
          if (extendedblockstorage == null)
          {
-@@ -720,7 +814,7 @@
+@@ -722,7 +816,7 @@
                  extendedblockstorage.setExtBlockMetadata(par1, par2 & 15, par3, par4);
                  int j1 = extendedblockstorage.getExtBlockID(par1, par2 & 15, par3);
  
@@ -241,7 +241,7 @@
                  {
                      TileEntity tileentity = this.getChunkBlockTileEntity(par1, par2, par3);
  
-@@ -741,7 +835,7 @@
+@@ -743,7 +837,7 @@
       */
      public int getSavedLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
      {
@@ -250,7 +250,7 @@
          return extendedblockstorage == null ? (this.canBlockSeeTheSky(par2, par3, par4) ? par1EnumSkyBlock.defaultLightValue : 0) : (par1EnumSkyBlock == EnumSkyBlock.Sky ? (this.worldObj.provider.hasNoSky ? 0 : extendedblockstorage.getExtSkylightValue(par2, par3 & 15, par4)) : (par1EnumSkyBlock == EnumSkyBlock.Block ? extendedblockstorage.getExtBlocklightValue(par2, par3 & 15, par4) : par1EnumSkyBlock.defaultLightValue));
      }
  
-@@ -751,6 +845,11 @@
+@@ -753,6 +847,11 @@
       */
      public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
      {
@@ -262,7 +262,7 @@
          ExtendedBlockStorage extendedblockstorage = this.storageArrays[par3 >> 4];
  
          if (extendedblockstorage == null)
-@@ -779,7 +878,7 @@
+@@ -781,7 +880,7 @@
       */
      public int getBlockLightValue(int par1, int par2, int par3, int par4)
      {
@@ -271,7 +271,7 @@
  
          if (extendedblockstorage == null)
          {
-@@ -832,7 +931,7 @@
+@@ -834,7 +933,7 @@
          {
              k = this.entityLists.length - 1;
          }
@@ -280,7 +280,7 @@
          par1Entity.addedToChunk = true;
          par1Entity.chunkCoordX = this.xPosition;
          par1Entity.chunkCoordY = k;
-@@ -882,33 +981,32 @@
+@@ -884,33 +983,32 @@
          ChunkPosition chunkposition = new ChunkPosition(par1, par2, par3);
          TileEntity tileentity = (TileEntity)this.chunkTileEntityMap.get(chunkposition);
  
@@ -325,7 +325,7 @@
      }
  
      /**
-@@ -923,7 +1021,7 @@
+@@ -925,7 +1023,7 @@
  
          if (this.isChunkLoaded)
          {
@@ -334,7 +334,7 @@
          }
      }
  
-@@ -938,7 +1036,8 @@
+@@ -940,7 +1038,8 @@
          par4TileEntity.yCoord = par2;
          par4TileEntity.zCoord = this.zPosition * 16 + par3;
  
@@ -344,7 +344,7 @@
          {
              if (this.chunkTileEntityMap.containsKey(chunkposition))
              {
-@@ -980,6 +1079,7 @@
+@@ -982,6 +1081,7 @@
          {
              this.worldObj.addLoadedEntities(this.entityLists[i]);
          }
@@ -352,7 +352,7 @@
      }
  
      /**
-@@ -1000,6 +1100,7 @@
+@@ -1002,6 +1102,7 @@
          {
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
@@ -360,7 +360,7 @@
      }
  
      /**
-@@ -1016,8 +1117,8 @@
+@@ -1018,8 +1119,8 @@
       */
      public void getEntitiesWithinAABBForEntity(Entity par1Entity, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -371,7 +371,7 @@
  
          if (i < 0)
          {
-@@ -1066,8 +1167,8 @@
+@@ -1068,8 +1169,8 @@
       */
      public void getEntitiesOfTypeWithinAAAB(Class par1Class, AxisAlignedBB par2AxisAlignedBB, List par3List, IEntitySelector par4IEntitySelector)
      {
@@ -382,7 +382,7 @@
  
          if (i < 0)
          {
-@@ -1250,6 +1351,15 @@
+@@ -1252,6 +1353,15 @@
       */
      public void fillChunk(byte[] par1ArrayOfByte, int par2, int par3, boolean par4)
      {
@@ -398,7 +398,7 @@
          int k = 0;
          boolean flag1 = !this.worldObj.provider.hasNoSky;
          int l;
-@@ -1350,12 +1460,26 @@
+@@ -1352,12 +1462,26 @@
          }
  
          this.generateHeightMap();
@@ -429,7 +429,7 @@
          }
      }
  
-@@ -1464,4 +1588,18 @@
+@@ -1466,4 +1590,18 @@
              }
          }
      }

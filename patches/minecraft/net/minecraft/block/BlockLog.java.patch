@@ -17,8 +17,8 @@
                          }
                      }
                  }
-@@ -171,4 +166,16 @@
-             this.field_94390_c[i] = par1IconRegister.func_94245_a(field_94389_b[i]);
+@@ -176,4 +171,16 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(treeTextureTypes[i]);
          }
      }
 +

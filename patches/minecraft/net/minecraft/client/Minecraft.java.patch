@@ -131,11 +131,11 @@
 -                    }
 -                    else if (entityminecart.func_94087_l() == 3)
 -                    {
--                        j = Item.field_94582_cb.itemID;
+-                        j = Item.tntMinecart.itemID;
 -                    }
 -                    else if (entityminecart.func_94087_l() == 5)
 -                    {
--                        j = Item.field_96600_cc.itemID;
+-                        j = Item.hopperMinecart.itemID;
 -                    }
 -                    else
 -                    {

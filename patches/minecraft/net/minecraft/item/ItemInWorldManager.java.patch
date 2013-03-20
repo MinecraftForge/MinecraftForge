@@ -77,7 +77,7 @@
              block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
          }
  
--        boolean flag = this.theWorld.func_94571_i(par1, par2, par3);
+-        boolean flag = this.theWorld.setBlockToAir(par1, par2, par3);
 +        boolean flag = (block != null && block.removeBlockByPlayer(theWorld, thisPlayerMP, par1, par2, par3));
  
          if (block != null && flag)

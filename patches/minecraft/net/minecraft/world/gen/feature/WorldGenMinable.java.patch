@@ -29,8 +29,8 @@
 +                                Block block = Block.blocksList[par1World.getBlockId(k2, l2, i3)];
 +                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, k2, l2, i3, field_94523_c)))
                                  {
--                                    par1World.setBlockAndMetadataWithNotify(k2, l2, i3, this.minableBlockId, 0, 2);
-+                                    par1World.setBlockAndMetadataWithNotify(k2, l2, i3, this.minableBlockId, minableBlockMeta, 2);
+-                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, 0, 2);
++                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, minableBlockMeta, 2);
                                  }
                              }
                          }

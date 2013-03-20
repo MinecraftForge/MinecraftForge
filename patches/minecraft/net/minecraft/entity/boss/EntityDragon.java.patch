@@ -10,8 +10,8 @@
 +
 +                    if (block != null)
                      {
--                        if (j2 != Block.obsidian.blockID && j2 != Block.whiteStone.blockID && j2 != Block.bedrock.blockID)
-+                        if (block.canDragonDestroy(worldObj, k1, l1, i2))
+-                        if (j2 != Block.obsidian.blockID && j2 != Block.whiteStone.blockID && j2 != Block.bedrock.blockID && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
++                        if (block.canDragonDestroy(worldObj, k1, l1, i2) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                          {
-                             flag1 = this.worldObj.func_94571_i(k1, l1, i2) || flag1;
+                             flag1 = this.worldObj.setBlockToAir(k1, l1, i2) || flag1;
                          }

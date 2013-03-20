@@ -82,4 +82,4 @@
 +            }
          }
  
-         Collection collection = this.worldObj.func_96441_U().func_96520_a(ScoreObjectiveCriteria.field_96642_c);
+         Collection collection = this.worldObj.getScoreboard().func_96520_a(ScoreObjectiveCriteria.field_96642_c);

@@ -52,7 +52,7 @@
  
                  this.playerEntity.moveEntity(d4, d6, d7);
 @@ -347,10 +364,15 @@
-                     this.mcServer.func_98033_al().func_98236_b(this.playerEntity.username + " moved wrongly!");
+                     this.mcServer.getLogAgent().logWarning(this.playerEntity.username + " moved wrongly!");
                  }
  
 +                if (!this.hasMoved) //Fixes "Moved Too Fast" kick when being teleported while moving
@@ -137,7 +137,7 @@
 +                        return;
 +                    }
 +                    s = event.line;
-                     this.mcServer.func_98033_al().func_98233_a(s);
+                     this.mcServer.getLogAgent().logInfo(s);
                      this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new Packet3Chat(s, false));
                  }
 @@ -822,7 +865,7 @@
@@ -149,11 +149,3 @@
              }
          }
      }
-@@ -1220,7 +1263,6 @@
-             }
-         }
-     }
--    
- 
-     @Override
- 

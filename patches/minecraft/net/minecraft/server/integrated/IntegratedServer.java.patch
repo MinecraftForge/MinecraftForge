@@ -24,10 +24,10 @@
 -            byte b0 = 0;
 -
 -            if (j == 1)
-+        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, func_98033_al()) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler, func_98033_al()));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, getLogAgent()) : new WorldServer(this, isavehandler, par2Str, 0, theWorldSettings, theProfiler, getLogAgent()));
 +        for (int dim : DimensionManager.getStaticDimensionIDs())
 +        {
-+            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler, func_98033_al()));
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, theWorldSettings, overWorld, theProfiler, getLogAgent()));
 +            world.addWorldAccess(new WorldManager(this, world));
 +
 +            if (!this.isSinglePlayer())
@@ -45,16 +45,16 @@
 -            {
 -                if (this.isDemo())
 -                {
--                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler, this.func_98033_al());
+-                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler, this.getLogAgent());
 -                }
 -                else
 -                {
--                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, this.theWorldSettings, this.theProfiler, this.func_98033_al());
+-                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, this.theWorldSettings, this.theProfiler, this.getLogAgent());
 -                }
 -            }
 -            else
 -            {
--                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, this.theWorldSettings, this.worldServers[0], this.theProfiler, this.func_98033_al());
+-                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, this.theWorldSettings, this.worldServers[0], this.theProfiler, this.getLogAgent());
 -            }
 -
 -            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));

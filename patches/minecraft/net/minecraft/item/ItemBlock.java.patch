@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src_work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -60,7 +60,8 @@
+@@ -64,7 +64,8 @@
          {
              par7 = 1;
          }
@@ -10,11 +10,11 @@
          {
              if (par7 == 0)
              {
-@@ -111,14 +112,8 @@
+@@ -115,14 +116,8 @@
              int j1 = this.getMetadata(par1ItemStack.getItemDamage());
              int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
  
--            if (par3World.setBlockAndMetadataWithNotify(par4, par5, par6, this.blockID, k1, 3))
+-            if (par3World.setBlock(par4, par5, par6, this.blockID, k1, 3))
 -            {
 -                if (par3World.getBlockId(par4, par5, par6) == this.blockID)
 -                {
@@ -27,7 +27,7 @@
                  par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
                  --par1ItemStack.stackSize;
              }
-@@ -144,7 +139,8 @@
+@@ -148,7 +143,8 @@
          {
              par5 = 1;
          }
@@ -37,8 +37,8 @@
          {
              if (par5 == 0)
              {
-@@ -227,4 +223,28 @@
-             this.field_94588_b = par1IconRegister.func_94245_a(s);
+@@ -231,4 +227,28 @@
+             this.field_94588_b = par1IconRegister.registerIcon(s);
          }
      }
 +
@@ -52,7 +52,7 @@
 +     */
 +    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
 +    {
-+       if (!world.setBlockAndMetadataWithNotify(x, y, z, this.blockID, metadata, 3))
++       if (!world.setBlock(x, y, z, this.blockID, metadata, 3))
 +       {
 +           return false;
 +       }

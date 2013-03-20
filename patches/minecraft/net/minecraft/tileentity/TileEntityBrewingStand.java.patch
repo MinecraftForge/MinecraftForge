@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -177,7 +177,7 @@
+@@ -184,7 +184,7 @@
  
              if (Item.itemsList[itemstack.itemID].hasContainerItem())
              {

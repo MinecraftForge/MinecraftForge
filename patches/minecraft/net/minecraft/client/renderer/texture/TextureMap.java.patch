@@ -9,88 +9,89 @@
  
  @SideOnly(Side.CLIENT)
  public class TextureMap implements IconRegister
-@@ -47,6 +49,7 @@
-     public void func_94247_b()
+@@ -48,6 +50,7 @@
+     public void refreshTextures()
      {
-         this.field_94256_j.clear();
+         this.textureStichedMap.clear();
 +        ForgeHooksClient.onTextureStitchedPre(this);
          int i;
          int j;
  
-@@ -90,13 +93,22 @@
+@@ -91,14 +94,22 @@
          StitchHolder stitchholder = new StitchHolder(texture);
-         stitcher.func_94312_a(stitchholder);
+         stitcher.addStitchHolder(stitchholder);
          hashmap.put(stitchholder, Arrays.asList(new Texture[] {texture}));
--        Iterator iterator = this.field_94256_j.keySet().iterator();
+-        Iterator iterator = this.textureStichedMap.keySet().iterator();
 -
 -        while (iterator.hasNext())
 -        {
 -            String s = (String)iterator.next();
--            String s1 = this.field_94254_c + s + this.field_94251_d;
--            List list = TextureManager.func_94267_b().func_94266_e(s1);
+-            String s1 = this.basePath + s + this.textureExt;
+-            List list = TextureManager.instance().createTexture(s1);
+-
 +
-+        for (Map.Entry<String, TextureStitched> entry : ((Map<String, TextureStitched>)field_94256_j).entrySet())
++        for (Map.Entry<String, TextureStitched> entry : ((Map<String, TextureStitched>)textureStichedMap).entrySet())
 +        {
 +            String name = entry.getKey();
 +            String path;
 +            if (name.indexOf(':') == -1)
 +            {
-+                path = this.field_94254_c + name + this.field_94251_d;
++                path = this.basePath + name + this.textureExt;
 +            }
 +            else
 +            {
-+                String domain = name.substring(0,name.indexOf(':'));
-+                String file = name.substring(name.indexOf(':')+1);
-+                path = "mods/" + domain +"/" + field_94254_c + file + field_94251_d;
++                String domain = name.substring(0, name.indexOf(':'));
++                String file = name.substring(name.indexOf(':') + 1);
++                path = "mods/" + domain +"/" + basePath + file + textureExt;
 +            }
-+            List list = TextureManager.func_94267_b().createNewTexture(name, path, entry.getValue());
- 
++            List list = TextureManager.instance().createNewTexture(name, path, entry.getValue());
              if (!list.isEmpty())
              {
-@@ -116,7 +128,7 @@
+                 StitchHolder stitchholder1 = new StitchHolder((Texture)list.get(0));
+@@ -117,7 +128,7 @@
          }
  
-         this.field_94257_h = stitcher.func_94306_e();
--        iterator = stitcher.func_94309_g().iterator();
-+        Iterator iterator = stitcher.func_94309_g().iterator();
+         this.atlasTexture = stitcher.getTexture();
+-        iterator = stitcher.getStichSlots().iterator();
++        Iterator iterator = stitcher.getStichSlots().iterator();
  
          while (iterator.hasNext())
          {
-@@ -150,7 +162,17 @@
+@@ -151,7 +162,17 @@
              if (list1.size() > 1)
              {
-                 this.field_94258_i.add(texturestitched);
--                String s3 = this.field_94254_c + s2 + ".txt";
+                 this.listTextureStiched.add(texturestitched);
+-                String s3 = this.basePath + s2 + ".txt";
 +                String s3;
 +                if (s2.indexOf(':') == -1)
 +                {
-+                    s3 = field_94254_c + s2 + ".txt";
++                    s3 = basePath + s2 + ".txt";
 +                }
 +                else
 +                {
 +                    String domain = s2.substring(0, s2.indexOf(':'));
 +                    String file = s2.substring(s2.indexOf(':') + 1);
-+                    s3 = "mods/" + domain + "/" + field_94254_c + file + ".txt";
++                    s3 = "mods/" + domain + "/" + basePath + file + ".txt";
 +                }
                  ITexturePack itexturepack = Minecraft.getMinecraft().texturePackList.getSelectedTexturePack();
-                 boolean flag1 = !itexturepack.func_98138_b("/" + this.field_94254_c + s2 + ".png", false);
+                 boolean flag1 = !itexturepack.func_98138_b("/" + this.basePath + s2 + ".png", false);
  
-@@ -176,7 +198,11 @@
-             texturestitched1.func_94217_a(this.field_94250_g);
+@@ -177,7 +198,11 @@
+             texturestitched1.copyFrom(this.missingTextureStiched);
          }
  
--        this.field_94257_h.func_94279_c("debug.stitched_" + this.field_94253_b + ".png");
+-        this.atlasTexture.writeImage("debug.stitched_" + this.textureName + ".png");
 +        if (!ForgeDummyContainer.disableStitchedFileSaving)
 +        {
-+            this.field_94257_h.func_94279_c("debug.stitched_" + this.field_94253_b + ".png");
++            this.atlasTexture.writeImage("debug.stitched_" + this.textureName + ".png");
 +        }
 +        ForgeHooksClient.onTextureStitchedPost(this);
-         this.field_94257_h.func_94285_g();
+         this.atlasTexture.createTexture();
      }
  
-@@ -218,4 +244,37 @@
+@@ -219,4 +244,37 @@
      {
-         return this.field_94250_g;
+         return this.missingTextureStiched;
      }
 +
 +    //===================================================================================================
@@ -105,7 +106,7 @@
 +     */
 +    public TextureStitched getTextureExtry(String name)
 +    {
-+        return (TextureStitched)field_94256_j.get(name);
++        return (TextureStitched)textureStichedMap.get(name);
 +    }
 +
 +    /**
@@ -118,9 +119,9 @@
 +     */
 +    public boolean setTextureEntry(String name, TextureStitched entry)
 +    {
-+        if (!field_94256_j.containsKey(name))
++        if (!textureStichedMap.containsKey(name))
 +        {
-+            field_94256_j.put(name, entry);
++            textureStichedMap.put(name, entry);
 +            return true;
 +        }
 +        return false;
