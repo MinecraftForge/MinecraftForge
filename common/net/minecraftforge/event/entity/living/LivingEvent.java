@@ -23,9 +23,4 @@ public class LivingEvent extends EntityEvent
     {
         public LivingJumpEvent(EntityLiving e){ super(e); }
     }
-	
-	public static class LivingInitEvent extends LivingEvent
-	{
-		public LivingInitEvent(EntityLiving e){ super(e); }
-	}
 }
