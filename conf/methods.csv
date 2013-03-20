@@ -838,7 +838,7 @@ func_71860_a,onBlockPlacedBy,2,Called when the block is placed in the world.
 func_71861_g,onBlockAdded,2,"Called whenever the block is added into the world. Args: world, x, y, z"
 func_71862_a,randomDisplayTick,2,A randomly called display update to be able to add particles or other items for display
 func_71863_a,onNeighborBlockChange,2,"Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are their own) Args: x, y, z, neighbor blockID"
-func_71864_b,getIndirectPowerOutput,2,"Returns the indirect signal strength being outputted by the given block in the *opposite* of the given direction. Args: World, X, Y, Z, direction. If isBlockNormalCube returns true, standard redstone propagation rules will apply instead and this will not be called."
+func_71864_b,setUnlocalizedName,2,
 func_71865_a,isProvidingWeakPower,2,"Returns true if the block is emitting indirect/weak redstone power on the specified side. If isBlockNormalCube returns true, standard redstone propagation rules will apply instead and this will not be called. Args: World, X, Y, Z, side. Note that the side is reversed - eg it is 1 (up) when checking the bottom of the block."
 func_71866_a,onFallenUpon,2,Block's chance to react to an entity falling on it.
 func_71867_k,onBlockDestroyedByExplosion,2,Called upon the block being destroyed by an explosion
