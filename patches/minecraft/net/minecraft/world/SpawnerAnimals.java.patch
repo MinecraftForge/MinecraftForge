@@ -33,7 +33,7 @@
                      label110:
  
                      while (iterator.hasNext())
-@@ -169,7 +178,8 @@
+@@ -169,13 +178,14 @@
  
                                                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, par0WorldServer.rand.nextFloat() * 360.0F, 0.0F);
  
@@ -43,6 +43,13 @@
                                                              {
                                                                  ++j2;
                                                                  par0WorldServer.spawnEntityInWorld(entityliving);
+                                                                 creatureSpecificInit(entityliving, par0WorldServer, f, f1, f2);
+ 
+-                                                                if (j2 >= entityliving.getMaxSpawnedInChunk())
++                                                                if (j2 >= ForgeEventFactory.getMaxSpawnedInChunk(entityliving))
+                                                                 {
+                                                                     continue label110;
+                                                                 }
 @@ -221,7 +231,8 @@
          else
          {
