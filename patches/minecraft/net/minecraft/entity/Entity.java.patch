@@ -1,14 +1,19 @@
 --- ../src_base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -2,6 +2,7 @@
+@@ -1,7 +1,12 @@
+ package net.minecraft.entity;
  
++import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
++
++import java.security.InvalidKeyException;
 +import java.util.ArrayList;
++import java.util.HashMap;
  import java.util.List;
  import java.util.Random;
  import java.util.UUID;
-@@ -13,8 +14,13 @@
+@@ -13,8 +18,13 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.enchantment.EnchantmentProtection;
  import net.minecraft.entity.effect.EntityLightningBolt;
@@ -22,7 +27,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -25,6 +31,7 @@
+@@ -25,12 +35,16 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -30,19 +35,65 @@
  import net.minecraft.util.ReportedException;
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.Vec3;
-@@ -225,6 +232,11 @@
+ import net.minecraft.world.Explosion;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
++import net.minecraftforge.common.IExtendedEntityProperties;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.EntityEvent;
+ 
+ public abstract class Entity
+ {
+@@ -225,6 +239,14 @@
      private boolean invulnerable;
      private UUID field_96093_i;
      public EnumEntitySize myEntitySize;
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
++    /** Forge: If customEntityData doesn't do what you need, create a class that extends IExtendedEntityProperties and register it */
++    private HashMap<String, IExtendedEntityProperties> extendedEntityData;
++    
 +    public boolean captureDrops = false;
 +    public ArrayList<EntityItem> capturedDrops = new ArrayList<EntityItem>();
 +    private UUID persistentID;
  
      public Entity(World par1World)
      {
-@@ -554,7 +566,7 @@
+@@ -274,6 +296,33 @@
+         this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
+         this.dataWatcher.addObject(1, Short.valueOf((short)300));
+         this.entityInit();
++        
++        extendedEntityData = new HashMap<String, IExtendedEntityProperties>();
++        
++        MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityConstructed(this, par1World));
++    }
++    
++    /**
++     * Lookup the extended entity properties for the given identifier
++     * @param identifier The ID (which you get from register
++     * @return
++     */
++    public IExtendedEntityProperties getExtendedProperties(String identifier){
++        if (!extendedEntityData.containsKey(identifier)) return null;
++        return extendedEntityData.get(identifier);
++    }
++    
++    /** 
++     * Register the extended properties passed in to this entity
++     * @param identifier The unique identifier for the properties
++     * @param properties The properties themselves.
++     * @throws InvalidKeyException 
++     */
++    public void registerExtendedProperties(String identifier, IExtendedEntityProperties properties) throws InvalidKeyException{
++        if (extendedEntityData.containsKey(identifier)){
++            throw new InvalidKeyException("Specified identifier '" + identifier + "' is already in use!");
++        }
++        extendedEntityData.put(identifier, properties);
+     }
+ 
+     protected abstract void entityInit();
+@@ -554,7 +603,7 @@
          if (!this.worldObj.isRemote)
          {
              this.setFlag(0, this.fire > 0);
@@ -51,7 +102,7 @@
          }
  
          this.firstUpdate = false;
-@@ -1534,6 +1546,10 @@
+@@ -1534,7 +1583,20 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.field_96093_i.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.field_96093_i.getLeastSignificantBits());
@@ -60,9 +111,19 @@
 +                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
 +            }
              this.writeEntityToNBT(par1NBTTagCompound);
++            
++            for (String identifier : this.extendedEntityData.keySet()){
++                try{
++                    IExtendedEntityProperties exProps = this.extendedEntityData.get(identifier);
++                    exProps.SaveNBTData(par1NBTTagCompound);
++                }catch(Throwable t){
++                    FMLLog.severe(String.format("IExtendedEntityProperties with identifier %s failed to save properly.  This is a mod issue.", identifier));
++                }
++            }
  
              if (this.ridingEntity != null)
-@@ -1604,6 +1620,15 @@
+             {
+@@ -1604,6 +1666,25 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -70,6 +131,16 @@
 +            {
 +                customEntityData = par1NBTTagCompound.getCompoundTag("ForgeData");
 +            }
++            
++            for (String identifier : this.extendedEntityData.keySet()){
++                try{
++                    IExtendedEntityProperties exProps = this.extendedEntityData.get(identifier);
++                    exProps.LoadFromNBT(par1NBTTagCompound);
++                }catch(Throwable t){
++                    FMLLog.severe(String.format("IExtendedEntityProperties with identifier %s failed to load properly.  This is a mod issue.", identifier));
++                }
++            }
++            
 +            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
 +            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
 +            {
@@ -78,7 +149,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable throwable)
-@@ -1698,7 +1723,14 @@
+@@ -1698,7 +1779,14 @@
      {
          EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          entityitem.delayBeforeCanPickup = 10;
@@ -94,7 +165,7 @@
          return entityitem;
      }
  
-@@ -2056,7 +2088,7 @@
+@@ -2056,7 +2144,7 @@
       */
      public boolean isRiding()
      {
@@ -103,7 +174,7 @@
      }
  
      /**
-@@ -2400,7 +2432,7 @@
+@@ -2400,7 +2488,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -112,7 +183,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2455,4 +2487,100 @@
+@@ -2455,4 +2543,100 @@
      {
          return this.getEntityName();
      }
