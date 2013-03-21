@@ -1,6 +1,6 @@
 --- ../src_base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src_work/minecraft/net/minecraft/entity/Entity.java
-@@ -1,7 +1,12 @@
+@@ -1,10 +1,17 @@
  package net.minecraft.entity;
  
 +import cpw.mods.fml.common.FMLLog;
@@ -13,7 +13,12 @@
  import java.util.List;
  import java.util.Random;
  import java.util.UUID;
-@@ -13,8 +18,13 @@
++import java.util.logging.Level;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockFluid;
+ import net.minecraft.block.StepSound;
+@@ -13,8 +20,13 @@
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.enchantment.EnchantmentProtection;
  import net.minecraft.entity.effect.EntityLightningBolt;
@@ -27,7 +32,7 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagDouble;
-@@ -25,12 +35,16 @@
+@@ -25,12 +37,16 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Direction;
  import net.minecraft.util.MathHelper;
@@ -44,7 +49,7 @@
  
  public abstract class Entity
  {
-@@ -225,6 +239,14 @@
+@@ -225,6 +241,14 @@
      private boolean invulnerable;
      private UUID field_96093_i;
      public EnumEntitySize myEntitySize;
@@ -59,7 +64,7 @@
  
      public Entity(World par1World)
      {
-@@ -274,6 +296,33 @@
+@@ -274,6 +298,41 @@
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
          this.entityInit();
@@ -71,11 +76,10 @@
 +    
 +    /**
 +     * Lookup the extended entity properties for the given identifier
-+     * @param identifier The ID (which you get from register
++     * @param identifier The identifier to search for
 +     * @return
 +     */
 +    public IExtendedEntityProperties getExtendedProperties(String identifier){
-+        if (!extendedEntityData.containsKey(identifier)) return null;
 +        return extendedEntityData.get(identifier);
 +    }
 +    
@@ -84,16 +88,25 @@
 +     * @param identifier The unique identifier for the properties
 +     * @param properties The properties themselves.
 +     * @throws InvalidKeyException 
++     * @return The actual identifier used to register the key.  If the requested identifier is in use, the identifier returned will be a modified one that did not exist, and should be used instead.
 +     */
-+    public void registerExtendedProperties(String identifier, IExtendedEntityProperties properties) throws InvalidKeyException{
-+        if (extendedEntityData.containsKey(identifier)){
-+            throw new InvalidKeyException("Specified identifier '" + identifier + "' is already in use!");
++    public String registerExtendedProperties(String identifier, IExtendedEntityProperties properties){
++        if (identifier == null){
++            FMLLog.severe("Attempted to register null identifier into extended properties.  The operation has been aborted.");
++            return "";
++        }
++
++        int identifierCountMod = 1;
++        String baseIdentifier = identifier;
++        while(extendedEntityData.containsKey(identifier)){
++            identifier = String.format("%s%d", baseIdentifier, identifierCountMod);
 +        }
 +        extendedEntityData.put(identifier, properties);
++        return identifier;
      }
  
      protected abstract void entityInit();
-@@ -554,7 +603,7 @@
+@@ -554,7 +613,7 @@
          if (!this.worldObj.isRemote)
          {
              this.setFlag(0, this.fire > 0);
@@ -102,7 +115,7 @@
          }
  
          this.firstUpdate = false;
-@@ -1534,7 +1583,20 @@
+@@ -1534,7 +1593,21 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
              par1NBTTagCompound.setLong("UUIDMost", this.field_96093_i.getMostSignificantBits());
              par1NBTTagCompound.setLong("UUIDLeast", this.field_96093_i.getLeastSignificantBits());
@@ -115,15 +128,16 @@
 +            for (String identifier : this.extendedEntityData.keySet()){
 +                try{
 +                    IExtendedEntityProperties exProps = this.extendedEntityData.get(identifier);
-+                    exProps.SaveNBTData(par1NBTTagCompound);
++                    exProps.saveNBTData(null);
 +                }catch(Throwable t){
-+                    FMLLog.severe(String.format("IExtendedEntityProperties with identifier %s failed to save properly.  This is a mod issue.", identifier));
++                    FMLLog.severe("IExtendedEntityProperties with identifier %s failed to save properly.  This is a mod issue.", identifier);
++                    t.printStackTrace();
 +                }
 +            }
  
              if (this.ridingEntity != null)
              {
-@@ -1604,6 +1666,25 @@
+@@ -1604,6 +1677,26 @@
  
              this.setPosition(this.posX, this.posY, this.posZ);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -135,9 +149,10 @@
 +            for (String identifier : this.extendedEntityData.keySet()){
 +                try{
 +                    IExtendedEntityProperties exProps = this.extendedEntityData.get(identifier);
-+                    exProps.LoadFromNBT(par1NBTTagCompound);
++                    exProps.loadFromNBT(par1NBTTagCompound);
 +                }catch(Throwable t){
-+                    FMLLog.severe(String.format("IExtendedEntityProperties with identifier %s failed to load properly.  This is a mod issue.", identifier));
++                    FMLLog.severe("IExtendedEntityProperties with identifier %s failed to load properly.  This is a mod issue.", identifier);
++                    t.printStackTrace();
 +                }
 +            }
 +            
@@ -149,7 +164,7 @@
              this.readEntityFromNBT(par1NBTTagCompound);
          }
          catch (Throwable throwable)
-@@ -1698,7 +1779,14 @@
+@@ -1698,7 +1791,14 @@
      {
          EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY + (double)par2, this.posZ, par1ItemStack);
          entityitem.delayBeforeCanPickup = 10;
@@ -165,7 +180,7 @@
          return entityitem;
      }
  
-@@ -2056,7 +2144,7 @@
+@@ -2056,7 +2156,7 @@
       */
      public boolean isRiding()
      {
@@ -174,7 +189,7 @@
      }
  
      /**
-@@ -2400,7 +2488,7 @@
+@@ -2400,7 +2500,7 @@
  
      public float func_82146_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, Block par6Block)
      {
@@ -183,7 +198,7 @@
      }
  
      public boolean func_96091_a(Explosion par1Explosion, World par2World, int par3, int par4, int par5, int par6, float par7)
-@@ -2455,4 +2543,100 @@
+@@ -2455,4 +2555,100 @@
      {
          return this.getEntityName();
      }
