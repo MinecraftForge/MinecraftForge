@@ -56,7 +56,7 @@
 +                case 28: return this.func_78616_a((BlockCocoa)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
 +                case 34: return this.func_82778_a((BlockBeacon)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
 +                case 38: return this.func_94172_a((BlockHopper)p_78612_1_, p_78612_2_, p_78612_3_, p_78612_4_);
-+                default: return false;
++                default: return FMLRenderAccessLibrary.renderWorldBlock(this, blockAccess, par2, par3, par4, par1Block, l);
 +            }
          }
      }
