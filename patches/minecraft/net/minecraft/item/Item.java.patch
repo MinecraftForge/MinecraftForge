@@ -1,6 +1,14 @@
 --- ../src_base/minecraft/net/minecraft/item/Item.java
 +++ ../src_work/minecraft/net/minecraft/item/Item.java
-@@ -14,6 +14,7 @@
+@@ -7,6 +7,7 @@
+ import java.util.Random;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
++import net.minecraft.client.model.ModelBiped;
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+@@ -14,6 +15,7 @@
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.item.EntityPainting;
  import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +16,7 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionHelper;
  import net.minecraft.stats.StatList;
-@@ -23,7 +24,9 @@
+@@ -23,7 +25,9 @@
  import net.minecraft.util.StatCollector;
  import net.minecraft.util.StringTranslate;
  import net.minecraft.util.Vec3;
@@ -18,7 +26,7 @@
  
  public class Item
  {
-@@ -238,13 +241,16 @@
+@@ -238,13 +242,16 @@
      /** Icon index in the icons table. */
      protected Icon iconIndex;
  
@@ -36,7 +44,7 @@
          }
  
          itemsList[256 + par1] = this;
-@@ -636,6 +642,10 @@
+@@ -636,6 +643,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
          double d3 = 5.0D;
@@ -47,7 +55,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -716,4 +726,324 @@
+@@ -716,4 +727,336 @@
      {
          StatList.initStats();
      }
@@ -371,4 +379,16 @@
 +        return getPotionEffect();
 +    }
 +
++    /**
++     * Override this method to have an item handle its own armor rendering.
++     * @param  entityLiving  The entity wearing the armor 
++     * @param  itemStack  The itemStack to render the model of 
++     * @param  armorSlot  0=head, 1=torso, 2=legs, 3=feet
++     * 
++     * @return  A ModelBiped to render instead of the default
++     */
++    @SideOnly(Side.CLIENT)
++    public ModelBiped provideArmorModel(EntityLiving entityLiving, ItemStack itemStack, int armorSlot) {
++        return null;
++    }
  }
