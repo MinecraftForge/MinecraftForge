@@ -1,6 +1,40 @@
 --- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -177,7 +177,7 @@
+@@ -11,6 +11,8 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.potion.PotionHelper;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.brewing.PotionBrewedEvent;
+ 
+ public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
+ {
+@@ -115,7 +117,7 @@
+ 
+                 for (int i = 0; i < 3; ++i)
+                 {
+-                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
++                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                     {
+                         int j = this.brewingItemStacks[i].getItemDamage();
+                         int k = this.getPotionResult(j, itemstack);
+@@ -154,7 +156,7 @@
+ 
+             for (int i = 0; i < 3; ++i)
+             {
+-                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
++                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                 {
+                     int j = this.brewingItemStacks[i].getItemDamage();
+                     int k = this.getPotionResult(j, itemstack);
+@@ -172,12 +174,14 @@
+                     {
+                         this.brewingItemStacks[i].setItemDamage(k);
+                     }
++                    
++                    MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(this.brewingItemStacks));
+                 }
+             }
  
              if (Item.itemsList[itemstack.itemID].hasContainerItem())
              {
@@ -9,3 +43,12 @@
              }
              else
              {
+@@ -333,7 +337,7 @@
+ 
+     public boolean func_94041_b(int par1, ItemStack par2ItemStack)
+     {
+-        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
++        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.itemID == Item.glassBottle.itemID;
+     }
+ 
+     @SideOnly(Side.CLIENT)
