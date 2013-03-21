@@ -10,5 +10,4 @@ public class PlayerFlyableFallEvent extends PlayerEvent{
         super(player);
         this.distanceFallen = f;
     }
-
 }
