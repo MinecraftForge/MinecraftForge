@@ -23,16 +23,36 @@
  
      public RenderPlayer()
      {
-@@ -56,7 +64,7 @@
+@@ -56,15 +64,19 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
 -                this.loadTexture("/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
+-                ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
+-                modelbiped.bipedHead.showModel = par2 == 0;
+-                modelbiped.bipedHeadwear.showModel = par2 == 0;
+-                modelbiped.bipedBody.showModel = par2 == 1 || par2 == 2;
+-                modelbiped.bipedRightArm.showModel = par2 == 1;
+-                modelbiped.bipedLeftArm.showModel = par2 == 1;
+-                modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
+-                modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
 +                this.loadTexture(ForgeHooksClient.getArmorTexture(itemstack, "/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
-                 ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
-                 modelbiped.bipedHead.showModel = par2 == 0;
-                 modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -125,7 +133,7 @@
++                ModelBiped modelbiped = ForgeHooksClient.getArmorModel(par1EntityPlayer, itemstack, par2);
++                if (modelbiped == null)
++                {
++                    modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
++                    modelbiped.bipedHead.showModel = par2 == 0;
++                    modelbiped.bipedHeadwear.showModel = par2 == 0;
++                    modelbiped.bipedBody.showModel = par2 == 1 || par2 == 2;
++                    modelbiped.bipedRightArm.showModel = par2 == 1;
++                    modelbiped.bipedLeftArm.showModel = par2 == 1;
++                    modelbiped.bipedRightLeg.showModel = par2 == 2 || par2 == 3;
++                    modelbiped.bipedLeftLeg.showModel = par2 == 2 || par2 == 3;
++                }
+                 this.setRenderPassModel(modelbiped);
+ 
+                 if (modelbiped != null)
+@@ -125,7 +137,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
@@ -41,7 +61,7 @@
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
-@@ -184,9 +192,12 @@
+@@ -184,9 +196,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float f2;
  
@@ -57,7 +77,7 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -304,7 +315,10 @@
+@@ -304,7 +319,10 @@
                  enumaction = itemstack1.getItemUseAction();
              }
  
@@ -69,7 +89,7 @@
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -361,7 +375,7 @@
+@@ -361,7 +379,7 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
              {
