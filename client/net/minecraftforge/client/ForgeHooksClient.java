@@ -71,11 +71,11 @@ public class ForgeHooksClient
 
         if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
-            engine.func_98187_b("/terrain.png");
+            engine.bindTexture("/terrain.png");
             int renderType = Block.blocksList[item.itemID].getRenderType();
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
-            if (RenderItem.field_82407_g)
+            if (RenderItem.renderInFrame)
             {
                 GL11.glScalef(1.25F, 1.25F, 1.25F);
                 GL11.glTranslatef(0.0F, 0.05F, 0.0F);
@@ -103,7 +103,7 @@ public class ForgeHooksClient
         }
         else
         {
-            engine.func_98187_b(item.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
+            engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -118,7 +118,7 @@ public class ForgeHooksClient
             return false;
         }
 
-        engine.func_98187_b(item.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();

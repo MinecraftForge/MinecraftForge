@@ -154,7 +154,7 @@
      }
  
      /**
-@@ -1414,4 +1433,853 @@
+@@ -1435,4 +1454,853 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -325,7 +325,7 @@
 +     */
 +    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z)
 +    {
-+        return world.func_94571_i(x, y, z);
++        return world.setBlockToAir(x, y, z);
 +    }
 +
 +    /**
@@ -932,7 +932,7 @@
 +    {
 +        if (blockID == grass.blockID)
 +        {
-+            world.setBlockAndMetadataWithNotify(x, y, z, dirt.blockID, 0, 2);
++            world.setBlock(x, y, z, dirt.blockID, 0, 2);
 +        }
 +    }
 +

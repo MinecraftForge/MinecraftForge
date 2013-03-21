@@ -21,7 +21,7 @@
 -            if (!isValidSupportBlock(par1World.getBlockId(j1, par3, k1)))
 +            if (!(isValidSupportBlock(par1World.getBlockId(j1, par3, k1)) || par1World.isBlockSolidOnSide(j1, par3, k1, ForgeDirection.getOrientation((i1 & 3) + 2))))
              {
-                 par1World.func_94571_i(par2, par3, par4);
+                 par1World.setBlockToAir(par2, par3, par4);
                  this.dropBlockAsItem(par1World, par2, par3, par4, i1, 0);
 @@ -259,6 +264,10 @@
       */

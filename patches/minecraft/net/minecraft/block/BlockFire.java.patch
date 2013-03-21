@@ -45,13 +45,13 @@
              if (!this.canPlaceBlockAt(par1World, par2, par3, par4))
              {
 @@ -155,7 +155,7 @@
-                         par1World.func_94571_i(par2, par3, par4);
+                         par1World.setBlockToAir(par2, par3, par4);
                      }
                  }
 -                else if (!flag && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4) && l == 15 && par5Random.nextInt(4) == 0)
 +                else if (!flag && !this.canBlockCatchFire(par1World, par2, par3 - 1, par4, UP) && l == 15 && par5Random.nextInt(4) == 0)
                  {
-                     par1World.func_94571_i(par2, par3, par4);
+                     par1World.setBlockToAir(par2, par3, par4);
                  }
 @@ -169,12 +169,12 @@
                          b0 = -50;
@@ -206,9 +206,9 @@
              {
                  for (l = 0; l < 2; ++l)
                  {
-@@ -462,4 +481,46 @@
+@@ -467,4 +486,46 @@
      {
-         return this.field_94439_c[0];
+         return this.iconArray[0];
      }
 +    
 +    /**

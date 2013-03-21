@@ -14,8 +14,8 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.Tuple;
  
-@@ -196,4 +200,28 @@
-             this.field_94236_i = arraylist;
+@@ -238,4 +242,28 @@
+             this.listAnimationTuples = arraylist;
          }
      }
 +

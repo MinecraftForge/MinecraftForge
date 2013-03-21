@@ -31,10 +31,10 @@
  
 -                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
 -                {
--                    par1World.setBlockAndMetadataWithNotify(par3, par4 - 1, par5, Block.dirt.blockID, 0, 2);
--                    par1World.setBlockAndMetadataWithNotify(par3 + 1, par4 - 1, par5, Block.dirt.blockID, 0, 2);
--                    par1World.setBlockAndMetadataWithNotify(par3, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
--                    par1World.setBlockAndMetadataWithNotify(par3 + 1, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3, par4 - 1, par5, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3 + 1, par4 - 1, par5, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3 + 1, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
 +                Block soil = Block.blocksList[i1];
 +                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
 +

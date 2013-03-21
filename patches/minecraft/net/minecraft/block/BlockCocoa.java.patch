@@ -37,8 +37,8 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -244,4 +254,10 @@
-             this.field_94469_b[i] = par1IconRegister.func_94245_a(field_94470_a[i]);
+@@ -249,4 +259,10 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(field_94470_a[i]);
          }
      }
 +

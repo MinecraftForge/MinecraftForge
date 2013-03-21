@@ -42,7 +42,7 @@ public class OreDictionary
             registerOre("logWood",     new ItemStack(Block.wood, 1, WILDCARD_VALUE));
             registerOre("plankWood",   new ItemStack(Block.planks, 1, WILDCARD_VALUE));
             registerOre("slabWood",    new ItemStack(Block.woodSingleSlab, 1, WILDCARD_VALUE));
-            registerOre("stairWood",   Block.stairCompactPlanks);
+            registerOre("stairWood",   Block.stairsWoodOak);
             registerOre("stairWood",   Block.stairsWoodBirch);
             registerOre("stairWood",   Block.stairsWoodJungle);
             registerOre("stairWood",   Block.stairsWoodSpruce);

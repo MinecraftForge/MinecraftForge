@@ -27,7 +27,7 @@
          {
              this.theWorld.theProfiler.startSection("prepare");
 -            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
--            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.field_96291_i, this.mc.gameSettings, par3);
+-            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
 -            this.countEntitiesTotal = 0;
 -            this.countEntitiesRendered = 0;
 -            this.countEntitiesHidden = 0;
@@ -41,7 +41,7 @@
 +            if (pass == 0)
 +            {
 +                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
-+                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.field_96291_i, this.mc.gameSettings, par3);
++                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
 +                this.countEntitiesTotal = 0;
 +                this.countEntitiesRendered = 0;
 +                this.countEntitiesHidden = 0;

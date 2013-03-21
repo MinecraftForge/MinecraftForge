@@ -19,7 +19,7 @@
 +
 +public class BlockTallGrass extends BlockFlower implements IShearable
  {
-     private static final String[] field_94367_a = new String[] {"deadbush", "tallgrass", "fern"};
+     private static final String[] grassTypes = new String[] {"deadbush", "tallgrass", "fern"};
      @SideOnly(Side.CLIENT)
 @@ -50,7 +55,7 @@
       */
@@ -47,8 +47,8 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -139,4 +136,35 @@
-             this.field_94366_b[i] = par1IconRegister.func_94245_a(field_94367_a[i]);
+@@ -144,4 +141,35 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(grassTypes[i]);
          }
      }
 +

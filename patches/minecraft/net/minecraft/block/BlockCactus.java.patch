@@ -22,9 +22,9 @@
          }
      }
  
-@@ -177,4 +181,22 @@
-         this.field_94380_a = par1IconRegister.func_94245_a("cactus_top");
-         this.field_94379_b = par1IconRegister.func_94245_a("cactus_bottom");
+@@ -182,4 +186,22 @@
+         this.field_94380_a = par1IconRegister.registerIcon("cactus_top");
+         this.field_94379_b = par1IconRegister.registerIcon("cactus_bottom");
      }
 +
 +    @Override

@@ -32,7 +32,7 @@
  import net.minecraft.util.Vec3;
 @@ -225,6 +232,11 @@
      private boolean invulnerable;
-     private UUID field_96093_i;
+     private UUID entityUniqueID;
      public EnumEntitySize myEntitySize;
 +    /** Forge: Used to store custom data for each entity. */
 +    private NBTTagCompound customEntityData;
@@ -53,8 +53,8 @@
          this.firstUpdate = false;
 @@ -1534,6 +1546,10 @@
              par1NBTTagCompound.setInteger("PortalCooldown", this.timeUntilPortal);
-             par1NBTTagCompound.setLong("UUIDMost", this.field_96093_i.getMostSignificantBits());
-             par1NBTTagCompound.setLong("UUIDLeast", this.field_96093_i.getLeastSignificantBits());
+             par1NBTTagCompound.setLong("UUIDMost", this.entityUniqueID.getMostSignificantBits());
+             par1NBTTagCompound.setLong("UUIDLeast", this.entityUniqueID.getLeastSignificantBits());
 +            if (customEntityData != null)
 +            {
 +                par1NBTTagCompound.setCompoundTag("ForgeData", customEntityData);
@@ -73,7 +73,7 @@
 +            //Rawr, legacy code, Vanilla added a UUID, keep this so older maps will convert properly
 +            if (par1NBTTagCompound.hasKey("PersistentIDMSB") && par1NBTTagCompound.hasKey("PersistentIDLSB"))
 +            {
-+                this.field_96093_i = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
++                this.entityUniqueID = new UUID(par1NBTTagCompound.getLong("PersistentIDMSB"), par1NBTTagCompound.getLong("PersistentIDLSB"));
 +            }
              this.readEntityFromNBT(par1NBTTagCompound);
          }
@@ -186,7 +186,7 @@
 +
 +    public UUID getPersistentID()
 +    {
-+        return field_96093_i;
++        return entityUniqueID;
 +    }
 +
 +    /**

@@ -22,13 +22,11 @@
  @SideOnly(Side.CLIENT)
  public class ItemRenderer
  {
-@@ -53,8 +61,21 @@
-     public void renderItem(EntityLiving par1EntityLiving, ItemStack par2ItemStack, int par3)
+@@ -54,7 +62,20 @@
      {
          GL11.glPushMatrix();
--
--        if (par2ItemStack.func_94608_d() == 0 && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
-+        
+ 
+-        if (par2ItemStack.getItemSpriteNumber() == 0 && Block.blocksList[par2ItemStack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
 +        Block block = null;
 +        if (par2ItemStack.getItem() instanceof ItemBlock && par2ItemStack.itemID < Block.blocksList.length)
 +        {
@@ -39,12 +37,12 @@
 +        
 +        if (customRenderer != null)
 +        {
-+            this.mc.renderEngine.func_98187_b(par2ItemStack.func_94608_d() == 0 ? "/terrain.png" : "/gui/items.png");
++            this.mc.renderEngine.bindTexture(par2ItemStack.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
 +            ForgeHooksClient.renderEquippedItem(customRenderer, renderBlocksInstance, par1EntityLiving, par2ItemStack);
 +        }
-+        else if (block != null && par2ItemStack.func_94608_d() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
++        else if (block != null && par2ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[par2ItemStack.itemID].getRenderType()))
          {
-             this.mc.renderEngine.func_98187_b("/terrain.png");
+             this.mc.renderEngine.bindTexture("/terrain.png");
              this.renderBlocksInstance.renderBlockAsItem(Block.blocksList[par2ItemStack.itemID], par2ItemStack.getItemDamage(), 1.0F);
 @@ -272,7 +293,7 @@
          Render render;

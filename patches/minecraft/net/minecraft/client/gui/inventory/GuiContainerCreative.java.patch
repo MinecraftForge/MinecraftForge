@@ -119,7 +119,7 @@
 +        for (l = start; l < k; ++l)
          {
              CreativeTabs creativetabs1 = acreativetabs[l];
-             this.mc.renderEngine.func_98187_b("/gui/allitems.png");
+             this.mc.renderEngine.bindTexture("/gui/allitems.png");
  
 -            if (creativetabs1.getTabIndex() != selectedTabIndex)
 +            if (creativetabs1 != null && creativetabs1.getTabIndex() != selectedTabIndex)
@@ -132,12 +132,12 @@
 +        {
 +            if (creativetabs != CreativeTabs.tabAllSearch)
 +            {
-+                mc.renderEngine.func_98187_b("/gui/allitems.png");
++                mc.renderEngine.bindTexture("/gui/allitems.png");
 +                renderCreativeTab(CreativeTabs.tabAllSearch);
 +            }
 +            if (creativetabs != CreativeTabs.tabInventory)
 +            {
-+                mc.renderEngine.func_98187_b("/gui/allitems.png");
++                mc.renderEngine.bindTexture("/gui/allitems.png");
 +                renderCreativeTab(CreativeTabs.tabInventory);
              }
          }

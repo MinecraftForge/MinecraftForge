@@ -42,7 +42,7 @@
          if (l == Block.sapling.blockID)
          {
 @@ -244,16 +270,9 @@
-                                             par1World.setBlockAndMetadataWithNotify(j1, k1, l1, Block.tallGrass.blockID, 1, 3);
+                                             par1World.setBlock(j1, k1, l1, Block.tallGrass.blockID, 1, 3);
                                          }
                                      }
 -                                    else if (itemRand.nextInt(3) != 0)
@@ -50,12 +50,12 @@
                                      {
 -                                        if (Block.plantYellow.canBlockStay(par1World, j1, k1, l1))
 -                                        {
--                                            par1World.func_94575_c(j1, k1, l1, Block.plantYellow.blockID);
+-                                            par1World.setBlock(j1, k1, l1, Block.plantYellow.blockID);
 -                                        }
 -                                    }
 -                                    else if (Block.plantRed.canBlockStay(par1World, j1, k1, l1))
 -                                    {
--                                        par1World.func_94575_c(j1, k1, l1, Block.plantRed.blockID);
+-                                        par1World.setBlock(j1, k1, l1, Block.plantRed.blockID);
 +                                        ForgeHooks.plantGrass(par1World, j1, k1, l1);
                                      }
                                  }
