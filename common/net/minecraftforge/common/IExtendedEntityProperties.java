@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public interface IExtendedEntityProperties {
-    public void SaveNBTData(NBTTagCompound compound);
-    public void LoadFromNBT(NBTTagCompound compound);
-    public void Init(Entity entity, World world);
+    public void saveNBTData(NBTTagCompound compound);
+    public void loadFromNBT(NBTTagCompound compound);
+    public void init(Entity entity, World world);
 }
