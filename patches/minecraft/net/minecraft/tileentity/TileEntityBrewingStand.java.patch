@@ -27,12 +27,12 @@
                  {
                      int j = this.brewingItemStacks[i].getItemDamage();
                      int k = this.getPotionResult(j, itemstack);
-@@ -172,12 +174,14 @@
+@@ -171,13 +173,13 @@
+                     else if (!ItemPotion.isSplash(j) && ItemPotion.isSplash(k))
                      {
                          this.brewingItemStacks[i].setItemDamage(k);
-                     }
-+                    
-+                    MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(this.brewingItemStacks));
+-                    }
++                    }                                       
                  }
              }
  
@@ -43,6 +43,15 @@
              }
              else
              {
+@@ -188,6 +190,8 @@
+                     this.brewingItemStacks[3] = null;
+                 }
+             }
++            
++            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(brewingItemStacks));
+         }
+     }
+ 
 @@ -333,7 +337,7 @@
  
      public boolean func_94041_b(int par1, ItemStack par2ItemStack)
