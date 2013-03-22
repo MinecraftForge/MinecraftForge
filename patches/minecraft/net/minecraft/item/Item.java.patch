@@ -47,7 +47,7 @@
          Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
          return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
      }
-@@ -720,4 +730,336 @@
+@@ -720,4 +730,349 @@
      {
          StatList.initStats();
      }
@@ -381,6 +381,19 @@
 +    public boolean isBookEnchantable(ItemStack itemstack1, ItemStack itemstack2)
 +    {
 +        return true;
++    }
++
++    /**
++     * An itemstack sensitive version of getDamageVsEntity - allows items to handle damage based on
++     * itemstack data, like tags. Falls back to getDamageVsEntity.
++     *
++     * @param par1Entity The entity being attacked (or the attacking mob, if it's a mob - vanilla bug?)
++     * @param itemStack The itemstack
++     * @return the damage
++     */
++    public int getDamageVsEntity(Entity par1Entity, ItemStack itemStack)
++    {
++        return getDamageVsEntity(par1Entity);
 +    }
 +
  }
