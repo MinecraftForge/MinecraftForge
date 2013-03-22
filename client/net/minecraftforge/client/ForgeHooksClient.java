@@ -20,6 +20,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -50,7 +51,12 @@ public class ForgeHooksClient
         }
         return _default;
     }
-
+    
+    public static ModelBiped getArmorModel(EntityLiving entityLiving, ItemStack itemStack, int slotID)
+    {
+        return itemStack.getItem().provideArmorModel(entityLiving, itemStack, slotID);
+    }
+    
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)
     {
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
