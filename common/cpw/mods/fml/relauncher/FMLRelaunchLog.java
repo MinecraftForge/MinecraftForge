@@ -113,7 +113,7 @@ public class FMLRelaunchLog
                 // Are we longer than just the line separator?
                 int lastIdx = -1;
                 int idx = currentMessage.indexOf("\n",lastIdx+1);
-                while (idx > 0)
+                while (idx >= 0)
                 {
                     log.log(Level.INFO, currentMessage.substring(lastIdx+1,idx));
                     lastIdx = idx;
