@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -37,13 +37,13 @@ public class GuiIdMismatchScreen extends GuiYesNo {
         field_73942_a = this;
         for (Entry<Integer, ItemData> entry : idDifferences.entriesOnlyOnLeft().entrySet())
         {
-            missingIds.add(String.format("ID %d (ModID: %s, type %s) is missing", entry.getValue().getItemId(), entry.getValue().getModId(), entry.getValue().getItemType()));
+            missingIds.add(String.format("ID %d from Mod %s is missing", entry.getValue().getItemId(), entry.getValue().getModId(), entry.getValue().getItemType()));
         }
         for (Entry<Integer, ValueDifference<ItemData>> entry : idDifferences.entriesDiffering().entrySet())
         {
             ItemData world = entry.getValue().leftValue();
             ItemData game = entry.getValue().rightValue();
-            mismatchedIds.add(String.format("ID %d is mismatched. World: (ModID: %s, type %s, ordinal %d) Game (ModID: %s, type %s, ordinal %d)", world.getItemId(), world.getModId(), world.getItemType(), world.getOrdinal(), game.getModId(), game.getItemType(), game.getOrdinal()));
+            mismatchedIds.add(String.format("ID %d is mismatched between world and game", world.getItemId()));
         }
         this.allowContinue = allowContinue;
     }
@@ -62,33 +62,32 @@ public class GuiIdMismatchScreen extends GuiYesNo {
         {
             field_73887_h.remove(0);
         }
-        int offset = Math.max(85 - missingIds.size() * 10 + mismatchedIds.size() * 30, 10);
-        this.func_73732_a(this.field_73886_k, "Forge Mod Loader has found world ID mismatches", this.field_73880_f / 2, offset, 0xFFFFFF);
-        offset += 10;
+        int offset = Math.max(85 - (missingIds.size() + mismatchedIds.size()) * 10, 30);
+        this.func_73732_a(this.field_73886_k, "Forge Mod Loader has found ID mismatches", this.field_73880_f / 2, 10, 0xFFFFFF);
+        this.func_73732_a(this.field_73886_k, "Complete details are in the log file", this.field_73880_f / 2, 20, 0xFFFFFF);
         for (String s: missingIds) {
             this.func_73732_a(this.field_73886_k, s, this.field_73880_f / 2, offset, 0xEEEEEE);
             offset += 10;
+            if (offset > this.field_73881_g - 30) break;
         }
         for (String s: mismatchedIds) {
             this.func_73732_a(this.field_73886_k, s, this.field_73880_f / 2, offset, 0xEEEEEE);
             offset += 10;
+            if (offset > this.field_73881_g - 30) break;
         }
-        offset += 10;
         if (allowContinue)
         {
-            this.func_73732_a(this.field_73886_k, "Do you wish to continue loading?", this.field_73880_f / 2, offset, 0xFFFFFF);
-            offset += 10;
+            this.func_73732_a(this.field_73886_k, "Do you wish to continue loading?", this.field_73880_f / 2, this.field_73881_g - 30, 0xFFFFFF);
         }
         else
         {
-            this.func_73732_a(this.field_73886_k, "You cannot connect to this server", this.field_73880_f / 2, offset, 0xFFFFFF);
-            offset += 10;
+            this.func_73732_a(this.field_73886_k, "You cannot connect to this server", this.field_73880_f / 2, this.field_73881_g - 30, 0xFFFFFF);
         }
         // super.super. Grrr
         for (int var4 = 0; var4 < this.field_73887_h.size(); ++var4)
         {
             GuiButton var5 = (GuiButton)this.field_73887_h.get(var4);
-            var5.field_73743_d = Math.min(offset + 10, this.field_73881_g - 20);
+            var5.field_73743_d = this.field_73881_g - 20;
             if (!allowContinue)
             {
                 var5.field_73746_c = this.field_73880_f / 2 - 75;
