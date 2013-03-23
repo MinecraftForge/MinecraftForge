@@ -39,3 +39,12 @@
                  this.setPosition(this.posX, this.posY, this.posZ);
  
                  if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
+@@ -439,7 +446,7 @@
+                     }
+                 }
+ 
+-                return false;
++                return super.attackEntityFrom(par1DamageSource, par2);
+             }
+             else
+             {
