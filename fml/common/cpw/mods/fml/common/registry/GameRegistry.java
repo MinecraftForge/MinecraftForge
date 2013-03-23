@@ -411,6 +411,9 @@ public class GameRegistry
 	 *
 	 * If it is built from a block, the metadata is by default the "wildcard" value.
 	 *
+	 * Custom itemstacks can be dumped from minecraft by setting the system property fml.dumpRegistry to true
+	 * (-Dfml.dumpRegistry=true on the command line will work)
+	 *
 	 * @param modId The modid of the stack owner
 	 * @param name The name of the stack
 	 * @param stackSize The size of the stack returned

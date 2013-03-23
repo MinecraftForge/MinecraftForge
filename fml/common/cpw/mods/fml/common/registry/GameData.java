@@ -354,6 +354,7 @@ public class GameData {
             try
             {
                 Files.write(mapJoiner.join(builder.build().entries()), f, Charsets.UTF_8);
+                FMLLog.log(Level.INFO, "Dumped item registry data to %s", f.getAbsolutePath());
             }
             catch (IOException e)
             {
