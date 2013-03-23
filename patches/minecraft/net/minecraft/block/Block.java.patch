@@ -34,7 +34,7 @@
  import net.minecraft.util.Icon;
  import net.minecraft.util.MovingObjectPosition;
  import net.minecraft.util.StatCollector;
-@@ -35,9 +42,18 @@
+@@ -35,9 +42,19 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
@@ -43,6 +43,7 @@
 +import net.minecraftforge.common.ForgeDirection;
 +import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.IPlantable;
++import net.minecraftforge.common.RotationHelper;
 +import cpw.mods.fml.relauncher.Side;
 +import cpw.mods.fml.relauncher.SideOnly;
  
@@ -53,7 +54,7 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
-@@ -454,9 +470,10 @@
+@@ -454,9 +471,10 @@
          return this.needsRandomTick;
      }
  
@@ -65,7 +66,7 @@
      }
  
      /**
-@@ -479,7 +496,7 @@
+@@ -479,7 +497,7 @@
       */
      public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -74,7 +75,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -489,7 +506,7 @@
+@@ -489,7 +507,7 @@
       */
      public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
      {
@@ -83,7 +84,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -639,7 +656,13 @@
+@@ -639,7 +657,13 @@
      /**
       * ejects contained items into the world, and notifies neighbours of an update, as appropriate
       */
@@ -98,7 +99,7 @@
  
      /**
       * Returns the quantity of items to drop on block destruction.
-@@ -664,7 +687,7 @@
+@@ -664,7 +688,7 @@
      public float getPlayerRelativeBlockHardness(EntityPlayer par1EntityPlayer, World par2World, int par3, int par4, int par5)
      {
          float f = this.getBlockHardness(par2World, par3, par4, par5);
@@ -107,7 +108,7 @@
      }
  
      /**
-@@ -682,18 +705,13 @@
+@@ -682,18 +706,13 @@
      {
          if (!par1World.isRemote)
          {
@@ -130,7 +131,7 @@
                  }
              }
          }
-@@ -1086,7 +1104,7 @@
+@@ -1086,7 +1105,7 @@
          par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
          par2EntityPlayer.addExhaustion(0.025F);
  
@@ -139,7 +140,7 @@
          {
              ItemStack itemstack = this.createStackedBlock(par6);
  
-@@ -1102,12 +1120,13 @@
+@@ -1102,12 +1121,13 @@
          }
      }
  
@@ -154,7 +155,7 @@
      }
  
      /**
-@@ -1435,4 +1454,853 @@
+@@ -1435,4 +1455,881 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1006,5 +1007,33 @@
 +    public boolean isBeaconBase(World worldObj, int x, int y, int z, int beaconX, int beaconY, int beaconZ)
 +    {
 +        return (blockID == blockEmerald.blockID || blockID == blockGold.blockID || blockID == blockDiamond.blockID || blockID == blockSteel.blockID);
++    }
++
++    /**
++     * Rotate the block around the specified axis by one rotation
++     *
++     * @param worldObj The world
++     * @param x X position
++     * @param y Y position
++     * @param z Z position
++     * @param axis The axis to rotate around
++     * @return True if the rotation was successful, False if the rotation failed, or is not possible
++     */
++    public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis)
++    {
++        return RotationHelper.rotateVanillaBlock(this, worldObj, x, y, z, axis);
++    }
++
++    /**
++     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
++     * @param worldObj The world
++     * @param x X position
++     * @param y Y position
++     * @param z Z position
++     * @return An array of valid axes to rotate around, or null for none or unknown
++     */
++    public ForgeDirection[] getValidRotations(World worldObj, int x, int y, int z)
++    {
++        return RotationHelper.getValidVanillaBlockRotations(this);
 +    }
  }
