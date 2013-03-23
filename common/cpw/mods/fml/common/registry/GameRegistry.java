@@ -411,10 +411,13 @@ public class GameRegistry
 	 *
 	 * @param modId The modid of the stack owner
 	 * @param name The name of the stack
+	 * @param stackSize The size of the stack returned
 	 * @return The custom itemstack or null if no such itemstack was found
 	 */
-	public static ItemStack findItemStack(String modId, String name)
+	public static ItemStack findItemStack(String modId, String name, int stackSize)
 	{
-	    return GameData.findItemStack(modId, name);
+	    ItemStack is = GameData.findItemStack(modId, name).func_77946_l();
+	    is.field_77994_a = stackSize;
+	    return is;
 	}
 }

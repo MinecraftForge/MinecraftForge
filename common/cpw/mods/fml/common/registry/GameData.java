@@ -319,7 +319,7 @@ public class GameData {
             Block b = findBlock(modId, name);
             if (b != null)
             {
-                is = new ItemStack(b, 0, 0);
+                is = new ItemStack(b, 0, Short.MAX_VALUE);
             }
         }
         return is;
