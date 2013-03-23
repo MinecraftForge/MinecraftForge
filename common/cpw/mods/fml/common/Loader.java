@@ -13,6 +13,7 @@
 package cpw.mods.fml.common;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,15 +27,20 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
 import net.minecraft.crash.CallableMinecraftVersion;
+import net.minecraft.item.ItemStack;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableListMultimap.Builder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Iterables;
@@ -47,7 +53,9 @@ import com.google.common.collect.Multiset.Entry;
 import com.google.common.collect.Multisets;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets.SetView;
+import com.google.common.collect.Table;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.io.Files;
 
 import cpw.mods.fml.common.LoaderState.ModState;
 import cpw.mods.fml.common.discovery.ModDiscoverer;
@@ -686,6 +694,8 @@ public class Loader
         modController.distributeStateMessage(LoaderState.POSTINITIALIZATION);
         modController.transition(LoaderState.AVAILABLE);
         modController.distributeStateMessage(LoaderState.AVAILABLE);
+        // Dump the custom registry data map, if necessary
+        GameData.dumpRegistry(minecraftDir);
         FMLLog.info("Forge Mod Loader has successfully loaded %d mod%s", mods.size(), mods.size()==1 ? "" : "s");
     }
 
@@ -810,4 +820,5 @@ public class Loader
         }
         return true;
     }
+
 }
