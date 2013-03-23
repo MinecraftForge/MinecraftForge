@@ -409,6 +409,8 @@ public class GameRegistry
 	 * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no
 	 * explicit itemstack is found.
 	 *
+	 * If it is built from a block, the metadata is by default the "wildcard" value.
+	 *
 	 * @param modId The modid of the stack owner
 	 * @param name The name of the stack
 	 * @param stackSize The size of the stack returned
@@ -417,7 +419,7 @@ public class GameRegistry
 	public static ItemStack findItemStack(String modId, String name, int stackSize)
 	{
 	    ItemStack is = GameData.findItemStack(modId, name).func_77946_l();
-	    is.field_77994_a = stackSize;
+	    is.field_77994_a = Math.min(stackSize, is.func_77976_d());
 	    return is;
 	}
 }
