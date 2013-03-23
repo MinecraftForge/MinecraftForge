@@ -5,7 +5,7 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
 +import net.minecraftforge.common.MinecraftForge;
-+import net.minecraftforge.event.entity.living.EndermanTeleportEvent;
++import net.minecraftforge.event.entity.living.EnderTeleportEvent;
  
  public class EntityEnderman extends EntityMob
  {
@@ -13,7 +13,7 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
-+        EndermanTeleportEvent event = new EndermanTeleportEvent(this, par1, par3, par5);
++        EnderTeleportEvent event = new EnderTeleportEvent(this, par1, par3, par5);
 +        if (!MinecraftForge.EVENT_BUS.post(event)){
 +            return false;
 +        }
