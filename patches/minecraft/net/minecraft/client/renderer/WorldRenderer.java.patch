@@ -1,14 +1,30 @@
---- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-+++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
-@@ -17,13 +17,15 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java 
++++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java 
+@@ -6,10 +6,12 @@
+ import java.util.HashSet;
+ import java.util.List;
+ import net.minecraft.block.Block;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.client.renderer.culling.ICamera;
+ import net.minecraft.client.renderer.entity.RenderItem;
+ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.EntityLiving;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.ChunkCache;
+@@ -17,13 +19,18 @@
  import net.minecraft.world.chunk.Chunk;
  import org.lwjgl.opengl.GL11;
  
 +import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.client.renderer.TessellatorState;
 +
  @SideOnly(Side.CLIENT)
  public class WorldRenderer
  {
++    private TessellatorState mTransparencyPassTessState = null;
++
      /** Reference to the World object. */
      public World worldObj;
      private int glRenderList = -1;
@@ -17,15 +33,30 @@
      public static int chunksUpdated = 0;
      public int posX;
      public int posY;
-@@ -192,15 +194,16 @@
-                                         GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
-                                         GL11.glScalef(f, f, f);
-                                         GL11.glTranslatef(8.0F, 8.0F, 8.0F);
+@@ -166,6 +173,8 @@
+                 RenderBlocks renderblocks = new RenderBlocks(chunkcache);
+                 this.bytesDrawn = 0;
+ 
++                    this.mTransparencyPassTessState = null;
++
+                 for (int l1 = 0; l1 < 2; ++l1)
+                 {
+                     boolean flag = false;
+@@ -185,22 +194,15 @@
+                                     if (!flag2)
+                                     {
+                                         flag2 = true;
+-                                        GL11.glNewList(this.glRenderList + l1, GL11.GL_COMPILE);
+-                                        GL11.glPushMatrix();
+-                                        this.setupGLTranslation();
+-                                        float f = 1.000001F;
+-                                        GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
+-                                        GL11.glScalef(f, f, f);
+-                                        GL11.glTranslatef(8.0F, 8.0F, 8.0F);
 -                                        tessellator.startDrawingQuads();
 -                                        tessellator.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
-+                                        //ForgeHooksClient.beforeRenderPass(l1); Noop fo now, TODO: Event if anyone needs
-+                                        Tessellator.instance.startDrawingQuads();
-+                                        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
++                                        //The logic that used to be here was extracted to startRenderPass()
++                                        startRenderPass(l1);
                                      }
  
                                      Block block = Block.blocksList[l2];
@@ -37,7 +68,7 @@
                                          {
                                              TileEntity tileentity = chunkcache.getBlockTileEntity(k2, i2, j2);
  
-@@ -212,14 +215,15 @@
+@@ -212,14 +214,15 @@
  
                                          int i3 = block.getRenderBlockPass();
  
@@ -56,17 +87,100 @@
                                      }
                                  }
                              }
-@@ -228,10 +232,11 @@
+@@ -228,10 +231,9 @@
  
                      if (flag2)
                      {
 -                        this.bytesDrawn += tessellator.draw();
-+                        //ForgeHooksClient.afterRenderPass(l1); Noop fo now, TODO: Event if anyone needs
-+                        this.bytesDrawn += Tessellator.instance.draw();
-                         GL11.glPopMatrix();
-                         GL11.glEndList();
+-                        GL11.glPopMatrix();
+-                        GL11.glEndList();
 -                        tessellator.setTranslation(0.0D, 0.0D, 0.0D);
-+                        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
++                        //The logic that used to be here was extracted to endRenderPass()
++                        EntityLiving player = Minecraft.getMinecraft().renderViewEntity;
++                        endRenderPass(l1, player);
                      }
                      else
                      {
+@@ -262,6 +264,74 @@
+     }
+ 
+     /**
++     *
++     * This logic was extracted from updateRenderer() so that it could also be used in rebuildTransparencyPass(), a
++     * new public method.  It preps a render pass to be drawn to the tessellator by a RenderBlocks instance.
++     *
++     * @param pass The index of the pass to be started rendering.
++     */
++    private void startRenderPass(int pass)
++    {
++        GL11.glNewList(this.glRenderList + pass, GL11.GL_COMPILE);
++        GL11.glPushMatrix();
++        this.setupGLTranslation();
++        float f = 1.000001F;
++        GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
++        GL11.glScalef(f, f, f);
++        GL11.glTranslatef(8.0F, 8.0F, 8.0F);
++        // ForgeHooksClient.beforeRenderPass(pass); Noop fo now, TODO: Event if
++        Tessellator.instance.startDrawingQuads();
++        Tessellator.instance.setTranslation((double) (-this.posX), (double) (-this.posY), (double) (-this.posZ));
++    }
++
++    /**
++     *
++     * This lgoic was extracted from updateRenderer() so that it could also be used in rebuildTransparencyPass(), a
++     * new public method.  It flushes the rendered quads out to the Tesselator instance's draw() method.  It also
++     * now handles quad sorting.
++     *
++     * @param pass The index of the pass to be started rendering.
++     * @param viewpoint The viewpoint to be renderered from- we use this to establish a position to base the transparent object quad sorting off of
++     */
++    private void endRenderPass(int pass, EntityLiving viewpoint)
++    {
++        //ForgeHooksClient.afterRenderPass(pass); Noop fo now, TODO: Event if anyone needs
++
++        if (pass == 1) {
++            //If we're drawing the semi-transparent pass, we now need to sort all quads in the pass from back to front
++            //in order to allow closer objects to correctly blend over further-away objects
++            this.mTransparencyPassTessState = Tessellator.instance.sortQuads((float)viewpoint.posX, (float)viewpoint.posY, (float)viewpoint.posZ);
++        }
++
++        this.bytesDrawn += Tessellator.instance.draw();
++        GL11.glPopMatrix();
++        GL11.glEndList();
++        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
++    }
++
++    /**
++     *
++     * A new public method that tries to rebuild quads for the transparency pass in the lightest-weight way possible.
++     * This method exists because in order to keep semi-transparent objects rendering properly, their quads need to be
++     * resorted rather often.  As a result, we tend to use this method to rebuild the transparency pass of nearby subchunks
++     * when the player moves even a fairly small amount.
++     *
++     * @param viewpoint The viewpoint entity to base the quad sorting off of.
++     */
++    public void rebuildTransparencyPass(EntityLiving viewpoint) {
++
++        if (this.mTransparencyPassTessState == null || this.skipRenderPass[1])
++            return;
++
++        startRenderPass(1);
++
++        // Retrieve the old rendered stuff
++        Tessellator.instance.restoreTessellatorState(this.mTransparencyPassTessState);
++
++        endRenderPass(1, viewpoint);
++    }
++
++    /**
+      * Returns the distance of this chunk renderer to the entity without performing the final normalizing square root,
+      * for performance reasons.
+      */
+@@ -285,6 +355,7 @@
+ 
+         this.isInFrustum = false;
+         this.isInitialized = false;
++        this.mTransparencyPassTessState = null;
+     }
+ 
+     public void stopRendering()
