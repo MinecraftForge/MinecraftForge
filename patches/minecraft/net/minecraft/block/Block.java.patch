@@ -53,6 +53,19 @@
      /**
       * used as foreach item, if item.tab = current tab, display it on the screen
       */
+@@ -253,10 +269,10 @@
+     public final int blockID;
+ 
+     /** Indicates how many hits it takes to break a block. */
+-    protected float blockHardness;
++    public float blockHardness;
+ 
+     /** Indicates the blocks resistance to explosions. */
+-    protected float blockResistance;
++    public float blockResistance;
+ 
+     /**
+      * set to true when Block's constructor is called through the chain of super()'s. Note: Never used
 @@ -454,9 +470,10 @@
          return this.needsRandomTick;
      }

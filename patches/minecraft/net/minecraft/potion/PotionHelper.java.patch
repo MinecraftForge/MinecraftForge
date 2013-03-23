@@ -1,0 +1,15 @@
+--- ../src_base/minecraft/net/minecraft/potion/PotionHelper.java
++++ ../src_work/minecraft/net/minecraft/potion/PotionHelper.java
+@@ -22,10 +22,10 @@
+     public static final String glowstoneEffect;
+     public static final String gunpowderEffect;
+     public static final String field_82818_l;
+-    private static final HashMap potionRequirements = new HashMap();
++    public static final HashMap potionRequirements = new HashMap();
+ 
+     /** Potion effect amplifier map */
+-    private static final HashMap potionAmplifiers = new HashMap();
++    public static final HashMap potionAmplifiers = new HashMap();
+     private static final HashMap field_77925_n;
+ 
+     /** An array of possible potion prefix names, as translation IDs. */

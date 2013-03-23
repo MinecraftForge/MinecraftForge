@@ -14,6 +14,15 @@
  import net.minecraft.nbt.NBTTagCompound;
  
  public class PotionEffect
+@@ -11,7 +16,7 @@
+     private int potionID;
+ 
+     /** The duration of the potion effect */
+-    private int duration;
++    public int duration;
+ 
+     /** The amplifier of the potion effect */
+     private int amplifier;
 @@ -24,6 +29,9 @@
      @SideOnly(Side.CLIENT)
      private boolean field_100013_f;

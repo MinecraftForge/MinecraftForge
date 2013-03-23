@@ -36,6 +36,15 @@
          }
  
          itemsList[256 + par1] = this;
+@@ -566,7 +572,7 @@
+     /**
+      * Sets the string representing this item's effect on a potion when used as an ingredient.
+      */
+-    protected Item setPotionEffect(String par1Str)
++    public Item setPotionEffect(String par1Str)
+     {
+         this.potionEffect = par1Str;
+         return this;
 @@ -640,6 +646,10 @@
          float f7 = f4 * f5;
          float f8 = f3 * f5;
