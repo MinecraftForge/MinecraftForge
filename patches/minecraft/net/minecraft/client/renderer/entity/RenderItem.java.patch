@@ -76,7 +76,7 @@
                          f8 = 1.0F;
  
                          if (this.renderWithColor)
-@@ -241,32 +232,27 @@
+@@ -241,32 +232,26 @@
              f11 = 0.021875F;
              ItemStack itemstack = par1EntityItem.getEntityItem();
              int j = itemstack.stackSize;
@@ -104,7 +104,7 @@
  
              for (int k = 0; k < b0; ++k)
              {
-                 GL11.glTranslatef(0.0F, 0.0F, f12 + f11);
+-                GL11.glTranslatef(0.0F, 0.0F, f12 + f11);
 -
 -                if (itemstack.getItemSpriteNumber() == 0 && Block.blocksList[itemstack.itemID] != null)
 +                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
@@ -124,7 +124,7 @@
                  {
                      this.loadTexture("/terrain.png");
                  }
-@@ -356,10 +342,10 @@
+@@ -356,10 +341,10 @@
          float f1;
          float f2;
  
@@ -137,7 +137,7 @@
              GL11.glPushMatrix();
              GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
              GL11.glScalef(10.0F, 10.0F, 10.0F);
-@@ -390,11 +376,11 @@
+@@ -390,11 +375,11 @@
              if (Item.itemsList[k].requiresMultipleRenderPasses())
              {
                  GL11.glDisable(GL11.GL_LIGHTING);
@@ -154,7 +154,7 @@
                      int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
                      f = (float)(k1 >> 16 & 255) / 255.0F;
                      f1 = (float)(k1 >> 8 & 255) / 255.0F;
-@@ -453,7 +439,10 @@
+@@ -453,7 +438,10 @@
      {
          if (par3ItemStack != null)
          {
@@ -166,7 +166,7 @@
  
              if (par3ItemStack.hasEffect())
              {
-@@ -590,4 +579,47 @@
+@@ -590,4 +578,47 @@
      {
          this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
      }
