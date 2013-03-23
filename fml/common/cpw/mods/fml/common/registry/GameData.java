@@ -25,11 +25,13 @@ import java.util.logging.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.ImmutableTable.Builder;
@@ -54,6 +56,7 @@ public class GameData {
     private static boolean shouldContinue = true;
     private static boolean isSaveValid = true;
     private static ImmutableTable<String, String, Integer> modObjectTable;
+    private static Table<String, String, ItemStack> customItemStacks = HashBasedTable.create();
     private static Map<String,String> ignoredMods;
 
     private static boolean isModIgnoredForIdValidation(String modId)
@@ -298,5 +301,32 @@ public class GameData {
             return null;
         }
         return Block.field_71973_m[blockId];
+    }
+
+    static ItemStack findItemStack(String modId, String name)
+    {
+        ItemStack is = customItemStacks.get(modId, name);
+        if (is == null)
+        {
+            Item i = findItem(modId, name);
+            if (i != null)
+            {
+                is = new ItemStack(i, 0 ,0);
+            }
+        }
+        if (is == null)
+        {
+            Block b = findBlock(modId, name);
+            if (b != null)
+            {
+                is = new ItemStack(b, 0, 0);
+            }
+        }
+        return is;
+    }
+
+    static void registerCustomItemStack(String name, ItemStack itemStack)
+    {
+        customItemStacks.put(Loader.instance().activeModContainer().getModId(), name, itemStack);
     }
 }

@@ -394,4 +394,27 @@ public class GameRegistry
     {
         return GameData.findItem(modId, name);
     }
+
+	/**
+	 * Manually register a custom item stack with FML for later tracking. It is automatically scoped with the active modid
+	 *
+	 * @param name The name to register it under
+	 * @param itemStack The itemstack to register
+	 */
+	public static void registerCustomItemStack(String name, ItemStack itemStack)
+	{
+	    GameData.registerCustomItemStack(name, itemStack);
+	}
+	/**
+	 * Lookup an itemstack based on mod and name. It will create "default" itemstacks from blocks and items if no
+	 * explicit itemstack is found.
+	 *
+	 * @param modId The modid of the stack owner
+	 * @param name The name of the stack
+	 * @return The custom itemstack or null if no such itemstack was found
+	 */
+	public static ItemStack findItemStack(String modId, String name)
+	{
+	    return GameData.findItemStack(modId, name);
+	}
 }
