@@ -29,9 +29,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.google.common.base.Joiner.MapJoiner;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.ImmutableTable.Builder;
@@ -42,6 +46,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
+import com.google.common.io.Files;
 
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
@@ -328,5 +333,32 @@ public class GameData {
     static void registerCustomItemStack(String name, ItemStack itemStack)
     {
         customItemStacks.put(Loader.instance().activeModContainer().getModId(), name, itemStack);
+    }
+
+    public static void dumpRegistry(File minecraftDir)
+    {
+        if (customItemStacks == null)
+        {
+            return;
+        }
+        if (Boolean.valueOf(System.getProperty("fml.dumpRegistry", "false")).booleanValue())
+        {
+            ImmutableListMultimap.Builder<String, String> builder = ImmutableListMultimap.builder();
+            for (String modId : customItemStacks.rowKeySet())
+            {
+                builder.putAll(modId, customItemStacks.row(modId).keySet());
+            }
+
+            File f = new File(minecraftDir, "itemStackRegistry.csv");
+            MapJoiner mapJoiner = Joiner.on("\n").withKeyValueSeparator(",");
+            try
+            {
+                Files.write(mapJoiner.join(builder.build().entries()), f, Charsets.UTF_8);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log(Level.SEVERE, e, "Failed to write registry data to %s", f.getAbsolutePath());
+            }
+        }
     }
 }
