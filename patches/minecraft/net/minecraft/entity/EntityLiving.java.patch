@@ -134,7 +134,19 @@
          super.fall(par1);
          int i = MathHelper.ceiling_float_int(par1 - 3.0F);
  
-@@ -1578,7 +1626,7 @@
+@@ -1407,6 +1455,11 @@
+     public void moveEntityWithHeading(float par1, float par2)
+     {
+         double d0;
++        
++        if (!ForgeHooks.onLivingMove(this, par1, par2))
++        {
++            return;
++        }
+ 
+         if (this.isInWater() && (!(this instanceof EntityPlayer) || !((EntityPlayer)this).capabilities.isFlying))
+         {
+@@ -1578,7 +1631,7 @@
          int j = MathHelper.floor_double(this.boundingBox.minY);
          int k = MathHelper.floor_double(this.posZ);
          int l = this.worldObj.getBlockId(i, j, k);
@@ -143,7 +155,7 @@
      }
  
      /**
-@@ -2000,6 +2048,7 @@
+@@ -2000,6 +2053,7 @@
          }
  
          this.isAirBorne = true;
@@ -151,7 +163,7 @@
      }
  
      /**
-@@ -2552,8 +2601,6 @@
+@@ -2552,8 +2606,6 @@
          return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
      }
  
@@ -160,7 +172,7 @@
      /**
       * Remove the speified potion effect from this entity.
       */
-@@ -3077,4 +3124,42 @@
+@@ -3077,4 +3129,42 @@
      {
          this.canPickUpLoot = par1;
      }
