@@ -13,11 +13,11 @@
       */
      protected boolean teleportTo(double par1, double par3, double par5)
      {
-+        EnderTeleportEvent event = new EnderTeleportEvent(this, par1, par3, par5);
++        EnderTeleportEvent event = new EnderTeleportEvent(this, par1, par3, par5, 0);
 +        if (MinecraftForge.EVENT_BUS.post(event)){
 +            return false;
 +        }
-+        
++
          double d3 = this.posX;
          double d4 = this.posY;
          double d5 = this.posZ;
@@ -30,15 +30,6 @@
          boolean flag = false;
          int i = MathHelper.floor_double(this.posX);
          int j = MathHelper.floor_double(this.posY);
-@@ -296,7 +303,7 @@
-             }
- 
-             if (flag1)
--            {
-+            {                
-                 this.setPosition(this.posX, this.posY, this.posZ);
- 
-                 if (this.worldObj.getCollidingBoundingBoxes(this, this.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(this.boundingBox))
 @@ -439,7 +446,7 @@
                      }
                  }
