@@ -96,7 +96,7 @@ def main():
         
     os.makedirs(out_folder)
     
-    options.skip_changelog = True #Disable till jenkins fixes its shit
+#    options.skip_changelog = True #Disable till jenkins fixes its shit
     if not options.skip_changelog:
       changelog_file = 'forge-%s/minecraftforge-changelog-%s.txt' % (version_str, version_str)
       make_changelog("http://jenkins.minecraftforge.net/job/minecraftforge/", build_num, changelog_file, version_str)
