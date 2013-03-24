@@ -9,3 +9,13 @@
                                  f1 -= (f3 + 0.3F) * f2;
                              }
  
+@@ -222,8 +222,7 @@
+                         block.dropBlockAsItemWithChance(this.worldObj, i, j, k, this.worldObj.getBlockMetadata(i, j, k), 1.0F / this.explosionSize, 0);
+                     }
+ 
+-                    this.worldObj.setBlock(i, j, k, 0, 0, 3);
+-                    block.onBlockDestroyedByExplosion(this.worldObj, i, j, k, this);
++                    block.onBlockExploded(this.worldObj, i, j, k, this);
+                 }
+             }
+         }
