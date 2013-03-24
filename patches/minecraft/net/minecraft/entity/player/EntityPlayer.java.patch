@@ -316,16 +316,18 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1834,6 +1941,8 @@
-             }
+@@ -1835,6 +1942,10 @@
  
              super.fall(par1);
-+        }else{
-+            MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(this, par1));
          }
++        else
++        {
++            MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(this, par1));
++        }
      }
  
-@@ -1876,7 +1985,7 @@
+     /**
+@@ -1876,7 +1987,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -334,7 +336,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1898,6 +2007,7 @@
+@@ -1898,6 +2009,7 @@
                      return Item.bow.func_94599_c(0);
                  }
              }
@@ -342,7 +344,7 @@
          }
  
          return icon;
-@@ -2137,6 +2247,14 @@
+@@ -2137,6 +2249,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -357,7 +359,7 @@
      }
  
      /**
-@@ -2208,7 +2326,14 @@
+@@ -2208,7 +2328,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
