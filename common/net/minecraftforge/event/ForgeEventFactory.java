@@ -21,9 +21,9 @@ import net.minecraftforge.event.world.WorldEvent;
 @SuppressWarnings("deprecation")
 public class ForgeEventFactory
 {
-    public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
+    public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, int metadata, boolean success)
     {
-        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
+        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, metadata, success);
         MinecraftForge.EVENT_BUS.post(event);
         return event.success;
     }

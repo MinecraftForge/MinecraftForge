@@ -18,12 +18,14 @@ public class PlayerEvent extends LivingEvent
     public static class HarvestCheck extends PlayerEvent
     {
         public final Block block;
+        public final int metadata;
         public boolean success;
 
-        public HarvestCheck(EntityPlayer player, Block block, boolean success)
+        public HarvestCheck(EntityPlayer player, Block block, int metadata, boolean success)
         {
             super(player);
             this.block = block;
+            this.metadata = metadata;
             this.success = success;
         }
     }
