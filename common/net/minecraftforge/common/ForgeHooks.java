@@ -91,13 +91,13 @@ public class ForgeHooks
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null)
         {
-            return player.canHarvestBlock(block);
+            return player.canHarvestBlock(block, metadata);
         }
 
         List info = toolClasses.get(stack.getItem());
         if (info == null)
         {
-            return player.canHarvestBlock(block);
+            return player.canHarvestBlock(block, metadata);
         }
 
         Object[] tmp = info.toArray();
@@ -107,7 +107,7 @@ public class ForgeHooks
         Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
         if (blockHarvestLevel == null)
         {
-            return player.canHarvestBlock(block);
+            return player.canHarvestBlock(block, metadata);
         }
 
         if (blockHarvestLevel > harvestLevel)
