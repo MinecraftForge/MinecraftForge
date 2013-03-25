@@ -149,7 +149,7 @@
                  {
                      f += f1 * 0.08F;
                  }
-@@ -830,7 +890,8 @@
+@@ -830,15 +890,22 @@
              f /= 5.0F;
          }
  
@@ -159,16 +159,22 @@
      }
  
      /**
-@@ -838,7 +899,7 @@
+      * Checks if the player has the ability to harvest a block (checks current inventory item for a tool if necessary)
       */
++    public boolean canHarvestBlock(Block par1Block, int metadata)
++    {
++        return ForgeEventFactory.doPlayerHarvestCheck(this, par1Block, metadata, inventory.canHarvestBlock(par1Block));
++    }
++
++    @Deprecated //Forge: New Metadata sensitive version.
      public boolean canHarvestBlock(Block par1Block)
      {
 -        return this.inventory.canHarvestBlock(par1Block);
-+        return ForgeEventFactory.doPlayerHarvestCheck(this, par1Block, inventory.canHarvestBlock(par1Block));
++        return canHarvestBlock(par1Block, 0);
      }
  
      /**
-@@ -1096,12 +1157,22 @@
+@@ -1096,12 +1163,22 @@
      {
          if (!this.isEntityInvulnerable())
          {
@@ -192,7 +198,7 @@
              par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
              this.addExhaustion(par1DamageSource.getHungerDamage());
              int j = this.getHealth();
-@@ -1144,6 +1215,10 @@
+@@ -1144,6 +1221,10 @@
  
      public boolean interactWith(Entity par1Entity)
      {
@@ -203,7 +209,7 @@
          if (par1Entity.interact(this))
          {
              return true;
-@@ -1187,7 +1262,9 @@
+@@ -1187,7 +1268,9 @@
       */
      public void destroyCurrentEquippedItem()
      {
@@ -213,7 +219,7 @@
      }
  
      /**
-@@ -1204,6 +1281,15 @@
+@@ -1204,6 +1287,15 @@
       */
      public void attackTargetEntityWithCurrentItem(Entity par1Entity)
      {
@@ -229,7 +235,7 @@
          if (par1Entity.canAttackWithItem())
          {
              if (!par1Entity.func_85031_j(this))
-@@ -1378,6 +1464,12 @@
+@@ -1378,6 +1470,12 @@
       */
      public EnumStatus sleepInBedAt(int par1, int par2, int par3)
      {
@@ -242,7 +248,7 @@
          if (!this.worldObj.isRemote)
          {
              if (this.isPlayerSleeping() || !this.isEntityAlive())
-@@ -1417,6 +1509,11 @@
+@@ -1417,6 +1515,11 @@
          {
              int l = this.worldObj.getBlockMetadata(par1, par2, par3);
              int i1 = BlockBed.getDirection(l);
@@ -254,7 +260,7 @@
              float f = 0.5F;
              float f1 = 0.5F;
  
-@@ -1487,10 +1584,12 @@
+@@ -1487,10 +1590,12 @@
          ChunkCoordinates chunkcoordinates = this.playerLocation;
          ChunkCoordinates chunkcoordinates1 = this.playerLocation;
  
@@ -271,7 +277,7 @@
  
              if (chunkcoordinates1 == null)
              {
-@@ -1527,7 +1626,9 @@
+@@ -1527,7 +1632,9 @@
       */
      private boolean isInBed()
      {
@@ -282,7 +288,7 @@
      }
  
      /**
-@@ -1542,9 +1643,12 @@
+@@ -1542,9 +1649,12 @@
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX - 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
          ichunkprovider.loadChunk(par1ChunkCoordinates.posX + 3 >> 4, par1ChunkCoordinates.posZ + 3 >> 4);
  
@@ -298,7 +304,7 @@
              return chunkcoordinates1;
          }
          else
-@@ -1566,10 +1670,13 @@
+@@ -1566,10 +1676,13 @@
      {
          if (this.playerLocation != null)
          {
@@ -316,7 +322,7 @@
              {
                  case 0:
                      return 90.0F;
-@@ -1835,6 +1942,10 @@
+@@ -1835,6 +1948,10 @@
  
              super.fall(par1);
          }
@@ -327,7 +333,7 @@
      }
  
      /**
-@@ -1876,7 +1987,7 @@
+@@ -1876,7 +1993,7 @@
          {
              if (par1ItemStack.getItem().requiresMultipleRenderPasses())
              {
@@ -336,7 +342,7 @@
              }
  
              if (this.itemInUse != null && par1ItemStack.itemID == Item.bow.itemID)
-@@ -1898,6 +2009,7 @@
+@@ -1898,6 +2015,7 @@
                      return Item.bow.func_94599_c(0);
                  }
              }
@@ -344,7 +350,7 @@
          }
  
          return icon;
-@@ -2137,6 +2249,14 @@
+@@ -2137,6 +2255,14 @@
          }
  
          this.theInventoryEnderChest = par1EntityPlayer.theInventoryEnderChest;
@@ -359,7 +365,7 @@
      }
  
      /**
-@@ -2208,7 +2328,14 @@
+@@ -2208,7 +2334,14 @@
       */
      public void setCurrentItemOrArmor(int par1, ItemStack par2ItemStack)
      {
