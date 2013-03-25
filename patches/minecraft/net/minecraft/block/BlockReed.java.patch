@@ -1,0 +1,49 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockReed.java
++++ ../src_work/minecraft/net/minecraft/block/BlockReed.java
+@@ -8,7 +8,11 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.World;
+ 
+-public class BlockReed extends Block
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.IPlantable;
++
++public class BlockReed extends Block implements IPlantable
+ {
+     protected BlockReed(int par1)
+     {
+@@ -54,8 +58,8 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        int l = par1World.getBlockId(par2, par3 - 1, par4);
+-        return l == this.blockID ? true : (l != Block.grass.blockID && l != Block.dirt.blockID && l != Block.sand.blockID ? false : (par1World.getBlockMaterial(par2 - 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2 + 1, par3 - 1, par4) == Material.water ? true : (par1World.getBlockMaterial(par2, par3 - 1, par4 - 1) == Material.water ? true : par1World.getBlockMaterial(par2, par3 - 1, par4 + 1) == Material.water))));
++        Block block = Block.blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
++        return (block != null && block.canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this));
+     }
+ 
+     /**
+@@ -138,4 +142,22 @@
+     {
+         return Item.reed.itemID;
+     }
++
++    @Override
++    public EnumPlantType getPlantType(World world, int x, int y, int z)
++    {
++        return EnumPlantType.Beach;
++    }
++
++    @Override
++    public int getPlantID(World world, int x, int y, int z)
++    {
++        return blockID;
++    }
++
++    @Override
++    public int getPlantMetadata(World world, int x, int y, int z)
++    {
++        return world.getBlockMetadata(x, y, z);
++    }
+ }

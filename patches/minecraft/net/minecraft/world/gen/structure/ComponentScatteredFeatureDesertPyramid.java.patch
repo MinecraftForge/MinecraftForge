@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureDesertPyramid.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.util.Direction;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentScatteredFeatureDesertPyramid extends ComponentScatteredFeature
+ {
+@@ -215,13 +218,14 @@
+         this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 1, 10, -10, 13, par3StructureBoundingBox);
+         this.placeBlockAtCurrentPosition(par1World, Block.sandStone.blockID, 2, 10, -11, 13, par3StructureBoundingBox);
+ 
++        ChestGenHooks info = ChestGenHooks.getInfo(PYRAMID_DESERT_CHEST);
+         for (i1 = 0; i1 < 4; ++i1)
+         {
+             if (!this.field_74940_h[i1])
+             {
+                 int j1 = Direction.offsetX[i1] * 2;
+                 int k1 = Direction.offsetZ[i1] * 2;
+-                this.field_74940_h[i1] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + j1, -11, 10 + k1, WeightedRandomChestContent.func_92080_a(itemsToGenerateInTemple, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 2 + par2Random.nextInt(5));
++                this.field_74940_h[i1] = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 10 + j1, -11, 10 + k1, info.getItems(par2Random), info.getCount(par2Random));
+             }
+         }
+ 

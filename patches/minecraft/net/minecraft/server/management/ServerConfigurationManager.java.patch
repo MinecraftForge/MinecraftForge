@@ -1,0 +1,122 @@
+--- ../src_base/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
++++ ../src_work/minecraft/net/minecraft/server/management/ServerConfigurationManager.java
+@@ -47,10 +47,14 @@
+ import net.minecraft.util.EnumChatFormatting;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.EnumGameType;
++import net.minecraft.world.Teleporter;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldProvider;
+ import net.minecraft.world.WorldServer;
+ import net.minecraft.world.demo.DemoWorldManager;
+ import net.minecraft.world.storage.IPlayerFileData;
++
++import net.minecraftforge.common.DimensionManager;
+ 
+ public abstract class ServerConfigurationManager
+ {
+@@ -386,6 +390,16 @@
+      */
+     public EntityPlayerMP respawnPlayer(EntityPlayerMP par1EntityPlayerMP, int par2, boolean par3)
+     {
++        World world = mcServer.worldServerForDimension(par2);
++        if (world == null)
++        {
++            par2 = 0;
++        }
++        else if (!world.provider.canRespawnHere())
++        {
++            par2 = world.provider.getRespawnDimension(par1EntityPlayerMP);
++        }
++
+         par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removePlayerFromTrackers(par1EntityPlayerMP);
+         par1EntityPlayerMP.getServerForPlayer().getEntityTracker().removeEntityFromAllTrackingPlayers(par1EntityPlayerMP);
+         par1EntityPlayerMP.getServerForPlayer().getPlayerManager().removePlayer(par1EntityPlayerMP);
+@@ -408,6 +422,7 @@
+         EntityPlayerMP entityplayermp1 = new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension), par1EntityPlayerMP.username, (ItemInWorldManager)object);
+         entityplayermp1.playerNetServerHandler = par1EntityPlayerMP.playerNetServerHandler;
+         entityplayermp1.clonePlayer(par1EntityPlayerMP, par3);
++        entityplayermp1.dimension = par2;
+         entityplayermp1.entityId = par1EntityPlayerMP.entityId;
+         WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+         this.func_72381_a(entityplayermp1, par1EntityPlayerMP, worldserver);
+@@ -452,6 +467,11 @@
+ 
+     public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2)
+     {
++        transferPlayerToDimension(par1EntityPlayerMP, par2, mcServer.worldServerForDimension(par2).getDefaultTeleporter());
++    }
++
++    public void transferPlayerToDimension(EntityPlayerMP par1EntityPlayerMP, int par2, Teleporter teleporter)
++    {
+         int j = par1EntityPlayerMP.dimension;
+         WorldServer worldserver = this.mcServer.worldServerForDimension(par1EntityPlayerMP.dimension);
+         par1EntityPlayerMP.dimension = par2;
+@@ -459,7 +479,7 @@
+         par1EntityPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet9Respawn(par1EntityPlayerMP.dimension, (byte)par1EntityPlayerMP.worldObj.difficultySetting, worldserver1.getWorldInfo().getTerrainType(), worldserver1.getHeight(), par1EntityPlayerMP.theItemInWorldManager.getGameType()));
+         worldserver.removePlayerEntityDangerously(par1EntityPlayerMP);
+         par1EntityPlayerMP.isDead = false;
+-        this.transferEntityToWorld(par1EntityPlayerMP, j, worldserver, worldserver1);
++        this.transferEntityToWorld(par1EntityPlayerMP, j, worldserver, worldserver1, teleporter);
+         this.func_72375_a(par1EntityPlayerMP, worldserver);
+         par1EntityPlayerMP.playerNetServerHandler.setPlayerLocation(par1EntityPlayerMP.posX, par1EntityPlayerMP.posY, par1EntityPlayerMP.posZ, par1EntityPlayerMP.rotationYaw, par1EntityPlayerMP.rotationPitch);
+         par1EntityPlayerMP.theItemInWorldManager.setWorld(worldserver1);
+@@ -481,38 +501,23 @@
+      */
+     public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer)
+     {
+-        double d0 = par1Entity.posX;
+-        double d1 = par1Entity.posZ;
+-        double d2 = 8.0D;
++        transferEntityToWorld(par1Entity, par2, par3WorldServer, par4WorldServer, par4WorldServer.getDefaultTeleporter());
++    }
++
++    public void transferEntityToWorld(Entity par1Entity, int par2, WorldServer par3WorldServer, WorldServer par4WorldServer, Teleporter teleporter)
++    {
++        WorldProvider pOld = par3WorldServer.provider;
++        WorldProvider pNew = par4WorldServer.provider;
++        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
++        double d0 = par1Entity.posX * moveFactor;
++        double d1 = par1Entity.posZ * moveFactor;
+         double d3 = par1Entity.posX;
+         double d4 = par1Entity.posY;
+         double d5 = par1Entity.posZ;
+         float f = par1Entity.rotationYaw;
+         par3WorldServer.theProfiler.startSection("moving");
+ 
+-        if (par1Entity.dimension == -1)
+-        {
+-            d0 /= d2;
+-            d1 /= d2;
+-            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
+-
+-            if (par1Entity.isEntityAlive())
+-            {
+-                par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+-            }
+-        }
+-        else if (par1Entity.dimension == 0)
+-        {
+-            d0 *= d2;
+-            d1 *= d2;
+-            par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
+-
+-            if (par1Entity.isEntityAlive())
+-            {
+-                par3WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+-            }
+-        }
+-        else
++        if (par1Entity.dimension == 1)
+         {
+             ChunkCoordinates chunkcoordinates;
+ 
+@@ -549,7 +554,7 @@
+                 par4WorldServer.spawnEntityInWorld(par1Entity);
+                 par1Entity.setLocationAndAngles(d0, par1Entity.posY, d1, par1Entity.rotationYaw, par1Entity.rotationPitch);
+                 par4WorldServer.updateEntityWithOptionalForce(par1Entity, false);
+-                par4WorldServer.getDefaultTeleporter().placeInPortal(par1Entity, d3, d4, d5, f);
++                teleporter.placeInPortal(par1Entity, d3, d4, d5, f);
+             }
+ 
+             par3WorldServer.theProfiler.endSection();

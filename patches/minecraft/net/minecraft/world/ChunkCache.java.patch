@@ -1,0 +1,43 @@
+--- ../src_base/minecraft/net/minecraft/world/ChunkCache.java
++++ ../src_work/minecraft/net/minecraft/world/ChunkCache.java
+@@ -108,7 +108,15 @@
+     {
+         int l = (par1 >> 4) - this.chunkX;
+         int i1 = (par3 >> 4) - this.chunkZ;
+-        return this.chunkArray[l][i1].getChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
++        if (l >= 0 && l < this.chunkArray.length && i1 >= 0 && i1 < this.chunkArray[l].length)
++        {
++            Chunk chunk = this.chunkArray[l][i1];
++            return chunk == null ? null : chunk.getChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
++        }
++        else
++        {
++            return null;
++        }
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -159,7 +167,12 @@
+         {
+             int l = (par1 >> 4) - this.chunkX;
+             int i1 = (par3 >> 4) - this.chunkZ;
+-            return this.chunkArray[l][i1].getBlockMetadata(par1 & 15, par2, par3 & 15);
++            if (l >= 0 && l < this.chunkArray.length && i1 >= 0 && i1 < this.chunkArray[l].length)
++            {
++                Chunk chunk = this.chunkArray[l][i1];
++                return chunk == null ? 0 : chunk.getBlockMetadata(par1 & 15, par2, par3 & 15);
++            }
++            return 0;
+         }
+     }
+ 
+@@ -306,8 +319,7 @@
+      */
+     public boolean doesBlockHaveSolidTopSurface(int par1, int par2, int par3)
+     {
+-        Block block = Block.blocksList[this.getBlockId(par1, par2, par3)];
+-        return this.worldObj.func_102026_a(block, this.getBlockMetadata(par1, par2, par3));
++        return this.worldObj.doesBlockHaveSolidTopSurface(par1, par2, par3);
+     }
+ 
+     /**

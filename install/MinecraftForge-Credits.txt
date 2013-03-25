@@ -18,3 +18,9 @@ ScotTools Background: ScotTools was an API that enabled modders to add blocks to
 
 * LexManos *
 
+* cpw *
+
+* Minecraft Coder Pack (MCP) *
+Forge Mod Loader and Minecraft Forge have permission to distribute and automatically download components of MCP and distribute MCP data files.
+This permission is not transitive and others wishing to redistribute the Minecraft Forge source independently should seek permission of MCP or
+remove the MCP data files and request their users to download MCP separately.

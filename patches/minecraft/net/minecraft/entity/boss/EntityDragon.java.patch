@@ -1,0 +1,17 @@
+--- ../src_base/minecraft/net/minecraft/entity/boss/EntityDragon.java
++++ ../src_work/minecraft/net/minecraft/entity/boss/EntityDragon.java
+@@ -531,10 +531,11 @@
+                 for (int i2 = k; i2 <= j1; ++i2)
+                 {
+                     int j2 = this.worldObj.getBlockId(k1, l1, i2);
+-
+-                    if (j2 != 0)
++                    Block block = Block.blocksList[j2];
++
++                    if (block != null)
+                     {
+-                        if (j2 != Block.obsidian.blockID && j2 != Block.whiteStone.blockID && j2 != Block.bedrock.blockID && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
++                        if (block.canDragonDestroy(worldObj, k1, l1, i2) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
+                         {
+                             flag1 = this.worldObj.setBlockToAir(k1, l1, i2) || flag1;
+                         }

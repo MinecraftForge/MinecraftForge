@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
+@@ -221,12 +221,14 @@
+ 
+         if (par4EntityLiving.isPlayerSleeping())
+         {
+-            int i = par1World.getBlockId(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+-
+-            if (i == Block.bed.blockID)
++            int x = MathHelper.floor_double(par4EntityLiving.posX);
++            int y = MathHelper.floor_double(par4EntityLiving.posY);
++            int z = MathHelper.floor_double(par4EntityLiving.posZ);
++            Block block = Block.blocksList[par1World.getBlockId(x, y, z)];
++
++            if (block != null && block.isBed(par1World, x, y, z, par4EntityLiving))
+             {
+-                int j = par1World.getBlockMetadata(MathHelper.floor_double(par4EntityLiving.posX), MathHelper.floor_double(par4EntityLiving.posY), MathHelper.floor_double(par4EntityLiving.posZ));
+-                int k = j & 3;
++                int k = block.getBedDirection(par1World, x, y, z);;
+                 this.playerViewY = (float)(k * 90 + 180);
+                 this.playerViewX = 0.0F;
+             }

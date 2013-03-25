@@ -1,0 +1,100 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockTripWireSource.java
++++ ../src_work/minecraft/net/minecraft/block/BlockTripWireSource.java
+@@ -8,6 +8,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ForgeDirection;
++import static net.minecraftforge.common.ForgeDirection.*;
++
+ public class BlockTripWireSource extends Block
+ {
+     public BlockTripWireSource(int par1)
+@@ -64,7 +67,11 @@
+      */
+     public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
+     {
+-        return par5 == 2 && par1World.isBlockNormalCube(par2, par3, par4 + 1) ? true : (par5 == 3 && par1World.isBlockNormalCube(par2, par3, par4 - 1) ? true : (par5 == 4 && par1World.isBlockNormalCube(par2 + 1, par3, par4) ? true : par5 == 5 && par1World.isBlockNormalCube(par2 - 1, par3, par4)));
++        ForgeDirection dir = ForgeDirection.getOrientation(par5);
++        return (dir == NORTH && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH)) ||
++               (dir == SOUTH && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH)) ||
++               (dir == WEST  && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST )) ||
++               (dir == EAST  && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST ));
+     }
+ 
+     /**
+@@ -72,7 +79,10 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        return par1World.isBlockNormalCube(par2 - 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2 + 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2, par3, par4 - 1) ? true : par1World.isBlockNormalCube(par2, par3, par4 + 1)));
++        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH) ||
++               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH) ||
++               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST ) ||
++               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST );
+     }
+ 
+     /**
+@@ -82,22 +92,22 @@
+     {
+         byte b0 = 0;
+ 
+-        if (par5 == 2 && par1World.isBlockNormalCubeDefault(par2, par3, par4 + 1, true))
++        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST, true))
+         {
+             b0 = 2;
+         }
+ 
+-        if (par5 == 3 && par1World.isBlockNormalCubeDefault(par2, par3, par4 - 1, true))
++        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST, true))
+         {
+             b0 = 0;
+         }
+ 
+-        if (par5 == 4 && par1World.isBlockNormalCubeDefault(par2 + 1, par3, par4, true))
++        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH, true))
+         {
+             b0 = 1;
+         }
+ 
+-        if (par5 == 5 && par1World.isBlockNormalCubeDefault(par2 - 1, par3, par4, true))
++        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH, true))
+         {
+             b0 = 3;
+         }
+@@ -127,22 +137,22 @@
+                 int j1 = i1 & 3;
+                 boolean flag = false;
+ 
+-                if (!par1World.isBlockNormalCube(par2 - 1, par3, par4) && j1 == 3)
++                if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, SOUTH) && j1 == 3)
+                 {
+                     flag = true;
+                 }
+ 
+-                if (!par1World.isBlockNormalCube(par2 + 1, par3, par4) && j1 == 1)
++                if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, NORTH) && j1 == 1)
+                 {
+                     flag = true;
+                 }
+ 
+-                if (!par1World.isBlockNormalCube(par2, par3, par4 - 1) && j1 == 0)
++                if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, EAST) && j1 == 0)
+                 {
+                     flag = true;
+                 }
+ 
+-                if (!par1World.isBlockNormalCube(par2, par3, par4 + 1) && j1 == 2)
++                if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, WEST) && j1 == 2)
+                 {
+                     flag = true;
+                 }
+@@ -163,7 +173,7 @@
+         boolean flag2 = (par6 & 8) == 8;
+         boolean flag3 = par5 == Block.tripWireSource.blockID;
+         boolean flag4 = false;
+-        boolean flag5 = !par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4);
++        boolean flag5 = !par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP);
+         int i2 = Direction.offsetX[l1];
+         int j2 = Direction.offsetZ[l1];
+         int k2 = 0;

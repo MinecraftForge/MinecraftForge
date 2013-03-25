@@ -1,0 +1,146 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
++++ ../src_work/minecraft/net/minecraft/world/gen/ChunkProviderHell.java
+@@ -19,6 +19,13 @@
+ import net.minecraft.world.gen.feature.WorldGenMinable;
+ import net.minecraft.world.gen.structure.MapGenNetherBridge;
+ 
++import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.*;
++import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.*;
++import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.*;
++import net.minecraftforge.common.*;
++import net.minecraftforge.event.Event.*;
++import net.minecraftforge.event.terraingen.*;
++
+ public class ChunkProviderHell implements IChunkProvider
+ {
+     private Random hellRNG;
+@@ -59,6 +66,11 @@
+     double[] noiseData3;
+     double[] noiseData4;
+     double[] noiseData5;
++
++    {
++        genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
++        netherCaveGenerator = TerrainGen.getModdedMapGen(netherCaveGenerator, NETHER_CAVE);
++    }
+ 
+     public ChunkProviderHell(World par1World, long par2)
+     {
+@@ -71,6 +83,16 @@
+         this.netherrackExculsivityNoiseGen = new NoiseGeneratorOctaves(this.hellRNG, 4);
+         this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.hellRNG, 10);
+         this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.hellRNG, 16);
++
++        NoiseGeneratorOctaves[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, slowsandGravelNoiseGen, netherrackExculsivityNoiseGen, netherNoiseGen6, netherNoiseGen7};
++        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.hellRNG, noiseGens);
++        this.netherNoiseGen1 = noiseGens[0];
++        this.netherNoiseGen2 = noiseGens[1];
++        this.netherNoiseGen3 = noiseGens[2];
++        this.slowsandGravelNoiseGen = noiseGens[3];
++        this.netherrackExculsivityNoiseGen = noiseGens[4];
++        this.netherNoiseGen6 = noiseGens[5];
++        this.netherNoiseGen7 = noiseGens[6];
+     }
+ 
+     /**
+@@ -155,6 +177,10 @@
+      */
+     public void replaceBlocksForBiome(int par1, int par2, byte[] par3ArrayOfByte)
+     {
++        ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, par1, par2, par3ArrayOfByte, null);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == Result.DENY) return;
++
+         byte b0 = 64;
+         double d0 = 0.03125D;
+         this.slowsandNoise = this.slowsandGravelNoiseGen.generateNoiseOctaves(this.slowsandNoise, par1 * 16, par2 * 16, 0, 16, 16, 1, d0, d0, 1.0D);
+@@ -290,6 +316,9 @@
+      */
+     private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
+     {
++        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, par1ArrayOfDouble, par2, par3, par4, par5, par6, par7);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.getResult() == Result.DENY) return event.noisefield;
+         if (par1ArrayOfDouble == null)
+         {
+             par1ArrayOfDouble = new double[par5 * par6 * par7];
+@@ -442,6 +471,9 @@
+     public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
+     {
+         BlockSand.fallInstantly = true;
++
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, worldObj, hellRNG, par2, par3, false));
++
+         int k = par2 * 16;
+         int l = par3 * 16;
+         this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.hellRNG, par2, par3);
+@@ -450,7 +482,8 @@
+         int k1;
+         int l1;
+ 
+-        for (i1 = 0; i1 < 8; ++i1)
++        boolean doGen = TerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, par2, par3, false, NETHER_LAVA);
++        for (i1 = 0; doGen && i1 < 8; ++i1)
+         {
+             j1 = k + this.hellRNG.nextInt(16) + 8;
+             k1 = this.hellRNG.nextInt(120) + 4;
+@@ -461,7 +494,8 @@
+         i1 = this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1) + 1;
+         int i2;
+ 
+-        for (j1 = 0; j1 < i1; ++j1)
++        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, par2, par3, false, FIRE);
++        for (j1 = 0; doGen && j1 < i1; ++j1)
+         {
+             k1 = k + this.hellRNG.nextInt(16) + 8;
+             l1 = this.hellRNG.nextInt(120) + 4;
+@@ -471,7 +505,8 @@
+ 
+         i1 = this.hellRNG.nextInt(this.hellRNG.nextInt(10) + 1);
+ 
+-        for (j1 = 0; j1 < i1; ++j1)
++        doGen = TerrainGen.populate(par1IChunkProvider, worldObj, hellRNG, par2, par3, false, GLOWSTONE);
++        for (j1 = 0; doGen && j1 < i1; ++j1)
+         {
+             k1 = k + this.hellRNG.nextInt(16) + 8;
+             l1 = this.hellRNG.nextInt(120) + 4;
+@@ -479,7 +514,7 @@
+             (new WorldGenGlowStone1()).generate(this.worldObj, this.hellRNG, k1, l1, i2);
+         }
+ 
+-        for (j1 = 0; j1 < 10; ++j1)
++        for (j1 = 0; doGen && j1 < 10; ++j1)
+         {
+             k1 = k + this.hellRNG.nextInt(16) + 8;
+             l1 = this.hellRNG.nextInt(128);
+@@ -487,7 +522,10 @@
+             (new WorldGenGlowStone2()).generate(this.worldObj, this.hellRNG, k1, l1, i2);
+         }
+ 
+-        if (this.hellRNG.nextInt(1) == 0)
++        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, hellRNG, k, l));
++        
++        doGen = TerrainGen.decorate(worldObj, hellRNG, k, l, SHROOM);
++        if (doGen && this.hellRNG.nextInt(1) == 0)
+         {
+             j1 = k + this.hellRNG.nextInt(16) + 8;
+             k1 = this.hellRNG.nextInt(128);
+@@ -495,7 +533,7 @@
+             (new WorldGenFlowers(Block.mushroomBrown.blockID)).generate(this.worldObj, this.hellRNG, j1, k1, l1);
+         }
+ 
+-        if (this.hellRNG.nextInt(1) == 0)
++        if (doGen && this.hellRNG.nextInt(1) == 0)
+         {
+             j1 = k + this.hellRNG.nextInt(16) + 8;
+             k1 = this.hellRNG.nextInt(128);
+@@ -522,6 +560,9 @@
+             (new WorldGenHellLava(Block.lavaMoving.blockID, true)).generate(this.worldObj, this.hellRNG, l1, i2, j2);
+         }
+ 
++        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, hellRNG, k, l));
++        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, hellRNG, par2, par3, false));
++
+         BlockSand.fallInstantly = false;
+     }
+ 

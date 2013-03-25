@@ -1,0 +1,56 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
+@@ -11,6 +11,8 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.potion.PotionHelper;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.brewing.PotionBrewedEvent;
+ 
+ public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
+ {
+@@ -122,7 +124,7 @@
+ 
+                 for (int i = 0; i < 3; ++i)
+                 {
+-                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
++                    if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                     {
+                         int j = this.brewingItemStacks[i].getItemDamage();
+                         int k = this.getPotionResult(j, itemstack);
+@@ -161,7 +163,7 @@
+ 
+             for (int i = 0; i < 3; ++i)
+             {
+-                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].itemID == Item.potion.itemID)
++                if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+                 {
+                     int j = this.brewingItemStacks[i].getItemDamage();
+                     int k = this.getPotionResult(j, itemstack);
+@@ -184,7 +186,7 @@
+ 
+             if (Item.itemsList[itemstack.itemID].hasContainerItem())
+             {
+-                this.brewingItemStacks[3] = new ItemStack(Item.itemsList[itemstack.itemID].getContainerItem());
++                this.brewingItemStacks[3] = Item.itemsList[itemstack.itemID].getContainerItemStack(brewingItemStacks[3]);
+             }
+             else
+             {
+@@ -195,6 +197,8 @@
+                     this.brewingItemStacks[3] = null;
+                 }
+             }
++            
++            MinecraftForge.EVENT_BUS.post(new PotionBrewedEvent(brewingItemStacks));
+         }
+     }
+ 
+@@ -343,7 +347,7 @@
+      */
+     public boolean isStackValidForSlot(int par1, ItemStack par2ItemStack)
+     {
+-        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.itemID == Item.potion.itemID || par2ItemStack.itemID == Item.glassBottle.itemID;
++        return par1 == 3 ? Item.itemsList[par2ItemStack.itemID].isPotionIngredient() : par2ItemStack.getItem() instanceof ItemPotion || par2ItemStack.itemID == Item.glassBottle.itemID;
+     }
+ 
+     @SideOnly(Side.CLIENT)

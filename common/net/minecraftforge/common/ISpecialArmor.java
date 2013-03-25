@@ -8,11 +8,11 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.minecraft.src.DamageSource;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ItemArmor;
-import net.minecraft.src.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 
 /**
  * This interface is to be implemented by ItemArmor classes. It will allow to
@@ -124,7 +124,7 @@ public interface ISpecialArmor
             }
             if (dmgVals.size() > 0)
             {
-                ArmorProperties[] props = dmgVals.toArray(new ArmorProperties[0]);
+                ArmorProperties[] props = dmgVals.toArray(new ArmorProperties[dmgVals.size()]);
                 StandardizeList(props, damage);
                 int level = props[0].Priority;
                 double ratio = 0;
@@ -262,7 +262,7 @@ public interface ISpecialArmor
                             total -= armor[y].AbsorbRatio;
                             if (damage * armor[y].AbsorbRatio > armor[y].AbsorbMax)
                             {
-                                armor[y].AbsorbRatio = (double)armor[y].AbsorbMax / (double)damage;
+                                armor[y].AbsorbRatio = (double)armor[y].AbsorbMax / damage;
                             }
                             total += armor[y].AbsorbRatio;
                         }

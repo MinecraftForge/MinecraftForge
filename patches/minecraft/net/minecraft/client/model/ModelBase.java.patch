@@ -1,0 +1,10 @@
+--- ../src_base/minecraft/net/minecraft/client/model/ModelBase.java
++++ ../src_work/minecraft/net/minecraft/client/model/ModelBase.java
+@@ -10,7 +10,6 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ 
+-@SideOnly(Side.CLIENT)
+ public abstract class ModelBase
+ {
+     public float onGround;

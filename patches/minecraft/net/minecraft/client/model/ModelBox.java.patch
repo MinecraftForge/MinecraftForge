@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/client/model/ModelBox.java
++++ ../src_work/minecraft/net/minecraft/client/model/ModelBox.java
+@@ -4,7 +4,6 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.client.renderer.Tessellator;
+ 
+-@SideOnly(Side.CLIENT)
+ public class ModelBox
+ {
+     /**
+@@ -96,6 +95,7 @@
+     /**
+      * Draw the six sided box defined by this ModelBox
+      */
++    @SideOnly(Side.CLIENT)
+     public void render(Tessellator par1Tessellator, float par2)
+     {
+         for (int i = 0; i < this.quadList.length; ++i)

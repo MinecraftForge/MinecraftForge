@@ -1,0 +1,62 @@
+--- ../src_base/minecraft/net/minecraft/inventory/Slot.java
++++ ../src_work/minecraft/net/minecraft/inventory/Slot.java
+@@ -22,6 +22,12 @@
+ 
+     /** display position of the inventory slot on the screen y axis */
+     public int yDisplayPosition;
++
++    /** Position within background texture file, normally -1 which causes no background to be drawn. */
++    protected Icon backgroundIcon = null;
++
++    /** Background texture file assigned to this slot, if any. Vanilla "/gui/items.png" is used if this is null. */
++    protected String texture = "/gui/items.png";
+ 
+     public Slot(IInventory par1IInventory, int par2, int par3, int par4)
+     {
+@@ -148,6 +154,45 @@
+      */
+     public Icon getBackgroundIconIndex()
+     {
+-        return null;
++        return backgroundIcon;
+     }
++
++    /**
++     * Gets the path of the texture file to use for the background image of this slot when drawing the GUI.
++     * @return String: The texture file that will be used in GuiContainer.drawSlotInventory for the slot background.  
++     */
++    public String getBackgroundIconTexture()
++    {
++        return (texture == null ? "/gui/items.png" : texture);
++    }
++
++    /**
++     * Sets which icon index to use as the background image of the slot when it's empty.
++     * @param icon The icon to use, null for none  
++     */
++    public void setBackgroundIconIndex(Icon icon)
++    {
++        backgroundIcon = icon;
++    }
++
++    /**
++     * Sets the texture file to use for the background image of the slot when it's empty.
++     * @param textureFilename String: Path of texture file to use, or null to use "/gui/items.png"
++     */
++    public void setBackgroundIconTexture(String textureFilename)
++    {
++        texture = textureFilename;
++    }
++
++    /**
++     * Retrieves the index in the inventory for this slot, this value should typically not 
++     * be used, but can be useful for some occasions.
++     * 
++     * @return Index in associated inventory for this slot.
++     */
++    public int getSlotIndex()
++    {
++        return slotIndex;
++    }
++
+ }

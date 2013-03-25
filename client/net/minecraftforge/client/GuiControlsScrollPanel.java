@@ -4,11 +4,12 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.GameSettings;
-import net.minecraft.src.GuiControls;
-import net.minecraft.src.GuiSlot;
-import net.minecraft.src.KeyBinding;
-import net.minecraft.src.Tessellator;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiSlot;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.EnumChatFormatting;
 
 public class GuiControlsScrollPanel extends GuiSlot
 {
@@ -90,7 +91,7 @@ public class GuiControlsScrollPanel extends GuiSlot
         boolean flag = _mouseX >= xPosition && _mouseY >= yPosition && _mouseX < xPosition + width && _mouseY < yPosition + height;
         int k = (flag ? 2 : 1);
 
-        GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, mc.renderEngine.getTexture("/gui/gui.png"));
+        mc.renderEngine.bindTexture("/gui/gui.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         controls.drawTexturedModalRect(xPosition, yPosition, 0, 46 + k * 20, width / 2, height);
         controls.drawTexturedModalRect(xPosition + width / 2, yPosition, 200 - width / 2, 46 + k * 20, width / 2, height);
@@ -105,8 +106,9 @@ public class GuiControlsScrollPanel extends GuiSlot
                 break;
             }
         }
-        String str = (conflict ? "\247c" : "") + options.getOptionDisplayString(index);
-        str = (index == selected ? "\247f> \247e??? \247f<" : str);
+
+        String str = (conflict ? EnumChatFormatting.RED : "") + options.getOptionDisplayString(index);
+        str = (index == selected ? EnumChatFormatting.WHITE + "> " + EnumChatFormatting.YELLOW + "??? " + EnumChatFormatting.WHITE + "<" : str);
         controls.drawCenteredString(mc.fontRenderer, str, xPosition + (width / 2), yPosition + (height - 8) / 2, 0xFFFFFFFF);
     }
 

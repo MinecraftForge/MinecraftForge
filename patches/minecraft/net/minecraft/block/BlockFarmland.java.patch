@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockFarmland.java
++++ ../src_work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -10,6 +10,9 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.IPlantable;
+ 
+ public class BlockFarmland extends Block
+ {
+@@ -115,7 +118,8 @@
+             {
+                 int j1 = par1World.getBlockId(l, par3 + 1, i1);
+ 
+-                if (j1 == Block.crops.blockID || j1 == Block.melonStem.blockID || j1 == Block.pumpkinStem.blockID || j1 == Block.potato.blockID || j1 == Block.carrot.blockID)
++                Block plant = blocksList[j1];
++                if (plant instanceof IPlantable && canSustainPlant(par1World, par2, par3, par4, ForgeDirection.UP, (IPlantable)plant))
+                 {
+                     return true;
+                 }

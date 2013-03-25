@@ -1,7 +1,7 @@
 package net.minecraftforge.event;
 
-import net.minecraft.src.ICommand;
-import net.minecraft.src.ICommandSender;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 
 @Cancelable
 public class CommandEvent extends Event

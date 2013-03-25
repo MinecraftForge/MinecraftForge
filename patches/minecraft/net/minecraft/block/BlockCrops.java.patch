@@ -1,0 +1,70 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockCrops.java
++++ ../src_work/minecraft/net/minecraft/block/BlockCrops.java
+@@ -2,6 +2,7 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -10,6 +11,7 @@
+ import net.minecraft.util.Icon;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockCrops extends BlockFlower
+ {
+@@ -103,11 +105,11 @@
+                 int j3 = par1World.getBlockId(l2, par3 - 1, i3);
+                 float f1 = 0.0F;
+ 
+-                if (j3 == Block.tilledField.blockID)
++                if (blocksList[j3] != null && blocksList[j3].canSustainPlant(par1World, l2, par3 - 1, i3, ForgeDirection.UP, this))
+                 {
+                     f1 = 1.0F;
+ 
+-                    if (par1World.getBlockMetadata(l2, par3 - 1, i3) > 0)
++                    if (blocksList[j3].isFertile(par1World, l2, par3 - 1, i3))
+                     {
+                         f1 = 3.0F;
+                     }
+@@ -175,22 +177,25 @@
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, 0);
+-
+-        if (!par1World.isRemote)
+-        {
+-            if (par5 >= 7)
++    }
++
++    @Override 
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = super.getBlockDropped(world, x, y, z, metadata, fortune);
++
++        if (metadata >= 7)
++        {
++            for (int n = 0; n < 3 + fortune; n++)
+             {
+-                int j1 = 3 + par7;
+-
+-                for (int k1 = 0; k1 < j1; ++k1)
+-                {
+-                    if (par1World.rand.nextInt(15) <= par5)
+-                    {
+-                        this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(this.getSeedItem(), 1, 0));
+-                    }
++                if (world.rand.nextInt(15) <= metadata)
++                {
++                    ret.add(new ItemStack(this.getSeedItem(), 1, 0));
+                 }
+             }
+         }
++
++        return ret;
+     }
+ 
+     /**

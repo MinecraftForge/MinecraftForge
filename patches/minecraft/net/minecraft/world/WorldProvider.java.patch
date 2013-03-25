@@ -1,0 +1,313 @@
+--- ../src_base/minecraft/net/minecraft/world/WorldProvider.java
++++ ../src_work/minecraft/net/minecraft/world/WorldProvider.java
+@@ -3,16 +3,23 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.block.Block;
++import net.minecraft.entity.Entity;
++import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.Vec3;
+ import net.minecraft.world.biome.BiomeGenBase;
+ import net.minecraft.world.biome.WorldChunkManager;
+ import net.minecraft.world.biome.WorldChunkManagerHell;
++import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.IChunkProvider;
+ import net.minecraft.world.gen.ChunkProviderFlat;
+ import net.minecraft.world.gen.ChunkProviderGenerate;
+ import net.minecraft.world.gen.FlatGeneratorInfo;
++import net.minecraft.world.storage.WorldInfo;
++import net.minecraftforge.client.IRenderHandler;
++import net.minecraftforge.common.DimensionManager;
+ 
+ public abstract class WorldProvider
+ {
+@@ -197,7 +204,7 @@
+ 
+     public static WorldProvider getProviderForDimension(int par0)
+     {
+-        return (WorldProvider)(par0 == -1 ? new WorldProviderHell() : (par0 == 0 ? new WorldProviderSurface() : (par0 == 1 ? new WorldProviderEnd() : null)));
++        return DimensionManager.createProviderFor(par0);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+@@ -266,4 +273,277 @@
+      * Returns the dimension's name, e.g. "The End", "Nether", or "Overworld".
+      */
+     public abstract String getDimensionName();
++
++    /*======================================= Forge Start =========================================*/
++    private IRenderHandler skyRenderer = null;
++    private IRenderHandler cloudRenderer = null;
++    
++    /**
++     * Sets the providers current dimension ID, used in default getSaveFolder()
++     * Added to allow default providers to be registered for multiple dimensions.
++     * 
++     * @param dim Dimension ID
++     */
++    public void setDimension(int dim)
++    {
++        this.dimensionId = dim;
++    }
++
++    /**
++     * Returns the sub-folder of the world folder that this WorldProvider saves to.
++     * EXA: DIM1, DIM-1
++     * @return The sub-folder name to save this world's chunks to.
++     */
++    public String getSaveFolder()
++    {
++        return (dimensionId == 0 ? null : "DIM" + dimensionId);
++    }
++
++    /**
++     * A message to display to the user when they transfer to this dimension.
++     *
++     * @return The message to be displayed
++     */
++    public String getWelcomeMessage()
++    {
++        if (this instanceof WorldProviderEnd)
++        {
++            return "Entering the End";
++        }
++        else if (this instanceof WorldProviderHell)
++        {
++            return "Entering the Nether";
++        }
++        return null;
++    }
++
++    /**
++     * A Message to display to the user when they transfer out of this dismension.
++     *
++     * @return The message to be displayed
++     */
++    public String getDepartMessage()
++    {
++        if (this instanceof WorldProviderEnd)
++        {
++            return "Leaving the End";
++        }
++        else if (this instanceof WorldProviderHell)
++        {
++            return "Leaving the Nether";
++        } 
++        return null;
++    }
++
++    /**
++     * The dimensions movement factor. Relative to normal overworld.
++     * It is applied to the players position when they transfer dimensions.
++     * Exa: Nether movement is 8.0
++     * @return The movement factor
++     */
++    public double getMovementFactor()
++    {
++        if (this instanceof WorldProviderHell)
++        {
++            return 8.0;
++        }
++        return 1.0;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getSkyRenderer()
++    {
++        return this.skyRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setSkyRenderer(IRenderHandler skyRenderer)
++    {
++        this.skyRenderer = skyRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public IRenderHandler getCloudRenderer()
++    {
++        return cloudRenderer;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public void setCloudRenderer(IRenderHandler renderer)
++    {
++        cloudRenderer = renderer;
++    }
++
++    public ChunkCoordinates getRandomizedSpawnPoint()
++    {
++        ChunkCoordinates chunkcoordinates = new ChunkCoordinates(this.worldObj.getSpawnPoint());
++
++        boolean isAdventure = worldObj.getWorldInfo().getGameType() == EnumGameType.ADVENTURE;
++        int spawnFuzz = terrainType.getSpawnFuzz();
++        int spawnFuzzHalf = spawnFuzz / 2;
++
++        if (!hasNoSky && !isAdventure)
++        {
++            chunkcoordinates.posX += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.posZ += this.worldObj.rand.nextInt(spawnFuzz) - spawnFuzzHalf;
++            chunkcoordinates.posY = this.worldObj.getTopSolidOrLiquidBlock(chunkcoordinates.posX, chunkcoordinates.posZ);
++        }
++
++        return chunkcoordinates;
++    }
++    
++    /**
++     * Determine if the cusor on the map should 'spin' when rendered, like it does for the player in the nether.
++     * 
++     * @param entity The entity holding the map, playername, or frame-ENTITYID
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z Postion
++     * @return True to 'spin' the cursor
++     */
++    public boolean shouldMapSpin(String entity, double x, double y, double z)
++    {
++        return dimensionId < 0;
++    }
++
++    /**
++     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
++     * 
++     * @param player The player that is respawning
++     * @return The dimension to respawn the player in
++     */
++    public int getRespawnDimension(EntityPlayerMP player)
++    {
++        return 0;
++    }
++
++    /*======================================= Start Moved From World =========================================*/
++
++    public BiomeGenBase getBiomeGenForCoords(int x, int z)
++    {
++        return worldObj.getBiomeGenForCoordsBody(x, z);
++    }
++
++    public boolean isDaytime()
++    {
++        return worldObj.skylightSubtracted < 4;
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 getSkyColor(Entity cameraEntity, float partialTicks)
++    {
++        return worldObj.getSkyColorBody(cameraEntity, partialTicks);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public Vec3 drawClouds(float partialTicks)
++    {
++        return worldObj.drawCloudsBody(partialTicks);
++    }
++
++    @SideOnly(Side.CLIENT)
++    public float getStarBrightness(float par1)
++    {
++        return worldObj.getStarBrightnessBody(par1);
++    }
++
++    public void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful)
++    {
++        worldObj.spawnHostileMobs = allowHostile;
++        worldObj.spawnPeacefulMobs = allowPeaceful;
++    }
++
++    public void calculateInitialWeather()
++    {
++        worldObj.calculateInitialWeatherBody();
++    }
++
++    public void updateWeather()
++    {
++        worldObj.updateWeatherBody();
++    }
++
++    public void toggleRain()
++    {
++        worldObj.worldInfo.setRainTime(1);
++    }
++
++    public boolean canBlockFreeze(int x, int y, int z, boolean byWater)
++    {
++        return worldObj.canBlockFreezeBody(x, y, z, byWater);
++    }
++
++    public boolean canSnowAt(int x, int y, int z)
++    {
++        return worldObj.canSnowAtBody(x, y, z);
++    }
++
++    public void setWorldTime(long time)
++    {
++        worldObj.worldInfo.setWorldTime(time);
++    }
++
++    public long getSeed()
++    {
++        return worldObj.worldInfo.getSeed();
++    }
++
++    public long getWorldTime()
++    {
++        return worldObj.worldInfo.getWorldTime();
++    }
++
++    public ChunkCoordinates getSpawnPoint()
++    {
++        WorldInfo info = worldObj.worldInfo;
++        return new ChunkCoordinates(info.getSpawnX(), info.getSpawnY(), info.getSpawnZ());
++    }
++
++    public void setSpawnPoint(int x, int y, int z)
++    {
++        worldObj.worldInfo.setSpawnPosition(x, y, z);
++    }
++
++    public boolean canMineBlock(EntityPlayer player, int x, int y, int z)
++    {
++        return worldObj.canMineBlockBody(player, x, y, z);
++    }
++
++    public boolean isBlockHighHumidity(int x, int y, int z)
++    {
++        return worldObj.getBiomeGenForCoords(x, z).isHighHumidity();
++    }
++
++    public int getHeight()
++    {
++        return 256;
++    }
++
++    public int getActualHeight()
++    {
++        return hasNoSky ? 128 : 256;
++    }
++
++    public double getHorizon()
++    {
++        return worldObj.worldInfo.getTerrainType().getHorizon(worldObj);
++    }
++
++    public void resetRainAndThunder()
++    {
++        worldObj.worldInfo.setRainTime(0);
++        worldObj.worldInfo.setRaining(false);
++        worldObj.worldInfo.setThunderTime(0);
++        worldObj.worldInfo.setThundering(false);
++    }
++
++    public boolean canDoLightning(Chunk chunk)
++    {
++        return true;
++    }
++
++    public boolean canDoRainSnowIce(Chunk chunk)
++    {
++        return true;
++    }
+ }

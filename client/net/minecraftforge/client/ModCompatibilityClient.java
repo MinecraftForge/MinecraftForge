@@ -12,7 +12,13 @@ import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecIBXM;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.*;
+import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.audio.SoundPool;
+import net.minecraft.client.audio.SoundPoolEntry;
+import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.Packet100OpenWindow;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 
 public class ModCompatibilityClient
 {

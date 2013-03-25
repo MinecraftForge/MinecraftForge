@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/client/audio/SoundPool.java
++++ ../src_work/minecraft/net/minecraft/client/audio/SoundPool.java
+@@ -4,6 +4,7 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.File;
+ import java.net.MalformedURLException;
++import java.net.URL;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+@@ -36,6 +37,26 @@
+      */
+     public SoundPoolEntry addSound(String par1Str, File par2File)
+     {
++        try 
++        {
++            return addSound(par1Str, par2File.toURI().toURL());
++        }
++        catch (MalformedURLException ex)
++        {
++            ex.printStackTrace();
++            throw new RuntimeException(ex);
++        }
++    }
++    
++    /**
++     * URL version of addSound, as the back-end sound engine has full support for various types of URLs
++     * 
++     * @param par1Str The name of the sound to add
++     * @param url The url of the sound resource
++     * @return A SoundPoolEntry for the newly added sound
++     */
++    public SoundPoolEntry addSound(String par1Str, URL url)
++    {
+         try
+         {
+             String s1 = par1Str;
+@@ -56,13 +77,13 @@
+                 this.nameToSoundPoolEntriesMapping.put(par1Str, new ArrayList());
+             }
+ 
+-            SoundPoolEntry soundpoolentry = new SoundPoolEntry(s1, par2File.toURI().toURL());
++            SoundPoolEntry soundpoolentry = new SoundPoolEntry(s1, url);
+             ((List)this.nameToSoundPoolEntriesMapping.get(par1Str)).add(soundpoolentry);
+             this.allSoundPoolEntries.add(soundpoolentry);
+             ++this.numberOfSoundPoolEntries;
+             return soundpoolentry;
+         }
+-        catch (MalformedURLException malformedurlexception)
++        catch (Exception malformedurlexception)
+         {
+             malformedurlexception.printStackTrace();
+             throw new RuntimeException(malformedurlexception);

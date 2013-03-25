@@ -1,0 +1,172 @@
+--- ../src_base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src_work/minecraft/net/minecraft/server/MinecraftServer.java
+@@ -12,6 +12,7 @@
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+ import java.util.Date;
++import java.util.Hashtable;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.logging.Level;
+@@ -56,6 +57,10 @@
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.WorldInfo;
+ 
++import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.WorldEvent;
++
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlayerUsage
+ {
+     /** Instance of Minecraft Server. */
+@@ -133,7 +138,8 @@
+     public final long[] tickTimeArray = new long[100];
+ 
+     /** Stats are [dimension][tick%100] system.nanoTime is stored. */
+-    public long[][] timeOfLastDimensionTick;
++    //public long[][] timeOfLastDimensionTick;
++    public Hashtable<Integer, long[]> worldTickTimes = new Hashtable<Integer, long[]>();
+     private KeyPair serverKeyPair;
+ 
+     /** Username of the server owner (for integrated servers) */
+@@ -209,8 +215,6 @@
+     {
+         this.convertMapIfNeeded(par1Str);
+         this.setUserMessage("menu.loadingLevel");
+-        this.worldServers = new WorldServer[3];
+-        this.timeOfLastDimensionTick = new long[this.worldServers.length][100];
+         ISaveHandler isavehandler = this.anvilConverterForAnvilFile.getSaveLoader(par1Str, true);
+         WorldInfo worldinfo = isavehandler.loadWorldInfo();
+         WorldSettings worldsettings;
+@@ -230,46 +234,23 @@
+             worldsettings.enableBonusChest();
+         }
+ 
+-        for (int j = 0; j < this.worldServers.length; ++j)
+-        {
+-            byte b0 = 0;
+-
+-            if (j == 1)
+-            {
+-                b0 = -1;
+-            }
+-
+-            if (j == 2)
+-            {
+-                b0 = 1;
+-            }
+-
+-            if (j == 0)
+-            {
+-                if (this.isDemo())
+-                {
+-                    this.worldServers[j] = new DemoWorldServer(this, isavehandler, par2Str, b0, this.theProfiler, this.getLogAgent());
+-                }
+-                else
+-                {
+-                    this.worldServers[j] = new WorldServer(this, isavehandler, par2Str, b0, worldsettings, this.theProfiler, this.getLogAgent());
+-                }
+-            }
+-            else
+-            {
+-                this.worldServers[j] = new WorldServerMulti(this, isavehandler, par2Str, b0, worldsettings, this.worldServers[0], this.theProfiler, this.getLogAgent());
+-            }
+-
+-            this.worldServers[j].addWorldAccess(new WorldManager(this, this.worldServers[j]));
++        WorldServer overWorld = (isDemo() ? new DemoWorldServer(this, isavehandler, par2Str, 0, theProfiler, getLogAgent()) : new WorldServer(this, isavehandler, par2Str, 0, worldsettings, theProfiler, getLogAgent()));
++        for (int dim : DimensionManager.getStaticDimensionIDs())
++        {
++            WorldServer world = (dim == 0 ? overWorld : new WorldServerMulti(this, isavehandler, par2Str, dim, worldsettings, overWorld, theProfiler, getLogAgent()));
++            world.addWorldAccess(new WorldManager(this, world));
+ 
+             if (!this.isSinglePlayer())
+             {
+-                this.worldServers[j].getWorldInfo().setGameType(this.getGameType());
++                world.getWorldInfo().setGameType(this.getGameType());
+             }
+ 
+             this.serverConfigManager.setPlayerManager(this.worldServers);
+-        }
+-
++
++            MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
++        }
++
++        this.serverConfigManager.setPlayerManager(new WorldServer[]{ overWorld });
+         this.setDifficultyForAllWorlds(this.getDifficulty());
+         this.initialWorldChunkLoad();
+     }
+@@ -398,7 +379,14 @@
+             for (int i = 0; i < this.worldServers.length; ++i)
+             {
+                 WorldServer worldserver = this.worldServers[i];
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
+                 worldserver.flush();
++            }
++
++            WorldServer[] tmp = worldServers;
++            for (WorldServer world : tmp)
++            {
++                DimensionManager.setWorld(world.provider.dimensionId, null);
+             }
+ 
+             if (this.usageSnooper != null && this.usageSnooper.isSnooperRunning())
+@@ -622,13 +610,15 @@
+         this.theProfiler.startSection("levels");
+         int i;
+ 
+-        for (i = 0; i < this.worldServers.length; ++i)
+-        {
++        Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
++        for (int x = 0; x < ids.length; x++)
++        {
++            int id = ids[x];
+             long j = System.nanoTime();
+ 
+-            if (i == 0 || this.getAllowNether())
+-            {
+-                WorldServer worldserver = this.worldServers[i];
++            if (id == 0 || this.getAllowNether())
++            {
++                WorldServer worldserver = DimensionManager.getWorld(id);
+                 this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
+                 this.theProfiler.startSection("pools");
+                 worldserver.getWorldVec3Pool().clear();
+@@ -675,9 +665,11 @@
+                 this.theProfiler.endSection();
+             }
+ 
+-            this.timeOfLastDimensionTick[i][this.tickCounter % 100] = System.nanoTime() - j;
+-        }
+-
++            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
++        }
++
++        this.theProfiler.endStartSection("dim_unloading");
++        DimensionManager.unloadWorlds(worldTickTimes);
+         this.theProfiler.endStartSection("connection");
+         this.getNetworkThread().networkTick();
+         this.theProfiler.endStartSection("players");
+@@ -731,7 +723,13 @@
+      */
+     public WorldServer worldServerForDimension(int par1)
+     {
+-        return par1 == -1 ? this.worldServers[1] : (par1 == 1 ? this.worldServers[2] : this.worldServers[0]);
++        WorldServer ret = DimensionManager.getWorld(par1);
++        if (ret == null)
++        {
++            DimensionManager.initDimension(par1);
++            ret = DimensionManager.getWorld(par1);
++        }
++        return ret;
+     }
+ 
+     @SideOnly(Side.SERVER)
+@@ -1102,6 +1100,7 @@
+ 
+             if (worldserver != null)
+             {
++                MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(worldserver));
+                 worldserver.flush();
+             }
+         }

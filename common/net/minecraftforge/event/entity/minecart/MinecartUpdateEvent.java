@@ -1,6 +1,6 @@
 package net.minecraftforge.event.entity.minecart;
 
-import net.minecraft.src.EntityMinecart;
+import net.minecraft.entity.item.EntityMinecart;
 
 public class MinecartUpdateEvent extends MinecartEvent
 {

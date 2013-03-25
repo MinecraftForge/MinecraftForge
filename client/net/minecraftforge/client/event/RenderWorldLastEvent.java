@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event;
 
-import net.minecraft.src.RenderGlobal;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraftforge.event.Event;
 
 public class RenderWorldLastEvent extends Event

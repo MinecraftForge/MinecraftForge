@@ -1,0 +1,40 @@
+--- ../src_base/minecraft/net/minecraft/enchantment/Enchantment.java
++++ ../src_work/minecraft/net/minecraft/enchantment/Enchantment.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.enchantment;
+ 
+ import java.util.ArrayList;
++
++import com.google.common.collect.ObjectArrays;
++
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.DamageSource;
+@@ -205,6 +208,27 @@
+         return this.type.canEnchantItem(par1ItemStack.getItem());
+     }
+ 
++    /**
++     * This applies specifically to applying at the enchanting table. The other method {@link #func_92037_a(ItemStack)}
++     * applies for <i>all possible</i> enchantments.
++     * @param stack
++     * @return
++     */
++    public boolean canApplyAtEnchantingTable(ItemStack stack)
++    {
++        return this.type.canEnchantItem(stack.getItem());
++    }
++
++    /**
++     * Add to the list of enchantments applicable by the anvil from a book
++     *
++     * @param enchantment
++     */
++    public static void addToBookList(Enchantment enchantment)
++    {
++        ObjectArrays.concat(field_92090_c, enchantment);
++    }
++
+     static
+     {
+         ArrayList arraylist = new ArrayList();

@@ -1,6 +1,6 @@
 package net.minecraftforge.common;
 
-import net.minecraft.src.Entity;
+import net.minecraft.entity.Entity;
 
 /**
  * This interface should be implemented by an Entity that can be 'thrown', like snowballs.

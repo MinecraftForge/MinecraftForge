@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenDungeons.java
+@@ -7,7 +7,13 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityChest;
+ import net.minecraft.tileentity.TileEntityMobSpawner;
++import net.minecraft.util.WeightedRandom;
++import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.DungeonHooks;
++import net.minecraftforge.common.MinecraftForge;
+ 
+ public class WorldGenDungeons extends WorldGenerator
+ {
+@@ -124,15 +130,8 @@
+ 
+                                     if (tileentitychest != null)
+                                     {
+-                                        for (int l2 = 0; l2 < 8; ++l2)
+-                                        {
+-                                            ItemStack itemstack = this.pickCheckLootItem(par2Random);
+-
+-                                            if (itemstack != null)
+-                                            {
+-                                                tileentitychest.setInventorySlotContents(par2Random.nextInt(tileentitychest.getSizeInventory()), itemstack);
+-                                            }
+-                                        }
++                                        ChestGenHooks info = ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST);
++                                        WeightedRandomChestContent.generateChestContents(par2Random, info.getItems(par2Random), tileentitychest, info.getCount(par2Random));
+                                     }
+ 
+                                     break label210;
+@@ -174,8 +173,7 @@
+      */
+     private ItemStack pickCheckLootItem(Random par1Random)
+     {
+-        int i = par1Random.nextInt(12);
+-        return i == 0 ? new ItemStack(Item.saddle) : (i == 1 ? new ItemStack(Item.ingotIron, par1Random.nextInt(4) + 1) : (i == 2 ? new ItemStack(Item.bread) : (i == 3 ? new ItemStack(Item.wheat, par1Random.nextInt(4) + 1) : (i == 4 ? new ItemStack(Item.gunpowder, par1Random.nextInt(4) + 1) : (i == 5 ? new ItemStack(Item.silk, par1Random.nextInt(4) + 1) : (i == 6 ? new ItemStack(Item.bucketEmpty) : (i == 7 && par1Random.nextInt(100) == 0 ? new ItemStack(Item.appleGold) : (i == 8 && par1Random.nextInt(2) == 0 ? new ItemStack(Item.redstone, par1Random.nextInt(4) + 1) : (i == 9 && par1Random.nextInt(10) == 0 ? new ItemStack(Item.itemsList[Item.record13.itemID + par1Random.nextInt(2)]) : (i == 10 ? new ItemStack(Item.dyePowder, 1, 3) : (i == 11 ? Item.enchantedBook.func_92109_a(par1Random) : null)))))))))));
++        return ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, par1Random);
+     }
+ 
+     /**
+@@ -183,7 +181,6 @@
+      */
+     private String pickMobSpawner(Random par1Random)
+     {
+-        int i = par1Random.nextInt(4);
+-        return i == 0 ? "Skeleton" : (i == 1 ? "Zombie" : (i == 2 ? "Zombie" : (i == 3 ? "Spider" : "")));
++        return DungeonHooks.getRandomDungeonMob(par1Random);
+     }
+ }

@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.src.ItemStack;
+import net.minecraft.item.ItemStack;
 
 /**
  * This interface has to be implemented by an instance of ItemArmor.

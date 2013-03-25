@@ -1,0 +1,79 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockSkull.java
++++ ../src_work/minecraft/net/minecraft/block/BlockSkull.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.client.renderer.texture.IconRegister;
+@@ -135,11 +137,6 @@
+     }
+ 
+     /**
+-     * Drops the block items with a specified chance of dropping the specified items
+-     */
+-    public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7) {}
+-
+-    /**
+      * Called when the block is attempted to be harvested
+      */
+     public void onBlockHarvested(World par1World, int par2, int par3, int par4, int par5, EntityPlayer par6EntityPlayer)
+@@ -150,6 +147,8 @@
+             par1World.setBlockMetadataWithNotify(par2, par3, par4, par5, 4);
+         }
+ 
++        dropBlockAsItem(par1World, par2, par3, par4, par5, 0);
++
+         super.onBlockHarvested(par1World, par2, par3, par4, par5, par6EntityPlayer);
+     }
+ 
+@@ -158,24 +157,30 @@
+      */
+     public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+     {
+-        if (!par1World.isRemote)
+-        {
+-            if ((par6 & 8) == 0)
++        super.breakBlock(par1World, par2, par3, par4, par5, par6);
++    }
++
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
++        if ((metadata & 8) == 0)
++        {
++            ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(world, x, y, z));
++            TileEntitySkull tileentityskull = (TileEntitySkull)world.getBlockTileEntity(x, y, z);
++
++            if (tileentityskull == null)
+             {
+-                ItemStack itemstack = new ItemStack(Item.skull.itemID, 1, this.getDamageValue(par1World, par2, par3, par4));
+-                TileEntitySkull tileentityskull = (TileEntitySkull)par1World.getBlockTileEntity(par2, par3, par4);
+-
+-                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
+-                {
+-                    itemstack.setTagCompound(new NBTTagCompound());
+-                    itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
+-                }
+-
+-                this.dropBlockAsItem_do(par1World, par2, par3, par4, itemstack);
++                return drops;
+             }
+-
+-            super.breakBlock(par1World, par2, par3, par4, par5, par6);
+-        }
++            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0)
++            {
++                itemstack.setTagCompound(new NBTTagCompound());
++                itemstack.getTagCompound().setString("SkullOwner", tileentityskull.getExtraType());
++            }
++            drops.add(itemstack);
++        }
++        return drops;
+     }
+ 
+     /**

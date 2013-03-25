@@ -10,23 +10,26 @@ import org.lwjgl.opengl.GL12;
 import cpw.mods.fml.client.FMLClientHandler;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.Block;
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.MathHelper;
-import net.minecraft.src.MovingObjectPosition;
-import net.minecraft.src.RenderBlocks;
-import net.minecraft.src.RenderEngine;
-import net.minecraft.src.RenderGlobal;
-import net.minecraft.src.Tessellator;
-import net.minecraft.src.TexturePackBase;
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.texturepacks.ITexturePack;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureLoadEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IArmorTextureProvider;
 import net.minecraftforge.common.MinecraftForge;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
@@ -34,187 +37,9 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class ForgeHooksClient
 {
-    private static class TesKey implements Comparable<TesKey>
-    {
-        public final int texture, subid;
-        public TesKey(int textureID, int subID)
-        {
-            texture = textureID;
-            subid = subID;
-        }
-
-        public int compareTo(TesKey key)
-        {
-            if (subid == key.subid)
-            {
-                return texture - key.texture;
-            }
-            return subid - key.subid;
-        }
-
-        public boolean equals(Object obj)
-        {
-            return compareTo((TesKey)obj) == 0;
-        }
-
-        public int hashCode()
-        {
-            return texture + 31 * subid;
-        }
-    }
-
-    public static HashMap<TesKey, Tessellator> tessellators = new HashMap<TesKey, Tessellator>();
-    public static HashMap<String, Integer> textures = new HashMap<String, Integer>();
-    public static TreeSet<TesKey> renderTextures = new TreeSet<TesKey>();
-    public static Tessellator defaultTessellator = null;
-    public static boolean inWorld = false;
-    public static HashMap<TesKey, IRenderContextHandler> renderHandlers = new HashMap<TesKey, IRenderContextHandler>();
-    public static IRenderContextHandler unbindContext = null;
-
-    protected static void registerRenderContextHandler(String texture, int subID, IRenderContextHandler handler)
-    {
-        Integer texID = textures.get(texture);
-        if (texID == null)
-        {
-            texID = engine().getTexture(texture);
-            textures.put(texture, texID);
-        }
-        renderHandlers.put(new TesKey(texID, subID), handler);
-    }
-
     static RenderEngine engine()
     {
         return FMLClientHandler.instance().getClient().renderEngine;
-    }
-    public static void bindTexture(String texture, int subID)
-    {
-        Integer texID = textures.get(texture);
-        if (texID == null)
-        {
-            texID = engine().getTexture(texture);
-            textures.put(texture, texID);
-        }
-        if (!inWorld)
-        {
-            if (unbindContext != null)
-            {
-                unbindContext.afterRenderContext();
-                unbindContext = null;
-            }
-            if (Tessellator.instance.isDrawing)
-            {
-                int mode = Tessellator.instance.drawMode;
-                Tessellator.instance.draw();
-                Tessellator.instance.startDrawing(mode);
-            }
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
-            unbindContext = renderHandlers.get(new TesKey(texID, subID));
-            if (unbindContext != null)
-            {
-                unbindContext.beforeRenderContext();
-            }
-            return;
-        }
-        bindTessellator(texID, subID);
-    }
-
-    public static void unbindTexture()
-    {
-        if (inWorld)
-        {
-            Tessellator.instance = defaultTessellator;
-        }
-        else
-        {
-            if (Tessellator.instance.isDrawing)
-            {
-                int mode = Tessellator.instance.drawMode;
-                Tessellator.instance.draw();
-                if (unbindContext != null)
-                {
-                    unbindContext.afterRenderContext();
-                    unbindContext = null;
-                }
-                Tessellator.instance.startDrawing(mode);
-            }
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, engine().getTexture("/terrain.png"));
-            return;
-        }
-    }
-
-    protected static void bindTessellator(int texture, int subID)
-    {
-        TesKey key = new TesKey(texture, subID);
-        Tessellator tess = tessellators.get(key);
-
-        if (tess == null)
-        {
-            tess = new Tessellator();
-            tess.textureID = texture;
-            tessellators.put(key, tess);
-        }
-
-        if (inWorld && !renderTextures.contains(key))
-        {
-            renderTextures.add(key);
-            tess.startDrawingQuads();
-            tess.setTranslation(defaultTessellator.xOffset, defaultTessellator.yOffset, defaultTessellator.zOffset);
-        }
-
-        Tessellator.instance = tess;
-    }
-
-    static int renderPass = -1;
-    public static void beforeRenderPass(int pass)
-    {
-        renderPass = pass;
-        defaultTessellator = Tessellator.instance;
-        Tessellator.renderingWorldRenderer = true;
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, engine().getTexture("/terrain.png"));
-        renderTextures.clear();
-        inWorld = true;
-    }
-
-    public static void afterRenderPass(int pass)
-    {
-        renderPass = -1;
-        inWorld = false;
-        for (TesKey info : renderTextures)
-        {
-            IRenderContextHandler handler = renderHandlers.get(info);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, info.texture);
-            Tessellator tess = tessellators.get(info);
-            if (handler == null)
-            {
-                tess.draw();
-            }
-            else
-            {
-                Tessellator.instance = tess;
-                handler.beforeRenderContext();
-                tess.draw();
-                handler.afterRenderContext();
-            }
-        }
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, engine().getTexture("/terrain.png"));
-        Tessellator.renderingWorldRenderer = false;
-        Tessellator.instance = defaultTessellator;
-    }
-
-    public static void beforeBlockRender(Block block, RenderBlocks render)
-    {
-        if (!block.isDefaultTexture && render.overrideBlockTexture == -1)
-        {
-            bindTexture(block.getTextureFile(), 0);
-        }
-    }
-
-    public static void afterBlockRender(Block block, RenderBlocks render)
-    {
-        if (!block.isDefaultTexture && render.overrideBlockTexture == -1)
-        {
-            unbindTexture();
-        }
     }
 
     public static String getArmorTexture(ItemStack armor, String _default)
@@ -231,7 +56,7 @@ public class ForgeHooksClient
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, ENTITY);
         if (customRenderer == null)
         {
-                return false;
+            return false;
         }
 
         if (customRenderer.shouldUseRenderHelper(ENTITY, item, ENTITY_ROTATION))
@@ -246,15 +71,23 @@ public class ForgeHooksClient
 
         if (item.getItem() instanceof ItemBlock && (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[item.itemID].getRenderType())))
         {
-            engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
+            engine.bindTexture("/terrain.png");
             int renderType = Block.blocksList[item.itemID].getRenderType();
             float scale = (renderType == 1 || renderType == 19 || renderType == 12 || renderType == 2 ? 0.5F : 0.25F);
 
+            if (RenderItem.renderInFrame)
+            {
+                GL11.glScalef(1.25F, 1.25F, 1.25F);
+                GL11.glTranslatef(0.0F, 0.05F, 0.0F);
+                GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+            }
+
             GL11.glScalef(scale, scale, scale);
-            int size = entity.item.stackSize;
+            
+            int size = item.stackSize;
             int count = (size > 20 ? 4 : (size > 5 ? 3 : (size > 1 ? 2 : 1)));
 
-            for(int j = 0; j < size; j++)
+            for(int j = 0; j < count; j++)
             {
                 GL11.glPushMatrix();
                 if (j > 0)
@@ -270,7 +103,7 @@ public class ForgeHooksClient
         }
         else
         {
-                engine.bindTexture(engine.getTexture(item.getItem().getTextureFile()));
+            engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
             GL11.glScalef(0.5F, 0.5F, 0.5F);
             customRenderer.renderItem(ENTITY, item, renderBlocks, entity);
         }
@@ -282,10 +115,10 @@ public class ForgeHooksClient
         IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(item, INVENTORY);
         if (customRenderer == null)
         {
-                return false;
+            return false;
         }
 
-        engine.bindTexture(engine.getTexture(Item.itemsList[item.itemID].getTextureFile()));
+        engine.bindTexture(item.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
         if (customRenderer.shouldUseRenderHelper(INVENTORY, item, INVENTORY_BLOCK))
         {
             GL11.glPushMatrix();
@@ -298,7 +131,7 @@ public class ForgeHooksClient
 
             if(inColor)
             {
-                int color = Item.itemsList[item.itemID].getColorFromDamage(item.getItemDamage(), 0);
+                int color = Item.itemsList[item.itemID].getColorFromItemStack(item, 0);
                 float r = (float)(color >> 16 & 0xff) / 255F;
                 float g = (float)(color >> 8 & 0xff) / 255F;
                 float b = (float)(color & 0xff) / 255F;
@@ -319,7 +152,7 @@ public class ForgeHooksClient
 
             if (inColor)
             {
-                int color = Item.itemsList[item.itemID].getColorFromDamage(item.getItemDamage(), 0);
+                int color = Item.itemsList[item.itemID].getColorFromItemStack(item, 0);
                 float r = (float)(color >> 16 & 255) / 255.0F;
                 float g = (float)(color >> 8 & 255) / 255.0F;
                 float b = (float)(color & 255) / 255.0F;
@@ -384,9 +217,19 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
     }
 
-    public static void onTextureLoad(String texture, TexturePackBase pack)
+    public static void onTextureLoad(String texture, ITexturePack pack)
     {
         MinecraftForge.EVENT_BUS.post(new TextureLoadEvent(texture, pack));
+    }
+
+    public static void onTextureStitchedPre(TextureMap map)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
+    }
+
+    public static void onTextureStitchedPost(TextureMap map)
+    {
+        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
     }
 
     /**
@@ -401,7 +244,7 @@ public class ForgeHooksClient
             System.out.println(msg);
             if (Tessellator.class.getPackage() != null)
             {
-                if (Tessellator.class.getPackage().equals("net.minecraft.src"))
+                if (Tessellator.class.getPackage().getName().startsWith("net.minecraft."))
                 {
                     Minecraft mc = FMLClientHandler.instance().getClient();
                     if (mc.ingameGUI != null)
@@ -411,5 +254,11 @@ public class ForgeHooksClient
                 }
             }
         }
+    }
+
+    static int renderPass = -1;
+    public static void setRenderPass(int pass)
+    {
+        renderPass = pass;
     }
 }

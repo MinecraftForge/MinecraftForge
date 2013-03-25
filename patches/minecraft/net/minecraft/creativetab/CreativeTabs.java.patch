@@ -1,0 +1,102 @@
+--- ../src_base/minecraft/net/minecraft/creativetab/CreativeTabs.java
++++ ../src_work/minecraft/net/minecraft/creativetab/CreativeTabs.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.enchantment.EnchantmentData;
+ import net.minecraft.enchantment.EnumEnchantmentType;
+ import net.minecraft.item.Item;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.util.StringTranslate;
+ 
+ public class CreativeTabs
+@@ -34,8 +35,22 @@
+     /** Whether to draw the title in the foreground of the creative GUI */
+     private boolean drawTitle = true;
+ 
++    public CreativeTabs(String label)
++    {
++        this(getNextID(), label);
++    }
++
+     public CreativeTabs(int par1, String par2Str)
+     {
++        if (par1 >= creativeTabArray.length)
++        {
++            CreativeTabs[] tmp = new CreativeTabs[par1 + 1];
++            for (int x = 0; x < creativeTabArray.length; x++)
++            {
++                tmp[x] = creativeTabArray[x];
++            }
++            creativeTabArray = tmp;
++        }
+         this.tabIndex = par1;
+         this.tabLabel = par2Str;
+         creativeTabArray[par1] = this;
+@@ -122,6 +137,10 @@
+      */
+     public int getTabColumn()
+     {
++        if (tabIndex > 11)
++        {
++            return ((tabIndex - 12) % 10) % 5;
++        }
+         return this.tabIndex % 6;
+     }
+ 
+@@ -132,6 +151,10 @@
+      */
+     public boolean isTabInFirstRow()
+     {
++        if (tabIndex > 11)
++        {
++            return ((tabIndex - 12) % 10) < 5;
++        }
+         return this.tabIndex < 6;
+     }
+ 
+@@ -149,11 +172,41 @@
+         {
+             Item item = aitem[j];
+ 
+-            if (item != null && item.getCreativeTab() == this)
+-            {
+-                item.getSubItems(item.itemID, this, par1List);
+-            }
+-        }
++            if (item == null)
++            {
++                continue;
++            }
++
++            for(CreativeTabs tab : item.getCreativeTabs())
++            {
++                if (tab == this)
++                {
++                    item.getSubItems(item.itemID, this, par1List);
++                }
++            }
++        }
++    }
++
++    public int getTabPage()
++    {
++        if (tabIndex > 11)
++        {
++            return ((tabIndex - 12) / 10) + 1;
++        }
++        return 0;
++    }
++
++    public static int getNextID()
++    {
++        return creativeTabArray.length;
++    }
++
++    /**
++     * Get the ItemStack that will be rendered to the tab.
++     */
++    public ItemStack getIconItemStack()
++    {
++        return new ItemStack(getTabIconItem());
+     }
+ 
+     @SideOnly(Side.CLIENT)

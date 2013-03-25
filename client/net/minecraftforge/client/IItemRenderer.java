@@ -1,9 +1,9 @@
 package net.minecraftforge.client;
 
-import net.minecraft.src.EntityItem;
-import net.minecraft.src.EntityLiving;
-import net.minecraft.src.ItemStack;
-import net.minecraft.src.RenderBlocks;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.RenderBlocks;
 
 public interface IItemRenderer
 {

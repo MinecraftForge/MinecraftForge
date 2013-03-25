@@ -1,0 +1,68 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemBlock.java
++++ ../src_work/minecraft/net/minecraft/item/ItemBlock.java
+@@ -64,7 +64,8 @@
+         {
+             par7 = 1;
+         }
+-        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID)
++        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID
++                && (Block.blocksList[i1] == null || !Block.blocksList[i1].isBlockReplaceable(par3World, par4, par5, par6)))
+         {
+             if (par7 == 0)
+             {
+@@ -115,14 +116,8 @@
+             int j1 = this.getMetadata(par1ItemStack.getItemDamage());
+             int k1 = Block.blocksList[this.blockID].onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, j1);
+ 
+-            if (par3World.setBlock(par4, par5, par6, this.blockID, k1, 3))
+-            {
+-                if (par3World.getBlockId(par4, par5, par6) == this.blockID)
+-                {
+-                    Block.blocksList[this.blockID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
+-                    Block.blocksList[this.blockID].onPostBlockPlaced(par3World, par4, par5, par6, k1);
+-                }
+-
++            if (placeBlockAt(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10, k1))
++            {
+                 par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), block.stepSound.getPlaceSound(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+                 --par1ItemStack.stackSize;
+             }
+@@ -148,7 +143,8 @@
+         {
+             par5 = 1;
+         }
+-        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID)
++        else if (i1 != Block.vine.blockID && i1 != Block.tallGrass.blockID && i1 != Block.deadBush.blockID
++                && (Block.blocksList[i1] == null || !Block.blocksList[i1].isBlockReplaceable(par1World, par2, par3, par4)))
+         {
+             if (par5 == 0)
+             {
+@@ -231,4 +227,28 @@
+             this.field_94588_b = par1IconRegister.registerIcon(s);
+         }
+     }
++
++    /**
++     * Called to actually place the block, after the location is determined
++     * and all permission checks have been made.
++     *
++     * @param stack The item stack that was used to place the block. This can be changed inside the method.
++     * @param player The player who is placing the block. Can be null if the block is not being placed by a player.
++     * @param side The side the player (or machine) right-clicked on.
++     */
++    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
++    {
++       if (!world.setBlock(x, y, z, this.blockID, metadata, 3))
++       {
++           return false;
++       }
++
++       if (world.getBlockId(x, y, z) == this.blockID)
++       {
++           Block.blocksList[this.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
++           Block.blocksList[this.blockID].onPostBlockPlaced(world, x, y, z, metadata);
++       }
++
++       return true;
++    }
+ }

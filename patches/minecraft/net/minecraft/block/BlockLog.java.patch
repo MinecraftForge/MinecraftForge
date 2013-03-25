@@ -1,0 +1,36 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockLog.java
++++ ../src_work/minecraft/net/minecraft/block/BlockLog.java
+@@ -69,14 +69,9 @@
+                     {
+                         int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
+ 
+-                        if (j2 == Block.leaves.blockID)
++                        if (Block.blocksList[j2] != null)
+                         {
+-                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
+-
+-                            if ((k2 & 8) == 0)
+-                            {
+-                                par1World.setBlockMetadataWithNotify(par2 + k1, par3 + l1, par4 + i2, k2 | 8, 4);
+-                            }
++                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
+                         }
+                     }
+                 }
+@@ -176,4 +171,16 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(treeTextureTypes[i]);
+         }
+     }
++
++    @Override
++    public boolean canSustainLeaves(World world, int x, int y, int z)
++    {
++        return true;
++    }
++
++    @Override
++    public boolean isWood(World world, int x, int y, int z)
++    {
++        return true;
++    }
+ }

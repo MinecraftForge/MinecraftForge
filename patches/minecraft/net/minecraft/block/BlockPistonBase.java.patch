@@ -1,0 +1,40 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockPistonBase.java
++++ ../src_work/minecraft/net/minecraft/block/BlockPistonBase.java
+@@ -431,7 +431,7 @@
+                 return false;
+             }
+ 
+-            return !(Block.blocksList[par0] instanceof ITileEntityProvider);
++            return !par1World.blockHasTileEntity(par2, par3, par4);
+         }
+     }
+ 
+@@ -449,7 +449,7 @@
+         {
+             if (l1 < 13)
+             {
+-                if (j1 <= 0 || j1 >= 255)
++                if (j1 <= 0 || j1 >= par0World.getHeight() - 1)
+                 {
+                     return false;
+                 }
+@@ -499,7 +499,7 @@
+ 
+             if (l1 < 13)
+             {
+-                if (j1 <= 0 || j1 >= 255)
++                if (j1 <= 0 || j1 >= par1World.getHeight() - 1)
+                 {
+                     return false;
+                 }
+@@ -527,7 +527,9 @@
+                         continue;
+                     }
+ 
+-                    Block.blocksList[i2].dropBlockAsItem(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), 0);
++                    //With our change to how snowballs are dropped this needs to dissallow to mimic vanilla behavior.
++                    float chance = (Block.blocksList[i2] instanceof BlockSnow ? -1.0f : 1.0f);
++                    Block.blocksList[i2].dropBlockAsItemWithChance(par1World, i1, j1, k1, par1World.getBlockMetadata(i1, j1, k1), chance, 0);
+                     par1World.setBlockToAir(i1, j1, k1);
+                 }
+             }

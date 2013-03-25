@@ -1,0 +1,49 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemBow.java
++++ ../src_work/minecraft/net/minecraft/item/ItemBow.java
+@@ -10,6 +10,10 @@
+ import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.ArrowLooseEvent;
++import net.minecraftforge.event.entity.player.ArrowNockEvent;
+ 
+ public class ItemBow extends Item
+ {
+@@ -30,11 +34,20 @@
+      */
+     public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
+     {
++        int j = this.getMaxItemUseDuration(par1ItemStack) - par4;
++
++        ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, j);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return;
++        }
++        j = event.charge;
++
+         boolean flag = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
+ 
+         if (flag || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
+         {
+-            int j = this.getMaxItemUseDuration(par1ItemStack) - par4;
+             float f = (float)j / 20.0F;
+             f = (f * f + f * 2.0F) / 3.0F;
+ 
+@@ -119,6 +132,13 @@
+      */
+     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+     {
++        ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
++        MinecraftForge.EVENT_BUS.post(event);
++        if (event.isCanceled())
++        {
++            return event.result;
++        }
++
+         if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(Item.arrow.itemID))
+         {
+             par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));

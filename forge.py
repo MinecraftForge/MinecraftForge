@@ -6,9 +6,6 @@ import csv, shutil
 import pprint
 
 forge_dir = os.path.dirname(os.path.abspath(__file__))
-mcp_dir = os.path.abspath('..')
-src_dir = os.path.join(mcp_dir, 'src')
-sys.path.append(mcp_dir)
         
 def reset_logger():
     log = logging.getLogger()
@@ -58,6 +55,7 @@ def inject_version(src_file, build=0):
     shutil.move(tmp_file, src_file)
     
 def zip_folder(path, key, zip):
+    import pprint
     files = os.listdir(path)
     for file in files:
         file_path = os.path.join(path, file)
@@ -65,8 +63,9 @@ def zip_folder(path, key, zip):
         if os.path.isdir(file_path):
             zip_folder(file_path, file_key, zip)
         else:
-            print file_key
-            zip.write(file_path, file_key)
+            if not file_key.replace(os.sep, '/') in zip.NameToInfo:
+                print '    ' + file_key
+                zip.write(file_path, file_key)
             
 def zip_create(path, key, zip_name):
     zip = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
@@ -78,6 +77,7 @@ def zip_create(path, key, zip_name):
 
 def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
     sys.path.append(fml_dir)
+    sys.path.append(os.path.join(fml_dir, 'install'))
     from fml import copytree, apply_patches
     
     #patch files
@@ -86,13 +86,11 @@ def apply_forge_patches(fml_dir, mcp_dir, forge_dir, src_dir, copy_files=True):
 
     if os.path.isdir(os.path.join(forge_dir, 'patches', 'minecraft')):
         apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'minecraft'), src_dir)
+        
     if copy_files and os.path.isdir(os.path.join(forge_dir, 'client')):
         copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'))
-            
-    if os.path.isdir(os.path.join(forge_dir, 'patches', 'common')):
-        apply_patches(mcp_dir, os.path.join(forge_dir, 'patches', 'common'), src_dir)
     if copy_files and os.path.isdir(os.path.join(forge_dir, 'common')):
-        copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'common'))
+        copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'minecraft'))
 
 def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     version = load_version(build_num)
@@ -103,6 +101,7 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
         shutil.rmtree(src_dir)
     
     sys.path.append(fml_dir)
+    sys.path.append(os.path.join(fml_dir, 'install'))
     from fml import copytree
         
     print 'src_work -> src'
@@ -110,24 +109,31 @@ def build_forge_dev(mcp_dir, forge_dir, fml_dir, build_num=0):
     print '\nCopying Client Code'
     copytree(os.path.join(forge_dir, 'client'), os.path.join(src_dir, 'minecraft'), -1)
     print '\nCopying Common Code'
-    copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'common'), -1)
+    copytree(os.path.join(forge_dir, 'common'), os.path.join(src_dir, 'minecraft'), -1)
     print
-    inject_version(os.path.join(src_dir, 'common/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
+    inject_version(os.path.join(src_dir, 'minecraft/net/minecraftforge/common/ForgeVersion.java'.replace('/', os.sep)), build_num)
     
     error_level = 0
     try:
         sys.path.append(mcp_dir)
-        from runtime.recompile import recompile
+        from runtime.commands import Commands, CLIENT, SERVER, CalledProcessError
+        from runtime.mcp import recompile_side
         
         os.chdir(mcp_dir)
         reset_logger()
-        recompile(None)
+        
+        commands = Commands(None, verify=True)
+        try:
+            recompile_side(commands, CLIENT)
+        except CalledProcessError as e:
+            error_level = 1
+            pass
         reset_logger()
         os.chdir(forge_dir)
-        
     except SystemExit, e:
-        print 'Recompile Exception: %d ' % e.code
-        error_level = e.code
+        if not e.code == 0:
+            print 'Recompile Exception: %d ' % e.code
+            error_level = e.code
         
     print '=================================== Build Finished %d =================================' % error_level
     return error_level

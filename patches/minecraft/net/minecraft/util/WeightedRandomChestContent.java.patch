@@ -1,0 +1,82 @@
+--- ../src_base/minecraft/net/minecraft/util/WeightedRandomChestContent.java
++++ ../src_work/minecraft/net/minecraft/util/WeightedRandomChestContent.java
+@@ -4,6 +4,9 @@
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.TileEntityDispenser;
++import net.minecraftforge.common.ChestGenHooks;
++import net.minecraftforge.common.DungeonHooks;
++import cpw.mods.fml.common.FMLLog;
+ 
+ public class WeightedRandomChestContent extends WeightedRandomItem
+ {
+@@ -42,20 +45,11 @@
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+             int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
+ 
+-            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
++
++            for (ItemStack item : stacks)
+             {
+-                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                itemstack.stackSize = k;
+-                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack);
+-            }
+-            else
+-            {
+-                for (int l = 0; l < k; ++l)
+-                {
+-                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
+-                    itemstack1.stackSize = 1;
+-                    par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), itemstack1);
+-                }
++                par2IInventory.setInventorySlotContents(par0Random.nextInt(par2IInventory.getSizeInventory()), item);
+             }
+         }
+     }
+@@ -68,22 +62,11 @@
+         for (int j = 0; j < par3; ++j)
+         {
+             WeightedRandomChestContent weightedrandomchestcontent = (WeightedRandomChestContent)WeightedRandom.getRandomItem(par0Random, par1ArrayOfWeightedRandomChestContent);
+-            int k = weightedrandomchestcontent.theMinimumChanceToGenerateItem + par0Random.nextInt(weightedrandomchestcontent.theMaximumChanceToGenerateItem - weightedrandomchestcontent.theMinimumChanceToGenerateItem + 1);
++            ItemStack[] stacks = ChestGenHooks.generateStacks(par0Random, weightedrandomchestcontent.theItemId, weightedrandomchestcontent.theMinimumChanceToGenerateItem, weightedrandomchestcontent.theMaximumChanceToGenerateItem);
+ 
+-            if (weightedrandomchestcontent.theItemId.getMaxStackSize() >= k)
++            for (ItemStack item : stacks)
+             {
+-                ItemStack itemstack = weightedrandomchestcontent.theItemId.copy();
+-                itemstack.stackSize = k;
+-                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack);
+-            }
+-            else
+-            {
+-                for (int l = 0; l < k; ++l)
+-                {
+-                    ItemStack itemstack1 = weightedrandomchestcontent.theItemId.copy();
+-                    itemstack1.stackSize = 1;
+-                    par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), itemstack1);
+-                }
++                par2TileEntityDispenser.setInventorySlotContents(par0Random.nextInt(par2TileEntityDispenser.getSizeInventory()), item);
+             }
+         }
+     }
+@@ -109,4 +92,18 @@
+ 
+         return aweightedrandomchestcontent1;
+     }
++
++    // -- Forge hooks
++    /**
++     * Allow a mod to submit a custom implementation that can delegate item stack generation beyond simple stack lookup
++     *
++     * @param random The current random for generation
++     * @param newInventory The inventory being generated (do not populate it, but you can refer to it)
++     * @return An array of {@link ItemStack} to put into the chest
++     */
++    protected ItemStack[] generateChestContent(Random random, IInventory newInventory)
++    {
++        return ChestGenHooks.generateStacks(random, theItemId, theMinimumChanceToGenerateItem, theMaximumChanceToGenerateItem);
++    }
++
+ }

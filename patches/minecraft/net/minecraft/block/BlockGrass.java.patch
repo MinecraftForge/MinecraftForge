@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockGrass.java
++++ ../src_work/minecraft/net/minecraft/block/BlockGrass.java
+@@ -44,7 +44,7 @@
+     {
+         if (!par1World.isRemote)
+         {
+-            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && Block.lightOpacity[par1World.getBlockId(par2, par3 + 1, par4)] > 2)
++            if (par1World.getBlockLightValue(par2, par3 + 1, par4) < 4 && par1World.getBlockLightOpacity(par2, par3 + 1, par4) > 2)
+             {
+                 par1World.setBlock(par2, par3, par4, Block.dirt.blockID);
+             }
+@@ -57,7 +57,7 @@
+                     int k1 = par4 + par5Random.nextInt(3) - 1;
+                     int l1 = par1World.getBlockId(i1, j1 + 1, k1);
+ 
+-                    if (par1World.getBlockId(i1, j1, k1) == Block.dirt.blockID && par1World.getBlockLightValue(i1, j1 + 1, k1) >= 4 && Block.lightOpacity[l1] <= 2)
++                    if (par1World.getBlockId(i1, j1, k1) == Block.dirt.blockID && par1World.getBlockLightValue(i1, j1 + 1, k1) >= 4 && par1World.getBlockLightOpacity(i1, j1 + 1, k1) <= 2)
+                     {
+                         par1World.setBlock(i1, j1, k1, Block.grass.blockID);
+                     }

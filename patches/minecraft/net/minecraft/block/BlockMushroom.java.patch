@@ -1,0 +1,22 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockMushroom.java
++++ ../src_work/minecraft/net/minecraft/block/BlockMushroom.java
+@@ -6,6 +6,8 @@
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.world.World;
+ import net.minecraft.world.gen.feature.WorldGenBigMushroom;
++
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockMushroom extends BlockFlower
+ {
+@@ -102,7 +104,9 @@
+         if (par3 >= 0 && par3 < 256)
+         {
+             int l = par1World.getBlockId(par2, par3 - 1, par4);
+-            return l == Block.mycelium.blockID || par1World.getFullBlockLightValue(par2, par3, par4) < 13 && this.canThisPlantGrowOnThisBlockID(l);
++            Block soil = Block.blocksList[l];
++            return (l == Block.mycelium.blockID || par1World.getFullBlockLightValue(par2, par3, par4) < 13) &&
++                   (soil != null && soil.canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this));
+         }
+         else
+         {

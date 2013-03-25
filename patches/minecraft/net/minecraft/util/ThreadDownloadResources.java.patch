@@ -1,0 +1,37 @@
+--- ../src_base/minecraft/net/minecraft/util/ThreadDownloadResources.java
++++ ../src_work/minecraft/net/minecraft/util/ThreadDownloadResources.java
+@@ -8,6 +8,8 @@
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import java.net.URL;
++import java.net.URLConnection;
++
+ import javax.xml.parsers.DocumentBuilder;
+ import javax.xml.parsers.DocumentBuilderFactory;
+ import net.minecraft.client.Minecraft;
+@@ -48,7 +50,11 @@
+             URL url = new URL("http://s3.amazonaws.com/MinecraftResources/");
+             DocumentBuilderFactory documentbuilderfactory = DocumentBuilderFactory.newInstance();
+             DocumentBuilder documentbuilder = documentbuilderfactory.newDocumentBuilder();
+-            Document document = documentbuilder.parse(url.openStream());
++            //Add a timeout of 60 seconds to getting the list, MC stalls without sound for some users.
++            URLConnection con = url.openConnection();
++            con.setConnectTimeout(60000);
++            con.setReadTimeout(60000);
++            Document document = documentbuilder.parse(con.getInputStream());
+             NodeList nodelist = document.getElementsByTagName("Contents");
+ 
+             for (int i = 0; i < 2; ++i)
+@@ -168,7 +174,11 @@
+     private void downloadResource(URL par1URL, File par2File, long par3) throws IOException
+     {
+         byte[] abyte = new byte[4096];
+-        DataInputStream datainputstream = new DataInputStream(par1URL.openStream());
++        //Add a timeout of 60 seconds to getting the list, MC stalls without sound for some users.
++        URLConnection con = par1URL.openConnection();
++        con.setConnectTimeout(60000);
++        con.setReadTimeout(60000);
++        DataInputStream datainputstream = new DataInputStream(con.getInputStream());
+         DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(par2File));
+         boolean flag = false;
+ 

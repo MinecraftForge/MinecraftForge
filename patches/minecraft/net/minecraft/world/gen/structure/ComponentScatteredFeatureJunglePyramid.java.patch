@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeatureJunglePyramid.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentScatteredFeatureJunglePyramid extends ComponentScatteredFeature
+ {
+@@ -164,9 +167,12 @@
+             this.placeBlockAtCurrentPosition(par1World, Block.redstoneWire.blockID, 0, 4, -3, 1, par3StructureBoundingBox);
+             this.placeBlockAtCurrentPosition(par1World, Block.cobblestoneMossy.blockID, 0, 3, -3, 1, par3StructureBoundingBox);
+ 
++            ChestGenHooks dispenser = ChestGenHooks.getInfo(PYRAMID_JUNGLE_DISPENSER);
++            ChestGenHooks chest = ChestGenHooks.getInfo(PYRAMID_JUNGLE_CHEST);
++
+             if (!this.field_74945_j)
+             {
+-                this.field_74945_j = this.generateStructureDispenserContents(par1World, par3StructureBoundingBox, par2Random, 3, -2, 1, 2, junglePyramidsDispenserContents, 2);
++                this.field_74945_j = this.generateStructureDispenserContents(par1World, par3StructureBoundingBox, par2Random, 3, -2, 1, 2, dispenser.getItems(par2Random), dispenser.getCount(par2Random));
+             }
+ 
+             this.placeBlockAtCurrentPosition(par1World, Block.vine.blockID, 15, 3, -2, 2, par3StructureBoundingBox);
+@@ -183,7 +189,7 @@
+ 
+             if (!this.field_74946_k)
+             {
+-                this.field_74946_k = this.generateStructureDispenserContents(par1World, par3StructureBoundingBox, par2Random, 9, -2, 3, 4, junglePyramidsDispenserContents, 2);
++                this.field_74946_k = this.generateStructureDispenserContents(par1World, par3StructureBoundingBox, par2Random, 9, -2, 3, 4, dispenser.getItems(par2Random), dispenser.getCount(par2Random));
+             }
+ 
+             this.placeBlockAtCurrentPosition(par1World, Block.vine.blockID, 15, 8, -1, 3, par3StructureBoundingBox);
+@@ -191,7 +197,7 @@
+ 
+             if (!this.field_74947_h)
+             {
+-                this.field_74947_h = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 8, -3, 3, WeightedRandomChestContent.func_92080_a(junglePyramidsChestContents, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 2 + par2Random.nextInt(5));
++                this.field_74947_h = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 8, -3, 3, chest.getItems(par2Random), chest.getCount(par2Random));
+             }
+ 
+             this.placeBlockAtCurrentPosition(par1World, Block.cobblestoneMossy.blockID, 0, 9, -3, 2, par3StructureBoundingBox);
+@@ -224,7 +230,7 @@
+ 
+             if (!this.field_74948_i)
+             {
+-                this.field_74948_i = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 9, -3, 10, WeightedRandomChestContent.func_92080_a(junglePyramidsChestContents, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 2 + par2Random.nextInt(5));
++                this.field_74948_i = this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 9, -3, 10, chest.getItems(par2Random), chest.getCount(par2Random));
+             }
+ 
+             return true;

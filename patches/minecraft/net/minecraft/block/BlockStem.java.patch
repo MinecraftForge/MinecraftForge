@@ -1,0 +1,88 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockStem.java
++++ ../src_work/minecraft/net/minecraft/block/BlockStem.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -12,6 +14,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ForgeDirection;
++
+ public class BlockStem extends BlockFlower
+ {
+     /** Defines if it is a Melon or a Pumpkin that the stem is producing. */
+@@ -106,7 +110,8 @@
+ 
+                     int l1 = par1World.getBlockId(j1, par3 - 1, k1);
+ 
+-                    if (par1World.getBlockId(j1, par3, k1) == 0 && (l1 == Block.tilledField.blockID || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
++                    boolean isSoil = (blocksList[l1] != null && blocksList[l1].canSustainPlant(par1World, j1, par3 - 1, k1, ForgeDirection.UP, this));
++                    if (par1World.getBlockId(j1, par3, k1) == 0 && (isSoil || l1 == Block.dirt.blockID || l1 == Block.grass.blockID))
+                     {
+                         par1World.setBlock(j1, par3, k1, this.fruitType.blockID);
+                     }
+@@ -149,11 +154,11 @@
+                 int j3 = par1World.getBlockId(l2, par3 - 1, i3);
+                 float f1 = 0.0F;
+ 
+-                if (j3 == Block.tilledField.blockID)
++                if (blocksList[j3] != null && blocksList[j3].canSustainPlant(par1World, l2, par3 - 1, i3, ForgeDirection.UP, this))
+                 {
+                     f1 = 1.0F;
+ 
+-                    if (par1World.getBlockMetadata(l2, par3 - 1, i3) > 0)
++                    if (blocksList[j3].isFertile(par1World, l2, par3 - 1, i3))
+                     {
+                         f1 = 3.0F;
+                     }
+@@ -245,29 +250,22 @@
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+         super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+-
+-        if (!par1World.isRemote)
+-        {
+-            Item item = null;
+-
+-            if (this.fruitType == Block.pumpkin)
++    }
++
++    @Override 
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++
++        for (int i = 0; i < 3; i++)
++        {
++            if (world.rand.nextInt(15) <= metadata)
+             {
+-                item = Item.pumpkinSeeds;
++                ret.add(new ItemStack(fruitType == pumpkin ? Item.pumpkinSeeds : Item.melonSeeds));
+             }
+-
+-            if (this.fruitType == Block.melon)
+-            {
+-                item = Item.melonSeeds;
+-            }
+-
+-            for (int j1 = 0; j1 < 3; ++j1)
+-            {
+-                if (par1World.rand.nextInt(15) <= par5)
+-                {
+-                    this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(item));
+-                }
+-            }
+-        }
++        }
++
++        return ret;
+     }
+ 
+     /**

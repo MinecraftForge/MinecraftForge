@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
++++ ../src_work/minecraft/net/minecraft/enchantment/EnchantmentHelper.java
+@@ -463,7 +463,7 @@
+         {
+             Enchantment enchantment = aenchantment[k];
+ 
+-            if (enchantment != null && (enchantment.type.canEnchantItem(item) || flag))
++            if (enchantment != null && (enchantment.canApplyAtEnchantingTable(par1ItemStack) || flag))
+             {
+                 for (int l = enchantment.getMinLevel(); l <= enchantment.getMaxLevel(); ++l)
+                 {

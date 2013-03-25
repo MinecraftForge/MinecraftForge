@@ -2,7 +2,10 @@ package net.minecraftforge.event.entity.player;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.*;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.Cancelable;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 
@@ -27,7 +30,7 @@ public class PlayerDropsEvent extends LivingDropsEvent
     {
         super(entity, source, drops, 
             (source.getEntity() instanceof EntityPlayer) ? 
-                EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity()).inventory) : 0,
+                EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity())) : 0,
             recentlyHit, 0);
         
         this.entityPlayer = entity;

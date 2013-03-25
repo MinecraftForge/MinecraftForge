@@ -1,0 +1,44 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
+@@ -47,7 +47,7 @@
+                         {
+                             l1 = par1World.getBlockId(j1, i1, k1);
+ 
+-                            if (l1 != 0 && l1 != Block.leaves.blockID)
++                            if (l1 != 0 && (Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(par1World, j1, i1, k1)))
+                             {
+                                 if (l1 != Block.waterStill.blockID && l1 != Block.waterMoving.blockID)
+                                 {
+@@ -94,7 +94,10 @@
+                             {
+                                 int l2 = k2 - par5;
+ 
+-                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && !Block.opaqueCubeLookup[par1World.getBlockId(l1, j2, k2)])
++                                Block block = Block.blocksList[par1World.getBlockId(l1, j2, k2)];
++
++                                if ((Math.abs(i2) != k1 || Math.abs(l2) != k1 || par2Random.nextInt(2) != 0 && j1 != 0) && 
++                                    (block == null || block.canBeReplacedByLeaves(par1World, l1, j2, k2)))
+                                 {
+                                     this.setBlock(par1World, l1, j2, k2, Block.leaves.blockID);
+                                 }
+@@ -106,7 +109,9 @@
+                     {
+                         j1 = par1World.getBlockId(par3, par4 + j2, par5);
+ 
+-                        if (j1 == 0 || j1 == Block.leaves.blockID || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
++                        Block block = Block.blocksList[j1];
++
++                        if (j1 == 0 || (block != null && block.isLeaves(par1World, par3, par4 + j2, par5)) || j1 == Block.waterMoving.blockID || j1 == Block.waterStill.blockID)
+                         {
+                             this.setBlock(par1World, par3, par4 + j2, par5, Block.wood.blockID);
+                         }
+@@ -121,7 +126,8 @@
+                         {
+                             for (i2 = par5 - k1; i2 <= par5 + k1; ++i2)
+                             {
+-                                if (par1World.getBlockId(l1, j2, i2) == Block.leaves.blockID)
++                                Block block = Block.blocksList[par1World.getBlockId(l1, j2, i2)];
++                                if (block != null && block.isLeaves(par1World, l1, j2, i2))
+                                 {
+                                     if (par2Random.nextInt(4) == 0 && par1World.getBlockId(l1 - 1, j2, i2) == 0)
+                                     {

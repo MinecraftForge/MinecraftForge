@@ -1,0 +1,58 @@
+--- ../src_base/minecraft/net/minecraft/world/biome/WorldChunkManager.java
++++ ../src_work/minecraft/net/minecraft/world/biome/WorldChunkManager.java
+@@ -3,6 +3,7 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.List;
+ import java.util.Random;
+ import net.minecraft.world.ChunkPosition;
+@@ -11,8 +12,13 @@
+ import net.minecraft.world.gen.layer.GenLayer;
+ import net.minecraft.world.gen.layer.IntCache;
+ 
++import net.minecraftforge.common.*;
++import net.minecraftforge.event.terraingen.*;
++import static net.minecraft.world.biome.BiomeGenBase.*;
++
+ public class WorldChunkManager
+ {
++    public static ArrayList<BiomeGenBase> allowedBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest, plains, taiga, taigaHills, forestHills, jungle. jungleHills));
+     private GenLayer genBiomes;
+ 
+     /** A GenLayer containing the indices into BiomeGenBase.biomeList[] */
+@@ -28,19 +34,14 @@
+     {
+         this.biomeCache = new BiomeCache(this);
+         this.biomesToSpawnIn = new ArrayList();
+-        this.biomesToSpawnIn.add(BiomeGenBase.forest);
+-        this.biomesToSpawnIn.add(BiomeGenBase.plains);
+-        this.biomesToSpawnIn.add(BiomeGenBase.taiga);
+-        this.biomesToSpawnIn.add(BiomeGenBase.taigaHills);
+-        this.biomesToSpawnIn.add(BiomeGenBase.forestHills);
+-        this.biomesToSpawnIn.add(BiomeGenBase.jungle);
+-        this.biomesToSpawnIn.add(BiomeGenBase.jungleHills);
++        this.biomesToSpawnIn.addAll(allowedBiomes);
+     }
+ 
+     public WorldChunkManager(long par1, WorldType par3WorldType)
+     {
+         this();
+         GenLayer[] agenlayer = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
++        agenlayer = getModdedBiomeGenerators(par3WorldType, par1, agenlayer);
+         this.genBiomes = agenlayer[0];
+         this.biomeIndexLayer = agenlayer[1];
+     }
+@@ -264,4 +265,11 @@
+     {
+         this.biomeCache.cleanupCache();
+     }
++
++    public GenLayer[] getModdedBiomeGenerators(WorldType worldType, long seed, GenLayer[] original)
++    {
++        WorldTypeEvent.InitBiomeGens event = new WorldTypeEvent.InitBiomeGens(worldType, seed, original);
++        MinecraftForge.TERRAIN_GEN_BUS.post(event);
++        return event.newBiomeGens;
++    }
+ }

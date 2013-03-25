@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/inventory/ContainerFurnace.java
++++ ../src_work/minecraft/net/minecraft/inventory/ContainerFurnace.java
+@@ -125,7 +125,7 @@
+             }
+             else if (par2 != 1 && par2 != 0)
+             {
+-                if (FurnaceRecipes.smelting().getSmeltingResult(itemstack1.getItem().itemID) != null)
++                if (FurnaceRecipes.smelting().getSmeltingResult(itemstack1) != null)
+                 {
+                     if (!this.mergeItemStack(itemstack1, 0, 1, false))
+                     {

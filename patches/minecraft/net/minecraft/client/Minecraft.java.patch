@@ -1,95 +1,169 @@
 --- ../src_base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src_work/minecraft/net/minecraft/client/Minecraft.java
-@@ -118,6 +118,7 @@
- import net.minecraft.src.WorldInfo;
- import net.minecraft.src.WorldRenderer;
- import net.minecraft.src.WorldSettings;
-+import net.minecraftforge.common.ForgeHooks;
+@@ -123,6 +123,10 @@
  
- import org.lwjgl.LWJGLException;
- import org.lwjgl.Sys;
-@@ -2212,80 +2213,12 @@
+ import com.google.common.collect.MapDifference;
+ 
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
++
+ @SideOnly(Side.CLIENT)
+ public abstract class Minecraft implements Runnable, IPlayerUsage
+ {
+@@ -1238,7 +1242,7 @@
+ 
+                 if (this.thePlayer.canCurrentToolHarvestBlock(j, k, l))
+                 {
+-                    this.effectRenderer.addBlockHitEffects(j, k, l, this.objectMouseOver.sideHit);
++                    this.effectRenderer.addBlockHitEffects(j, k, l, this.objectMouseOver);
+                     this.thePlayer.swingItem();
+                 }
+             }
+@@ -1304,7 +1308,8 @@
+                 {
+                     int j1 = itemstack != null ? itemstack.stackSize : 0;
+ 
+-                    if (this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, itemstack, j, k, l, i1, this.objectMouseOver.hitVec))
++                    boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_BLOCK, j, k, l, i1).isCanceled();
++                    if (result && this.playerController.onPlayerRightClick(this.thePlayer, this.theWorld, itemstack, j, k, l, i1, this.objectMouseOver.hitVec))
+                     {
+                         flag = false;
+                         this.thePlayer.swingItem();
+@@ -1330,7 +1335,8 @@
+             {
+                 ItemStack itemstack1 = this.thePlayer.inventory.getCurrentItem();
+ 
+-                if (itemstack1 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
++                boolean result = !ForgeEventFactory.onPlayerInteract(thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
++                if (result && itemstack1 != null && this.playerController.sendUseItem(this.thePlayer, this.theWorld, itemstack1))
+                 {
+                     this.entityRenderer.itemRenderer.resetEquippedProgress2();
+                 }
+@@ -2027,6 +2033,18 @@
+             if (this.theIntegratedServer != null)
+             {
+                 this.theIntegratedServer.initiateShutdown();
++                if (loadingScreen!=null)
++                {
++                    this.loadingScreen.resetProgresAndWorkingMessage("Shutting down internal server...");
++                }
++                while (!theIntegratedServer.isServerStopped())
++                {
++                    try
++                    {
++                        Thread.sleep(10);
++                    }
++                    catch (InterruptedException ie) {}
++                }
+             }
+ 
+             this.theIntegratedServer = null;
+@@ -2354,103 +2372,12 @@
          if (this.objectMouseOver != null)
          {
-             boolean var1 = this.thePlayer.capabilities.isCreativeMode;
--            int var3 = 0;
--            boolean var4 = false;
--            int var2;
-             int var5;
+             boolean flag = this.thePlayer.capabilities.isCreativeMode;
+-            int i = 0;
+-            boolean flag1 = false;
+-            int j;
+             int k;
  
 -            if (this.objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
 -            {
--                var5 = this.objectMouseOver.blockX;
--                int var6 = this.objectMouseOver.blockY;
--                int var7 = this.objectMouseOver.blockZ;
--                Block var8 = Block.blocksList[this.theWorld.getBlockId(var5, var6, var7)];
+-                k = this.objectMouseOver.blockX;
+-                int l = this.objectMouseOver.blockY;
+-                int i1 = this.objectMouseOver.blockZ;
+-                Block block = Block.blocksList[this.theWorld.getBlockId(k, l, i1)];
 -
--                if (var8 == null)
+-                if (block == null)
 -                {
 -                    return;
 -                }
 -
--                var2 = var8.idPicked(this.theWorld, var5, var6, var7);
+-                j = block.idPicked(this.theWorld, k, l, i1);
 -
--                if (var2 == 0)
+-                if (j == 0)
 -                {
 -                    return;
 -                }
 -
--                var4 = Item.itemsList[var2].getHasSubtypes();
--                int var9 = var2 >= 256 ? var8.blockID : var2;
--                var3 = Block.blocksList[var9].getDamageValue(this.theWorld, var5, var6, var7);
+-                flag1 = Item.itemsList[j].getHasSubtypes();
+-                int j1 = j < 256 && !Block.blocksList[block.blockID].func_82505_u_() ? j : block.blockID;
+-                i = Block.blocksList[j1].getDamageValue(this.theWorld, k, l, i1);
 -            }
 -            else
 -            {
--                if (this.objectMouseOver.typeOfHit != EnumMovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !var1)
+-                if (this.objectMouseOver.typeOfHit != EnumMovingObjectType.ENTITY || this.objectMouseOver.entityHit == null || !flag)
 -                {
 -                    return;
 -                }
 -
 -                if (this.objectMouseOver.entityHit instanceof EntityPainting)
 -                {
--                    var2 = Item.painting.shiftedIndex;
+-                    j = Item.painting.itemID;
 -                }
--                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
+-                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
 -                {
--                    EntityMinecart var10 = (EntityMinecart)this.objectMouseOver.entityHit;
+-                    EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
 -
--                    if (var10.minecartType == 2)
+-                    if (entityitemframe.getDisplayedItem() == null)
 -                    {
--                        var2 = Item.minecartPowered.shiftedIndex;
--                    }
--                    else if (var10.minecartType == 1)
--                    {
--                        var2 = Item.minecartCrate.shiftedIndex;
+-                        j = Item.itemFrame.itemID;
 -                    }
 -                    else
 -                    {
--                        var2 = Item.minecartEmpty.shiftedIndex;
+-                        j = entityitemframe.getDisplayedItem().itemID;
+-                        i = entityitemframe.getDisplayedItem().getItemDamage();
+-                        flag1 = true;
+-                    }
+-                }
+-                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
+-                {
+-                    EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
+-
+-                    if (entityminecart.func_94087_l() == 2)
+-                    {
+-                        j = Item.minecartPowered.itemID;
+-                    }
+-                    else if (entityminecart.func_94087_l() == 1)
+-                    {
+-                        j = Item.minecartCrate.itemID;
+-                    }
+-                    else if (entityminecart.func_94087_l() == 3)
+-                    {
+-                        j = Item.tntMinecart.itemID;
+-                    }
+-                    else if (entityminecart.func_94087_l() == 5)
+-                    {
+-                        j = Item.hopperMinecart.itemID;
+-                    }
+-                    else
+-                    {
+-                        j = Item.minecartEmpty.itemID;
 -                    }
 -                }
 -                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
 -                {
--                    var2 = Item.boat.shiftedIndex;
+-                    j = Item.boat.itemID;
 -                }
 -                else
 -                {
--                    var2 = Item.monsterPlacer.shiftedIndex;
--                    var3 = EntityList.getEntityID(this.objectMouseOver.entityHit);
--                    var4 = true;
+-                    j = Item.monsterPlacer.itemID;
+-                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
+-                    flag1 = true;
 -
--                    if (var3 <= 0 || !EntityList.entityEggs.containsKey(Integer.valueOf(var3)))
+-                    if (i <= 0 || !EntityList.entityEggs.containsKey(Integer.valueOf(i)))
 -                    {
 -                        return;
 -                    }
 -                }
 -            }
 -
--            this.thePlayer.inventory.setCurrentItem(var2, var3, var4, var1);
+-            this.thePlayer.inventory.setCurrentItem(j, i, flag1, flag);
 +            if (!ForgeHooks.onPickBlock(this.objectMouseOver, this.thePlayer, this.theWorld))
 +            {
 +                return;
 +            }
  
-             if (var1)
+             if (flag)
              {

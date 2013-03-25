@@ -1,0 +1,47 @@
+--- ../src_base/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
++++ ../src_work/minecraft/net/minecraft/client/multiplayer/NetClientHandler.java
+@@ -176,6 +176,11 @@
+ import net.minecraft.world.storage.MapStorage;
+ import org.lwjgl.input.Keyboard;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++import net.minecraftforge.client.event.ClientChatReceivedEvent;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++
+ @SideOnly(Side.CLIENT)
+ public class NetClientHandler extends NetHandler
+ {
+@@ -762,7 +767,7 @@
+ 
+     public void handleKickDisconnect(Packet255KickDisconnect par1Packet255KickDisconnect)
+     {
+-        this.netManager.networkShutdown("disconnect.kicked", new Object[0]);
++        this.netManager.networkShutdown("disconnect.kicked", par1Packet255KickDisconnect.reason);
+         this.disconnected = true;
+         this.mc.loadWorld((WorldClient)null);
+ 
+@@ -844,7 +849,11 @@
+     public void handleChat(Packet3Chat par1Packet3Chat)
+     {
+         par1Packet3Chat = FMLNetworkHandler.handleChatMessage(this, par1Packet3Chat);
+-        this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
++        ClientChatReceivedEvent event = new ClientChatReceivedEvent(par1Packet3Chat.message);
++        if (!MinecraftForge.EVENT_BUS.post(event) && event.message != null)
++        {
++            this.mc.ingameGUI.getChatGUI().printChatMessage(par1Packet3Chat.message);
++        }
+     }
+ 
+     public void handleAnimation(Packet18Animation par1Packet18Animation)
+@@ -1278,6 +1287,10 @@
+                 {
+                     tileentity.readFromNBT(par1Packet132TileEntityData.customParam1);
+                 }
++                else
++                {
++                    tileentity.onDataPacket(netManager,  par1Packet132TileEntityData);
++                }
+             }
+         }
+     }

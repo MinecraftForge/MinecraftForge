@@ -1,7 +1,7 @@
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.src.SoundManager;
-import net.minecraft.src.SoundPoolEntry;
+import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.audio.SoundPoolEntry;
 
 /***
  * Raised when the SoundManager tries to play a normal sound,

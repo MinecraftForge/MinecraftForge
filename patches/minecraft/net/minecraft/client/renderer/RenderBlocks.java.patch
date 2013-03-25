@@ -1,0 +1,93 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/RenderBlocks.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/RenderBlocks.java
+@@ -44,6 +44,8 @@
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
++import static net.minecraftforge.common.ForgeDirection.*;
++
+ @SideOnly(Side.CLIENT)
+ public class RenderBlocks
+ {
+@@ -533,9 +535,8 @@
+     public boolean renderBlockBed(Block par1Block, int par2, int par3, int par4)
+     {
+         Tessellator tessellator = Tessellator.instance;
+-        int l = this.blockAccess.getBlockMetadata(par2, par3, par4);
+-        int i1 = BlockBed.getDirection(l);
+-        boolean flag = BlockBed.isBlockHeadOfBed(l);
++        int i1 = par1Block.getBedDirection(blockAccess, par2, par3, par4);
++        boolean flag = par1Block.isBedFoot(blockAccess, par2, par3, par4);
+         float f = 0.5F;
+         float f1 = 1.0F;
+         float f2 = 0.8F;
+@@ -544,6 +545,7 @@
+         tessellator.setBrightness(j1);
+         tessellator.setColorOpaque_F(f, f, f);
+         Icon icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 0);
++        if (hasOverrideBlockTexture()) icon = overrideBlockTexture; //BugFix Proper breaking texture on underside
+         double d0 = (double)icon.getMinU();
+         double d1 = (double)icon.getMaxU();
+         double d2 = (double)icon.getMinV();
+@@ -560,6 +562,7 @@
+         tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4));
+         tessellator.setColorOpaque_F(f1, f1, f1);
+         icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 1);
++        if (hasOverrideBlockTexture()) icon = overrideBlockTexture; //BugFix Proper breaking texture on underside
+         d0 = (double)icon.getMinU();
+         d1 = (double)icon.getMaxU();
+         d2 = (double)icon.getMinV();
+@@ -2351,7 +2354,7 @@
+         double d9;
+         double d10;
+ 
+-        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4))
++        if (!this.blockAccess.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && !Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 - 1, par4, UP))
+         {
+             float f1 = 0.2F;
+             float f2 = 0.0625F;
+@@ -2371,7 +2374,7 @@
+                 d0 = d5;
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 - 1, par3, par4, EAST))
+             {
+                 tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d2, d1);
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 1), d2, d3);
+@@ -2383,7 +2386,7 @@
+                 tessellator.addVertexWithUV((double)((float)par2 + f1), (double)((float)par3 + f + f2), (double)(par4 + 1), d2, d1);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 + 1, par3, par4))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2 + 1, par3, par4, WEST))
+             {
+                 tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d1);
+                 tessellator.addVertexWithUV((double)(par2 + 1 - 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d0, d3);
+@@ -2395,7 +2398,7 @@
+                 tessellator.addVertexWithUV((double)((float)(par2 + 1) - f1), (double)((float)par3 + f + f2), (double)(par4 + 0), d0, d1);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 - 1))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 - 1, SOUTH))
+             {
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d2, d1);
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)(par3 + 0) + f2), (double)(par4 + 0), d2, d3);
+@@ -2407,7 +2410,7 @@
+                 tessellator.addVertexWithUV((double)(par2 + 0), (double)((float)par3 + f + f2), (double)((float)par4 + f1), d2, d1);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 + 1))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3, par4 + 1, NORTH))
+             {
+                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d1);
+                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)(par3 + 0) + f2), (double)(par4 + 1 - 0), d0, d3);
+@@ -2419,7 +2422,7 @@
+                 tessellator.addVertexWithUV((double)(par2 + 1), (double)((float)par3 + f + f2), (double)((float)(par4 + 1) - f1), d0, d1);
+             }
+ 
+-            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4))
++            if (Block.fire.canBlockCatchFire(this.blockAccess, par2, par3 + 1, par4, DOWN))
+             {
+                 d5 = (double)par2 + 0.5D + 0.5D;
+                 d6 = (double)par2 + 0.5D - 0.5D;

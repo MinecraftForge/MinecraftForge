@@ -1,0 +1,53 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemSeeds.java
++++ ../src_work/minecraft/net/minecraft/item/ItemSeeds.java
+@@ -1,10 +1,15 @@
+ package net.minecraft.item;
+ 
++import net.minecraft.block.Block;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.world.World;
+ 
+-public class ItemSeeds extends Item
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.common.IPlantable;
++
++public class ItemSeeds extends Item implements IPlantable
+ {
+     /**
+      * The type of block this seed turns into (wheat or pumpkin stems for instance)
+@@ -35,8 +40,9 @@
+         else if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))
+         {
+             int i1 = par3World.getBlockId(par4, par5, par6);
++            Block soil = Block.blocksList[i1];
+ 
+-            if (i1 == this.soilBlockID && par3World.isAirBlock(par4, par5 + 1, par6))
++            if (soil != null && soil.canSustainPlant(par3World, par4, par5, par6, ForgeDirection.UP, this) && par3World.isAirBlock(par4, par5 + 1, par6))
+             {
+                 par3World.setBlock(par4, par5 + 1, par6, this.blockType);
+                 --par1ItemStack.stackSize;
+@@ -52,4 +58,22 @@
+             return false;
+         }
+     }
++
++    @Override
++    public EnumPlantType getPlantType(World world, int x, int y, int z)
++    {
++        return (blockType == Block.netherStalk.blockID ? EnumPlantType.Nether : EnumPlantType.Crop);
++    }
++
++    @Override
++    public int getPlantID(World world, int x, int y, int z)
++    {
++        return blockType;
++    }
++
++    @Override
++    public int getPlantMetadata(World world, int x, int y, int z)
++    {
++        return 0;
++    }
+ }

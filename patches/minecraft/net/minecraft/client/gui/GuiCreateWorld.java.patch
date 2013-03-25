@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
++++ ../src_work/minecraft/net/minecraft/client/gui/GuiCreateWorld.java
+@@ -377,7 +377,7 @@
+             }
+             else if (par1GuiButton.id == 8)
+             {
+-                this.mc.displayGuiScreen(new GuiCreateFlatWorld(this, this.generatorOptionsToUse));
++                WorldType.worldTypes[this.worldTypeId].onCustomizeButton(this.mc, this);
+             }
+         }
+     }
+@@ -395,7 +395,8 @@
+         this.buttonBonusItems.drawButton = this.moreOptions;
+         this.buttonWorldType.drawButton = this.moreOptions;
+         this.buttonAllowCommands.drawButton = this.moreOptions;
+-        this.buttonCustomize.drawButton = this.moreOptions && WorldType.worldTypes[this.worldTypeId] == WorldType.FLAT;
++        this.buttonCustomize.drawButton = this.moreOptions && (WorldType.worldTypes[this.worldTypeId].isCustomizable());
++        
+         StringTranslate stringtranslate;
+ 
+         if (this.moreOptions)

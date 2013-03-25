@@ -1,0 +1,231 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemInWorldManager.java
++++ ../src_work/minecraft/net/minecraft/item/ItemInWorldManager.java
+@@ -8,8 +8,19 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ 
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.Event;
++import net.minecraftforge.event.ForgeEventFactory;
++import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent;
++import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
++
+ public class ItemInWorldManager
+ {
++    /** Forge reach distance */
++    private double blockReachDistance = 5.0d;
++
+     /** The world object that this object is connected to. */
+     public World theWorld;
+ 
+@@ -145,6 +156,13 @@
+     {
+         if (!this.gameType.isAdventure() || this.thisPlayerMP.canCurrentToolHarvestBlock(par1, par2, par3))
+         {
++            PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(thisPlayerMP, Action.LEFT_CLICK_BLOCK, par1, par2, par3, par4);
++            if (event.isCanceled())
++            {
++                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                return;
++            }
++
+             if (this.isCreative())
+             {
+                 if (!this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4))
+@@ -154,15 +172,33 @@
+             }
+             else
+             {
+-                this.theWorld.extinguishFire((EntityPlayer)null, par1, par2, par3, par4);
+                 this.initialDamage = this.curblockDamage;
+                 float f = 1.0F;
+                 int i1 = this.theWorld.getBlockId(par1, par2, par3);
+ 
+-                if (i1 > 0)
+-                {
+-                    Block.blocksList[i1].onBlockClicked(this.theWorld, par1, par2, par3, this.thisPlayerMP);
+-                    f = Block.blocksList[i1].getPlayerRelativeBlockHardness(this.thisPlayerMP, this.thisPlayerMP.worldObj, par1, par2, par3);
++                Block block = Block.blocksList[i1];
++
++                if (block != null)
++                {
++                    if (event.useBlock != Event.Result.DENY)
++                    {
++                        block.onBlockClicked(theWorld, par1, par2, par3, thisPlayerMP);
++                        theWorld.extinguishFire(thisPlayerMP, par1, par2, par3, par4);
++                    }
++                    else
++                    {
++                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                    }
++                    f = block.getPlayerRelativeBlockHardness(thisPlayerMP, thisPlayerMP.worldObj, par1, par2, par3);
++                }
++
++                if (event.useItem == Event.Result.DENY)
++                {
++                    if (f >= 1.0f)
++                    {
++                        thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, theWorld));
++                    }
++                    return;
+                 }
+ 
+                 if (i1 > 0 && f >= 1.0F)
+@@ -236,7 +272,7 @@
+             block.onBlockHarvested(this.theWorld, par1, par2, par3, l, this.thisPlayerMP);
+         }
+ 
+-        boolean flag = this.theWorld.setBlockToAir(par1, par2, par3);
++        boolean flag = (block != null && block.removeBlockByPlayer(theWorld, thisPlayerMP, par1, par2, par3));
+ 
+         if (block != null && flag)
+         {
+@@ -257,19 +293,30 @@
+         }
+         else
+         {
++            ItemStack stack = thisPlayerMP.getCurrentEquippedItem();
++            if (stack != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, thisPlayerMP))
++            {
++                return false;
++            }
+             int l = this.theWorld.getBlockId(par1, par2, par3);
+             int i1 = this.theWorld.getBlockMetadata(par1, par2, par3);
+             this.theWorld.playAuxSFXAtEntity(this.thisPlayerMP, 2001, par1, par2, par3, l + (this.theWorld.getBlockMetadata(par1, par2, par3) << 12));
+-            boolean flag = this.removeBlock(par1, par2, par3);
++            boolean flag = false;
+ 
+             if (this.isCreative())
+             {
++                flag = this.removeBlock(par1, par2, par3);
+                 this.thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par1, par2, par3, this.theWorld));
+             }
+             else
+             {
+                 ItemStack itemstack = this.thisPlayerMP.getCurrentEquippedItem();
+-                boolean flag1 = this.thisPlayerMP.canHarvestBlock(Block.blocksList[l]);
++                boolean flag1 = false;
++                Block block = Block.blocksList[l];
++                if (block != null)
++                {
++                    flag1 = block.canHarvestBlock(thisPlayerMP, i1);
++                }
+ 
+                 if (itemstack != null)
+                 {
+@@ -281,6 +328,7 @@
+                     }
+                 }
+ 
++                flag = this.removeBlock(par1, par2, par3);
+                 if (flag && flag1)
+                 {
+                     Block.blocksList[l].harvestBlock(this.theWorld, this.thisPlayerMP, par1, par2, par3, i1);
+@@ -321,6 +369,7 @@
+             if (itemstack1.stackSize == 0)
+             {
+                 par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thisPlayerMP, itemstack1));
+             }
+ 
+             if (!par1EntityPlayer.isUsingItem())
+@@ -338,35 +387,56 @@
+      */
+     public boolean activateBlockOrUseItem(EntityPlayer par1EntityPlayer, World par2World, ItemStack par3ItemStack, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+     {
+-        int i1;
+-
+-        if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
+-        {
+-            i1 = par2World.getBlockId(par4, par5, par6);
+-
+-            if (i1 > 0 && Block.blocksList[i1].onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10))
+-            {
+-                return true;
+-            }
+-        }
+-
+-        if (par3ItemStack == null)
+-        {
++        PlayerInteractEvent event = ForgeEventFactory.onPlayerInteract(par1EntityPlayer, Action.RIGHT_CLICK_BLOCK, par4, par5, par6, par7);
++        if (event.isCanceled())
++        {
++            thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
+             return false;
+         }
+-        else if (this.isCreative())
+-        {
+-            i1 = par3ItemStack.getItemDamage();
+-            int j1 = par3ItemStack.stackSize;
+-            boolean flag = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
+-            par3ItemStack.setItemDamage(i1);
+-            par3ItemStack.stackSize = j1;
+-            return flag;
+-        }
+-        else
+-        {
+-            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
+-        }
++
++        Item item = (par3ItemStack != null ? par3ItemStack.getItem() : null);
++        if (item != null && item.onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10))
++        {
++            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
++            return true;
++        }
++
++        int i1 = par2World.getBlockId(par4, par5, par6);
++        Block block = Block.blocksList[i1];
++        boolean result = false;
++
++        if (block != null && (!par1EntityPlayer.isSneaking() || ( par1EntityPlayer.getHeldItem() == null || par1EntityPlayer.getHeldItem().getItem().shouldPassSneakingClickToBlock(par2World, par4, par5, par6))))
++        {
++            if (event.useBlock != Event.Result.DENY)
++            {
++                result = block.onBlockActivated(par2World, par4, par5, par6, par1EntityPlayer, par7, par8, par9, par10);
++            }
++            else
++            {
++                thisPlayerMP.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(par4, par5, par6, theWorld));
++                result = event.useItem != Event.Result.ALLOW;
++            }
++        }
++
++        if (par3ItemStack != null && !result && event.useItem != Event.Result.DENY)
++        {
++            int meta = par3ItemStack.getItemDamage();
++            int size = par3ItemStack.stackSize;
++            result = par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, par8, par9, par10);
++            if (isCreative())
++            {
++                par3ItemStack.setItemDamage(meta);
++                par3ItemStack.stackSize = size;
++            }
++            if (par3ItemStack.stackSize <= 0) ForgeEventFactory.onPlayerDestroyItem(thisPlayerMP, par3ItemStack);
++        }
++
++        /* Re-enable if this causes bukkit incompatibility, or re-write client side to only send a single packet per right click.
++        if (par3ItemStack != null && ((!result && event.useItem != Event.Result.DENY) || event.useItem == Event.Result.ALLOW))
++        {
++            this.tryUseItem(thisPlayerMP, par2World, par3ItemStack);
++        }*/
++        return result;
+     }
+ 
+     /**
+@@ -376,4 +446,13 @@
+     {
+         this.theWorld = par1WorldServer;
+     }
++
++    public double getBlockReachDistance()
++    {
++        return blockReachDistance;
++    }
++    public void setBlockReachDistance(double distance)
++    {
++        blockReachDistance = distance;
++    }
+ }

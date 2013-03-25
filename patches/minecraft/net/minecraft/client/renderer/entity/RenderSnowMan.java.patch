@@ -1,0 +1,35 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderSnowMan.java
+@@ -7,8 +7,14 @@
+ import net.minecraft.client.renderer.RenderBlocks;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.monster.EntitySnowman;
++import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemStack;
+ import org.lwjgl.opengl.GL11;
++
++import net.minecraftforge.client.IItemRenderer;
++import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
++import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
++import net.minecraftforge.client.MinecraftForgeClient;
+ 
+ @SideOnly(Side.CLIENT)
+ public class RenderSnowMan extends RenderLiving
+@@ -31,12 +37,15 @@
+         super.renderEquippedItems(par1EntitySnowman, par2);
+         ItemStack itemstack = new ItemStack(Block.pumpkin, 1);
+ 
+-        if (itemstack != null && itemstack.getItem().itemID < 256)
++        if (itemstack != null && itemstack.getItem() instanceof ItemBlock)
+         {
+             GL11.glPushMatrix();
+             this.snowmanModel.head.postRender(0.0625F);
+ 
+-            if (RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++            IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(itemstack, EQUIPPED);
++            boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, itemstack, BLOCK_3D));
++
++            if (is3D || RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
+             {
+                 float f1 = 0.625F;
+                 GL11.glTranslatef(0.0F, -0.34375F, 0.0F);

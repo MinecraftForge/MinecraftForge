@@ -1,0 +1,159 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockLever.java
++++ ../src_work/minecraft/net/minecraft/block/BlockLever.java
+@@ -10,6 +10,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ForgeDirection;
++import static net.minecraftforge.common.ForgeDirection.*;
++
+ public class BlockLever extends Block
+ {
+     protected BlockLever(int par1)
+@@ -57,7 +60,13 @@
+      */
+     public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5)
+     {
+-        return par5 == 0 && par1World.isBlockNormalCube(par2, par3 + 1, par4) ? true : (par5 == 1 && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) ? true : (par5 == 2 && par1World.isBlockNormalCube(par2, par3, par4 + 1) ? true : (par5 == 3 && par1World.isBlockNormalCube(par2, par3, par4 - 1) ? true : (par5 == 4 && par1World.isBlockNormalCube(par2 + 1, par3, par4) ? true : par5 == 5 && par1World.isBlockNormalCube(par2 - 1, par3, par4)))));
++        ForgeDirection dir = ForgeDirection.getOrientation(par5);
++        return (dir == DOWN  && par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN )) ||
++               (dir == UP    && par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP   )) ||
++               (dir == NORTH && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH)) ||
++               (dir == SOUTH && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH)) ||
++               (dir == WEST  && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST )) ||
++               (dir == EAST  && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST ));
+     }
+ 
+     /**
+@@ -65,7 +74,12 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        return par1World.isBlockNormalCube(par2 - 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2 + 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2, par3, par4 - 1) ? true : (par1World.isBlockNormalCube(par2, par3, par4 + 1) ? true : (par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) ? true : par1World.isBlockNormalCube(par2, par3 + 1, par4)))));
++        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST ) ||
++               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST ) ||
++               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) ||
++               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH) ||
++               par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP   ) ||
++               par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN );
+     }
+ 
+     /**
+@@ -77,32 +91,32 @@
+         int k1 = par9 & 7;
+         byte b0 = -1;
+ 
+-        if (par5 == 0 && par1World.isBlockNormalCube(par2, par3 + 1, par4))
++        if (par5 == 0 && par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN))
+         {
+             b0 = 0;
+         }
+ 
+-        if (par5 == 1 && par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4))
++        if (par5 == 1 && par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP))
+         {
+             b0 = 5;
+         }
+ 
+-        if (par5 == 2 && par1World.isBlockNormalCube(par2, par3, par4 + 1))
++        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
+         {
+             b0 = 4;
+         }
+ 
+-        if (par5 == 3 && par1World.isBlockNormalCube(par2, par3, par4 - 1))
++        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
+         {
+             b0 = 3;
+         }
+ 
+-        if (par5 == 4 && par1World.isBlockNormalCube(par2 + 1, par3, par4))
++        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+         {
+             b0 = 2;
+         }
+ 
+-        if (par5 == 5 && par1World.isBlockNormalCube(par2 - 1, par3, par4))
++        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+         {
+             b0 = 1;
+         }
+@@ -178,42 +192,42 @@
+             int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
+             boolean flag = false;
+ 
+-            if (!par1World.isBlockNormalCube(par2 - 1, par3, par4) && i1 == 1)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.isBlockNormalCube(par2 + 1, par3, par4) && i1 == 2)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.isBlockNormalCube(par2, par3, par4 - 1) && i1 == 3)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.isBlockNormalCube(par2, par3, par4 + 1) && i1 == 4)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && i1 == 5)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.doesBlockHaveSolidTopSurface(par2, par3 - 1, par4) && i1 == 6)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.isBlockNormalCube(par2, par3 + 1, par4) && i1 == 0)
+-            {
+-                flag = true;
+-            }
+-
+-            if (!par1World.isBlockNormalCube(par2, par3 + 1, par4) && i1 == 7)
++            if (!par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST) && i1 == 1)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST) && i1 == 2)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) && i1 == 3)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH) && i1 == 4)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && i1 == 5)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2, par3 - 1, par4, UP) && i1 == 6)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN) && i1 == 0)
++            {
++                flag = true;
++            }
++
++            if (!par1World.isBlockSolidOnSide(par2, par3 + 1, par4, DOWN) && i1 == 7)
+             {
+                 flag = true;
+             }

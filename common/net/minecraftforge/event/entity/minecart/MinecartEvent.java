@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.minecart;
 
-import net.minecraft.src.Entity;
-import net.minecraft.src.EntityMinecart;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraftforge.event.entity.EntityEvent;
 
 public class MinecartEvent extends EntityEvent

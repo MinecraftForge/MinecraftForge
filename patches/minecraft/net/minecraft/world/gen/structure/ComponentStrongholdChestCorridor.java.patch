@@ -1,0 +1,21 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdChestCorridor.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentStrongholdChestCorridor extends ComponentStronghold
+ {
+@@ -72,7 +75,7 @@
+                 if (par3StructureBoundingBox.isVecInside(j, i, k))
+                 {
+                     this.hasMadeChest = true;
+-                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 2, 3, WeightedRandomChestContent.func_92080_a(strongholdChestContents, new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 2 + par2Random.nextInt(2));
++                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 2, 3, ChestGenHooks.getItems(STRONGHOLD_CORRIDOR, par2Random), ChestGenHooks.getCount(STRONGHOLD_CORRIDOR, par2Random));
+                 }
+             }
+ 

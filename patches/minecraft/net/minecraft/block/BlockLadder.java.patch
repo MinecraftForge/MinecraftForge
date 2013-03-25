@@ -1,0 +1,89 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockLadder.java
++++ ../src_work/minecraft/net/minecraft/block/BlockLadder.java
+@@ -8,6 +8,9 @@
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ForgeDirection;
++import static net.minecraftforge.common.ForgeDirection.*;
+ 
+ public class BlockLadder extends Block
+ {
+@@ -104,7 +107,10 @@
+      */
+     public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
+     {
+-        return par1World.isBlockNormalCube(par2 - 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2 + 1, par3, par4) ? true : (par1World.isBlockNormalCube(par2, par3, par4 - 1) ? true : par1World.isBlockNormalCube(par2, par3, par4 + 1)));
++        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST ) ||
++               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST ) ||
++               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH) ||
++               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH);
+     }
+ 
+     /**
+@@ -114,22 +120,22 @@
+     {
+         int j1 = par9;
+ 
+-        if ((par9 == 0 || par5 == 2) && par1World.isBlockNormalCube(par2, par3, par4 + 1))
++        if ((j1 == 0 || par5 == 2) && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
+         {
+             j1 = 2;
+         }
+ 
+-        if ((j1 == 0 || par5 == 3) && par1World.isBlockNormalCube(par2, par3, par4 - 1))
++        if ((j1 == 0 || par5 == 3) && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
+         {
+             j1 = 3;
+         }
+ 
+-        if ((j1 == 0 || par5 == 4) && par1World.isBlockNormalCube(par2 + 1, par3, par4))
++        if ((j1 == 0 || par5 == 4) && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+         {
+             j1 = 4;
+         }
+ 
+-        if ((j1 == 0 || par5 == 5) && par1World.isBlockNormalCube(par2 - 1, par3, par4))
++        if ((j1 == 0 || par5 == 5) && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+         {
+             j1 = 5;
+         }
+@@ -146,22 +152,22 @@
+         int i1 = par1World.getBlockMetadata(par2, par3, par4);
+         boolean flag = false;
+ 
+-        if (i1 == 2 && par1World.isBlockNormalCube(par2, par3, par4 + 1))
++        if (i1 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH))
+         {
+             flag = true;
+         }
+ 
+-        if (i1 == 3 && par1World.isBlockNormalCube(par2, par3, par4 - 1))
++        if (i1 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH))
+         {
+             flag = true;
+         }
+ 
+-        if (i1 == 4 && par1World.isBlockNormalCube(par2 + 1, par3, par4))
++        if (i1 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST))
+         {
+             flag = true;
+         }
+ 
+-        if (i1 == 5 && par1World.isBlockNormalCube(par2 - 1, par3, par4))
++        if (i1 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST))
+         {
+             flag = true;
+         }
+@@ -182,4 +188,10 @@
+     {
+         return 1;
+     }
++
++    @Override
++    public boolean isLadder(World world, int x, int y, int z)
++    {
++        return true;
++    }
+ }

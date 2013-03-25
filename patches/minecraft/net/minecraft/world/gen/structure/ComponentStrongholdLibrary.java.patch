@@ -1,0 +1,29 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdLibrary.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentStrongholdLibrary.java
+@@ -6,6 +6,9 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentStrongholdLibrary extends ComponentStronghold
+ {
+@@ -145,12 +148,14 @@
+                 this.placeBlockAtCurrentPosition(par1World, Block.torchWood.blockID, 0, b1, 8, b2 + 1, par3StructureBoundingBox);
+             }
+ 
+-            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 3, 5, WeightedRandomChestContent.func_92080_a(strongholdLibraryChestContents, new WeightedRandomChestContent[] {Item.enchantedBook.func_92112_a(par2Random, 1, 5, 2)}), 1 + par2Random.nextInt(4));
++            ChestGenHooks info = ChestGenHooks.getInfo(STRONGHOLD_LIBRARY);
++
++            this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 3, 3, 5, info.getItems(par2Random), info.getCount(par2Random));
+ 
+             if (this.isLargeRoom)
+             {
+                 this.placeBlockAtCurrentPosition(par1World, 0, 0, 12, 9, 1, par3StructureBoundingBox);
+-                this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 12, 8, 1, WeightedRandomChestContent.func_92080_a(strongholdLibraryChestContents, new WeightedRandomChestContent[] {Item.enchantedBook.func_92112_a(par2Random, 1, 5, 2)}), 1 + par2Random.nextInt(4));
++                this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 12, 8, 1, info.getItems(par2Random), info.getCount(par2Random));
+             }
+ 
+             return true;

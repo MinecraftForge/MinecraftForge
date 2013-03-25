@@ -185,12 +185,17 @@ public class ListenerList
          */
         private void buildCache()
         {        
+            if(parent != null && parent.shouldRebuild())
+            {
+                parent.buildCache();
+            }
+            
             ArrayList<IEventListener> ret = new ArrayList<IEventListener>();
             for (EventPriority value : EventPriority.values())
             {
                 ret.addAll(getListeners(value));
             }
-            listeners = ret.toArray(new IEventListener[0]);
+            listeners = ret.toArray(new IEventListener[ret.size()]);
             rebuild = false;
         }
         

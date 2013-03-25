@@ -1,0 +1,26 @@
+--- ../src_base/minecraft/net/minecraft/item/ItemTool.java
++++ ../src_work/minecraft/net/minecraft/item/ItemTool.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeHooks;
+ 
+ public class ItemTool extends Item
+ {
+@@ -110,4 +111,15 @@
+     {
+         return this.toolMaterial.getToolCraftingMaterial() == par2ItemStack.itemID ? true : super.getIsRepairable(par1ItemStack, par2ItemStack);
+     }
++
++    /** FORGE: Overridden to allow custom tool effectiveness */
++    @Override
++    public float getStrVsBlock(ItemStack stack, Block block, int meta) 
++    {
++        if (ForgeHooks.isToolEffective(stack, block, meta))
++        {
++            return efficiencyOnProperMaterial;
++        }
++        return getStrVsBlock(stack, block);
++    }
+ }

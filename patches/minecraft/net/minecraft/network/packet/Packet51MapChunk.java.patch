@@ -1,0 +1,82 @@
+--- ../src_base/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
++++ ../src_work/minecraft/net/minecraft/network/packet/Packet51MapChunk.java
+@@ -5,6 +5,7 @@
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.IOException;
++import java.util.concurrent.Semaphore;
+ import java.util.zip.DataFormatException;
+ import java.util.zip.Deflater;
+ import java.util.zip.Inflater;
+@@ -47,6 +48,8 @@
+     /** A temporary storage for the compressed chunk data byte array. */
+     private static byte[] temp = new byte[196864];
+ 
++    private Semaphore deflateGate;
++
+     public Packet51MapChunk()
+     {
+         this.isChunkDataPacket = true;
+@@ -59,17 +62,22 @@
+         this.zCh = par1Chunk.zPosition;
+         this.includeInitialize = par2;
+         Packet51MapChunkData packet51mapchunkdata = getMapChunkData(par1Chunk, par2, par3);
+-        Deflater deflater = new Deflater(-1);
+         this.yChMax = packet51mapchunkdata.chunkHasAddSectionFlag;
+         this.yChMin = packet51mapchunkdata.chunkExistFlag;
+-
++        this.compressedChunkData = packet51mapchunkdata.compressedData;
++        this.deflateGate = new Semaphore(1);
++    }
++
++    private void deflate()
++    {
++        Deflater deflater = new Deflater(-1);
+         try
+         {
+-            this.compressedChunkData = packet51mapchunkdata.compressedData;
+-            deflater.setInput(packet51mapchunkdata.compressedData, 0, packet51mapchunkdata.compressedData.length);
++            deflater.setInput(compressedChunkData, 0, compressedChunkData.length);
+             deflater.finish();
+-            this.chunkData = new byte[packet51mapchunkdata.compressedData.length];
+-            this.tempLength = deflater.deflate(this.chunkData);
++            byte[] deflated = new byte[compressedChunkData.length];
++            this.tempLength = deflater.deflate(deflated);
++            this.chunkData = deflated;
+         }
+         finally
+         {
+@@ -97,13 +105,16 @@
+         par1DataInputStream.readFully(temp, 0, this.tempLength);
+         int i = 0;
+         int j;
++        int msb = 0; //BugFix: MC does not read the MSB array from the packet properly, causing issues for servers that use blocks > 256
+ 
+         for (j = 0; j < 16; ++j)
+         {
+             i += this.yChMin >> j & 1;
++            msb  += this.yChMax >> j & 1;
+         }
+ 
+         j = 12288 * i;
++        j += 2048 * msb;
+ 
+         if (this.includeInitialize)
+         {
+@@ -133,6 +144,16 @@
+      */
+     public void writePacketData(DataOutputStream par1DataOutputStream) throws IOException
+     {
++        if (chunkData == null)
++        {
++            deflateGate.acquireUninterruptibly();
++            if (chunkData == null)
++            {
++                deflate();
++            }
++            deflateGate.release();
++        }
++
+         par1DataOutputStream.writeInt(this.xCh);
+         par1DataOutputStream.writeInt(this.zCh);
+         par1DataOutputStream.writeBoolean(this.includeInitialize);

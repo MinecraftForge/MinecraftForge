@@ -1,0 +1,399 @@
+--- ../src_base/minecraft/net/minecraft/item/Item.java
++++ ../src_work/minecraft/net/minecraft/item/Item.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.entity.item.EntityItemFrame;
+ import net.minecraft.entity.item.EntityPainting;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.potion.Potion;
+ import net.minecraft.potion.PotionHelper;
+ import net.minecraft.stats.StatList;
+@@ -23,7 +24,9 @@
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.util.StringTranslate;
+ import net.minecraft.util.Vec3;
++import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ChestGenHooks;
+ 
+ public class Item
+ {
+@@ -238,13 +241,16 @@
+     /** Icon index in the icons table. */
+     protected Icon iconIndex;
+ 
++    /** FORGE: To disable repair recipes. */
++    protected boolean canRepair = true;
++
+     public Item(int par1)
+     {
+         this.itemID = 256 + par1;
+ 
+         if (itemsList[256 + par1] != null)
+         {
+-            System.out.println("CONFLICT @ " + par1);
++            System.out.println("CONFLICT @ " + par1 + " item slot already occupied by " + itemsList[256 + par1] + " while adding " + this);
+         }
+ 
+         itemsList[256 + par1] = this;
+@@ -640,6 +646,10 @@
+         float f7 = f4 * f5;
+         float f8 = f3 * f5;
+         double d3 = 5.0D;
++        if (par2EntityPlayer instanceof EntityPlayerMP)
++        {
++            d3 = ((EntityPlayerMP)par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
++        }
+         Vec3 vec31 = vec3.addVector((double)f7 * d3, (double)f6 * d3, (double)f8 * d3);
+         return par1World.rayTraceBlocks_do_do(vec3, vec31, par3, !par3);
+     }
+@@ -720,4 +730,349 @@
+     {
+         StatList.initStats();
+     }
++
++    /* =========================================================== FORGE START ===============================================================*/
++    /**
++     * Called when a player drops the item into the world,
++     * returning false from this will prevent the item from
++     * being removed from the players inventory and spawning
++     * in the world
++     *
++     * @param player The player that dropped the item
++     * @param item The item stack, before the item is removed.
++     */
++    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
++    {
++        return true;
++    }
++
++    /**
++     * This is called when the item is used, before the block is activated.
++     * @param stack The Item Stack
++     * @param player The Player that used the item
++     * @param world The Current World
++     * @param x Target X Position
++     * @param y Target Y Position
++     * @param z Target Z Position
++     * @param side The side of the target hit
++     * @return Return true to prevent any further processing.
++     */
++    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
++    {
++        return false;
++    }
++
++    /**
++     * Metadata-sensitive version of getStrVsBlock
++     * @param itemstack The Item Stack
++     * @param block The block the item is trying to break
++     * @param metadata The items current metadata
++     * @return The damage strength
++     */
++    public float getStrVsBlock(ItemStack itemstack, Block block, int metadata)
++    {
++        return getStrVsBlock(itemstack, block);
++    }
++
++    /**
++     * Called by CraftingManager to determine if an item is reparable.
++     * @return True if reparable
++     */
++    public boolean isRepairable()
++    {
++        return canRepair && isDamageable();
++    }
++
++    /**
++     * Call to disable repair recipes.
++     * @return The current Item instance
++     */
++    public Item setNoRepair()
++    {
++        canRepair = false;
++        return this;
++    }
++
++    /**
++     * Called before a block is broken.  Return true to prevent default block harvesting.
++     *
++     * Note: In SMP, this is called on both client and server sides!
++     *
++     * @param itemstack The current ItemStack
++     * @param X The X Position
++     * @param Y The X Position
++     * @param Z The X Position
++     * @param player The Player that is wielding the item
++     * @return True to prevent harvesting, false to continue as normal
++     */
++    public boolean onBlockStartBreak(ItemStack itemstack, int X, int Y, int Z, EntityPlayer player)
++    {
++        return false;
++    }
++
++    /**
++     * Called each tick while using an item.
++     * @param stack The Item being used
++     * @param player The Player using the item
++     * @param count The amount of time in tick the item has been used for continuously
++     */
++    public void onUsingItemTick(ItemStack stack, EntityPlayer player, int count)
++    {
++    }
++
++    /**
++     * Called when the player Left Clicks (attacks) an entity.
++     * Processed before damage is done, if return value is true further processing is canceled
++     * and the entity is not attacked.
++     *
++     * @param stack The Item being used
++     * @param player The player that is attacking
++     * @param entity The entity being attacked
++     * @return True to cancel the rest of the interaction.
++     */
++    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
++    {
++        return false;
++    }
++
++    /**
++     * Player, Render pass, and item usage sensitive version of getIconIndex.
++     *
++     * @param stack The item stack to get the icon for. (Usually this, and usingItem will be the same if usingItem is not null)
++     * @param renderPass The pass to get the icon for, 0 is default.
++     * @param player The player holding the item
++     * @param usingItem The item the player is actively using. Can be null if not using anything.
++     * @param useRemaining The ticks remaining for the active item.
++     * @return The icon index
++     */
++    public Icon getIcon(ItemStack stack, int renderPass, EntityPlayer player, ItemStack usingItem, int useRemaining)
++    {
++        return getIcon(stack, renderPass);
++    }
++
++    /**
++     * Returns the number of render passes/layers this item has.
++     * Usually equates to ItemRenderer.renderItem being called for this many passes.
++     * Does not get called unless requiresMultipleRenderPasses() is true;
++     *
++     * @param metadata The item's metadata
++     * @return The number of passes to run.
++     */
++    public int getRenderPasses(int metadata)
++    {
++        return requiresMultipleRenderPasses() ? 2 : 1;
++    }
++
++    /**
++     * ItemStack sensitive version of getContainerItem.
++     * Returns a full ItemStack instance of the result.
++     *
++     * @param itemStack The current ItemStack
++     * @return The resulting ItemStack
++     */
++    public ItemStack getContainerItemStack(ItemStack itemStack)
++    {
++        if (!hasContainerItem())
++        {
++            return null;
++        }
++        return new ItemStack(getContainerItem());
++    }
++
++    /**
++     * Retrieves the normal 'lifespan' of this item when it is dropped on the ground as a EntityItem.
++     * This is in ticks, standard result is 6000, or 5 mins.
++     *
++     * @param itemStack The current ItemStack
++     * @param world The world the entity is in
++     * @return The normal lifespan in ticks.
++     */
++    public int getEntityLifespan(ItemStack itemStack, World world)
++    {
++        return 6000;
++    }
++
++    /**
++     * Determines if this Item has a special entity for when they are in the world.
++     * Is called when a EntityItem is spawned in the world, if true and Item#createCustomEntity
++     * returns non null, the EntityItem will be destroyed and the new Entity will be added to the world.
++     *
++     * @param stack The current item stack
++     * @return True of the item has a custom entity, If true, Item#createCustomEntity will be called
++     */
++    public boolean hasCustomEntity(ItemStack stack)
++    {
++        return false;
++    }
++
++    /**
++     * This function should return a new entity to replace the dropped item.
++     * Returning null here will not kill the EntityItem and will leave it to function normally.
++     * Called when the item it placed in a world.
++     *
++     * @param world The world object
++     * @param location The EntityItem object, useful for getting the position of the entity
++     * @param itemstack The current item stack
++     * @return A new Entity object to spawn or null
++     */
++    public Entity createEntity(World world, Entity location, ItemStack itemstack)
++    {
++        return null;
++    }
++
++    /**
++     * Gets a list of tabs that items belonging to this class can display on,
++     * combined properly with getSubItems allows for a single item to span
++     * many sub-items across many tabs.
++     *
++     * @return A list of all tabs that this item could possibly be one.
++     */
++    public CreativeTabs[] getCreativeTabs()
++    {
++        return new CreativeTabs[]{ getCreativeTab() };
++    }
++
++    /**
++     * Determines the base experience for a player when they remove this item from a furnace slot.
++     * This number must be between 0 and 1 for it to be valid.
++     * This number will be multiplied by the stack size to get the total experience.
++     *
++     * @param item The item stack the player is picking up.
++     * @return The amount to award for each item.
++     */
++    public float getSmeltingExperience(ItemStack item)
++    {
++        return -1; //-1 will default to the old lookups.
++    }
++
++    /**
++     * Return the correct icon for rendering based on the supplied ItemStack and render pass.
++     *
++     * Defers to {@link #getIconFromDamageForRenderPass(int, int)}
++     * @param stack to render for
++     * @param pass the multi-render pass
++     * @return the icon
++     */
++    public Icon getIcon(ItemStack stack, int pass)
++    {
++    	return getIconFromDamageForRenderPass(stack.getItemDamage(), pass);
++    }
++
++    /**
++     * Generates the base Random item for a specific instance of the chest gen,
++     * Enchanted books use this to pick a random enchantment.
++     *
++     * @param chest The chest category to generate for
++     * @param rnd World RNG
++     * @param original Original result registered with the chest gen hooks.
++     * @return New values to use as the random item, typically this will be original
++     */
++    public WeightedRandomChestContent getChestGenBase(ChestGenHooks chest, Random rnd, WeightedRandomChestContent original)
++    {
++        if (this instanceof ItemEnchantedBook)
++        {
++            return ((ItemEnchantedBook)this).func_92112_a(rnd,
++                    original.theMinimumChanceToGenerateItem,
++                    original.theMaximumChanceToGenerateItem, original.itemWeight);
++        }
++        return original;
++    }
++
++    /**
++     *
++     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
++     *
++     * @param par2World
++     * @param par4
++     * @param par5
++     * @param par6
++     * @return
++     */
++    public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6)
++    {
++        return false;
++    }
++
++
++    /**
++     * Called to tick armor in the armor slot. Override to do something
++     *
++     * @param world
++     * @param player
++     * @param itemStack
++     */
++    public void onArmorTickUpdate(World world, EntityPlayer player, ItemStack itemStack)
++    {
++
++    }
++
++    /**
++     * Determines if the specific ItemStack can be placed in the specified armor slot.
++     *
++     * @param stack The ItemStack
++     * @param armorType Armor slot ID: 0: Helmet, 1: Chest, 2: Legs, 3: Boots
++     * @return True if the given ItemStack can be inserted in the slot
++     */
++    public boolean isValidArmor(ItemStack stack, int armorType)
++    {
++        if (this instanceof ItemArmor)
++        {
++            return ((ItemArmor)this).armorType == armorType;
++        }
++
++        if (armorType == 0)
++        {
++            return itemID == Block.pumpkin.blockID || itemID == Item.skull.itemID;
++        }
++
++        return false;
++    }
++
++    /**
++     * ItemStack sensitive version of isPotionIngredient
++     *
++     * @param stack The item stack
++     * @return True if this stack can be used as a potion ingredient
++     */
++    public boolean isPotionIngredient(ItemStack stack)
++    {
++        return isPotionIngredient();
++    }
++
++    /**
++     * ItemStack sensitive version of getPotionEffect
++     *
++     * @param stack The item stack
++     * @return A string containing the bit manipulation to apply the the potion.
++     */
++    public String getPotionEffect(ItemStack stack)
++    {
++        return getPotionEffect();
++    }
++
++    /**
++     * Allow or forbid the specific book/item combination as an anvil enchant
++     *
++     * @param itemstack1 The item
++     * @param itemstack2 The book
++     * @return if the enchantment is allowed
++     */
++    public boolean isBookEnchantable(ItemStack itemstack1, ItemStack itemstack2)
++    {
++        return true;
++    }
++
++    /**
++     * An itemstack sensitive version of getDamageVsEntity - allows items to handle damage based on
++     * itemstack data, like tags. Falls back to getDamageVsEntity.
++     *
++     * @param par1Entity The entity being attacked (or the attacking mob, if it's a mob - vanilla bug?)
++     * @param itemStack The itemstack
++     * @return the damage
++     */
++    public int getDamageVsEntity(Entity par1Entity, ItemStack itemStack)
++    {
++        return getDamageVsEntity(par1Entity);
++    }
++
+ }

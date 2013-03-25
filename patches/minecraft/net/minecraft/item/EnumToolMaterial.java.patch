@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/item/EnumToolMaterial.java
++++ ../src_work/minecraft/net/minecraft/item/EnumToolMaterial.java
+@@ -30,6 +30,9 @@
+ 
+     /** Defines the natural enchantability factor of the material. */
+     private final int enchantability;
++
++    //Added by forge for custom Armor materials.
++    public Item customCraftingMaterial = null;
+ 
+     private EnumToolMaterial(int par3, int par4, float par5, int par6, int par7)
+     {
+@@ -86,6 +89,14 @@
+      */
+     public int getToolCraftingMaterial()
+     {
+-        return this == WOOD ? Block.planks.blockID : (this == STONE ? Block.cobblestone.blockID : (this == GOLD ? Item.ingotGold.itemID : (this == IRON ? Item.ingotIron.itemID : (this == EMERALD ? Item.diamond.itemID : 0))));
++        switch (this)
++        {
++            case WOOD:    return Block.planks.blockID;
++            case STONE:   return Block.cobblestone.blockID;
++            case GOLD:    return Item.ingotGold.itemID;
++            case IRON:    return Item.ingotIron.itemID;
++            case EMERALD: return Item.diamond.itemID;
++            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.itemID);
++        }
+     }
+ }

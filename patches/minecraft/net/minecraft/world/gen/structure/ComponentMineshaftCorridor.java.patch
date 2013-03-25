@@ -1,0 +1,31 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/structure/ComponentMineshaftCorridor.java
++++ ../src_work/minecraft/net/minecraft/world/gen/structure/ComponentMineshaftCorridor.java
+@@ -8,6 +8,9 @@
+ import net.minecraft.tileentity.TileEntityMobSpawner;
+ import net.minecraft.util.WeightedRandomChestContent;
+ import net.minecraft.world.World;
++
++import net.minecraftforge.common.ChestGenHooks;
++import static net.minecraftforge.common.ChestGenHooks.*;
+ 
+ public class ComponentMineshaftCorridor extends StructureComponent
+ {
+@@ -260,14 +263,16 @@
+                 this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k - 1, Block.torchWood.blockID, 0);
+                 this.randomlyPlaceBlock(par1World, par3StructureBoundingBox, par2Random, 0.05F, 1, 2, k + 1, Block.torchWood.blockID, 0);
+ 
++                ChestGenHooks info = ChestGenHooks.getInfo(MINESHAFT_CORRIDOR);
++
+                 if (par2Random.nextInt(100) == 0)
+                 {
+-                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 2, 0, k - 1, WeightedRandomChestContent.func_92080_a(StructureMineshaftPieces.func_78816_a(), new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 3 + par2Random.nextInt(4));
++                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 2, 0, k - 1, info.getItems(par2Random), info.getCount(par2Random));
+                 }
+ 
+                 if (par2Random.nextInt(100) == 0)
+                 {
+-                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 0, 0, k + 1, WeightedRandomChestContent.func_92080_a(StructureMineshaftPieces.func_78816_a(), new WeightedRandomChestContent[] {Item.enchantedBook.func_92114_b(par2Random)}), 3 + par2Random.nextInt(4));
++                    this.generateStructureChestContents(par1World, par3StructureBoundingBox, par2Random, 0, 0, k + 1, info.getItems(par2Random), info.getCount(par2Random));
+                 }
+ 
+                 if (this.hasSpiders && !this.spawnerPlaced)

@@ -1,0 +1,70 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockBaseRailLogic.java
++++ ../src_work/minecraft/net/minecraft/block/BlockBaseRailLogic.java
+@@ -14,6 +14,8 @@
+     private final boolean field_94512_f;
+     private List field_94513_g;
+ 
++    private final boolean canMakeSlopes;
++
+     final BlockRailBase field_94518_a;
+ 
+     public BlockBaseRailLogic(BlockRailBase par1, World par2, int par3, int par4, int par5)
+@@ -25,17 +27,11 @@
+         this.field_94514_d = par4;
+         this.field_94515_e = par5;
+         int l = par2.getBlockId(par3, par4, par5);
+-        int i1 = par2.getBlockMetadata(par3, par4, par5);
+-
+-        if (((BlockRailBase)Block.blocksList[l]).isPowered)
+-        {
+-            this.field_94512_f = true;
+-            i1 &= -9;
+-        }
+-        else
+-        {
+-            this.field_94512_f = false;
+-        }
++
++        BlockRailBase target = (BlockRailBase)Block.blocksList[l];
++        int i1 = target.getBasicRailMetadata(par2, null, par3, par4, par5);
++        field_94512_f = !target.isFlexibleRail(par2, par3, par4, par5);
++        canMakeSlopes = target.canMakeSlopes(par2, par3, par4, par5);
+ 
+         this.func_94504_a(i1);
+     }
+@@ -227,7 +223,7 @@
+             }
+         }
+ 
+-        if (b0 == 0)
++        if (b0 == 0 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.field_94516_b, this.field_94517_c, this.field_94514_d + 1, this.field_94515_e - 1))
+             {
+@@ -240,7 +236,7 @@
+             }
+         }
+ 
+-        if (b0 == 1)
++        if (b0 == 1 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.field_94516_b, this.field_94517_c + 1, this.field_94514_d + 1, this.field_94515_e))
+             {
+@@ -385,7 +381,7 @@
+             }
+         }
+ 
+-        if (b0 == 0)
++        if (b0 == 0 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.field_94516_b, this.field_94517_c, this.field_94514_d + 1, this.field_94515_e - 1))
+             {
+@@ -398,7 +394,7 @@
+             }
+         }
+ 
+-        if (b0 == 1)
++        if (b0 == 1 && canMakeSlopes)
+         {
+             if (BlockRailBase.isRailBlockAt(this.field_94516_b, this.field_94517_c + 1, this.field_94514_d + 1, this.field_94515_e))
+             {

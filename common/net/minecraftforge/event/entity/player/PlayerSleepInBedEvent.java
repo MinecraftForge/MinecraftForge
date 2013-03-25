@@ -1,7 +1,7 @@
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.EnumStatus;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EnumStatus;
 
 public class PlayerSleepInBedEvent extends PlayerEvent
 {

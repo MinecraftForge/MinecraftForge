@@ -1,0 +1,99 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockLeaves.java
++++ ../src_work/minecraft/net/minecraft/block/BlockLeaves.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+ import net.minecraft.block.material.Material;
+@@ -16,7 +18,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockLeaves extends BlockLeavesBase
++import net.minecraftforge.common.IShearable;
++
++public class BlockLeaves extends BlockLeavesBase implements IShearable
+ {
+     public static final String[] LEAF_TYPES = new String[] {"oak", "spruce", "birch", "jungle"};
+     public static final String[][] field_94396_b = new String[][] {{"leaves", "leaves_spruce", "leaves", "leaves_jungle"}, {"leaves_opaque", "leaves_spruce_opaque", "leaves_opaque", "leaves_jungle_opaque"}};
+@@ -107,10 +111,9 @@
+                     {
+                         int j2 = par1World.getBlockId(par2 + k1, par3 + l1, par4 + i2);
+ 
+-                        if (j2 == Block.leaves.blockID)
++                        if (Block.blocksList[j2] != null)
+                         {
+-                            int k2 = par1World.getBlockMetadata(par2 + k1, par3 + l1, par4 + i2);
+-                            par1World.setBlockMetadataWithNotify(par2 + k1, par3 + l1, par4 + i2, k2 | 8, 4);
++                            Block.blocksList[j2].beginLeavesDecay(par1World, par2 + k1, par3 + l1, par4 + i2);
+                         }
+                     }
+                 }
+@@ -156,11 +159,13 @@
+                             {
+                                 k2 = par1World.getBlockId(par2 + l1, par3 + i2, par4 + j2);
+ 
+-                                if (k2 == Block.wood.blockID)
++                                Block block = Block.blocksList[k2];
++
++                                if (block != null && block.canSustainLeaves(par1World, par2 + l1, par3 + i2, par4 + j2))
+                                 {
+                                     this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = 0;
+                                 }
+-                                else if (k2 == Block.leaves.blockID)
++                                else if (block != null && block.isLeaves(par1World, par2 + l1, par3 + i2, par4 + j2))
+                                 {
+                                     this.adjacentTreeBlocks[(l1 + k1) * j1 + (i2 + k1) * b1 + j2 + k1] = -2;
+                                 }
+@@ -325,15 +330,7 @@
+      */
+     public void harvestBlock(World par1World, EntityPlayer par2EntityPlayer, int par3, int par4, int par5, int par6)
+     {
+-        if (!par1World.isRemote && par2EntityPlayer.getCurrentEquippedItem() != null && par2EntityPlayer.getCurrentEquippedItem().itemID == Item.shears.itemID)
+-        {
+-            par2EntityPlayer.addStat(StatList.mineBlockStatArray[this.blockID], 1);
+-            this.dropBlockAsItem_do(par1World, par3, par4, par5, new ItemStack(Block.leaves.blockID, 1, par6 & 3));
+-        }
+-        else
+-        {
+-            super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
+-        }
++        super.harvestBlock(par1World, par2EntityPlayer, par3, par4, par5, par6);
+     }
+ 
+     /**
+@@ -414,4 +411,30 @@
+             }
+         }
+     }
++
++    @Override
++    public boolean isShearable(ItemStack item, World world, int x, int y, int z)
++    {
++        return true;
++    }
++
++    @Override
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int x, int y, int z, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        ret.add(new ItemStack(this, 1, world.getBlockMetadata(x, y, z) & 3));
++        return ret;
++    }
++
++    @Override
++    public void beginLeavesDecay(World world, int x, int y, int z)
++    {
++        world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) | 8, 4);
++    }
++
++    @Override
++    public boolean isLeaves(World world, int x, int y, int z)
++    {
++        return true;
++    }
+ }

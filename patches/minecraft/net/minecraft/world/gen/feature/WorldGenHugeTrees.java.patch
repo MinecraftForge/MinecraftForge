@@ -1,0 +1,111 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenHugeTrees.java
+@@ -2,8 +2,10 @@
+ 
+ import java.util.Random;
+ import net.minecraft.block.Block;
++import net.minecraft.block.BlockSapling;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class WorldGenHugeTrees extends WorldGenerator
+ {
+@@ -58,7 +60,12 @@
+                         {
+                             l1 = par1World.getBlockId(j1, i1, k1);
+ 
+-                            if (l1 != 0 && l1 != Block.leaves.blockID && l1 != Block.grass.blockID && l1 != Block.dirt.blockID && l1 != Block.wood.blockID && l1 != Block.sapling.blockID)
++                            if (l1 != 0 &&
++                               (Block.blocksList[l1] != null && !Block.blocksList[l1].isLeaves(par1World, j1, i1, k1)) &&
++                               l1 != Block.grass.blockID &&
++                               l1 != Block.dirt.blockID &&
++                               (Block.blocksList[l1] != null && !Block.blocksList[l1].isWood(par1World, j1, i1, k1)) &&
++                               l1 != Block.sapling.blockID)
+                             {
+                                 flag = false;
+                             }
+@@ -79,12 +86,15 @@
+             {
+                 i1 = par1World.getBlockId(par3, par4 - 1, par5);
+ 
+-                if ((i1 == Block.grass.blockID || i1 == Block.dirt.blockID) && par4 < 256 - l - 1)
+-                {
+-                    par1World.setBlock(par3, par4 - 1, par5, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3 + 1, par4 - 1, par5, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
+-                    par1World.setBlock(par3 + 1, par4 - 1, par5 + 1, Block.dirt.blockID, 0, 2);
++                Block soil = Block.blocksList[i1];
++                boolean isValidSoil = soil != null && soil.canSustainPlant(par1World, par3, par4 - 1, par5, ForgeDirection.UP, (BlockSapling)Block.sapling);
++
++                if (isValidSoil && par4 < 256 - l - 1)
++                {
++                    onPlantGrow(par1World, par3,     par4 - 1, par5,     par3, par4, par5);
++                    onPlantGrow(par1World, par3 + 1, par4 - 1, par5,     par3, par4, par5);
++                    onPlantGrow(par1World, par3,     par4 - 1, par5 + 1, par3, par4, par5);
++                    onPlantGrow(par1World, par3 + 1, par4 - 1, par5 + 1, par3, par4, par5);
+                     this.growLeaves(par1World, par3, par5, par4 + l, 2, par2Random);
+ 
+                     for (int i2 = par4 + l - 2 - par2Random.nextInt(4); i2 > par4 + l / 2; i2 -= 2 + par2Random.nextInt(4))
+@@ -106,7 +116,7 @@
+                     {
+                         k1 = par1World.getBlockId(par3, par4 + j1, par5);
+ 
+-                        if (k1 == 0 || k1 == Block.leaves.blockID)
++                        if (k1 == 0 || Block.blocksList[k1] == null || Block.blocksList[k1].isLeaves(par1World, par3, par4 + j1, par5))
+                         {
+                             this.setBlockAndMetadata(par1World, par3, par4 + j1, par5, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -128,7 +138,7 @@
+                         {
+                             k1 = par1World.getBlockId(par3 + 1, par4 + j1, par5);
+ 
+-                            if (k1 == 0 || k1 == Block.leaves.blockID)
++                            if (k1 == 0 || Block.blocksList[k1] == null || Block.blocksList[k1].isLeaves(par1World, par3 + 1, par4 + j1, par5))
+                             {
+                                 this.setBlockAndMetadata(par1World, par3 + 1, par4 + j1, par5, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -148,7 +158,7 @@
+ 
+                             k1 = par1World.getBlockId(par3 + 1, par4 + j1, par5 + 1);
+ 
+-                            if (k1 == 0 || k1 == Block.leaves.blockID)
++                            if (k1 == 0 || Block.blocksList[k1] == null || Block.blocksList[k1].isLeaves(par1World, par3 + 1, par4 + j1, par5 + 1))
+                             {
+                                 this.setBlockAndMetadata(par1World, par3 + 1, par4 + j1, par5 + 1, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -168,7 +178,7 @@
+ 
+                             k1 = par1World.getBlockId(par3, par4 + j1, par5 + 1);
+ 
+-                            if (k1 == 0 || k1 == Block.leaves.blockID)
++                            if (k1 == 0 || Block.blocksList[k1] == null || Block.blocksList[k1].isLeaves(par1World, par3, par4 + j1, par5 + 1))
+                             {
+                                 this.setBlockAndMetadata(par1World, par3, par4 + j1, par5 + 1, Block.wood.blockID, this.woodMetadata);
+ 
+@@ -222,8 +232,9 @@
+                     if ((i2 >= 0 || k2 >= 0 || i2 * i2 + k2 * k2 <= k1 * k1) && (i2 <= 0 && k2 <= 0 || i2 * i2 + k2 * k2 <= (k1 + 1) * (k1 + 1)) && (par6Random.nextInt(4) != 0 || i2 * i2 + k2 * k2 <= (k1 - 1) * (k1 - 1)))
+                     {
+                         int l2 = par1World.getBlockId(l1, i1, j2);
+-
+-                        if (l2 == 0 || l2 == Block.leaves.blockID)
++                        Block block = Block.blocksList[l2];
++
++                        if (block == null || block.canBeReplacedByLeaves(par1World, l1, i1, j2))
+                         {
+                             this.setBlockAndMetadata(par1World, l1, i1, j2, Block.leaves.blockID, this.leavesMetadata);
+                         }
+@@ -232,4 +243,13 @@
+             }
+         }
+     }
++
++    private void onPlantGrow(World world, int x, int y, int z, int sourceX, int sourceY, int sourceZ)
++    {
++        Block block = Block.blocksList[world.getBlockId(x, y, z)];
++        if (block != null)
++        {
++            block.onPlantGrow(world, x, y, z, sourceX, sourceY, sourceZ);
++        }
++    }
+ }

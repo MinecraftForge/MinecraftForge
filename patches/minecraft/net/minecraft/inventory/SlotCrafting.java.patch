@@ -1,0 +1,31 @@
+--- ../src_base/minecraft/net/minecraft/inventory/SlotCrafting.java
++++ ../src_work/minecraft/net/minecraft/inventory/SlotCrafting.java
+@@ -6,6 +6,10 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.AchievementList;
++
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+ 
+ public class SlotCrafting extends Slot
+ {
+@@ -124,9 +128,15 @@
+ 
+                 if (itemstack1.getItem().hasContainerItem())
+                 {
+-                    ItemStack itemstack2 = new ItemStack(itemstack1.getItem().getContainerItem());
++                    ItemStack itemstack2 = itemstack1.getItem().getContainerItemStack(itemstack1);
+ 
+-                    if (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2))
++                    if (itemstack2.isItemStackDamageable() && itemstack2.getItemDamage() > itemstack2.getMaxDamage())
++                    {
++                        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(thePlayer, itemstack2));
++                        itemstack2 = null;
++                    }
++
++                    if (itemstack2 != null && (!itemstack1.getItem().doesContainerItemLeaveCraftingGrid(itemstack1) || !this.thePlayer.inventory.addItemStackToInventory(itemstack2)))
+                     {
+                         if (this.craftMatrix.getStackInSlot(i) == null)
+                         {

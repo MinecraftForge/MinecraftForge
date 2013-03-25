@@ -1,23 +1,30 @@
 *** HOW TO INSTALL ***
+For Mod Users:
 
-Extract the download archive directly into your MCP-directiory.
-It should create a folder "forge" within that directory, containing all 
-extracted files.
+Copy all files from this zip to your minecraft.jar, thats it.
+Thats it, you're done, during first run FML will download all needed libraries for you.
 
-You should use freshly downloaded jars, add NOTHING to the jars, ModLoader 
-is no longer needed. Both client and server are required and should be 100% clean.
+For Mod Devs:
 
-It comes with MCP 7.2a+, but if you do not have it, you need to install the 
-FernFlower decompiler, you can download it at http://goo.gl/PnJHp. 
-Extract fernflower.jar into your MCP's runtime/bin folder.
+The install scripts should take care of everything for you, you do NOT need to 
+have MCP installed before running install.cmd/sh as Forge will download it for you.
 
-Now just start the install.cmd/.sh, MCForge will install itself into the proper
+Just start the install.cmd/.sh, MCForge will install itself into the proper
 locations and copy all needed files, as well as modifying the needed baseclasses.
 
 Forge also includes a snapshot of the MCP mapings, this may not be the current 
 version of the mapings. But you must use the provided mapings in order for the 
 patch files to work together.
 
-The install scripts should take care of everything for you, so you should not need
-to run ANY MCP script before installing forge.
 
+Requirements:
+  You must ahve a JDK installed and accessible, there is a big in java 1.6_21 that 
+  causes compile errors, just update your jdk to fix them.
+
+For Mac users: 
+  It should automatically set the execution bits on mcp/runtime/bin/astyle-osx, 
+  if it does not, please do so manually: chmod +x mcp/runtime/bin/astyle-osx
+  
+For Linux users:
+  Astyle is required for the patches to apply properly, so either install wine, or astyle
+  Instalation instructions are distro specific, so I can not give them here.

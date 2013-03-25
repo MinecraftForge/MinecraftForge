@@ -1,0 +1,205 @@
+--- ../src_base/minecraft/net/minecraft/entity/EntityLiving.java
++++ ../src_work/minecraft/net/minecraft/entity/EntityLiving.java
+@@ -22,6 +22,7 @@
+ import net.minecraft.entity.item.EntityXPOrb;
+ import net.minecraft.entity.monster.EntityCreeper;
+ import net.minecraft.entity.monster.EntityGhast;
++import net.minecraft.entity.passive.EntityPig;
+ import net.minecraft.entity.passive.EntityWolf;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.projectile.EntityArrow;
+@@ -50,6 +51,11 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ 
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.living.*;
++import static net.minecraftforge.event.entity.living.LivingEvent.*;
++
+ public abstract class EntityLiving extends Entity
+ {
+     /**
+@@ -398,6 +404,7 @@
+     public void setAttackTarget(EntityLiving par1EntityLiving)
+     {
+         this.attackTarget = par1EntityLiving;
++        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLiving);
+     }
+ 
+     /**
+@@ -494,6 +501,7 @@
+     {
+         this.entityLivingToAttack = par1EntityLiving;
+         this.revengeTimer = this.entityLivingToAttack != null ? 100 : 0;
++        ForgeHooks.onLivingSetAttackTarget(this, par1EntityLiving);
+     }
+ 
+     protected void entityInit()
+@@ -805,6 +813,11 @@
+      */
+     public void onUpdate()
+     {
++        if (ForgeHooks.onLivingUpdate(this))
++        {
++            return;
++        }
++
+         super.onUpdate();
+ 
+         if (!this.worldObj.isRemote)
+@@ -990,6 +1003,11 @@
+      */
+     public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
+     {
++        if (ForgeHooks.onLivingAttack(this, par1DamageSource, par2))
++        {
++            return false;
++        }
++
+         if (this.isEntityInvulnerable())
+         {
+             return false;
+@@ -1227,6 +1245,11 @@
+     {
+         if (!this.isEntityInvulnerable())
+         {
++            par2 = ForgeHooks.onLivingHurt(this, par1DamageSource, par2);
++            if (par2 <= 0)
++            {
++                return;
++            }
+             par2 = this.applyArmorCalculations(par1DamageSource, par2);
+             par2 = this.applyPotionDamageCalculations(par1DamageSource, par2);
+             int j = this.getHealth();
+@@ -1293,6 +1316,11 @@
+      */
+     public void onDeath(DamageSource par1DamageSource)
+     {
++        if (ForgeHooks.onLivingDeath(this, par1DamageSource))
++        {
++            return;
++        }
++
+         Entity entity = par1DamageSource.getEntity();
+         EntityLiving entityliving = this.func_94060_bK();
+ 
+@@ -1317,6 +1345,10 @@
+                 i = EnchantmentHelper.getLootingModifier((EntityLiving)entity);
+             }
+ 
++            captureDrops = true;
++            capturedDrops.clear();
++            int j = 0;
++
+             if (!this.isChild() && this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+             {
+                 this.dropFewItems(this.recentlyHit > 0, i);
+@@ -1324,7 +1356,7 @@
+ 
+                 if (this.recentlyHit > 0)
+                 {
+-                    int j = this.rand.nextInt(200) - i;
++                    j = this.rand.nextInt(200) - i;
+ 
+                     if (j < 5)
+                     {
+@@ -1332,6 +1364,16 @@
+                     }
+                 }
+             }
++
++            captureDrops = false;
++
++            if (!ForgeHooks.onLivingDrops(this, par1DamageSource, capturedDrops, i, recentlyHit > 0, j))
++            {
++                for (EntityItem item : capturedDrops)
++                {
++                    worldObj.spawnEntityInWorld(item);
++                }
++            }
+         }
+ 
+         this.worldObj.setEntityState(this, (byte)3);
+@@ -1376,6 +1418,12 @@
+      */
+     protected void fall(float par1)
+     {
++        par1 = ForgeHooks.onLivingFall(this, par1);
++        if (par1 <= 0)
++        {
++            return;
++        }
++
+         super.fall(par1);
+         int i = MathHelper.ceiling_float_int(par1 - 3.0F);
+ 
+@@ -1578,7 +1626,7 @@
+         int j = MathHelper.floor_double(this.boundingBox.minY);
+         int k = MathHelper.floor_double(this.posZ);
+         int l = this.worldObj.getBlockId(i, j, k);
+-        return l == Block.ladder.blockID || l == Block.vine.blockID;
++        return ForgeHooks.isLivingOnLadder(Block.blocksList[l], worldObj, i, j, k);
+     }
+ 
+     /**
+@@ -2000,6 +2048,7 @@
+         }
+ 
+         this.isAirBorne = true;
++        ForgeHooks.onLivingJump(this);
+     }
+ 
+     /**
+@@ -2552,8 +2601,6 @@
+         return this.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+-
+     /**
+      * Remove the speified potion effect from this entity.
+      */
+@@ -3077,4 +3124,42 @@
+     {
+         this.canPickUpLoot = par1;
+     }
++
++    /***
++     * Removes all potion effects that have curativeItem as a curative item for its effect
++     * @param curativeItem The itemstack we are using to cure potion effects
++     */
++    public void curePotionEffects(ItemStack curativeItem)
++    {
++        Iterator<Integer> potionKey = activePotionsMap.keySet().iterator();
++
++        if (worldObj.isRemote)
++        {
++            return;
++        }
++
++        while (potionKey.hasNext())
++        {
++            Integer key = potionKey.next();
++            PotionEffect effect = (PotionEffect)activePotionsMap.get(key);
++
++            if (effect.isCurativeItem(curativeItem))
++            {
++                potionKey.remove();
++                onFinishedPotionEffect(effect);
++            }
++        }
++    }
++
++    /**
++     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.
++     * currently only used in vanilla code by pigs.
++     *
++     * @param player The player who is riding the entity.
++     * @return If the player should orient the same direction as this entity.
++     */
++    public boolean shouldRiderFaceForward(EntityPlayer player)
++    {
++        return this instanceof EntityPig;
++    }
+ }

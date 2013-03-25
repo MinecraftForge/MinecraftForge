@@ -1,0 +1,14 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
+@@ -355,8 +355,9 @@
+                 }
+ 
+                 int l = this.worldObj.getBlockId(i, j - 1, k);
+-
+-                if (l == Block.grass.blockID || l == Block.leaves.blockID)
++                Block block = Block.blocksList[l];
++
++                if (l == Block.grass.blockID || (block != null && block.isLeaves(worldObj, i, j - 1, k)))
+                 {
+                     return true;
+                 }

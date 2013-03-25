@@ -1,0 +1,78 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
+@@ -8,7 +8,11 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+ 
+-public class EntityMooshroom extends EntityCow
++import java.util.ArrayList;
++
++import net.minecraftforge.common.IShearable;
++
++public class EntityMooshroom extends EntityCow implements IShearable
+ {
+     public EntityMooshroom(World par1World)
+     {
+@@ -39,31 +43,7 @@
+             }
+         }
+ 
+-        if (itemstack != null && itemstack.itemID == Item.shears.itemID && this.getGrowingAge() >= 0)
+-        {
+-            this.setDead();
+-            this.worldObj.spawnParticle("largeexplode", this.posX, this.posY + (double)(this.height / 2.0F), this.posZ, 0.0D, 0.0D, 0.0D);
+-
+-            if (!this.worldObj.isRemote)
+-            {
+-                EntityCow entitycow = new EntityCow(this.worldObj);
+-                entitycow.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+-                entitycow.setEntityHealth(this.getHealth());
+-                entitycow.renderYawOffset = this.renderYawOffset;
+-                this.worldObj.spawnEntityInWorld(entitycow);
+-
+-                for (int i = 0; i < 5; ++i)
+-                {
+-                    this.worldObj.spawnEntityInWorld(new EntityItem(this.worldObj, this.posX, this.posY + (double)this.height, this.posZ, new ItemStack(Block.mushroomRed)));
+-                }
+-            }
+-
+-            return true;
+-        }
+-        else
+-        {
+-            return super.interact(par1EntityPlayer);
+-        }
++        return super.interact(par1EntityPlayer);
+     }
+ 
+     public EntityMooshroom func_94900_c(EntityAgeable par1EntityAgeable)
+@@ -83,4 +63,29 @@
+     {
+         return this.func_94900_c(par1EntityAgeable);
+     }
++
++    @Override
++    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
++    {
++        return getGrowingAge() >= 0;
++    }
++
++    @Override
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
++    {
++        setDead();
++        EntityCow entitycow = new EntityCow(worldObj);
++        entitycow.setLocationAndAngles(posX, posY, posZ, rotationYaw, rotationPitch);
++        entitycow.setEntityHealth(getHealth());
++        entitycow.renderYawOffset = renderYawOffset;
++        worldObj.spawnEntityInWorld(entitycow);
++        worldObj.spawnParticle("largeexplode", posX, posY + (double)(height / 2.0F), posZ, 0.0D, 0.0D, 0.0D);
++
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        for (int x = 0; x < 5; x++)
++        {
++            ret.add(new ItemStack(Block.mushroomRed));
++        }
++        return ret;
++    }
+ }

@@ -1,0 +1,36 @@
+--- ../src_base/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
++++ ../src_work/minecraft/net/minecraft/world/gen/feature/WorldGenMinable.java
+@@ -9,6 +9,7 @@
+ {
+     /** The block ID of the ore to be placed using this generator. */
+     private int minableBlockId;
++    private int minableBlockMeta = 0;
+ 
+     /** The number of blocks to generate. */
+     private int numberOfBlocks;
+@@ -24,6 +25,12 @@
+         this.minableBlockId = par1;
+         this.numberOfBlocks = par2;
+         this.field_94523_c = par3;
++    }
++
++    public WorldGenMinable(int id, int meta, int number, int target)
++    {
++        this(id, number, target);
++        minableBlockMeta = meta;
+     }
+ 
+     public boolean generate(World par1World, Random par2Random, int par3, int par4, int par5)
+@@ -67,9 +74,10 @@
+                             {
+                                 double d14 = ((double)i3 + 0.5D - d8) / (d10 / 2.0D);
+ 
+-                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && par1World.getBlockId(k2, l2, i3) == this.field_94523_c)
++                                Block block = Block.blocksList[par1World.getBlockId(k2, l2, i3)];
++                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, k2, l2, i3, field_94523_c)))
+                                 {
+-                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, 0, 2);
++                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, minableBlockMeta, 2);
+                                 }
+                             }
+                         }

@@ -1,0 +1,76 @@
+--- ../src_base/minecraft/net/minecraft/entity/passive/EntitySheep.java
++++ ../src_work/minecraft/net/minecraft/entity/passive/EntitySheep.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.EntityAgeable;
+@@ -24,7 +26,9 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+ 
+-public class EntitySheep extends EntityAnimal
++import net.minecraftforge.common.IShearable;
++
++public class EntitySheep extends EntityAnimal implements IShearable
+ {
+     private final InventoryCrafting field_90016_e = new InventoryCrafting(new ContainerSheep(this), 2, 1);
+ 
+@@ -159,28 +163,6 @@
+      */
+     public boolean interact(EntityPlayer par1EntityPlayer)
+     {
+-        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+-
+-        if (itemstack != null && itemstack.itemID == Item.shears.itemID && !this.getSheared() && !this.isChild())
+-        {
+-            if (!this.worldObj.isRemote)
+-            {
+-                this.setSheared(true);
+-                int i = 1 + this.rand.nextInt(3);
+-
+-                for (int j = 0; j < i; ++j)
+-                {
+-                    EntityItem entityitem = this.entityDropItem(new ItemStack(Block.cloth.blockID, 1, this.getFleeceColor()), 1.0F);
+-                    entityitem.motionY += (double)(this.rand.nextFloat() * 0.05F);
+-                    entityitem.motionX += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+-                    entityitem.motionZ += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+-                }
+-            }
+-
+-            itemstack.damageItem(1, par1EntityPlayer);
+-            this.playSound("mob.sheep.shear", 1.0F, 1.0F);
+-        }
+-
+         return super.interact(par1EntityPlayer);
+     }
+ 
+@@ -349,4 +331,24 @@
+     {
+         return this.func_90015_b(par1EntityAgeable);
+     }
++
++    @Override
++    public boolean isShearable(ItemStack item, World world, int X, int Y, int Z)
++    {
++        return !getSheared() && !isChild();
++    }
++
++    @Override
++    public ArrayList<ItemStack> onSheared(ItemStack item, World world, int X, int Y, int Z, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        setSheared(true);
++        int i = 1 + rand.nextInt(3);
++        for (int j = 0; j < i; j++)
++        {
++            ret.add(new ItemStack(Block.cloth.blockID, 1, getFleeceColor()));
++        }
++        this.worldObj.playSoundAtEntity(this, "mob.sheep.shear", 1.0F, 1.0F);
++        return ret;
++    }
+ }

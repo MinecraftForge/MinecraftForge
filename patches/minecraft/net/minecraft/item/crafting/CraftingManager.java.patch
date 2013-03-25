@@ -1,0 +1,11 @@
+--- ../src_base/minecraft/net/minecraft/item/crafting/CraftingManager.java
++++ ../src_work/minecraft/net/minecraft/item/crafting/CraftingManager.java
+@@ -282,7 +282,7 @@
+             }
+         }
+ 
+-        if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isDamageable())
++        if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isRepairable())
+         {
+             Item item = Item.itemsList[itemstack.itemID];
+             int k = item.getMaxDamage() - itemstack.getItemDamageForDisplay();

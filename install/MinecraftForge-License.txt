@@ -63,3 +63,8 @@ minecraft original sources.
 Modification of Minecraft Forge as well as dependencies, including patches to
 minecraft original sources, has to remain under the terms of the present
 license.
+
+The right to distribute Minecraft Forge does not extend to the right to distribute
+MCP data files included within Minecraft Forge. These are the property of the MCP
+project and should be removed from any customized distribution of Minecraft Forge
+or permission sought separately from the MCP team.

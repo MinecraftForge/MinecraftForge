@@ -1,0 +1,72 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/WorldRenderer.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/WorldRenderer.java
+@@ -17,13 +17,15 @@
+ import net.minecraft.world.chunk.Chunk;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++
+ @SideOnly(Side.CLIENT)
+ public class WorldRenderer
+ {
+     /** Reference to the World object. */
+     public World worldObj;
+     private int glRenderList = -1;
+-    private static Tessellator tessellator = Tessellator.instance;
++    //private static Tessellator tessellator = Tessellator.instance;
+     public static int chunksUpdated = 0;
+     public int posX;
+     public int posY;
+@@ -192,15 +194,16 @@
+                                         GL11.glTranslatef(-8.0F, -8.0F, -8.0F);
+                                         GL11.glScalef(f, f, f);
+                                         GL11.glTranslatef(8.0F, 8.0F, 8.0F);
+-                                        tessellator.startDrawingQuads();
+-                                        tessellator.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
++                                        //ForgeHooksClient.beforeRenderPass(l1); Noop fo now, TODO: Event if anyone needs
++                                        Tessellator.instance.startDrawingQuads();
++                                        Tessellator.instance.setTranslation((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
+                                     }
+ 
+                                     Block block = Block.blocksList[l2];
+ 
+                                     if (block != null)
+                                     {
+-                                        if (l1 == 0 && block.hasTileEntity())
++                                        if (l1 == 0 && block.hasTileEntity(chunkcache.getBlockMetadata(k2, i2, j2)))
+                                         {
+                                             TileEntity tileentity = chunkcache.getBlockTileEntity(k2, i2, j2);
+ 
+@@ -212,14 +215,15 @@
+ 
+                                         int i3 = block.getRenderBlockPass();
+ 
+-                                        if (i3 != l1)
++                                        if (i3 > l1)
+                                         {
+                                             flag = true;
+                                         }
+-                                        else if (i3 == l1)
++                                        if (!block.canRenderInPass(l1))
+                                         {
+-                                            flag1 |= renderblocks.renderBlockByRenderType(block, k2, i2, j2);
++                                            continue;
+                                         }
++                                        flag1 |= renderblocks.renderBlockByRenderType(block, k2, i2, j2);
+                                     }
+                                 }
+                             }
+@@ -228,10 +232,11 @@
+ 
+                     if (flag2)
+                     {
+-                        this.bytesDrawn += tessellator.draw();
++                        //ForgeHooksClient.afterRenderPass(l1); Noop fo now, TODO: Event if anyone needs
++                        this.bytesDrawn += Tessellator.instance.draw();
+                         GL11.glPopMatrix();
+                         GL11.glEndList();
+-                        tessellator.setTranslation(0.0D, 0.0D, 0.0D);
++                        Tessellator.instance.setTranslation(0.0D, 0.0D, 0.0D);
+                     }
+                     else
+                     {

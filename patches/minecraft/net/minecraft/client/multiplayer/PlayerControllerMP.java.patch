@@ -1,0 +1,77 @@
+--- ../src_base/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
++++ ../src_work/minecraft/net/minecraft/client/multiplayer/PlayerControllerMP.java
+@@ -20,6 +20,10 @@
+ import net.minecraft.world.EnumGameType;
+ import net.minecraft.world.World;
+ 
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
++
+ @SideOnly(Side.CLIENT)
+ public class PlayerControllerMP
+ {
+@@ -124,6 +128,12 @@
+      */
+     public boolean onPlayerDestroyBlock(int par1, int par2, int par3, int par4)
+     {
++        ItemStack stack = mc.thePlayer.getCurrentEquippedItem();
++        if (stack != null && stack.getItem() != null && stack.getItem().onBlockStartBreak(stack, par1, par2, par3, mc.thePlayer))
++        {
++            return false;
++        }
++
+         if (this.currentGameType.isAdventure() && !this.mc.thePlayer.canCurrentToolHarvestBlock(par1, par2, par3))
+         {
+             return false;
+@@ -141,7 +151,7 @@
+             {
+                 worldclient.playAuxSFX(2001, par1, par2, par3, block.blockID + (worldclient.getBlockMetadata(par1, par2, par3) << 12));
+                 int i1 = worldclient.getBlockMetadata(par1, par2, par3);
+-                boolean flag = worldclient.setBlockToAir(par1, par2, par3);
++                boolean flag = block.removeBlockByPlayer(worldclient, mc.thePlayer, par1, par2, par3);
+ 
+                 if (flag)
+                 {
+@@ -342,6 +352,12 @@
+         float f2 = (float)par8Vec3.zCoord - (float)par6;
+         boolean flag = false;
+         int i1;
++        if (par3ItemStack != null &&
++            par3ItemStack.getItem() != null &&
++            par3ItemStack.getItem().onItemUseFirst(par3ItemStack, par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
++        {
++                return true;
++        }
+ 
+         if (!par1EntityPlayer.isSneaking() || par1EntityPlayer.getHeldItem() == null)
+         {
+@@ -384,7 +400,15 @@
+         }
+         else
+         {
+-            return par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2);
++            if (!par3ItemStack.tryPlaceItemIntoWorld(par1EntityPlayer, par2World, par4, par5, par6, par7, f, f1, f2))
++            {
++                return false;
++            }
++            if (par3ItemStack.stackSize <= 0)
++            {
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, par3ItemStack));
++            }
++            return true;
+         }
+     }
+ 
+@@ -406,9 +430,10 @@
+         {
+             par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = itemstack1;
+ 
+-            if (itemstack1.stackSize == 0)
++            if (itemstack1.stackSize <= 0)
+             {
+                 par1EntityPlayer.inventory.mainInventory[par1EntityPlayer.inventory.currentItem] = null;
++                MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(par1EntityPlayer, itemstack1));
+             }
+ 
+             return true;

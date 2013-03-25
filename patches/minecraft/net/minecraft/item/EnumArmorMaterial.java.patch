@@ -1,0 +1,28 @@
+--- ../src_base/minecraft/net/minecraft/item/EnumArmorMaterial.java
++++ ../src_work/minecraft/net/minecraft/item/EnumArmorMaterial.java
+@@ -22,6 +22,9 @@
+ 
+     /** Return the enchantability factor of the material */
+     private int enchantability;
++
++    //Added by forge for custom Armor materials.
++    public Item customCraftingMaterial = null;
+ 
+     private EnumArmorMaterial(int par3, int[] par4ArrayOfInteger, int par5)
+     {
+@@ -61,6 +64,14 @@
+      */
+     public int getArmorCraftingMaterial()
+     {
+-        return this == CLOTH ? Item.leather.itemID : (this == CHAIN ? Item.ingotIron.itemID : (this == GOLD ? Item.ingotGold.itemID : (this == IRON ? Item.ingotIron.itemID : (this == DIAMOND ? Item.diamond.itemID : 0))));
++        switch (this)
++        {
++            case CLOTH:   return Item.leather.itemID;
++            case CHAIN:   return Item.ingotIron.itemID;
++            case GOLD:    return Item.ingotGold.itemID;
++            case IRON:    return Item.ingotIron.itemID;
++            case DIAMOND: return Item.diamond.itemID;
++            default:      return (customCraftingMaterial == null ? 0 : customCraftingMaterial.itemID);
++        }
+     }
+ }

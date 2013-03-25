@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.src.SoundManager;
+import net.minecraft.client.audio.SoundManager;
 
 /**
  * Raised by the SoundManager.loadSoundSettings, this would be a good place for 

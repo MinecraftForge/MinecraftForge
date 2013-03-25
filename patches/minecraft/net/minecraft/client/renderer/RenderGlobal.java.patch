@@ -1,0 +1,133 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/RenderGlobal.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/RenderGlobal.java
+@@ -65,6 +65,9 @@
+ import org.lwjgl.opengl.ARBOcclusionQuery;
+ import org.lwjgl.opengl.GL11;
+ 
++import net.minecraftforge.client.IRenderHandler;
++import net.minecraftforge.client.MinecraftForgeClient;
++
+ @SideOnly(Side.CLIENT)
+ public class RenderGlobal implements IWorldAccess
+ {
+@@ -443,35 +446,47 @@
+      */
+     public void renderEntities(Vec3 par1Vec3, ICamera par2ICamera, float par3)
+     {
++        int pass = MinecraftForgeClient.getRenderPass();
+         if (this.renderEntitiesStartupCounter > 0)
+         {
++            if (pass > 0)
++            {
++                return;
++            }
+             --this.renderEntitiesStartupCounter;
+         }
+         else
+         {
+             this.theWorld.theProfiler.startSection("prepare");
+-            TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
+-            RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
+-            this.countEntitiesTotal = 0;
+-            this.countEntitiesRendered = 0;
+-            this.countEntitiesHidden = 0;
+-            EntityLiving entityliving = this.mc.renderViewEntity;
+-            RenderManager.renderPosX = entityliving.lastTickPosX + (entityliving.posX - entityliving.lastTickPosX) * (double)par3;
+-            RenderManager.renderPosY = entityliving.lastTickPosY + (entityliving.posY - entityliving.lastTickPosY) * (double)par3;
+-            RenderManager.renderPosZ = entityliving.lastTickPosZ + (entityliving.posZ - entityliving.lastTickPosZ) * (double)par3;
+-            TileEntityRenderer.staticPlayerX = entityliving.lastTickPosX + (entityliving.posX - entityliving.lastTickPosX) * (double)par3;
+-            TileEntityRenderer.staticPlayerY = entityliving.lastTickPosY + (entityliving.posY - entityliving.lastTickPosY) * (double)par3;
+-            TileEntityRenderer.staticPlayerZ = entityliving.lastTickPosZ + (entityliving.posZ - entityliving.lastTickPosZ) * (double)par3;
++            if (pass == 0)
++            {
++                TileEntityRenderer.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, par3);
++                RenderManager.instance.cacheActiveRenderInfo(this.theWorld, this.renderEngine, this.mc.fontRenderer, this.mc.renderViewEntity, this.mc.pointedEntityLiving, this.mc.gameSettings, par3);
++                this.countEntitiesTotal = 0;
++                this.countEntitiesRendered = 0;
++                this.countEntitiesHidden = 0;
++                EntityLiving entityliving = this.mc.renderViewEntity;
++                RenderManager.renderPosX = entityliving.lastTickPosX + (entityliving.posX - entityliving.lastTickPosX) * (double)par3;
++                RenderManager.renderPosY = entityliving.lastTickPosY + (entityliving.posY - entityliving.lastTickPosY) * (double)par3;
++                RenderManager.renderPosZ = entityliving.lastTickPosZ + (entityliving.posZ - entityliving.lastTickPosZ) * (double)par3;
++                TileEntityRenderer.staticPlayerX = entityliving.lastTickPosX + (entityliving.posX - entityliving.lastTickPosX) * (double)par3;
++                TileEntityRenderer.staticPlayerY = entityliving.lastTickPosY + (entityliving.posY - entityliving.lastTickPosY) * (double)par3;
++                TileEntityRenderer.staticPlayerZ = entityliving.lastTickPosZ + (entityliving.posZ - entityliving.lastTickPosZ) * (double)par3;
++            }
+             this.mc.entityRenderer.enableLightmap((double)par3);
+             this.theWorld.theProfiler.endStartSection("global");
+             List list = this.theWorld.getLoadedEntityList();
+-            this.countEntitiesTotal = list.size();
++            if (pass == 0)
++            {
++                this.countEntitiesTotal = list.size();
++            }
+             int i;
+             Entity entity;
+ 
+             for (i = 0; i < this.theWorld.weatherEffects.size(); ++i)
+             {
+                 entity = (Entity)this.theWorld.weatherEffects.get(i);
++                if (!entity.shouldRenderInPass(pass)) continue;
+                 ++this.countEntitiesRendered;
+ 
+                 if (entity.isInRangeToRenderVec3D(par1Vec3))
+@@ -485,6 +500,7 @@
+             for (i = 0; i < list.size(); ++i)
+             {
+                 entity = (Entity)list.get(i);
++                if (!entity.shouldRenderInPass(pass)) continue;
+ 
+                 if (entity.isInRangeToRenderVec3D(par1Vec3) && (entity.ignoreFrustumCheck || par2ICamera.isBoundingBoxInFrustum(entity.boundingBox) || entity.riddenByEntity == this.mc.thePlayer) && (entity != this.mc.renderViewEntity || this.mc.gameSettings.thirdPersonView != 0 || this.mc.renderViewEntity.isPlayerSleeping()) && this.theWorld.blockExists(MathHelper.floor_double(entity.posX), 0, MathHelper.floor_double(entity.posZ)))
+                 {
+@@ -498,7 +514,11 @@
+ 
+             for (i = 0; i < this.tileEntities.size(); ++i)
+             {
+-                TileEntityRenderer.instance.renderTileEntity((TileEntity)this.tileEntities.get(i), par3);
++                TileEntity tile = (TileEntity)tileEntities.get(i);
++                if (tile.shouldRenderInPass(pass) && par2ICamera.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
++                {
++                    TileEntityRenderer.instance.renderTileEntity(tile, par3);
++                }
+             }
+ 
+             this.mc.entityRenderer.disableLightmap((double)par3);
+@@ -933,6 +953,12 @@
+      */
+     public void renderSky(float par1)
+     {
++        IRenderHandler skyProvider = null;
++        if ((skyProvider = this.mc.theWorld.provider.getSkyRenderer()) != null)
++        {
++            skyProvider.render(par1, this.theWorld, mc);
++            return;
++        }
+         if (this.mc.theWorld.provider.dimensionId == 1)
+         {
+             GL11.glDisable(GL11.GL_FOG);
+@@ -1171,6 +1197,13 @@
+ 
+     public void renderClouds(float par1)
+     {
++        IRenderHandler renderer = null;
++        if ((renderer = theWorld.provider.getCloudRenderer()) != null)
++        {
++            renderer.render(par1, theWorld, mc);
++            return;
++        }
++
+         if (this.mc.theWorld.provider.isSurfaceWorld())
+         {
+             if (this.mc.gameSettings.fancyGraphics)
+@@ -1599,6 +1632,11 @@
+     }
+ 
+     public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityPlayer par2EntityPlayer, float par3)
++    {
++        drawBlockDamageTexture(par1Tessellator, (EntityLiving)par2EntityPlayer, par3);
++    }
++
++    public void drawBlockDamageTexture(Tessellator par1Tessellator, EntityLiving par2EntityPlayer, float par3)
+     {
+         double d0 = par2EntityPlayer.lastTickPosX + (par2EntityPlayer.posX - par2EntityPlayer.lastTickPosX) * (double)par3;
+         double d1 = par2EntityPlayer.lastTickPosY + (par2EntityPlayer.posY - par2EntityPlayer.lastTickPosY) * (double)par3;

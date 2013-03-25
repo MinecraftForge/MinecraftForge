@@ -1,6 +1,6 @@
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.src.SoundManager;
+import net.minecraft.client.audio.SoundManager;
 
 /**
  * This event is raised by the SoundManager when it does its first setup of the 

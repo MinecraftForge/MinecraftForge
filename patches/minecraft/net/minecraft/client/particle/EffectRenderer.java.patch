@@ -1,0 +1,70 @@
+--- ../src_base/minecraft/net/minecraft/client/particle/EffectRenderer.java
++++ ../src_work/minecraft/net/minecraft/client/particle/EffectRenderer.java
+@@ -11,6 +11,7 @@
+ import net.minecraft.client.renderer.Tessellator;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
+ import org.lwjgl.opengl.GL11;
+ 
+@@ -59,9 +60,13 @@
+             for (int j = 0; j < this.fxLayers[i].size(); ++j)
+             {
+                 EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
+-                entityfx.onUpdate();
+-
+-                if (entityfx.isDead)
++
++                if (entityfx != null)
++                {
++                    entityfx.onUpdate();
++                }
++
++                if (entityfx == null || entityfx.isDead)
+                 {
+                     this.fxLayers[i].remove(j--);
+                 }
+@@ -111,6 +116,7 @@
+                 for (int j = 0; j < this.fxLayers[i].size(); ++j)
+                 {
+                     EntityFX entityfx = (EntityFX)this.fxLayers[i].get(j);
++                    if (entityfx == null) continue;
+                     tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
+                     entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
+                 }
+@@ -139,6 +145,7 @@
+             for (int i = 0; i < this.fxLayers[b0].size(); ++i)
+             {
+                 EntityFX entityfx = (EntityFX)this.fxLayers[b0].get(i);
++                if (entityfx == null) continue;
+                 tessellator.setBrightness(entityfx.getBrightnessForRender(par2));
+                 entityfx.renderParticle(tessellator, par2, f1, f5, f2, f3, f4);
+             }
+@@ -157,9 +164,9 @@
+ 
+     public void addBlockDestroyEffects(int par1, int par2, int par3, int par4, int par5)
+     {
+-        if (par4 != 0)
+-        {
+-            Block block = Block.blocksList[par4];
++        Block block = Block.blocksList[par4];
++        if (block != null && !block.addBlockDestroyEffects(worldObj, par1, par2, par3, par5, this))
++        {
+             byte b0 = 4;
+ 
+             for (int j1 = 0; j1 < b0; ++j1)
+@@ -232,4 +239,13 @@
+     {
+         return "" + (this.fxLayers[0].size() + this.fxLayers[1].size() + this.fxLayers[2].size());
+     }
++
++    public void addBlockHitEffects(int x, int y, int z, MovingObjectPosition target)
++    {
++        Block block = Block.blocksList[worldObj.getBlockId(x, y, z)];
++        if (block != null && !block.addBlockHitEffects(worldObj, target, this))
++        {
++            addBlockHitEffects(x, y, z, target.sideHit);
++        }
++     }
+ }

@@ -1,10 +1,31 @@
 package net.minecraftforge.common;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 
-import net.minecraft.src.*;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemSpade;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumMovingObjectType;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.WeightedRandom;
+import net.minecraft.util.WeightedRandomItem;
+import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.*;
@@ -42,7 +63,7 @@ public class ForgeHooks
         {
             return;
         }
-        world.setBlockAndMetadataWithNotify(x, y, z, grass.block.blockID, grass.metadata);
+        world.setBlock(x, y, z, grass.block.blockID, grass.metadata, 3);
     }
 
     public static ItemStack getGrassSeed(World world)
@@ -62,7 +83,7 @@ public class ForgeHooks
 
     public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)
     {
-        if (block.blockMaterial.isHarvestable())
+        if (block.blockMaterial.isToolNotRequired())
         {
             return true;
         }
@@ -73,7 +94,7 @@ public class ForgeHooks
             return player.canHarvestBlock(block);
         }
 
-        List info = (List)toolClasses.get(stack.getItem());
+        List info = toolClasses.get(stack.getItem());
         if (info == null)
         {
             return player.canHarvestBlock(block);
@@ -83,7 +104,7 @@ public class ForgeHooks
         String toolClass = (String)tmp[0];
         int harvestLevel = (Integer)tmp[1];
 
-        Integer blockHarvestLevel = (Integer)toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
+        Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
         if (blockHarvestLevel == null)
         {
             return player.canHarvestBlock(block);
@@ -94,6 +115,20 @@ public class ForgeHooks
             return false;
         }
         return true;
+    }
+    
+    public static boolean canToolHarvestBlock(Block block, int metadata, ItemStack stack)
+    {
+        if (stack == null) return false;
+        List info = toolClasses.get(stack.getItem());
+        if (info == null) return false;
+
+        Object[] tmp = info.toArray();
+        String toolClass = (String)tmp[0];
+        int harvestLevel = (Integer)tmp[1];
+
+        Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
+        return !(blockHarvestLevel == null || blockHarvestLevel > harvestLevel);
     }
 
     public static float blockStrength(Block block, EntityPlayer player, World world, int x, int y, int z)
@@ -107,22 +142,19 @@ public class ForgeHooks
 
         if (!canHarvestBlock(block, player, metadata))
         {
-            return 1.0F / hardness / 100F;
+            float speed = ForgeEventFactory.getBreakSpeed(player, block, metadata, 1.0f);
+            return (speed < 0 ? 0 : speed) / hardness / 100F;
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
         }
     }
 
     public static boolean isToolEffective(ItemStack stack, Block block, int metadata)
     {
-        List toolClass = (List)toolClasses.get(stack.getItem());
-        if (toolClass == null)
-        {
-            return false;
-        }
-        return toolEffectiveness.contains(Arrays.asList(block, metadata, (String)toolClass.get(0)));
+        List toolClass = toolClasses.get(stack.getItem());
+        return toolClass != null && toolEffectiveness.contains(Arrays.asList(block, metadata, toolClass.get(0)));
     }
 
     static void initTools()
@@ -181,22 +213,6 @@ public class ForgeHooks
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstone, "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.obsidian,    "pickaxe");
         MinecraftForge.removeBlockEffectiveness(Block.oreRedstoneGlowing, "pickaxe");
-    }
-
-    public static String getTexture(String _default, Object obj)
-    {
-        if (obj instanceof Item)
-        {
-            return ((Item)obj).getTextureFile();
-        }
-        else if (obj instanceof Block)
-        {
-            return ((Block)obj).getTextureFile();
-        }
-        else
-        {
-            return _default;
-        }
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
@@ -265,7 +281,7 @@ public class ForgeHooks
         for (int x = 0; x < 9; x++)
         {
             ItemStack stack = player.inventory.getStackInSlot(x);
-            if (stack != null && stack.isItemEqual(result))
+            if (stack != null && stack.isItemEqual(result) && ItemStack.areItemStackTagsEqual(stack, result))
             {
                 player.inventory.currentItem = x;
                 return true;

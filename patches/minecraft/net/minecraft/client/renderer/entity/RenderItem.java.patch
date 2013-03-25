@@ -1,0 +1,216 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/entity/RenderItem.java
+@@ -19,6 +19,8 @@
+ import org.lwjgl.opengl.GL11;
+ import org.lwjgl.opengl.GL12;
+ 
++import net.minecraftforge.client.ForgeHooksClient;
++
+ @SideOnly(Side.CLIENT)
+ public class RenderItem extends Render
+ {
+@@ -49,29 +51,9 @@
+         if (itemstack.getItem() != null)
+         {
+             GL11.glPushMatrix();
+-            float f2 = MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F;
++            float f2 = shouldBob() ? MathHelper.sin(((float)par1EntityItem.age + par9) / 10.0F + par1EntityItem.hoverStart) * 0.1F + 0.1F : 0F;
+             float f3 = (((float)par1EntityItem.age + par9) / 20.0F + par1EntityItem.hoverStart) * (180F / (float)Math.PI);
+-            byte b0 = 1;
+-
+-            if (par1EntityItem.getEntityItem().stackSize > 1)
+-            {
+-                b0 = 2;
+-            }
+-
+-            if (par1EntityItem.getEntityItem().stackSize > 5)
+-            {
+-                b0 = 3;
+-            }
+-
+-            if (par1EntityItem.getEntityItem().stackSize > 20)
+-            {
+-                b0 = 4;
+-            }
+-
+-            if (par1EntityItem.getEntityItem().stackSize > 40)
+-            {
+-                b0 = 5;
+-            }
++            byte b0 = getMiniBlockCount(itemstack);
+ 
+             GL11.glTranslatef((float)par2, (float)par4 + f2, (float)par6);
+             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+@@ -80,9 +62,18 @@
+             float f5;
+             float f6;
+ 
+-            if (itemstack.getItemSpriteNumber() == 0 && Block.blocksList[itemstack.itemID] != null && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
+-            {
+-                Block block = Block.blocksList[itemstack.itemID];
++            Block block = null;
++            if (itemstack.itemID < Block.blocksList.length)
++            {
++                block = Block.blocksList[itemstack.itemID];
++            }
++
++            if (ForgeHooksClient.renderEntityItem(par1EntityItem, itemstack, f2, f3, random, renderManager.renderEngine, renderBlocks))
++            {
++                ;
++            }
++            else if (itemstack.getItemSpriteNumber() == 0 && block != null && RenderBlocks.renderItemIn3d(Block.blocksList[itemstack.itemID].getRenderType()))
++            {
+                 GL11.glRotatef(f3, 0.0F, 1.0F, 0.0F);
+ 
+                 if (renderInFrame)
+@@ -138,10 +129,10 @@
+ 
+                     this.loadTexture("/gui/items.png");
+ 
+-                    for (int k = 0; k <= 1; ++k)
++                    for (int k = 0; k < itemstack.getItem().getRenderPasses(itemstack.getItemDamage()); ++k)
+                     {
+                         this.random.setSeed(187L);
+-                        Icon icon = itemstack.getItem().getIconFromDamageForRenderPass(itemstack.getItemDamage(), k);
++                        Icon icon = itemstack.getItem().getIcon(itemstack, k);
+                         f8 = 1.0F;
+ 
+                         if (this.renderWithColor)
+@@ -241,32 +232,26 @@
+             f11 = 0.021875F;
+             ItemStack itemstack = par1EntityItem.getEntityItem();
+             int j = itemstack.stackSize;
+-            byte b0;
+-
+-            if (j < 2)
+-            {
+-                b0 = 1;
+-            }
+-            else if (j < 16)
+-            {
+-                b0 = 2;
+-            }
+-            else if (j < 32)
+-            {
+-                b0 = 3;
+-            }
+-            else
+-            {
+-                b0 = 4;
+-            }
++            byte b0 = getMiniItemCount(itemstack);
+ 
+             GL11.glTranslatef(-f9, -f10, -((f12 + f11) * (float)b0 / 2.0F));
+ 
+             for (int k = 0; k < b0; ++k)
+             {
+-                GL11.glTranslatef(0.0F, 0.0F, f12 + f11);
+-
+-                if (itemstack.getItemSpriteNumber() == 0 && Block.blocksList[itemstack.itemID] != null)
++                // Makes items offset when in 3D, like when in 2D, looks much better. Considered a vanilla bug...
++                if (k > 0 && shouldSpreadItems())
++                {
++                    float x = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
++                    float y = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
++                    float z = (random.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
++                    GL11.glTranslatef(x, y, f12 + f11);
++                }
++                else
++                {
++                    GL11.glTranslatef(0f, 0f, f12 + f11);
++                }
++
++                if (itemstack.getItemSpriteNumber() == 0)
+                 {
+                     this.loadTexture("/terrain.png");
+                 }
+@@ -356,10 +341,10 @@
+         float f1;
+         float f2;
+ 
+-        if (par3ItemStack.getItemSpriteNumber() == 0 && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
++        Block block = (k < Block.blocksList.length ? Block.blocksList[k] : null);
++        if (par3ItemStack.getItemSpriteNumber() == 0 && block != null && RenderBlocks.renderItemIn3d(Block.blocksList[k].getRenderType()))
+         {
+             par2RenderEngine.bindTexture("/terrain.png");
+-            Block block = Block.blocksList[k];
+             GL11.glPushMatrix();
+             GL11.glTranslatef((float)(par4 - 2), (float)(par5 + 3), -3.0F + this.zLevel);
+             GL11.glScalef(10.0F, 10.0F, 10.0F);
+@@ -390,11 +375,11 @@
+             if (Item.itemsList[k].requiresMultipleRenderPasses())
+             {
+                 GL11.glDisable(GL11.GL_LIGHTING);
+-                par2RenderEngine.bindTexture("/gui/items.png");
+-
+-                for (j1 = 0; j1 <= 1; ++j1)
+-                {
+-                    Icon icon1 = Item.itemsList[k].getIconFromDamageForRenderPass(l, j1);
++                par2RenderEngine.bindTexture(par3ItemStack.getItemSpriteNumber() == 0 ? "/terrain.png" : "/gui/items.png");
++
++                for (j1 = 0; j1 < Item.itemsList[k].getRenderPasses(l); ++j1)
++                {
++                    Icon icon1 = Item.itemsList[k].getIcon(par3ItemStack, j1);
+                     int k1 = Item.itemsList[k].getColorFromItemStack(par3ItemStack, j1);
+                     f = (float)(k1 >> 16 & 255) / 255.0F;
+                     f1 = (float)(k1 >> 8 & 255) / 255.0F;
+@@ -453,7 +438,10 @@
+     {
+         if (par3ItemStack != null)
+         {
+-            this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
++            if (!ForgeHooksClient.renderInventoryItem(renderBlocks, par2RenderEngine, par3ItemStack, renderWithColor, zLevel, (float)par4, (float)par5))
++            {
++                this.renderItemIntoGUI(par1FontRenderer, par2RenderEngine, par3ItemStack, par4, par5);
++            }
+ 
+             if (par3ItemStack.hasEffect())
+             {
+@@ -590,4 +578,47 @@
+     {
+         this.doRenderItem((EntityItem)par1Entity, par2, par4, par6, par8, par9);
+     }
++
++    /**
++     * Items should spread out when rendered in 3d?
++     * @return
++     */
++    public boolean shouldSpreadItems()
++    {
++        return true;
++    }
++
++    /**
++     * Items should have a bob effect
++     * @return
++     */
++    public boolean shouldBob()
++    {
++        return true;
++    }
++
++    public byte getMiniBlockCount(ItemStack stack)
++    {
++        byte ret = 1;
++        if (stack.stackSize > 1 ) ret = 2;
++        if (stack.stackSize > 5 ) ret = 3;
++        if (stack.stackSize > 20) ret = 4;
++        if (stack.stackSize > 40) ret = 5;
++        return ret;
++    }
++
++    /**
++     * Allows for a subclass to override how many rendered items appear in a
++     * "mini item 3d stack"
++     * @param stack
++     * @return
++     */
++    public byte getMiniItemCount(ItemStack stack)
++    {
++        byte ret = 1;
++        if (stack.stackSize > 1) ret = 2;
++        if (stack.stackSize > 15) ret = 3;
++        if (stack.stackSize > 31) ret = 4;
++        return ret;
++    }
+ }

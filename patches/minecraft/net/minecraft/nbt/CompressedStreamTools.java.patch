@@ -1,0 +1,18 @@
+--- ../src_base/minecraft/net/minecraft/nbt/CompressedStreamTools.java
++++ ../src_work/minecraft/net/minecraft/nbt/CompressedStreamTools.java
+@@ -140,7 +140,6 @@
+         NBTBase.writeNamedTag(par0NBTTagCompound, par1DataOutput);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static void write(NBTTagCompound par0NBTTagCompound, File par1File) throws IOException
+     {
+         DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(par1File));
+@@ -155,7 +154,6 @@
+         }
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public static NBTTagCompound read(File par0File) throws IOException
+     {
+         if (!par0File.exists())

@@ -18,11 +18,11 @@ public class EventTransformer implements IClassTransformer
     public EventTransformer()
     {
     }
-    
+
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String transformedName, byte[] bytes)
     {
-        if (name.equals("net.minecraftforge.event.Event") || name.startsWith("net.minecraft.src.") || name.indexOf('.') == -1)
+        if (bytes == null || name.equals("net.minecraftforge.event.Event") || name.startsWith("net.minecraft.") || name.indexOf('.') == -1)
         {
             return bytes;
         }
@@ -40,6 +40,10 @@ public class EventTransformer implements IClassTransformer
             }
             return bytes;
         }
+        catch (ClassNotFoundException ex)
+        {
+            // Discard silently- it's just noise
+        }
         catch (Exception e)
         {
             e.printStackTrace();
@@ -47,7 +51,7 @@ public class EventTransformer implements IClassTransformer
 
         return bytes;
     }
-    
+
     @SuppressWarnings("unchecked")
     private boolean buildEvents(ClassNode classNode) throws Exception
     {
@@ -56,23 +60,24 @@ public class EventTransformer implements IClassTransformer
         {
             return false;
         }
-        
+
         boolean hasSetup = false;
         boolean hasGetListenerList = false;
         boolean hasDefaultCtr = false;
-        
-        Type tList = Type.getType(ListenerList.class);
-        
+
+        Class<?> listenerListClazz = Class.forName("net.minecraftforge.event.ListenerList", false, getClass().getClassLoader());
+        Type tList = Type.getType(listenerListClazz);
+
         for (MethodNode method : (List<MethodNode>)classNode.methods)
         {
-                if (method.name.equals("setup") && 
-                    method.desc.equals(Type.getMethodDescriptor(VOID_TYPE)) && 
+                if (method.name.equals("setup") &&
+                    method.desc.equals(Type.getMethodDescriptor(VOID_TYPE)) &&
                     (method.access & ACC_PROTECTED) == ACC_PROTECTED)
                 {
                     hasSetup = true;
                 }
-                if (method.name.equals("getListenerList") && 
-                    method.desc.equals(Type.getMethodDescriptor(tList)) && 
+                if (method.name.equals("getListenerList") &&
+                    method.desc.equals(Type.getMethodDescriptor(tList)) &&
                     (method.access & ACC_PUBLIC) == ACC_PUBLIC)
                 {
                     hasGetListenerList = true;
@@ -83,7 +88,7 @@ public class EventTransformer implements IClassTransformer
                     hasDefaultCtr = true;
                 }
         }
-        
+
         if (hasSetup)
         {
                 if (!hasGetListenerList)
@@ -95,9 +100,9 @@ public class EventTransformer implements IClassTransformer
                         return false;
                 }
         }
-        
+
         Type tSuper = Type.getType(classNode.superName);
-        
+
         //Add private static ListenerList LISTENER_LIST
         classNode.fields.add(new FieldNode(ACC_PRIVATE | ACC_STATIC, "LISTENER_LIST", tList.getDescriptor(), null, null));
 
@@ -144,7 +149,7 @@ public class EventTransformer implements IClassTransformer
         method.instructions.add(new FieldInsnNode(PUTSTATIC, classNode.name, "LISTENER_LIST", tList.getDescriptor()));
         method.instructions.add(new InsnNode(RETURN));
         classNode.methods.add(method);
-        
+
         /*Add:
          *      public ListenerList getListenerList()
          *      {
@@ -157,5 +162,4 @@ public class EventTransformer implements IClassTransformer
         classNode.methods.add(method);
         return true;
     }
-
 }

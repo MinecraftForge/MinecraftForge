@@ -1,0 +1,80 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockNetherStalk.java
++++ ../src_work/minecraft/net/minecraft/block/BlockNetherStalk.java
+@@ -2,6 +2,8 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
++import java.util.ArrayList;
+ import java.util.Random;
+ import net.minecraft.client.renderer.texture.IconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -9,6 +11,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.Icon;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
+ 
+ public class BlockNetherStalk extends BlockFlower
+ {
+@@ -39,7 +42,8 @@
+      */
+     public boolean canBlockStay(World par1World, int par2, int par3, int par4)
+     {
+-        return this.canThisPlantGrowOnThisBlockID(par1World.getBlockId(par2, par3 - 1, par4));
++        Block block = Block.blocksList[par1World.getBlockId(par2, par3 - 1, par4)];
++        return (block != null && block.canSustainPlant(par1World, par2, par3 - 1, par4, ForgeDirection.UP, this));
+     }
+ 
+     /**
+@@ -81,25 +85,7 @@
+      */
+     public void dropBlockAsItemWithChance(World par1World, int par2, int par3, int par4, int par5, float par6, int par7)
+     {
+-        if (!par1World.isRemote)
+-        {
+-            int j1 = 1;
+-
+-            if (par5 >= 3)
+-            {
+-                j1 = 2 + par1World.rand.nextInt(3);
+-
+-                if (par7 > 0)
+-                {
+-                    j1 += par1World.rand.nextInt(par7 + 1);
+-                }
+-            }
+-
+-            for (int k1 = 0; k1 < j1; ++k1)
+-            {
+-                this.dropBlockAsItem_do(par1World, par2, par3, par4, new ItemStack(Item.netherStalkSeeds));
+-            }
+-        }
++        super.dropBlockAsItemWithChance(par1World, par2, par3, par4, par5, par6, par7);
+     }
+ 
+     /**
+@@ -143,4 +129,23 @@
+             this.iconArray[i] = par1IconRegister.registerIcon(field_94373_a[i]);
+         }
+     }
++
++    @Override
++    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
++    {
++        ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
++        int count = 1;
++
++        if (metadata >= 3)
++        {
++            count = 2 + world.rand.nextInt(3) + (fortune > 0 ? world.rand.nextInt(fortune + 1) : 0);
++        }
++
++        for (int i = 0; i < count; i++)
++        {
++            ret.add(new ItemStack(Item.netherStalkSeeds));
++        }
++
++        return ret;
++    }
+ }
