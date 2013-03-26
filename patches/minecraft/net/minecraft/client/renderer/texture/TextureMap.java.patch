@@ -89,7 +89,15 @@
          this.atlasTexture.createTexture();
      }
  
-@@ -219,4 +244,37 @@
+@@ -202,6 +227,7 @@
+         if (par1Str == null)
+         {
+             (new RuntimeException("Don\'t register null!")).printStackTrace();
++            par1Str = "null"; //Don't allow things to actually register null.. 
+         }
+ 
+         TextureStitched texturestitched = (TextureStitched)this.textureStichedMap.get(par1Str);
+@@ -219,4 +245,37 @@
      {
          return this.missingTextureStiched;
      }
