@@ -164,7 +164,7 @@
      }
  
      /**
-@@ -1414,4 +1436,871 @@
+@@ -1414,4 +1436,885 @@
          canBlockGrass[0] = true;
          StatList.initBreakableStats();
      }
@@ -1017,6 +1017,20 @@
 +    public boolean canDragonDestroy(World world, int x, int y, int z)
 +    {
 +        return blockID != obsidian.blockID && blockID != whiteStone.blockID && blockID != bedrock.blockID;
++    }
++
++    /**
++     * Determines if this block is destroyed when a wither tries to fly through it.
++     *
++     * @param world The current world
++     * @param x X Position
++     * @param y Y Position
++     * @param z Z position
++     * @return True to allow a wither to destroy this block
++     */
++    public boolean canWitherDestroy(World world, int x, int y, int z)
++    {
++        return blockID != bedrock.blockID && blockID != endPortal.blockID && blockID != endPortalFrame.blockID;
 +    }
 +
 +    /**
