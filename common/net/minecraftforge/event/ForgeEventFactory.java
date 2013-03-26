@@ -21,16 +21,16 @@ import net.minecraftforge.event.world.WorldEvent;
 @SuppressWarnings("deprecation")
 public class ForgeEventFactory
 {
-    public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, int metadata, boolean success)
+    public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, World world, int x, int y, int z, boolean success)
     {
-        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, metadata, success);
+        PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, world, x, y, z, success);
         MinecraftForge.EVENT_BUS.post(event);
         return event.success;
     }
 
-    public static float getBreakSpeed(EntityPlayer player, Block block, int metadata, float original)
+    public static float getBreakSpeed(EntityPlayer player, Block block, World world, int x, int y, int z, float original)
     {
-        PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, block, metadata, original);
+        PlayerEvent.BreakSpeed event = new PlayerEvent.BreakSpeed(player, block, world, x, y, z, original);
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.newSpeed);
     }
 

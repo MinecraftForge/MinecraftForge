@@ -81,8 +81,9 @@ public class ForgeHooks
     static HashMap<List, Integer> toolHarvestLevels = new HashMap<List, Integer>();
     static HashSet<List> toolEffectiveness = new HashSet<List>();
 
-    public static boolean canHarvestBlock(Block block, EntityPlayer player, int metadata)
+    public static boolean canHarvestBlock(Block block, EntityPlayer player, World world, int x, int y, int z)
     {
+        int metadata = world.getBlockMetadata(x, y, z);
         if (block.blockMaterial.isToolNotRequired())
         {
             return true;
@@ -91,13 +92,13 @@ public class ForgeHooks
         ItemStack stack = player.inventory.getCurrentItem();
         if (stack == null)
         {
-            return player.canHarvestBlock(block, metadata);
+            return player.canHarvestBlock(block, world, x, y, z);
         }
 
         List info = toolClasses.get(stack.getItem());
         if (info == null)
         {
-            return player.canHarvestBlock(block, metadata);
+            return player.canHarvestBlock(block, world, x, y, z);
         }
 
         Object[] tmp = info.toArray();
@@ -107,7 +108,7 @@ public class ForgeHooks
         Integer blockHarvestLevel = toolHarvestLevels.get(Arrays.asList(block, metadata, toolClass));
         if (blockHarvestLevel == null)
         {
-            return player.canHarvestBlock(block, metadata);
+            return player.canHarvestBlock(block, world, x, y, z);
         }
 
         if (blockHarvestLevel > harvestLevel)
@@ -140,14 +141,14 @@ public class ForgeHooks
             return 0.0F;
         }
 
-        if (!canHarvestBlock(block, player, metadata))
+        if (!canHarvestBlock(block, player, world, x, y, z))
         {
-            float speed = ForgeEventFactory.getBreakSpeed(player, block, metadata, 1.0f);
+            float speed = ForgeEventFactory.getBreakSpeed(player, block, world, x, y, z, 1.0f);
             return (speed < 0 ? 0 : speed) / hardness / 100F;
         }
         else
         {
-             return player.getCurrentPlayerStrVsBlock(block, false, metadata) / hardness / 30F;
+             return player.getCurrentPlayerStrVsBlock(block, false, world, x, y, z) / hardness / 30F;
         }
     }
 
