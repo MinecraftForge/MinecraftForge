@@ -154,7 +154,7 @@ public class LiquidStack
     @Override
     public final int hashCode()
     {
-        return Objects.hashCode(itemID, itemMeta);
+        return 31 * itemID + itemMeta;
     }
 
     @Override
