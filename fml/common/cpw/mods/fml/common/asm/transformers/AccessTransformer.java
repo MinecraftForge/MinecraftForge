@@ -159,7 +159,7 @@ public class AccessTransformer implements IClassTransformer
     public byte[] transform(String name, String transformedName, byte[] bytes)
     {
         if (bytes == null) { return null; }
-        boolean makeAllPublic = FMLDeobfuscatingRemapper.INSTANCE.isRemappedClass(name);
+        boolean makeAllPublic = FMLDeobfuscatingRemapper.INSTANCE.isRemappedClass(name) || !name.contains("/");
 
         if (DEBUG)
         {
