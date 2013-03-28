@@ -34,6 +34,10 @@ public abstract class LiquidDictionary
      */
     public static LiquidStack getOrCreateLiquid(String name, LiquidStack liquid)
     {
+        if (liquid == null)
+        {
+            throw new NullPointerException("You cannot register a null LiquidStack");
+        }
         LiquidStack existing = liquids.get(name);
         if(existing != null) {
             return existing.copy();
