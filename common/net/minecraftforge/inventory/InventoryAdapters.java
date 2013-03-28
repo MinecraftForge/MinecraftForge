@@ -2,6 +2,7 @@ package net.minecraftforge.inventory;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
@@ -41,21 +42,6 @@ public class InventoryAdapters {
         return null;
     }
 
-    private static IInventory mergeChest(IInventory inv, TileEntityChest chest, int dx, int dz)
-    {
-        if (!chest.worldObj.blockExists(chest.xCoord + dx, chest.yCoord, chest.zCoord + dz)) return inv;
-
-        TileEntity adjacent = chest.worldObj.getBlockTileEntity(chest.xCoord + dx, chest.yCoord, chest.zCoord + dz);
-        if (adjacent instanceof TileEntityChest)
-        {
-            if (dx < 0 || dz < 0)
-                return new InventoryLargeChest("container.chestDouble", (TileEntityChest) adjacent, inv);
-            else
-                return new InventoryLargeChest("container.chestDouble", inv, (TileEntityChest) adjacent);
-        }
-        return inv;
-    }
-
     /**
      * Creates an ILinearInventory view of an IInventory. If the IInventory is
      * also an ISidedInventory, the side must be specified. Otherwise, the side
@@ -66,10 +52,7 @@ public class InventoryAdapters {
         if (inv instanceof TileEntityChest)
         {
             TileEntityChest chest = (TileEntityChest) inv;
-            inv = mergeChest(inv, chest, -1, 0);
-            inv = mergeChest(inv, chest, 1, 0);
-            inv = mergeChest(inv, chest, 0, -1);
-            inv = mergeChest(inv, chest, 0, 1);
+            return asLinearInventory(Block.chest.func_94442_h_(chest.worldObj, chest.xCoord, chest.yCoord, chest.zCoord), side);
         }
 
         if (inv instanceof net.minecraft.inventory.ISidedInventory)
