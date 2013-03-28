@@ -1,0 +1,27 @@
+--- ../src_base/minecraft/net/minecraft/block/BlockDropper.java
++++ ../src_work/minecraft/net/minecraft/block/BlockDropper.java
+@@ -13,6 +13,9 @@
+ import net.minecraft.tileentity.TileEntityHopper;
+ import net.minecraft.util.Facing;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.inventory.IForgeCustomInventory;
++import net.minecraftforge.inventory.InventoryAdapters;
+ 
+ public class BlockDropper extends BlockDispenser
+ {
+@@ -67,12 +70,12 @@
+             {
+                 ItemStack itemstack = tileentitydispenser.getStackInSlot(l);
+                 int i1 = par1World.getBlockMetadata(par2, par3, par4) & 7;
+-                IInventory iinventory = TileEntityHopper.func_96117_b(par1World, (double)(par2 + Facing.offsetsXForSide[i1]), (double)(par3 + Facing.offsetsYForSide[i1]), (double)(par4 + Facing.offsetsZForSide[i1]));
++                IForgeCustomInventory iinventory = InventoryAdapters.getCustomInventoryAt(par1World, par2 + Facing.offsetsXForSide[i1], par3 + Facing.offsetsYForSide[i1], par4 + Facing.offsetsZForSide[i1], ForgeDirection.VALID_DIRECTIONS[Facing.faceToSide[i1]]);
+                 ItemStack itemstack1;
+ 
+                 if (iinventory != null)
+                 {
+-                    itemstack1 = TileEntityHopper.func_94117_a(iinventory, itemstack.copy().splitStack(1), Facing.faceToSide[i1]);
++                    itemstack1 = (iinventory.insertInventoryItems(itemstack, 1, false) == 0 ? null : itemstack);
+ 
+                     if (itemstack1 == null)
+                     {

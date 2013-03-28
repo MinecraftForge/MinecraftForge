@@ -1,0 +1,116 @@
+--- ../src_base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
++++ ../src_work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
+@@ -17,6 +17,10 @@
+ import net.minecraft.util.Facing;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
++import net.minecraftforge.common.ForgeDirection;
++import net.minecraftforge.inventory.IForgeCustomInventory;
++import net.minecraftforge.inventory.IStackFilter;
++import net.minecraftforge.inventory.InventoryAdapters;
+ 
+ public class TileEntityHopper extends TileEntity implements Hopper
+ {
+@@ -266,7 +270,9 @@
+ 
+     private boolean func_94116_j()
+     {
+-        IInventory iinventory = this.func_94119_v();
++        // See TileEntityHopper.func_94119_v
++        int facing = BlockHopper.func_94451_c(this.getBlockMetadata());
++        IForgeCustomInventory iinventory = InventoryAdapters.getCustomInventoryAt(this.getWorldObj(), (double)(this.xCoord + Facing.offsetsXForSide[facing]), (double)(this.yCoord + Facing.offsetsYForSide[facing]), (double)(this.zCoord + Facing.offsetsZForSide[facing]), ForgeDirection.VALID_DIRECTIONS[facing^1]);
+ 
+         if (iinventory == null)
+         {
+@@ -279,55 +285,49 @@
+                 if (this.getStackInSlot(i) != null)
+                 {
+                     ItemStack itemstack = this.getStackInSlot(i).copy();
+-                    ItemStack itemstack1 = func_94117_a(iinventory, this.decrStackSize(i, 1), Facing.faceToSide[BlockHopper.func_94451_c(this.getBlockMetadata())]);
+-
+-                    if (itemstack1 == null || itemstack1.stackSize == 0)
+-                    {
+-                        iinventory.onInventoryChanged();
+-                        return true;
+-                    }
+-
+-                    this.setInventorySlotContents(i, itemstack);
+-                }
+-            }
+-
+-            return false;
+-        }
+-    }
+-
+-    public static boolean func_96116_a(Hopper par0Hopper)
+-    {
+-        IInventory iinventory = func_96118_b(par0Hopper);
+-
+-        if (iinventory != null)
+-        {
+-            byte b0 = 0;
+-
+-            if (iinventory instanceof ISidedInventory && b0 > -1)
+-            {
+-                ISidedInventory isidedinventory = (ISidedInventory)iinventory;
+-                int[] aint = isidedinventory.getSizeInventorySide(b0);
+-
+-                for (int i = 0; i < aint.length; ++i)
+-                {
+-                    if (func_102012_a(par0Hopper, iinventory, aint[i], b0))
++                    int leftover = iinventory.insertInventoryItems(this.decrStackSize(i, 1), 1, false);
++
++                    if (leftover == 0)
+                     {
+                         return true;
+                     }
++
++                    this.setInventorySlotContents(i, itemstack);
+                 }
+             }
+-            else
+-            {
+-                int j = iinventory.getSizeInventory();
+-
+-                for (int k = 0; k < j; ++k)
++
++            return false;
++        }
++    }
++
++    public static boolean func_96116_a(Hopper par0Hopper)
++    {
++        IForgeCustomInventory iinventory = InventoryAdapters.getCustomInventoryAt(par0Hopper.getWorldObj(), par0Hopper.func_96107_aA(), par0Hopper.func_96109_aB() + 1, par0Hopper.func_96108_aC(), ForgeDirection.DOWN);
++
++        if (iinventory != null)
++        {
++            // Only extract stacks we're able to store in the hopper, so there shouldn't be anything left over.
++            // If we had transactions that could be rolled back, that would be a better solution.
++            // Note that if we extract an item from iinventory, we aren't guaranteed to be able to put it back.
++            final ItemStack[] hopperStacks = new ItemStack[par0Hopper.getSizeInventory()];
++            for(int k = 0; k < hopperStacks.length; k++)
++                hopperStacks[k] = par0Hopper.getStackInSlot(k);
++            IStackFilter filter = new IStackFilter() {
++                @Override
++                public boolean matchesItem(ItemStack item)
+                 {
+-                    if (func_102012_a(par0Hopper, iinventory, k, b0))
+-                    {
+-                        return true;
+-                    }
++                    for(ItemStack is : hopperStacks)
++                        if(is == null)
++                            return true; // if there's any empty slot in the hopper, we can pull any item
++                        else if(is.itemID == item.itemID && is.getItemDamage() == item.getItemDamage() && ItemStack.areItemStackTagsEqual(is, item) && is.stackSize < is.getMaxStackSize())
++                            return true; // we can also stack with matching items
++                    return false;
+                 }
+-            }
++            };
++            ItemStack extracted = iinventory.extractInventoryItems(filter, 1, false);
++            ItemStack leftover = func_94117_a(par0Hopper, extracted, -1);
++            if(leftover != null)
++                System.out.println("Failed to insert "+leftover+" into hopper - shouldn't happen. Hopper coords: "+par0Hopper.func_96107_aA()+","+par0Hopper.func_96109_aB()+","+par0Hopper.func_96108_aC());
+         }
+         else
+         {

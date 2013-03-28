@@ -1,14 +1,19 @@
 package net.minecraftforge.inventory;
 
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.Entity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
@@ -58,7 +63,7 @@ public class InventoryAdapters {
         if (inv instanceof net.minecraft.inventory.ISidedInventory)
         {
             if (side == null || side == ForgeDirection.UNKNOWN) return null;
-            
+
             return new VanillaSidedToLinearAdapter((net.minecraft.inventory.ISidedInventory) inv, side);
         }
 
@@ -108,6 +113,39 @@ public class InventoryAdapters {
             if (li != null) return new LinearToCustomAdapter(li);
         }
         return null;
+    }
+
+    /**
+     * Creates an ICustomInventory view of a side of a thing at the given
+     * coordinates. Returns null if the adapter could not be created. The side
+     * must not be null or UNKNOWN.
+     * 
+     * Supports both entities and tile entities.
+     * 
+     * When calling this from a tile entity, you most likely want to pass integer coordinates.
+     */
+    public static IForgeCustomInventory getCustomInventoryAt(World world, double x, double y, double z, ForgeDirection side) throws NullPointerException,
+            IllegalArgumentException
+    {
+        if (side == null) throw new NullPointerException("side");
+        if (side == ForgeDirection.UNKNOWN) throw new IllegalArgumentException("side");
+
+        IForgeCustomInventory inv = null;
+
+        TileEntity te = world.getBlockTileEntity(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+        if (te != null) inv = asCustomInventory(te, side);
+
+        if (inv == null)
+        {
+            List list = world.func_94576_a((Entity) null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 1, z + 1), IEntitySelector.field_96566_b);
+
+            if (list != null && list.size() > 0)
+            {
+                inv = asCustomInventory((IInventory) list.get(world.rand.nextInt(list.size())), side);
+            }
+        }
+
+        return inv;
     }
 
     private static class InventorySlotAdapter implements ILinearInventorySlot {
@@ -331,11 +369,10 @@ public class InventoryAdapters {
             int newCount = (is == null ? 0 : is.stackSize);
             int oldCount = (old == null ? 0 : old.stackSize);
 
-            if (old.itemID != is.itemID || old.getItemDamage() != is.getItemDamage() || !ItemStack.areItemStackTagsEqual(old, is))
+            if (old != null && is != null && (old.itemID != is.itemID || old.getItemDamage() != is.getItemDamage() || !ItemStack.areItemStackTagsEqual(old, is)))
             {
                 // If changing the item type, check that we can extract all the
-                // old
-                // items and insert all the new ones
+                // old items and insert all the new ones
 
                 if (old != null && !inv.func_102008_b(slotIndex, old, side)) return false;
                 if (is != null && !inv.isStackValidForSlot(slotIndex, is)) return false;
