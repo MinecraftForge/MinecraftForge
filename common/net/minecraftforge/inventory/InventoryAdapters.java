@@ -72,10 +72,7 @@ public class InventoryAdapters {
             end = start + ((ISidedInventory) inv).getSizeInventorySide(side);
         }
 
-        if (inv instanceof TileEntityFurnace && side != ForgeDirection.UP && side != ForgeDirection.DOWN)
-            return new FurnaceOutputToLinearAdapter(inv, start);
-        else
-            return new InventoryToLinearAdapter(inv, start, end);
+        return new InventoryToLinearAdapter(inv, start, end);
     }
 
     /**
@@ -161,29 +158,6 @@ public class InventoryAdapters {
         }
     }
 
-    private static class FurnaceOutputSlotAdapter extends InventorySlotAdapter {
-        public FurnaceOutputSlotAdapter(IInventory inv, int slot)
-        {
-            super(inv, slot);
-        }
-
-        public boolean setStack(ItemStack is, boolean simulate)
-        {
-            if (is == null) return super.setStack(is, simulate);
-
-            ItemStack old = getStack();
-
-            // can't put in more items than were in there already
-            if (old == null) return false;
-            if (is.stackSize > old.stackSize) return false;
-
-            // can't change the item either
-            if (old.itemID != is.itemID || old.getItemDamage() != is.getItemDamage() || !ItemStack.areItemStackTagsEqual(old, is)) return false;
-
-            return super.setStack(is, simulate);
-        }
-    }
-
     private static class InventoryToLinearAdapter implements IForgeLinearInventory {
 
         private final int start, end;
@@ -208,30 +182,6 @@ public class InventoryAdapters {
             if (index < 0 || index >= end - start)
                 throw new IndexOutOfBoundsException("Slot index " + index + " out of range (max is " + (end - start + 1) + ")");
             return new InventorySlotAdapter(inv, start + index);
-        }
-    }
-
-    private static class FurnaceOutputToLinearAdapter implements IForgeLinearInventory {
-        private final int slot;
-        private final IInventory inv;
-
-        public FurnaceOutputToLinearAdapter(IInventory inv, int slot)
-        {
-            this.inv = inv;
-            this.slot = slot;
-        }
-
-        @Override
-        public int getNumInventorySlots()
-        {
-            return 1;
-        }
-
-        @Override
-        public ILinearInventorySlot getInventorySlot(int index) throws IndexOutOfBoundsException
-        {
-            if (index != 0) throw new IndexOutOfBoundsException("Slot index " + index + " out of range (max is 0)");
-            return new FurnaceOutputSlotAdapter(inv, slot);
         }
     }
 
