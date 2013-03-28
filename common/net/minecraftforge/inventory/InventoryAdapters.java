@@ -56,7 +56,11 @@ public class InventoryAdapters {
         }
 
         if (inv instanceof net.minecraft.inventory.ISidedInventory)
+        {
+            if (side == null || side == ForgeDirection.UNKNOWN) return null;
+            
             return new VanillaSidedToLinearAdapter((net.minecraft.inventory.ISidedInventory) inv, side);
+        }
 
         int start = 0, end = inv.getSizeInventory();
 
