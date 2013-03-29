@@ -125,8 +125,45 @@ public class LiquidStack
     }
 
     @SideOnly(CLIENT)
+    private String textureSheet = "/terrain.png";
+
+    /**
+     * Return the textureSheet used for this liquid stack's texture Icon
+     * Defaults to '/terrain.png'
+     *
+     * See {@link #getRenderingIcon()} for the actual icon
+     *
+     * @return The texture sheet
+     */
+    public String getTextureSheet()
+    {
+        return textureSheet;
+    }
+
+    /**
+     * Set the texture sheet for this icon (usually /terrain.png or /gui/items.png)
+     *
+     * See also the {@link #setRenderingIcon(Icon)} for the icon itself
+     *
+     * @param textureSheet
+     * @return the liquid stack
+     */
+    public LiquidStack setTextureSheet(String textureSheet)
+    {
+        this.textureSheet = textureSheet;
+        return this;
+    }
+    @SideOnly(CLIENT)
     private Icon renderingIcon;
 
+    /**
+     * Get the rendering icon for this liquid stack, for presentation in the world or in GUIs.
+     * Defaults to handling water and lava, and returns the set rendering icon otherwise.
+     *
+     * See {@link #getTextureSheet()} to get the texture sheet this icon is associated with
+     *
+     * @return The icon for rendering this liquid
+     */
     @SideOnly(CLIENT)
     public Icon getRenderingIcon()
     {
@@ -141,10 +178,20 @@ public class LiquidStack
         return renderingIcon;
     }
 
+    /**
+     * Set the icon for rendering this liquid
+     * It should be refreshed whenever textures are refreshed.
+     *
+     * See also {@link #setTextureSheet(String)} for setting the sheet this icon is associated with
+     *
+     * @param icon The icon to render
+     * @return The liquid stack
+     */
     @SideOnly(CLIENT)
-    public void setRenderingIcon(Icon icon)
+    public LiquidStack setRenderingIcon(Icon icon)
     {
         this.renderingIcon = icon;
+        return this;
     }
 
     @Override
@@ -157,5 +204,15 @@ public class LiquidStack
     public final boolean equals(Object ob)
     {
         return ob instanceof LiquidStack && Objects.equal(((LiquidStack)ob).itemID, itemID) && Objects.equal(((LiquidStack)ob).itemMeta, itemMeta);
+    }
+
+
+    /**
+     * Get the canonical version of this liquid stack (will contain things like icons and texturesheets)
+     * @return The canonical liquidstack
+     */
+    public LiquidStack canonical()
+    {
+        return LiquidDictionary.getCanonicalLiquid(LiquidDictionary.findLiquidName(this));
     }
 }
