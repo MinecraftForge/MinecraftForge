@@ -106,6 +106,18 @@ public abstract class LiquidDictionary
 
     public static String findLiquidName(LiquidStack reference)
     {
-        return liquids.inverse().get(reference);
+        if (reference != null)
+        {
+            return liquids.inverse().get(reference);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public static LiquidStack getCanonicalLiquid(LiquidStack liquidStack)
+    {
+        return liquids.get(liquids.inverse().get(liquidStack));
     }
 }

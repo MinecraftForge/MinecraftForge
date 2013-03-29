@@ -15,15 +15,18 @@ import net.minecraft.util.Icon;
 
 /**
  * ItemStack substitute for liquids
+ * Things of note: they are equal if their items are equal. Amount does NOT matter for java equals() testing
+ * <br/>
+ * The canonical liquidstack is probably the only one that has a lot of the rendering data on it. Use {@link #canonical()}
+ * to get it.
+ *
  * @author SirSengir
  */
 public class LiquidStack
 {
-    public int itemID;
+    public final int itemID;
     public int amount;
-    public int itemMeta;
-
-    private LiquidStack(){}
+    public final int itemMeta;
 
     public LiquidStack(int itemID,  int amount) { this(itemID,        amount, 0); }
     public LiquidStack(Item item,   int amount) { this(item.itemID,   amount, 0); }
@@ -45,17 +48,15 @@ public class LiquidStack
         return nbt;
     }
 
+
+    /**
+     * NO-OP now. Use {@link #loadLiquidStackFromNBT(NBTTagCompound)} to get a new instance
+     *
+     * @param nbt
+     */
+    @Deprecated
     public void readFromNBT(NBTTagCompound nbt)
     {
-        String liquidName = nbt.getString("LiquidName");
-        itemID = nbt.getShort("Id");
-        itemMeta = nbt.getShort("Meta");
-        LiquidStack liquid = LiquidDictionary.getCanonicalLiquid(liquidName);
-        if(liquid != null) {
-            itemID = liquid.itemID;
-            itemMeta = liquid.itemMeta;
-        }
-        amount = nbt.getInteger("Amount");
     }
 
     /**
@@ -119,8 +120,20 @@ public class LiquidStack
      */
     public static LiquidStack loadLiquidStackFromNBT(NBTTagCompound nbt)
     {
-        LiquidStack liquidstack = new LiquidStack();
-        liquidstack.readFromNBT(nbt);
+        if (nbt == null)
+        {
+            return null;
+        }
+        String liquidName = nbt.getString("LiquidName");
+        int itemID = nbt.getShort("Id");
+        int itemMeta = nbt.getShort("Meta");
+        LiquidStack liquid = LiquidDictionary.getCanonicalLiquid(liquidName);
+        if(liquid != null) {
+            itemID = liquid.itemID;
+            itemMeta = liquid.itemMeta;
+        }
+        int amount = nbt.getInteger("Amount");
+        LiquidStack liquidstack = new LiquidStack(itemID, amount, itemMeta);
         return liquidstack.itemID == 0 ? null : liquidstack;
     }
 
@@ -197,13 +210,18 @@ public class LiquidStack
     @Override
     public final int hashCode()
     {
-        return 31 * itemID + itemMeta;
+        return 31 * itemMeta + itemID;
     }
 
     @Override
     public final boolean equals(Object ob)
     {
-        return ob instanceof LiquidStack && Objects.equal(((LiquidStack)ob).itemID, itemID) && Objects.equal(((LiquidStack)ob).itemMeta, itemMeta);
+        if (ob instanceof LiquidStack)
+        {
+            LiquidStack ls = (LiquidStack)ob;
+            return ls.itemID == itemID && ls.itemMeta == itemMeta;
+        }
+        return false;
     }
 
 
@@ -213,6 +231,6 @@ public class LiquidStack
      */
     public LiquidStack canonical()
     {
-        return LiquidDictionary.getCanonicalLiquid(LiquidDictionary.findLiquidName(this));
+        return LiquidDictionary.getCanonicalLiquid(this);
     }
 }

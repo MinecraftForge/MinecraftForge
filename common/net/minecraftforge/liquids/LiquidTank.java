@@ -144,4 +144,9 @@ public class LiquidTank implements ILiquidTank {
     {
         return liquid!= null ? LiquidDictionary.findLiquidName(liquid) : null;
     }
+
+    public boolean containsValidLiquid()
+    {
+        return LiquidDictionary.findLiquidName(liquid) != null;
+    }
 }
