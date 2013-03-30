@@ -132,6 +132,11 @@ public class LiquidStack
             itemID = liquid.itemID;
             itemMeta = liquid.itemMeta;
         }
+        // if the item is not existent, and no liquid dictionary is found, null returns
+        else if (Item.itemsList[itemID] == null)
+        {
+            return null;
+        }
         int amount = nbt.getInteger("Amount");
         LiquidStack liquidstack = new LiquidStack(itemID, amount, itemMeta);
         return liquidstack.itemID == 0 ? null : liquidstack;
