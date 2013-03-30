@@ -99,7 +99,7 @@
      public String getServerModName()
      {
 -        return "vanilla";
-+        return "fml";
++        return FMLCommonHandler.instance().getModName();
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
