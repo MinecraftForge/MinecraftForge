@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -38,6 +38,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -244,12 +245,9 @@ public class FMLCommonHandler
             {
             	brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
             }
-            try {
-                Properties props=new Properties();
-                props.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
-                brd.add(props.getProperty("fmlbranding"));
-            } catch (Exception ex) {
-                // Ignore - no branding file found
+            if (Loader.instance().getFMLBrandingProperties().containsKey("fmlbranding"))
+            {
+                brd.add(Loader.instance().getFMLBrandingProperties().get("fmlbranding"));
             }
             int tModCount = Loader.instance().getModList().size();
             int aModCount = Loader.instance().getActiveModList().size();
@@ -468,5 +466,21 @@ public class FMLCommonHandler
     public void handleServerStopped()
     {
         Loader.instance().serverStopped();
+    }
+
+    public String getModName()
+    {
+        List<String> modNames = Lists.newArrayListWithExpectedSize(3);
+        modNames.add("fml");
+        if (!noForge)
+        {
+            modNames.add("forge");
+        }
+
+        if (Loader.instance().getFMLBrandingProperties().containsKey("snooperbranding"))
+        {
+            modNames.add(Loader.instance().getFMLBrandingProperties().get("snooperbranding"));
+        }
+        return Joiner.on(',').join(modNames);
     }
 }
