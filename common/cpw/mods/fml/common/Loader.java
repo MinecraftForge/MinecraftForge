@@ -152,6 +152,7 @@ public class Loader
     private static File minecraftDir;
     private static List<String> injectedContainers;
     private File loggingProperties;
+    private ImmutableMap<String, String> fmlBrandingProperties;
 
     public static Loader instance()
     {
@@ -821,4 +822,21 @@ public class Loader
         return true;
     }
 
+    public Map<String,String> getFMLBrandingProperties()
+    {
+        if (fmlBrandingProperties == null)
+        {
+            Properties loaded = new Properties();
+            try
+            {
+                loaded.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
+            }
+            catch (IOException e)
+            {
+                // File not found - ignore
+            }
+            fmlBrandingProperties = Maps.fromProperties(loaded);
+        }
+        return fmlBrandingProperties;
+    }
 }
