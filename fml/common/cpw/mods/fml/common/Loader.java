@@ -831,7 +831,7 @@ public class Loader
             {
                 loaded.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 // File not found - ignore
             }
