@@ -142,7 +142,6 @@ public class LiquidStack
         return liquidstack.itemID == 0 ? null : liquidstack;
     }
 
-    @SideOnly(CLIENT)
     private String textureSheet = "/terrain.png";
 
     /**
