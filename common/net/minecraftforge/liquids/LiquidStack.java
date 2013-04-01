@@ -69,7 +69,8 @@ public class LiquidStack
     public LiquidStack copy()
     {
         LiquidStack stack = new LiquidStack(itemID, amount, itemMeta);
-        stack.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
+        if(stackTagCompound != null)
+            stack.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
         return stack;
     }
 
@@ -124,7 +125,8 @@ public class LiquidStack
     public ItemStack asItemStack()
     {
         ItemStack stack = new ItemStack(itemID, 1, itemMeta);
-        stack.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
+        if(stackTagCompound != null)
+            stack.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
         return stack;
     }
 
