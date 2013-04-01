@@ -61,7 +61,30 @@ public class EventBus
             }
         }
     }
+    
+    public void register(Class<?> eventType, EventPriority priority, IEventListener listener)
+    {
+        try
+        {
+            Constructor<?> ctr = eventType.getConstructor();
+            ctr.setAccessible(true);
+            Event event = (Event)ctr.newInstance();
+            event.getListenerList().register(busID, priority, listener);
 
+            ArrayList<IEventListener> others = listeners.get(listener); 
+            if (others == null)
+            {
+                others = new ArrayList<IEventListener>();
+                listeners.put(listener, others);
+            }
+            others.add(listener);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
     private void register(Class<?> eventType, Object target, Method method)
     {
         try
