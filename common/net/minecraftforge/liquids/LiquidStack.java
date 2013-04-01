@@ -27,6 +27,7 @@ public class LiquidStack
     public final int itemID;
     public int amount;
     public final int itemMeta;
+    public NBTTagCompound stackTagCompound;
 
     public LiquidStack(int itemID,  int amount) { this(itemID,        amount, 0); }
     public LiquidStack(Item item,   int amount) { this(item.itemID,   amount, 0); }
@@ -45,6 +46,9 @@ public class LiquidStack
         nbt.setShort("Id", (short)itemID);
         nbt.setShort("Meta", (short)itemMeta);
         nbt.setString("LiquidName", LiquidDictionary.findLiquidName(this));
+        if(stackTagCompound != null) {
+            nbt.setTag("tag", stackTagCompound);
+        }
         return nbt;
     }
 
@@ -64,7 +68,9 @@ public class LiquidStack
      */
     public LiquidStack copy()
     {
-        return new LiquidStack(itemID, amount, itemMeta);
+        LiquidStack stack = new LiquidStack(itemID, amount, itemMeta);
+        stack.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
+        return stack;
     }
 
     /**
@@ -73,7 +79,7 @@ public class LiquidStack
      */
     public boolean isLiquidEqual(LiquidStack other)
     {
-        return other != null && itemID == other.itemID && itemMeta == other.itemMeta;
+        return other != null && itemID == other.itemID && itemMeta == other.itemMeta && isStackTagCompoundEqual(other.stackTagCompound);
     }
 
     /**
@@ -96,12 +102,20 @@ public class LiquidStack
             return false;
         }
 
-        if (itemID == other.itemID && itemMeta == other.getItemDamage())
+        if (itemID == other.itemID && itemMeta == other.getItemDamage() && isStackTagCompoundEqual(other.stackTagCompound))
         {
             return true;
         }
 
         return isLiquidEqual(LiquidContainerRegistry.getLiquidForFilledItem(other));
+    }
+    
+    /**
+     * @param other NBTTagCompound containing data to compare to.
+     * @return whether the tag compounds are equal.
+     */
+    public boolean isStackTagCompoundEqual(NBTTagCompound other) {
+        return stackTagCompound == null ? other == null : stackTagCompound.equals(other);
     }
 
     /**
@@ -109,7 +123,9 @@ public class LiquidStack
      */
     public ItemStack asItemStack()
     {
-        return new ItemStack(itemID, 1, itemMeta);
+        ItemStack stack = new ItemStack(itemID, 1, itemMeta);
+        stack.stackTagCompound = (NBTTagCompound) stackTagCompound.copy();
+        return stack;
     }
 
     /**
@@ -139,6 +155,13 @@ public class LiquidStack
         }
         int amount = nbt.getInteger("Amount");
         LiquidStack liquidstack = new LiquidStack(itemID, amount, itemMeta);
+        
+        NBTTagCompound stackTagCompound;
+        if(nbt.hasKey("tag")) {
+            stackTagCompound = (NBTTagCompound) nbt.getTag("tag");
+            liquidstack.stackTagCompound = stackTagCompound;
+        }
+        
         return liquidstack.itemID == 0 ? null : liquidstack;
     }
 
