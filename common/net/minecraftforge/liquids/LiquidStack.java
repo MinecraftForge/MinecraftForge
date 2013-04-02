@@ -158,10 +158,8 @@ public class LiquidStack
         int amount = nbt.getInteger("Amount");
         LiquidStack liquidstack = new LiquidStack(itemID, amount, itemMeta);
         
-        NBTTagCompound stackTagCompound;
         if(nbt.hasKey("tag")) {
-            stackTagCompound = (NBTTagCompound) nbt.getTag("tag");
-            liquidstack.stackTagCompound = stackTagCompound;
+            liquidstack.stackTagCompound = (NBTTagCompound) nbt.getTag("tag");
         }
         
         return liquidstack.itemID == 0 ? null : liquidstack;
