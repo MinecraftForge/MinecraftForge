@@ -248,7 +248,7 @@ public class LiquidStack
         if (ob instanceof LiquidStack)
         {
             LiquidStack ls = (LiquidStack)ob;
-            return ls.itemID == itemID && ls.itemMeta == itemMeta;
+            return ls.itemID == itemID && ls.itemMeta == itemMeta && isStackTagCompoundEqual(ls.stackTagCompound);
         }
         return false;
     }
