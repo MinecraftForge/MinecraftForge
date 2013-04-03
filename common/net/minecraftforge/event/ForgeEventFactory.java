@@ -3,14 +3,17 @@ package net.minecraftforge.event;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
+import net.minecraftforge.event.entity.EntityExplodeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -44,6 +47,16 @@ public class ForgeEventFactory
     public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
+    }
+    
+    public static boolean onEntityExplode(Explosion explosion, World world)
+    {
+        EntityExplodeEvent event = new EntityExplodeEvent(world, explosion.exploder, explosion.explosionX, explosion.explosionY, explosion.explosionZ, explosion.explosionSize, explosion.isFlaming, explosion.isSmoking);
+        MinecraftForge.EVENT_BUS.post(event);
+        explosion.isFlaming = event.isFlaming;
+        explosion.isSmoking = event.isSmoking;
+        explosion.explosionSize = event.strength;
+        return event.isCanceled();
     }
 
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
