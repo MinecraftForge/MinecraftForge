@@ -5,7 +5,7 @@
                  if (par4)
                  {
 -                    l = par2 + (par3Texture.getHeight() - k);
-+                    l = par1 + (par3Texture.getHeight() - k); //BUGFIX: targetY -> targetX
++                    l = par1 + (par3Texture.getHeight() - k - 1); //BUGFIX: targetY -> targetX and -1
                  }
  
                  for (int k1 = 0; k1 < par3Texture.getWidth(); ++k1)
