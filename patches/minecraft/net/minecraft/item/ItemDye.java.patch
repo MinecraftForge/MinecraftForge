@@ -13,6 +13,15 @@
  public class ItemDye extends Item
  {
      /** List of dye color names */
+@@ -73,7 +79,7 @@
+         {
+             if (par1ItemStack.getItemDamage() == 15)
+             {
+-                if (func_96604_a(par1ItemStack, par3World, par4, par5, par6))
++                if (applyBonemeal(par1ItemStack, par3World, par4, par5, par6, par2EntityPlayer))
+                 {
+                     if (!par3World.isRemote)
+                     {
 @@ -141,7 +147,27 @@
  
      public static boolean func_96604_a(ItemStack par0ItemStack, World par1World, int par2, int par3, int par4)
