@@ -1,0 +1,20 @@
+--- ../src_base/minecraft/net/minecraft/client/renderer/texture/Texture.java
++++ ../src_work/minecraft/net/minecraft/client/renderer/texture/Texture.java
+@@ -222,7 +222,7 @@
+ 
+                 if (par4)
+                 {
+-                    l = par2 + (par3Texture.getHeight() - k);
++                    l = par1 + (par3Texture.getHeight() - k); //BUGFIX: targetY -> targetX
+                 }
+ 
+                 for (int k1 = 0; k1 < par3Texture.getWidth(); ++k1)
+@@ -232,7 +232,7 @@
+ 
+                     if (par4)
+                     {
+-                        l1 = par1 + k1 * this.width * 4 + l * 4;
++                        l1 = (par2 + k1) * this.width * 4 + l * 4; //BUGFIX: targetX -> targetY and parens
+                     }
+ 
+                     this.textureData.put(l1 + 0, bytebuffer.get(i2 + 0));
