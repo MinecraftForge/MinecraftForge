@@ -9,12 +9,14 @@
  import java.util.Map;
  import net.minecraft.block.Block;
  import net.minecraft.item.Item;
-@@ -13,6 +15,8 @@
+@@ -13,6 +15,10 @@
      /** The list of smelting results. */
      private Map smeltingList = new HashMap();
      private Map experienceList = new HashMap();
 +    private HashMap<List<Integer>, ItemStack> metaSmeltingList = new HashMap<List<Integer>, ItemStack>();
 +    private HashMap<List<Integer>, Float> metaExperience = new HashMap<List<Integer>, Float>();
++    private HashMap<ItemStack, ItemStack> nbtSmeltingList = new HashMap<ItemStack, ItemStack>();
++    private HashMap<ItemStack, Float> nbtExperience = new HashMap<ItemStack, Float>();
  
      /**
       * Used to call methods addSmelting and getSmeltingResult.
@@ -28,7 +30,7 @@
      public ItemStack getSmeltingResult(int par1)
      {
          return (ItemStack)this.smeltingList.get(Integer.valueOf(par1));
-@@ -67,8 +73,63 @@
+@@ -67,8 +73,86 @@
          return this.smeltingList;
      }
  
@@ -48,6 +50,15 @@
 +    }
 +
 +    /**
++     * A NBT sensitive version of adding a furnance recipe.
++     */
++    public void addSmelting(ItemStack input, ItemStack output, float experience)
++    {
++        nbtSmeltingList.put(input, output);
++        nbtExperience.put(input, experience);
++    }
++
++    /**
 +     * Used to get the resulting ItemStack form a source ItemStack
 +     * @param item The Source ItemStack
 +     * @return The result ItemStack
@@ -60,6 +71,11 @@
 +        }
 +        ItemStack ret = (ItemStack)metaSmeltingList.get(Arrays.asList(item.itemID, item.getItemDamage()));
 +        if (ret != null) 
++        {
++            return ret;
++        }
++        ret = (ItemStack)nbtSmeltingList.get(item);
++        if (ret != null)
 +        {
 +            return ret;
 +        }
@@ -84,11 +100,20 @@
 +        {
 +            ret = ((Float)experienceList.get(item.itemID)).floatValue();
 +        }
++        if (ret < 0 && nbtExperience.containsKey(item))
++        {
++            ret = nbtExperience.get(item);
++        }
 +        return (ret < 0 ? 0 : ret);
 +    }
 +
 +    public Map<List<Integer>, ItemStack> getMetaSmeltingList()
 +    {
 +        return metaSmeltingList;
++    }
++
++    public Map<ItemStack, ItemStack> getNbtSmeltingList()
++    {
++        return nbtSmeltingList;
 +    }
  }
