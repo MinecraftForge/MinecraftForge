@@ -13,8 +13,11 @@
 package cpw.mods.fml.relauncher;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -61,6 +64,8 @@ public class RelaunchClassLoader extends URLClassLoader
 
     private static final boolean DEBUG_CLASSLOADING = Boolean.parseBoolean(System.getProperty("fml.debugClassLoading", "false"));
     private static final boolean DEBUG_CLASSLOADING_FINER = DEBUG_CLASSLOADING && Boolean.parseBoolean(System.getProperty("fml.debugClassLoadingFiner", "false"));
+    private static final boolean DEBUG_CLASSLOADING_SAVE = DEBUG_CLASSLOADING && Boolean.parseBoolean(System.getProperty("fml.debugClassLoadingSave", "false"));
+    private static File temp_folder = null;
 
     public RelaunchClassLoader(URL[] sources)
     {
@@ -87,6 +92,27 @@ public class RelaunchClassLoader extends URLClassLoader
         addTransformerExclusion("com.google.common.");
         addTransformerExclusion("org.bouncycastle.");
         addTransformerExclusion("cpw.mods.fml.common.asm.transformers.deobf.");
+
+        if (DEBUG_CLASSLOADING_SAVE)
+        {
+            int x = 1;
+            temp_folder = new File(FMLRelaunchLog.minecraftHome, "CLASSLOADER_TEMP");
+            while(temp_folder.exists() && x <= 10)
+            {
+                temp_folder = new File(FMLRelaunchLog.minecraftHome, "CLASSLOADER_TEMP" + x++);
+            }
+            
+            if (temp_folder.exists())
+            {
+                FMLRelaunchLog.info("DEBUG_CLASSLOADING_SAVE enabled,  but 10 temp directories already exist, clean them and try again.");
+                temp_folder = null;
+            }
+            else
+            {
+                FMLRelaunchLog.info("DEBUG_CLASSLOADING_SAVE Enabled, saving all classes to \"%s\"", temp_folder.getAbsolutePath().replace('\\',  '/'));
+                temp_folder.mkdirs();
+            }
+        }
     }
 
     public void registerTransformer(String transformerClassName)
@@ -197,6 +223,7 @@ public class RelaunchClassLoader extends URLClassLoader
             }
             byte[] basicClass = getClassBytes(untransformedName);
             byte[] transformedClass = runTransformers(untransformedName, transformedName, basicClass);
+            saveTransformedClass(transformedClass, transformedName);
             Class<?> cl = defineClass(transformedName, transformedClass, 0, transformedClass.length, (urlConnection == null ? null : new CodeSource(urlConnection.getURL(), signers)));
             cachedClasses.put(transformedName, cl);
             return cl;
@@ -209,6 +236,39 @@ public class RelaunchClassLoader extends URLClassLoader
                 FMLLog.log(Level.FINEST, e, "Exception encountered attempting classloading of %s", name);
             }
             throw new ClassNotFoundException(name, e);
+        }
+    }
+
+    private void saveTransformedClass(byte[] data, String transformedName)
+    {
+        if (!DEBUG_CLASSLOADING_SAVE || temp_folder == null)
+        {
+            return;
+        }
+
+        File outFile = new File(temp_folder, transformedName.replace('.', File.separatorChar) + ".class");
+        File outDir = outFile.getParentFile();
+
+        if (!outDir.exists())
+        {
+            outDir.mkdirs();
+        }
+
+        if (outFile.exists())
+        {
+            outFile.delete();
+        }
+
+        try
+        {
+            FMLRelaunchLog.fine("Saving transformed class \"%s\" to \"%s\"", transformedName, outFile.getAbsolutePath().replace('\\',  '/'));
+            OutputStream output = new FileOutputStream(outFile);
+            output.write(data);
+            output.close();
+        }
+        catch(IOException ex)
+        {
+            FMLRelaunchLog.log(Level.WARNING, ex, "Could not save transformed class \"%s\"", transformedName);
         }
     }
 
