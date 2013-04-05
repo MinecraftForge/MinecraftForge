@@ -28,20 +28,34 @@
              {
                  ItemArmor itemarmor = (ItemArmor)item;
 -                this.loadTexture("/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png");
-+                this.loadTexture(ForgeHooksClient.getArmorTexture(itemstack, "/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png"));
++                this.loadTexture(ForgeHooksClient.getArmorTexture(par1EntityPlayer, itemstack, "/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + ".png", par2, 1));
                  ModelBiped modelbiped = par2 == 2 ? this.modelArmor : this.modelArmorChestplate;
                  modelbiped.bipedHead.showModel = par2 == 0;
                  modelbiped.bipedHeadwear.showModel = par2 == 0;
-@@ -125,7 +133,7 @@
+@@ -84,9 +92,10 @@
+ 
+                 float f1 = 1.0F;
+ 
+-                if (itemarmor.getArmorMaterial() == EnumArmorMaterial.CLOTH)
+-                {
+-                    int j = itemarmor.getColor(itemstack);
++                //Move outside if to allow for more then just CLOTH
++                int j = itemarmor.getColor(itemstack);
++                if (j != -1)
++                {
+                     float f2 = (float)(j >> 16 & 255) / 255.0F;
+                     float f3 = (float)(j >> 8 & 255) / 255.0F;
+                     float f4 = (float)(j & 255) / 255.0F;
+@@ -125,7 +134,7 @@
              if (item instanceof ItemArmor)
              {
                  ItemArmor itemarmor = (ItemArmor)item;
 -                this.loadTexture("/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png");
-+                this.loadTexture(ForgeHooksClient.getArmorTexture(itemstack, "/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png"));
++                this.loadTexture(ForgeHooksClient.getArmorTexture(par1EntityPlayer, itemstack, "/armor/" + armorFilenamePrefix[itemarmor.renderIndex] + "_" + (par2 == 2 ? 2 : 1) + "_b.png", par2, 2));
                  float f1 = 1.0F;
                  GL11.glColor3f(f1, f1, f1);
              }
-@@ -184,9 +192,12 @@
+@@ -184,9 +193,12 @@
              this.modelBipedMain.bipedHead.postRender(0.0625F);
              float f2;
  
@@ -57,7 +71,7 @@
                  {
                      f2 = 0.625F;
                      GL11.glTranslatef(0.0F, -0.25F, 0.0F);
-@@ -304,7 +315,10 @@
+@@ -304,7 +316,10 @@
                  enumaction = itemstack1.getItemUseAction();
              }
  
@@ -69,7 +83,7 @@
              {
                  f3 = 0.5F;
                  GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-@@ -361,7 +375,7 @@
+@@ -361,7 +376,7 @@
  
              if (itemstack1.getItem().requiresMultipleRenderPasses())
              {

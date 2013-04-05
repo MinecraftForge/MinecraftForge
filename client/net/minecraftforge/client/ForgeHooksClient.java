@@ -12,6 +12,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.client.texturepacks.ITexturePack;
@@ -42,13 +43,10 @@ public class ForgeHooksClient
         return FMLClientHandler.instance().getClient().renderEngine;
     }
 
-    public static String getArmorTexture(ItemStack armor, String _default)
+    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, int slot, int layer)
     {
-        if (armor.getItem() instanceof IArmorTextureProvider)
-        {
-            return ((IArmorTextureProvider)armor.getItem()).getArmorTextureFile(armor);
-        }
-        return _default;
+        String result = armor.getItem().getArmorTexture(armor, entity, slot, layer);
+        return result != null ? result : _default;
     }
 
     public static boolean renderEntityItem(EntityItem entity, ItemStack item, float bobing, float rotation, Random random, RenderEngine engine, RenderBlocks renderBlocks)

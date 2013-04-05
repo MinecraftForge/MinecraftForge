@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
  * It allows for the application of a custom texture file to the player skin
  * when the armor is worn.
  */
+@Deprecated //See Item.getArmorTexture
 public interface IArmorTextureProvider
 {
 
